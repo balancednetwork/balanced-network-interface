@@ -8,6 +8,7 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 
 import { NotFoundPage } from './components/NotFoundPage/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
+import { StyleGuidePage } from './containers/StyleGuidePage';
 
 export function App() {
   const { i18n } = useTranslation();
@@ -29,6 +30,7 @@ export function App() {
 
           <Switch>
             <Route exact path="/" component={HomePage} />
+            <Route exact path="/style-guide" component={StyleGuidePage} />
             <Route component={NotFoundPage} />
           </Switch>
         </BrowserRouter>

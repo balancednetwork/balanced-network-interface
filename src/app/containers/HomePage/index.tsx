@@ -17,13 +17,13 @@ export function HomePage() {
       </Helmet>
       <span>HomePage container</span>
 
-      <Text color="text" fontSize={35}>
+      <Text color="text" fontSize={35} fontWeight="bold">
         Heading 1
       </Text>
-      <Text color="text" fontSize={25}>
+      <Text color="text" fontSize={25} fontWeight="bold">
         Heading 2
       </Text>
-      <Text color="text" fontSize={20}>
+      <Text color="text" fontSize={20} fontWeight="bold">
         Heading 3
       </Text>
       <Text color="text" fontSize={16}>

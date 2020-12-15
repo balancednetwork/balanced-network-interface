@@ -3,6 +3,11 @@ import React from 'react';
 import { ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, MediaFunction } from 'styled-components';
 import { css, DefaultTheme } from 'styled-components/macro';
 
+import texGyeAdventorBoldWoff from 'assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff';
+import texGyeAdventorBoldWoff2 from 'assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff2';
+import texGyeAdventorRegularWoff from 'assets/font/tex-gyre-adventor-regular/tex-gyre-adventor-regular.woff';
+import texGyeAdventorRegularWoff2 from 'assets/font/tex-gyre-adventor-regular/tex-gyre-adventor-regular.woff2';
+
 // Update your breakpoints if you want
 export const sizes = {
   upToExtraSmall: 500,
@@ -59,6 +64,22 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
 }
 
 export const FixedGlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: 'tex-gyre-adventor';
+    src: url(${texGyeAdventorRegularWoff2}) format('woff2'),
+    url(${texGyeAdventorRegularWoff}) format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'tex-gyre-adventor';
+    src: url(${texGyeAdventorBoldWoff2}) format('woff2'),
+    url(${texGyeAdventorBoldWoff}) format('woff');
+    font-weight: bold;
+    font-style: normal;
+  }
+
   html,
   body {
     height: 100%;
@@ -66,7 +87,7 @@ export const FixedGlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'tex-gyre-adventor', Arial, sans-serif;
   }
 
   #root {

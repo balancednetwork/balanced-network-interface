@@ -42,3 +42,29 @@ export const TextButton = styled(RebassButton)`
     color: #27264a;
   }
 `;
+
+export const IconButton = styled(RebassButton)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background-color: #2395aa;
+  border-radius: 100px;
+  color: #01002a;
+  cursor: pointer;
+  padding: 4px;
+  outline: none;
+
+  &:hover,
+  &:focus {
+    background-color: #087083;
+    transition: background-color 0.2s ease;
+  }
+
+  &:disabled {
+    cursor: default;
+    pointer-events: none;
+    color: #27264a;
+  }
+`;

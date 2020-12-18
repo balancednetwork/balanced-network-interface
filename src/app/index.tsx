@@ -9,6 +9,8 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import { NotFoundPage } from './components/NotFoundPage/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
 import { StyleGuidePage } from './containers/StyleGuidePage';
+import { TradePage } from './containers/TradePage';
+import { VotePage } from './containers/VotePage';
 
 export function App() {
   const { i18n } = useTranslation();
@@ -21,15 +23,17 @@ export function App() {
 
         <BrowserRouter>
           <Helmet
-            titleTemplate="%s - React Boilerplate"
-            defaultTitle="React Boilerplate"
+            titleTemplate="%s - Balanced Network"
+            defaultTitle="Balanced Network"
             htmlAttributes={{ lang: i18n.language }}
           >
-            <meta name="description" content="A React Boilerplate application" />
+            <meta name="description" content="A Balanced Network interface" />
           </Helmet>
 
           <Switch>
             <Route exact path="/" component={HomePage} />
+            <Route exact path="/vote" component={VotePage} />
+            <Route exact path="/trade" component={TradePage} />
             <Route exact path="/style-guide" component={StyleGuidePage} />
             <Route component={NotFoundPage} />
           </Switch>

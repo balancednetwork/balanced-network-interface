@@ -19,7 +19,7 @@ export const sizes = {
 // Iterate through the sizes and create a media template
 export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce((acc, label) => {
   acc[label] = (first: any, ...interpolations: any[]) => css`
-    @media (min-width: ${sizes[label]}px) {
+    @media (max-width: ${sizes[label]}px) {
       ${css(first, ...interpolations)}
     }
   `;
@@ -108,13 +108,13 @@ export const FixedGlobalStyle = createGlobalStyle`
 `;
 
 export const ThemedGlobalStyle = createGlobalStyle`
-html {
-  color: ${({ theme }) => theme.colors.text1};
-  background-color: ${({ theme }) => theme.colors.bg2};
-}
+  html {
+    color: ${({ theme }) => theme.colors.text1};
+    background-color: ${({ theme }) => theme.colors.bg1};
+  }
 
-body {
-  min-height: 100vh;
-  background: ${({ theme }) => theme.colors.bg1}
-}
+  body {
+    min-height: 100vh;
+    background: ${({ theme }) => theme.colors.bg1}
+  }
 `;

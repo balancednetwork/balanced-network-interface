@@ -12,15 +12,35 @@ const StyledLogo = styled(Logo)`
   width: 100px;
   margin-left: 7px;
   margin-right: 75px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 75px;
+    margin-right: 15px;
+  `}
 `;
 
-const HeaderWrapper = styled.header``;
+const WalletInfo = styled(Box)`
+  text-align: 'right';
+  margin-right: 15px;
 
-export function Header(props: { title?: string; className?: string } = { title: 'Home' }) {
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `}
+`;
+
+const WalletButton = styled(IconButton)`
+  margin-right: 25px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `}
+`;
+
+export function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
   return (
-    <HeaderWrapper className={className}>
+    <header className={className}>
       <Flex justifyContent="space-between">
         <Flex alignItems="center">
           <StyledLogo />
@@ -30,24 +50,24 @@ export function Header(props: { title?: string; className?: string } = { title: 
         </Flex>
 
         <Flex alignItems="center">
-          <Box style={{ textAlign: 'right', marginRight: 15 }}>
+          <WalletInfo>
             <Text color="text" fontSize={16}>
               Main
             </Text>
             <Text color="text" fontSize={14}>
               hx28c08b2...2240bc3
             </Text>
-          </Box>
+          </WalletInfo>
 
-          <IconButton style={{ marginRight: 25 }}>
+          <WalletButton>
             <WalletIcon />
-          </IconButton>
+          </WalletButton>
 
           <IconButton>
             <NotificationIcon />
           </IconButton>
         </Flex>
       </Flex>
-    </HeaderWrapper>
+    </header>
   );
 }

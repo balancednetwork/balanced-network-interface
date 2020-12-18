@@ -11,9 +11,10 @@ import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
 const Navigation = styled.nav`
   display: inline-block;
   width: 100px;
-  @media (max-width: 600px) {
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     width: initial;
-  }
+  `}
 `;
 
 const List = styled.ul`
@@ -39,7 +40,7 @@ const ListItem = styled.li`
     margin-bottom: 0;
   }
 
-  @media (max-width: 600px) {
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     display: inline-block;
     margin-bottom: 0;
     margin-right: 3px;
@@ -47,7 +48,7 @@ const ListItem = styled.li`
     &:last-child {
       margin-right: 0;
     }
-  }
+  `}
 `;
 
 const activeClassName = 'ACTIVE';
@@ -78,10 +79,10 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
     opacity: 1;
   }
 
-  @media (max-width: 600px) {
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100px;
     padding: 5px;
-  }
+  `}
 `;
 
 export function AppBar() {
@@ -89,21 +90,21 @@ export function AppBar() {
     <Navigation>
       <List>
         <ListItem>
-          <StyledNavLink to="/">
+          <StyledNavLink exact to="/">
             <HomeIcon width="30" height="35" />
             <Text>Home</Text>
           </StyledNavLink>
         </ListItem>
 
         <ListItem>
-          <StyledNavLink to="/vote">
+          <StyledNavLink exact to="/vote">
             <VoteIcon width="30" height="35" />
             <Text>Vote</Text>
           </StyledNavLink>
         </ListItem>
 
         <ListItem>
-          <StyledNavLink to="/trade">
+          <StyledNavLink exact to="/trade">
             <TradeIcon width="30" height="35" />
             <Text>Trade</Text>
           </StyledNavLink>

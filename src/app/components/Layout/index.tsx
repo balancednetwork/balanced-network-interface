@@ -17,6 +17,7 @@ const StyledHeader = styled(Header)`
 `;
 
 const Container = styled(Box)`
+  overflow: auto;
   max-width: 1280px;
   margin-left: auto;
   margin-right: auto;

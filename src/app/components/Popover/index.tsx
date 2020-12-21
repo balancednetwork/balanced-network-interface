@@ -59,7 +59,6 @@ const Arrow = styled.div`
 
   &.arrow-left {
     right: -5px;
-
     ::before {
       border-bottom: none;
       border-left: none;
@@ -90,7 +89,7 @@ export default function Popover({ content, show, children, placement = 'auto' }:
     placement,
     strategy: 'fixed',
     modifiers: [
-      { name: 'offset', options: { offset: [8, 8] } },
+      { name: 'offset', options: { offset: [0, 8] } },
       { name: 'arrow', options: { element: arrowElement } },
     ],
   });

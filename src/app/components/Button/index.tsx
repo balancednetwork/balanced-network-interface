@@ -1,7 +1,7 @@
 import { Button as RebassButton } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-export const ButtonBase = styled(RebassButton)`
+export const Button = styled(RebassButton)`
   display: inline-block;
   border-radius: 10px;
   padding: 5px 35px;

@@ -105,6 +105,10 @@ export const FixedGlobalStyle = createGlobalStyle`
     font-family: inherit;
     font-size: inherit;
   }
+
+  button:focus {
+    outline: none;
+  }
 `;
 
 export const ThemedGlobalStyle = createGlobalStyle`

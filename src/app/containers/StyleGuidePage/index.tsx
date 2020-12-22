@@ -3,7 +3,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Text, Flex } from 'rebass/styled-components';
 
-import { ButtonBase, TextButton } from 'app/components/Button';
+import { Button, TextButton } from 'app/components/Button';
 import { Link } from 'app/components/Link';
 import { Panel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
@@ -51,8 +51,8 @@ export function StyleGuidePage() {
         <QuestionHelper text={"Use this tool to find pairs that don't automatically appear in the interface."} />
       </Flex>
 
-      <ButtonBase>Hello World</ButtonBase>
-      <ButtonBase disabled>Hello World</ButtonBase>
+      <Button>Hello World</Button>
+      <Button disabled>Hello World</Button>
       <TextButton>Cancel</TextButton>
 
       <Panel bg="bg2">

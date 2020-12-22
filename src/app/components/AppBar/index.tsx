@@ -19,13 +19,13 @@ const Navigation = styled.nav`
 
 const List = styled.ul`
   width: 100%;
-  border: 1px solid #2395aa;
+  border: 1px solid ${({ theme }) => theme.colors.primary};
   box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.068), 0 6.7px 5.3px rgba(0, 0, 0, 0.096), 0 12.5px 10px rgba(0, 0, 0, 0.12),
     0 22.3px 17.9px rgba(0, 0, 0, 0.144), 0 41.8px 33.4px rgba(0, 0, 0, 0.172), 0 100px 80px rgba(0, 0, 0, 0.24);
   border-radius: 20px;
   padding: 0;
   margin: 0;
-  background-color: #0c2a4d;
+  background-color: ${({ theme }) => theme.colors.bg2};
 `;
 
 const ListItem = styled.li`
@@ -67,15 +67,15 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   font-size: 14px;
 
   &.${activeClassName} {
-    color: #01002a;
-    background-color: #2395aa;
+    color: ${({ theme }) => theme.colors.bg1};
+    background-color: ${({ theme }) => theme.colors.primary};
     opacity: 1;
   }
 
   :hover,
   :focus {
-    color: #01002a;
-    background-color: #2395aa;
+    color: ${({ theme }) => theme.colors.bg1};
+    background-color: ${({ theme }) => theme.colors.primary};
     opacity: 1;
   }
 

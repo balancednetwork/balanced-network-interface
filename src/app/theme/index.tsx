@@ -34,17 +34,25 @@ export function theme(): DefaultTheme {
       white: '#FFFFFF',
       black: '#000000',
 
-      // text
+      // text white
       text: '#FFFFFF',
-      text1: '#FFFFFF',
+
+      // balanced dark grey
+      text1: '#D5D7DB',
 
       // backgrounds
+      // Balanced navy blue
       bg1: '#01002A',
+
+      // Balanced panel
       bg2: '#0c2a4d',
+
+      // Balanced parent paenl
       bg3: '#144a68',
+
       bg4: '#0b284c',
 
-      //
+      // Balanced turqoise
       primary: '#2ca9b7',
     },
 

@@ -9,7 +9,7 @@ export const CheckBox = styled(Box)<{ isActive: boolean }>`
   width: 20px;
   height: 20px;
   border-radius: 5px;
-  background-color: ${props => (props.isActive ? '#2ca9b7' : '#03334f')};
+  background-color: ${props => (props.isActive ? props.theme.colors.primary : '#03334f')};
 `;
 
 export const Field: React.FC<{

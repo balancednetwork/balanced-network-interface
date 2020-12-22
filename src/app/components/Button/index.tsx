@@ -7,7 +7,7 @@ export const Button = styled(RebassButton)`
   padding: 5px 35px;
   color: #ffffff;
   text-decoration: none;
-  background-color: #2ca9b7;
+  background-color: ${({ theme }) => theme.colors.primary};
   cursor: pointer;
   transition: background-color 0.3s ease;
 
@@ -51,7 +51,7 @@ export const IconButton = styled(RebassButton)`
   height: 50px;
   background-color: #2395aa;
   border-radius: 100px;
-  color: #01002a;
+  color: ${({ theme }) => theme.colors.bg1};
   cursor: pointer;
   padding: 4px;
   outline: none;

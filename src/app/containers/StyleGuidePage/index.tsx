@@ -16,27 +16,27 @@ export function StyleGuidePage() {
         <meta name="description" content="Balanced Network Interface Style Guide" />
       </Helmet>
 
-      <Text color="text" fontSize={35} fontWeight="bold">
+      <Text as="h1" color="text" fontSize={35} fontWeight="bold">
         Style Guide
       </Text>
 
-      <Text color="text" fontSize={35} fontWeight="bold">
+      <Text as="h1" color="text" fontSize={35} fontWeight="bold">
         Heading 1
       </Text>
 
-      <Text color="text" fontSize={25} fontWeight="bold">
+      <Text as="h2" color="text" fontSize={25} fontWeight="bold">
         Heading 2
       </Text>
 
-      <Text color="text" fontSize={20} fontWeight="bold">
+      <Text as="h3" color="text" fontSize={20} fontWeight="bold">
         Heading 3
       </Text>
 
-      <Text color="text" fontSize={16}>
+      <Text as="p" color="text" fontSize={16}>
         This is a paragraph of text.
       </Text>
 
-      <Text color="text" fontSize={14}>
+      <Text as="label" color="text" fontSize={14}>
         This is a label.
       </Text>
 

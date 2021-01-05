@@ -52,13 +52,13 @@ const MobileAppBarWrapper = styled(Box)`
   `}
 `;
 
-export function DefaultLayout(props) {
-  const { children } = props;
+export const DefaultLayout: React.FC<{ title?: string }> = props => {
+  const { children, title = 'Home' } = props;
 
   return (
     <>
       <Container>
-        <StyledHeader title="Home" />
+        <StyledHeader title={title} />
 
         <Flex>
           <DesktopAppBarWrapper>
@@ -74,4 +74,4 @@ export function DefaultLayout(props) {
       </Container>
     </>
   );
-}
+};

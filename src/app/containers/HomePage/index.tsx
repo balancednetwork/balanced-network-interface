@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import { Field } from 'app/components/Form';
 import { DefaultLayout } from 'app/components/Layout';
-import { Panel } from 'app/components/Panel';
+import { BoxPanel } from 'app/components/Panel';
 
 const Grid = styled.div`
   flex: 1;
@@ -20,7 +20,7 @@ const Grid = styled.div`
   `}
 `;
 
-const ActivityPanel = styled(Panel)`
+const ActivityPanel = styled(BoxPanel)`
   grid-area: '3 / 1 / 3 / 3';
   ${({ theme }) => theme.mediaWidth.upToSmall`
     grid-area: initial;
@@ -45,7 +45,7 @@ export function HomePage() {
       </Helmet>
 
       <Grid>
-        <Panel bg="bg3">
+        <BoxPanel bg="bg3">
           <Flex justifyContent="space-between" alignItems="cener">
             <Text color="text" fontSize={25} fontWeight="bold">
               Collateral
@@ -86,25 +86,25 @@ export function HomePage() {
               />
             </Box>
           </Flex>
-        </Panel>
+        </BoxPanel>
 
-        <Panel bg="bg3">
+        <BoxPanel bg="bg3">
           <Text color="text" fontSize={25} fontWeight="bold">
             Loan
           </Text>
-        </Panel>
+        </BoxPanel>
 
-        <Panel bg="bg2">
+        <BoxPanel bg="bg2">
           <Text color="text" fontSize={25} fontWeight="bold">
             Wallet
           </Text>
-        </Panel>
+        </BoxPanel>
 
-        <Panel bg="bg2">
+        <BoxPanel bg="bg2">
           <Text color="text" fontSize={25} fontWeight="bold">
             Rewards
           </Text>
-        </Panel>
+        </BoxPanel>
 
         <ActivityPanel bg="bg2">
           <Text color="text" fontSize={25} fontWeight="bold">

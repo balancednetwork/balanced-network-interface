@@ -46,6 +46,7 @@
     "react-feather": "2.0.9",
     "react-helmet-async": "1.0.6",
     "react-i18next": "11.7.2",
+    "react-is": "17.0.1",
     "react-popper": "2.2.4",
     "react-redux": "7.2.1",
     "react-router-dom": "5.2.0",

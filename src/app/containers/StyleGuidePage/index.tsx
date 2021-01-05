@@ -5,7 +5,7 @@ import { Text, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { Link } from 'app/components/Link';
-import { Panel } from 'app/components/Panel';
+import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 
 export function StyleGuidePage() {
@@ -55,13 +55,13 @@ export function StyleGuidePage() {
       <Button disabled>Hello World</Button>
       <TextButton>Cancel</TextButton>
 
-      <Panel bg="bg2">
+      <BoxPanel bg="bg2">
         <Text color="text">This is a panel</Text>
-      </Panel>
+      </BoxPanel>
 
-      <Panel bg="bg3">
+      <BoxPanel bg="bg3">
         <Text color="text">This is a panel</Text>
-      </Panel>
+      </BoxPanel>
     </>
   );
 }

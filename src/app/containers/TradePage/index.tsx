@@ -195,7 +195,7 @@ export function TradePage() {
               </SwapPanel>
 
               <Box bg="bg2" flex={1} padding={35}>
-                <Text as="h2" color="text" fontSize={25} fontWeight="bold" mb={10}>
+                <Text as="h2" color="text" fontSize={20} fontWeight="bold" mb={10}>
                   ICX / ICD liquidity pool
                 </Text>
                 <Text as="p" color="text1" fontSize={14} mb={25} lineHeight="25px">

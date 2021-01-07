@@ -34,6 +34,8 @@ const CurrencySelect = styled.button`
 const StyledTokenName = styled.span`
   line-height: 1.5;
   margin-right: 8px;
+  font-size: 14px;
+  font-weight: bold;
 `;
 
 const NumberInput = styled.input`

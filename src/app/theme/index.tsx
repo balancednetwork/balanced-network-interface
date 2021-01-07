@@ -94,7 +94,7 @@ export const FixedGlobalStyle = createGlobalStyle`
     width: 100%;
   }
 
-  body {
+  body,button {
     font-family: 'tex-gyre-adventor', Arial, sans-serif;
   }
 

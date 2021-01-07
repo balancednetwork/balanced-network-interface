@@ -1,27 +1,19 @@
 import React, { useCallback, useState } from 'react';
 
-import { HelpCircle as Question } from 'react-feather';
 import styled from 'styled-components';
 
 import Tooltip from 'app/components/Tooltip';
+import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 
 const QuestionWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem;
   border: none;
   background: none;
   outline: none;
   cursor: default;
-  border-radius: 36px;
-  background-color: ${({ theme }) => theme.colors.bg2};
   color: ${({ theme }) => theme.colors.text1};
-
-  :hover,
-  :focus {
-    opacity: 0.7;
-  }
 `;
 
 const LightQuestionWrapper = styled.div`
@@ -56,10 +48,10 @@ export default function QuestionHelper({ text }: { text: string }) {
   const close = useCallback(() => setShow(false), [setShow]);
 
   return (
-    <span style={{ marginLeft: 4 }}>
-      <Tooltip text={text} show={show}>
+    <span style={{ marginLeft: 4, verticalAlign: 'middle' }}>
+      <Tooltip text={text} show={show} placement="top">
         <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
-          <Question size={16} />
+          <QuestionIcon width={14} />
         </QuestionWrapper>
       </Tooltip>
     </span>

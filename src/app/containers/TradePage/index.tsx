@@ -9,6 +9,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Divider } from 'app/components/Divider';
 import { DefaultLayout } from 'app/components/Layout';
 import { BoxPanel } from 'app/components/Panel';
+import QuestionHelper from 'app/components/QuestionHelper';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import { Currency } from 'types';
 
@@ -129,8 +130,9 @@ export function TradePage() {
                 </Flex>
 
                 <Flex alignItems="center" justifyContent="space-between">
-                  <Text color="text1" fontSize={14}>
+                  <Text color="text1" fontSize={14} as="span">
                     Slippage tolerance
+                    <QuestionHelper text="If the price slips by more than this amount, your swap will fail." />
                   </Text>
                   <Text color="text1" fontSize={14}>
                     2.5%
@@ -237,7 +239,7 @@ export function TradePage() {
 
         <BoxPanel bg="bg2" mb={50}>
           <Text as="h2" color="text" fontSize={25} fontWeight="bold" mb={25}>
-            Collateral
+            Liquidity details
           </Text>
 
           {/* <!-- Liquidity list --> */}

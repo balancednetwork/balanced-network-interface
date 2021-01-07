@@ -5,11 +5,12 @@ import styled from 'styled-components';
 import Popover, { PopoverProps } from '../Popover';
 
 const TooltipContainer = styled.div`
-  width: 228px;
+  width: 240px;
   padding: 12px 1rem;
   line-height: 150%;
   font-weight: 400;
   font-size: 14px;
+  color: ${({ theme }) => theme.colors.white};
 `;
 
 interface TooltipProps extends Omit<PopoverProps, 'content'> {

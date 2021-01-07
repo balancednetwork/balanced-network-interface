@@ -105,7 +105,7 @@ export default function CurrencyInputPanel({
       <CurrencySelect>
         {currency ? <CurrencyLogo currency={currency} style={{ marginRight: 8 }} /> : null}
         {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
-        {onCurrencySelect && <StyledDropDown selected={!!currency} />}
+        {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
       </CurrencySelect>
 
       <NumberInput value={value} onChange={event => onUserInput(event.target.value)} />

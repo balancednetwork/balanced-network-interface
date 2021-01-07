@@ -41,7 +41,17 @@ export function TradePage() {
     setValue(value);
   };
 
-  const handleTypeInput = () => {};
+  const [swapInputAmount, setSwapInputAmount] = React.useState('0');
+
+  const handleTypeInput = (val: string) => {
+    setSwapInputAmount(val);
+  };
+
+  const [swapOutputAmount, setSwapOutputAmount] = React.useState('0');
+
+  const handleTypeOutput = (val: string) => {
+    setSwapOutputAmount(val);
+  };
 
   const handleInputSelect = () => {};
 
@@ -78,14 +88,11 @@ export function TradePage() {
 
                 <Flex mt={15} mb={25}>
                   <CurrencyInputPanel
-                    // label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
-                    value="0"
+                    value={swapInputAmount}
                     showMaxButton={false}
                     currency={inputCurrency}
                     onUserInput={handleTypeInput}
-                    // onMax={handleMaxInput}
                     onCurrencySelect={handleInputSelect}
-                    // otherCurrency={currencies[Field.OUTPUT]}
                     id="swap-currency-input"
                   />
                 </Flex>
@@ -101,13 +108,11 @@ export function TradePage() {
 
                 <Flex mt={15} mb={25}>
                   <CurrencyInputPanel
-                    // label={independentField === Field.INPUT && !showWrap && trade ? 'To (estimated)' : 'To'}
-                    value="0"
+                    value={swapOutputAmount}
                     showMaxButton={false}
                     currency={outputCurrency}
-                    onUserInput={handleTypeInput}
+                    onUserInput={handleTypeOutput}
                     onCurrencySelect={handleInputSelect}
-                    // otherCurrency={currencies[Field.INPUT]}
                     id="swap-currency-output"
                   />
                 </Flex>
@@ -163,8 +168,8 @@ export function TradePage() {
                     showMaxButton={false}
                     currency={CURRENCYLIST['icx']}
                     onUserInput={handleTypeInput}
-                    // onCurrencySelect={handleInputSelect}
-                    id="supply"
+                    disableCurrencySelect={true}
+                    id="supply-liquidity-input-tokena"
                   />
                 </Flex>
 
@@ -174,8 +179,8 @@ export function TradePage() {
                     showMaxButton={false}
                     currency={CURRENCYLIST['icd']}
                     onUserInput={handleTypeInput}
-                    // onCurrencySelect={handleInputSelect}
-                    id="supply"
+                    disableCurrencySelect={true}
+                    id="supply-liquidity-input-tokenb"
                   />
                 </Flex>
 

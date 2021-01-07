@@ -7,7 +7,7 @@ export const FlexPanel = styled(Flex)<{
   borderRadius?: string;
 }>`
   border-radius: 10px;
-  padding: 32px;
+  padding: 35px;
   padding: ${({ padding }) => padding};
   border-radius: ${({ borderRadius }) => borderRadius};
 `;
@@ -18,7 +18,7 @@ export const BoxPanel = styled(Box)<{
   borderRadius?: string;
 }>`
   border-radius: 10px;
-  padding: 32px;
+  padding: 35px;
   padding: ${({ padding }) => padding};
   border-radius: ${({ borderRadius }) => borderRadius};
 `;

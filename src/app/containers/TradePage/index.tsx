@@ -8,7 +8,7 @@ import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Divider } from 'app/components/Divider';
 import { DefaultLayout } from 'app/components/Layout';
-import { FlexPanel, BoxPanel } from 'app/components/Panel';
+import { BoxPanel } from 'app/components/Panel';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import { Currency } from 'types';
 
@@ -19,6 +19,13 @@ const StyledDL = styled.dl`
   > dd {
     margin-left: 0;
   }
+`;
+
+const SwapPanel = styled(Flex)`
+  overflow: hidden;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
 `;
 
 const CURRENCYLIST = {
@@ -49,7 +56,7 @@ export function TradePage() {
       </Helmet>
 
       <Box flex={1}>
-        <Flex flexDirection="column">
+        <Flex mb={50} flexDirection="column">
           <Flex>
             <Tabs value={value} onChange={handleTabClick}>
               <Tab>Swap</Tab>
@@ -58,16 +65,8 @@ export function TradePage() {
           </Flex>
 
           <TabPanel value={value} index={0}>
-            <Flex
-              bg="bg3"
-              sx={{
-                overflow: 'hidden',
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 10,
-                borderBottomLeftRadius: 10,
-              }}
-            >
-              <FlexPanel flexDirection="column" alignItems="stretch" maxWidth={360} flex={1}>
+            <SwapPanel bg="bg2">
+              <SwapPanel bg="bg3" p={35} flexDirection="column" alignItems="stretch" maxWidth={360} flex={1}>
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text as="h2" color="text" fontSize={25} fontWeight="bold">
                     Swap
@@ -138,31 +137,23 @@ export function TradePage() {
                     Swap
                   </Button>
                 </Flex>
-              </FlexPanel>
+              </SwapPanel>
 
               <Box bg="bg2" flex={1} padding={35}>
                 <Text>Chart</Text>
               </Box>
-            </Flex>
+            </SwapPanel>
           </TabPanel>
 
           <TabPanel value={value} index={1}>
-            <Flex
-              bg="bg3"
-              sx={{
-                overflow: 'hidden',
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 10,
-                borderBottomLeftRadius: 10,
-              }}
-            >
-              <FlexPanel flexDirection="column" alignItems="stretch" maxWidth={360} flex={1}>
-                <Flex alignItems="center" justifyContent="space-between">
+            <SwapPanel bg="bg2">
+              <SwapPanel bg="bg3" p={35} flexDirection="column" alignItems="stretch" maxWidth={360} flex={1}>
+                <Flex alignItems="flex-end">
                   <Text as="h2" color="text" fontSize={25} fontWeight="bold">
-                    Supply
+                    Supply:
                   </Text>
-                  <Text color="text1" fontSize={14}>
-                    ICX/ICD
+                  <Text color="text" fontSize={18}>
+                    ICX / ICD
                   </Text>
                 </Flex>
 
@@ -201,7 +192,7 @@ export function TradePage() {
                     Supply
                   </Button>
                 </Flex>
-              </FlexPanel>
+              </SwapPanel>
 
               <Box bg="bg2" flex={1} padding={35}>
                 <Text as="h2" color="text" fontSize={25} fontWeight="bold" mb={10}>
@@ -235,11 +226,11 @@ export function TradePage() {
                   </Box>
                 </Flex>
               </Box>
-            </Flex>
+            </SwapPanel>
           </TabPanel>
         </Flex>
 
-        <BoxPanel bg="bg2" mt={50}>
+        <BoxPanel bg="bg2" mb={50}>
           <Text as="h2" color="text" fontSize={25} fontWeight="bold" mb={25}>
             Collateral
           </Text>

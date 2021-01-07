@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { ReactComponent as HomeIcon } from 'assets/icons/home.svg';
 import { ReactComponent as TradeIcon } from 'assets/icons/trade.svg';
-import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
+// import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
 
 const Navigation = styled.nav`
   display: inline-block;
@@ -96,12 +96,14 @@ export function AppBar() {
           </StyledNavLink>
         </ListItem>
 
+        {/* 
+        // move vote feature to next phase
         <ListItem>
           <StyledNavLink exact to="/vote">
             <VoteIcon width="30" height="35" />
             <Text>Vote</Text>
           </StyledNavLink>
-        </ListItem>
+        </ListItem> */}
 
         <ListItem>
           <StyledNavLink exact to="/trade">

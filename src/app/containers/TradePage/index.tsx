@@ -4,10 +4,11 @@ import { Helmet } from 'react-helmet-async';
 import { Text, Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button } from 'app/components/Button';
+import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Divider } from 'app/components/Divider';
 import { DefaultLayout } from 'app/components/Layout';
+import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
@@ -59,6 +60,16 @@ export function TradePage() {
   const inputCurrency: Currency = CURRENCYLIST['icx'];
 
   const outputCurrency: Currency = CURRENCYLIST['baln'];
+
+  const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
+
+  const handleConfirmDismiss = () => {
+    setShowSwapConfirm(false);
+  };
+
+  const handleSwap = () => {
+    setShowSwapConfirm(true);
+  };
 
   return (
     <DefaultLayout title="Trade">
@@ -140,7 +151,7 @@ export function TradePage() {
                 </Flex>
 
                 <Flex justifyContent="center">
-                  <Button color="primary" marginTop={25}>
+                  <Button color="primary" marginTop={25} onClick={handleSwap}>
                     Swap
                   </Button>
                 </Flex>
@@ -299,6 +310,47 @@ export function TradePage() {
           </table>
         </BoxPanel>
       </Box>
+
+      <Modal isOpen={showSwapConfirm} onDismiss={handleConfirmDismiss}>
+        <Flex flexDirection="column" alignItems="stretch" m={25} width="100%">
+          <Text fontSize={14} color="text1" textAlign="center" mb="5px" as="h3">
+            Swap ICX for BALN?
+          </Text>
+
+          <Text fontSize={16} fontWeight="bold" textAlign="center" color="text" as="p">
+            0.7215 ICX per BALN
+          </Text>
+
+          <Flex my={25}>
+            <Box width={1 / 2} className="border-right" style={{ textAlign: 'center' }}>
+              <Text fontSize={14} color="text1" as="p">
+                Pay
+              </Text>
+              <Text fontSize={16} color="text" as="p">
+                100.00 ICX
+              </Text>
+            </Box>
+
+            <Box width={1 / 2} style={{ textAlign: 'center' }}>
+              <Text fontSize={14} color="text1" as="p">
+                Receive
+              </Text>
+              <Text fontSize={16} color="text" as="p">
+                71.93 BALN
+              </Text>
+            </Box>
+          </Flex>
+
+          <Text fontSize={14} color="text1" textAlign="center" as="p">
+            Includes a fee of 0.22 BALN.
+          </Text>
+
+          <Flex justifyContent="center" mt={20} pt={20} className="border-top">
+            <TextButton>Cancel</TextButton>
+            <Button>Swap</Button>
+          </Flex>
+        </Flex>
+      </Modal>
     </DefaultLayout>
   );
 }

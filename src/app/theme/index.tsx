@@ -54,6 +54,10 @@ export function theme(): DefaultTheme {
 
       // Balanced turqoise
       primary: '#2ca9b7',
+
+      //specialty colors
+      modalBG: 'rgba(1, 0, 42, 0.75)',
+      advancedBG: 'rgba(255,255,255,0.6)',
     },
 
     fontSizes: [12, 14, 16, 20, 25, 35],
@@ -62,6 +66,9 @@ export function theme(): DefaultTheme {
 
     // media queries
     mediaWidth: media,
+
+    // shadows
+    shadow1: '#2F80ED',
   };
 }
 

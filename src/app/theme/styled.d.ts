@@ -19,8 +19,8 @@ export interface Colors {
   bg4: Color;
   // bg5: Color;
 
-  // modalBG: Color;
-  // advancedBG: Color;
+  modalBG: Color;
+  advancedBG: Color;
 
   //blues
   primary: Color;
@@ -81,6 +81,9 @@ declare module 'styled-components' {
     fontSizes: number[];
 
     space: number[];
+
+    // shadows
+    shadow1: string;
 
     // media queries
     mediaWidth: {

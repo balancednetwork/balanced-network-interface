@@ -12,7 +12,10 @@ import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
+import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from 'app/components/TradingViewChart';
 import { Currency } from 'types';
+
+import { dayData, candleData, volumeData } from '../../../demo';
 
 const StyledDL = styled.dl`
   margin: 15px 0 25px 0;
@@ -28,6 +31,31 @@ const SwapPanel = styled(Flex)`
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
+`;
+
+const ChartControlButton = styled(Button)<{ active: boolean }>`
+  padding: 1px 12px;
+  border-radius: 100px;
+  color: #ffffff;
+  font-size: 14px;
+  background-color: ${({ theme, active }) => (active ? theme.colors.primary : theme.colors.bg3)};
+  transition: background-color 0.3s ease;
+
+  :hover {
+    background-color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+const ChartControlGroup = styled(Box)`
+  text-align: right;
+
+  & button {
+    margin-right: 5px;
+  }
+
+  & button:last-child {
+    margin-right: 0;
+  }
 `;
 
 const CURRENCYLIST = {
@@ -69,6 +97,25 @@ export function TradePage() {
 
   const handleSwap = () => {
     setShowSwapConfirm(true);
+  };
+
+  const [chartOption, setChartOption] = React.useState({
+    type: CHART_TYPES.AREA,
+    period: CHART_PERIODS['5m'],
+  });
+
+  const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setChartOption({
+      ...chartOption,
+      period: event.currentTarget.value,
+    });
+  };
+
+  const handleChartTypeChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setChartOption({
+      ...chartOption,
+      type: event.currentTarget.value,
+    });
   };
 
   return (
@@ -158,7 +205,51 @@ export function TradePage() {
               </SwapPanel>
 
               <Box bg="bg2" flex={1} padding={35}>
-                <Text>Chart</Text>
+                <Flex mb={25}>
+                  <Box width={1 / 2}>
+                    <Text color="white" fontSize={20} mb={10} as="h3">
+                      ICX / BALN
+                    </Text>
+                    <Text color="white" fontSize={16}>
+                      0.7215 ICX per BALN <span className="text-red">-1.21%</span>
+                    </Text>
+                  </Box>
+                  <Box width={1 / 2}>
+                    <ChartControlGroup mb={10}>
+                      {Object.keys(CHART_PERIODS).map(key => (
+                        <ChartControlButton
+                          type="button"
+                          value={CHART_PERIODS[key]}
+                          onClick={handleChartPeriodChange}
+                          active={chartOption.period === CHART_PERIODS[key]}
+                        >
+                          {CHART_PERIODS[key]}
+                        </ChartControlButton>
+                      ))}
+                    </ChartControlGroup>
+
+                    <ChartControlGroup>
+                      {Object.keys(CHART_TYPES).map(key => (
+                        <ChartControlButton
+                          type="button"
+                          value={CHART_TYPES[key]}
+                          onClick={handleChartTypeChange}
+                          active={chartOption.type === CHART_TYPES[key]}
+                        >
+                          {CHART_TYPES[key]}
+                        </ChartControlButton>
+                      ))}
+                    </ChartControlGroup>
+                  </Box>
+                </Flex>
+
+                <Box hidden={chartOption.type === CHART_TYPES.AREA}>
+                  <TradingViewChart data={dayData} candleData={dayData} width={580} type={CHART_TYPES.AREA} />
+                </Box>
+
+                <Box hidden={chartOption.type === CHART_TYPES.CANDLE}>
+                  <TradingViewChart data={volumeData} candleData={candleData} width={580} type={CHART_TYPES.CANDLE} />
+                </Box>
               </Box>
             </SwapPanel>
           </TabPanel>

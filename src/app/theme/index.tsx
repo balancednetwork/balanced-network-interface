@@ -99,6 +99,7 @@ export const FixedGlobalStyle = createGlobalStyle`
   body {
     height: 100%;
     width: 100%;
+    line-height: 1.4;
   }
 
   body,button {
@@ -108,11 +109,6 @@ export const FixedGlobalStyle = createGlobalStyle`
   #root {
     min-height: 100%;
     min-width: 100%;
-  }
-
-  p,
-  label {
-    line-height: 1.5em;
   }
 
   input, select {

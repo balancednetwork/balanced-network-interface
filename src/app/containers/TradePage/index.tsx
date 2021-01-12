@@ -243,11 +243,11 @@ export function TradePage() {
                   </Box>
                 </Flex>
 
-                <Box hidden={chartOption.type === CHART_TYPES.AREA}>
+                <Box hidden={chartOption.type !== CHART_TYPES.AREA}>
                   <TradingViewChart data={dayData} candleData={dayData} width={580} type={CHART_TYPES.AREA} />
                 </Box>
 
-                <Box hidden={chartOption.type === CHART_TYPES.CANDLE}>
+                <Box hidden={chartOption.type !== CHART_TYPES.CANDLE}>
                   <TradingViewChart data={volumeData} candleData={candleData} width={580} type={CHART_TYPES.CANDLE} />
                 </Box>
               </Box>

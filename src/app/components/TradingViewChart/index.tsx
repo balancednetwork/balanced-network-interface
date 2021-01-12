@@ -92,7 +92,7 @@ const TradingViewChart = ({ type = CHART_TYPES.CANDLE, data, candleData, width }
     if (!chartCreated && data && ref.current) {
       let chart = createChart(
         ref.current,
-        type === CHART_TYPES.AREA ? { width: width, ...CandleOption } : { width: width, ...AreaOption },
+        type === CHART_TYPES.CANDLE ? { width: width, ...CandleOption } : { width: width, ...AreaOption },
       );
 
       if (type === CHART_TYPES.CANDLE) {

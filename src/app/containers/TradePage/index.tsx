@@ -92,12 +92,22 @@ export function TradePage() {
 
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
-  const handleConfirmDismiss = () => {
+  const handleSwapConfirmDismiss = () => {
     setShowSwapConfirm(false);
   };
 
   const handleSwap = () => {
     setShowSwapConfirm(true);
+  };
+
+  const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
+
+  const handleSupplyConfirmDismiss = () => {
+    setShowSupplyConfirm(false);
+  };
+
+  const handleSupply = () => {
+    setShowSupplyConfirm(true);
   };
 
   const [chartOption, setChartOption] = React.useState({
@@ -307,7 +317,7 @@ export function TradePage() {
                 </Box>
 
                 <Flex justifyContent="center">
-                  <Button color="primary" marginTop={25}>
+                  <Button color="primary" marginTop={25} onClick={handleSupply}>
                     Supply
                   </Button>
                 </Flex>
@@ -412,7 +422,7 @@ export function TradePage() {
         </BoxPanel>
       </Box>
 
-      <Modal isOpen={showSwapConfirm} onDismiss={handleConfirmDismiss}>
+      <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>
         <Flex flexDirection="column" alignItems="stretch" m={25} width="100%">
           <Text fontSize={14} color="text1" textAlign="center" mb="5px" as="h3">
             Swap ICX for BALN?
@@ -447,8 +457,40 @@ export function TradePage() {
           </Text>
 
           <Flex justifyContent="center" mt={20} pt={20} className="border-top">
-            <TextButton>Cancel</TextButton>
+            <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
             <Button>Swap</Button>
+          </Flex>
+        </Flex>
+      </Modal>
+
+      <Modal isOpen={showSupplyConfirm} onDismiss={handleSupplyConfirmDismiss}>
+        <Flex flexDirection="column" alignItems="stretch" m={25} width="100%">
+          <Text fontSize={14} color="text1" textAlign="center" mb="5px" as="h3">
+            Supply liquidity?
+          </Text>
+
+          <Text fontSize={16} textAlign="center" color="text" as="p" mb={20}>
+            Send each asset to the pool, <br />
+            then click Supply
+          </Text>
+
+          <Text fontSize={16} fontWeight="bold" textAlign="center" color="text" as="p" mb={20}>
+            0 ICX
+          </Text>
+
+          <Text fontSize={16} fontWeight="bold" textAlign="center" color="text" as="p" mb={20}>
+            0 ICD
+          </Text>
+
+          <Text fontSize={14} color="text1" textAlign="center" as="p">
+            Your ICX will be staked, and your
+            <br />
+            assets will be locked for 24 hours.
+          </Text>
+
+          <Flex justifyContent="center" mt={20} pt={20} className="border-top">
+            <TextButton onClick={handleSupplyConfirmDismiss}>Cancel</TextButton>
+            <Button>Supply</Button>
           </Flex>
         </Flex>
       </Modal>

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Nouislider from 'nouislider-react';
 import { Helmet } from 'react-helmet-async';
 import { Text, Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -292,9 +293,18 @@ export function TradePage() {
                   Wallet: 12,000 ICX / 1,485 ICD
                 </Text>
 
-                <Text mt={15} textAlign="center">
-                  Need to add slider
-                </Text>
+                <Box mt={25}>
+                  <Nouislider
+                    id="slider-supply"
+                    start={[0]}
+                    padding={[0]}
+                    connect={[true, false]}
+                    range={{
+                      min: [0],
+                      max: [100],
+                    }}
+                  />
+                </Box>
 
                 <Flex justifyContent="center">
                   <Button color="primary" marginTop={25}>

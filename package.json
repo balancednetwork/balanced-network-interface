@@ -40,6 +40,7 @@
     "lightweight-charts": "3.2.0",
     "lint-staged": "10.3.0",
     "node-plop": "0.26.2",
+    "nouislider-react": "3.3.9",
     "plop": "2.7.4",
     "polished": "4.0.5",
     "prettier": "2.1.1",

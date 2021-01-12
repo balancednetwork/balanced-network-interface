@@ -187,4 +187,306 @@ export const ThemedGlobalStyle = createGlobalStyle`
     min-height: 100vh;
     background: ${({ theme }) => theme.colors.bg1}
   }
+
+  /* ==========================================================================
+    Slider (noUISlider.JS)
+  ========================================================================== */
+
+  .noUi-target,
+  .noUi-target * {
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-user-select: none;
+    -ms-touch-action: none;
+    touch-action: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .noUi-target {
+    position: relative;
+  }
+  .noUi-base,
+  .noUi-connects {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Wrapper for all connect elements. */
+
+  .noUi-connects {
+    overflow: hidden;
+    z-index: 0;
+  }
+  .noUi-connect,
+  .noUi-origin {
+    will-change: transform;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    -ms-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -webkit-transform-style: preserve-3d;
+    transform-origin: 0 0;
+    transform-style: flat;
+  }
+  .noUi-connect {
+    height: 100%;
+    width: 100%;
+  }
+  .noUi-origin {
+    height: 10%;
+    width: 10%;
+  }
+
+  /* Offset direction */
+
+  .noUi-txt-dir-rtl.noUi-horizontal .noUi-origin {
+    left: 0;
+    right: auto;
+  }
+
+  /* Give origins 0 height/width so they don't interfere with clicking the connect elements. */
+
+  .noUi-vertical .noUi-origin {
+    width: 0;
+  }
+  .noUi-horizontal .noUi-origin {
+    height: 0;
+  }
+  .noUi-handle {
+    backface-visibility: hidden;
+    position: absolute;
+  }
+  .noUi-touch-area {
+    height: 100%;
+    width: 100%;
+  }
+  .noUi-state-tap .noUi-connect,
+  .noUi-state-tap .noUi-origin {
+    transition: transform 0.3s;
+  }
+  .noUi-state-drag * {
+    cursor: inherit !important;
+  }
+
+  /* Slider size and handle placement */
+
+  .noUi-horizontal {
+    height: 5px;
+  }
+  .noUi-horizontal .noUi-handle {
+    width: 20px;
+    height: 20px;
+    right: -10px;
+    top: -8px;
+    background-color: #03334f;
+    border: 3px solid #2ca9b7;
+  }
+  .noUi-vertical {
+    width: 18px;
+  }
+  .noUi-vertical .noUi-handle {
+    width: 28px;
+    height: 34px;
+    right: -6px;
+    top: -17px;
+  }
+  .noUi-txt-dir-rtl.noUi-horizontal .noUi-handle {
+    left: -17px;
+    right: auto;
+  }
+
+  /* Styling: Giving the connect element a border radius causes issues with using transform: scale */
+
+  .noUi-target {
+    background: #03334f;
+    border-radius: 4px;
+  }
+  .noUi-connects {
+    border-radius: 3px;
+  }
+  .noUi-connect {
+    background: #2ca9b7;
+  }
+
+  /* Handles and cursors */
+
+  .noUi-draggable {
+    cursor: ew-resize;
+  }
+  .noUi-vertical .noUi-draggable {
+    cursor: ns-resize;
+  }
+  .noUi-handle {
+    border: 1px solid #D9D9D9;
+    border-radius: 100px;
+    background: #FFF;
+    cursor: pointer;
+  }
+  .noUi-active {
+    box-shadow: inset 0 0 1px #FFF, inset 0 1px 7px #DDD, 0 3px 6px -3px #BBB;
+  }
+
+  /* Handle stripes */
+
+  .noUi-vertical .noUi-handle:before,
+  .noUi-vertical .noUi-handle:after {
+    width: 14px;
+    height: 1px;
+    left: 6px;
+    top: 14px;
+  }
+  .noUi-vertical .noUi-handle:after {
+    top: 17px;
+  }
+
+  /* Disabled state */
+
+  [disabled] .noUi-connect {
+    background: #B8B8B8;
+  }
+  [disabled].noUi-target,
+  [disabled].noUi-handle,
+  [disabled] .noUi-handle {
+    cursor: not-allowed;
+  }
+
+  /* Base */
+
+  .noUi-pips,
+  .noUi-pips * {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .noUi-pips {
+    position: absolute;
+    color: #999;
+  }
+
+  /* Values */
+
+  .noUi-value {
+    position: absolute;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .noUi-value-sub {
+    color: #ccc;
+    font-size: 10px;
+  }
+
+  /* Markings */
+
+  .noUi-marker {
+    position: absolute;
+    background: #CCC;
+  }
+  .noUi-marker-sub {
+    background: #AAA;
+  }
+  .noUi-marker-large {
+    background: #AAA;
+  }
+
+  /* Horizontal layout */
+
+  .noUi-pips-horizontal {
+    padding: 10px 0;
+    height: 80px;
+    top: 100%;
+    left: 0;
+    width: 100%;
+  }
+  .noUi-value-horizontal {
+    transform: translate(-50%, 50%);
+  }
+  .noUi-rtl .noUi-value-horizontal {
+    transform: translate(50%, 50%);
+  }
+  .noUi-marker-horizontal.noUi-marker {
+    margin-left: -1px;
+    width: 2px;
+    height: 5px;
+  }
+  .noUi-marker-horizontal.noUi-marker-sub {
+    height: 10px;
+  }
+  .noUi-marker-horizontal.noUi-marker-large {
+    height: 15px;
+  }
+
+  /* Vertical layout */
+
+  .noUi-pips-vertical {
+    padding: 0 10px;
+    height: 100%;
+    top: 0;
+    left: 100%;
+  }
+  .noUi-value-vertical {
+    transform: translate(0, -50%);
+    padding-left: 25px;
+  }
+  .noUi-rtl .noUi-value-vertical {
+    transform: translate(0, 50%);
+  }
+  .noUi-marker-vertical.noUi-marker {
+    width: 5px;
+    height: 2px;
+    margin-top: -1px;
+  }
+  .noUi-marker-vertical.noUi-marker-sub {
+    width: 10px;
+  }
+  .noUi-marker-vertical.noUi-marker-large {
+    width: 15px;
+  }
+  .noUi-tooltip {
+    display: block;
+    position: absolute;
+    border: 2px solid #2ca9b7;
+    border-radius: 10px;
+    background: #0b284c;
+    color: #ffffff;
+    padding: 15px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .noUi-horizontal .noUi-tooltip {
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    left: 50%;
+    bottom: 120%;
+  }
+  .noUi-vertical .noUi-tooltip {
+    -webkit-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+    top: 50%;
+    right: 120%;
+  }
+  .noUi-horizontal .noUi-origin > .noUi-tooltip {
+    -webkit-transform: translate(50%, 0);
+    transform: translate(50%, 0);
+    left: auto;
+    bottom: 10px;
+  }
+  .noUi-vertical .noUi-origin > .noUi-tooltip {
+    -webkit-transform: translate(0, -18px);
+    transform: translate(0, -18px);
+    top: auto;
+    right: 28px;
+  }
+  .noUi-tooltip {
+    display: none;
+  }
+  .noUi-active .noUi-tooltip {
+    display: block;
+  }
+
 `;

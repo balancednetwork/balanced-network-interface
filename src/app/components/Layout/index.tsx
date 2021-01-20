@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -17,7 +18,9 @@ const StyledHeader = styled(Header)`
 `;
 
 const Container = styled(Box)`
-  overflow: auto;
+  /* disable margin collapse */
+  display: flex;
+  flex-direction: column;
   max-width: 1280px;
   margin-left: auto;
   margin-right: auto;
@@ -31,29 +34,24 @@ const Container = styled(Box)`
 `;
 
 const DesktopAppBarWrapper = styled(Box)`
+  z-index: 3;
   margin-right: 75px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-    margin-right: 0;
-  `}
 `;
 
 const MobileAppBarWrapper = styled(Box)`
-  display: none;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: fit-content;
-    position: sticky;
-    margin-top: 48px;
-    bottom: 24px;
-  `}
+  z-index: 3;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+  position: sticky;
+  margin-top: 48px;
+  bottom: 24px;
 `;
 
 export const DefaultLayout: React.FC<{ title?: string }> = props => {
   const { children, title = 'Home' } = props;
+  const below800 = useMedia('(max-width: 800px)');
 
   return (
     <>
@@ -61,16 +59,20 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
         <StyledHeader title={title} />
 
         <Flex>
-          <DesktopAppBarWrapper>
-            <AppBar />
-          </DesktopAppBarWrapper>
+          {!below800 && (
+            <DesktopAppBarWrapper>
+              <AppBar />
+            </DesktopAppBarWrapper>
+          )}
 
           {children}
         </Flex>
 
-        <MobileAppBarWrapper>
-          <AppBar />
-        </MobileAppBarWrapper>
+        {below800 && (
+          <MobileAppBarWrapper>
+            <AppBar />
+          </MobileAppBarWrapper>
+        )}
       </Container>
     </>
   );

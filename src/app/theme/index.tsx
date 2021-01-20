@@ -10,9 +10,9 @@ import texGyeAdventorRegularWoff2 from 'assets/font/tex-gyre-adventor-regular/te
 
 // Update your breakpoints if you want
 export const sizes = {
-  upToExtraSmall: 500,
-  upToSmall: 720,
-  upToMedium: 960,
+  upToExtraSmall: 600,
+  upToSmall: 800,
+  upToMedium: 1000,
   upToLarge: 1280,
 };
 
@@ -69,6 +69,9 @@ export function theme(): DefaultTheme {
 
     // shadows
     shadow1: '#2F80ED',
+
+    // breakpoints
+    breakpoints: Object.values(sizes).map(size => `${size}px`),
   };
 }
 

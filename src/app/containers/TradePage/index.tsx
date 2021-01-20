@@ -27,11 +27,24 @@ const StyledDL = styled.dl`
   }
 `;
 
-const SwapPanel = styled(Flex)`
+const Panel = styled(Flex)`
   overflow: hidden;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
+`;
+
+const SectionPanel = styled(Panel)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+  `}
+`;
+
+const BrightPanel = styled(Panel)`
+  max-width: 360px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    max-width: initial;
+  `}
 `;
 
 const ChartControlButton = styled(Button)<{ active: boolean }>`
@@ -129,6 +142,17 @@ export function TradePage() {
     });
   };
 
+  // update the width on a window resize
+  const ref = React.useRef<HTMLDivElement>();
+  const [width, setWidth] = React.useState(ref?.current?.clientWidth);
+  React.useEffect(() => {
+    function handleResize() {
+      setWidth(ref?.current?.clientWidth ?? width);
+    }
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [width]);
+
   return (
     <DefaultLayout title="Trade">
       <Helmet>
@@ -145,8 +169,8 @@ export function TradePage() {
           </Flex>
 
           <TabPanel value={value} index={0}>
-            <SwapPanel bg="bg2">
-              <SwapPanel bg="bg3" p={35} flexDirection="column" alignItems="stretch" maxWidth={360} flex={1}>
+            <SectionPanel bg="bg2">
+              <BrightPanel bg="bg3" p={35} flexDirection="column" alignItems="stretch" flex={1}>
                 <Flex alignItems="center" justifyContent="space-between">
                   <Text as="h2" color="text" fontSize={25} fontWeight="bold">
                     Swap
@@ -213,11 +237,11 @@ export function TradePage() {
                     Swap
                   </Button>
                 </Flex>
-              </SwapPanel>
+              </BrightPanel>
 
               <Box bg="bg2" flex={1} padding={35}>
-                <Flex mb={25}>
-                  <Box width={1 / 2}>
+                <Flex mb={25} flexWrap="wrap">
+                  <Box width={[1, 1 / 2]}>
                     <Text color="white" fontSize={20} mb={10} as="h3">
                       ICX / BALN
                     </Text>
@@ -225,10 +249,11 @@ export function TradePage() {
                       0.7215 ICX per BALN <span className="text-red">-1.21%</span>
                     </Text>
                   </Box>
-                  <Box width={1 / 2}>
+                  <Box width={[1, 1 / 2]} marginTop={['15px', 0]}>
                     <ChartControlGroup mb={10}>
                       {Object.keys(CHART_PERIODS).map(key => (
                         <ChartControlButton
+                          key={key}
                           type="button"
                           value={CHART_PERIODS[key]}
                           onClick={handleChartPeriodChange}
@@ -242,6 +267,7 @@ export function TradePage() {
                     <ChartControlGroup>
                       {Object.keys(CHART_TYPES).map(key => (
                         <ChartControlButton
+                          key={key}
                           type="button"
                           value={CHART_TYPES[key]}
                           onClick={handleChartTypeChange}
@@ -254,20 +280,29 @@ export function TradePage() {
                   </Box>
                 </Flex>
 
-                <Box hidden={chartOption.type !== CHART_TYPES.AREA}>
-                  <TradingViewChart data={dayData} candleData={dayData} width={580} type={CHART_TYPES.AREA} />
-                </Box>
+                {chartOption.type === CHART_TYPES.AREA && (
+                  <Box ref={ref}>
+                    <TradingViewChart data={dayData} candleData={dayData} width={width} type={CHART_TYPES.AREA} />
+                  </Box>
+                )}
 
-                <Box hidden={chartOption.type !== CHART_TYPES.CANDLE}>
-                  <TradingViewChart data={volumeData} candleData={candleData} width={580} type={CHART_TYPES.CANDLE} />
-                </Box>
+                {chartOption.type === CHART_TYPES.CANDLE && (
+                  <Box ref={ref}>
+                    <TradingViewChart
+                      data={volumeData}
+                      candleData={candleData}
+                      width={width}
+                      type={CHART_TYPES.CANDLE}
+                    />
+                  </Box>
+                )}
               </Box>
-            </SwapPanel>
+            </SectionPanel>
           </TabPanel>
 
           <TabPanel value={value} index={1}>
-            <SwapPanel bg="bg2">
-              <SwapPanel bg="bg3" p={35} flexDirection="column" alignItems="stretch" maxWidth={360} flex={1}>
+            <SectionPanel bg="bg2">
+              <BrightPanel bg="bg3" p={35} flexDirection="column" alignItems="stretch" flex={1}>
                 <Flex alignItems="flex-end">
                   <Text as="h2" color="text" fontSize={25} fontWeight="bold">
                     Supply:
@@ -321,7 +356,7 @@ export function TradePage() {
                     Supply
                   </Button>
                 </Flex>
-              </SwapPanel>
+              </BrightPanel>
 
               <Box bg="bg2" flex={1} padding={35}>
                 <Text as="h2" color="text" fontSize={20} fontWeight="bold" mb={10}>
@@ -355,7 +390,7 @@ export function TradePage() {
                   </Box>
                 </Flex>
               </Box>
-            </SwapPanel>
+            </SectionPanel>
           </TabPanel>
         </Flex>
 

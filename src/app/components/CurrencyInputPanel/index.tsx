@@ -7,7 +7,8 @@ import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { Currency } from 'types';
 
 const InputContainer = styled.div`
-  display: flex;
+  display: inline-flex;
+  width: 100%;
 `;
 
 const CurrencySelect = styled.button`
@@ -16,8 +17,7 @@ const CurrencySelect = styled.button`
   background-color: #0b284c;
   display: flex;
   align-items: center;
-  max-width: 120px;
-  width: 100%;
+  width: 120px;
   height: 43px;
   padding: 4px 15px;
   color: #ffffff;
@@ -39,6 +39,7 @@ const StyledTokenName = styled.span`
 `;
 
 const NumberInput = styled.input`
+  flex: 1;
   width: 100%;
   height: 43px;
   text-align: right;

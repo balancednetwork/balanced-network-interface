@@ -455,3 +455,10 @@ export const volumeData = [
   { time: '2019-05-24', value: 23714686.0 },
   { time: '2019-05-28', value: 9264013.0 },
 ];
+
+export const CURRENCYLIST = {
+  icx: { symbol: 'ICX', decimals: 10, name: 'ICON' },
+  sicx: { symbol: 'sICX', decimals: 10, name: 'Staked ICX' },
+  icd: { symbol: 'ICD', decimals: 10, name: 'ICON Dollar' },
+  baln: { symbol: 'BALN', decimals: 10, name: 'Blanced Token' },
+};

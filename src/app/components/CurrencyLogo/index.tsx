@@ -5,12 +5,14 @@ import styled from 'styled-components';
 import BALNLogo from 'assets/logos/baln.png';
 import ICDLogo from 'assets/logos/icd.svg';
 import ICXLogo from 'assets/logos/icx.svg';
+import SICXLogo from 'assets/logos/sicx.svg';
 import { Currency } from 'types';
 
 const LOGOS = {
   ICX: ICXLogo,
   BALN: BALNLogo,
   ICD: ICDLogo,
+  sICX: SICXLogo,
 };
 
 const getTokenLogoURL = (symbol?: string) => {
@@ -29,7 +31,7 @@ export default function CurrencyLogo({
   size = '24px',
   style,
 }: {
-  currency?: Currency;
+  currency?: Currency | null;
   size?: string;
   style?: React.CSSProperties;
 }) {

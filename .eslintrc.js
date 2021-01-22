@@ -26,7 +26,7 @@ module.exports = {
         groups: [['builtin', 'external'], 'internal', ['parent', 'sibling', 'index']],
         pathGroups: [
           {
-            pattern: '{app,assets,hooks,locales,store,styles,types,utils}{**,**/**}',
+            pattern: '{app,assets,hooks,locales,store,styles,types,utils,demo}{**,**/**}',
             group: 'internal',
           },
           {

@@ -3,7 +3,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
+import { Popper } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
+import { CURRENCYLIST } from 'demo';
 import { Currency } from 'types';
 
 const InputContainer = styled.div`
@@ -84,6 +86,24 @@ interface CurrencyInputPanelProps {
   customBalanceText?: string;
 }
 
+const CurrencySelection = styled.div`
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  /* width: 100%; */
+  top: 50px;
+  max-height: 540px;
+  overflow: auto;
+  left: 0;
+  padding: 20px;
+  padding-bottom: 0;
+  background: ${({ theme }) => theme.colors.bg2};
+  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 12px;
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.04);
+`;
+
 export default function CurrencyInputPanel({
   value,
   onUserInput,
@@ -101,15 +121,87 @@ export default function CurrencyInputPanel({
   showCommonBases,
   customBalanceText,
 }: CurrencyInputPanelProps) {
-  return (
-    <InputContainer>
-      <CurrencySelect>
-        {currency ? <CurrencyLogo currency={currency} style={{ marginRight: 8 }} /> : null}
-        {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
-        {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
-      </CurrencySelect>
+  const [open, setOpen] = React.useState(false);
 
-      <NumberInput value={value} onChange={event => onUserInput(event.target.value)} />
-    </InputContainer>
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
+
+  // refs to detect clicks outside modal
+  const wrapperRef = React.useRef<HTMLButtonElement>(null);
+  const menuRef = React.useRef<HTMLDivElement>(null);
+
+  const handleClick = e => {
+    if (
+      !(menuRef.current && menuRef.current.contains(e.target)) &&
+      !(wrapperRef.current && wrapperRef.current.contains(e.target))
+    ) {
+      setOpen(false);
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  });
+
+  // update the width on a window resize
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [width, setWidth] = React.useState(ref?.current?.clientWidth);
+  React.useEffect(() => {
+    function handleResize() {
+      setWidth(ref?.current?.clientWidth ?? width);
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [width]);
+
+  //
+  const handleCurrencySelect = (ccy: Currency) => (e: React.MouseEvent) => {
+    onCurrencySelect && onCurrencySelect(ccy);
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <InputContainer ref={ref}>
+        <CurrencySelect onClick={toggleOpen} ref={wrapperRef}>
+          {currency ? <CurrencyLogo currency={currency} style={{ marginRight: 8 }} /> : null}
+          {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
+          {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
+        </CurrencySelect>
+
+        <NumberInput value={value} onChange={event => onUserInput(event.target.value)} />
+      </InputContainer>
+
+      {onCurrencySelect && (
+        <Popper show={open} anchorEl={ref.current} placement="bottom">
+          <CurrencySelection style={{ width: width }} ref={menuRef}>
+            <table className="list assets">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Wallet</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.values(CURRENCYLIST).map(item => (
+                  <tr onClick={handleCurrencySelect(item)} key={item.name}>
+                    <td>
+                      <CurrencyLogo currency={item} style={{ marginRight: 8 }} />
+                      {item.symbol}
+                    </td>
+                    <td>6,808</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CurrencySelection>
+        </Popper>
+      )}
+    </>
   );
 }

@@ -164,6 +164,35 @@ export const FixedGlobalStyle = createGlobalStyle`
     font-weight: bold;
   }
 
+  /* Asset list */
+  .list.assets tbody tr {
+    border-bottom: 1px solid #304a68;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+  }
+  .list.assets tbody tr:last-of-type {
+    border-bottom: none !important;
+  }
+  .list.assets tbody tr:hover {
+    cursor: pointer;
+    color: #2ca9b7;
+    transition: color 0.2s ease, border-bottom 0.2s ease;
+  }
+  .list.assets thead th,
+  .list.assets tbody td {
+    text-align: right;
+  }
+  .list.assets tbody tr:last-of-type td {
+    padding-bottom: 20px;
+  }
+  .list.assets thead th:first-of-type,
+  .list.assets tbody td:first-of-type {
+    text-align: left;
+    display: flex;
+  }
+  .list.assets tbody td:first-of-type {
+    font-weight: bold;
+  }
+
   /* Borders */
 
   .border-left {

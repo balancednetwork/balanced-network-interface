@@ -115,3 +115,32 @@ export default function Popover({ content, show, children, placement = 'auto' }:
     </>
   );
 }
+
+export interface PopperProps {
+  anchorEl: HTMLElement | null;
+  show: boolean;
+  children: React.ReactNode;
+  placement?: Placement;
+}
+
+export function Popper({ show, children, placement = 'auto', anchorEl }: PopperProps) {
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
+    placement,
+    strategy: 'fixed',
+    modifiers: [{ name: 'offset', options: { offset: [0, 2] } }],
+  });
+
+  const updateCallback = useCallback(() => {
+    update && update();
+  }, [update]);
+  useInterval(updateCallback, show ? 100 : null);
+
+  return (
+    <Portal>
+      <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+        {children}
+      </PopoverContainer>
+    </Portal>
+  );
+}

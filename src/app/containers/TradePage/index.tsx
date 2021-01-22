@@ -14,7 +14,7 @@ import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from 'app/components/TradingViewChart';
-import { Currency } from 'types';
+import { CURRENCYLIST } from 'demo';
 
 import { dayData, candleData, volumeData } from '../../../demo';
 
@@ -72,12 +72,6 @@ const ChartControlGroup = styled(Box)`
   }
 `;
 
-const CURRENCYLIST = {
-  icx: { symbol: 'ICX', decimals: 10, name: 'ICON' },
-  baln: { symbol: 'BALN', decimals: 10, name: 'Blanced Token' },
-  icd: { symbol: 'ICD', decimals: 10, name: 'ICON Dollars' },
-};
-
 export function TradePage() {
   const [value, setValue] = React.useState<number>(0);
 
@@ -97,11 +91,17 @@ export function TradePage() {
     setSwapOutputAmount(val);
   };
 
-  const handleInputSelect = () => {};
+  const handleInputSelect = ccy => {
+    setInputCurrency(ccy);
+  };
 
-  const inputCurrency: Currency = CURRENCYLIST['icx'];
+  const handleOutputSelect = ccy => {
+    setOutputCurrency(ccy);
+  };
 
-  const outputCurrency: Currency = CURRENCYLIST['baln'];
+  const [inputCurrency, setInputCurrency] = React.useState(CURRENCYLIST['icx']);
+
+  const [outputCurrency, setOutputCurrency] = React.useState(CURRENCYLIST['baln']);
 
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
@@ -206,7 +206,7 @@ export function TradePage() {
                     showMaxButton={false}
                     currency={outputCurrency}
                     onUserInput={handleTypeOutput}
-                    onCurrencySelect={handleInputSelect}
+                    onCurrencySelect={handleOutputSelect}
                     id="swap-currency-output"
                   />
                 </Flex>

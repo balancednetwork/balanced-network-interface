@@ -1,12 +1,13 @@
 import React from 'react';
 
 import { Helmet } from 'react-helmet-async';
-import { Text, Flex } from 'rebass/styled-components';
+import { Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
+import { Typography } from 'app/theme';
 
 export function StyleGuidePage() {
   return (
@@ -16,38 +17,24 @@ export function StyleGuidePage() {
         <meta name="description" content="Balanced Network Interface Style Guide" />
       </Helmet>
 
-      <Text as="h1" color="text" fontSize={35} fontWeight="bold">
-        Style Guide
-      </Text>
+      <Typography variant="h1">Style Guide</Typography>
 
-      <Text as="h1" color="text" fontSize={35} fontWeight="bold">
-        Heading 1
-      </Text>
+      <Typography variant="h1">Heading 1</Typography>
 
-      <Text as="h2" color="text" fontSize={25} fontWeight="bold">
-        Heading 2
-      </Text>
+      <Typography variant="h2">Heading 2</Typography>
 
-      <Text as="h3" color="text" fontSize={20} fontWeight="bold">
-        Heading 3
-      </Text>
+      <Typography variant="h3">Heading 3</Typography>
 
-      <Text as="p" color="text" fontSize={16}>
-        This is a paragraph of text.
-      </Text>
+      <Typography variant="p">This is a paragraph of text.</Typography>
 
-      <Text as="label" color="text" fontSize={14}>
-        This is a label.
-      </Text>
+      <Typography variant="label">This is a label.</Typography>
 
       <Link href="#">This is a link</Link>
       <br />
       <br />
 
       <Flex>
-        <Text color="text" fontSize={14}>
-          This is a tooltip.
-        </Text>
+        <Typography>This is a tooltip.</Typography>
         <QuestionHelper text={"Use this tool to find pairs that don't automatically appear in the interface."} />
       </Flex>
 
@@ -56,11 +43,11 @@ export function StyleGuidePage() {
       <TextButton>Cancel</TextButton>
 
       <BoxPanel bg="bg2">
-        <Text color="text">This is a panel</Text>
+        <Typography variant="p">This is a panel</Typography>
       </BoxPanel>
 
       <BoxPanel bg="bg3">
-        <Text color="text">This is a panel</Text>
+        <Typography variant="p">This is a panel</Typography>
       </BoxPanel>
     </>
   );

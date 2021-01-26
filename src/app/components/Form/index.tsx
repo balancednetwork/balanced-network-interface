@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Text, Box, Flex } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { MouseoverTooltip } from 'app/components/Tooltip';
+import { Typography } from 'app/theme';
 
 export const CheckBox = styled(Box)<{ isActive: boolean }>`
   width: 20px;
@@ -28,16 +29,14 @@ export const Field: React.FC<{
         <MouseoverTooltip placement="top" text={tooltipText}>
           <Flex>
             <CheckBox isActive={isActive} mr="4px" />
-            <Text color="rgba(255,255,255,0.75)" fontSize={16}>
-              {label}
-            </Text>
+            <Typography variant="p">{label}</Typography>
           </Flex>
         </MouseoverTooltip>
       </Flex>
 
-      <Text ml={24} color="text" fontSize={18}>
+      <Typography variant="p" ml={24} fontSize={18}>
         {`${value} ${unit}`}
-      </Text>
+      </Typography>
     </Flex>
   );
 };

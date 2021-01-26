@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { TextProps } from 'rebass';
+import { Text } from 'rebass/styled-components';
 import { ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, MediaFunction } from 'styled-components';
 import { css, DefaultTheme } from 'styled-components/macro';
 
@@ -74,6 +76,29 @@ export function theme(): DefaultTheme {
     breakpoints: Object.values(sizes).map(size => `${size}px`),
   };
 }
+
+type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'body';
+
+export const Typography = (props: TextProps & { variant?: TypographyVariant }) => {
+  const { variant, ...rest } = props;
+
+  switch (variant) {
+    case 'h1':
+      return <Text as="h1" color="text" fontSize={35} fontWeight="bold" {...rest} />;
+    case 'h2':
+      return <Text as="h2" color="text" fontSize={25} fontWeight="bold" {...rest} />;
+    case 'h3':
+      return <Text as="h3" color="text" fontSize={20} fontWeight="bold" {...rest} />;
+    case 'p':
+      return <Text as="p" color="text" fontSize={16} {...rest} />;
+    case 'label':
+      return <Text as="label" color="text1" fontSize={14} {...rest} />;
+    case 'body':
+      return <Text as="p" color="text1" fontSize={14} {...rest} />;
+    default:
+      return <Text as="p" color="text1" fontSize={14} {...rest} />;
+  }
+};
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const themeObject = theme();
@@ -380,13 +405,31 @@ export const ThemedGlobalStyle = createGlobalStyle`
 
   /* Disabled state */
 
-  [disabled] .noUi-connect {
-    background: #B8B8B8;
+  .panel-parent [disabled].noUi-horizontal {
+    background: #03334f;
   }
+  .panel [disabled].noUi-horizontal{
+    background: #144a68;
+  }
+  [disabled] .noUi-handle {
+    opacity: 0;
+    cursor: default;
+  }
+  [disabled].noUi-horizontal {
+    height: 15px;
+    transition: height 0.3s ease;
+  }
+  [disabled] .noUi-handle {
+    transition: opacity 0.3s ease;
+  }
+
+  /* [disabled] .noUi-connect {
+    background: #B8B8B8;
+  } */
   [disabled].noUi-target,
   [disabled].noUi-handle,
   [disabled] .noUi-handle {
-    cursor: not-allowed;
+    cursor: default;
   }
 
   /* Base */

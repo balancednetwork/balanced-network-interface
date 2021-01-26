@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { Text, Flex, Box } from 'rebass/styled-components';
+import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { IconButton } from 'app/components/Button';
 import Logo from 'app/components/Logo';
+import { Typography } from 'app/theme';
 import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
 
@@ -44,19 +45,15 @@ export function Header(props: { title?: string; className?: string }) {
       <Flex justifyContent="space-between">
         <Flex alignItems="center">
           <StyledLogo />
-          <Text color="text" fontSize={35} fontWeight="bold">
-            {title}
-          </Text>
+          <Typography variant="h1">{title}</Typography>
         </Flex>
 
         <Flex alignItems="center">
           <WalletInfo>
-            <Text color="text" fontSize={16}>
-              Main
-            </Text>
-            <Text color="text" fontSize={14}>
-              hx28c08b2...2240bc3
-            </Text>
+            <Typography variant="p" textAlign="right">
+              Wallet
+            </Typography>
+            <Typography>hx28c08b2...2240bc3</Typography>
           </WalletInfo>
 
           <WalletButton>

@@ -2,7 +2,7 @@ import React from 'react';
 
 import Nouislider from 'nouislider-react';
 import { Helmet } from 'react-helmet-async';
-import { Text, Flex, Box } from 'rebass/styled-components';
+import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
@@ -14,9 +14,8 @@ import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from 'app/components/TradingViewChart';
-import { CURRENCYLIST } from 'demo';
-
-import { dayData, candleData, volumeData } from '../../../demo';
+import { Typography } from 'app/theme';
+import { dayData, candleData, volumeData, CURRENCYLIST } from 'demo';
 
 const StyledDL = styled.dl`
   margin: 15px 0 25px 0;
@@ -172,12 +171,8 @@ export function TradePage() {
             <SectionPanel bg="bg2">
               <BrightPanel bg="bg3" p={35} flexDirection="column" alignItems="stretch" flex={1}>
                 <Flex alignItems="center" justifyContent="space-between">
-                  <Text as="h2" color="text" fontSize={25} fontWeight="bold">
-                    Swap
-                  </Text>
-                  <Text color="text1" fontSize={14}>
-                    Wallet: 72,273ICX
-                  </Text>
+                  <Typography variant="h2">Swap</Typography>
+                  <Typography>Wallet: 72,273ICX</Typography>
                 </Flex>
 
                 <Flex mt={15} mb={25}>
@@ -192,12 +187,8 @@ export function TradePage() {
                 </Flex>
 
                 <Flex alignItems="center" justifyContent="space-between">
-                  <Text as="h2" color="text" fontSize={25} fontWeight="bold">
-                    For
-                  </Text>
-                  <Text color="text1" fontSize={14}>
-                    Wallet: 0 BALN
-                  </Text>
+                  <Typography variant="h2">For</Typography>
+                  <Typography>Wallet: 0 BALN</Typography>
                 </Flex>
 
                 <Flex mt={15} mb={25}>
@@ -214,22 +205,16 @@ export function TradePage() {
                 <Divider style={{ marginBottom: 16 }} />
 
                 <Flex alignItems="center" justifyContent="space-between">
-                  <Text color="text1" fontSize={14}>
-                    Minimum to receive
-                  </Text>
-                  <Text color="text1" fontSize={14}>
-                    0 BALN
-                  </Text>
+                  <Typography>Minimum to receive</Typography>
+                  <Typography>0 BALN</Typography>
                 </Flex>
 
                 <Flex alignItems="center" justifyContent="space-between">
-                  <Text color="text1" fontSize={14} as="span">
+                  <Typography as="span">
                     Slippage tolerance
                     <QuestionHelper text="If the price slips by more than this amount, your swap will fail." />
-                  </Text>
-                  <Text color="text1" fontSize={14}>
-                    2.5%
-                  </Text>
+                  </Typography>
+                  <Typography>2.5%</Typography>
                 </Flex>
 
                 <Flex justifyContent="center">
@@ -242,12 +227,12 @@ export function TradePage() {
               <Box bg="bg2" flex={1} padding={35}>
                 <Flex mb={25} flexWrap="wrap">
                   <Box width={[1, 1 / 2]}>
-                    <Text color="white" fontSize={20} mb={10} as="h3">
+                    <Typography variant="h3" mb={10}>
                       ICX / BALN
-                    </Text>
-                    <Text color="white" fontSize={16}>
+                    </Typography>
+                    <Typography variant="p">
                       0.7215 ICX per BALN <span className="text-red">-1.21%</span>
-                    </Text>
+                    </Typography>
                   </Box>
                   <Box width={[1, 1 / 2]} marginTop={['15px', 0]}>
                     <ChartControlGroup mb={10}>
@@ -304,12 +289,8 @@ export function TradePage() {
             <SectionPanel bg="bg2">
               <BrightPanel bg="bg3" p={35} flexDirection="column" alignItems="stretch" flex={1}>
                 <Flex alignItems="flex-end">
-                  <Text as="h2" color="text" fontSize={25} fontWeight="bold">
-                    Supply:
-                  </Text>
-                  <Text color="text" fontSize={18}>
-                    ICX / ICD
-                  </Text>
+                  <Typography variant="h2">Supply:</Typography>
+                  <Typography fontSize={18}>ICX / ICD</Typography>
                 </Flex>
 
                 <Flex mt={15}>
@@ -334,9 +315,9 @@ export function TradePage() {
                   />
                 </Flex>
 
-                <Text mt={15} color="text1" fontSize={14} textAlign="right">
+                <Typography mt={15} textAlign="right">
                   Wallet: 12,000 ICX / 1,485 ICD
-                </Text>
+                </Typography>
 
                 <Box mt={25}>
                   <Nouislider
@@ -359,13 +340,13 @@ export function TradePage() {
               </BrightPanel>
 
               <Box bg="bg2" flex={1} padding={35}>
-                <Text as="h2" color="text" fontSize={20} fontWeight="bold" mb={10}>
+                <Typography variant="h3" mb={10}>
                   ICX / ICD liquidity pool
-                </Text>
-                <Text as="p" color="text1" fontSize={14} mb={25} lineHeight="25px">
+                </Typography>
+                <Typography mb={25} lineHeight="25px">
                   Earn Balance Tokens every day you supply liquidity. Your assets will be locked for the first 24 hours,
                   and your supply ratio will fluctuate with the price.
-                </Text>
+                </Typography>
 
                 <Flex>
                   <Box width={1 / 2} className="border-right">
@@ -395,9 +376,9 @@ export function TradePage() {
         </Flex>
 
         <BoxPanel bg="bg2" mb={50}>
-          <Text as="h2" color="text" fontSize={25} fontWeight="bold" mb={25}>
+          <Typography variant="h2" mb={25}>
             Liquidity details
-          </Text>
+          </Typography>
 
           {/* <!-- Liquidity list --> */}
           <table className="list liquidity">
@@ -459,37 +440,29 @@ export function TradePage() {
 
       <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>
         <Flex flexDirection="column" alignItems="stretch" m={25} width="100%">
-          <Text fontSize={14} color="text1" textAlign="center" mb="5px" as="h3">
+          <Typography textAlign="center" mb="5px" as="h3">
             Swap ICX for BALN?
-          </Text>
+          </Typography>
 
-          <Text fontSize={16} fontWeight="bold" textAlign="center" color="text" as="p">
+          <Typography variant="p" fontWeight="bold" textAlign="center">
             0.7215 ICX per BALN
-          </Text>
+          </Typography>
 
           <Flex my={25}>
             <Box width={1 / 2} className="border-right" style={{ textAlign: 'center' }}>
-              <Text fontSize={14} color="text1" as="p">
-                Pay
-              </Text>
-              <Text fontSize={16} color="text" as="p">
-                100.00 ICX
-              </Text>
+              <Typography>Pay</Typography>
+              <Typography variant="p">100.00 ICX</Typography>
             </Box>
 
             <Box width={1 / 2} style={{ textAlign: 'center' }}>
-              <Text fontSize={14} color="text1" as="p">
-                Receive
-              </Text>
-              <Text fontSize={16} color="text" as="p">
-                71.93 BALN
-              </Text>
+              <Typography>Receive</Typography>
+              <Typography variant="p">71.93 BALN</Typography>
             </Box>
           </Flex>
 
-          <Text fontSize={14} color="text1" textAlign="center" as="p">
+          <Typography textAlign="center" as="p">
             Includes a fee of 0.22 BALN.
-          </Text>
+          </Typography>
 
           <Flex justifyContent="center" mt={20} pt={20} className="border-top">
             <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
@@ -500,28 +473,28 @@ export function TradePage() {
 
       <Modal isOpen={showSupplyConfirm} onDismiss={handleSupplyConfirmDismiss}>
         <Flex flexDirection="column" alignItems="stretch" m={25} width="100%">
-          <Text fontSize={14} color="text1" textAlign="center" mb="5px" as="h3">
+          <Typography textAlign="center" mb="5px" as="h3">
             Supply liquidity?
-          </Text>
+          </Typography>
 
-          <Text fontSize={16} textAlign="center" color="text" as="p" mb={20}>
+          <Typography variant="p" textAlign="center" mb={20}>
             Send each asset to the pool, <br />
             then click Supply
-          </Text>
+          </Typography>
 
-          <Text fontSize={16} fontWeight="bold" textAlign="center" color="text" as="p" mb={20}>
+          <Typography variant="p" fontWeight="bold" textAlign="center" mb={20}>
             0 ICX
-          </Text>
+          </Typography>
 
-          <Text fontSize={16} fontWeight="bold" textAlign="center" color="text" as="p" mb={20}>
+          <Typography variant="p" fontWeight="bold" textAlign="center" mb={20}>
             0 ICD
-          </Text>
+          </Typography>
 
-          <Text fontSize={14} color="text1" textAlign="center" as="p">
+          <Typography textAlign="center" as="p">
             Your ICX will be staked, and your
             <br />
             assets will be locked for 24 hours.
-          </Text>
+          </Typography>
 
           <Flex justifyContent="center" mt={20} pt={20} className="border-top">
             <TextButton onClick={handleSupplyConfirmDismiss}>Cancel</TextButton>

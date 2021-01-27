@@ -69,7 +69,7 @@ export function HomePage() {
             </Box>
           </Flex>
 
-          <Box marginY={30}>
+          <Box marginY={6}>
             <Nouislider
               disabled={!isEditing}
               id="slider-collateral"
@@ -84,7 +84,7 @@ export function HomePage() {
           </Box>
 
           <Flex justifyContent="space-between">
-            <Box width={[1, 1 / 2]} mr={18}>
+            <Box width={[1, 1 / 2]} mr={4}>
               <Field
                 editable={isEditing}
                 isActive
@@ -95,7 +95,7 @@ export function HomePage() {
               />
             </Box>
 
-            <Box width={[1, 1 / 2]} ml={18}>
+            <Box width={[1, 1 / 2]} ml={4}>
               <Field
                 editable={isEditing}
                 isActive={false}
@@ -124,7 +124,7 @@ export function HomePage() {
             </Box>
           </Flex>
 
-          <Box marginY={30}>
+          <Box marginY={6}>
             <Nouislider
               disabled={!isEditing}
               id="slider-collateral"
@@ -139,7 +139,7 @@ export function HomePage() {
           </Box>
 
           <Flex justifyContent="space-between">
-            <Box width={[1, 1 / 2]} mr={18}>
+            <Box width={[1, 1 / 2]} mr={4}>
               <Field
                 editable={isEditing}
                 isActive
@@ -150,7 +150,7 @@ export function HomePage() {
               />
             </Box>
 
-            <Box width={[1, 1 / 2]} ml={18}>
+            <Box width={[1, 1 / 2]} ml={4}>
               <Field
                 editable={isEditing}
                 isActive={false}
@@ -165,7 +165,7 @@ export function HomePage() {
 
         <ActivityPanel bg="bg2">
           <BoxPanel bg="bg3" maxWidth={[350, 'initial']}>
-            <Typography variant="h2" mb={25}>
+            <Typography variant="h2" mb={5}>
               Position detail
             </Typography>
 
@@ -180,7 +180,7 @@ export function HomePage() {
               </Box>
             </Flex>
             <Divider style={{ marginTop: 20, marginBottom: 20 }} />
-            <Typography mb={10}>The current ICX price is $0.2400.</Typography>
+            <Typography mb={2}>The current ICX price is $0.2400.</Typography>
             <Typography>You hold 0.15% of the total debt.</Typography>
           </BoxPanel>
           <BoxPanel bg="bg2"></BoxPanel>

@@ -64,7 +64,7 @@ export function theme(): DefaultTheme {
 
     fontSizes: [12, 14, 16, 20, 25, 35],
 
-    space: [0, 4, 8, 16, 32, 64, 128, 256],
+    space: [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
 
     // media queries
     mediaWidth: media,

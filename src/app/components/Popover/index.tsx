@@ -9,11 +9,12 @@ import useInterval from 'hooks/useInterval';
 
 const PopoverContainer = styled.div<{ show: boolean }>`
   z-index: 9999;
-
   visibility: ${props => (props.show ? 'visible' : 'hidden')};
   opacity: ${props => (props.show ? 1 : 0)};
   transition: visibility 150ms linear, opacity 150ms linear;
+`;
 
+const ContentWrapper = styled.div`
   background: ${({ theme }) => theme.colors.bg4};
   border: 2px solid ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.text1};
@@ -25,52 +26,36 @@ const ReferenceElement = styled.div`
 `;
 
 const Arrow = styled.div`
-  width: 8px;
-  height: 8px;
-  z-index: 9998;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  z-index: -1;
 
   ::before {
     position: absolute;
-    width: 8px;
-    height: 8px;
-    z-index: 9998;
+    width: 10px;
+    height: 10px;
+    z-index: -1;
 
     content: '';
-    border: 1px solid ${({ theme }) => theme.colors.primary};
     transform: rotate(45deg);
-    background: ${({ theme }) => theme.colors.bg4};
+    background: ${({ theme }) => theme.colors.primary};
   }
 
   &.arrow-top {
     bottom: -5px;
-    ::before {
-      border-top: none;
-      border-left: none;
-    }
   }
 
   &.arrow-bottom {
     top: -5px;
-    ::before {
-      border-bottom: none;
-      border-right: none;
-    }
   }
 
   &.arrow-left {
     right: -5px;
-    ::before {
-      border-bottom: none;
-      border-left: none;
-    }
   }
 
   &.arrow-right {
     left: -5px;
-    ::before {
-      border-right: none;
-      border-top: none;
-    }
   }
 `;
 
@@ -89,7 +74,7 @@ export default function Popover({ content, show, children, placement = 'auto' }:
     placement,
     strategy: 'fixed',
     modifiers: [
-      { name: 'offset', options: { offset: [0, 8] } },
+      { name: 'offset', options: { offset: [0, 10] } },
       { name: 'arrow', options: { element: arrowElement } },
     ],
   });
@@ -103,7 +88,7 @@ export default function Popover({ content, show, children, placement = 'auto' }:
       <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
       <Portal>
         <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
-          {content}
+          <ContentWrapper>{content}</ContentWrapper>
           <Arrow
             className={`arrow-${attributes.popper?.['data-popper-placement'] ?? ''}`}
             ref={setArrowElement as any}
@@ -125,10 +110,15 @@ export interface PopperProps {
 
 export function Popper({ show, children, placement = 'auto', anchorEl }: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
     placement,
     strategy: 'fixed',
-    modifiers: [{ name: 'offset', options: { offset: [0, 2] } }],
+    modifiers: [
+      { name: 'offset', options: { offset: [0, 10] } },
+      { name: 'arrow', options: { element: arrowElement } },
+    ],
   });
 
   const updateCallback = useCallback(() => {
@@ -139,7 +129,13 @@ export function Popper({ show, children, placement = 'auto', anchorEl }: PopperP
   return (
     <Portal>
       <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
-        {children}
+        <ContentWrapper>{children}</ContentWrapper>
+        <Arrow
+          className={`arrow-${attributes.popper?.['data-popper-placement'] ?? ''}`}
+          ref={setArrowElement as any}
+          style={styles.arrow}
+          {...attributes.arrow}
+        />
       </PopoverContainer>
     </Portal>
   );

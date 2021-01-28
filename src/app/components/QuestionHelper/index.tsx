@@ -12,7 +12,7 @@ const QuestionWrapper = styled.div`
   border: none;
   background: none;
   outline: none;
-  cursor: default;
+  cursor: help;
   color: ${({ theme }) => theme.colors.text1};
 `;
 

@@ -27,14 +27,14 @@ const ReferenceElement = styled.div`
 
 const Arrow = styled.div`
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   z-index: -1;
 
   ::before {
     position: absolute;
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     z-index: -1;
 
     content: '';
@@ -42,20 +42,28 @@ const Arrow = styled.div`
     background: ${({ theme }) => theme.colors.primary};
   }
 
-  &.arrow-top {
-    bottom: -5px;
+  &.arrow-top,
+  &.arrow-top-start,
+  &.arrow-top-end {
+    bottom: -6px;
   }
 
-  &.arrow-bottom {
-    top: -5px;
+  &.arrow-bottom,
+  &.arrow-bottom-start,
+  &.arrow-bottom-end {
+    top: -6px;
   }
 
-  &.arrow-left {
-    right: -5px;
+  &.arrow-left,
+  &.arrow-left-start,
+  &.arrow-left-end {
+    right: -6px;
   }
 
-  &.arrow-right {
-    left: -5px;
+  &.arrow-right,
+  &.arrow-right-start,
+  &.arrow-right-end {
+    left: -6px;
   }
 `;
 
@@ -74,7 +82,7 @@ export default function Popover({ content, show, children, placement = 'auto' }:
     placement,
     strategy: 'fixed',
     modifiers: [
-      { name: 'offset', options: { offset: [0, 10] } },
+      { name: 'offset', options: { offset: [0, 12] } },
       { name: 'arrow', options: { element: arrowElement } },
     ],
   });
@@ -116,7 +124,7 @@ export function Popper({ show, children, placement = 'auto', anchorEl }: PopperP
     placement,
     strategy: 'fixed',
     modifiers: [
-      { name: 'offset', options: { offset: [0, 10] } },
+      { name: 'offset', options: { offset: [0, 12] } },
       { name: 'arrow', options: { element: arrowElement } },
     ],
   });

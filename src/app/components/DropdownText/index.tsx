@@ -1,0 +1,70 @@
+import React from 'react';
+
+import styled from 'styled-components';
+
+import { Popper } from 'app/components/Popover';
+import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-down.svg';
+
+const StyledArrowDownIcon = styled(ArrowDownIcon)`
+  margin-left: 5px;
+  margin-top: -3px;
+  width: 10px;
+`;
+
+const Wrapper = styled.span`
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const UnderlineText = styled.span`
+  color: #2fccdc;
+  font-size: 14px;
+  text-decoration: none;
+  background: transparent;
+  display: inline-block;
+  position: relative;
+  padding-bottom: 3px;
+  margin-bottom: -9px;
+  user-select: none;
+
+  &:after {
+    content: '';
+    display: block;
+    width: 0px;
+    height: 1px;
+    margin-top: 3px;
+    background: transparent;
+    border-radius: 3px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+  }
+
+  &:hover:after {
+    width: 100%;
+    background: #2fccdc;
+  }
+`;
+
+export const DropdownText = ({ text, children, ...rest }: { text: string; children: React.ReactNode }) => {
+  const [anchor, setAnchor] = React.useState<HTMLAnchorElement | null>(null);
+
+  const arrowRef = React.useRef(null);
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    setAnchor(anchor ? null : arrowRef.current);
+  };
+
+  return (
+    <>
+      <Wrapper onClick={handleClick} {...rest}>
+        <UnderlineText>{text}</UnderlineText>
+        <StyledArrowDownIcon ref={arrowRef} />
+      </Wrapper>
+      <Popper show={Boolean(anchor)} anchorEl={anchor} placement="bottom">
+        {children}
+      </Popper>
+    </>
+  );
+};
+
+export default DropdownText;

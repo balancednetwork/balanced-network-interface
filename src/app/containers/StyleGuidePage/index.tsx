@@ -4,19 +4,13 @@ import { Helmet } from 'react-helmet-async';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
+import DropdownText from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
-import { Popper } from 'app/components/Popover';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 
 export function StyleGuidePage() {
-  const [anchor, setAnchor] = React.useState<HTMLAnchorElement | null>(null);
-
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    setAnchor(anchor ? null : e.currentTarget);
-  };
-
   return (
     <>
       <Helmet>
@@ -42,15 +36,11 @@ export function StyleGuidePage() {
 
       <br />
 
-      <Link href="#" onClick={handleClick}>
-        This is a dropdown
-      </Link>
-
-      <Popper show={Boolean(anchor)} anchorEl={anchor} placement="bottom">
+      <DropdownText text="This is a dropdown">
         <Box p={2}>
           <Typography>This a dropdown</Typography>
         </Box>
-      </Popper>
+      </DropdownText>
       <br />
 
       <Flex>

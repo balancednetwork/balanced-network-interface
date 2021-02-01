@@ -8,10 +8,12 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Divider } from 'app/components/Divider';
+import DropdownText from 'app/components/DropdownText';
 import { DefaultLayout } from 'app/components/Layout';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
+import SlippageSetting from 'app/components/SlippageSetting';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
@@ -152,6 +154,10 @@ export function TradePage() {
     return () => window.removeEventListener('resize', handleResize);
   }, [width]);
 
+  //
+  const [rawSlippage, setRawSlippage] = React.useState(250);
+  const [ttl, setTtl] = React.useState(0);
+
   return (
     <DefaultLayout title="Trade">
       <Helmet>
@@ -214,7 +220,14 @@ export function TradePage() {
                     Slippage tolerance
                     <QuestionHelper text="If the price slips by more than this amount, your swap will fail." />
                   </Typography>
-                  <Typography>2.5%</Typography>
+                  <DropdownText text={`${(rawSlippage / 100).toFixed(2)}%`}>
+                    <SlippageSetting
+                      rawSlippage={rawSlippage}
+                      setRawSlippage={setRawSlippage}
+                      deadline={ttl}
+                      setDeadline={setTtl}
+                    />
+                  </DropdownText>
                 </Flex>
 
                 <Flex justifyContent="center">

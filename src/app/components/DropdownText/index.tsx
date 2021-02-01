@@ -46,22 +46,42 @@ export const UnderlineText = styled.span`
 `;
 
 export const DropdownText = ({ text, children, ...rest }: { text: string; children: React.ReactNode }) => {
-  const [anchor, setAnchor] = React.useState<HTMLAnchorElement | null>(null);
+  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleToggleClick = (e: React.MouseEvent<HTMLElement>) => {
     setAnchor(anchor ? null : arrowRef.current);
   };
 
+  // refs to detect clicks outside modal
+  const wrapperRef = React.useRef<HTMLElement>(null);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  const handleClick = e => {
+    if (
+      !(contentRef.current && contentRef.current.contains(e.target)) &&
+      !(wrapperRef.current && wrapperRef.current.contains(e.target))
+    ) {
+      setAnchor(null);
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  });
+
   return (
     <>
-      <Wrapper onClick={handleClick} {...rest}>
+      <Wrapper onClick={handleToggleClick} ref={wrapperRef} {...rest}>
         <UnderlineText>{text}</UnderlineText>
         <StyledArrowDownIcon ref={arrowRef} />
       </Wrapper>
       <Popper show={Boolean(anchor)} anchorEl={anchor} placement="bottom">
-        {children}
+        <div ref={contentRef}>{children}</div>
       </Popper>
     </>
   );

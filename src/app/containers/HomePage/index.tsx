@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { Divider } from 'app/components/Divider';
+import Divider from 'app/components/Divider';
 import { Field } from 'app/components/Form';
 import { DefaultLayout } from 'app/components/Layout';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';

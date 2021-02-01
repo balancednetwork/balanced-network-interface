@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import { Divider } from 'app/components/Divider';
+import Divider from 'app/components/Divider';
 import DropdownText from 'app/components/DropdownText';
 import { DefaultLayout } from 'app/components/Layout';
 import Modal from 'app/components/Modal';

@@ -19,6 +19,9 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from 'app/components/Tra
 import { Typography } from 'app/theme';
 import { dayData, candleData, volumeData, CURRENCYLIST } from 'demo';
 
+import { iconService, convertLoopToIcx } from '../../../utils/commonIcx';
+import { numberWithCommas } from '../../../utils/formatNumber';
+
 const StyledDL = styled.dl`
   margin: 15px 0 5px 0;
   text-align: center;
@@ -75,6 +78,15 @@ const ChartControlGroup = styled(Box)`
 
 export function TradePage() {
   const [value, setValue] = React.useState<number>(0);
+  const [address] = React.useState(localStorage.getItem('a'));
+  const [balance, updateBalance] = React.useState('0');
+
+  iconService
+    .getBalance(address)
+    .execute()
+    .then(d => {
+      updateBalance(numberWithCommas(convertLoopToIcx(d).toNumber()));
+    });
 
   const handleTabClick = (event: React.MouseEvent, value: number) => {
     setValue(value);
@@ -178,7 +190,7 @@ export function TradePage() {
               <BrightPanel bg="bg3" p={7} flexDirection="column" alignItems="stretch" flex={1}>
                 <Flex alignItems="center" justifyContent="space-between">
                   <Typography variant="h2">Swap</Typography>
-                  <Typography>Wallet: 72,273ICX</Typography>
+                  <Typography>Wallet: {balance} ICX</Typography>
                 </Flex>
 
                 <Flex mt={3} mb={5}>

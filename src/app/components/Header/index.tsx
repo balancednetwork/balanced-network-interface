@@ -37,8 +37,48 @@ const WalletButton = styled(IconButton)`
   `}
 `;
 
-export function Header(props: { title?: string; className?: string }) {
+export function Header(props: { title?: string; className?: string; address?: '' }) {
   const { className, title } = props;
+  const [address, updateAddress] = React.useState(localStorage.getItem('a'));
+
+  function eventHandler(event) {
+    console.log(event);
+
+    const type = event.detail.type;
+    const payload = event.detail.payload;
+    switch (type) {
+      // case 'RESPONSE_HAS_ACCOUNT':
+      // case 'RESPONSE_HAS_ADDRESS':
+      case 'RESPONSE_ADDRESS':
+        localStorage.setItem('a', payload);
+        updateAddress(payload);
+        break;
+      // case 'RESPONSE_JSON-RPC':
+      // case 'CANCEL_JSON-RPC':
+      // case 'RESPONSE_SIGNING':
+      // case 'CANCEL_SIGNING':
+
+      default:
+        break;
+    }
+  }
+
+  React.useEffect(() => {
+    window.addEventListener('ICONEX_RELAY_RESPONSE', eventHandler, false);
+    return () => {
+      document.removeEventListener('ICONEX_RELAY_RESPONSE', eventHandler);
+    };
+  });
+
+  function callIconexWallet(e) {
+    window.dispatchEvent(
+      new CustomEvent('ICONEX_RELAY_REQUEST', {
+        detail: {
+          type: 'REQUEST_ADDRESS',
+        },
+      }),
+    );
+  }
 
   return (
     <header className={className}>
@@ -53,10 +93,10 @@ export function Header(props: { title?: string; className?: string }) {
             <Typography variant="p" textAlign="right">
               Wallet
             </Typography>
-            <Typography>hx28c08b2...2240bc3</Typography>
+            <Typography>{address}</Typography>
           </WalletInfo>
 
-          <WalletButton>
+          <WalletButton onClick={callIconexWallet}>
             <WalletIcon />
           </WalletButton>
 

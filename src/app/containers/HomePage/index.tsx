@@ -8,8 +8,10 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import Divider from 'app/components/Divider';
+import DropdownText from 'app/components/DropdownText';
 import { Field } from 'app/components/Form';
 import { DefaultLayout } from 'app/components/Layout';
+import { MenuList, MenuItem } from 'app/components/Menu';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { CURRENCYLIST } from 'demo';
@@ -164,7 +166,7 @@ export function HomePage() {
         </BoxPanel>
 
         <ActivityPanel bg="bg2">
-          <BoxPanel bg="bg3" maxWidth={[350, 'initial']}>
+          <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 350]}>
             <Typography variant="h2" mb={5}>
               Position detail
             </Typography>
@@ -180,11 +182,54 @@ export function HomePage() {
               </Box>
             </Flex>
             <Divider style={{ marginTop: 20, marginBottom: 20 }} />
-            <Typography mb={2}>The current ICX price is $0.2400.</Typography>
-            <Typography>You hold 0.15% of the total debt.</Typography>
+            <Typography mb={2}>
+              The current ICX price is <span className="alert">$0.2400</span>.
+            </Typography>
+            <Typography>
+              You hold <span className="white">0.15%</span> of the total debt.
+            </Typography>
           </BoxPanel>
-          <BoxPanel bg="bg2"></BoxPanel>
+          <BoxPanel bg="bg2" flex={1}>
+            <Typography variant="h3">Risk ratio</Typography>
+
+            <Divider style={{ marginTop: 15, marginBottom: 15 }} />
+
+            <Flex flexWrap="wrap" alignItems="flex-end">
+              <Box width={[1, 1 / 2]}>
+                <Flex alignItems="center" mb={15}>
+                  <Typography variant="h3" mr={15}>
+                    Rebalancing
+                  </Typography>
+                  <DropdownText text="Past week">
+                    <MenuList>
+                      <MenuItem>Day</MenuItem>
+                      <MenuItem>Week</MenuItem>
+                      <MenuItem>Month</MenuItem>
+                    </MenuList>
+                  </DropdownText>
+                </Flex>
+                <Flex>
+                  <Box width={1 / 2}>
+                    <Typography variant="p">0 ICD</Typography>
+                    <Typography>Collateral sold</Typography>
+                  </Box>
+                  <Box width={1 / 2}>
+                    <Typography variant="p">0 ICD</Typography>
+                    <Typography>Loan repaid</Typography>
+                  </Box>
+                </Flex>
+              </Box>
+
+              <Box width={[1, 1 / 2]}>
+                <Typography>
+                  Traders can repay loans by selling ICD for $1 of ICX collateral. Your position will rebalance based on
+                  your % of the total debt.
+                </Typography>
+              </Box>
+            </Flex>
+          </BoxPanel>
         </ActivityPanel>
+
         <BoxPanel bg="bg2">
           <Typography variant="h2">Wallet</Typography>
 

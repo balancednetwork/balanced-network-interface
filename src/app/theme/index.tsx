@@ -232,6 +232,15 @@ export const FixedGlobalStyle = createGlobalStyle`
   .border-bottom {
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   }
+
+  /* Utils */
+  .alert {
+    color: #fb6a6a;
+  }
+
+  .white {
+    color: #FFFFFF;
+  }
 `;
 
 export const ThemedGlobalStyle = createGlobalStyle`

@@ -6,15 +6,14 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import CurrencyLogo from 'app/components/CurrencyLogo';
 import Divider from 'app/components/Divider';
 import DropdownText from 'app/components/DropdownText';
 import { Field } from 'app/components/Form';
 import { DefaultLayout } from 'app/components/Layout';
 import { MenuList, MenuItem } from 'app/components/Menu';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
+import WalletPanel from 'app/components/WalletPanel';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'demo';
 
 const Grid = styled.div`
   flex: 1;
@@ -35,6 +34,17 @@ const ActivityPanel = styled(FlexPanel)`
     grid-area: initial;
     flex-direction: column;
   `}
+`;
+
+const RewardGrid = styled.div`
+  display: grid;
+  grid-template-rows: auto;
+  grid-gap: 20px;
+`;
+
+const Row = styled(Flex)`
+  align-items: flex-start;
+  justify-content: space-between;
 `;
 
 export function HomePage() {
@@ -181,7 +191,7 @@ export function HomePage() {
                 <Typography variant="p">$1,512 / $2,587</Typography>
               </Box>
             </Flex>
-            <Divider style={{ marginTop: 20, marginBottom: 20 }} />
+            <Divider my={4} />
             <Typography mb={2}>
               The current ICX price is <span className="alert">$0.2400</span>.
             </Typography>
@@ -192,7 +202,7 @@ export function HomePage() {
           <BoxPanel bg="bg2" flex={1}>
             <Typography variant="h3">Risk ratio</Typography>
 
-            <Divider style={{ marginTop: 15, marginBottom: 15 }} />
+            <Divider my={3} />
 
             <Flex flexWrap="wrap" alignItems="flex-end">
               <Box width={[1, 1 / 2]}>
@@ -230,41 +240,52 @@ export function HomePage() {
           </BoxPanel>
         </ActivityPanel>
 
-        <BoxPanel bg="bg2">
-          <Typography variant="h2">Wallet</Typography>
+        <WalletPanel />
 
-          {/* <!-- wallet asset list --> */}
-          <table className="list liquidity">
-            <thead>
-              <tr>
-                <th>Asset</th>
-                <th>Balance</th>
-                <th>Value</th>
-              </tr>
-            </thead>
+        <div>
+          <BoxPanel bg="bg2">
+            <Flex justifyContent="space-between" alignItems="center" mb={5}>
+              <Typography variant="h2">Rewards</Typography>
 
-            <tbody>
-              {Object.values(CURRENCYLIST).map(item => (
-                <tr key={item.name}>
-                  <td>
-                    <CurrencyLogo currency={item} style={{ marginRight: 8 }} />
-                    {item.symbol}
-                  </td>
-                  <td>6,808</td>
-                  <td>$1,634</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </BoxPanel>
+              <Typography>Last claimed 2 days ago</Typography>
+            </Flex>
 
-        <BoxPanel bg="bg2">
-          <Flex justifyContent="space-between" alignItems="center">
-            <Typography variant="h2">Rewards</Typography>
+            <RewardGrid>
+              <Row>
+                <Typography variant="p">Loan rewards</Typography>
+                <Typography variant="p">8 BALN</Typography>
+              </Row>
 
-            <Typography>Last claimed 2 days ago</Typography>
-          </Flex>
-        </BoxPanel>
+              <Row>
+                <Typography variant="p">Weekly dividends</Typography>
+
+                <Box>
+                  <Typography variant="p" textAlign="right">
+                    7 ICX
+                  </Typography>
+                  <Typography variant="p" textAlign="right">
+                    12 ICD
+                  </Typography>
+                </Box>
+              </Row>
+
+              <Divider />
+
+              <Row>
+                <Typography variant="p" fontWeight="bold">
+                  Total
+                </Typography>
+                <Typography variant="p" fontWeight="bold">
+                  $24.47
+                </Typography>
+              </Row>
+            </RewardGrid>
+
+            <Flex alignItems="center" justifyContent="center" mt={3}>
+              <Button>Claim rewards</Button>
+            </Flex>
+          </BoxPanel>
+        </div>
       </Grid>
     </DefaultLayout>
   );

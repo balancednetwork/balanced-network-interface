@@ -1,12 +1,9 @@
+import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-const Divider = styled.hr`
-  width: 100%;
+const Divider = styled(Box)`
   height: 1px;
-  margin: 0;
-  border: none;
-  flex-shrink: 0;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: ${({ theme }) => theme.colors.divider};
 `;
 
 export default Divider;

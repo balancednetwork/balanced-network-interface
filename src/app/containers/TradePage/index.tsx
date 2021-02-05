@@ -208,7 +208,7 @@ export function TradePage() {
                   />
                 </Flex>
 
-                <Divider style={{ marginBottom: 16 }} />
+                <Divider mb={3} />
 
                 <Flex alignItems="center" justifyContent="space-between" mb={1}>
                   <Typography>Minimum to receive</Typography>

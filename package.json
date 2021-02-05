@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "@popperjs/core": "2.5.4",
+    "@reach/accordion": "0.13.0",
     "@reach/dialog": "0.12.1",
     "@reach/portal": "0.12.1",
+    "@reach/tabs": "0.13.0",
     "@reduxjs/toolkit": "1.4.0",
     "@testing-library/jest-dom": "5.11.4",
     "@testing-library/react": "11.0.2",

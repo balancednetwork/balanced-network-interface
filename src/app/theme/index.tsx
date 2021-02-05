@@ -60,6 +60,9 @@ export function theme(): DefaultTheme {
       //specialty colors
       modalBG: 'rgba(1, 0, 42, 0.75)',
       advancedBG: 'rgba(255,255,255,0.6)',
+
+      // divider
+      divider: 'rgba(255, 255, 255, 0.15)',
     },
 
     fontSizes: [12, 14, 16, 20, 25, 35],
@@ -92,11 +95,11 @@ export const Typography = (props: TextProps & { variant?: TypographyVariant }) =
     case 'p':
       return <Text as="p" color="text" fontSize={16} {...rest} />;
     case 'label':
-      return <Text as="label" color="text1" fontSize={14} {...rest} />;
+      return <Text as="label" fontSize={14} {...rest} />;
     case 'body':
-      return <Text as="p" color="text1" fontSize={14} {...rest} />;
+      return <Text as="p" fontSize={14} {...rest} />;
     default:
-      return <Text as="p" color="text1" fontSize={14} {...rest} />;
+      return <Text as="p" fontSize={14} {...rest} />;
   }
 };
 
@@ -144,7 +147,7 @@ export const FixedGlobalStyle = createGlobalStyle`
     font-size: inherit;
   }
 
-  button:focus {
+  div, button:focus {
     outline: none;
   }
 

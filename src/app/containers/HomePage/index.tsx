@@ -9,10 +9,11 @@ import { Button, TextButton } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import DropdownText from 'app/components/DropdownText';
 import { Field } from 'app/components/Form';
+import RewardsPanel from 'app/components/home/RewardsPanel';
+import WalletPanel from 'app/components/home/WalletPanel';
 import { DefaultLayout } from 'app/components/Layout';
 import { MenuList, MenuItem } from 'app/components/Menu';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
-import WalletPanel from 'app/components/WalletPanel';
 import { Typography } from 'app/theme';
 
 const Grid = styled.div`
@@ -34,17 +35,6 @@ const ActivityPanel = styled(FlexPanel)`
     grid-area: initial;
     flex-direction: column;
   `}
-`;
-
-const RewardGrid = styled.div`
-  display: grid;
-  grid-template-rows: auto;
-  grid-gap: 20px;
-`;
-
-const Row = styled(Flex)`
-  align-items: flex-start;
-  justify-content: space-between;
 `;
 
 export function HomePage() {
@@ -243,48 +233,7 @@ export function HomePage() {
         <WalletPanel />
 
         <div>
-          <BoxPanel bg="bg2">
-            <Flex justifyContent="space-between" alignItems="center" mb={5}>
-              <Typography variant="h2">Rewards</Typography>
-
-              <Typography>Last claimed 2 days ago</Typography>
-            </Flex>
-
-            <RewardGrid>
-              <Row>
-                <Typography variant="p">Loan rewards</Typography>
-                <Typography variant="p">8 BALN</Typography>
-              </Row>
-
-              <Row>
-                <Typography variant="p">Weekly dividends</Typography>
-
-                <Box>
-                  <Typography variant="p" textAlign="right">
-                    7 ICX
-                  </Typography>
-                  <Typography variant="p" textAlign="right">
-                    12 ICD
-                  </Typography>
-                </Box>
-              </Row>
-
-              <Divider />
-
-              <Row>
-                <Typography variant="p" fontWeight="bold">
-                  Total
-                </Typography>
-                <Typography variant="p" fontWeight="bold">
-                  $24.47
-                </Typography>
-              </Row>
-            </RewardGrid>
-
-            <Flex alignItems="center" justifyContent="center" mt={3}>
-              <Button>Claim rewards</Button>
-            </Flex>
-          </BoxPanel>
+          <RewardsPanel />
         </div>
       </Grid>
     </DefaultLayout>

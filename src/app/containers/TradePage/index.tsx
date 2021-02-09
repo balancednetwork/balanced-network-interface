@@ -11,10 +11,10 @@ import Divider from 'app/components/Divider';
 import DropdownText from 'app/components/DropdownText';
 import { DefaultLayout } from 'app/components/Layout';
 import Modal from 'app/components/Modal';
-import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import SlippageSetting from 'app/components/SlippageSetting';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
+import LiquidityDetails from 'app/components/trade/LiquidityDetails';
 import ReturnICDSection from 'app/components/trade/ReturnICDSection';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
@@ -391,67 +391,7 @@ export function TradePage() {
           </TabPanel>
         </Flex>
 
-        <BoxPanel bg="bg2" mb={10}>
-          <Typography variant="h2" mb={5}>
-            Liquidity details
-          </Typography>
-
-          {/* <!-- Liquidity list --> */}
-          <table className="list liquidity">
-            <thead>
-              <tr>
-                <th>Pool</th>
-                <th>Your supply</th>
-                <th>Pool share</th>
-                <th>Daily rewards</th>
-                <th></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {/* <!-- sICX / ICX --> */}
-              <tr>
-                <td>sICX / ICX</td>
-                <td>15,000 ICX</td>
-                <td>3.1%</td>
-                <td>~ 120 BALN</td>
-                <td>
-                  <span className="dropdown">Withdraw</span>
-                </td>
-              </tr>
-
-              {/* <!-- ICX / ICD --> */}
-              <tr>
-                <td>ICX / ICD</td>
-                <td>
-                  15,000 ICX
-                  <br />
-                  15,000 ICD
-                </td>
-                <td>3.1%</td>
-                <td>~ 120 BALN</td>
-                <td>
-                  <span className="dropdown">Withdraw</span>
-                </td>
-              </tr>
-
-              {/* <!-- BALN / ICD --> */}
-              <tr>
-                <td>BALN / ICD</td>
-                <td>
-                  15,000 BALN
-                  <br />
-                  15,000 ICD
-                </td>
-                <td>3.1%</td>
-                <td>~ 120 BALN</td>
-                <td>
-                  <span className="dropdown">Withdraw</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </BoxPanel>
+        <LiquidityDetails />
       </Box>
 
       <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>

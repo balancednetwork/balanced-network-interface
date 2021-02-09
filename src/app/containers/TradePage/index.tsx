@@ -15,6 +15,7 @@ import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import SlippageSetting from 'app/components/SlippageSetting';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
+import ReturnICDSection from 'app/components/trade/ReturnICDSection';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import { dayData, candleData, volumeData, CURRENCYLIST } from 'demo';
@@ -166,11 +167,13 @@ export function TradePage() {
 
       <Box flex={1}>
         <Flex mb={10} flexDirection="column">
-          <Flex>
+          <Flex alignItems="center" justifyContent="space-between">
             <Tabs value={value} onChange={handleTabClick}>
               <Tab>Swap</Tab>
               <Tab>Supply liquidity</Tab>
             </Tabs>
+
+            <ReturnICDSection />
           </Flex>
 
           <TabPanel value={value} index={0}>

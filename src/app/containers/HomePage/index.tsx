@@ -37,6 +37,18 @@ const ActivityPanel = styled(FlexPanel)`
   `}
 `;
 
+const Chip = styled(Box)`
+  display: inline-block;
+  min-width: 82px;
+  text-align: center;
+  border-radius: 100px;
+  padding: 1px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #ffffff;
+  line-height: 1.4;
+`;
+
 export function HomePage() {
   const [isEditing, setEditing] = React.useState<boolean>(false);
 
@@ -191,6 +203,24 @@ export function HomePage() {
           </BoxPanel>
           <BoxPanel bg="bg2" flex={1}>
             <Typography variant="h3">Risk ratio</Typography>
+
+            <Flex alignItems="center" justifyContent="space-between" my={4}>
+              <Chip bg="primary">Low risk</Chip>
+              <Box flex={1} mx={1}>
+                <Nouislider
+                  disabled={true}
+                  id="risk-ratio"
+                  start={[10000]}
+                  padding={[0]}
+                  connect={[true, false]}
+                  range={{
+                    min: [0],
+                    max: [15000],
+                  }}
+                />
+              </Box>
+              <Chip bg="red">Liquidated</Chip>
+            </Flex>
 
             <Divider my={3} />
 

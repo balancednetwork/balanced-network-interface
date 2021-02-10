@@ -19,6 +19,7 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from 'app/components/Tra
 import { Typography } from 'app/theme';
 import { dayData, candleData, volumeData, CURRENCYLIST } from 'demo';
 
+import { iBalancedAPIService } from '../../../services/balancedApi';
 import { iconService, convertLoopToIcx } from '../../../utils/commonIcx';
 import { numberWithCommas } from '../../../utils/formatNumber';
 
@@ -84,8 +85,12 @@ export function TradePage() {
   iconService
     .getBalance(address)
     .execute()
-    .then(d => {
-      updateBalance(numberWithCommas(convertLoopToIcx(d).toNumber()));
+    .then(async d => {
+      const {
+        data: { price },
+      } = await iBalancedAPIService.convertICX2USD();
+
+      updateBalance(numberWithCommas(convertLoopToIcx(d).toNumber() * price));
     });
 
   const handleTabClick = (event: React.MouseEvent, value: number) => {
@@ -190,7 +195,7 @@ export function TradePage() {
               <BrightPanel bg="bg3" p={7} flexDirection="column" alignItems="stretch" flex={1}>
                 <Flex alignItems="center" justifyContent="space-between">
                   <Typography variant="h2">Swap</Typography>
-                  <Typography>Wallet: {balance} ICX</Typography>
+                  <Typography>Wallet: {balance} USD</Typography>
                 </Flex>
 
                 <Flex mt={3} mb={5}>

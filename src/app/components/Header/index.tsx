@@ -2,12 +2,20 @@ import React from 'react';
 
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 import { IconButton } from 'app/components/Button';
 import Logo from 'app/components/Logo';
+import { NotificationsDropdown } from 'app/components/NotificationsDropdown';
 import { Typography } from 'app/theme';
 import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
+
+import { environments } from '../../../environments';
+import { iNotificationsService } from '../../../services/notification';
+import { JSONSafeParse } from '../../../utils/jsonSefeParse';
+
+const client = new W3CWebSocket(`ws://${environments.local.api}/ws`);
 
 const StyledLogo = styled(Logo)`
   width: 100px;
@@ -37,13 +45,63 @@ const WalletButton = styled(IconButton)`
   `}
 `;
 
+const NotificationWrapper = styled.div`
+  position: relative;
+`;
+
+const NotificationBadges = styled.span`
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background-color: red;
+  color: white;
+`;
+
+const NotificationButton = styled(IconButton)`
+  position: relative;
+`;
+
 export function Header(props: { title?: string; className?: string; address?: '' }) {
   const { className, title } = props;
   const [address, updateAddress] = React.useState(localStorage.getItem('a'));
+  const [showNoti, updateShowNoti] = React.useState(false);
+  const [notifications, updateNotification] = React.useState(Object.values(iNotificationsService.getNotification()));
+  const [notiCount, updateNotiCount] = React.useState(0);
+
+  client.onopen = () => {
+    if (address) {
+      client.send(
+        JSON.stringify({
+          address,
+        }),
+      );
+    }
+  };
+
+  client.onerror = console.error;
+
+  window.onload = () => {
+    client.send(
+      JSON.stringify({
+        address,
+      }),
+    );
+  };
+
+  client.onmessage = message => {
+    const data = JSONSafeParse(message.data);
+    if (data.from_address) {
+      iNotificationsService.addNotification(data);
+      updateNotiCount(notiCount + 1);
+      console.log(notiCount);
+
+      updateNotification(Object.values(iNotificationsService.getNotification()));
+    }
+  };
 
   function eventHandler(event) {
-    console.log(event);
-
     const type = event.detail.type;
     const payload = event.detail.payload;
     switch (type) {
@@ -80,6 +138,21 @@ export function Header(props: { title?: string; className?: string; address?: ''
     );
   }
 
+  function showNotification() {
+    if (!notifications.length) {
+      fetch(`http://${environments.local.api}/api/v1/address/history/${address}?offset=0&limit=5`, {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+        },
+      })
+        .then(d => d.json())
+        .then(updateNotification)
+        .catch(console.error);
+    }
+    updateShowNoti(!showNoti);
+  }
+
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
@@ -100,9 +173,22 @@ export function Header(props: { title?: string; className?: string; address?: ''
             <WalletIcon />
           </WalletButton>
 
-          <IconButton>
-            <NotificationIcon />
-          </IconButton>
+          <NotificationWrapper>
+            <NotificationButton onClick={showNotification}>
+              <NotificationIcon />
+              {notiCount > 0 ? <NotificationBadges>{notiCount}</NotificationBadges> : <></>}
+            </NotificationButton>
+            {showNoti ? (
+              <NotificationsDropdown
+                notifications={notifications}
+                updateNotification={updateNotification}
+                notiCount={notiCount}
+                updateNotiCount={updateNotiCount}
+              />
+            ) : (
+              <></>
+            )}
+          </NotificationWrapper>
         </Flex>
       </Flex>
     </header>

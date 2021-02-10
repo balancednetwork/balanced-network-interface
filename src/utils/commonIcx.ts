@@ -3,7 +3,7 @@ import IconService from 'icon-sdk-js/build/icon-sdk-js.web.min.js';
 
 const GOVERNANCE_ADDRESS = 'cx0000000000000000000000000000000000000001';
 
-export const iconService = new IconService(new IconService.HttpProvider('https://bicon.net.solidwallet.io/api/v3'));
+export const iconService = new IconService(new IconService.HttpProvider('http://35.240.219.80:9000/api/v3'));
 
 export const getDefaultStepCost = async () => {
   const builder = new IconBuilder.CallBuilder();

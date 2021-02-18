@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { request } from 'iconex';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -36,9 +37,18 @@ const WalletButton = styled(IconButton)`
     display: none;
   `}
 `;
-
 export function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
+
+  const [address, setAddress] = React.useState();
+
+  const handleWalletIconClick = async (_event: React.MouseEvent) => {
+    const detail = await request({
+      type: 'REQUEST_ADDRESS',
+    });
+
+    setAddress(detail.payload);
+  };
 
   return (
     <header className={className}>
@@ -53,10 +63,10 @@ export function Header(props: { title?: string; className?: string }) {
             <Typography variant="p" textAlign="right">
               Wallet
             </Typography>
-            <Typography>hx28c08b2...2240bc3</Typography>
+            {address && <Typography>{address}</Typography>}
           </WalletInfo>
 
-          <WalletButton>
+          <WalletButton onClick={handleWalletIconClick}>
             <WalletIcon />
           </WalletButton>
 

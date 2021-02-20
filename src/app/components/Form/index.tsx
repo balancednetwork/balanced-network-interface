@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
+import { Currency } from 'types';
 
 export const CheckBox = styled(Box)<{ isActive: boolean }>`
   width: 20px;
@@ -17,11 +18,11 @@ export const Field: React.FC<{
   editable: boolean;
   isActive: boolean;
   label: string;
-  value: number;
-  unit: string;
+  value: string;
+  currency: Currency;
   tooltipText: string;
 }> = function (props) {
-  const { isActive, label, value, unit, tooltipText } = props;
+  const { isActive, label, value, currency, tooltipText } = props;
 
   return (
     <Flex flexDirection="column">
@@ -35,7 +36,7 @@ export const Field: React.FC<{
       </Flex>
 
       <Typography variant="p" ml={24} fontSize={18}>
-        {`${value} ${unit}`}
+        {`${value} ${currency.symbol}`}
       </Typography>
     </Flex>
   );

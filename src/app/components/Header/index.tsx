@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { request } from 'iconex';
+import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -9,6 +9,7 @@ import Logo from 'app/components/Logo';
 import { Typography } from 'app/theme';
 import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
+import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
   width: 100px;
@@ -22,8 +23,9 @@ const StyledLogo = styled(Logo)`
 `;
 
 const WalletInfo = styled(Box)`
-  text-align: 'right';
+  text-align: right;
   margin-right: 15px;
+  min-height: 42px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -37,17 +39,14 @@ const WalletButton = styled(IconButton)`
     display: none;
   `}
 `;
+
 export function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
-  const [address, setAddress] = React.useState();
-
+  const { account, requestAddress } = useIconReact();
+  console.log(account);
   const handleWalletIconClick = async (_event: React.MouseEvent) => {
-    const detail = await request({
-      type: 'REQUEST_ADDRESS',
-    });
-
-    setAddress(detail.payload);
+    requestAddress();
   };
 
   return (
@@ -63,7 +62,7 @@ export function Header(props: { title?: string; className?: string }) {
             <Typography variant="p" textAlign="right">
               Wallet
             </Typography>
-            {address && <Typography>{address}</Typography>}
+            {account && <Typography>{shortenAddress(account)}</Typography>}
           </WalletInfo>
 
           <WalletButton onClick={handleWalletIconClick}>

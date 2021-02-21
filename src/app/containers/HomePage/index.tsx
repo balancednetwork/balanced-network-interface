@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Nouislider from 'nouislider-react';
-import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -16,8 +15,6 @@ import { DefaultLayout } from 'app/components/Layout';
 import { MenuList, MenuItem } from 'app/components/Menu';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'demo';
-import { useWalletICXBalance, useStakedICXBalance } from 'hooks';
 
 const Grid = styled.div`
   flex: 1;
@@ -63,19 +60,6 @@ export function HomePage() {
     setEditing(false);
   };
 
-  //
-  const { account } = useIconReact();
-  // wallet icx balance
-  const walletICXAmount = useWalletICXBalance(account);
-
-  // staked icx balance
-  const stakedICXAmount = useStakedICXBalance(account);
-
-  // totall icx balance
-  const totalICXAmount = walletICXAmount.plus(stakedICXAmount);
-
-  console.log(account, walletICXAmount.toFixed(), stakedICXAmount.toFixed(), totalICXAmount.toFixed());
-
   return (
     <DefaultLayout>
       <Helmet>
@@ -120,8 +104,8 @@ export function HomePage() {
                 isActive
                 label="Deposited"
                 tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-                value={'37533'}
-                currency={CURRENCYLIST['icx']}
+                value={37533}
+                unit="ICX"
               />
             </Box>
 
@@ -131,8 +115,8 @@ export function HomePage() {
                 isActive={false}
                 label="Available"
                 tooltipText="The amount of ICX available to deposit from your wallet."
-                value={'34740'}
-                currency={CURRENCYLIST['icx']}
+                value={34740}
+                unit="ICX"
               />
             </Box>
           </Flex>
@@ -175,8 +159,8 @@ export function HomePage() {
                 isActive
                 label="Borrowed"
                 tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-                value={'37533'}
-                currency={CURRENCYLIST['icx']}
+                value={37533}
+                unit="ICD"
               />
             </Box>
 
@@ -186,8 +170,8 @@ export function HomePage() {
                 isActive={false}
                 label="Available"
                 tooltipText="The amount of ICX available to deposit from your wallet."
-                value={'34740'}
-                currency={CURRENCYLIST['icx']}
+                value={34740}
+                unit="ICD"
               />
             </Box>
           </Flex>

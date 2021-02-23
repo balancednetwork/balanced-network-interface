@@ -40,11 +40,11 @@ const WalletButton = styled(IconButton)`
   `}
 `;
 
-export function Header(props: { title?: string; className?: string }) {
+export default React.memo(function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
   const { account, requestAddress } = useIconReact();
-  console.log(account);
+
   const handleWalletIconClick = async (_event: React.MouseEvent) => {
     requestAddress();
   };
@@ -76,4 +76,4 @@ export function Header(props: { title?: string; className?: string }) {
       </Flex>
     </header>
   );
-}
+});

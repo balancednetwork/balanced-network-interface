@@ -85,7 +85,7 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   `}
 `;
 
-export function AppBar() {
+export default React.memo(function AppBar() {
   return (
     <Navigation>
       <List>
@@ -114,4 +114,4 @@ export function AppBar() {
       </List>
     </Navigation>
   );
-}
+});

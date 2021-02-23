@@ -4,8 +4,8 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { AppBar } from 'app/components/AppBar';
-import { Header } from 'app/components/Header';
+import AppBar from 'app/components/AppBar';
+import Header from 'app/components/Header';
 
 const StyledHeader = styled(Header)`
   margin-top: 50px;

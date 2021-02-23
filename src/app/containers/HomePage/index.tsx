@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
@@ -9,7 +10,7 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import DropdownText from 'app/components/DropdownText';
-import { Field } from 'app/components/Form';
+import { CurrencyField } from 'app/components/Form';
 import RewardsPanel from 'app/components/home/RewardsPanel';
 import WalletPanel from 'app/components/home/WalletPanel';
 import { DefaultLayout } from 'app/components/Layout';
@@ -52,29 +53,82 @@ const Chip = styled(Box)`
   line-height: 1.4;
 `;
 
-export function HomePage() {
-  const [isEditing, setEditing] = React.useState<boolean>(false);
+enum Field {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
 
-  const handleAdjust = () => {
-    setEditing(true);
+export function HomePage() {
+  const [isCollateralEditing, setCollateralEditing] = React.useState<boolean>(true);
+
+  const handleCollateralAdjust = () => {
+    setCollateralEditing(true);
   };
 
-  const handleCancel = () => {
-    setEditing(false);
+  const handleCollateralCancel = () => {
+    setCollateralEditing(false);
+  };
+
+  const [isLoanEditing, setLoanEditing] = React.useState<boolean>(true);
+
+  const handleLoanAdjust = () => {
+    setLoanEditing(true);
+  };
+
+  const handleLoanCancel = () => {
+    setLoanEditing(false);
   };
 
   //
   const { account } = useIconReact();
   // wallet icx balance
-  const walletICXAmount = useWalletICXBalance(account);
+  const unStackedICXAmount = useWalletICXBalance(account);
 
   // staked icx balance
   const stakedICXAmount = useStakedICXBalance(account);
 
   // totall icx balance
-  const totalICXAmount = walletICXAmount.plus(stakedICXAmount);
+  const totalICXAmount = unStackedICXAmount.plus(stakedICXAmount);
 
-  console.log(account, walletICXAmount.toFixed(), stakedICXAmount.toFixed(), totalICXAmount.toFixed());
+  const [{ independentField, typedValue }, setCollateralState] = React.useState({
+    independentField: Field.LEFT,
+    typedValue: '',
+  });
+
+  React.useEffect(() => {
+    setCollateralState({ independentField: Field.LEFT, typedValue: unStackedICXAmount.toFixed(2) });
+  }, [unStackedICXAmount]);
+
+  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
+
+  const handleStakedAmountType = React.useCallback((value: string) => {
+    setCollateralState({ independentField: Field.LEFT, typedValue: value });
+  }, []);
+
+  const handleUnstakedAmountType = React.useCallback((value: string) => {
+    setCollateralState({ independentField: Field.RIGHT, typedValue: value });
+  }, []);
+
+  const handleCollateralSlider = React.useCallback((values: string[], handle: number) => {
+    setCollateralState({ independentField: Field.LEFT, typedValue: values[handle] });
+  }, []);
+
+  // calculate dependentField value
+  const parsedAmount = {
+    [independentField]: new BigNumber(typedValue),
+    [dependentField]: totalICXAmount.minus(new BigNumber(typedValue)),
+  };
+
+  const formattedAmounts = {
+    [independentField]: typedValue,
+    [dependentField]: parsedAmount[dependentField].toFixed(2),
+  };
+
+  const sliderInstance = React.useRef<any>(null);
+
+  React.useEffect(() => {
+    sliderInstance.current.noUiSlider.set(new BigNumber(typedValue).toNumber());
+  }, [typedValue]);
 
   return (
     <DefaultLayout>
@@ -88,51 +142,59 @@ export function HomePage() {
             <Typography variant="h2">Collateral</Typography>
 
             <Box>
-              {isEditing ? (
+              {isCollateralEditing ? (
                 <>
-                  <TextButton onClick={handleCancel}>Cancel</TextButton>
+                  <TextButton onClick={handleCollateralCancel}>Cancel</TextButton>
                   <Button>Confirm</Button>
                 </>
               ) : (
-                <Button onClick={handleAdjust}>Adjust</Button>
+                <Button onClick={handleCollateralAdjust}>Adjust</Button>
               )}
             </Box>
           </Flex>
 
           <Box marginY={6}>
             <Nouislider
-              disabled={!isEditing}
               id="slider-collateral"
-              start={[10000]}
+              disabled={!isCollateralEditing}
+              start={0}
               padding={[0]}
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [15000],
+                max: [totalICXAmount.toNumber()],
               }}
+              instanceRef={instance => {
+                sliderInstance.current = instance;
+              }}
+              onSlide={handleCollateralSlider}
             />
           </Box>
 
           <Flex justifyContent="space-between">
             <Box width={[1, 1 / 2]} mr={4}>
-              <Field
-                editable={isEditing}
+              <CurrencyField
+                id="staked-icx-amount"
+                editable={isCollateralEditing}
                 isActive
                 label="Deposited"
                 tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-                value={'37533'}
+                value={formattedAmounts[Field.LEFT]}
                 currency={CURRENCYLIST['icx']}
+                onUserInput={handleStakedAmountType}
               />
             </Box>
 
             <Box width={[1, 1 / 2]} ml={4}>
-              <Field
-                editable={isEditing}
+              <CurrencyField
+                id="unstaked-icx-amount"
+                editable={isCollateralEditing}
                 isActive={false}
                 label="Available"
                 tooltipText="The amount of ICX available to deposit from your wallet."
-                value={'34740'}
+                value={formattedAmounts[Field.RIGHT]}
                 currency={CURRENCYLIST['icx']}
+                onUserInput={handleUnstakedAmountType}
               />
             </Box>
           </Flex>
@@ -143,20 +205,20 @@ export function HomePage() {
             <Typography variant="h2">Loan</Typography>
 
             <Box>
-              {isEditing ? (
+              {isLoanEditing ? (
                 <>
-                  <TextButton onClick={handleCancel}>Cancel</TextButton>
+                  <TextButton onClick={handleLoanCancel}>Cancel</TextButton>
                   <Button>Confirm</Button>
                 </>
               ) : (
-                <Button onClick={handleAdjust}>Borrow</Button>
+                <Button onClick={handleLoanAdjust}>Borrow</Button>
               )}
             </Box>
           </Flex>
 
           <Box marginY={6}>
             <Nouislider
-              disabled={!isEditing}
+              disabled={!isLoanEditing}
               id="slider-collateral"
               start={[10000]}
               padding={[0]}
@@ -170,24 +232,24 @@ export function HomePage() {
 
           <Flex justifyContent="space-between">
             <Box width={[1, 1 / 2]} mr={4}>
-              <Field
-                editable={isEditing}
+              <CurrencyField
+                editable={isLoanEditing}
                 isActive
                 label="Borrowed"
                 tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
                 value={'37533'}
-                currency={CURRENCYLIST['icx']}
+                currency={CURRENCYLIST['bnusd']}
               />
             </Box>
 
             <Box width={[1, 1 / 2]} ml={4}>
-              <Field
-                editable={isEditing}
+              <CurrencyField
+                editable={isLoanEditing}
                 isActive={false}
                 label="Available"
                 tooltipText="The amount of ICX available to deposit from your wallet."
                 value={'34740'}
-                currency={CURRENCYLIST['icx']}
+                currency={CURRENCYLIST['bnusd']}
               />
             </Box>
           </Flex>

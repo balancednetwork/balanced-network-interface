@@ -459,6 +459,6 @@ export const volumeData = [
 export const CURRENCYLIST = {
   icx: { symbol: 'ICX', decimals: 10, name: 'ICON' },
   sicx: { symbol: 'sICX', decimals: 10, name: 'Staked ICX' },
-  icd: { symbol: 'ICD', decimals: 10, name: 'ICON Dollar' },
+  bnusd: { symbol: 'bnUSD', decimals: 10, name: 'ICON Dollar' },
   baln: { symbol: 'BALN', decimals: 10, name: 'Blanced Token' },
 };

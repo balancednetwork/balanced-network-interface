@@ -306,7 +306,7 @@ export function TradePage() {
               <BrightPanel bg="bg3" p={7} flexDirection="column" alignItems="stretch" flex={1}>
                 <Flex alignItems="flex-end">
                   <Typography variant="h2">Supply:</Typography>
-                  <Typography fontSize={18}>ICX / ICD</Typography>
+                  <Typography fontSize={18}>ICX / bnUSD</Typography>
                 </Flex>
 
                 <Flex mt={3}>
@@ -324,7 +324,7 @@ export function TradePage() {
                   <CurrencyInputPanel
                     value="0"
                     showMaxButton={false}
-                    currency={CURRENCYLIST['icd']}
+                    currency={CURRENCYLIST['bnusd']}
                     onUserInput={handleTypeInput}
                     disableCurrencySelect={true}
                     id="supply-liquidity-input-tokenb"
@@ -332,7 +332,7 @@ export function TradePage() {
                 </Flex>
 
                 <Typography mt={3} textAlign="right">
-                  Wallet: 12,000 ICX / 1,485 ICD
+                  Wallet: 12,000 ICX / 1,485 bnUSD
                 </Typography>
 
                 <Box mt={5}>
@@ -357,7 +357,7 @@ export function TradePage() {
 
               <Box bg="bg2" flex={1} padding={7}>
                 <Typography variant="h3" mb={2}>
-                  ICX / ICD liquidity pool
+                  ICX / bnUSD liquidity pool
                 </Typography>
                 <Typography mb={5} lineHeight={'25px'}>
                   Earn Balance Tokens every day you supply liquidity. Your assets will be locked for the first 24 hours,
@@ -368,7 +368,7 @@ export function TradePage() {
                   <Box width={1 / 2} className="border-right">
                     <StyledDL>
                       <dt>Your supply</dt>
-                      <dd>9,000 ICX / 2,160 ICD</dd>
+                      <dd>9,000 ICX / 2,160 bnUSD</dd>
                     </StyledDL>
                     <StyledDL>
                       <dt>Your daily rewards</dt>
@@ -378,7 +378,7 @@ export function TradePage() {
                   <Box width={1 / 2}>
                     <StyledDL>
                       <dt>Total supply</dt>
-                      <dd>500,000 ICX / 400,000 ICD</dd>
+                      <dd>500,000 ICX / 400,000 bnUSD</dd>
                     </StyledDL>
                     <StyledDL>
                       <dt>Total daily rewards</dt>
@@ -445,7 +445,7 @@ export function TradePage() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" mb={4}>
-            0 ICD
+            0 bnUSD
           </Typography>
 
           <Typography textAlign="center">

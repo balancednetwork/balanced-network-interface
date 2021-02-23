@@ -168,7 +168,7 @@ const WalletPanel = () => {
                       <TabPanel>
                         <Grid>
                           <Flex alignItems="center" justifyContent="space-between">
-                            <Typography variant="h3">Send ICD</Typography>
+                            <Typography variant="h3">Send bnUSD</Typography>
                             <Link href="#">Send max</Link>
                           </Flex>
 
@@ -255,9 +255,9 @@ const WalletPanel = () => {
               <StyledAccordionButton>
                 <ListItem>
                   <AssetSymbol>
-                    <CurrencyLogo currency={CURRENCYLIST['icd']} />
+                    <CurrencyLogo currency={CURRENCYLIST['bnusd']} />
                     <Typography fontSize={16} fontWeight="bold">
-                      {CURRENCYLIST['icd'].symbol}
+                      {CURRENCYLIST['bnusd'].symbol}
                     </Typography>
                   </AssetSymbol>
                   <DataText>6,808</DataText>
@@ -269,14 +269,14 @@ const WalletPanel = () => {
                 <BoxPanel bg="bg3">
                   <Grid>
                     <Flex alignItems="center" justifyContent="space-between">
-                      <Typography variant="h3">Send ICD</Typography>
+                      <Typography variant="h3">Send bnUSD</Typography>
                       <Link href="#">Send max</Link>
                     </Flex>
 
                     <CurrencyInputPanel
                       value="0"
                       showMaxButton={false}
-                      currency={CURRENCYLIST['icd']}
+                      currency={CURRENCYLIST['bnusd']}
                       onUserInput={() => null}
                       id="swap-currency-output"
                     />

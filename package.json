@@ -83,6 +83,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "profile": "react-scripts build --profile",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "test:generators": "ts-node --project=./internals/ts-node.tsconfig.json ./internals/testing/test-generators.ts",

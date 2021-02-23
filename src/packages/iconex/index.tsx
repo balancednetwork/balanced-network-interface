@@ -26,7 +26,7 @@ export interface ICONexRequestEvent {
 
 export interface ICONexResponseEvent {
   type: ICONexResponseEventType;
-  payload: any;
+  payload?: any;
 }
 
 export type ICONexEvent = ICONexRequestEvent | ICONexResponseEvent;

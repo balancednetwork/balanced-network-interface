@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { ICONexRequestEventType, ICONexResponseEventType, ICONEX_RELAY_REQUEST, ICONEX_RELAY_RESPONSE } from 'iconex';
+import { useIconReact } from 'packages/icon-react';
+import {
+  ICONexRequestEventType,
+  ICONEX_RELAY_RESPONSE,
+  ICONexResponseEventType,
+  ICONEX_RELAY_REQUEST,
+} from 'packages/iconex';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -9,6 +15,7 @@ import Logo from 'app/components/Logo';
 import { Typography } from 'app/theme';
 import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
+import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
   width: 100px;
@@ -22,8 +29,9 @@ const StyledLogo = styled(Logo)`
 `;
 
 const WalletInfo = styled(Box)`
-  text-align: 'right';
+  text-align: right;
   margin-right: 15px;
+  min-height: 42px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -37,10 +45,9 @@ const WalletButton = styled(IconButton)`
     display: none;
   `}
 `;
+
 export function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
-
-  const [address, setAddress] = React.useState();
 
   const [hasExtension, setHasExtension] = React.useState(false);
   const [hasAccount, setHasAccount] = React.useState(false);
@@ -48,20 +55,13 @@ export function Header(props: { title?: string; className?: string }) {
 
   function handler({ detail }: any) {
     const { type, payload } = detail;
-
-    switch (type) {
-      case ICONexResponseEventType.RESPONSE_ADDRESS:
-        handlerResponseRequestAddress(payload);
-        break;
-      case ICONexResponseEventType.RESPONSE_HAS_ACCOUNT:
-        handleResponseHasAccount(payload);
-        break;
+    if (type === ICONexResponseEventType.RESPONSE_HAS_ACCOUNT) {
+      handleResponseHasAccount(payload);
     }
   }
 
   window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
 
-  // should await window.addEventListener(ICONEX_RELAY_RESPONSE, handler) done to emit ICONEX_RELAY_REQUEST
   setTimeout(() => {
     window.dispatchEvent(
       new CustomEvent(ICONEX_RELAY_REQUEST, {
@@ -71,6 +71,24 @@ export function Header(props: { title?: string; className?: string }) {
       }),
     );
   }, 1000);
+  // React.useEffect(() => {
+  //   return () => window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
+  // });
+
+  function handleResponseHasAccount({ hasAccount }) {
+    setHasExtension(true);
+    setHasAccount(hasAccount);
+    setIsChecking(false);
+  }
+
+  const { account, requestAddress } = useIconReact();
+  console.log(account);
+  const handleWalletIconClick = async (_event: React.MouseEvent) => {
+    if (isChecking || !hasExtension || !hasAccount || getBrowserName() !== 'chrome') {
+      return alert('ICONEX is not installed or Chrome browser is not used');
+    }
+    requestAddress();
+  };
 
   function getBrowserName() {
     const agent = window.navigator.userAgent.toLowerCase();
@@ -92,33 +110,6 @@ export function Header(props: { title?: string; className?: string }) {
     }
   }
 
-  function handleResponseHasAccount({ hasAccount }) {
-    setHasExtension(true);
-    setHasAccount(hasAccount);
-    setIsChecking(false);
-  }
-
-  function handlerResponseRequestAddress(payload: any) {
-    setAddress(payload);
-  }
-
-  const handleWalletIconClick = async (_event: React.MouseEvent) => {
-    console.log('isChecking', isChecking);
-    console.log('!hasExtension', !hasExtension);
-    console.log('!hasAccount', !hasAccount);
-    console.log('getBrowserName()', getBrowserName());
-    if (isChecking || !hasExtension || !hasAccount || getBrowserName() !== 'chrome') {
-      return alert('ICONEX is not installed or Chrome browser is not used');
-    }
-    window.dispatchEvent(
-      new CustomEvent(ICONEX_RELAY_REQUEST, {
-        detail: {
-          type: ICONexRequestEventType.REQUEST_ADDRESS,
-        },
-      }),
-    );
-  };
-
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
@@ -132,7 +123,7 @@ export function Header(props: { title?: string; className?: string }) {
             <Typography variant="p" textAlign="right">
               Wallet
             </Typography>
-            {address && <Typography>{address}</Typography>}
+            {account && <Typography>{shortenAddress(account)}</Typography>}
           </WalletInfo>
 
           <WalletButton onClick={handleWalletIconClick}>

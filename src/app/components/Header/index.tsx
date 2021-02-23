@@ -43,7 +43,7 @@ const WalletButton = styled(IconButton)`
 export default React.memo(function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
-  const { account, requestAddress } = useIconReact();
+  const { account, requestAddress, hasExtension } = useIconReact();
 
   const handleWalletIconClick = async (_event: React.MouseEvent) => {
     requestAddress();
@@ -65,9 +65,21 @@ export default React.memo(function Header(props: { title?: string; className?: s
             {account && <Typography>{shortenAddress(account)}</Typography>}
           </WalletInfo>
 
-          <WalletButton onClick={handleWalletIconClick}>
-            <WalletIcon />
-          </WalletButton>
+          {hasExtension && (
+            <WalletButton onClick={handleWalletIconClick}>
+              <WalletIcon />
+            </WalletButton>
+          )}
+
+          {!hasExtension && (
+            <WalletButton
+              href="https://chrome.google.com/webstore/detail/iconex/flpiciilemghbmfalicajoolhkkenfel?hl=en"
+              as="a"
+              target="_blank"
+            >
+              <WalletIcon />
+            </WalletButton>
+          )}
 
           <IconButton>
             <NotificationIcon />

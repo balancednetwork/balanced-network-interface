@@ -1,7 +1,13 @@
 import React from 'react';
 
 import IconService, { IconBuilder, IconConverter } from 'icon-sdk-js';
-import { request, ICONexResponseEvent, ICONexRequestEvent } from 'packages/iconex';
+import {
+  request,
+  ICONexResponseEvent,
+  ICONexRequestEvent,
+  ICONexRequestEventType,
+  ICONexResponseEventType,
+} from 'packages/iconex';
 
 export const GOVERNANCE_ADDRESS = 'cx0000000000000000000000000000000000000001';
 
@@ -21,6 +27,7 @@ interface ICONReactContextInterface {
   request: (event: ICONexRequestEvent) => Promise<ICONexResponseEvent>;
   requestAddress: () => void;
   iconService: any;
+  hasExtension: boolean;
 }
 
 const IconReactContext = React.createContext<ICONReactContextInterface>({
@@ -28,20 +35,31 @@ const IconReactContext = React.createContext<ICONReactContextInterface>({
   request: request,
   requestAddress: () => null,
   iconService: iconService,
+  hasExtension: false,
 });
 
 export function IconReactProvider({ children }) {
   const [account, setAccount] = React.useState<string | null>();
+  const [hasExtension, setHasExtension] = React.useState<boolean>(false);
 
   const requestAddress = React.useCallback(async () => {
     const detail = await request({
-      type: 'REQUEST_ADDRESS',
+      type: ICONexRequestEventType.REQUEST_ADDRESS,
     });
 
-    setAccount(detail?.payload);
+    if (detail?.type === ICONexResponseEventType.RESPONSE_ADDRESS) {
+      setAccount(detail?.payload);
+    }
   }, []);
 
-  const context: ICONReactContextInterface = { account, requestAddress, request, iconService };
+  React.useEffect(() => {
+    window.addEventListener('load', async () => {
+      await request({ type: ICONexRequestEventType.REQUEST_HAS_ACCOUNT });
+      setHasExtension(true);
+    });
+  }, []);
+
+  const context: ICONReactContextInterface = { account, requestAddress, request, iconService, hasExtension };
 
   return <IconReactContext.Provider value={context}>{children}</IconReactContext.Provider>;
 }

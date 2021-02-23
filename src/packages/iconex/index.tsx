@@ -1,19 +1,21 @@
-const ICONEX_RELAY_RESPONSE = 'ICONEX_RELAY_RESPONSE';
-const ICONEX_RELAY_REQUEST = 'ICONEX_RELAY_REQUEST';
+export const ICONEX_RELAY_RESPONSE = 'ICONEX_RELAY_RESPONSE';
+export const ICONEX_RELAY_REQUEST = 'ICONEX_RELAY_REQUEST';
 
-export type ICONexRequestEventType =
-  | 'REQUEST_HAS_ACCOUNT'
-  | 'REQUEST_HAS_ADDRESS '
-  | 'REQUEST_ADDRESS'
-  | 'REQUEST_JSON-RPC'
-  | 'REQUEST_SIGNING';
+export enum ICONexRequestEventType {
+  REQUEST_HAS_ACCOUNT = 'REQUEST_HAS_ACCOUNT',
+  REQUEST_HAS_ADDRESS = 'REQUEST_HAS_ADDRESS',
+  REQUEST_ADDRESS = 'REQUEST_ADDRESS',
+  REQUEST_JSON = 'REQUEST_JSON',
+  REQUEST_SIGNING = 'REQUEST_SIGNING',
+}
 
-export type ICONexResponseEventType =
-  | 'RESPONSE_HAS_ACCOUNT'
-  | 'RESPONSE_HAS_ADDRESS'
-  | 'RESPONSE_ADDRESS'
-  | 'RESPONSE_JSON-RPC'
-  | 'RESPONSE_SIGNING';
+export enum ICONexResponseEventType {
+  RESPONSE_HAS_ACCOUNT = 'RESPONSE_HAS_ACCOUNT',
+  RESPONSE_HAS_ADDRESS = 'RESPONSE_HAS_ADDRESS',
+  RESPONSE_ADDRESS = 'RESPONSE_ADDRESS',
+  RESPONSE_JSON = 'RESPONSE_JSON',
+  RESPONSE_SIGNING = 'RESPONSE_SIGNING',
+}
 
 export type ICONexEventType = ICONexRequestEventType | ICONexResponseEventType;
 
@@ -37,10 +39,9 @@ export const request = (event: ICONexRequestEvent): Promise<ICONexResponseEvent>
   );
 
   return new Promise((resolve, reject) => {
-    const handler = event => {
-      console.log(event.detail);
+    const handler = evt => {
       window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
-      resolve(event.detail);
+      resolve(evt.detail);
     };
 
     window.addEventListener(ICONEX_RELAY_RESPONSE, handler);

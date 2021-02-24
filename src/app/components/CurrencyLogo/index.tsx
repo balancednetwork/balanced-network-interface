@@ -11,7 +11,7 @@ import { Currency } from 'types';
 const LOGOS = {
   ICX: ICXLogo,
   BALN: BALNLogo,
-  ICD: ICDLogo,
+  bnUSD: ICDLogo,
   sICX: SICXLogo,
 };
 

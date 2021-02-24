@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Popper } from 'app/components/Popover';
+import { DropdownPopper } from 'app/components/Popover';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-down.svg';
 
 const StyledArrowDownIcon = styled(ArrowDownIcon)`
@@ -80,9 +80,9 @@ export const DropdownText = ({ text, children, ...rest }: { text: string; childr
         <UnderlineText>{text}</UnderlineText>
         <StyledArrowDownIcon ref={arrowRef} />
       </Wrapper>
-      <Popper show={Boolean(anchor)} anchorEl={anchor} placement="bottom">
+      <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
         <div ref={contentRef}>{children}</div>
-      </Popper>
+      </DropdownPopper>
     </>
   );
 };

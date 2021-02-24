@@ -19,7 +19,7 @@ const CurrencySelect = styled.button`
   background-color: #0b284c;
   display: flex;
   align-items: center;
-  width: 120px;
+  width: 128px;
   height: 43px;
   padding: 4px 15px;
   color: #ffffff;

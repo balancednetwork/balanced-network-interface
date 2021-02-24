@@ -148,3 +148,46 @@ export function Popper({ show, children, placement = 'auto', anchorEl }: PopperP
     </Portal>
   );
 }
+
+export function DropdownPopper({ show, children, placement = 'auto', anchorEl }: PopperProps) {
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+
+  const customModifier = React.useMemo(
+    () => [
+      { name: 'offset', options: { offset: [20, 12] } },
+      {
+        name: 'arrow',
+        options: {
+          element: arrowElement,
+        },
+      },
+    ],
+    [arrowElement],
+  );
+
+  const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
+    placement,
+    strategy: 'fixed',
+    modifiers: customModifier,
+  });
+
+  const updateCallback = useCallback(() => {
+    update && update();
+  }, [update]);
+  useTimeout(updateCallback, show ? 100 : null);
+
+  return (
+    <Portal>
+      <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+        <ContentWrapper>{children}</ContentWrapper>
+        <Arrow
+          className={`arrow-${attributes.popper?.['data-popper-placement'] ?? ''}`}
+          ref={setArrowElement as any}
+          style={styles.arrow}
+          {...attributes.arrow}
+        />
+      </PopoverContainer>
+    </Portal>
+  );
+}

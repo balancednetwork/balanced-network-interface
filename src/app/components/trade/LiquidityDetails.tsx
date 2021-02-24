@@ -75,11 +75,11 @@ const LiquidityDetails = () => {
 
           {/* <!-- ICX / ICD --> */}
           <tr>
-            <td>ICX / ICD</td>
+            <td>ICX / bnUSD</td>
             <td>
               15,000 ICX
               <br />
-              15,000 ICD
+              15,000 bnUSD
             </td>
             <td>3.1%</td>
             <td>~ 120 BALN</td>
@@ -88,7 +88,7 @@ const LiquidityDetails = () => {
                 <Flex padding={5} bg="bg3" maxWidth={320} flexDirection="column">
                   <Typography variant="h3" mb={3}>
                     Withdraw:&nbsp;
-                    <Typography as="span">ICX / ICD</Typography>
+                    <Typography as="span">ICX / bnUSD</Typography>
                   </Typography>
                   <Box mb={3}>
                     <CurrencyInputPanel
@@ -103,13 +103,13 @@ const LiquidityDetails = () => {
                     <CurrencyInputPanel
                       value={'0'}
                       showMaxButton={false}
-                      currency={CURRENCYLIST['icd']}
+                      currency={CURRENCYLIST['bnusd']}
                       onUserInput={() => null}
                       id="withdraw-liquidity-input"
                     />
                   </Box>
                   <Typography mb={5} textAlign="right">
-                    Wallet: 2,000 ICX / 5,000 ICD
+                    Wallet: 2,000 ICX / 5,000 bnUSD
                   </Typography>
                   <Nouislider
                     id="slider-supply"
@@ -129,13 +129,13 @@ const LiquidityDetails = () => {
             </td>
           </tr>
 
-          {/* <!-- BALN / ICD --> */}
+          {/* <!-- BALN / bnUSD --> */}
           <tr>
-            <td>BALN / ICD</td>
+            <td>BALN / bnUSD</td>
             <td>
               15,000 BALN
               <br />
-              15,000 ICD
+              15,000 bnUSD
             </td>
             <td>3.1%</td>
             <td>~ 120 BALN</td>
@@ -144,7 +144,7 @@ const LiquidityDetails = () => {
                 <Flex padding={5} bg="bg3" maxWidth={320} flexDirection="column">
                   <Typography variant="h3" mb={3}>
                     Withdraw:&nbsp;
-                    <Typography as="span">BALN / ICD</Typography>
+                    <Typography as="span">BALN / bnUSD</Typography>
                   </Typography>
                   <Box mb={3}>
                     <CurrencyInputPanel
@@ -159,7 +159,7 @@ const LiquidityDetails = () => {
                     <CurrencyInputPanel
                       value={'0'}
                       showMaxButton={false}
-                      currency={CURRENCYLIST['icd']}
+                      currency={CURRENCYLIST['bnusd']}
                       onUserInput={() => null}
                       id="withdraw-liquidity-input"
                     />

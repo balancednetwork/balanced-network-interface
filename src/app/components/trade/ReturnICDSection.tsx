@@ -29,15 +29,15 @@ const ReturnICDSection = () => {
   };
 
   return (
-    <DropdownText text="Return ICD from an exchange">
+    <DropdownText text="Return bnUSD from an exchange">
       <Box padding={5} bg="bg3">
         <Grid>
-          <Typography variant="h2">Return ICD</Typography>
+          <Typography variant="h2">Return bnUSD</Typography>
 
-          <Typography>Sell your ICD for $1 of sICX (staked ICX).</Typography>
+          <Typography>Sell your bnUSD for $1 of sICX (staked ICX).</Typography>
 
           <CurrencyInputPanel
-            currency={CURRENCYLIST['icd']}
+            currency={CURRENCYLIST['bnusd']}
             value={value}
             onUserInput={handleInput}
             showMaxButton={false}
@@ -45,8 +45,8 @@ const ReturnICDSection = () => {
           />
 
           <RowBetween>
-            <Typography>Minimum: 50 ICD</Typography>
-            <Typography>Wallet: 1672 ICD</Typography>
+            <Typography>Minimum: 50 bnUSD</Typography>
+            <Typography>Wallet: 1672 bnUSD</Typography>
           </RowBetween>
 
           <Divider />
@@ -58,7 +58,7 @@ const ReturnICDSection = () => {
         </Grid>
 
         <Flex justifyContent="center" mt={5}>
-          <Button>Return ICD</Button>
+          <Button>Return bnUSD</Button>
         </Flex>
       </Box>
     </DropdownText>

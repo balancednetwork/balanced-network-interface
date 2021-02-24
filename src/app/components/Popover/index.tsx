@@ -116,17 +116,13 @@ export interface PopperProps {
   placement?: Placement;
 }
 
-export function Popper({ show, children, placement = 'auto', anchorEl }: PopperProps) {
+export function PopperWithoutArrow({ show, children, placement = 'auto', anchorEl }: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
     placement,
     strategy: 'fixed',
-    modifiers: [
-      { name: 'offset', options: { offset: [0, 12] } },
-      { name: 'arrow', options: { element: arrowElement } },
-    ],
+    modifiers: [{ name: 'offset', options: { offset: [0, 2] } }],
   });
 
   const updateCallback = useCallback(() => {
@@ -138,12 +134,6 @@ export function Popper({ show, children, placement = 'auto', anchorEl }: PopperP
     <Portal>
       <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
         <ContentWrapper>{children}</ContentWrapper>
-        <Arrow
-          className={`arrow-${attributes.popper?.['data-popper-placement'] ?? ''}`}
-          ref={setArrowElement as any}
-          style={styles.arrow}
-          {...attributes.arrow}
-        />
       </PopoverContainer>
     </Portal>
   );

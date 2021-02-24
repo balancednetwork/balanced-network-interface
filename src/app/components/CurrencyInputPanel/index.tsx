@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { Popper } from 'app/components/Popover';
+import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { CURRENCYLIST } from 'demo';
 import { Currency } from 'types';
@@ -178,7 +178,7 @@ export default function CurrencyInputPanel({
       </InputContainer>
 
       {onCurrencySelect && (
-        <Popper show={open} anchorEl={ref.current} placement="bottom">
+        <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom">
           <CurrencySelection style={{ width: width }} ref={menuRef}>
             <table className="list assets">
               <thead>
@@ -200,7 +200,7 @@ export default function CurrencyInputPanel({
               </tbody>
             </table>
           </CurrencySelection>
-        </Popper>
+        </PopperWithoutArrow>
       )}
     </>
   );

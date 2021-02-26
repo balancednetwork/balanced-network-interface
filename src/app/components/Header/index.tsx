@@ -9,6 +9,7 @@ import Logo from 'app/components/Logo';
 import { Typography } from 'app/theme';
 import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
+import { useAddPopup } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
@@ -49,6 +50,21 @@ export default React.memo(function Header(props: { title?: string; className?: s
     requestAddress();
   };
 
+  const addPopup = useAddPopup();
+
+  const handleNotification = () => {
+    addPopup(
+      {
+        txn: {
+          hash: '0x123456789',
+          success: true,
+          summary: 'Swapped 100 ICX for 771.93 bnUSD.',
+        },
+      },
+      new Date().valueOf().toString(),
+    );
+  };
+
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
@@ -81,7 +97,7 @@ export default React.memo(function Header(props: { title?: string; className?: s
             </WalletButton>
           )}
 
-          <IconButton>
+          <IconButton onClick={handleNotification}>
             <NotificationIcon />
           </IconButton>
         </Flex>

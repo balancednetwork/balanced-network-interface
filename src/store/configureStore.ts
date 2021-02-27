@@ -25,9 +25,9 @@ export function configureAppStore() {
   ];
 
   const store = configureStore({
-    reducer: {
+    reducer: createReducer({
       application,
-    },
+    }),
     middleware: [...getDefaultMiddleware(), ...middlewares],
     devTools: process.env.NODE_ENV !== 'production',
     enhancers,

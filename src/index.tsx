@@ -13,12 +13,11 @@ import 'sanitize.css/sanitize.css';
 
 // Import root app
 import { App } from 'app';
-import { configureAppStore } from 'store/configureStore';
+import store from 'store';
 
 // Initialize languages
 import './locales/i18n';
 
-const store = configureAppStore();
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
 
 ReactDOM.render(

@@ -49,6 +49,8 @@ export default React.memo(function Header(props: { title?: string; className?: s
     requestAddress();
   };
 
+  const handleNotification = () => {};
+
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
@@ -81,7 +83,7 @@ export default React.memo(function Header(props: { title?: string; className?: s
             </WalletButton>
           )}
 
-          <IconButton>
+          <IconButton onClick={handleNotification}>
             <NotificationIcon />
           </IconButton>
         </Flex>

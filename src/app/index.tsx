@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
 
+import Popups from 'app/components/Popups';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 
 import { NotFoundPage } from './components/NotFoundPage/Loadable';
@@ -21,6 +22,7 @@ export function App() {
       <FixedGlobalStyle />
       <ThemeProvider>
         <ThemedGlobalStyle />
+        <Popups />
 
         <IconReactProvider>
           <BrowserRouter>

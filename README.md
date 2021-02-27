@@ -1,6 +1,6 @@
 # Balanced Network Interface
 
-An open source interface for Balanced Network -- Balanced Network is a decentralized synthetic asset generation and trading platform on the ICON blockchain.
+An open source interface for Balanced: a decentralized synthetic asset generator and trading platform on the ICON Network.
 
 - Website: [balanced.network](https://balanced.network/)
 - Prototype: [balanced.network/prototype](https://balanced.network/prototype)

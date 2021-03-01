@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -7,3 +9,25 @@ const Divider = styled(Box)`
 `;
 
 export default Divider;
+
+const StyledHr = styled.div`
+  width: 1px;
+  height: 100%;
+  background-color: ${({ theme }) => theme.colors.divider};
+`;
+
+const StyledWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const VerticalDivider = ({ text, ...rest }: { text: string }) => {
+  return (
+    <StyledWrapper>
+      <StyledHr />
+      <span>{text}</span>
+      <StyledHr />
+    </StyledWrapper>
+  );
+};

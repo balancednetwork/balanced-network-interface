@@ -1,15 +1,17 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit';
 
-import { addPopup, PopupContent, removePopup } from './actions';
+import { addPopup, PopupContent, removePopup, ApplicationModal, setOpenModal } from './actions';
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>;
 
 export interface ApplicationState {
   readonly popupList: PopupList;
+  readonly openModal: ApplicationModal | null;
 }
 
 const initialState: ApplicationState = {
   popupList: [],
+  openModal: null,
 };
 
 export default createReducer(initialState, builder =>
@@ -30,5 +32,8 @@ export default createReducer(initialState, builder =>
           p.show = false;
         }
       });
+    })
+    .addCase(setOpenModal, (state, action) => {
+      state.openModal = action.payload;
     }),
 );

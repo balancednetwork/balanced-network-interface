@@ -9,9 +9,11 @@ import { IconButton, Button } from 'app/components/Button';
 import { Link } from 'app/components/Link';
 import Logo from 'app/components/Logo';
 import { DropdownPopper } from 'app/components/Popover';
+import WalletModal from 'app/components/WalletModal';
 import { Typography } from 'app/theme';
 import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
+import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
@@ -59,7 +61,7 @@ const WalletMenuButton = styled(Button)`
 export default React.memo(function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
-  const { account, requestAddress } = useIconReact();
+  const { account, requestAddress, disconnect } = useIconReact();
 
   const handleWalletIconClick = async (_event: React.MouseEvent) => {
     if (!account) requestAddress();
@@ -77,6 +79,17 @@ export default React.memo(function Header(props: { title?: string; className?: s
   };
   const closeWalletMenu = () => setAnchor(null);
 
+  const toggleWalletModal = useWalletModalToggle();
+
+  const handleChangeWallet = () => {
+    closeWalletMenu();
+    toggleWalletModal();
+  };
+
+  const handleDisconnectWallet = () => {
+    disconnect();
+  };
+
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
@@ -85,36 +98,46 @@ export default React.memo(function Header(props: { title?: string; className?: s
           <Typography variant="h1">{title}</Typography>
         </Flex>
 
-        <Flex alignItems="center">
-          <WalletInfo>
-            <Typography variant="p" textAlign="right">
-              Wallet
-            </Typography>
-            {account && <Typography>{shortenAddress(account)}</Typography>}
-          </WalletInfo>
+        {!account && (
+          <Flex alignItems="center">
+            <Button onClick={toggleWalletModal}>Sign In</Button>
+          </Flex>
+        )}
 
-          <WalletButtonWrapper>
-            <ClickAwayListener onClickAway={closeWalletMenu}>
-              <div>
-                <IconButton ref={walletButtonRef} onClick={handleWalletIconClick}>
-                  <WalletIcon />
-                </IconButton>
+        {account && (
+          <Flex alignItems="center">
+            <WalletInfo>
+              <Typography variant="p" textAlign="right">
+                Wallet
+              </Typography>
+              {account && <Typography>{shortenAddress(account)}</Typography>}
+            </WalletInfo>
 
-                <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
-                  <WalletMenu>
-                    <Link href="#">Change wallet</Link>
-                    <WalletMenuButton>Sign Out</WalletMenuButton>
-                  </WalletMenu>
-                </DropdownPopper>
-              </div>
-            </ClickAwayListener>
-          </WalletButtonWrapper>
+            <WalletButtonWrapper>
+              <ClickAwayListener onClickAway={closeWalletMenu}>
+                <div>
+                  <IconButton ref={walletButtonRef} onClick={handleWalletIconClick}>
+                    <WalletIcon />
+                  </IconButton>
 
-          <IconButton onClick={handleNotification}>
-            <NotificationIcon />
-          </IconButton>
-        </Flex>
+                  <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
+                    <WalletMenu>
+                      <Link onClick={handleChangeWallet}>Change wallet</Link>
+                      <WalletMenuButton onClick={handleDisconnectWallet}>Sign Out</WalletMenuButton>
+                    </WalletMenu>
+                  </DropdownPopper>
+                </div>
+              </ClickAwayListener>
+            </WalletButtonWrapper>
+
+            <IconButton onClick={handleNotification}>
+              <NotificationIcon />
+            </IconButton>
+          </Flex>
+        )}
       </Flex>
+
+      <WalletModal />
     </header>
   );
 });

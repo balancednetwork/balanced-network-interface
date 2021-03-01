@@ -59,7 +59,7 @@ enum Field {
 }
 
 export function HomePage() {
-  const [isCollateralEditing, setCollateralEditing] = React.useState<boolean>(true);
+  const [isCollateralEditing, setCollateralEditing] = React.useState<boolean>(false);
 
   const handleCollateralAdjust = () => {
     setCollateralEditing(true);
@@ -69,7 +69,7 @@ export function HomePage() {
     setCollateralEditing(false);
   };
 
-  const [isLoanEditing, setLoanEditing] = React.useState<boolean>(true);
+  const [isLoanEditing, setLoanEditing] = React.useState<boolean>(false);
 
   const handleLoanAdjust = () => {
     setLoanEditing(true);

@@ -28,6 +28,7 @@ interface ICONReactContextInterface {
   requestAddress: () => void;
   iconService: any;
   hasExtension: boolean;
+  disconnect: () => void;
 }
 
 const IconReactContext = React.createContext<ICONReactContextInterface>({
@@ -36,6 +37,7 @@ const IconReactContext = React.createContext<ICONReactContextInterface>({
   requestAddress: () => null,
   iconService: iconService,
   hasExtension: false,
+  disconnect: () => null,
 });
 
 export function IconReactProvider({ children }) {
@@ -52,6 +54,10 @@ export function IconReactProvider({ children }) {
     }
   }, []);
 
+  const disconnect = React.useCallback(() => {
+    setAccount(null);
+  }, []);
+
   React.useEffect(() => {
     window.addEventListener('load', async () => {
       await request({ type: ICONexRequestEventType.REQUEST_HAS_ACCOUNT });
@@ -59,7 +65,14 @@ export function IconReactProvider({ children }) {
     });
   }, []);
 
-  const context: ICONReactContextInterface = { account, requestAddress, request, iconService, hasExtension };
+  const context: ICONReactContextInterface = {
+    account,
+    requestAddress,
+    request,
+    iconService,
+    hasExtension,
+    disconnect,
+  };
 
   return <IconReactContext.Provider value={context}>{children}</IconReactContext.Provider>;
 }

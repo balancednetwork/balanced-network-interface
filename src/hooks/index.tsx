@@ -14,6 +14,8 @@ export function useWalletICXBalance(account?: string | null): BigNumber {
       if (isEoaAddress(account)) {
         const balance = await iconService.getBalance(account).execute();
         setBalance(convertLoopToIcx(balance));
+      } else {
+        setBalance(new BigNumber(0));
       }
     };
     getBalance();
@@ -31,6 +33,8 @@ export function useStakedICXBalance(account?: string | null): BigNumber {
       if (isEoaAddress(account)) {
         const balance = await iconService.getBalance(account).execute();
         setBalance(convertLoopToIcx(balance));
+      } else {
+        setBalance(new BigNumber(0));
       }
     };
     getBalance();

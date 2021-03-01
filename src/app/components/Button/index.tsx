@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const Button = styled(RebassButton)`
   display: inline-block;
   border-radius: 10px;
-  padding: 5px 35px;
+  padding: 5px 25px;
   color: #ffffff;
   text-decoration: none;
   background-color: ${({ theme }) => theme.colors.primary};

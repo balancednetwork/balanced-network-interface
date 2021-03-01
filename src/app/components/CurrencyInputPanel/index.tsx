@@ -1,5 +1,6 @@
 import React from 'react';
 
+import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
@@ -127,26 +128,6 @@ export default function CurrencyInputPanel({
     setOpen(!open);
   };
 
-  // refs to detect clicks outside modal
-  const wrapperRef = React.useRef<HTMLButtonElement>(null);
-  const menuRef = React.useRef<HTMLDivElement>(null);
-
-  const handleClick = e => {
-    if (
-      !(menuRef.current && menuRef.current.contains(e.target)) &&
-      !(wrapperRef.current && wrapperRef.current.contains(e.target))
-    ) {
-      setOpen(false);
-    }
-  };
-
-  React.useEffect(() => {
-    document.addEventListener('click', handleClick);
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  });
-
   // update the width on a window resize
   const ref = React.useRef<HTMLDivElement>(null);
   const [width, setWidth] = React.useState(ref?.current?.clientWidth);
@@ -166,42 +147,42 @@ export default function CurrencyInputPanel({
   };
 
   return (
-    <>
-      <InputContainer ref={ref}>
-        <CurrencySelect onClick={toggleOpen} ref={wrapperRef}>
+    <InputContainer ref={ref}>
+      <ClickAwayListener onClickAway={() => setOpen(false)}>
+        <CurrencySelect onClick={toggleOpen}>
           {currency ? <CurrencyLogo currency={currency} style={{ marginRight: 8 }} /> : null}
           {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
           {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
+
+          {onCurrencySelect && (
+            <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom">
+              <CurrencySelection style={{ width: width }}>
+                <table className="list assets">
+                  <thead>
+                    <tr>
+                      <th>Asset</th>
+                      <th>Wallet</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.values(CURRENCYLIST).map(item => (
+                      <tr onClick={handleCurrencySelect(item)} key={item.name}>
+                        <td>
+                          <CurrencyLogo currency={item} style={{ marginRight: 8 }} />
+                          {item.symbol}
+                        </td>
+                        <td>6,808</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </CurrencySelection>
+            </PopperWithoutArrow>
+          )}
         </CurrencySelect>
+      </ClickAwayListener>
 
-        <NumberInput value={value} onChange={event => onUserInput(event.target.value)} />
-      </InputContainer>
-
-      {onCurrencySelect && (
-        <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom">
-          <CurrencySelection style={{ width: width }} ref={menuRef}>
-            <table className="list assets">
-              <thead>
-                <tr>
-                  <th>Asset</th>
-                  <th>Wallet</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.values(CURRENCYLIST).map(item => (
-                  <tr onClick={handleCurrencySelect(item)} key={item.name}>
-                    <td>
-                      <CurrencyLogo currency={item} style={{ marginRight: 8 }} />
-                      {item.symbol}
-                    </td>
-                    <td>6,808</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </CurrencySelection>
-        </PopperWithoutArrow>
-      )}
-    </>
+      <NumberInput value={value} onChange={event => onUserInput(event.target.value)} />
+    </InputContainer>
   );
 }

@@ -1,11 +1,14 @@
 import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
+import ClickAwayListener from 'react-click-away-listener';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { IconButton } from 'app/components/Button';
+import { IconButton, Button } from 'app/components/Button';
+import { Link } from 'app/components/Link';
 import Logo from 'app/components/Logo';
+import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
@@ -32,7 +35,7 @@ const WalletInfo = styled(Box)`
   `}
 `;
 
-const WalletButton = styled(IconButton)`
+const WalletButtonWrapper = styled.div`
   margin-right: 25px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -40,16 +43,39 @@ const WalletButton = styled(IconButton)`
   `}
 `;
 
+const WalletMenu = styled.div`
+  max-width: 160px;
+  font-size: 14px;
+  padding: 25px;
+  display: grid;
+  grid-template-rows: auto;
+  grid-gap: 20px;
+`;
+
+const WalletMenuButton = styled(Button)`
+  padding: 7px 25px;
+`;
+
 export default React.memo(function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
-  const { account, requestAddress, hasExtension } = useIconReact();
+  const { account, requestAddress } = useIconReact();
 
   const handleWalletIconClick = async (_event: React.MouseEvent) => {
-    requestAddress();
+    if (!account) requestAddress();
+    else {
+      toggleWalletMenu();
+    }
   };
 
   const handleNotification = () => {};
+
+  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+  const walletButtonRef = React.useRef<HTMLElement>(null);
+  const toggleWalletMenu = () => {
+    setAnchor(anchor ? null : walletButtonRef.current);
+  };
+  const closeWalletMenu = () => setAnchor(null);
 
   return (
     <header className={className}>
@@ -67,21 +93,22 @@ export default React.memo(function Header(props: { title?: string; className?: s
             {account && <Typography>{shortenAddress(account)}</Typography>}
           </WalletInfo>
 
-          {hasExtension && (
-            <WalletButton onClick={handleWalletIconClick}>
-              <WalletIcon />
-            </WalletButton>
-          )}
+          <WalletButtonWrapper>
+            <ClickAwayListener onClickAway={closeWalletMenu}>
+              <div>
+                <IconButton ref={walletButtonRef} onClick={handleWalletIconClick}>
+                  <WalletIcon />
+                </IconButton>
 
-          {!hasExtension && (
-            <WalletButton
-              href="https://chrome.google.com/webstore/detail/iconex/flpiciilemghbmfalicajoolhkkenfel?hl=en"
-              as="a"
-              target="_blank"
-            >
-              <WalletIcon />
-            </WalletButton>
-          )}
+                <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
+                  <WalletMenu>
+                    <Link href="#">Change wallet</Link>
+                    <WalletMenuButton>Sign Out</WalletMenuButton>
+                  </WalletMenu>
+                </DropdownPopper>
+              </div>
+            </ClickAwayListener>
+          </WalletButtonWrapper>
 
           <IconButton onClick={handleNotification}>
             <NotificationIcon />

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
 import { DropdownPopper } from 'app/components/Popover';
@@ -54,36 +55,22 @@ export const DropdownText = ({ text, children, ...rest }: { text: string; childr
     setAnchor(anchor ? null : arrowRef.current);
   };
 
-  // refs to detect clicks outside modal
-  const wrapperRef = React.useRef<HTMLElement>(null);
-  const contentRef = React.useRef<HTMLDivElement>(null);
-
-  const handleClick = e => {
-    if (
-      !(contentRef.current && contentRef.current.contains(e.target)) &&
-      !(wrapperRef.current && wrapperRef.current.contains(e.target))
-    ) {
-      setAnchor(null);
-    }
+  const closePopper = () => {
+    setAnchor(null);
   };
 
-  React.useEffect(() => {
-    document.addEventListener('click', handleClick);
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  });
-
   return (
-    <>
-      <Wrapper onClick={handleToggleClick} ref={wrapperRef} {...rest}>
-        <UnderlineText>{text}</UnderlineText>
-        <StyledArrowDownIcon ref={arrowRef} />
-      </Wrapper>
-      <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
-        <div ref={contentRef}>{children}</div>
-      </DropdownPopper>
-    </>
+    <ClickAwayListener onClickAway={closePopper}>
+      <div>
+        <Wrapper onClick={handleToggleClick} {...rest}>
+          <UnderlineText>{text}</UnderlineText>
+          <StyledArrowDownIcon ref={arrowRef} />
+        </Wrapper>
+        <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
+          {children}
+        </DropdownPopper>
+      </div>
+    </ClickAwayListener>
   );
 };
 

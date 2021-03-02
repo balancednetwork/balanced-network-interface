@@ -96,5 +96,14 @@ declare module 'styled-components' {
 
     // breakpoints
     breakpoints: string[];
+
+    // z-index
+    zIndices: {
+      appBar: number;
+      drawer: number;
+      modal: number;
+      snackbar: number;
+      tooltip: number;
+    };
   }
 }

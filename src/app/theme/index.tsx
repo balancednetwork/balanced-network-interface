@@ -77,6 +77,15 @@ export function theme(): DefaultTheme {
 
     // breakpoints
     breakpoints: Object.values(sizes).map(size => `${size}px`),
+
+    // z-index
+    zIndices: {
+      appBar: 1100,
+      drawer: 1200,
+      modal: 1300,
+      snackbar: 1400,
+      tooltip: 1500,
+    },
   };
 }
 

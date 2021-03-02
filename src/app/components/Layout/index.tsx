@@ -34,12 +34,12 @@ const Container = styled(Box)`
 `;
 
 const DesktopAppBarWrapper = styled(Box)`
-  z-index: 3;
+  z-index: ${({ theme }) => theme.zIndices.appBar};
   margin-right: 75px;
 `;
 
 const MobileAppBarWrapper = styled(Box)`
-  z-index: 3;
+  z-index: ${({ theme }) => theme.zIndices.appBar};
   display: block;
   margin-left: auto;
   margin-right: auto;

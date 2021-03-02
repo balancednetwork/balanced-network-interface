@@ -90,8 +90,6 @@ interface CurrencyInputPanelProps {
 const CurrencySelection = styled.div`
   display: flex;
   flex-direction: column;
-  z-index: 9999;
-  /* width: 100%; */
   top: 50px;
   max-height: 540px;
   overflow: auto;

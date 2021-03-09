@@ -6,21 +6,23 @@ import styled from 'styled-components';
 import { DropdownPopper } from 'app/components/Popover';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-down.svg';
 
-const StyledArrowDownIcon = styled(ArrowDownIcon)`
+export const StyledArrowDownIcon = styled(ArrowDownIcon)`
   margin-left: 5px;
   margin-top: -3px;
   width: 10px;
 `;
 
-const Wrapper = styled.span`
+export const Wrapper = styled.span`
   &:hover {
     cursor: pointer;
   }
+  color: #2fccdc;
+  font-size: 14px;
 `;
 
 export const UnderlineText = styled.span`
-  color: #2fccdc;
-  font-size: 14px;
+  color: inherit;
+  font-size: inherit;
   text-decoration: none;
   background: transparent;
   display: inline-block;

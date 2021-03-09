@@ -15,6 +15,7 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import SlippageSetting from 'app/components/SlippageSetting';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import LiquidityDetails from 'app/components/trade/LiquidityDetails';
+import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import ReturnICDSection from 'app/components/trade/ReturnICDSection';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
@@ -311,7 +312,7 @@ export function TradePage() {
               <BrightPanel bg="bg3" p={7} flexDirection="column" alignItems="stretch" flex={1}>
                 <Flex alignItems="flex-end">
                   <Typography variant="h2">Supply:</Typography>
-                  <Typography fontSize={18}>ICX / bnUSD</Typography>
+                  <LiquiditySelect />
                 </Flex>
 
                 <Flex mt={3}>

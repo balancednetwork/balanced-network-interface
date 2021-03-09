@@ -53,8 +53,7 @@ const DataText = styled(Typography)`
 `;
 
 const ListItem = styled(DashGrid)`
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px 0;
   cursor: pointer;
   color: #ffffff;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);

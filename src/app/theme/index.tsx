@@ -91,26 +91,26 @@ export function theme(): DefaultTheme {
 
 type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'body';
 
-export const Typography = (props: TextProps & { variant?: TypographyVariant }) => {
+export const Typography = React.forwardRef((props: TextProps & { variant?: TypographyVariant }, ref) => {
   const { variant, ...rest } = props;
 
   switch (variant) {
     case 'h1':
-      return <Text as="h1" color="text" fontSize={35} fontWeight="bold" {...rest} />;
+      return <Text ref={ref} as="h1" color="text" fontSize={35} fontWeight="bold" {...rest} />;
     case 'h2':
-      return <Text as="h2" color="text" fontSize={25} fontWeight="bold" {...rest} />;
+      return <Text ref={ref} as="h2" color="text" fontSize={25} fontWeight="bold" {...rest} />;
     case 'h3':
-      return <Text as="h3" color="text" fontSize={20} fontWeight="bold" {...rest} />;
+      return <Text ref={ref} as="h3" color="text" fontSize={20} fontWeight="bold" {...rest} />;
     case 'p':
-      return <Text as="p" color="text" fontSize={16} {...rest} />;
+      return <Text ref={ref} as="p" color="text" fontSize={16} {...rest} />;
     case 'label':
-      return <Text as="label" fontSize={14} {...rest} />;
+      return <Text ref={ref} as="label" fontSize={14} {...rest} />;
     case 'body':
-      return <Text as="p" fontSize={14} {...rest} />;
+      return <Text ref={ref} as="p" fontSize={14} {...rest} />;
     default:
-      return <Text as="p" fontSize={14} {...rest} />;
+      return <Text ref={ref} as="p" fontSize={14} {...rest} />;
   }
-};
+});
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const themeObject = theme();

@@ -8,7 +8,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import Divider from 'app/components/Divider';
 import DropdownText from 'app/components/DropdownText';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'demo';
+import { CURRENCYLIST } from 'constants/currency';
 
 const Grid = styled.div`
   display: grid;

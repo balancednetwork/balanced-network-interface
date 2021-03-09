@@ -7,6 +7,7 @@ import { createInjectorsEnhancer } from 'redux-injectors';
 import createSagaMiddleware from 'redux-saga';
 
 import application from './application/reducer';
+import pool from './pool/reducer';
 import { createReducer } from './reducers';
 
 export function configureAppStore() {
@@ -27,6 +28,7 @@ export function configureAppStore() {
   const store = configureStore({
     reducer: createReducer({
       application,
+      pool,
     }),
     middleware: [...getDefaultMiddleware(), ...middlewares],
     devTools: process.env.NODE_ENV !== 'production',

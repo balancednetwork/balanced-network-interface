@@ -7,7 +7,7 @@ import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'demo';
+import { CURRENCYLIST } from 'constants/currency';
 
 const LoanPanel = () => {
   const [isLoanEditing, setLoanEditing] = React.useState<boolean>(false);

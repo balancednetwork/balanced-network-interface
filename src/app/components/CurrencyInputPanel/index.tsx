@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
-import { CURRENCYLIST } from 'demo';
+import { CURRENCYLIST } from 'constants/currency';
 import { Currency } from 'types';
 
 const InputContainer = styled.div`

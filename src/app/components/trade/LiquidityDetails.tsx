@@ -8,7 +8,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import DropdownText from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'demo';
+import { CURRENCYLIST } from 'constants/currency';
 
 const LiquidityDetails = () => {
   return (

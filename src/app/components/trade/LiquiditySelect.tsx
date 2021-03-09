@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import { Wrapper, UnderlineText, StyledArrowDownIcon } from 'app/components/DropdownText';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { Typography } from 'app/theme';
+import { SupportedPairs, Pair } from 'constants/currency';
+import { useSetPair, usePoolPair } from 'store/pool/hooks';
 
 const DashGrid = styled.div`
   display: grid;
@@ -65,11 +67,20 @@ export default function LiquiditySelect() {
 
   const ref = React.useRef<HTMLElement>(null);
 
+  const selectedPair = usePoolPair();
+  const setPair = useSetPair();
+
+  const handleSelectPool = (pl: Pair) => {
+    toggleOpen();
+    setPair(pl);
+  };
+
+  console.log(selectedPair);
   return (
     <ClickAwayListener onClickAway={() => setOpen(false)}>
       <div>
         <StyledWrapper ref={ref} onClick={toggleOpen}>
-          <UnderlineText>ICX / bnUSD</UnderlineText>
+          <UnderlineText>{selectedPair.pair}</UnderlineText>
           <StyledArrowDownIcon />
         </StyledWrapper>
 
@@ -79,30 +90,16 @@ export default function LiquiditySelect() {
               <HeaderText>POOL</HeaderText>
               <HeaderText textAlign="right">APY</HeaderText>
             </DashGrid>
-            <ListItem>
-              <DataText variant="p" fontWeight="bold">
-                BALN / bnUSD
-              </DataText>
-              <DataText variant="p" textAlign="right">
-                5.6%
-              </DataText>
-            </ListItem>
-            <ListItem>
-              <DataText variant="p" fontWeight="bold">
-                ICX / bnUSD
-              </DataText>
-              <DataText variant="p" textAlign="right">
-                3.6%
-              </DataText>
-            </ListItem>
-            <ListItem>
-              <DataText variant="p" fontWeight="bold">
-                sICX / ICX
-              </DataText>
-              <DataText variant="p" textAlign="right">
-                9.2%
-              </DataText>
-            </ListItem>
+            {SupportedPairs.map(pool => (
+              <ListItem key={pool.pair} onClick={() => handleSelectPool(pool)}>
+                <DataText variant="p" fontWeight="bold">
+                  {pool.pair}
+                </DataText>
+                <DataText variant="p" textAlign="right">
+                  5.6%
+                </DataText>
+              </ListItem>
+            ))}
           </List>
         </PopperWithoutArrow>
       </div>

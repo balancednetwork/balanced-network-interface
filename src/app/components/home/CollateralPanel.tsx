@@ -10,7 +10,7 @@ import { CurrencyField } from 'app/components/Form';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'demo';
+import { CURRENCYLIST } from 'constants/currency';
 import { useWalletICXBalance, useStakedICXBalance } from 'hooks';
 
 enum Field {

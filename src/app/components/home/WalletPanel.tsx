@@ -13,7 +13,7 @@ import Divider from 'app/components/Divider';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'demo';
+import { CURRENCYLIST } from 'constants/currency';
 
 import '@reach/tabs/styles.css';
 import { Button } from '../Button';

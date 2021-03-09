@@ -74,6 +74,11 @@ const ChartControlGroup = styled(Box)`
   }
 `;
 
+const SupplyButton = styled(Button)`
+  padding: 5px 10px;
+  font-size: 12px;
+`;
+
 export function TradePage() {
   const [value, setValue] = React.useState<number>(0);
 
@@ -396,7 +401,7 @@ export function TradePage() {
 
       <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-          <Typography textAlign="center" mb="5px" as="h3">
+          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             Swap ICX for BALN?
           </Typography>
 
@@ -431,7 +436,7 @@ export function TradePage() {
 
       <Modal isOpen={showSupplyConfirm} onDismiss={handleSupplyConfirmDismiss}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-          <Typography textAlign="center" mb="5px" as="h3">
+          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             Supply liquidity?
           </Typography>
 
@@ -440,13 +445,27 @@ export function TradePage() {
             then click Supply
           </Typography>
 
-          <Typography variant="p" fontWeight="bold" textAlign="center" mb={4}>
-            0 ICX
-          </Typography>
+          <Flex alignItems="center" mb={4}>
+            <Box width={1 / 2}>
+              <Typography variant="p" fontWeight="bold" textAlign="right">
+                0 ICX
+              </Typography>
+            </Box>
+            <Box width={1 / 2}>
+              <SupplyButton ml={3}>Send</SupplyButton>
+            </Box>
+          </Flex>
 
-          <Typography variant="p" fontWeight="bold" textAlign="center" mb={4}>
-            0 bnUSD
-          </Typography>
+          <Flex alignItems="center" mb={4}>
+            <Box width={1 / 2}>
+              <Typography variant="p" fontWeight="bold" textAlign="right">
+                0 bnUSD
+              </Typography>
+            </Box>
+            <Box width={1 / 2}>
+              <SupplyButton ml={3}>Send</SupplyButton>
+            </Box>
+          </Flex>
 
           <Typography textAlign="center">
             Your ICX will be staked, and your

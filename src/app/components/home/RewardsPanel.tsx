@@ -76,7 +76,7 @@ const RewardsPanel = () => {
 
       <Modal isOpen={open} onDismiss={handleClose}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-          <Typography textAlign="center" mb="5px" as="h3">
+          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             Stake new Balance Tokens?
           </Typography>
 

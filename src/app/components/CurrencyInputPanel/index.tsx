@@ -1,12 +1,14 @@
 import React from 'react';
 
 import ClickAwayListener from 'react-click-away-listener';
+import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
+import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCYLIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
 import { Currency } from 'types';
 
 const InputContainer = styled.div`
@@ -81,27 +83,12 @@ interface CurrencyInputPanelProps {
   hideBalance?: boolean;
   // pair?: Pair | null;
   hideInput?: boolean;
-  otherCurrency?: Currency | null;
+  otherCurrency?: CurrencyKey | null;
+  currencyList?: CurrencyKey[];
   id: string;
   showCommonBases?: boolean;
   customBalanceText?: string;
 }
-
-const CurrencySelection = styled.div`
-  display: flex;
-  flex-direction: column;
-  top: 50px;
-  max-height: 540px;
-  overflow: auto;
-  left: 0;
-  padding: 20px;
-  padding-bottom: 0;
-  background: ${({ theme }) => theme.colors.bg2};
-  border-bottom-right-radius: 12px;
-  border-bottom-left-radius: 12px;
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.04);
-`;
 
 export default function CurrencyInputPanel({
   value,
@@ -116,6 +103,7 @@ export default function CurrencyInputPanel({
   // pair = null, // used for double token logo
   hideInput = false,
   otherCurrency,
+  currencyList = CURRENCY,
   id,
   showCommonBases,
   customBalanceText,
@@ -144,6 +132,16 @@ export default function CurrencyInputPanel({
     setOpen(false);
   };
 
+  const availableCurrencies = React.useMemo(
+    () => (otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList),
+    [otherCurrency, currencyList],
+  );
+
+  React.useEffect(() => {
+    const t = otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList;
+    onCurrencySelect && onCurrencySelect(CURRENCYLIST[t[0].toLowerCase()]);
+  }, [otherCurrency, onCurrencySelect, currencyList]);
+
   return (
     <InputContainer ref={ref}>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
@@ -154,27 +152,25 @@ export default function CurrencyInputPanel({
 
           {onCurrencySelect && (
             <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom">
-              <CurrencySelection style={{ width: width }}>
-                <table className="list assets">
-                  <thead>
-                    <tr>
-                      <th>Asset</th>
-                      <th>Wallet</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.values(CURRENCYLIST).map(item => (
-                      <tr onClick={handleCurrencySelect(item)} key={item.name}>
-                        <td>
-                          <CurrencyLogo currency={item} style={{ marginRight: 8 }} />
-                          {item.symbol}
-                        </td>
-                        <td>6,808</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </CurrencySelection>
+              <List style={{ width: width }}>
+                <DashGrid>
+                  <HeaderText>Asset</HeaderText>
+                  <HeaderText textAlign="right">Wallet</HeaderText>
+                </DashGrid>
+                {availableCurrencies.map(currency => (
+                  <ListItem key={currency} onClick={handleCurrencySelect(CURRENCYLIST[currency.toLowerCase()])}>
+                    <Flex>
+                      <CurrencyLogo currency={CURRENCYLIST[currency.toLowerCase()]} style={{ marginRight: '8px' }} />
+                      <DataText variant="p" fontWeight="bold">
+                        {currency}
+                      </DataText>
+                    </Flex>
+                    <DataText variant="p" textAlign="right">
+                      5,600
+                    </DataText>
+                  </ListItem>
+                ))}
+              </List>
             </PopperWithoutArrow>
           )}
         </CurrencySelect>

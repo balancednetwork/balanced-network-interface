@@ -15,7 +15,7 @@ import SlippageSetting from 'app/components/SlippageSetting';
 import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCYLIST, SupportedBaseCurrencies } from 'constants/currency';
 import { TRILLION } from 'constants/index';
 import { dayData, candleData, volumeData } from 'demo';
 
@@ -51,6 +51,11 @@ const ChartContainer = styled(Box)`
   height: ${HEIGHT}px;
 `;
 
+export enum Field {
+  INPUT = 'INPUT',
+  OUTPUT = 'OUTPUT',
+}
+
 export default function SwapPanel() {
   const [swapInputAmount, setSwapInputAmount] = React.useState('0');
 
@@ -64,13 +69,13 @@ export default function SwapPanel() {
     setSwapOutputAmount(val);
   };
 
-  const handleInputSelect = ccy => {
+  const handleInputSelect = React.useCallback(ccy => {
     setInputCurrency(ccy);
-  };
+  }, []);
 
-  const handleOutputSelect = ccy => {
+  const handleOutputSelect = React.useCallback(ccy => {
     setOutputCurrency(ccy);
-  };
+  }, []);
 
   const [inputCurrency, setInputCurrency] = React.useState(CURRENCYLIST['icx']);
 
@@ -156,6 +161,7 @@ export default function SwapPanel() {
               onUserInput={handleTypeInput}
               onCurrencySelect={handleInputSelect}
               id="swap-currency-input"
+              currencyList={SupportedBaseCurrencies}
             />
           </Flex>
 
@@ -172,6 +178,7 @@ export default function SwapPanel() {
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
               id="swap-currency-output"
+              otherCurrency={inputCurrency.symbol}
             />
           </Flex>
 
@@ -208,10 +215,10 @@ export default function SwapPanel() {
           <Flex mb={5} flexWrap="wrap">
             <Box width={[1, 1 / 2]}>
               <Typography variant="h3" mb={2}>
-                ICX / BALN
+                {inputCurrency.symbol} / {outputCurrency.symbol}
               </Typography>
               <Typography variant="p">
-                0.7215 ICX per BALN <span className="text-red">-1.21%</span>
+                0.7215 {inputCurrency.symbol} per {outputCurrency.symbol} <span className="alert">-1.21%</span>
               </Typography>
             </Box>
             <Box width={[1, 1 / 2]} marginTop={[3, 0]}>

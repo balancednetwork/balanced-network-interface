@@ -3,6 +3,7 @@ import React from 'react';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs';
 import Nouislider from 'nouislider-react';
+import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -13,9 +14,12 @@ import Divider from 'app/components/Divider';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'constants/currency';
-
+import { CURRENCYLIST } from 'demo';
 import '@reach/tabs/styles.css';
+import { useWalletICXBalance } from 'hooks';
+import { useRatioValue } from 'store/ratio/hooks';
+import { useWalletBalanceValue } from 'store/wallet/hooks';
+
 import { Button } from '../Button';
 
 const AssetSymbol = styled.div`
@@ -53,7 +57,8 @@ const DataText = styled(Typography)`
 `;
 
 const ListItem = styled(DashGrid)`
-  padding: 20px 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
   cursor: pointer;
   color: #ffffff;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
@@ -125,6 +130,12 @@ const Grid = styled.div`
 `;
 
 const WalletPanel = () => {
+  // #redux-step-9: how to use
+  const walletBalance = useWalletBalanceValue(); // get from store
+  const { account } = useIconReact();
+  const ICXbalance = useWalletICXBalance(account);
+  const ratio = useRatioValue();
+
   return (
     <BoxPanel bg="bg2">
       <Typography variant="h2" mb={5}>
@@ -150,8 +161,10 @@ const WalletPanel = () => {
                       {CURRENCYLIST['icx'].symbol}
                     </Typography>
                   </AssetSymbol>
-                  <DataText>6,808</DataText>
-                  <DataText>$1,634</DataText>
+                  <DataText>{ICXbalance.toFixed(2)}</DataText>
+                  <DataText>
+                    {'$' + (ICXbalance.toNumber() * (ratio.ICXUSDratio?.toNumber() || 0)).toFixed(2).toString()}
+                  </DataText>
                 </ListItem>
               </StyledAccordionButton>
 
@@ -218,8 +231,17 @@ const WalletPanel = () => {
                       {CURRENCYLIST['sicx'].symbol}
                     </Typography>
                   </AssetSymbol>
-                  <DataText>6,808</DataText>
-                  <DataText>$1,634</DataText>
+                  <DataText>{walletBalance.sICXbalance?.toFixed(2)}</DataText>
+                  <DataText>
+                    {'$' +
+                      (
+                        (walletBalance.sICXbalance?.toNumber() || 0) *
+                        (ratio.sICXICXratio?.toNumber() || 0) *
+                        (ratio.ICXUSDratio?.toNumber() || 0)
+                      )
+                        .toFixed(2)
+                        .toString()}
+                  </DataText>
                 </ListItem>
               </StyledAccordionButton>
 
@@ -259,8 +281,8 @@ const WalletPanel = () => {
                       {CURRENCYLIST['bnusd'].symbol}
                     </Typography>
                   </AssetSymbol>
-                  <DataText>6,808</DataText>
-                  <DataText>$1,634</DataText>
+                  <DataText>{walletBalance.bnUSDbalance?.toFixed(2)}</DataText>
+                  <DataText>{'$' + walletBalance.bnUSDbalance?.toFixed(2)}</DataText>
                 </ListItem>
               </StyledAccordionButton>
 
@@ -300,8 +322,13 @@ const WalletPanel = () => {
                       {CURRENCYLIST['baln'].symbol}
                     </Typography>
                   </AssetSymbol>
-                  <DataText>6,808</DataText>
-                  <DataText>$1,634</DataText>
+                  <DataText>{walletBalance.BALNbalance?.toFixed(2)}</DataText>
+                  <DataText>
+                    {'$' +
+                      ((walletBalance.BALNbalance?.toNumber() || 0) * (ratio.BALNbnUSDratio?.toNumber() || 0))
+                        .toFixed(2)
+                        .toString()}
+                  </DataText>
                 </ListItem>
               </StyledAccordionButton>
 

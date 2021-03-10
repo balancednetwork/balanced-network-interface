@@ -21,7 +21,7 @@ const Wrapper = styled.div`
 `;
 
 // constant height for charts
-export const HEIGHT = 260;
+const HEIGHT = 260;
 
 const AreaOption: DeepPartial<ChartOptions> = {
   height: HEIGHT,
@@ -128,7 +128,7 @@ const TradingViewChart = ({ type = CHART_TYPES.CANDLE, data, candleData, width }
           lineColor: 'rgba(44, 169, 183, 1)',
           lineWidth: 2,
         });
-        console.log(data);
+
         series.setData(data);
       }
 

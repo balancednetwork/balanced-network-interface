@@ -2,8 +2,8 @@ import { useCallback, useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { AppDispatch, AppState } from '../index';
-import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from './actions';
+import { AppState } from '../index';
+import { addPopup, PopupContent, removePopup, changeAccount } from './actions';
 
 // returns a function that allows adding a popup
 export function useAddPopup(): (content: PopupContent, key?: string) => void {
@@ -28,23 +28,23 @@ export function useRemovePopup(): (key: string) => void {
   );
 }
 
+export function useChangeAccount(): (account: string) => void {
+  const dispatch = useDispatch();
+  return useCallback(
+    (account: string) => {
+      dispatch(changeAccount({ account }));
+    },
+    [dispatch],
+  );
+}
+
 // get the list of active popups
 export function useActivePopups(): AppState['application']['popupList'] {
   const list = useSelector((state: AppState) => state.application.popupList);
   return useMemo(() => list.filter(item => item.show), [list]);
 }
 
-export function useModalOpen(modal: ApplicationModal): boolean {
-  const openModal = useSelector((state: AppState) => state.application.openModal);
-  return openModal === modal;
-}
-
-export function useToggleModal(modal: ApplicationModal): () => void {
-  const open = useModalOpen(modal);
-  const dispatch = useDispatch<AppDispatch>();
-  return useCallback(() => dispatch(setOpenModal(open ? null : modal)), [dispatch, modal, open]);
-}
-
-export function useWalletModalToggle(): () => void {
-  return useToggleModal(ApplicationModal.WALLET);
+export function useAccount(): AppState['application']['account'] {
+  const account = useSelector((state: AppState) => state.application.account);
+  return useMemo(() => account, [account]);
 }

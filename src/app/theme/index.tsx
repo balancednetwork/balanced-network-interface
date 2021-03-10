@@ -77,40 +77,31 @@ export function theme(): DefaultTheme {
 
     // breakpoints
     breakpoints: Object.values(sizes).map(size => `${size}px`),
-
-    // z-index
-    zIndices: {
-      appBar: 1100,
-      drawer: 1200,
-      modal: 1300,
-      snackbar: 1400,
-      tooltip: 1500,
-    },
   };
 }
 
 type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'body';
 
-export const Typography = React.forwardRef((props: TextProps & { variant?: TypographyVariant }, ref) => {
+export const Typography = (props: TextProps & { variant?: TypographyVariant }) => {
   const { variant, ...rest } = props;
 
   switch (variant) {
     case 'h1':
-      return <Text ref={ref} as="h1" color="text" fontSize={35} fontWeight="bold" {...rest} />;
+      return <Text as="h1" color="text" fontSize={35} fontWeight="bold" {...rest} />;
     case 'h2':
-      return <Text ref={ref} as="h2" color="text" fontSize={25} fontWeight="bold" {...rest} />;
+      return <Text as="h2" color="text" fontSize={25} fontWeight="bold" {...rest} />;
     case 'h3':
-      return <Text ref={ref} as="h3" color="text" fontSize={20} fontWeight="bold" {...rest} />;
+      return <Text as="h3" color="text" fontSize={20} fontWeight="bold" {...rest} />;
     case 'p':
-      return <Text ref={ref} as="p" color="text" fontSize={16} {...rest} />;
+      return <Text as="p" color="text" fontSize={16} {...rest} />;
     case 'label':
-      return <Text ref={ref} as="label" fontSize={14} {...rest} />;
+      return <Text as="label" fontSize={14} {...rest} />;
     case 'body':
-      return <Text ref={ref} as="p" fontSize={14} {...rest} />;
+      return <Text as="p" fontSize={14} {...rest} />;
     default:
-      return <Text ref={ref} as="p" fontSize={14} {...rest} />;
+      return <Text as="p" fontSize={14} {...rest} />;
   }
-});
+};
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const themeObject = theme();
@@ -198,6 +189,35 @@ export const FixedGlobalStyle = createGlobalStyle`
     text-align: left;
   }
   .list.liquidity tbody td:first-of-type {
+    font-weight: bold;
+  }
+
+  /* Asset list */
+  .list.assets tbody tr {
+    border-bottom: 1px solid #304a68;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+  }
+  .list.assets tbody tr:last-of-type {
+    border-bottom: none !important;
+  }
+  .list.assets tbody tr:hover {
+    cursor: pointer;
+    color: #2ca9b7;
+    transition: color 0.2s ease, border-bottom 0.2s ease;
+  }
+  .list.assets thead th,
+  .list.assets tbody td {
+    text-align: right;
+  }
+  .list.assets tbody tr:last-of-type td {
+    padding-bottom: 20px;
+  }
+  .list.assets thead th:first-of-type,
+  .list.assets tbody td:first-of-type {
+    text-align: left;
+    display: flex;
+  }
+  .list.assets tbody td:first-of-type {
     font-weight: bold;
   }
 

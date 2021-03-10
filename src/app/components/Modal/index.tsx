@@ -12,7 +12,7 @@ const AnimatedDialogOverlay = animated(DialogOverlay);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
   &[data-reach-dialog-overlay] {
-    z-index: ${({ theme }) => theme.zIndices.modal};
+    z-index: 2;
     background-color: transparent;
     overflow: hidden;
 
@@ -85,7 +85,6 @@ interface ModalProps {
   maxHeight?: number;
   initialFocusRef?: React.RefObject<any>;
   children?: React.ReactNode;
-  className?: string;
 }
 
 export default function Modal({
@@ -95,7 +94,6 @@ export default function Modal({
   maxHeight = 90,
   initialFocusRef,
   children,
-  className,
 }: ModalProps) {
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
@@ -133,7 +131,6 @@ export default function Modal({
                 minHeight={minHeight}
                 maxHeight={maxHeight}
                 mobile={isMobile}
-                className={className}
               >
                 {/* prevents the automatic focusing of inputs on mobile by the reach dialog */}
                 {!initialFocusRef && isMobile ? <div tabIndex={1} /> : null}

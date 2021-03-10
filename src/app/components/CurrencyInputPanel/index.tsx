@@ -1,14 +1,11 @@
 import React from 'react';
 
-import ClickAwayListener from 'react-click-away-listener';
-import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
-import { CURRENCYLIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
+import { CURRENCYLIST } from 'demo';
 import { Currency } from 'types';
 
 const InputContainer = styled.div`
@@ -83,12 +80,29 @@ interface CurrencyInputPanelProps {
   hideBalance?: boolean;
   // pair?: Pair | null;
   hideInput?: boolean;
-  otherCurrency?: CurrencyKey | null;
-  currencyList?: CurrencyKey[];
+  otherCurrency?: Currency | null;
   id: string;
   showCommonBases?: boolean;
   customBalanceText?: string;
 }
+
+const CurrencySelection = styled.div`
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  /* width: 100%; */
+  top: 50px;
+  max-height: 540px;
+  overflow: auto;
+  left: 0;
+  padding: 20px;
+  padding-bottom: 0;
+  background: ${({ theme }) => theme.colors.bg2};
+  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 12px;
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
+    0px 24px 32px rgba(0, 0, 0, 0.04);
+`;
 
 export default function CurrencyInputPanel({
   value,
@@ -103,7 +117,6 @@ export default function CurrencyInputPanel({
   // pair = null, // used for double token logo
   hideInput = false,
   otherCurrency,
-  currencyList = CURRENCY,
   id,
   showCommonBases,
   customBalanceText,
@@ -113,6 +126,26 @@ export default function CurrencyInputPanel({
   const toggleOpen = () => {
     setOpen(!open);
   };
+
+  // refs to detect clicks outside modal
+  const wrapperRef = React.useRef<HTMLButtonElement>(null);
+  const menuRef = React.useRef<HTMLDivElement>(null);
+
+  const handleClick = e => {
+    if (
+      !(menuRef.current && menuRef.current.contains(e.target)) &&
+      !(wrapperRef.current && wrapperRef.current.contains(e.target))
+    ) {
+      setOpen(false);
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  });
 
   // update the width on a window resize
   const ref = React.useRef<HTMLDivElement>(null);
@@ -132,51 +165,43 @@ export default function CurrencyInputPanel({
     setOpen(false);
   };
 
-  const availableCurrencies = React.useMemo(
-    () => (otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList),
-    [otherCurrency, currencyList],
-  );
-
-  React.useEffect(() => {
-    const t = otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList;
-    onCurrencySelect && onCurrencySelect(CURRENCYLIST[t[0].toLowerCase()]);
-  }, [otherCurrency, onCurrencySelect, currencyList]);
-
   return (
-    <InputContainer ref={ref}>
-      <ClickAwayListener onClickAway={() => setOpen(false)}>
-        <CurrencySelect onClick={toggleOpen}>
+    <>
+      <InputContainer ref={ref}>
+        <CurrencySelect onClick={toggleOpen} ref={wrapperRef}>
           {currency ? <CurrencyLogo currency={currency} style={{ marginRight: 8 }} /> : null}
           {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
           {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
-
-          {onCurrencySelect && (
-            <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom">
-              <List style={{ width: width }}>
-                <DashGrid>
-                  <HeaderText>Asset</HeaderText>
-                  <HeaderText textAlign="right">Wallet</HeaderText>
-                </DashGrid>
-                {availableCurrencies.map(currency => (
-                  <ListItem key={currency} onClick={handleCurrencySelect(CURRENCYLIST[currency.toLowerCase()])}>
-                    <Flex>
-                      <CurrencyLogo currency={CURRENCYLIST[currency.toLowerCase()]} style={{ marginRight: '8px' }} />
-                      <DataText variant="p" fontWeight="bold">
-                        {currency}
-                      </DataText>
-                    </Flex>
-                    <DataText variant="p" textAlign="right">
-                      5,600
-                    </DataText>
-                  </ListItem>
-                ))}
-              </List>
-            </PopperWithoutArrow>
-          )}
         </CurrencySelect>
-      </ClickAwayListener>
 
-      <NumberInput value={value} onChange={event => onUserInput(event.target.value)} />
-    </InputContainer>
+        <NumberInput value={value} onChange={event => onUserInput(event.target.value)} />
+      </InputContainer>
+
+      {onCurrencySelect && (
+        <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom">
+          <CurrencySelection style={{ width: width }} ref={menuRef}>
+            <table className="list assets">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Wallet</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.values(CURRENCYLIST).map(item => (
+                  <tr onClick={handleCurrencySelect(item)} key={item.name}>
+                    <td>
+                      <CurrencyLogo currency={item} style={{ marginRight: 8 }} />
+                      {item.symbol}
+                    </td>
+                    <td>6,808</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CurrencySelection>
+        </PopperWithoutArrow>
+      )}
+    </>
   );
 }

@@ -1,28 +1,25 @@
 import React from 'react';
 
-import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
 import { DropdownPopper } from 'app/components/Popover';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-down.svg';
 
-export const StyledArrowDownIcon = styled(ArrowDownIcon)`
+const StyledArrowDownIcon = styled(ArrowDownIcon)`
   margin-left: 5px;
   margin-top: -3px;
   width: 10px;
 `;
 
-export const Wrapper = styled.span`
+const Wrapper = styled.span`
   &:hover {
     cursor: pointer;
   }
-  color: #2fccdc;
-  font-size: 14px;
 `;
 
 export const UnderlineText = styled.span`
-  color: inherit;
-  font-size: inherit;
+  color: #2fccdc;
+  font-size: 14px;
   text-decoration: none;
   background: transparent;
   display: inline-block;
@@ -57,22 +54,36 @@ export const DropdownText = ({ text, children, ...rest }: { text: string; childr
     setAnchor(anchor ? null : arrowRef.current);
   };
 
-  const closePopper = () => {
-    setAnchor(null);
+  // refs to detect clicks outside modal
+  const wrapperRef = React.useRef<HTMLElement>(null);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  const handleClick = e => {
+    if (
+      !(contentRef.current && contentRef.current.contains(e.target)) &&
+      !(wrapperRef.current && wrapperRef.current.contains(e.target))
+    ) {
+      setAnchor(null);
+    }
   };
 
+  React.useEffect(() => {
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  });
+
   return (
-    <ClickAwayListener onClickAway={closePopper}>
-      <div>
-        <Wrapper onClick={handleToggleClick} {...rest}>
-          <UnderlineText>{text}</UnderlineText>
-          <StyledArrowDownIcon ref={arrowRef} />
-        </Wrapper>
-        <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
-          {children}
-        </DropdownPopper>
-      </div>
-    </ClickAwayListener>
+    <>
+      <Wrapper onClick={handleToggleClick} ref={wrapperRef} {...rest}>
+        <UnderlineText>{text}</UnderlineText>
+        <StyledArrowDownIcon ref={arrowRef} />
+      </Wrapper>
+      <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
+        <div ref={contentRef}>{children}</div>
+      </DropdownPopper>
+    </>
   );
 };
 

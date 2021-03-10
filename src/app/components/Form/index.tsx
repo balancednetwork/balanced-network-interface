@@ -14,7 +14,7 @@ export const CheckBox = styled(Box)<{ isActive: boolean }>`
   background-color: ${props => (props.isActive ? props.theme.colors.primary : '#03334f')};
 `;
 
-const CurrencyInput = styled(Box)`
+const CurrencyInput = styled.div`
   display: inline-flex;
   align-items: center;
   text-align: right;
@@ -65,20 +65,20 @@ export const CurrencyField: React.FC<{
       <Flex alignItems="center">
         <MouseoverTooltip placement="top" text={tooltipText}>
           <Flex>
-            <CheckBox isActive={isActive} mr={2} />
-            <Typography>{label}</Typography>
+            <CheckBox isActive={isActive} mr="4px" />
+            <Typography variant="p">{label}</Typography>
           </Flex>
         </MouseoverTooltip>
       </Flex>
 
       {!editable && (
-        <Typography variant="p" ml={6} mt={1} fontSize={18}>
+        <Typography variant="p" ml={24} fontSize={18}>
           {`${value} ${currency.symbol}`}
         </Typography>
       )}
 
       {editable && (
-        <CurrencyInput mt={1}>
+        <CurrencyInput>
           <Input value={value} onChange={handleChange} />
           <CurrencyUnit>{currency.symbol}</CurrencyUnit>
         </CurrencyInput>

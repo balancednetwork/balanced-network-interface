@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { IconBuilder, IconConverter } from 'icon-sdk-js';
+import { useIconReact, REWARD_ADDRESS } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -23,13 +25,52 @@ const Row = styled(Flex)`
 const RewardsPanel = () => {
   const [open, setOpen] = React.useState(false);
 
+  const { account } = useIconReact();
+
+  const handleClaimReward = () => {
+    if (!account) return;
+    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
+
+    // const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
+    // const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
+    // const params = { _data1: data1, _data2: data2 };
+
+    const depositPayload = callTransactionBuilder
+      .from(account)
+      .to(REWARD_ADDRESS)
+      .method('claimRewards')
+      //.params(params)
+      .nid(IconConverter.toBigNumber(3))
+      .timestamp(new Date().getTime() * 1000)
+      .stepLimit(IconConverter.toBigNumber(1000000))
+      //.value(IconAmount.of(formattedAmounts[Field.LEFT], IconAmount.Unit.ICX).toLoop())
+      .version(IconConverter.toBigNumber(3))
+      .build();
+
+    const parsed = {
+      jsonrpc: '2.0',
+      method: 'icx_sendTransaction',
+      params: IconConverter.toRawTransaction(depositPayload),
+      id: Date.now(),
+    };
+
+    window.dispatchEvent(
+      new CustomEvent('ICONEX_RELAY_REQUEST', {
+        detail: {
+          type: 'REQUEST_JSON-RPC',
+          payload: parsed,
+        },
+      }),
+    );
+  };
+
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleClaim = () => {
-    setOpen(true);
-  };
+  // const handleClaim = () => {
+  //   setOpen(true);
+  // };
 
   return (
     <BoxPanel bg="bg2">
@@ -71,12 +112,12 @@ const RewardsPanel = () => {
       </RewardGrid>
 
       <Flex alignItems="center" justifyContent="center" mt={3}>
-        <Button onClick={handleClaim}>Claim rewards</Button>
+        <Button onClick={handleClaimReward}>Claim rewards</Button>
       </Flex>
 
       <Modal isOpen={open} onDismiss={handleClose}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
+          <Typography textAlign="center" mb="5px" as="h3">
             Stake new Balance Tokens?
           </Typography>
 

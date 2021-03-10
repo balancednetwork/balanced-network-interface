@@ -7,8 +7,12 @@ import { createInjectorsEnhancer } from 'redux-injectors';
 import createSagaMiddleware from 'redux-saga';
 
 import application from './application/reducer';
-import pool from './pool/reducer';
+import collateral from './collateral/reducer';
+import liquidity from './liquidity/reducer';
+import loan from './loan/reducer';
+import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
+import walletBalance from './wallet/reducer';
 
 export function configureAppStore() {
   const reduxSagaMonitorOptions = {};
@@ -27,10 +31,20 @@ export function configureAppStore() {
 
   const store = configureStore({
     reducer: createReducer({
+      // #redux-step-8: add more reducer from 'store/**/reducer.ts'
       application,
-      pool,
+      collateral,
+      liquidity,
+      loan,
+      ratio,
+      walletBalance,
     }),
-    middleware: [...getDefaultMiddleware(), ...middlewares],
+    middleware: [
+      ...getDefaultMiddleware({
+        serializableCheck: false,
+      }),
+      ...middlewares,
+    ],
     devTools: process.env.NODE_ENV !== 'production',
     enhancers,
   });

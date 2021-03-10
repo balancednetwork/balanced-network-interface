@@ -4,13 +4,12 @@ import styled from 'styled-components';
 export const Button = styled(RebassButton)`
   display: inline-block;
   border-radius: 10px;
-  padding: 5px 25px;
+  padding: 5px 35px;
   color: #ffffff;
   text-decoration: none;
   background-color: ${({ theme }) => theme.colors.primary};
   cursor: pointer;
   transition: background-color 0.3s ease;
-  user-select: none;
 
   &:hover {
     background-color: #087083;
@@ -31,7 +30,6 @@ export const TextButton = styled(RebassButton)`
   color: rgba(255, 255, 255, 0.75);
   cursor: pointer !important;
   transition: color 0.3s ease;
-  user-select: none;
 
   &:hover {
     color: rgba(255, 255, 255, 1);

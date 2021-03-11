@@ -13,7 +13,7 @@ import WalletModal from 'app/components/WalletModal';
 import { Typography } from 'app/theme';
 import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
-import { useWalletModalToggle } from 'store/application/hooks';
+import { useWalletModalToggle, useAddPopup } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
@@ -70,7 +70,21 @@ export default React.memo(function Header(props: { title?: string; className?: s
     }
   };
 
-  const handleNotification = () => {};
+  const addPopup = useAddPopup();
+
+  const handleNotification = () => {
+    addPopup(
+      {
+        txn: {
+          hash: '0x123456789',
+          success: true,
+          summary: `Supplying ICX/bnUSD liquidity
+          This may take a few moments`,
+        },
+      },
+      new Date().valueOf().toString(),
+    );
+  };
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const walletButtonRef = React.useRef<HTMLElement>(null);

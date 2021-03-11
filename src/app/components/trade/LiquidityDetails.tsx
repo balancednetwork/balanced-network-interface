@@ -9,8 +9,11 @@ import DropdownText from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { CURRENCYLIST } from 'constants/currency';
+import { useLiquiditySupply } from 'store/liquidity/hooks';
 
 const LiquidityDetails = () => {
+  const liquiditySupply = useLiquiditySupply();
+
   return (
     <BoxPanel bg="bg2" mb={10}>
       <Typography variant="h2" mb={5}>
@@ -75,11 +78,11 @@ const LiquidityDetails = () => {
 
           {/* <!-- ICX / ICD --> */}
           <tr>
-            <td>ICX / bnUSD</td>
+            <td>sICX / bnUSD</td>
             <td>
-              15,000 ICX
+              {liquiditySupply.sICXbnUSDsupply?.toFixed(2).toString() + ' sICX'}
               <br />
-              15,000 bnUSD
+              {liquiditySupply.bnUSDsupply?.toFixed(2).toString() + ' bnUSD'}
             </td>
             <td>3.1%</td>
             <td>~ 120 BALN</td>

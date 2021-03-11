@@ -1,6 +1,9 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
+import { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
 import Nouislider from 'nouislider-react';
+import { bnUSD_ADDRESS, LOAN_ADDRESS, useIconReact, iconService } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
@@ -8,8 +11,125 @@ import { CurrencyField } from 'app/components/Form';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { CURRENCYLIST } from 'constants/currency';
+import { useDepositedValue } from 'store/collateral/hooks';
+import { useLoanBorrowedValue } from 'store/loan/hooks';
+import { useRatioValue } from 'store/ratio/hooks';
 
 const LoanPanel = () => {
+  const { account } = useIconReact();
+
+  enum loanField {
+    LEFT = 'LEFT',
+    RIGHT = 'RIGHT',
+  }
+
+  const ratioValue = useRatioValue();
+  const stakedICXAmount = useDepositedValue();
+  const loanBorrowedValue = useLoanBorrowedValue();
+
+  const totalLoanAmount = stakedICXAmount.div(4).minus(loanBorrowedValue);
+
+  const [{ independentLoanField, typedLoanValue }, setLoanState] = React.useState({
+    independentLoanField: loanField.LEFT,
+    typedLoanValue: '',
+  });
+
+  const dependentLoanField: loanField = independentLoanField === loanField.LEFT ? loanField.RIGHT : loanField.LEFT;
+
+  const parsedLoanAmount = {
+    [independentLoanField]: new BigNumber(typedLoanValue),
+    [dependentLoanField]: totalLoanAmount.minus(new BigNumber(typedLoanValue)),
+  };
+
+  const formattedLoanAmounts = {
+    [independentLoanField]: typedLoanValue,
+    [dependentLoanField]: parsedLoanAmount[dependentLoanField].toFixed(2),
+  };
+
+  const handleLoanConfirm = () => {
+    if (!account) return;
+    const newBorrowValue = parseFloat(formattedLoanAmounts[loanField.LEFT]);
+
+    if (newBorrowValue === 0 && loanBorrowedValue.toNumber() > 0) {
+      repayLoan(loanBorrowedValue);
+    } else if (newBorrowValue > loanBorrowedValue.toNumber() && loanBorrowedValue.toNumber() > 0) {
+      addLoan(newBorrowValue);
+    }
+  };
+
+  function repayLoan(value) {
+    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
+    const data = '0x' + Buffer.from('{"method": "_repay_loan", "params": {}}', 'utf8').toString('hex');
+    const valueParam = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = { _to: LOAN_ADDRESS, _value: valueParam, _data: data };
+
+    const loanPayload = callTransactionBuilder
+      .from(account)
+      .to(bnUSD_ADDRESS)
+      .method('transfer')
+      .params(params)
+      .nid(IconConverter.toBigNumber(3))
+      .timestamp(new Date().getTime() * 1000)
+      .stepLimit(IconConverter.toBigNumber(1000000))
+      .value(0)
+      .version(IconConverter.toBigNumber(3))
+      .build();
+
+    const parsed = {
+      jsonrpc: '2.0',
+      method: 'icx_sendTransaction',
+      params: IconConverter.toRawTransaction(loanPayload),
+      id: Date.now(),
+    };
+
+    window.dispatchEvent(
+      new CustomEvent('ICONEX_RELAY_REQUEST', {
+        detail: {
+          type: 'REQUEST_JSON-RPC',
+          payload: parsed,
+        },
+      }),
+    );
+  }
+
+  function addLoan(value) {
+    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
+    const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
+    const data2 = Buffer.from(
+      '", "_asset": "ICD", "_amount": ' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop() + '}}',
+      'utf8',
+    ).toString('hex');
+    const params = { _data1: data1, _data2: data2 };
+
+    const depositPayload = callTransactionBuilder
+      .from(account)
+      .to(LOAN_ADDRESS)
+      .method('addCollateral')
+      .params(params)
+      .nid(IconConverter.toBigNumber(3))
+      .timestamp(new Date().getTime() * 1000)
+      .stepLimit(IconConverter.toBigNumber(2000000))
+      .value(IconAmount.of(value / (ratioValue.ICXUSDratio?.toNumber() || 0), IconAmount.Unit.ICX).toLoop())
+      .version(IconConverter.toBigNumber(3))
+      .build();
+
+    const parsed = {
+      jsonrpc: '2.0',
+      method: 'icx_sendTransaction',
+      params: IconConverter.toRawTransaction(depositPayload),
+      id: Date.now(),
+    };
+
+    window.dispatchEvent(
+      new CustomEvent('ICONEX_RELAY_REQUEST', {
+        detail: {
+          type: 'REQUEST_JSON-RPC',
+          payload: parsed,
+        },
+      }),
+    );
+  }
+
   const [isLoanEditing, setLoanEditing] = React.useState<boolean>(false);
 
   const handleLoanAdjust = () => {

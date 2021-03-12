@@ -3,7 +3,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
 import Nouislider from 'nouislider-react';
-import { bnUSD_ADDRESS, LOAN_ADDRESS, useIconReact, iconService } from 'packages/icon-react';
+import { bnUSD_ADDRESS, LOAN_ADDRESS, useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';

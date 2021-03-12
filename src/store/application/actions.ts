@@ -31,6 +31,3 @@ export const setOpenModal = createAction<ApplicationModal | null>('application/s
 export const changeDeposite = createAction<{ depositedValue: BigNumber }>('application/changeDepositedValue');
 
 export const changeBalance = createAction<{ balance: BigNumber }>('application/changeBalanceValue');
-
-// Account
-export const changeAccount = createAction<{ account: string }>('application/changeAccount');

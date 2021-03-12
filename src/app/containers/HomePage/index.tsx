@@ -11,7 +11,6 @@ import {
   bnUSD_ADDRESS,
   BAND_ADDRESS,
   STAKING_ADDRESS,
-  iconService,
   BALNbnUSDpoolId,
   DEX_ADDRESS,
 } from 'packages/icon-react';
@@ -33,7 +32,6 @@ import { MenuList, MenuItem } from 'app/components/Menu';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { useWalletICXBalance } from 'hooks';
-import { useChangeAccount } from 'store/application/hooks';
 import { useChangeDepositedValue, useDepositedValue, useChangeBalanceValue } from 'store/collateral/hooks';
 import {
   useLoanBorrowedValue,
@@ -82,9 +80,7 @@ const Chip = styled(Box)`
 const client = new W3CWebSocket(`ws://35.240.219.80:8000/wss`);
 
 export function HomePage() {
-  const { account } = useIconReact();
-
-  useChangeAccount()(`${account}`);
+  const { account, iconService } = useIconReact();
 
   const balance = useWalletICXBalance(account);
 
@@ -141,7 +137,7 @@ export function HomePage() {
       changeRatioValue({ sICXICXratio });
       changeRatioValue({ BALNbnUSDratio });
     });
-  }, [account, changeRatioValue]);
+  }, [account, changeRatioValue, iconService]);
 
   // wallet balance
   const initWalletBalance = React.useCallback(() => {
@@ -174,7 +170,7 @@ export function HomePage() {
       changeBalanceValue({ BALNbalance });
       changeBalanceValue({ bnUSDbalance });
     });
-  }, [account, changeBalanceValue]);
+  }, [account, changeBalanceValue, iconService]);
 
   const initLoan = React.useCallback(() => {
     const callGetAvailableAssetsParams = new IconBuilder.CallBuilder()
@@ -207,7 +203,13 @@ export function HomePage() {
       updateChangeLoanbnUSDtotalSupply(bnUSDtotalSupply);
       updateChangeLoanBorrowedValue(totalDebt);
     });
-  }, [account, updateChangeLoanbnUSDbadDebt, updateChangeLoanbnUSDtotalSupply, updateChangeLoanBorrowedValue]);
+  }, [
+    account,
+    updateChangeLoanbnUSDbadDebt,
+    updateChangeLoanbnUSDtotalSupply,
+    updateChangeLoanBorrowedValue,
+    iconService,
+  ]);
 
   const initStakedICXBalance = React.useCallback(() => {
     const callParams = new IconBuilder.CallBuilder()
@@ -225,7 +227,7 @@ export function HomePage() {
 
         changeStakedICXAmount(deposited);
       });
-  }, [account, changeStakedICXAmount]);
+  }, [account, changeStakedICXAmount, iconService]);
 
   const initWebSocket = React.useCallback(() => {
     client.send(
@@ -261,7 +263,7 @@ export function HomePage() {
         changeStakedICXAmount(stakedICXVal);
       },
     );
-  }, [account, updateUnStackedICXAmount, changeStakedICXAmount]);
+  }, [account, updateUnStackedICXAmount, changeStakedICXAmount, iconService]);
 
   React.useEffect(() => {
     const handler = ({ detail: { type, payload } }: any) => {

@@ -3,7 +3,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
 import Nouislider from 'nouislider-react';
-import { LOAN_ADDRESS, useIconReact, iconService } from 'packages/icon-react';
+import { LOAN_ADDRESS, useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 import { Box, Flex } from 'rebass/styled-components';
@@ -26,7 +26,7 @@ enum Field {
 }
 
 const CollateralPanel = () => {
-  const { account } = useIconReact();
+  const { account, iconService } = useIconReact();
   const [open, setOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<boolean>(false);
   const [{ independentField, typedValue }, setCollateralState] = React.useState({
@@ -213,7 +213,7 @@ const CollateralPanel = () => {
     return () => {
       window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
     };
-  }, [account, changeStakedICXAmountCache]);
+  }, [account, changeStakedICXAmountCache, iconService]);
 
   return (
     <>

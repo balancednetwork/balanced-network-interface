@@ -14,7 +14,11 @@ import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { CURRENCYLIST } from 'constants/currency';
-import { useWalletICXBalance, useStakedICXBalance } from 'hooks';
+// import { useWalletICXBalance, useStakedICXBalance } from 'hooks';
+import {
+  /* useChangeDepositedValue, */ useBalance,
+  useDepositedValue /* , useChangeBalanceValue */,
+} from 'store/collateral/hooks';
 
 enum Field {
   LEFT = 'LEFT',
@@ -24,23 +28,31 @@ enum Field {
 const CollateralPanel = () => {
   const { account, iconService } = useIconReact();
   const [open, setOpen] = React.useState(false);
-
-  const toggleOpen = () => {
-    setOpen(!open);
-  };
-
   const [editing, setEditing] = React.useState<boolean>(false);
-
-  const toggleEditing = () => {
-    setEditing(!editing);
-  };
-
   const [{ independentField, typedValue }, setCollateralState] = React.useState({
     independentField: Field.LEFT,
     typedValue: '',
   });
 
+  // wallet icx balance
+
+  // staked icx balance
+  const stakedICXAmount = useDepositedValue();
+  const unStackedICXAmount = useBalance();
+  // const changeStakedICXAmount = useChangeDepositedValue();
+  // const updateUnStackedICXAmount = useChangeBalanceValue();
+  const [stakedICXAmountCache, changeStakedICXAmountCache] = React.useState(new BigNumber(0));
+  // changeStakedICXAmountCache(stakedICXAmount);
+
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
+
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
+
+  const toggleEditing = () => {
+    setEditing(!editing);
+  };
 
   const handleStakedAmountType = React.useCallback(
     (value: string) => {
@@ -60,15 +72,9 @@ const CollateralPanel = () => {
     setCollateralState(state => ({ independentField: state['independentField'], typedValue: values[handle] }));
   };
 
-  // wallet icx balance
-  const unStackedICXAmount = useWalletICXBalance(account);
-
-  // staked icx balance
-  const stakedICXAmount = useStakedICXBalance(account);
-  const [stakedICXAmountCache, changeStakedICXAmountCache] = React.useState(0);
-
   // totall icx balance
   const totalICXAmount = unStackedICXAmount.plus(stakedICXAmount);
+
   // calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
@@ -89,6 +95,7 @@ const CollateralPanel = () => {
     formattedAmounts,
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCollateralConfirm = () => {
     if (!account) return;
     const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
@@ -96,17 +103,17 @@ const CollateralPanel = () => {
     const params = { _data1: data1, _data2: data2 };
 
     const newDepositedValue = parseFloat(formattedAmounts[Field.LEFT]);
-    const shouldWithdraw = newDepositedValue < stakedICXAmountCache;
+    const shouldWithdraw = newDepositedValue < stakedICXAmountCache.toNumber();
     if (shouldWithdraw) {
       withdrawCollateral(0, {
         _value:
           '0x' +
-          IconAmount.of(stakedICXAmountCache - newDepositedValue, IconAmount.Unit.ICX)
+          IconAmount.of(stakedICXAmountCache.toNumber() - newDepositedValue, IconAmount.Unit.ICX)
             .toLoop()
             .toString(16),
       });
     } else {
-      addCollateral(newDepositedValue - stakedICXAmountCache, params);
+      addCollateral(newDepositedValue - stakedICXAmountCache.toNumber(), params);
     }
   };
 
@@ -193,6 +200,7 @@ const CollateralPanel = () => {
           Promise.all([iconService.call(callParams).execute(), iconService.getBalance(account).execute()]).then(
             ([result, balance]) => {
               const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               const unStakedVal = convertLoopToIcx(balance);
               changeStakedICXAmountCache(stakedICXVal);
             },

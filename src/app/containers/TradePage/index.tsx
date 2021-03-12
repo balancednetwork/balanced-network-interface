@@ -2,7 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { IconBuilder } from 'icon-sdk-js';
-import { useIconReact, DEX_ADDRESS, iconService, BALN_ADDRESS, sICXbnUSDpoolId } from 'packages/icon-react';
+import { useIconReact, DEX_ADDRESS, BALN_ADDRESS, sICXbnUSDpoolId } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { Helmet } from 'react-helmet-async';
 import { Flex, Box } from 'rebass/styled-components';
@@ -17,7 +17,7 @@ import { useChangeLiquiditySupply } from 'store/liquidity/hooks';
 import { useChangeRatio } from 'store/ratio/hooks';
 
 export function TradePage() {
-  const { account } = useIconReact();
+  const { account, iconService } = useIconReact();
   const changeRatio = useChangeRatio();
   const changeLiquiditySupply = useChangeLiquiditySupply();
 
@@ -45,7 +45,7 @@ export function TradePage() {
           changeRatio({ sICXbnUSDratio: sICXbnUSDratio });
         });
     }
-  }, [changeRatio, account]);
+  }, [changeRatio, account, iconService]);
 
   /** get liquidity sICX:bnUSD supply
   React.useEffect(() => {
@@ -108,7 +108,7 @@ export function TradePage() {
           changeLiquiditySupply({ sICXbnUSDsupply: sICXbnUSDsupply });
         });
     }
-  }, [changeLiquiditySupply, account]);
+  }, [changeLiquiditySupply, account, iconService]);
 
   // update the width on a window resize
   const ref = React.useRef<HTMLDivElement>();

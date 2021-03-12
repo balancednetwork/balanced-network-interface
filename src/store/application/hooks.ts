@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, AppState } from '../index';
-import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal, changeAccount } from './actions';
+import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from './actions';
 
 // returns a function that allows adding a popup
 export function useAddPopup(): (content: PopupContent, key?: string) => void {
@@ -28,16 +28,6 @@ export function useRemovePopup(): (key: string) => void {
   );
 }
 
-export function useChangeAccount(): (account: string) => void {
-  const dispatch = useDispatch();
-  return useCallback(
-    (account: string) => {
-      dispatch(changeAccount({ account }));
-    },
-    [dispatch],
-  );
-}
-
 // get the list of active popups
 export function useActivePopups(): AppState['application']['popupList'] {
   const list = useSelector((state: AppState) => state.application.popupList);
@@ -57,9 +47,4 @@ export function useToggleModal(modal: ApplicationModal): () => void {
 
 export function useWalletModalToggle(): () => void {
   return useToggleModal(ApplicationModal.WALLET);
-}
-
-export function useAccount(): AppState['application']['account'] {
-  const account = useSelector((state: AppState) => state.application.account);
-  return useMemo(() => account, [account]);
 }

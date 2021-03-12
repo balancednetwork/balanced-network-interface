@@ -1,6 +1,6 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit';
 
-import { addPopup, PopupContent, removePopup, ApplicationModal, setOpenModal, changeAccount } from './actions';
+import { addPopup, PopupContent, removePopup, ApplicationModal, setOpenModal } from './actions';
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>;
 
@@ -37,8 +37,5 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setOpenModal, (state, action) => {
       state.openModal = action.payload;
-    })
-    .addCase(changeAccount, (state, { payload: { account } }) => {
-      state.account = account;
     }),
 );

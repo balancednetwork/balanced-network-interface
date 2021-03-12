@@ -45,6 +45,13 @@ export const getDefaultStepCost = async () => {
   return defaultStepCost;
 };
 
+export enum NetworkId {
+  MAINNET = 1,
+  YEOUIDO = 3,
+  EULJIRO = 2,
+  PAGODA = 80,
+}
+
 interface ICONReactContextInterface {
   account?: string | null;
   request: (event: ICONexRequestEvent) => Promise<ICONexResponseEvent>;

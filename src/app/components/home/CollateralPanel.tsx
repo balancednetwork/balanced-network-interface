@@ -28,6 +28,23 @@ enum Field {
 const CollateralPanel = () => {
   const { account, iconService } = useIconReact();
   const [open, setOpen] = React.useState(false);
+  const [editing, setEditing] = React.useState<boolean>(false);
+  const [{ independentField, typedValue }, setCollateralState] = React.useState({
+    independentField: Field.LEFT,
+    typedValue: '',
+  });
+
+  // wallet icx balance
+
+  // staked icx balance
+  const stakedICXAmount = useDepositedValue();
+  const unStackedICXAmount = useBalance();
+  // const changeStakedICXAmount = useChangeDepositedValue();
+  // const updateUnStackedICXAmount = useChangeBalanceValue();
+  const [stakedICXAmountCache, changeStakedICXAmountCache] = React.useState(new BigNumber(0));
+  // changeStakedICXAmountCache(stakedICXAmount);
+
+  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
   // wallet icx balance
 
@@ -43,18 +60,9 @@ const CollateralPanel = () => {
     setOpen(!open);
   };
 
-  const [editing, setEditing] = React.useState<boolean>(false);
-
   const toggleEditing = () => {
     setEditing(!editing);
   };
-
-  const [{ independentField, typedValue }, setCollateralState] = React.useState({
-    independentField: Field.LEFT,
-    typedValue: '',
-  });
-
-  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
   const handleStakedAmountType = React.useCallback(
     (value: string) => {

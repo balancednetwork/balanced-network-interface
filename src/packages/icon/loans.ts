@@ -1,4 +1,5 @@
-import addresses, { NetworkId } from '../../constants/address';
+import { nid } from '.';
+import addresses from '../../constants/addresses';
 import { IconWrapper } from './iconWrapper';
 
 export enum Collateral {
@@ -7,47 +8,46 @@ export enum Collateral {
 }
 
 export class Loans extends IconWrapper {
-  constructor() {
-    super(NetworkId.YEOUIDO);
+  constructor(public account: string) {
+    super(nid);
     this.address = addresses[this.nid].loans;
   }
 
-  collateral({
-    account,
+  /**
+   * addCollateral and withdrawCollateral
+   * @returns payload to call iconex
+   */
+  getCollateralTransactionPayload({
     value,
     params,
     method,
   }: {
     method: Collateral;
-    account: string;
     value: number;
     params: {
       [key: string]: any;
     };
   }) {
     return this.transactionParamsBuilder({
-      account,
       method,
       value,
       params,
     });
   }
 
-  getAvailableAssets({ account }: { account: string }) {
+  getAvailableAssets() {
     const callParams = this.paramsBuilder({
-      account,
       method: 'getAvailableAssets',
     });
 
     return this.call(callParams);
   }
 
-  getAccountPositions({ account }: { account: string }) {
+  getAccountPositions() {
     const callParams = this.paramsBuilder({
-      account,
       method: 'getAccountPositions',
       params: {
-        _owner: account,
+        _owner: this.account,
       },
     });
 

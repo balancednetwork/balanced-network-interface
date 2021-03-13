@@ -1,26 +1,25 @@
 import IconService, { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
 
-import { NetworkId } from '../../constants/address';
+import { NetworkId } from '../../constants/addresses';
 import { iconService } from '../icon-react/index';
 
 export class IconWrapper {
   protected caller: IconService = iconService;
   protected address: string = '';
+  protected account: string = '';
 
-  constructor(protected nid: NetworkId = 3) {}
+  constructor(protected nid: NetworkId) {}
 
   public paramsBuilder({
-    account,
     method,
     params,
   }: {
-    account: string;
     method: string;
     params?: {
       [key: string]: any;
     };
   }) {
-    return new IconBuilder.CallBuilder().from(account).to(this.address).method(method).params(params).build();
+    return new IconBuilder.CallBuilder().from(this.account).to(this.address).method(method).params(params).build();
   }
 
   async call(params: any) {
@@ -33,21 +32,19 @@ export class IconWrapper {
    * @returns payload to call Iconex wallet
    */
   public transactionParamsBuilder({
-    account,
     method,
     params,
     value,
   }: {
-    account: string;
     method: string;
-    value: number;
+    value?: number;
     params?: {
       [key: string]: any;
     };
   }) {
     const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
     const payload = callTransactionBuilder
-      .from(account)
+      .from(this.account)
       .to(this.address)
       .method(method)
       .params(params)

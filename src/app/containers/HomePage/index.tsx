@@ -284,8 +284,6 @@ export function HomePage() {
   const totalLoanAmount = stakedICXAmount.div(4).minus(loanBorrowedValue);
 
   const totalCollateralValue = stakedICXAmount.times(ratioValue.ICXUSDratio === undefined ? 0 : ratioValue.ICXUSDratio);
-  // const totalLoanBorrowedValue = loanBorrowedValue.times(new BigNumber(ratioValue.ICXUSDratio).toNumber());
-  // const totalBorrowedAvailableValue = stakedICXAmount.times(new BigNumber(ratioValue.ICXUSDratio).toNumber());
   const debtHoldShare = loanBorrowedValue.div(loanbnUSDtotalSupply.minus(loanbnUSDbadDebt)).multipliedBy(100);
 
   return (

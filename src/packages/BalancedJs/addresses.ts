@@ -1,4 +1,4 @@
-enum NetworkId {
+export enum NetworkId {
   MAINNET = 1,
   YEOUIDO = 3,
   EULJIRO = 2,
@@ -15,8 +15,8 @@ const MAINNET_ADDRESSES = {
   governance: '',
   dummy_oracle: '',
   sicx: '',
-  icd: '',
-  bal: '',
+  bnUSD: '',
+  baln: '',
   bwt: '',
 };
 
@@ -30,8 +30,8 @@ const YEOUIDO_ADDRESSES = {
   governance: 'cx9806e13bad38e4fca402eb2fde9779d303fc428a',
   dummy_oracle: 'cx61a36e5d10412e03c907a507d1e8c6c3856d9964',
   sicx: 'cxcdae80da2964665c5b2480477a44b9646511d7ee',
-  icd: 'cx0399a75f88323f13daea97f114440f14fd551494',
-  bal: 'cxdfa188a9ef06d9e6a5118b9c73c3fac1567bc889',
+  bnUSD: 'cx0399a75f88323f13daea97f114440f14fd551494',
+  baln: 'cxdfa188a9ef06d9e6a5118b9c73c3fac1567bc889',
   bwt: 'cxa2dd90f9b85a22c3514e21f309c3e52e8eec02af',
 };
 

@@ -1,4 +1,4 @@
-import { nid } from '.';
+import { nid, AccountType } from '.';
 import addresses from '../../constants/addresses';
 import { IconWrapper } from './iconWrapper';
 
@@ -8,7 +8,7 @@ export enum Collateral {
 }
 
 export class Loans extends IconWrapper {
-  constructor(public account: string) {
+  constructor(public account: AccountType) {
     super(nid);
     this.address = addresses[this.nid].loans;
   }
@@ -22,7 +22,7 @@ export class Loans extends IconWrapper {
     params,
     method,
   }: {
-    method: Collateral;
+    method: 'withdrawCollateral' | 'addCollateral';
     value: number;
     params: {
       [key: string]: any;

@@ -1,10 +1,9 @@
-import { nid } from '.';
+import { nid, AccountType } from '.';
 import addresses from '../../constants/addresses';
-import { BALNbnUSDpoolId } from '../icon-react';
 import { IconWrapper } from './iconWrapper';
 
 export class Staking extends IconWrapper {
-  constructor(public account: string) {
+  constructor(public account: AccountType) {
     super(nid);
     this.address = addresses[this.nid].staking;
   }
@@ -12,7 +11,6 @@ export class Staking extends IconWrapper {
   getTodayRate() {
     const callParams = this.paramsBuilder({
       method: 'getTodayRate',
-      params: { _pid: BALNbnUSDpoolId.toString() },
     });
 
     return this.call(callParams);

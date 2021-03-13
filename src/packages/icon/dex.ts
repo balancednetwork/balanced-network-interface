@@ -1,4 +1,6 @@
-import { nid } from '.';
+import { IconConverter } from 'icon-sdk-js';
+
+import { nid, AccountType } from '.';
 import addresses from '../../constants/addresses';
 import { BALNbnUSDpoolId, sICXbnUSDpoolId } from '../icon-react';
 import { IconWrapper } from './iconWrapper';
@@ -9,12 +11,12 @@ export enum GetPriceDexPID {
 }
 
 export class Dex extends IconWrapper {
-  constructor(public account: string) {
+  constructor(public account: AccountType) {
     super(nid);
     this.address = addresses[this.nid].dex;
   }
 
-  getPrice({ params }: { params: { _pid: GetPriceDexPID } }) {
+  getPrice(params: { _pid: GetPriceDexPID }) {
     const callParams = this.paramsBuilder({
       method: 'getPrice',
       params: {
@@ -26,8 +28,9 @@ export class Dex extends IconWrapper {
   }
 
   balanceOf() {
+    console.log('IconConverter.toNumber', IconConverter.toNumber(addresses[this.nid].bal));
     const callParams = this.paramsBuilder({
-      method: 'getPrice',
+      method: 'balanceOf',
       params: { _owner: this.account, _id: addresses[this.nid].bal },
     });
 

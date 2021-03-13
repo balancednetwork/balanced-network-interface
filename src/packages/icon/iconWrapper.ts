@@ -1,12 +1,13 @@
 import IconService, { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
 
+import { AccountType } from '.';
 import { NetworkId } from '../../constants/addresses';
 import { iconService } from '../icon-react/index';
 
 export class IconWrapper {
   protected caller: IconService = iconService;
   protected address: string = '';
-  protected account: string = '';
+  protected account: AccountType = '';
 
   constructor(protected nid: NetworkId) {}
 
@@ -22,7 +23,7 @@ export class IconWrapper {
     return new IconBuilder.CallBuilder().from(this.account).to(this.address).method(method).params(params).build();
   }
 
-  async call(params: any) {
+  async call(params: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.caller.call(params).execute().then(resolve).catch(reject);
     });

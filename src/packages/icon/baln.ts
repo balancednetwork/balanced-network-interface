@@ -1,9 +1,9 @@
-import { nid } from '.';
+import { nid, AccountType } from '.';
 import addresses from '../../constants/addresses';
 import { IconWrapper } from './iconWrapper';
 
 export class BALN extends IconWrapper {
-  constructor(public account: string) {
+  constructor(public account: AccountType) {
     super(nid);
     this.address = addresses[this.nid].bal;
   }
@@ -13,18 +13,6 @@ export class BALN extends IconWrapper {
       method: 'balanceOf',
       params: {
         _owner: this.account,
-      },
-    });
-
-    return this.call(callParams);
-  }
-
-  getLiquidityBALNSupply() {
-    const callParams = this.paramsBuilder({
-      method: 'balanceOf',
-      params: {
-        _owner: this.account,
-        _id: this.address,
       },
     });
 

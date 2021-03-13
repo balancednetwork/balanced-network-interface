@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
+// import { main } from 'packages/icon/integration.test';
 import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';

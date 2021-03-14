@@ -8,24 +8,22 @@ export default class Baln extends Contract {
     this.address = addresses[this.nid].baln;
   }
 
-  balanceOf({ account }: { account: string }) {
+  balanceOf() {
     const callParams = this.paramsBuilder({
-      account,
       method: 'balanceOf',
       params: {
-        _owner: account,
+        _owner: this.account,
       },
     });
 
     return this.call(callParams);
   }
 
-  getLiquidityBALNSupply({ account }: { account: string }) {
+  getLiquidityBALNSupply() {
     const callParams = this.paramsBuilder({
-      account,
       method: 'balanceOf',
       params: {
-        _owner: account,
+        _owner: this.account,
         _id: this.address,
       },
     });

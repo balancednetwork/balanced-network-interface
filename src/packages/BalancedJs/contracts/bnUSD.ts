@@ -8,12 +8,11 @@ export default class bnUSD extends Contract {
     this.address = addresses[this.nid].bnUSD;
   }
 
-  balanceOf({ account }: { account: string }) {
+  balanceOf() {
     const callParams = this.paramsBuilder({
-      account,
       method: 'balanceOf',
       params: {
-        _owner: account,
+        _owner: this.account,
       },
     });
 
@@ -22,9 +21,7 @@ export default class bnUSD extends Contract {
 
   totalSupply() {
     const callParams = this.paramsBuilder({
-      account: '',
       method: 'totalSupply',
-      params: {},
     });
 
     return this.call(callParams);

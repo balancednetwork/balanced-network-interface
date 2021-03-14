@@ -2,10 +2,7 @@ import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
 
-export enum Collateral {
-  withdrawCollateral = 'withdrawCollateral',
-  addCollateral = 'addCollateral',
-}
+export type CollateralMethod = 'withdrawCollateral' | 'addCollateral';
 
 export default class Loans extends Contract {
   constructor(contractSettings: ContractSettings) {
@@ -13,42 +10,41 @@ export default class Loans extends Contract {
     this.address = addresses[this.nid].loans;
   }
 
-  collateral({
-    account,
+  /**
+   * addCollateral and withdrawCollateral
+   * @returns payload to call iconex
+   */
+  getCollateralTransactionPayload({
     value,
     params,
     method,
   }: {
-    method: Collateral;
-    account: string;
+    method: CollateralMethod;
     value: number;
     params: {
       [key: string]: any;
     };
   }) {
     return this.transactionParamsBuilder({
-      account,
       method,
       value,
       params,
     });
   }
 
-  getAvailableAssets({ account }: { account: string }) {
+  getAvailableAssets() {
     const callParams = this.paramsBuilder({
-      account,
       method: 'getAvailableAssets',
     });
 
     return this.call(callParams);
   }
 
-  getAccountPositions({ account }: { account: string }) {
+  getAccountPositions() {
     const callParams = this.paramsBuilder({
-      account,
       method: 'getAccountPositions',
       params: {
-        _owner: account,
+        _owner: this.account,
       },
     });
 

@@ -65,6 +65,8 @@ export function usePrice() {
 
 export function useBalance() {
   const { account } = useIconReact();
+  // eject this account and we don't need to account params for when call contract
+  bnJs.eject({ account });
 
   // wallet
   const changeBalanceValue = useChangeWalletBalance();
@@ -72,11 +74,7 @@ export function useBalance() {
   // wallet balance
   const initWalletBalance = React.useCallback(() => {
     if (account) {
-      Promise.all([
-        bnJs.sICX.balanceOf({ account: account }),
-        bnJs.Baln.balanceOf({ account: account }),
-        bnJs.bnUSD.balanceOf({ account: account }),
-      ]).then(result => {
+      Promise.all([bnJs.sICX.balanceOf(), bnJs.Baln.balanceOf(), bnJs.bnUSD.balanceOf()]).then(result => {
         const [sICXbalance, BALNbalance, bnUSDbalance] = result.map(v => convertLoopToIcx(v as BigNumber));
         changeBalanceValue({ sICXbalance });
         changeBalanceValue({ BALNbalance });
@@ -97,14 +95,16 @@ export function useAccountPositions() {
 
   const getAccountPositions = React.useCallback(() => {
     if (account) {
-      Promise.all([bnJs.Loans.getAccountPositions({ account }), iconService.getBalance(account).execute()]).then(
-        ([result, balance]: Array<any>) => {
-          const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
-          const unStakedVal = convertLoopToIcx(balance);
-          updateUnStackedICXAmount(unStakedVal);
-          changeStakedICXAmount(stakedICXVal);
-        },
-      );
+      Promise.all([
+        // if we call for another account we can re-eject that here
+        bnJs.Loans.eject({ account }).getAccountPositions(),
+        iconService.getBalance(account).execute(),
+      ]).then(([result, balance]: Array<any>) => {
+        const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
+        const unStakedVal = convertLoopToIcx(balance);
+        updateUnStackedICXAmount(unStakedVal);
+        changeStakedICXAmount(stakedICXVal);
+      });
     }
   }, [account, updateUnStackedICXAmount, changeStakedICXAmount, iconService]);
 
@@ -121,11 +121,11 @@ export function useInitLoan() {
   const initLoan = React.useCallback(() => {
     if (account) {
       Promise.all([
-        bnJs.Loans.getAvailableAssets({ account }),
+        bnJs.Loans.eject({ account }).getAvailableAssets(),
         bnJs.bnUSD.totalSupply(),
-        bnJs.Loans.getAccountPositions({ account }),
+        bnJs.Loans.eject({ account }).getAccountPositions(),
       ]).then(([resultGetAvailableAssets, resultbnUSDtotalSupply, resultTotalDebt]: Array<any>) => {
-        const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['ICD']['bad_debt']);
+        const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
         const bnUSDtotalSupply = convertLoopToIcx(resultbnUSDtotalSupply);
         const totalDebt = convertLoopToIcx(resultTotalDebt['total_debt'] || 0);
 

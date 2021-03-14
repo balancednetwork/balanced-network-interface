@@ -2,17 +2,15 @@ import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
 
-export default class Staking extends Contract {
+export class Rewards extends Contract {
   constructor(contractSettings: ContractSettings) {
     super(contractSettings);
-    this.address = addresses[this.nid].staking;
+    this.address = addresses[this.nid].loans;
   }
 
-  getTodayRate() {
-    const callParams = this.paramsBuilder({
-      method: 'getTodayRate',
+  getClaimRewardsTransactionPayload() {
+    return this.transactionParamsBuilder({
+      method: 'claimRewards',
     });
-
-    return this.call(callParams);
   }
 }

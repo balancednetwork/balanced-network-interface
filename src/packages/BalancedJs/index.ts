@@ -9,6 +9,12 @@ import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
 import ContractSettings from './contractSettings';
 
+export type AccountType = string | undefined | null;
+
+export type SettingEjection = {
+  account: AccountType;
+};
+
 export class BalancedJs {
   contractSettings: ContractSettings;
   networkId: NetworkId;
@@ -39,24 +45,27 @@ export class BalancedJs {
    */
 
   constructor(contractSettings?: Partial<ContractSettings>) {
-    let _contractSettings = new ContractSettings(contractSettings);
-    this.contractSettings = _contractSettings;
-    const { networkId } = _contractSettings;
-    this.networkId = networkId;
+    this.contractSettings = new ContractSettings(contractSettings);
+    this.networkId = this.contractSettings.networkId;
 
     // Object.keys(contracts).forEach(name => {
     //   const Contract = contracts[name];
     //   this[name] = new Contract(_contractSettings);
     // });
 
-    this.Baln = new Baln(_contractSettings);
-    this.Loans = new Loans(_contractSettings);
-    this.sICX = new sICX(_contractSettings);
-    this.Band = new Band(_contractSettings);
-    this.Staking = new Staking(_contractSettings);
-    this.Dex = new Dex(_contractSettings);
-    this.bnUSD = new bnUSD(_contractSettings);
+    this.Baln = new Baln(this.contractSettings);
+    this.Loans = new Loans(this.contractSettings);
+    this.sICX = new sICX(this.contractSettings);
+    this.Band = new Band(this.contractSettings);
+    this.Staking = new Staking(this.contractSettings);
+    this.Dex = new Dex(this.contractSettings);
+    this.bnUSD = new bnUSD(this.contractSettings);
 
     console.info(this);
+  }
+
+  eject({ account }: SettingEjection) {
+    this.contractSettings.account = account;
+    return this;
   }
 }

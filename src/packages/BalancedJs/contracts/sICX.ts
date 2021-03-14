@@ -8,12 +8,11 @@ export default class sICX extends Contract {
     this.address = addresses[this.nid].sicx;
   }
 
-  balanceOf({ account }: { account: string }) {
+  balanceOf() {
     const callParams = this.paramsBuilder({
-      account,
       method: 'balanceOf',
       params: {
-        _owner: account,
+        _owner: this.account,
       },
     });
 

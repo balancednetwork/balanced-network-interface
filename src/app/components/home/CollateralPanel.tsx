@@ -34,16 +34,6 @@ const CollateralPanel = () => {
     typedValue: '',
   });
 
-  // wallet icx balance
-
-  // staked icx balance
-  const stakedICXAmount = useDepositedValue();
-  const unStackedICXAmount = useBalance();
-  // const changeStakedICXAmount = useChangeDepositedValue();
-  // const updateUnStackedICXAmount = useChangeBalanceValue();
-  const [stakedICXAmountCache, changeStakedICXAmountCache] = React.useState(new BigNumber(0));
-  // changeStakedICXAmountCache(stakedICXAmount);
-
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
   // wallet icx balance

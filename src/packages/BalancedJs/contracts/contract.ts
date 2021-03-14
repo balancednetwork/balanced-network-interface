@@ -1,5 +1,6 @@
 import IconService, { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
 
+import { AccountType, SettingEjection } from '..';
 import { NetworkId } from '../addresses';
 import ContractSettings from '../contractSettings';
 
@@ -8,26 +9,33 @@ export class Contract {
   protected nid: NetworkId;
   protected address: string = '';
 
-  constructor(contractSettings: ContractSettings) {
+  constructor(private contractSettings: ContractSettings) {
     this.provider = contractSettings.provider;
     this.nid = contractSettings.networkId;
   }
 
+  protected get account(): AccountType {
+    return this.contractSettings.account;
+  }
+
+  public eject({ account }: SettingEjection) {
+    this.contractSettings.account = account;
+    return this;
+  }
+
   public paramsBuilder({
-    account,
     method,
     params,
   }: {
-    account: string;
     method: string;
     params?: {
       [key: string]: any;
     };
   }) {
-    return new IconBuilder.CallBuilder().from(account).to(this.address).method(method).params(params).build();
+    return new IconBuilder.CallBuilder().from(this.account).to(this.address).method(method).params(params).build();
   }
 
-  async call(params: any) {
+  async call(params: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.provider.call(params).execute().then(resolve).catch(reject);
     });
@@ -37,21 +45,19 @@ export class Contract {
    * @returns payload to call Iconex wallet
    */
   public transactionParamsBuilder({
-    account,
     method,
     params,
     value,
   }: {
-    account: string;
     method: string;
-    value: number;
+    value?: number;
     params?: {
       [key: string]: any;
     };
   }) {
     const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
     const payload = callTransactionBuilder
-      .from(account)
+      .from(this.account)
       .to(this.address)
       .method(method)
       .params(params)

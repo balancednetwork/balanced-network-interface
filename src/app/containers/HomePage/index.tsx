@@ -1,21 +1,10 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { IconBuilder } from 'icon-sdk-js';
 import Nouislider from 'nouislider-react';
-import {
-  useIconReact,
-  sICX_ADDRESS,
-  LOAN_ADDRESS,
-  BALN_ADDRESS,
-  bnUSD_ADDRESS,
-  BAND_ADDRESS,
-  STAKING_ADDRESS,
-  BALNbnUSDpoolId,
-  DEX_ADDRESS,
-} from 'packages/icon-react';
+import { BalancedJs } from 'packages/BalancedJs';
+import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
-import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 import { Helmet } from 'react-helmet-async';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -31,7 +20,8 @@ import { DefaultLayout } from 'app/components/Layout';
 import { MenuList, MenuItem } from 'app/components/Menu';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { useWalletICXBalance } from 'hooks';
+import bnJs from 'bnJs';
+import useInterval from 'hooks/useInterval';
 import { useChangeDepositedValue, useDepositedValue, useChangeBalanceValue } from 'store/collateral/hooks';
 import {
   useLoanBorrowedValue,
@@ -79,155 +69,105 @@ const Chip = styled(Box)`
 
 const client = new W3CWebSocket(`ws://35.240.219.80:8000/wss`);
 
-export function HomePage() {
-  const { account, iconService } = useIconReact();
+const PERIOD = 10000;
 
-  const balance = useWalletICXBalance(account);
+export function usePrice() {
+  const changeRatioValue = useChangeRatio();
 
-  // collateral
-  const stakedICXAmount = useDepositedValue();
-  const changeStakedICXAmount = useChangeDepositedValue();
-  const updateUnStackedICXAmount = useChangeBalanceValue();
-  updateUnStackedICXAmount(balance);
+  // ICX <-> USD price
+  useInterval(async () => {
+    const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
+    const ICXUSDratio = convertLoopToIcx(res['rate']);
+    changeRatioValue({ ICXUSDratio });
+  }, PERIOD);
 
-  // loan
-  const loanBorrowedValue = useLoanBorrowedValue();
-  const loanbnUSDbadDebt = useLoanbnUSDbadDebt();
-  const loanbnUSDtotalSupply = useLoanbnUSDtotalSupply();
-  const updateChangeLoanBorrowedValue = useLoanChangeBorrowedValue();
-  const updateChangeLoanbnUSDbadDebt = useLoanChangebnUSDbadDebt();
-  const updateChangeLoanbnUSDtotalSupply = useLoanChangebnUSDtotalSupply();
+  // sICX <-> ICX price
+  useInterval(async () => {
+    const res = await bnJs.Staking.getTodayRate();
+    const sICXICXratio = convertLoopToIcx(res);
+    changeRatioValue({ sICXICXratio });
+  }, PERIOD);
+
+  // sICX <-> ICX price
+  useInterval(async () => {
+    const res = await bnJs.Dex.getPrice({ _pid: BalancedJs.utils.BALNbnUSDpoolId.toString() });
+    const BALNbnUSDratio = convertLoopToIcx(res);
+    changeRatioValue({ BALNbnUSDratio });
+  }, PERIOD);
+}
+
+export function useBalance() {
+  const { account } = useIconReact();
 
   // wallet
   const changeBalanceValue = useChangeWalletBalance();
 
-  // ratio
-  const ratioValue = useRatioValue();
-  const changeRatioValue = useChangeRatio();
-
-  // ratio
-  const initRatioICXUSDratio = React.useCallback(() => {
-    const callICXUSDratioParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(BAND_ADDRESS)
-      .method('get_reference_data')
-      .params({ _base: 'ICX', _quote: 'USD' })
-      .build();
-    const callSICXICXratioParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(STAKING_ADDRESS)
-      .method('getTodayRate')
-      .build();
-    const callBALNbnUSDratioParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(DEX_ADDRESS)
-      .method('getPrice')
-      .params({ _pid: BALNbnUSDpoolId.toString() })
-      .build();
-
-    Promise.all([
-      iconService.call(callICXUSDratioParams).execute(),
-      iconService.call(callSICXICXratioParams).execute(),
-      iconService.call(callBALNbnUSDratioParams).execute(),
-    ]).then(([resultICXUSDratio, resultSICXICXratio, resultBALNbnUSDratioParams]) => {
-      const ICXUSDratio = convertLoopToIcx(resultICXUSDratio['rate']);
-      const sICXICXratio = convertLoopToIcx(resultSICXICXratio);
-      const BALNbnUSDratio = convertLoopToIcx(resultBALNbnUSDratioParams);
-      changeRatioValue({ ICXUSDratio });
-      changeRatioValue({ sICXICXratio });
-      changeRatioValue({ BALNbnUSDratio });
-    });
-  }, [account, changeRatioValue, iconService]);
-
   // wallet balance
   const initWalletBalance = React.useCallback(() => {
-    const callSICXbalanceParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(sICX_ADDRESS)
-      .method('balanceOf')
-      .params({ _owner: account })
-      .build();
-    const callBALNbalanceParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(BALN_ADDRESS)
-      .method('balanceOf')
-      .params({ _owner: account })
-      .build();
-    const callbnUSDbalanceParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(bnUSD_ADDRESS)
-      .method('balanceOf')
-      .params({ _owner: account })
-      .build();
+    if (account) {
+      Promise.all([
+        bnJs.sICX.balanceOf({ account: account }),
+        bnJs.Baln.balanceOf({ account: account }),
+        bnJs.bnUSD.balanceOf({ account: account }),
+      ]).then(result => {
+        const [sICXbalance, BALNbalance, bnUSDbalance] = result.map(v => convertLoopToIcx(v as BigNumber));
+        changeBalanceValue({ sICXbalance });
+        changeBalanceValue({ BALNbalance });
+        changeBalanceValue({ bnUSDbalance });
+      });
+    }
+  }, [account, changeBalanceValue]);
 
-    Promise.all([
-      iconService.call(callSICXbalanceParams).execute(),
-      iconService.call(callBALNbalanceParams).execute(),
-      iconService.call(callbnUSDbalanceParams).execute(),
-    ]).then(result => {
-      const [sICXbalance, BALNbalance, bnUSDbalance] = result.map(v => convertLoopToIcx(v));
-      changeBalanceValue({ sICXbalance });
-      changeBalanceValue({ BALNbalance });
-      changeBalanceValue({ bnUSDbalance });
-    });
-  }, [account, changeBalanceValue, iconService]);
+  React.useEffect(() => {
+    initWalletBalance();
+  }, [initWalletBalance]);
+}
+
+export function useAccountPositions() {
+  const { account, iconService } = useIconReact();
+  const changeStakedICXAmount = useChangeDepositedValue();
+  const updateUnStackedICXAmount = useChangeBalanceValue();
+
+  const getAccountPositions = React.useCallback(() => {
+    if (account) {
+      Promise.all([bnJs.Loans.getAccountPositions({ account }), iconService.getBalance(account).execute()]).then(
+        ([result, balance]: Array<any>) => {
+          const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
+          const unStakedVal = convertLoopToIcx(balance);
+          updateUnStackedICXAmount(unStakedVal);
+          changeStakedICXAmount(stakedICXVal);
+        },
+      );
+    }
+  }, [account, updateUnStackedICXAmount, changeStakedICXAmount, iconService]);
+
+  useInterval(getAccountPositions, PERIOD);
+}
+
+export function useInitLoan() {
+  const { account } = useIconReact();
+
+  const updateChangeLoanBorrowedValue = useLoanChangeBorrowedValue();
+  const updateChangeLoanbnUSDbadDebt = useLoanChangebnUSDbadDebt();
+  const updateChangeLoanbnUSDtotalSupply = useLoanChangebnUSDtotalSupply();
 
   const initLoan = React.useCallback(() => {
-    const callGetAvailableAssetsParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(LOAN_ADDRESS)
-      .method('getAvailableAssets')
-      .build();
-    const callbnUSDtotalSupplyParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(bnUSD_ADDRESS)
-      .method('totalSupply')
-      .build();
-    const callTotalDebtParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(LOAN_ADDRESS)
-      .method('getAccountPositions')
-      .params({ _owner: account })
-      .build();
+    if (account) {
+      Promise.all([
+        bnJs.Loans.getAvailableAssets({ account }),
+        bnJs.bnUSD.totalSupply(),
+        bnJs.Loans.getAccountPositions({ account }),
+      ]).then(([resultGetAvailableAssets, resultbnUSDtotalSupply, resultTotalDebt]: Array<any>) => {
+        const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['ICD']['bad_debt']);
+        const bnUSDtotalSupply = convertLoopToIcx(resultbnUSDtotalSupply);
+        const totalDebt = convertLoopToIcx(resultTotalDebt['total_debt'] || 0);
 
-    Promise.all([
-      iconService.call(callGetAvailableAssetsParams).execute(),
-      iconService.call(callbnUSDtotalSupplyParams).execute(),
-      iconService.call(callTotalDebtParams).execute(),
-    ]).then(([resultGetAvailableAssets, resultbnUSDtotalSupply, resultTotalDebt]) => {
-      const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['ICD']['bad_debt']);
-      const bnUSDtotalSupply = convertLoopToIcx(resultbnUSDtotalSupply);
-      const totalDebt = convertLoopToIcx(resultTotalDebt['total_debt'] || 0);
-
-      updateChangeLoanbnUSDbadDebt(bnUSDbadDebt);
-      updateChangeLoanbnUSDtotalSupply(bnUSDtotalSupply);
-      updateChangeLoanBorrowedValue(totalDebt);
-    });
-  }, [
-    account,
-    updateChangeLoanbnUSDbadDebt,
-    updateChangeLoanbnUSDtotalSupply,
-    updateChangeLoanBorrowedValue,
-    iconService,
-  ]);
-
-  const initStakedICXBalance = React.useCallback(() => {
-    const callParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(LOAN_ADDRESS)
-      .method('getAccountPositions')
-      .params({ _owner: account })
-      .build();
-
-    iconService
-      .call(callParams)
-      .execute()
-      .then((result: BigNumber) => {
-        const deposited = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
-
-        changeStakedICXAmount(deposited);
+        updateChangeLoanbnUSDbadDebt(bnUSDbadDebt);
+        updateChangeLoanbnUSDtotalSupply(bnUSDtotalSupply);
+        updateChangeLoanBorrowedValue(totalDebt);
       });
-  }, [account, changeStakedICXAmount, iconService]);
+    }
+  }, [account, updateChangeLoanbnUSDbadDebt, updateChangeLoanbnUSDtotalSupply, updateChangeLoanBorrowedValue]);
 
   const initWebSocket = React.useCallback(() => {
     client.send(
@@ -239,52 +179,37 @@ export function HomePage() {
 
   React.useEffect(() => {
     if (account) {
-      initRatioICXUSDratio();
-      initWalletBalance();
       initLoan();
       initWebSocket();
-      initStakedICXBalance();
     }
-  }, [initRatioICXUSDratio, initWalletBalance, initLoan, initWebSocket, initStakedICXBalance, account]);
+  }, [initLoan, initWebSocket, account]);
+}
 
-  const getAccountPositions = React.useCallback(() => {
-    const callParams = new IconBuilder.CallBuilder()
-      .from(account)
-      .to(LOAN_ADDRESS)
-      .method('getAccountPositions')
-      .params({ _owner: account })
-      .build();
+export function HomePage() {
+  // collateral
+  const stakedICXAmount = useDepositedValue();
 
-    Promise.all([iconService.call(callParams).execute(), iconService.getBalance(account).execute()]).then(
-      ([result, balance]) => {
-        const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
-        const unStakedVal = convertLoopToIcx(balance);
-        updateUnStackedICXAmount(unStakedVal);
-        changeStakedICXAmount(stakedICXVal);
-      },
-    );
-  }, [account, updateUnStackedICXAmount, changeStakedICXAmount, iconService]);
+  // loan
+  const loanBorrowedValue = useLoanBorrowedValue();
+  const loanbnUSDbadDebt = useLoanbnUSDbadDebt();
+  const loanbnUSDtotalSupply = useLoanbnUSDtotalSupply();
 
-  React.useEffect(() => {
-    const handler = ({ detail: { type, payload } }: any) => {
-      setTimeout(() => {
-        if (account && type === 'RESPONSE_JSON-RPC') {
-          getAccountPositions();
-        }
-      }, 5000);
-    };
-
-    window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
-    return () => {
-      window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
-    };
-  }, [account, getAccountPositions]);
+  // ratio
+  const ratioValue = useRatioValue();
+  console.log(ratioValue);
+  // ratio
 
   // loan slider
   const totalLoanAmount = stakedICXAmount.div(4).minus(loanBorrowedValue);
 
   const totalCollateralValue = stakedICXAmount.times(ratioValue.ICXUSDratio === undefined ? 0 : ratioValue.ICXUSDratio);
   const debtHoldShare = loanBorrowedValue.div(loanbnUSDtotalSupply.minus(loanbnUSDbadDebt)).multipliedBy(100);
+
+  //////////////////////////////////////////////////////////////////
+  usePrice();
+  useBalance();
+  useAccountPositions();
+  useInitLoan();
 
   return (
     <DefaultLayout>

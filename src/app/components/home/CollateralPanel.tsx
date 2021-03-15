@@ -1,7 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
+import { IconBuilder } from 'icon-sdk-js';
 import Nouislider from 'nouislider-react';
 import { LOAN_ADDRESS, useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
@@ -13,6 +13,7 @@ import { CurrencyField } from 'app/components/Form';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
+import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 // import { useWalletICXBalance, useStakedICXBalance } from 'hooks';
 import {
@@ -45,6 +46,12 @@ const CollateralPanel = () => {
   // const updateUnStackedICXAmount = useChangeBalanceValue();
   const [stakedICXAmountCache, changeStakedICXAmountCache] = React.useState(new BigNumber(0));
   // changeStakedICXAmountCache(stakedICXAmount);
+
+  //bug here
+  React.useEffect(() => {
+    setCollateralState({ independentField: Field.LEFT, typedValue: stakedICXAmount.toFixed(2) });
+  }, [stakedICXAmount]);
+  /*******/
 
   const toggleOpen = () => {
     setOpen(!open);
@@ -83,41 +90,51 @@ const CollateralPanel = () => {
 
   const formattedAmounts = {
     [independentField]: typedValue || '0',
-    [dependentField]: parsedAmount[dependentField].toFixed(2),
+    [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 
-  console.log(
+  /*console.log(
     independentField,
     unStackedICXAmount.toFixed(2),
     stakedICXAmount.toFixed(2),
     totalICXAmount.toFixed(2),
     parsedAmount,
     formattedAmounts,
-  );
+  );*/
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCollateralConfirm = () => {
     if (!account) return;
-    const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
-    const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
-    const params = { _data1: data1, _data2: data2 };
+    //const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
+    //const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
+    //const params = { _data1: data1, _data2: data2 };
 
     const newDepositedValue = parseFloat(formattedAmounts[Field.LEFT]);
     const shouldWithdraw = newDepositedValue < stakedICXAmountCache.toNumber();
     if (shouldWithdraw) {
-      withdrawCollateral(0, {
+      /*withdrawCollateral(0, {
         _value:
           '0x' +
           IconAmount.of(stakedICXAmountCache.toNumber() - newDepositedValue, IconAmount.Unit.ICX)
             .toLoop()
             .toString(16),
-      });
+      });*/
     } else {
-      addCollateral(newDepositedValue - stakedICXAmountCache.toNumber(), params);
+      //addCollateral(newDepositedValue - stakedICXAmountCache.toNumber(), params);
+      //deposit
+      bnJs
+        .eject({ account: account })
+        .Loans.depositAddCollateral(newDepositedValue)
+        .then(res => {
+          console.log('res', res);
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
     }
   };
 
-  function withdrawCollateral(value, params) {
+  /*function withdrawCollateral(value, params) {
     const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
     const depositPayload = callTransactionBuilder
       .from(account)
@@ -178,7 +195,7 @@ const CollateralPanel = () => {
         },
       }),
     );
-  }
+  }*/
 
   const sliderInstance = React.useRef<any>(null);
 
@@ -200,8 +217,6 @@ const CollateralPanel = () => {
           Promise.all([iconService.call(callParams).execute(), iconService.getBalance(account).execute()]).then(
             ([result, balance]) => {
               const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              const unStakedVal = convertLoopToIcx(balance);
               changeStakedICXAmountCache(stakedICXVal);
             },
           );
@@ -287,21 +302,21 @@ const CollateralPanel = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            0 ICX
+            {formattedAmounts[Field.LEFT] + ' ICX'}
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                8,205 ICX
+                {unStackedICXAmount.toFixed(2) + ' ICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                8,205 ICX
+                {formattedAmounts[Field.RIGHT] + ' ICX'}
               </Typography>
             </Box>
           </Flex>
@@ -310,7 +325,7 @@ const CollateralPanel = () => {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen}>Cancel</TextButton>
-            <Button>Deposit</Button>
+            <Button onClick={handleCollateralConfirm}>Deposit</Button>
           </Flex>
         </Flex>
       </Modal>

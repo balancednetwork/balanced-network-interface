@@ -9,8 +9,10 @@ export class Rewards extends Contract {
   }
 
   getClaimRewardsTransactionPayload() {
-    return this.transactionParamsBuilder({
+    const payload = this.transactionParamsBuilder({
       method: 'claimRewards',
     });
+
+    return this.callIconex(payload);
   }
 }

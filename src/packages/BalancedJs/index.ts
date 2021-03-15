@@ -10,6 +10,11 @@ import Staking from './contracts/Staking';
 import ContractSettings from './contractSettings';
 
 export type AccountType = string | undefined | null;
+export type ResponseJsonRPCPayload = {
+  id: number;
+  jsonrpc: string;
+  result: string;
+};
 
 export type SettingEjection = {
   account: AccountType;

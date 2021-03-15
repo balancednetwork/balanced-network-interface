@@ -1,9 +1,8 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
 import Nouislider from 'nouislider-react';
-import { bnUSD_ADDRESS, LOAN_ADDRESS, useIconReact } from 'packages/icon-react';
+import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
@@ -13,7 +12,6 @@ import { Typography } from 'app/theme';
 import { CURRENCYLIST } from 'constants/currency';
 import { useDepositedValue } from 'store/collateral/hooks';
 import { useLoanBorrowedValue } from 'store/loan/hooks';
-import { useRatioValue } from 'store/ratio/hooks';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
@@ -23,7 +21,6 @@ const LoanPanel = () => {
     RIGHT = 'RIGHT',
   }
 
-  const ratioValue = useRatioValue();
   const stakedICXAmount = useDepositedValue();
   const loanBorrowedValue = useLoanBorrowedValue();
 
@@ -37,27 +34,30 @@ const LoanPanel = () => {
   const dependentLoanField: loanField = independentLoanField === loanField.LEFT ? loanField.RIGHT : loanField.LEFT;
 
   const parsedLoanAmount = {
-    [independentLoanField]: new BigNumber(typedLoanValue),
-    [dependentLoanField]: totalLoanAmount.minus(new BigNumber(typedLoanValue)),
+    [independentLoanField]: new BigNumber(typedLoanValue || '0'),
+    [dependentLoanField]: totalLoanAmount.minus(new BigNumber(typedLoanValue || '0')),
   };
 
   const formattedLoanAmounts = {
-    [independentLoanField]: typedLoanValue,
-    [dependentLoanField]: parsedLoanAmount[dependentLoanField].toFixed(2),
+    [independentLoanField]: typedLoanValue || '0',
+    [dependentLoanField]: parsedLoanAmount[dependentLoanField].isZero()
+      ? '0'
+      : parsedLoanAmount[dependentLoanField].toFixed(2),
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleLoanConfirm = () => {
     if (!account) return;
     const newBorrowValue = parseFloat(formattedLoanAmounts[loanField.LEFT]);
 
     if (newBorrowValue === 0 && loanBorrowedValue.toNumber() > 0) {
-      repayLoan(loanBorrowedValue);
+      //repayLoan(loanBorrowedValue);
     } else if (newBorrowValue > loanBorrowedValue.toNumber() && loanBorrowedValue.toNumber() > 0) {
-      addLoan(newBorrowValue);
+      //addLoan(newBorrowValue);
     }
   };
 
-  function repayLoan(value) {
+  /*function repayLoan(value) {
     const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
     const data = '0x' + Buffer.from('{"method": "_repay_loan", "params": {}}', 'utf8').toString('hex');
     const valueParam = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
@@ -128,7 +128,7 @@ const LoanPanel = () => {
         },
       }),
     );
-  }
+  }*/
 
   const [isLoanEditing, setLoanEditing] = React.useState<boolean>(false);
 
@@ -139,6 +139,18 @@ const LoanPanel = () => {
   const handleLoanCancel = () => {
     setLoanEditing(false);
   };
+
+  const handleLoanSlider = (values: string[], handle: number) => {
+    setLoanState(state => ({ independentLoanField: state['independentLoanField'], typedLoanValue: values[handle] }));
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleBorrowedAmountType = React.useCallback(
+    (value: string) => {
+      setLoanState({ independentLoanField: loanField.LEFT, typedLoanValue: value });
+    },
+    [setLoanState, loanField.LEFT],
+  );
 
   return (
     <BoxPanel bg="bg3">
@@ -164,6 +176,7 @@ const LoanPanel = () => {
           start={[10000]}
           padding={[0]}
           connect={[true, false]}
+          onSlide={handleLoanSlider}
           range={{
             min: [0],
             max: [15000],
@@ -178,7 +191,7 @@ const LoanPanel = () => {
             isActive
             label="Borrowed"
             tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-            value={'37533'}
+            value={formattedLoanAmounts[loanField.LEFT]}
             currency={CURRENCYLIST['bnusd']}
           />
         </Box>
@@ -189,7 +202,7 @@ const LoanPanel = () => {
             isActive={false}
             label="Available"
             tooltipText="The amount of ICX available to deposit from your wallet."
-            value={'34740'}
+            value={formattedLoanAmounts[loanField.RIGHT]}
             currency={CURRENCYLIST['bnusd']}
           />
         </Box>

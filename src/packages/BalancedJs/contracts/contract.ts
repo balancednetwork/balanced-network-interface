@@ -1,6 +1,7 @@
 import IconService, { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
+import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 
-import { AccountType, SettingEjection } from '..';
+import { AccountType, ResponseJsonRPCPayload, SettingEjection } from '..';
 import { NetworkId } from '../addresses';
 import ContractSettings from '../contractSettings';
 
@@ -74,5 +75,26 @@ export class Contract {
       params: IconConverter.toRawTransaction(payload),
       id: Date.now(),
     };
+  }
+
+  public async callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
+    window.dispatchEvent(
+      new CustomEvent('ICONEX_RELAY_REQUEST', {
+        detail: {
+          type: 'REQUEST_JSON-RPC',
+          payload,
+        },
+      }),
+    );
+    return new Promise(resolve => {
+      const handler = ({ detail: { type, payload } }: any) => {
+        if (type === 'RESPONSE_JSON-RPC') {
+          window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
+          resolve(payload);
+        }
+      };
+
+      window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
+    });
   }
 }

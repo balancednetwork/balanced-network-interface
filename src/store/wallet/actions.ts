@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 
 // #redux-step-4: define action
 export const changeValueBalance = createAction<{
+  ICXbalance?: BigNumber;
   sICXbalance?: BigNumber;
   bnUSDbalance?: BigNumber;
   BALNbalance?: BigNumber;

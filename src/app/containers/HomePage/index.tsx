@@ -97,10 +97,11 @@ export function useAccountPositions() {
     if (account) {
       Promise.all([
         // if we call for another account we can re-eject that here
-        bnJs.Loans.eject({ account }).getAccountPositions(),
+        bnJs.Loans.eject({ account: account }).getAccountPositions(),
         iconService.getBalance(account).execute(),
       ]).then(([result, balance]: Array<any>) => {
         const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
+        console.log(result);
         const unStakedVal = convertLoopToIcx(balance);
         updateUnStackedICXAmount(unStakedVal);
         changeStakedICXAmount(stakedICXVal);

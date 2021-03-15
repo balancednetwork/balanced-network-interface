@@ -13,11 +13,16 @@ export function useWalletBalanceValue(): AppState['walletBalance'] {
 }
 
 // #redux-step-6: define function working with variable on store
-export function useChangeWalletBalance(): ({ sICXbalance, bnUSDbalance, BALNbalance }: WalletState) => void {
+export function useChangeWalletBalance(): ({
+  ICXbalance,
+  sICXbalance,
+  bnUSDbalance,
+  BALNbalance,
+}: WalletState) => void {
   const dispatch = useDispatch();
   return useCallback(
-    ({ sICXbalance, bnUSDbalance, BALNbalance }) => {
-      dispatch(changeValueBalance({ sICXbalance, bnUSDbalance, BALNbalance }));
+    ({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance }) => {
+      dispatch(changeValueBalance({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance }));
     },
     [dispatch],
   );

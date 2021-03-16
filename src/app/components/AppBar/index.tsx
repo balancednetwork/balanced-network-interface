@@ -19,7 +19,6 @@ const Navigation = styled.nav`
 
 const List = styled.ul`
   width: 100%;
-  border: 1px solid ${({ theme }) => theme.colors.primary};
   box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.068), 0 6.7px 5.3px rgba(0, 0, 0, 0.096), 0 12.5px 10px rgba(0, 0, 0, 0.12),
     0 22.3px 17.9px rgba(0, 0, 0, 0.144), 0 41.8px 33.4px rgba(0, 0, 0, 0.172), 0 100px 80px rgba(0, 0, 0, 0.24);
   border-radius: 20px;
@@ -57,7 +56,7 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   display: block;
   margin-left: 50%;
   transform: translate(-50%);
-  padding: 10px;
+  padding: 15px;
   width: 114px;
   border-radius: 20px;
   color: #8695a6;
@@ -83,6 +82,10 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
     width: 100px;
     padding: 5px;
   `}
+
+  > svg {
+    margin-bottom: 5px;
+  }
 `;
 
 export default React.memo(function AppBar() {
@@ -91,7 +94,7 @@ export default React.memo(function AppBar() {
       <List>
         <ListItem>
           <StyledNavLink exact to="/">
-            <HomeIcon width="30" height="35" />
+            <HomeIcon width="35" height="33" />
             <Text>Home</Text>
           </StyledNavLink>
         </ListItem>
@@ -107,7 +110,7 @@ export default React.memo(function AppBar() {
 
         <ListItem>
           <StyledNavLink exact to="/trade">
-            <TradeIcon width="30" height="35" />
+            <TradeIcon width="35" height="33" />
             <Text>Trade</Text>
           </StyledNavLink>
         </ListItem>

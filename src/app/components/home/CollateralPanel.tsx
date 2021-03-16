@@ -79,7 +79,7 @@ const CollateralPanel = () => {
     setCollateralState(state => ({ independentField: state['independentField'], typedValue: values[handle] }));
   };
 
-  // totall icx balance
+  // total icx balance
   const totalICXAmount = unStackedICXAmount.plus(stakedICXAmount);
 
   // calculate dependentField value
@@ -262,7 +262,7 @@ const CollateralPanel = () => {
             instanceRef={instance => {
               sliderInstance.current = instance;
             }}
-            onSlide={handleCollateralSlider}
+            onSet={handleCollateralSlider}
           />
         </Box>
 

@@ -16,10 +16,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 // import { useWalletICXBalance, useStakedICXBalance } from 'hooks';
-import {
-  /* useChangeDepositedValue, */ useBalance,
-  useDepositedValue /* , useChangeBalanceValue */,
-} from 'store/collateral/hooks';
+import { useChangeDepositedValue, useBalance } from 'store/collateral/hooks';
 
 enum Field {
   LEFT = 'LEFT',
@@ -28,29 +25,17 @@ enum Field {
 
 const CollateralPanel = () => {
   const { account, iconService } = useIconReact();
+  bnJs.eject({ account });
   const [open, setOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<boolean>(false);
-  const [{ independentField, typedValue }, setCollateralState] = React.useState({
-    independentField: Field.LEFT,
-    typedValue: '',
-  });
-
-  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
-
-  // wallet icx balance
 
   // staked icx balance
-  const stakedICXAmount = useDepositedValue();
-  const unStackedICXAmount = useBalance();
-  // const changeStakedICXAmount = useChangeDepositedValue();
-  // const updateUnStackedICXAmount = useChangeBalanceValue();
-  const [stakedICXAmountCache, changeStakedICXAmountCache] = React.useState(new BigNumber(0));
-  // changeStakedICXAmountCache(stakedICXAmount);
+  const [stakedICXAmount, updateStakedICXAmount] = React.useState(0);
+  const changeDepositedValue = useChangeDepositedValue();
 
-  //bug here
-  React.useEffect(() => {
-    setCollateralState({ independentField: Field.LEFT, typedValue: stakedICXAmount.toFixed(2) });
-  }, [stakedICXAmount]);
+  const unStackedICXAmount = useBalance();
+  const [stakedICXAmountCache, changeStakedICXAmountCache] = React.useState(new BigNumber(0));
+
   /*******/
 
   const toggleOpen = () => {
@@ -61,11 +46,28 @@ const CollateralPanel = () => {
     setEditing(!editing);
   };
 
+  const [{ independentField, typedValue }, setCollateralState] = React.useState({
+    independentField: Field.LEFT,
+    typedValue: '',
+  });
+
+  React.useEffect(() => {
+    if (!account) return;
+    bnJs.Loans.getAccountPositions().then(result => {
+      const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
+      updateStakedICXAmount(stakedICXVal.toNumber());
+      changeStakedICXAmountCache(stakedICXVal);
+
+      setCollateralState({ independentField: Field.LEFT, typedValue: stakedICXVal.toFixed(2) });
+    });
+  }, [setCollateralState, account]);
+
   const handleStakedAmountType = React.useCallback(
     (value: string) => {
       setCollateralState({ independentField: Field.LEFT, typedValue: value });
+      changeDepositedValue(new BigNumber(value));
     },
-    [setCollateralState],
+    [setCollateralState, changeDepositedValue],
   );
 
   const handleUnstakedAmountType = React.useCallback(
@@ -78,6 +80,8 @@ const CollateralPanel = () => {
   const handleCollateralSlider = (values: string[], handle: number) => {
     setCollateralState(state => ({ independentField: state['independentField'], typedValue: values[handle] }));
   };
+
+  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
   // totall icx balance
   const totalICXAmount = unStackedICXAmount.plus(stakedICXAmount);
@@ -102,13 +106,8 @@ const CollateralPanel = () => {
     formattedAmounts,
   );*/
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCollateralConfirm = () => {
     if (!account) return;
-    //const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
-    //const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
-    //const params = { _data1: data1, _data2: data2 };
-
     const newDepositedValue = parseFloat(formattedAmounts[Field.LEFT]);
     const shouldWithdraw = newDepositedValue < stakedICXAmountCache.toNumber();
     if (shouldWithdraw) {
@@ -122,9 +121,7 @@ const CollateralPanel = () => {
     } else {
       //addCollateral(newDepositedValue - stakedICXAmountCache.toNumber(), params);
       //deposit
-      bnJs
-        .eject({ account: account })
-        .Loans.depositAddCollateral(newDepositedValue)
+      bnJs.Loans.depositAddCollateral(newDepositedValue)
         .then(res => {
           console.log('res', res);
         })

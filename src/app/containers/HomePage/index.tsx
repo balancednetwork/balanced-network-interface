@@ -1,10 +1,8 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
-// import { main } from 'packages/icon/integration.test';
 import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
@@ -56,11 +54,11 @@ export function usePrice() {
   }, PERIOD);
 
   // sICX <-> ICX price
-  useInterval(async () => {
-    const res = await bnJs.Dex.getPrice({ _pid: BalancedJs.utils.BALNbnUSDpoolId.toString() });
-    const BALNbnUSDratio = convertLoopToIcx(res);
-    changeRatioValue({ BALNbnUSDratio });
-  }, PERIOD);
+  // useInterval(async () => {
+  //   const res = await bnJs.Dex.getPrice({ _pid: BalancedJs.utils.BALNbnUSDpoolId.toString() });
+  //   const BALNbnUSDratio = convertLoopToIcx(res);
+  //   changeRatioValue({ BALNbnUSDratio });
+  // }, PERIOD);
 }
 
 export function useBalance() {
@@ -101,7 +99,6 @@ export function useAccountPositions() {
         iconService.getBalance(account).execute(),
       ]).then(([result, balance]: Array<any>) => {
         const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
-        console.log(result);
         const unStakedVal = convertLoopToIcx(balance);
         updateUnStackedICXAmount(unStakedVal);
         changeStakedICXAmount(stakedICXVal);

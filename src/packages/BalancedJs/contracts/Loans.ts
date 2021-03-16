@@ -13,9 +13,7 @@ export default class Loans extends Contract {
    * @returns payload to call iconex
    */
   async depositWithdrawCollateral(value: number): Promise<ResponseJsonRPCPayload> {
-    const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
-    const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
-    const params = { _data1: data1, _data2: data2 };
+    const params = { _amount: '0x1' };
     const payload = this.transactionParamsBuilder({
       method: 'withdrawCollateral',
       value,
@@ -28,9 +26,7 @@ export default class Loans extends Contract {
    * @returns payload to call iconex
    */
   async depositAddCollateral(value: number): Promise<ResponseJsonRPCPayload> {
-    const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
-    const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
-    const params = { _data1: data1, _data2: data2 };
+    const params = { _amount: '0x1' };
     const payload = this.transactionParamsBuilder({
       method: 'addCollateral',
       value,
@@ -51,7 +47,6 @@ export default class Loans extends Contract {
         _owner: this.account,
       },
     });
-    console.log(callParams);
     return this.call(callParams);
   }
 }

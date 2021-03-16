@@ -29,7 +29,7 @@ const ReturnICDSection = () => {
   };
 
   return (
-    <DropdownText text="Return bnUSD from an exchange">
+    <DropdownText text="Retire bnUSD">
       <Box padding={5} bg="bg3">
         <Grid>
           <Typography variant="h2">Return bnUSD</Typography>

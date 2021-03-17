@@ -51,6 +51,15 @@ const LoanPanel = () => {
 
     if (newBorrowValue === 0 && loanBorrowedValue.toNumber() > 0) {
       //repayLoan(loanBorrowedValue);
+      bnJs
+        .eject({ account: account })
+        .bnUSD.repayLoan(loanBorrowedValue.toNumber())
+        .then(res => {
+          console.log('res', res);
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
     } else {
       //addLoan(newBorrowValue);
       bnJs

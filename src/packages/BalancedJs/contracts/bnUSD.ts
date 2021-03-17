@@ -59,17 +59,4 @@ export default class bnUSD extends Contract {
 
     return this.call(callParams);
   }
-
-  async repayLoan(value: number): Promise<ResponseJsonRPCPayload> {
-    const data = { method: '_repay_loan', params: {} };
-    const dataHex = '0x' + Buffer.from(JSON.stringify(data), 'utf8').toString('hex');
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
-    const params = { _to: addresses[this.nid].loans, _value: valueHex, _data: dataHex };
-    const payload = this.transactionParamsBuilder({
-      method: 'transfer',
-      value: 0,
-      params,
-    });
-    return this.callIconex(payload);
-  }
 }

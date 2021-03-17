@@ -8,7 +8,7 @@ import ContractSettings from '../contractSettings';
 export class Contract {
   protected provider: IconService;
   protected nid: NetworkId;
-  protected address: string = '';
+  public address: string = '';
 
   constructor(private contractSettings: ContractSettings) {
     this.provider = contractSettings.provider;

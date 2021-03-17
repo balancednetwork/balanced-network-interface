@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 // #redux-step-4: define action
 export const changeLiquiditySupply = createAction<{
   ICXsupply?: BigNumber;
+  sICXsupply?: BigNumber;
   sICXbnUSDsupply?: BigNumber;
   bnUSDsupply?: BigNumber;
   BALNsupply?: BigNumber;

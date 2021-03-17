@@ -6,6 +6,7 @@ import { changeLiquiditySupply } from './actions';
 // #redux-step-1: define interface for variable
 export interface LiquidityState {
   ICXsupply?: BigNumber;
+  sICXsupply?: BigNumber;
   sICXbnUSDsupply?: BigNumber;
   bnUSDsupply?: BigNumber;
   BALNsupply?: BigNumber;
@@ -14,6 +15,7 @@ export interface LiquidityState {
 // #redux-step-2: inital state
 const initialState: LiquidityState = {
   ICXsupply: new BigNumber(0),
+  sICXsupply: new BigNumber(0),
   sICXbnUSDsupply: new BigNumber(0),
   bnUSDsupply: new BigNumber(0),
   BALNsupply: new BigNumber(0),
@@ -23,7 +25,8 @@ const initialState: LiquidityState = {
 export default createReducer(initialState, builder =>
   builder.addCase(
     changeLiquiditySupply,
-    (state, { payload: { ICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply } }) => {
+    (state, { payload: { ICXsupply, sICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply } }) => {
+      state.sICXsupply = sICXsupply || state.sICXsupply;
       state.ICXsupply = ICXsupply || state.ICXsupply;
       state.sICXbnUSDsupply = sICXbnUSDsupply || state.sICXbnUSDsupply;
       state.bnUSDsupply = bnUSDsupply || state.bnUSDsupply;

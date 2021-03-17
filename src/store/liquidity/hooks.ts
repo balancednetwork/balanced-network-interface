@@ -15,14 +15,15 @@ export function useLiquiditySupply(): AppState['liquidity'] {
 // #redux-step-6: define function working with variable on store
 export function useChangeLiquiditySupply(): ({
   ICXsupply,
+  sICXsupply,
   sICXbnUSDsupply,
   bnUSDsupply,
   BALNsupply,
 }: LiquidityState) => void {
   const dispatch = useDispatch();
   return useCallback(
-    ({ ICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply }) => {
-      dispatch(changeLiquiditySupply({ ICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply }));
+    ({ ICXsupply, sICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply }) => {
+      dispatch(changeLiquiditySupply({ ICXsupply, sICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply }));
     },
     [dispatch],
   );

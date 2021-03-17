@@ -24,9 +24,9 @@ export interface Pair {
 
 export const SupportedPairs: Array<Pair> = [
   {
-    baseCurrencyKey: CURRENCY_MAP['ICX'],
+    baseCurrencyKey: CURRENCY_MAP['sICX'],
     quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
-    pair: toMarketPair(CURRENCY_MAP['ICX'], CURRENCY_MAP['bnUSD']),
+    pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['bnUSD']),
   },
   {
     baseCurrencyKey: CURRENCY_MAP['BALN'],
@@ -34,9 +34,9 @@ export const SupportedPairs: Array<Pair> = [
     pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['bnUSD']),
   },
   {
-    baseCurrencyKey: CURRENCY_MAP['sICX'],
-    quoteCurrencyKey: CURRENCY_MAP['ICX'],
-    pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['ICX']),
+    baseCurrencyKey: CURRENCY_MAP['ICX'],
+    quoteCurrencyKey: CURRENCY_MAP['sICX'],
+    pair: toMarketPair(CURRENCY_MAP['ICX'], CURRENCY_MAP['sICX']),
   },
 ];
 

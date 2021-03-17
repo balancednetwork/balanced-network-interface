@@ -5,7 +5,7 @@ import { Contract } from './contract';
 export class Rewards extends Contract {
   constructor(contractSettings: ContractSettings) {
     super(contractSettings);
-    this.address = addresses[this.nid].loans;
+    this.address = addresses[this.nid].rewards;
   }
 
   getClaimRewardsTransactionPayload() {

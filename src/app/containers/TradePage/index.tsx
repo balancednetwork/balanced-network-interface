@@ -13,6 +13,7 @@ import LiquidityDetails from 'app/components/trade/LiquidityDetails';
 import LPPanel from 'app/components/trade/LPPanel';
 import ReturnICDSection from 'app/components/trade/ReturnICDSection';
 import SwapPanel from 'app/components/trade/SwapPanel';
+import bnJs from 'bnJs';
 import { useChangeLiquiditySupply } from 'store/liquidity/hooks';
 import { useChangeRatio } from 'store/ratio/hooks';
 
@@ -27,7 +28,7 @@ export function TradePage() {
     setValue(value);
   };
 
-  // get sICX:ICX ratio
+  // get sICX:bnUSD ratio
   React.useEffect(() => {
     if (account) {
       const callParams = new IconBuilder.CallBuilder()
@@ -89,7 +90,22 @@ export function TradePage() {
   }, [changeLiquiditySupply, account]);
   **/
 
-  // get liquidity BALN supply
+  // get liquidity supply
+
+  const initLiquiditySupply = React.useCallback(() => {
+    if (account) {
+      Promise.all([bnJs.Dex.getDeposit(bnJs.sICX.address), bnJs.Dex.getDeposit(bnJs.bnUSD.address)]).then(result => {
+        const [sICXsupply, bnUSDsupply] = result.map(v => convertLoopToIcx(v as BigNumber));
+        changeLiquiditySupply({ sICXsupply: sICXsupply });
+        changeLiquiditySupply({ bnUSDsupply: bnUSDsupply });
+      });
+    }
+  }, [account, changeLiquiditySupply]);
+
+  React.useEffect(() => {
+    initLiquiditySupply();
+  }, [initLiquiditySupply]);
+
   React.useEffect(() => {
     if (account) {
       const callParams = new IconBuilder.CallBuilder()

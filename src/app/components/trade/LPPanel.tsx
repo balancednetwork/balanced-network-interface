@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Nouislider from 'nouislider-react';
+import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -9,8 +10,11 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import Modal from 'app/components/Modal';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
+import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 import { usePoolPair } from 'store/pool/hooks';
+import { useRatioValue } from 'store/ratio/hooks';
+import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 import { SectionPanel, BrightPanel } from './utils';
 
@@ -29,8 +33,8 @@ const SupplyButton = styled(Button)`
 `;
 
 export default function LPPanel() {
-  const handleTypeInput = (val: string) => {};
-
+  const { account } = useIconReact();
+  const walletBalance = useWalletBalanceValue();
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
 
   const handleSupplyConfirmDismiss = () => {
@@ -42,6 +46,64 @@ export default function LPPanel() {
   };
 
   const selectedPair = usePoolPair();
+  const ratio = useRatioValue();
+  const sICXbnUSDratio = ratio.sICXbnUSDratio?.toNumber() || 0;
+
+  const [supplyInputAmount, setsupplyInputAmount] = React.useState('0');
+
+  const [supplyOutputAmount, setsupplyOutputAmount] = React.useState('0');
+
+  const handleTypeInput = (val: string) => {
+    setsupplyInputAmount(val);
+    setsupplyOutputAmount((parseFloat(val) * sICXbnUSDratio).toFixed(2).toString());
+  };
+
+  const handleTypeOutput = (val: string) => {
+    setsupplyOutputAmount(val);
+    setsupplyInputAmount((parseFloat(val) / sICXbnUSDratio).toFixed(2).toString());
+  };
+
+  const handleSupplyInputDepositConfirm = () => {
+    if (!account) return;
+    bnJs
+      .eject({ account: account })
+      //.sICX.borrowAdd(newBorrowValue)
+      .sICX.dexDeposit(parseFloat(supplyInputAmount))
+      .then(res => {
+        console.log('res', res);
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const handleSupplyOutputDepositConfirm = () => {
+    if (!account) return;
+    bnJs
+      .eject({ account: account })
+      //.sICX.borrowAdd(newBorrowValue)
+      .bnUSD.dexDeposit(parseFloat(supplyOutputAmount))
+      .then(res => {
+        console.log('res', res);
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const handleSupplyConfirm = () => {
+    if (!account) return;
+    bnJs
+      .eject({ account: account })
+      //.sICX.borrowAdd(newBorrowValue)
+      .Dex.dexSupplysICXbnUSD(parseFloat(supplyInputAmount), parseFloat(supplyOutputAmount))
+      .then(res => {
+        console.log('res', res);
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
 
   return (
     <>
@@ -54,7 +116,7 @@ export default function LPPanel() {
 
           <Flex mt={3}>
             <CurrencyInputPanel
-              value="0"
+              value={supplyInputAmount}
               showMaxButton={false}
               currency={CURRENCYLIST[selectedPair.baseCurrencyKey.toLowerCase()]}
               onUserInput={handleTypeInput}
@@ -65,17 +127,18 @@ export default function LPPanel() {
 
           <Flex mt={3}>
             <CurrencyInputPanel
-              value="0"
+              value={supplyOutputAmount}
               showMaxButton={false}
               currency={CURRENCYLIST[selectedPair.quoteCurrencyKey.toLowerCase()]}
-              onUserInput={handleTypeInput}
+              onUserInput={handleTypeOutput}
               disableCurrencySelect={true}
               id="supply-liquidity-input-tokenb"
             />
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            Wallet: 12,000 {selectedPair.baseCurrencyKey} / 1,485 {selectedPair.quoteCurrencyKey}
+            Wallet: {walletBalance.sICXbalance?.toFixed(2)} {selectedPair.baseCurrencyKey} /{' '}
+            {walletBalance.bnUSDbalance?.toFixed(2)} {selectedPair.quoteCurrencyKey}
           </Typography>
 
           <Box mt={5}>
@@ -150,22 +213,26 @@ export default function LPPanel() {
           <Flex alignItems="center" mb={4}>
             <Box width={1 / 2}>
               <Typography variant="p" fontWeight="bold" textAlign="right">
-                0 {selectedPair.baseCurrencyKey}
+                {supplyInputAmount} {selectedPair.baseCurrencyKey}
               </Typography>
             </Box>
             <Box width={1 / 2}>
-              <SupplyButton ml={3}>Send</SupplyButton>
+              <SupplyButton ml={3} onClick={handleSupplyInputDepositConfirm}>
+                Send
+              </SupplyButton>
             </Box>
           </Flex>
 
           <Flex alignItems="center" mb={4}>
             <Box width={1 / 2}>
               <Typography variant="p" fontWeight="bold" textAlign="right">
-                0 {selectedPair.quoteCurrencyKey}
+                {supplyOutputAmount} {selectedPair.quoteCurrencyKey}
               </Typography>
             </Box>
             <Box width={1 / 2}>
-              <SupplyButton ml={3}>Send</SupplyButton>
+              <SupplyButton ml={3} onClick={handleSupplyOutputDepositConfirm}>
+                Send
+              </SupplyButton>
             </Box>
           </Flex>
 
@@ -177,7 +244,7 @@ export default function LPPanel() {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={handleSupplyConfirmDismiss}>Cancel</TextButton>
-            <Button>Supply</Button>
+            <Button onClick={handleSupplyConfirm}>Supply</Button>
           </Flex>
         </Flex>
       </Modal>

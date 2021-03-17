@@ -80,7 +80,7 @@ const LiquidityDetails = () => {
           <tr>
             <td>sICX / bnUSD</td>
             <td>
-              {liquiditySupply.sICXbnUSDsupply?.toFixed(2).toString() + ' sICX'}
+              {liquiditySupply.sICXsupply?.toFixed(2).toString() + ' sICX'}
               <br />
               {liquiditySupply.bnUSDsupply?.toFixed(2).toString() + ' bnUSD'}
             </td>

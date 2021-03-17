@@ -1,11 +1,9 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { IconBuilder } from 'icon-sdk-js';
 import Nouislider from 'nouislider-react';
-import { LOAN_ADDRESS, useIconReact } from 'packages/icon-react';
+import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
-import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
@@ -24,7 +22,7 @@ enum Field {
 }
 
 const CollateralPanel = () => {
-  const { account, iconService } = useIconReact();
+  const { account } = useIconReact();
   bnJs.eject({ account });
   const [open, setOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<boolean>(false);
@@ -36,6 +34,13 @@ const CollateralPanel = () => {
   const unStackedICXAmount = useBalance();
   const [stakedICXAmountCache, changeStakedICXAmountCache] = React.useState(new BigNumber(0));
 
+  const [{ independentField, typedValue }, setCollateralState] = React.useState({
+    independentField: Field.LEFT,
+    typedValue: '',
+  });
+
+  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
+
   /*******/
 
   const toggleOpen = () => {
@@ -46,15 +51,12 @@ const CollateralPanel = () => {
     setEditing(!editing);
   };
 
-  const [{ independentField, typedValue }, setCollateralState] = React.useState({
-    independentField: Field.LEFT,
-    typedValue: '',
-  });
-
   React.useEffect(() => {
     if (!account) return;
     bnJs.Loans.getAccountPositions().then(result => {
-      const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
+      const stakedICXVal = result['assets']
+        ? convertLoopToIcx(new BigNumber(parseInt(result['assets']['sICX'], 16)))
+        : 0;
       updateStakedICXAmount(stakedICXVal.toNumber());
       changeStakedICXAmountCache(stakedICXVal);
 
@@ -64,6 +66,7 @@ const CollateralPanel = () => {
 
   const handleStakedAmountType = React.useCallback(
     (value: string) => {
+      sliderInstance.current.noUiSlider.set(new BigNumber(value).toNumber());
       setCollateralState({ independentField: Field.LEFT, typedValue: value });
       changeDepositedValue(new BigNumber(value));
     },
@@ -81,8 +84,6 @@ const CollateralPanel = () => {
     setCollateralState(state => ({ independentField: state['independentField'], typedValue: values[handle] }));
   };
 
-  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
-
   // totall icx balance
   const totalICXAmount = unStackedICXAmount.plus(stakedICXAmount);
 
@@ -97,31 +98,32 @@ const CollateralPanel = () => {
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 
-  /*console.log(
-    independentField,
-    unStackedICXAmount.toFixed(2),
-    stakedICXAmount.toFixed(2),
-    totalICXAmount.toFixed(2),
-    parsedAmount,
-    formattedAmounts,
-  );*/
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCollateralConfirm = () => {
     if (!account) return;
+    //const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
+    //const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
+    //const params = { _data1: data1, _data2: data2 };
+
     const newDepositedValue = parseFloat(formattedAmounts[Field.LEFT]);
     const shouldWithdraw = newDepositedValue < stakedICXAmountCache.toNumber();
     if (shouldWithdraw) {
-      /*withdrawCollateral(0, {
-        _value:
-          '0x' +
-          IconAmount.of(stakedICXAmountCache.toNumber() - newDepositedValue, IconAmount.Unit.ICX)
-            .toLoop()
-            .toString(16),
-      });*/
+      bnJs
+        .eject({ account: account })
+        .Loans.depositWithdrawCollateral(stakedICXAmountCache.toNumber() - newDepositedValue)
+        .then(res => {
+          console.log('res', res);
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
     } else {
       //addCollateral(newDepositedValue - stakedICXAmountCache.toNumber(), params);
       //deposit
-      bnJs.Loans.depositAddCollateral(newDepositedValue)
+
+      bnJs
+        .eject({ account: account })
+        .Loans.depositAddCollateral(newDepositedValue - stakedICXAmountCache.toNumber())
         .then(res => {
           console.log('res', res);
         })
@@ -197,11 +199,21 @@ const CollateralPanel = () => {
   const sliderInstance = React.useRef<any>(null);
 
   React.useEffect(() => {
-    sliderInstance.current.noUiSlider.set(new BigNumber(typedValue).toNumber());
-  }, [typedValue, editing]);
+    if (!account) return;
+    bnJs
+      .eject({ account: account })
+      .Loans.getAccountPositions()
+      .then(res => {
+        console.log('res', res);
+        const stakedICXVal = res['assets'] ? convertLoopToIcx(new BigNumber(parseInt(res['assets']['sICX'], 16))) : 0;
+        changeStakedICXAmountCache(stakedICXVal);
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  }, [account, changeStakedICXAmountCache]);
 
-  React.useEffect(() => {
-    const handler = ({ detail: { type, payload } }: any) => {
+  /*const handler = ({ detail: { type, payload } }: any) => {
       setTimeout(() => {
         if (account && type === 'RESPONSE_JSON-RPC') {
           const callParams = new IconBuilder.CallBuilder()
@@ -214,6 +226,7 @@ const CollateralPanel = () => {
           Promise.all([iconService.call(callParams).execute(), iconService.getBalance(account).execute()]).then(
             ([result, balance]) => {
               const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
+              console.log('here' + stakedICXVal);
               changeStakedICXAmountCache(stakedICXVal);
             },
           );
@@ -225,7 +238,7 @@ const CollateralPanel = () => {
     return () => {
       window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
     };
-  }, [account, changeStakedICXAmountCache, iconService]);
+  }, [account, changeStakedICXAmountCache, iconService]);*/
 
   return (
     <>
@@ -257,7 +270,9 @@ const CollateralPanel = () => {
               max: [totalICXAmount.toNumber()],
             }}
             instanceRef={instance => {
-              sliderInstance.current = instance;
+              if (instance && !sliderInstance.current) {
+                sliderInstance.current = instance;
+              }
             }}
             onSlide={handleCollateralSlider}
           />

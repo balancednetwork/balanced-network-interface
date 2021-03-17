@@ -65,8 +65,6 @@ export class BalancedJs {
     this.Staking = new Staking(this.contractSettings);
     this.Dex = new Dex(this.contractSettings);
     this.bnUSD = new bnUSD(this.contractSettings);
-
-    console.info(this);
   }
 
   eject({ account }: SettingEjection) {

@@ -101,9 +101,6 @@ const CollateralPanel = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCollateralConfirm = () => {
     if (!account) return;
-    //const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
-    //const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
-    //const params = { _data1: data1, _data2: data2 };
 
     const newDepositedValue = parseFloat(formattedAmounts[Field.LEFT]);
     const shouldWithdraw = newDepositedValue < stakedICXAmountCache.toNumber();
@@ -118,9 +115,6 @@ const CollateralPanel = () => {
           console.error('error', e);
         });
     } else {
-      //addCollateral(newDepositedValue - stakedICXAmountCache.toNumber(), params);
-      //deposit
-
       bnJs
         .eject({ account: account })
         .Loans.depositAddCollateral(newDepositedValue - stakedICXAmountCache.toNumber())
@@ -133,112 +127,7 @@ const CollateralPanel = () => {
     }
   };
 
-  /*function withdrawCollateral(value, params) {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-    const depositPayload = callTransactionBuilder
-      .from(account)
-      .to(LOAN_ADDRESS)
-      .method('withdrawCollateral')
-      .params(params)
-      .nid(IconConverter.toBigNumber(3))
-      .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(1000000))
-      .value(IconAmount.of(value, IconAmount.Unit.ICX).toLoop())
-      .version(IconConverter.toBigNumber(3))
-      .build();
-
-    const parsed = {
-      jsonrpc: '2.0',
-      method: 'icx_sendTransaction',
-      params: IconConverter.toRawTransaction(depositPayload),
-      id: Date.now(),
-    };
-
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload: parsed,
-        },
-      }),
-    );
-  }
-
-  function addCollateral(value, params) {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-
-    const depositPayload = callTransactionBuilder
-      .from(account)
-      .to(LOAN_ADDRESS)
-      .method('addCollateral')
-      .params(params)
-      .nid(IconConverter.toBigNumber(3))
-      .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(1000000))
-      .value(IconAmount.of(value, IconAmount.Unit.ICX).toLoop())
-      .version(IconConverter.toBigNumber(3))
-      .build();
-
-    const parsed = {
-      jsonrpc: '2.0',
-      method: 'icx_sendTransaction',
-      params: IconConverter.toRawTransaction(depositPayload),
-      id: Date.now(),
-    };
-
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload: parsed,
-        },
-      }),
-    );
-  }*/
-
   const sliderInstance = React.useRef<any>(null);
-
-  React.useEffect(() => {
-    if (!account) return;
-    bnJs
-      .eject({ account: account })
-      .Loans.getAccountPositions()
-      .then(res => {
-        console.log('res', res);
-        const stakedICXVal = res['assets'] ? convertLoopToIcx(new BigNumber(parseInt(res['assets']['sICX'], 16))) : 0;
-        changeStakedICXAmountCache(stakedICXVal);
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
-  }, [account, changeStakedICXAmountCache]);
-
-  /*const handler = ({ detail: { type, payload } }: any) => {
-      setTimeout(() => {
-        if (account && type === 'RESPONSE_JSON-RPC') {
-          const callParams = new IconBuilder.CallBuilder()
-            .from(account)
-            .to(LOAN_ADDRESS)
-            .method('getAccountPositions')
-            .params({ _owner: account })
-            .build();
-
-          Promise.all([iconService.call(callParams).execute(), iconService.getBalance(account).execute()]).then(
-            ([result, balance]) => {
-              const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
-              console.log('here' + stakedICXVal);
-              changeStakedICXAmountCache(stakedICXVal);
-            },
-          );
-        }
-      }, 5000);
-    };
-
-    window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
-    return () => {
-      window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
-    };
-  }, [account, changeStakedICXAmountCache, iconService]);*/
 
   return (
     <>
@@ -286,8 +175,8 @@ const CollateralPanel = () => {
               isActive
               label="Deposited"
               tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-              value={formattedAmounts[Field.LEFT]}
-              currency={CURRENCYLIST['icx']}
+              value={!account ? '-' : formattedAmounts[Field.LEFT]}
+              currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['icx']}
               onUserInput={handleStakedAmountType}
             />
           </Box>
@@ -299,8 +188,8 @@ const CollateralPanel = () => {
               isActive={false}
               label="Wallet"
               tooltipText="The amount of ICX available to deposit from your wallet."
-              value={formattedAmounts[Field.RIGHT]}
-              currency={CURRENCYLIST['icx']}
+              value={!account ? '-' : formattedAmounts[Field.RIGHT]}
+              currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['icx']}
               onUserInput={handleUnstakedAmountType}
             />
           </Box>
@@ -314,7 +203,7 @@ const CollateralPanel = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formattedAmounts[Field.LEFT] + ' ICX'}
+            {formattedAmounts[Field.LEFT] === '0' ? '-' : formattedAmounts[Field.LEFT] + ' ICX'}
           </Typography>
 
           <Flex my={5}>

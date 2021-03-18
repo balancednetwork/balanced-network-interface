@@ -18,11 +18,12 @@ export function useChangeWalletBalance(): ({
   sICXbalance,
   bnUSDbalance,
   BALNbalance,
+  BALNreward,
 }: WalletState) => void {
   const dispatch = useDispatch();
   return useCallback(
-    ({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance }) => {
-      dispatch(changeValueBalance({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance }));
+    ({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance, BALNreward }) => {
+      dispatch(changeValueBalance({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance, BALNreward }));
     },
     [dispatch],
   );

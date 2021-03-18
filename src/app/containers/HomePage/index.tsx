@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 // import { main } from 'packages/icon/integration.test';
@@ -49,7 +50,8 @@ export async function usePrice(account: string) {
   // const res = await bnJs.Staking.getTodayRate();
   // const sICXICXratio = convertLoopToIcx(res);
   // changeRatioValue({ sICXICXratio });
-
+  const BALNbnUSDratio = await bnJs.Dex.getPrice({ _pid: BalancedJs.utils.BALNbnUSDpoolId.toString() });
+  changeRatioValue({ BALNbnUSDratio: BALNbnUSDratio });
   // // sICX <-> ICX price
   // useInterval(async () => {
   //   const res = await bnJs.Dex.getPrice({ _pid: BalancedJs.utils.BALNbnUSDpoolId.toString() });
@@ -68,11 +70,17 @@ export function useBalance(account: string) {
   // wallet balance
   const initWalletBalance = React.useCallback(() => {
     if (account) {
-      Promise.all([bnJs.sICX.balanceOf(), bnJs.Baln.balanceOf(), bnJs.bnUSD.balanceOf()]).then(result => {
-        const [sICXbalance, BALNbalance, bnUSDbalance] = result.map(v => convertLoopToIcx(v as BigNumber));
+      Promise.all([
+        bnJs.sICX.balanceOf(),
+        bnJs.Baln.balanceOf(),
+        bnJs.bnUSD.balanceOf(),
+        bnJs.Rewards.getRewards(),
+      ]).then(result => {
+        const [sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v as BigNumber));
         changeBalanceValue({ sICXbalance });
         changeBalanceValue({ BALNbalance });
         changeBalanceValue({ bnUSDbalance });
+        changeBalanceValue({ BALNreward });
       });
     }
   }, [account, changeBalanceValue]);
@@ -118,7 +126,9 @@ export function useInitLoan(account: string) {
           bnJs.Loans.eject({ account }).getAccountPositions(),
           bnJs.contractSettings.provider.getBalance(account).execute(),
         ]).then(([stakedICXResult, balance]: Array<any>) => {
-          const stakedICXVal = convertLoopToIcx(stakedICXResult['assets'] ? stakedICXResult['assets']['sICX'] : 0);
+          const stakedICXVal = stakedICXResult['assets']
+            ? convertLoopToIcx(new BigNumber(parseInt(stakedICXResult['assets']['sICX'], 16)))
+            : 0;
           const unStakedVal = convertLoopToIcx(balance);
 
           changeStakedICXAmount(stakedICXVal);
@@ -129,7 +139,7 @@ export function useInitLoan(account: string) {
     [updateUnStackedICXAmount, changeStakedICXAmount],
   );
 
-  const initWebSocket = React.useCallback(
+  /*const initWebSocket = React.useCallback(
     (account: string) => {
       const client = new W3CWebSocket(`ws://35.240.219.80:8069/ws`);
       client.onopen = () => {
@@ -143,20 +153,26 @@ export function useInitLoan(account: string) {
           const { data } = JSON.parse(msgEvent.data);
 
           initBalance(account);
-          alert(`https://bicon.tracker.solidwallet.io/transaction/${data.raw.txHash}`);
+          //alert(`https://bicon.tracker.solidwallet.io/transaction/${data.raw.txHash}`);
+          alert(`https://bicon.tracker.solidwallet.io/transaction/${JSON.stringify(data)}`);
         };
       };
     },
     [initBalance],
-  );
+  );*/
 
   React.useEffect(() => {
     if (account) {
       initBalance(account);
       initLoan(account);
-      initWebSocket(account);
+      //initWebSocket(account);
     }
-  }, [initLoan, initWebSocket, initBalance, account]);
+  }, [
+    initLoan,
+    //initWebSocket,
+    initBalance,
+    account,
+  ]);
 }
 
 export function HomePage() {

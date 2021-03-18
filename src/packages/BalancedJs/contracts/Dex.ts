@@ -49,4 +49,40 @@ export default class Dex extends Contract {
 
     return this.call(callParams);
   }
+
+  getSupply(pid: string) {
+    const callParams = this.paramsBuilder({
+      method: 'balanceOf',
+      params: {
+        _owner: this.account,
+        _id: pid,
+      },
+    });
+    console.log('here' + JSON.stringify(callParams));
+    console.log('here' + JSON.stringify(this.call(callParams)));
+    return this.call(callParams);
+  }
+
+  getTotalSupply(pid: string) {
+    const callParams = this.paramsBuilder({
+      method: 'totalSupply',
+      params: {
+        _pid: pid,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  getPoolTotal(pid: string, tokenAddress: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getPoolTotal',
+      params: {
+        _pid: pid,
+        _token: tokenAddress,
+      },
+    });
+
+    return this.call(callParams);
+  }
 }

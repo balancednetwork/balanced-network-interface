@@ -1,6 +1,7 @@
 import keyBy from 'lodash/keyBy';
 
 export const CURRENCYLIST = {
+  empty: { symbol: '', decimals: 0, name: 'empty' },
   icx: { symbol: 'ICX', decimals: 10, name: 'ICON' },
   sicx: { symbol: 'sICX', decimals: 10, name: 'Staked ICX' },
   bnusd: { symbol: 'bnUSD', decimals: 10, name: 'ICON Dollar' },

@@ -5,6 +5,7 @@ import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
 import Dex from './contracts/Dex';
 import Loans from './contracts/Loans';
+import Rewards from './contracts/Rewards';
 import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
 import ContractSettings from './contractSettings';
@@ -32,6 +33,7 @@ export class BalancedJs {
   Staking: Staking;
   Dex: Dex;
   bnUSD: bnUSD;
+  Rewards: Rewards;
 
   // static
   static utils = {
@@ -65,6 +67,7 @@ export class BalancedJs {
     this.Staking = new Staking(this.contractSettings);
     this.Dex = new Dex(this.contractSettings);
     this.bnUSD = new bnUSD(this.contractSettings);
+    this.Rewards = new Rewards(this.contractSettings);
   }
 
   eject({ account }: SettingEjection) {

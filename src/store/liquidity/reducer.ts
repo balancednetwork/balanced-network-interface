@@ -8,6 +8,7 @@ export interface LiquidityState {
   ICXsupply?: BigNumber;
   sICXsupply?: BigNumber;
   sICXbnUSDsupply?: BigNumber;
+  sICXbnUSDtotalSupply?: BigNumber;
   bnUSDsupply?: BigNumber;
   BALNsupply?: BigNumber;
 }
@@ -17,6 +18,7 @@ const initialState: LiquidityState = {
   ICXsupply: new BigNumber(0),
   sICXsupply: new BigNumber(0),
   sICXbnUSDsupply: new BigNumber(0),
+  sICXbnUSDtotalSupply: new BigNumber(0),
   bnUSDsupply: new BigNumber(0),
   BALNsupply: new BigNumber(0),
 };
@@ -25,10 +27,11 @@ const initialState: LiquidityState = {
 export default createReducer(initialState, builder =>
   builder.addCase(
     changeLiquiditySupply,
-    (state, { payload: { ICXsupply, sICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply } }) => {
+    (state, { payload: { ICXsupply, sICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply, sICXbnUSDtotalSupply } }) => {
       state.sICXsupply = sICXsupply || state.sICXsupply;
       state.ICXsupply = ICXsupply || state.ICXsupply;
       state.sICXbnUSDsupply = sICXbnUSDsupply || state.sICXbnUSDsupply;
+      state.sICXbnUSDtotalSupply = sICXbnUSDtotalSupply || state.sICXbnUSDtotalSupply;
       state.bnUSDsupply = bnUSDsupply || state.bnUSDsupply;
       state.BALNsupply = BALNsupply || state.BALNsupply;
     },

@@ -222,8 +222,8 @@ const LoanPanel = () => {
             isActive
             label="Borrowed"
             tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-            value={formattedAmounts[Field.LEFT]}
-            currency={CURRENCYLIST['bnusd']}
+            value={!account ? '-' : formattedAmounts[Field.LEFT]}
+            currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['bnusd']}
           />
         </Box>
 
@@ -233,8 +233,8 @@ const LoanPanel = () => {
             isActive={false}
             label="Available"
             tooltipText="The amount of ICX available to deposit from your wallet."
-            value={formattedAmounts[Field.RIGHT]}
-            currency={CURRENCYLIST['bnusd']}
+            value={!account ? '-' : formattedAmounts[Field.RIGHT]}
+            currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['bnusd']}
           />
         </Box>
       </Flex>

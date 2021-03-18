@@ -17,13 +17,23 @@ export function useChangeLiquiditySupply(): ({
   ICXsupply,
   sICXsupply,
   sICXbnUSDsupply,
+  sICXbnUSDtotalSupply,
   bnUSDsupply,
   BALNsupply,
 }: LiquidityState) => void {
   const dispatch = useDispatch();
   return useCallback(
-    ({ ICXsupply, sICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply }) => {
-      dispatch(changeLiquiditySupply({ ICXsupply, sICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply }));
+    ({ ICXsupply, sICXsupply, sICXbnUSDsupply, sICXbnUSDtotalSupply, bnUSDsupply, BALNsupply }) => {
+      dispatch(
+        changeLiquiditySupply({
+          ICXsupply,
+          sICXsupply,
+          sICXbnUSDsupply,
+          sICXbnUSDtotalSupply,
+          bnUSDsupply,
+          BALNsupply,
+        }),
+      );
     },
     [dispatch],
   );

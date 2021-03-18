@@ -12,6 +12,7 @@ import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
+import { useLiquiditySupply } from 'store/liquidity/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
@@ -35,6 +36,16 @@ const SupplyButton = styled(Button)`
 export default function LPPanel() {
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
+  const liquiditySupply = useLiquiditySupply();
+  const sICXtotalSupply = liquiditySupply.sICXsupply?.toNumber() || 0;
+  const bnUSDtotalSsupply = liquiditySupply.bnUSDsupply?.toNumber() || 0;
+
+  const sICXbnUSDsupply = liquiditySupply.sICXbnUSDsupply?.toNumber() || 0;
+  const sICXbnUSDtotalSupply = liquiditySupply.sICXbnUSDtotalSupply?.toNumber() || 0;
+  const sICXbnUSDsupplyShare = (sICXbnUSDsupply / sICXbnUSDtotalSupply) * 100;
+  const sICXsupply = sICXtotalSupply * (sICXbnUSDsupplyShare / 100);
+  const bnUSDsupply = bnUSDtotalSsupply * (sICXbnUSDsupplyShare / 100);
+
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
 
   const handleSupplyConfirmDismiss = () => {
@@ -175,7 +186,8 @@ export default function LPPanel() {
               <StyledDL>
                 <dt>Your supply</dt>
                 <dd>
-                  9,000 {selectedPair.baseCurrencyKey} / 2,160 {selectedPair.quoteCurrencyKey}
+                  {sICXsupply.toFixed(2)} {selectedPair.baseCurrencyKey} / {bnUSDsupply.toFixed(2)}{' '}
+                  {selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>
@@ -187,7 +199,8 @@ export default function LPPanel() {
               <StyledDL>
                 <dt>Total supply</dt>
                 <dd>
-                  500,000 {selectedPair.baseCurrencyKey} / 400,000 {selectedPair.quoteCurrencyKey}
+                  {sICXtotalSupply.toFixed(2)} {selectedPair.baseCurrencyKey} / {bnUSDtotalSsupply.toFixed(2)}{' '}
+                  {selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>

@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { IconBuilder } from 'icon-sdk-js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact, DEX_ADDRESS, BALN_ADDRESS, sICXbnUSDpoolId } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { Helmet } from 'react-helmet-async';
@@ -94,10 +95,19 @@ export function TradePage() {
 
   const initLiquiditySupply = React.useCallback(() => {
     if (account) {
-      Promise.all([bnJs.Dex.getDeposit(bnJs.sICX.address), bnJs.Dex.getDeposit(bnJs.bnUSD.address)]).then(result => {
-        const [sICXsupply, bnUSDsupply] = result.map(v => convertLoopToIcx(v as BigNumber));
-        changeLiquiditySupply({ sICXsupply: sICXsupply });
-        changeLiquiditySupply({ bnUSDsupply: bnUSDsupply });
+      Promise.all([
+        bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.sICX.address),
+        bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.bnUSD.address),
+        bnJs.Dex.getSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
+        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
+      ]).then(result => {
+        const [sICXsupply, bnUSDsupply, sICXbnUSDsupply, sICXbnUSDtotalSupply] = result.map(v =>
+          convertLoopToIcx(v as BigNumber),
+        );
+        changeLiquiditySupply({ sICXsupply });
+        changeLiquiditySupply({ bnUSDsupply });
+        changeLiquiditySupply({ sICXbnUSDsupply });
+        changeLiquiditySupply({ sICXbnUSDtotalSupply });
       });
     }
   }, [account, changeLiquiditySupply]);
@@ -106,7 +116,7 @@ export function TradePage() {
     initLiquiditySupply();
   }, [initLiquiditySupply]);
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     if (account) {
       const callParams = new IconBuilder.CallBuilder()
         .from(account)
@@ -124,7 +134,7 @@ export function TradePage() {
           changeLiquiditySupply({ sICXbnUSDsupply: sICXbnUSDsupply });
         });
     }
-  }, [changeLiquiditySupply, account, iconService]);
+  }, [changeLiquiditySupply, account, iconService]);*/
 
   // update the width on a window resize
   const ref = React.useRef<HTMLDivElement>();

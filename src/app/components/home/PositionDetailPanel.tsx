@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Nouislider from 'nouislider-react';
+import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -36,6 +37,7 @@ const Chip = styled(Box)`
 
 const PositionDetailPanel = () => {
   // ratio
+  const { account } = useIconReact();
   const ratioValue = useRatioValue();
   // collateral
   const stakedICXAmount = useDepositedValue();
@@ -61,23 +63,34 @@ const PositionDetailPanel = () => {
         <Flex>
           <Box width={1 / 2} className="border-right">
             <Typography>Collateral</Typography>
-            <Typography variant="p">{'$' + totalCollateralValue.toFixed(2).toString()}</Typography>
+            <Typography variant="p">
+              {!account
+                ? '-'
+                : totalCollateralValue.isLessThanOrEqualTo(0)
+                ? '$0'
+                : '$' + totalCollateralValue.toFixed(2).toString()}
+            </Typography>
           </Box>
           <Box width={1 / 2} sx={{ textAlign: 'right' }}>
             <Typography>Loan</Typography>
             <Typography variant="p">
-              {'$' + loanBorrowedValue.toFixed(2).toString() + ' / $' + totalLoanAmount.toFixed(2).toString()}
+              {!account
+                ? '-'
+                : loanBorrowedValue.isLessThanOrEqualTo(0)
+                ? '$0 / $' + totalLoanAmount.toFixed(2).toString()
+                : '$' + loanBorrowedValue.toFixed(2).toString() + ' / $' + totalLoanAmount.toFixed(2).toString()}
             </Typography>
           </Box>
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
-          The current ICX price is <span className="alert">{'$' + ratioValue.ICXUSDratio?.toFixed(2).toString()}</span>.
+          The current ICX price is{' '}
+          <span className="alert">{!account ? '-' : '$' + ratioValue.ICXUSDratio?.toFixed(2).toString() + '.'}</span>
         </Typography>
         <Typography>
           You hold{' '}
           <span className="white">
-            {isNaN(debtHoldShare.toNumber()) ? '0%' : debtHoldShare.toFixed(2).toString() + '%'}
+            {!account ? '-' : isNaN(debtHoldShare.toNumber()) ? '-' : debtHoldShare.toFixed(2).toString() + '%'}
           </span>{' '}
           of the total debt.
         </Typography>

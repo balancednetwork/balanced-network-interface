@@ -163,7 +163,7 @@ const CollateralPanel = () => {
                 sliderInstance.current = instance;
               }
             }}
-            onSet={handleCollateralSlider}
+            onSlide={handleCollateralSlider}
           />
         </Box>
 

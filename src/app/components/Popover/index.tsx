@@ -19,6 +19,7 @@ const ContentWrapper = styled.div`
   border: 2px solid ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.text1};
   border-radius: 8px;
+  overflow: hidden;
 `;
 
 const ReferenceElement = styled.div`

@@ -46,14 +46,12 @@ const CollateralPanel = () => {
   const toggleOpen = () => {
     setOpen(!open);
   };
-  // React.useCallback(
-  //   (value: string) => {
-  //     sliderInstance.current.noUiSlider.set(new BigNumber(value).toNumber());
-  //     setCollateralState({ independentField: Field.LEFT, typedValue: value });
-  //     changeDepositedValue(new BigNumber(value));
-  //   },
-  //   [setCollateralState, changeDepositedValue],
-  // );
+
+  const toggleCancel = () => {
+    setCollateralState({ independentField: Field.LEFT, typedValue: stakedICXAmount.toFixed(2) });
+    setEditing(!editing);
+  };
+
   const toggleEditing = () => {
     setEditing(!editing);
   };
@@ -144,7 +142,7 @@ const CollateralPanel = () => {
           <Box>
             {editing ? (
               <>
-                <TextButton onClick={toggleEditing}>Cancel</TextButton>
+                <TextButton onClick={toggleCancel}>Cancel</TextButton>
                 <Button onClick={toggleOpen}>Confirm</Button>
               </>
             ) : (

@@ -155,6 +155,7 @@ const LoanPanel = () => {
   };
 
   const handleLoanCancel = () => {
+    setLoanState({ independentField: Field.LEFT, typedValue: loanBorrowedValue.toFixed(2) });
     setLoanEditing(false);
   };
 

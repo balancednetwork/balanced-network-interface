@@ -76,11 +76,11 @@ const RewardsPanel = () => {
 
       <Modal isOpen={open} onDismiss={handleClose}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
+          <Typography textAlign="center" mb="5px">
             Stake new Balance Tokens?
           </Typography>
 
-          <Typography variant="p" fontWeight="bold" textAlign="center">
+          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
             8 BALN
           </Typography>
 
@@ -106,8 +106,10 @@ const RewardsPanel = () => {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleClose}>Not now</TextButton>
-            <Button>Stake</Button>
+            <TextButton onClick={handleClose} fontSize={14}>
+              Not now
+            </TextButton>
+            <Button fontSize={14}>Stake</Button>
           </Flex>
         </Flex>
       </Modal>

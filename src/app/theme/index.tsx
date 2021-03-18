@@ -54,6 +54,8 @@ export function theme(): DefaultTheme {
 
       bg4: '#0b284c',
 
+      bg5: '#021338',
+
       // Balanced turqoise
       primary: '#2ca9b7',
 
@@ -143,6 +145,7 @@ export const FixedGlobalStyle = createGlobalStyle`
   }
 
   body,button {
+    line-height: 1.4;
     font-family: 'tex-gyre-adventor', Arial, sans-serif;
   }
 
@@ -555,5 +558,4 @@ export const ThemedGlobalStyle = createGlobalStyle`
   .noUi-active .noUi-tooltip {
     display: block;
   }
-
 `;

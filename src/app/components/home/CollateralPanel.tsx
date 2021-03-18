@@ -159,11 +159,11 @@ const CollateralPanel = () => {
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-          <Typography textAlign="center" mb="5px" as="h3">
+          <Typography textAlign="center" mb="5px">
             Deposit ICON collateral?
           </Typography>
 
-          <Typography variant="p" fontWeight="bold" textAlign="center">
+          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
             0 ICX
           </Typography>
 
@@ -186,8 +186,10 @@ const CollateralPanel = () => {
           <Typography textAlign="center">Your ICX will be staked as sICX.</Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen}>Cancel</TextButton>
-            <Button>Deposit</Button>
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              Cancel
+            </TextButton>
+            <Button fontSize={14}>Deposit</Button>
           </Flex>
         </Flex>
       </Modal>

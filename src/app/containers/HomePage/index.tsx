@@ -47,11 +47,12 @@ export async function usePrice(account: string) {
   // }, PERIOD);
 
   // sICX <-> ICX price
-  // const res = await bnJs.Staking.getTodayRate();
-  // const sICXICXratio = convertLoopToIcx(res);
-  // changeRatioValue({ sICXICXratio });
-  const BALNbnUSDratio = await bnJs.Dex.getPrice({ _pid: BalancedJs.utils.BALNbnUSDpoolId.toString() });
-  changeRatioValue({ BALNbnUSDratio: BALNbnUSDratio });
+  const sICXICXratio = convertLoopToIcx(await bnJs.Staking.getTodayRate());
+  changeRatioValue({ sICXICXratio });
+  //const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId.toString()));
+  //changeRatioValue({ BALNbnUSDratio: BALNbnUSDratio });
+  const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId.toString()));
+  changeRatioValue({ sICXbnUSDratio: sICXbnUSDratio });
   // // sICX <-> ICX price
   // useInterval(async () => {
   //   const res = await bnJs.Dex.getPrice({ _pid: BalancedJs.utils.BALNbnUSDpoolId.toString() });

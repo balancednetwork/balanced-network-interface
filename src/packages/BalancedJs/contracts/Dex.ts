@@ -11,10 +11,12 @@ export default class Dex extends Contract {
     this.address = addresses[this.nid].dex;
   }
 
-  getPrice(params: { _pid: string }) {
+  getPrice(pid: string) {
     const callParams = this.paramsBuilder({
       method: 'getPrice',
-      params,
+      params: {
+        _pid: pid,
+      },
     });
 
     return this.call(callParams);
@@ -58,8 +60,6 @@ export default class Dex extends Contract {
         _id: pid,
       },
     });
-    console.log('here' + JSON.stringify(callParams));
-    console.log('here' + JSON.stringify(this.call(callParams)));
     return this.call(callParams);
   }
 

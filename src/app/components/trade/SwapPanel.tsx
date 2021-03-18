@@ -158,7 +158,7 @@ export default function SwapPanel() {
   React.useEffect(() => {
     setLoading(true);
     try {
-      axios.get('http://35.240.219.80:8069/api/v1/chart/lines?symbol=SICXICD&limit=500&order=desc').then(res => {
+      axios.get('http://35.240.219.80:8069/api/v1/chart/lines?symbol=SICXbnUSD&limit=500&order=desc').then(res => {
         const { data: d } = res;
         let t = d.map(item => ({ time: item.time, value: convertLoopToIcx(new BigNumber(item.price)) }));
         setData(t);

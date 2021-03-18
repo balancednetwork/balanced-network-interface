@@ -11,7 +11,7 @@ import Logo from 'app/components/Logo';
 import { DropdownPopper } from 'app/components/Popover';
 import WalletModal from 'app/components/WalletModal';
 import { Typography } from 'app/theme';
-import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
+// import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
@@ -38,8 +38,6 @@ const WalletInfo = styled(Box)`
 `;
 
 const WalletButtonWrapper = styled.div`
-  margin-right: 25px;
-
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `}
@@ -69,8 +67,6 @@ export default React.memo(function Header(props: { title?: string; className?: s
       toggleWalletMenu();
     }
   };
-
-  const handleNotification = () => {};
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const walletButtonRef = React.useRef<HTMLElement>(null);
@@ -130,9 +126,10 @@ export default React.memo(function Header(props: { title?: string; className?: s
               </ClickAwayListener>
             </WalletButtonWrapper>
 
-            <IconButton onClick={handleNotification}>
+            {/* https://github.com/WeiLi512/balanced-network-interface/issues/12 */}
+            {/* <IconButton onClick={handleNotification}>
               <NotificationIcon />
-            </IconButton>
+            </IconButton> */}
           </Flex>
         )}
       </Flex>

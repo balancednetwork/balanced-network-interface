@@ -62,7 +62,7 @@ export function HomePage() {
         <LoanPanel />
 
         <ActivityPanel bg="bg2">
-          <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 350]}>
+          <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]}>
             <Typography variant="h2" mb={5}>
               Position detail
             </Typography>

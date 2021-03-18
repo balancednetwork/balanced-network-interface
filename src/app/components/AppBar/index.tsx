@@ -12,7 +12,7 @@ const Navigation = styled.nav`
   display: inline-block;
   width: 100px;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     width: initial;
   `}
 `;
@@ -39,7 +39,7 @@ const ListItem = styled.li`
     margin-bottom: 0;
   }
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     display: inline-block;
     margin-bottom: 0;
     margin-right: 3px;
@@ -78,7 +78,7 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
     opacity: 1;
   }
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100px;
     padding: 5px;
   `}

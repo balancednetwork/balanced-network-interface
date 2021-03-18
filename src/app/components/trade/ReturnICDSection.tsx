@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -27,6 +28,12 @@ const ReturnICDSection = () => {
   const handleInput = v => {
     setValue(v);
   };
+
+  const below800 = useMedia('(max-width: 800px)');
+
+  if (below800) {
+    return null;
+  }
 
   return (
     <DropdownText text="Retire bnUSD">

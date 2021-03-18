@@ -199,7 +199,7 @@ const LoanPanel = () => {
         <Nouislider
           disabled={!isLoanEditing}
           id="slider-collateral"
-          start={[0]}
+          start={[loanBorrowedValue.toNumber()]}
           padding={[0]}
           connect={[true, false]}
           range={{

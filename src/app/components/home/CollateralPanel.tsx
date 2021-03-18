@@ -46,7 +46,14 @@ const CollateralPanel = () => {
   const toggleOpen = () => {
     setOpen(!open);
   };
-
+  // React.useCallback(
+  //   (value: string) => {
+  //     sliderInstance.current.noUiSlider.set(new BigNumber(value).toNumber());
+  //     setCollateralState({ independentField: Field.LEFT, typedValue: value });
+  //     changeDepositedValue(new BigNumber(value));
+  //   },
+  //   [setCollateralState, changeDepositedValue],
+  // );
   const toggleEditing = () => {
     setEditing(!editing);
   };
@@ -59,7 +66,6 @@ const CollateralPanel = () => {
         : 0;
       updateStakedICXAmount(stakedICXVal.toNumber());
       changeStakedICXAmountCache(stakedICXVal);
-
       setCollateralState({ independentField: Field.LEFT, typedValue: stakedICXVal.toFixed(2) });
     });
   }, [setCollateralState, account]);
@@ -151,7 +157,7 @@ const CollateralPanel = () => {
           <Nouislider
             id="slider-collateral"
             disabled={!editing}
-            start={[0]}
+            start={[stakedICXAmount]}
             padding={[0]}
             connect={[true, false]}
             range={{

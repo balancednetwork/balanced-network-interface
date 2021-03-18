@@ -136,7 +136,6 @@ export default React.memo(function Header(props: { title?: string; className?: s
           </Flex>
         )}
       </Flex>
-
       <WalletModal />
     </header>
   );

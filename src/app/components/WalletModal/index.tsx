@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
+import { Web3Provider } from '@ethersproject/providers';
+import { Web3ReactProvider, useWeb3React } from '@web3-react/core';
 import { useIconReact } from 'packages/icon-react';
+import { ledger } from 'packages/ledger/connectors';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -42,6 +45,52 @@ const StyledModal = styled(Modal).attrs({
   }
 `;
 
+const connectorsByName = {
+  Ledger: ledger,
+};
+
+function LedgerComponent() {
+  const context = useWeb3React();
+  const { connector, library, chainId, account, activate, deactivate, active, error } = context;
+  const [activatingConnector, setActivatingConnector] = useState(undefined);
+
+  useEffect(() => {
+    if (activatingConnector && activatingConnector === connector) {
+      setActivatingConnector(undefined);
+    }
+  }, [activatingConnector, connector]);
+  console.log('account', account);
+  return (
+    <>
+      {Object.keys(connectorsByName).map(name => {
+        const currentConnector = connectorsByName[name];
+        const activating = currentConnector === activatingConnector;
+        const connected = currentConnector === connector;
+        const disabled = !!activatingConnector || connected || !!error;
+
+        return (
+          <WalletOption
+            key={name}
+            disabled={disabled}
+            onClick={() => {
+              setActivatingConnector(currentConnector);
+              activate(connectorsByName[name]);
+            }}
+          >
+            <LedgerIcon width="50" height="50" />
+            <Text>{activating ? 'Connecting' : 'Ledger'}</Text>
+            {connected && (
+              <span role="img" aria-label="check">
+                ✅
+              </span>
+            )}
+          </WalletOption>
+        );
+      })}
+    </>
+  );
+}
+
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
@@ -51,6 +100,12 @@ export default function WalletModal() {
   const handleOpenWallet = () => {
     toggleWalletModal();
     requestAddress();
+  };
+
+  const getLibrary = provider => {
+    const library = new Web3Provider(provider);
+    library.pollingInterval = 8000;
+    return library;
   };
 
   return (
@@ -75,13 +130,10 @@ export default function WalletModal() {
               <Text>ICONex</Text>
             </WalletOption>
           )}
-
           <VerticalDivider text="or"></VerticalDivider>
-
-          <WalletOption>
-            <LedgerIcon width="50" height="50" />
-            <Text>Ledger</Text>
-          </WalletOption>
+          <Web3ReactProvider getLibrary={getLibrary}>
+            <LedgerComponent />
+          </Web3ReactProvider>
         </Flex>
       </Box>
     </StyledModal>

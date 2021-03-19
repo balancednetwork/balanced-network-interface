@@ -20,6 +20,8 @@ const LiquidityDetails = () => {
   const sICXbnUSDsupplyShare = (sICXbnUSDsupply / sICXbnUSDtotalSupply) * 100;
   const sICXsupply = (liquiditySupply.sICXsupply?.toNumber() || 0) * (sICXbnUSDsupplyShare / 100);
   const bnUSDsupply = (liquiditySupply.bnUSDsupply?.toNumber() || 0) * (sICXbnUSDsupplyShare / 100);
+  const sICXICXTotalSupply = liquiditySupply.sICXICXTotalSupply?.toNumber() || 0;
+  const ICXBalance = liquiditySupply.ICXBalance?.toNumber() || 0;
 
   return (
     <BoxPanel bg="bg2" mb={10}>
@@ -43,8 +45,8 @@ const LiquidityDetails = () => {
           {/* <!-- sICX / ICX --> */}
           <tr>
             <td>sICX / ICX</td>
-            <td>15,000 ICX</td>
-            <td>3.1%</td>
+            <td>{ICXBalance} ICX</td>
+            <td>{((ICXBalance / sICXICXTotalSupply) * 100).toFixed(2)} %</td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">
@@ -55,7 +57,7 @@ const LiquidityDetails = () => {
                   </Typography>
                   <Box mb={3}>
                     <CurrencyInputPanel
-                      value={'0'}
+                      value={ICXBalance.toString()}
                       showMaxButton={false}
                       currency={CURRENCYLIST['icx']}
                       onUserInput={() => null}
@@ -64,16 +66,16 @@ const LiquidityDetails = () => {
                     />
                   </Box>
                   <Typography mb={5} textAlign="right">
-                    Wallet: 12,000 ICX
+                    Wallet: {ICXBalance} ICX
                   </Typography>
                   <Nouislider
                     id="slider-supply"
-                    start={[0]}
+                    start={[ICXBalance]}
                     padding={[0]}
                     connect={[true, false]}
                     range={{
                       min: [0],
-                      max: [100],
+                      max: [sICXICXTotalSupply],
                     }}
                   />
                   <Flex alignItems="center" justifyContent="center">

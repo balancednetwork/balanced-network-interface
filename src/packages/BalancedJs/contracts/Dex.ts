@@ -85,4 +85,15 @@ export default class Dex extends Contract {
 
     return this.call(callParams);
   }
+
+  getICXBalance() {
+    const callParams = this.paramsBuilder({
+      method: 'getICXBalance',
+      params: {
+        _address: this.account,
+      },
+    });
+
+    return this.call(callParams);
+  }
 }

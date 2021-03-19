@@ -35,14 +35,25 @@ export function TradePage() {
         bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.bnUSD.address),
         bnJs.Dex.getSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
         bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
+        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXICXpoolId.toString()),
+        bnJs.eject({ account: account }).Dex.getICXBalance(),
       ]).then(result => {
-        const [sICXsupply, bnUSDsupply, sICXbnUSDsupply, sICXbnUSDtotalSupply] = result.map(v =>
-          convertLoopToIcx(v as BigNumber),
-        );
-        changeLiquiditySupply({ sICXsupply });
-        changeLiquiditySupply({ bnUSDsupply });
-        changeLiquiditySupply({ sICXbnUSDsupply });
-        changeLiquiditySupply({ sICXbnUSDtotalSupply });
+        const [
+          sICXsupply,
+          bnUSDsupply,
+          sICXbnUSDsupply,
+          sICXbnUSDtotalSupply,
+          sICXICXTotalSupply,
+          ICXBalance,
+        ] = result.map(v => convertLoopToIcx(v as BigNumber));
+        changeLiquiditySupply({
+          sICXsupply,
+          bnUSDsupply,
+          sICXbnUSDsupply,
+          sICXbnUSDtotalSupply,
+          sICXICXTotalSupply,
+          ICXBalance,
+        });
       });
     }
   }, [account, changeLiquiditySupply]);

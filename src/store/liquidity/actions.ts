@@ -9,4 +9,6 @@ export const changeLiquiditySupply = createAction<{
   sICXbnUSDtotalSupply?: BigNumber;
   bnUSDsupply?: BigNumber;
   BALNsupply?: BigNumber;
+  sICXICXTotalSupply?: BigNumber;
+  ICXBalance?: BigNumber;
 }>('liquidity/changeLiquiditySupply'); // #redux-note: make sure action name is unique in global store

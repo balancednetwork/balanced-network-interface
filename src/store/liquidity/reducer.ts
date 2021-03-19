@@ -11,6 +11,8 @@ export interface LiquidityState {
   sICXbnUSDtotalSupply?: BigNumber;
   bnUSDsupply?: BigNumber;
   BALNsupply?: BigNumber;
+  sICXICXTotalSupply?: BigNumber;
+  ICXBalance?: BigNumber;
 }
 
 // #redux-step-2: inital state
@@ -21,19 +23,37 @@ const initialState: LiquidityState = {
   sICXbnUSDtotalSupply: new BigNumber(0),
   bnUSDsupply: new BigNumber(0),
   BALNsupply: new BigNumber(0),
+  sICXICXTotalSupply: new BigNumber(0),
+  ICXBalance: new BigNumber(0),
 };
 
 // #redux-step-7: define function reducer, what happend when the action have dispatch
 export default createReducer(initialState, builder =>
   builder.addCase(
     changeLiquiditySupply,
-    (state, { payload: { ICXsupply, sICXsupply, sICXbnUSDsupply, bnUSDsupply, BALNsupply, sICXbnUSDtotalSupply } }) => {
+    (
+      state,
+      {
+        payload: {
+          ICXsupply,
+          sICXsupply,
+          sICXbnUSDsupply,
+          bnUSDsupply,
+          BALNsupply,
+          sICXbnUSDtotalSupply,
+          sICXICXTotalSupply,
+          ICXBalance,
+        },
+      },
+    ) => {
       state.sICXsupply = sICXsupply || state.sICXsupply;
       state.ICXsupply = ICXsupply || state.ICXsupply;
       state.sICXbnUSDsupply = sICXbnUSDsupply || state.sICXbnUSDsupply;
       state.sICXbnUSDtotalSupply = sICXbnUSDtotalSupply || state.sICXbnUSDtotalSupply;
       state.bnUSDsupply = bnUSDsupply || state.bnUSDsupply;
       state.BALNsupply = BALNsupply || state.BALNsupply;
+      state.sICXICXTotalSupply = sICXICXTotalSupply || state.sICXICXTotalSupply;
+      state.ICXBalance = ICXBalance || state.ICXBalance;
     },
   ),
 );

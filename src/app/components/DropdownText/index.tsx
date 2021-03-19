@@ -30,6 +30,7 @@ export const UnderlineText = styled.span`
   padding-bottom: 3px;
   margin-bottom: -9px;
   user-select: none;
+  word-break: normal;
 
   &:after {
     content: '';

@@ -16,10 +16,10 @@ const InputContainer = styled.div`
   width: 100%;
 `;
 
-const CurrencySelect = styled.button`
-  border: 2px solid #0b284c;
+const CurrencySelect = styled.button<{ bg?: string }>`
+  border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
+  background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
   border-right: 1px solid rgba(255, 255, 255, 0.15);
-  background-color: #0b284c;
   display: flex;
   align-items: center;
   width: 128px;
@@ -43,14 +43,14 @@ const StyledTokenName = styled.span`
   font-weight: bold;
 `;
 
-const NumberInput = styled.input`
+const NumberInput = styled.input<{ bg?: string }>`
   flex: 1;
   width: 100%;
   height: 43px;
   text-align: right;
   border-radius: 0 10px 10px 0;
-  border: 2px solid #0c2a4d;
-  background-color: #0c2a4d;
+  border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
+  background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
   color: #ffffff;
   padding: 7px 20px;
   outline: none;
@@ -88,6 +88,7 @@ interface CurrencyInputPanelProps {
   id: string;
   showCommonBases?: boolean;
   customBalanceText?: string;
+  bg?: string;
 }
 
 export default function CurrencyInputPanel({
@@ -107,6 +108,7 @@ export default function CurrencyInputPanel({
   id,
   showCommonBases,
   customBalanceText,
+  bg = 'bg2',
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -145,7 +147,7 @@ export default function CurrencyInputPanel({
   return (
     <InputContainer ref={ref}>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
-        <CurrencySelect onClick={toggleOpen}>
+        <CurrencySelect onClick={toggleOpen} bg={bg}>
           {currency ? <CurrencyLogo currency={currency} style={{ marginRight: 8 }} /> : null}
           {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
           {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
@@ -176,7 +178,7 @@ export default function CurrencyInputPanel({
         </CurrencySelect>
       </ClickAwayListener>
 
-      <NumberInput value={value} onChange={event => onUserInput(event.target.value)} />
+      <NumberInput value={value} onChange={event => onUserInput(event.target.value)} bg={bg} />
     </InputContainer>
   );
 }

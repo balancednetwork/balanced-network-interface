@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Nouislider from 'nouislider-react';
+import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -12,6 +13,9 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
+import { useDepositedValue } from 'store/collateral/hooks';
+import { useLoanBorrowedValue, useLoanbnUSDbadDebt, useLoanbnUSDtotalSupply } from 'store/loan/hooks';
+import { useRatioValue } from 'store/ratio/hooks';
 
 const ActivityPanel = styled(FlexPanel)`
   padding: 0;
@@ -90,9 +94,26 @@ const PositionDetailPanel = () => {
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
 
+  // ratio
+  const { account } = useIconReact();
+  const ratioValue = useRatioValue();
+  // collateral
+  const stakedICXAmount = useDepositedValue();
+
+  // loan
+  const loanBorrowedValue = useLoanBorrowedValue();
+  const loanbnUSDbadDebt = useLoanbnUSDbadDebt();
+  const loanbnUSDtotalSupply = useLoanbnUSDtotalSupply();
+
+  // loan slider
+  const totalLoanAmount = stakedICXAmount.div(4).minus(loanBorrowedValue);
+
+  const totalCollateralValue = stakedICXAmount.times(ratioValue.ICXUSDratio === undefined ? 0 : ratioValue.ICXUSDratio);
+  const debtHoldShare = loanBorrowedValue.div(loanbnUSDtotalSupply.minus(loanbnUSDbadDebt)).multipliedBy(100);
+
   return (
     <ActivityPanel bg="bg2">
-      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 350]}>
+      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]}>
         <Typography variant="h2" mb={5}>
           Position detail
         </Typography>
@@ -101,23 +122,45 @@ const PositionDetailPanel = () => {
           <Box width={1 / 2}>
             <Typography mb={1}>Collateral</Typography>
             <Typography variant="p" fontSize={18}>
-              $10,349
+              {!account
+                ? '-'
+                : totalCollateralValue.isLessThanOrEqualTo(0)
+                ? '$0'
+                : '$' + totalCollateralValue.toFixed(2).toString()}
             </Typography>
           </Box>
 
           <Box width={1 / 2}>
             <Typography mb={1}>Loan</Typography>
-            <Typography variant="p" fontSize={18} as="span">
-              $1,512 <Typography as="span">/ $2,587</Typography>
-            </Typography>
+
+            {!account ? (
+              <Typography variant="p" fontSize={18} as="span">
+                -
+              </Typography>
+            ) : loanBorrowedValue.isLessThanOrEqualTo(0) ? (
+              <Typography variant="p" fontSize={18} as="span">
+                $0 / $<Typography as="span">{totalLoanAmount.toFixed(2).toString()}</Typography>
+              </Typography>
+            ) : (
+              <Typography variant="p" fontSize={18} as="span">
+                $ {loanBorrowedValue.toFixed(2).toString()}{' '}
+                <Typography as="span">/ ${totalLoanAmount.toFixed(2).toString()}</Typography>
+              </Typography>
+            )}
           </Box>
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
-          The current ICX price is <span className="alert">$0.2400</span>.
+          The current ICX price is{' '}
+          <span className="alert">{!account ? '-' : '$' + ratioValue.ICXUSDratio?.toFixed(2).toString() + '.'}</span>.
         </Typography>
         <Typography>
-          You hold <span className="white">0.15%</span> of the total debt.
+          You hold{' '}
+          <span className="white">
+            {' '}
+            {!account ? '-' : isNaN(debtHoldShare.toNumber()) ? '-' : debtHoldShare.toFixed(2).toString() + '%'}
+          </span>{' '}
+          of the total debt.
         </Typography>
       </BoxPanel>
       <BoxPanel bg="bg2" flex={1}>

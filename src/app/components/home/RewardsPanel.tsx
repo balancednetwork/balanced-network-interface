@@ -10,8 +10,6 @@ import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { useRatioValue } from 'store/ratio/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 const RewardGrid = styled.div`
@@ -30,8 +28,6 @@ const RewardsPanel = () => {
 
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
-  const ratio = useRatioValue();
-  const rewardValue = walletBalance.BALNreward?.toNumber();
 
   const handleClaimReward = () => {
     if (!account) return;

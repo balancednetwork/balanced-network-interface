@@ -1,7 +1,6 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { IconBuilder } from 'icon-sdk-js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
@@ -18,7 +17,7 @@ import bnJs from 'bnJs';
 import { useChangeLiquiditySupply } from 'store/liquidity/hooks';
 
 export function TradePage() {
-  const { account, iconService } = useIconReact();
+  const { account } = useIconReact();
   const changeLiquiditySupply = useChangeLiquiditySupply();
 
   const [value, setValue] = React.useState<number>(0);

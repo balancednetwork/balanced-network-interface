@@ -19,7 +19,6 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/compon
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST, SupportedBaseCurrencies } from 'constants/currency';
-import { TRILLION } from 'constants/index';
 import { dayData, candleData, volumeData } from 'demo';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';

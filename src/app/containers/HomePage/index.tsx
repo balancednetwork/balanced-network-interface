@@ -7,7 +7,7 @@ import { convertLoopToIcx } from 'packages/icon-react/utils';
 // import { main } from 'packages/icon/integration.test';
 import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
+// import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 import CollateralPanel from 'app/components/home/CollateralPanel';
 import LoanPanel from 'app/components/home/LoanPanel';

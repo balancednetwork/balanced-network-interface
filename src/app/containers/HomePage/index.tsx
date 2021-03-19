@@ -1,20 +1,26 @@
 import React from 'react';
 
-import Nouislider from 'nouislider-react';
+import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
+import { useIconReact } from 'packages/icon-react';
+import { convertLoopToIcx } from 'packages/icon-react/utils';
+// import { main } from 'packages/icon/integration.test';
 import { Helmet } from 'react-helmet-async';
-import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
+// import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
-import Divider from 'app/components/Divider';
-import DropdownText from 'app/components/DropdownText';
 import CollateralPanel from 'app/components/home/CollateralPanel';
 import LoanPanel from 'app/components/home/LoanPanel';
+import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
 import RewardsPanel from 'app/components/home/RewardsPanel';
 import WalletPanel from 'app/components/home/WalletPanel';
 import { DefaultLayout } from 'app/components/Layout';
-import { MenuList, MenuItem } from 'app/components/Menu';
-import { BoxPanel, FlexPanel } from 'app/components/Panel';
-import { Typography } from 'app/theme';
+import bnJs from 'bnJs';
+// import useInterval from 'hooks/useInterval';
+import { useChangeDepositedValue, useChangeBalanceValue } from 'store/collateral/hooks';
+import { useLoanChangeBorrowedValue, useLoanChangebnUSDbadDebt, useLoanChangebnUSDtotalSupply } from 'store/loan/hooks';
+import { useChangeRatio } from 'store/ratio/hooks';
+import { useChangeWalletBalance } from 'store/wallet/hooks';
 
 const Grid = styled.div`
   flex: 1;
@@ -28,28 +34,155 @@ const Grid = styled.div`
   `}
 `;
 
-const ActivityPanel = styled(FlexPanel)`
-  padding: 0;
-  grid-area: 2 / 1 / 2 / 3;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-area: initial;
-    flex-direction: column;
-  `}
-`;
+export async function usePrice(account: string) {
+  const changeRatioValue = useChangeRatio();
 
-const Chip = styled(Box)`
-  display: inline-block;
-  min-width: 82px;
-  text-align: center;
-  border-radius: 100px;
-  padding: 1px 10px;
-  font-size: 12px;
-  font-weight: bold;
-  color: #ffffff;
-  line-height: 1.4;
-`;
+  if (!account) return;
+
+  // // ICX <-> USD price
+  // useInterval(async () => {
+  const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
+  const ICXUSDratio = convertLoopToIcx(res['rate']);
+  changeRatioValue({ ICXUSDratio });
+  // }, PERIOD);
+
+  // sICX <-> ICX price
+  const sICXICXratio = convertLoopToIcx(await bnJs.Staking.getTodayRate());
+  changeRatioValue({ sICXICXratio });
+  //const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId.toString()));
+  //changeRatioValue({ BALNbnUSDratio: BALNbnUSDratio });
+  const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId.toString()));
+  changeRatioValue({ sICXbnUSDratio: sICXbnUSDratio });
+  // // sICX <-> ICX price
+  // useInterval(async () => {
+  //   const res = await bnJs.Dex.getPrice({ _pid: BalancedJs.utils.BALNbnUSDpoolId.toString() });
+  //   const BALNbnUSDratio = convertLoopToIcx(res);
+  //   changeRatioValue({ BALNbnUSDratio });
+  // }, PERIOD);
+}
+
+export function useBalance(account: string) {
+  // eject this account and we don't need to account params for when call contract
+  bnJs.eject({ account });
+
+  // wallet
+  const changeBalanceValue = useChangeWalletBalance();
+
+  // wallet balance
+  const initWalletBalance = React.useCallback(() => {
+    if (account) {
+      Promise.all([
+        bnJs.sICX.balanceOf(),
+        bnJs.Baln.balanceOf(),
+        bnJs.bnUSD.balanceOf(),
+        bnJs.Rewards.getRewards(),
+      ]).then(result => {
+        const [sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v as BigNumber));
+        changeBalanceValue({ sICXbalance });
+        changeBalanceValue({ BALNbalance });
+        changeBalanceValue({ bnUSDbalance });
+        changeBalanceValue({ BALNreward });
+      });
+    }
+  }, [account, changeBalanceValue]);
+
+  React.useEffect(() => {
+    initWalletBalance();
+  }, [initWalletBalance]);
+}
+
+export function useInitLoan(account: string) {
+  const updateChangeLoanBorrowedValue = useLoanChangeBorrowedValue();
+  const updateChangeLoanbnUSDbadDebt = useLoanChangebnUSDbadDebt();
+  const updateChangeLoanbnUSDtotalSupply = useLoanChangebnUSDtotalSupply();
+  const changeStakedICXAmount = useChangeDepositedValue();
+  const updateUnStackedICXAmount = useChangeBalanceValue();
+
+  const initLoan = React.useCallback(
+    (account: string) => {
+      if (account) {
+        Promise.all([
+          bnJs.Loans.eject({ account }).getAvailableAssets(),
+          bnJs.bnUSD.totalSupply(),
+          bnJs.Loans.eject({ account }).getAccountPositions(),
+        ]).then(([resultGetAvailableAssets, resultbnUSDtotalSupply, resultTotalDebt]: Array<any>) => {
+          const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
+          const bnUSDtotalSupply = convertLoopToIcx(resultbnUSDtotalSupply);
+
+          const totalDebt = convertLoopToIcx(new BigNumber(parseInt(resultTotalDebt['total_debt'] || 0, 16)));
+
+          updateChangeLoanbnUSDbadDebt(bnUSDbadDebt);
+          updateChangeLoanbnUSDtotalSupply(bnUSDtotalSupply);
+          updateChangeLoanBorrowedValue(totalDebt);
+        });
+      }
+    },
+    [updateChangeLoanbnUSDbadDebt, updateChangeLoanbnUSDtotalSupply, updateChangeLoanBorrowedValue],
+  );
+
+  const initBalance = React.useCallback(
+    (account: string) => {
+      if (account) {
+        Promise.all([
+          bnJs.Loans.eject({ account }).getAccountPositions(),
+          bnJs.contractSettings.provider.getBalance(account).execute(),
+        ]).then(([stakedICXResult, balance]: Array<any>) => {
+          const stakedICXVal = stakedICXResult['assets']
+            ? convertLoopToIcx(new BigNumber(parseInt(stakedICXResult['assets']['sICX'], 16)))
+            : new BigNumber(0);
+          const unStakedVal = convertLoopToIcx(balance);
+
+          changeStakedICXAmount(stakedICXVal);
+          updateUnStackedICXAmount(unStakedVal);
+        });
+      }
+    },
+    [updateUnStackedICXAmount, changeStakedICXAmount],
+  );
+
+  /*const initWebSocket = React.useCallback(
+    (account: string) => {
+      const client = new W3CWebSocket(`ws://35.240.219.80:8069/ws`);
+      client.onopen = () => {
+        client.send(
+          JSON.stringify({
+            address: account,
+          }),
+        );
+
+        client.onmessage = (msgEvent: any) => {
+          const { data } = JSON.parse(msgEvent.data);
+
+          initBalance(account);
+          //alert(`https://bicon.tracker.solidwallet.io/transaction/${data.raw.txHash}`);
+          alert(`https://bicon.tracker.solidwallet.io/transaction/${JSON.stringify(data)}`);
+        };
+      };
+    },
+    [initBalance],
+  );*/
+
+  React.useEffect(() => {
+    if (account) {
+      initBalance(account);
+      initLoan(account);
+      //initWebSocket(account);
+    }
+  }, [
+    initLoan,
+    //initWebSocket,
+    initBalance,
+    account,
+  ]);
+}
 
 export function HomePage() {
+  const { account } = useIconReact();
+
+  usePrice(`${account || ''}`);
+  useBalance(`${account || ''}`);
+  useInitLoan(`${account || ''}`);
+
   return (
     <DefaultLayout>
       <Helmet>
@@ -61,88 +194,7 @@ export function HomePage() {
 
         <LoanPanel />
 
-        <ActivityPanel bg="bg2">
-          <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]}>
-            <Typography variant="h2" mb={5}>
-              Position detail
-            </Typography>
-
-            <Flex>
-              <Box width={1 / 2} className="border-right">
-                <Typography>Collateral</Typography>
-                <Typography variant="p">$10,349</Typography>
-              </Box>
-              <Box width={1 / 2} sx={{ textAlign: 'right' }}>
-                <Typography>Loan</Typography>
-                <Typography variant="p">$1,512 / $2,587</Typography>
-              </Box>
-            </Flex>
-            <Divider my={4} />
-            <Typography mb={2}>
-              The current ICX price is <span className="alert">$0.2400</span>.
-            </Typography>
-            <Typography>
-              You hold <span className="white">0.15%</span> of the total debt.
-            </Typography>
-          </BoxPanel>
-          <BoxPanel bg="bg2" flex={1}>
-            <Typography variant="h3">Risk ratio</Typography>
-
-            <Flex alignItems="center" justifyContent="space-between" my={4}>
-              <Chip bg="primary">Low risk</Chip>
-              <Box flex={1} mx={1}>
-                <Nouislider
-                  disabled={true}
-                  id="risk-ratio"
-                  start={[10000]}
-                  padding={[0]}
-                  connect={[true, false]}
-                  range={{
-                    min: [0],
-                    max: [15000],
-                  }}
-                />
-              </Box>
-              <Chip bg="red">Liquidated</Chip>
-            </Flex>
-
-            <Divider my={3} />
-
-            <Flex flexWrap="wrap" alignItems="flex-end">
-              <Box width={[1, 1 / 2]}>
-                <Flex alignItems="center" mb={15}>
-                  <Typography variant="h3" mr={15}>
-                    Rebalancing
-                  </Typography>
-                  <DropdownText text="Past week">
-                    <MenuList>
-                      <MenuItem>Day</MenuItem>
-                      <MenuItem>Week</MenuItem>
-                      <MenuItem>Month</MenuItem>
-                    </MenuList>
-                  </DropdownText>
-                </Flex>
-                <Flex>
-                  <Box width={1 / 2}>
-                    <Typography variant="p">0 ICD</Typography>
-                    <Typography>Collateral sold</Typography>
-                  </Box>
-                  <Box width={1 / 2}>
-                    <Typography variant="p">0 ICD</Typography>
-                    <Typography>Loan repaid</Typography>
-                  </Box>
-                </Flex>
-              </Box>
-
-              <Box width={[1, 1 / 2]}>
-                <Typography>
-                  Traders can repay loans by selling ICD for $1 of ICX collateral. Your position will rebalance based on
-                  your % of the total debt.
-                </Typography>
-              </Box>
-            </Flex>
-          </BoxPanel>
-        </ActivityPanel>
+        <PositionDetailPanel />
 
         <WalletPanel />
 

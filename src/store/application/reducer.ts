@@ -7,11 +7,13 @@ type PopupList = Array<{ key: string; show: boolean; content: PopupContent; remo
 export interface ApplicationState {
   readonly popupList: PopupList;
   readonly openModal: ApplicationModal | null;
+  account: string;
 }
 
 const initialState: ApplicationState = {
   popupList: [],
   openModal: null,
+  account: '',
 };
 
 export default createReducer(initialState, builder =>

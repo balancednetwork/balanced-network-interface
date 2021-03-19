@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Nouislider from 'nouislider-react';
+import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Button } from 'app/components/Button';
@@ -9,8 +10,17 @@ import DropdownText from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { CURRENCYLIST } from 'constants/currency';
+import { useLiquiditySupply } from 'store/liquidity/hooks';
 
 const LiquidityDetails = () => {
+  const { account } = useIconReact();
+  const liquiditySupply = useLiquiditySupply();
+  const sICXbnUSDsupply = liquiditySupply.sICXbnUSDsupply?.toNumber() || 0;
+  const sICXbnUSDtotalSupply = liquiditySupply.sICXbnUSDtotalSupply?.toNumber() || 0;
+  const sICXbnUSDsupplyShare = (sICXbnUSDsupply / sICXbnUSDtotalSupply) * 100;
+  const sICXsupply = (liquiditySupply.sICXsupply?.toNumber() || 0) * (sICXbnUSDsupplyShare / 100);
+  const bnUSDsupply = (liquiditySupply.bnUSDsupply?.toNumber() || 0) * (sICXbnUSDsupplyShare / 100);
+
   return (
     <BoxPanel bg="bg2" mb={10}>
       <Typography variant="h2" mb={5}>
@@ -38,7 +48,7 @@ const LiquidityDetails = () => {
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">
-                <Flex padding={5} bg="bg3" maxWidth={320} flexDirection="column">
+                <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
                   <Typography variant="h3" mb={3}>
                     Withdraw:&nbsp;
                     <Typography as="span">sICX / ICX</Typography>
@@ -50,6 +60,7 @@ const LiquidityDetails = () => {
                       currency={CURRENCYLIST['icx']}
                       onUserInput={() => null}
                       id="withdraw-liquidity-input"
+                      bg="bg5"
                     />
                   </Box>
                   <Typography mb={5} textAlign="right">
@@ -75,17 +86,17 @@ const LiquidityDetails = () => {
 
           {/* <!-- ICX / ICD --> */}
           <tr>
-            <td>ICX / bnUSD</td>
+            <td>sICX / bnUSD</td>
             <td>
-              15,000 ICX
+              {sICXsupply.toFixed(2).toString() + ' sICX'}
               <br />
-              15,000 bnUSD
+              {bnUSDsupply.toFixed(2).toString() + ' bnUSD'}
             </td>
-            <td>3.1%</td>
+            <td>{!account ? '-' : sICXbnUSDsupplyShare + '%'}</td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">
-                <Flex padding={5} bg="bg3" maxWidth={320} flexDirection="column">
+                <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
                   <Typography variant="h3" mb={3}>
                     Withdraw:&nbsp;
                     <Typography as="span">ICX / bnUSD</Typography>
@@ -97,6 +108,7 @@ const LiquidityDetails = () => {
                       currency={CURRENCYLIST['icx']}
                       onUserInput={() => null}
                       id="withdraw-liquidity-input"
+                      bg="bg5"
                     />
                   </Box>
                   <Box mb={3}>
@@ -106,6 +118,7 @@ const LiquidityDetails = () => {
                       currency={CURRENCYLIST['bnusd']}
                       onUserInput={() => null}
                       id="withdraw-liquidity-input"
+                      bg="bg5"
                     />
                   </Box>
                   <Typography mb={5} textAlign="right">
@@ -141,7 +154,7 @@ const LiquidityDetails = () => {
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">
-                <Flex padding={5} bg="bg3" maxWidth={320} flexDirection="column">
+                <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
                   <Typography variant="h3" mb={3}>
                     Withdraw:&nbsp;
                     <Typography as="span">BALN / bnUSD</Typography>
@@ -153,6 +166,7 @@ const LiquidityDetails = () => {
                       currency={CURRENCYLIST['baln']}
                       onUserInput={() => null}
                       id="withdraw-liquidity-input"
+                      bg="bg5"
                     />
                   </Box>
                   <Box mb={3}>
@@ -162,6 +176,7 @@ const LiquidityDetails = () => {
                       currency={CURRENCYLIST['bnusd']}
                       onUserInput={() => null}
                       id="withdraw-liquidity-input"
+                      bg="bg5"
                     />
                   </Box>
                   <Typography mb={5} textAlign="right">

@@ -18,7 +18,6 @@ import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
   width: 100px;
-  margin-left: 7px;
   margin-right: 75px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`

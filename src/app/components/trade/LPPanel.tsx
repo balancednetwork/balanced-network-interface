@@ -121,7 +121,7 @@ export default function LPPanel() {
       <SectionPanel bg="bg2">
         <BrightPanel bg="bg3" p={7} flexDirection="column" alignItems="stretch" flex={1}>
           <Flex alignItems="flex-end">
-            <Typography variant="h2">Supply:</Typography>
+            <Typography variant="h2">Supply:&nbsp;</Typography>
             <LiquiditySelect />
           </Flex>
 

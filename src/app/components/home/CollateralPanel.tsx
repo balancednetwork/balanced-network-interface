@@ -133,6 +133,9 @@ const CollateralPanel = () => {
 
   const sliderInstance = React.useRef<any>(null);
 
+  const newDepositedValue = new BigNumber(formattedAmounts[Field.LEFT]);
+  const difference = newDepositedValue.minus(stakedICXAmountCache);
+
   return (
     <>
       <BoxPanel bg="bg3">
@@ -203,25 +206,25 @@ const CollateralPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb="5px" as="h3">
-            Deposit ICON collateral?
+            {difference.isPositive() ? 'Deposit ICON collateral?' : 'Withdraw ICON collateral?'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formattedAmounts[Field.LEFT] === '0' ? '-' : formattedAmounts[Field.LEFT] + ' ICX'}
+            {difference.toFixed(2) + ' ICX'}
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {unStackedICXAmount.toFixed(2) + ' ICX'}
+                {stakedICXAmount.toFixed(2) + ' ICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {formattedAmounts[Field.RIGHT] + ' ICX'}
+                {formattedAmounts[Field.LEFT] + ' ICX'}
               </Typography>
             </Box>
           </Flex>
@@ -230,7 +233,7 @@ const CollateralPanel = () => {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen}>Cancel</TextButton>
-            <Button onClick={handleCollateralConfirm}>Deposit</Button>
+            <Button onClick={handleCollateralConfirm}>{difference.isPositive() ? 'Deposit' : 'Withdraw'}</Button>
           </Flex>
         </Flex>
       </Modal>

@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { MouseoverTooltip } from 'app/components/Tooltip';
+// import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { Currency } from 'types';
 
@@ -54,7 +54,7 @@ export const CurrencyField: React.FC<{
   tooltipText: string;
   onUserInput?: (value: string) => void;
 }> = function (props) {
-  const { id, isActive, label, value, currency, tooltipText, editable, onUserInput } = props;
+  const { id, isActive, label, value, currency, /*tooltipText,*/ editable, onUserInput } = props;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onUserInput && onUserInput(event.target.value);
@@ -63,12 +63,10 @@ export const CurrencyField: React.FC<{
   return (
     <Flex id={id} flexDirection="column">
       <Flex alignItems="center">
-        <MouseoverTooltip placement="top" text={tooltipText}>
-          <Flex>
-            <CheckBox isActive={isActive} mr={2} />
-            <Typography>{label}</Typography>
-          </Flex>
-        </MouseoverTooltip>
+        <Flex>
+          <CheckBox isActive={isActive} mr={2} />
+          <Typography>{label}</Typography>
+        </Flex>
       </Flex>
 
       {!editable && (

@@ -61,7 +61,7 @@ const CollateralPanel = () => {
     bnJs.Loans.getAccountPositions().then(result => {
       const stakedICXVal = result['assets']
         ? convertLoopToIcx(new BigNumber(parseInt(result['assets']['sICX'], 16)))
-        : 0;
+        : new BigNumber(0);
       updateStakedICXAmount(stakedICXVal.toNumber());
       changeStakedICXAmountCache(stakedICXVal);
       setCollateralState({ independentField: Field.LEFT, typedValue: stakedICXVal.toFixed(2) });

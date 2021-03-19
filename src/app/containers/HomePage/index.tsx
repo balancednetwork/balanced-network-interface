@@ -109,7 +109,7 @@ export function useInitLoan(account: string) {
           const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
           const bnUSDtotalSupply = convertLoopToIcx(resultbnUSDtotalSupply);
 
-          const totalDebt = convertLoopToIcx(new BigNumber(parseInt(resultTotalDebt['total_debt'], 16)));
+          const totalDebt = convertLoopToIcx(new BigNumber(parseInt(resultTotalDebt['total_debt'] || 0, 16)));
 
           updateChangeLoanbnUSDbadDebt(bnUSDbadDebt);
           updateChangeLoanbnUSDtotalSupply(bnUSDtotalSupply);
@@ -129,7 +129,7 @@ export function useInitLoan(account: string) {
         ]).then(([stakedICXResult, balance]: Array<any>) => {
           const stakedICXVal = stakedICXResult['assets']
             ? convertLoopToIcx(new BigNumber(parseInt(stakedICXResult['assets']['sICX'], 16)))
-            : 0;
+            : new BigNumber(0);
           const unStakedVal = convertLoopToIcx(balance);
 
           changeStakedICXAmount(stakedICXVal);

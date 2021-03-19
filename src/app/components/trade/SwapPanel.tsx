@@ -41,6 +41,10 @@ const ChartControlButton = styled(Button)<{ active: boolean }>`
 const ChartControlGroup = styled(Box)`
   text-align: right;
 
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    text-align: left;
+  `}
+
   & button {
     margin-right: 5px;
   }

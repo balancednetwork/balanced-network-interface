@@ -20,7 +20,7 @@ import { useWalletBalanceValue } from 'store/wallet/hooks';
 import { SectionPanel, BrightPanel } from './utils';
 
 const StyledDL = styled.dl`
-  margin: 15px 0 5px 0;
+  margin: 15px 0 15px 0;
   text-align: center;
 
   > dd {
@@ -181,8 +181,14 @@ export default function LPPanel() {
             your supply ratio will fluctuate with the price.
           </Typography>
 
-          <Flex>
-            <Box width={1 / 2} className="border-right">
+          <Flex flexWrap="wrap">
+            <Box
+              width={[1, 1 / 2]} //
+              sx={{
+                borderBottom: ['1px solid rgba(255, 255, 255, 0.15)', 0], //
+                borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
+              }}
+            >
               <StyledDL>
                 <dt>Your supply</dt>
                 <dd>
@@ -195,7 +201,7 @@ export default function LPPanel() {
                 <dd>~120 BALN</dd>
               </StyledDL>
             </Box>
-            <Box width={1 / 2}>
+            <Box width={[1, 1 / 2]}>
               <StyledDL>
                 <dt>Total supply</dt>
                 <dd>

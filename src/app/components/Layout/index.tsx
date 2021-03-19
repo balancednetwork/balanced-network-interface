@@ -11,7 +11,7 @@ const StyledHeader = styled(Header)`
   margin-top: 50px;
   margin-bottom: 50px;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     margin-top: 25px;
     margin-bottom: 25px;
   `}
@@ -27,7 +27,7 @@ const Container = styled(Box)`
   padding-left: 40px;
   padding-right: 40px;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     padding-left: 16px;
     padding-right: 16px;
   `}
@@ -51,7 +51,7 @@ const MobileAppBarWrapper = styled(Box)`
 
 export const DefaultLayout: React.FC<{ title?: string }> = props => {
   const { children, title = 'Home' } = props;
-  const below800 = useMedia('(max-width: 800px)');
+  const below1000 = useMedia('(max-width: 1000px)');
 
   return (
     <>
@@ -59,7 +59,7 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
         <StyledHeader title={title} />
 
         <Flex>
-          {!below800 && (
+          {!below1000 && (
             <DesktopAppBarWrapper>
               <AppBar />
             </DesktopAppBarWrapper>
@@ -68,7 +68,7 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
           {children}
         </Flex>
 
-        {below800 && (
+        {below1000 && (
           <MobileAppBarWrapper>
             <AppBar />
           </MobileAppBarWrapper>

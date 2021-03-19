@@ -16,11 +16,6 @@ const Grid = styled.div`
   grid-gap: 15px;
 `;
 
-const RowBetween = styled(Flex)`
-  align-items: center;
-  justify-content: space-between;
-`;
-
 const ReturnICDSection = () => {
   const [value, setValue] = React.useState('0');
 
@@ -30,9 +25,9 @@ const ReturnICDSection = () => {
 
   return (
     <DropdownText text="Retire bnUSD">
-      <Box padding={5} bg="bg3">
+      <Box padding={5} bg="bg4">
         <Grid>
-          <Typography variant="h2">Return bnUSD</Typography>
+          <Typography variant="h2">Retire bnUSD</Typography>
 
           <Typography>Sell your bnUSD for $1 of sICX (staked ICX).</Typography>
 
@@ -42,23 +37,29 @@ const ReturnICDSection = () => {
             onUserInput={handleInput}
             showMaxButton={false}
             id="return-icd-input"
+            bg="bg5"
           />
 
-          <RowBetween>
-            <Typography>Minimum: 50 bnUSD</Typography>
+          <Flex flexDirection="column" alignItems="flex-end">
+            <Typography mb={2}>Minimum: 50 bnUSD</Typography>
             <Typography>Wallet: 1672 bnUSD</Typography>
-          </RowBetween>
+          </Flex>
 
           <Divider />
 
-          <RowBetween>
+          <Flex alignItems="flex-start" justifyContent="space-between">
             <Typography variant="p">Total</Typography>
-            <Typography variant="p">0 sICX</Typography>
-          </RowBetween>
+            <Flex flexDirection="column" alignItems="flex-end">
+              <Typography variant="p">0 sICX</Typography>
+              <Typography variant="p" color="text1" fontSize={14}>
+                ~ 0 sICX
+              </Typography>
+            </Flex>
+          </Flex>
         </Grid>
 
         <Flex justifyContent="center" mt={5}>
-          <Button>Return bnUSD</Button>
+          <Button>Retire bnUSD</Button>
         </Flex>
       </Box>
     </DropdownText>

@@ -70,9 +70,9 @@ const RewardsPanel = () => {
     setOpen(false);
   };
 
-  // const handleClaim = () => {
-  //   setOpen(true);
-  // };
+  const handleClaim = () => {
+    setOpen(true);
+  };
 
   return (
     <BoxPanel bg="bg2">
@@ -107,16 +107,16 @@ const RewardsPanel = () => {
       </RewardGrid>
 
       <Flex alignItems="center" justifyContent="center" mt={3}>
-        <Button onClick={handleClaimReward}>Claim rewards</Button>
+        <Button onClick={handleClaim}>Claim rewards</Button>
       </Flex>
 
       <Modal isOpen={open} onDismiss={handleClose}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
+          <Typography textAlign="center" mb="5px">
             Stake new Balance Tokens?
           </Typography>
 
-          <Typography variant="p" fontWeight="bold" textAlign="center">
+          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
             8 BALN
           </Typography>
 
@@ -142,8 +142,12 @@ const RewardsPanel = () => {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleClose}>Not now</TextButton>
-            <Button>Stake</Button>
+            <TextButton onClick={handleClose} fontSize={14}>
+              Not now
+            </TextButton>
+            <Button fontSize={14} onClick={handleClaimReward}>
+              Stake
+            </Button>
           </Flex>
         </Flex>
       </Modal>

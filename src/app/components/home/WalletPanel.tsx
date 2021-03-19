@@ -56,11 +56,11 @@ const DataText = styled(Typography)`
   font-size: 16px;
 `;
 
-const ListItem = styled(DashGrid)`
+const ListItem = styled(DashGrid)<{ border?: boolean }>`
   padding: 20px 0;
   cursor: pointer;
   color: #ffffff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
 
   :hover {
     color: #2ca9b7;
@@ -340,7 +340,7 @@ const WalletPanel = () => {
             {/* baln section */}
             <AccordionItem>
               <StyledAccordionButton>
-                <ListItem>
+                <ListItem border={false}>
                   <AssetSymbol>
                     <CurrencyLogo currency={CURRENCYLIST['baln']} />
                     <Typography fontSize={16} fontWeight="bold">

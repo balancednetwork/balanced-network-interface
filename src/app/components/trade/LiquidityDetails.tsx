@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Nouislider from 'nouislider-react';
+import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Button } from 'app/components/Button';
@@ -12,7 +13,13 @@ import { CURRENCYLIST } from 'constants/currency';
 import { useLiquiditySupply } from 'store/liquidity/hooks';
 
 const LiquidityDetails = () => {
+  const { account } = useIconReact();
   const liquiditySupply = useLiquiditySupply();
+  const sICXbnUSDsupply = liquiditySupply.sICXbnUSDsupply?.toNumber() || 0;
+  const sICXbnUSDtotalSupply = liquiditySupply.sICXbnUSDtotalSupply?.toNumber() || 0;
+  const sICXbnUSDsupplyShare = (sICXbnUSDsupply / sICXbnUSDtotalSupply) * 100;
+  const sICXsupply = (liquiditySupply.sICXsupply?.toNumber() || 0) * (sICXbnUSDsupplyShare / 100);
+  const bnUSDsupply = (liquiditySupply.bnUSDsupply?.toNumber() || 0) * (sICXbnUSDsupplyShare / 100);
 
   return (
     <BoxPanel bg="bg2" mb={10}>
@@ -80,11 +87,11 @@ const LiquidityDetails = () => {
           <tr>
             <td>sICX / bnUSD</td>
             <td>
-              {liquiditySupply.sICXbnUSDsupply?.toFixed(2).toString() + ' sICX'}
+              {sICXsupply.toFixed(2).toString() + ' sICX'}
               <br />
-              {liquiditySupply.bnUSDsupply?.toFixed(2).toString() + ' bnUSD'}
+              {bnUSDsupply.toFixed(2).toString() + ' bnUSD'}
             </td>
-            <td>3.1%</td>
+            <td>{!account ? '-' : sICXbnUSDsupplyShare + '%'}</td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">

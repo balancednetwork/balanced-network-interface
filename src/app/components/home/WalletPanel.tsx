@@ -160,9 +160,13 @@ const WalletPanel = () => {
                       {CURRENCYLIST['icx'].symbol}
                     </Typography>
                   </AssetSymbol>
-                  <DataText>{ICXbalance.toFixed(2)}</DataText>
+                  <DataText>{!account ? '-' : ICXbalance.toNumber() === 0 ? '0' : ICXbalance.toFixed(2)}</DataText>
                   <DataText>
-                    {'$' + (ICXbalance.toNumber() * (ratio.ICXUSDratio?.toNumber() || 0)).toFixed(2).toString()}
+                    {!account
+                      ? '-'
+                      : ICXbalance.toNumber() === 0
+                      ? '$0'
+                      : '$' + (ICXbalance.toNumber() * (ratio.ICXUSDratio?.toNumber() || 0)).toFixed(2).toString()}
                   </DataText>
                 </ListItem>
               </StyledAccordionButton>
@@ -230,16 +234,26 @@ const WalletPanel = () => {
                       {CURRENCYLIST['sicx'].symbol}
                     </Typography>
                   </AssetSymbol>
-                  <DataText>{walletBalance.sICXbalance?.toFixed(2)}</DataText>
                   <DataText>
-                    {'$' +
-                      (
-                        (walletBalance.sICXbalance?.toNumber() || 0) *
-                        (ratio.sICXICXratio?.toNumber() || 0) *
-                        (ratio.ICXUSDratio?.toNumber() || 0)
-                      )
-                        .toFixed(2)
-                        .toString()}
+                    {!account
+                      ? '-'
+                      : walletBalance.sICXbalance?.toNumber() === 0
+                      ? '0'
+                      : walletBalance.sICXbalance?.toFixed(2)}
+                  </DataText>
+                  <DataText>
+                    {!account
+                      ? '-'
+                      : walletBalance.sICXbalance?.toNumber() === 0
+                      ? '$0'
+                      : '$' +
+                        (
+                          (walletBalance.sICXbalance?.toNumber() || 0) *
+                          (ratio.sICXICXratio?.toNumber() || 0) *
+                          (ratio.ICXUSDratio?.toNumber() || 0)
+                        )
+                          .toFixed(2)
+                          .toString()}
                   </DataText>
                 </ListItem>
               </StyledAccordionButton>
@@ -270,7 +284,7 @@ const WalletPanel = () => {
               </AccordionPanel>
             </AccordionItem>
 
-            {/* icd section */}
+            {/* bnusd section */}
             <AccordionItem>
               <StyledAccordionButton>
                 <ListItem>
@@ -280,8 +294,20 @@ const WalletPanel = () => {
                       {CURRENCYLIST['bnusd'].symbol}
                     </Typography>
                   </AssetSymbol>
-                  <DataText>{walletBalance.bnUSDbalance?.toFixed(2)}</DataText>
-                  <DataText>{'$' + walletBalance.bnUSDbalance?.toFixed(2)}</DataText>
+                  <DataText>
+                    {!account
+                      ? '-'
+                      : walletBalance.bnUSDbalance?.toNumber() === 0
+                      ? '0'
+                      : walletBalance.bnUSDbalance?.toFixed(2)}
+                  </DataText>
+                  <DataText>
+                    {!account
+                      ? '-'
+                      : walletBalance.bnUSDbalance?.toNumber() === 0
+                      ? '$0'
+                      : '$' + walletBalance.bnUSDbalance?.toFixed(2)}
+                  </DataText>
                 </ListItem>
               </StyledAccordionButton>
 
@@ -321,12 +347,22 @@ const WalletPanel = () => {
                       {CURRENCYLIST['baln'].symbol}
                     </Typography>
                   </AssetSymbol>
-                  <DataText>{walletBalance.BALNbalance?.toFixed(2)}</DataText>
                   <DataText>
-                    {'$' +
-                      ((walletBalance.BALNbalance?.toNumber() || 0) * (ratio.BALNbnUSDratio?.toNumber() || 0))
-                        .toFixed(2)
-                        .toString()}
+                    {!account
+                      ? '-'
+                      : walletBalance.BALNbalance?.toNumber() === 0
+                      ? '0'
+                      : walletBalance.BALNbalance?.toFixed(2)}
+                  </DataText>
+                  <DataText>
+                    {!account
+                      ? '-'
+                      : walletBalance.BALNbalance?.toNumber() === 0
+                      ? '$0'
+                      : '$' +
+                        ((walletBalance.BALNbalance?.toNumber() || 0) * (ratio.BALNbnUSDratio?.toNumber() || 0))
+                          .toFixed(2)
+                          .toString()}
                   </DataText>
                 </ListItem>
               </StyledAccordionButton>

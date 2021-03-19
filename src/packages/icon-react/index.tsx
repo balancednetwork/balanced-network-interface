@@ -13,11 +13,11 @@ export const GOVERNANCE_BASE_ADDRESS = 'cx00000000000000000000000000000000000000
 
 export const STAKING_ADDRESS = 'cxc337abaf1b24e13e827644501716ebaaab9493f2';
 
-export const LOAN_ADDRESS = 'cxc3a8dd98d922e2a1e4a6e9c836c410a1d564ad7e';
+export const LOAN_ADDRESS = 'cxe809a61f33ed3f42853b239c4516086b992b1fb7';
 
 export const REWARD_ADDRESS = 'cx67da40d0c49fa340954c6945c83860b52a581653';
 
-export const DEX_ADDRESS = 'cxdf85ae1d175a8978955a0149914ad697d78d18fe';
+export const DEX_ADDRESS = 'cx1320d7c02b52a2c18044bc75c6be8c82a3bb52eb';
 
 export const sICX_ADDRESS = 'cxcdae80da2964665c5b2480477a44b9646511d7ee';
 
@@ -29,7 +29,7 @@ export const BAND_ADDRESS = 'cx61a36e5d10412e03c907a507d1e8c6c3856d9964';
 
 export const BALNbnUSDpoolId = 3;
 
-export const sICXbnUSDpoolId = 2;
+export const sICXbnUSDpoolId = 3;
 
 export const sICXICXpoolId = 1;
 

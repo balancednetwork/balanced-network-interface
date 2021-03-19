@@ -1,33 +1,42 @@
 import IconService, { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
+import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 
+import { AccountType, ResponseJsonRPCPayload, SettingEjection } from '..';
 import { NetworkId } from '../addresses';
 import ContractSettings from '../contractSettings';
 
 export class Contract {
   protected provider: IconService;
   protected nid: NetworkId;
-  protected address: string = '';
+  public address: string = '';
 
-  constructor(contractSettings: ContractSettings) {
+  constructor(private contractSettings: ContractSettings) {
     this.provider = contractSettings.provider;
     this.nid = contractSettings.networkId;
   }
 
+  protected get account(): AccountType {
+    return this.contractSettings.account;
+  }
+
+  public eject({ account }: SettingEjection) {
+    this.contractSettings.account = account;
+    return this;
+  }
+
   public paramsBuilder({
-    account,
     method,
     params,
   }: {
-    account: string;
     method: string;
     params?: {
       [key: string]: any;
     };
   }) {
-    return new IconBuilder.CallBuilder().from(account).to(this.address).method(method).params(params).build();
+    return new IconBuilder.CallBuilder().from(this.account).to(this.address).method(method).params(params).build();
   }
 
-  async call(params: any) {
+  async call(params: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.provider.call(params).execute().then(resolve).catch(reject);
     });
@@ -37,21 +46,19 @@ export class Contract {
    * @returns payload to call Iconex wallet
    */
   public transactionParamsBuilder({
-    account,
     method,
     params,
     value,
   }: {
-    account: string;
     method: string;
-    value: number;
+    value?: number;
     params?: {
       [key: string]: any;
     };
   }) {
     const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
     const payload = callTransactionBuilder
-      .from(account)
+      .from(this.account)
       .to(this.address)
       .method(method)
       .params(params)
@@ -68,5 +75,26 @@ export class Contract {
       params: IconConverter.toRawTransaction(payload),
       id: Date.now(),
     };
+  }
+
+  public async callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
+    window.dispatchEvent(
+      new CustomEvent('ICONEX_RELAY_REQUEST', {
+        detail: {
+          type: 'REQUEST_JSON-RPC',
+          payload,
+        },
+      }),
+    );
+    return new Promise(resolve => {
+      const handler = ({ detail: { type, payload } }: any) => {
+        if (type === 'RESPONSE_JSON-RPC') {
+          window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
+          resolve(payload);
+        }
+      };
+
+      window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
+    });
   }
 }

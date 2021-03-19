@@ -1,8 +1,8 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { IconBuilder } from 'icon-sdk-js';
-import { useIconReact, DEX_ADDRESS, BALN_ADDRESS, sICXbnUSDpoolId } from 'packages/icon-react';
+import { BalancedJs } from 'packages/BalancedJs';
+import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { Helmet } from 'react-helmet-async';
 import { Flex, Box } from 'rebass/styled-components';
@@ -13,12 +13,11 @@ import LiquidityDetails from 'app/components/trade/LiquidityDetails';
 import LPPanel from 'app/components/trade/LPPanel';
 import ReturnICDSection from 'app/components/trade/ReturnICDSection';
 import SwapPanel from 'app/components/trade/SwapPanel';
+import bnJs from 'bnJs';
 import { useChangeLiquiditySupply } from 'store/liquidity/hooks';
-import { useChangeRatio } from 'store/ratio/hooks';
 
 export function TradePage() {
-  const { account, iconService } = useIconReact();
-  const changeRatio = useChangeRatio();
+  const { account } = useIconReact();
   const changeLiquiditySupply = useChangeLiquiditySupply();
 
   const [value, setValue] = React.useState<number>(0);
@@ -27,88 +26,30 @@ export function TradePage() {
     setValue(value);
   };
 
-  // get sICX:ICX ratio
-  React.useEffect(() => {
+  // get liquidity supply
+
+  const initLiquiditySupply = React.useCallback(() => {
     if (account) {
-      const callParams = new IconBuilder.CallBuilder()
-        .from(account)
-        .to(DEX_ADDRESS)
-        .method('getPrice')
-        .params({ _pid: sICXbnUSDpoolId.toString() })
-        .build();
-
-      iconService
-        .call(callParams)
-        .execute()
-        .then((result: BigNumber) => {
-          const sICXbnUSDratio = convertLoopToIcx(result);
-          changeRatio({ sICXbnUSDratio: sICXbnUSDratio });
-        });
+      Promise.all([
+        bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.sICX.address),
+        bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.bnUSD.address),
+        bnJs.Dex.getSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
+        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
+      ]).then(result => {
+        const [sICXsupply, bnUSDsupply, sICXbnUSDsupply, sICXbnUSDtotalSupply] = result.map(v =>
+          convertLoopToIcx(v as BigNumber),
+        );
+        changeLiquiditySupply({ sICXsupply });
+        changeLiquiditySupply({ bnUSDsupply });
+        changeLiquiditySupply({ sICXbnUSDsupply });
+        changeLiquiditySupply({ sICXbnUSDtotalSupply });
+      });
     }
-  }, [changeRatio, account, iconService]);
-
-  /** get liquidity sICX:bnUSD supply
-  React.useEffect(() => {
-    if (account) {
-      const callParams = new IconBuilder.CallBuilder()
-        .from(account)
-        .to(DEX_ADDRESS)
-        .method('balanceOf')
-        .params({ _owner: account, _id: sICXbnUSDpoolId })
-        .build();
-
-      iconService
-        .call(callParams)
-        .execute()
-        .then((result: BigNumber) => {
-          const sICXbnUSDsupply = convertLoopToIcx(result);
-
-          changeLiquiditySupply({ sICXbnUSDsupply: sICXbnUSDsupply });
-        });
-    }
-  }, [changeLiquiditySupply, account]);
+  }, [account, changeLiquiditySupply]);
 
   React.useEffect(() => {
-    if (account) {
-      const callParams = new IconBuilder.CallBuilder()
-        .from(account)
-        .to(DEX_ADDRESS)
-        .method('getDeposit')
-        .params({ _user: account, _tokenAddress: bnUSD_ADDRESS })
-        .build();
-
-      iconService
-        .call(callParams)
-        .execute()
-        .then((result: BigNumber) => {
-          const bnUSDsupply = convertLoopToIcx(result);
-
-          changeLiquiditySupply({ bnUSDsupply: bnUSDsupply });
-        });
-    }
-  }, [changeLiquiditySupply, account]);
-  **/
-
-  // get liquidity BALN supply
-  React.useEffect(() => {
-    if (account) {
-      const callParams = new IconBuilder.CallBuilder()
-        .from(account)
-        .to(DEX_ADDRESS)
-        .method('balanceOf')
-        .params({ _owner: account, _id: BALN_ADDRESS })
-        .build();
-
-      iconService
-        .call(callParams)
-        .execute()
-        .then((result: BigNumber) => {
-          const sICXbnUSDsupply = convertLoopToIcx(result);
-
-          changeLiquiditySupply({ sICXbnUSDsupply: sICXbnUSDsupply });
-        });
-    }
-  }, [changeLiquiditySupply, account, iconService]);
+    initLiquiditySupply();
+  }, [initLiquiditySupply]);
 
   // update the width on a window resize
   const ref = React.useRef<HTMLDivElement>();

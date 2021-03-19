@@ -1,11 +1,9 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
 import Nouislider from 'nouislider-react';
-import { LOAN_ADDRESS, useIconReact } from 'packages/icon-react';
+import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
-import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
@@ -13,12 +11,10 @@ import { CurrencyField } from 'app/components/Form';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
+import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 // import { useWalletICXBalance, useStakedICXBalance } from 'hooks';
-import {
-  /* useChangeDepositedValue, */ useBalance,
-  useDepositedValue /* , useChangeBalanceValue */,
-} from 'store/collateral/hooks';
+import { useChangeDepositedValue, useBalance } from 'store/collateral/hooks';
 
 enum Field {
   LEFT = 'LEFT',
@@ -26,28 +22,17 @@ enum Field {
 }
 
 const CollateralPanel = () => {
-  const { account, iconService } = useIconReact();
+  const { account } = useIconReact();
+  bnJs.eject({ account });
   const [open, setOpen] = React.useState(false);
-
-  // wallet icx balance
-
-  // staked icx balance
-  const stakedICXAmount = useDepositedValue();
-  const unStackedICXAmount = useBalance();
-  // const changeStakedICXAmount = useChangeDepositedValue();
-  // const updateUnStackedICXAmount = useChangeBalanceValue();
-  const [stakedICXAmountCache, changeStakedICXAmountCache] = React.useState(new BigNumber(0));
-  // changeStakedICXAmountCache(stakedICXAmount);
-
-  const toggleOpen = () => {
-    setOpen(!open);
-  };
-
   const [editing, setEditing] = React.useState<boolean>(false);
 
-  const toggleEditing = () => {
-    setEditing(!editing);
-  };
+  // staked icx balance
+  const [stakedICXAmount, updateStakedICXAmount] = React.useState(0);
+  const changeDepositedValue = useChangeDepositedValue();
+
+  const unStackedICXAmount = useBalance();
+  const [stakedICXAmountCache, changeStakedICXAmountCache] = React.useState(new BigNumber(0));
 
   const [{ independentField, typedValue }, setCollateralState] = React.useState({
     independentField: Field.LEFT,
@@ -56,11 +41,40 @@ const CollateralPanel = () => {
 
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
+  /*******/
+
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
+
+  const toggleCancel = () => {
+    setCollateralState({ independentField: Field.LEFT, typedValue: stakedICXAmount.toFixed(2) });
+    setEditing(!editing);
+  };
+
+  const toggleEditing = () => {
+    setEditing(!editing);
+  };
+
+  React.useEffect(() => {
+    if (!account) return;
+    bnJs.Loans.getAccountPositions().then(result => {
+      const stakedICXVal = result['assets']
+        ? convertLoopToIcx(new BigNumber(parseInt(result['assets']['sICX'], 16)))
+        : new BigNumber(0);
+      updateStakedICXAmount(stakedICXVal.toNumber());
+      changeStakedICXAmountCache(stakedICXVal);
+      setCollateralState({ independentField: Field.LEFT, typedValue: stakedICXVal.toFixed(2) });
+    });
+  }, [setCollateralState, account]);
+
   const handleStakedAmountType = React.useCallback(
     (value: string) => {
+      sliderInstance.current.noUiSlider.set(new BigNumber(value).toNumber());
       setCollateralState({ independentField: Field.LEFT, typedValue: value });
+      changeDepositedValue(new BigNumber(value));
     },
-    [setCollateralState],
+    [setCollateralState, changeDepositedValue],
   );
 
   const handleUnstakedAmountType = React.useCallback(
@@ -74,7 +88,7 @@ const CollateralPanel = () => {
     setCollateralState(state => ({ independentField: state['independentField'], typedValue: values[handle] }));
   };
 
-  // totall icx balance
+  // total icx balance
   const totalICXAmount = unStackedICXAmount.plus(stakedICXAmount);
 
   // calculate dependentField value
@@ -85,137 +99,42 @@ const CollateralPanel = () => {
 
   const formattedAmounts = {
     [independentField]: typedValue || '0',
-    [dependentField]: parsedAmount[dependentField].toFixed(2),
+    [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
-
-  console.log(
-    independentField,
-    unStackedICXAmount.toFixed(2),
-    stakedICXAmount.toFixed(2),
-    totalICXAmount.toFixed(2),
-    parsedAmount,
-    formattedAmounts,
-  );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCollateralConfirm = () => {
     if (!account) return;
-    const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
-    const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
-    const params = { _data1: data1, _data2: data2 };
 
     const newDepositedValue = parseFloat(formattedAmounts[Field.LEFT]);
     const shouldWithdraw = newDepositedValue < stakedICXAmountCache.toNumber();
     if (shouldWithdraw) {
-      withdrawCollateral(0, {
-        _value:
-          '0x' +
-          IconAmount.of(stakedICXAmountCache.toNumber() - newDepositedValue, IconAmount.Unit.ICX)
-            .toLoop()
-            .toString(16),
-      });
+      bnJs
+        .eject({ account: account })
+        .Loans.depositWithdrawCollateral(stakedICXAmountCache.toNumber() - newDepositedValue)
+        .then(res => {
+          console.log('res', res);
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
     } else {
-      addCollateral(newDepositedValue - stakedICXAmountCache.toNumber(), params);
+      bnJs
+        .eject({ account: account })
+        .Loans.depositAddCollateral(newDepositedValue - stakedICXAmountCache.toNumber())
+        .then(res => {
+          console.log('res', res);
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
     }
   };
 
-  function withdrawCollateral(value, params) {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-    const depositPayload = callTransactionBuilder
-      .from(account)
-      .to(LOAN_ADDRESS)
-      .method('withdrawCollateral')
-      .params(params)
-      .nid(IconConverter.toBigNumber(3))
-      .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(1000000))
-      .value(IconAmount.of(value, IconAmount.Unit.ICX).toLoop())
-      .version(IconConverter.toBigNumber(3))
-      .build();
-
-    const parsed = {
-      jsonrpc: '2.0',
-      method: 'icx_sendTransaction',
-      params: IconConverter.toRawTransaction(depositPayload),
-      id: Date.now(),
-    };
-
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload: parsed,
-        },
-      }),
-    );
-  }
-
-  function addCollateral(value, params) {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-
-    const depositPayload = callTransactionBuilder
-      .from(account)
-      .to(LOAN_ADDRESS)
-      .method('addCollateral')
-      .params(params)
-      .nid(IconConverter.toBigNumber(3))
-      .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(1000000))
-      .value(IconAmount.of(value, IconAmount.Unit.ICX).toLoop())
-      .version(IconConverter.toBigNumber(3))
-      .build();
-
-    const parsed = {
-      jsonrpc: '2.0',
-      method: 'icx_sendTransaction',
-      params: IconConverter.toRawTransaction(depositPayload),
-      id: Date.now(),
-    };
-
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload: parsed,
-        },
-      }),
-    );
-  }
-
   const sliderInstance = React.useRef<any>(null);
 
-  React.useEffect(() => {
-    sliderInstance.current.noUiSlider.set(new BigNumber(typedValue).toNumber());
-  }, [typedValue, editing]);
-
-  React.useEffect(() => {
-    const handler = ({ detail: { type, payload } }: any) => {
-      setTimeout(() => {
-        if (account && type === 'RESPONSE_JSON-RPC') {
-          const callParams = new IconBuilder.CallBuilder()
-            .from(account)
-            .to(LOAN_ADDRESS)
-            .method('getAccountPositions')
-            .params({ _owner: account })
-            .build();
-
-          Promise.all([iconService.call(callParams).execute(), iconService.getBalance(account).execute()]).then(
-            ([result, balance]) => {
-              const stakedICXVal = convertLoopToIcx(result['assets'] ? result['assets']['sICX'] : 0);
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              const unStakedVal = convertLoopToIcx(balance);
-              changeStakedICXAmountCache(stakedICXVal);
-            },
-          );
-        }
-      }, 5000);
-    };
-
-    window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
-    return () => {
-      window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
-    };
-  }, [account, changeStakedICXAmountCache, iconService]);
+  const newDepositedValue = new BigNumber(formattedAmounts[Field.LEFT]);
+  const difference = newDepositedValue.minus(stakedICXAmountCache);
 
   return (
     <>
@@ -226,7 +145,7 @@ const CollateralPanel = () => {
           <Box>
             {editing ? (
               <>
-                <TextButton onClick={toggleEditing}>Cancel</TextButton>
+                <TextButton onClick={toggleCancel}>Cancel</TextButton>
                 <Button onClick={toggleOpen}>Confirm</Button>
               </>
             ) : (
@@ -239,7 +158,7 @@ const CollateralPanel = () => {
           <Nouislider
             id="slider-collateral"
             disabled={!editing}
-            start={[0]}
+            start={[stakedICXAmount]}
             padding={[0]}
             connect={[true, false]}
             range={{
@@ -247,7 +166,9 @@ const CollateralPanel = () => {
               max: [totalICXAmount.toNumber()],
             }}
             instanceRef={instance => {
-              sliderInstance.current = instance;
+              if (instance && !sliderInstance.current) {
+                sliderInstance.current = instance;
+              }
             }}
             onSlide={handleCollateralSlider}
           />
@@ -261,8 +182,8 @@ const CollateralPanel = () => {
               isActive
               label="Deposited"
               tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-              value={formattedAmounts[Field.LEFT]}
-              currency={CURRENCYLIST['icx']}
+              value={!account ? '-' : formattedAmounts[Field.LEFT]}
+              currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['icx']}
               onUserInput={handleStakedAmountType}
             />
           </Box>
@@ -274,8 +195,8 @@ const CollateralPanel = () => {
               isActive={false}
               label="Wallet"
               tooltipText="The amount of ICX available to deposit from your wallet."
-              value={formattedAmounts[Field.RIGHT]}
-              currency={CURRENCYLIST['icx']}
+              value={!account ? '-' : formattedAmounts[Field.RIGHT]}
+              currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['icx']}
               onUserInput={handleUnstakedAmountType}
             />
           </Box>
@@ -285,25 +206,25 @@ const CollateralPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb="5px" as="h3">
-            Deposit ICON collateral?
+            {difference.isPositive() ? 'Deposit ICON collateral?' : 'Withdraw ICON collateral?'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            0 ICX
+            {difference.toFixed(2) + ' ICX'}
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                8,205 ICX
+                {stakedICXAmount.toFixed(2) + ' ICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                8,205 ICX
+                {formattedAmounts[Field.LEFT] + ' ICX'}
               </Typography>
             </Box>
           </Flex>
@@ -312,7 +233,7 @@ const CollateralPanel = () => {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen}>Cancel</TextButton>
-            <Button>Deposit</Button>
+            <Button onClick={handleCollateralConfirm}>{difference.isPositive() ? 'Deposit' : 'Withdraw'}</Button>
           </Flex>
         </Flex>
       </Modal>

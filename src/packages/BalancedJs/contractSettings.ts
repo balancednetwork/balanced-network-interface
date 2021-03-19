@@ -1,5 +1,7 @@
 import IconService from 'icon-sdk-js';
 
+import { AccountType } from '.';
+
 export enum NetworkId {
   MAINNET = 1,
   YEOUIDO = 3,
@@ -19,6 +21,7 @@ const getDefaultProvider = (networkId: NetworkId = NetworkId.MAINNET) => {
 class ContractSettings {
   networkId: NetworkId;
   provider: any;
+  account: AccountType = '';
   /**
    * @constructor
    * @param provider {Object} -

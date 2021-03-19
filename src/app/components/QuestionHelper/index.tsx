@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import Tooltip from 'app/components/Tooltip';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 
-const QuestionWrapper = styled.div`
-  display: flex;
+export const QuestionWrapper = styled.div`
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   border: none;
@@ -16,7 +16,7 @@ const QuestionWrapper = styled.div`
   color: ${({ theme }) => theme.colors.text1};
 `;
 
-const LightQuestionWrapper = styled.div`
+export const LightQuestionWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;

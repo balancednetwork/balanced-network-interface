@@ -105,15 +105,17 @@ export function useInitLoan(account: string) {
           bnJs.Loans.eject({ account }).getAvailableAssets(),
           bnJs.bnUSD.totalSupply(),
           bnJs.Loans.eject({ account }).getAccountPositions(),
-        ]).then(([resultGetAvailableAssets, resultbnUSDtotalSupply, resultTotalDebt]: Array<any>) => {
+        ]).then(([resultGetAvailableAssets, resultbnUSDtotalSupply, resultbnUSDdebt]: Array<any>) => {
           const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
           const bnUSDtotalSupply = convertLoopToIcx(resultbnUSDtotalSupply);
 
-          const totalDebt = convertLoopToIcx(new BigNumber(parseInt(resultTotalDebt['total_debt'] || 0, 16)));
+          const bnUSDdebt = resultbnUSDdebt['assets']
+            ? convertLoopToIcx(new BigNumber(parseInt(resultbnUSDdebt['assets']['bnUSD'], 16)))
+            : new BigNumber(0);
 
           updateChangeLoanbnUSDbadDebt(bnUSDbadDebt);
           updateChangeLoanbnUSDtotalSupply(bnUSDtotalSupply);
-          updateChangeLoanBorrowedValue(totalDebt);
+          updateChangeLoanBorrowedValue(bnUSDdebt);
         });
       }
     },

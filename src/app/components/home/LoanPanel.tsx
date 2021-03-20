@@ -14,6 +14,7 @@ import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 import { useDepositedValue } from 'store/collateral/hooks';
 import { useLoanBorrowedValue } from 'store/loan/hooks';
+import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
@@ -25,6 +26,7 @@ const LoanPanel = () => {
 
   const stakedICXAmount = useDepositedValue();
   const loanBorrowedValue = useLoanBorrowedValue();
+  const walletBalance = useWalletBalanceValue();
   const totalLoanAmount = stakedICXAmount.div(4).minus(loanBorrowedValue);
   // const [loanAmountCache, changeLoanAmountCache] = React.useState(new BigNumber(0));
 
@@ -75,79 +77,6 @@ const LoanPanel = () => {
         });
     }
   };
-
-  /*function repayLoan(value) {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-    const data = '0x' + Buffer.from('{"method": "_repay_loan", "params": {}}', 'utf8').toString('hex');
-    const valueParam = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
-    const params = { _to: LOAN_ADDRESS, _value: valueParam, _data: data };
-
-    const loanPayload = callTransactionBuilder
-      .from(account)
-      .to(bnUSD_ADDRESS)
-      .method('transfer')
-      .params(params)
-      .nid(IconConverter.toBigNumber(3))
-      .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(1000000))
-      .value(0)
-      .version(IconConverter.toBigNumber(3))
-      .build();
-
-    const parsed = {
-      jsonrpc: '2.0',
-      method: 'icx_sendTransaction',
-      params: IconConverter.toRawTransaction(loanPayload),
-      id: Date.now(),
-    };
-
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload: parsed,
-        },
-      }),
-    );
-  }
-
-  function addLoan(value) {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-    const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
-    const data2 = Buffer.from(
-      '", "_asset": "ICD", "_amount": ' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop() + '}}',
-      'utf8',
-    ).toString('hex');
-    const params = { _data1: data1, _data2: data2 };
-
-    const depositPayload = callTransactionBuilder
-      .from(account)
-      .to(LOAN_ADDRESS)
-      .method('addCollateral')
-      .params(params)
-      .nid(IconConverter.toBigNumber(3))
-      .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(2000000))
-      .value(IconAmount.of(value / (ratioValue.ICXUSDratio?.toNumber() || 0), IconAmount.Unit.ICX).toLoop())
-      .version(IconConverter.toBigNumber(3))
-      .build();
-
-    const parsed = {
-      jsonrpc: '2.0',
-      method: 'icx_sendTransaction',
-      params: IconConverter.toRawTransaction(depositPayload),
-      id: Date.now(),
-    };
-
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload: parsed,
-        },
-      }),
-    );
-  }*/
 
   const [isLoanEditing, setLoanEditing] = React.useState<boolean>(false);
 
@@ -254,21 +183,24 @@ const LoanPanel = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            0 bnUSD
+            {formattedAmounts[Field.LEFT]} bnUSD
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                5,560 bnUSD
+                {walletBalance.bnUSDbalance?.toFixed(2)} bnUSD
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                5,560 bnUSD
+                {(walletBalance.bnUSDbalance || new BigNumber(0))
+                  .plus(parseFloat(formattedAmounts[Field.LEFT]))
+                  .toFixed(2)}
+                {' bnUSD'}
               </Typography>
             </Box>
           </Flex>

@@ -39,11 +39,11 @@ export function TradePage() {
         bnJs.eject({ account: account }).Dex.getICXBalance(),
       ]).then(result => {
         const [
-          sICXsupply,
-          bnUSDsupply,
-          sICXbnUSDsupply,
-          sICXbnUSDtotalSupply,
-          sICXICXTotalSupply,
+          sICXsupply, // sm method `getPoolTotal`
+          bnUSDsupply, // sm method `getPoolTotal`
+          sICXbnUSDsupply, // sm method `balanceOf`
+          sICXbnUSDtotalSupply, // sm method `totalSupply` pool sICXbnUSDpoolId
+          sICXICXTotalSupply, // sm method `totalSupply` pool sICXICXpoolId
           ICXBalance,
         ] = result.map(v => convertLoopToIcx(v as BigNumber));
         changeLiquiditySupply({

@@ -1,6 +1,8 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
@@ -9,19 +11,87 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import DropdownText from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
+import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
-import { useLiquiditySupply } from 'store/liquidity/hooks';
+import { WITHDRAW_LOCK_TIMEOUT } from 'constants/index';
+import { useLiquiditySupply, useChangeLiquiditySupply } from 'store/liquidity/hooks';
 
 const LiquidityDetails = () => {
   const { account } = useIconReact();
+  const changeLiquiditySupply = useChangeLiquiditySupply();
   const liquiditySupply = useLiquiditySupply();
+
   const sICXbnUSDsupply = liquiditySupply.sICXbnUSDsupply?.toNumber() || 0;
   const sICXbnUSDtotalSupply = liquiditySupply.sICXbnUSDtotalSupply?.toNumber() || 0;
   const sICXbnUSDsupplyShare = (sICXbnUSDsupply / sICXbnUSDtotalSupply) * 100;
-  const sICXsupply = (liquiditySupply.sICXsupply?.toNumber() || 0) * (sICXbnUSDsupplyShare / 100);
-  const bnUSDsupply = (liquiditySupply.bnUSDsupply?.toNumber() || 0) * (sICXbnUSDsupplyShare / 100);
+
+  const sICXPoolTotal = liquiditySupply.sICXsupply?.toNumber() || 0;
+  const sICXSupplied = sICXbnUSDsupplyShare * sICXPoolTotal;
+
+  const bnUSDPoolTotal = liquiditySupply.bnUSDsupply?.toNumber() || 0;
+  const bnUSDSupplied = sICXbnUSDsupplyShare * bnUSDPoolTotal;
+
   const sICXICXTotalSupply = liquiditySupply.sICXICXTotalSupply?.toNumber() || 0;
   const ICXBalance = liquiditySupply.ICXBalance?.toNumber() || 0;
+
+  const handleWithdrawalICX = () => {
+    if (account) {
+      bnJs
+        .eject({ account: account })
+        .Dex.getICXWithdrawLock()
+        .then(result => {
+          const ICXWithdrawLockTime = parseInt(result, 16);
+          const timeNow = Date.now() * 1000;
+          if (timeNow > ICXWithdrawLockTime + WITHDRAW_LOCK_TIMEOUT) {
+            bnJs
+              .eject({ account: account })
+              .Dex.getICXBalance()
+              .then(result => {
+                changeLiquiditySupply({ ICXBalance: new BigNumber(0) });
+              })
+              .catch(e => {
+                console.error('error', e);
+              });
+          } else {
+            // TODO: show alert
+            console.log('show alert the withdrawal is locked');
+          }
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    }
+  };
+
+  // x : input amount token1
+  // y : output amount token2
+  // v : total liquidity token 1
+  // z : total liquidity token 2
+  // value = total token * x / v
+  // pool token 2 -= pool token2 * value / z
+  // y = pool token 2 * value / z
+  const [amountWithdrawSICX, setAmountWithdrawSICX] = React.useState('0');
+  const [amountWithdrawBNUSD, setAmountWithdrawBNUSD] = React.useState('0');
+  const handleTypeAmountWithdrawSICX = (val: string) => {
+    setAmountWithdrawSICX(val);
+  };
+  const handleTypeAmountWithdrawBNUSD = (val: string) => {
+    setAmountWithdrawBNUSD(val);
+  };
+
+  const handleWithdrawalSICXBNUSD = () => {
+    if (!account) return;
+    // TODO: calculate value and withdrawal
+    bnJs
+      .eject({ account: account })
+      .Dex.withdrawalTokens(BalancedJs.utils.sICXbnUSDpoolId, 10)
+      .then(result => {
+        console.log(result);
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
 
   return (
     <BoxPanel bg="bg2" mb={10}>
@@ -79,7 +149,9 @@ const LiquidityDetails = () => {
                     }}
                   />
                   <Flex alignItems="center" justifyContent="center">
-                    <Button mt={5}>Withdraw liquidity</Button>
+                    <Button mt={5} onClick={handleWithdrawalICX}>
+                      Withdraw liquidity
+                    </Button>
                   </Flex>
                 </Flex>
               </DropdownText>
@@ -90,9 +162,9 @@ const LiquidityDetails = () => {
           <tr>
             <td>sICX / bnUSD</td>
             <td>
-              {sICXsupply.toFixed(2).toString() + ' sICX'}
+              {sICXSupplied.toFixed(2).toString() + ' sICX'}
               <br />
-              {bnUSDsupply.toFixed(2).toString() + ' bnUSD'}
+              {bnUSDSupplied.toFixed(2).toString() + ' bnUSD'}
             </td>
             <td>{!account ? '-' : sICXbnUSDsupplyShare + '%'}</td>
             <td>~ 120 BALN</td>
@@ -105,20 +177,22 @@ const LiquidityDetails = () => {
                   </Typography>
                   <Box mb={3}>
                     <CurrencyInputPanel
-                      value={'0'}
+                      value={amountWithdrawSICX}
                       showMaxButton={false}
-                      currency={CURRENCYLIST['icx']}
-                      onUserInput={() => null}
+                      currency={CURRENCYLIST['sicx']}
+                      onUserInput={handleTypeAmountWithdrawSICX}
+                      disableCurrencySelect={true}
                       id="withdraw-liquidity-input"
                       bg="bg5"
                     />
                   </Box>
                   <Box mb={3}>
                     <CurrencyInputPanel
-                      value={'0'}
+                      value={amountWithdrawBNUSD}
                       showMaxButton={false}
                       currency={CURRENCYLIST['bnusd']}
-                      onUserInput={() => null}
+                      onUserInput={handleTypeAmountWithdrawBNUSD}
+                      disableCurrencySelect={true}
                       id="withdraw-liquidity-input"
                       bg="bg5"
                     />
@@ -137,7 +211,9 @@ const LiquidityDetails = () => {
                     }}
                   />
                   <Flex alignItems="center" justifyContent="center">
-                    <Button mt={5}>Withdraw liquidity</Button>
+                    <Button mt={5} onClick={handleWithdrawalSICXBNUSD}>
+                      Withdraw liquidity
+                    </Button>
                   </Flex>
                 </Flex>
               </DropdownText>

@@ -11,7 +11,7 @@ import Modal from 'app/components/Modal';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCYLIST, SupportedPairs } from 'constants/currency';
 import { useLiquiditySupply } from 'store/liquidity/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
@@ -54,6 +54,7 @@ export default function LPPanel() {
 
   const handleSupply = () => {
     setShowSupplyConfirm(true);
+    console.log('selectedPair = ', selectedPair);
   };
 
   const selectedPair = usePoolPair();
@@ -104,16 +105,30 @@ export default function LPPanel() {
 
   const handleSupplyConfirm = () => {
     if (!account) return;
-    bnJs
-      .eject({ account: account })
-      //.sICX.borrowAdd(newBorrowValue)
-      .Dex.dexSupplysICXbnUSD(parseFloat(supplyInputAmount), parseFloat(supplyOutputAmount))
-      .then(res => {
-        console.log('res', res);
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
+    console.log('selectedPair = ', selectedPair);
+    if (selectedPair.pair === SupportedPairs[2].pair) {
+      console.log('match pair = ', parseFloat(supplyInputAmount));
+      bnJs
+        .eject({ account: account })
+        .Dex.transferICX(parseFloat(supplyInputAmount))
+        .then(res => {
+          console.log('res', res);
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    } else {
+      bnJs
+        .eject({ account: account })
+        //.sICX.borrowAdd(newBorrowValue)
+        .Dex.dexSupplysICXbnUSD(parseFloat(supplyInputAmount), parseFloat(supplyOutputAmount))
+        .then(res => {
+          console.log('res', res);
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    }
   };
 
   return (

@@ -110,7 +110,7 @@ export function useInitLoan(account: string) {
           const bnUSDtotalSupply = convertLoopToIcx(resultbnUSDtotalSupply);
 
           const bnUSDdebt = resultbnUSDdebt['assets']
-            ? convertLoopToIcx(new BigNumber(parseInt(resultbnUSDdebt['assets']['bnUSD'], 16)))
+            ? convertLoopToIcx(new BigNumber(parseInt(resultbnUSDdebt['assets']['bnUSD'] || 0, 16)))
             : new BigNumber(0);
 
           updateChangeLoanbnUSDbadDebt(bnUSDbadDebt);

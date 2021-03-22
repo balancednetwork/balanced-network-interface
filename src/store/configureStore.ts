@@ -4,6 +4,7 @@
 
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { createInjectorsEnhancer } from 'redux-injectors';
+import { save, load } from 'redux-localstorage-simple';
 import createSagaMiddleware from 'redux-saga';
 
 import application from './application/reducer';
@@ -13,7 +14,10 @@ import loan from './loan/reducer';
 import pool from './pool/reducer';
 import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
+import transactions from './transactions/reducer';
 import walletBalance from './wallet/reducer';
+
+const PERSISTED_KEYS: string[] = ['transactions'];
 
 export function configureAppStore() {
   const reduxSagaMonitorOptions = {};
@@ -40,13 +44,16 @@ export function configureAppStore() {
       loan,
       ratio,
       walletBalance,
+      transactions,
     }),
     middleware: [
       ...getDefaultMiddleware({
         serializableCheck: false,
       }),
+      save({ states: PERSISTED_KEYS }),
       ...middlewares,
     ],
+    preloadedState: load({ states: PERSISTED_KEYS }),
     devTools: process.env.NODE_ENV !== 'production',
     enhancers,
   });

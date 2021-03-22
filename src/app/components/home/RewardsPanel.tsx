@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { IconBuilder, IconConverter } from 'icon-sdk-js';
-import { useIconReact, REWARD_ADDRESS } from 'packages/icon-react';
+import addresses from 'packages/BalancedJs/addresses';
+import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -26,7 +27,7 @@ const Row = styled(Flex)`
 const RewardsPanel = () => {
   const [open, setOpen] = React.useState(false);
 
-  const { account } = useIconReact();
+  const { account, networkId } = useIconReact();
   const walletBalance = useWalletBalanceValue();
 
   const handleClaimReward = () => {
@@ -36,10 +37,10 @@ const RewardsPanel = () => {
     // const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
     // const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
     // const params = { _data1: data1, _data2: data2 };
-
+    console.log(addresses[networkId].rewards);
     const depositPayload = callTransactionBuilder
       .from(account)
-      .to(REWARD_ADDRESS)
+      .to(addresses[networkId].rewards)
       .method('claimRewards')
       //.params(params)
       .nid(IconConverter.toBigNumber(3))

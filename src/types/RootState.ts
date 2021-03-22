@@ -10,6 +10,7 @@ import { LiquidityState } from 'store/liquidity/reducer';
 import { LoanState } from 'store/loan/reducer';
 import { PoolState } from 'store/pool/reducer';
 import { RatioState } from 'store/ratio/reducer';
+import { TransactionState } from 'store/transactions/reducer';
 import { WalletState } from 'store/wallet/reducer';
 
 // #redux-step-3: define interface for RootState (the root tree view on Redux Devtool chrome extension)
@@ -22,4 +23,5 @@ export interface RootState {
   liquidity: LiquidityState;
   ratio: RatioState;
   walletBalance: WalletState;
+  transactions: TransactionState;
 }

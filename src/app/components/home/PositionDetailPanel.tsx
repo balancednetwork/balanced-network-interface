@@ -152,7 +152,7 @@ const PositionDetailPanel = () => {
         <Divider my={4} />
         <Typography mb={2}>
           The current ICX price is{' '}
-          <span className="alert">{!account ? '-' : '$' + ratioValue.ICXUSDratio?.toFixed(2).toString() + '.'}</span>.
+          <span className="alert">{!account ? '-' : '$' + ratioValue.ICXUSDratio?.toFixed(2).toString()}</span>.
         </Typography>
         <Typography>
           You hold{' '}

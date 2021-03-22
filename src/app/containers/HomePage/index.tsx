@@ -60,7 +60,7 @@ export function usePrice() {
   // sICX / bnUSD price
   useInterval(async () => {
     const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId.toString()));
-    changeRatioValue({ sICXbnUSDratio: sICXbnUSDratio });
+    changeRatioValue({ sICXbnUSDratio });
   }, PERIOD);
 }
 

@@ -14,6 +14,7 @@ import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 import { useDepositedValue } from 'store/collateral/hooks';
 import { useLoanBorrowedValue } from 'store/loan/hooks';
+import { useRatioValue } from 'store/ratio/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 const LoanPanel = () => {
@@ -27,8 +28,10 @@ const LoanPanel = () => {
   const stakedICXAmount = useDepositedValue();
   const loanBorrowedValue = useLoanBorrowedValue();
   const walletBalance = useWalletBalanceValue();
-  const totalLoanAmount = stakedICXAmount.div(4).minus(loanBorrowedValue);
-  // const [loanAmountCache, changeLoanAmountCache] = React.useState(new BigNumber(0));
+  const ratio = useRatioValue();
+
+  const sICXUSD = (ratio.sICXICXratio || new BigNumber(0)).multipliedBy(ratio.ICXUSDratio || new BigNumber(0));
+  const totalLoanAmount = stakedICXAmount.multipliedBy(sICXUSD).div(4);
 
   const [{ independentField, typedValue }, setLoanState] = React.useState({
     independentField: Field.LEFT,

@@ -15,6 +15,7 @@ import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 // import { useWalletICXBalance, useStakedICXBalance } from 'hooks';
 import { useChangeDepositedValue, useBalance } from 'store/collateral/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 
 enum Field {
   LEFT = 'LEFT',
@@ -102,18 +103,21 @@ const CollateralPanel = () => {
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 
+  const addTransaction = useTransactionAdder();
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleCollateralConfirm = () => {
     if (!account) return;
 
     const newDepositedValue = parseFloat(formattedAmounts[Field.LEFT]);
     const shouldWithdraw = newDepositedValue < stakedICXAmountCache.toNumber();
+    const collateralValue = Math.abs(stakedICXAmountCache.toNumber() - newDepositedValue);
     if (shouldWithdraw) {
       bnJs
         .eject({ account: account })
-        .Loans.depositWithdrawCollateral(stakedICXAmountCache.toNumber() - newDepositedValue)
+        .Loans.depositWithdrawCollateral(collateralValue)
         .then(res => {
-          console.log('res', res);
+          addTransaction({ hash: res.result }, { summary: `${collateralValue} ICX added to your wallet.` });
         })
         .catch(e => {
           console.error('error', e);
@@ -121,9 +125,9 @@ const CollateralPanel = () => {
     } else {
       bnJs
         .eject({ account: account })
-        .Loans.depositAddCollateral(newDepositedValue - stakedICXAmountCache.toNumber())
+        .Loans.depositAddCollateral(collateralValue)
         .then(res => {
-          console.log('res', res);
+          addTransaction({ hash: res.result }, { summary: `Deposited ${collateralValue} ICX as collateral.` });
         })
         .catch(e => {
           console.error('error', e);

@@ -7,6 +7,7 @@ import { Switch, Route, BrowserRouter } from 'react-router-dom';
 
 import Popups from 'app/components/Popups';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
+import TransactionUpdater from 'store/transactions/updater';
 
 import { NotFoundPage } from './components/NotFoundPage/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
@@ -14,17 +15,27 @@ import { StyleGuidePage } from './containers/StyleGuidePage';
 import { TradePage } from './containers/TradePage';
 import { VotePage } from './containers/VotePage';
 
+function Updaters() {
+  return (
+    <>
+      <TransactionUpdater />
+    </>
+  );
+}
+
 export function App() {
   const { i18n } = useTranslation();
 
   return (
     <>
       <FixedGlobalStyle />
-      <ThemeProvider>
-        <ThemedGlobalStyle />
-        <Popups />
+      <IconReactProvider>
+        <Updaters />
 
-        <IconReactProvider>
+        <ThemeProvider>
+          <ThemedGlobalStyle />
+          <Popups />
+
           <BrowserRouter>
             <Helmet
               titleTemplate="%s - Balanced Network"
@@ -42,8 +53,8 @@ export function App() {
               <Route component={NotFoundPage} />
             </Switch>
           </BrowserRouter>
-        </IconReactProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </IconReactProvider>
     </>
   );
 }

@@ -1,12 +1,13 @@
 import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import useInterval from 'hooks/useInterval';
 
 import { useAddPopup } from '../application/hooks';
-import { AppDispatch, AppState } from '../index';
+import { AppDispatch } from '../index';
+import { useAllTransactions } from '../transactions/hooks';
 import { finalizeTransaction } from './actions';
 
 export function shouldCheck(tx: { addedTime: number; receipt?: {}; lastCheckedBlockNumber?: number }): boolean {
@@ -18,15 +19,13 @@ export default function Updater(): null {
   const { networkId, iconService } = useIconReact();
 
   const dispatch = useDispatch<AppDispatch>();
-  const state = useSelector<AppState, AppState['transactions']>(state => state.transactions);
 
   //call useEffect per 5000ms
   const [last, setLast] = React.useState(0);
   const increment = React.useCallback(() => setLast(last => last + 1), [setLast]);
   useInterval(increment, 5000);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const transactions = networkId ? state[networkId] ?? {} : {};
+  const transactions = useAllTransactions();
 
   // show popup on confirm
   const addPopup = useAddPopup();

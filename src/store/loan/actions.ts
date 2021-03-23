@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 
 export const changeBorrowedValue = createAction<{ borrowedValue: BigNumber }>('loan/changeBorrowedValue');
 
-export const changeAvailabelValue = createAction<{ availabelValue: BigNumber }>('loan/changeAvailabelValue');
+export const changeAvailableValue = createAction<{ availabelValue: BigNumber }>('loan/changeAvailableValue');
 
 export const changebnUSDbadDebt = createAction<{ bnUSDbadDebt: BigNumber }>('loan/changebnUSDbadDebt');
 

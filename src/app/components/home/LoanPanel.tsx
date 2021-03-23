@@ -15,19 +15,18 @@ import { CURRENCYLIST } from 'constants/currency';
 import { useDepositedValue } from 'store/collateral/hooks';
 import { useLoanBorrowedValue } from 'store/loan/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
+
+enum Field {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
 
 const LoanPanel = () => {
   const { account } = useIconReact();
 
-  enum Field {
-    LEFT = 'LEFT',
-    RIGHT = 'RIGHT',
-  }
-
   const stakedICXAmount = useDepositedValue();
   const loanBorrowedValue = useLoanBorrowedValue();
-  const walletBalance = useWalletBalanceValue();
   const ratio = useRatioValue();
 
   const sICXUSD = (ratio.sICXICXratio || new BigNumber(0)).multipliedBy(ratio.ICXUSDratio || new BigNumber(0));
@@ -48,37 +47,6 @@ const LoanPanel = () => {
   const formattedAmounts = {
     [independentField]: typedValue || '0',
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleLoanConfirm = () => {
-    if (!account) return;
-    const newBorrowValue = parseFloat(formattedAmounts[Field.LEFT]);
-
-    if (newBorrowValue === 0 && loanBorrowedValue.toNumber() > 0) {
-      //repayLoan(loanBorrowedValue);
-      bnJs
-        .eject({ account: account })
-        .bnUSD.repayLoan(loanBorrowedValue.toNumber())
-        .then(res => {
-          console.log('res', res);
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
-    } else {
-      //addLoan(newBorrowValue);
-      bnJs
-        .eject({ account: account })
-        //.sICX.borrowAdd(newBorrowValue)
-        .Loans.borrowAdd(newBorrowValue)
-        .then(res => {
-          console.log('res', res);
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
-    }
   };
 
   const [isLoanEditing, setLoanEditing] = React.useState<boolean>(false);
@@ -102,7 +70,7 @@ const LoanPanel = () => {
       sliderInstance.current.noUiSlider.set(new BigNumber(value).toNumber());
       setLoanState({ independentField: Field.LEFT, typedValue: value });
     },
-    [setLoanState, Field.LEFT],
+    [setLoanState],
   );
 
   const sliderInstance = React.useRef<any>(null);
@@ -110,11 +78,48 @@ const LoanPanel = () => {
   React.useEffect(() => {
     if (!account) return;
     setLoanState({ independentField: Field.LEFT, typedValue: loanBorrowedValue.toFixed(2) });
-  }, [account, setLoanState, Field.LEFT, loanBorrowedValue]);
+  }, [account, setLoanState, loanBorrowedValue]);
 
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => setOpen(!open);
+
+  const addTransaction = useTransactionAdder();
+
+  //before
+  const beforeAmount = loanBorrowedValue;
+  //after
+  const afterAmount = parsedAmount[Field.LEFT];
+  //difference = after-before
+  const differenceAmount = afterAmount.minus(beforeAmount);
+  //whether if repay or borrow
+  const shouldBorrow = differenceAmount.isPositive();
+
+  const handleLoanConfirm = () => {
+    if (!account) return;
+
+    if (shouldBorrow) {
+      bnJs
+        .eject({ account })
+        .Loans.borrowAdd(differenceAmount.toNumber())
+        .then(res => {
+          addTransaction({ hash: res.result }, { summary: `Borrowed ${differenceAmount.toNumber()} bnUSD.` });
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    } else {
+      bnJs
+        .eject({ account })
+        .bnUSD.repayLoan(differenceAmount.abs().toNumber())
+        .then(res => {
+          addTransaction({ hash: res.result }, { summary: `Repaid ${differenceAmount.abs().toNumber()} bnUSD.` });
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    }
+  };
 
   return (
     <>
@@ -182,28 +187,25 @@ const LoanPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb="5px">
-            Borrow Balanced Dollars?
+            {shouldBorrow ? 'Borrow Balanced Dollars?' : 'Repay Balanced Dollars?'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {formattedAmounts[Field.LEFT]} bnUSD
+            {differenceAmount.toFixed(2)} bnUSD
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {walletBalance.bnUSDbalance?.toFixed(2)} bnUSD
+                {beforeAmount.toFixed(2)} bnUSD
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {(walletBalance.bnUSDbalance || new BigNumber(0))
-                  .plus(parseFloat(formattedAmounts[Field.LEFT]))
-                  .toFixed(2)}
-                {' bnUSD'}
+                {afterAmount.toFixed(2)} bnUSD
               </Typography>
             </Box>
           </Flex>
@@ -215,7 +217,7 @@ const LoanPanel = () => {
               Cancel
             </TextButton>
             <Button onClick={handleLoanConfirm} fontSize={14}>
-              Borrow
+              {shouldBorrow ? 'Borrow' : 'Repay'}
             </Button>
           </Flex>
         </Flex>

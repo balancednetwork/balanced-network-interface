@@ -64,7 +64,7 @@ export function usePrice() {
   }, PERIOD);
 }
 
-export function useBalance(account: string) {
+export function useBalance(account?: string | null) {
   // eject this account and we don't need to account params for when call contract
   bnJs.eject({ account });
 
@@ -94,15 +94,44 @@ export function useBalance(account: string) {
   }, [fetchBalances, transactions]);
 }
 
-export function useCollateralInfo(account: string) {
-  const updateChangeLoanBorrowedValue = useLoanChangeBorrowedValue();
-  const updateChangeLoanbnUSDbadDebt = useLoanChangebnUSDbadDebt();
-  const updateChangeLoanbnUSDtotalSupply = useLoanChangebnUSDtotalSupply();
+export function useCollateralInfo(account?: string | null) {
   const changeStakedICXAmount = useChangeDepositedValue();
-  const updateUnStackedICXAmount = useChangeBalanceValue();
+  const changeUnStackedICXAmount = useChangeBalanceValue();
   const transactions = useAllTransactions();
 
-  const fetchTotalCollateralInfo = React.useCallback(
+  const fetchCollateralInfo = React.useCallback(
+    (account: string) => {
+      Promise.all([
+        bnJs.Loans.eject({ account }).getAccountPositions(),
+        bnJs.contractSettings.provider.getBalance(account).execute(),
+      ]).then(([stakedICXResult, balance]: Array<any>) => {
+        const stakedICXVal = stakedICXResult['assets']
+          ? convertLoopToIcx(new BigNumber(parseInt(stakedICXResult['assets']['sICX'], 16)))
+          : new BigNumber(0);
+        const unStakedVal = convertLoopToIcx(balance);
+
+        changeStakedICXAmount(stakedICXVal);
+        changeUnStackedICXAmount(unStakedVal);
+      });
+    },
+    [changeUnStackedICXAmount, changeStakedICXAmount],
+  );
+
+  React.useEffect(() => {
+    if (account) {
+      fetchCollateralInfo(account);
+    }
+  }, [fetchCollateralInfo, account, transactions]);
+}
+
+export function useLoanInfo(account?: string | null) {
+  const changeBorrowedValue = useLoanChangeBorrowedValue();
+  const changebnUSDbadDebt = useLoanChangebnUSDbadDebt();
+  const changebnUSDtotalSupply = useLoanChangebnUSDtotalSupply();
+
+  const transactions = useAllTransactions();
+
+  const fetchLoanInfo = React.useCallback(
     (account: string) => {
       if (account) {
         Promise.all([
@@ -117,47 +146,29 @@ export function useCollateralInfo(account: string) {
             ? convertLoopToIcx(new BigNumber(parseInt(resultbnUSDdebt['assets']['bnUSD'] || 0, 16)))
             : new BigNumber(0);
 
-          updateChangeLoanbnUSDbadDebt(bnUSDbadDebt);
-          updateChangeLoanbnUSDtotalSupply(bnUSDtotalSupply);
-          updateChangeLoanBorrowedValue(bnUSDdebt);
+          changebnUSDbadDebt(bnUSDbadDebt);
+          changebnUSDtotalSupply(bnUSDtotalSupply);
+          changeBorrowedValue(bnUSDdebt);
         });
       }
     },
-    [updateChangeLoanbnUSDbadDebt, updateChangeLoanbnUSDtotalSupply, updateChangeLoanBorrowedValue],
-  );
-
-  const fetchCollateralInfo = React.useCallback(
-    (account: string) => {
-      Promise.all([
-        bnJs.Loans.eject({ account }).getAccountPositions(),
-        bnJs.contractSettings.provider.getBalance(account).execute(),
-      ]).then(([stakedICXResult, balance]: Array<any>) => {
-        const stakedICXVal = stakedICXResult['assets']
-          ? convertLoopToIcx(new BigNumber(parseInt(stakedICXResult['assets']['sICX'], 16)))
-          : new BigNumber(0);
-        const unStakedVal = convertLoopToIcx(balance);
-
-        changeStakedICXAmount(stakedICXVal);
-        updateUnStackedICXAmount(unStakedVal);
-      });
-    },
-    [updateUnStackedICXAmount, changeStakedICXAmount],
+    [changebnUSDbadDebt, changebnUSDtotalSupply, changeBorrowedValue],
   );
 
   React.useEffect(() => {
     if (account) {
-      fetchTotalCollateralInfo(account);
-      fetchCollateralInfo(account);
+      fetchLoanInfo(account);
     }
-  }, [fetchTotalCollateralInfo, fetchCollateralInfo, account, transactions]);
+  }, [fetchLoanInfo, account, transactions]);
 }
 
 export function HomePage() {
   const { account } = useIconReact();
 
   usePrice();
-  useBalance(account || '');
-  useCollateralInfo(account || '');
+  useBalance(account);
+  useCollateralInfo(account);
+  useLoanInfo(account);
 
   return (
     <DefaultLayout>

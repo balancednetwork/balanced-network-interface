@@ -1,7 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
+
+import bnJs from 'bnJs';
+import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
 import { changeBorrowedValue, changeAvailableValue, changebnUSDbadDebt, changebnUSDtotalSupply } from './actions';
@@ -64,4 +68,42 @@ export function useLoanChangebnUSDtotalSupply(): (bnUSDtotalSupply: BigNumber) =
     },
     [dispatch],
   );
+}
+
+export function useFetchLoanInfo(account?: string | null) {
+  const changeBorrowedValue = useLoanChangeBorrowedValue();
+  const changebnUSDbadDebt = useLoanChangebnUSDbadDebt();
+  const changebnUSDtotalSupply = useLoanChangebnUSDtotalSupply();
+
+  const transactions = useAllTransactions();
+
+  const fetchLoanInfo = React.useCallback(
+    (account: string) => {
+      if (account) {
+        Promise.all([
+          bnJs.Loans.eject({ account }).getAvailableAssets(),
+          bnJs.bnUSD.totalSupply(),
+          bnJs.Loans.eject({ account }).getAccountPositions(),
+        ]).then(([resultGetAvailableAssets, resultbnUSDtotalSupply, resultbnUSDdebt]: Array<any>) => {
+          const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
+          const bnUSDtotalSupply = convertLoopToIcx(resultbnUSDtotalSupply);
+
+          const bnUSDdebt = resultbnUSDdebt['assets']
+            ? convertLoopToIcx(new BigNumber(parseInt(resultbnUSDdebt['assets']['bnUSD'] || 0, 16)))
+            : new BigNumber(0);
+
+          changebnUSDbadDebt(bnUSDbadDebt);
+          changebnUSDtotalSupply(bnUSDtotalSupply);
+          changeBorrowedValue(bnUSDdebt);
+        });
+      }
+    },
+    [changebnUSDbadDebt, changebnUSDtotalSupply, changeBorrowedValue],
+  );
+
+  React.useEffect(() => {
+    if (account) {
+      fetchLoanInfo(account);
+    }
+  }, [fetchLoanInfo, account, transactions]);
 }

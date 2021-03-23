@@ -1,6 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
+import BigNumber from 'bignumber.js';
+import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
+
+import bnJs from 'bnJs';
+import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
 import { changeValueBalance } from './actions';
@@ -27,4 +32,34 @@ export function useChangeWalletBalance(): ({
     },
     [dispatch],
   );
+}
+
+export function useFetchBalance(account?: string | null) {
+  // eject this account and we don't need to account params for when call contract
+  bnJs.eject({ account });
+
+  const changeBalanceValue = useChangeWalletBalance();
+
+  const transactions = useAllTransactions();
+
+  const fetchBalances = React.useCallback(() => {
+    if (account) {
+      Promise.all([
+        bnJs.sICX.balanceOf(),
+        bnJs.Baln.balanceOf(),
+        bnJs.bnUSD.balanceOf(),
+        bnJs.Rewards.getRewards(),
+      ]).then(result => {
+        const [sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v as BigNumber));
+        changeBalanceValue({ sICXbalance });
+        changeBalanceValue({ BALNbalance });
+        changeBalanceValue({ bnUSDbalance });
+        changeBalanceValue({ BALNreward });
+      });
+    }
+  }, [account, changeBalanceValue]);
+
+  React.useEffect(() => {
+    fetchBalances();
+  }, [fetchBalances, transactions]);
 }

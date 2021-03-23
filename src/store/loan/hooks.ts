@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppState } from '..';
-import { changeBorrowedValue, changeAvailabelValue, changebnUSDbadDebt, changebnUSDtotalSupply } from './actions';
+import { changeBorrowedValue, changeAvailableValue, changebnUSDbadDebt, changebnUSDtotalSupply } from './actions';
 
 export function useLoanBorrowedValue(): AppState['loan']['borrowedValue'] {
   const borrowedValue = useSelector((state: AppState) => state.loan.borrowedValue);
@@ -36,11 +36,11 @@ export function useLoanChangeBorrowedValue(): (borrowedValue: BigNumber) => void
   );
 }
 
-export function useLoanChangeAvailabelValue(): (availabelValue: BigNumber) => void {
+export function useLoanchangeAvailableValue(): (availabelValue: BigNumber) => void {
   const dispatch = useDispatch();
   return useCallback(
     (availabelValue: BigNumber) => {
-      dispatch(changeAvailabelValue({ availabelValue }));
+      dispatch(changeAvailableValue({ availabelValue }));
     },
     [dispatch],
   );

@@ -15,6 +15,7 @@ import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 // import { useWalletICXBalance, useStakedICXBalance } from 'hooks';
 import { useChangeDepositedValue, useBalance } from 'store/collateral/hooks';
+import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
 enum Field {
@@ -27,9 +28,10 @@ const CollateralPanel = () => {
   bnJs.eject({ account });
   const [open, setOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<boolean>(false);
+  const ratioValue = useRatioValue();
 
   // staked icx balance
-  const [stakedICXAmount, updateStakedICXAmount] = React.useState(0);
+  const [stakedICXAmount, updateStakedICXAmount] = React.useState(new BigNumber(0));
   const changeDepositedValue = useChangeDepositedValue();
 
   const unStackedICXAmount = useBalance();
@@ -61,13 +63,15 @@ const CollateralPanel = () => {
     if (!account) return;
     bnJs.Loans.getAccountPositions().then(result => {
       const stakedICXVal = result['assets']
-        ? convertLoopToIcx(new BigNumber(parseInt(result['assets']['sICX'], 16)))
+        ? convertLoopToIcx(new BigNumber(parseInt(result['assets']['sICX'], 16))).multipliedBy(
+            ratioValue.sICXICXratio?.toNumber(),
+          )
         : new BigNumber(0);
-      updateStakedICXAmount(stakedICXVal.toNumber());
+      updateStakedICXAmount(stakedICXVal);
       changeStakedICXAmountCache(stakedICXVal);
       setCollateralState({ independentField: Field.LEFT, typedValue: stakedICXVal.toFixed(2) });
     });
-  }, [setCollateralState, account]);
+  }, [setCollateralState, account, ratioValue]);
 
   const handleStakedAmountType = React.useCallback(
     (value: string) => {
@@ -162,7 +166,7 @@ const CollateralPanel = () => {
           <Nouislider
             id="slider-collateral"
             disabled={!editing}
-            start={[stakedICXAmount]}
+            start={[stakedICXAmount.toNumber()]}
             padding={[0]}
             connect={[true, false]}
             range={{

@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { changeAvailabelValue, changeBorrowedValue, changebnUSDbadDebt, changebnUSDtotalSupply } from './actions';
+import { changeAvailableValue, changeBorrowedValue, changebnUSDbadDebt, changebnUSDtotalSupply } from './actions';
 
 export interface LoanState {
   borrowedValue: BigNumber;
@@ -22,7 +22,7 @@ export default createReducer(initialState, builder =>
     .addCase(changeBorrowedValue, (state, { payload: { borrowedValue } }) => {
       state.borrowedValue = borrowedValue;
     })
-    .addCase(changeAvailabelValue, (state, { payload: { availabelValue } }) => {
+    .addCase(changeAvailableValue, (state, { payload: { availabelValue } }) => {
       state.availabelValue = availabelValue;
     })
     .addCase(changebnUSDbadDebt, (state, { payload: { bnUSDbadDebt } }) => {

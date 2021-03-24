@@ -20,7 +20,7 @@ import {
   useStakedICXAmount,
   useTotalICXAmount,
 } from 'store/collateral/hooks';
-import { useLockedICXAmount } from 'store/loan/hooks';
+// import { useLockedICXAmount } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
 const CollateralPanel = () => {
@@ -30,28 +30,28 @@ const CollateralPanel = () => {
   const sliderInstance = React.useRef<any>(null);
 
   // user interaction logic
-  const { independentField, typedValue, isAdjusting } = useCollateralState();
+  const { independentField, typedValue, isAdjusting, inputType } = useCollateralState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
   const type = useCollateralType();
 
   const handleStakedAmountType = React.useCallback(
     (value: string) => {
-      type({ independentField: Field.LEFT, typedValue: value });
+      type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' });
     },
     [type],
   );
 
   const handleUnstakedAmountType = React.useCallback(
     (value: string) => {
-      type({ independentField: Field.RIGHT, typedValue: value });
+      type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' });
     },
     [type],
   );
 
   const handleCollateralSlider = React.useCallback(
     (values: string[], handle: number) => {
-      type({ typedValue: values[handle] });
+      type({ typedValue: values[handle], inputType: 'slider' });
     },
     [type],
   );
@@ -150,23 +150,25 @@ const CollateralPanel = () => {
     }
   }, [type, stakedICXAmount, isAdjusting]);
 
-  // !todo
   // optimze slider performance
-  // change sliderValue after user user interaction
-  // React.useEffect(() => {
-  //   sliderInstance.current.noUiSlider.set(afterAmount);
-  // }, [afterAmount]);
+  // change slider value if only a user types
+  React.useEffect(() => {
+    if (inputType === 'text') {
+      sliderInstance.current.noUiSlider.set(afterAmount.toNumber());
+    }
+  }, [afterAmount, inputType]);
 
   // !todo
   // display locked sICX for borrowed bnUSD
-  const lockedICXAmount = useLockedICXAmount();
-  console.log(lockedICXAmount.toNumber());
+  // const lockedICXAmount = useLockedICXAmount();
+  // console.log(lockedICXAmount.toNumber());
 
-  React.useEffect(() => {
-    sliderInstance.current?.noUiSlider.updateOptions({
-      padding: [lockedICXAmount.toNumber(), 0],
-    });
-  }, [lockedICXAmount]);
+  // !bug
+  // React.useEffect(() => {
+  //   sliderInstance.current?.noUiSlider.updateOptions({
+  //     padding: [lockedICXAmount.toNumber(), 0],
+  //   });
+  // }, [lockedICXAmount]);
 
   return (
     <>

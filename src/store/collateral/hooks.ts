@@ -81,7 +81,11 @@ export function useCollateralState() {
   return state;
 }
 
-export function useCollateralType(): (payload: { independentField?: Field; typedValue?: string }) => void {
+export function useCollateralType(): (payload: {
+  independentField?: Field;
+  typedValue?: string;
+  inputType?: 'slider' | 'text';
+}) => void {
   const dispatch = useDispatch();
 
   return useCallback(

@@ -14,6 +14,8 @@ export const adjust = createAction('collateral/adjust');
 
 export const cancel = createAction('collateral/cancel');
 
-export const type = createAction<{ independentField?: Field; typedValue?: string }>('collateral/type');
+export const type = createAction<{ independentField?: Field; typedValue?: string; inputType?: 'slider' | 'text' }>(
+  'collateral/type',
+);
 
 // export const slide = createAction<{ balance: BigNumber }>('collateral/slide');

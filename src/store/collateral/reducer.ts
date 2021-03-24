@@ -12,6 +12,7 @@ export interface CollateralState {
     isAdjusting: boolean;
     typedValue: string;
     independentField: Field;
+    inputType: 'slider' | 'text';
   };
 }
 
@@ -24,6 +25,7 @@ const initialState: CollateralState = {
     isAdjusting: false,
     typedValue: '',
     independentField: Field.LEFT,
+    inputType: 'text',
   },
 };
 
@@ -36,9 +38,10 @@ export default createReducer(initialState, builder =>
       // reset typedValue, indepentField, isAdjusting values
       state.state.isAdjusting = false;
     })
-    .addCase(type, (state, { payload: { independentField, typedValue } }) => {
+    .addCase(type, (state, { payload: { independentField, typedValue, inputType } }) => {
       state.state.independentField = independentField || state.state.independentField;
       state.state.typedValue = typedValue || state.state.independentField;
+      state.state.inputType = inputType || state.state.inputType;
     })
     .addCase(changeDeposite, (state, { payload: { depositedValue } }) => {
       state.depositedValue = depositedValue;

@@ -18,7 +18,12 @@ export function useRatioValue(): AppState['ratio'] {
 }
 
 // #redux-step-6: define function working with variable on store
-export function useChangeRatio(): ({ ICXUSDratio, sICXbnUSDratio, sICXICXratio, BALNbnUSDratio }: RatioState) => void {
+export function useChangeRatio(): ({
+  ICXUSDratio,
+  sICXbnUSDratio,
+  sICXICXratio,
+  BALNbnUSDratio,
+}: Partial<RatioState>) => void {
   const dispatch = useDispatch();
   return useCallback(
     ({ ICXUSDratio, sICXbnUSDratio, sICXICXratio, BALNbnUSDratio }) => {

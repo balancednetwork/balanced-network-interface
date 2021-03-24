@@ -5,6 +5,7 @@ import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { useRatioValue } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -107,3 +108,16 @@ export function useFetchLoanInfo(account?: string | null) {
     }
   }, [fetchLoanInfo, account, transactions]);
 }
+
+const MANDATORY_COLLATERAL_RATIO = 4;
+
+export const useLockedICXAmount = () => {
+  const ratio = useRatioValue();
+
+  const bnUSDLoanAmount = useLoanBorrowedValue();
+
+  return React.useMemo(() => {
+    const price = ratio.ICXUSDratio.isZero() ? new BigNumber(1) : ratio.ICXUSDratio;
+    return bnUSDLoanAmount.multipliedBy(MANDATORY_COLLATERAL_RATIO).div(price);
+  }, [bnUSDLoanAmount, ratio.ICXUSDratio]);
+};

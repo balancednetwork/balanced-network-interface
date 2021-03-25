@@ -197,7 +197,8 @@ const CollateralPanel = () => {
             connect={[true, false]}
             range={{
               min: [0],
-              max: [totalICXAmount.toNumber()],
+              // https://github.com/balancednetwork/balanced-network-interface/issues/50
+              max: [totalICXAmount.isZero() ? 1 : totalICXAmount.toNumber()],
             }}
             instanceRef={instance => {
               if (instance && !sliderInstance.current) {

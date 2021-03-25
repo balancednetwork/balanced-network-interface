@@ -83,6 +83,8 @@ const CollateralPanel = () => {
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 
+  const buttonText = stakedICXAmount.isZero() ? 'Deposit' : 'Adjust';
+
   // collateral confirm modal logic & value
   const [open, setOpen] = React.useState(false);
 
@@ -185,7 +187,7 @@ const CollateralPanel = () => {
               </>
             ) : (
               <Button onClick={handleEnableAdjusting} fontSize={14}>
-                Deposit
+                {buttonText}
               </Button>
             )}
           </Box>

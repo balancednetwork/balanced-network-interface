@@ -558,4 +558,43 @@ export const ThemedGlobalStyle = createGlobalStyle`
   .noUi-active .noUi-tooltip {
     display: block;
   }
+
+  /*  */
+  #indicator-locked-container,
+  #indicator-used-container {
+    position: relative;
+  }
+  #indicator-locked,
+  #indicator-used {
+    position: absolute;
+    width: 1px;
+    height: 20px;
+    margin-top: 25px;
+    background-color: #ffffff;
+    z-index: 2;
+    opacity: 1;
+    transition: height 0.2s ease, opacity 0.2s ease;
+  }
+  #indicator-used {
+    margin-top: -5px;
+  }
+  #indicator-locked.disabled,
+  #indicator-used.disabled {
+    height: 10px;
+    transition: height 0.2s ease;
+  }
+  #indicator-locked .label,
+  #indicator-used .label {
+    margin-top: -20px;
+    margin-left: -23px;
+    width: 100px;
+  }
+  #indicator-used .label {
+    margin-left: -17px;
+  }
+  #indicator-locked.active,
+  #indicator-used.active {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
 `;

@@ -1,12 +1,13 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
+import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
+import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
@@ -20,7 +21,7 @@ import {
   useStakedICXAmount,
   useTotalICXAmount,
 } from 'store/collateral/hooks';
-// import { useLockedICXAmount } from 'store/loan/hooks';
+import { useLockedICXAmount } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
 const CollateralPanel = () => {
@@ -160,17 +161,17 @@ const CollateralPanel = () => {
     }
   }, [afterAmount, inputType]);
 
-  // !todo
   // display locked sICX for borrowed bnUSD
-  // const lockedICXAmount = useLockedICXAmount();
-  // console.log(lockedICXAmount.toNumber());
+  const lockedICXAmount = useLockedICXAmount();
 
-  // !bug
-  // React.useEffect(() => {
-  //   sliderInstance.current?.noUiSlider.updateOptions({
-  //     padding: [lockedICXAmount.toNumber(), 0],
-  //   });
-  // }, [lockedICXAmount]);
+  const tLockedICXAmount = React.useMemo(() => BigNumber.min(lockedICXAmount, totalICXAmount), [
+    lockedICXAmount,
+    totalICXAmount,
+  ]);
+
+  const percent = totalICXAmount.isZero() ? 0 : tLockedICXAmount.div(totalICXAmount).times(100).toNumber();
+
+  const shouldShowLock = !lockedICXAmount.isZero();
 
   return (
     <>
@@ -185,17 +186,21 @@ const CollateralPanel = () => {
                 <Button onClick={toggleOpen}>Confirm</Button>
               </>
             ) : (
-              <Button onClick={handleEnableAdjusting}>{buttonText}</Button>
+              <Button onClick={handleEnableAdjusting} fontSize={14}>
+                {buttonText}
+              </Button>
             )}
           </Box>
         </Flex>
+
+        {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} />}
 
         <Box marginY={6} height={20}>
           <Nouislider
             id="slider-collateral"
             disabled={!isAdjusting}
             start={[stakedICXAmount.toNumber()]}
-            padding={[0]}
+            padding={[tLockedICXAmount.toNumber(), 0]}
             connect={[true, false]}
             range={{
               min: [0],

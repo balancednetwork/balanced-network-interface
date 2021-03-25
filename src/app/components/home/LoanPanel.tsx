@@ -166,7 +166,9 @@ const LoanPanel = () => {
                 <Button onClick={toggleOpen}>Confirm</Button>
               </>
             ) : (
-              <Button onClick={handleEnableAdjusting}>{buttonText}</Button>
+              <Button onClick={handleEnableAdjusting} fontSize={14}>
+                {buttonText}
+              </Button>
             )}
           </Box>
         </Flex>

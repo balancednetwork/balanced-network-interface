@@ -9680,6 +9680,11 @@ nouislider-react@3.3.9:
   dependencies:
     nouislider "^14.6.2"
 
+nouislider@14.6.4:
+  version "14.6.4"
+  resolved "https://registry.yarnpkg.com/nouislider/-/nouislider-14.6.4.tgz#81eb9544309a59b013293278951661da69e46713"
+  integrity sha512-PVCGYl+aC7/nVEbW61ypJWfuW3UCpvctz/luxpt4byxxli1FFyjBX9NIiy4Yak9AaO6a5BkPGfFYMCW4eg3eeQ==
+
 nouislider@^14.6.2:
   version "14.6.3"
   resolved "https://registry.yarnpkg.com/nouislider/-/nouislider-14.6.3.tgz#4dad5b6651d6515f6e6829f8b8e3a1736a5c0ffb"

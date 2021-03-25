@@ -47,6 +47,7 @@
     "lint-staged": "10.3.0",
     "lodash": "4.17.21",
     "node-plop": "0.26.2",
+    "nouislider": "14.6.4",
     "nouislider-react": "3.3.9",
     "plop": "2.7.4",
     "polished": "4.0.5",

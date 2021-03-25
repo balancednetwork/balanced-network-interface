@@ -81,6 +81,8 @@ const LoanPanel = () => {
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 
+  const buttonText = borrowedbnUSDAmount.isZero() ? 'Borrow' : 'Adjust';
+
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
 
@@ -164,7 +166,7 @@ const LoanPanel = () => {
                 <Button onClick={toggleOpen}>Confirm</Button>
               </>
             ) : (
-              <Button onClick={handleEnableAdjusting}>Borrow</Button>
+              <Button onClick={handleEnableAdjusting}>{buttonText}</Button>
             )}
           </Box>
         </Flex>

@@ -180,7 +180,8 @@ const LoanPanel = () => {
             connect={[true, false]}
             range={{
               min: [0],
-              max: [totalAvailablebnUSDAmount.toNumber()],
+              // https://github.com/balancednetwork/balanced-network-interface/issues/50
+              max: [totalAvailablebnUSDAmount.isZero() ? 1 : totalAvailablebnUSDAmount.toNumber()],
             }}
             instanceRef={instance => {
               if (instance && !sliderInstance.current) {

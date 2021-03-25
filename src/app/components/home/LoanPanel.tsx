@@ -12,36 +12,68 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
-import { useDepositedValue } from 'store/collateral/hooks';
-import { useLoanBorrowedValue } from 'store/loan/hooks';
-import { useRatioValue } from 'store/ratio/hooks';
+import { Field } from 'store/loan/actions';
+import {
+  useLoanAdjust,
+  useLoanBorrowedValue,
+  useLoanState,
+  useLoanType,
+  useTotalAvailablebnUSDAmount,
+} from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-
-enum Field {
-  LEFT = 'LEFT',
-  RIGHT = 'RIGHT',
-}
 
 const LoanPanel = () => {
   const { account } = useIconReact();
 
-  const stakedICXAmount = useDepositedValue();
-  const loanBorrowedValue = useLoanBorrowedValue();
-  const ratio = useRatioValue();
+  // collateral slider instance
+  const sliderInstance = React.useRef<any>(null);
 
-  const sICXUSD = (ratio.sICXICXratio || new BigNumber(0)).multipliedBy(ratio.ICXUSDratio || new BigNumber(0));
-  const totalLoanAmount = stakedICXAmount.multipliedBy(sICXUSD).div(4);
-
-  const [{ independentField, typedValue }, setLoanState] = React.useState({
-    independentField: Field.LEFT,
-    typedValue: '',
-  });
-
+  // user interaction logic
+  const { independentField, typedValue, isAdjusting, inputType } = useLoanState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
+  const type = useLoanType();
+
+  const handleLeftAmountType = React.useCallback(
+    (value: string) => {
+      type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' });
+    },
+    [type],
+  );
+
+  const handleRightAmountType = React.useCallback(
+    (value: string) => {
+      type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' });
+    },
+    [type],
+  );
+
+  const handleSlider = React.useCallback(
+    (values: string[], handle: number) => {
+      type({ typedValue: values[handle], inputType: 'slider' });
+    },
+    [type],
+  );
+
+  const adjust = useLoanAdjust();
+
+  const handleEnableAdjusting = () => {
+    adjust(true);
+  };
+
+  const handleCancelAdjusting = () => {
+    adjust(false);
+  };
+
+  //
+  const borrowedbnUSDAmount = useLoanBorrowedValue();
+
+  const totalAvailablebnUSDAmount = useTotalAvailablebnUSDAmount();
+  console.log(totalAvailablebnUSDAmount.toNumber());
+  //  calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: totalLoanAmount.minus(new BigNumber(typedValue || '0')),
+    [dependentField]: totalAvailablebnUSDAmount.minus(new BigNumber(typedValue || '0')),
   };
 
   const formattedAmounts = {
@@ -49,51 +81,22 @@ const LoanPanel = () => {
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 
-  const [isLoanEditing, setLoanEditing] = React.useState<boolean>(false);
-
-  const handleLoanAdjust = () => {
-    setLoanEditing(true);
-  };
-
-  const handleLoanCancel = () => {
-    setLoanState({ independentField: Field.LEFT, typedValue: loanBorrowedValue.toFixed(2) });
-    setLoanEditing(false);
-  };
-
-  const handleLoanSlider = (values: string[], handle: number) => {
-    setLoanState(state => ({ independentField: state['independentField'], typedValue: values[handle] }));
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleBorrowedAmountType = React.useCallback(
-    (value: string) => {
-      sliderInstance.current.noUiSlider.set(new BigNumber(value).toNumber());
-      setLoanState({ independentField: Field.LEFT, typedValue: value });
-    },
-    [setLoanState],
-  );
-
-  const sliderInstance = React.useRef<any>(null);
-
-  React.useEffect(() => {
-    if (!account) return;
-    setLoanState({ independentField: Field.LEFT, typedValue: loanBorrowedValue.toFixed(2) });
-  }, [account, setLoanState, loanBorrowedValue]);
-
+  // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => setOpen(!open);
 
-  const addTransaction = useTransactionAdder();
-
   //before
-  const beforeAmount = loanBorrowedValue;
+  const beforeAmount = borrowedbnUSDAmount;
   //after
   const afterAmount = parsedAmount[Field.LEFT];
   //difference = after-before
   const differenceAmount = afterAmount.minus(beforeAmount);
   //whether if repay or borrow
   const shouldBorrow = differenceAmount.isPositive();
+  //borrow fee
+  const fee = differenceAmount.multipliedBy(1 / 100);
+  const addTransaction = useTransactionAdder();
 
   const handleLoanConfirm = () => {
     if (!account) return;
@@ -104,6 +107,10 @@ const LoanPanel = () => {
         .Loans.borrowAdd(differenceAmount.toNumber())
         .then(res => {
           addTransaction({ hash: res.result }, { summary: `Borrowed ${differenceAmount.toNumber()} bnUSD.` });
+          // close modal
+          toggleOpen();
+          // reset loan panel values
+          adjust(false);
         })
         .catch(e => {
           console.error('error', e);
@@ -114,12 +121,35 @@ const LoanPanel = () => {
         .bnUSD.repayLoan(differenceAmount.abs().toNumber())
         .then(res => {
           addTransaction({ hash: res.result }, { summary: `Repaid ${differenceAmount.abs().toNumber()} bnUSD.` });
+          // close modal
+          toggleOpen();
+          // reset loan panel values
+          adjust(false);
         })
         .catch(e => {
           console.error('error', e);
         });
     }
   };
+
+  // reset loan ui state if cancel adjusting
+  // change typedValue if sICX and ratio changes
+  React.useEffect(() => {
+    if (!isAdjusting) {
+      type({
+        independentField: Field.LEFT,
+        typedValue: borrowedbnUSDAmount.isZero() ? '0' : borrowedbnUSDAmount.toFixed(2),
+      });
+    }
+  }, [type, borrowedbnUSDAmount, isAdjusting]);
+
+  // optimze slider performance
+  // change slider value if only a user types
+  React.useEffect(() => {
+    if (inputType === 'text') {
+      sliderInstance.current.noUiSlider.set(afterAmount.toNumber());
+    }
+  }, [afterAmount, inputType]);
 
   return (
     <>
@@ -128,57 +158,59 @@ const LoanPanel = () => {
           <Typography variant="h2">Loan</Typography>
 
           <Box>
-            {isLoanEditing ? (
+            {isAdjusting ? (
               <>
-                <TextButton onClick={handleLoanCancel}>Cancel</TextButton>
+                <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
                 <Button onClick={toggleOpen}>Confirm</Button>
               </>
             ) : (
-              <Button onClick={handleLoanAdjust}>Borrow</Button>
+              <Button onClick={handleEnableAdjusting}>Borrow</Button>
             )}
           </Box>
         </Flex>
 
         <Box marginY={6}>
           <Nouislider
-            disabled={!isLoanEditing}
-            id="slider-collateral"
-            start={[loanBorrowedValue.toNumber()]}
+            disabled={!isAdjusting}
+            id="slider-loan"
+            start={[borrowedbnUSDAmount.toNumber()]}
             padding={[0]}
             connect={[true, false]}
             range={{
               min: [0],
-              max: [totalLoanAmount.toNumber()],
+              max: [totalAvailablebnUSDAmount.toNumber()],
             }}
             instanceRef={instance => {
               if (instance && !sliderInstance.current) {
                 sliderInstance.current = instance;
               }
             }}
-            onSlide={handleLoanSlider}
+            onSlide={handleSlider}
           />
         </Box>
 
         <Flex justifyContent="space-between">
           <Box width={[1, 1 / 2]} mr={4}>
             <CurrencyField
-              editable={isLoanEditing}
+              editable={isAdjusting}
               isActive
               label="Borrowed"
               tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
               value={!account ? '-' : formattedAmounts[Field.LEFT]}
               currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['bnusd']}
+              onUserInput={handleLeftAmountType}
             />
           </Box>
 
           <Box width={[1, 1 / 2]} ml={4}>
             <CurrencyField
-              editable={isLoanEditing}
+              editable={isAdjusting}
               isActive={false}
               label="Available"
               tooltipText="The amount of ICX available to deposit from your wallet."
               value={!account ? '-' : formattedAmounts[Field.RIGHT]}
               currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['bnusd']}
+              onUserInput={handleRightAmountType}
             />
           </Box>
         </Flex>
@@ -210,7 +242,7 @@ const LoanPanel = () => {
             </Box>
           </Flex>
 
-          <Typography textAlign="center">Includes a fee of 14 bnUSD.</Typography>
+          <Typography textAlign="center">Includes a fee of ${fee.toFixed(2)} bnUSD.</Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>

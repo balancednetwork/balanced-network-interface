@@ -5,11 +5,21 @@ import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { useStakedICXAmount } from 'store/collateral/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
-import { changeBorrowedValue, changeAvailableValue, changebnUSDbadDebt, changebnUSDtotalSupply } from './actions';
+import {
+  changeBorrowedValue,
+  changeAvailableValue,
+  changebnUSDbadDebt,
+  changebnUSDtotalSupply,
+  Field,
+  adjust,
+  cancel,
+  type,
+} from './actions';
 
 export function useLoanBorrowedValue(): AppState['loan']['borrowedValue'] {
   const borrowedValue = useSelector((state: AppState) => state.loan.borrowedValue);
@@ -120,4 +130,47 @@ export const useLockedICXAmount = () => {
     const price = ratio.ICXUSDratio.isZero() ? new BigNumber(1) : ratio.ICXUSDratio;
     return bnUSDLoanAmount.multipliedBy(MANDATORY_COLLATERAL_RATIO).div(price);
   }, [bnUSDLoanAmount, ratio.ICXUSDratio]);
+};
+
+export function useLoanState() {
+  const state = useSelector((state: AppState) => state.loan.state);
+  return state;
+}
+
+export function useLoanType(): (payload: {
+  independentField?: Field;
+  typedValue?: string;
+  inputType?: 'slider' | 'text';
+}) => void {
+  const dispatch = useDispatch();
+
+  return useCallback(
+    payload => {
+      dispatch(type(payload));
+    },
+    [dispatch],
+  );
+}
+
+export function useLoanAdjust(): (isAdjust: boolean) => void {
+  const dispatch = useDispatch();
+
+  return useCallback(
+    isAdjust => {
+      if (isAdjust) {
+        dispatch(adjust());
+      } else {
+        dispatch(cancel());
+      }
+    },
+    [dispatch],
+  );
+}
+
+export const useTotalAvailablebnUSDAmount = () => {
+  const ratio = useRatioValue();
+
+  const stakedICXAmount = useStakedICXAmount();
+  console.log('stakedICX', stakedICXAmount.toNumber(), ratio.ICXUSDratio.toNumber());
+  return stakedICXAmount.multipliedBy(ratio.ICXUSDratio).div(MANDATORY_COLLATERAL_RATIO);
 };

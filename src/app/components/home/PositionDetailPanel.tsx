@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -96,7 +97,7 @@ const PositionDetailPanel = () => {
 
   // ratio
   const { account } = useIconReact();
-  const ratioValue = useRatioValue();
+  const ratio = useRatioValue();
   // collateral
   const stakedICXAmount = useDepositedValue();
 
@@ -106,9 +107,10 @@ const PositionDetailPanel = () => {
   const loanbnUSDtotalSupply = useLoanbnUSDtotalSupply();
 
   // loan slider
-  const totalLoanAmount = stakedICXAmount.div(4).minus(loanBorrowedValue);
+  const sICXUSD = (ratio.sICXICXratio || new BigNumber(0)).multipliedBy(ratio.ICXUSDratio || new BigNumber(0));
+  const totalLoanAmount = stakedICXAmount.multipliedBy(sICXUSD).div(4);
 
-  const totalCollateralValue = stakedICXAmount.times(ratioValue.ICXUSDratio === undefined ? 0 : ratioValue.ICXUSDratio);
+  const totalCollateralValue = stakedICXAmount.times(ratio.ICXUSDratio === undefined ? 0 : ratio.ICXUSDratio);
   const debtHoldShare = loanBorrowedValue.div(loanbnUSDtotalSupply.minus(loanbnUSDbadDebt)).multipliedBy(100);
 
   return (
@@ -152,7 +154,7 @@ const PositionDetailPanel = () => {
         <Divider my={4} />
         <Typography mb={2}>
           The current ICX price is{' '}
-          <span className="alert">{!account ? '-' : '$' + ratioValue.ICXUSDratio?.toFixed(2).toString() + '.'}</span>.
+          <span className="alert">{!account ? '-' : '$' + ratio.ICXUSDratio?.toFixed(2).toString()}</span>.
         </Typography>
         <Typography>
           You hold{' '}

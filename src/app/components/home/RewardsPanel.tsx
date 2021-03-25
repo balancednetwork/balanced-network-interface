@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { IconBuilder, IconConverter } from 'icon-sdk-js';
-import { useIconReact, REWARD_ADDRESS } from 'packages/icon-react';
+import addresses from 'packages/BalancedJs/addresses';
+import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -26,7 +27,7 @@ const Row = styled(Flex)`
 const RewardsPanel = () => {
   const [open, setOpen] = React.useState(false);
 
-  const { account } = useIconReact();
+  const { account, networkId } = useIconReact();
   const walletBalance = useWalletBalanceValue();
 
   const handleClaimReward = () => {
@@ -36,10 +37,10 @@ const RewardsPanel = () => {
     // const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
     // const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
     // const params = { _data1: data1, _data2: data2 };
-
+    console.log(addresses[networkId].rewards);
     const depositPayload = callTransactionBuilder
       .from(account)
-      .to(REWARD_ADDRESS)
+      .to(addresses[networkId].rewards)
       .method('claimRewards')
       //.params(params)
       .nid(IconConverter.toBigNumber(3))
@@ -75,83 +76,85 @@ const RewardsPanel = () => {
   };
 
   return (
-    <BoxPanel bg="bg2">
-      <Flex justifyContent="space-between" alignItems="center" mb={5}>
-        <Typography variant="h2">Rewards</Typography>
+    <div>
+      <BoxPanel bg="bg2">
+        <Flex justifyContent="space-between" alignItems="center" mb={5}>
+          <Typography variant="h2">Rewards</Typography>
 
-        <Typography>Last claimed 2 days ago</Typography>
-      </Flex>
-
-      <RewardGrid>
-        <Row>
-          <Typography variant="p">Loan rewards</Typography>
-          <Typography variant="p">
-            {!account
-              ? '-'
-              : walletBalance.BALNreward?.toNumber() === 0 || walletBalance.BALNreward?.isNaN()
-              ? '0 BALN'
-              : walletBalance.BALNreward?.toFixed(2) + 'BALN'}
-          </Typography>
-        </Row>
-
-        <Divider />
-
-        <Row>
-          <Typography variant="p" fontWeight="bold">
-            Total
-          </Typography>
-          <Typography variant="p" fontWeight="bold">
-            $24.47
-          </Typography>
-        </Row>
-      </RewardGrid>
-
-      <Flex alignItems="center" justifyContent="center" mt={3}>
-        <Button onClick={handleClaim}>Claim rewards</Button>
-      </Flex>
-
-      <Modal isOpen={open} onDismiss={handleClose}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-          <Typography textAlign="center" mb="5px">
-            Stake new Balance Tokens?
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            8 BALN
-          </Typography>
-
-          <Flex my={5}>
-            <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
-              <Typography variant="p" textAlign="center">
-                50 BALN
-              </Typography>
-            </Box>
-
-            <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
-              <Typography variant="p" textAlign="center">
-                58 BALN
-              </Typography>
-            </Box>
-          </Flex>
-
-          <Typography textAlign="center">
-            Stake your Balance Tokens to earn dividends.
-            <br /> Unstaking takes 3 days.
-          </Typography>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleClose} fontSize={14}>
-              Not now
-            </TextButton>
-            <Button fontSize={14} onClick={handleClaimReward}>
-              Stake
-            </Button>
-          </Flex>
+          <Typography>Last claimed 2 days ago</Typography>
         </Flex>
-      </Modal>
-    </BoxPanel>
+
+        <RewardGrid>
+          <Row>
+            <Typography variant="p">Loan rewards</Typography>
+            <Typography variant="p">
+              {!account
+                ? '-'
+                : walletBalance.BALNreward?.toNumber() === 0 || walletBalance.BALNreward?.isNaN()
+                ? '0 BALN'
+                : walletBalance.BALNreward?.toFixed(2) + 'BALN'}
+            </Typography>
+          </Row>
+
+          <Divider />
+
+          <Row>
+            <Typography variant="p" fontWeight="bold">
+              Total
+            </Typography>
+            <Typography variant="p" fontWeight="bold">
+              $24.47
+            </Typography>
+          </Row>
+        </RewardGrid>
+
+        <Flex alignItems="center" justifyContent="center" mt={3}>
+          <Button onClick={handleClaim}>Claim rewards</Button>
+        </Flex>
+
+        <Modal isOpen={open} onDismiss={handleClose}>
+          <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+            <Typography textAlign="center" mb="5px">
+              Stake new Balance Tokens?
+            </Typography>
+
+            <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
+              8 BALN
+            </Typography>
+
+            <Flex my={5}>
+              <Box width={1 / 2} className="border-right">
+                <Typography textAlign="center">Before</Typography>
+                <Typography variant="p" textAlign="center">
+                  50 BALN
+                </Typography>
+              </Box>
+
+              <Box width={1 / 2}>
+                <Typography textAlign="center">After</Typography>
+                <Typography variant="p" textAlign="center">
+                  58 BALN
+                </Typography>
+              </Box>
+            </Flex>
+
+            <Typography textAlign="center">
+              Stake your Balance Tokens to earn dividends.
+              <br /> Unstaking takes 3 days.
+            </Typography>
+
+            <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+              <TextButton onClick={handleClose} fontSize={14}>
+                Not now
+              </TextButton>
+              <Button fontSize={14} onClick={handleClaimReward}>
+                Stake
+              </Button>
+            </Flex>
+          </Flex>
+        </Modal>
+      </BoxPanel>
+    </div>
   );
 };
 

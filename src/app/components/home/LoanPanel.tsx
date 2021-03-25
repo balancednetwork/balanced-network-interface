@@ -14,19 +14,23 @@ import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 import { useDepositedValue } from 'store/collateral/hooks';
 import { useLoanBorrowedValue } from 'store/loan/hooks';
+import { useRatioValue } from 'store/ratio/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
+
+enum Field {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
 
 const LoanPanel = () => {
   const { account } = useIconReact();
 
-  enum Field {
-    LEFT = 'LEFT',
-    RIGHT = 'RIGHT',
-  }
-
   const stakedICXAmount = useDepositedValue();
   const loanBorrowedValue = useLoanBorrowedValue();
-  const totalLoanAmount = stakedICXAmount.div(4).minus(loanBorrowedValue);
-  // const [loanAmountCache, changeLoanAmountCache] = React.useState(new BigNumber(0));
+  const ratio = useRatioValue();
+
+  const sICXUSD = (ratio.sICXICXratio || new BigNumber(0)).multipliedBy(ratio.ICXUSDratio || new BigNumber(0));
+  const totalLoanAmount = stakedICXAmount.multipliedBy(sICXUSD).div(4);
 
   const [{ independentField, typedValue }, setLoanState] = React.useState({
     independentField: Field.LEFT,
@@ -44,110 +48,6 @@ const LoanPanel = () => {
     [independentField]: typedValue || '0',
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleLoanConfirm = () => {
-    if (!account) return;
-    const newBorrowValue = parseFloat(formattedAmounts[Field.LEFT]);
-
-    if (newBorrowValue === 0 && loanBorrowedValue.toNumber() > 0) {
-      //repayLoan(loanBorrowedValue);
-      bnJs
-        .eject({ account: account })
-        .bnUSD.repayLoan(loanBorrowedValue.toNumber())
-        .then(res => {
-          console.log('res', res);
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
-    } else {
-      //addLoan(newBorrowValue);
-      bnJs
-        .eject({ account: account })
-        //.sICX.borrowAdd(newBorrowValue)
-        .Loans.borrowAdd(newBorrowValue)
-        .then(res => {
-          console.log('res', res);
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
-    }
-  };
-
-  /*function repayLoan(value) {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-    const data = '0x' + Buffer.from('{"method": "_repay_loan", "params": {}}', 'utf8').toString('hex');
-    const valueParam = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
-    const params = { _to: LOAN_ADDRESS, _value: valueParam, _data: data };
-
-    const loanPayload = callTransactionBuilder
-      .from(account)
-      .to(bnUSD_ADDRESS)
-      .method('transfer')
-      .params(params)
-      .nid(IconConverter.toBigNumber(3))
-      .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(1000000))
-      .value(0)
-      .version(IconConverter.toBigNumber(3))
-      .build();
-
-    const parsed = {
-      jsonrpc: '2.0',
-      method: 'icx_sendTransaction',
-      params: IconConverter.toRawTransaction(loanPayload),
-      id: Date.now(),
-    };
-
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload: parsed,
-        },
-      }),
-    );
-  }
-
-  function addLoan(value) {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-    const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
-    const data2 = Buffer.from(
-      '", "_asset": "ICD", "_amount": ' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop() + '}}',
-      'utf8',
-    ).toString('hex');
-    const params = { _data1: data1, _data2: data2 };
-
-    const depositPayload = callTransactionBuilder
-      .from(account)
-      .to(LOAN_ADDRESS)
-      .method('addCollateral')
-      .params(params)
-      .nid(IconConverter.toBigNumber(3))
-      .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(2000000))
-      .value(IconAmount.of(value / (ratioValue.ICXUSDratio?.toNumber() || 0), IconAmount.Unit.ICX).toLoop())
-      .version(IconConverter.toBigNumber(3))
-      .build();
-
-    const parsed = {
-      jsonrpc: '2.0',
-      method: 'icx_sendTransaction',
-      params: IconConverter.toRawTransaction(depositPayload),
-      id: Date.now(),
-    };
-
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload: parsed,
-        },
-      }),
-    );
-  }*/
 
   const [isLoanEditing, setLoanEditing] = React.useState<boolean>(false);
 
@@ -170,7 +70,7 @@ const LoanPanel = () => {
       sliderInstance.current.noUiSlider.set(new BigNumber(value).toNumber());
       setLoanState({ independentField: Field.LEFT, typedValue: value });
     },
-    [setLoanState, Field.LEFT],
+    [setLoanState],
   );
 
   const sliderInstance = React.useRef<any>(null);
@@ -178,11 +78,48 @@ const LoanPanel = () => {
   React.useEffect(() => {
     if (!account) return;
     setLoanState({ independentField: Field.LEFT, typedValue: loanBorrowedValue.toFixed(2) });
-  }, [account, setLoanState, Field.LEFT, loanBorrowedValue]);
+  }, [account, setLoanState, loanBorrowedValue]);
 
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => setOpen(!open);
+
+  const addTransaction = useTransactionAdder();
+
+  //before
+  const beforeAmount = loanBorrowedValue;
+  //after
+  const afterAmount = parsedAmount[Field.LEFT];
+  //difference = after-before
+  const differenceAmount = afterAmount.minus(beforeAmount);
+  //whether if repay or borrow
+  const shouldBorrow = differenceAmount.isPositive();
+
+  const handleLoanConfirm = () => {
+    if (!account) return;
+
+    if (shouldBorrow) {
+      bnJs
+        .eject({ account })
+        .Loans.borrowAdd(differenceAmount.toNumber())
+        .then(res => {
+          addTransaction({ hash: res.result }, { summary: `Borrowed ${differenceAmount.toNumber()} bnUSD.` });
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    } else {
+      bnJs
+        .eject({ account })
+        .bnUSD.repayLoan(differenceAmount.abs().toNumber())
+        .then(res => {
+          addTransaction({ hash: res.result }, { summary: `Repaid ${differenceAmount.abs().toNumber()} bnUSD.` });
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    }
+  };
 
   return (
     <>
@@ -250,25 +187,25 @@ const LoanPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb="5px">
-            Borrow Balanced Dollars?
+            {shouldBorrow ? 'Borrow Balanced Dollars?' : 'Repay Balanced Dollars?'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            0 bnUSD
+            {differenceAmount.toFixed(2)} bnUSD
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                5,560 bnUSD
+                {beforeAmount.toFixed(2)} bnUSD
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                5,560 bnUSD
+                {afterAmount.toFixed(2)} bnUSD
               </Typography>
             </Box>
           </Flex>
@@ -280,7 +217,7 @@ const LoanPanel = () => {
               Cancel
             </TextButton>
             <Button onClick={handleLoanConfirm} fontSize={14}>
-              Borrow
+              {shouldBorrow ? 'Borrow' : 'Repay'}
             </Button>
           </Flex>
         </Flex>

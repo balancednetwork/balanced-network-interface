@@ -22,6 +22,7 @@ const Container = styled(Box)`
   display: flex;
   flex-direction: column;
   max-width: 1280px;
+  min-height: 100vh;
   margin-left: auto;
   margin-right: auto;
   padding-left: 40px;
@@ -58,7 +59,7 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
       <Container>
         <StyledHeader title={title} />
 
-        <Flex>
+        <Flex flex={1}>
           {!below1000 && (
             <DesktopAppBarWrapper>
               <AppBar />

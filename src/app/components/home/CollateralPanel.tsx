@@ -79,7 +79,7 @@ const CollateralPanel = () => {
   };
 
   const formattedAmounts = {
-    [independentField]: typedValue || '0',
+    [independentField]: typedValue,
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 
@@ -202,7 +202,8 @@ const CollateralPanel = () => {
             connect={[true, false]}
             range={{
               min: [0],
-              max: [totalICXAmount.toNumber()],
+              // https://github.com/balancednetwork/balanced-network-interface/issues/50
+              max: [totalICXAmount.isZero() ? 1 : totalICXAmount.toNumber()],
             }}
             instanceRef={instance => {
               if (instance && !sliderInstance.current) {

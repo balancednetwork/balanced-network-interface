@@ -184,7 +184,9 @@ const CollateralPanel = () => {
                 <Button onClick={toggleOpen}>Confirm</Button>
               </>
             ) : (
-              <Button onClick={handleEnableAdjusting}>Deposit</Button>
+              <Button onClick={handleEnableAdjusting} fontSize={14}>
+                Deposit
+              </Button>
             )}
           </Box>
         </Flex>

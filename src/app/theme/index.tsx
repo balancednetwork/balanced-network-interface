@@ -585,6 +585,7 @@ export const ThemedGlobalStyle = createGlobalStyle`
   }
   #indicator-locked .label,
   #indicator-used .label {
+    font-size: 14px;
     margin-top: -20px;
     margin-left: -23px;
     width: 100px;

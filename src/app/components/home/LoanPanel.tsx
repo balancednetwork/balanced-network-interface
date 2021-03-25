@@ -134,7 +134,9 @@ const LoanPanel = () => {
                 <Button onClick={toggleOpen}>Confirm</Button>
               </>
             ) : (
-              <Button onClick={handleLoanAdjust}>Borrow</Button>
+              <Button onClick={handleLoanAdjust} fontSize={14}>
+                Borrow
+              </Button>
             )}
           </Box>
         </Flex>

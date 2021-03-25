@@ -5,10 +5,11 @@ import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { useRatioValue } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '../index';
-import { changeBalance, changeDeposite } from './actions';
+import { adjust, cancel, changeBalance, changeDeposite, type, Field } from './actions';
 
 export function useChangeDepositedValue(): (depositedValue: BigNumber) => void {
   const dispatch = useDispatch();
@@ -18,6 +19,11 @@ export function useChangeDepositedValue(): (depositedValue: BigNumber) => void {
     },
     [dispatch],
   );
+}
+
+export function useSICXAmount() {
+  const sICXAmount = useSelector((state: AppState) => state.collateral.depositedValue);
+  return sICXAmount;
 }
 
 export function useChangeBalanceValue(): (balance: BigNumber) => void {
@@ -30,15 +36,16 @@ export function useChangeBalanceValue(): (balance: BigNumber) => void {
   );
 }
 
+export function useICXAmount() {
+  const ICXAmount = useSelector((state: AppState) => state.collateral.balance);
+  return ICXAmount;
+}
+
 export function useDepositedValue(): AppState['collateral']['depositedValue'] {
   const depositedValue = useSelector((state: AppState) => state.collateral.depositedValue);
   return useMemo(() => depositedValue, [depositedValue]);
 }
 
-export function useBalance(): AppState['collateral']['balance'] {
-  const balance = useSelector((state: AppState) => state.collateral.balance);
-  return useMemo(() => balance, [balance]);
-}
 export function useFetchCollateralInfo(account?: string | null) {
   const changeStakedICXAmount = useChangeDepositedValue();
   const changeUnStackedICXAmount = useChangeBalanceValue();
@@ -68,3 +75,61 @@ export function useFetchCollateralInfo(account?: string | null) {
     }
   }, [fetchCollateralInfo, account, transactions]);
 }
+
+export function useCollateralState() {
+  const state = useSelector((state: AppState) => state.collateral.state);
+  return state;
+}
+
+export function useCollateralType(): (payload: {
+  independentField?: Field;
+  typedValue?: string;
+  inputType?: 'slider' | 'text';
+}) => void {
+  const dispatch = useDispatch();
+
+  return useCallback(
+    payload => {
+      dispatch(type(payload));
+    },
+    [dispatch],
+  );
+}
+
+export function useCollateralAdjust(): (isAdjust: boolean) => void {
+  const dispatch = useDispatch();
+
+  return useCallback(
+    isAdjust => {
+      if (isAdjust) {
+        dispatch(adjust());
+      } else {
+        dispatch(cancel());
+      }
+    },
+    [dispatch],
+  );
+}
+
+export const useStakedICXAmount = () => {
+  const sICXAmount = useSICXAmount();
+
+  const ratio = useRatioValue();
+
+  return React.useMemo(() => {
+    const stakedICXAmount = sICXAmount.multipliedBy(ratio.sICXICXratio);
+
+    return stakedICXAmount;
+  }, [sICXAmount, ratio.sICXICXratio]);
+};
+
+export const useTotalICXAmount = () => {
+  const ICXAmount = useICXAmount();
+
+  const stakedICXAmount = useStakedICXAmount();
+
+  return React.useMemo(() => {
+    const totalICXAmount = stakedICXAmount.plus(ICXAmount);
+    return totalICXAmount;
+  }, [stakedICXAmount, ICXAmount]);
+};

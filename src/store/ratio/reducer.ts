@@ -4,10 +4,10 @@ import BigNumber from 'bignumber.js';
 import { changeRatioValue } from './actions';
 
 export interface RatioState {
-  ICXUSDratio?: BigNumber;
-  sICXbnUSDratio?: BigNumber;
-  sICXICXratio?: BigNumber;
-  BALNbnUSDratio?: BigNumber;
+  ICXUSDratio: BigNumber;
+  sICXbnUSDratio: BigNumber;
+  sICXICXratio: BigNumber;
+  BALNbnUSDratio: BigNumber;
 }
 
 const initialState: RatioState = {

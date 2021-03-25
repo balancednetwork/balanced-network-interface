@@ -78,7 +78,7 @@ const CollateralPanel = () => {
   };
 
   const formattedAmounts = {
-    [independentField]: typedValue || '0',
+    [independentField]: typedValue,
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 

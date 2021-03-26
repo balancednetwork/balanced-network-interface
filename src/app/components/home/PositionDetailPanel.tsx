@@ -249,11 +249,11 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">0 ICD</Typography>
+                <Typography variant="p">0 ICX</Typography>
                 <Typography>Collateral sold</Typography>
               </Box>
               <Box width={1 / 2}>
-                <Typography variant="p">0 ICD</Typography>
+                <Typography variant="p">0 bnUSD</Typography>
                 <Typography>Loan repaid</Typography>
               </Box>
             </Flex>
@@ -261,7 +261,7 @@ const PositionDetailPanel = () => {
 
           <Box width={[1, 1 / 2]}>
             <Typography>
-              Traders can repay loans by selling ICD for $1 of ICX collateral. Your position will rebalance based on
+              Traders can repay loans by selling bnUSD for $1 of ICX collateral. Your position will rebalance based on
               your % of the total debt.
             </Typography>
           </Box>

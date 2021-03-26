@@ -598,4 +598,21 @@ export const ThemedGlobalStyle = createGlobalStyle`
     opacity: 1;
     transition: opacity 0.3s ease;
   }
+
+/* Risk */
+
+  #slider-risk {
+    /* height: 17px; */
+    border-radius: 0;
+  }
+  #slider-risk .noUi-connects {
+    border-radius: 0;
+  }
+  #slider-risk[disabled].noUi-horizontal {
+    background: #2ca9b7;
+    border-radius: 0;
+  }
+  #slider-risk[disabled].noUi-horizontal .noUi-connect {
+    background: #144a68;
+  }
 `;

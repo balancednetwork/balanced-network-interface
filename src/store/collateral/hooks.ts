@@ -133,3 +133,18 @@ export const useTotalICXAmount = () => {
     return totalICXAmount;
   }, [stakedICXAmount, ICXAmount]);
 };
+
+export const useCollateralInputAmount = () => {
+  const { independentField, typedValue } = useCollateralState();
+  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
+
+  const totalICXAmount = useTotalICXAmount();
+
+  //  calculate dependentField value
+  const parsedAmount = {
+    [independentField]: new BigNumber(typedValue || '0'),
+    [dependentField]: totalICXAmount.minus(new BigNumber(typedValue || '0')),
+  };
+
+  return parsedAmount[Field.LEFT];
+};

@@ -124,7 +124,7 @@ const MANDATORY_COLLATERAL_RATIO = 4;
 export const useLockedICXAmount = () => {
   const ratio = useRatioValue();
 
-  const bnUSDLoanAmount = useLoanBorrowedValue();
+  const bnUSDLoanAmount = useLoanInputAmount();
 
   return React.useMemo(() => {
     const price = ratio.ICXUSDratio.isZero() ? new BigNumber(1) : ratio.ICXUSDratio;

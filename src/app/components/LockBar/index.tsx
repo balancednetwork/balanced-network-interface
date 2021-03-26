@@ -3,13 +3,14 @@ import React from 'react';
 interface LockBarProps {
   disabled: boolean;
   percent: number;
+  text?: string;
 }
 
-export default function LockBar({ disabled, percent }: LockBarProps) {
+export default function LockBar({ disabled, percent, text = 'Locked' }: LockBarProps) {
   return (
     <div id="indicator-locked-container">
       <div id="indicator-locked" className={disabled ? '' : 'disabled'} style={{ left: `${percent}%` }}>
-        <p className="label">Locked</p>
+        <p className="label">{text}</p>
       </div>
     </div>
   );

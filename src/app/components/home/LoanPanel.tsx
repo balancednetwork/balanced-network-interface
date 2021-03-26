@@ -1,12 +1,13 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
+import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
+import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
@@ -21,6 +22,7 @@ import {
   useTotalAvailablebnUSDAmount,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
@@ -153,6 +155,20 @@ const LoanPanel = () => {
     }
   }, [afterAmount, inputType]);
 
+  // Add Used indicator to the Loan section #73
+  // https://github.com/balancednetwork/balanced-network-interface/issues/73
+  const { bnUSDbalance: remainingbnUSDAmount } = useWalletBalanceValue();
+
+  const usedbnUSDAmount = React.useMemo(() => {
+    return BigNumber.max(borrowedbnUSDAmount.minus(remainingbnUSDAmount as BigNumber), new BigNumber(0));
+  }, [borrowedbnUSDAmount, remainingbnUSDAmount]);
+
+  const percent = totalAvailablebnUSDAmount.isZero()
+    ? 0
+    : usedbnUSDAmount.div(totalAvailablebnUSDAmount).times(100).toNumber();
+
+  const shouldShowLock = !usedbnUSDAmount.isZero();
+
   return (
     <>
       <BoxPanel bg="bg3">
@@ -173,12 +189,14 @@ const LoanPanel = () => {
           </Box>
         </Flex>
 
+        {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text="Used" />}
+
         <Box marginY={6}>
           <Nouislider
             disabled={!isAdjusting}
             id="slider-loan"
             start={[borrowedbnUSDAmount.toNumber()]}
-            padding={[0]}
+            padding={[usedbnUSDAmount.toNumber(), 0]}
             connect={[true, false]}
             range={{
               min: [0],

@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { IconConverter, IconAmount } from 'icon-sdk-js';
 
-export function convertLoopToIcx(value: BigNumber) {
+export function convertLoopToIcx(value: BigNumber): BigNumber {
   return IconConverter.toBigNumber(IconAmount.of(value, IconAmount.Unit.LOOP).convertUnit(IconAmount.Unit.ICX));
 }
 

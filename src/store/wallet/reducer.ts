@@ -5,11 +5,11 @@ import { changeValueBalance } from './actions';
 
 // #redux-step-1: define interface for variable
 export interface WalletState {
-  ICXbalance?: BigNumber;
-  sICXbalance?: BigNumber;
-  bnUSDbalance?: BigNumber;
-  BALNbalance?: BigNumber;
-  BALNreward?: BigNumber;
+  ICXbalance: BigNumber;
+  sICXbalance: BigNumber;
+  bnUSDbalance: BigNumber;
+  BALNbalance: BigNumber;
+  BALNreward: BigNumber;
 }
 
 // #redux-step-2: inital state

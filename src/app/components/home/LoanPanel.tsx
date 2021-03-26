@@ -196,7 +196,10 @@ const LoanPanel = () => {
             disabled={!isAdjusting}
             id="slider-loan"
             start={[borrowedbnUSDAmount.toNumber()]}
-            padding={[usedbnUSDAmount.toNumber(), 0]}
+            // dont refactor the below code
+            // it solved the race condition issue that caused padding value exceeds the max range value
+            // need to find a good approach in the future
+            padding={[Math.min(usedbnUSDAmount.toNumber(), totalAvailablebnUSDAmount.toNumber()), 0]}
             connect={[true, false]}
             range={{
               min: [0],

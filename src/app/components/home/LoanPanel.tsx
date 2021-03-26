@@ -179,7 +179,9 @@ const LoanPanel = () => {
             {isAdjusting ? (
               <>
                 <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
-                <Button onClick={toggleOpen}>Confirm</Button>
+                <Button onClick={toggleOpen} fontSize={14}>
+                  Confirm
+                </Button>
               </>
             ) : (
               <Button onClick={handleEnableAdjusting} fontSize={14}>

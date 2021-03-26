@@ -1,8 +1,6 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
-import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -14,8 +12,13 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import { useDepositedValue } from 'store/collateral/hooks';
-import { useLoanBorrowedValue, useLoanbnUSDbadDebt, useLoanbnUSDtotalSupply } from 'store/loan/hooks';
+import { useCollateralInputAmount } from 'store/collateral/hooks';
+import {
+  useLoanbnUSDbadDebt,
+  useLoanbnUSDtotalSupply,
+  useLoanInputAmount,
+  useTotalAvailablebnUSDAmount,
+} from 'store/loan/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 
 const ActivityPanel = styled(FlexPanel)`
@@ -33,10 +36,11 @@ const Chip = styled(Box)`
   text-align: center;
   border-radius: 100px;
   padding: 1px 10px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: bold;
   color: #ffffff;
-  line-height: 1.4;
+  line-height: 14px;
+  height: 17px;
 `;
 
 const Threshold = styled(Box)`
@@ -89,6 +93,55 @@ const Locked = styled(Threshold)`
   }
 `;
 
+const useThresholdPrices = () => {
+  const collateralInputAmount = useCollateralInputAmount();
+  const loanInputAmount = useLoanInputAmount();
+
+  return React.useMemo(() => {
+    if (collateralInputAmount.isZero()) return [0, 0];
+
+    return [
+      loanInputAmount.multipliedBy(5).div(collateralInputAmount),
+      loanInputAmount.multipliedBy(4).div(collateralInputAmount),
+    ];
+  }, [collateralInputAmount, loanInputAmount]);
+};
+
+const useCurrentRatio = () => {
+  const collateralInputAmount = useCollateralInputAmount();
+  const loanInputAmount = useLoanInputAmount();
+  const ratio = useRatioValue();
+
+  return React.useMemo(() => {
+    if (loanInputAmount.isZero()) return 900;
+
+    return collateralInputAmount
+      .multipliedBy(ratio.ICXUSDratio)
+      .dividedBy(loanInputAmount)
+      .multipliedBy(100)
+      .toNumber();
+  }, [collateralInputAmount, loanInputAmount, ratio.ICXUSDratio]);
+};
+
+const useTotalCollateralAmountbyUSD = () => {
+  const collateralInputAmount = useCollateralInputAmount();
+  const ratio = useRatioValue();
+
+  return React.useMemo(() => {
+    return collateralInputAmount.multipliedBy(ratio.ICXUSDratio);
+  }, [collateralInputAmount, ratio.ICXUSDratio]);
+};
+
+const useDebtHoldingShare = () => {
+  const loanInputAmount = useLoanInputAmount();
+  const loanbnUSDbadDebt = useLoanbnUSDbadDebt();
+  const loanbnUSDtotalSupply = useLoanbnUSDtotalSupply();
+
+  return React.useMemo(() => {
+    return loanInputAmount.div(loanbnUSDtotalSupply.minus(loanbnUSDbadDebt)).multipliedBy(100);
+  }, [loanInputAmount, loanbnUSDbadDebt, loanbnUSDtotalSupply]);
+};
+
 const PositionDetailPanel = () => {
   const [show, setShow] = React.useState<boolean>(false);
 
@@ -96,22 +149,24 @@ const PositionDetailPanel = () => {
   const close = React.useCallback(() => setShow(false), [setShow]);
 
   // ratio
-  const { account } = useIconReact();
   const ratio = useRatioValue();
-  // collateral
-  const stakedICXAmount = useDepositedValue();
 
   // loan
-  const loanBorrowedValue = useLoanBorrowedValue();
-  const loanbnUSDbadDebt = useLoanbnUSDbadDebt();
-  const loanbnUSDtotalSupply = useLoanbnUSDtotalSupply();
+  const loanInputAmount = useLoanInputAmount();
+  const totalAvailableLoanAmount = useTotalAvailablebnUSDAmount();
 
-  // loan slider
-  const sICXUSD = (ratio.sICXICXratio || new BigNumber(0)).multipliedBy(ratio.ICXUSDratio || new BigNumber(0));
-  const totalLoanAmount = stakedICXAmount.multipliedBy(sICXUSD).div(4);
+  const totalCollateralAmountbyUSD = useTotalCollateralAmountbyUSD();
 
-  const totalCollateralValue = stakedICXAmount.times(ratio.ICXUSDratio === undefined ? 0 : ratio.ICXUSDratio);
-  const debtHoldShare = loanBorrowedValue.div(loanbnUSDtotalSupply.minus(loanbnUSDbadDebt)).multipliedBy(100);
+  const debtHoldShare = useDebtHoldingShare();
+
+  // collateral slider instance
+  const sliderInstance = React.useRef<any>(null);
+
+  const [rewardThresholdPrice, lockThresholdPrice] = useThresholdPrices();
+
+  const currentRatio = useCurrentRatio();
+
+  var lowRisk1 = (900 * 100) / currentRatio;
 
   return (
     <ActivityPanel bg="bg2">
@@ -124,45 +179,26 @@ const PositionDetailPanel = () => {
           <Box width={1 / 2}>
             <Typography mb={1}>Collateral</Typography>
             <Typography variant="p" fontSize={18}>
-              {!account
-                ? '-'
-                : totalCollateralValue.isLessThanOrEqualTo(0)
-                ? '$0'
-                : '$' + totalCollateralValue.toFixed(2).toString()}
+              ${totalCollateralAmountbyUSD.toFixed(2)}
             </Typography>
           </Box>
 
           <Box width={1 / 2}>
             <Typography mb={1}>Loan</Typography>
 
-            {!account ? (
-              <Typography variant="p" fontSize={18} as="span">
-                -
-              </Typography>
-            ) : loanBorrowedValue.isLessThanOrEqualTo(0) ? (
-              <Typography variant="p" fontSize={18} as="span">
-                $0 / $<Typography as="span">{totalLoanAmount.toFixed(2).toString()}</Typography>
-              </Typography>
-            ) : (
-              <Typography variant="p" fontSize={18} as="span">
-                $ {loanBorrowedValue.toFixed(2).toString()}{' '}
-                <Typography as="span">/ ${totalLoanAmount.toFixed(2).toString()}</Typography>
-              </Typography>
-            )}
+            <Typography variant="p" fontSize={18} as="span">
+              ${loanInputAmount.toFixed(2)} <Typography as="span">/ ${totalAvailableLoanAmount.toFixed(2)}</Typography>
+            </Typography>
           </Box>
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
-          The current ICX price is{' '}
-          <span className="alert">{!account ? '-' : '$' + ratio.ICXUSDratio?.toFixed(2).toString()}</span>.
+          The current ICX price is <span className="alert">{'$' + ratio.ICXUSDratio.toFixed(2)}</span>.
         </Typography>
         <Typography>
           You hold{' '}
-          <span className="white">
-            {' '}
-            {!account ? '-' : isNaN(debtHoldShare.toNumber()) ? '-' : debtHoldShare.toFixed(2).toString() + '%'}
-          </span>{' '}
-          of the total debt.
+          <span className="white">{isNaN(debtHoldShare.toNumber()) ? '-' : debtHoldShare.toFixed(2) + '%'}</span> of the
+          total debt.
         </Typography>
       </BoxPanel>
       <BoxPanel bg="bg2" flex={1}>
@@ -179,10 +215,17 @@ const PositionDetailPanel = () => {
             show={show}
             placement="bottom"
           >
-            <Chip bg="primary">Low risk</Chip>
+            <Chip
+              bg="primary"
+              style={{
+                backgroundImage: 'linear-gradient(to right, #2ca9b7 ' + lowRisk1 + '%, #144a68 ' + lowRisk1 + '%)',
+              }}
+            >
+              Low risk
+            </Chip>
           </Tooltip>
 
-          <Box flex={1} mx={1} style={{ position: 'relative' }}>
+          <Box flex={1} mx={1} style={{ position: 'relative', marginTop: '3px' }}>
             <Rewards>
               <MetaData as="dl">
                 <Tooltip
@@ -192,7 +235,7 @@ const PositionDetailPanel = () => {
                 >
                   <dt>Reward threshold</dt>
                 </Tooltip>
-                <dd>$1.2798</dd>
+                <dd>${rewardThresholdPrice.toFixed(3)}</dd>
               </MetaData>
             </Rewards>
 
@@ -205,19 +248,24 @@ const PositionDetailPanel = () => {
                 >
                   <dt>All collateral locked</dt>
                 </Tooltip>
-                <dd>$1.0239</dd>
+                <dd>${lockThresholdPrice.toFixed(3)}</dd>
               </MetaData>
             </Locked>
 
             <Nouislider
               disabled={true}
-              id="risk-ratio"
-              start={[10000]}
-              padding={[0]}
+              id="slider-risk"
+              direction="rtl"
+              start={[Math.min(currentRatio, 900)]}
               connect={[true, false]}
               range={{
-                min: [0],
-                max: [15000],
+                min: [150],
+                max: [900],
+              }}
+              instanceRef={instance => {
+                if (instance && !sliderInstance.current) {
+                  sliderInstance.current = instance;
+                }
               }}
             />
           </Box>

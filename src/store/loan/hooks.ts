@@ -5,7 +5,7 @@ import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { useStakedICXAmount } from 'store/collateral/hooks';
+import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
@@ -170,7 +170,22 @@ export function useLoanAdjust(): (isAdjust: boolean) => void {
 export const useTotalAvailablebnUSDAmount = () => {
   const ratio = useRatioValue();
 
-  const stakedICXAmount = useStakedICXAmount();
+  const stakedICXAmount = useCollateralInputAmount();
   console.log('stakedICX', stakedICXAmount.toNumber(), ratio.ICXUSDratio.toNumber());
   return stakedICXAmount.multipliedBy(ratio.ICXUSDratio).div(MANDATORY_COLLATERAL_RATIO);
+};
+
+export const useLoanInputAmount = (): BigNumber => {
+  const { independentField, typedValue } = useLoanState();
+  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
+
+  const totalAvailablebnUSDAmount = useTotalAvailablebnUSDAmount();
+
+  //  calculate dependentField value
+  const parsedAmount = {
+    [independentField]: new BigNumber(typedValue || '0'),
+    [dependentField]: totalAvailablebnUSDAmount.minus(new BigNumber(typedValue || '0')),
+  };
+
+  return parsedAmount[Field.LEFT];
 };

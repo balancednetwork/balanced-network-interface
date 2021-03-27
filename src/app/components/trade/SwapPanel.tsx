@@ -19,7 +19,7 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/compon
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST, SupportedBaseCurrencies } from 'constants/currency';
-import { dayData, candleData, volumeData } from 'demo';
+import { dayData /* , candleData, volumeData */ } from 'demo';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
@@ -63,6 +63,8 @@ export enum Field {
   INPUT = 'INPUT',
   OUTPUT = 'OUTPUT',
 }
+
+type Interval = '5m' | '15m' | '1h' | '4h' | '1d';
 
 export default function SwapPanel() {
   const { account } = useIconReact();
@@ -127,9 +129,14 @@ export default function SwapPanel() {
   });
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const interval: any = event.currentTarget.value;
+    loadChartData({
+      interval,
+      symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
+    });
     setChartOption({
       ...chartOption,
-      period: event.currentTarget.value,
+      period: interval,
     });
   };
 
@@ -158,21 +165,38 @@ export default function SwapPanel() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(() => {
+  const loadChartData = React.useCallback(({ symbol, interval }: { symbol: string; interval: Interval }) => {
     setLoading(true);
     try {
-      axios.get('http://35.240.219.80:8069/api/v1/chart/lines?symbol=SICXbnUSD&limit=500&order=desc').then(res => {
-        const { data: d } = res;
-        let t = d.map(item => ({ time: item.time, value: convertLoopToIcx(new BigNumber(item.price)) }));
-        setData(t);
-        setLoading(false);
-      });
+      axios
+        .get(`http://35.240.219.80:8069/api/v1/chart/lines?symbol=${symbol}&interval=${interval}&limit=500&order=desc`)
+        .then(res => {
+          const { data: d } = res;
+          let t = d.map(item => ({
+            time: item.time * 10 ** 3,
+            value: convertLoopToIcx(new BigNumber(item.price)).toNumber(),
+          }));
+
+          if (!t.length) {
+            alert('No chart data, switch to others trading pairs');
+            return;
+          }
+          setData(t);
+          setLoading(false);
+        });
     } catch (e) {
       console.error(e);
       setData([]);
       setLoading(false);
     }
   }, []);
+
+  React.useEffect(() => {
+    loadChartData({
+      symbol: 'SICXbnUSD',
+      interval: '5m',
+    });
+  }, [loadChartData]);
 
   return (
     <>
@@ -268,17 +292,15 @@ export default function SwapPanel() {
               </ChartControlGroup>
 
               <ChartControlGroup>
-                {Object.keys(CHART_TYPES).map(key => (
-                  <ChartControlButton
-                    key={key}
-                    type="button"
-                    value={CHART_TYPES[key]}
-                    onClick={handleChartTypeChange}
-                    active={chartOption.type === CHART_TYPES[key]}
-                  >
-                    {CHART_TYPES[key]}
-                  </ChartControlButton>
-                ))}
+                <ChartControlButton
+                  key={CHART_TYPES.AREA}
+                  type="button"
+                  value={CHART_TYPES.AREA}
+                  onClick={handleChartTypeChange}
+                  active={chartOption.type === CHART_TYPES.AREA}
+                >
+                  {CHART_TYPES.AREA}
+                </ChartControlButton>
               </ChartControlGroup>
             </Box>
           </Flex>
@@ -292,12 +314,12 @@ export default function SwapPanel() {
               )}
             </ChartContainer>
           )}
-
+          {/* 
           {chartOption.type === CHART_TYPES.CANDLE && (
             <Box ref={ref}>
               <TradingViewChart data={volumeData} candleData={candleData} width={width} type={CHART_TYPES.CANDLE} />
             </Box>
-          )}
+          )} */}
         </Box>
       </SectionPanel>
       <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>

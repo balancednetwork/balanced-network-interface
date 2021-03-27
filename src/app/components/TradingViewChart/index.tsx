@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { createChart, IChartApi, CrosshairMode, ChartOptions, DeepPartial } from 'lightweight-charts';
+import { createChart, IChartApi, ChartOptions, DeepPartial } from 'lightweight-charts';
 import styled from 'styled-components';
 
 export const CHART_PERIODS = {
@@ -13,7 +13,7 @@ export const CHART_PERIODS = {
 
 export const CHART_TYPES = {
   AREA: 'Line',
-  CANDLE: 'Candles',
+  // CANDLE: 'Candles',
 };
 
 const Wrapper = styled.div`
@@ -50,34 +50,34 @@ const AreaOption: DeepPartial<ChartOptions> = {
   },
 };
 
-const CandleOption: DeepPartial<ChartOptions> = {
-  height: HEIGHT,
-  layout: {
-    backgroundColor: '#0c2a4d',
-    textColor: 'rgba(255, 255, 255, 0.9)',
-  },
-  grid: {
-    vertLines: {
-      color: '#304a68',
-      visible: false,
-    },
-    horzLines: {
-      color: '#304a68',
-      visible: false,
-    },
-  },
-  rightPriceScale: {
-    borderColor: '#304a68',
-  },
-  timeScale: {
-    borderColor: '#304a68',
-  },
-  crosshair: {
-    mode: CrosshairMode.Normal,
-  },
-};
+// const CandleOption: DeepPartial<ChartOptions> = {
+//   height: HEIGHT,
+//   layout: {
+//     backgroundColor: '#0c2a4d',
+//     textColor: 'rgba(255, 255, 255, 0.9)',
+//   },
+//   grid: {
+//     vertLines: {
+//       color: '#304a68',
+//       visible: false,
+//     },
+//     horzLines: {
+//       color: '#304a68',
+//       visible: false,
+//     },
+//   },
+//   rightPriceScale: {
+//     borderColor: '#304a68',
+//   },
+//   timeScale: {
+//     borderColor: '#304a68',
+//   },
+//   crosshair: {
+//     mode: CrosshairMode.Normal,
+//   },
+// };
 
-const TradingViewChart = ({ type = CHART_TYPES.CANDLE, data, candleData, width }) => {
+const TradingViewChart = ({ type = CHART_TYPES.AREA, data, candleData, width }) => {
   // reference for DOM element to create with chart
   const ref = useRef<HTMLDivElement>(null);
 
@@ -90,47 +90,16 @@ const TradingViewChart = ({ type = CHART_TYPES.CANDLE, data, candleData, width }
   // if no chart created yet, create one with options and add to DOM manually
   useEffect(() => {
     if (!chartCreated && data && ref.current) {
-      let chart = createChart(
-        ref.current,
-        type === CHART_TYPES.CANDLE ? { width: width, ...CandleOption } : { width: width, ...AreaOption },
-      );
+      let chart = createChart(ref.current, { width: width, ...AreaOption });
 
-      if (type === CHART_TYPES.CANDLE) {
-        let candleSeries = chart.addCandlestickSeries({
-          upColor: 'rgba(44, 169, 183, 1)',
-          downColor: '#fb6a6a',
-          borderDownColor: '#fb6a6a',
-          borderUpColor: 'rgba(44, 169, 183, 1)',
-          wickDownColor: '#fb6a6a',
-          wickUpColor: 'rgba(44, 169, 183, 1)',
-        });
-
-        candleSeries.setData(candleData);
-
-        var volumeSeries = chart.addHistogramSeries({
-          color: 'rgba(44, 169, 183, 0.5)',
-          priceFormat: {
-            type: 'volume',
-          },
-          priceLineVisible: false,
-          priceScaleId: '',
-          scaleMargins: {
-            top: 0.85,
-            bottom: 0,
-          },
-        });
-
-        volumeSeries.setData(data);
-      } else {
-        let series = chart.addAreaSeries({
-          topColor: 'rgba(44, 169, 183, 0.56)',
-          bottomColor: 'rgba(44, 169, 183, 0.04)',
-          lineColor: 'rgba(44, 169, 183, 1)',
-          lineWidth: 2,
-        });
-        console.log(data);
-        series.setData(data);
-      }
+      let series = chart.addAreaSeries({
+        topColor: 'rgba(44, 169, 183, 0.56)',
+        bottomColor: 'rgba(44, 169, 183, 0.04)',
+        lineColor: 'rgba(44, 169, 183, 1)',
+        lineWidth: 2,
+      });
+      console.log(data);
+      series.setData(data);
 
       chart.timeScale().fitContent();
 

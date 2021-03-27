@@ -20,7 +20,9 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST, SupportedBaseCurrencies } from 'constants/currency';
 import { dayData, candleData, volumeData } from 'demo';
+import { useWalletICXBalance } from 'hooks';
 import { useRatioValue } from 'store/ratio/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 import { SectionPanel, BrightPanel } from './utils';
@@ -69,6 +71,8 @@ export default function SwapPanel() {
   const walletBalance = useWalletBalanceValue();
   const ratio = useRatioValue();
   const sICXbnUSDratio = ratio.sICXbnUSDratio?.toNumber() || 0;
+  const addTransaction = useTransactionAdder();
+  const ICXbalance = useWalletICXBalance(account);
 
   const tokenRatio = (symbol: string) => {
     if (symbol === 'ICX') {
@@ -83,7 +87,7 @@ export default function SwapPanel() {
   const tokenBalance = (symbol: string) => {
     if (account) {
       if (symbol === 'ICX') {
-        return walletBalance.ICXbalance;
+        return ICXbalance;
       } else if (symbol === 'BALN') {
         return walletBalance.BALNbalance;
       } else if (symbol === 'sICX') {
@@ -153,6 +157,10 @@ export default function SwapPanel() {
         .then(res => {
           console.log('res', res);
           setShowSwapConfirm(false);
+          addTransaction(
+            { hash: res.result },
+            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+          );
         })
         .catch(e => {
           console.error('error', e);
@@ -164,6 +172,10 @@ export default function SwapPanel() {
         .then(res => {
           console.log('res', res);
           setShowSwapConfirm(false);
+          addTransaction(
+            { hash: res.result },
+            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+          );
         })
         .catch(e => {
           console.error('error', e);
@@ -175,6 +187,10 @@ export default function SwapPanel() {
         .then(res => {
           console.log('res', res);
           setShowSwapConfirm(false);
+          addTransaction(
+            { hash: res.result },
+            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+          );
         })
         .catch(e => {
           console.error('error', e);

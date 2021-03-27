@@ -131,7 +131,6 @@ export default function LPPanel() {
               showMaxButton={false}
               currency={CURRENCYLIST[selectedPair.baseCurrencyKey.toLowerCase()]}
               onUserInput={handleTypeInput}
-              disableCurrencySelect={true}
               id="supply-liquidity-input-tokena"
             />
           </Flex>
@@ -142,7 +141,6 @@ export default function LPPanel() {
               showMaxButton={false}
               currency={CURRENCYLIST[selectedPair.quoteCurrencyKey.toLowerCase()]}
               onUserInput={handleTypeOutput}
-              disableCurrencySelect={true}
               id="supply-liquidity-input-tokenb"
             />
           </Flex>

@@ -16,7 +16,7 @@ const InputContainer = styled.div`
   width: 100%;
 `;
 
-const CurrencySelect = styled.button<{ bg?: string }>`
+const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
   border-right: 1px solid rgba(255, 255, 255, 0.15);
@@ -29,6 +29,7 @@ const CurrencySelect = styled.button<{ bg?: string }>`
   border-radius: 10px 0 0 10px;
   transition: border 0.3s ease, background-color 0.3s ease, color 0.3s ease;
   cursor: pointer;
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   :hover,
   :focus {
@@ -79,7 +80,6 @@ interface CurrencyInputPanelProps {
   label?: string;
   onCurrencySelect?: (currency: Currency) => void;
   currency?: Currency | null;
-  disableCurrencySelect?: boolean;
   hideBalance?: boolean;
   // pair?: Pair | null;
   hideInput?: boolean;
@@ -99,7 +99,6 @@ export default function CurrencyInputPanel({
   label = 'Input',
   onCurrencySelect,
   currency,
-  disableCurrencySelect = false,
   hideBalance = false,
   // pair = null, // used for double token logo
   hideInput = false,
@@ -147,10 +146,10 @@ export default function CurrencyInputPanel({
   return (
     <InputContainer ref={ref}>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
-        <CurrencySelect onClick={toggleOpen} bg={bg}>
+        <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
           {currency ? <CurrencyLogo currency={currency} style={{ marginRight: 8 }} /> : null}
           {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
-          {!disableCurrencySelect && <StyledDropDown selected={!!currency} />}
+          {onCurrencySelect && <StyledDropDown selected={!!currency} />}
 
           {onCurrencySelect && (
             <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom">

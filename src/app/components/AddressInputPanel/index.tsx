@@ -19,15 +19,9 @@ const AddressInputLabel = styled.button`
   color: #ffffff;
   border-radius: 10px 0 0 10px;
   transition: border 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-  cursor: pointer;
   font-size: 14px;
   font-weight: bold;
   justify-content: center;
-
-  :hover,
-  :focus {
-    border: 2px solid #2ca9b7;
-  }
 `;
 
 const AddressInput = styled.input`

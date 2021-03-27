@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import BigNumber from 'bignumber.js';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -24,7 +23,7 @@ export function useChangeWalletBalance(): ({
   bnUSDbalance,
   BALNbalance,
   BALNreward,
-}: WalletState) => void {
+}: Partial<WalletState>) => void {
   const dispatch = useDispatch();
   return useCallback(
     ({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance, BALNreward }) => {
@@ -50,7 +49,7 @@ export function useFetchBalance(account?: string | null) {
         bnJs.bnUSD.balanceOf(),
         bnJs.Rewards.getRewards(),
       ]).then(result => {
-        const [sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v as BigNumber));
+        const [sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v));
         changeBalanceValue({ sICXbalance });
         changeBalanceValue({ BALNbalance });
         changeBalanceValue({ bnUSDbalance });

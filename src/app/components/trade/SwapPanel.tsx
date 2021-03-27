@@ -64,8 +64,6 @@ export enum Field {
   OUTPUT = 'OUTPUT',
 }
 
-type Interval = '5m' | '15m' | '1h' | '4h' | '1d';
-
 export default function SwapPanel() {
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
@@ -86,17 +84,12 @@ export default function SwapPanel() {
     setSwapInputAmount((parseFloat(val) / sICXbnUSDratio).toFixed(2).toString());
   };
 
-  const handleInputSelect = React.useCallback(ccy => {
-    setInputCurrency(ccy);
-  }, []);
+  const defaultInputCurrency = CURRENCYLIST['sicx'];
+  const defaultOutputCurrency = CURRENCYLIST['bnusd'];
 
-  const handleOutputSelect = React.useCallback(ccy => {
-    setOutputCurrency(ccy);
-  }, []);
+  const [inputCurrency, setInputCurrency] = React.useState(defaultInputCurrency);
 
-  const [inputCurrency, setInputCurrency] = React.useState(CURRENCYLIST['icx']);
-
-  const [outputCurrency, setOutputCurrency] = React.useState(CURRENCYLIST['baln']);
+  const [outputCurrency, setOutputCurrency] = React.useState(defaultOutputCurrency);
 
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
@@ -165,7 +158,7 @@ export default function SwapPanel() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  const loadChartData = React.useCallback(({ symbol, interval }: { symbol: string; interval: Interval }) => {
+  const loadChartData = React.useCallback(({ interval, symbol }: { interval: string; symbol: string }) => {
     setLoading(true);
     try {
       axios
@@ -191,12 +184,34 @@ export default function SwapPanel() {
     }
   }, []);
 
+  const handleInputSelect = React.useCallback(
+    ccy => {
+      setInputCurrency(ccy);
+      loadChartData({
+        interval: chartOption.period,
+        symbol: `${ccy.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
+      });
+    },
+    [chartOption.period, outputCurrency.symbol, loadChartData],
+  );
+
+  const handleOutputSelect = React.useCallback(
+    ccy => {
+      setOutputCurrency(ccy);
+      loadChartData({
+        interval: chartOption.period,
+        symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${ccy.symbol}`,
+      });
+    },
+    [chartOption.period, inputCurrency.symbol, loadChartData],
+  );
+
   React.useEffect(() => {
     loadChartData({
-      symbol: 'SICXbnUSD',
+      symbol: `${defaultInputCurrency.symbol.toLocaleUpperCase()}${defaultOutputCurrency.symbol}`,
       interval: '5m',
     });
-  }, [loadChartData]);
+  }, [defaultInputCurrency.symbol, defaultOutputCurrency.symbol, loadChartData]);
 
   return (
     <>

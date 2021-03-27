@@ -60,7 +60,7 @@ export default function LPPanel() {
     setSupplyInputAmount(val);
     let outputAmount = new BigNumber(val).multipliedBy(getRatioByPair());
     if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
-    setSupplyOutputAmount(outputAmount.toFixed(2));
+    setSupplyOutputAmount(outputAmount.toString());
   };
 
   const getRatioByPair = () => {
@@ -82,7 +82,7 @@ export default function LPPanel() {
     setSupplyOutputAmount(val);
     let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair()));
     if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
-    setSupplyInputAmount(inputAmount.toFixed(2));
+    setSupplyInputAmount(inputAmount.toString());
   };
 
   const handleSupplyInputDepositConfirm = () => {
@@ -163,13 +163,7 @@ export default function LPPanel() {
       }
     }
   };
-
-  React.useEffect(() => {
-    const suppliedPairAmount = getSuppliedPairAmount();
-
-    setSupplyInputAmount(suppliedPairAmount.base.toFixed(2));
-    setSupplyOutputAmount(suppliedPairAmount.quote.toFixed(2));
-  }, [selectedPair]);
+  const suppliedPairAmount = getSuppliedPairAmount();
 
   return (
     <>
@@ -247,7 +241,8 @@ export default function LPPanel() {
               <StyledDL>
                 <dt>Your supply</dt>
                 <dd>
-                  {0} {selectedPair.baseCurrencyKey} / {0} {selectedPair.quoteCurrencyKey}
+                  {suppliedPairAmount.base.toFixed(2)} {selectedPair.baseCurrencyKey} /{' '}
+                  {suppliedPairAmount.quote.toFixed(2)} {selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>

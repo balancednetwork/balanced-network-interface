@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
@@ -37,14 +38,6 @@ export default function LPPanel() {
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
   const liquiditySupply = useLiquiditySupply();
-  const sICXtotalSupply = liquiditySupply.sICXsupply?.toNumber() || 0;
-  const bnUSDtotalSsupply = liquiditySupply.bnUSDsupply?.toNumber() || 0;
-
-  const sICXbnUSDsupply = liquiditySupply.sICXbnUSDsupply?.toNumber() || 0;
-  const sICXbnUSDtotalSupply = liquiditySupply.sICXbnUSDtotalSupply?.toNumber() || 0;
-  const sICXbnUSDsupplyShare = (sICXbnUSDsupply / sICXbnUSDtotalSupply) * 100;
-  const sICXsupply = sICXtotalSupply * (sICXbnUSDsupplyShare / 100);
-  const bnUSDsupply = bnUSDtotalSsupply * (sICXbnUSDsupplyShare / 100);
 
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
 
@@ -54,25 +47,42 @@ export default function LPPanel() {
 
   const handleSupply = () => {
     setShowSupplyConfirm(true);
-    console.log('selectedPair = ', selectedPair);
   };
 
   const selectedPair = usePoolPair();
   const ratio = useRatioValue();
-  const sICXbnUSDratio = ratio.sICXbnUSDratio?.toNumber() || 0;
 
-  const [supplyInputAmount, setsupplyInputAmount] = React.useState('0');
+  const [supplyInputAmount, setSupplyInputAmount] = React.useState('0');
 
-  const [supplyOutputAmount, setsupplyOutputAmount] = React.useState('0');
+  const [supplyOutputAmount, setSupplyOutputAmount] = React.useState('0');
 
-  const handleTypeInput = (val: string) => {
-    setsupplyInputAmount(val);
-    setsupplyOutputAmount((parseFloat(val) * sICXbnUSDratio).toFixed(2).toString());
+  const handleTypeInputAmount = (val: string) => {
+    setSupplyInputAmount(val);
+    let outputAmount = new BigNumber(val).multipliedBy(getRatioByPair());
+    if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
+    setSupplyOutputAmount(outputAmount.toFixed(2));
+  };
+
+  const getRatioByPair = () => {
+    switch (selectedPair.pair) {
+      case SupportedPairs[0].pair: {
+        return ratio.sICXbnUSDratio;
+      }
+      case SupportedPairs[1].pair: {
+        return ratio.BALNbnUSDratio;
+      }
+      case SupportedPairs[2].pair: {
+        return ratio.sICXICXratio;
+      }
+    }
+    return 0;
   };
 
   const handleTypeOutput = (val: string) => {
-    setsupplyOutputAmount(val);
-    setsupplyInputAmount((parseFloat(val) / sICXbnUSDratio).toFixed(2).toString());
+    setSupplyOutputAmount(val);
+    let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair()));
+    if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
+    setSupplyInputAmount(inputAmount.toFixed(2));
   };
 
   const handleSupplyInputDepositConfirm = () => {
@@ -131,6 +141,36 @@ export default function LPPanel() {
     }
   };
 
+  const getSuppliedPairAmount = () => {
+    switch (selectedPair.pair) {
+      case SupportedPairs[0].pair: {
+        return {
+          base: liquiditySupply.sICXSuppliedPoolsICXbnUSD || 0,
+          quote: liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || 0,
+        };
+      }
+      case SupportedPairs[1].pair: {
+        return {
+          base: liquiditySupply.BALNSuppliedPoolBALNbnUSD || 0,
+          quote: liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || 0,
+        };
+      }
+      case SupportedPairs[2].pair: {
+        return { base: new BigNumber(2), quote: new BigNumber(2) };
+      }
+      default: {
+        return { base: new BigNumber(0), quote: new BigNumber(0) };
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    const suppliedPairAmount = getSuppliedPairAmount();
+
+    setSupplyInputAmount(suppliedPairAmount.base.toFixed(2));
+    setSupplyOutputAmount(suppliedPairAmount.quote.toFixed(2));
+  }, [selectedPair]);
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -145,7 +185,7 @@ export default function LPPanel() {
               value={supplyInputAmount}
               showMaxButton={false}
               currency={CURRENCYLIST[selectedPair.baseCurrencyKey.toLowerCase()]}
-              onUserInput={handleTypeInput}
+              onUserInput={handleTypeInputAmount}
               disableCurrencySelect={true}
               id="supply-liquidity-input-tokena"
             />
@@ -207,8 +247,7 @@ export default function LPPanel() {
               <StyledDL>
                 <dt>Your supply</dt>
                 <dd>
-                  {sICXsupply.toFixed(2)} {selectedPair.baseCurrencyKey} / {bnUSDsupply.toFixed(2)}{' '}
-                  {selectedPair.quoteCurrencyKey}
+                  {0} {selectedPair.baseCurrencyKey} / {0} {selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>
@@ -220,8 +259,7 @@ export default function LPPanel() {
               <StyledDL>
                 <dt>Total supply</dt>
                 <dd>
-                  {sICXtotalSupply.toFixed(2)} {selectedPair.baseCurrencyKey} / {bnUSDtotalSsupply.toFixed(2)}{' '}
-                  {selectedPair.quoteCurrencyKey}
+                  {0} {selectedPair.baseCurrencyKey} / {0} {selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>

@@ -52,7 +52,7 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  getSupply(pid: string) {
+  balanceOf(pid: string) {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',
       params: {

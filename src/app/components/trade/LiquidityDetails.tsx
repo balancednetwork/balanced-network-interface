@@ -21,15 +21,11 @@ const LiquidityDetails = () => {
   const changeLiquiditySupply = useChangeLiquiditySupply();
   const liquiditySupply = useLiquiditySupply();
 
-  const sICXbnUSDsupply = liquiditySupply.sICXbnUSDsupply?.toNumber() || 0;
-  const sICXbnUSDtotalSupply = liquiditySupply.sICXbnUSDtotalSupply?.toNumber() || 0;
-  const sICXbnUSDsupplyShare = (sICXbnUSDsupply / sICXbnUSDtotalSupply) * 100;
-
-  const sICXPoolTotal = liquiditySupply.sICXsupply?.toNumber() || 0;
-  const sICXSupplied = sICXbnUSDsupplyShare * sICXPoolTotal;
-
-  const bnUSDPoolTotal = liquiditySupply.bnUSDsupply?.toNumber() || 0;
-  const bnUSDSupplied = sICXbnUSDsupplyShare * bnUSDPoolTotal;
+  const sICXbnUSDTotalSupply = liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0);
+  const sICXbnUSDSuppliedShare = liquiditySupply.sICXSuppliedPoolsICXbnUSD
+    ?.dividedBy(sICXbnUSDTotalSupply)
+    ?.multipliedBy(100)
+    .toFixed(2);
 
   const sICXICXTotalSupply = liquiditySupply.sICXICXTotalSupply?.toNumber() || 0;
   const ICXBalance = liquiditySupply.ICXBalance?.toNumber() || 0;
@@ -162,11 +158,11 @@ const LiquidityDetails = () => {
           <tr>
             <td>sICX / bnUSD</td>
             <td>
-              {sICXSupplied.toFixed(2).toString() + ' sICX'}
+              {liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toFixed(2) + ' sICX'}
               <br />
-              {bnUSDSupplied.toFixed(2).toString() + ' bnUSD'}
+              {liquiditySupply.bnUSDSuppliedPoolsICXbnUSD?.toFixed(2) + ' bnUSD'}
             </td>
-            <td>{!account ? '-' : sICXbnUSDsupplyShare + '%'}</td>
+            <td>{!account ? '-' : sICXbnUSDSuppliedShare + '%'}</td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">
@@ -224,9 +220,9 @@ const LiquidityDetails = () => {
           <tr>
             <td>BALN / bnUSD</td>
             <td>
-              15,000 BALN
+              {liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toFixed(2)} BALN
               <br />
-              15,000 bnUSD
+              {liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toFixed(2)} bnUSD
             </td>
             <td>3.1%</td>
             <td>~ 120 BALN</td>

@@ -15,9 +15,15 @@ import ReturnICDSection from 'app/components/trade/ReturnICDSection';
 import SwapPanel from 'app/components/trade/SwapPanel';
 import bnJs from 'bnJs';
 import { useChangeLiquiditySupply } from 'store/liquidity/hooks';
+import { useFetchPrice } from 'store/ratio/hooks';
+import { useFetchBalance } from 'store/wallet/hooks';
 
 export function TradePage() {
+  // get ratio interval at here
+  useFetchPrice();
+
   const { account } = useIconReact();
+  useFetchBalance(account);
   const changeLiquiditySupply = useChangeLiquiditySupply();
 
   const [value, setValue] = React.useState<number>(0);

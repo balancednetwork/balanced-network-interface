@@ -85,4 +85,12 @@ export default class Dex extends Contract {
 
     return this.call(callParams);
   }
+
+  async transferICX(_value: number): Promise<ResponseJsonRPCPayload> {
+    const payload = this.transferICXToContract({
+      value: _value,
+    });
+    console.log(payload);
+    return this.callIconex(payload);
+  }
 }

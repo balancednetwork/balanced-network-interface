@@ -26,6 +26,15 @@ export function TradePage() {
     setValue(value);
   };
 
+  const calculateTokenSupplied = (balance: BigNumber, poolTotal: BigNumber, totalSupply: BigNumber) => {
+    let tokenSupplied = balance
+      .multipliedBy(poolTotal)
+      .multipliedBy(new BigNumber(1).minus(balance.dividedBy(totalSupply)))
+      .dividedBy(totalSupply);
+    if (tokenSupplied.isNaN()) tokenSupplied = new BigNumber(0);
+    return tokenSupplied;
+  };
+
   // get liquidity supply
 
   const initLiquiditySupply = React.useCallback(() => {
@@ -33,16 +42,78 @@ export function TradePage() {
       Promise.all([
         bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.sICX.address),
         bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.bnUSD.address),
-        bnJs.Dex.getSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
+        bnJs.Dex.balanceOf(BalancedJs.utils.sICXbnUSDpoolId.toString()),
         bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
+
+        bnJs.Dex.getPoolTotal(BalancedJs.utils.BALNbnUSDpoolId.toString(), bnJs.Baln.address),
+        bnJs.Dex.getPoolTotal(BalancedJs.utils.BALNbnUSDpoolId.toString(), bnJs.bnUSD.address),
+        bnJs.Dex.balanceOf(BalancedJs.utils.BALNbnUSDpoolId.toString()),
+        bnJs.Dex.getTotalSupply(BalancedJs.utils.BALNbnUSDpoolId.toString()),
+
+        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXICXpoolId.toString()),
+        bnJs.eject({ account: account }).Dex.getICXBalance(),
       ]).then(result => {
-        const [sICXsupply, bnUSDsupply, sICXbnUSDsupply, sICXbnUSDtotalSupply] = result.map(v =>
-          convertLoopToIcx(v as BigNumber),
+        const [
+          sICXPoolsICXbnUSDTotal, // sm method `getPoolTotal`
+          bnUSDPoolsICXbnUSDTotal, // sm method `getPoolTotal`
+          sICXbnUSDBalance, // sm method `balanceOf`
+          sICXbnUSDTotalSupply, // sm method `totalSupply` pool sICXbnUSDpoolId
+
+          BALNPoolBALNbnUSDTotal,
+          bnUSDPoolBALNbnUSDTotal,
+          BALNbnUSDBalance,
+          BALNbnUSDTotalSupply,
+
+          sICXICXTotalSupply, // sm method `totalSupply` pool sICXICXpoolId
+          ICXBalance,
+        ] = result.map(v => convertLoopToIcx(v as BigNumber));
+        const sICXSuppliedPoolsICXbnUSD = calculateTokenSupplied(
+          sICXbnUSDBalance,
+          sICXPoolsICXbnUSDTotal,
+          sICXbnUSDTotalSupply,
         );
-        changeLiquiditySupply({ sICXsupply });
-        changeLiquiditySupply({ bnUSDsupply });
-        changeLiquiditySupply({ sICXbnUSDsupply });
-        changeLiquiditySupply({ sICXbnUSDtotalSupply });
+        const bnUSDSuppliedPoolsICXbnUSD = calculateTokenSupplied(
+          sICXbnUSDBalance,
+          bnUSDPoolsICXbnUSDTotal,
+          sICXbnUSDTotalSupply,
+        );
+
+        const BALNSuppliedPoolBALNbnUSD = calculateTokenSupplied(
+          BALNbnUSDBalance,
+          BALNPoolBALNbnUSDTotal,
+          BALNbnUSDTotalSupply,
+        );
+        const bnUSDSuppliedPoolBALNbnUSD = calculateTokenSupplied(
+          BALNbnUSDBalance,
+          bnUSDPoolBALNbnUSDTotal,
+          BALNbnUSDTotalSupply,
+        );
+
+        console.log('sICXSuppliedPoolsICXbnUSD = ', sICXSuppliedPoolsICXbnUSD.toFixed(2));
+        console.log('bnUSDSuppliedPoolsICXbnUSD = ', bnUSDSuppliedPoolsICXbnUSD.toFixed(2));
+        console.log('BALNSuppliedPoolBALNbnUSD = ', BALNSuppliedPoolBALNbnUSD.toFixed(2));
+        console.log('bnUSDSuppliedPoolBALNbnUSD = ', bnUSDSuppliedPoolBALNbnUSD.toFixed(2));
+
+        changeLiquiditySupply({
+          sICXPoolsICXbnUSDTotal,
+          bnUSDPoolsICXbnUSDTotal,
+          sICXbnUSDBalance,
+          sICXbnUSDTotalSupply,
+
+          BALNPoolBALNbnUSDTotal,
+          bnUSDPoolBALNbnUSDTotal,
+          BALNbnUSDBalance,
+          BALNbnUSDTotalSupply,
+
+          sICXSuppliedPoolsICXbnUSD,
+          bnUSDSuppliedPoolsICXbnUSD,
+
+          BALNSuppliedPoolBALNbnUSD,
+          bnUSDSuppliedPoolBALNbnUSD,
+
+          sICXICXTotalSupply,
+          ICXBalance,
+        });
       });
     }
   }, [account, changeLiquiditySupply]);

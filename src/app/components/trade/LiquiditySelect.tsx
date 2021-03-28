@@ -35,7 +35,6 @@ export default function LiquiditySelect() {
     setPair(pl);
   };
 
-  console.log(selectedPair);
   return (
     <ClickAwayListener onClickAway={() => setOpen(false)}>
       <div>

@@ -77,6 +77,28 @@ export class Contract {
     };
   }
 
+  /**
+   * @returns transaction transfer ICX to call ICONex
+   */
+  public transferICXParamsBuilder({ value }: { value: number }) {
+    const payload = new IconBuilder.IcxTransactionBuilder()
+      .from(this.account)
+      .to(this.address)
+      .nid(IconConverter.toBigNumber(this.nid))
+      .timestamp(new Date().getTime() * 1000)
+      .stepLimit(IconConverter.toBigNumber(1000000))
+      .value(IconAmount.of(value, IconAmount.Unit.ICX).toLoop())
+      .version(IconConverter.toBigNumber(3))
+      .build();
+
+    return {
+      jsonrpc: '2.0',
+      method: 'icx_sendTransaction',
+      params: IconConverter.toRawTransaction(payload),
+      id: Date.now(),
+    };
+  }
+
   public async callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
     window.dispatchEvent(
       new CustomEvent('ICONEX_RELAY_REQUEST', {

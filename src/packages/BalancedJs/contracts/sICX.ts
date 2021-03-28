@@ -116,4 +116,18 @@ export default class sICX extends Contract {
 
     return this.callIconex(callParams);
   }
+
+  async unstakeSICX(value: number): Promise<ResponseJsonRPCPayload> {
+    const data = '0x' + Buffer.from('{"method": "_unstake"}', 'utf8').toString('hex');
+    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = { _to: addresses[this.nid].staking, _value: valueHex, _data: data };
+
+    const payload = this.transactionParamsBuilder({
+      method: 'transfer',
+      value: 0,
+      params,
+    });
+    console.log(payload);
+    return this.callIconex(payload);
+  }
 }

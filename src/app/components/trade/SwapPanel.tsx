@@ -124,7 +124,7 @@ export default function SwapPanel() {
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const interval: any = event.currentTarget.value;
     loadChartData({
-      interval,
+      interval: interval.toLowerCase(),
       symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
     });
     setChartOption({
@@ -188,7 +188,7 @@ export default function SwapPanel() {
     ccy => {
       setInputCurrency(ccy);
       loadChartData({
-        interval: chartOption.period,
+        interval: chartOption.period.toLowerCase(),
         symbol: `${ccy.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
       });
     },
@@ -199,7 +199,7 @@ export default function SwapPanel() {
     ccy => {
       setOutputCurrency(ccy);
       loadChartData({
-        interval: chartOption.period,
+        interval: chartOption.period.toLowerCase(),
         symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${ccy.symbol}`,
       });
     },

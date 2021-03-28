@@ -166,7 +166,7 @@ export default function SwapPanel() {
         .then(res => {
           const { data: d } = res;
           let t = d.map(item => ({
-            time: item.time * 10 ** 3,
+            time: item.time,
             value: convertLoopToIcx(new BigNumber(item.price)).toNumber(),
           }));
 

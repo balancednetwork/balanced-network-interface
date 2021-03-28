@@ -74,19 +74,6 @@ export default function SwapPanel() {
   const addTransaction = useTransactionAdder();
   const ICXbalance = useWalletICXBalance(account);
 
-  const tokenRatio = (symbol: string) => {
-    if (symbol === 'ICX') {
-      let icxRatio = ratio.sICXICXratio?.toNumber() || 0;
-      return icxRatio ? 1 / icxRatio : 0;
-    } else if (symbol === 'BALN') {
-      return ratio.BALNbnUSDratio?.toNumber() || 0;
-    } else if (symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
-      return ratio.sICXbnUSDratio?.toNumber() || 0;
-    } else if (symbol === 'sICX' && outputCurrency.symbol === 'ICX') {
-      return ratio.sICXICXratio?.toNumber() || 0;
-    }
-    return 0;
-  };
   const tokenBalance = (symbol: string) => {
     if (account) {
       if (symbol === 'ICX') {
@@ -103,16 +90,30 @@ export default function SwapPanel() {
 
   const [swapInputAmount, setSwapInputAmount] = React.useState('0');
 
-  const handleTypeInput = (val: string) => {
-    setSwapInputAmount(val);
-    let ratioLocal = tokenRatio(inputCurrency.symbol);
-    if (!ratioLocal) {
-      console.log(`Cannot get rate from this pair`);
-    }
-    setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
-  };
-
   const [swapOutputAmount, setSwapOutputAmount] = React.useState('0');
+
+  const [inputCurrency, setInputCurrency] = React.useState(CURRENCYLIST['sicx']);
+
+  const [outputCurrency, setOutputCurrency] = React.useState(CURRENCYLIST['bnusd']);
+
+  const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
+
+  const tokenRatio = React.useCallback(
+    (symbol: string) => {
+      if (symbol === 'ICX') {
+        let icxRatio = ratio.sICXICXratio?.toNumber() || 0;
+        return icxRatio ? 1 / icxRatio : 0;
+      } else if (symbol === 'BALN') {
+        return ratio.BALNbnUSDratio?.toNumber() || 0;
+      } else if (symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
+        return ratio.sICXbnUSDratio?.toNumber() || 0;
+      } else if (symbol === 'sICX' && outputCurrency.symbol === 'ICX') {
+        return ratio.sICXICXratio?.toNumber() || 0;
+      }
+      return 0;
+    },
+    [outputCurrency.symbol, ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
+  );
 
   const handleTypeOutput = (val: string) => {
     setSwapOutputAmount(val);
@@ -122,6 +123,18 @@ export default function SwapPanel() {
     }
     setSwapInputAmount((parseFloat(val) / ratioLocal).toFixed(inputCurrency.decimals).toString());
   };
+
+  const handleTypeInput = React.useCallback(
+    (val: string) => {
+      setSwapInputAmount(val);
+      let ratioLocal = tokenRatio(inputCurrency.symbol);
+      if (!ratioLocal) {
+        console.log(`Cannot get rate from this pair`);
+      }
+      setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
+    },
+    [inputCurrency.symbol, outputCurrency.decimals, tokenRatio],
+  );
 
   const handleInputSelect = React.useCallback(
     ccy => {
@@ -138,12 +151,6 @@ export default function SwapPanel() {
     },
     [swapInputAmount, handleTypeInput],
   );
-
-  const [inputCurrency, setInputCurrency] = React.useState(CURRENCYLIST['sicx']);
-
-  const [outputCurrency, setOutputCurrency] = React.useState(CURRENCYLIST['bnusd']);
-
-  const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
   const handleSwapConfirmDismiss = () => {
     setShowSwapConfirm(false);

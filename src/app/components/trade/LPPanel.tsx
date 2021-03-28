@@ -16,6 +16,7 @@ import { CURRENCYLIST, SupportedPairs } from 'constants/currency';
 import { useLiquiditySupply } from 'store/liquidity/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 import { SectionPanel, BrightPanel } from './utils';
@@ -85,6 +86,8 @@ export default function LPPanel() {
     setSupplyInputAmount(inputAmount.toString());
   };
 
+  const addTransaction = useTransactionAdder();
+
   const handleSupplyInputDepositConfirm = () => {
     if (!account) return;
     bnJs
@@ -93,6 +96,10 @@ export default function LPPanel() {
       .sICX.dexDeposit(parseFloat(supplyInputAmount))
       .then(res => {
         console.log('res', res);
+        addTransaction(
+          { hash: res.result },
+          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
+        );
       })
       .catch(e => {
         console.error('error', e);
@@ -107,6 +114,10 @@ export default function LPPanel() {
       .bnUSD.dexDeposit(parseFloat(supplyOutputAmount))
       .then(res => {
         console.log('res', res);
+        addTransaction(
+          { hash: res.result },
+          { summary: `Deposited ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the DEX.` },
+        );
       })
       .catch(e => {
         console.error('error', e);
@@ -115,14 +126,16 @@ export default function LPPanel() {
 
   const handleSupplyConfirm = () => {
     if (!account) return;
-    console.log('selectedPair = ', selectedPair);
     if (selectedPair.pair === SupportedPairs[2].pair) {
       console.log('match pair = ', parseFloat(supplyInputAmount));
       bnJs
         .eject({ account: account })
         .Dex.transferICX(parseFloat(supplyInputAmount))
         .then(res => {
-          console.log('res', res);
+          addTransaction(
+            { hash: res.result },
+            { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the pool.` },
+          );
         })
         .catch(e => {
           console.error('error', e);
@@ -133,7 +146,12 @@ export default function LPPanel() {
         //.sICX.borrowAdd(newBorrowValue)
         .Dex.dexSupplysICXbnUSD(parseFloat(supplyInputAmount), parseFloat(supplyOutputAmount))
         .then(res => {
-          console.log('res', res);
+          addTransaction(
+            { hash: res.result },
+            {
+              summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the pool.`,
+            },
+          );
         })
         .catch(e => {
           console.error('error', e);

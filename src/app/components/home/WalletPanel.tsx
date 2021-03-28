@@ -19,6 +19,7 @@ import { CURRENCYLIST } from 'constants/currency';
 import '@reach/tabs/styles.css';
 import { useWalletICXBalance } from 'hooks';
 import { useRatioValue } from 'store/ratio/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 import { Button } from '../Button';
@@ -135,6 +136,7 @@ const WalletPanel = () => {
   const { account } = useIconReact();
   const ICXbalance = useWalletICXBalance(account);
   const ratio = useRatioValue();
+  const addTransaction = useTransactionAdder();
 
   const [sICXTransferValue, setSICXTransferValue] = useState('0');
   const [sICXTransferAddress, setSICXTransferAddress] = useState('');
@@ -150,6 +152,19 @@ const WalletPanel = () => {
       })
       .catch(console.error);
   }, [sICXTransferValue, sICXTransferAddress]);
+
+  const Test = () => {
+    // console.log(sICXTransferValue);
+    // console.log(sICXTransferAddress);
+    bnJs.Baln.stakeBALN(10)
+      .then(res => {
+        console.log('res', res);
+        addTransaction({ hash: res.result }, { summary: `Test` });
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
 
   return (
     <BoxPanel bg="bg2">
@@ -215,7 +230,7 @@ const WalletPanel = () => {
                         </Grid>
 
                         <Flex alignItems="center" justifyContent="center" mt={5}>
-                          <Button>Send</Button>
+                          <Button onClick={Test}>Send</Button>
                         </Flex>
                       </TabPanel>
 

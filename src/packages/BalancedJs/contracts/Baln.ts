@@ -69,4 +69,16 @@ export default class Baln extends Contract {
 
     return this.callIconex(callParams);
   }
+
+  async stakeBALN(value: number): Promise<ResponseJsonRPCPayload> {
+    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = { _value: valueHex };
+    const payload = this.transactionParamsBuilder({
+      method: 'stake',
+      value: 0,
+      params,
+    });
+    console.log(payload);
+    return this.callIconex(payload);
+  }
 }

@@ -35,6 +35,8 @@ export default function LiquiditySelect() {
     setPair(pl);
   };
 
+  const pairs = [SupportedPairs[0], SupportedPairs[1], SupportedPairs[2]];
+
   return (
     <ClickAwayListener onClickAway={() => setOpen(false)}>
       <div>
@@ -49,7 +51,7 @@ export default function LiquiditySelect() {
               <HeaderText>POOL</HeaderText>
               <HeaderText textAlign="right">APY</HeaderText>
             </DashGrid>
-            {SupportedPairs.map(pool => (
+            {pairs.map(pool => (
               <ListItem key={pool.pair} onClick={() => handleSelectPool(pool)}>
                 <DataText variant="p" fontWeight="bold">
                   {pool.pair}

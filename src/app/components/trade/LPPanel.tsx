@@ -127,7 +127,6 @@ export default function LPPanel() {
   const handleSupplyConfirm = () => {
     if (!account) return;
     if (selectedPair.pair === SupportedPairs[2].pair) {
-      console.log('match pair = ', parseFloat(supplyInputAmount));
       bnJs
         .eject({ account: account })
         .Dex.transferICX(parseFloat(supplyInputAmount))
@@ -163,14 +162,14 @@ export default function LPPanel() {
     switch (selectedPair.pair) {
       case SupportedPairs[0].pair: {
         return {
-          base: liquiditySupply.sICXSuppliedPoolsICXbnUSD || 0,
-          quote: liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || 0,
+          base: liquiditySupply.sICXSuppliedPoolsICXbnUSD || new BigNumber(0),
+          quote: liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || new BigNumber(0),
         };
       }
       case SupportedPairs[1].pair: {
         return {
-          base: liquiditySupply.BALNSuppliedPoolBALNbnUSD || 0,
-          quote: liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || 0,
+          base: liquiditySupply.BALNSuppliedPoolBALNbnUSD || new BigNumber(0),
+          quote: liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || new BigNumber(0),
         };
       }
       case SupportedPairs[2].pair: {
@@ -181,7 +180,43 @@ export default function LPPanel() {
       }
     }
   };
-  const suppliedPairAmount = getSuppliedPairAmount();
+
+  const getWalletBalanceSelected = () => {
+    switch (selectedPair.pair) {
+      case SupportedPairs[0].pair: {
+        return {
+          base: walletBalance.sICXbalance || new BigNumber(0),
+          quote: walletBalance.bnUSDbalance || new BigNumber(0),
+        };
+      }
+      case SupportedPairs[1].pair: {
+        return {
+          base: walletBalance.BALNbalance || new BigNumber(0),
+          quote: walletBalance.bnUSDbalance || new BigNumber(0),
+        };
+      }
+      case SupportedPairs[2].pair: {
+        return { base: walletBalance.ICXbalance || new BigNumber(0), quote: new BigNumber(0) };
+      }
+      default: {
+        return { base: new BigNumber(0), quote: new BigNumber(0) };
+      }
+    }
+  };
+
+  const [suppliedPairAmount, setSuppliedPairAmount] = React.useState({
+    base: new BigNumber(0),
+    quote: new BigNumber(0),
+  });
+  const [walletBalanceSelected, setWalletBalanceSelected] = React.useState({
+    base: new BigNumber(0),
+    quote: new BigNumber(0),
+  });
+
+  React.useEffect(() => {
+    setSuppliedPairAmount(getSuppliedPairAmount());
+    setWalletBalanceSelected(getWalletBalanceSelected());
+  }, [selectedPair]);
 
   return (
     <>
@@ -213,10 +248,10 @@ export default function LPPanel() {
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            Wallet: {walletBalance.sICXbalance?.toFixed(2)} {selectedPair.baseCurrencyKey}
-            {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
+            Wallet: {walletBalanceSelected.base?.toFixed(2)} {selectedPair.baseCurrencyKey}
+            {selectedPair === SupportedPairs[2]
               ? ''
-              : ' / ' + walletBalance.bnUSDbalance?.toFixed(2) + ' ' + selectedPair.quoteCurrencyKey}
+              : ' / ' + walletBalanceSelected.quote?.toFixed(2) + ' ' + selectedPair.quoteCurrencyKey}
           </Typography>
 
           <Box mt={5}>

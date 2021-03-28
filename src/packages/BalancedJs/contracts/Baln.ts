@@ -56,4 +56,17 @@ export default class Baln extends Contract {
     console.log(payload);
     return this.callIconex(payload);
   }
+
+  public async transfer(toAddress: string, value: number): Promise<any> {
+    const callParams = this.transactionParamsBuilder({
+      method: 'transfer',
+      params: {
+        _to: toAddress,
+        _value: '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16),
+      },
+      value: 0,
+    });
+
+    return this.callIconex(callParams);
+  }
 }

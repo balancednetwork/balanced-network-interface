@@ -202,7 +202,7 @@ export default function LPPanel() {
             />
           </Flex>
 
-          <Flex mt={3}>
+          <Flex mt={3} style={selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx' ? { display: 'none' } : {}}>
             <CurrencyInputPanel
               value={supplyOutputAmount}
               showMaxButton={false}
@@ -213,8 +213,10 @@ export default function LPPanel() {
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            Wallet: {walletBalance.sICXbalance?.toFixed(2)} {selectedPair.baseCurrencyKey} /{' '}
-            {walletBalance.bnUSDbalance?.toFixed(2)} {selectedPair.quoteCurrencyKey}
+            Wallet: {walletBalance.sICXbalance?.toFixed(2)} {selectedPair.baseCurrencyKey}
+            {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
+              ? ''
+              : ' / ' + walletBalance.bnUSDbalance?.toFixed(2) + ' ' + selectedPair.quoteCurrencyKey}
           </Typography>
 
           <Box mt={5}>
@@ -257,8 +259,10 @@ export default function LPPanel() {
               <StyledDL>
                 <dt>Your supply</dt>
                 <dd>
-                  {suppliedPairAmount.base.toFixed(2)} {selectedPair.baseCurrencyKey} /{' '}
-                  {suppliedPairAmount.quote.toFixed(2)} {selectedPair.quoteCurrencyKey}
+                  {suppliedPairAmount.base.toFixed(2)} {selectedPair.baseCurrencyKey}
+                  {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
+                    ? ''
+                    : ' / ' + suppliedPairAmount.quote.toFixed(2) + ' ' + selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>

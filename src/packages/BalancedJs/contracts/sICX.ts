@@ -78,4 +78,15 @@ export default class sICX extends Contract {
 
     return this.call(callParams);
   }
+
+  getUnstakingAmount() {
+    const callParams = this.paramsBuilder({
+      method: 'getUserUnstakeInfo',
+      params: {
+        _owner: this.account,
+      },
+    });
+
+    return this.call(callParams);
+  }
 }

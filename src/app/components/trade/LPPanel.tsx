@@ -158,7 +158,16 @@ export default function LPPanel() {
     }
   };
 
-  const getSuppliedPairAmount = () => {
+  const [suppliedPairAmount, setSuppliedPairAmount] = React.useState({
+    base: new BigNumber(0),
+    quote: new BigNumber(0),
+  });
+  const [walletBalanceSelected, setWalletBalanceSelected] = React.useState({
+    base: new BigNumber(0),
+    quote: new BigNumber(0),
+  });
+
+  const getSuppliedPairAmount = React.useCallback(() => {
     switch (selectedPair.pair) {
       case SupportedPairs[0].pair: {
         return {
@@ -179,9 +188,9 @@ export default function LPPanel() {
         return { base: new BigNumber(0), quote: new BigNumber(0) };
       }
     }
-  };
+  }, [selectedPair, liquiditySupply]);
 
-  const getWalletBalanceSelected = () => {
+  const getWalletBalanceSelected = React.useCallback(() => {
     switch (selectedPair.pair) {
       case SupportedPairs[0].pair: {
         return {
@@ -202,21 +211,13 @@ export default function LPPanel() {
         return { base: new BigNumber(0), quote: new BigNumber(0) };
       }
     }
-  };
-
-  const [suppliedPairAmount, setSuppliedPairAmount] = React.useState({
-    base: new BigNumber(0),
-    quote: new BigNumber(0),
-  });
-  const [walletBalanceSelected, setWalletBalanceSelected] = React.useState({
-    base: new BigNumber(0),
-    quote: new BigNumber(0),
-  });
+  }, [selectedPair, walletBalance]);
 
   React.useEffect(() => {
+    console.log('useEffect');
     setSuppliedPairAmount(getSuppliedPairAmount());
     setWalletBalanceSelected(getWalletBalanceSelected());
-  }, [selectedPair]);
+  }, [getSuppliedPairAmount, getWalletBalanceSelected, selectedPair]);
 
   return (
     <>

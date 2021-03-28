@@ -57,7 +57,7 @@ export default function LPPanel() {
 
   const [supplyOutputAmount, setSupplyOutputAmount] = React.useState('0');
 
-  const handleTypeInputAmount = (val: string) => {
+  const handleTypeInput = (val: string) => {
     setSupplyInputAmount(val);
     let outputAmount = new BigNumber(val).multipliedBy(getRatioByPair());
     if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
@@ -197,7 +197,7 @@ export default function LPPanel() {
               value={supplyInputAmount}
               showMaxButton={false}
               currency={CURRENCYLIST[selectedPair.baseCurrencyKey.toLowerCase()]}
-              onUserInput={handleTypeInputAmount}
+              onUserInput={handleTypeInput}
               disableCurrencySelect={true}
               id="supply-liquidity-input-tokena"
             />

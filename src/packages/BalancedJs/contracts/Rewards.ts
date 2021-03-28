@@ -8,9 +8,10 @@ export default class Rewards extends Contract {
     this.address = addresses[this.nid].rewards;
   }
 
-  getClaimRewardsTransactionPayload() {
+  claimRewards() {
     const payload = this.transactionParamsBuilder({
       method: 'claimRewards',
+      value: 0,
     });
 
     return this.callIconex(payload);

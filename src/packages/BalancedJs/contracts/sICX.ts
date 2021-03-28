@@ -68,6 +68,20 @@ export default class sICX extends Contract {
     return this.callIconex(payload);
   }
 
+  async swapToICX(value: number): Promise<ResponseJsonRPCPayload> {
+    const data = '0x' + Buffer.from('{"method": "_swap_icx"}}', 'utf8').toString('hex');
+    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
+
+    const payload = this.transactionParamsBuilder({
+      method: 'transfer',
+      value: 0,
+      params,
+    });
+    console.log(payload);
+    return this.callIconex(payload);
+  }
+
   balanceOf() {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',

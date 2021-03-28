@@ -39,10 +39,15 @@ export const SupportedPairs: Array<Pair> = [
     quoteCurrencyKey: CURRENCY_MAP['sICX'],
     pair: toMarketPair(CURRENCY_MAP['ICX'], CURRENCY_MAP['sICX']),
   },
+  {
+    baseCurrencyKey: CURRENCY_MAP['sICX'],
+    quoteCurrencyKey: CURRENCY_MAP['ICX'],
+    pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['ICX']),
+  },
 ];
 
 export const getFilteredCurrencies = (baseCurrencyKey: CurrencyKey): CurrencyKey[] => {
   return SupportedPairs.filter(pair => pair.baseCurrencyKey === baseCurrencyKey).map(pair => pair.quoteCurrencyKey);
 };
 
-export const SupportedBaseCurrencies = SupportedPairs.map(pair => pair.baseCurrencyKey);
+export const SupportedBaseCurrencies = Array.from(new Set(SupportedPairs.map(pair => pair.baseCurrencyKey)));

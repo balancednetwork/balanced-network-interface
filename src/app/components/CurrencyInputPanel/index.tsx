@@ -138,10 +138,12 @@ export default function CurrencyInputPanel({
     [otherCurrency, currencyList],
   );
 
-  // React.useEffect(() => {
-  //   const t = otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList;
-  //   onCurrencySelect && onCurrencySelect(CURRENCYLIST[t[0].toLowerCase()]);
-  // }, [otherCurrency, onCurrencySelect, currencyList]);
+  React.useEffect(() => {
+    const t = otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList;
+    if (t?.indexOf(currency?.symbol as string) == -1) {
+      onCurrencySelect && onCurrencySelect(CURRENCYLIST[t[0].toLowerCase()]);
+    }
+  }, [otherCurrency, onCurrencySelect, currencyList]);
 
   return (
     <InputContainer ref={ref}>

@@ -177,7 +177,6 @@ const LiquidityDetails = () => {
                       showMaxButton={false}
                       currency={CURRENCYLIST['sicx']}
                       onUserInput={handleTypeAmountWithdrawSICX}
-                      disableCurrencySelect={true}
                       id="withdraw-liquidity-input"
                       bg="bg5"
                     />
@@ -188,7 +187,6 @@ const LiquidityDetails = () => {
                       showMaxButton={false}
                       currency={CURRENCYLIST['bnusd']}
                       onUserInput={handleTypeAmountWithdrawBNUSD}
-                      disableCurrencySelect={true}
                       id="withdraw-liquidity-input"
                       bg="bg5"
                     />

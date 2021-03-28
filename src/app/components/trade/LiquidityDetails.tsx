@@ -112,7 +112,7 @@ const LiquidityDetails = () => {
           <tr>
             <td>sICX / ICX</td>
             <td>{ICXBalance} ICX</td>
-            <td>{((ICXBalance / sICXICXTotalSupply) * 100).toFixed(2)} %</td>
+            <td>{((ICXBalance / sICXICXTotalSupply) * 100).toFixed(2)}%</td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">
@@ -162,7 +162,7 @@ const LiquidityDetails = () => {
               <br />
               {liquiditySupply.bnUSDSuppliedPoolsICXbnUSD?.toFixed(2) + ' bnUSD'}
             </td>
-            <td>{!account ? '-' : sICXbnUSDSuppliedShare + '%'}</td>
+            <td>{!account ? '-' : !sICXbnUSDSuppliedShare ? '0%' : sICXbnUSDSuppliedShare + '%'}</td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">

@@ -125,15 +125,17 @@ export default function SwapPanel() {
 
   const handleInputSelect = React.useCallback(ccy => {
     setInputCurrency(ccy);
+    handleTypeInput(swapInputAmount);
   }, []);
 
   const handleOutputSelect = React.useCallback(ccy => {
     setOutputCurrency(ccy);
+    handleTypeInput(swapInputAmount);
   }, []);
 
-  const [inputCurrency, setInputCurrency] = React.useState(CURRENCYLIST['icx']);
+  const [inputCurrency, setInputCurrency] = React.useState(CURRENCYLIST['sicx']);
 
-  const [outputCurrency, setOutputCurrency] = React.useState(CURRENCYLIST['baln']);
+  const [outputCurrency, setOutputCurrency] = React.useState(CURRENCYLIST['bnusd']);
 
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 

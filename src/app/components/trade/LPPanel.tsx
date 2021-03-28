@@ -202,7 +202,7 @@ export default function LPPanel() {
             />
           </Flex>
 
-          <Flex mt={3}>
+          <Flex mt={3} style={selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx' ? { display: 'none' } : {}}>
             <CurrencyInputPanel
               value={supplyOutputAmount}
               showMaxButton={false}
@@ -213,8 +213,10 @@ export default function LPPanel() {
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            Wallet: {walletBalance.sICXbalance?.toFixed(2)} {selectedPair.baseCurrencyKey} /{' '}
-            {walletBalance.bnUSDbalance?.toFixed(2)} {selectedPair.quoteCurrencyKey}
+            Wallet: {walletBalance.sICXbalance?.toFixed(2)} {selectedPair.baseCurrencyKey}
+            {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
+              ? ''
+              : ' / ' + walletBalance.bnUSDbalance?.toFixed(2) + ' ' + selectedPair.quoteCurrencyKey}
           </Typography>
 
           <Box mt={5}>
@@ -242,8 +244,13 @@ export default function LPPanel() {
             {selectedPair.pair} liquidity pool
           </Typography>
           <Typography mb={5} lineHeight={'25px'}>
-            Earn Balance Tokens every day you supply liquidity. Your assets will be locked for the first 24 hours, and
-            your supply ratio will fluctuate with the price.
+            {selectedPair.baseCurrencyKey.toLowerCase() === 'icx'
+              ? 'Earn Balance Tokens every day you supply liquidity. Your assets will be locked for the first 24 hours, and your supply ratio will fluctuate with the price.'
+              : selectedPair.baseCurrencyKey.toLowerCase() === 'baln'
+              ? 'Earn Balance Tokens every day you supply liquidity, and start accruing dividends. Your supply ratio will fluctuate with the price.'
+              : selectedPair.baseCurrencyKey.toLowerCase() === 'sicx'
+              ? 'Earn Balance Tokens every day you supply liquidity. Your supply ratio will fluctuate with the price.'
+              : ''}
           </Typography>
 
           <Flex flexWrap="wrap">
@@ -257,8 +264,10 @@ export default function LPPanel() {
               <StyledDL>
                 <dt>Your supply</dt>
                 <dd>
-                  {suppliedPairAmount.base.toFixed(2)} {selectedPair.baseCurrencyKey} /{' '}
-                  {suppliedPairAmount.quote.toFixed(2)} {selectedPair.quoteCurrencyKey}
+                  {suppliedPairAmount.base.toFixed(2)} {selectedPair.baseCurrencyKey}
+                  {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
+                    ? ''
+                    : ' / ' + suppliedPairAmount.quote.toFixed(2) + ' ' + selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>

@@ -123,15 +123,21 @@ export default function SwapPanel() {
     setSwapInputAmount((parseFloat(val) / ratioLocal).toFixed(inputCurrency.decimals).toString());
   };
 
-  const handleInputSelect = React.useCallback(ccy => {
-    setInputCurrency(ccy);
-    handleTypeInput(swapInputAmount);
-  }, []);
+  const handleInputSelect = React.useCallback(
+    ccy => {
+      setInputCurrency(ccy);
+      handleTypeInput(swapInputAmount);
+    },
+    [swapInputAmount, handleTypeInput],
+  );
 
-  const handleOutputSelect = React.useCallback(ccy => {
-    setOutputCurrency(ccy);
-    handleTypeInput(swapInputAmount);
-  }, []);
+  const handleOutputSelect = React.useCallback(
+    ccy => {
+      setOutputCurrency(ccy);
+      handleTypeInput(swapInputAmount);
+    },
+    [swapInputAmount, handleTypeInput],
+  );
 
   const [inputCurrency, setInputCurrency] = React.useState(CURRENCYLIST['sicx']);
 

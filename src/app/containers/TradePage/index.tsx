@@ -95,11 +95,6 @@ export function TradePage() {
           BALNbnUSDTotalSupply,
         );
 
-        console.log('sICXSuppliedPoolsICXbnUSD = ', sICXSuppliedPoolsICXbnUSD.toFixed(2));
-        console.log('bnUSDSuppliedPoolsICXbnUSD = ', bnUSDSuppliedPoolsICXbnUSD.toFixed(2));
-        console.log('BALNSuppliedPoolBALNbnUSD = ', BALNSuppliedPoolBALNbnUSD.toFixed(2));
-        console.log('bnUSDSuppliedPoolBALNbnUSD = ', bnUSDSuppliedPoolBALNbnUSD.toFixed(2));
-
         changeLiquiditySupply({
           sICXPoolsICXbnUSDTotal,
           bnUSDPoolsICXbnUSDTotal,

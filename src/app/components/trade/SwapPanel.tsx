@@ -20,7 +20,9 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST, SupportedBaseCurrencies } from 'constants/currency';
 import { dayData, candleData, volumeData } from 'demo';
+import { useWalletICXBalance } from 'hooks';
 import { useRatioValue } from 'store/ratio/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 import { SectionPanel, BrightPanel } from './utils';
@@ -69,19 +71,53 @@ export default function SwapPanel() {
   const walletBalance = useWalletBalanceValue();
   const ratio = useRatioValue();
   const sICXbnUSDratio = ratio.sICXbnUSDratio?.toNumber() || 0;
+  const addTransaction = useTransactionAdder();
+  const ICXbalance = useWalletICXBalance(account);
+
+  const tokenRatio = (symbol: string) => {
+    if (symbol === 'ICX') {
+      return ratio.sICXICXratio?.toNumber() || 0;
+    } else if (symbol === 'BALN') {
+      return ratio.BALNbnUSDratio?.toNumber() || 0;
+    } else if (symbol === 'sICX') {
+      return ratio.sICXbnUSDratio?.toNumber() || 0;
+    }
+    return 0;
+  };
+  const tokenBalance = (symbol: string) => {
+    if (account) {
+      if (symbol === 'ICX') {
+        return ICXbalance;
+      } else if (symbol === 'BALN') {
+        return walletBalance.BALNbalance;
+      } else if (symbol === 'sICX') {
+        return walletBalance.sICXbalance;
+      } else if (symbol === 'bnUSD') {
+        return walletBalance.bnUSDbalance;
+      }
+    }
+  };
 
   const [swapInputAmount, setSwapInputAmount] = React.useState('0');
 
   const handleTypeInput = (val: string) => {
     setSwapInputAmount(val);
-    setSwapOutputAmount((parseFloat(val) * sICXbnUSDratio).toFixed(2).toString());
+    let ratioLocal = tokenRatio(inputCurrency.symbol);
+    if (!ratioLocal) {
+      console.log(`Cannot get rate from this pair`);
+    }
+    setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
   };
 
   const [swapOutputAmount, setSwapOutputAmount] = React.useState('0');
 
   const handleTypeOutput = (val: string) => {
     setSwapOutputAmount(val);
-    setSwapInputAmount((parseFloat(val) / sICXbnUSDratio).toFixed(2).toString());
+    let ratioLocal = tokenRatio(inputCurrency.symbol);
+    if (!ratioLocal) {
+      console.log(`Cannot get rate from this pair`);
+    }
+    setSwapInputAmount((parseFloat(val) / ratioLocal).toFixed(inputCurrency.decimals).toString());
   };
 
   const handleInputSelect = React.useCallback(ccy => {
@@ -103,22 +139,65 @@ export default function SwapPanel() {
   };
 
   const handleSwap = () => {
-    setShowSwapConfirm(true);
+    if (!account) {
+      // todo: require access to wallet to execute trade
+    } else {
+      setShowSwapConfirm(true);
+    }
   };
 
   const handleSwapConfirm = () => {
     if (!account) return;
-    bnJs
-      .eject({ account: account })
-      //.sICX.borrowAdd(newBorrowValue)
-      //.bnUSD.swapBysICX(parseFloat(swapInputAmount), '10')
-      .sICX.swapBybnUSD(parseFloat(swapOutputAmount), '250')
-      .then(res => {
-        console.log('res', res);
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
+    if (inputCurrency.symbol === 'sICX') {
+      bnJs
+        .eject({ account: account })
+        //.sICX.borrowAdd(newBorrowValue)
+        //.bnUSD.swapBysICX(parseFloat(swapInputAmount), '10')
+        .sICX.swapBybnUSD(parseFloat(swapInputAmount), rawSlippage + '')
+        .then(res => {
+          console.log('res', res);
+          setShowSwapConfirm(false);
+          addTransaction(
+            { hash: res.result },
+            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+          );
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    } else if (inputCurrency.symbol === 'BALN') {
+      bnJs
+        .eject({ account: account })
+        .Baln.swapToBnUSD(parseFloat(swapInputAmount), rawSlippage + '')
+        .then(res => {
+          console.log('res', res);
+          setShowSwapConfirm(false);
+          addTransaction(
+            { hash: res.result },
+            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+          );
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    } else if (inputCurrency.symbol === 'ICX') {
+      bnJs
+        .eject({ account: account })
+        .Dex.transferICX(parseFloat(swapInputAmount))
+        .then(res => {
+          console.log('res', res);
+          setShowSwapConfirm(false);
+          addTransaction(
+            { hash: res.result },
+            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+          );
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    } else {
+      console.log(`this pair is currently not supported on balanced interface`);
+    }
   };
 
   const [chartOption, setChartOption] = React.useState({
@@ -180,7 +259,9 @@ export default function SwapPanel() {
         <BrightPanel bg="bg3" p={7} flexDirection="column" alignItems="stretch" flex={1}>
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">Swap</Typography>
-            <Typography>Wallet: {walletBalance.sICXbalance?.toFixed(2)} sICX</Typography>
+            <Typography>
+              Wallet: {tokenBalance(inputCurrency.symbol)?.toFixed(inputCurrency.decimals)} {inputCurrency.symbol}{' '}
+            </Typography>
           </Flex>
 
           <Flex mt={3} mb={5}>
@@ -197,7 +278,9 @@ export default function SwapPanel() {
 
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">For</Typography>
-            <Typography>Wallet: {walletBalance.bnUSDbalance?.toFixed(2)} bnUSD</Typography>
+            <Typography>
+              Wallet: {tokenBalance(outputCurrency.symbol)?.toFixed(outputCurrency.decimals)} {outputCurrency.symbol}
+            </Typography>
           </Flex>
 
           <Flex mt={3} mb={5}>
@@ -216,7 +299,10 @@ export default function SwapPanel() {
 
           <Flex alignItems="center" justifyContent="space-between" mb={1}>
             <Typography>Minimum to receive</Typography>
-            <Typography>0 BALN</Typography>
+            <Typography>
+              {(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4).toFixed(outputCurrency.decimals)}{' '}
+              {outputCurrency.symbol}
+            </Typography>
           </Flex>
 
           <Flex alignItems="center" justifyContent="space-between">
@@ -314,14 +400,14 @@ export default function SwapPanel() {
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Pay</Typography>
               <Typography variant="p" textAlign="center">
-                {swapInputAmount} sICX
+                {swapInputAmount} {inputCurrency.symbol}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">Receive</Typography>
               <Typography variant="p" textAlign="center">
-                {swapOutputAmount} bnUSD
+                {swapOutputAmount} {outputCurrency.symbol}
               </Typography>
             </Box>
           </Flex>

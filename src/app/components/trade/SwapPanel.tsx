@@ -18,7 +18,7 @@ import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST, SupportedBaseCurrencies } from 'constants/currency';
+import { CURRENCYLIST, getFilteredCurrencies, SupportedBaseCurrencies } from 'constants/currency';
 import { dayData, candleData, volumeData } from 'demo';
 import { useWalletICXBalance } from 'hooks';
 import { useRatioValue } from 'store/ratio/hooks';
@@ -76,11 +76,14 @@ export default function SwapPanel() {
 
   const tokenRatio = (symbol: string) => {
     if (symbol === 'ICX') {
-      return ratio.sICXICXratio?.toNumber() || 0;
+      let icxRatio = ratio.sICXICXratio?.toNumber() || 0;
+      return icxRatio ? 1 / icxRatio : 0;
     } else if (symbol === 'BALN') {
       return ratio.BALNbnUSDratio?.toNumber() || 0;
-    } else if (symbol === 'sICX') {
+    } else if (symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
       return ratio.sICXbnUSDratio?.toNumber() || 0;
+    } else if (symbol === 'sICX' && outputCurrency.symbol === 'ICX') {
+      return ratio.sICXICXratio?.toNumber() || 0;
     }
     return 0;
   };
@@ -148,12 +151,27 @@ export default function SwapPanel() {
 
   const handleSwapConfirm = () => {
     if (!account) return;
-    if (inputCurrency.symbol === 'sICX') {
+    if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
       bnJs
         .eject({ account: account })
         //.sICX.borrowAdd(newBorrowValue)
         //.bnUSD.swapBysICX(parseFloat(swapInputAmount), '10')
         .sICX.swapBybnUSD(parseFloat(swapInputAmount), rawSlippage + '')
+        .then(res => {
+          console.log('res', res);
+          setShowSwapConfirm(false);
+          addTransaction(
+            { hash: res.result },
+            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+          );
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    } else if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'ICX') {
+      bnJs
+        .eject({ account: account })
+        .sICX.swapToICX(parseFloat(swapInputAmount))
         .then(res => {
           console.log('res', res);
           setShowSwapConfirm(false);
@@ -291,7 +309,7 @@ export default function SwapPanel() {
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
               id="swap-currency-output"
-              otherCurrency={inputCurrency.symbol}
+              currencyList={getFilteredCurrencies(inputCurrency.symbol)}
             />
           </Flex>
 

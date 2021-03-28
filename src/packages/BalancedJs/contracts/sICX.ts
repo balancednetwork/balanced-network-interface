@@ -32,6 +32,20 @@ export default class sICX extends Contract {
     return this.callIconex(payload);
   }
 
+  async collateralDeposit(value: number): Promise<ResponseJsonRPCPayload> {
+    const data = { method: '_deposit_and_borrow', params: { _sender: this.account, _asset: '', _amount: 0 } };
+    const dataHex = '0x' + Buffer.from(JSON.stringify(data), 'utf8').toString('hex');
+    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = { _to: addresses[this.nid].loans, _value: valueHex, _data: dataHex };
+    const payload = this.transactionParamsBuilder({
+      method: 'transfer',
+      value: 0,
+      params,
+    });
+    console.log(payload);
+    return this.callIconex(payload);
+  }
+
   async dexDeposit(value: number): Promise<ResponseJsonRPCPayload> {
     const data = '0x' + Buffer.from('{"method": "_deposit"}', 'utf8').toString('hex');
     const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);

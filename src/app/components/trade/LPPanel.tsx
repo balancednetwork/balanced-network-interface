@@ -320,7 +320,7 @@ export default function LPPanel() {
               </StyledDL>
               <StyledDL>
                 <dt>Total daily rewards</dt>
-                <dd>~17,500 BALN</dd>
+                <dd>17,500 BALN</dd>
               </StyledDL>
             </Box>
           </Flex>

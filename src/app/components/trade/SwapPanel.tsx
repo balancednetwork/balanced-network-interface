@@ -70,7 +70,6 @@ export default function SwapPanel() {
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
   const ratio = useRatioValue();
-  const sICXbnUSDratio = ratio.sICXbnUSDratio?.toNumber() || 0;
   const addTransaction = useTransactionAdder();
   const ICXbalance = useWalletICXBalance(account);
 
@@ -422,11 +421,11 @@ export default function SwapPanel() {
       <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
-            Swap sICX for bnUSD?
+            Swap {inputCurrency.symbol} for {outputCurrency.symbol}?
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {sICXbnUSDratio.toFixed(2)} sICX per bnUSD
+            {tokenRatio(inputCurrency.symbol).toFixed(2)} {inputCurrency.symbol} per {outputCurrency.symbol}
           </Typography>
 
           <Flex my={5}>
@@ -445,7 +444,17 @@ export default function SwapPanel() {
             </Box>
           </Flex>
 
-          <Typography textAlign="center">Includes a fee of 0.22 BALN.</Typography>
+          <Typography
+            textAlign="center"
+            style={
+              (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') ||
+              (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx')
+                ? { display: 'none' }
+                : {}
+            }
+          >
+            Includes a fee of 0.22 BALN.
+          </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>

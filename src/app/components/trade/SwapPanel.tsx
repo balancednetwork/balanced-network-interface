@@ -453,7 +453,7 @@ export default function SwapPanel() {
                 : {}
             }
           >
-            Includes a fee of 0.22 BALN.
+            Includes a fee of 0.22 {outputCurrency.symbol}.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

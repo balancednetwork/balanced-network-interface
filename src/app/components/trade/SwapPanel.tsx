@@ -162,7 +162,9 @@ export default function SwapPanel() {
     setLoading(true);
     try {
       axios
-        .get(`http://35.240.219.80:8069/api/v1/chart/lines?symbol=${symbol}&interval=${interval}&limit=500&order=desc`)
+        .get(
+          `https://balanced.techiast.com:8069/api/v1/chart/lines?symbol=${symbol}&interval=${interval}&limit=500&order=desc`,
+        )
         .then(res => {
           const { data: d } = res;
           let t = d.map(item => ({

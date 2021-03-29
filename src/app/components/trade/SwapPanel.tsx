@@ -447,8 +447,7 @@ export default function SwapPanel() {
           <Typography
             textAlign="center"
             style={
-              (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') ||
-              (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx')
+              inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx'
                 ? { display: 'none' }
                 : {}
             }

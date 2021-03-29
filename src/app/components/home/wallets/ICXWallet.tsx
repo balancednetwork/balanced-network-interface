@@ -24,7 +24,7 @@ export default function ICXWallet() {
   const sendICX = useCallback(() => {
     if (!account) return;
     bnJs
-      .iconexTransfer({
+      .transfer({
         value: Number(icxValueToSend),
         to: addressToTransfer,
       })

@@ -75,7 +75,7 @@ export class BalancedJs {
     return this;
   }
 
-  iconexTransfer({ value, to }: { value: number; to: string }): Promise<any> {
+  transfer({ value, to }: { value: number; to: string }): Promise<any> {
     const contract = new Contract(this.contractSettings);
     contract.address = to;
     const payload = contract.transferICXParamsBuilder({

@@ -17,7 +17,7 @@ import { useLiquiditySupply } from 'store/liquidity/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalanceValue, useChangeWalletBalance } from 'store/wallet/hooks';
 
 import { SectionPanel, BrightPanel } from './utils';
 
@@ -39,6 +39,8 @@ export default function LPPanel() {
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
   const liquiditySupply = useLiquiditySupply();
+
+  const changeWalletBalance = useChangeWalletBalance();
 
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
 
@@ -88,29 +90,9 @@ export default function LPPanel() {
 
   const addTransaction = useTransactionAdder();
 
-  const handleSupplyInputDepositConfirm = () => {
-    if (!account) return;
-    bnJs
+  const sendBnUSDToDex = () => {
+    return bnJs
       .eject({ account: account })
-      //.sICX.borrowAdd(newBorrowValue)
-      .sICX.dexDeposit(parseFloat(supplyInputAmount))
-      .then(res => {
-        console.log('res', res);
-        addTransaction(
-          { hash: res.result },
-          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
-        );
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
-  };
-
-  const handleSupplyOutputDepositConfirm = () => {
-    if (!account) return;
-    bnJs
-      .eject({ account: account })
-      //.sICX.borrowAdd(newBorrowValue)
       .bnUSD.dexDeposit(parseFloat(supplyOutputAmount))
       .then(res => {
         console.log('res', res);
@@ -124,37 +106,174 @@ export default function LPPanel() {
       });
   };
 
-  const handleSupplyConfirm = () => {
-    if (!account) return;
-    if (selectedPair.pair === SupportedPairs[2].pair) {
-      bnJs
-        .eject({ account: account })
-        .Dex.transferICX(parseFloat(supplyInputAmount))
-        .then(res => {
-          addTransaction(
-            { hash: res.result },
-            { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the pool.` },
-          );
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
-    } else {
+  const sendSICXToDex = () => {
+    return (
       bnJs
         .eject({ account: account })
         //.sICX.borrowAdd(newBorrowValue)
-        .Dex.dexSupplysICXbnUSD(parseFloat(supplyInputAmount), parseFloat(supplyOutputAmount))
+        .sICX.dexDeposit(parseFloat(supplyInputAmount))
         .then(res => {
+          console.log('res', res);
           addTransaction(
             { hash: res.result },
-            {
-              summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the pool.`,
-            },
+            { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
           );
         })
         .catch(e => {
           console.error('error', e);
+        })
+    );
+  };
+
+  const sendBALNToDex = () => {
+    return bnJs
+      .eject({ account: account })
+      .Baln.dexDeposit(parseFloat(supplyInputAmount))
+      .then(res => {
+        console.log('res', res);
+        addTransaction(
+          { hash: res.result },
+          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
+        );
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const sendICXToDex = () => {
+    return bnJs
+      .eject({ account: account })
+      .Baln.dexDeposit(parseFloat(supplyInputAmount))
+      .then(res => {
+        console.log('res', res);
+        addTransaction(
+          { hash: res.result },
+          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
+        );
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const handleSupplyInputDepositConfirm = () => {
+    if (!account) return;
+    switch (selectedPair.pair) {
+      case SupportedPairs[0].pair: {
+        sendSICXToDex().then(() => {
+          const new_sICXBalance = walletBalance.sICXbalance.minus(new BigNumber(supplyInputAmount));
+          changeWalletBalance({
+            sICXbalance: new_sICXBalance,
+          });
         });
+        break;
+      }
+      case SupportedPairs[1].pair: {
+        sendBALNToDex().then(() => {
+          const new_bnUSDBalance = walletBalance.bnUSDbalance.minus(new BigNumber(supplyInputAmount));
+          changeWalletBalance({
+            bnUSDbalance: new_bnUSDBalance,
+          });
+        });
+        break;
+      }
+      case SupportedPairs[2].pair: {
+        sendICXToDex().then(() => {
+          const newICXBalance = walletBalance.ICXbalance.minus(new BigNumber(supplyInputAmount));
+          changeWalletBalance({
+            ICXbalance: newICXBalance,
+          });
+        });
+        break;
+      }
+      default: {
+        console.log('deposit input currency not yet supported');
+      }
+    }
+  };
+
+  const handleSupplyOutputDepositConfirm = () => {
+    if (!account) return;
+    switch (selectedPair.pair) {
+      case SupportedPairs[0].pair: {
+        sendBnUSDToDex().then(() => {
+          const new_bnUSDBalance = walletBalance.bnUSDbalance.minus(new BigNumber(supplyOutputAmount));
+          changeWalletBalance({
+            bnUSDbalance: new_bnUSDBalance,
+          });
+        });
+        break;
+      }
+      case SupportedPairs[1].pair: {
+        sendBnUSDToDex().then(() => {
+          const new_bnUSDBalance = walletBalance.bnUSDbalance.minus(new BigNumber(supplyOutputAmount));
+          changeWalletBalance({
+            bnUSDbalance: new_bnUSDBalance,
+          });
+        });
+        break;
+      }
+      default: {
+        console.log('deposit output currency not yet supported');
+      }
+    }
+  };
+
+  const supply_sICXbnUSD = () => {
+    bnJs
+      .eject({ account: account })
+      .Dex.dexSupplysICXbnUSD(parseFloat(supplyInputAmount), parseFloat(supplyOutputAmount))
+      .then(res => {
+        console.log('supply_sICXbnUSD = ', res);
+        addTransaction(
+          { hash: res.result },
+          {
+            summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the pool.`,
+          },
+        );
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const supplyBALNbnUSD = () => {
+    bnJs
+      .eject({ account: account })
+      .Dex.supplyBALNbnUSD(parseFloat(supplyInputAmount), parseFloat(supplyOutputAmount))
+      .then(res => {
+        console.log('supplyBALNbnUSD = ', res);
+        addTransaction(
+          { hash: res.result },
+          {
+            summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the pool.`,
+          },
+        );
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const handleSupplyConfirm = () => {
+    if (!account) return;
+    switch (selectedPair.pair) {
+      case SupportedPairs[0].pair: {
+        supply_sICXbnUSD();
+        break;
+      }
+      case SupportedPairs[1].pair: {
+        supplyBALNbnUSD();
+        break;
+      }
+      case SupportedPairs[2].pair: {
+        sendICXToDex();
+        break;
+      }
+      default: {
+        console.log('deposit input currency not yet supported');
+      }
     }
   };
 
@@ -214,7 +333,6 @@ export default function LPPanel() {
   }, [selectedPair, walletBalance]);
 
   React.useEffect(() => {
-    console.log('useEffect');
     setSuppliedPairAmount(getSuppliedPairAmount());
     setWalletBalanceSelected(getWalletBalanceSelected());
   }, [getSuppliedPairAmount, getWalletBalanceSelected, selectedPair]);

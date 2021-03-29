@@ -40,6 +40,24 @@ export default class Dex extends Contract {
     return this.callIconex(payload);
   }
 
+  async supplyBALNbnUSD(baseValue: number, quoteValue: number): Promise<ResponseJsonRPCPayload> {
+    const hexBasePrice = '0x' + IconAmount.of(baseValue, IconAmount.Unit.ICX).toLoop().toString(16);
+    const hexQuotePrice = '0x' + IconAmount.of(quoteValue, IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = {
+      _baseToken: addresses[this.nid].baln,
+      _quoteToken: addresses[this.nid].bnUSD,
+      _maxBaseValue: hexBasePrice,
+      _quoteValue: hexQuotePrice,
+    };
+    const payload = this.transactionParamsBuilder({
+      method: 'add',
+      value: 0,
+      params,
+    });
+    console.log(payload);
+    return this.callIconex(payload);
+  }
+
   getDeposit(tokenAddress: string) {
     const callParams = this.paramsBuilder({
       method: 'getDeposit',

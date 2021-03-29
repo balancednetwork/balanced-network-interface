@@ -27,50 +27,59 @@ const LiquidityDetails = () => {
     ?.multipliedBy(100)
     .toFixed(2);
 
-  const sICXICXTotalSupply = liquiditySupply.sICXICXTotalSupply?.toNumber() || 0;
-  const ICXBalance = liquiditySupply.ICXBalance?.toNumber() || 0;
+  const BALNPoolBALNbnUSDTotal = liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0);
+  const BALNbnUSDSuppliedShare = liquiditySupply.BALNSuppliedPoolBALNbnUSD?.dividedBy(BALNPoolBALNbnUSDTotal)
+    ?.multipliedBy(100)
+    .toFixed(2);
 
-  const handleWithdrawalICX = () => {
-    if (account) {
-      bnJs
-        .eject({ account: account })
-        .Dex.getICXWithdrawLock()
-        .then(result => {
-          const ICXWithdrawLockTime = parseInt(result, 16);
-          const timeNow = Date.now() * 1000;
-          if (timeNow > ICXWithdrawLockTime + WITHDRAW_LOCK_TIMEOUT) {
-            bnJs
-              .eject({ account: account })
-              .Dex.getICXBalance()
-              .then(result => {
-                changeLiquiditySupply({ ICXBalance: new BigNumber(0) });
-              })
-              .catch(e => {
-                console.error('error', e);
-              });
-          } else {
-            // TODO: show alert
-            console.log('show alert the withdrawal is locked');
-          }
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
-    }
-  };
+  const sICXICXTotalSupply = liquiditySupply.BALNbnUSDTotalSupply || new BigNumber(0);
+  const ICXBalance = liquiditySupply.ICXBalance || new BigNumber(0);
 
-  // x : input amount token1
-  // y : output amount token2
-  // v : total liquidity token 1
-  // z : total liquidity token 2
-  // value = total token * x / v
-  // pool token 2 -= pool token2 * value / z
-  // y = pool token 2 * value / z
-  const [amountWithdrawSICX, setAmountWithdrawSICX] = React.useState('0');
-  const [amountWithdrawBNUSD, setAmountWithdrawBNUSD] = React.useState('0');
+  const [amountWithdrawICX, setAmountWithdrawICX] = React.useState('0');
+
+  React.useEffect(() => {
+    setAmountWithdrawICX((liquiditySupply.ICXBalance || new BigNumber(0)).toFixed(2));
+  }, [liquiditySupply.ICXBalance]);
+
   const handleTypeAmountWithdrawSICX = (val: string) => {
     setAmountWithdrawSICX(val);
   };
+
+  const handleWithdrawalICX = () => {
+    if (!account) return;
+    bnJs
+      .eject({ account: account })
+      .Dex.getICXWithdrawLock()
+      .then(result => {
+        const ICXWithdrawLockTime = parseInt(result, 16);
+        const timeNow = Date.now() * 1000;
+        if (timeNow > ICXWithdrawLockTime + WITHDRAW_LOCK_TIMEOUT) {
+          bnJs
+            .eject({ account: account })
+            .Dex.getICXBalance()
+            .then(result => {
+              changeLiquiditySupply({ ICXBalance: liquiditySupply.ICXBalance?.minus(amountWithdrawICX) });
+            })
+            .catch(e => {
+              console.error('error', e);
+            });
+        } else {
+          // TODO: show alert
+          console.log('show alert the withdrawal is locked');
+        }
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const [amountWithdrawSICX, setAmountWithdrawSICX] = React.useState('0');
+  const [amountWithdrawBNUSD, setAmountWithdrawBNUSD] = React.useState('0');
+
+  const handleTypeAmountWithdrawICX = (val: string) => {
+    setAmountWithdrawICX(val);
+  };
+
   const handleTypeAmountWithdrawBNUSD = (val: string) => {
     setAmountWithdrawBNUSD(val);
   };
@@ -111,8 +120,8 @@ const LiquidityDetails = () => {
           {/* <!-- sICX / ICX --> */}
           <tr>
             <td>sICX / ICX</td>
-            <td>{ICXBalance} ICX</td>
-            <td>{((ICXBalance / sICXICXTotalSupply) * 100).toFixed(2)}%</td>
+            <td>{ICXBalance.toFixed(2)} ICX</td>
+            <td>{ICXBalance.dividedBy(sICXICXTotalSupply).multipliedBy(100).toFixed(2)}%</td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">
@@ -123,25 +132,25 @@ const LiquidityDetails = () => {
                   </Typography>
                   <Box mb={3}>
                     <CurrencyInputPanel
-                      value={ICXBalance.toString()}
+                      value={amountWithdrawICX}
                       showMaxButton={false}
                       currency={CURRENCYLIST['icx']}
-                      onUserInput={() => null}
+                      onUserInput={handleTypeAmountWithdrawICX}
                       id="withdraw-liquidity-input"
                       bg="bg5"
                     />
                   </Box>
                   <Typography mb={5} textAlign="right">
-                    Wallet: {ICXBalance} ICX
+                    Wallet: {ICXBalance.toFixed(2)} ICX
                   </Typography>
                   <Nouislider
                     id="slider-supply"
-                    start={[ICXBalance]}
+                    start={[ICXBalance.toFixed(2)]}
                     padding={[0]}
                     connect={[true, false]}
                     range={{
                       min: [0],
-                      max: [sICXICXTotalSupply],
+                      max: [sICXICXTotalSupply.toNumber()],
                     }}
                   />
                   <Flex alignItems="center" justifyContent="center">
@@ -222,7 +231,7 @@ const LiquidityDetails = () => {
               <br />
               {liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toFixed(2)} bnUSD
             </td>
-            <td>3.1%</td>
+            <td>{!account ? '-' : !BALNbnUSDSuppliedShare ? '0%' : BALNbnUSDSuppliedShare + '%'}</td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">

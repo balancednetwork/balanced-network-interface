@@ -28,7 +28,7 @@ export default class sICX extends Contract {
       value,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 
@@ -41,7 +41,7 @@ export default class sICX extends Contract {
       value: 0,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 
@@ -64,7 +64,7 @@ export default class sICX extends Contract {
       value: 0,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 
@@ -78,7 +78,7 @@ export default class sICX extends Contract {
       value: 0,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 

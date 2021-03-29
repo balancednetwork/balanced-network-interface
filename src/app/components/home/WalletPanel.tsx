@@ -8,6 +8,7 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
+import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import Divider from 'app/components/Divider';
@@ -16,11 +17,8 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { CURRENCYLIST } from 'constants/currency';
 import '@reach/tabs/styles.css';
-import { useWalletICXBalance } from 'hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
-
-import { Button } from '../Button';
 
 const AssetSymbol = styled.div`
   display: grid;
@@ -132,7 +130,6 @@ const WalletPanel = () => {
   // #redux-step-9: how to use
   const walletBalance = useWalletBalanceValue(); // get from store
   const { account } = useIconReact();
-  const ICXbalance = useWalletICXBalance(account);
   const ratio = useRatioValue();
 
   return (
@@ -160,13 +157,22 @@ const WalletPanel = () => {
                       {CURRENCYLIST['icx'].symbol}
                     </Typography>
                   </AssetSymbol>
-                  <DataText>{!account ? '-' : ICXbalance.toNumber() === 0 ? '0' : ICXbalance.toFixed(2)}</DataText>
                   <DataText>
                     {!account
                       ? '-'
-                      : ICXbalance.toNumber() === 0
+                      : walletBalance.ICXbalance.toNumber() === 0
+                      ? '0'
+                      : walletBalance.ICXbalance.toFixed(2)}
+                  </DataText>
+                  <DataText>
+                    {!account
+                      ? '-'
+                      : walletBalance.ICXbalance.toNumber() === 0
                       ? '$0'
-                      : '$' + (ICXbalance.toNumber() * (ratio.ICXUSDratio?.toNumber() || 0)).toFixed(2).toString()}
+                      : '$' +
+                        (walletBalance.ICXbalance.toNumber() * (ratio.ICXUSDratio?.toNumber() || 0))
+                          .toFixed(2)
+                          .toString()}
                   </DataText>
                 </ListItem>
               </StyledAccordionButton>

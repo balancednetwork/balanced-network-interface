@@ -51,16 +51,12 @@ export function useFetchBalance(account?: string | null) {
         bnJs.Rewards.getRewards(),
       ]).then(result => {
         const [ICXbalance, sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v));
-        changeBalanceValue({ ICXbalance });
-        changeBalanceValue({ sICXbalance });
-        changeBalanceValue({ BALNbalance });
-        changeBalanceValue({ bnUSDbalance });
-        changeBalanceValue({ BALNreward });
+        changeBalanceValue({ ICXbalance, sICXbalance, BALNbalance, bnUSDbalance, BALNreward });
       });
     }
   }, [account, changeBalanceValue]);
 
   React.useEffect(() => {
     fetchBalances();
-  }, [fetchBalances, transactions]);
+  }, [fetchBalances, transactions, account]);
 }

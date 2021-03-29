@@ -8,4 +8,4 @@ export const changeValueBalance = createAction<{
   bnUSDbalance?: BigNumber;
   BALNbalance?: BigNumber;
   BALNreward?: BigNumber;
-}>('walletBalance/changeValueBalance'); // #redux-note: make sure action name is unique in global store
+}>('wallet/changeValueBalance'); // #redux-note: make sure action name is unique in global store

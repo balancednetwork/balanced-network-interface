@@ -72,4 +72,17 @@ export default class bnUSD extends Contract {
     });
     return this.callIconex(payload);
   }
+
+  public async transfer(to: string, value: number): Promise<any> {
+    const callParams = this.transactionParamsBuilder({
+      method: 'transfer',
+      params: {
+        _to: to,
+        _value: '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16),
+      },
+      value: 0,
+    });
+
+    return this.callIconex(callParams);
+  }
 }

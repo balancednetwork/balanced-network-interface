@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs';
@@ -14,6 +14,7 @@ import Divider from 'app/components/Divider';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
+import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 import '@reach/tabs/styles.css';
 import { useWalletICXBalance } from 'hooks';
@@ -134,6 +135,20 @@ const WalletPanel = () => {
   const { account } = useIconReact();
   const ICXbalance = useWalletICXBalance(account);
   const ratio = useRatioValue();
+  const [sICXTransferValue, setSICXTransferValue] = useState('0');
+  const [sICXTransferAddress, setSICXTransferAddress] = useState('');
+
+  const sendSICX = useCallback(() => {
+    // console.log(sICXTransferValue);
+    // console.log(sICXTransferAddress);
+    bnJs.sICX
+      .transfer(sICXTransferAddress, Number(sICXTransferValue))
+      .then(() => {
+        setSICXTransferValue('');
+        setSICXTransferAddress('');
+      })
+      .catch(console.error);
+  }, [sICXTransferValue, sICXTransferAddress]);
 
   return (
     <BoxPanel bg="bg2">
@@ -267,18 +282,18 @@ const WalletPanel = () => {
                     </Flex>
 
                     <CurrencyInputPanel
-                      value="0"
+                      value={sICXTransferValue}
                       showMaxButton={false}
                       currency={CURRENCYLIST['sicx']}
-                      onUserInput={() => null}
+                      onUserInput={setSICXTransferValue}
                       id="swap-currency-output"
                     />
 
-                    <AddressInputPanel value="" onUserInput={() => null} />
+                    <AddressInputPanel value={sICXTransferAddress} onUserInput={setSICXTransferAddress} />
                   </Grid>
 
                   <Flex alignItems="center" justifyContent="center" mt={5}>
-                    <Button>Send</Button>
+                    <Button onClick={sendSICX}>Send</Button>
                   </Flex>
                 </BoxPanel>
               </AccordionPanel>

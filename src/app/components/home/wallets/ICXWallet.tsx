@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
+import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
@@ -10,11 +11,29 @@ import Divider from 'app/components/Divider';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
+import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 
 import { StyledTabList, StyledTab, Grid } from './utils';
 
 export default function ICXWallet() {
+  const [icxValueToSend, setICXValueToChange] = useState('0');
+  const [addressToTransfer, setAddressToTransfer] = useState('');
+  const { account } = useIconReact();
+
+  const sendICX = useCallback(() => {
+    if (!account) return;
+    bnJs
+      .iconexTransfer({
+        value: Number(icxValueToSend),
+        to: addressToTransfer,
+      })
+      .then(() => {
+        setICXValueToChange('0');
+        setAddressToTransfer('');
+      });
+  }, [setICXValueToChange, setAddressToTransfer, icxValueToSend, addressToTransfer, account]);
+
   return (
     <BoxPanel bg="bg3">
       <Tabs>
@@ -27,23 +46,23 @@ export default function ICXWallet() {
           <TabPanel>
             <Grid>
               <Flex alignItems="center" justifyContent="space-between">
-                <Typography variant="h3">Send bnUSD</Typography>
+                <Typography variant="h3">Send ICX</Typography>
                 <Link href="#">Send max</Link>
               </Flex>
 
               <CurrencyInputPanel
-                value="0"
+                value={icxValueToSend}
                 showMaxButton={false}
                 currency={CURRENCYLIST['icx']}
-                onUserInput={() => null}
+                onUserInput={setICXValueToChange}
                 id="swap-currency-output"
               />
 
-              <AddressInputPanel value="" onUserInput={() => null} />
+              <AddressInputPanel value={addressToTransfer} onUserInput={setAddressToTransfer} />
             </Grid>
 
             <Flex alignItems="center" justifyContent="center" mt={5}>
-              <Button>Send</Button>
+              <Button onClick={sendICX}>Send</Button>
             </Flex>
           </TabPanel>
 

@@ -28,7 +28,7 @@ export default class sICX extends Contract {
       value,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 
@@ -41,7 +41,7 @@ export default class sICX extends Contract {
       value: 0,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 
@@ -64,7 +64,7 @@ export default class sICX extends Contract {
       value: 0,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 
@@ -78,7 +78,7 @@ export default class sICX extends Contract {
       value: 0,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 
@@ -104,11 +104,11 @@ export default class sICX extends Contract {
     return this.call(callParams);
   }
 
-  public async transfer(toAddress: string, value: number): Promise<any> {
+  public async transfer(to: string, value: number): Promise<any> {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
       params: {
-        _to: toAddress,
+        _to: to,
         _value: '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16),
       },
       value: 0,
@@ -117,7 +117,7 @@ export default class sICX extends Contract {
     return this.callIconex(callParams);
   }
 
-  async unstakeSICX(value: number): Promise<ResponseJsonRPCPayload> {
+  async unstake(value: number): Promise<ResponseJsonRPCPayload> {
     const data = '0x' + Buffer.from('{"method": "_unstake"}', 'utf8').toString('hex');
     const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].staking, _value: valueHex, _data: data };
@@ -127,7 +127,7 @@ export default class sICX extends Contract {
       value: 0,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 }

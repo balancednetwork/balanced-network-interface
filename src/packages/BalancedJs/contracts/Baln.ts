@@ -53,15 +53,15 @@ export default class Baln extends Contract {
       value: 0,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 
-  public async transfer(toAddress: string, value: number): Promise<any> {
+  public async transfer(to: string, value: number): Promise<any> {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
       params: {
-        _to: toAddress,
+        _to: to,
         _value: '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16),
       },
       value: 0,
@@ -70,7 +70,7 @@ export default class Baln extends Contract {
     return this.callIconex(callParams);
   }
 
-  async stakeBALN(value: number): Promise<ResponseJsonRPCPayload> {
+  async stake(value: number): Promise<ResponseJsonRPCPayload> {
     const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _value: valueHex };
     const payload = this.transactionParamsBuilder({
@@ -78,7 +78,7 @@ export default class Baln extends Contract {
       value: 0,
       params,
     });
-    console.log(payload);
+
     return this.callIconex(payload);
   }
 }

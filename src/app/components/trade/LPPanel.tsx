@@ -144,7 +144,7 @@ export default function LPPanel() {
   const sendICXToDex = () => {
     return bnJs
       .eject({ account: account })
-      .Baln.dexDeposit(parseFloat(supplyInputAmount))
+      .Dex.transferICX(parseFloat(supplyInputAmount))
       .then(res => {
         console.log('res', res);
         addTransaction(

@@ -13,11 +13,16 @@ export function useReward(): AppState['reward'] {
 }
 
 // #redux-step-6: define function working with variable on store
-export function useChangeReward(): ({ sICXbnUSDreward, sICXICXreward, poolDailyReward }: Partial<RewardState>) => void {
+export function useChangeReward(): ({
+  sICXbnUSDreward,
+  BALNbnUSDreward,
+  sICXICXreward,
+  poolDailyReward,
+}: Partial<RewardState>) => void {
   const dispatch = useDispatch();
   return useCallback(
-    ({ sICXbnUSDreward, sICXICXreward, poolDailyReward }) => {
-      dispatch(changeReward({ sICXbnUSDreward, sICXICXreward, poolDailyReward }));
+    ({ sICXbnUSDreward, BALNbnUSDreward, sICXICXreward, poolDailyReward }) => {
+      dispatch(changeReward({ sICXbnUSDreward, BALNbnUSDreward, sICXICXreward, poolDailyReward }));
     },
     [dispatch],
   );

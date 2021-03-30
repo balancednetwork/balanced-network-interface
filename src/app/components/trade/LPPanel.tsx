@@ -39,6 +39,7 @@ export default function LPPanel() {
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
   const liquiditySupply = useLiquiditySupply();
+  const ICXliquiditySupply = liquiditySupply.ICXBalance || new BigNumber(0);
 
   const changeWalletBalance = useChangeWalletBalance();
 
@@ -418,10 +419,15 @@ export default function LPPanel() {
               <StyledDL>
                 <dt>Your supply</dt>
                 <dd>
-                  {suppliedPairAmount.base.toFixed(2)} {selectedPair.baseCurrencyKey}
                   {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
-                    ? ''
-                    : ' / ' + suppliedPairAmount.quote.toFixed(2) + ' ' + selectedPair.quoteCurrencyKey}
+                    ? ICXliquiditySupply.toFixed(2) + ' ICX'
+                    : suppliedPairAmount.base.toFixed(2) +
+                      ' ' +
+                      selectedPair.baseCurrencyKey +
+                      ' / ' +
+                      suppliedPairAmount.quote.toFixed(2) +
+                      ' ' +
+                      selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>

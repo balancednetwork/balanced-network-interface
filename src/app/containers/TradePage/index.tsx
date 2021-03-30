@@ -15,15 +15,30 @@ import ReturnICDSection from 'app/components/trade/ReturnICDSection';
 import SwapPanel from 'app/components/trade/SwapPanel';
 import bnJs from 'bnJs';
 import { useChangeLiquiditySupply } from 'store/liquidity/hooks';
+import { useFetchPrice } from 'store/ratio/hooks';
+import { useFetchBalance } from 'store/wallet/hooks';
 
 export function TradePage() {
+  // get ratio interval at here
+  useFetchPrice();
+
   const { account } = useIconReact();
+  useFetchBalance(account);
   const changeLiquiditySupply = useChangeLiquiditySupply();
 
   const [value, setValue] = React.useState<number>(0);
 
   const handleTabClick = (event: React.MouseEvent, value: number) => {
     setValue(value);
+  };
+
+  const calculateTokenSupplied = (balance: BigNumber, poolTotal: BigNumber, totalSupply: BigNumber) => {
+    let tokenSupplied = balance
+      .multipliedBy(poolTotal)
+      .multipliedBy(new BigNumber(1).minus(balance.dividedBy(totalSupply)))
+      .dividedBy(totalSupply);
+    if (tokenSupplied.isNaN()) tokenSupplied = new BigNumber(0);
+    return tokenSupplied;
   };
 
   // get liquidity supply
@@ -33,16 +48,73 @@ export function TradePage() {
       Promise.all([
         bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.sICX.address),
         bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.bnUSD.address),
-        bnJs.Dex.getSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
+        bnJs.Dex.balanceOf(BalancedJs.utils.sICXbnUSDpoolId.toString()),
         bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
+
+        bnJs.Dex.getPoolTotal(BalancedJs.utils.BALNbnUSDpoolId.toString(), bnJs.Baln.address),
+        bnJs.Dex.getPoolTotal(BalancedJs.utils.BALNbnUSDpoolId.toString(), bnJs.bnUSD.address),
+        bnJs.Dex.balanceOf(BalancedJs.utils.BALNbnUSDpoolId.toString()),
+        bnJs.Dex.getTotalSupply(BalancedJs.utils.BALNbnUSDpoolId.toString()),
+
+        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXICXpoolId.toString()),
+        bnJs.eject({ account: account }).Dex.getICXBalance(),
       ]).then(result => {
-        const [sICXsupply, bnUSDsupply, sICXbnUSDsupply, sICXbnUSDtotalSupply] = result.map(v =>
-          convertLoopToIcx(v as BigNumber),
+        const [
+          sICXPoolsICXbnUSDTotal, // sm method `getPoolTotal`
+          bnUSDPoolsICXbnUSDTotal, // sm method `getPoolTotal`
+          sICXbnUSDBalance, // sm method `balanceOf`
+          sICXbnUSDTotalSupply, // sm method `totalSupply` pool sICXbnUSDpoolId
+
+          BALNPoolBALNbnUSDTotal,
+          bnUSDPoolBALNbnUSDTotal,
+          BALNbnUSDBalance,
+          BALNbnUSDTotalSupply,
+
+          sICXICXTotalSupply, // sm method `totalSupply` pool sICXICXpoolId
+          ICXBalance,
+        ] = result.map(v => convertLoopToIcx(v as BigNumber));
+        const sICXSuppliedPoolsICXbnUSD = calculateTokenSupplied(
+          sICXbnUSDBalance,
+          sICXPoolsICXbnUSDTotal,
+          sICXbnUSDTotalSupply,
         );
-        changeLiquiditySupply({ sICXsupply });
-        changeLiquiditySupply({ bnUSDsupply });
-        changeLiquiditySupply({ sICXbnUSDsupply });
-        changeLiquiditySupply({ sICXbnUSDtotalSupply });
+        const bnUSDSuppliedPoolsICXbnUSD = calculateTokenSupplied(
+          sICXbnUSDBalance,
+          bnUSDPoolsICXbnUSDTotal,
+          sICXbnUSDTotalSupply,
+        );
+
+        const BALNSuppliedPoolBALNbnUSD = calculateTokenSupplied(
+          BALNbnUSDBalance,
+          BALNPoolBALNbnUSDTotal,
+          BALNbnUSDTotalSupply,
+        );
+        const bnUSDSuppliedPoolBALNbnUSD = calculateTokenSupplied(
+          BALNbnUSDBalance,
+          bnUSDPoolBALNbnUSDTotal,
+          BALNbnUSDTotalSupply,
+        );
+
+        changeLiquiditySupply({
+          sICXPoolsICXbnUSDTotal,
+          bnUSDPoolsICXbnUSDTotal,
+          sICXbnUSDBalance,
+          sICXbnUSDTotalSupply,
+
+          BALNPoolBALNbnUSDTotal,
+          bnUSDPoolBALNbnUSDTotal,
+          BALNbnUSDBalance,
+          BALNbnUSDTotalSupply,
+
+          sICXSuppliedPoolsICXbnUSD,
+          bnUSDSuppliedPoolsICXbnUSD,
+
+          BALNSuppliedPoolBALNbnUSD,
+          bnUSDSuppliedPoolBALNbnUSD,
+
+          sICXICXTotalSupply,
+          ICXBalance,
+        });
       });
     }
   }, [account, changeLiquiditySupply]);

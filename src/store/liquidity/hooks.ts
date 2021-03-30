@@ -14,24 +14,67 @@ export function useLiquiditySupply(): AppState['liquidity'] {
 
 // #redux-step-6: define function working with variable on store
 export function useChangeLiquiditySupply(): ({
-  ICXsupply,
-  sICXsupply,
-  sICXbnUSDsupply,
-  sICXbnUSDtotalSupply,
-  bnUSDsupply,
-  BALNsupply,
+  sICXPoolsICXbnUSDTotal,
+  bnUSDPoolsICXbnUSDTotal,
+  sICXbnUSDBalance,
+  sICXbnUSDTotalSupply,
+
+  BALNPoolBALNbnUSDTotal,
+  bnUSDPoolBALNbnUSDTotal,
+  BALNbnUSDBalance,
+  BALNbnUSDTotalSupply,
+
+  sICXSuppliedPoolsICXbnUSD,
+  bnUSDSuppliedPoolsICXbnUSD,
+
+  BALNSuppliedPoolBALNbnUSD,
+  bnUSDSuppliedPoolBALNbnUSD,
+
+  sICXICXTotalSupply,
+  ICXBalance,
 }: LiquidityState) => void {
   const dispatch = useDispatch();
   return useCallback(
-    ({ ICXsupply, sICXsupply, sICXbnUSDsupply, sICXbnUSDtotalSupply, bnUSDsupply, BALNsupply }) => {
+    ({
+      sICXPoolsICXbnUSDTotal,
+      bnUSDPoolsICXbnUSDTotal,
+      sICXbnUSDBalance,
+      sICXbnUSDTotalSupply,
+
+      BALNPoolBALNbnUSDTotal,
+      bnUSDPoolBALNbnUSDTotal,
+      BALNbnUSDBalance,
+      BALNbnUSDTotalSupply,
+
+      sICXSuppliedPoolsICXbnUSD,
+      bnUSDSuppliedPoolsICXbnUSD,
+
+      BALNSuppliedPoolBALNbnUSD,
+      bnUSDSuppliedPoolBALNbnUSD,
+
+      sICXICXTotalSupply,
+      ICXBalance,
+    }) => {
       dispatch(
         changeLiquiditySupply({
-          ICXsupply,
-          sICXsupply,
-          sICXbnUSDsupply,
-          sICXbnUSDtotalSupply,
-          bnUSDsupply,
-          BALNsupply,
+          sICXPoolsICXbnUSDTotal,
+          bnUSDPoolsICXbnUSDTotal,
+          sICXbnUSDBalance,
+          sICXbnUSDTotalSupply,
+
+          BALNPoolBALNbnUSDTotal,
+          bnUSDPoolBALNbnUSDTotal,
+          BALNbnUSDBalance,
+          BALNbnUSDTotalSupply,
+
+          sICXSuppliedPoolsICXbnUSD,
+          bnUSDSuppliedPoolsICXbnUSD,
+
+          BALNSuppliedPoolBALNbnUSD,
+          bnUSDSuppliedPoolBALNbnUSD,
+
+          sICXICXTotalSupply,
+          ICXBalance,
         }),
       );
     },

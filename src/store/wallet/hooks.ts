@@ -44,21 +44,19 @@ export function useFetchBalance(account?: string | null) {
   const fetchBalances = React.useCallback(() => {
     if (account) {
       Promise.all([
+        bnJs.sICX.getICXBalance(),
         bnJs.sICX.balanceOf(),
         bnJs.Baln.balanceOf(),
         bnJs.bnUSD.balanceOf(),
         bnJs.Rewards.getRewards(),
       ]).then(result => {
-        const [sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v));
-        changeBalanceValue({ sICXbalance });
-        changeBalanceValue({ BALNbalance });
-        changeBalanceValue({ bnUSDbalance });
-        changeBalanceValue({ BALNreward });
+        const [ICXbalance, sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v));
+        changeBalanceValue({ ICXbalance, sICXbalance, BALNbalance, bnUSDbalance, BALNreward });
       });
     }
   }, [account, changeBalanceValue]);
 
   React.useEffect(() => {
     fetchBalances();
-  }, [fetchBalances, transactions]);
+  }, [fetchBalances, transactions, account]);
 }

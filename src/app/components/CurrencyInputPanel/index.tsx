@@ -10,6 +10,7 @@ import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { CURRENCYLIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
 import { Currency } from 'types';
+import { escapeRegExp } from 'utils';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -91,6 +92,8 @@ interface CurrencyInputPanelProps {
   bg?: string;
 }
 
+const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
+
 export default function CurrencyInputPanel({
   value,
   onUserInput,
@@ -140,8 +143,16 @@ export default function CurrencyInputPanel({
 
   React.useEffect(() => {
     const t = otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList;
-    onCurrencySelect && onCurrencySelect(CURRENCYLIST[t[0].toLowerCase()]);
-  }, [otherCurrency, onCurrencySelect, currencyList]);
+    if (t?.indexOf(currency?.symbol as string) === -1) {
+      onCurrencySelect && onCurrencySelect(CURRENCYLIST[t[0].toLowerCase()]);
+    }
+  }, [currency, otherCurrency, onCurrencySelect, currencyList]);
+
+  const enforcer = (nextUserInput: string) => {
+    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+      onUserInput(nextUserInput);
+    }
+  };
 
   return (
     <InputContainer ref={ref}>
@@ -177,7 +188,25 @@ export default function CurrencyInputPanel({
         </CurrencySelect>
       </ClickAwayListener>
 
-      <NumberInput value={value} onChange={event => onUserInput(event.target.value)} bg={bg} />
+      <NumberInput
+        value={value}
+        onChange={event => {
+          enforcer(event.target.value.replace(/,/g, '.'));
+        }}
+        // universal input options
+        inputMode="decimal"
+        title="Token Amount"
+        autoComplete="off"
+        autoCorrect="off"
+        // text-specific options
+        type="text"
+        pattern="^[0-9]*[.,]?[0-9]*$"
+        minLength={1}
+        maxLength={79}
+        spellCheck="false"
+        //style
+        bg={bg}
+      />
     </InputContainer>
   );
 }

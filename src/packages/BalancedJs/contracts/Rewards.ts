@@ -24,6 +24,6 @@ export default class Rewards extends Contract {
       },
     });
 
-    return this.callIconex(payload);
+    return this.call(payload);
   }
 }

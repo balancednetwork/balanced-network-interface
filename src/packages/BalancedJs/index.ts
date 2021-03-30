@@ -75,7 +75,7 @@ export class BalancedJs {
     return this;
   }
 
-  transfer({ value, to }: { value: number; to: string }): Promise<any> {
+  transfer(to: string, value: number): Promise<any> {
     const contract = new Contract(this.contractSettings);
     contract.address = to;
     const payload = contract.transferICXParamsBuilder({

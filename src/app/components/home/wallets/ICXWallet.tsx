@@ -61,10 +61,7 @@ export default function ICXWallet() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .transfer({
-        to: address,
-        value: differenceAmount.toNumber(),
-      })
+      .transfer(address, differenceAmount.toNumber())
       .then(res => {
         if (res.result) {
           addTransaction({ hash: res.result }, { summary: `Sent ${differenceAmount.toNumber()} ICX to ${address}.` });

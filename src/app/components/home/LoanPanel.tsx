@@ -71,7 +71,7 @@ const LoanPanel = () => {
   const borrowedbnUSDAmount = useLoanBorrowedValue();
 
   const totalAvailablebnUSDAmount = useTotalAvailablebnUSDAmount();
-  console.log(totalAvailablebnUSDAmount.toNumber());
+
   //  calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),

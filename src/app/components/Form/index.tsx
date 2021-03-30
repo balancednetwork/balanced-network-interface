@@ -6,6 +6,7 @@ import styled from 'styled-components';
 // import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { Currency } from 'types';
+import { escapeRegExp } from 'utils'; // match escaped "." characters via in a non-capturing group
 
 export const CheckBox = styled(Box)<{ isActive: boolean }>`
   width: 20px;
@@ -31,7 +32,7 @@ const CurrencyInput = styled(Box)`
   overflow: visible;
 `;
 
-const Input = styled.input`
+const NumberInput = styled.input`
   flex: 1;
   width: 100%;
   text-align: right;
@@ -39,10 +40,12 @@ const Input = styled.input`
   border: none;
   color: white;
   outline: none;
-  margin-right: 4px;
+  padding-right: 4px;
 `;
 
 const CurrencyUnit = styled.span``;
+
+const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`);
 
 export const CurrencyField: React.FC<{
   id?: string;
@@ -57,7 +60,11 @@ export const CurrencyField: React.FC<{
   const { id, isActive, label, value, currency, /*tooltipText,*/ editable, onUserInput } = props;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onUserInput && onUserInput(event.target.value);
+    const nextUserInput = event.target.value.replace(/,/g, '.');
+
+    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+      onUserInput && onUserInput(event.target.value);
+    }
   };
 
   return (
@@ -65,7 +72,9 @@ export const CurrencyField: React.FC<{
       <Flex alignItems="center">
         <Flex>
           <CheckBox isActive={isActive} mr={2} />
-          <Typography>{label}</Typography>
+          <Typography as="label" htmlFor={label} unselectable="on" sx={{ userSelect: 'none' }}>
+            {label}
+          </Typography>
         </Flex>
       </Flex>
 
@@ -77,7 +86,22 @@ export const CurrencyField: React.FC<{
 
       {editable && (
         <CurrencyInput mt={1}>
-          <Input value={value} onChange={handleChange} />
+          <NumberInput
+            id={label}
+            value={value}
+            onChange={handleChange}
+            // universal input options
+            inputMode="decimal"
+            title="Token Amount"
+            autoComplete="off"
+            autoCorrect="off"
+            // text-specific options
+            type="text"
+            pattern="^[0-9]*[.,]?[0-9]*$"
+            minLength={1}
+            maxLength={79}
+            spellCheck="false"
+          />
           <CurrencyUnit>{currency.symbol}</CurrencyUnit>
         </CurrencyInput>
       )}

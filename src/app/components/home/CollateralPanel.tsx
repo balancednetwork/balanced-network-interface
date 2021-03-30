@@ -197,12 +197,12 @@ const CollateralPanel = () => {
 
         {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} />}
 
-        <Box marginY={6} height={20}>
+        <Box marginY={6}>
           <Nouislider
             id="slider-collateral"
             disabled={!isAdjusting}
             start={[stakedICXAmount.toNumber()]}
-            padding={[tLockedICXAmount.toNumber(), 0]}
+            padding={[Math.max(tLockedICXAmount.toNumber(), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],

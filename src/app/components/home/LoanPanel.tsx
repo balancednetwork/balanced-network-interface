@@ -201,7 +201,7 @@ const LoanPanel = () => {
             // dont refactor the below code
             // it solved the race condition issue that caused padding value exceeds the max range value
             // need to find a good approach in the future
-            padding={[Math.min(usedbnUSDAmount.toNumber(), totalAvailablebnUSDAmount.toNumber()), 0]}
+            padding={[Math.max(Math.min(usedbnUSDAmount.toNumber(), totalAvailablebnUSDAmount.toNumber()), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],

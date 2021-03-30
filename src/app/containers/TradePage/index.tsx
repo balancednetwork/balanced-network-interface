@@ -131,10 +131,12 @@ export function TradePage() {
         const [poolsReward, poolEmission] = result.map(v => v);
         const sICXICXreward = convertLoopToIcx(poolsReward['SICXICX']);
         const sICXbnUSDreward = convertLoopToIcx(poolsReward['SICXbnUSD']);
+        const BALNbnUSDreward = convertLoopToIcx(poolsReward['BALNbnUSD']);
         const poolDailyReward = convertLoopToIcx(poolEmission);
         changeReward({
           sICXICXreward,
           sICXbnUSDreward,
+          BALNbnUSDreward,
           poolDailyReward,
         });
       });

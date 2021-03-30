@@ -15,4 +15,16 @@ export default class Staking extends Contract {
 
     return this.call(callParams);
   }
+
+  stakeICX(value: number) {
+    const payload = this.transactionParamsBuilder({
+      method: 'stakeICX',
+      value: value,
+      params: {
+        _to: this.account,
+      },
+    });
+
+    return this.callIconex(payload);
+  }
 }

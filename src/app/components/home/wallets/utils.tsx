@@ -1,6 +1,8 @@
 import { TabList, Tab } from '@reach/tabs';
 import styled from 'styled-components';
 
+import { Link } from 'app/components/Link';
+
 export const StyledTabList = styled(TabList)`
   &[data-reach-tab-list] {
     width: 100%;
@@ -37,4 +39,8 @@ export const Grid = styled.div`
   display: grid;
   grid-auto-rows: auto;
   row-gap: 15px;
+`;
+
+export const MaxButton = styled(Link)`
+  cursor: pointer;
 `;

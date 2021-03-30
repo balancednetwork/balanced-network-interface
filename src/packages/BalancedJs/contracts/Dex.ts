@@ -140,4 +140,12 @@ export default class Dex extends Contract {
     console.log(payload);
     return this.callIconex(payload);
   }
+
+  getFees() {
+    const callParams = this.paramsBuilder({
+      method: 'getFees',
+    });
+
+    return this.call(callParams);
+  }
 }

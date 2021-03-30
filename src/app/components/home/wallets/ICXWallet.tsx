@@ -77,7 +77,11 @@ export default function ICXWallet() {
       });
   };
 
-  const isDisabled = !isAddress(address) || !differenceAmount.isPositive() || differenceAmount.isGreaterThan(maxAmount);
+  const isDisabled =
+    !isAddress(address) ||
+    differenceAmount.isNegative() ||
+    differenceAmount.isZero() ||
+    differenceAmount.isGreaterThan(maxAmount);
 
   return (
     <BoxPanel bg="bg3">

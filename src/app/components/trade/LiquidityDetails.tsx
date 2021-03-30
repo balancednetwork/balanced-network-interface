@@ -13,27 +13,29 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
-import { WITHDRAW_LOCK_TIMEOUT } from 'constants/index';
 import { useLiquiditySupply, useChangeLiquiditySupply } from 'store/liquidity/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 
 const LiquidityDetails = () => {
   const { account } = useIconReact();
   const changeLiquiditySupply = useChangeLiquiditySupply();
   const liquiditySupply = useLiquiditySupply();
+  const addTransaction = useTransactionAdder();
 
   const sICXbnUSDTotalSupply = liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0);
   const sICXbnUSDSuppliedShare = liquiditySupply.sICXSuppliedPoolsICXbnUSD
     ?.dividedBy(sICXbnUSDTotalSupply)
-    ?.multipliedBy(100)
-    .toFixed(2);
+    ?.multipliedBy(100);
 
   const BALNPoolBALNbnUSDTotal = liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0);
-  const BALNbnUSDSuppliedShare = liquiditySupply.BALNSuppliedPoolBALNbnUSD?.dividedBy(BALNPoolBALNbnUSDTotal)
-    ?.multipliedBy(100)
-    .toFixed(2);
+  const BALNbnUSDSuppliedShare = liquiditySupply.BALNSuppliedPoolBALNbnUSD?.dividedBy(
+    BALNPoolBALNbnUSDTotal,
+  )?.multipliedBy(100);
 
-  const sICXICXTotalSupply = liquiditySupply.BALNbnUSDTotalSupply || new BigNumber(0);
+  const sICXICXTotalSupply = liquiditySupply.sICXICXTotalSupply || new BigNumber(0);
   const ICXBalance = liquiditySupply.ICXBalance || new BigNumber(0);
+  const sICXICXSuppliedShare = ICXBalance.dividedBy(sICXICXTotalSupply).multipliedBy(100);
+  console.log('sICXICXSuppliedShare = ', ICXBalance.dividedBy(sICXICXTotalSupply).toFixed(2));
 
   const [amountWithdrawICX, setAmountWithdrawICX] = React.useState('0');
 
@@ -49,24 +51,11 @@ const LiquidityDetails = () => {
     if (!account) return;
     bnJs
       .eject({ account: account })
-      .Dex.getICXWithdrawLock()
-      .then(result => {
-        const ICXWithdrawLockTime = parseInt(result, 16);
-        const timeNow = Date.now() * 1000;
-        if (timeNow > ICXWithdrawLockTime + WITHDRAW_LOCK_TIMEOUT) {
-          bnJs
-            .eject({ account: account })
-            .Dex.getICXBalance()
-            .then(result => {
-              changeLiquiditySupply({ ICXBalance: liquiditySupply.ICXBalance?.minus(amountWithdrawICX) });
-            })
-            .catch(e => {
-              console.error('error', e);
-            });
-        } else {
-          // TODO: show alert
-          console.log('show alert the withdrawal is locked');
-        }
+      .Dex.cancelSicxIcxOrder()
+      .then(res => {
+        console.log(res);
+        changeLiquiditySupply({ ICXBalance: new BigNumber(0) });
+        addTransaction({ hash: res.result }, { summary: `Withdrawn ${ICXBalance.toFixed(2)} ICX from the DEX.` });
       })
       .catch(e => {
         console.error('error', e);
@@ -121,7 +110,7 @@ const LiquidityDetails = () => {
           <tr>
             <td>sICX / ICX</td>
             <td>{ICXBalance.toFixed(2)} ICX</td>
-            <td>{ICXBalance.dividedBy(sICXICXTotalSupply).multipliedBy(100).toFixed(2)}%</td>
+            <td>{sICXICXSuppliedShare?.isNaN() ? '0.00' : sICXICXSuppliedShare.toFixed(2)}%</td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">
@@ -163,7 +152,6 @@ const LiquidityDetails = () => {
             </td>
           </tr>
 
-          {/* <!-- ICX / ICD --> */}
           <tr>
             <td>sICX / bnUSD</td>
             <td>
@@ -171,7 +159,9 @@ const LiquidityDetails = () => {
               <br />
               {liquiditySupply.bnUSDSuppliedPoolsICXbnUSD?.toFixed(2) + ' bnUSD'}
             </td>
-            <td>{!account ? '-' : !sICXbnUSDSuppliedShare ? '0%' : sICXbnUSDSuppliedShare + '%'}</td>
+            <td>
+              {!account ? '-' : sICXbnUSDSuppliedShare?.isNaN() ? '0%' : sICXbnUSDSuppliedShare?.toFixed(2) + '%'}
+            </td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">
@@ -231,7 +221,7 @@ const LiquidityDetails = () => {
               <br />
               {liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toFixed(2)} bnUSD
             </td>
-            <td>{!account ? '-' : !BALNbnUSDSuppliedShare ? '0%' : BALNbnUSDSuppliedShare + '%'}</td>
+            <td>{!account ? '-' : BALNbnUSDSuppliedShare?.isNaN() ? '0.00' : BALNbnUSDSuppliedShare?.toFixed(2)}%</td>
             <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">

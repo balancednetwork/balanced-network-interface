@@ -13,7 +13,7 @@ import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST, SupportedPairs } from 'constants/currency';
-import { useLiquiditySupply } from 'store/liquidity/hooks';
+import { useLiquiditySupply, useChangeLiquiditySupply } from 'store/liquidity/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -39,6 +39,8 @@ export default function LPPanel() {
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
   const liquiditySupply = useLiquiditySupply();
+  const changeLiquiditySupply = useChangeLiquiditySupply();
+
   const ICXliquiditySupply = liquiditySupply.ICXBalance || new BigNumber(0);
 
   const changeWalletBalance = useChangeWalletBalance();
@@ -269,7 +271,9 @@ export default function LPPanel() {
         break;
       }
       case SupportedPairs[2].pair: {
-        sendICXToDex();
+        sendICXToDex().then(() => {
+          changeLiquiditySupply({ ICXBalance: ICXliquiditySupply.plus(new BigNumber(supplyInputAmount)) });
+        });
         break;
       }
       default: {

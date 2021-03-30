@@ -132,14 +132,12 @@ export default class Dex extends Contract {
   }
 
   cancelSicxIcxOrder() {
-    const callParams = this.paramsBuilder({
+    const payload = this.transactionParamsBuilder({
       method: 'cancelSicxicxOrder',
-      params: {
-        _address: this.account,
-      },
+      value: 0,
     });
 
-    return this.call(callParams);
+    return this.callIconex(payload);
   }
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot

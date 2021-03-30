@@ -16,6 +16,7 @@ import SwapPanel from 'app/components/trade/SwapPanel';
 import bnJs from 'bnJs';
 import { useChangeLiquiditySupply } from 'store/liquidity/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
+import { useChangeReward } from 'store/reward/hooks';
 import { useFetchBalance } from 'store/wallet/hooks';
 
 export function TradePage() {
@@ -25,6 +26,7 @@ export function TradePage() {
   const { account } = useIconReact();
   useFetchBalance(account);
   const changeLiquiditySupply = useChangeLiquiditySupply();
+  const changeReward = useChangeReward();
 
   const [value, setValue] = React.useState<number>(0);
 
@@ -122,6 +124,26 @@ export function TradePage() {
   React.useEffect(() => {
     initLiquiditySupply();
   }, [initLiquiditySupply]);
+
+  const initReward = React.useCallback(() => {
+    if (account) {
+      Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission(new BigNumber(1))]).then(result => {
+        const [poolsReward, poolEmission] = result.map(v => v);
+        const sICXICXreward = convertLoopToIcx(poolsReward['SICXICX']);
+        const sICXbnUSDreward = convertLoopToIcx(poolsReward['SICXbnUSD']);
+        const poolDailyReward = convertLoopToIcx(poolEmission);
+        changeReward({
+          sICXICXreward,
+          sICXbnUSDreward,
+          poolDailyReward,
+        });
+      });
+    }
+  }, [account, changeReward]);
+
+  React.useEffect(() => {
+    initReward();
+  }, [initReward]);
 
   // update the width on a window resize
   const ref = React.useRef<HTMLDivElement>();

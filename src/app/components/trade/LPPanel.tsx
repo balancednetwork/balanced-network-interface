@@ -444,7 +444,7 @@ export default function LPPanel() {
               </StyledDL>
               <StyledDL>
                 <dt>Total daily rewards</dt>
-                <dd>~17,500 BALN</dd>
+                <dd>17,500 BALN</dd>
               </StyledDL>
             </Box>
           </Flex>
@@ -475,7 +475,11 @@ export default function LPPanel() {
             </Box>
           </Flex>
 
-          <Flex alignItems="center" mb={4}>
+          <Flex
+            alignItems="center"
+            mb={4}
+            style={selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx' ? { display: 'none' } : {}}
+          >
             <Box width={1 / 2}>
               <Typography variant="p" fontWeight="bold" textAlign="right">
                 {supplyOutputAmount} {selectedPair.quoteCurrencyKey}

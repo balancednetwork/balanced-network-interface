@@ -10,7 +10,6 @@ import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import Divider from 'app/components/Divider';
-import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
@@ -19,7 +18,7 @@ import { CURRENCYLIST } from 'constants/currency';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
-import { StyledTabList, StyledTab, Grid } from './utils';
+import { StyledTabList, StyledTab, Grid, MaxButton } from './utils';
 
 export default function ICXWallet() {
   const [value, setValue] = React.useState('');
@@ -96,7 +95,7 @@ export default function ICXWallet() {
             <Grid>
               <Flex alignItems="center" justifyContent="space-between">
                 <Typography variant="h3">Send ICX</Typography>
-                <Link onClick={handleMax}>Send max</Link>
+                <MaxButton onClick={handleMax}>Send max</MaxButton>
               </Flex>
 
               <CurrencyInputPanel

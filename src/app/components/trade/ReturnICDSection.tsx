@@ -10,6 +10,8 @@ import Divider from 'app/components/Divider';
 import DropdownText from 'app/components/DropdownText';
 import { Typography } from 'app/theme';
 import { CURRENCYLIST } from 'constants/currency';
+import { useRatioValue } from 'store/ratio/hooks';
+import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 const Grid = styled.div`
   display: grid;
@@ -18,11 +20,19 @@ const Grid = styled.div`
 `;
 
 const ReturnICDSection = () => {
-  const [value, setValue] = React.useState('0');
+  const wallet = useWalletBalanceValue();
+  const ratio = useRatioValue();
 
-  const handleInput = v => {
-    setValue(v);
-  };
+  const [retireAmount, setRetireAmount] = React.useState('0');
+  const [receiveAmount, setReceiveAmount] = React.useState('0');
+
+  const handleTypeInput = React.useCallback(
+    (val: string) => {
+      setRetireAmount(val);
+      setReceiveAmount((parseFloat(val) / ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString());
+    },
+    [ratio],
+  );
 
   const below800 = useMedia('(max-width: 800px)');
 
@@ -31,25 +41,25 @@ const ReturnICDSection = () => {
   }
 
   return (
-    <DropdownText text="Retire bnUSD">
+    <DropdownText text="Retire Balanced assets">
       <Box padding={5} bg="bg4">
         <Grid>
           <Typography variant="h2">Retire bnUSD</Typography>
 
-          <Typography>Sell your bnUSD for $1 of sICX (staked ICX).</Typography>
+          <Typography>Sell your bnUSD for ${ratio.sICXbnUSDratio?.toFixed(2)} of sICX (staked ICX).</Typography>
 
           <CurrencyInputPanel
             currency={CURRENCYLIST['bnusd']}
-            value={value}
-            onUserInput={handleInput}
+            value={retireAmount}
+            onUserInput={handleTypeInput}
             showMaxButton={false}
             id="return-icd-input"
             bg="bg5"
           />
 
           <Flex flexDirection="column" alignItems="flex-end">
-            <Typography mb={2}>Minimum: 50 bnUSD</Typography>
-            <Typography>Wallet: 1672 bnUSD</Typography>
+            <Typography mb={2}>Minimum: 1000 bnUSD</Typography>
+            <Typography>Wallet: {wallet.bnUSDbalance?.toFixed(2)} bnUSD</Typography>
           </Flex>
 
           <Divider />
@@ -57,9 +67,9 @@ const ReturnICDSection = () => {
           <Flex alignItems="flex-start" justifyContent="space-between">
             <Typography variant="p">Total</Typography>
             <Flex flexDirection="column" alignItems="flex-end">
-              <Typography variant="p">0 sICX</Typography>
+              <Typography variant="p">{receiveAmount} sICX</Typography>
               <Typography variant="p" color="text1" fontSize={14}>
-                ~ 0 sICX
+                ~ {parseFloat(receiveAmount) * ratio.sICXICXratio?.toNumber()} ICX
               </Typography>
             </Flex>
           </Flex>

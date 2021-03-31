@@ -93,7 +93,7 @@ const LiquidityDetails = () => {
     // TODO: calculate value and withdrawal
     bnJs
       .eject({ account: account })
-      .Dex.withdrawalTokens(BalancedJs.utils.sICXbnUSDpoolId, 10)
+      .Dex.withdrawalTokens(BalancedJs.utils.sICXbnUSDpoolId, new BigNumber(10))
       .then(result => {
         console.log(result);
       })

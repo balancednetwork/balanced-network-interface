@@ -13,7 +13,6 @@ export default class Rewards extends Contract {
   claimRewards() {
     const payload = this.transactionParamsBuilder({
       method: 'claimRewards',
-      value: 0,
     });
 
     return this.callIconex(payload);

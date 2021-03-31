@@ -46,12 +46,11 @@ export default class Baln extends Contract {
           '}}',
         'utf8',
       ).toString('hex');
-    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
 
     const payload = this.transactionParamsBuilder({
       method: 'transfer',
-      value: 0,
       params,
     });
 
@@ -63,20 +62,18 @@ export default class Baln extends Contract {
       method: 'transfer',
       params: {
         _to: to,
-        _value: '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16),
+        _value: '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16),
       },
-      value: 0,
     });
 
     return this.callIconex(callParams);
   }
 
   async stake(value: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _value: valueHex };
     const payload = this.transactionParamsBuilder({
       method: 'stake',
-      value: 0,
       params,
     });
 

@@ -7,6 +7,7 @@ import { Wrapper, UnderlineText, StyledArrowDownIcon } from 'app/components/Drop
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { SupportedPairs, Pair } from 'constants/currency';
+import { useLiquiditySupply } from 'store/liquidity/hooks';
 import { useSetPair, usePoolPair } from 'store/pool/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
@@ -41,15 +42,28 @@ export default function LiquiditySelect() {
 
   const poolReward = useReward();
   const ratio = useRatioValue();
+  const liquidity = useLiquiditySupply();
+
   const sICXICXpoolDailyReward =
     (poolReward.sICXICXreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
   const sICXbnUSDpoolDailyReward =
     (poolReward.sICXbnUSDreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
   const BALNbnUSDpoolDailyReward =
     (poolReward.BALNbnUSDreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
-  const sICXICXapy = sICXICXpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber();
-  const sICXbnUSDICXapy = sICXbnUSDpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber();
-  const BALNbnUSDapy = BALNbnUSDpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber();
+
+  const sICXICXapy =
+    (sICXICXpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber()) /
+      ((liquidity.sICXICXTotalSupply?.toNumber() || 0) * ratio.ICXUSDratio?.toNumber()) || 0;
+
+  const sICXbnUSDICXapy =
+    (sICXbnUSDpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber()) /
+      ((liquidity.sICXSuppliedPoolsICXbnUSD?.toNumber() || 0) * ratio.sICXbnUSDratio?.toNumber() +
+        (liquidity.bnUSDPoolsICXbnUSDTotal?.toNumber() || 0)) || 0;
+
+  const BALNbnUSDapy =
+    (BALNbnUSDpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber()) /
+      ((liquidity.BALNPoolBALNbnUSDTotal?.toNumber() || 0) * ratio.BALNbnUSDratio?.toNumber() +
+        (liquidity.bnUSDPoolBALNbnUSDTotal?.toNumber() || 0)) || 0;
 
   return (
     <ClickAwayListener onClickAway={() => setOpen(false)}>
@@ -71,7 +85,14 @@ export default function LiquiditySelect() {
                   {pool.pair}
                 </DataText>
                 <DataText variant="p" textAlign="right">
-                  {sICXICXapy} %
+                  {pool.pair === 'sICX / bnUSD'
+                    ? sICXbnUSDICXapy
+                    : pool.pair === 'BALN / bnUSD'
+                    ? BALNbnUSDapy
+                    : pool.pair === 'ICX / sICX'
+                    ? sICXICXapy
+                    : ''}{' '}
+                  %
                 </DataText>
               </ListItem>
             ))}

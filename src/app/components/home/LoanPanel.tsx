@@ -122,7 +122,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .eject({ account })
-        .bnUSD.repayLoan(differenceAmount.abs().toNumber())
+        .bnUSD.repayLoan(differenceAmount.abs())
         .then(res => {
           addTransaction({ hash: res.result }, { summary: `Repaid ${differenceAmount.abs().toNumber()} bnUSD.` });
           // close modal

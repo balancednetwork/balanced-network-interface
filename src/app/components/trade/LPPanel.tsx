@@ -111,7 +111,7 @@ export default function LPPanel() {
     bnJs
       .eject({ account: account })
       //.sICX.borrowAdd(newBorrowValue)
-      .bnUSD.dexDeposit(parseFloat(supplyOutputAmount))
+      .bnUSD.dexDeposit(new BigNumber(supplyOutputAmount))
       .then(res => {
         console.log('res', res);
         addTransaction(

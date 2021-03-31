@@ -142,6 +142,14 @@ const useDebtHoldingShare = () => {
   }, [loanInputAmount, loanbnUSDbadDebt, loanbnUSDtotalSupply]);
 };
 
+enum Period {
+  'day' = 'Day',
+  'week' = 'Week',
+  'month' = 'Month',
+}
+
+const PERIODS = [Period.day, Period.week, Period.month];
+
 const PositionDetailPanel = () => {
   const [show, setShow] = React.useState<boolean>(false);
 
@@ -167,6 +175,12 @@ const PositionDetailPanel = () => {
   const currentRatio = useCurrentRatio();
 
   var lowRisk1 = (900 * 100) / currentRatio;
+
+  const [period, setPeriod] = React.useState(Period.day);
+
+  const handlePeriod = (p: Period) => {
+    setPeriod(p);
+  };
 
   return (
     <ActivityPanel bg="bg2">
@@ -287,11 +301,11 @@ const PositionDetailPanel = () => {
               <Typography variant="h3" mr={15}>
                 Rebalancing
               </Typography>
-              <DropdownText text="Past week">
+              <DropdownText text={`Past ${period.toLowerCase()}`}>
                 <MenuList>
-                  <MenuItem>Day</MenuItem>
-                  <MenuItem>Week</MenuItem>
-                  <MenuItem>Month</MenuItem>
+                  {PERIODS.map(p => (
+                    <MenuItem onClick={() => handlePeriod(p)}>{p}</MenuItem>
+                  ))}
                 </MenuList>
               </DropdownText>
             </Flex>

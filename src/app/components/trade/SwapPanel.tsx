@@ -363,7 +363,9 @@ export default function SwapPanel() {
           <Flex alignItems="center" justifyContent="space-between" mb={1}>
             <Typography>Minimum to receive</Typography>
             <Typography>
-              {(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4).toFixed(outputCurrency.decimals)}{' '}
+              {!swapOutputAmount
+                ? new BigNumber(0).toNumber().toFixed(outputCurrency.decimals)
+                : (((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4).toFixed(outputCurrency.decimals)}{' '}
               {outputCurrency.symbol}
             </Typography>
           </Flex>

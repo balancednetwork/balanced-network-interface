@@ -24,8 +24,8 @@ export default class Dex extends Contract {
   }
 
   async dexSupplysICXbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const hexBasePrice = '0x' + IconAmount.of(baseValue.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
-    const hexQuotePrice = '0x' + IconAmount.of(quoteValue.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
+    const hexBasePrice = '0x' + IconAmount.of(baseValue, IconAmount.Unit.ICX).toLoop().toString(16);
+    const hexQuotePrice = '0x' + IconAmount.of(quoteValue, IconAmount.Unit.ICX).toLoop().toString(16);
     const params = {
       _baseToken: addresses[this.nid].sicx,
       _quoteToken: addresses[this.nid].bnUSD,
@@ -34,7 +34,6 @@ export default class Dex extends Contract {
     };
     const payload = this.transactionParamsBuilder({
       method: 'add',
-      value: 0,
       params,
     });
     console.log(payload);
@@ -128,10 +127,9 @@ export default class Dex extends Contract {
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
   withdrawalTokens(pid: number, value: BigNumber) {
-    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
     const payload = this.transactionParamsBuilder({
       method: 'remove',
-      value: 0,
       params: {
         _pid: pid.toString(16),
         _value: valueHex,

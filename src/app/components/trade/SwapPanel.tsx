@@ -200,7 +200,7 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol === 'BALN') {
       bnJs
         .eject({ account: account })
-        .Baln.swapToBnUSD(parseFloat(swapInputAmount), rawSlippage + '')
+        .Baln.swapToBnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
         .then(res => {
           console.log('res', res);
           setShowSwapConfirm(false);

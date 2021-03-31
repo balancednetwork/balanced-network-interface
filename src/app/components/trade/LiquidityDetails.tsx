@@ -14,6 +14,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 import { useLiquiditySupply, useChangeLiquiditySupply } from 'store/liquidity/hooks';
+import { useReward } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
 const LiquidityDetails = () => {
@@ -21,6 +22,7 @@ const LiquidityDetails = () => {
   const changeLiquiditySupply = useChangeLiquiditySupply();
   const liquiditySupply = useLiquiditySupply();
   const addTransaction = useTransactionAdder();
+  const poolReward = useReward();
 
   const sICXbnUSDTotalSupply = liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0);
   const sICXbnUSDSuppliedShare = liquiditySupply.sICXSuppliedPoolsICXbnUSD
@@ -35,7 +37,6 @@ const LiquidityDetails = () => {
   const sICXICXTotalSupply = liquiditySupply.sICXICXTotalSupply || new BigNumber(0);
   const ICXBalance = liquiditySupply.ICXBalance || new BigNumber(0);
   const sICXICXSuppliedShare = ICXBalance.dividedBy(sICXICXTotalSupply).multipliedBy(100);
-  console.log('sICXICXSuppliedShare = ', ICXBalance.dividedBy(sICXICXTotalSupply).toFixed(2));
 
   const [amountWithdrawICX, setAmountWithdrawICX] = React.useState('0');
 
@@ -46,6 +47,13 @@ const LiquidityDetails = () => {
   const handleTypeAmountWithdrawSICX = (val: string) => {
     setAmountWithdrawSICX(val);
   };
+
+  const sICXICXpoolDailyReward =
+    (poolReward.sICXICXreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
+  const sICXbnUSDpoolDailyReward =
+    (poolReward.sICXbnUSDreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
+  const BALNbnUSDpoolDailyReward =
+    (poolReward.BALNbnUSDreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
 
   const handleWithdrawalICX = () => {
     if (!account) return;
@@ -78,7 +86,7 @@ const LiquidityDetails = () => {
     // TODO: calculate value and withdrawal
     bnJs
       .eject({ account: account })
-      .Dex.withdrawalTokens(BalancedJs.utils.sICXbnUSDpoolId, 10)
+      .Dex.withdrawalTokens(BalancedJs.utils.sICXbnUSDpoolId, new BigNumber(10))
       .then(result => {
         console.log(result);
       })
@@ -111,7 +119,9 @@ const LiquidityDetails = () => {
             <td>sICX / ICX</td>
             <td>{ICXBalance.toFixed(2)} ICX</td>
             <td>{sICXICXSuppliedShare?.isNaN() ? '0.00' : sICXICXSuppliedShare.toFixed(2)}%</td>
-            <td>~ 120 BALN</td>
+            <td>
+              ~ {(sICXICXpoolDailyReward * (ICXBalance.toNumber() / sICXICXTotalSupply.toNumber())).toFixed(2)} BALN
+            </td>
             <td>
               <DropdownText text="Withdraw">
                 <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
@@ -159,10 +169,15 @@ const LiquidityDetails = () => {
               <br />
               {liquiditySupply.bnUSDSuppliedPoolsICXbnUSD?.toFixed(2) + ' bnUSD'}
             </td>
+            <td>{!account ? '-' : sICXbnUSDSuppliedShare?.isNaN() ? '0.00' : sICXbnUSDSuppliedShare?.toFixed(2)}%</td>
             <td>
-              {!account ? '-' : sICXbnUSDSuppliedShare?.isNaN() ? '0%' : sICXbnUSDSuppliedShare?.toFixed(2) + '%'}
+              ~{' '}
+              {(
+                sICXbnUSDpoolDailyReward *
+                (liquiditySupply.sICXSuppliedPoolsICXbnUSD?.dividedBy(sICXbnUSDTotalSupply).toNumber() || 0)
+              ).toFixed(2)}{' '}
+              BALN
             </td>
-            <td>~ 120 BALN</td>
             <td>
               <DropdownText text="Withdraw">
                 <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
@@ -221,8 +236,15 @@ const LiquidityDetails = () => {
               <br />
               {liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toFixed(2)} bnUSD
             </td>
-            <td>{!account ? '-' : BALNbnUSDSuppliedShare?.isNaN() ? '0.00' : BALNbnUSDSuppliedShare?.toFixed(2)}%</td>
-            <td>~ 120 BALN</td>
+
+            <td>
+              ~{' '}
+              {(
+                BALNbnUSDpoolDailyReward *
+                (liquiditySupply.BALNSuppliedPoolBALNbnUSD?.dividedBy(BALNPoolBALNbnUSDTotal).toNumber() || 0)
+              ).toFixed(2)}{' '}
+              BALN
+            </td>
             <td>
               <DropdownText text="Withdraw">
                 <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">

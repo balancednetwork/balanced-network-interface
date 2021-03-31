@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { IconAmount } from 'icon-sdk-js';
 
 import { ResponseJsonRPCPayload } from '..';
@@ -22,19 +23,18 @@ export default class bnUSD extends Contract {
     return this.call(callParams);
   }
 
-  async dexDeposit(value: number): Promise<ResponseJsonRPCPayload> {
+  async dexDeposit(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     const data = '0x' + Buffer.from('{"method": "_deposit"}', 'utf8').toString('hex');
     const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
     const payload = this.transactionParamsBuilder({
       method: 'transfer',
-      value: 0,
       params,
     });
     return this.callIconex(payload);
   }
 
-  async swapBysICX(value: number, slippage: string): Promise<ResponseJsonRPCPayload> {
+  async swapBysICX(value: BigNumber, slippage: string): Promise<ResponseJsonRPCPayload> {
     const data =
       '0x' +
       Buffer.from(
@@ -46,7 +46,6 @@ export default class bnUSD extends Contract {
 
     const payload = this.transactionParamsBuilder({
       method: 'transfer',
-      value: 0,
       params,
     });
     return this.callIconex(payload);
@@ -60,27 +59,25 @@ export default class bnUSD extends Contract {
     return this.call(callParams);
   }
 
-  async repayLoan(value: number): Promise<ResponseJsonRPCPayload> {
+  async repayLoan(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     const data = { method: '_repay_loan', params: {} };
     const dataHex = '0x' + Buffer.from(JSON.stringify(data), 'utf8').toString('hex');
     const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].loans, _value: valueHex, _data: dataHex };
     const payload = this.transactionParamsBuilder({
       method: 'transfer',
-      value: 0,
       params,
     });
     return this.callIconex(payload);
   }
 
-  public async transfer(to: string, value: number): Promise<any> {
+  public async transfer(to: string, value: BigNumber): Promise<any> {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
       params: {
         _to: to,
         _value: '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16),
       },
-      value: 0,
     });
 
     return this.callIconex(callParams);

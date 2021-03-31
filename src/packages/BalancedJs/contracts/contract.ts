@@ -49,10 +49,10 @@ export class Contract {
   public transactionParamsBuilder({
     method,
     params,
-    value,
+    value = new BigNumber(0),
   }: {
     method: string;
-    value?: number;
+    value?: BigNumber;
     params?: {
       [key: string]: any;
     };
@@ -81,7 +81,7 @@ export class Contract {
   /**
    * @returns transaction transfer ICX to call ICONex
    */
-  public transferICXParamsBuilder({ value }: { value: number }) {
+  public transferICXParamsBuilder({ value }: { value: BigNumber }) {
     const payload = new IconBuilder.IcxTransactionBuilder()
       .from(this.account)
       .to(this.address)

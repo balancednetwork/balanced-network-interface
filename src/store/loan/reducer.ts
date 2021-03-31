@@ -53,7 +53,7 @@ export default createReducer(initialState, builder =>
     })
     .addCase(type, (state, { payload: { independentField, typedValue, inputType } }) => {
       state.state.independentField = independentField || state.state.independentField;
-      state.state.typedValue = typedValue || state.state.independentField;
+      state.state.typedValue = typedValue ?? state.state.typedValue;
       state.state.inputType = inputType || state.state.inputType;
     })
     .addCase(changeBorrowedValue, (state, { payload: { borrowedValue } }) => {

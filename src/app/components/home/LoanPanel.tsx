@@ -108,7 +108,7 @@ const LoanPanel = () => {
     if (shouldBorrow) {
       bnJs
         .eject({ account })
-        .Loans.borrowAdd(differenceAmount.toNumber())
+        .Loans.borrowAdd(differenceAmount)
         .then(res => {
           addTransaction({ hash: res.result }, { summary: `Borrowed ${differenceAmount.toNumber()} bnUSD.` });
           // close modal
@@ -122,7 +122,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .eject({ account })
-        .bnUSD.repayLoan(differenceAmount.abs().toNumber())
+        .bnUSD.repayLoan(differenceAmount.abs())
         .then(res => {
           addTransaction({ hash: res.result }, { summary: `Repaid ${differenceAmount.abs().toNumber()} bnUSD.` });
           // close modal
@@ -201,7 +201,7 @@ const LoanPanel = () => {
             // dont refactor the below code
             // it solved the race condition issue that caused padding value exceeds the max range value
             // need to find a good approach in the future
-            padding={[Math.min(usedbnUSDAmount.toNumber(), totalAvailablebnUSDAmount.toNumber()), 0]}
+            padding={[Math.max(Math.min(usedbnUSDAmount.toNumber(), totalAvailablebnUSDAmount.toNumber()), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],

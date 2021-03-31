@@ -96,7 +96,7 @@ export default function LPPanel() {
   const sendBnUSDToDex = () => {
     return bnJs
       .eject({ account: account })
-      .bnUSD.dexDeposit(parseFloat(supplyOutputAmount))
+      .bnUSD.dexDeposit(new BigNumber(supplyOutputAmount))
       .then(res => {
         console.log('res', res);
         addTransaction(
@@ -110,22 +110,19 @@ export default function LPPanel() {
   };
 
   const sendSICXToDex = () => {
-    return (
-      bnJs
-        .eject({ account: account })
-        //.sICX.borrowAdd(newBorrowValue)
-        .sICX.dexDeposit(parseFloat(supplyInputAmount))
-        .then(res => {
-          console.log('res', res);
-          addTransaction(
-            { hash: res.result },
-            { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
-          );
-        })
-        .catch(e => {
-          console.error('error', e);
-        })
-    );
+    return bnJs
+      .eject({ account: account })
+      .sICX.dexDeposit(new BigNumber(supplyInputAmount))
+      .then(res => {
+        console.log('res', res);
+        addTransaction(
+          { hash: res.result },
+          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
+        );
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
   };
 
   const sendBALNToDex = () => {
@@ -147,7 +144,7 @@ export default function LPPanel() {
   const sendICXToDex = () => {
     return bnJs
       .eject({ account: account })
-      .Dex.transferICX(parseFloat(supplyInputAmount))
+      .Dex.transferICX(new BigNumber(supplyInputAmount))
       .then(res => {
         console.log('res', res);
         addTransaction(
@@ -226,7 +223,7 @@ export default function LPPanel() {
   const supply_sICXbnUSD = () => {
     bnJs
       .eject({ account: account })
-      .Dex.dexSupplysICXbnUSD(parseFloat(supplyInputAmount), parseFloat(supplyOutputAmount))
+      .Dex.dexSupplysICXbnUSD(new BigNumber(supplyInputAmount), new BigNumber(supplyOutputAmount))
       .then(res => {
         console.log('supply_sICXbnUSD = ', res);
         addTransaction(

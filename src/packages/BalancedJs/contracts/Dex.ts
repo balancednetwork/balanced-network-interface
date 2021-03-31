@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { IconAmount } from 'icon-sdk-js';
 
 import { ResponseJsonRPCPayload } from '..';
@@ -22,7 +23,7 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  async dexSupplysICXbnUSD(baseValue: number, quoteValue: number): Promise<ResponseJsonRPCPayload> {
+  async dexSupplysICXbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
     const hexBasePrice = '0x' + IconAmount.of(baseValue, IconAmount.Unit.ICX).toLoop().toString(16);
     const hexQuotePrice = '0x' + IconAmount.of(quoteValue, IconAmount.Unit.ICX).toLoop().toString(16);
     const params = {
@@ -33,7 +34,6 @@ export default class Dex extends Contract {
     };
     const payload = this.transactionParamsBuilder({
       method: 'add',
-      value: 0,
       params,
     });
     console.log(payload);
@@ -51,7 +51,6 @@ export default class Dex extends Contract {
     };
     const payload = this.transactionParamsBuilder({
       method: 'add',
-      value: 0,
       params,
     });
     console.log(payload);
@@ -104,7 +103,7 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  transferICX(value: number) {
+  transferICX(value: BigNumber) {
     const payload = this.transferICXParamsBuilder({
       value: value,
     });
@@ -134,7 +133,6 @@ export default class Dex extends Contract {
   cancelSicxIcxOrder() {
     const payload = this.transactionParamsBuilder({
       method: 'cancelSicxicxOrder',
-      value: 0,
     });
 
     return this.callIconex(payload);
@@ -142,11 +140,10 @@ export default class Dex extends Contract {
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
-  withdrawalTokens(pid: number, value: number) {
+  withdrawalTokens(pid: number, value: BigNumber) {
     const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
     const payload = this.transactionParamsBuilder({
       method: 'remove',
-      value: 0,
       params: {
         _pid: pid.toString(16),
         _value: valueHex,
@@ -155,5 +152,13 @@ export default class Dex extends Contract {
     });
     console.log(payload);
     return this.callIconex(payload);
+  }
+
+  getFees() {
+    const callParams = this.paramsBuilder({
+      method: 'getFees',
+    });
+
+    return this.call(callParams);
   }
 }

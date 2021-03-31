@@ -11,6 +11,8 @@ import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
+import bnJs from 'bnJs';
+import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 const RewardGrid = styled.div`
@@ -29,6 +31,7 @@ const RewardsPanel = () => {
 
   const { account, networkId } = useIconReact();
   const walletBalance = useWalletBalanceValue();
+  const addTransaction = useTransactionAdder();
 
   const handleClaimReward = () => {
     if (!account) return;
@@ -68,7 +71,30 @@ const RewardsPanel = () => {
   };
 
   const handleClose = () => {
-    setOpen(false);
+    bnJs
+      .eject({ account: account })
+      .Rewards.claimRewards()
+      .then(res => {
+        addTransaction(
+          { hash: res.result }, //
+          {
+            summary: `${
+              !account
+                ? '-'
+                : walletBalance.BALNreward?.toNumber() === 0 || walletBalance.BALNreward?.isNaN()
+                ? '0 BALN'
+                : walletBalance.BALNreward?.toFixed(2) + 'BALN'
+            } ICX added to your wallet.`,
+          },
+        );
+        // close modal
+        //toggleOpen();
+        // reset collateral panel values
+        setOpen(false);
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
   };
 
   const handleClaim = () => {

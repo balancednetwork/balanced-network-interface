@@ -111,7 +111,7 @@ const CollateralPanel = () => {
     if (shouldDeposit) {
       bnJs
         .eject({ account: account })
-        .Loans.depositAddCollateral(collateralAmount.toNumber())
+        .Loans.depositAddCollateral(collateralAmount)
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -128,7 +128,7 @@ const CollateralPanel = () => {
     } else {
       bnJs
         .eject({ account: account })
-        .Loans.depositWithdrawCollateral(collateralAmount.toNumber())
+        .Loans.depositWithdrawCollateral(collateralAmount)
         .then(res => {
           addTransaction(
             { hash: res.result }, //
@@ -197,12 +197,12 @@ const CollateralPanel = () => {
 
         {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} />}
 
-        <Box marginY={6} height={20}>
+        <Box marginY={6}>
           <Nouislider
             id="slider-collateral"
             disabled={!isAdjusting}
             start={[stakedICXAmount.toNumber()]}
-            padding={[tLockedICXAmount.toNumber(), 0]}
+            padding={[Math.max(tLockedICXAmount.toNumber(), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],

@@ -1,45 +1,32 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 
-import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button, TextButton } from 'app/components/Button';
-import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import Modal from 'app/components/Modal';
-import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
+import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
-import { Grid, MaxButton } from './utils';
+export default function DepositPanel() {
+  const [value, setValue] = React.useState('0');
 
-export default function SICXWallet() {
-  const [value, setValue] = React.useState('');
-
-  const handleCurrencyInput = (value: string) => {
-    setValue(value);
-  };
-
-  const [address, setAddress] = React.useState('');
-
-  const handleAddressInput = (value: string) => {
-    setAddress(value);
+  const handleSlider = (values: string[], handle: number) => {
+    setValue(values[handle]);
   };
 
   const { account } = useIconReact();
 
   const wallet = useWalletBalanceValue();
 
-  const maxAmount = wallet.sICXbalance;
+  const ratio = useRatioValue();
 
-  const handleMax = () => {
-    setValue(maxAmount.toFixed());
-  };
+  const maxAmount = wallet.sICXbalance;
 
   // modal logic
   const [open, setOpen] = React.useState(false);
@@ -59,13 +46,15 @@ export default function SICXWallet() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .sICX.transfer(address, differenceAmount.toNumber())
+      .sICX.collateralDeposit(differenceAmount)
       .then(res => {
         if (res.result) {
-          addTransaction({ hash: res.result }, { summary: `Sent ${differenceAmount.toNumber()} sICX to ${address}.` });
+          addTransaction(
+            { hash: res.result },
+            { summary: `Deposit ${differenceAmount.toNumber()} sICX to the collateral pool.` },
+          );
           toggleOpen();
-          setValue('');
-          setAddress('');
+          setValue('0');
         } else {
           // to do
           // need to handle error case
@@ -75,45 +64,50 @@ export default function SICXWallet() {
       });
   };
 
-  const isDisabled =
-    !isAddress(address) ||
-    differenceAmount.isNegative() ||
-    differenceAmount.isZero() ||
-    differenceAmount.isGreaterThan(maxAmount);
+  const differenceAmountByICX = differenceAmount.multipliedBy(ratio.sICXICXratio);
 
   return (
-    <BoxPanel bg="bg3">
-      <Grid>
-        <Flex alignItems="center" justifyContent="space-between">
-          <Typography variant="h3">Send sICX</Typography>
-          <MaxButton onClick={handleMax}>Send max</MaxButton>
-        </Flex>
+    <>
+      <Typography variant="h3">Deposit as collateral</Typography>
 
-        <CurrencyInputPanel
-          value={value}
-          showMaxButton={false}
-          currency={CURRENCYLIST['sicx']}
-          onUserInput={handleCurrencyInput}
-          id="sicx-currency-input-in-sicx-wallet"
+      <Typography my={1}>Add your sICX to the collateral pool.</Typography>
+
+      <Box my={3}>
+        <Nouislider
+          start={[0]}
+          padding={[0]}
+          connect={[true, false]}
+          range={{
+            min: [0],
+            max: [maxAmount.isZero() ? 0.001 : maxAmount.toNumber()],
+          }}
+          onSlide={handleSlider}
         />
+      </Box>
 
-        <AddressInputPanel value={address} onUserInput={handleAddressInput} />
-      </Grid>
+      <Flex my={1} alignItems="center" justifyContent="space-between">
+        <Typography>
+          {value} / {maxAmount.toFixed(2)} sICX
+        </Typography>
+        <Typography>~ {differenceAmountByICX.toFixed(2)} ICX</Typography>
+      </Flex>
 
       <Flex alignItems="center" justifyContent="center" mt={5}>
-        <Button onClick={toggleOpen} disabled={isDisabled}>
-          Send
-        </Button>
+        <Button onClick={toggleOpen}>Deposit sICX</Button>
       </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb="5px">
-            Send asset?
+            Deposit sICX collateral?
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
             {differenceAmount.toFixed(2) + ' sICX'}
+          </Typography>
+
+          <Typography textAlign="center" mb="5px">
+            {differenceAmountByICX.toFixed(2)} ICX
           </Typography>
 
           <Flex my={5}>
@@ -137,11 +131,11 @@ export default function SICXWallet() {
               Cancel
             </TextButton>
             <Button onClick={handleSend} fontSize={14}>
-              Send
+              Deposit
             </Button>
           </Flex>
         </Flex>
       </Modal>
-    </BoxPanel>
+    </>
   );
 }

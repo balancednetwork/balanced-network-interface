@@ -29,4 +29,15 @@ export default class Staking extends Contract {
 
     return this.callIconex(payload);
   }
+
+  getUserUnstakeInfo(address: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getUserUnstakeInfo',
+      params: {
+        _address: address,
+      },
+    });
+
+    return this.call(callParams);
+  }
 }

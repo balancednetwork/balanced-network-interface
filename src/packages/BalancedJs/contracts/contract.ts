@@ -65,7 +65,7 @@ export class Contract {
       .params(params)
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(1000000))
+      .stepLimit(IconConverter.toBigNumber(10000000))
       .value(IconAmount.of(value, IconAmount.Unit.ICX).toLoop())
       .version(IconConverter.toBigNumber(3))
       .build();

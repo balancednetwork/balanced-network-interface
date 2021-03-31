@@ -173,7 +173,12 @@ const LoanPanel = () => {
     return (
       <FlexPanel bg="bg3" flexDirection="column">
         <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">Loan</Typography>
+          <Typography variant="h2">
+            Loan:{' '}
+            <Typography as="span" fontSize={18} fontWeight="normal">
+              US Dollars
+            </Typography>
+          </Typography>
         </Flex>
 
         <Flex flex={1} justifyContent="center" alignItems="center">
@@ -187,7 +192,12 @@ const LoanPanel = () => {
     <>
       <BoxPanel bg="bg3">
         <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">Loan</Typography>
+          <Typography variant="h2">
+            Loan:{' '}
+            <Typography as="span" fontSize={18} fontWeight="normal">
+              US Dollars
+            </Typography>
+          </Typography>
 
           <Box>
             {isAdjusting ? (

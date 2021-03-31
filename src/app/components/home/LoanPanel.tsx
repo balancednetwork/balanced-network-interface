@@ -294,7 +294,7 @@ const LoanPanel = () => {
             </Box>
           </Flex>
 
-          {shouldBorrow && <Typography textAlign="center">Includes a fee of ${fee.toFixed(2)} bnUSD.</Typography>}
+          {shouldBorrow && <Typography textAlign="center">Includes a fee of {fee.toFixed(2)} bnUSD.</Typography>}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>

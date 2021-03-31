@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { IconAmount } from 'icon-sdk-js';
 
 import { ResponseJsonRPCPayload } from '..';
@@ -11,7 +12,7 @@ export default class sICX extends Contract {
     this.address = addresses[this.nid].sicx;
   }
 
-  async borrowAdd(value: number): Promise<ResponseJsonRPCPayload> {
+  async borrowAdd(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     const data = Buffer.from(
       '{"method": "_deposit_and_borrow", "params": {"_sender": "' +
         this.account +
@@ -20,22 +21,22 @@ export default class sICX extends Contract {
     ).toString('hex');
     const params = {
       _to: addresses[this.nid].loans,
-      _value: '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16),
+      _value: '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16),
       _data: data,
     };
     const payload = this.transactionParamsBuilder({
       method: 'transfer',
-      value,
+      value: value.toNumber(),
       params,
     });
 
     return this.callIconex(payload);
   }
 
-  async collateralDeposit(value: number): Promise<ResponseJsonRPCPayload> {
+  async collateralDeposit(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     const data = { method: '_deposit_and_borrow', params: { _sender: this.account, _asset: '', _amount: 0 } };
     const dataHex = '0x' + Buffer.from(JSON.stringify(data), 'utf8').toString('hex');
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].loans, _value: valueHex, _data: dataHex };
     const payload = this.transactionParamsBuilder({
       method: 'transfer',
@@ -46,9 +47,9 @@ export default class sICX extends Contract {
     return this.callIconex(payload);
   }
 
-  async dexDeposit(value: number): Promise<ResponseJsonRPCPayload> {
+  async dexDeposit(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     const data = '0x' + Buffer.from('{"method": "_deposit"}', 'utf8').toString('hex');
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
     const payload = this.transactionParamsBuilder({
       method: 'transfer',
@@ -59,7 +60,7 @@ export default class sICX extends Contract {
     return this.callIconex(payload);
   }
 
-  async swapBybnUSD(value: number, slippage: string): Promise<ResponseJsonRPCPayload> {
+  async swapBybnUSD(value: BigNumber, slippage: string): Promise<ResponseJsonRPCPayload> {
     const data =
       '0x' +
       Buffer.from(
@@ -70,7 +71,7 @@ export default class sICX extends Contract {
           '}}',
         'utf8',
       ).toString('hex');
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
 
     const payload = this.transactionParamsBuilder({
@@ -82,9 +83,9 @@ export default class sICX extends Contract {
     return this.callIconex(payload);
   }
 
-  async swapToICX(value: number): Promise<ResponseJsonRPCPayload> {
+  async swapToICX(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     const data = '0x' + Buffer.from('{"method": "_swap_icx"}', 'utf8').toString('hex');
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
 
     const payload = this.transactionParamsBuilder({
@@ -118,12 +119,12 @@ export default class sICX extends Contract {
     return this.call(callParams);
   }
 
-  public async transfer(to: string, value: number): Promise<any> {
+  public async transfer(to: string, value: BigNumber): Promise<any> {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
       params: {
         _to: to,
-        _value: '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16),
+        _value: '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16),
       },
       value: 0,
     });
@@ -131,9 +132,9 @@ export default class sICX extends Contract {
     return this.callIconex(callParams);
   }
 
-  async unstake(value: number): Promise<ResponseJsonRPCPayload> {
+  async unstake(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     const data = '0x' + Buffer.from('{"method": "_unstake"}', 'utf8').toString('hex');
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].staking, _value: valueHex, _data: data };
 
     const payload = this.transactionParamsBuilder({

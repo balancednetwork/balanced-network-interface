@@ -46,7 +46,7 @@ export default function UnstakePanel() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .sICX.unstake(differenceAmount.toNumber())
+      .sICX.unstake(differenceAmount)
       .then(res => {
         if (res.result) {
           addTransaction({ hash: res.result }, { summary: `Unstake ${differenceAmount.toNumber()} sICX.` });

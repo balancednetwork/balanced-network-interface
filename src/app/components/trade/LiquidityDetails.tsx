@@ -43,8 +43,8 @@ const LiquidityDetails = () => {
     setAmountWithdrawICX((liquiditySupply.ICXBalance || new BigNumber(0)).toFixed(2));
   }, [liquiditySupply.ICXBalance]);
 
-  const handleTypeAmountWithdrawSICX = (val: string) => {
-    setAmountWithdrawSICX(val);
+  const handleTypeAmountWithdrawICX = (val: string) => {
+    setAmountWithdrawICX(val);
   };
 
   const handleWithdrawalICX = () => {
@@ -62,15 +62,15 @@ const LiquidityDetails = () => {
       });
   };
 
-  const [amountWithdrawSICX, setAmountWithdrawSICX] = React.useState('0');
-  const [amountWithdrawBNUSD, setAmountWithdrawBNUSD] = React.useState('0');
+  const [amountWithdrawSICXPoolsICXbnUSD, setAmountWithdrawSICXPoolsICXbnUSD] = React.useState('0');
+  const [amountWithdrawBNUSDPoolsICXbnUSD, setAmountWithdrawBNUSDPoolsICXbnUSD] = React.useState('0');
 
-  const handleTypeAmountWithdrawICX = (val: string) => {
-    setAmountWithdrawICX(val);
+  const handleTypeAmountWithdrawsICXPoolsICXbnUSD = (val: string) => {
+    setAmountWithdrawSICXPoolsICXbnUSD(val);
   };
 
-  const handleTypeAmountWithdrawBNUSD = (val: string) => {
-    setAmountWithdrawBNUSD(val);
+  const handleTypeAmountWithdrawBNUSDPoolsICXbnUSD = (val: string) => {
+    setAmountWithdrawBNUSDPoolsICXbnUSD(val);
   };
 
   const handleWithdrawalSICXBNUSD = () => {
@@ -172,20 +172,20 @@ const LiquidityDetails = () => {
                   </Typography>
                   <Box mb={3}>
                     <CurrencyInputPanel
-                      value={amountWithdrawSICX}
+                      value={amountWithdrawSICXPoolsICXbnUSD}
                       showMaxButton={false}
                       currency={CURRENCYLIST['sicx']}
-                      onUserInput={handleTypeAmountWithdrawSICX}
+                      onUserInput={handleTypeAmountWithdrawsICXPoolsICXbnUSD}
                       id="withdraw-liquidity-input"
                       bg="bg5"
                     />
                   </Box>
                   <Box mb={3}>
                     <CurrencyInputPanel
-                      value={amountWithdrawBNUSD}
+                      value={amountWithdrawBNUSDPoolsICXbnUSD}
                       showMaxButton={false}
                       currency={CURRENCYLIST['bnusd']}
-                      onUserInput={handleTypeAmountWithdrawBNUSD}
+                      onUserInput={handleTypeAmountWithdrawBNUSDPoolsICXbnUSD}
                       id="withdraw-liquidity-input"
                       bg="bg5"
                     />

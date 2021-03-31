@@ -215,7 +215,7 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol === 'ICX') {
       bnJs
         .eject({ account: account })
-        .Staking.stakeICX(parseFloat(swapInputAmount))
+        .Staking.stakeICX(new BigNumber(swapInputAmount))
         .then(res => {
           console.log('res', res);
           setShowSwapConfirm(false);

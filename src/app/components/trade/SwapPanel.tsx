@@ -138,10 +138,12 @@ export default function SwapPanel() {
       if (!val) {
         val = '0';
       }
-      if (
-        (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') ||
-        (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx')
-      ) {
+      if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
+        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
+      } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
+        const fee = parseFloat(val) * 0.1;
+        setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
+        val = (parseFloat(val) - fee).toString();
         setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
       } else {
         bnJs
@@ -480,8 +482,7 @@ export default function SwapPanel() {
           <Typography
             textAlign="center"
             style={
-              (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') ||
-              (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx')
+              inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx'
                 ? { display: 'none' }
                 : {}
             }

@@ -39,11 +39,20 @@ export default function LPPanel() {
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
   const liquiditySupply = useLiquiditySupply();
+  const [isSendSICXDone, updateIsSendSICXDone] = React.useState(false);
+  const [isSendBNUSDDone, updateIsSendBNUSDDone] = React.useState(false);
 
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
+  const [showSupplyCancel, setShowSupplyCancel] = React.useState(false);
 
   const handleSupplyConfirmDismiss = () => {
+    setShowSupplyCancel(!(isSendSICXDone && isSendBNUSDDone));
     setShowSupplyConfirm(false);
+  };
+
+  const handleSupplyCancelDismiss = () => {
+    setShowSupplyCancel(false);
+    setShowSupplyConfirm(true);
   };
 
   const handleSupply = () => {
@@ -95,7 +104,7 @@ export default function LPPanel() {
       //.sICX.borrowAdd(newBorrowValue)
       .sICX.dexDeposit(parseFloat(supplyInputAmount))
       .then(res => {
-        console.log('res', res);
+        updateIsSendSICXDone(true);
         addTransaction(
           { hash: res.result },
           { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
@@ -114,6 +123,7 @@ export default function LPPanel() {
       .bnUSD.dexDeposit(parseFloat(supplyOutputAmount))
       .then(res => {
         console.log('res', res);
+        updateIsSendBNUSDDone(true);
         addTransaction(
           { hash: res.result },
           { summary: `Deposited ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the DEX.` },
@@ -214,7 +224,6 @@ export default function LPPanel() {
   }, [selectedPair, walletBalance]);
 
   React.useEffect(() => {
-    console.log('useEffect');
     setSuppliedPairAmount(getSuppliedPairAmount());
     setWalletBalanceSelected(getWalletBalanceSelected());
   }, [getSuppliedPairAmount, getWalletBalanceSelected, selectedPair]);
@@ -345,9 +354,13 @@ export default function LPPanel() {
               </Typography>
             </Box>
             <Box width={1 / 2}>
-              <SupplyButton ml={3} onClick={handleSupplyInputDepositConfirm}>
-                Send
-              </SupplyButton>
+              {isSendSICXDone ? (
+                <SupplyButton ml={3}>✅</SupplyButton>
+              ) : (
+                <SupplyButton ml={3} onClick={handleSupplyInputDepositConfirm}>
+                  Send
+                </SupplyButton>
+              )}
             </Box>
           </Flex>
 
@@ -362,9 +375,13 @@ export default function LPPanel() {
               </Typography>
             </Box>
             <Box width={1 / 2}>
-              <SupplyButton ml={3} onClick={handleSupplyOutputDepositConfirm}>
-                Send
-              </SupplyButton>
+              {isSendBNUSDDone ? (
+                <SupplyButton ml={3}>✅</SupplyButton>
+              ) : (
+                <SupplyButton ml={3} onClick={handleSupplyOutputDepositConfirm}>
+                  Send
+                </SupplyButton>
+              )}
             </Box>
           </Flex>
 
@@ -376,7 +393,35 @@ export default function LPPanel() {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={handleSupplyConfirmDismiss}>Cancel</TextButton>
-            <Button onClick={handleSupplyConfirm}>Supply</Button>
+            <Button onClick={handleSupplyConfirm} disabled={!isSendSICXDone || !isSendBNUSDDone}>
+              Supply
+            </Button>
+          </Flex>
+        </Flex>
+      </Modal>
+
+      <Modal isOpen={showSupplyCancel} onDismiss={handleSupplyCancelDismiss}>
+        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
+            Cancel supply?
+          </Typography>
+
+          <Typography variant="p" textAlign="center" mb={4}>
+            Remove your assests from the <br />
+            pool to cancel this transaction
+          </Typography>
+
+          <Typography variant="p" textAlign="center" fontSize="20px">
+            {supplyInputAmount} sICX
+          </Typography>
+          <Typography variant="p" textAlign="center" mb={4} fontSize="20px">
+            {supplyOutputAmount} bnUSD
+          </Typography>
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            <TextButton onClick={handleSupplyCancelDismiss}>Go Back</TextButton>
+            <Button backgroundColor="#fb6a6a" onClick={() => null}>
+              Remove and cancel
+            </Button>
           </Flex>
         </Flex>
       </Modal>

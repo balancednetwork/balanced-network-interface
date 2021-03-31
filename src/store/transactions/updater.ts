@@ -23,7 +23,7 @@ export default function Updater(): null {
   //call useEffect per 5000ms
   const [last, setLast] = React.useState(0);
   const increment = React.useCallback(() => setLast(last => last + 1), [setLast]);
-  useInterval(increment, 5000);
+  useInterval(increment, 1000);
 
   const transactions = useAllTransactions();
 

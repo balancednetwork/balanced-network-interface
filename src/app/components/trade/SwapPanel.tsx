@@ -202,7 +202,6 @@ export default function SwapPanel() {
         .eject({ account: account })
         .Baln.swapToBnUSD(parseFloat(swapInputAmount), rawSlippage + '')
         .then(res => {
-          console.log('res', res);
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },

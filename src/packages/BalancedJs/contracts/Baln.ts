@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { IconAmount } from 'icon-sdk-js';
 
 import { ResponseJsonRPCPayload } from '..';
@@ -34,7 +35,7 @@ export default class Baln extends Contract {
     return this.call(callParams);
   }
 
-  async swapToBnUSD(value: number, slippage: string): Promise<ResponseJsonRPCPayload> {
+  async swapToBnUSD(value: BigNumber, slippage: string): Promise<ResponseJsonRPCPayload> {
     const data =
       '0x' +
       Buffer.from(
@@ -45,7 +46,7 @@ export default class Baln extends Contract {
           '}}',
         'utf8',
       ).toString('hex');
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
 
     const payload = this.transactionParamsBuilder({
@@ -57,12 +58,12 @@ export default class Baln extends Contract {
     return this.callIconex(payload);
   }
 
-  public async transfer(to: string, value: number): Promise<any> {
+  public async transfer(to: string, value: BigNumber): Promise<any> {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
       params: {
         _to: to,
-        _value: '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16),
+        _value: '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16),
       },
       value: 0,
     });
@@ -70,8 +71,8 @@ export default class Baln extends Contract {
     return this.callIconex(callParams);
   }
 
-  async stake(value: number): Promise<ResponseJsonRPCPayload> {
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+  async stake(value: BigNumber): Promise<ResponseJsonRPCPayload> {
+    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _value: valueHex };
     const payload = this.transactionParamsBuilder({
       method: 'stake',

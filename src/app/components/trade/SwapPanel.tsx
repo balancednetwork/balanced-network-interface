@@ -170,7 +170,7 @@ export default function SwapPanel() {
         .eject({ account: account })
         //.sICX.borrowAdd(newBorrowValue)
         //.bnUSD.swapBysICX(parseFloat(swapInputAmount), '10')
-        .sICX.swapBybnUSD(parseFloat(swapInputAmount), rawSlippage + '')
+        .sICX.swapBybnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
         .then(res => {
           console.log('res', res);
           setShowSwapConfirm(false);
@@ -185,7 +185,7 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'ICX') {
       bnJs
         .eject({ account: account })
-        .sICX.swapToICX(parseFloat(swapInputAmount))
+        .sICX.swapToICX(new BigNumber(swapInputAmount))
         .then(res => {
           console.log('res', res);
           setShowSwapConfirm(false);
@@ -200,7 +200,7 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol === 'BALN') {
       bnJs
         .eject({ account: account })
-        .Baln.swapToBnUSD(parseFloat(swapInputAmount), rawSlippage + '')
+        .Baln.swapToBnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
         .then(res => {
           console.log('res', res);
           setShowSwapConfirm(false);
@@ -215,7 +215,7 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol === 'ICX') {
       bnJs
         .eject({ account: account })
-        .Staking.stakeICX(parseFloat(swapInputAmount))
+        .Staking.stakeICX(new BigNumber(swapInputAmount))
         .then(res => {
           console.log('res', res);
           setShowSwapConfirm(false);

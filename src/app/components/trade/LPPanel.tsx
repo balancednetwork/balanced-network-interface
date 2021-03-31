@@ -93,7 +93,7 @@ export default function LPPanel() {
     bnJs
       .eject({ account: account })
       //.sICX.borrowAdd(newBorrowValue)
-      .sICX.dexDeposit(parseFloat(supplyInputAmount))
+      .sICX.dexDeposit(new BigNumber(supplyInputAmount))
       .then(res => {
         console.log('res', res);
         addTransaction(
@@ -111,7 +111,7 @@ export default function LPPanel() {
     bnJs
       .eject({ account: account })
       //.sICX.borrowAdd(newBorrowValue)
-      .bnUSD.dexDeposit(parseFloat(supplyOutputAmount))
+      .bnUSD.dexDeposit(new BigNumber(supplyOutputAmount))
       .then(res => {
         console.log('res', res);
         addTransaction(
@@ -129,7 +129,7 @@ export default function LPPanel() {
     if (selectedPair.pair === SupportedPairs[2].pair) {
       bnJs
         .eject({ account: account })
-        .Dex.transferICX(parseFloat(supplyInputAmount))
+        .Dex.transferICX(new BigNumber(supplyInputAmount))
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -143,7 +143,7 @@ export default function LPPanel() {
       bnJs
         .eject({ account: account })
         //.sICX.borrowAdd(newBorrowValue)
-        .Dex.dexSupplysICXbnUSD(parseFloat(supplyInputAmount), parseFloat(supplyOutputAmount))
+        .Dex.dexSupplysICXbnUSD(new BigNumber(supplyInputAmount), new BigNumber(supplyOutputAmount))
         .then(res => {
           addTransaction(
             { hash: res.result },

@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 import { NetworkId } from './addresses';
 import Baln from './contracts/Baln';
 import Band from './contracts/Band';
@@ -75,7 +77,7 @@ export class BalancedJs {
     return this;
   }
 
-  transfer(to: string, value: number): Promise<any> {
+  transfer(to: string, value: BigNumber): Promise<any> {
     const contract = new Contract(this.contractSettings);
     contract.address = to;
     const payload = contract.transferICXParamsBuilder({

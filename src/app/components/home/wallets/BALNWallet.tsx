@@ -62,7 +62,7 @@ export default function BALNWallet() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .Baln.transfer(address, differenceAmount.toNumber())
+      .Baln.transfer(address, differenceAmount)
       .then(res => {
         if (res.result) {
           addTransaction({ hash: res.result }, { summary: `Sent ${differenceAmount.toNumber()} BALN to ${address}.` });

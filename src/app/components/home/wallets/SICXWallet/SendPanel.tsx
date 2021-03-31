@@ -58,7 +58,7 @@ export default function SendPanel() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .sICX.transfer(address, differenceAmount.toNumber())
+      .sICX.transfer(address, differenceAmount)
       .then(res => {
         if (res.result) {
           addTransaction({ hash: res.result }, { summary: `Sent ${differenceAmount.toNumber()} sICX to ${address}.` });

@@ -81,14 +81,14 @@ export class Contract {
   /**
    * @returns transaction transfer ICX to call ICONex
    */
-  public transferICXParamsBuilder({ value }: { value: number }) {
+  public transferICXParamsBuilder({ value }: { value: BigNumber }) {
     const payload = new IconBuilder.IcxTransactionBuilder()
       .from(this.account)
       .to(this.address)
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)
       .stepLimit(IconConverter.toBigNumber(1000000))
-      .value(IconAmount.of(value, IconAmount.Unit.ICX).toLoop())
+      .value(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop())
       .version(IconConverter.toBigNumber(3))
       .build();
 

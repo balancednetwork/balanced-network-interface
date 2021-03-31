@@ -46,7 +46,7 @@ export default function DepositPanel() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .sICX.collateralDeposit(differenceAmount.toNumber())
+      .sICX.collateralDeposit(differenceAmount)
       .then(res => {
         if (res.result) {
           addTransaction(

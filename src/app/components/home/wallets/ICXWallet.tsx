@@ -4,6 +4,7 @@ import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
 import { useIconReact } from 'packages/icon-react';
+import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { Box, Flex } from 'rebass/styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
@@ -83,9 +84,28 @@ export default function ICXWallet() {
     differenceAmount.isZero() ||
     differenceAmount.isGreaterThan(maxAmount);
 
+  const [tabIndex, setTabIndex] = React.useState(0);
+
+  const handleTabsChange = index => {
+    setTabIndex(index);
+  };
+
+  const [list, setList] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchUserUnstakeInfo = async () => {
+      if (account) {
+        const result = await bnJs.Staking.getUserUnstakeInfo(account);
+        setList(result.map(record => convertLoopToIcx(new BigNumber(record[0], 16)).toFixed(2)));
+      }
+    };
+
+    fetchUserUnstakeInfo();
+  }, [account, tabIndex]);
+
   return (
     <BoxPanel bg="bg3">
-      <Tabs>
+      <Tabs index={tabIndex} onChange={handleTabsChange}>
         <StyledTabList>
           <StyledTab>Send</StyledTab>
           <StyledTab>Unstaking</StyledTab>
@@ -121,14 +141,12 @@ export default function ICXWallet() {
             <Grid>
               <Typography variant="h3">Unstaking</Typography>
 
-              <Box>
-                <Typography>Collateral unstaking</Typography>
-                <Typography variant="p">9,716 ICX ~12 days remaining.</Typography>
-              </Box>
+              <Typography>Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
 
               <Box>
-                <Typography>Liquidity unstaking</Typography>
-                <Typography variant="p">3,468 ICX ~5 days remaining.</Typography>
+                {list.map(item => (
+                  <Typography variant="p">{item} ICX unstaking</Typography>
+                ))}
               </Box>
             </Grid>
           </TabPanel>

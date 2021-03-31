@@ -8,6 +8,8 @@ import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/L
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { SupportedPairs, Pair } from 'constants/currency';
 import { useSetPair, usePoolPair } from 'store/pool/hooks';
+import { useRatioValue } from 'store/ratio/hooks';
+import { useReward } from 'store/reward/hooks';
 
 const StyledWrapper = styled(Wrapper)`
   font-size: 18px;
@@ -37,6 +39,18 @@ export default function LiquiditySelect() {
 
   const pairs = [SupportedPairs[0], SupportedPairs[1], SupportedPairs[2]];
 
+  const poolReward = useReward();
+  const ratio = useRatioValue();
+  const sICXICXpoolDailyReward =
+    (poolReward.sICXICXreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
+  const sICXbnUSDpoolDailyReward =
+    (poolReward.sICXbnUSDreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
+  const BALNbnUSDpoolDailyReward =
+    (poolReward.BALNbnUSDreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
+  const sICXICXapy = sICXICXpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber();
+  const sICXbnUSDICXapy = sICXbnUSDpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber();
+  const BALNbnUSDapy = BALNbnUSDpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber();
+
   return (
     <ClickAwayListener onClickAway={() => setOpen(false)}>
       <div>
@@ -57,7 +71,7 @@ export default function LiquiditySelect() {
                   {pool.pair}
                 </DataText>
                 <DataText variant="p" textAlign="right">
-                  5.6%
+                  {sICXICXapy} %
                 </DataText>
               </ListItem>
             ))}

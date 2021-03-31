@@ -13,6 +13,7 @@ import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
+import { useCollateralAdjust } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
   useLoanAdjust,
@@ -58,9 +59,11 @@ const LoanPanel = () => {
   );
 
   const adjust = useLoanAdjust();
+  const adjustCollateral = useCollateralAdjust();
 
   const handleEnableAdjusting = () => {
     adjust(true);
+    adjustCollateral(false);
   };
 
   const handleCancelAdjusting = () => {

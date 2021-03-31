@@ -24,6 +24,7 @@ const ContentWrapper = styled.div`
 
 const ReferenceElement = styled.div`
   display: inline-block;
+  line-height: 0;
 `;
 
 const Arrow = styled.div`

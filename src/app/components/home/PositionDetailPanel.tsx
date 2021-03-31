@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -40,15 +41,28 @@ const Chip = styled(Box)`
   font-weight: bold;
   color: #ffffff;
   line-height: 14px;
-  height: 17px;
+  height: 16px;
 `;
 
-const Threshold = styled(Box)`
+const LeftChip = styled(Chip)`
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 3px solid #0d2a4d;
+`;
+
+const RightChip = styled(Chip)`
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-left: 3px solid #0d2a4d;
+`;
+
+const Threshold = styled(Box)<{ warned?: boolean }>`
+  color: ${({ warned }) => (warned ? '#fb6a6a' : '#ffffff')};
   position: absolute;
   width: 1px;
   height: 50px;
-  margin-top: -33px;
-  background-color: #ffffff;
+  margin-top: -34px;
+  background-color: ${({ warned }) => (warned ? '#fb6a6a' : '#ffffff')};
   z-index: 2;
   transition: color 0.3s ease;
 
@@ -59,7 +73,7 @@ const Threshold = styled(Box)`
     width: 10px;
     height: 1px;
     margin-left: -10px;
-    background-color: #ffffff;
+    background-color: ${({ warned }) => (warned ? '#fb6a6a' : '#ffffff')};
     z-index: 2;
     transition: height 0.3s ease;
   }
@@ -68,6 +82,14 @@ const Threshold = styled(Box)`
 const MetaData = styled(Box)`
   font-size: 14px;
   margin-top: -10px;
+
+  & dt {
+    line-height: 17px;
+  }
+
+  & dd {
+    margin-inline: 0px;
+  }
 `;
 
 const Rewards = styled(Threshold)`
@@ -98,7 +120,7 @@ const useThresholdPrices = () => {
   const loanInputAmount = useLoanInputAmount();
 
   return React.useMemo(() => {
-    if (collateralInputAmount.isZero()) return [0, 0];
+    if (collateralInputAmount.isZero()) return [new BigNumber(0), new BigNumber(0)];
 
     return [
       loanInputAmount.multipliedBy(5).div(collateralInputAmount),
@@ -182,11 +204,15 @@ const PositionDetailPanel = () => {
     setPeriod(p);
   };
 
+  const isRewardWarning = rewardThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
+
+  const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
+
   return (
     <ActivityPanel bg="bg2">
       <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]}>
         <Typography variant="h2" mb={5}>
-          Position detail
+          Position details
         </Typography>
 
         <Flex>
@@ -207,7 +233,8 @@ const PositionDetailPanel = () => {
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
-          The current ICX price is <span className="alert">{'$' + ratio.ICXUSDratio.toFixed(2)}</span>.
+          The current ICX price is{' '}
+          <span className={isRewardWarning ? 'alert' : ''}>{'$' + ratio.ICXUSDratio.toFixed(4)}</span>.
         </Typography>
         <Typography>
           You hold{' '}
@@ -229,19 +256,19 @@ const PositionDetailPanel = () => {
             show={show}
             placement="bottom"
           >
-            <Chip
+            <LeftChip
               bg="primary"
               style={{
                 backgroundImage: 'linear-gradient(to right, #2ca9b7 ' + lowRisk1 + '%, #144a68 ' + lowRisk1 + '%)',
               }}
             >
               Low risk
-            </Chip>
+            </LeftChip>
           </Tooltip>
 
-          <Box flex={1} mx={1} style={{ position: 'relative', marginTop: '3px' }}>
-            <Rewards>
-              <MetaData as="dl">
+          <Box flex={1} style={{ position: 'relative' }}>
+            <Rewards warned={isRewardWarning}>
+              <MetaData as="dl" style={{ textAlign: 'right' }}>
                 <Tooltip
                   text="You won’t earn any Balance Tokens if you go beyond this threshold."
                   show={show}
@@ -253,8 +280,8 @@ const PositionDetailPanel = () => {
               </MetaData>
             </Rewards>
 
-            <Locked>
-              <MetaData as="dl">
+            <Locked warned={isLockWarning}>
+              <MetaData as="dl" style={{ textAlign: 'left' }}>
                 <Tooltip
                   text="You can’t withdraw any collateral if you go beyond this threshold."
                   show={show}
@@ -281,6 +308,7 @@ const PositionDetailPanel = () => {
                   sliderInstance.current = instance;
                 }
               }}
+              style={{ height: 16 }}
             />
           </Box>
 
@@ -289,7 +317,7 @@ const PositionDetailPanel = () => {
             show={show}
             placement="bottom"
           >
-            <Chip bg="red">Liquidated</Chip>
+            <RightChip bg="#fb6a6a">Liquidated</RightChip>
           </Tooltip>
         </Flex>
 

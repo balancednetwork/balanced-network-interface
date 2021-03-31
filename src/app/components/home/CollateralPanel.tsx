@@ -111,7 +111,7 @@ const CollateralPanel = () => {
     if (shouldDeposit) {
       bnJs
         .eject({ account: account })
-        .Loans.depositAddCollateral(collateralAmount.toNumber())
+        .Loans.depositAddCollateral(collateralAmount)
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -128,7 +128,7 @@ const CollateralPanel = () => {
     } else {
       bnJs
         .eject({ account: account })
-        .Loans.depositWithdrawCollateral(collateralAmount.toNumber())
+        .Loans.depositWithdrawCollateral(collateralAmount)
         .then(res => {
           addTransaction(
             { hash: res.result }, //

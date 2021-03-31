@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { IconAmount } from 'icon-sdk-js';
 
 import { ResponseJsonRPCPayload } from '..';
@@ -14,10 +15,10 @@ export default class Loans extends Contract {
    * addCollateral and withdrawCollateral
    * @returns payload to call iconex
    */
-  async depositWithdrawCollateral(value: number): Promise<ResponseJsonRPCPayload> {
+  async depositWithdrawCollateral(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     //const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
     //const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _value: valueHex };
     const payload = this.transactionParamsBuilder({
       method: 'withdrawCollateral',
@@ -30,19 +31,19 @@ export default class Loans extends Contract {
    * addCollateral and withdrawCollateral
    * @returns payload to call iconex
    */
-  async depositAddCollateral(value: number): Promise<ResponseJsonRPCPayload> {
+  async depositAddCollateral(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     //const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
     //const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
     const params = { _asset: '', _amount: '0x0' };
     const payload = this.transactionParamsBuilder({
       method: 'addCollateral',
-      value,
+      value: value.toNumber(),
       params,
     });
     return this.callIconex(payload);
   }
 
-  async borrowAdd(value: number): Promise<ResponseJsonRPCPayload> {
+  async borrowAdd(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     //const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
     //const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
     /*const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
@@ -54,7 +55,7 @@ export default class Loans extends Contract {
     });
     console.log(payload);
     return this.callIconex(payload);*/
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = '0x' + IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _asset: 'bnUSD', _amount: valueHex, _from: this.account };
     const payload = this.transactionParamsBuilder({
       method: 'originateLoan',

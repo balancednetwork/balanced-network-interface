@@ -108,7 +108,7 @@ const LoanPanel = () => {
     if (shouldBorrow) {
       bnJs
         .eject({ account })
-        .Loans.borrowAdd(differenceAmount.toNumber())
+        .Loans.borrowAdd(differenceAmount)
         .then(res => {
           addTransaction({ hash: res.result }, { summary: `Borrowed ${differenceAmount.toNumber()} bnUSD.` });
           // close modal

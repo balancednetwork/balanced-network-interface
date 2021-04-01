@@ -236,7 +236,7 @@ const LiquidityDetails = () => {
               <br />
               {liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toFixed(2)} bnUSD
             </td>
-
+            <td>{!account ? '-' : BALNbnUSDSuppliedShare?.isNaN() ? '0.00' : BALNbnUSDSuppliedShare?.toFixed(2)}%</td>
             <td>
               ~{' '}
               {(

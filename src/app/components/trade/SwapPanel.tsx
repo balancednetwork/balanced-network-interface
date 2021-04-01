@@ -25,7 +25,7 @@ import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
-import { SectionPanel, BrightPanel } from './utils';
+import { SectionPanel, BrightPanel, swapMessage } from './utils';
 
 const ChartControlButton = styled(Button)<{ active: boolean }>`
   padding: 1px 12px;
@@ -236,7 +236,9 @@ export default function SwapPanel() {
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
-            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+            {
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
+            },
           );
         })
         .catch(e => {
@@ -251,7 +253,9 @@ export default function SwapPanel() {
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
-            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+            {
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
+            },
           );
         })
         .catch(e => {
@@ -266,7 +270,7 @@ export default function SwapPanel() {
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
-            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+            { summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol) },
           );
         })
         .catch(e => {
@@ -281,7 +285,7 @@ export default function SwapPanel() {
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
-            { summary: `Created tx swap from ${inputCurrency.symbol} to ${outputCurrency.symbol} successfully.` },
+            { summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol) },
           );
         })
         .catch(e => {

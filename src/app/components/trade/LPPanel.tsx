@@ -19,7 +19,7 @@ import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue, useChangeWalletBalance } from 'store/wallet/hooks';
 
-import { SectionPanel, BrightPanel } from './utils';
+import { SectionPanel, BrightPanel, depositMessage, supplyMessage } from './utils';
 
 const StyledDL = styled.dl`
   margin: 15px 0 15px 0;
@@ -101,7 +101,7 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: `Deposited ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the DEX.` },
+          { summary: depositMessage(supplyOutputAmount, selectedPair.quoteCurrencyKey) },
         );
       })
       .catch(e => {
@@ -117,7 +117,12 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
+          {
+            summary: supplyMessage(
+              supplyInputAmount,
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ),
+          },
         );
       })
       .catch(e => {
@@ -133,7 +138,12 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
+          {
+            summary: supplyMessage(
+              supplyInputAmount,
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ),
+          },
         );
       })
       .catch(e => {
@@ -149,7 +159,12 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
+          {
+            summary: supplyMessage(
+              supplyInputAmount,
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ),
+          },
         );
       })
       .catch(e => {
@@ -229,7 +244,10 @@ export default function LPPanel() {
         addTransaction(
           { hash: res.result },
           {
-            summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the pool.`,
+            summary: supplyMessage(
+              supplyInputAmount,
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ),
           },
         );
       })
@@ -247,7 +265,10 @@ export default function LPPanel() {
         addTransaction(
           { hash: res.result },
           {
-            summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the pool.`,
+            summary: supplyMessage(
+              supplyInputAmount,
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ),
           },
         );
       })

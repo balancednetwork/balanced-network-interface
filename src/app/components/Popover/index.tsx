@@ -5,7 +5,7 @@ import Portal from '@reach/portal';
 import { usePopper } from 'react-popper';
 import styled from 'styled-components';
 
-import useTimeout from 'hooks/useTimeout';
+import useInterval from 'hooks/useInterval';
 
 const PopoverContainer = styled.div<{ show: boolean }>`
   z-index: ${({ theme }) => theme.zIndices.tooltip};
@@ -24,6 +24,7 @@ const ContentWrapper = styled.div`
 
 const ReferenceElement = styled.div`
   display: inline-block;
+  line-height: 0;
 `;
 
 const Arrow = styled.div`
@@ -90,7 +91,7 @@ export default function Popover({ content, show, children, placement = 'auto' }:
   const updateCallback = useCallback(() => {
     update && update();
   }, [update]);
-  useTimeout(updateCallback, show ? 100 : null);
+  useInterval(updateCallback, show ? 100 : null);
 
   return (
     <>
@@ -129,7 +130,7 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
   const updateCallback = useCallback(() => {
     update && update();
   }, [update]);
-  useTimeout(updateCallback, show ? 100 : null);
+  useInterval(updateCallback, show ? 100 : null);
 
   return (
     <Portal>
@@ -166,7 +167,7 @@ export function DropdownPopper({ show, children, placement = 'auto', anchorEl }:
   const updateCallback = useCallback(() => {
     update && update();
   }, [update]);
-  useTimeout(updateCallback, show ? 100 : null);
+  useInterval(updateCallback, show ? 100 : null);
 
   return (
     <Portal>

@@ -40,6 +40,23 @@ export default class Dex extends Contract {
     return this.callIconex(payload);
   }
 
+  async supplyBALNbnUSD(baseValue: number, quoteValue: number): Promise<ResponseJsonRPCPayload> {
+    const hexBasePrice = '0x' + IconAmount.of(baseValue, IconAmount.Unit.ICX).toLoop().toString(16);
+    const hexQuotePrice = '0x' + IconAmount.of(quoteValue, IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = {
+      _baseToken: addresses[this.nid].baln,
+      _quoteToken: addresses[this.nid].bnUSD,
+      _maxBaseValue: hexBasePrice,
+      _quoteValue: hexQuotePrice,
+    };
+    const payload = this.transactionParamsBuilder({
+      method: 'add',
+      params,
+    });
+    console.log(payload);
+    return this.callIconex(payload);
+  }
+
   getDeposit(tokenAddress: string) {
     const callParams = this.paramsBuilder({
       method: 'getDeposit',
@@ -114,14 +131,11 @@ export default class Dex extends Contract {
   }
 
   cancelSicxIcxOrder() {
-    const callParams = this.paramsBuilder({
+    const payload = this.transactionParamsBuilder({
       method: 'cancelSicxicxOrder',
-      params: {
-        _address: this.account,
-      },
     });
 
-    return this.call(callParams);
+    return this.callIconex(payload);
   }
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot

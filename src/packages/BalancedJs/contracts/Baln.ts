@@ -79,4 +79,16 @@ export default class Baln extends Contract {
 
     return this.callIconex(payload);
   }
+
+  async dexDeposit(value: number): Promise<ResponseJsonRPCPayload> {
+    const data = '0x' + Buffer.from('{"method": "_deposit"}', 'utf8').toString('hex');
+    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
+    const payload = this.transactionParamsBuilder({
+      method: 'transfer',
+      params,
+    });
+
+    return this.callIconex(payload);
+  }
 }

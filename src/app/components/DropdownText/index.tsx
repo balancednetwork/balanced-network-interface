@@ -49,6 +49,22 @@ export const UnderlineText = styled.span`
   }
 `;
 
+type UnderlineTextWithArrowProps = {
+  arrowRef?: ((instance: SVGSVGElement | null) => void) | React.RefObject<SVGSVGElement> | null | undefined;
+  text: string;
+} & React.HTMLAttributes<HTMLSpanElement>;
+
+export const UnderlineTextWithArrow: React.FC<UnderlineTextWithArrowProps> = props => {
+  const { arrowRef, text, ...rest } = props;
+
+  return (
+    <Wrapper {...rest}>
+      <UnderlineText>{text}</UnderlineText>
+      <StyledArrowDownIcon ref={arrowRef} />
+    </Wrapper>
+  );
+};
+
 export const DropdownText = ({ text, children, ...rest }: { text: string; children: React.ReactNode }) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -65,10 +81,7 @@ export const DropdownText = ({ text, children, ...rest }: { text: string; childr
   return (
     <ClickAwayListener onClickAway={closePopper}>
       <div>
-        <Wrapper onClick={handleToggleClick} {...rest}>
-          <UnderlineText>{text}</UnderlineText>
-          <StyledArrowDownIcon ref={arrowRef} />
-        </Wrapper>
+        <UnderlineTextWithArrow text={text} onClick={handleToggleClick} arrowRef={arrowRef} {...rest} />
         <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
           {children}
         </DropdownPopper>

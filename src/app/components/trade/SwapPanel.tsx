@@ -100,25 +100,62 @@ export default function SwapPanel() {
   const [swapFee, setSwapFee] = React.useState('0');
 
   const tokenRatio = React.useCallback(
-    (symbol: string) => {
-      if (symbol === 'ICX') {
+    (symbolInput: string, symbolOutput: string) => {
+      if (symbolInput === 'ICX') {
         let icxRatio = ratio.sICXICXratio?.toNumber() || 0;
         return icxRatio ? 1 / icxRatio : 0;
-      } else if (symbol === 'BALN') {
+      } else if (symbolInput === 'BALN') {
         return ratio.BALNbnUSDratio?.toNumber() || 0;
-      } else if (symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
+      } else if (symbolInput === 'sICX' && symbolOutput === 'bnUSD') {
         return ratio.sICXbnUSDratio?.toNumber() || 0;
-      } else if (symbol === 'sICX' && outputCurrency.symbol === 'ICX') {
+      } else if (symbolInput === 'sICX' && symbolOutput === 'ICX') {
         return ratio.sICXICXratio?.toNumber() || 0;
       }
       return 0;
     },
-    [outputCurrency.symbol, ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
+    [ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
+  );
+
+  const handleConvertOutputRate = React.useCallback(
+    (_inputCurrency: any, _outputCurrency: any, val: string) => {
+      let ratioLocal = tokenRatio(_inputCurrency.symbol, _outputCurrency.symbol);
+      if (!ratioLocal) {
+        console.log(`Cannot get rate from this pair`);
+      }
+      if (!val) {
+        val = '0';
+      }
+      if (_inputCurrency.symbol.toLowerCase() === 'icx' && _outputCurrency.symbol.toLowerCase() === 'sicx') {
+        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(_outputCurrency.decimals).toString());
+      } else if (_inputCurrency.symbol.toLowerCase() === 'sicx' && _outputCurrency.symbol.toLowerCase() === 'icx') {
+        // 1% fee for trading from sicx -> icx
+        const fee = parseFloat(val) * 0.01;
+        setSwapFee(fee.toFixed(_inputCurrency.decimals).toString());
+        val = (parseFloat(val) - fee).toString();
+        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(_outputCurrency.decimals).toString());
+      } else {
+        bnJs
+          .eject({ account: account })
+          .Dex.getFees()
+          .then(res => {
+            const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
+            const lp_fee = parseInt(res[`pool_lp_fee`], 16);
+            const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
+            setSwapFee(fee.toFixed(_inputCurrency.decimals).toString());
+            val = (parseFloat(val) - fee).toString();
+            setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(_outputCurrency.decimals).toString());
+          })
+          .catch(e => {
+            console.error('error', e);
+          });
+      }
+    },
+    [account, tokenRatio],
   );
 
   const handleTypeOutput = (val: string) => {
     setSwapOutputAmount(val);
-    let ratioLocal = tokenRatio(inputCurrency.symbol);
+    let ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
     if (!ratioLocal) {
       console.log(`Cannot get rate from this pair`);
     }
@@ -151,55 +188,25 @@ export default function SwapPanel() {
   const handleTypeInput = React.useCallback(
     (val: string) => {
       setSwapInputAmount(val);
-      let ratioLocal = tokenRatio(inputCurrency.symbol);
-      if (!ratioLocal) {
-        console.log(`Cannot get rate from this pair`);
-      }
-      if (!val) {
-        val = '0';
-      }
-      if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
-        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
-      } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
-        // 1% fee for trading from sicx -> icx
-        const fee = parseFloat(val) * 0.01;
-        setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
-        val = (parseFloat(val) - fee).toString();
-        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
-      } else {
-        bnJs
-          .eject({ account: account })
-          .Dex.getFees()
-          .then(res => {
-            const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
-            const lp_fee = parseInt(res[`pool_lp_fee`], 16);
-            const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
-            setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
-            val = (parseFloat(val) - fee).toString();
-            setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
-          })
-          .catch(e => {
-            console.error('error', e);
-          });
-      }
+      handleConvertOutputRate(inputCurrency, outputCurrency, val);
     },
-    [account, inputCurrency.decimals, inputCurrency.symbol, tokenRatio, outputCurrency.decimals, outputCurrency.symbol],
+    [inputCurrency, outputCurrency, handleConvertOutputRate],
   );
 
   const handleInputSelect = React.useCallback(
     ccy => {
       setInputCurrency(ccy);
-      handleTypeInput(swapInputAmount);
+      handleConvertOutputRate(ccy, outputCurrency, swapInputAmount);
     },
-    [swapInputAmount, handleTypeInput],
+    [swapInputAmount, handleConvertOutputRate, outputCurrency],
   );
 
   const handleOutputSelect = React.useCallback(
     ccy => {
       setOutputCurrency(ccy);
-      handleTypeInput(swapInputAmount);
+      handleConvertOutputRate(inputCurrency, ccy, swapInputAmount);
     },
-    [swapInputAmount, handleTypeInput],
+    [swapInputAmount, handleConvertOutputRate, inputCurrency],
   );
 
   const handleSwapConfirmDismiss = () => {
@@ -482,7 +489,8 @@ export default function SwapPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {tokenRatio(inputCurrency.symbol).toFixed(2)} {inputCurrency.symbol} per {outputCurrency.symbol}
+            {tokenRatio(inputCurrency.symbol, outputCurrency.symbol).toFixed(2)}
+            {inputCurrency.symbol} per {outputCurrency.symbol}
           </Typography>
 
           <Flex my={5}>

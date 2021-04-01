@@ -1,125 +1,59 @@
 import React from 'react';
 
-import { IconBuilder, IconConverter } from 'icon-sdk-js';
-import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
-import { Box, Flex } from 'rebass/styled-components';
+import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
+import { Button } from 'app/components/Button';
 import Divider from 'app/components/Divider';
-import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
-const RewardGrid = styled.div`
-  display: grid;
-  grid-template-rows: auto;
-  grid-gap: 20px;
-`;
-
-const Row = styled(Flex)`
-  align-items: flex-start;
-  justify-content: space-between;
-`;
-
 const RewardsPanel = () => {
-  const [open, setOpen] = React.useState(false);
-
-  const { account, networkId } = useIconReact();
-  const walletBalance = useWalletBalanceValue();
+  const { account } = useIconReact();
+  const wallet = useWalletBalanceValue();
   const addTransaction = useTransactionAdder();
 
-  const handleClaimReward = () => {
-    if (!account) return;
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-
-    // const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
-    // const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
-    // const params = { _data1: data1, _data2: data2 };
-    console.log(addresses[networkId].rewards);
-    const depositPayload = callTransactionBuilder
-      .from(account)
-      .to(addresses[networkId].rewards)
-      .method('claimRewards')
-      //.params(params)
-      .nid(IconConverter.toBigNumber(3))
-      .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(1000000))
-      //.value(IconAmount.of(formattedAmounts[Field.LEFT], IconAmount.Unit.ICX).toLoop())
-      .version(IconConverter.toBigNumber(3))
-      .build();
-
-    const parsed = {
-      jsonrpc: '2.0',
-      method: 'icx_sendTransaction',
-      params: IconConverter.toRawTransaction(depositPayload),
-      id: Date.now(),
-    };
-
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload: parsed,
-        },
-      }),
-    );
-  };
-
-  const handleClose = () => {
-    bnJs
-      .eject({ account: account })
-      .Rewards.claimRewards()
-      .then(res => {
-        addTransaction(
-          { hash: res.result }, //
-          {
-            summary: `${
-              !account
-                ? '-'
-                : walletBalance.BALNreward?.toNumber() === 0 || walletBalance.BALNreward?.isNaN()
-                ? '0 BALN'
-                : walletBalance.BALNreward?.toFixed(2) + 'BALN'
-            } ICX added to your wallet.`,
-          },
-        );
-        // close modal
-        //toggleOpen();
-        // reset collateral panel values
-        setOpen(false);
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
-  };
-
   const handleClaim = () => {
-    setOpen(true);
+    if (account) {
+      bnJs
+        .eject({ account: account })
+        .Rewards.claimRewards()
+        .then(res => {
+          addTransaction(
+            { hash: res.result }, //
+            {
+              summary: `Claimed ${reward.dp(2).toFormat()} BALN.`,
+            },
+          );
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    }
   };
+
+  const reward = wallet.BALNreward;
+
+  const ratio = useRatioValue();
+
+  const rewardAmountByUSD = reward.multipliedBy(ratio.BALNbnUSDratio);
 
   return (
     <div>
       <BoxPanel bg="bg2">
-        <Flex justifyContent="space-between" alignItems="center" mb={5}>
-          <Typography variant="h2">Rewards</Typography>
-
-          <Typography>Last claimed 2 days ago</Typography>
-        </Flex>
+        <Typography variant="h2" mb={5}>
+          Rewards
+        </Typography>
 
         <RewardGrid>
           <Row>
             <Typography variant="p">Loan rewards</Typography>
-            <Typography variant="p">
-              {!account
-                ? '-'
-                : walletBalance.BALNreward?.toNumber() === 0 || walletBalance.BALNreward?.isNaN()
-                ? '0 BALN'
-                : walletBalance.BALNreward?.toFixed(2) + 'BALN'}
-            </Typography>
+            <Typography variant="p">{!account ? '-' : `${reward.dp(2).toFormat()} BALN`}</Typography>
           </Row>
 
           <Divider />
@@ -129,16 +63,19 @@ const RewardsPanel = () => {
               Total
             </Typography>
             <Typography variant="p" fontWeight="bold">
-              $24.47
+              {`$${rewardAmountByUSD.dp(2).toFormat()}`}
             </Typography>
           </Row>
         </RewardGrid>
 
         <Flex alignItems="center" justifyContent="center" mt={3}>
-          <Button onClick={handleClaim}>Claim rewards</Button>
+          <Button onClick={handleClaim} disabled={reward.isZero()}>
+            Claim rewards
+          </Button>
         </Flex>
 
-        <Modal isOpen={open} onDismiss={handleClose}>
+        {/* Stake new Balance Tokens Modal */}
+        {/* <Modal isOpen={open} onDismiss={handleClose}>
           <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
             <Typography textAlign="center" mb="5px">
               Stake new Balance Tokens?
@@ -178,10 +115,21 @@ const RewardsPanel = () => {
               </Button>
             </Flex>
           </Flex>
-        </Modal>
+        </Modal> */}
       </BoxPanel>
     </div>
   );
 };
 
 export default RewardsPanel;
+
+const RewardGrid = styled.div`
+  display: grid;
+  grid-template-rows: auto;
+  grid-gap: 20px;
+`;
+
+const Row = styled(Flex)`
+  align-items: flex-start;
+  justify-content: space-between;
+`;

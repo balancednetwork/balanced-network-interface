@@ -125,7 +125,27 @@ export default function SwapPanel() {
     if (!val) {
       val = '0';
     }
-    setSwapInputAmount((parseFloat(val) / ratioLocal).toFixed(inputCurrency.decimals).toString());
+    let inputAmount = parseFloat(val) / ratioLocal;
+    if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
+      inputAmount += inputAmount * 0.01;
+      setSwapInputAmount(inputAmount.toFixed(inputCurrency.decimals).toString());
+    } else if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
+      // fee on this pair is zero so do nothing on this case
+      setSwapInputAmount(inputAmount.toFixed(inputCurrency.decimals).toString());
+    } else {
+      bnJs
+        .eject({ account: account })
+        .Dex.getFees()
+        .then(res => {
+          const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
+          const lp_fee = parseInt(res[`pool_lp_fee`], 16);
+          inputAmount += (inputAmount * (bal_holder_fee + lp_fee)) / 10000;
+          setSwapInputAmount(inputAmount.toFixed(inputCurrency.decimals).toString());
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    }
   };
 
   const handleTypeInput = React.useCallback(
@@ -141,7 +161,8 @@ export default function SwapPanel() {
       if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
         setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
       } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
-        const fee = parseFloat(val) * 0.1;
+        // 1% fee for trading from sicx -> icx
+        const fee = parseFloat(val) * 0.01;
         setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
         val = (parseFloat(val) - fee).toString();
         setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
@@ -295,6 +316,7 @@ export default function SwapPanel() {
     function handleResize() {
       setWidth(ref?.current?.clientWidth ?? width);
     }
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [width]);

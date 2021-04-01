@@ -117,22 +117,21 @@ export default function SwapPanel() {
   );
 
   const handleConvertOutputRate = React.useCallback(
-    (_inputCurrency: any, _outputCurrency: any, val: string) => {
-      let ratioLocal = tokenRatio(_inputCurrency.symbol, _outputCurrency.symbol);
+    (inputCurrency: any, outputCurrency: any, val: string) => {
+      let ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
       if (!ratioLocal) {
         console.log(`Cannot get rate from this pair`);
       }
       if (!val) {
         val = '0';
       }
-      if (_inputCurrency.symbol.toLowerCase() === 'icx' && _outputCurrency.symbol.toLowerCase() === 'sicx') {
-        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(_outputCurrency.decimals).toString());
-      } else if (_inputCurrency.symbol.toLowerCase() === 'sicx' && _outputCurrency.symbol.toLowerCase() === 'icx') {
-        // 1% fee for trading from sicx -> icx
+      if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
+        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
+      } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
         const fee = parseFloat(val) * 0.01;
-        setSwapFee(fee.toFixed(_inputCurrency.decimals).toString());
+        setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
         val = (parseFloat(val) - fee).toString();
-        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(_outputCurrency.decimals).toString());
+        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
       } else {
         bnJs
           .eject({ account: account })
@@ -141,9 +140,9 @@ export default function SwapPanel() {
             const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
             const lp_fee = parseInt(res[`pool_lp_fee`], 16);
             const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
-            setSwapFee(fee.toFixed(_inputCurrency.decimals).toString());
+            setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
             val = (parseFloat(val) - fee).toString();
-            setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(_outputCurrency.decimals).toString());
+            setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
           })
           .catch(e => {
             console.error('error', e);

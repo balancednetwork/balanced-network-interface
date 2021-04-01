@@ -333,18 +333,27 @@ export default function LPPanel() {
             Supply liquidity?
           </Typography>
 
-          <Typography variant="p" textAlign="center" mb={4}>
+          <Typography
+            variant="p"
+            textAlign="center"
+            mb={4}
+            style={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? { display: 'none' } : {}}
+          >
             Send each asset to the pool, <br />
             then click Supply
           </Typography>
 
           <Flex alignItems="center" mb={4}>
-            <Box width={1 / 2}>
-              <Typography variant="p" fontWeight="bold" textAlign="right">
+            <Box width={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? 1 : 1 / 2}>
+              <Typography
+                variant="p"
+                fontWeight="bold"
+                textAlign={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? 'center' : 'right'}
+              >
                 {supplyInputAmount} {selectedPair.baseCurrencyKey}
               </Typography>
             </Box>
-            <Box width={1 / 2}>
+            <Box width={1 / 2} style={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? { display: 'none' } : {}}>
               <SupplyButton ml={3} onClick={handleSupplyInputDepositConfirm}>
                 Send
               </SupplyButton>
@@ -354,7 +363,7 @@ export default function LPPanel() {
           <Flex
             alignItems="center"
             mb={4}
-            style={selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx' ? { display: 'none' } : {}}
+            style={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? { display: 'none' } : {}}
           >
             <Box width={1 / 2}>
               <Typography variant="p" fontWeight="bold" textAlign="right">
@@ -369,9 +378,17 @@ export default function LPPanel() {
           </Flex>
 
           <Typography textAlign="center">
-            Your ICX will be staked, and your
-            <br />
-            assets will be locked for 24 hours.
+            {selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? (
+              <>
+                Your ICX will be staked as sICX, and locked in the <br />
+                pool for the first 24 hours.
+              </>
+            ) : (
+              <>
+                Your ICX will be staked, and your
+                <br /> assets will be locked for 24 hours.
+              </>
+            )}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

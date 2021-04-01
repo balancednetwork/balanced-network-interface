@@ -334,10 +334,53 @@ export default function LPPanel() {
     }
   }, [selectedPair, walletBalance]);
 
+  const getMaxAmountSupply = React.useCallback(() => {
+    switch (selectedPair.pair) {
+      case SupportedPairs[0].pair: {
+        if (walletBalance.sICXbalance.multipliedBy(ratio.sICXbnUSDratio).isLessThan(walletBalance.bnUSDbalance)) {
+          return { value: walletBalance.sICXbalance.toNumber(), key: 'input' };
+        } else {
+          return { value: walletBalance.bnUSDbalance.toNumber(), key: 'output' };
+        }
+      }
+      case SupportedPairs[1].pair: {
+        if (walletBalance.BALNbalance.multipliedBy(ratio.BALNbnUSDratio).isLessThan(walletBalance.bnUSDbalance)) {
+          return { value: walletBalance.BALNbalance.toNumber(), key: 'input' };
+        } else {
+          return { value: walletBalance.bnUSDbalance.toNumber(), key: 'output' };
+        }
+      }
+      case SupportedPairs[2].pair: {
+        return { value: walletBalance.ICXbalance.toNumber(), key: 'input' };
+      }
+      default: {
+        return { value: 0, key: 'input' };
+      }
+    }
+  }, [selectedPair, walletBalance, ratio]);
+
+  const [maxAmountSupply, setMaxAmountSupply] = React.useState({ value: 0, key: '' });
+
   React.useEffect(() => {
     setSuppliedPairAmount(getSuppliedPairAmount());
     setWalletBalanceSelected(getWalletBalanceSelected());
-  }, [getSuppliedPairAmount, getWalletBalanceSelected, selectedPair]);
+    setMaxAmountSupply(getMaxAmountSupply());
+    handleTypeInput('0');
+  }, [getSuppliedPairAmount, getWalletBalanceSelected, getMaxAmountSupply, selectedPair]);
+
+  const [amountSlider, setAmountSlider] = React.useState('0');
+
+  const handleSlider = (values: string[], handle: number) => {
+    setAmountSlider(values[handle]);
+  };
+
+  React.useEffect(() => {
+    if (maxAmountSupply.key === 'input') {
+      handleTypeInput(amountSlider);
+    } else {
+      handleTypeOutput(amountSlider);
+    }
+  }, [amountSlider]);
 
   return (
     <>
@@ -383,8 +426,9 @@ export default function LPPanel() {
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [100],
+                max: [maxAmountSupply.value],
               }}
+              onSlide={handleSlider}
             />
           </Box>
 

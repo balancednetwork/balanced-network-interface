@@ -2,11 +2,12 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
+import ClickAwayListener from 'react-click-away-listener';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import Divider from 'app/components/Divider';
-import DropdownText from 'app/components/DropdownText';
+import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { MenuList, MenuItem } from 'app/components/Menu';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { QuestionWrapper } from 'app/components/QuestionHelper';
@@ -21,6 +22,8 @@ import {
   useTotalAvailablebnUSDAmount,
 } from 'store/loan/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
+
+import { DropdownPopper } from '../Popover';
 
 const ActivityPanel = styled(FlexPanel)`
   padding: 0;
@@ -198,15 +201,29 @@ const PositionDetailPanel = () => {
 
   var lowRisk1 = (900 * 100) / currentRatio;
 
-  const [period, setPeriod] = React.useState(Period.day);
-
-  const handlePeriod = (p: Period) => {
-    setPeriod(p);
-  };
-
   const isRewardWarning = rewardThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
 
   const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
+
+  // handle rebalancing logic
+  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+
+  const arrowRef = React.useRef(null);
+
+  const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchor(anchor ? null : arrowRef.current);
+  };
+
+  const closeMenu = () => {
+    setAnchor(null);
+  };
+
+  const [period, setPeriod] = React.useState(Period.day);
+
+  const handlePeriod = (p: Period) => {
+    closeMenu();
+    setPeriod(p);
+  };
 
   return (
     <ActivityPanel bg="bg2">
@@ -329,13 +346,23 @@ const PositionDetailPanel = () => {
               <Typography variant="h3" mr={15}>
                 Rebalancing
               </Typography>
-              <DropdownText text={`Past ${period.toLowerCase()}`}>
-                <MenuList>
-                  {PERIODS.map(p => (
-                    <MenuItem onClick={() => handlePeriod(p)}>{p}</MenuItem>
-                  ))}
-                </MenuList>
-              </DropdownText>
+
+              <ClickAwayListener onClickAway={closeMenu}>
+                <div>
+                  <UnderlineTextWithArrow
+                    onClick={handleToggle}
+                    text={`Past ${period.toLowerCase()}`}
+                    arrowRef={arrowRef}
+                  />
+                  <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
+                    <MenuList>
+                      {PERIODS.map(p => (
+                        <MenuItem onClick={() => handlePeriod(p)}>{p}</MenuItem>
+                      ))}
+                    </MenuList>
+                  </DropdownPopper>
+                </div>
+              </ClickAwayListener>
             </Flex>
             <Flex>
               <Box width={1 / 2}>

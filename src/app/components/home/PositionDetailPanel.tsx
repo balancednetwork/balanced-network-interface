@@ -225,6 +225,10 @@ const PositionDetailPanel = () => {
     setPeriod(p);
   };
 
+  if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
+    return null;
+  }
+
   return (
     <ActivityPanel bg="bg2">
       <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]}>

@@ -97,6 +97,8 @@ export default function SwapPanel() {
 
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
+  const [swapFee, setSwapFee] = React.useState('0');
+
   const tokenRatio = React.useCallback(
     (symbol: string) => {
       if (symbol === 'ICX') {
@@ -120,6 +122,9 @@ export default function SwapPanel() {
     if (!ratioLocal) {
       console.log(`Cannot get rate from this pair`);
     }
+    if (!val) {
+      val = '0';
+    }
     setSwapInputAmount((parseFloat(val) / ratioLocal).toFixed(inputCurrency.decimals).toString());
   };
 
@@ -130,9 +135,34 @@ export default function SwapPanel() {
       if (!ratioLocal) {
         console.log(`Cannot get rate from this pair`);
       }
-      setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
+      if (!val) {
+        val = '0';
+      }
+      if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
+        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
+      } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
+        const fee = parseFloat(val) / 100;
+        setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
+        val = (parseFloat(val) - fee).toString();
+        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
+      } else {
+        bnJs
+          .eject({ account: account })
+          .Dex.getFees()
+          .then(res => {
+            const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
+            const lp_fee = parseInt(res[`pool_lp_fee`], 16);
+            const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
+            setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
+            val = (parseFloat(val) - fee).toString();
+            setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
+          })
+          .catch(e => {
+            console.error('error', e);
+          });
+      }
     },
-    [inputCurrency.symbol, outputCurrency.decimals, tokenRatio],
+    [account, inputCurrency.decimals, inputCurrency.symbol, tokenRatio, outputCurrency.decimals, outputCurrency.symbol],
   );
 
   const handleInputSelect = React.useCallback(
@@ -159,6 +189,9 @@ export default function SwapPanel() {
     if (!account) {
       // todo: require access to wallet to execute trade
     } else {
+      if (!swapInputAmount || !swapOutputAmount) {
+        return;
+      }
       setShowSwapConfirm(true);
     }
   };
@@ -332,7 +365,9 @@ export default function SwapPanel() {
           <Flex alignItems="center" justifyContent="space-between" mb={1}>
             <Typography>Minimum to receive</Typography>
             <Typography>
-              {(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4).toFixed(outputCurrency.decimals)}{' '}
+              {!swapOutputAmount
+                ? new BigNumber(0).toNumber().toFixed(outputCurrency.decimals)
+                : (((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4).toFixed(outputCurrency.decimals)}{' '}
               {outputCurrency.symbol}
             </Typography>
           </Flex>
@@ -452,7 +487,7 @@ export default function SwapPanel() {
                 : {}
             }
           >
-            Includes a fee of 0.22 {outputCurrency.symbol}.
+            Includes a fee of {swapFee} {inputCurrency.symbol}.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

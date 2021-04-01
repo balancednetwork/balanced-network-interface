@@ -24,10 +24,31 @@ export default class Dex extends Contract {
   }
 
   async dexSupplysICXbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const hexBasePrice = '0x' + IconAmount.of(baseValue, IconAmount.Unit.ICX).toLoop().toString(16);
-    const hexQuotePrice = '0x' + IconAmount.of(quoteValue, IconAmount.Unit.ICX).toLoop().toString(16);
+    const hexBasePrice =
+      '0x' + IconAmount.of(baseValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+    const hexQuotePrice =
+      '0x' + IconAmount.of(quoteValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = {
       _baseToken: addresses[this.nid].sicx,
+      _quoteToken: addresses[this.nid].bnUSD,
+      _maxBaseValue: hexBasePrice,
+      _quoteValue: hexQuotePrice,
+    };
+    const payload = this.transactionParamsBuilder({
+      method: 'add',
+      params,
+    });
+    console.log(payload);
+    return this.callIconex(payload);
+  }
+
+  async supplyBALNbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
+    const hexBasePrice =
+      '0x' + IconAmount.of(baseValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+    const hexQuotePrice =
+      '0x' + IconAmount.of(quoteValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = {
+      _baseToken: addresses[this.nid].baln,
       _quoteToken: addresses[this.nid].bnUSD,
       _maxBaseValue: hexBasePrice,
       _quoteValue: hexQuotePrice,
@@ -88,7 +109,7 @@ export default class Dex extends Contract {
 
   transferICX(value: BigNumber) {
     const payload = this.transferICXParamsBuilder({
-      value: value,
+      value: value.integerValue(BigNumber.ROUND_DOWN),
     });
 
     return this.callIconex(payload);
@@ -114,20 +135,18 @@ export default class Dex extends Contract {
   }
 
   cancelSicxIcxOrder() {
-    const callParams = this.paramsBuilder({
+    const payload = this.transactionParamsBuilder({
       method: 'cancelSicxicxOrder',
-      params: {
-        _address: this.account,
-      },
     });
 
-    return this.call(callParams);
+    return this.callIconex(payload);
   }
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
   withdrawalTokens(pid: number, value: BigNumber) {
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex =
+      '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
     const payload = this.transactionParamsBuilder({
       method: 'remove',
       params: {
@@ -138,5 +157,13 @@ export default class Dex extends Contract {
     });
     console.log(payload);
     return this.callIconex(payload);
+  }
+
+  getFees() {
+    const callParams = this.paramsBuilder({
+      method: 'getFees',
+    });
+
+    return this.call(callParams);
   }
 }

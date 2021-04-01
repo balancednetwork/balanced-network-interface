@@ -21,12 +21,23 @@ export default class Staking extends Contract {
   stakeICX(value: BigNumber) {
     const payload = this.transactionParamsBuilder({
       method: 'stakeICX',
-      value: value,
+      value: value.integerValue(BigNumber.ROUND_DOWN),
       params: {
         _to: this.account,
       },
     });
 
     return this.callIconex(payload);
+  }
+
+  getUserUnstakeInfo(address: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getUserUnstakeInfo',
+      params: {
+        _address: address,
+      },
+    });
+
+    return this.call(callParams);
   }
 }

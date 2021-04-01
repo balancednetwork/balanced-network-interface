@@ -21,7 +21,7 @@ import {
   useStakedICXAmount,
   useTotalICXAmount,
 } from 'store/collateral/hooks';
-import { useLockedICXAmount } from 'store/loan/hooks';
+import { useLockedICXAmount, useLoanAdjust } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
 const CollateralPanel = () => {
@@ -59,8 +59,11 @@ const CollateralPanel = () => {
 
   const adjust = useCollateralAdjust();
 
+  const adjustLoan = useLoanAdjust();
+
   const handleEnableAdjusting = () => {
     adjust(true);
+    adjustLoan(false);
   };
 
   const handleCancelAdjusting = () => {

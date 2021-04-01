@@ -9,10 +9,11 @@ import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
-import { BoxPanel } from 'app/components/Panel';
+import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
+import { useCollateralAdjust } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
   useLoanAdjust,
@@ -58,9 +59,11 @@ const LoanPanel = () => {
   );
 
   const adjust = useLoanAdjust();
+  const adjustCollateral = useCollateralAdjust();
 
   const handleEnableAdjusting = () => {
     adjust(true);
+    adjustCollateral(false);
   };
 
   const handleCancelAdjusting = () => {
@@ -151,7 +154,7 @@ const LoanPanel = () => {
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(afterAmount.toNumber());
+      sliderInstance.current?.noUiSlider.set(afterAmount.toNumber());
     }
   }, [afterAmount, inputType]);
 
@@ -169,11 +172,35 @@ const LoanPanel = () => {
 
   const shouldShowLock = !usedbnUSDAmount.isZero();
 
+  if (totalAvailablebnUSDAmount.isZero() || totalAvailablebnUSDAmount.isNegative()) {
+    return (
+      <FlexPanel bg="bg3" flexDirection="column">
+        <Flex justifyContent="space-between" alignItems="center">
+          <Typography variant="h2">
+            Loan:{' '}
+            <Typography as="span" fontSize={18} fontWeight="normal">
+              US Dollars
+            </Typography>
+          </Typography>
+        </Flex>
+
+        <Flex flex={1} justifyContent="center" alignItems="center">
+          <Typography>To take out a loan, deposit collateral.</Typography>
+        </Flex>
+      </FlexPanel>
+    );
+  }
+
   return (
     <>
       <BoxPanel bg="bg3">
         <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">Loan</Typography>
+          <Typography variant="h2">
+            Loan:{' '}
+            <Typography as="span" fontSize={18} fontWeight="normal">
+              US Dollars
+            </Typography>
+          </Typography>
 
           <Box>
             {isAdjusting ? (
@@ -270,7 +297,7 @@ const LoanPanel = () => {
             </Box>
           </Flex>
 
-          {shouldBorrow && <Typography textAlign="center">Includes a fee of ${fee.toFixed(2)} bnUSD.</Typography>}
+          {shouldBorrow && <Typography textAlign="center">Includes a fee of {fee.toFixed(2)} bnUSD.</Typography>}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>

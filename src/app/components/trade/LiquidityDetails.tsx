@@ -19,6 +19,7 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 
 const LiquidityDetails = () => {
   const { account } = useIconReact();
+
   const changeLiquiditySupply = useChangeLiquiditySupply();
   const liquiditySupply = useLiquiditySupply();
   const addTransaction = useTransactionAdder();
@@ -94,6 +95,15 @@ const LiquidityDetails = () => {
         console.error('error', e);
       });
   };
+
+  if (
+    !account ||
+    (liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toNumber() === 0 &&
+      liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toNumber() === 0 &&
+      liquiditySupply.ICXBalance?.toNumber() === 0)
+  ) {
+    return null;
+  }
 
   return (
     <BoxPanel bg="bg2" mb={10}>

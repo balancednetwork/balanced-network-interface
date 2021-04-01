@@ -128,7 +128,7 @@ export default function LPPanel() {
   const sendBALNToDex = () => {
     return bnJs
       .eject({ account: account })
-      .Baln.dexDeposit(parseFloat(supplyInputAmount))
+      .Baln.dexDeposit(new BigNumber(supplyInputAmount))
       .then(res => {
         console.log('res', res);
         addTransaction(
@@ -241,7 +241,7 @@ export default function LPPanel() {
   const supplyBALNbnUSD = () => {
     bnJs
       .eject({ account: account })
-      .Dex.supplyBALNbnUSD(parseFloat(supplyInputAmount), parseFloat(supplyOutputAmount))
+      .Dex.supplyBALNbnUSD(new BigNumber(supplyInputAmount), new BigNumber(supplyOutputAmount))
       .then(res => {
         console.log('supplyBALNbnUSD = ', res);
         addTransaction(
@@ -282,6 +282,8 @@ export default function LPPanel() {
   const [suppliedPairAmount, setSuppliedPairAmount] = React.useState({
     base: new BigNumber(0),
     quote: new BigNumber(0),
+    baseSupply: new BigNumber(0),
+    quoteSupply: new BigNumber(0),
   });
   const [walletBalanceSelected, setWalletBalanceSelected] = React.useState({
     base: new BigNumber(0),
@@ -294,19 +296,33 @@ export default function LPPanel() {
         return {
           base: liquiditySupply.sICXSuppliedPoolsICXbnUSD || new BigNumber(0),
           quote: liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || new BigNumber(0),
+          baseSupply: liquiditySupply.sICXPoolsICXbnUSDTotal || new BigNumber(0),
+          quoteSupply: liquiditySupply.bnUSDPoolsICXbnUSDTotal || new BigNumber(0),
         };
       }
       case SupportedPairs[1].pair: {
         return {
           base: liquiditySupply.BALNSuppliedPoolBALNbnUSD || new BigNumber(0),
           quote: liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || new BigNumber(0),
+          baseSupply: liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0),
+          quoteSupply: liquiditySupply.bnUSDPoolBALNbnUSDTotal || new BigNumber(0),
         };
       }
       case SupportedPairs[2].pair: {
-        return { base: new BigNumber(2), quote: new BigNumber(2) };
+        return {
+          base: new BigNumber(2),
+          quote: new BigNumber(2),
+          baseSupply: new BigNumber(0),
+          quoteSupply: new BigNumber(0),
+        };
       }
       default: {
-        return { base: new BigNumber(0), quote: new BigNumber(0) };
+        return {
+          base: new BigNumber(0),
+          quote: new BigNumber(0),
+          baseSupply: new BigNumber(0),
+          quoteSupply: new BigNumber(0),
+        };
       }
     }
   }, [selectedPair, liquiditySupply]);
@@ -440,7 +456,15 @@ export default function LPPanel() {
               <StyledDL>
                 <dt>Total supply</dt>
                 <dd>
-                  {0} {selectedPair.baseCurrencyKey} / {0} {selectedPair.quoteCurrencyKey}
+                  {' '}
+                  {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
+                    ? (liquiditySupply.sICXICXTotalSupply?.toFixed(2) || '0') + ' ICX'
+                    : suppliedPairAmount.baseSupply.toFixed(2) +
+                      selectedPair.baseCurrencyKey +
+                      ' / ' +
+                      suppliedPairAmount.quoteSupply.toFixed(2) +
+                      ' ' +
+                      selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>

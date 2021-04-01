@@ -66,7 +66,7 @@ export class Contract {
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)
       .stepLimit(IconConverter.toBigNumber(10000000))
-      .value(IconAmount.of(value, IconAmount.Unit.ICX).toLoop())
+      .value(IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop())
       .version(IconConverter.toBigNumber(3))
       .build();
 
@@ -88,7 +88,7 @@ export class Contract {
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)
       .stepLimit(IconConverter.toBigNumber(1000000))
-      .value(IconAmount.of(value, IconAmount.Unit.ICX).toLoop())
+      .value(IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop())
       .version(IconConverter.toBigNumber(3))
       .build();
 

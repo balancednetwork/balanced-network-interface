@@ -46,7 +46,8 @@ export default class Baln extends Contract {
           '}}',
         'utf8',
       ).toString('hex');
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex =
+      '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
 
     const payload = this.transactionParamsBuilder({
@@ -62,7 +63,8 @@ export default class Baln extends Contract {
       method: 'transfer',
       params: {
         _to: to,
-        _value: '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16),
+        _value:
+          '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16),
       },
     });
 
@@ -70,7 +72,8 @@ export default class Baln extends Contract {
   }
 
   async stake(value: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex =
+      '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _value: valueHex };
     const payload = this.transactionParamsBuilder({
       method: 'stake',
@@ -80,9 +83,10 @@ export default class Baln extends Contract {
     return this.callIconex(payload);
   }
 
-  async dexDeposit(value: number): Promise<ResponseJsonRPCPayload> {
+  async dexDeposit(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     const data = '0x' + Buffer.from('{"method": "_deposit"}', 'utf8').toString('hex');
-    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex =
+      '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
     const payload = this.transactionParamsBuilder({
       method: 'transfer',

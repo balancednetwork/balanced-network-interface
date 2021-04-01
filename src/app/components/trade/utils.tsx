@@ -26,8 +26,8 @@ export function swapMessage(inputAmount: string, inputCurrency: string, outputAm
   return message;
 }
 
-export function depositMessage(amount: string, currency: string) {
-  const message = `Deposited ${amount} ${currency}.`;
+export function depositMessage(currency: string, pair: string) {
+  const message = `${currency} sent to the ${pair} pool.`;
   return message;
 }
 

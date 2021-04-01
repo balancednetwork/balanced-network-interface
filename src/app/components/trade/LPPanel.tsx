@@ -101,7 +101,7 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: depositMessage(supplyOutputAmount, selectedPair.quoteCurrencyKey) },
+          { summary: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair) },
         );
       })
       .catch(e => {
@@ -117,12 +117,7 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          {
-            summary: supplyMessage(
-              supplyInputAmount,
-              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-            ),
-          },
+          { summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair) },
         );
       })
       .catch(e => {
@@ -138,12 +133,7 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          {
-            summary: supplyMessage(
-              supplyInputAmount,
-              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-            ),
-          },
+          { summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair) },
         );
       })
       .catch(e => {

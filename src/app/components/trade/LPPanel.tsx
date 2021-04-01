@@ -528,10 +528,7 @@ export default function LPPanel() {
 
           <Typography textAlign="center">
             {selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? (
-              <>
-                Your ICX will be staked as sICX, and locked in the <br />
-                pool for the first 24 hours.
-              </>
+              <>Your ICX will be locked in the pool for the first 24 hours.</>
             ) : (
               <>
                 Your ICX will be staked, and your

@@ -100,38 +100,25 @@ export default function SwapPanel() {
   const [swapFee, setSwapFee] = React.useState('0');
 
   const tokenRatio = React.useCallback(
-    (symbol: string) => {
-      if (symbol === 'ICX') {
+    (symbolInput: string, symbolOutput: string) => {
+      if (symbolInput === 'ICX') {
         let icxRatio = ratio.sICXICXratio?.toNumber() || 0;
         return icxRatio ? 1 / icxRatio : 0;
-      } else if (symbol === 'BALN') {
+      } else if (symbolInput === 'BALN') {
         return ratio.BALNbnUSDratio?.toNumber() || 0;
-      } else if (symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
+      } else if (symbolInput === 'sICX' && symbolOutput === 'bnUSD') {
         return ratio.sICXbnUSDratio?.toNumber() || 0;
-      } else if (symbol === 'sICX' && outputCurrency.symbol === 'ICX') {
+      } else if (symbolInput === 'sICX' && symbolOutput === 'ICX') {
         return ratio.sICXICXratio?.toNumber() || 0;
       }
       return 0;
     },
-    [outputCurrency.symbol, ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
+    [ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
   );
 
-  const handleTypeOutput = (val: string) => {
-    setSwapOutputAmount(val);
-    let ratioLocal = tokenRatio(inputCurrency.symbol);
-    if (!ratioLocal) {
-      console.log(`Cannot get rate from this pair`);
-    }
-    if (!val) {
-      val = '0';
-    }
-    setSwapInputAmount((parseFloat(val) / ratioLocal).toFixed(inputCurrency.decimals).toString());
-  };
-
-  const handleTypeInput = React.useCallback(
-    (val: string) => {
-      setSwapInputAmount(val);
-      let ratioLocal = tokenRatio(inputCurrency.symbol);
+  const handleConvertOutputRate = React.useCallback(
+    (inputCurrency: any, outputCurrency: any, val: string) => {
+      let ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
       if (!ratioLocal) {
         console.log(`Cannot get rate from this pair`);
       }
@@ -162,23 +149,63 @@ export default function SwapPanel() {
           });
       }
     },
-    [account, inputCurrency.decimals, inputCurrency.symbol, tokenRatio, outputCurrency.decimals, outputCurrency.symbol],
+    [account, tokenRatio],
+  );
+
+  const handleTypeOutput = (val: string) => {
+    setSwapOutputAmount(val);
+    let ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
+    if (!ratioLocal) {
+      console.log(`Cannot get rate from this pair`);
+    }
+    if (!val) {
+      val = '0';
+    }
+    let inputAmount = parseFloat(val) / ratioLocal;
+    if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
+      inputAmount += inputAmount * 0.01;
+      setSwapInputAmount(inputAmount.toFixed(inputCurrency.decimals).toString());
+    } else if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
+      // fee on this pair is zero so do nothing on this case
+      setSwapInputAmount(inputAmount.toFixed(inputCurrency.decimals).toString());
+    } else {
+      bnJs
+        .eject({ account: account })
+        .Dex.getFees()
+        .then(res => {
+          const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
+          const lp_fee = parseInt(res[`pool_lp_fee`], 16);
+          inputAmount += (inputAmount * (bal_holder_fee + lp_fee)) / 10000;
+          setSwapInputAmount(inputAmount.toFixed(inputCurrency.decimals).toString());
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    }
+  };
+
+  const handleTypeInput = React.useCallback(
+    (val: string) => {
+      setSwapInputAmount(val);
+      handleConvertOutputRate(inputCurrency, outputCurrency, val);
+    },
+    [inputCurrency, outputCurrency, handleConvertOutputRate],
   );
 
   const handleInputSelect = React.useCallback(
     ccy => {
       setInputCurrency(ccy);
-      handleTypeInput(swapInputAmount);
+      handleConvertOutputRate(ccy, outputCurrency, swapInputAmount);
     },
-    [swapInputAmount, handleTypeInput],
+    [swapInputAmount, handleConvertOutputRate, outputCurrency],
   );
 
   const handleOutputSelect = React.useCallback(
     ccy => {
       setOutputCurrency(ccy);
-      handleTypeInput(swapInputAmount);
+      handleConvertOutputRate(inputCurrency, ccy, swapInputAmount);
     },
-    [swapInputAmount, handleTypeInput],
+    [swapInputAmount, handleConvertOutputRate, inputCurrency],
   );
 
   const handleSwapConfirmDismiss = () => {
@@ -295,6 +322,7 @@ export default function SwapPanel() {
     function handleResize() {
       setWidth(ref?.current?.clientWidth ?? width);
     }
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [width]);
@@ -460,7 +488,8 @@ export default function SwapPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {tokenRatio(inputCurrency.symbol).toFixed(2)} {inputCurrency.symbol} per {outputCurrency.symbol}
+            {tokenRatio(inputCurrency.symbol, outputCurrency.symbol).toFixed(2)}
+            {inputCurrency.symbol} per {outputCurrency.symbol}
           </Typography>
 
           <Flex my={5}>

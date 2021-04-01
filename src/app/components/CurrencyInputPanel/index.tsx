@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -9,6 +10,8 @@ import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/L
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { CURRENCYLIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
+import { useWalletICXBalance } from 'hooks';
+import { useWalletBalanceValue } from 'store/wallet/hooks';
 import { Currency } from 'types';
 import { escapeRegExp } from 'utils';
 
@@ -154,6 +157,23 @@ export default function CurrencyInputPanel({
     }
   };
 
+  const { account } = useIconReact();
+  const walletBalance = useWalletBalanceValue();
+  const ICXbalance = useWalletICXBalance(account);
+  const tokenBalance = (symbol: string) => {
+    if (account) {
+      if (symbol === 'icx') {
+        return ICXbalance;
+      } else if (symbol === 'baln') {
+        return walletBalance.BALNbalance;
+      } else if (symbol === 'sicx') {
+        return walletBalance.sICXbalance;
+      } else if (symbol === 'bnusd') {
+        return walletBalance.bnUSDbalance;
+      }
+    }
+  };
+
   return (
     <InputContainer ref={ref}>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
@@ -178,7 +198,7 @@ export default function CurrencyInputPanel({
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      5,600
+                      {tokenBalance(currency.toLowerCase())?.toFixed(2)} {currency}
                     </DataText>
                   </ListItem>
                 ))}

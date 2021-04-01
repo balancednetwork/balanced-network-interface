@@ -20,3 +20,18 @@ export const BrightPanel = styled(Panel)`
     max-width: initial;
   `}
 `;
+
+export function swapMessage(inputAmount: string, inputCurrency: string, outputAmount: string, outputCurrency: string) {
+  const message = `Swapped ${inputAmount} ${inputCurrency} for ${outputAmount} ${outputCurrency}.`;
+  return message;
+}
+
+export function depositMessage(amount: string, currency: string) {
+  const message = `Deposited ${amount} ${currency}.`;
+  return message;
+}
+
+export function supplyMessage(amount: string, pair: string) {
+  const message = `Supplied ${pair} liquidity.`;
+  return message;
+}

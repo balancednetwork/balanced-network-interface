@@ -1,6 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
+import BigNumber from 'bignumber.js';
+import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
+
+import bnJs from 'bnJs';
+import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
 import { changeReward } from './actions';
@@ -26,4 +31,33 @@ export function useChangeReward(): ({
     },
     [dispatch],
   );
+}
+
+export function useFetchReward(account?: string | null) {
+  // eject this account and we don't need to account params for when call contract
+  bnJs.eject({ account });
+  const transactions = useAllTransactions();
+  const changeReward = useChangeReward();
+
+  const fetchReward = React.useCallback(() => {
+    if (account) {
+      Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission(new BigNumber(1))]).then(result => {
+        const [poolsReward, poolEmission] = result.map(v => v);
+        const sICXICXreward = convertLoopToIcx(poolsReward['SICXICX']);
+        const sICXbnUSDreward = convertLoopToIcx(poolsReward['SICXbnUSD']);
+        const BALNbnUSDreward = convertLoopToIcx(poolsReward['BALNbnUSD']);
+        const poolDailyReward = convertLoopToIcx(poolEmission);
+        changeReward({
+          sICXICXreward,
+          sICXbnUSDreward,
+          BALNbnUSDreward,
+          poolDailyReward,
+        });
+      });
+    }
+  }, [account, changeReward]);
+
+  React.useEffect(() => {
+    fetchReward();
+  }, [fetchReward, transactions, account]);
 }

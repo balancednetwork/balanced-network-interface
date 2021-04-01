@@ -128,7 +128,7 @@ export default function SwapPanel() {
       if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
         setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
       } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
-        const fee = parseFloat(val) * 0.01;
+        const fee = parseFloat(val) / 100;
         setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
         val = (parseFloat(val) - fee).toString();
         setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());

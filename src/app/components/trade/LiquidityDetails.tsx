@@ -42,8 +42,39 @@ const LiquidityDetails = () => {
   const [amountWithdrawICX, setAmountWithdrawICX] = React.useState('0');
 
   React.useEffect(() => {
+    console.log('useEffect');
     setAmountWithdrawICX((liquiditySupply.ICXBalance || new BigNumber(0)).toFixed(2));
   }, [liquiditySupply.ICXBalance]);
+
+  const [amountWithdrawsICXbnUSDMax, setAmountWithdrawsICXbnUSDMax] = React.useState(0);
+
+  React.useEffect(() => {
+    console.log('useEffect');
+    if (
+      liquiditySupply.sICXSuppliedPoolsICXbnUSD
+        ?.multipliedBy(ratio.sICXbnUSDratio)
+        .isLessThan(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || new BigNumber(0))
+    ) {
+      setAmountWithdrawsICXbnUSDMax(liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toNumber() || 0);
+    } else {
+      setAmountWithdrawsICXbnUSDMax(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD?.toNumber() || 0);
+    }
+  }, [liquiditySupply.sICXSuppliedPoolsICXbnUSD]);
+
+  const [amountWithdrawBALNbnUSDMax, setAmountWithdrawBALNbnUSDMax] = React.useState(0);
+
+  React.useEffect(() => {
+    console.log('useEffect');
+    if (
+      liquiditySupply.BALNSuppliedPoolBALNbnUSD?.multipliedBy(ratio.BALNbnUSDratio).isLessThan(
+        liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || new BigNumber(0),
+      )
+    ) {
+      setAmountWithdrawBALNbnUSDMax(liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toNumber() || 0);
+    } else {
+      setAmountWithdrawBALNbnUSDMax(liquiditySupply.bnUSDSuppliedPoolBALNbnUSD?.toNumber() || 0);
+    }
+  }, [liquiditySupply.BALNSuppliedPoolBALNbnUSD]);
 
   const handleTypeAmountWithdrawICX = (val: string) => {
     setAmountWithdrawICX(val);
@@ -132,6 +163,18 @@ const LiquidityDetails = () => {
     return null;
   }
 
+  const handleSlideWithdrawalICX = (values: string[], handle: number) => {
+    setAmountWithdrawICX(values[handle]);
+  };
+
+  const handleSlideWithdrawsICXPoolsICXbnUSD = (values: string[], handle: number) => {
+    handleTypeAmountWithdrawsICXPoolsICXbnUSD(values[handle]);
+  };
+
+  const handleSlideWithdrawBALNPoolBALNbnUSD = (values: string[], handle: number) => {
+    handleTypeAmountWithdrawBALNPoolBALNbnUSD(values[handle]);
+  };
+
   return (
     <BoxPanel bg="bg2" mb={10}>
       <Typography variant="h2" mb={5}>
@@ -188,6 +231,7 @@ const LiquidityDetails = () => {
                       min: [0],
                       max: [sICXICXTotalSupply.toNumber()],
                     }}
+                    onSlide={handleSlideWithdrawalICX}
                   />
                   <Flex alignItems="center" justifyContent="center">
                     <Button mt={5} onClick={handleWithdrawalICX}>
@@ -253,8 +297,9 @@ const LiquidityDetails = () => {
                     connect={[true, false]}
                     range={{
                       min: [0],
-                      max: [100],
+                      max: [amountWithdrawsICXbnUSDMax],
                     }}
+                    onSlide={handleSlideWithdrawsICXPoolsICXbnUSD}
                   />
                   <Flex alignItems="center" justifyContent="center">
                     <Button mt={5} onClick={handleWithdrawalSICXBNUSD}>
@@ -321,8 +366,9 @@ const LiquidityDetails = () => {
                     connect={[true, false]}
                     range={{
                       min: [0],
-                      max: [100],
+                      max: [amountWithdrawBALNbnUSDMax],
                     }}
+                    onSlide={handleSlideWithdrawBALNPoolBALNbnUSD}
                   />
                   <Flex alignItems="center" justifyContent="center">
                     <Button mt={5}>Withdraw liquidity</Button>

@@ -49,7 +49,6 @@ const LiquidityDetails = () => {
   const [amountWithdrawsICXbnUSDMax, setAmountWithdrawsICXbnUSDMax] = React.useState(0);
 
   React.useEffect(() => {
-    console.log('useEffect');
     if (
       liquiditySupply.sICXSuppliedPoolsICXbnUSD
         ?.multipliedBy(ratio.sICXbnUSDratio)
@@ -59,12 +58,11 @@ const LiquidityDetails = () => {
     } else {
       setAmountWithdrawsICXbnUSDMax(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD?.toNumber() || 0);
     }
-  }, [liquiditySupply.sICXSuppliedPoolsICXbnUSD]);
+  }, [liquiditySupply.sICXSuppliedPoolsICXbnUSD, liquiditySupply.bnUSDSuppliedPoolsICXbnUSD, ratio.sICXbnUSDratio]);
 
   const [amountWithdrawBALNbnUSDMax, setAmountWithdrawBALNbnUSDMax] = React.useState(0);
 
   React.useEffect(() => {
-    console.log('useEffect');
     if (
       liquiditySupply.BALNSuppliedPoolBALNbnUSD?.multipliedBy(ratio.BALNbnUSDratio).isLessThan(
         liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || new BigNumber(0),
@@ -74,7 +72,7 @@ const LiquidityDetails = () => {
     } else {
       setAmountWithdrawBALNbnUSDMax(liquiditySupply.bnUSDSuppliedPoolBALNbnUSD?.toNumber() || 0);
     }
-  }, [liquiditySupply.BALNSuppliedPoolBALNbnUSD]);
+  }, [liquiditySupply.BALNSuppliedPoolBALNbnUSD, liquiditySupply.bnUSDSuppliedPoolBALNbnUSD, ratio.BALNbnUSDratio]);
 
   const handleTypeAmountWithdrawICX = (val: string) => {
     setAmountWithdrawICX(val);

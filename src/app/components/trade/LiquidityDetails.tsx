@@ -32,8 +32,10 @@ const LiquidityDetails = () => {
   const sICXbnUSDTotalSupply = liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0);
   const sICXbnUSDSuppliedShare = liquiditySupply.sICXbnUSDBalance?.dividedBy(sICXbnUSDTotalSupply)?.multipliedBy(100);
 
-  const BALNPoolBALNbnUSDTotal = liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0);
-  const BALNbnUSDSuppliedShare = liquiditySupply.BALNbnUSDBalance?.dividedBy(BALNPoolBALNbnUSDTotal)?.multipliedBy(100);
+  const BALNPoolBALNbnUSDTotalSupply = liquiditySupply.BALNbnUSDTotalSupply || new BigNumber(0);
+  const BALNbnUSDSuppliedShare = liquiditySupply.BALNbnUSDBalance?.dividedBy(
+    BALNPoolBALNbnUSDTotalSupply,
+  )?.multipliedBy(100);
 
   const sICXICXTotalSupply = liquiditySupply.sICXICXTotalSupply || new BigNumber(0);
   const ICXBalance = liquiditySupply.ICXBalance || new BigNumber(0);
@@ -279,7 +281,7 @@ const LiquidityDetails = () => {
               ~{' '}
               {(
                 BALNbnUSDpoolDailyReward *
-                (liquiditySupply.BALNSuppliedPoolBALNbnUSD?.dividedBy(BALNPoolBALNbnUSDTotal).toNumber() || 0)
+                (liquiditySupply.BALNSuppliedPoolBALNbnUSD?.dividedBy(BALNPoolBALNbnUSDTotalSupply).toNumber() || 0)
               ).toFixed(2)}{' '}
               BALN
             </td>

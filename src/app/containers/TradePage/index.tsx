@@ -16,7 +16,8 @@ import { useFetchReward } from 'store/reward/hooks';
 import { useFetchBalance } from 'store/wallet/hooks';
 
 export function TradePage() {
-  const { account } = useIconReact();
+  //const { account } = useIconReact();
+  const account = 'hxdf7c371a35b4acb19d9f869a68eed8721503eaea';
 
   useFetchPrice();
   useFetchBalance(account);

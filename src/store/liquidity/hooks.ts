@@ -97,7 +97,7 @@ export function useFetchLiquidity(account?: string | null) {
   const calculateTokenSupplied = (balance: BigNumber, poolTotal: BigNumber, totalSupply: BigNumber) => {
     let tokenSupplied = balance
       .multipliedBy(poolTotal)
-      .multipliedBy(new BigNumber(1).minus(balance.dividedBy(totalSupply)))
+      //.multipliedBy(new BigNumber(1).minus(balance.dividedBy(totalSupply)))
       .dividedBy(totalSupply);
     if (tokenSupplied.isNaN()) tokenSupplied = new BigNumber(0);
     return tokenSupplied;

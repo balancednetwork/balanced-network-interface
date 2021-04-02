@@ -86,4 +86,18 @@ export default class bnUSD extends Contract {
 
     return this.callIconex(callParams);
   }
+
+  async retireBnUSD(value: BigNumber): Promise<ResponseJsonRPCPayload> {
+    const data = '0x' + Buffer.from('{"method": "_retire_asset", "params": {}}', 'utf8').toString('hex');
+    const valueHex =
+      '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = { _to: addresses[this.nid].loans, _value: valueHex, _data: data };
+
+    const payload = this.transactionParamsBuilder({
+      method: 'transfer',
+      params,
+    });
+
+    return this.callIconex(payload);
+  }
 }

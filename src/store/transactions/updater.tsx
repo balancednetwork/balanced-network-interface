@@ -2,13 +2,16 @@ import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 
+import { NotificationSuccess } from 'app/components/Notification/TransactionNotification';
 import useInterval from 'hooks/useInterval';
+import { getTrackerLink } from 'utils';
 
 import { useAddPopup } from '../application/hooks';
 import { AppDispatch } from '../index';
-import { useAllTransactions } from '../transactions/hooks';
 import { finalizeTransaction } from './actions';
+import { useAllTransactions } from './hooks';
 
 export function shouldCheck(tx: { addedTime: number; receipt?: {}; lastCheckedBlockNumber?: number }): boolean {
   if (tx.receipt) return false;
@@ -58,6 +61,18 @@ export default function Updater(): null {
                   },
                 }),
               );
+
+              //
+              const link = getTrackerLink(networkId, hash, 'transaction');
+              const toastProps = {
+                onClick: () => window.open(link, '_blank'),
+              };
+
+              toast.update(receipt.txHash, {
+                ...toastProps,
+                render: <NotificationSuccess summary={transactions[hash]?.summary} />,
+                autoClose: 1000000,
+              });
 
               addPopup(
                 {

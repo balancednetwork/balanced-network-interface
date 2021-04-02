@@ -5,7 +5,8 @@ import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
 
-import Popups from 'app/components/Popups';
+import NotificationContainer from 'app/components/Notification/NotificationContainer';
+// import Popups from 'app/components/Popups';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import TransactionUpdater from 'store/transactions/updater';
 
@@ -34,7 +35,8 @@ export function App() {
 
         <ThemeProvider>
           <ThemedGlobalStyle />
-          <Popups />
+          {/* <Popups /> */}
+          <NotificationContainer />
 
           <BrowserRouter>
             <Helmet

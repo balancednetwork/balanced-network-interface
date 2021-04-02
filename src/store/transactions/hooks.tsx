@@ -1,7 +1,11 @@
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+
+import { NotificationPending } from 'app/components/Notification/TransactionNotification';
+import { getTrackerLink } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
 import { addTransaction } from './actions';
@@ -16,22 +20,14 @@ export function useTransactionAdder(): (
   response: TransactionResponse,
   customData?: {
     summary?: string;
-    approval?: { tokenAddress: string; spender: string };
-    claim?: { recipient: string };
+    pending?: string;
   },
 ) => void {
   const { networkId, account } = useIconReact();
   const dispatch = useDispatch<AppDispatch>();
 
   return useCallback(
-    (
-      response: TransactionResponse,
-      {
-        summary,
-        approval,
-        claim,
-      }: { summary?: string; claim?: { recipient: string }; approval?: { tokenAddress: string; spender: string } } = {},
-    ) => {
+    (response: TransactionResponse, { summary, pending }: { summary?: string; pending?: string } = {}) => {
       if (!account) return;
       if (!networkId) return;
 
@@ -39,7 +35,19 @@ export function useTransactionAdder(): (
       if (!hash) {
         throw Error('No transaction hash found.');
       }
-      dispatch(addTransaction({ hash, from: account, networkId, approval, summary, claim }));
+
+      //
+      const link = getTrackerLink(networkId, hash, 'transaction');
+      const toastProps = {
+        onClick: () => window.open(link, '_blank'),
+      };
+
+      toast(<NotificationPending summary={pending || 'Your transaction has been sent to the network'} />, {
+        ...toastProps,
+        toastId: hash,
+      });
+
+      dispatch(addTransaction({ hash, from: account, networkId, summary }));
     },
     [dispatch, networkId, account],
   );

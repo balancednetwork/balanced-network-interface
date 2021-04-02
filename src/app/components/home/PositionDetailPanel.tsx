@@ -362,7 +362,9 @@ const PositionDetailPanel = () => {
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (
-                        <MenuItem onClick={() => handlePeriod(p)}>{p}</MenuItem>
+                        <MenuItem key={p} onClick={() => handlePeriod(p)}>
+                          {p}
+                        </MenuItem>
                       ))}
                     </MenuList>
                   </DropdownPopper>

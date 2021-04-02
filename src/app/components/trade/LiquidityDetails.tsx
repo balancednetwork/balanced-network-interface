@@ -42,8 +42,37 @@ const LiquidityDetails = () => {
   const [amountWithdrawICX, setAmountWithdrawICX] = React.useState('0');
 
   React.useEffect(() => {
-    setAmountWithdrawICX((liquiditySupply.ICXBalance || new BigNumber(0)).toFixed(2));
+    console.log('useEffect');
+    setAmountWithdrawICX('0');
   }, [liquiditySupply.ICXBalance]);
+
+  const [amountWithdrawsICXbnUSDMax, setAmountWithdrawsICXbnUSDMax] = React.useState(0);
+
+  React.useEffect(() => {
+    if (
+      liquiditySupply.sICXSuppliedPoolsICXbnUSD
+        ?.multipliedBy(ratio.sICXbnUSDratio)
+        .isLessThan(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || new BigNumber(0))
+    ) {
+      setAmountWithdrawsICXbnUSDMax(liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toNumber() || 0);
+    } else {
+      setAmountWithdrawsICXbnUSDMax(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD?.toNumber() || 0);
+    }
+  }, [liquiditySupply.sICXSuppliedPoolsICXbnUSD, liquiditySupply.bnUSDSuppliedPoolsICXbnUSD, ratio.sICXbnUSDratio]);
+
+  const [amountWithdrawBALNbnUSDMax, setAmountWithdrawBALNbnUSDMax] = React.useState(0);
+
+  React.useEffect(() => {
+    if (
+      liquiditySupply.BALNSuppliedPoolBALNbnUSD?.multipliedBy(ratio.BALNbnUSDratio).isLessThan(
+        liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || new BigNumber(0),
+      )
+    ) {
+      setAmountWithdrawBALNbnUSDMax(liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toNumber() || 0);
+    } else {
+      setAmountWithdrawBALNbnUSDMax(liquiditySupply.bnUSDSuppliedPoolBALNbnUSD?.toNumber() || 0);
+    }
+  }, [liquiditySupply.BALNSuppliedPoolBALNbnUSD, liquiditySupply.bnUSDSuppliedPoolBALNbnUSD, ratio.BALNbnUSDratio]);
 
   const handleTypeAmountWithdrawICX = (val: string) => {
     setAmountWithdrawICX(val);
@@ -132,6 +161,18 @@ const LiquidityDetails = () => {
     return null;
   }
 
+  const handleSlideWithdrawalICX = (values: string[], handle: number) => {
+    setAmountWithdrawICX(values[handle]);
+  };
+
+  const handleSlideWithdrawsICXPoolsICXbnUSD = (values: string[], handle: number) => {
+    handleTypeAmountWithdrawsICXPoolsICXbnUSD(values[handle]);
+  };
+
+  const handleSlideWithdrawBALNPoolBALNbnUSD = (values: string[], handle: number) => {
+    handleTypeAmountWithdrawBALNPoolBALNbnUSD(values[handle]);
+  };
+
   return (
     <BoxPanel bg="bg2" mb={10}>
       <Typography variant="h2" mb={5}>
@@ -177,17 +218,18 @@ const LiquidityDetails = () => {
                     />
                   </Box>
                   <Typography mb={5} textAlign="right">
-                    Wallet: {ICXBalance.toFixed(2)} ICX
+                    Wallet: {walletBalance.ICXbalance.toFixed(2)} ICX
                   </Typography>
                   <Nouislider
                     id="slider-supply"
-                    start={[ICXBalance.toFixed(2)]}
+                    start={[0]}
                     padding={[0]}
                     connect={[true, false]}
                     range={{
                       min: [0],
-                      max: [sICXICXTotalSupply.toNumber()],
+                      max: [ICXBalance.toNumber()],
                     }}
+                    onSlide={handleSlideWithdrawalICX}
                   />
                   <Flex alignItems="center" justifyContent="center">
                     <Button mt={5} onClick={handleWithdrawalICX}>
@@ -248,8 +290,9 @@ const LiquidityDetails = () => {
                     connect={[true, false]}
                     range={{
                       min: [0],
-                      max: [100],
+                      max: [amountWithdrawsICXbnUSDMax],
                     }}
+                    onSlide={handleSlideWithdrawsICXPoolsICXbnUSD}
                   />
                   <Flex alignItems="center" justifyContent="center">
                     <Button mt={5} onClick={handleWithdrawalSICXBNUSD}>
@@ -267,7 +310,7 @@ const LiquidityDetails = () => {
             <td>
               {liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toFixed(2)} BALN
               <br />
-              {liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toFixed(2)} bnUSD
+              {liquiditySupply.bnUSDSuppliedPoolBALNbnUSD?.toFixed(2)} bnUSD
             </td>
             <td>{!account ? '-' : BALNbnUSDSuppliedShare?.isNaN() ? '0.00' : BALNbnUSDSuppliedShare?.toFixed(2)}%</td>
             <td>
@@ -311,8 +354,9 @@ const LiquidityDetails = () => {
                     connect={[true, false]}
                     range={{
                       min: [0],
-                      max: [100],
+                      max: [amountWithdrawBALNbnUSDMax],
                     }}
+                    onSlide={handleSlideWithdrawBALNPoolBALNbnUSD}
                   />
                   <Flex alignItems="center" justifyContent="center">
                     <Button mt={5}>Withdraw liquidity</Button>

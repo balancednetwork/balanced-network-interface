@@ -37,6 +37,10 @@ const ReturnICDSection = () => {
   };
 
   const handleRetireConfirm = () => {
+    if (parseFloat(value) < 50) {
+      console.log(`Can not retire with amount lower than minimum value`);
+      return;
+    }
     bnJs
       .eject({ account: account })
       .bnUSD.retireBnUSD(new BigNumber(value))

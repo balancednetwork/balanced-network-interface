@@ -71,7 +71,7 @@ export default function Updater(): null {
               toast.update(receipt.txHash, {
                 ...toastProps,
                 render: <NotificationSuccess summary={transactions[hash]?.summary} />,
-                autoClose: 1000000,
+                autoClose: 10000,
               });
 
               addPopup(

@@ -43,7 +43,7 @@ const LiquidityDetails = () => {
 
   React.useEffect(() => {
     console.log('useEffect');
-    setAmountWithdrawICX((liquiditySupply.ICXBalance || new BigNumber(0)).toFixed(2));
+    setAmountWithdrawICX('0');
   }, [liquiditySupply.ICXBalance]);
 
   const [amountWithdrawsICXbnUSDMax, setAmountWithdrawsICXbnUSDMax] = React.useState(0);
@@ -218,16 +218,16 @@ const LiquidityDetails = () => {
                     />
                   </Box>
                   <Typography mb={5} textAlign="right">
-                    Wallet: {ICXBalance.toFixed(2)} ICX
+                    Wallet: {walletBalance.ICXbalance.toFixed(2)} ICX
                   </Typography>
                   <Nouislider
                     id="slider-supply"
-                    start={[ICXBalance.toFixed(2)]}
+                    start={[0]}
                     padding={[0]}
                     connect={[true, false]}
                     range={{
                       min: [0],
-                      max: [sICXICXTotalSupply.toNumber()],
+                      max: [ICXBalance.toNumber()],
                     }}
                     onSlide={handleSlideWithdrawalICX}
                   />
@@ -315,7 +315,7 @@ const LiquidityDetails = () => {
             <td>
               {liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toFixed(2)} BALN
               <br />
-              {liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toFixed(2)} bnUSD
+              {liquiditySupply.bnUSDSuppliedPoolBALNbnUSD?.toFixed(2)} bnUSD
             </td>
             <td>{!account ? '-' : BALNbnUSDSuppliedShare?.isNaN() ? '0.00' : BALNbnUSDSuppliedShare?.toFixed(2)}%</td>
             <td>

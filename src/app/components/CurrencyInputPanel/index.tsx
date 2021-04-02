@@ -198,7 +198,7 @@ export default function CurrencyInputPanel({
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      {tokenBalance(currency.toLowerCase())?.toFixed(2)} {currency}
+                      {tokenBalance(currency.toLowerCase())?.dp(2).toFormat()} {currency}
                     </DataText>
                   </ListItem>
                 ))}

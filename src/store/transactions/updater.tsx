@@ -4,11 +4,10 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { NotificationSuccess } from 'app/components/Notification/TransactionNotification';
+import { NotificationError, NotificationSuccess } from 'app/components/Notification/TransactionNotification';
 import useInterval from 'hooks/useInterval';
 import { getTrackerLink } from 'utils';
 
-import { useAddPopup } from '../application/hooks';
 import { AppDispatch } from '../index';
 import { finalizeTransaction } from './actions';
 import { useAllTransactions } from './hooks';
@@ -29,9 +28,6 @@ export default function Updater(): null {
   useInterval(increment, 5000);
 
   const transactions = useAllTransactions();
-
-  // show popup on confirm
-  const addPopup = useAddPopup();
 
   React.useEffect(() => {
     if (!networkId || !iconService) return;
@@ -62,35 +58,35 @@ export default function Updater(): null {
                 }),
               );
 
-              //
               const link = getTrackerLink(networkId, hash, 'transaction');
               const toastProps = {
                 onClick: () => window.open(link, '_blank'),
               };
 
-              toast.update(receipt.txHash, {
-                ...toastProps,
-                render: <NotificationSuccess summary={transactions[hash]?.summary} />,
-                autoClose: 10000,
-              });
+              // success
+              if (receipt.status === 1) {
+                toast.update(receipt.txHash, {
+                  ...toastProps,
+                  render: <NotificationSuccess summary={transactions[hash]?.summary} />,
+                  autoClose: 10000,
+                });
+              }
 
-              addPopup(
-                {
-                  txn: {
-                    hash,
-                    success: receipt.status === 1,
-                    summary: transactions[hash]?.summary,
-                  },
-                },
-                hash,
-              );
+              // failure
+              if (receipt.status === 0) {
+                toast.update(receipt.txHash, {
+                  ...toastProps,
+                  render: <NotificationError failureReason={receipt.failure.message} />,
+                  autoClose: 10000,
+                });
+              }
             }
           })
           .catch(error => {
             console.error(`failed to check transaction hash: ${hash}`, error);
           });
       });
-  }, [networkId, iconService, transactions, dispatch, addPopup, last]);
+  }, [networkId, iconService, transactions, dispatch, last]);
 
   return null;
 }

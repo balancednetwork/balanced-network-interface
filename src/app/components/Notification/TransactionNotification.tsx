@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Flex } from 'rebass/styled-components';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
 
@@ -38,10 +38,14 @@ const NotificationSuccess = ({ summary }: NotificationProps) => {
 const NotificationError = ({ failureReason }: NotificationProps) => {
   return (
     <NotificationContainer>
-      <TransactionInfo>
-        <TransactionInfoBody>failed</TransactionInfoBody>
-        <TransactionInfoBody isFailureMessage={true}>
+      <TransactionInfo flexDirection="column">
+        <TransactionInfoBody>
           <Typography variant="p" fontWeight={500}>
+            Your transaction has failed.
+          </Typography>
+        </TransactionInfoBody>
+        <TransactionInfoBody>
+          <Typography variant="p" fontWeight={500} color="alert">
             {failureReason}
           </Typography>
         </TransactionInfoBody>
@@ -53,12 +57,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
 const NotificationContainer = styled(Flex)``;
 
 const TransactionInfo = styled(Flex)``;
-const TransactionInfoBody = styled.div<{ isFailureMessage?: boolean }>`
-  ${props =>
-    props.isFailureMessage &&
-    css`
-      color: ${props => props.theme.colors.bg3};
-    `}
-`;
+
+const TransactionInfoBody = styled.div``;
 
 export { NotificationPending, NotificationSuccess, NotificationError };

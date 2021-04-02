@@ -208,12 +208,7 @@ const LiquidityDetails = () => {
             </td>
             <td>{!account ? '-' : sICXbnUSDSuppliedShare?.isNaN() ? '0.00' : sICXbnUSDSuppliedShare?.toFixed(2)}%</td>
             <td>
-              ~{' '}
-              {(
-                sICXbnUSDpoolDailyReward *
-                (liquiditySupply.sICXSuppliedPoolsICXbnUSD?.dividedBy(sICXbnUSDTotalSupply).toNumber() || 0)
-              ).toFixed(2)}{' '}
-              BALN
+              ~ {(sICXbnUSDpoolDailyReward * (sICXbnUSDSuppliedShare?.dividedBy(100).toNumber() || 0)).toFixed(2)} BALN
             </td>
             <td>
               <DropdownText text="Withdraw">
@@ -276,12 +271,7 @@ const LiquidityDetails = () => {
             </td>
             <td>{!account ? '-' : BALNbnUSDSuppliedShare?.isNaN() ? '0.00' : BALNbnUSDSuppliedShare?.toFixed(2)}%</td>
             <td>
-              ~{' '}
-              {(
-                BALNbnUSDpoolDailyReward *
-                (liquiditySupply.BALNSuppliedPoolBALNbnUSD?.dividedBy(BALNbnUSDTotalSupply).toNumber() || 0)
-              ).toFixed(2)}{' '}
-              BALN
+              ~ {(BALNbnUSDpoolDailyReward * (BALNbnUSDSuppliedShare?.dividedBy(100).toNumber() || 0)).toFixed(2)} BALN
             </td>
             <td>
               <DropdownText text="Withdraw">

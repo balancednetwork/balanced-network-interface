@@ -16,6 +16,7 @@ import { CURRENCYLIST, SupportedPairs } from 'constants/currency';
 import { useLiquiditySupply, useChangeLiquiditySupply } from 'store/liquidity/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
+import { useReward } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue, useChangeWalletBalance } from 'store/wallet/hooks';
 
@@ -39,6 +40,7 @@ export default function LPPanel() {
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
   const liquiditySupply = useLiquiditySupply();
+  const poolReward = useReward();
   const changeLiquiditySupply = useChangeLiquiditySupply();
 
   const ICXliquiditySupply = liquiditySupply.ICXBalance || new BigNumber(0);
@@ -295,6 +297,8 @@ export default function LPPanel() {
     quote: new BigNumber(0),
     baseSupply: new BigNumber(0),
     quoteSupply: new BigNumber(0),
+    dailyReward: new BigNumber(0),
+    poolTotalDailyReward: new BigNumber(0),
   });
   const [walletBalanceSelected, setWalletBalanceSelected] = React.useState({
     base: new BigNumber(0),
@@ -304,27 +308,54 @@ export default function LPPanel() {
   const getSuppliedPairAmount = React.useCallback(() => {
     switch (selectedPair.pair) {
       case SupportedPairs[0].pair: {
+        let sICXbnUSDpoolDailyReward = poolReward.sICXbnUSDreward?.multipliedBy(
+          poolReward.poolDailyReward || new BigNumber(0),
+        );
+        let sICXbnUSDSuppliedShare = liquiditySupply.sICXbnUSDBalance?.dividedBy(
+          liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0),
+        );
+        let dailyReward = sICXbnUSDpoolDailyReward?.multipliedBy(sICXbnUSDSuppliedShare || new BigNumber(0));
         return {
           base: liquiditySupply.sICXSuppliedPoolsICXbnUSD || new BigNumber(0),
           quote: liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || new BigNumber(0),
           baseSupply: liquiditySupply.sICXPoolsICXbnUSDTotal || new BigNumber(0),
           quoteSupply: liquiditySupply.bnUSDPoolsICXbnUSDTotal || new BigNumber(0),
+          dailyReward: dailyReward || new BigNumber(0),
+          poolTotalDailyReward: sICXbnUSDpoolDailyReward || new BigNumber(0),
         };
       }
       case SupportedPairs[1].pair: {
+        let BALNbnUSDpoolDailyReward = poolReward.BALNbnUSDreward?.multipliedBy(
+          poolReward.poolDailyReward || new BigNumber(0),
+        );
+        let BALNbnUSDSuppliedShare = liquiditySupply.BALNbnUSDBalance?.dividedBy(
+          liquiditySupply.BALNbnUSDTotalSupply || new BigNumber(0),
+        );
+        let dailyReward = BALNbnUSDpoolDailyReward?.multipliedBy(BALNbnUSDSuppliedShare || new BigNumber(0));
         return {
           base: liquiditySupply.BALNSuppliedPoolBALNbnUSD || new BigNumber(0),
           quote: liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || new BigNumber(0),
           baseSupply: liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0),
           quoteSupply: liquiditySupply.bnUSDPoolBALNbnUSDTotal || new BigNumber(0),
+          dailyReward: dailyReward || new BigNumber(0),
+          poolTotalDailyReward: BALNbnUSDpoolDailyReward || new BigNumber(0),
         };
       }
       case SupportedPairs[2].pair: {
+        let sICXICXpoolDailyReward = poolReward.sICXICXreward?.multipliedBy(
+          poolReward.poolDailyReward || new BigNumber(0),
+        );
+        let sICXICXSuppliedShare = liquiditySupply.ICXBalance?.dividedBy(
+          liquiditySupply.sICXICXTotalSupply || new BigNumber(0),
+        );
+        let dailyReward = sICXICXpoolDailyReward?.multipliedBy(sICXICXSuppliedShare || new BigNumber(0));
         return {
           base: new BigNumber(2),
           quote: new BigNumber(2),
           baseSupply: new BigNumber(0),
           quoteSupply: new BigNumber(0),
+          dailyReward: dailyReward || new BigNumber(0),
+          poolTotalDailyReward: sICXICXpoolDailyReward || new BigNumber(0),
         };
       }
       default: {
@@ -333,10 +364,12 @@ export default function LPPanel() {
           quote: new BigNumber(0),
           baseSupply: new BigNumber(0),
           quoteSupply: new BigNumber(0),
+          dailyReward: new BigNumber(0),
+          poolTotalDailyReward: new BigNumber(0),
         };
       }
     }
-  }, [selectedPair, liquiditySupply]);
+  }, [selectedPair, liquiditySupply, poolReward]);
 
   const getWalletBalanceSelected = React.useCallback(() => {
     switch (selectedPair.pair) {
@@ -460,7 +493,9 @@ export default function LPPanel() {
               </StyledDL>
               <StyledDL>
                 <dt>Your daily rewards</dt>
-                <dd>~120 BALN</dd>
+                <dd>
+                  ~ {suppliedPairAmount.dailyReward.isNaN() ? '0' : suppliedPairAmount.dailyReward.toFixed(2)} BALN
+                </dd>
               </StyledDL>
             </Box>
             <Box width={[1, 1 / 2]}>
@@ -471,6 +506,7 @@ export default function LPPanel() {
                   {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
                     ? (liquiditySupply.sICXICXTotalSupply?.toFixed(2) || '0') + ' ICX'
                     : suppliedPairAmount.baseSupply.toFixed(2) +
+                      ' ' +
                       selectedPair.baseCurrencyKey +
                       ' / ' +
                       suppliedPairAmount.quoteSupply.toFixed(2) +
@@ -480,7 +516,12 @@ export default function LPPanel() {
               </StyledDL>
               <StyledDL>
                 <dt>Total daily rewards</dt>
-                <dd>17,500 BALN</dd>
+                <dd>
+                  {suppliedPairAmount.poolTotalDailyReward.isNaN()
+                    ? '0'
+                    : suppliedPairAmount.poolTotalDailyReward.toFixed(2)}{' '}
+                  BALN
+                </dd>
               </StyledDL>
             </Box>
           </Flex>

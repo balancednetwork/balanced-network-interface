@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -80,7 +81,7 @@ export const CurrencyField: React.FC<{
 
       {!editable && (
         <Typography variant="p" ml={6} mt={1} fontSize={18}>
-          {`${value} ${currency.symbol}`}
+          {`${new BigNumber(value).dp(2).toFormat()} ${currency.symbol}`}
         </Typography>
       )}
 

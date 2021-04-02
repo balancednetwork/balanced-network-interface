@@ -240,7 +240,7 @@ const PositionDetailPanel = () => {
           <Box width={1 / 2}>
             <Typography mb={1}>Collateral</Typography>
             <Typography variant="p" fontSize={18}>
-              ${totalCollateralAmountbyUSD.toFixed(2)}
+              ${totalCollateralAmountbyUSD.dp(2).toFormat()}
             </Typography>
           </Box>
 
@@ -248,19 +248,20 @@ const PositionDetailPanel = () => {
             <Typography mb={1}>Loan</Typography>
 
             <Typography variant="p" fontSize={18} as="span">
-              ${loanInputAmount.toFixed(2)} <Typography as="span">/ ${totalAvailableLoanAmount.toFixed(2)}</Typography>
+              ${loanInputAmount.dp(2).toFormat()}{' '}
+              <Typography as="span">/ ${totalAvailableLoanAmount.dp(2).toFormat()}</Typography>
             </Typography>
           </Box>
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
           The current ICX price is{' '}
-          <span className={isRewardWarning ? 'alert' : ''}>{'$' + ratio.ICXUSDratio.toFixed(4)}</span>.
+          <span className={isRewardWarning ? 'alert' : ''}>{'$' + ratio.ICXUSDratio.dp(4).toFormat()}</span>.
         </Typography>
         <Typography>
           You hold{' '}
-          <span className="white">{isNaN(debtHoldShare.toNumber()) ? '-' : debtHoldShare.toFixed(2) + '%'}</span> of the
-          total debt.
+          <span className="white">{isNaN(debtHoldShare.toNumber()) ? '-' : debtHoldShare.dp(2).toFormat() + '%'}</span>{' '}
+          of the total debt.
         </Typography>
       </BoxPanel>
       <BoxPanel bg="bg2" flex={1}>

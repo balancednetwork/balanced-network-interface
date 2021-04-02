@@ -257,21 +257,21 @@ const CollateralPanel = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.toFixed(2) + ' ICX'}
+            {differenceAmount.dp(2).toFormat() + ' ICX'}
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.toFixed(2) + ' ICX'}
+                {beforeAmount.dp(2).toFormat() + ' ICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.toFixed(2) + ' ICX'}
+                {afterAmount.dp(2).toFormat() + ' ICX'}
               </Typography>
             </Box>
           </Flex>

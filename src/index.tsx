@@ -3,6 +3,7 @@ import 'react-app-polyfill/stable';
 
 import * as React from 'react';
 
+import BigNumber from 'bignumber.js';
 import * as ReactDOM from 'react-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Provider } from 'react-redux';
@@ -19,6 +20,20 @@ import store from 'store';
 import './locales/i18n';
 
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
+
+// Set the global formatting options
+const fmt = {
+  prefix: '',
+  decimalSeparator: '.',
+  groupSeparator: ',',
+  groupSize: 3,
+  secondaryGroupSize: 0,
+  fractionGroupSeparator: ' ',
+  fractionGroupSize: 0,
+  suffix: '',
+};
+
+BigNumber.config({ FORMAT: fmt });
 
 ReactDOM.render(
   <Provider store={store}>

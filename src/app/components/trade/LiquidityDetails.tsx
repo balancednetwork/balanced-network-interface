@@ -30,14 +30,10 @@ const LiquidityDetails = () => {
   const poolReward = useReward();
 
   const sICXbnUSDTotalSupply = liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0);
-  const sICXbnUSDSuppliedShare = liquiditySupply.sICXSuppliedPoolsICXbnUSD
-    ?.dividedBy(sICXbnUSDTotalSupply)
-    ?.multipliedBy(100);
+  const sICXbnUSDSuppliedShare = liquiditySupply.sICXbnUSDBalance?.dividedBy(sICXbnUSDTotalSupply)?.multipliedBy(100);
 
   const BALNPoolBALNbnUSDTotal = liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0);
-  const BALNbnUSDSuppliedShare = liquiditySupply.BALNSuppliedPoolBALNbnUSD?.dividedBy(
-    BALNPoolBALNbnUSDTotal,
-  )?.multipliedBy(100);
+  const BALNbnUSDSuppliedShare = liquiditySupply.BALNbnUSDBalance?.dividedBy(BALNPoolBALNbnUSDTotal)?.multipliedBy(100);
 
   const sICXICXTotalSupply = liquiditySupply.sICXICXTotalSupply || new BigNumber(0);
   const ICXBalance = liquiditySupply.ICXBalance || new BigNumber(0);

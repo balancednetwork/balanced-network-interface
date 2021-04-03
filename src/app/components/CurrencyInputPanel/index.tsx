@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -9,7 +10,10 @@ import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/L
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { CURRENCYLIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
+import { useWalletICXBalance } from 'hooks';
+import { useWalletBalanceValue } from 'store/wallet/hooks';
 import { Currency } from 'types';
+import { escapeRegExp } from 'utils';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -30,7 +34,6 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
   transition: border 0.3s ease, background-color 0.3s ease, color 0.3s ease;
   cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-
   :hover,
   :focus {
     border: 2px solid #2ca9b7;
@@ -61,7 +64,6 @@ const NumberInput = styled.input<{ bg?: string }>`
   font-size: 100%;
   line-height: 1.15;
   margin: 0;
-
   :hover,
   :focus {
     border: 2px solid #2ca9b7;
@@ -90,6 +92,8 @@ interface CurrencyInputPanelProps {
   customBalanceText?: string;
   bg?: string;
 }
+
+const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
 
 export default function CurrencyInputPanel({
   value,
@@ -138,10 +142,35 @@ export default function CurrencyInputPanel({
     [otherCurrency, currencyList],
   );
 
-  // React.useEffect(() => {
-  //   const t = otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList;
-  //   onCurrencySelect && onCurrencySelect(CURRENCYLIST[t[0].toLowerCase()]);
-  // }, [otherCurrency, onCurrencySelect, currencyList]);
+  React.useEffect(() => {
+    const t = otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList;
+    if (t?.indexOf(currency?.symbol as string) === -1) {
+      onCurrencySelect && onCurrencySelect(CURRENCYLIST[t[0].toLowerCase()]);
+    }
+  }, [currency, otherCurrency, onCurrencySelect, currencyList]);
+
+  const enforcer = (nextUserInput: string) => {
+    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+      onUserInput(nextUserInput);
+    }
+  };
+
+  const { account } = useIconReact();
+  const walletBalance = useWalletBalanceValue();
+  const ICXbalance = useWalletICXBalance(account);
+  const tokenBalance = (symbol: string) => {
+    if (account) {
+      if (symbol === 'icx') {
+        return ICXbalance;
+      } else if (symbol === 'baln') {
+        return walletBalance.BALNbalance;
+      } else if (symbol === 'sicx') {
+        return walletBalance.sICXbalance;
+      } else if (symbol === 'bnusd') {
+        return walletBalance.bnUSDbalance;
+      }
+    }
+  };
 
   return (
     <InputContainer ref={ref}>
@@ -167,7 +196,7 @@ export default function CurrencyInputPanel({
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      5,600
+                      {tokenBalance(currency.toLowerCase())?.dp(2).toFormat()} {currency}
                     </DataText>
                   </ListItem>
                 ))}
@@ -177,7 +206,25 @@ export default function CurrencyInputPanel({
         </CurrencySelect>
       </ClickAwayListener>
 
-      <NumberInput value={value} onChange={event => onUserInput(event.target.value)} bg={bg} />
+      <NumberInput
+        value={value}
+        onChange={event => {
+          enforcer(event.target.value.replace(/,/g, '.'));
+        }}
+        // universal input options
+        inputMode="decimal"
+        title="Token Amount"
+        autoComplete="off"
+        autoCorrect="off"
+        // text-specific options
+        type="text"
+        pattern="^[0-9]*[.,]?[0-9]*$"
+        minLength={1}
+        maxLength={79}
+        spellCheck="false"
+        //style
+        bg={bg}
+      />
     </InputContainer>
   );
 }

@@ -21,7 +21,7 @@ import {
   useStakedICXAmount,
   useTotalICXAmount,
 } from 'store/collateral/hooks';
-import { useLockedICXAmount } from 'store/loan/hooks';
+import { useLockedICXAmount, useLoanAdjust } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
 const CollateralPanel = () => {
@@ -59,8 +59,11 @@ const CollateralPanel = () => {
 
   const adjust = useCollateralAdjust();
 
+  const adjustLoan = useLoanAdjust();
+
   const handleEnableAdjusting = () => {
     adjust(true);
+    adjustLoan(false);
   };
 
   const handleCancelAdjusting = () => {
@@ -111,7 +114,7 @@ const CollateralPanel = () => {
     if (shouldDeposit) {
       bnJs
         .eject({ account: account })
-        .Loans.depositAddCollateral(collateralAmount.toNumber())
+        .Loans.depositAddCollateral(collateralAmount)
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -128,7 +131,7 @@ const CollateralPanel = () => {
     } else {
       bnJs
         .eject({ account: account })
-        .Loans.depositWithdrawCollateral(collateralAmount.toNumber())
+        .Loans.depositWithdrawCollateral(collateralAmount)
         .then(res => {
           addTransaction(
             { hash: res.result }, //
@@ -197,12 +200,12 @@ const CollateralPanel = () => {
 
         {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} />}
 
-        <Box marginY={6} height={20}>
+        <Box marginY={6}>
           <Nouislider
             id="slider-collateral"
             disabled={!isAdjusting}
             start={[stakedICXAmount.toNumber()]}
-            padding={[tLockedICXAmount.toNumber(), 0]}
+            padding={[Math.max(tLockedICXAmount.toNumber(), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],
@@ -254,21 +257,21 @@ const CollateralPanel = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.toFixed(2) + ' ICX'}
+            {differenceAmount.dp(2).toFormat() + ' ICX'}
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.toFixed(2) + ' ICX'}
+                {beforeAmount.dp(2).toFormat() + ' ICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.toFixed(2) + ' ICX'}
+                {afterAmount.dp(2).toFormat() + ' ICX'}
               </Typography>
             </Box>
           </Flex>

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
@@ -7,7 +8,11 @@ import { Wrapper, UnderlineText, StyledArrowDownIcon } from 'app/components/Drop
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { SupportedPairs, Pair } from 'constants/currency';
+import { useLiquiditySupply } from 'store/liquidity/hooks';
 import { useSetPair, usePoolPair } from 'store/pool/hooks';
+import { useRatioValue } from 'store/ratio/hooks';
+import { useReward } from 'store/reward/hooks';
+import { formatBigNumber } from 'utils';
 
 const StyledWrapper = styled(Wrapper)`
   font-size: 18px;
@@ -35,7 +40,33 @@ export default function LiquiditySelect() {
     setPair(pl);
   };
 
-  console.log(selectedPair);
+  const pairs = [SupportedPairs[0], SupportedPairs[1], SupportedPairs[2]];
+
+  const poolReward = useReward();
+  const ratio = useRatioValue();
+  const liquidity = useLiquiditySupply();
+
+  const sICXICXpoolDailyReward =
+    (poolReward.sICXICXreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
+  const sICXbnUSDpoolDailyReward =
+    (poolReward.sICXbnUSDreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
+  const BALNbnUSDpoolDailyReward =
+    (poolReward.BALNbnUSDreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
+
+  const sICXICXapy =
+    (sICXICXpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber()) /
+      ((liquidity.sICXICXTotalSupply?.toNumber() || 0) * ratio.ICXUSDratio?.toNumber()) || 0;
+
+  const sICXbnUSDICXapy =
+    (sICXbnUSDpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber()) /
+      ((liquidity.sICXSuppliedPoolsICXbnUSD?.toNumber() || 0) * ratio.sICXbnUSDratio?.toNumber() +
+        (liquidity.bnUSDPoolsICXbnUSDTotal?.toNumber() || 0)) || 0;
+
+  const BALNbnUSDapy =
+    (BALNbnUSDpoolDailyReward * 365 * ratio.BALNbnUSDratio?.toNumber()) /
+      ((liquidity.BALNPoolBALNbnUSDTotal?.toNumber() || 0) * ratio.BALNbnUSDratio?.toNumber() +
+        (liquidity.bnUSDPoolBALNbnUSDTotal?.toNumber() || 0)) || 0;
+
   return (
     <ClickAwayListener onClickAway={() => setOpen(false)}>
       <div>
@@ -50,13 +81,20 @@ export default function LiquiditySelect() {
               <HeaderText>POOL</HeaderText>
               <HeaderText textAlign="right">APY</HeaderText>
             </DashGrid>
-            {SupportedPairs.map(pool => (
+            {pairs.map(pool => (
               <ListItem key={pool.pair} onClick={() => handleSelectPool(pool)}>
                 <DataText variant="p" fontWeight="bold">
                   {pool.pair}
                 </DataText>
                 <DataText variant="p" textAlign="right">
-                  5.6%
+                  {pool.pair === 'sICX / bnUSD'
+                    ? formatBigNumber(new BigNumber(sICXbnUSDICXapy), 'currency')
+                    : pool.pair === 'BALN / bnUSD'
+                    ? formatBigNumber(new BigNumber(BALNbnUSDapy), 'currency')
+                    : pool.pair === 'ICX / sICX'
+                    ? formatBigNumber(new BigNumber(sICXICXapy), 'currency')
+                    : ''}{' '}
+                  %
                 </DataText>
               </ListItem>
             ))}

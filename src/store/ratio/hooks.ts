@@ -52,15 +52,15 @@ export function useFetchPrice() {
     changeRatioValue({ sICXICXratio });
   }, PERIOD);
 
-  // BALN / bnUSD price
-  // useInterval(async () => {
-  //   const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId.toString()));
-  //   changeRatioValue({ BALNbnUSDratio: BALNbnUSDratio });
-  // }, PERIOD);
-
   // sICX / bnUSD price
   useInterval(async () => {
     const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId.toString()));
     changeRatioValue({ sICXbnUSDratio });
+  }, PERIOD);
+
+  // BALN / bnUSD price
+  useInterval(async () => {
+    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId.toString()));
+    changeRatioValue({ BALNbnUSDratio });
   }, PERIOD);
 }

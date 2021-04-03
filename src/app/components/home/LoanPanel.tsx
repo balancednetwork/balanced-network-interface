@@ -9,10 +9,11 @@ import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
-import { BoxPanel } from 'app/components/Panel';
+import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
+import { useCollateralAdjust } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
   useLoanAdjust,
@@ -58,9 +59,11 @@ const LoanPanel = () => {
   );
 
   const adjust = useLoanAdjust();
+  const adjustCollateral = useCollateralAdjust();
 
   const handleEnableAdjusting = () => {
     adjust(true);
+    adjustCollateral(false);
   };
 
   const handleCancelAdjusting = () => {
@@ -71,7 +74,7 @@ const LoanPanel = () => {
   const borrowedbnUSDAmount = useLoanBorrowedValue();
 
   const totalAvailablebnUSDAmount = useTotalAvailablebnUSDAmount();
-  console.log(totalAvailablebnUSDAmount.toNumber());
+
   //  calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
@@ -108,7 +111,7 @@ const LoanPanel = () => {
     if (shouldBorrow) {
       bnJs
         .eject({ account })
-        .Loans.borrowAdd(differenceAmount.toNumber())
+        .Loans.borrowAdd(differenceAmount)
         .then(res => {
           addTransaction({ hash: res.result }, { summary: `Borrowed ${differenceAmount.toNumber()} bnUSD.` });
           // close modal
@@ -122,7 +125,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .eject({ account })
-        .bnUSD.repayLoan(differenceAmount.abs().toNumber())
+        .bnUSD.repayLoan(differenceAmount.abs())
         .then(res => {
           addTransaction({ hash: res.result }, { summary: `Repaid ${differenceAmount.abs().toNumber()} bnUSD.` });
           // close modal
@@ -151,7 +154,7 @@ const LoanPanel = () => {
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(afterAmount.toNumber());
+      sliderInstance.current?.noUiSlider.set(afterAmount.toNumber());
     }
   }, [afterAmount, inputType]);
 
@@ -169,11 +172,35 @@ const LoanPanel = () => {
 
   const shouldShowLock = !usedbnUSDAmount.isZero();
 
+  if (totalAvailablebnUSDAmount.isZero() || totalAvailablebnUSDAmount.isNegative()) {
+    return (
+      <FlexPanel bg="bg3" flexDirection="column">
+        <Flex justifyContent="space-between" alignItems="center">
+          <Typography variant="h2">
+            Loan:{' '}
+            <Typography as="span" fontSize={18} fontWeight="normal">
+              US Dollars
+            </Typography>
+          </Typography>
+        </Flex>
+
+        <Flex flex={1} justifyContent="center" alignItems="center">
+          <Typography>To take out a loan, deposit collateral.</Typography>
+        </Flex>
+      </FlexPanel>
+    );
+  }
+
   return (
     <>
       <BoxPanel bg="bg3">
         <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">Loan</Typography>
+          <Typography variant="h2">
+            Loan:{' '}
+            <Typography as="span" fontSize={18} fontWeight="normal">
+              US Dollars
+            </Typography>
+          </Typography>
 
           <Box>
             {isAdjusting ? (
@@ -201,7 +228,7 @@ const LoanPanel = () => {
             // dont refactor the below code
             // it solved the race condition issue that caused padding value exceeds the max range value
             // need to find a good approach in the future
-            padding={[Math.min(usedbnUSDAmount.toNumber(), totalAvailablebnUSDAmount.toNumber()), 0]}
+            padding={[Math.max(Math.min(usedbnUSDAmount.toNumber(), totalAvailablebnUSDAmount.toNumber()), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],
@@ -251,26 +278,26 @@ const LoanPanel = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.toFixed(2)} bnUSD
+            {differenceAmount.dp(2).toFormat()} bnUSD
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.toFixed(2)} bnUSD
+                {beforeAmount.dp(2).toFormat()} bnUSD
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.toFixed(2)} bnUSD
+                {afterAmount.dp(2).toFormat()} bnUSD
               </Typography>
             </Box>
           </Flex>
 
-          {shouldBorrow && <Typography textAlign="center">Includes a fee of ${fee.toFixed(2)} bnUSD.</Typography>}
+          {shouldBorrow && <Typography textAlign="center">Includes a fee of {fee.dp(2).toFormat()} bnUSD.</Typography>}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>

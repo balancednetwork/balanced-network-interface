@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
@@ -8,7 +10,7 @@ export default class Rewards extends Contract {
     this.address = addresses[this.nid].rewards;
   }
 
-  getClaimRewardsTransactionPayload() {
+  claimRewards() {
     const payload = this.transactionParamsBuilder({
       method: 'claimRewards',
     });
@@ -24,6 +26,25 @@ export default class Rewards extends Contract {
       },
     });
 
-    return this.callIconex(payload);
+    return this.call(payload);
+  }
+
+  getRecipientsSplit() {
+    const payload = this.paramsBuilder({
+      method: 'getRecipientsSplit',
+    });
+
+    return this.call(payload);
+  }
+
+  getEmission(day: BigNumber) {
+    const payload = this.paramsBuilder({
+      method: 'getEmission',
+      params: {
+        _day: day.toString(),
+      },
+    });
+
+    return this.call(payload);
   }
 }

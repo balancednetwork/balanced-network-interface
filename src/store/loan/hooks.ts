@@ -171,7 +171,7 @@ export const useTotalAvailablebnUSDAmount = () => {
   const ratio = useRatioValue();
 
   const stakedICXAmount = useCollateralInputAmount();
-  console.log('stakedICX', stakedICXAmount.toNumber(), ratio.ICXUSDratio.toNumber());
+
   return stakedICXAmount.multipliedBy(ratio.ICXUSDratio).div(MANDATORY_COLLATERAL_RATIO);
 };
 

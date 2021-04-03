@@ -10,6 +10,7 @@ import { LiquidityState } from 'store/liquidity/reducer';
 import { LoanState } from 'store/loan/reducer';
 import { PoolState } from 'store/pool/reducer';
 import { RatioState } from 'store/ratio/reducer';
+import { RewardState } from 'store/reward/reducer';
 import { TransactionState } from 'store/transactions/reducer';
 import { WalletState } from 'store/wallet/reducer';
 
@@ -21,6 +22,7 @@ export interface RootState {
   collateral: CollateralState;
   loan: LoanState;
   liquidity: LiquidityState;
+  reward: RewardState;
   ratio: RatioState;
   walletBalance: WalletState;
   transactions: TransactionState;

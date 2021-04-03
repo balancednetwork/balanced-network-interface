@@ -1,8 +1,10 @@
+import BigNumber from 'bignumber.js';
+
 import { NetworkId } from './addresses';
-// import { Contract } from './contracts/contract';
 import Baln from './contracts/Baln';
 import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
+import { Contract } from './contracts/contract';
 import Dex from './contracts/Dex';
 import Loans from './contracts/Loans';
 import Rewards from './contracts/Rewards';
@@ -73,5 +75,14 @@ export class BalancedJs {
   eject({ account }: SettingEjection) {
     this.contractSettings.account = account;
     return this;
+  }
+
+  transfer(to: string, value: BigNumber): Promise<any> {
+    const contract = new Contract(this.contractSettings);
+    contract.address = to;
+    const payload = contract.transferICXParamsBuilder({
+      value,
+    });
+    return contract.callIconex(payload);
   }
 }

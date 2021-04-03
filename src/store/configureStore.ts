@@ -14,6 +14,7 @@ import loan from './loan/reducer';
 import pool from './pool/reducer';
 import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
+import reward from './reward/reducer';
 import transactions from './transactions/reducer';
 import walletBalance from './wallet/reducer';
 
@@ -39,6 +40,7 @@ export function configureAppStore() {
       // #redux-step-8: add more reducer from 'store/**/reducer.ts'
       application,
       pool,
+      reward,
       collateral,
       liquidity,
       loan,

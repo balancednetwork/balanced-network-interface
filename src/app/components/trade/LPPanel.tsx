@@ -19,6 +19,7 @@ import { useRatioValue } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue, useChangeWalletBalance } from 'store/wallet/hooks';
+import { formatBigNumber } from 'utils';
 
 import { SectionPanel, BrightPanel, depositMessage, supplyMessage } from './utils';
 
@@ -84,7 +85,7 @@ export default function LPPanel() {
       setSupplyInputAmount(val);
       let outputAmount = new BigNumber(val).multipliedBy(getRatioByPair());
       if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
-      setSupplyOutputAmount(outputAmount.toString());
+      setSupplyOutputAmount(formatBigNumber(outputAmount, 'input'));
     },
     [getRatioByPair],
   );
@@ -94,7 +95,7 @@ export default function LPPanel() {
       setSupplyOutputAmount(val);
       let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair()));
       if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
-      setSupplyInputAmount(inputAmount.toString());
+      setSupplyInputAmount(formatBigNumber(inputAmount, 'input'));
     },
     [getRatioByPair],
   );
@@ -159,7 +160,7 @@ export default function LPPanel() {
           { hash: res.result },
           {
             summary: supplyMessage(
-              supplyInputAmount,
+              formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
               selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
             ),
           },
@@ -243,7 +244,7 @@ export default function LPPanel() {
           { hash: res.result },
           {
             summary: supplyMessage(
-              supplyInputAmount,
+              formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
               selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
             ),
           },
@@ -264,7 +265,7 @@ export default function LPPanel() {
           { hash: res.result },
           {
             summary: supplyMessage(
-              supplyInputAmount,
+              formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
               selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
             ),
           },
@@ -478,10 +479,10 @@ export default function LPPanel() {
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            Wallet: {walletBalanceSelected.base?.toFixed(2)} {selectedPair.baseCurrencyKey}
+            Wallet: {formatBigNumber(walletBalanceSelected.base, 'currency')} {selectedPair.baseCurrencyKey}
             {selectedPair === SupportedPairs[2]
               ? ''
-              : ' / ' + walletBalanceSelected.quote?.toFixed(2) + ' ' + selectedPair.quoteCurrencyKey}
+              : ' / ' + formatBigNumber(walletBalanceSelected.quote, 'currency') + ' ' + selectedPair.quoteCurrencyKey}
           </Typography>
 
           <Box mt={5}>
@@ -531,21 +532,19 @@ export default function LPPanel() {
                 <dt>Your supply</dt>
                 <dd>
                   {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
-                    ? ICXliquiditySupply.toFixed(2) + ' ICX'
-                    : suppliedPairAmount.base.toFixed(2) +
+                    ? formatBigNumber(ICXliquiditySupply, 'currency') + ' ICX'
+                    : formatBigNumber(suppliedPairAmount.base, 'currency') +
                       ' ' +
                       selectedPair.baseCurrencyKey +
                       ' / ' +
-                      suppliedPairAmount.quote.toFixed(2) +
+                      formatBigNumber(suppliedPairAmount.quote, 'currency') +
                       ' ' +
                       selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>
                 <dt>Your daily rewards</dt>
-                <dd>
-                  ~ {suppliedPairAmount.dailyReward.isNaN() ? '0' : suppliedPairAmount.dailyReward.toFixed(2)} BALN
-                </dd>
+                <dd>~ {formatBigNumber(suppliedPairAmount.dailyReward, 'currency')} BALN</dd>
               </StyledDL>
             </Box>
             <Box width={[1, 1 / 2]}>
@@ -554,24 +553,19 @@ export default function LPPanel() {
                 <dd>
                   {' '}
                   {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
-                    ? (liquiditySupply.sICXICXTotalSupply?.toFixed(2) || '0') + ' ICX'
-                    : suppliedPairAmount.baseSupply.toFixed(2) +
+                    ? formatBigNumber(liquiditySupply.sICXICXTotalSupply, 'currency') + ' ICX'
+                    : formatBigNumber(suppliedPairAmount.baseSupply, 'currency') +
                       ' ' +
                       selectedPair.baseCurrencyKey +
                       ' / ' +
-                      suppliedPairAmount.quoteSupply.toFixed(2) +
+                      formatBigNumber(suppliedPairAmount.quoteSupply, 'currency') +
                       ' ' +
                       selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>
                 <dt>Total daily rewards</dt>
-                <dd>
-                  {suppliedPairAmount.poolTotalDailyReward.isNaN()
-                    ? '0'
-                    : suppliedPairAmount.poolTotalDailyReward.toFixed(2)}{' '}
-                  BALN
-                </dd>
+                <dd>{formatBigNumber(suppliedPairAmount.poolTotalDailyReward, 'currency')} BALN</dd>
               </StyledDL>
             </Box>
           </Flex>
@@ -601,7 +595,7 @@ export default function LPPanel() {
                 fontWeight="bold"
                 textAlign={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? 'center' : 'right'}
               >
-                {supplyInputAmount} {selectedPair.baseCurrencyKey}
+                {formatBigNumber(new BigNumber(supplyInputAmount), 'currency')} {selectedPair.baseCurrencyKey}
               </Typography>
             </Box>
             <Box width={1 / 2} style={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? { display: 'none' } : {}}>
@@ -618,7 +612,7 @@ export default function LPPanel() {
           >
             <Box width={1 / 2}>
               <Typography variant="p" fontWeight="bold" textAlign="right">
-                {supplyOutputAmount} {selectedPair.quoteCurrencyKey}
+                {formatBigNumber(new BigNumber(supplyOutputAmount), 'currency')} {selectedPair.quoteCurrencyKey}
               </Typography>
             </Box>
             <Box width={1 / 2}>

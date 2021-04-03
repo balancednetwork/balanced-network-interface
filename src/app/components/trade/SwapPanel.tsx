@@ -24,6 +24,7 @@ import { useWalletICXBalance } from 'hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { formatBigNumber } from 'utils';
 
 import { SectionPanel, BrightPanel, swapMessage } from './utils';
 
@@ -103,13 +104,13 @@ export default function SwapPanel() {
     (symbolInput: string, symbolOutput: string) => {
       if (symbolInput === 'ICX') {
         let icxRatio = ratio.sICXICXratio?.toNumber() || 0;
-        return icxRatio ? 1 / icxRatio : 0;
+        return icxRatio ? new BigNumber(1 / icxRatio) : new BigNumber(0);
       } else if (symbolInput === 'BALN') {
-        return ratio.BALNbnUSDratio?.toNumber() || 0;
+        return ratio.BALNbnUSDratio || new BigNumber(0);
       } else if (symbolInput === 'sICX' && symbolOutput === 'bnUSD') {
-        return ratio.sICXbnUSDratio?.toNumber() || 0;
+        return ratio.sICXbnUSDratio || new BigNumber(0);
       } else if (symbolInput === 'sICX' && symbolOutput === 'ICX') {
-        return ratio.sICXICXratio?.toNumber() || 0;
+        return ratio.sICXICXratio || new BigNumber(0);
       }
       return 0;
     },
@@ -126,12 +127,12 @@ export default function SwapPanel() {
         val = '0';
       }
       if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
-        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
+        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
       } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
         const fee = parseFloat(val) / 100;
-        setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
+        setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
         val = (parseFloat(val) - fee).toString();
-        setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
+        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
       } else {
         bnJs
           .eject({ account: account })
@@ -140,9 +141,9 @@ export default function SwapPanel() {
             const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
             const lp_fee = parseInt(res[`pool_lp_fee`], 16);
             const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
-            setSwapFee(fee.toFixed(inputCurrency.decimals).toString());
+            setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
             val = (parseFloat(val) - fee).toString();
-            setSwapOutputAmount((parseFloat(val) * ratioLocal).toFixed(outputCurrency.decimals).toString());
+            setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
           })
           .catch(e => {
             console.error('error', e);
@@ -161,13 +162,13 @@ export default function SwapPanel() {
     if (!val) {
       val = '0';
     }
-    let inputAmount = parseFloat(val) / ratioLocal;
+    let inputAmount = new BigNumber(val).dividedBy(ratioLocal);
     if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
-      inputAmount += inputAmount * 0.01;
-      setSwapInputAmount(inputAmount.toFixed(inputCurrency.decimals).toString());
+      inputAmount = inputAmount.plus(inputAmount.multipliedBy(0.01));
+      setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
     } else if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
       // fee on this pair is zero so do nothing on this case
-      setSwapInputAmount(inputAmount.toFixed(inputCurrency.decimals).toString());
+      setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
     } else {
       bnJs
         .eject({ account: account })
@@ -175,8 +176,8 @@ export default function SwapPanel() {
         .then(res => {
           const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
           const lp_fee = parseInt(res[`pool_lp_fee`], 16);
-          inputAmount += (inputAmount * (bal_holder_fee + lp_fee)) / 10000;
-          setSwapInputAmount(inputAmount.toFixed(inputCurrency.decimals).toString());
+          inputAmount = inputAmount.plus((inputAmount.toNumber() * (bal_holder_fee + lp_fee)) / 10000);
+          setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
         })
         .catch(e => {
           console.error('error', e);
@@ -357,7 +358,8 @@ export default function SwapPanel() {
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">Swap</Typography>
             <Typography>
-              Wallet: {tokenBalance(inputCurrency.symbol)?.toFixed(inputCurrency.decimals)} {inputCurrency.symbol}{' '}
+              Wallet: {formatBigNumber(new BigNumber(tokenBalance(inputCurrency.symbol) || 0), 'currency')}{' '}
+              {inputCurrency.symbol}{' '}
             </Typography>
           </Flex>
 
@@ -376,7 +378,8 @@ export default function SwapPanel() {
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">For</Typography>
             <Typography>
-              Wallet: {tokenBalance(outputCurrency.symbol)?.toFixed(outputCurrency.decimals)} {outputCurrency.symbol}
+              Wallet: {formatBigNumber(new BigNumber(tokenBalance(outputCurrency.symbol) || 0), 'currency')}{' '}
+              {outputCurrency.symbol}
             </Typography>
           </Flex>
 
@@ -398,8 +401,11 @@ export default function SwapPanel() {
             <Typography>Minimum to receive</Typography>
             <Typography>
               {!swapOutputAmount
-                ? new BigNumber(0).toNumber().toFixed(outputCurrency.decimals)
-                : (((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4).toFixed(outputCurrency.decimals)}{' '}
+                ? formatBigNumber(new BigNumber(0), 'currency')
+                : formatBigNumber(
+                    new BigNumber(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4),
+                    'currency',
+                  )}{' '}
               {outputCurrency.symbol}
             </Typography>
           </Flex>
@@ -409,7 +415,7 @@ export default function SwapPanel() {
               Slippage tolerance
               <QuestionHelper text="If the price slips by more than this amount, your swap will fail." />
             </Typography>
-            <DropdownText text={`${(rawSlippage / 100).toFixed(2)}%`}>
+            <DropdownText text={`${formatBigNumber(new BigNumber(rawSlippage / 100), 'currency')}%`}>
               <SlippageSetting
                 rawSlippage={rawSlippage}
                 setRawSlippage={setRawSlippage}
@@ -433,7 +439,7 @@ export default function SwapPanel() {
                 {inputCurrency.symbol} / {outputCurrency.symbol}
               </Typography>
               <Typography variant="p">
-                {ratio.sICXbnUSDratio?.toFixed(2)} {outputCurrency.symbol} per {inputCurrency.symbol}{' '}
+                {formatBigNumber(ratio.sICXbnUSDratio, 'currency')} {outputCurrency.symbol} per {inputCurrency.symbol}{' '}
                 <span className="alert">-1.21%</span>
               </Typography>
             </Box>
@@ -492,7 +498,7 @@ export default function SwapPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {tokenRatio(inputCurrency.symbol, outputCurrency.symbol).toFixed(2)}
+            {formatBigNumber(new BigNumber(tokenRatio(inputCurrency.symbol, outputCurrency.symbol)), 'ratio')}{' '}
             {inputCurrency.symbol} per {outputCurrency.symbol}
           </Typography>
 
@@ -500,14 +506,14 @@ export default function SwapPanel() {
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Pay</Typography>
               <Typography variant="p" textAlign="center">
-                {swapInputAmount} {inputCurrency.symbol}
+                {formatBigNumber(new BigNumber(swapInputAmount), 'currency')} {inputCurrency.symbol}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">Receive</Typography>
               <Typography variant="p" textAlign="center">
-                {swapOutputAmount} {outputCurrency.symbol}
+                {formatBigNumber(new BigNumber(swapOutputAmount), 'currency')} {outputCurrency.symbol}
               </Typography>
             </Box>
           </Flex>

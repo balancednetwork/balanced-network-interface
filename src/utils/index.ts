@@ -42,12 +42,15 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-export function formatBigNumber(value: BigNumber | undefined, type: 'currency' | 'ratio') {
+export function formatBigNumber(value: BigNumber | undefined, type: 'currency' | 'ratio' | 'input') {
   if (value === undefined || value.isNaN()) {
     return '0';
   } else {
     switch (type) {
       case 'currency': {
+        return value.toFormat(2);
+      }
+      case 'input': {
         return value.toFixed(2, 1);
       }
       case 'ratio': {

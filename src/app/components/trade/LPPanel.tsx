@@ -85,7 +85,7 @@ export default function LPPanel() {
       setSupplyInputAmount(val);
       let outputAmount = new BigNumber(val).multipliedBy(getRatioByPair());
       if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
-      setSupplyOutputAmount(formatBigNumber(outputAmount, 'currency'));
+      setSupplyOutputAmount(formatBigNumber(outputAmount, 'input'));
     },
     [getRatioByPair],
   );
@@ -95,7 +95,7 @@ export default function LPPanel() {
       setSupplyOutputAmount(val);
       let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair()));
       if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
-      setSupplyInputAmount(formatBigNumber(inputAmount, 'currency'));
+      setSupplyInputAmount(formatBigNumber(inputAmount, 'input'));
     },
     [getRatioByPair],
   );

@@ -127,12 +127,12 @@ export default function SwapPanel() {
         val = '0';
       }
       if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
-        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'currency'));
+        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
       } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
         const fee = parseFloat(val) / 100;
-        setSwapFee(formatBigNumber(new BigNumber(fee), 'currency'));
+        setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
         val = (parseFloat(val) - fee).toString();
-        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'currency'));
+        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
       } else {
         bnJs
           .eject({ account: account })
@@ -141,9 +141,9 @@ export default function SwapPanel() {
             const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
             const lp_fee = parseInt(res[`pool_lp_fee`], 16);
             const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
-            setSwapFee(formatBigNumber(new BigNumber(fee), 'currency'));
+            setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
             val = (parseFloat(val) - fee).toString();
-            setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'currency'));
+            setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
           })
           .catch(e => {
             console.error('error', e);
@@ -165,10 +165,10 @@ export default function SwapPanel() {
     let inputAmount = new BigNumber(val).dividedBy(ratioLocal);
     if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
       inputAmount = inputAmount.plus(inputAmount.multipliedBy(0.01));
-      setSwapInputAmount(formatBigNumber(inputAmount, 'currency'));
+      setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
     } else if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
       // fee on this pair is zero so do nothing on this case
-      setSwapInputAmount(formatBigNumber(inputAmount, 'currency'));
+      setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
     } else {
       bnJs
         .eject({ account: account })
@@ -177,7 +177,7 @@ export default function SwapPanel() {
           const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
           const lp_fee = parseInt(res[`pool_lp_fee`], 16);
           inputAmount = inputAmount.plus((inputAmount.toNumber() * (bal_holder_fee + lp_fee)) / 10000);
-          setSwapInputAmount(formatBigNumber(inputAmount, 'currency'));
+          setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
         })
         .catch(e => {
           console.error('error', e);
@@ -506,14 +506,14 @@ export default function SwapPanel() {
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Pay</Typography>
               <Typography variant="p" textAlign="center">
-                {swapInputAmount} {inputCurrency.symbol}
+                {formatBigNumber(new BigNumber(swapInputAmount), 'currency')} {inputCurrency.symbol}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">Receive</Typography>
               <Typography variant="p" textAlign="center">
-                {swapOutputAmount} {outputCurrency.symbol}
+                {formatBigNumber(new BigNumber(swapOutputAmount), 'currency')} {outputCurrency.symbol}
               </Typography>
             </Box>
           </Flex>

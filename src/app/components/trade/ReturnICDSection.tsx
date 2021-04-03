@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -16,7 +17,10 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
 import { useRatioValue } from 'store/ratio/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
+
+import { retireMessage } from './utils';
 
 const Grid = styled.div`
   display: grid;
@@ -28,6 +32,7 @@ const ReturnICDSection = () => {
   const wallet = useWalletBalanceValue();
   const ratio = useRatioValue();
   const { account } = useIconReact();
+  const addTransaction = useTransactionAdder();
   const [retireAmount, setRetireAmount] = React.useState('0');
   const [receiveAmount, setReceiveAmount] = React.useState('0');
   const [swapFee, setSwapFee] = React.useState('0');
@@ -87,6 +92,29 @@ const ReturnICDSection = () => {
     setOpen(false);
   };
 
+  const handleRetireConfirm = () => {
+    if (parseFloat(retireAmount) < 10) {
+      console.log(`Can not retire with amount lower than minimum value`);
+      return;
+    }
+    bnJs
+      .eject({ account: account })
+      .bnUSD.retireBnUSD(new BigNumber(retireAmount))
+      .then(res => {
+        console.log('res', res);
+        setOpen(false);
+        addTransaction(
+          { hash: res.result },
+          {
+            summary: retireMessage(retireAmount),
+          },
+        );
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
   return (
     <>
       <ClickAwayListener onClickAway={closeDropdown}>
@@ -98,7 +126,7 @@ const ReturnICDSection = () => {
               <Grid>
                 <Typography variant="h2">Retire bnUSD</Typography>
 
-                <Typography>Sell your bnUSD for ${ratio.sICXbnUSDratio?.toFixed(2)} of sICX (staked ICX).</Typography>
+                <Typography>Sell your bnUSD for $1 of sICX (staked ICX).</Typography>
 
                 <CurrencyInputPanel
                   currency={CURRENCYLIST['bnusd']}
@@ -164,7 +192,7 @@ const ReturnICDSection = () => {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={handleRetireDismiss}>Cancel</TextButton>
-            <Button>Confirm</Button>
+            <Button onClick={handleRetireConfirm}>Confirm</Button>
           </Flex>
         </Flex>
       </Modal>

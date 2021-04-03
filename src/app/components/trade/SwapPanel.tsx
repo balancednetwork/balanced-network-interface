@@ -19,7 +19,7 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/compon
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST, getFilteredCurrencies, SupportedBaseCurrencies } from 'constants/currency';
-import { dayData, candleData, volumeData } from 'demo';
+import { dayData } from 'demo';
 import { useWalletICXBalance } from 'hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -185,12 +185,29 @@ export default function SwapPanel() {
     }
   };
 
-  /*const defaultInputCurrency = CURRENCYLIST['sicx'];
-  const defaultOutputCurrency = CURRENCYLIST['bnusd'];
+  const [chartOption, setChartOption] = React.useState({
+    type: CHART_TYPES.AREA,
+    period: CHART_PERIODS['5m'],
+  });
 
-  const [inputCurrency, setInputCurrency] = React.useState(defaultInputCurrency);
+  const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const interval: any = event.currentTarget.value;
+    loadChartData({
+      interval: interval.toLowerCase(),
+      symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
+    });
+    setChartOption({
+      ...chartOption,
+      period: interval,
+    });
+  };
 
-  const [outputCurrency, setOutputCurrency] = React.useState(defaultOutputCurrency);*/
+  const handleChartTypeChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setChartOption({
+      ...chartOption,
+      type: event.currentTarget.value,
+    });
+  };
 
   const handleTypeInput = React.useCallback(
     (val: string) => {
@@ -198,30 +215,6 @@ export default function SwapPanel() {
       handleConvertOutputRate(inputCurrency, outputCurrency, val);
     },
     [inputCurrency, outputCurrency, handleConvertOutputRate],
-  );
-
-  const handleInputSelect = React.useCallback(
-    ccy => {
-      setInputCurrency(ccy);
-      handleConvertOutputRate(ccy, outputCurrency, swapInputAmount);
-      loadChartData({
-        interval: chartOption.period.toLowerCase(),
-        symbol: `${ccy.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
-      });
-    },
-    [swapInputAmount, handleConvertOutputRate, outputCurrency],
-  );
-
-  const handleOutputSelect = React.useCallback(
-    ccy => {
-      setOutputCurrency(ccy);
-      handleConvertOutputRate(inputCurrency, ccy, swapInputAmount);
-      loadChartData({
-        interval: chartOption.period.toLowerCase(),
-        symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${ccy.symbol}`,
-      });
-    },
-    [swapInputAmount, handleConvertOutputRate, inputCurrency],
   );
 
   const handleSwapConfirmDismiss = () => {
@@ -312,30 +305,6 @@ export default function SwapPanel() {
     }
   };
 
-  const [chartOption, setChartOption] = React.useState({
-    type: CHART_TYPES.AREA,
-    period: CHART_PERIODS['5m'],
-  });
-
-  const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const interval: any = event.currentTarget.value;
-    loadChartData({
-      interval: interval.toLowerCase(),
-      symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
-    });
-    setChartOption({
-      ...chartOption,
-      period: interval,
-    });
-  };
-
-  const handleChartTypeChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setChartOption({
-      ...chartOption,
-      type: event.currentTarget.value,
-    });
-  };
-
   //
   const [rawSlippage, setRawSlippage] = React.useState(250);
   const [ttl, setTtl] = React.useState(0);
@@ -389,6 +358,30 @@ export default function SwapPanel() {
       interval: '5m',
     });
   }, [inputCurrency.symbol, outputCurrency.symbol, loadChartData]);
+
+  const handleInputSelect = React.useCallback(
+    ccy => {
+      setInputCurrency(ccy);
+      handleConvertOutputRate(ccy, outputCurrency, swapInputAmount);
+      loadChartData({
+        interval: chartOption.period.toLowerCase(),
+        symbol: `${ccy.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
+      });
+    },
+    [swapInputAmount, handleConvertOutputRate, outputCurrency, chartOption, loadChartData],
+  );
+
+  const handleOutputSelect = React.useCallback(
+    ccy => {
+      setOutputCurrency(ccy);
+      handleConvertOutputRate(inputCurrency, ccy, swapInputAmount);
+      loadChartData({
+        interval: chartOption.period.toLowerCase(),
+        symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${ccy.symbol}`,
+      });
+    },
+    [swapInputAmount, handleConvertOutputRate, inputCurrency, chartOption, loadChartData],
+  );
 
   return (
     <>

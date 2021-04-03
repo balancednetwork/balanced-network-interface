@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
 import { NetworkId } from 'packages/icon-react';
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
@@ -39,4 +40,15 @@ export function getTrackerLink(
 
 export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+export function formatBigNumber(value: BigNumber, type: 'currency' | 'percentage') {
+  switch (type) {
+    case 'currency': {
+      return value.toFixed(2, 1);
+    }
+    case 'percentage': {
+      return value.toString();
+    }
+  }
 }

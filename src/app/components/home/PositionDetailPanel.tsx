@@ -11,7 +11,7 @@ import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { MenuList, MenuItem } from 'app/components/Menu';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { QuestionWrapper } from 'app/components/QuestionHelper';
-import Tooltip from 'app/components/Tooltip';
+import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
@@ -231,7 +231,7 @@ const PositionDetailPanel = () => {
 
   return (
     <ActivityPanel bg="bg2">
-      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]}>
+      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]} style={{ paddingTop: 30 }}>
         <Typography variant="h2" mb={5}>
           Position details
         </Typography>
@@ -264,6 +264,7 @@ const PositionDetailPanel = () => {
           of the total debt.
         </Typography>
       </BoxPanel>
+
       <BoxPanel bg="bg2" flex={1}>
         <Typography variant="h3">
           Risk ratio{' '}
@@ -272,7 +273,7 @@ const PositionDetailPanel = () => {
           </QuestionWrapper>
         </Typography>
 
-        <Flex alignItems="center" justifyContent="space-between" my={4}>
+        <Flex alignItems="center" justifyContent="space-between" mt={5} mb={4}>
           <Tooltip
             text="If the bar only fills this section, you have a low risk of liquidation."
             show={show}
@@ -349,7 +350,15 @@ const PositionDetailPanel = () => {
           <Box width={[1, 1 / 2]}>
             <Flex alignItems="center" mb={15}>
               <Typography variant="h3" mr={15}>
-                Rebalancing
+                Rebalancing{' '}
+                <MouseoverTooltip
+                  text={
+                    'Traders can repay loans by selling bnUSD for $1 of ICX collateral. Your position will sometimes rebalance to accommodate.'
+                  }
+                  placement="top"
+                >
+                  <QuestionIcon width={14} />
+                </MouseoverTooltip>
               </Typography>
 
               <ClickAwayListener onClickAway={closeMenu}>
@@ -382,10 +391,21 @@ const PositionDetailPanel = () => {
           </Box>
 
           <Box width={[1, 1 / 2]}>
-            <Typography>
-              Traders can repay loans by selling bnUSD for $1 of ICX collateral. Your position will rebalance based on
-              your % of the total debt.
-            </Typography>
+            <Flex alignItems="center" mb={15}>
+              <Typography variant="h3" mr={15}>
+                Expected return
+              </Typography>
+            </Flex>
+            <Flex>
+              <Box width={1 / 2}>
+                <Typography variant="p">~ 6.74 BALN</Typography>
+                <Typography>Daily rewards</Typography>
+              </Box>
+              <Box width={1 / 2}>
+                <Typography variant="p">17.34%</Typography>
+                <Typography>APY</Typography>
+              </Box>
+            </Flex>
           </Box>
         </Flex>
       </BoxPanel>

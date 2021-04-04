@@ -2,6 +2,7 @@ import React from 'react';
 
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { Flex, Box } from 'rebass/styled-components';
@@ -21,7 +22,7 @@ import bnJs from 'bnJs';
 import { CURRENCYLIST, getFilteredCurrencies, SupportedBaseCurrencies } from 'constants/currency';
 import { dayData } from 'demo';
 import { useWalletICXBalance } from 'hooks';
-import { useFetchPrice, useRatioValue } from 'store/ratio/hooks';
+import { useRatioValue, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
@@ -73,6 +74,7 @@ export default function SwapPanel() {
   const ratio = useRatioValue();
   const addTransaction = useTransactionAdder();
   const ICXbalance = useWalletICXBalance(account);
+  const changeRatioValue = useChangeRatio();
 
   const tokenBalance = (symbol: string) => {
     if (account) {
@@ -87,6 +89,21 @@ export default function SwapPanel() {
       }
     }
   };
+
+  const refreshPrice = React.useCallback(async () => {
+    const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
+    const ICXUSDratio = convertLoopToIcx(res['rate']);
+    changeRatioValue({ ICXUSDratio });
+
+    const sICXICXratio = convertLoopToIcx(await bnJs.Staking.getTodayRate());
+    changeRatioValue({ sICXICXratio });
+
+    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId.toString()));
+    changeRatioValue({ sICXbnUSDratio });
+
+    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId.toString()));
+    changeRatioValue({ BALNbnUSDratio });
+  }, [changeRatioValue]);
 
   const [swapInputAmount, setSwapInputAmount] = React.useState('0');
 
@@ -375,14 +392,13 @@ export default function SwapPanel() {
     }
   }, []);
 
-  const reUseFetchPrice = React.useCallback(useFetchPrice, []);
   React.useEffect(() => {
     loadChartData({
       symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
       interval: '5m',
     });
-    reUseFetchPrice();
-  }, [inputCurrency.symbol, outputCurrency.symbol, loadChartData, reUseFetchPrice]);
+    refreshPrice();
+  }, [inputCurrency.symbol, outputCurrency.symbol, loadChartData, refreshPrice]);
 
   const handleInputSelect = React.useCallback(
     ccy => {

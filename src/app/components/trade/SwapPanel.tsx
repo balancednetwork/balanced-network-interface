@@ -579,7 +579,7 @@ export default function SwapPanel() {
                 : {}
             }
           >
-            Includes a fee of {swapFee} {inputCurrency.symbol}.
+            Includes a fee of {formatBigNumber(new BigNumber(swapFee), 'currency')} {inputCurrency.symbol}.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

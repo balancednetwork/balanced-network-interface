@@ -152,6 +152,7 @@ export default class Dex extends Contract {
       params: {
         _pid: pid.toString(16),
         _value: valueHex,
+        _withdraw: '0x1',
       },
     });
     console.log(payload);

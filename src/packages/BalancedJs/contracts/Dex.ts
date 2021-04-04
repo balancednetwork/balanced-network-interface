@@ -23,6 +23,30 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
+  async add(
+    baseValue: BigNumber,
+    quoteValue: BigNumber,
+    _baseToken: string,
+    _quoteToken: string,
+  ): Promise<ResponseJsonRPCPayload> {
+    const hexBasePrice =
+      '0x' + IconAmount.of(baseValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+    const hexQuotePrice =
+      '0x' + IconAmount.of(quoteValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = {
+      _baseToken: _baseToken,
+      _quoteToken: _quoteToken,
+      _maxBaseValue: hexBasePrice,
+      _quoteValue: hexQuotePrice,
+    };
+    const payload = this.transactionParamsBuilder({
+      method: 'add',
+      params,
+    });
+    console.log(payload);
+    return this.callIconex(payload);
+  }
+
   async dexSupplysICXbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
     const hexBasePrice =
       '0x' + IconAmount.of(baseValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);

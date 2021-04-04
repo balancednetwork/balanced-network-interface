@@ -62,7 +62,6 @@ export default function LPPanel() {
   const ratio = useRatioValue();
 
   const [supplyInputAmount, setSupplyInputAmount] = React.useState('0');
-
   const [supplyOutputAmount, setSupplyOutputAmount] = React.useState('0');
 
   const getRatioByPair = React.useCallback(() => {
@@ -105,7 +104,7 @@ export default function LPPanel() {
   const sendBnUSDToDex = () => {
     return bnJs
       .eject({ account: account })
-      .bnUSD.dexDeposit(new BigNumber(supplyOutputAmount))
+      .bnUSD.dexDeposit(new BigNumber(supplyInputAmount).multipliedBy(getRatioByPair()))
       .then(res => {
         console.log('res', res);
         addTransaction(
@@ -177,27 +176,27 @@ export default function LPPanel() {
       case SupportedPairs[0].pair: {
         sendSICXToDex().then(() => {
           const new_sICXBalance = walletBalance.sICXbalance.minus(new BigNumber(supplyInputAmount));
-          changeWalletBalance({
-            sICXbalance: new_sICXBalance,
-          });
+          // changeWalletBalance({
+          // sICXbalance: new_sICXBalance,
+          // });
         });
         break;
       }
       case SupportedPairs[1].pair: {
         sendBALNToDex().then(() => {
           const new_bnUSDBalance = walletBalance.bnUSDbalance.minus(new BigNumber(supplyInputAmount));
-          changeWalletBalance({
-            bnUSDbalance: new_bnUSDBalance,
-          });
+          // changeWalletBalance({
+          // bnUSDbalance: new_bnUSDBalance,
+          // });
         });
         break;
       }
       case SupportedPairs[2].pair: {
         sendICXToDex().then(() => {
           const newICXBalance = walletBalance.ICXbalance.minus(new BigNumber(supplyInputAmount));
-          changeWalletBalance({
-            ICXbalance: newICXBalance,
-          });
+          // changeWalletBalance({
+          // ICXbalance: newICXBalance,
+          // });
         });
         break;
       }
@@ -237,7 +236,12 @@ export default function LPPanel() {
   const supply_sICXbnUSD = () => {
     bnJs
       .eject({ account: account })
-      .Dex.dexSupplysICXbnUSD(new BigNumber(supplyInputAmount), new BigNumber(supplyOutputAmount))
+      .Dex.add(
+        new BigNumber(supplyInputAmount),
+        new BigNumber(supplyInputAmount).multipliedBy(getRatioByPair()),
+        bnJs.sICX.address,
+        bnJs.bnUSD.address,
+      )
       .then(res => {
         console.log('supply_sICXbnUSD = ', res);
         addTransaction(
@@ -253,6 +257,25 @@ export default function LPPanel() {
       .catch(e => {
         console.error('error', e);
       });
+
+    /*bnJs
+      .eject({ account: account })
+      .Dex.dexSupplysICXbnUSD(new BigNumber(supplyInputAmount), new BigNumber(supplyOutputAmount))
+      .then(res => {
+        console.log('supply_sICXbnUSD = ', res);
+        addTransaction(
+          { hash: res.result },
+          {
+            summary: supplyMessage(
+              formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ),
+          },
+        );
+      })
+      .catch(e => {
+        console.error('error', e);
+      });*/
   };
 
   const supplyBALNbnUSD = () => {

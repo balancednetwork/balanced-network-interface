@@ -48,6 +48,9 @@ const AreaOption: DeepPartial<ChartOptions> = {
       visible: false,
     },
   },
+  localization: {
+    dateFormat: 'yyyy-MM-dd',
+  },
 };
 
 // const CandleOption: DeepPartial<ChartOptions> = {
@@ -100,6 +103,12 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, candleData, width }) 
       });
       console.log(data);
       series.setData(data);
+
+      chart.applyOptions({
+        timeScale: {
+          timeVisible: true,
+        },
+      });
 
       chart.timeScale().fitContent();
 

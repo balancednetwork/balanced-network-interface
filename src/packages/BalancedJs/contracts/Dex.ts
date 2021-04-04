@@ -144,7 +144,7 @@ export default class Dex extends Contract {
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
-  withdrawalTokens(pid: number, value: BigNumber) {
+  remove(pid: number, value: BigNumber) {
     const valueHex =
       '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
     const payload = this.transactionParamsBuilder({
@@ -152,7 +152,6 @@ export default class Dex extends Contract {
       params: {
         _pid: pid.toString(16),
         _value: valueHex,
-        _withdraw: '0x1',
       },
     });
     console.log(payload);

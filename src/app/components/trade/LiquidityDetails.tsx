@@ -119,14 +119,14 @@ const LiquidityDetails = () => {
     setAmountWithdrawSICXPoolsICXbnUSD(val);
     let outputAmount = new BigNumber(val).multipliedBy(ratio.sICXbnUSDratio);
     if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
-    setAmountWithdrawBNUSDPoolsICXbnUSD(outputAmount.toString());
+    setAmountWithdrawBNUSDPoolsICXbnUSD(formatBigNumber(outputAmount, 'input'));
   };
 
   const handleTypeAmountWithdrawBNUSDPoolsICXbnUSD = (val: string) => {
     setAmountWithdrawBNUSDPoolsICXbnUSD(val);
     let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(ratio.sICXbnUSDratio));
     if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
-    setAmountWithdrawSICXPoolsICXbnUSD(inputAmount.toString());
+    setAmountWithdrawSICXPoolsICXbnUSD(formatBigNumber(inputAmount, 'input'));
   };
 
   /** withdraw BALNbnUSD */
@@ -138,24 +138,60 @@ const LiquidityDetails = () => {
     setAmountWithdrawBALNPoolBALNbnUSD(val);
     let outputAmount = new BigNumber(val).multipliedBy(ratio.BALNbnUSDratio);
     if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
-    setAmountWithdrawBNUSDPoolsBALNbnUSD(outputAmount.toString());
+    setAmountWithdrawBNUSDPoolsBALNbnUSD(formatBigNumber(outputAmount, 'input'));
   };
 
   const handleTypeAmountWithdrawBNUSDPoolBALNbnUSD = (val: string) => {
     setAmountWithdrawBNUSDPoolsBALNbnUSD(val);
     let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(ratio.BALNbnUSDratio));
     if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
-    setAmountWithdrawBALNPoolBALNbnUSD(inputAmount.toString());
+    setAmountWithdrawBALNPoolBALNbnUSD(formatBigNumber(inputAmount, 'input'));
   };
 
   const handleWithdrawalSICXBNUSD = () => {
     if (!account) return;
     // TODO: calculate value and withdrawal
+    const withdrawTotal =
+      parseFloat(amountWithdrawSICXPoolsICXbnUSD) *
+      (1 /
+        ((liquiditySupply.sICXPoolsICXbnUSDTotal?.toNumber() || 0) /
+          (liquiditySupply.sICXbnUSDTotalSupply?.toNumber() || 0)));
     bnJs
       .eject({ account: account })
-      .Dex.withdrawalTokens(BalancedJs.utils.sICXbnUSDpoolId, new BigNumber(10))
+      .Dex.remove(BalancedJs.utils.sICXbnUSDpoolId, new BigNumber(withdrawTotal))
       .then(result => {
         console.log(result);
+        addTransaction(
+          { hash: result.result },
+          {
+            summary: `${amountWithdrawSICXPoolsICXbnUSD} sICX and ${amountWithdrawBNUSDPoolsICXbnUSD} bnUSD added to your wallet.`,
+          },
+        );
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const handleWithdrawalBALNbnUSD = () => {
+    if (!account) return;
+    // TODO: calculate value and withdrawal
+    const withdrawTotal =
+      parseFloat(amountWithdrawBNUSDPoolBALNbnUSD) *
+      (1 /
+        ((liquiditySupply.BALNPoolBALNbnUSDTotal?.toNumber() || 0) /
+          (liquiditySupply.BALNbnUSDTotalSupply?.toNumber() || 0)));
+    bnJs
+      .eject({ account: account })
+      .Dex.remove(BalancedJs.utils.BALNbnUSDpoolId, new BigNumber(withdrawTotal))
+      .then(result => {
+        console.log(result);
+        addTransaction(
+          { hash: result.result },
+          {
+            summary: `${amountWithdrawBALNPoolBALNbnUSD} BALN and ${amountWithdrawBNUSDPoolBALNbnUSD} bnUSD added to your wallet.`,
+          },
+        );
       })
       .catch(e => {
         console.error('error', e);
@@ -391,7 +427,9 @@ const LiquidityDetails = () => {
                     onSlide={handleSlideWithdrawBALNPoolBALNbnUSD}
                   />
                   <Flex alignItems="center" justifyContent="center">
-                    <Button mt={5}>Withdraw liquidity</Button>
+                    <Button mt={5} onClick={handleWithdrawalBALNbnUSD}>
+                      Withdraw liquidity
+                    </Button>
                   </Flex>
                 </Flex>
               </DropdownText>

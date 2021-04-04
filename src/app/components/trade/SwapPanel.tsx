@@ -362,7 +362,7 @@ export default function SwapPanel() {
           }));
 
           if (!t.length) {
-            alert('No chart data, switch to others trading pairs');
+            console.log('No chart data, switch to others trading pairs');
             return;
           }
           setData(t);

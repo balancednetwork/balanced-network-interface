@@ -21,7 +21,7 @@ import bnJs from 'bnJs';
 import { CURRENCYLIST, getFilteredCurrencies, SupportedBaseCurrencies } from 'constants/currency';
 import { dayData } from 'demo';
 import { useWalletICXBalance } from 'hooks';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useFetchPrice, useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
@@ -133,12 +133,12 @@ export default function SwapPanel() {
         val = '0';
       }
       if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
-        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
+        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
       } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
         const fee = parseFloat(val) / 100;
         setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
         val = (parseFloat(val) - fee).toString();
-        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
+        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
       } else {
         bnJs
           .eject({ account: account })
@@ -149,7 +149,7 @@ export default function SwapPanel() {
             const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
             setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
             val = (parseFloat(val) - fee).toString();
-            setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
+            setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
           })
           .catch(e => {
             console.error('error', e);
@@ -171,10 +171,10 @@ export default function SwapPanel() {
     let inputAmount = new BigNumber(val).dividedBy(ratioLocal);
     if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
       inputAmount = inputAmount.plus(inputAmount.multipliedBy(0.01));
-      setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
+      setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
     } else if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
       // fee on this pair is zero so do nothing on this case
-      setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
+      setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
     } else {
       bnJs
         .eject({ account: account })
@@ -183,7 +183,7 @@ export default function SwapPanel() {
           const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
           const lp_fee = parseInt(res[`pool_lp_fee`], 16);
           inputAmount = inputAmount.plus((inputAmount.toNumber() * (bal_holder_fee + lp_fee)) / 10000);
-          setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
+          setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
         })
         .catch(e => {
           console.error('error', e);
@@ -375,12 +375,14 @@ export default function SwapPanel() {
     }
   }, []);
 
+  const reUseFetchPrice = React.useCallback(useFetchPrice, []);
   React.useEffect(() => {
     loadChartData({
       symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
       interval: '5m',
     });
-  }, [inputCurrency.symbol, outputCurrency.symbol, loadChartData]);
+    reUseFetchPrice();
+  }, [inputCurrency.symbol, outputCurrency.symbol, loadChartData, reUseFetchPrice]);
 
   const handleInputSelect = React.useCallback(
     ccy => {
@@ -456,10 +458,10 @@ export default function SwapPanel() {
             <Typography>Minimum to receive</Typography>
             <Typography>
               {!swapOutputAmount
-                ? formatBigNumber(new BigNumber(0), 'currency')
+                ? formatBigNumber(new BigNumber(0), 'ratio')
                 : formatBigNumber(
                     new BigNumber(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4),
-                    'currency',
+                    'ratio',
                   )}{' '}
               {outputCurrency.symbol}
             </Typography>

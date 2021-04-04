@@ -19,7 +19,7 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/compon
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST, getFilteredCurrencies, SupportedBaseCurrencies } from 'constants/currency';
-import { dayData, candleData, volumeData } from 'demo';
+import { dayData } from 'demo';
 import { useWalletICXBalance } from 'hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -185,28 +185,36 @@ export default function SwapPanel() {
     }
   };
 
+  const [chartOption, setChartOption] = React.useState({
+    type: CHART_TYPES.AREA,
+    period: CHART_PERIODS['5m'],
+  });
+
+  const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const interval: any = event.currentTarget.value;
+    loadChartData({
+      interval: interval.toLowerCase(),
+      symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
+    });
+    setChartOption({
+      ...chartOption,
+      period: interval,
+    });
+  };
+
+  const handleChartTypeChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setChartOption({
+      ...chartOption,
+      type: event.currentTarget.value,
+    });
+  };
+
   const handleTypeInput = React.useCallback(
     (val: string) => {
       setSwapInputAmount(val);
       handleConvertOutputRate(inputCurrency, outputCurrency, val);
     },
     [inputCurrency, outputCurrency, handleConvertOutputRate],
-  );
-
-  const handleInputSelect = React.useCallback(
-    ccy => {
-      setInputCurrency(ccy);
-      handleConvertOutputRate(ccy, outputCurrency, swapInputAmount);
-    },
-    [swapInputAmount, handleConvertOutputRate, outputCurrency],
-  );
-
-  const handleOutputSelect = React.useCallback(
-    ccy => {
-      setOutputCurrency(ccy);
-      handleConvertOutputRate(inputCurrency, ccy, swapInputAmount);
-    },
-    [swapInputAmount, handleConvertOutputRate, inputCurrency],
   );
 
   const handleSwapConfirmDismiss = () => {
@@ -297,25 +305,6 @@ export default function SwapPanel() {
     }
   };
 
-  const [chartOption, setChartOption] = React.useState({
-    type: CHART_TYPES.AREA,
-    period: CHART_PERIODS['5m'],
-  });
-
-  const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setChartOption({
-      ...chartOption,
-      period: event.currentTarget.value,
-    });
-  };
-
-  const handleChartTypeChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setChartOption({
-      ...chartOption,
-      type: event.currentTarget.value,
-    });
-  };
-
   //
   const [rawSlippage, setRawSlippage] = React.useState(250);
   const [ttl, setTtl] = React.useState(0);
@@ -335,21 +324,64 @@ export default function SwapPanel() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(() => {
+  const loadChartData = React.useCallback(({ interval, symbol }: { interval: string; symbol: string }) => {
     setLoading(true);
     try {
-      axios.get('http://35.240.219.80:8069/api/v1/chart/lines?symbol=SICXbnUSD&limit=500&order=desc').then(res => {
-        const { data: d } = res;
-        let t = d.map(item => ({ time: item.time, value: convertLoopToIcx(new BigNumber(item.price)) }));
-        setData(t);
-        setLoading(false);
-      });
+      axios
+        .get(
+          `https://balanced.techiast.com:8069/api/v1/chart/lines?symbol=${symbol}&interval=${interval}&limit=500&order=desc`,
+        )
+        .then(res => {
+          const { data: d } = res;
+          let t = d.map(item => ({
+            time: item.time,
+            value: convertLoopToIcx(new BigNumber(item.price)).toNumber(),
+          }));
+
+          if (!t.length) {
+            alert('No chart data, switch to others trading pairs');
+            return;
+          }
+          setData(t);
+          setLoading(false);
+        });
     } catch (e) {
       console.error(e);
       setData([]);
       setLoading(false);
     }
   }, []);
+
+  React.useEffect(() => {
+    loadChartData({
+      symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
+      interval: '5m',
+    });
+  }, [inputCurrency.symbol, outputCurrency.symbol, loadChartData]);
+
+  const handleInputSelect = React.useCallback(
+    ccy => {
+      setInputCurrency(ccy);
+      handleConvertOutputRate(ccy, outputCurrency, swapInputAmount);
+      loadChartData({
+        interval: chartOption.period.toLowerCase(),
+        symbol: `${ccy.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
+      });
+    },
+    [swapInputAmount, handleConvertOutputRate, outputCurrency, chartOption, loadChartData],
+  );
+
+  const handleOutputSelect = React.useCallback(
+    ccy => {
+      setOutputCurrency(ccy);
+      handleConvertOutputRate(inputCurrency, ccy, swapInputAmount);
+      loadChartData({
+        interval: chartOption.period.toLowerCase(),
+        symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${ccy.symbol}`,
+      });
+    },
+    [swapInputAmount, handleConvertOutputRate, inputCurrency, chartOption, loadChartData],
+  );
 
   return (
     <>
@@ -459,17 +491,15 @@ export default function SwapPanel() {
               </ChartControlGroup>
 
               <ChartControlGroup>
-                {Object.keys(CHART_TYPES).map(key => (
-                  <ChartControlButton
-                    key={key}
-                    type="button"
-                    value={CHART_TYPES[key]}
-                    onClick={handleChartTypeChange}
-                    active={chartOption.type === CHART_TYPES[key]}
-                  >
-                    {CHART_TYPES[key]}
-                  </ChartControlButton>
-                ))}
+                <ChartControlButton
+                  key={CHART_TYPES.AREA}
+                  type="button"
+                  value={CHART_TYPES.AREA}
+                  onClick={handleChartTypeChange}
+                  active={chartOption.type === CHART_TYPES.AREA}
+                >
+                  {CHART_TYPES.AREA}
+                </ChartControlButton>
               </ChartControlGroup>
             </Box>
           </Flex>
@@ -483,12 +513,12 @@ export default function SwapPanel() {
               )}
             </ChartContainer>
           )}
-
+          {/* 
           {chartOption.type === CHART_TYPES.CANDLE && (
             <Box ref={ref}>
               <TradingViewChart data={volumeData} candleData={candleData} width={width} type={CHART_TYPES.CANDLE} />
             </Box>
-          )}
+          )} */}
         </Box>
       </SectionPanel>
       <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>

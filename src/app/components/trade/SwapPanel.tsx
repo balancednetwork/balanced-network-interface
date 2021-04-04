@@ -272,6 +272,9 @@ export default function SwapPanel() {
               summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
             },
           );
+          refreshPrice();
+          setSwapInputAmount('0');
+          setSwapOutputAmount('0');
         })
         .catch(e => {
           console.error('error', e);
@@ -289,6 +292,9 @@ export default function SwapPanel() {
               summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
             },
           );
+          refreshPrice();
+          setSwapInputAmount('0');
+          setSwapOutputAmount('0');
         })
         .catch(e => {
           console.error('error', e);
@@ -304,6 +310,9 @@ export default function SwapPanel() {
             { hash: res.result },
             { summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol) },
           );
+          refreshPrice();
+          setSwapInputAmount('0');
+          setSwapOutputAmount('0');
         })
         .catch(e => {
           console.error('error', e);
@@ -319,6 +328,9 @@ export default function SwapPanel() {
             { hash: res.result },
             { summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol) },
           );
+          refreshPrice();
+          setSwapInputAmount('0');
+          setSwapOutputAmount('0');
         })
         .catch(e => {
           console.error('error', e);
@@ -336,6 +348,9 @@ export default function SwapPanel() {
               summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
             },
           );
+          refreshPrice();
+          setSwapInputAmount('0');
+          setSwapOutputAmount('0');
         })
         .catch(e => {
           console.error('error', e);

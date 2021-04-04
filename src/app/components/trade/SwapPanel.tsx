@@ -111,6 +111,12 @@ export default function SwapPanel() {
         return ratio.sICXbnUSDratio || new BigNumber(0);
       } else if (symbolInput === 'sICX' && symbolOutput === 'ICX') {
         return ratio.sICXICXratio || new BigNumber(0);
+      } else if (symbolInput === 'bnUSD' && symbolOutput === 'sICX') {
+        let bnUSDRatio = ratio.sICXbnUSDratio?.toNumber() || 0;
+        return bnUSDRatio ? new BigNumber(1 / bnUSDRatio) : new BigNumber(0);
+      } else if (symbolInput === 'bnUSD' && symbolOutput === 'BALN') {
+        let bnUSDRatio = ratio.BALNbnUSDratio?.toNumber() || 0;
+        return bnUSDRatio ? new BigNumber(1 / bnUSDRatio) : new BigNumber(0);
       }
       return 0;
     },
@@ -300,6 +306,23 @@ export default function SwapPanel() {
         .catch(e => {
           console.error('error', e);
         });
+    } else if (inputCurrency.symbol === 'bnUSD') {
+      bnJs
+        .eject({ account: account })
+        .bnUSD.swapToOutputCurrency(new BigNumber(swapInputAmount), outputCurrency.symbol, rawSlippage + '')
+        .then(res => {
+          console.log('res', res);
+          setShowSwapConfirm(false);
+          addTransaction(
+            { hash: res.result },
+            {
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
+            },
+          );
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
     } else {
       console.log(`this pair is currently not supported on balanced interface`);
     }
@@ -339,7 +362,7 @@ export default function SwapPanel() {
           }));
 
           if (!t.length) {
-            alert('No chart data, switch to others trading pairs');
+            console.log('No chart data, switch to others trading pairs');
             return;
           }
           setData(t);
@@ -556,7 +579,7 @@ export default function SwapPanel() {
                 : {}
             }
           >
-            Includes a fee of {swapFee} {inputCurrency.symbol}.
+            Includes a fee of {formatBigNumber(new BigNumber(swapFee), 'currency')} {inputCurrency.symbol}.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

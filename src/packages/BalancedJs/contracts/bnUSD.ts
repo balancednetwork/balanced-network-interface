@@ -100,4 +100,29 @@ export default class bnUSD extends Contract {
 
     return this.callIconex(payload);
   }
+
+  async swapToOutputCurrency(
+    value: BigNumber,
+    outputSymbol: string,
+    slippage: string,
+  ): Promise<ResponseJsonRPCPayload> {
+    const data =
+      '0x' +
+      Buffer.from(
+        '{"method": "_swap", "params": {"toToken":"' +
+          addresses[this.nid][outputSymbol.toLowerCase()] +
+          '", "maxSlippage":' +
+          slippage +
+          '}}',
+        'utf8',
+      ).toString('hex');
+    const valueHex = '0x' + IconAmount.of(value, IconAmount.Unit.ICX).toLoop().toString(16);
+    const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
+    const payload = this.transactionParamsBuilder({
+      method: 'transfer',
+      params,
+    });
+
+    return this.callIconex(payload);
+  }
 }

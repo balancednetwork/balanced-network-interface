@@ -20,8 +20,6 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/compon
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST, getFilteredCurrencies, SupportedBaseCurrencies } from 'constants/currency';
-import { dayData } from 'demo';
-import { useWalletICXBalance } from 'hooks';
 import { useRatioValue, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
@@ -73,13 +71,12 @@ export default function SwapPanel() {
   const walletBalance = useWalletBalanceValue();
   const ratio = useRatioValue();
   const addTransaction = useTransactionAdder();
-  const ICXbalance = useWalletICXBalance(account);
   const changeRatioValue = useChangeRatio();
 
   const tokenBalance = (symbol: string) => {
     if (account) {
       if (symbol === 'ICX') {
-        return ICXbalance;
+        return walletBalance.ICXbalance;
       } else if (symbol === 'BALN') {
         return walletBalance.BALNbalance;
       } else if (symbol === 'sICX') {
@@ -562,11 +559,7 @@ export default function SwapPanel() {
 
           {chartOption.type === CHART_TYPES.AREA && (
             <ChartContainer ref={ref}>
-              {loading ? (
-                <Spinner centered />
-              ) : (
-                <TradingViewChart data={data} candleData={dayData} width={width} type={CHART_TYPES.AREA} />
-              )}
+              {loading ? <Spinner centered /> : <TradingViewChart data={data} width={width} type={CHART_TYPES.AREA} />}
             </ChartContainer>
           )}
           {/* 

@@ -62,7 +62,13 @@ export default function BnUSDWallet() {
       .bnUSD.transfer(address, differenceAmount)
       .then(res => {
         if (res.result) {
-          addTransaction({ hash: res.result }, { summary: `Sent ${differenceAmount.toNumber()} bnUSD to ${address}.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: `Sending bnUSD...`,
+              summary: `Sent ${differenceAmount.dp(2).toFormat()} bnUSD.`,
+            },
+          );
           toggleOpen();
           setValue('');
           setAddress('');

@@ -118,7 +118,10 @@ const CollateralPanel = () => {
         .then(res => {
           addTransaction(
             { hash: res.result },
-            { summary: `Deposited ${collateralAmount.toNumber()} ICX as collateral.` },
+            {
+              pending: 'Depositing collateral...',
+              summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
+            },
           );
           // close modal
           toggleOpen();
@@ -135,7 +138,10 @@ const CollateralPanel = () => {
         .then(res => {
           addTransaction(
             { hash: res.result }, //
-            { summary: `${collateralAmount.toNumber()} ICX added to your wallet.` },
+            {
+              pending: 'Withdrawing collateral...',
+              summary: `${collateralAmount.dp(2).toFormat()} sICX added to your wallet.`,
+            },
           );
           // close modal
           toggleOpen();

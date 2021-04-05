@@ -113,7 +113,13 @@ const LoanPanel = () => {
         .eject({ account })
         .Loans.borrowAdd(differenceAmount)
         .then(res => {
-          addTransaction({ hash: res.result }, { summary: `Borrowed ${differenceAmount.toNumber()} bnUSD.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: 'Borrowing bnUSD...',
+              summary: `Borrowed ${differenceAmount.dp(2).toFormat()} bnUSD.`,
+            },
+          );
           // close modal
           toggleOpen();
           // reset loan panel values
@@ -127,7 +133,13 @@ const LoanPanel = () => {
         .eject({ account })
         .bnUSD.repayLoan(differenceAmount.abs())
         .then(res => {
-          addTransaction({ hash: res.result }, { summary: `Repaid ${differenceAmount.abs().toNumber()} bnUSD.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: 'Repaying bnUSD...',
+              summary: `Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,
+            },
+          );
           // close modal
           toggleOpen();
           // reset loan panel values

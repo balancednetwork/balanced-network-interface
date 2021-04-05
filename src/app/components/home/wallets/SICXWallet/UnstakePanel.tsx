@@ -49,7 +49,13 @@ export default function UnstakePanel() {
       .sICX.unstake(differenceAmount)
       .then(res => {
         if (res.result) {
-          addTransaction({ hash: res.result }, { summary: `Unstake ${differenceAmount.toNumber()} sICX.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: `Preparing to unstake sICX...`,
+              summary: `Unstaking ${differenceAmount.dp(2).toFormat()} sICX. Check ICX in your wallet for details.`,
+            },
+          );
           toggleOpen();
           setValue('0');
         } else {

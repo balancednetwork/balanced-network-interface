@@ -45,6 +45,8 @@ export interface Colors {
   // yellow2: Color;
   // blue1: Color;
   divider: Color;
+
+  alert: Color;
 }
 
 export interface Grids {

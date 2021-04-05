@@ -23,33 +23,19 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  async dexSupplysICXbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
+  async add(
+    baseValue: BigNumber,
+    quoteValue: BigNumber,
+    _baseToken: string,
+    _quoteToken: string,
+  ): Promise<ResponseJsonRPCPayload> {
     const hexBasePrice =
-      '0x' + IconAmount.of(baseValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+      '0x' + parseInt(IconAmount.of(baseValue.absoluteValue(), IconAmount.Unit.ICX).toLoop()).toString(16);
     const hexQuotePrice =
       '0x' + IconAmount.of(quoteValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
     const params = {
-      _baseToken: addresses[this.nid].sicx,
-      _quoteToken: addresses[this.nid].bnUSD,
-      _maxBaseValue: hexBasePrice,
-      _quoteValue: hexQuotePrice,
-    };
-    const payload = this.transactionParamsBuilder({
-      method: 'add',
-      params,
-    });
-    console.log(payload);
-    return this.callIconex(payload);
-  }
-
-  async supplyBALNbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const hexBasePrice =
-      '0x' + IconAmount.of(baseValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
-    const hexQuotePrice =
-      '0x' + IconAmount.of(quoteValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
-    const params = {
-      _baseToken: addresses[this.nid].baln,
-      _quoteToken: addresses[this.nid].bnUSD,
+      _baseToken: _baseToken,
+      _quoteToken: _quoteToken,
       _maxBaseValue: hexBasePrice,
       _quoteValue: hexQuotePrice,
     };

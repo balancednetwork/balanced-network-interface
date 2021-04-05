@@ -62,7 +62,6 @@ export default function LPPanel() {
   const ratio = useRatioValue();
 
   const [supplyInputAmount, setSupplyInputAmount] = React.useState('0');
-
   const [supplyOutputAmount, setSupplyOutputAmount] = React.useState('0');
 
   const getRatioByPair = React.useCallback(() => {
@@ -85,7 +84,7 @@ export default function LPPanel() {
       setSupplyInputAmount(val);
       let outputAmount = new BigNumber(val).multipliedBy(getRatioByPair());
       if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
-      setSupplyOutputAmount(formatBigNumber(outputAmount, 'input'));
+      setSupplyOutputAmount(formatBigNumber(outputAmount, 'ratio'));
     },
     [getRatioByPair],
   );
@@ -95,7 +94,7 @@ export default function LPPanel() {
       setSupplyOutputAmount(val);
       let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair()));
       if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
-      setSupplyInputAmount(formatBigNumber(inputAmount, 'input'));
+      setSupplyInputAmount(formatBigNumber(inputAmount, 'ratio'));
     },
     [getRatioByPair],
   );
@@ -121,7 +120,7 @@ export default function LPPanel() {
   const sendSICXToDex = () => {
     return bnJs
       .eject({ account: account })
-      .sICX.dexDeposit(new BigNumber(supplyInputAmount))
+      .sICX.dexDeposit(new BigNumber(supplyOutputAmount).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair())))
       .then(res => {
         console.log('res', res);
         addTransaction(
@@ -137,7 +136,7 @@ export default function LPPanel() {
   const sendBALNToDex = () => {
     return bnJs
       .eject({ account: account })
-      .Baln.dexDeposit(new BigNumber(supplyInputAmount))
+      .Baln.dexDeposit(new BigNumber(supplyOutputAmount).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair())))
       .then(res => {
         console.log('res', res);
         addTransaction(
@@ -176,28 +175,28 @@ export default function LPPanel() {
     switch (selectedPair.pair) {
       case SupportedPairs[0].pair: {
         sendSICXToDex().then(() => {
-          const new_sICXBalance = walletBalance.sICXbalance.minus(new BigNumber(supplyInputAmount));
-          changeWalletBalance({
-            sICXbalance: new_sICXBalance,
-          });
+          // const new_sICXBalance = walletBalance.sICXbalance.minus(new BigNumber(supplyInputAmount));
+          // changeWalletBalance({
+          // sICXbalance: new_sICXBalance,
+          // });
         });
         break;
       }
       case SupportedPairs[1].pair: {
         sendBALNToDex().then(() => {
-          const new_bnUSDBalance = walletBalance.bnUSDbalance.minus(new BigNumber(supplyInputAmount));
-          changeWalletBalance({
-            bnUSDbalance: new_bnUSDBalance,
-          });
+          // const new_bnUSDBalance = walletBalance.bnUSDbalance.minus(new BigNumber(supplyInputAmount));
+          // changeWalletBalance({
+          // bnUSDbalance: new_bnUSDBalance,
+          // });
         });
         break;
       }
       case SupportedPairs[2].pair: {
         sendICXToDex().then(() => {
-          const newICXBalance = walletBalance.ICXbalance.minus(new BigNumber(supplyInputAmount));
-          changeWalletBalance({
-            ICXbalance: newICXBalance,
-          });
+          // const newICXBalance = walletBalance.ICXbalance.minus(new BigNumber(supplyInputAmount));
+          // changeWalletBalance({
+          // ICXbalance: newICXBalance,
+          // });
         });
         break;
       }
@@ -237,7 +236,12 @@ export default function LPPanel() {
   const supply_sICXbnUSD = () => {
     bnJs
       .eject({ account: account })
-      .Dex.dexSupplysICXbnUSD(new BigNumber(supplyInputAmount), new BigNumber(supplyOutputAmount))
+      .Dex.add(
+        new BigNumber(supplyOutputAmount).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair())),
+        new BigNumber(supplyOutputAmount),
+        bnJs.sICX.address,
+        bnJs.bnUSD.address,
+      )
       .then(res => {
         console.log('supply_sICXbnUSD = ', res);
         addTransaction(
@@ -249,6 +253,7 @@ export default function LPPanel() {
             ),
           },
         );
+        setShowSupplyConfirm(false);
       })
       .catch(e => {
         console.error('error', e);
@@ -256,9 +261,15 @@ export default function LPPanel() {
   };
 
   const supplyBALNbnUSD = () => {
+    alert(new BigNumber(supplyOutputAmount).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair())).toString());
     bnJs
       .eject({ account: account })
-      .Dex.supplyBALNbnUSD(new BigNumber(supplyInputAmount), new BigNumber(supplyOutputAmount))
+      .Dex.add(
+        new BigNumber(supplyOutputAmount).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair())),
+        new BigNumber(supplyOutputAmount),
+        bnJs.Baln.address,
+        bnJs.bnUSD.address,
+      )
       .then(res => {
         console.log('supplyBALNbnUSD = ', res);
         addTransaction(
@@ -270,6 +281,7 @@ export default function LPPanel() {
             ),
           },
         );
+        setShowSupplyConfirm(false);
       })
       .catch(e => {
         console.error('error', e);
@@ -432,8 +444,17 @@ export default function LPPanel() {
     setSuppliedPairAmount(getSuppliedPairAmount());
     setWalletBalanceSelected(getWalletBalanceSelected());
     setMaxAmountSupply(getMaxAmountSupply());
-    handleTypeInput('0');
-  }, [getSuppliedPairAmount, getWalletBalanceSelected, getMaxAmountSupply, handleTypeInput, selectedPair]);
+    if (showSupplyConfirm === false) {
+      handleTypeInput('0');
+    }
+  }, [
+    getSuppliedPairAmount,
+    getWalletBalanceSelected,
+    getMaxAmountSupply,
+    handleTypeInput,
+    showSupplyConfirm,
+    selectedPair,
+  ]);
 
   const [amountSlider, setAmountSlider] = React.useState('0');
 
@@ -442,12 +463,12 @@ export default function LPPanel() {
   };
 
   React.useEffect(() => {
-    if (maxAmountSupply.key === 'input') {
+    if (maxAmountSupply.key === 'input' && showSupplyConfirm === false) {
       handleTypeInput(amountSlider);
-    } else {
+    } else if (showSupplyConfirm === false) {
       handleTypeOutput(amountSlider);
     }
-  }, [handleTypeInput, handleTypeOutput, amountSlider, maxAmountSupply]);
+  }, [handleTypeInput, handleTypeOutput, amountSlider, maxAmountSupply, showSupplyConfirm]);
 
   return (
     <>
@@ -595,7 +616,7 @@ export default function LPPanel() {
                 fontWeight="bold"
                 textAlign={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? 'center' : 'right'}
               >
-                {formatBigNumber(new BigNumber(supplyInputAmount), 'currency')} {selectedPair.baseCurrencyKey}
+                {formatBigNumber(new BigNumber(supplyInputAmount), 'ratio')} {selectedPair.baseCurrencyKey}
               </Typography>
             </Box>
             <Box width={1 / 2} style={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? { display: 'none' } : {}}>
@@ -612,7 +633,7 @@ export default function LPPanel() {
           >
             <Box width={1 / 2}>
               <Typography variant="p" fontWeight="bold" textAlign="right">
-                {formatBigNumber(new BigNumber(supplyOutputAmount), 'currency')} {selectedPair.quoteCurrencyKey}
+                {formatBigNumber(new BigNumber(supplyOutputAmount), 'ratio')} {selectedPair.quoteCurrencyKey}
               </Typography>
             </Box>
             <Box width={1 / 2}>

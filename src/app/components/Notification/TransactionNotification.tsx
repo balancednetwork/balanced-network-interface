@@ -4,6 +4,9 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
+import { ReactComponent as FailureIcon } from 'assets/icons/failure.svg';
+import { ReactComponent as PendingIcon } from 'assets/icons/pending.svg';
+import { ReactComponent as SuccessIcon } from 'assets/icons/success.svg';
 
 type NotificationProps = {
   closeToast?: Function;
@@ -14,6 +17,10 @@ type NotificationProps = {
 const NotificationPending = ({ summary }: NotificationProps) => {
   return (
     <NotificationContainer>
+      <TransactionStatus>
+        <PendingIcon width={20} height={20} />
+      </TransactionStatus>
+
       <TransactionInfo>
         <Typography variant="p" fontWeight={500}>
           {summary}
@@ -26,6 +33,9 @@ const NotificationPending = ({ summary }: NotificationProps) => {
 const NotificationSuccess = ({ summary }: NotificationProps) => {
   return (
     <NotificationContainer>
+      <TransactionStatus>
+        <SuccessIcon width={20} height={20} />
+      </TransactionStatus>
       <TransactionInfo>
         <Typography variant="p" fontWeight={500}>
           {summary}
@@ -38,6 +48,10 @@ const NotificationSuccess = ({ summary }: NotificationProps) => {
 const NotificationError = ({ failureReason }: NotificationProps) => {
   return (
     <NotificationContainer>
+      <TransactionStatus>
+        <FailureIcon width={20} height={20} />
+      </TransactionStatus>
+
       <TransactionInfo flexDirection="column">
         <TransactionInfoBody>
           <Typography variant="p" fontWeight={500}>
@@ -54,7 +68,14 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
   );
 };
 
-const NotificationContainer = styled(Flex)``;
+const NotificationContainer = styled(Flex)`
+  align-items: flex-start;
+`;
+
+const TransactionStatus = styled.div`
+  margin-top: -3px;
+  margin-right: 6px;
+`;
 
 const TransactionInfo = styled(Flex)``;
 

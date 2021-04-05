@@ -15,10 +15,7 @@ const NotificationContainer = () => {
 };
 
 const StyledToastContainer = styled(ToastContainer)`
-  .Toastify__toast-container {
-    background-color: ${props => props.theme.colors.bg2};
-    border: 1px solid ${props => props.theme.colors.primary};
-    border-radius: 4px;
+  &.Toastify__toast-container {
   }
   .Toastify__toast {
     background-color: ${({ theme }) => theme.colors.bg2};

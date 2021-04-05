@@ -6,13 +6,11 @@ export enum Field {
   RIGHT = 'RIGHT',
 }
 
-export const changeBorrowedValue = createAction<{ borrowedValue: BigNumber }>('loan/changeBorrowedValue');
+export const changeBorrowedAmount = createAction<{ borrowedAmount: BigNumber }>('loan/changeBorrowedAmount');
 
-export const changeAvailableValue = createAction<{ availabelValue: BigNumber }>('loan/changeAvailableValue');
+export const changeBadDebt = createAction<{ badDebt: BigNumber }>('loan/changeBadDebt');
 
-export const changebnUSDbadDebt = createAction<{ bnUSDbadDebt: BigNumber }>('loan/changebnUSDbadDebt');
-
-export const changebnUSDtotalSupply = createAction<{ bnUSDtotalSupply: BigNumber }>('loan/changebnUSDtotalSupply');
+export const changeTotalSupply = createAction<{ totalSupply: BigNumber }>('loan/changeTotalSupply');
 
 export const adjust = createAction('loan/adjust');
 

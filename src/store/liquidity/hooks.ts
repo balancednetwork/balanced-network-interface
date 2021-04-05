@@ -94,16 +94,76 @@ export function useFetchLiquidity(account?: string | null) {
   const transactions = useAllTransactions();
   const changeLiquiditySupply = useChangeLiquiditySupply();
 
-  const calculateTokenSupplied = (balance: BigNumber, poolTotal: BigNumber, totalSupply: BigNumber) => {
-    let tokenSupplied = balance
-      .multipliedBy(poolTotal)
-      .multipliedBy(new BigNumber(1).minus(balance.dividedBy(totalSupply)))
-      .dividedBy(totalSupply);
+  const calculateTokenSupplied = (balance: BigNumber, poolSupply: BigNumber, poolTotal: BigNumber) => {
+    let poolFraction = balance.dividedBy(poolSupply);
+    let tokenSupplied = poolFraction.multipliedBy(poolTotal);
     if (tokenSupplied.isNaN()) tokenSupplied = new BigNumber(0);
     return tokenSupplied;
   };
 
   const fetchLiquidity = React.useCallback(() => {
+    const getSuppliedToken = (poolId: string, baseAddress: string, quoteAddress: string) => {
+      return new Promise((resolve, reject) => {
+        Promise.all([
+          bnJs.Dex.balanceOf(poolId),
+          bnJs.Dex.getTotalSupply(poolId),
+          bnJs.Dex.getPoolTotal(poolId, baseAddress),
+          bnJs.Dex.getPoolTotal(poolId, quoteAddress),
+        ])
+          .then(result => {
+            const [balance, poolTotalSupply, poolBaseTotal, poolQuoteTotal] = result.map(v =>
+              convertLoopToIcx(v as BigNumber),
+            );
+            const baseTokenSupplied = calculateTokenSupplied(balance, poolTotalSupply, poolBaseTotal);
+            const quoteTokenSupplied = calculateTokenSupplied(balance, poolTotalSupply, poolQuoteTotal);
+            resolve({ balance, baseTokenSupplied, quoteTokenSupplied, poolBaseTotal, poolQuoteTotal, poolTotalSupply });
+          })
+          .catch(reject);
+      });
+    };
+
+    if (account) {
+      Promise.all([
+        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXICXpoolId.toString()),
+        bnJs.eject({ account: account }).Dex.getICXBalance(),
+      ]).then(result => {
+        const [sICXICXTotalSupply, ICXBalance] = result.map(v => convertLoopToIcx(v as BigNumber));
+
+        changeLiquiditySupply({
+          sICXICXTotalSupply,
+          ICXBalance,
+        });
+      });
+
+      getSuppliedToken(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.sICX.address, bnJs.bnUSD.address)
+        .then((result: any) =>
+          changeLiquiditySupply({
+            sICXbnUSDBalance: result.balance,
+            sICXSuppliedPoolsICXbnUSD: result.baseTokenSupplied,
+            bnUSDSuppliedPoolsICXbnUSD: result.quoteTokenSupplied,
+            sICXPoolsICXbnUSDTotal: result.poolBaseTotal,
+            bnUSDPoolsICXbnUSDTotal: result.poolQuoteTotal,
+            sICXbnUSDTotalSupply: result.poolTotalSupply,
+          }),
+        )
+        .catch(e => console.log(e));
+
+      getSuppliedToken(BalancedJs.utils.BALNbnUSDpoolId.toString(), bnJs.Baln.address, bnJs.bnUSD.address)
+        .then((result: any) =>
+          changeLiquiditySupply({
+            BALNbnUSDBalance: result.balance,
+            BALNSuppliedPoolBALNbnUSD: result.baseTokenSupplied,
+            bnUSDSuppliedPoolBALNbnUSD: result.quoteTokenSupplied,
+            BALNPoolBALNbnUSDTotal: result.poolBaseTotal,
+            bnUSDPoolBALNbnUSDTotal: result.poolQuoteTotal,
+            BALNbnUSDTotalSupply: result.poolTotalSupply,
+          }),
+        )
+        .catch(e => console.log(e));
+    }
+  }, [account, changeLiquiditySupply]);
+
+  /*const fetchLiquidity = React.useCallback(() => {
     if (account) {
       Promise.all([
         bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.sICX.address),
@@ -177,7 +237,7 @@ export function useFetchLiquidity(account?: string | null) {
         });
       });
     }
-  }, [account, changeLiquiditySupply]);
+  }, [account, changeLiquiditySupply]);*/
 
   React.useEffect(() => {
     fetchLiquidity();

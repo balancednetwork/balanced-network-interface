@@ -35,3 +35,8 @@ export function supplyMessage(amount: string, pair: string) {
   const message = `Supplied ${pair} liquidity.`;
   return message;
 }
+
+export function retireMessage(amount: string) {
+  const message = `Retired ${amount} bnUSD.`;
+  return message;
+}

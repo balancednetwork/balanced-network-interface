@@ -18,8 +18,8 @@ import {
   useCollateralState,
   useCollateralType,
   useCollateralAdjust,
-  useStakedICXAmount,
-  useTotalICXAmount,
+  useCollateralDepositedAmountInICX,
+  useCollateralTotalICXAmount,
 } from 'store/collateral/hooks';
 import { useLockedICXAmount, useLoanAdjust } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -71,9 +71,9 @@ const CollateralPanel = () => {
   };
 
   //
-  const stakedICXAmount = useStakedICXAmount();
+  const stakedICXAmount = useCollateralDepositedAmountInICX();
 
-  const totalICXAmount = useTotalICXAmount();
+  const totalICXAmount = useCollateralTotalICXAmount();
 
   //  calculate dependentField value
   const parsedAmount = {
@@ -162,7 +162,7 @@ const CollateralPanel = () => {
     }
   }, [type, stakedICXAmount, isAdjusting]);
 
-  // optimze slider performance
+  // optimize slider performance
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {

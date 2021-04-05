@@ -34,7 +34,6 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
   transition: border 0.3s ease, background-color 0.3s ease, color 0.3s ease;
   cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-
   :hover,
   :focus {
     border: 2px solid #2ca9b7;
@@ -65,7 +64,6 @@ const NumberInput = styled.input<{ bg?: string }>`
   font-size: 100%;
   line-height: 1.15;
   margin: 0;
-
   :hover,
   :focus {
     border: 2px solid #2ca9b7;

@@ -90,13 +90,13 @@ export default function ICXWallet() {
     setTabIndex(index);
   };
 
-  const [list, setList] = React.useState([]);
+  const [list, setList] = React.useState<BigNumber[]>([]);
 
   React.useEffect(() => {
     const fetchUserUnstakeInfo = async () => {
       if (account) {
         const result = await bnJs.Staking.getUserUnstakeInfo(account);
-        setList(result.map(record => convertLoopToIcx(new BigNumber(record[0], 16)).toFixed(2)));
+        setList(result.map(record => convertLoopToIcx(new BigNumber(record[0], 16))));
       }
     };
 
@@ -145,7 +145,7 @@ export default function ICXWallet() {
 
               <Box>
                 {list.map(item => (
-                  <Typography variant="p">{item} ICX unstaking</Typography>
+                  <Typography variant="p">{item.dp(2).toFormat()} ICX unstaking</Typography>
                 ))}
               </Box>
             </Grid>
@@ -160,21 +160,21 @@ export default function ICXWallet() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.toFixed(2) + ' ICX'}
+            {differenceAmount.dp(2).toFormat() + ' ICX'}
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.toFixed(2) + ' ICX'}
+                {beforeAmount.dp(2).toFormat() + ' ICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.toFixed(2) + ' ICX'}
+                {afterAmount.dp(2).toFormat() + ' ICX'}
               </Typography>
             </Box>
           </Flex>

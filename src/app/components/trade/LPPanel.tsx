@@ -16,10 +16,12 @@ import { CURRENCYLIST, SupportedPairs } from 'constants/currency';
 import { useLiquiditySupply, useChangeLiquiditySupply } from 'store/liquidity/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
+import { useReward } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue, useChangeWalletBalance } from 'store/wallet/hooks';
+import { formatBigNumber } from 'utils';
 
-import { SectionPanel, BrightPanel } from './utils';
+import { SectionPanel, BrightPanel, depositMessage, supplyMessage } from './utils';
 
 const StyledDL = styled.dl`
   margin: 15px 0 15px 0;
@@ -39,6 +41,7 @@ export default function LPPanel() {
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
   const liquiditySupply = useLiquiditySupply();
+  const poolReward = useReward();
   const changeLiquiditySupply = useChangeLiquiditySupply();
 
   const ICXliquiditySupply = liquiditySupply.ICXBalance || new BigNumber(0);
@@ -62,14 +65,7 @@ export default function LPPanel() {
 
   const [supplyOutputAmount, setSupplyOutputAmount] = React.useState('0');
 
-  const handleTypeInput = (val: string) => {
-    setSupplyInputAmount(val);
-    let outputAmount = new BigNumber(val).multipliedBy(getRatioByPair());
-    if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
-    setSupplyOutputAmount(outputAmount.toString());
-  };
-
-  const getRatioByPair = () => {
+  const getRatioByPair = React.useCallback(() => {
     switch (selectedPair.pair) {
       case SupportedPairs[0].pair: {
         return ratio.sICXbnUSDratio;
@@ -82,14 +78,27 @@ export default function LPPanel() {
       }
     }
     return 0;
-  };
+  }, [ratio, selectedPair]);
 
-  const handleTypeOutput = (val: string) => {
-    setSupplyOutputAmount(val);
-    let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair()));
-    if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
-    setSupplyInputAmount(inputAmount.toString());
-  };
+  const handleTypeInput = React.useCallback(
+    (val: string) => {
+      setSupplyInputAmount(val);
+      let outputAmount = new BigNumber(val).multipliedBy(getRatioByPair());
+      if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
+      setSupplyOutputAmount(formatBigNumber(outputAmount, 'input'));
+    },
+    [getRatioByPair],
+  );
+
+  const handleTypeOutput = React.useCallback(
+    (val: string) => {
+      setSupplyOutputAmount(val);
+      let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair()));
+      if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
+      setSupplyInputAmount(formatBigNumber(inputAmount, 'input'));
+    },
+    [getRatioByPair],
+  );
 
   const addTransaction = useTransactionAdder();
 
@@ -101,7 +110,7 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: `Deposited ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the DEX.` },
+          { summary: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair) },
         );
       })
       .catch(e => {
@@ -117,7 +126,7 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
+          { summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair) },
         );
       })
       .catch(e => {
@@ -133,7 +142,7 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
+          { summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair) },
         );
       })
       .catch(e => {
@@ -149,7 +158,12 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} to the DEX.` },
+          {
+            summary: supplyMessage(
+              formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ),
+          },
         );
       })
       .catch(e => {
@@ -229,7 +243,10 @@ export default function LPPanel() {
         addTransaction(
           { hash: res.result },
           {
-            summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the pool.`,
+            summary: supplyMessage(
+              formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ),
           },
         );
       })
@@ -247,7 +264,10 @@ export default function LPPanel() {
         addTransaction(
           { hash: res.result },
           {
-            summary: `Supplied ${supplyInputAmount} ${selectedPair.baseCurrencyKey} ${supplyOutputAmount} ${selectedPair.quoteCurrencyKey} to the pool.`,
+            summary: supplyMessage(
+              formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ),
           },
         );
       })
@@ -284,6 +304,8 @@ export default function LPPanel() {
     quote: new BigNumber(0),
     baseSupply: new BigNumber(0),
     quoteSupply: new BigNumber(0),
+    dailyReward: new BigNumber(0),
+    poolTotalDailyReward: new BigNumber(0),
   });
   const [walletBalanceSelected, setWalletBalanceSelected] = React.useState({
     base: new BigNumber(0),
@@ -293,27 +315,54 @@ export default function LPPanel() {
   const getSuppliedPairAmount = React.useCallback(() => {
     switch (selectedPair.pair) {
       case SupportedPairs[0].pair: {
+        let sICXbnUSDpoolDailyReward = poolReward.sICXbnUSDreward?.multipliedBy(
+          poolReward.poolDailyReward || new BigNumber(0),
+        );
+        let sICXbnUSDSuppliedShare = liquiditySupply.sICXbnUSDBalance?.dividedBy(
+          liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0),
+        );
+        let dailyReward = sICXbnUSDpoolDailyReward?.multipliedBy(sICXbnUSDSuppliedShare || new BigNumber(0));
         return {
           base: liquiditySupply.sICXSuppliedPoolsICXbnUSD || new BigNumber(0),
           quote: liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || new BigNumber(0),
           baseSupply: liquiditySupply.sICXPoolsICXbnUSDTotal || new BigNumber(0),
           quoteSupply: liquiditySupply.bnUSDPoolsICXbnUSDTotal || new BigNumber(0),
+          dailyReward: dailyReward || new BigNumber(0),
+          poolTotalDailyReward: sICXbnUSDpoolDailyReward || new BigNumber(0),
         };
       }
       case SupportedPairs[1].pair: {
+        let BALNbnUSDpoolDailyReward = poolReward.BALNbnUSDreward?.multipliedBy(
+          poolReward.poolDailyReward || new BigNumber(0),
+        );
+        let BALNbnUSDSuppliedShare = liquiditySupply.BALNbnUSDBalance?.dividedBy(
+          liquiditySupply.BALNbnUSDTotalSupply || new BigNumber(0),
+        );
+        let dailyReward = BALNbnUSDpoolDailyReward?.multipliedBy(BALNbnUSDSuppliedShare || new BigNumber(0));
         return {
           base: liquiditySupply.BALNSuppliedPoolBALNbnUSD || new BigNumber(0),
           quote: liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || new BigNumber(0),
           baseSupply: liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0),
           quoteSupply: liquiditySupply.bnUSDPoolBALNbnUSDTotal || new BigNumber(0),
+          dailyReward: dailyReward || new BigNumber(0),
+          poolTotalDailyReward: BALNbnUSDpoolDailyReward || new BigNumber(0),
         };
       }
       case SupportedPairs[2].pair: {
+        let sICXICXpoolDailyReward = poolReward.sICXICXreward?.multipliedBy(
+          poolReward.poolDailyReward || new BigNumber(0),
+        );
+        let sICXICXSuppliedShare = liquiditySupply.ICXBalance?.dividedBy(
+          liquiditySupply.sICXICXTotalSupply || new BigNumber(0),
+        );
+        let dailyReward = sICXICXpoolDailyReward?.multipliedBy(sICXICXSuppliedShare || new BigNumber(0));
         return {
           base: new BigNumber(2),
           quote: new BigNumber(2),
           baseSupply: new BigNumber(0),
           quoteSupply: new BigNumber(0),
+          dailyReward: dailyReward || new BigNumber(0),
+          poolTotalDailyReward: sICXICXpoolDailyReward || new BigNumber(0),
         };
       }
       default: {
@@ -322,10 +371,12 @@ export default function LPPanel() {
           quote: new BigNumber(0),
           baseSupply: new BigNumber(0),
           quoteSupply: new BigNumber(0),
+          dailyReward: new BigNumber(0),
+          poolTotalDailyReward: new BigNumber(0),
         };
       }
     }
-  }, [selectedPair, liquiditySupply]);
+  }, [selectedPair, liquiditySupply, poolReward]);
 
   const getWalletBalanceSelected = React.useCallback(() => {
     switch (selectedPair.pair) {
@@ -350,10 +401,53 @@ export default function LPPanel() {
     }
   }, [selectedPair, walletBalance]);
 
+  const getMaxAmountSupply = React.useCallback(() => {
+    switch (selectedPair.pair) {
+      case SupportedPairs[0].pair: {
+        if (walletBalance.sICXbalance.multipliedBy(ratio.sICXbnUSDratio).isLessThan(walletBalance.bnUSDbalance)) {
+          return { value: walletBalance.sICXbalance.toNumber(), key: 'input' };
+        } else {
+          return { value: walletBalance.bnUSDbalance.toNumber(), key: 'output' };
+        }
+      }
+      case SupportedPairs[1].pair: {
+        if (walletBalance.BALNbalance.multipliedBy(ratio.BALNbnUSDratio).isLessThan(walletBalance.bnUSDbalance)) {
+          return { value: walletBalance.BALNbalance.toNumber(), key: 'input' };
+        } else {
+          return { value: walletBalance.bnUSDbalance.toNumber(), key: 'output' };
+        }
+      }
+      case SupportedPairs[2].pair: {
+        return { value: walletBalance.ICXbalance.toNumber(), key: 'input' };
+      }
+      default: {
+        return { value: 0, key: 'input' };
+      }
+    }
+  }, [selectedPair, walletBalance, ratio]);
+
+  const [maxAmountSupply, setMaxAmountSupply] = React.useState({ value: 0, key: '' });
+
   React.useEffect(() => {
     setSuppliedPairAmount(getSuppliedPairAmount());
     setWalletBalanceSelected(getWalletBalanceSelected());
-  }, [getSuppliedPairAmount, getWalletBalanceSelected, selectedPair]);
+    setMaxAmountSupply(getMaxAmountSupply());
+    handleTypeInput('0');
+  }, [getSuppliedPairAmount, getWalletBalanceSelected, getMaxAmountSupply, handleTypeInput, selectedPair]);
+
+  const [amountSlider, setAmountSlider] = React.useState('0');
+
+  const handleSlider = (values: string[], handle: number) => {
+    setAmountSlider(values[handle]);
+  };
+
+  React.useEffect(() => {
+    if (maxAmountSupply.key === 'input') {
+      handleTypeInput(amountSlider);
+    } else {
+      handleTypeOutput(amountSlider);
+    }
+  }, [handleTypeInput, handleTypeOutput, amountSlider, maxAmountSupply]);
 
   return (
     <>
@@ -385,10 +479,10 @@ export default function LPPanel() {
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            Wallet: {walletBalanceSelected.base?.toFixed(2)} {selectedPair.baseCurrencyKey}
+            Wallet: {formatBigNumber(walletBalanceSelected.base, 'currency')} {selectedPair.baseCurrencyKey}
             {selectedPair === SupportedPairs[2]
               ? ''
-              : ' / ' + walletBalanceSelected.quote?.toFixed(2) + ' ' + selectedPair.quoteCurrencyKey}
+              : ' / ' + formatBigNumber(walletBalanceSelected.quote, 'currency') + ' ' + selectedPair.quoteCurrencyKey}
           </Typography>
 
           <Box mt={5}>
@@ -399,8 +493,9 @@ export default function LPPanel() {
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [100],
+                max: [maxAmountSupply.value],
               }}
+              onSlide={handleSlider}
             />
           </Box>
 
@@ -437,19 +532,19 @@ export default function LPPanel() {
                 <dt>Your supply</dt>
                 <dd>
                   {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
-                    ? ICXliquiditySupply.toFixed(2) + ' ICX'
-                    : suppliedPairAmount.base.toFixed(2) +
+                    ? formatBigNumber(ICXliquiditySupply, 'currency') + ' ICX'
+                    : formatBigNumber(suppliedPairAmount.base, 'currency') +
                       ' ' +
                       selectedPair.baseCurrencyKey +
                       ' / ' +
-                      suppliedPairAmount.quote.toFixed(2) +
+                      formatBigNumber(suppliedPairAmount.quote, 'currency') +
                       ' ' +
                       selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>
                 <dt>Your daily rewards</dt>
-                <dd>~120 BALN</dd>
+                <dd>~ {formatBigNumber(suppliedPairAmount.dailyReward, 'currency')} BALN</dd>
               </StyledDL>
             </Box>
             <Box width={[1, 1 / 2]}>
@@ -458,18 +553,19 @@ export default function LPPanel() {
                 <dd>
                   {' '}
                   {selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx'
-                    ? (liquiditySupply.sICXICXTotalSupply?.toFixed(2) || '0') + ' ICX'
-                    : suppliedPairAmount.baseSupply.toFixed(2) +
+                    ? formatBigNumber(liquiditySupply.sICXICXTotalSupply, 'currency') + ' ICX'
+                    : formatBigNumber(suppliedPairAmount.baseSupply, 'currency') +
+                      ' ' +
                       selectedPair.baseCurrencyKey +
                       ' / ' +
-                      suppliedPairAmount.quoteSupply.toFixed(2) +
+                      formatBigNumber(suppliedPairAmount.quoteSupply, 'currency') +
                       ' ' +
                       selectedPair.quoteCurrencyKey}
                 </dd>
               </StyledDL>
               <StyledDL>
                 <dt>Total daily rewards</dt>
-                <dd>17,500 BALN</dd>
+                <dd>{formatBigNumber(suppliedPairAmount.poolTotalDailyReward, 'currency')} BALN</dd>
               </StyledDL>
             </Box>
           </Flex>
@@ -499,7 +595,7 @@ export default function LPPanel() {
                 fontWeight="bold"
                 textAlign={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? 'center' : 'right'}
               >
-                {supplyInputAmount} {selectedPair.baseCurrencyKey}
+                {formatBigNumber(new BigNumber(supplyInputAmount), 'currency')} {selectedPair.baseCurrencyKey}
               </Typography>
             </Box>
             <Box width={1 / 2} style={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? { display: 'none' } : {}}>
@@ -516,7 +612,7 @@ export default function LPPanel() {
           >
             <Box width={1 / 2}>
               <Typography variant="p" fontWeight="bold" textAlign="right">
-                {supplyOutputAmount} {selectedPair.quoteCurrencyKey}
+                {formatBigNumber(new BigNumber(supplyOutputAmount), 'currency')} {selectedPair.quoteCurrencyKey}
               </Typography>
             </Box>
             <Box width={1 / 2}>

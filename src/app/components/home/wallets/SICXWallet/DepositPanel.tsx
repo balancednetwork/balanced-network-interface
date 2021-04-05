@@ -87,9 +87,9 @@ export default function DepositPanel() {
 
       <Flex my={1} alignItems="center" justifyContent="space-between">
         <Typography>
-          {value} / {maxAmount.toFixed(2)} sICX
+          {new BigNumber(value).dp(2).toFormat()} / {maxAmount.dp(2).toFormat()} sICX
         </Typography>
-        <Typography>~ {differenceAmountByICX.toFixed(2)} ICX</Typography>
+        <Typography>~ {differenceAmountByICX.dp(2).toFormat()} ICX</Typography>
       </Flex>
 
       <Flex alignItems="center" justifyContent="center" mt={5}>
@@ -103,25 +103,25 @@ export default function DepositPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.toFixed(2) + ' sICX'}
+            {differenceAmount.dp(2).toFormat() + ' sICX'}
           </Typography>
 
           <Typography textAlign="center" mb="5px">
-            {differenceAmountByICX.toFixed(2)} ICX
+            {differenceAmountByICX.dp(2).toFormat()} ICX
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.toFixed(2) + ' sICX'}
+                {beforeAmount.dp(2).toFormat() + ' sICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.toFixed(2) + ' sICX'}
+                {afterAmount.dp(2).toFormat() + ' sICX'}
               </Typography>
             </Box>
           </Flex>

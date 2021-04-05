@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
@@ -11,6 +12,7 @@ import { useLiquiditySupply } from 'store/liquidity/hooks';
 import { useSetPair, usePoolPair } from 'store/pool/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
+import { formatBigNumber } from 'utils';
 
 const StyledWrapper = styled(Wrapper)`
   font-size: 18px;
@@ -86,11 +88,11 @@ export default function LiquiditySelect() {
                 </DataText>
                 <DataText variant="p" textAlign="right">
                   {pool.pair === 'sICX / bnUSD'
-                    ? sICXbnUSDICXapy
+                    ? formatBigNumber(new BigNumber(sICXbnUSDICXapy), 'currency')
                     : pool.pair === 'BALN / bnUSD'
-                    ? BALNbnUSDapy
+                    ? formatBigNumber(new BigNumber(BALNbnUSDapy), 'currency')
                     : pool.pair === 'ICX / sICX'
-                    ? sICXICXapy
+                    ? formatBigNumber(new BigNumber(sICXICXapy), 'currency')
                     : ''}{' '}
                   %
                 </DataText>

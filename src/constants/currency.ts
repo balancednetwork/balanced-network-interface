@@ -44,6 +44,16 @@ export const SupportedPairs: Array<Pair> = [
     quoteCurrencyKey: CURRENCY_MAP['ICX'],
     pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['ICX']),
   },
+  {
+    baseCurrencyKey: CURRENCY_MAP['bnUSD'],
+    quoteCurrencyKey: CURRENCY_MAP['sICX'],
+    pair: toMarketPair(CURRENCY_MAP['bnUSD'], CURRENCY_MAP['sICX']),
+  },
+  {
+    baseCurrencyKey: CURRENCY_MAP['bnUSD'],
+    quoteCurrencyKey: CURRENCY_MAP['BALN'],
+    pair: toMarketPair(CURRENCY_MAP['bnUSD'], CURRENCY_MAP['BALN']),
+  },
 ];
 
 export const getFilteredCurrencies = (baseCurrencyKey: CurrencyKey): CurrencyKey[] => {

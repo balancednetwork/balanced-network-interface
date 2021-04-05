@@ -1,17 +1,42 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import Divider from 'app/components/Divider';
-import { BoxPanel } from 'app/components/Panel';
+import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { useSICXAmount } from 'store/collateral/hooks';
+import { useLoanBorrowedValue } from 'store/loan/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
+
+const useCollateralRatio = () => {
+  // sICX collateral * sICXICX price * ICXUSD price / bnUSD loan
+  const sICXAmount = useSICXAmount();
+  const borrowedAmount = useLoanBorrowedValue();
+  const ratio = useRatioValue();
+  return sICXAmount.times(ratio.sICXICXratio).times(ratio.ICXUSDratio).div(borrowedAmount);
+};
+
+const useHasRewardableCollateral = () => {
+  const borrowedAmount = useLoanBorrowedValue();
+  const collateralRatio = useCollateralRatio();
+
+  if (
+    borrowedAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
+    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(4))
+  ) {
+    return true;
+  }
+
+  return false;
+};
 
 const RewardsPanel = () => {
   const { account } = useIconReact();
@@ -43,6 +68,27 @@ const RewardsPanel = () => {
 
   const rewardAmountByUSD = reward.multipliedBy(ratio.BALNbnUSDratio);
 
+  const hasRewardableCollateral = useHasRewardableCollateral();
+
+  if (!hasRewardableCollateral) {
+    return (
+      <div>
+        <FlexPanel bg="bg2" flexDirection="column">
+          <Typography variant="h2" mb={5}>
+            Rewards
+          </Typography>
+
+          <Flex flex={1} justifyContent="center" alignItems="center" minHeight={100}>
+            <Typography textAlign="center">
+              To earn Balanced rewards, take out a loan <br />
+              or supply liquidity on the Trade page.
+            </Typography>
+          </Flex>
+        </FlexPanel>
+      </div>
+    );
+  }
+
   return (
     <div>
       <BoxPanel bg="bg2">
@@ -73,9 +119,10 @@ const RewardsPanel = () => {
             Claim rewards
           </Button>
         </Flex>
+      </BoxPanel>
 
-        {/* Stake new Balance Tokens Modal */}
-        {/* <Modal isOpen={open} onDismiss={handleClose}>
+      {/* Stake new Balance Tokens Modal */}
+      {/* <Modal isOpen={open} onDismiss={handleClose}>
           <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
             <Typography textAlign="center" mb="5px">
               Stake new Balance Tokens?
@@ -116,7 +163,6 @@ const RewardsPanel = () => {
             </Flex>
           </Flex>
         </Modal> */}
-      </BoxPanel>
     </div>
   );
 };

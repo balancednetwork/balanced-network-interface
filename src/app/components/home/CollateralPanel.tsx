@@ -18,8 +18,8 @@ import {
   useCollateralState,
   useCollateralType,
   useCollateralAdjust,
-  useDepositedAmountInICX,
-  useTotalICXAmount,
+  useCollateralDepositedAmountInICX,
+  useCollateralTotalICXAmount,
 } from 'store/collateral/hooks';
 import { useLockedICXAmount, useLoanAdjust } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -71,9 +71,9 @@ const CollateralPanel = () => {
   };
 
   //
-  const stakedICXAmount = useDepositedAmountInICX();
+  const stakedICXAmount = useCollateralDepositedAmountInICX();
 
-  const totalICXAmount = useTotalICXAmount();
+  const totalICXAmount = useCollateralTotalICXAmount();
 
   //  calculate dependentField value
   const parsedAmount = {

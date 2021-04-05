@@ -11,7 +11,7 @@ import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
 import RewardsPanel from 'app/components/home/RewardsPanel';
 import WalletPanel from 'app/components/home/WalletPanel';
 import { DefaultLayout } from 'app/components/Layout';
-import { useFetchCollateralInfo } from 'store/collateral/hooks';
+import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useLoanFetchInfo } from 'store/loan/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchBalance } from 'store/wallet/hooks';
@@ -41,7 +41,7 @@ export function HomePage() {
 
   useFetchPrice();
   useFetchBalance(account);
-  useFetchCollateralInfo(account);
+  useCollateralFetchInfo(account);
   useLoanFetchInfo(account);
 
   return (

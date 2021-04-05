@@ -11,7 +11,7 @@ import { useAllTransactions } from 'store/transactions/hooks';
 import { AppState } from '../index';
 import { adjust, cancel, changeBalance, changeDepositedAmount, type, Field } from './actions';
 
-export function useChangeDepositedAmount(): (depositedAmount: BigNumber) => void {
+export function useCollateralChangeDepositedAmount(): (depositedAmount: BigNumber) => void {
   const dispatch = useDispatch();
 
   return React.useCallback(
@@ -22,7 +22,7 @@ export function useChangeDepositedAmount(): (depositedAmount: BigNumber) => void
   );
 }
 
-export function useChangeBalance(): (balance: BigNumber) => void {
+export function useCollateralChangeBalance(): (balance: BigNumber) => void {
   const dispatch = useDispatch();
 
   return React.useCallback(
@@ -33,14 +33,13 @@ export function useChangeBalance(): (balance: BigNumber) => void {
   );
 }
 
-export function useAvailableAmount() {
-  const ICXAmount = useSelector((state: AppState) => state.collateral.balance);
-  return ICXAmount;
+export function useCollateralAvailableAmount() {
+  return useSelector((state: AppState) => state.collateral.balance);
 }
 
-export function useFetchCollateralInfo(account?: string | null) {
-  const changeStakedICXAmount = useChangeDepositedAmount();
-  const changeUnStackedICXAmount = useChangeBalance();
+export function useCollateralFetchInfo(account?: string | null) {
+  const changeStakedICXAmount = useCollateralChangeDepositedAmount();
+  const changeUnStackedICXAmount = useCollateralChangeBalance();
   const transactions = useAllTransactions();
 
   const fetchCollateralInfo = React.useCallback(
@@ -69,8 +68,7 @@ export function useFetchCollateralInfo(account?: string | null) {
 }
 
 export function useCollateralState() {
-  const state = useSelector((state: AppState) => state.collateral.state);
-  return state;
+  return useSelector((state: AppState) => state.collateral.state);
 }
 
 export function useCollateralType(): (payload: {
@@ -103,13 +101,12 @@ export function useCollateralAdjust(): (isAdjust: boolean) => void {
   );
 }
 
-export function useDepositedAmount() {
-  const sICXAmount = useSelector((state: AppState) => state.collateral.depositedAmount);
-  return sICXAmount;
+export function useCollateralDepositedAmount() {
+  return useSelector((state: AppState) => state.collateral.depositedAmount);
 }
 
-export function useDepositedAmountInICX() {
-  const sICXAmount = useDepositedAmount();
+export function useCollateralDepositedAmountInICX() {
+  const sICXAmount = useCollateralDepositedAmount();
 
   const ratio = useRatioValue();
 
@@ -118,10 +115,10 @@ export function useDepositedAmountInICX() {
   }, [sICXAmount, ratio.sICXICXratio]);
 }
 
-export function useTotalICXAmount() {
-  const ICXAmount = useAvailableAmount();
+export function useCollateralTotalICXAmount() {
+  const ICXAmount = useCollateralAvailableAmount();
 
-  const stakedICXAmount = useDepositedAmountInICX();
+  const stakedICXAmount = useCollateralDepositedAmountInICX();
 
   return React.useMemo(() => {
     const totalICXAmount = stakedICXAmount.plus(ICXAmount);
@@ -133,7 +130,7 @@ export function useCollateralInputAmount() {
   const { independentField, typedValue } = useCollateralState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
-  const totalICXAmount = useTotalICXAmount();
+  const totalICXAmount = useCollateralTotalICXAmount();
 
   //  calculate dependentField value
   const parsedAmount = {

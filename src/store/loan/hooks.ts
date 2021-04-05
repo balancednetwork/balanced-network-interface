@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
@@ -10,81 +10,54 @@ import { useRatioValue } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
-import {
-  changeBorrowedValue,
-  changeAvailableValue,
-  changebnUSDbadDebt,
-  changebnUSDtotalSupply,
-  Field,
-  adjust,
-  cancel,
-  type,
-} from './actions';
+import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, Field, adjust, cancel, type } from './actions';
 
-export function useLoanBorrowedValue(): AppState['loan']['borrowedValue'] {
-  const borrowedValue = useSelector((state: AppState) => state.loan.borrowedValue);
-  return useMemo(() => borrowedValue, [borrowedValue]);
+export function useLoanBorrowedAmount(): AppState['loan']['borrowedAmount'] {
+  return useSelector((state: AppState) => state.loan.borrowedAmount);
 }
 
-export function useLoanAvailabelValue(): AppState['loan']['availabelValue'] {
-  const availabelValue = useSelector((state: AppState) => state.loan.availabelValue);
-  return useMemo(() => availabelValue, [availabelValue]);
+export function useLoanBadDebt(): AppState['loan']['badDebt'] {
+  return useSelector((state: AppState) => state.loan.badDebt);
 }
 
-export function useLoanbnUSDbadDebt(): AppState['loan']['bnUSDbadDebt'] {
-  const bnUSDbadDebt = useSelector((state: AppState) => state.loan.bnUSDbadDebt);
-  return useMemo(() => bnUSDbadDebt, [bnUSDbadDebt]);
+export function useLoanTotalSupply(): AppState['loan']['totalSupply'] {
+  return useSelector((state: AppState) => state.loan.totalSupply);
 }
 
-export function useLoanbnUSDtotalSupply(): AppState['loan']['bnUSDtotalSupply'] {
-  const bnUSDtotalSupply = useSelector((state: AppState) => state.loan.bnUSDtotalSupply);
-  return useMemo(() => bnUSDtotalSupply, [bnUSDtotalSupply]);
-}
-
-export function useLoanChangeBorrowedValue(): (borrowedValue: BigNumber) => void {
+export function useLoanChangeBorrowedAmount(): (borrowedAmount: BigNumber) => void {
   const dispatch = useDispatch();
-  return useCallback(
-    (borrowedValue: BigNumber) => {
-      dispatch(changeBorrowedValue({ borrowedValue }));
+  return React.useCallback(
+    (borrowedAmount: BigNumber) => {
+      dispatch(changeBorrowedAmount({ borrowedAmount }));
     },
     [dispatch],
   );
 }
 
-export function useLoanchangeAvailableValue(): (availabelValue: BigNumber) => void {
+export function useLoanChangeBadDebt(): (badDebt: BigNumber) => void {
   const dispatch = useDispatch();
-  return useCallback(
-    (availabelValue: BigNumber) => {
-      dispatch(changeAvailableValue({ availabelValue }));
+  return React.useCallback(
+    (badDebt: BigNumber) => {
+      dispatch(changeBadDebt({ badDebt }));
     },
     [dispatch],
   );
 }
 
-export function useLoanChangebnUSDbadDebt(): (bnUSDbadDebt: BigNumber) => void {
+export function useLoanChangeTotalSupply(): (totalSupply: BigNumber) => void {
   const dispatch = useDispatch();
-  return useCallback(
-    (bnUSDbadDebt: BigNumber) => {
-      dispatch(changebnUSDbadDebt({ bnUSDbadDebt }));
+  return React.useCallback(
+    (totalSupply: BigNumber) => {
+      dispatch(changeTotalSupply({ totalSupply }));
     },
     [dispatch],
   );
 }
 
-export function useLoanChangebnUSDtotalSupply(): (bnUSDtotalSupply: BigNumber) => void {
-  const dispatch = useDispatch();
-  return useCallback(
-    (bnUSDtotalSupply: BigNumber) => {
-      dispatch(changebnUSDtotalSupply({ bnUSDtotalSupply }));
-    },
-    [dispatch],
-  );
-}
-
-export function useFetchLoanInfo(account?: string | null) {
-  const changeBorrowedValue = useLoanChangeBorrowedValue();
-  const changebnUSDbadDebt = useLoanChangebnUSDbadDebt();
-  const changebnUSDtotalSupply = useLoanChangebnUSDtotalSupply();
+export function useLoanFetchInfo(account?: string | null) {
+  const changeBorrowedAmount = useLoanChangeBorrowedAmount();
+  const changeBadDebt = useLoanChangeBadDebt();
+  const changeTotalSupply = useLoanChangeTotalSupply();
 
   const transactions = useAllTransactions();
 
@@ -95,21 +68,21 @@ export function useFetchLoanInfo(account?: string | null) {
           bnJs.Loans.eject({ account }).getAvailableAssets(),
           bnJs.bnUSD.totalSupply(),
           bnJs.Loans.eject({ account }).getAccountPositions(),
-        ]).then(([resultGetAvailableAssets, resultbnUSDtotalSupply, resultbnUSDdebt]: Array<any>) => {
+        ]).then(([resultGetAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
           const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
-          const bnUSDtotalSupply = convertLoopToIcx(resultbnUSDtotalSupply);
+          const bnUSDTotalSupply = convertLoopToIcx(resultTotalSupply);
 
-          const bnUSDdebt = resultbnUSDdebt['assets']
-            ? convertLoopToIcx(new BigNumber(parseInt(resultbnUSDdebt['assets']['bnUSD'] || 0, 16)))
+          const bnUSDDebt = resultDebt['assets']
+            ? convertLoopToIcx(new BigNumber(parseInt(resultDebt['assets']['bnUSD'] || 0, 16)))
             : new BigNumber(0);
 
-          changebnUSDbadDebt(bnUSDbadDebt);
-          changebnUSDtotalSupply(bnUSDtotalSupply);
-          changeBorrowedValue(bnUSDdebt);
+          changeBadDebt(bnUSDbadDebt);
+          changeTotalSupply(bnUSDTotalSupply);
+          changeBorrowedAmount(bnUSDDebt);
         });
       }
     },
-    [changebnUSDbadDebt, changebnUSDtotalSupply, changeBorrowedValue],
+    [changeBadDebt, changeTotalSupply, changeBorrowedAmount],
   );
 
   React.useEffect(() => {
@@ -118,19 +91,6 @@ export function useFetchLoanInfo(account?: string | null) {
     }
   }, [fetchLoanInfo, account, transactions]);
 }
-
-const MANDATORY_COLLATERAL_RATIO = 4;
-
-export const useLockedICXAmount = () => {
-  const ratio = useRatioValue();
-
-  const bnUSDLoanAmount = useLoanInputAmount();
-
-  return React.useMemo(() => {
-    const price = ratio.ICXUSDratio.isZero() ? new BigNumber(1) : ratio.ICXUSDratio;
-    return bnUSDLoanAmount.multipliedBy(MANDATORY_COLLATERAL_RATIO).div(price);
-  }, [bnUSDLoanAmount, ratio.ICXUSDratio]);
-};
 
 export function useLoanState() {
   const state = useSelector((state: AppState) => state.loan.state);
@@ -144,7 +104,7 @@ export function useLoanType(): (payload: {
 }) => void {
   const dispatch = useDispatch();
 
-  return useCallback(
+  return React.useCallback(
     payload => {
       dispatch(type(payload));
     },
@@ -155,7 +115,7 @@ export function useLoanType(): (payload: {
 export function useLoanAdjust(): (isAdjust: boolean) => void {
   const dispatch = useDispatch();
 
-  return useCallback(
+  return React.useCallback(
     isAdjust => {
       if (isAdjust) {
         dispatch(adjust());
@@ -167,25 +127,48 @@ export function useLoanAdjust(): (isAdjust: boolean) => void {
   );
 }
 
-export const useTotalAvailablebnUSDAmount = () => {
+export function useLoanTotalBorrowableAmount() {
   const ratio = useRatioValue();
 
   const stakedICXAmount = useCollateralInputAmount();
 
   return stakedICXAmount.multipliedBy(ratio.ICXUSDratio).div(MANDATORY_COLLATERAL_RATIO);
-};
+}
 
-export const useLoanInputAmount = (): BigNumber => {
+export function useLoanInputAmount() {
   const { independentField, typedValue } = useLoanState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
-  const totalAvailablebnUSDAmount = useTotalAvailablebnUSDAmount();
+  const totalBorrowableAmount = useLoanTotalBorrowableAmount();
 
   //  calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: totalAvailablebnUSDAmount.minus(new BigNumber(typedValue || '0')),
+    [dependentField]: totalBorrowableAmount.minus(new BigNumber(typedValue || '0')),
   };
 
   return parsedAmount[Field.LEFT];
-};
+}
+
+const MANDATORY_COLLATERAL_RATIO = 4;
+
+export function useLockedICXAmount() {
+  const ratio = useRatioValue();
+
+  const bnUSDLoanAmount = useLoanInputAmount();
+
+  return React.useMemo(() => {
+    const price = ratio.ICXUSDratio.isZero() ? new BigNumber(1) : ratio.ICXUSDratio;
+    return bnUSDLoanAmount.multipliedBy(MANDATORY_COLLATERAL_RATIO).div(price);
+  }, [bnUSDLoanAmount, ratio.ICXUSDratio]);
+}
+
+export function useLoanDebtHoldingShare() {
+  const loanInputAmount = useLoanInputAmount();
+  const loanBadDebt = useLoanBadDebt();
+  const loanTotalSupply = useLoanTotalSupply();
+
+  return React.useMemo(() => {
+    return loanInputAmount.div(loanTotalSupply.minus(loanBadDebt)).multipliedBy(100);
+  }, [loanInputAmount, loanBadDebt, loanTotalSupply]);
+}

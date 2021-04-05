@@ -143,3 +143,12 @@ export function useCollateralInputAmount() {
 
   return parsedAmount[Field.LEFT];
 }
+
+export function useCollateralInputAmountInUSD() {
+  const collateralInputAmount = useCollateralInputAmount();
+  const ratio = useRatioValue();
+
+  return React.useMemo(() => {
+    return collateralInputAmount.multipliedBy(ratio.ICXUSDratio);
+  }, [collateralInputAmount, ratio.ICXUSDratio]);
+}

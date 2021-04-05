@@ -1,10 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { changeDeposite, changeBalance, adjust, cancel, type, Field } from './actions';
+import { changeDepositedAmount, changeBalance, adjust, cancel, type, Field } from './actions';
 
 export interface CollateralState {
-  depositedValue: BigNumber;
+  depositedAmount: BigNumber;
   balance: BigNumber;
 
   // collateral panel UI state
@@ -17,7 +17,7 @@ export interface CollateralState {
 }
 
 const initialState: CollateralState = {
-  depositedValue: new BigNumber(0),
+  depositedAmount: new BigNumber(0),
   balance: new BigNumber(0),
 
   // collateral panel UI state
@@ -35,7 +35,7 @@ export default createReducer(initialState, builder =>
       state.state.isAdjusting = true;
     })
     .addCase(cancel, (state, { payload }) => {
-      // reset typedValue, indepentField, isAdjusting values
+      // reset typedValue, independentField, isAdjusting values
       state.state.isAdjusting = false;
     })
     .addCase(type, (state, { payload: { independentField, typedValue, inputType } }) => {
@@ -43,8 +43,8 @@ export default createReducer(initialState, builder =>
       state.state.typedValue = typedValue ?? state.state.typedValue;
       state.state.inputType = inputType || state.state.inputType;
     })
-    .addCase(changeDeposite, (state, { payload: { depositedValue } }) => {
-      state.depositedValue = depositedValue;
+    .addCase(changeDepositedAmount, (state, { payload: { depositedAmount } }) => {
+      state.depositedAmount = depositedAmount;
     })
     .addCase(changeBalance, (state, { payload: { balance } }) => {
       state.balance = balance;

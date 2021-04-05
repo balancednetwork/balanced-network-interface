@@ -2,6 +2,7 @@ import React from 'react';
 
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { Flex, Box } from 'rebass/styled-components';
@@ -21,7 +22,7 @@ import bnJs from 'bnJs';
 import { CURRENCYLIST, getFilteredCurrencies, SupportedBaseCurrencies } from 'constants/currency';
 import { dayData } from 'demo';
 import { useWalletICXBalance } from 'hooks';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatioValue, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
@@ -73,6 +74,7 @@ export default function SwapPanel() {
   const ratio = useRatioValue();
   const addTransaction = useTransactionAdder();
   const ICXbalance = useWalletICXBalance(account);
+  const changeRatioValue = useChangeRatio();
 
   const tokenBalance = (symbol: string) => {
     if (account) {
@@ -87,6 +89,21 @@ export default function SwapPanel() {
       }
     }
   };
+
+  const refreshPrice = React.useCallback(async () => {
+    const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
+    const ICXUSDratio = convertLoopToIcx(res['rate']);
+    changeRatioValue({ ICXUSDratio });
+
+    const sICXICXratio = convertLoopToIcx(await bnJs.Staking.getTodayRate());
+    changeRatioValue({ sICXICXratio });
+
+    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId.toString()));
+    changeRatioValue({ sICXbnUSDratio });
+
+    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId.toString()));
+    changeRatioValue({ BALNbnUSDratio });
+  }, [changeRatioValue]);
 
   const [swapInputAmount, setSwapInputAmount] = React.useState('0');
 
@@ -133,12 +150,12 @@ export default function SwapPanel() {
         val = '0';
       }
       if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
-        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
+        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
       } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
         const fee = parseFloat(val) / 100;
         setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
         val = (parseFloat(val) - fee).toString();
-        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
+        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
       } else {
         bnJs
           .eject({ account: account })
@@ -149,7 +166,7 @@ export default function SwapPanel() {
             const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
             setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
             val = (parseFloat(val) - fee).toString();
-            setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
+            setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
           })
           .catch(e => {
             console.error('error', e);
@@ -171,10 +188,10 @@ export default function SwapPanel() {
     let inputAmount = new BigNumber(val).dividedBy(ratioLocal);
     if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
       inputAmount = inputAmount.plus(inputAmount.multipliedBy(0.01));
-      setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
+      setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
     } else if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
       // fee on this pair is zero so do nothing on this case
-      setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
+      setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
     } else {
       bnJs
         .eject({ account: account })
@@ -183,7 +200,7 @@ export default function SwapPanel() {
           const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
           const lp_fee = parseInt(res[`pool_lp_fee`], 16);
           inputAmount = inputAmount.plus((inputAmount.toNumber() * (bal_holder_fee + lp_fee)) / 10000);
-          setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
+          setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
         })
         .catch(e => {
           console.error('error', e);
@@ -255,6 +272,9 @@ export default function SwapPanel() {
               summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
             },
           );
+          refreshPrice();
+          setSwapInputAmount('0');
+          setSwapOutputAmount('0');
         })
         .catch(e => {
           console.error('error', e);
@@ -272,6 +292,9 @@ export default function SwapPanel() {
               summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
             },
           );
+          refreshPrice();
+          setSwapInputAmount('0');
+          setSwapOutputAmount('0');
         })
         .catch(e => {
           console.error('error', e);
@@ -287,6 +310,9 @@ export default function SwapPanel() {
             { hash: res.result },
             { summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol) },
           );
+          refreshPrice();
+          setSwapInputAmount('0');
+          setSwapOutputAmount('0');
         })
         .catch(e => {
           console.error('error', e);
@@ -302,6 +328,9 @@ export default function SwapPanel() {
             { hash: res.result },
             { summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol) },
           );
+          refreshPrice();
+          setSwapInputAmount('0');
+          setSwapOutputAmount('0');
         })
         .catch(e => {
           console.error('error', e);
@@ -319,6 +348,9 @@ export default function SwapPanel() {
               summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
             },
           );
+          refreshPrice();
+          setSwapInputAmount('0');
+          setSwapOutputAmount('0');
         })
         .catch(e => {
           console.error('error', e);
@@ -380,7 +412,8 @@ export default function SwapPanel() {
       symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
       interval: '5m',
     });
-  }, [inputCurrency.symbol, outputCurrency.symbol, loadChartData]);
+    refreshPrice();
+  }, [inputCurrency.symbol, outputCurrency.symbol, loadChartData, refreshPrice]);
 
   const handleInputSelect = React.useCallback(
     ccy => {
@@ -456,10 +489,10 @@ export default function SwapPanel() {
             <Typography>Minimum to receive</Typography>
             <Typography>
               {!swapOutputAmount
-                ? formatBigNumber(new BigNumber(0), 'currency')
+                ? formatBigNumber(new BigNumber(0), 'ratio')
                 : formatBigNumber(
                     new BigNumber(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4),
-                    'currency',
+                    'ratio',
                   )}{' '}
               {outputCurrency.symbol}
             </Typography>

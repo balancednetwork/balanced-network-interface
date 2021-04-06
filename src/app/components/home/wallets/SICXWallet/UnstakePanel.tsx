@@ -9,9 +9,9 @@ import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 export default function UnstakePanel() {
   const [value, setValue] = React.useState('0');
@@ -22,9 +22,9 @@ export default function UnstakePanel() {
 
   const { account } = useIconReact();
 
-  const wallet = useWalletBalanceValue();
+  const wallet = useWalletBalances();
 
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
   const maxAmount = wallet.sICXbalance;
 

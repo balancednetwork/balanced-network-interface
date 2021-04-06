@@ -19,10 +19,10 @@ import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST, getFilteredCurrencies, SupportedBaseCurrencies } from 'constants/currency';
-import { useRatioValue, useChangeRatio } from 'store/ratio/hooks';
+import { CURRENCY_LIST, getFilteredCurrencies, SUPPORTED_BASE_CURRENCIES } from 'constants/currency';
+import { useRatio, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
 import { SectionPanel, BrightPanel, swapMessage } from './utils';
@@ -68,8 +68,8 @@ export enum Field {
 
 export default function SwapPanel() {
   const { account } = useIconReact();
-  const walletBalance = useWalletBalanceValue();
-  const ratio = useRatioValue();
+  const walletBalance = useWalletBalances();
+  const ratio = useRatio();
   const addTransaction = useTransactionAdder();
   const changeRatioValue = useChangeRatio();
 
@@ -106,9 +106,9 @@ export default function SwapPanel() {
 
   const [swapOutputAmount, setSwapOutputAmount] = React.useState('0');
 
-  const [inputCurrency, setInputCurrency] = React.useState(CURRENCYLIST['sicx']);
+  const [inputCurrency, setInputCurrency] = React.useState(CURRENCY_LIST['sicx']);
 
-  const [outputCurrency, setOutputCurrency] = React.useState(CURRENCYLIST['bnusd']);
+  const [outputCurrency, setOutputCurrency] = React.useState(CURRENCY_LIST['bnusd']);
 
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
@@ -261,7 +261,6 @@ export default function SwapPanel() {
         //.bnUSD.swapBysICX(parseFloat(swapInputAmount), '10')
         .sICX.swapBybnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
         .then(res => {
-          console.log('res', res);
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
@@ -281,7 +280,6 @@ export default function SwapPanel() {
         .eject({ account: account })
         .sICX.swapToICX(new BigNumber(swapInputAmount))
         .then(res => {
-          console.log('res', res);
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
@@ -301,7 +299,6 @@ export default function SwapPanel() {
         .eject({ account: account })
         .Baln.swapToBnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
         .then(res => {
-          console.log('res', res);
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
@@ -319,7 +316,6 @@ export default function SwapPanel() {
         .eject({ account: account })
         .Staking.stakeICX(new BigNumber(swapInputAmount))
         .then(res => {
-          console.log('res', res);
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
@@ -337,7 +333,6 @@ export default function SwapPanel() {
         .eject({ account: account })
         .bnUSD.swapToOutputCurrency(new BigNumber(swapInputAmount), outputCurrency.symbol, rawSlippage + '')
         .then(res => {
-          console.log('res', res);
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
@@ -456,7 +451,7 @@ export default function SwapPanel() {
               onUserInput={handleTypeInput}
               onCurrencySelect={handleInputSelect}
               id="swap-currency-input"
-              currencyList={SupportedBaseCurrencies}
+              currencyList={SUPPORTED_BASE_CURRENCIES}
             />
           </Flex>
 

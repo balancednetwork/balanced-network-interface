@@ -12,7 +12,7 @@ import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCY_LIST } from 'constants/currency';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
@@ -236,7 +236,7 @@ const CollateralPanel = () => {
               label="Deposited"
               tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
               value={!account ? '-' : formattedAmounts[Field.LEFT]}
-              currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['icx']}
+              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['icx']}
               onUserInput={handleStakedAmountType}
             />
           </Box>
@@ -249,7 +249,7 @@ const CollateralPanel = () => {
               label="Wallet"
               tooltipText="The amount of ICX available to deposit from your wallet."
               value={!account ? '-' : formattedAmounts[Field.RIGHT]}
-              currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['icx']}
+              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['icx']}
               onUserInput={handleUnstakedAmountType}
             />
           </Box>

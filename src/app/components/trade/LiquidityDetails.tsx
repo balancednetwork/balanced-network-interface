@@ -12,12 +12,12 @@ import DropdownText from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCY_LIST } from 'constants/currency';
 import { useLiquiditySupply, useChangeLiquiditySupply } from 'store/liquidity/hooks';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
 const LiquidityDetails = () => {
@@ -26,8 +26,8 @@ const LiquidityDetails = () => {
   const changeLiquiditySupply = useChangeLiquiditySupply();
   const liquiditySupply = useLiquiditySupply();
   const addTransaction = useTransactionAdder();
-  const walletBalance = useWalletBalanceValue();
-  const ratio = useRatioValue();
+  const walletBalance = useWalletBalances();
+  const ratio = useRatio();
   const poolReward = useReward();
 
   const sICXbnUSDTotalSupply = liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0);
@@ -45,7 +45,6 @@ const LiquidityDetails = () => {
   const [amountWithdrawICX, setAmountWithdrawICX] = React.useState('0');
 
   React.useEffect(() => {
-    console.log('useEffect');
     setAmountWithdrawICX('0');
   }, [liquiditySupply.ICXBalance]);
 
@@ -98,7 +97,6 @@ const LiquidityDetails = () => {
       .eject({ account: account })
       .Dex.cancelSicxIcxOrder()
       .then(res => {
-        console.log(res);
         changeLiquiditySupply({ ICXBalance: new BigNumber(0) });
         addTransaction(
           { hash: res.result },
@@ -154,9 +152,7 @@ const LiquidityDetails = () => {
     bnJs
       .eject({ account: account })
       .Dex.withdrawalTokens(BalancedJs.utils.sICXbnUSDpoolId, new BigNumber(10))
-      .then(result => {
-        console.log(result);
-      })
+      .then(result => {})
       .catch(e => {
         console.error('error', e);
       });
@@ -226,7 +222,7 @@ const LiquidityDetails = () => {
                     <CurrencyInputPanel
                       value={amountWithdrawICX}
                       showMaxButton={false}
-                      currency={CURRENCYLIST['icx']}
+                      currency={CURRENCY_LIST['icx']}
                       onUserInput={handleTypeAmountWithdrawICX}
                       id="withdraw-liquidity-input"
                       bg="bg5"
@@ -290,7 +286,7 @@ const LiquidityDetails = () => {
                     <CurrencyInputPanel
                       value={amountWithdrawSICXPoolsICXbnUSD}
                       showMaxButton={false}
-                      currency={CURRENCYLIST['sicx']}
+                      currency={CURRENCY_LIST['sicx']}
                       onUserInput={handleTypeAmountWithdrawsICXPoolsICXbnUSD}
                       id="withdraw-liquidity-input"
                       bg="bg5"
@@ -300,7 +296,7 @@ const LiquidityDetails = () => {
                     <CurrencyInputPanel
                       value={amountWithdrawBNUSDPoolsICXbnUSD}
                       showMaxButton={false}
-                      currency={CURRENCYLIST['bnusd']}
+                      currency={CURRENCY_LIST['bnusd']}
                       onUserInput={handleTypeAmountWithdrawBNUSDPoolsICXbnUSD}
                       id="withdraw-liquidity-input"
                       bg="bg5"
@@ -359,7 +355,7 @@ const LiquidityDetails = () => {
                     <CurrencyInputPanel
                       value={amountWithdrawBALNPoolBALNbnUSD}
                       showMaxButton={false}
-                      currency={CURRENCYLIST['baln']}
+                      currency={CURRENCY_LIST['baln']}
                       onUserInput={handleTypeAmountWithdrawBALNPoolBALNbnUSD}
                       id="withdraw-liquidity-input"
                       bg="bg5"
@@ -369,7 +365,7 @@ const LiquidityDetails = () => {
                     <CurrencyInputPanel
                       value={amountWithdrawBNUSDPoolBALNbnUSD}
                       showMaxButton={false}
-                      currency={CURRENCYLIST['bnusd']}
+                      currency={CURRENCY_LIST['bnusd']}
                       onUserInput={handleTypeAmountWithdrawBNUSDPoolBALNbnUSD}
                       id="withdraw-liquidity-input"
                       bg="bg5"

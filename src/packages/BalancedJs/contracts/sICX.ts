@@ -42,7 +42,6 @@ export default class sICX extends Contract {
       method: 'transfer',
       params,
     });
-    console.log(payload);
     return this.callIconex(payload);
   }
 

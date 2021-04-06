@@ -1,11 +1,11 @@
 import keyBy from 'lodash/keyBy';
 
-export const CURRENCYLIST = {
+export const CURRENCY_LIST = {
   empty: { symbol: '', decimals: 0, name: 'empty' },
   icx: { symbol: 'ICX', decimals: 3, name: 'ICON' },
   sicx: { symbol: 'sICX', decimals: 3, name: 'Staked ICX' },
   bnusd: { symbol: 'bnUSD', decimals: 3, name: 'ICON Dollar' },
-  baln: { symbol: 'BALN', decimals: 3, name: 'Blanced Token' },
+  baln: { symbol: 'BALN', decimals: 3, name: 'Balanced Token' },
 };
 
 export const CURRENCY = ['ICX', 'sICX', 'bnUSD', 'BALN'];
@@ -23,7 +23,7 @@ export interface Pair {
   pair: string;
 }
 
-export const SupportedPairs: Array<Pair> = [
+export const SUPPORTED_PAIRS: Array<Pair> = [
   {
     baseCurrencyKey: CURRENCY_MAP['sICX'],
     quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
@@ -57,7 +57,7 @@ export const SupportedPairs: Array<Pair> = [
 ];
 
 export const getFilteredCurrencies = (baseCurrencyKey: CurrencyKey): CurrencyKey[] => {
-  return SupportedPairs.filter(pair => pair.baseCurrencyKey === baseCurrencyKey).map(pair => pair.quoteCurrencyKey);
+  return SUPPORTED_PAIRS.filter(pair => pair.baseCurrencyKey === baseCurrencyKey).map(pair => pair.quoteCurrencyKey);
 };
 
-export const SupportedBaseCurrencies = Array.from(new Set(SupportedPairs.map(pair => pair.baseCurrencyKey)));
+export const SUPPORTED_BASE_CURRENCIES = Array.from(new Set(SUPPORTED_PAIRS.map(pair => pair.baseCurrencyKey)));

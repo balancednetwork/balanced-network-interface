@@ -101,7 +101,6 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, width }) => {
         lineColor: 'rgba(44, 169, 183, 1)',
         lineWidth: 2,
       });
-      console.log(data);
       series.setData(data);
 
       chart.applyOptions({

@@ -12,7 +12,7 @@ import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCY_LIST } from 'constants/currency';
 import { useCollateralAdjust } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
@@ -23,7 +23,7 @@ import {
   useLoanTotalBorrowableAmount,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
@@ -172,7 +172,7 @@ const LoanPanel = () => {
 
   // Add Used indicator to the Loan section #73
   // https://github.com/balancednetwork/balanced-network-interface/issues/73
-  const { bnUSDbalance: remainingBNUSDAmount } = useWalletBalanceValue();
+  const { bnUSDbalance: remainingBNUSDAmount } = useWalletBalances();
 
   const usedBNUSDAmount = React.useMemo(() => {
     return BigNumber.max(borrowedAmount.minus(remainingBNUSDAmount as BigNumber), new BigNumber(0));
@@ -262,7 +262,7 @@ const LoanPanel = () => {
               label="Borrowed"
               tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
               value={!account ? '-' : formattedAmounts[Field.LEFT]}
-              currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['bnusd']}
+              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['bnusd']}
               onUserInput={handleLeftAmountType}
             />
           </Box>
@@ -274,7 +274,7 @@ const LoanPanel = () => {
               label="Available"
               tooltipText="The amount of ICX available to deposit from your wallet."
               value={!account ? '-' : formattedAmounts[Field.RIGHT]}
-              currency={!account ? CURRENCYLIST['empty'] : CURRENCYLIST['bnusd']}
+              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['bnusd']}
               onUserInput={handleRightAmountType}
             />
           </Box>

@@ -146,7 +146,7 @@ export function useFetchLiquidity(account?: string | null) {
             sICXbnUSDTotalSupply: result.poolTotalSupply,
           }),
         )
-        .catch(e => console.log(e));
+        .catch(e => console.error(e));
 
       getSuppliedToken(BalancedJs.utils.BALNbnUSDpoolId.toString(), bnJs.Baln.address, bnJs.bnUSD.address)
         .then((result: any) =>
@@ -159,7 +159,7 @@ export function useFetchLiquidity(account?: string | null) {
             BALNbnUSDTotalSupply: result.poolTotalSupply,
           }),
         )
-        .catch(e => console.log(e));
+        .catch(e => console.error(e));
     }
   }, [account, changeLiquiditySupply]);
 

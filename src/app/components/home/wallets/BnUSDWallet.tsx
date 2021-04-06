@@ -12,9 +12,9 @@ import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCY_LIST } from 'constants/currency';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 import { Grid, MaxButton } from './utils';
 
@@ -33,7 +33,7 @@ export default function BnUSDWallet() {
 
   const { account } = useIconReact();
 
-  const wallet = useWalletBalanceValue();
+  const wallet = useWalletBalances();
 
   const maxAmount = wallet.bnUSDbalance;
 
@@ -98,7 +98,7 @@ export default function BnUSDWallet() {
         <CurrencyInputPanel
           value={value}
           showMaxButton={false}
-          currency={CURRENCYLIST['bnusd']}
+          currency={CURRENCY_LIST['bnusd']}
           onUserInput={handleCurrencyInput}
           id="bnusd-currency-input-in-bnusd-wallet"
         />

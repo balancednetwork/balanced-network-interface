@@ -15,10 +15,10 @@ import Modal from 'app/components/Modal';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
-import { useRatioValue } from 'store/ratio/hooks';
+import { CURRENCY_LIST } from 'constants/currency';
+import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 import { retireMessage } from './utils';
 
@@ -29,8 +29,8 @@ const Grid = styled.div`
 `;
 
 const ReturnICDSection = () => {
-  const wallet = useWalletBalanceValue();
-  const ratio = useRatioValue();
+  const wallet = useWalletBalances();
+  const ratio = useRatio();
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
   const [retireAmount, setRetireAmount] = React.useState('0');
@@ -101,7 +101,6 @@ const ReturnICDSection = () => {
       .eject({ account: account })
       .bnUSD.retireBnUSD(new BigNumber(retireAmount))
       .then(res => {
-        console.log('res', res);
         setOpen(false);
         addTransaction(
           { hash: res.result },
@@ -129,7 +128,7 @@ const ReturnICDSection = () => {
                 <Typography>Sell your bnUSD for $1 of sICX (staked ICX).</Typography>
 
                 <CurrencyInputPanel
-                  currency={CURRENCYLIST['bnusd']}
+                  currency={CURRENCY_LIST['bnusd']}
                   value={retireAmount}
                   onUserInput={handleTypeInput}
                   showMaxButton={false}

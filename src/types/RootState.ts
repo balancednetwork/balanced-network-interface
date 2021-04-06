@@ -8,6 +8,7 @@ import { ApplicationState } from 'store/application/reducer';
 import { CollateralState } from 'store/collateral/reducer';
 import { LiquidityState } from 'store/liquidity/reducer';
 import { LoanState } from 'store/loan/reducer';
+import { MintState } from 'store/mint/reducer';
 import { PoolState } from 'store/pool/reducer';
 import { RatioState } from 'store/ratio/reducer';
 import { RewardState } from 'store/reward/reducer';
@@ -26,4 +27,5 @@ export interface RootState {
   ratio: RatioState;
   walletBalance: WalletState;
   transactions: TransactionState;
+  mint: MintState;
 }

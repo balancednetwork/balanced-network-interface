@@ -13,7 +13,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 const RewardGrid = styled.div`
   display: grid;
@@ -30,7 +30,7 @@ const RewardsPanel = () => {
   const [open, setOpen] = React.useState(false);
 
   const { account, networkId } = useIconReact();
-  const walletBalance = useWalletBalanceValue();
+  const walletBalance = useWalletBalances();
   const addTransaction = useTransactionAdder();
 
   const handleClaimReward = () => {
@@ -40,7 +40,7 @@ const RewardsPanel = () => {
     // const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
     // const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
     // const params = { _data1: data1, _data2: data2 };
-    console.log(addresses[networkId].rewards);
+
     const depositPayload = callTransactionBuilder
       .from(account)
       .to(addresses[networkId].rewards)

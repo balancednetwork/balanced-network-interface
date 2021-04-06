@@ -16,7 +16,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
 import { useLoanInputAmount, useLoanTotalBorrowableAmount, useLoanDebtHoldingShare } from 'store/loan/hooks';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatio } from 'store/ratio/hooks';
 
 import { DropdownPopper } from '../Popover';
 
@@ -130,7 +130,7 @@ const useThresholdPrices = () => {
 const useCurrentRatio = () => {
   const collateralInputAmount = useCollateralInputAmount();
   const loanInputAmount = useLoanInputAmount();
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
   return React.useMemo(() => {
     if (loanInputAmount.isZero()) return 900;
@@ -158,7 +158,7 @@ const PositionDetailPanel = () => {
   const close = React.useCallback(() => setShow(false), [setShow]);
 
   // ratio
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
   // loan
   const loanInputAmount = useLoanInputAmount();

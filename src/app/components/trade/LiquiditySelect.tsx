@@ -2,15 +2,17 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { Wrapper, UnderlineText, StyledArrowDownIcon } from 'app/components/DropdownText';
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
-import { SupportedPairs, Pair } from 'constants/currency';
+import { SUPPORTED_PAIRS, Pair } from 'constants/currency';
 import { useLiquiditySupply } from 'store/liquidity/hooks';
+import { resetMintState } from 'store/mint/actions';
 import { useSetPair, usePoolPair } from 'store/pool/hooks';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
 
@@ -34,16 +36,18 @@ export default function LiquiditySelect() {
 
   const selectedPair = usePoolPair();
   const setPair = useSetPair();
+  const dispatch = useDispatch();
 
   const handleSelectPool = (pl: Pair) => {
     toggleOpen();
     setPair(pl);
+    dispatch(resetMintState());
   };
 
-  const pairs = [SupportedPairs[0], SupportedPairs[1], SupportedPairs[2]];
+  const pairs = [SUPPORTED_PAIRS[0], SUPPORTED_PAIRS[1], SUPPORTED_PAIRS[2]];
 
   const poolReward = useReward();
-  const ratio = useRatioValue();
+  const ratio = useRatio();
   const liquidity = useLiquiditySupply();
 
   const sICXICXpoolDailyReward =

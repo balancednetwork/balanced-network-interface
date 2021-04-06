@@ -5,7 +5,7 @@ import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '../index';
@@ -108,7 +108,7 @@ export function useCollateralDepositedAmount() {
 export function useCollateralDepositedAmountInICX() {
   const sICXAmount = useCollateralDepositedAmount();
 
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
   return React.useMemo(() => {
     return sICXAmount.multipliedBy(ratio.sICXICXratio);
@@ -143,7 +143,7 @@ export function useCollateralInputAmount() {
 
 export function useCollateralInputAmountInUSD() {
   const collateralInputAmount = useCollateralInputAmount();
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
   return React.useMemo(() => {
     return collateralInputAmount.multipliedBy(ratio.ICXUSDratio);

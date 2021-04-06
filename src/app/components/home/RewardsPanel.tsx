@@ -31,7 +31,7 @@ const useHasRewardableCollateral = () => {
 
   if (
     borrowedAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
-    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(4))
+    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(5))
   ) {
     return true;
   }

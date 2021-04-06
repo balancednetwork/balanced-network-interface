@@ -95,10 +95,10 @@ export default function SwapPanel() {
     const sICXICXratio = convertLoopToIcx(await bnJs.Staking.getTodayRate());
     changeRatioValue({ sICXICXratio });
 
-    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId.toString()));
+    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId));
     changeRatioValue({ sICXbnUSDratio });
 
-    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId.toString()));
+    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId));
     changeRatioValue({ BALNbnUSDratio });
   }, [changeRatioValue]);
 

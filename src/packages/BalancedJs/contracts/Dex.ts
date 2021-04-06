@@ -12,11 +12,11 @@ export default class Dex extends Contract {
     this.address = addresses[this.nid].dex;
   }
 
-  getPrice(pid: string) {
+  getPrice(pid: number) {
     const callParams = this.paramsBuilder({
       method: 'getPrice',
       params: {
-        _pid: pid,
+        _pid: IconConverter.toHex(pid),
       },
     });
 

@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { IconAmount } from 'icon-sdk-js';
+import { IconAmount, IconConverter } from 'icon-sdk-js';
 
 import { ResponseJsonRPCPayload } from '..';
 import addresses from '../addresses';
@@ -46,8 +46,7 @@ export default class Baln extends Contract {
           '}}',
         'utf8',
       ).toString('hex');
-    const valueHex =
-      '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop());
     const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
 
     const payload = this.transactionParamsBuilder({
@@ -63,8 +62,7 @@ export default class Baln extends Contract {
       method: 'transfer',
       params: {
         _to: to,
-        _value:
-          '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16),
+        _value: IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop()),
       },
     });
 
@@ -72,8 +70,7 @@ export default class Baln extends Contract {
   }
 
   async stake(value: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const valueHex =
-      '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop());
     const params = { _value: valueHex };
     const payload = this.transactionParamsBuilder({
       method: 'stake',
@@ -85,8 +82,7 @@ export default class Baln extends Contract {
 
   async dexDeposit(value: BigNumber): Promise<ResponseJsonRPCPayload> {
     const data = '0x' + Buffer.from('{"method": "_deposit"}', 'utf8').toString('hex');
-    const valueHex =
-      '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+    const valueHex = IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop());
     const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
     const payload = this.transactionParamsBuilder({
       method: 'transfer',

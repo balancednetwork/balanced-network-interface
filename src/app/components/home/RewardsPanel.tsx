@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -10,22 +11,22 @@ import Divider from 'app/components/Divider';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useSICXAmount } from 'store/collateral/hooks';
-import { useLoanBorrowedValue } from 'store/loan/hooks';
+import { useCollateralDepositedAmount } from 'store/collateral/hooks';
+import { useLoanBorrowedAmount } from 'store/loan/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 
 const useCollateralRatio = () => {
   // sICX collateral * sICXICX price * ICXUSD price / bnUSD loan
-  const sICXAmount = useSICXAmount();
-  const borrowedAmount = useLoanBorrowedValue();
+  const sICXAmount = useCollateralDepositedAmount();
+  const borrowedAmount = useLoanBorrowedAmount();
   const ratio = useRatioValue();
   return sICXAmount.times(ratio.sICXICXratio).times(ratio.ICXUSDratio).div(borrowedAmount);
 };
 
 const useHasRewardableCollateral = () => {
-  const borrowedAmount = useLoanBorrowedValue();
+  const borrowedAmount = useLoanBorrowedAmount();
   const collateralRatio = useCollateralRatio();
 
   if (
@@ -36,6 +37,31 @@ const useHasRewardableCollateral = () => {
   }
 
   return false;
+};
+
+const useHasRewardableLiquidity = () => {
+  const { account } = useIconReact();
+
+  const [hasRewardableLiquidity, setHasRewardableLiquidity] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkIfRewardable = async () => {
+      if (account) {
+        const result = await Promise.all([
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.BALNbnUSDpoolId),
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.sICXbnUSDpoolId),
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.sICXICXpoolId),
+        ]);
+
+        if (result.find(pool => Number(pool))) setHasRewardableLiquidity(true);
+        else setHasRewardableLiquidity(false);
+      }
+    };
+
+    checkIfRewardable();
+  }, [account]);
+
+  return hasRewardableLiquidity;
 };
 
 const RewardsPanel = () => {
@@ -70,7 +96,9 @@ const RewardsPanel = () => {
 
   const hasRewardableCollateral = useHasRewardableCollateral();
 
-  if (!hasRewardableCollateral) {
+  const hasRewardableLiquidity = useHasRewardableLiquidity();
+
+  if (!hasRewardableCollateral && !hasRewardableLiquidity) {
     return (
       <div>
         <FlexPanel bg="bg2" flexDirection="column">

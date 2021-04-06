@@ -149,4 +149,16 @@ export default class Dex extends Contract {
 
     return this.call(callParams);
   }
+
+  isEarningRewards(address: string, id: number) {
+    const callParams = this.paramsBuilder({
+      method: 'isEarningRewards',
+      params: {
+        _address: address,
+        _id: IconConverter.toHex(id),
+      },
+    });
+
+    return this.call(callParams);
+  }
 }

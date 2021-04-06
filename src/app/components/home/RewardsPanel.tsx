@@ -127,7 +127,9 @@ const RewardsPanel = () => {
         <RewardGrid>
           <Row>
             <Typography variant="p">Loan rewards</Typography>
-            <Typography variant="p">{!account ? '-' : `${reward.dp(2).toFormat()} BALN`}</Typography>
+            <Typography variant="p">
+              {!account ? '-' : reward.isZero() ? 'Pending' : `${reward.dp(2).toFormat()} BALN`}
+            </Typography>
           </Row>
 
           <Divider />

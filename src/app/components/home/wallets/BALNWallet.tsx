@@ -65,7 +65,13 @@ export default function BALNWallet() {
       .Baln.transfer(address, differenceAmount)
       .then(res => {
         if (res.result) {
-          addTransaction({ hash: res.result }, { summary: `Sent ${differenceAmount.toNumber()} BALN to ${address}.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: `Sending BALN...`,
+              summary: `Sent ${differenceAmount.dp(2).toFormat()} BALN.`,
+            },
+          );
           toggleOpen();
           setValue('');
           setAddress('');

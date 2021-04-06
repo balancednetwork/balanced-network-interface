@@ -1,22 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import {
-  changeAvailableValue,
-  changeBorrowedValue,
-  changebnUSDbadDebt,
-  changebnUSDtotalSupply,
-  adjust,
-  cancel,
-  type,
-  Field,
-} from './actions';
+import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, adjust, cancel, type, Field } from './actions';
 
 export interface LoanState {
-  borrowedValue: BigNumber;
-  availabelValue: BigNumber;
-  bnUSDbadDebt: BigNumber;
-  bnUSDtotalSupply: BigNumber;
+  borrowedAmount: BigNumber;
+  badDebt: BigNumber;
+  totalSupply: BigNumber;
 
   // loan panel UI state
   state: {
@@ -28,10 +18,9 @@ export interface LoanState {
 }
 
 const initialState: LoanState = {
-  borrowedValue: new BigNumber(0),
-  availabelValue: new BigNumber(0),
-  bnUSDbadDebt: new BigNumber(0),
-  bnUSDtotalSupply: new BigNumber(0),
+  borrowedAmount: new BigNumber(0),
+  badDebt: new BigNumber(0),
+  totalSupply: new BigNumber(0),
 
   // loan panel UI state
   state: {
@@ -48,7 +37,7 @@ export default createReducer(initialState, builder =>
       state.state.isAdjusting = true;
     })
     .addCase(cancel, (state, { payload }) => {
-      // reset typedValue, indepentField, isAdjusting values
+      // reset typedValue, independentField, isAdjusting values
       state.state.isAdjusting = false;
     })
     .addCase(type, (state, { payload: { independentField, typedValue, inputType } }) => {
@@ -56,16 +45,13 @@ export default createReducer(initialState, builder =>
       state.state.typedValue = typedValue ?? state.state.typedValue;
       state.state.inputType = inputType || state.state.inputType;
     })
-    .addCase(changeBorrowedValue, (state, { payload: { borrowedValue } }) => {
-      state.borrowedValue = borrowedValue;
+    .addCase(changeBorrowedAmount, (state, { payload: { borrowedAmount } }) => {
+      state.borrowedAmount = borrowedAmount;
     })
-    .addCase(changeAvailableValue, (state, { payload: { availabelValue } }) => {
-      state.availabelValue = availabelValue;
+    .addCase(changeBadDebt, (state, { payload: { badDebt } }) => {
+      state.badDebt = badDebt;
     })
-    .addCase(changebnUSDbadDebt, (state, { payload: { bnUSDbadDebt } }) => {
-      state.bnUSDbadDebt = bnUSDbadDebt;
-    })
-    .addCase(changebnUSDtotalSupply, (state, { payload: { bnUSDtotalSupply } }) => {
-      state.bnUSDtotalSupply = bnUSDtotalSupply;
+    .addCase(changeTotalSupply, (state, { payload: { totalSupply } }) => {
+      state.totalSupply = totalSupply;
     }),
 );

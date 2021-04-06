@@ -10,7 +10,6 @@ import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/L
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { CURRENCYLIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
-import { useWalletICXBalance } from 'hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 import { Currency } from 'types';
 import { escapeRegExp } from 'utils';
@@ -157,11 +156,11 @@ export default function CurrencyInputPanel({
 
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
-  const ICXbalance = useWalletICXBalance(account);
+
   const tokenBalance = (symbol: string) => {
     if (account) {
       if (symbol === 'icx') {
-        return ICXbalance;
+        return walletBalance.ICXbalance;
       } else if (symbol === 'baln') {
         return walletBalance.BALNbalance;
       } else if (symbol === 'sicx') {

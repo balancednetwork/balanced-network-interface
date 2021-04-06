@@ -14,13 +14,8 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import { useCollateralInputAmount } from 'store/collateral/hooks';
-import {
-  useLoanbnUSDbadDebt,
-  useLoanbnUSDtotalSupply,
-  useLoanInputAmount,
-  useTotalAvailablebnUSDAmount,
-} from 'store/loan/hooks';
+import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
+import { useLoanInputAmount, useLoanTotalBorrowableAmount, useLoanDebtHoldingShare } from 'store/loan/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
 
 import { DropdownPopper } from '../Popover';
@@ -148,25 +143,6 @@ const useCurrentRatio = () => {
   }, [collateralInputAmount, loanInputAmount, ratio.ICXUSDratio]);
 };
 
-const useTotalCollateralAmountbyUSD = () => {
-  const collateralInputAmount = useCollateralInputAmount();
-  const ratio = useRatioValue();
-
-  return React.useMemo(() => {
-    return collateralInputAmount.multipliedBy(ratio.ICXUSDratio);
-  }, [collateralInputAmount, ratio.ICXUSDratio]);
-};
-
-const useDebtHoldingShare = () => {
-  const loanInputAmount = useLoanInputAmount();
-  const loanbnUSDbadDebt = useLoanbnUSDbadDebt();
-  const loanbnUSDtotalSupply = useLoanbnUSDtotalSupply();
-
-  return React.useMemo(() => {
-    return loanInputAmount.div(loanbnUSDtotalSupply.minus(loanbnUSDbadDebt)).multipliedBy(100);
-  }, [loanInputAmount, loanbnUSDbadDebt, loanbnUSDtotalSupply]);
-};
-
 enum Period {
   'day' = 'Day',
   'week' = 'Week',
@@ -186,11 +162,11 @@ const PositionDetailPanel = () => {
 
   // loan
   const loanInputAmount = useLoanInputAmount();
-  const totalAvailableLoanAmount = useTotalAvailablebnUSDAmount();
+  const totalAvailableLoanAmount = useLoanTotalBorrowableAmount();
 
-  const totalCollateralAmountbyUSD = useTotalCollateralAmountbyUSD();
+  const collateralInputAmountInUSD = useCollateralInputAmountInUSD();
 
-  const debtHoldShare = useDebtHoldingShare();
+  const debtHoldShare = useLoanDebtHoldingShare();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -240,7 +216,7 @@ const PositionDetailPanel = () => {
           <Box width={1 / 2}>
             <Typography mb={1}>Collateral</Typography>
             <Typography variant="p" fontSize={18}>
-              ${totalCollateralAmountbyUSD.dp(2).toFormat()}
+              ${collateralInputAmountInUSD.dp(2).toFormat()}
             </Typography>
           </Box>
 
@@ -362,7 +338,9 @@ const PositionDetailPanel = () => {
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (
-                        <MenuItem onClick={() => handlePeriod(p)}>{p}</MenuItem>
+                        <MenuItem key={p} onClick={() => handlePeriod(p)}>
+                          {p}
+                        </MenuItem>
                       ))}
                     </MenuList>
                   </DropdownPopper>

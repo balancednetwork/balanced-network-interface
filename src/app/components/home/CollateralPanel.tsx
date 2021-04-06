@@ -18,8 +18,8 @@ import {
   useCollateralState,
   useCollateralType,
   useCollateralAdjust,
-  useStakedICXAmount,
-  useTotalICXAmount,
+  useCollateralDepositedAmountInICX,
+  useCollateralTotalICXAmount,
 } from 'store/collateral/hooks';
 import { useLockedICXAmount, useLoanAdjust } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -71,9 +71,9 @@ const CollateralPanel = () => {
   };
 
   //
-  const stakedICXAmount = useStakedICXAmount();
+  const stakedICXAmount = useCollateralDepositedAmountInICX();
 
-  const totalICXAmount = useTotalICXAmount();
+  const totalICXAmount = useCollateralTotalICXAmount();
 
   //  calculate dependentField value
   const parsedAmount = {
@@ -118,7 +118,10 @@ const CollateralPanel = () => {
         .then(res => {
           addTransaction(
             { hash: res.result },
-            { summary: `Deposited ${collateralAmount.toNumber()} ICX as collateral.` },
+            {
+              pending: 'Depositing collateral...',
+              summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
+            },
           );
           // close modal
           toggleOpen();
@@ -135,7 +138,10 @@ const CollateralPanel = () => {
         .then(res => {
           addTransaction(
             { hash: res.result }, //
-            { summary: `${collateralAmount.toNumber()} ICX added to your wallet.` },
+            {
+              pending: 'Withdrawing collateral...',
+              summary: `${collateralAmount.dp(2).toFormat()} sICX added to your wallet.`,
+            },
           );
           // close modal
           toggleOpen();
@@ -156,7 +162,7 @@ const CollateralPanel = () => {
     }
   }, [type, stakedICXAmount, isAdjusting]);
 
-  // optimze slider performance
+  // optimize slider performance
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {

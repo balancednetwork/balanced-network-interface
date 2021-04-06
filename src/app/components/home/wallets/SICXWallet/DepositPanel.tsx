@@ -51,7 +51,10 @@ export default function DepositPanel() {
         if (res.result) {
           addTransaction(
             { hash: res.result },
-            { summary: `Deposit ${differenceAmount.toNumber()} sICX to the collateral pool.` },
+            {
+              pending: `Depositing collateral...`,
+              summary: `Deposited ${differenceAmount.dp(2).toFormat()} sICX as collateral.`,
+            },
           );
           toggleOpen();
           setValue('0');

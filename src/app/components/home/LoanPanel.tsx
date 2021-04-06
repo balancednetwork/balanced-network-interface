@@ -17,10 +17,10 @@ import { useCollateralAdjust } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
   useLoanAdjust,
-  useLoanBorrowedValue,
+  useLoanBorrowedAmount,
   useLoanState,
   useLoanType,
-  useTotalAvailablebnUSDAmount,
+  useLoanTotalBorrowableAmount,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
@@ -71,22 +71,22 @@ const LoanPanel = () => {
   };
 
   //
-  const borrowedbnUSDAmount = useLoanBorrowedValue();
+  const borrowedAmount = useLoanBorrowedAmount();
 
-  const totalAvailablebnUSDAmount = useTotalAvailablebnUSDAmount();
+  const totalBorrowableAmount = useLoanTotalBorrowableAmount();
 
   //  calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: totalAvailablebnUSDAmount.minus(new BigNumber(typedValue || '0')),
+    [dependentField]: totalBorrowableAmount.minus(new BigNumber(typedValue || '0')),
   };
 
   const formattedAmounts = {
-    [independentField]: typedValue || '0',
+    [independentField]: typedValue,
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 
-  const buttonText = borrowedbnUSDAmount.isZero() ? 'Borrow' : 'Adjust';
+  const buttonText = borrowedAmount.isZero() ? 'Borrow' : 'Adjust';
 
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
@@ -94,7 +94,7 @@ const LoanPanel = () => {
   const toggleOpen = () => setOpen(!open);
 
   //before
-  const beforeAmount = borrowedbnUSDAmount;
+  const beforeAmount = borrowedAmount;
   //after
   const afterAmount = parsedAmount[Field.LEFT];
   //difference = after-before
@@ -113,7 +113,13 @@ const LoanPanel = () => {
         .eject({ account })
         .Loans.borrowAdd(differenceAmount)
         .then(res => {
-          addTransaction({ hash: res.result }, { summary: `Borrowed ${differenceAmount.toNumber()} bnUSD.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: 'Borrowing bnUSD...',
+              summary: `Borrowed ${differenceAmount.dp(2).toFormat()} bnUSD.`,
+            },
+          );
           // close modal
           toggleOpen();
           // reset loan panel values
@@ -127,7 +133,13 @@ const LoanPanel = () => {
         .eject({ account })
         .bnUSD.repayLoan(differenceAmount.abs())
         .then(res => {
-          addTransaction({ hash: res.result }, { summary: `Repaid ${differenceAmount.abs().toNumber()} bnUSD.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: 'Repaying bnUSD...',
+              summary: `Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,
+            },
+          );
           // close modal
           toggleOpen();
           // reset loan panel values
@@ -145,12 +157,12 @@ const LoanPanel = () => {
     if (!isAdjusting) {
       type({
         independentField: Field.LEFT,
-        typedValue: borrowedbnUSDAmount.isZero() ? '0' : borrowedbnUSDAmount.toFixed(2),
+        typedValue: borrowedAmount.isZero() ? '0' : borrowedAmount.toFixed(2),
       });
     }
-  }, [type, borrowedbnUSDAmount, isAdjusting]);
+  }, [type, borrowedAmount, isAdjusting]);
 
-  // optimze slider performance
+  // optimize slider performance
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {
@@ -160,19 +172,17 @@ const LoanPanel = () => {
 
   // Add Used indicator to the Loan section #73
   // https://github.com/balancednetwork/balanced-network-interface/issues/73
-  const { bnUSDbalance: remainingbnUSDAmount } = useWalletBalanceValue();
+  const { bnUSDbalance: remainingBNUSDAmount } = useWalletBalanceValue();
 
-  const usedbnUSDAmount = React.useMemo(() => {
-    return BigNumber.max(borrowedbnUSDAmount.minus(remainingbnUSDAmount as BigNumber), new BigNumber(0));
-  }, [borrowedbnUSDAmount, remainingbnUSDAmount]);
+  const usedBNUSDAmount = React.useMemo(() => {
+    return BigNumber.max(borrowedAmount.minus(remainingBNUSDAmount as BigNumber), new BigNumber(0));
+  }, [borrowedAmount, remainingBNUSDAmount]);
 
-  const percent = totalAvailablebnUSDAmount.isZero()
-    ? 0
-    : usedbnUSDAmount.div(totalAvailablebnUSDAmount).times(100).toNumber();
+  const percent = totalBorrowableAmount.isZero() ? 0 : usedBNUSDAmount.div(totalBorrowableAmount).times(100).toNumber();
 
-  const shouldShowLock = !usedbnUSDAmount.isZero();
+  const shouldShowLock = !usedBNUSDAmount.isZero();
 
-  if (totalAvailablebnUSDAmount.isZero() || totalAvailablebnUSDAmount.isNegative()) {
+  if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative()) {
     return (
       <FlexPanel bg="bg3" flexDirection="column">
         <Flex justifyContent="space-between" alignItems="center">
@@ -224,16 +234,16 @@ const LoanPanel = () => {
           <Nouislider
             disabled={!isAdjusting}
             id="slider-loan"
-            start={[borrowedbnUSDAmount.toNumber()]}
-            // dont refactor the below code
+            start={[borrowedAmount.toNumber()]}
+            // don't refactor the below code
             // it solved the race condition issue that caused padding value exceeds the max range value
             // need to find a good approach in the future
-            padding={[Math.max(Math.min(usedbnUSDAmount.toNumber(), totalAvailablebnUSDAmount.toNumber()), 0), 0]}
+            padding={[Math.max(Math.min(usedBNUSDAmount.toNumber(), totalBorrowableAmount.toNumber()), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],
               // https://github.com/balancednetwork/balanced-network-interface/issues/50
-              max: [totalAvailablebnUSDAmount.isZero() ? 1 : totalAvailablebnUSDAmount.toNumber()],
+              max: [totalBorrowableAmount.isZero() ? 1 : totalBorrowableAmount.toNumber()],
             }}
             instanceRef={instance => {
               if (instance && !sliderInstance.current) {

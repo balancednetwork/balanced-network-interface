@@ -266,7 +266,10 @@ export default function SwapPanel() {
           addTransaction(
             { hash: res.result },
             {
-              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
+              pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .pendingMessage,
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .successMessage,
             },
           );
           refreshPrice();
@@ -286,7 +289,10 @@ export default function SwapPanel() {
           addTransaction(
             { hash: res.result },
             {
-              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
+              pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .pendingMessage,
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .successMessage,
             },
           );
           refreshPrice();
@@ -305,7 +311,12 @@ export default function SwapPanel() {
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
-            { summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol) },
+            {
+              pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .pendingMessage,
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .successMessage,
+            },
           );
           refreshPrice();
           setSwapInputAmount('0');
@@ -323,7 +334,12 @@ export default function SwapPanel() {
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
-            { summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol) },
+            {
+              pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .pendingMessage,
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .successMessage,
+            },
           );
           refreshPrice();
           setSwapInputAmount('0');
@@ -342,7 +358,10 @@ export default function SwapPanel() {
           addTransaction(
             { hash: res.result },
             {
-              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
+              pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .pendingMessage,
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .successMessage,
             },
           );
           refreshPrice();

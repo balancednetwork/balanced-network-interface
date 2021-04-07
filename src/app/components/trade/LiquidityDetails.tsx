@@ -4,12 +4,15 @@ import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
+import ClickAwayListener from 'react-click-away-listener';
 import { Flex, Box } from 'rebass/styled-components';
 
-import { Button } from 'app/components/Button';
+import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import DropdownText from 'app/components/DropdownText';
+import { UnderlineTextWithArrow } from 'app/components/DropdownText';
+import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
+import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCYLIST } from 'constants/currency';
@@ -45,6 +48,52 @@ const LiquidityDetails = () => {
   const sICXICXSuppliedShare = ICXBalance.dividedBy(sICXICXTotalSupply).multipliedBy(100);
 
   const [amountWithdrawICX, setAmountWithdrawICX] = React.useState('0');
+
+  const [showSwapConfirm, setShowWithdrawConfirm] = React.useState(false);
+
+  const [inputCurrency, setInputCurrency] = React.useState('');
+
+  const [outputCurrency, setOutputCurrency] = React.useState('');
+
+  const [withdrawInputAmount, setwithdrawInputAmount] = React.useState('0');
+
+  const [withdrawOutputAmount, setwithdrawOutputAmount] = React.useState('0');
+
+  const handleWithdrawConfirmDismiss = () => {
+    setShowWithdrawConfirm(false);
+  };
+
+  const [anchorSICXbnUSD, setAnchorSICXbnUSD] = React.useState<HTMLElement | null>(null);
+  const [anchorBALNbnUSD, setAnchorBALNbnUSD] = React.useState<HTMLElement | null>(null);
+  const [anchorSICXICX, setAnchorSICXICX] = React.useState<HTMLElement | null>(null);
+
+  const arrowRefSICXbnUSD = React.useRef(null);
+  const arrowRefBALNbnUSD = React.useRef(null);
+  const arrowRefSICXICX = React.useRef(null);
+
+  const closeDropdownSICXbnUSD = () => {
+    setAnchorSICXbnUSD(null);
+  };
+
+  const closeDropdownBALNbnUSD = () => {
+    setAnchorBALNbnUSD(null);
+  };
+
+  const closeDropdownSICXICX = () => {
+    setAnchorSICXICX(null);
+  };
+
+  const handleToggleDropdownSICXbnUSD = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorSICXbnUSD(anchorSICXbnUSD ? null : arrowRefSICXbnUSD.current);
+  };
+
+  const handleToggleDropdownBALNbnUSD = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorBALNbnUSD(anchorBALNbnUSD ? null : arrowRefBALNbnUSD.current);
+  };
+
+  const handleToggleDropdownSICXICX = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorSICXICX(anchorSICXICX ? null : arrowRefSICXICX.current);
+  };
 
   React.useEffect(() => {
     console.log('useEffect');
@@ -94,7 +143,47 @@ const LiquidityDetails = () => {
     poolReward.poolDailyReward || new BigNumber(0),
   );
 
-  const handleWithdrawalICX = () => {
+  const handleWithdrawConfirm = () => {
+    if (inputCurrency.toLowerCase() === 'sicx' && outputCurrency.toLowerCase() === 'bnusd') {
+      withdrawSICXBNUSD(withdrawInputAmount);
+    } else if (inputCurrency.toLowerCase() === 'baln' && outputCurrency.toLowerCase() === 'bnusd') {
+      withdrawBALNbnUSD(withdrawInputAmount);
+    } else if (inputCurrency.toLowerCase() === 'icx' && outputCurrency.toLowerCase() === 'sicx') {
+      withdrawICX(withdrawInputAmount);
+    }
+  };
+
+  const handleWithdrawSICXICX = () => {
+    if (!account) return;
+    setInputCurrency('ICX');
+    setOutputCurrency('sICX');
+    setwithdrawInputAmount(amountWithdrawSICXPoolsICXbnUSD);
+    setwithdrawOutputAmount(amountWithdrawBNUSDPoolsICXbnUSD);
+    closeDropdownSICXICX();
+    setShowWithdrawConfirm(true);
+  };
+
+  const handleWithdrawSICXbnUSD = () => {
+    if (!account) return;
+    setInputCurrency('sICX');
+    setOutputCurrency('bnUSD');
+    setwithdrawInputAmount(amountWithdrawSICXPoolsICXbnUSD);
+    setwithdrawOutputAmount(amountWithdrawBNUSDPoolsICXbnUSD);
+    closeDropdownSICXbnUSD();
+    setShowWithdrawConfirm(true);
+  };
+
+  const handleWithdrawBALNbnUSD = () => {
+    if (!account) return;
+    setInputCurrency('BALN');
+    setOutputCurrency('bnUSD');
+    setwithdrawInputAmount(amountWithdrawBNUSDPoolBALNbnUSD);
+    setwithdrawOutputAmount(amountWithdrawBNUSDPoolBALNbnUSD);
+    closeDropdownBALNbnUSD();
+    setShowWithdrawConfirm(true);
+  };
+
+  const withdrawICX = (withdrawICXamount: string) => {
     if (!account) return;
     bnJs
       .eject({ account: account })
@@ -109,13 +198,68 @@ const LiquidityDetails = () => {
             summary: withdrawMessage(amountWithdrawICX, 'ICX', '', 'sICX').successMessage,
           },
         );
+        handleWithdrawConfirmDismiss();
       })
       .catch(e => {
         console.error('error', e);
       });
   };
 
-  /** withdraw sICXbnUSD **/
+  const withdrawSICXBNUSD = (withdrawSICXamount: string) => {
+    if (!account) return;
+    // TODO: calculate value and withdrawal
+    const withdrawTotal =
+      parseFloat(withdrawSICXamount) *
+      (1 /
+        ((liquiditySupply.sICXPoolsICXbnUSDTotal?.toNumber() || 0) /
+          (liquiditySupply.sICXbnUSDTotalSupply?.toNumber() || 0)));
+    bnJs
+      .eject({ account: account })
+      .Dex.remove(BalancedJs.utils.sICXbnUSDpoolId, new BigNumber(withdrawTotal))
+      .then(result => {
+        console.log(result);
+        addTransaction(
+          { hash: result.result },
+          {
+            pending: withdrawMessage(amountWithdrawSICXPoolsICXbnUSD, 'sICX', amountWithdrawBNUSDPoolsICXbnUSD, 'bnUSD')
+              .pendingMessage,
+            summary: `${amountWithdrawSICXPoolsICXbnUSD} sICX and ${amountWithdrawBNUSDPoolsICXbnUSD} bnUSD added to your wallet.`,
+          },
+        );
+        handleWithdrawConfirmDismiss();
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const withdrawBALNbnUSD = (withdrawBALNamount: string) => {
+    if (!account) return;
+    // TODO: calculate value and withdrawal
+    const withdrawTotal =
+      parseFloat(withdrawBALNamount) *
+      (1 /
+        ((liquiditySupply.BALNPoolBALNbnUSDTotal?.toNumber() || 0) /
+          (liquiditySupply.BALNbnUSDTotalSupply?.toNumber() || 0)));
+    bnJs
+      .eject({ account: account })
+      .Dex.remove(BalancedJs.utils.BALNbnUSDpoolId, new BigNumber(withdrawTotal))
+      .then(result => {
+        console.log(result);
+        addTransaction(
+          { hash: result.result },
+          {
+            pending: withdrawMessage(amountWithdrawBALNPoolBALNbnUSD, 'sICX', amountWithdrawBNUSDPoolBALNbnUSD, 'bnUSD')
+              .pendingMessage,
+            summary: `${amountWithdrawBALNPoolBALNbnUSD} BALN and ${amountWithdrawBNUSDPoolBALNbnUSD} bnUSD added to your wallet.`,
+          },
+        );
+        handleWithdrawConfirmDismiss();
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
 
   const [amountWithdrawSICXPoolsICXbnUSD, setAmountWithdrawSICXPoolsICXbnUSD] = React.useState('0');
   const [amountWithdrawBNUSDPoolsICXbnUSD, setAmountWithdrawBNUSDPoolsICXbnUSD] = React.useState('0');
@@ -153,56 +297,6 @@ const LiquidityDetails = () => {
     setAmountWithdrawBALNPoolBALNbnUSD(formatBigNumber(inputAmount, 'input'));
   };
 
-  const handleWithdrawalSICXBNUSD = () => {
-    if (!account) return;
-    // TODO: calculate value and withdrawal
-    const withdrawTotal =
-      parseFloat(amountWithdrawSICXPoolsICXbnUSD) *
-      (1 /
-        ((liquiditySupply.sICXPoolsICXbnUSDTotal?.toNumber() || 0) /
-          (liquiditySupply.sICXbnUSDTotalSupply?.toNumber() || 0)));
-    bnJs
-      .eject({ account: account })
-      .Dex.remove(BalancedJs.utils.sICXbnUSDpoolId, new BigNumber(withdrawTotal))
-      .then(result => {
-        console.log(result);
-        addTransaction(
-          { hash: result.result },
-          {
-            summary: `${amountWithdrawSICXPoolsICXbnUSD} sICX and ${amountWithdrawBNUSDPoolsICXbnUSD} bnUSD added to your wallet.`,
-          },
-        );
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
-  };
-
-  const handleWithdrawalBALNbnUSD = () => {
-    if (!account) return;
-    // TODO: calculate value and withdrawal
-    const withdrawTotal =
-      parseFloat(amountWithdrawBNUSDPoolBALNbnUSD) *
-      (1 /
-        ((liquiditySupply.BALNPoolBALNbnUSDTotal?.toNumber() || 0) /
-          (liquiditySupply.BALNbnUSDTotalSupply?.toNumber() || 0)));
-    bnJs
-      .eject({ account: account })
-      .Dex.remove(BalancedJs.utils.BALNbnUSDpoolId, new BigNumber(withdrawTotal))
-      .then(result => {
-        console.log(result);
-        addTransaction(
-          { hash: result.result },
-          {
-            summary: `${amountWithdrawBALNPoolBALNbnUSD} BALN and ${amountWithdrawBNUSDPoolBALNbnUSD} bnUSD added to your wallet.`,
-          },
-        );
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
-  };
-
   if (
     !account ||
     (liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toNumber() === 0 &&
@@ -225,224 +319,271 @@ const LiquidityDetails = () => {
   };
 
   return (
-    <BoxPanel bg="bg2" mb={10}>
-      <Typography variant="h2" mb={5}>
-        Liquidity details
-      </Typography>
+    <>
+      <BoxPanel bg="bg2" mb={10}>
+        <Typography variant="h2" mb={5}>
+          Liquidity details
+        </Typography>
 
-      {/* <!-- Liquidity list --> */}
-      <table className="list liquidity">
-        <thead>
-          <tr>
-            <th>Pool</th>
-            <th>Your supply</th>
-            <th>Pool share</th>
-            <th>Daily rewards</th>
-            <th></th>
-          </tr>
-        </thead>
+        {/* <!-- Liquidity list --> */}
+        <table className="list liquidity">
+          <thead>
+            <tr>
+              <th>Pool</th>
+              <th>Your supply</th>
+              <th>Pool share</th>
+              <th>Daily rewards</th>
+              <th></th>
+            </tr>
+          </thead>
 
-        <tbody>
-          {/* <!-- sICX / ICX --> */}
-          <tr>
-            <td>sICX / ICX</td>
-            <td>{formatBigNumber(ICXBalance, 'currency')} ICX</td>
-            <td>{sICXICXSuppliedShare?.isNaN() ? '0.00' : formatBigNumber(sICXICXSuppliedShare, 'currency')}%</td>
-            <td>
-              ~{' '}
-              {formatBigNumber(
-                new BigNumber(sICXICXpoolDailyReward * (ICXBalance.toNumber() / sICXICXTotalSupply.toNumber())),
-                'currency',
-              )}{' '}
-              BALN
-            </td>
-            <td>
-              <DropdownText text="Withdraw">
-                <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
-                  <Typography variant="h3" mb={3}>
-                    Withdraw:&nbsp;
-                    <Typography as="span">sICX / ICX</Typography>
-                  </Typography>
-                  <Box mb={3}>
-                    <CurrencyInputPanel
-                      value={amountWithdrawICX}
-                      showMaxButton={false}
-                      currency={CURRENCYLIST['icx']}
-                      onUserInput={handleTypeAmountWithdrawICX}
-                      id="withdraw-liquidity-input"
-                      bg="bg5"
+          <tbody>
+            {/* <!-- sICX / ICX --> */}
+            <tr>
+              <td>sICX / ICX</td>
+              <td>{formatBigNumber(ICXBalance, 'currency')} ICX</td>
+              <td>{sICXICXSuppliedShare?.isNaN() ? '0.00' : formatBigNumber(sICXICXSuppliedShare, 'currency')}%</td>
+              <td>
+                ~{' '}
+                {formatBigNumber(
+                  new BigNumber(sICXICXpoolDailyReward * (ICXBalance.toNumber() / sICXICXTotalSupply.toNumber())),
+                  'currency',
+                )}{' '}
+                BALN
+              </td>
+              <td>
+                <ClickAwayListener onClickAway={closeDropdownSICXICX}>
+                  <div>
+                    <UnderlineTextWithArrow
+                      onClick={handleToggleDropdownSICXICX}
+                      text="Withdraw"
+                      arrowRef={arrowRefSICXICX}
                     />
-                  </Box>
-                  <Typography mb={5} textAlign="right">
-                    Wallet: {formatBigNumber(walletBalance.ICXbalance, 'currency')} ICX
-                  </Typography>
-                  <Nouislider
-                    id="slider-supply"
-                    start={[0]}
-                    padding={[0]}
-                    connect={[true, false]}
-                    range={{
-                      min: [0],
-                      max: [ICXBalance.toNumber()],
-                    }}
-                    onSlide={handleSlideWithdrawalICX}
-                  />
-                  <Flex alignItems="center" justifyContent="center">
-                    <Button mt={5} onClick={handleWithdrawalICX}>
-                      Withdraw liquidity
-                    </Button>
-                  </Flex>
-                </Flex>
-              </DropdownText>
-            </td>
-          </tr>
+                    <DropdownPopper show={Boolean(anchorSICXICX)} anchorEl={anchorSICXICX}>
+                      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
+                        <Typography variant="h3" mb={3}>
+                          Withdraw:&nbsp;
+                          <Typography as="span">sICX / ICX</Typography>
+                        </Typography>
+                        <Box mb={3}>
+                          <CurrencyInputPanel
+                            value={amountWithdrawICX}
+                            showMaxButton={false}
+                            currency={CURRENCYLIST['icx']}
+                            onUserInput={handleTypeAmountWithdrawICX}
+                            id="withdraw-liquidity-input"
+                            bg="bg5"
+                          />
+                        </Box>
+                        <Typography mb={5} textAlign="right">
+                          Wallet: {formatBigNumber(walletBalance.ICXbalance, 'currency')} ICX
+                        </Typography>
+                        <Nouislider
+                          id="slider-supply"
+                          start={[0]}
+                          padding={[0]}
+                          connect={[true, false]}
+                          range={{
+                            min: [0],
+                            max: [ICXBalance.toNumber()],
+                          }}
+                          onSlide={handleSlideWithdrawalICX}
+                        />
+                        <Flex alignItems="center" justifyContent="center">
+                          <Button mt={5} onClick={handleWithdrawSICXICX}>
+                            Withdraw liquidity
+                          </Button>
+                        </Flex>
+                      </Flex>
+                    </DropdownPopper>
+                  </div>
+                </ClickAwayListener>
+              </td>
+            </tr>
 
-          <tr>
-            <td>sICX / bnUSD</td>
-            <td>
-              {formatBigNumber(liquiditySupply.sICXSuppliedPoolsICXbnUSD, 'currency') + ' sICX'}
-              <br />
-              {formatBigNumber(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD, 'currency') + ' bnUSD'}
-            </td>
-            <td>
-              {!account
-                ? '-'
-                : sICXbnUSDSuppliedShare?.isNaN()
-                ? '0.00'
-                : formatBigNumber(sICXbnUSDSuppliedShare, 'currency')}
-              %
-            </td>
-            <td>
-              ~{' '}
-              {formatBigNumber(
-                sICXbnUSDpoolDailyReward?.multipliedBy(sICXbnUSDSuppliedShare?.dividedBy(100)),
-                'currency',
-              )}{' '}
-              BALN
-            </td>
-            <td>
-              <DropdownText text="Withdraw">
-                <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
-                  <Typography variant="h3" mb={3}>
-                    Withdraw:&nbsp;
-                    <Typography as="span">sICX / bnUSD</Typography>
-                  </Typography>
-                  <Box mb={3}>
-                    <CurrencyInputPanel
-                      value={amountWithdrawSICXPoolsICXbnUSD}
-                      showMaxButton={false}
-                      currency={CURRENCYLIST['sicx']}
-                      onUserInput={handleTypeAmountWithdrawsICXPoolsICXbnUSD}
-                      id="withdraw-liquidity-input"
-                      bg="bg5"
+            <tr>
+              <td>sICX / bnUSD</td>
+              <td>
+                {formatBigNumber(liquiditySupply.sICXSuppliedPoolsICXbnUSD, 'currency') + ' sICX'}
+                <br />
+                {formatBigNumber(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD, 'currency') + ' bnUSD'}
+              </td>
+              <td>
+                {!account
+                  ? '-'
+                  : sICXbnUSDSuppliedShare?.isNaN()
+                  ? '0.00'
+                  : formatBigNumber(sICXbnUSDSuppliedShare, 'currency')}
+                %
+              </td>
+              <td>
+                ~{' '}
+                {formatBigNumber(
+                  sICXbnUSDpoolDailyReward?.multipliedBy(sICXbnUSDSuppliedShare?.dividedBy(100)),
+                  'currency',
+                )}{' '}
+                BALN
+              </td>
+              <td>
+                <ClickAwayListener onClickAway={closeDropdownSICXbnUSD}>
+                  <div>
+                    <UnderlineTextWithArrow
+                      onClick={handleToggleDropdownSICXbnUSD}
+                      text="Withdraw"
+                      arrowRef={arrowRefSICXbnUSD}
                     />
-                  </Box>
-                  <Box mb={3}>
-                    <CurrencyInputPanel
-                      value={amountWithdrawBNUSDPoolsICXbnUSD}
-                      showMaxButton={false}
-                      currency={CURRENCYLIST['bnusd']}
-                      onUserInput={handleTypeAmountWithdrawBNUSDPoolsICXbnUSD}
-                      id="withdraw-liquidity-input"
-                      bg="bg5"
-                    />
-                  </Box>
-                  <Typography mb={5} textAlign="right">
-                    Wallet: {formatBigNumber(walletBalance.sICXbalance, 'currency')} sICX /{' '}
-                    {formatBigNumber(walletBalance.bnUSDbalance, 'currency')} bnUSD
-                  </Typography>
-                  <Nouislider
-                    id="slider-supply"
-                    start={[0]}
-                    padding={[0]}
-                    connect={[true, false]}
-                    range={{
-                      min: [0],
-                      max: [amountWithdrawsICXbnUSDMax],
-                    }}
-                    onSlide={handleSlideWithdrawsICXPoolsICXbnUSD}
-                  />
-                  <Flex alignItems="center" justifyContent="center">
-                    <Button mt={5} onClick={handleWithdrawalSICXBNUSD}>
-                      Withdraw liquidity
-                    </Button>
-                  </Flex>
-                </Flex>
-              </DropdownText>
-            </td>
-          </tr>
+                    <DropdownPopper show={Boolean(anchorSICXbnUSD)} anchorEl={anchorSICXbnUSD}>
+                      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
+                        <Typography variant="h3" mb={3}>
+                          Withdraw:&nbsp;
+                          <Typography as="span">sICX / bnUSD</Typography>
+                        </Typography>
+                        <Box mb={3}>
+                          <CurrencyInputPanel
+                            value={amountWithdrawSICXPoolsICXbnUSD}
+                            showMaxButton={false}
+                            currency={CURRENCYLIST['sicx']}
+                            onUserInput={handleTypeAmountWithdrawsICXPoolsICXbnUSD}
+                            id="withdraw-liquidity-input"
+                            bg="bg5"
+                          />
+                        </Box>
+                        <Box mb={3}>
+                          <CurrencyInputPanel
+                            value={amountWithdrawBNUSDPoolsICXbnUSD}
+                            showMaxButton={false}
+                            currency={CURRENCYLIST['bnusd']}
+                            onUserInput={handleTypeAmountWithdrawBNUSDPoolsICXbnUSD}
+                            id="withdraw-liquidity-input"
+                            bg="bg5"
+                          />
+                        </Box>
+                        <Typography mb={5} textAlign="right">
+                          Wallet: {formatBigNumber(walletBalance.sICXbalance, 'currency')} sICX /{' '}
+                          {formatBigNumber(walletBalance.bnUSDbalance, 'currency')} bnUSD
+                        </Typography>
+                        <Nouislider
+                          id="slider-supply"
+                          start={[0]}
+                          padding={[0]}
+                          connect={[true, false]}
+                          range={{
+                            min: [0],
+                            max: [amountWithdrawsICXbnUSDMax],
+                          }}
+                          onSlide={handleSlideWithdrawsICXPoolsICXbnUSD}
+                        />
+                        <Flex alignItems="center" justifyContent="center">
+                          <Button mt={5} onClick={handleWithdrawSICXbnUSD}>
+                            Withdraw liquidity
+                          </Button>
+                        </Flex>
+                      </Flex>
+                    </DropdownPopper>
+                  </div>
+                </ClickAwayListener>
+              </td>
+            </tr>
 
-          {/* <!-- BALN / bnUSD --> */}
-          <tr>
-            <td>BALN / bnUSD</td>
-            <td>
-              {formatBigNumber(liquiditySupply.BALNSuppliedPoolBALNbnUSD, 'currency')} BALN
-              <br />
-              {formatBigNumber(liquiditySupply.bnUSDSuppliedPoolBALNbnUSD, 'currency')} bnUSD
-            </td>
-            <td>{!account ? '-' : formatBigNumber(BALNbnUSDSuppliedShare, 'currency')}%</td>
-            <td>
-              ~{' '}
-              {formatBigNumber(
-                BALNbnUSDpoolDailyReward?.multipliedBy(BALNbnUSDSuppliedShare.dividedBy(100)),
-                'currency',
-              )}{' '}
-              BALN
-            </td>
-            <td>
-              <DropdownText text="Withdraw">
-                <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
-                  <Typography variant="h3" mb={3}>
-                    Withdraw:&nbsp;
-                    <Typography as="span">BALN / bnUSD</Typography>
-                  </Typography>
-                  <Box mb={3}>
-                    <CurrencyInputPanel
-                      value={amountWithdrawBALNPoolBALNbnUSD}
-                      showMaxButton={false}
-                      currency={CURRENCYLIST['baln']}
-                      onUserInput={handleTypeAmountWithdrawBALNPoolBALNbnUSD}
-                      id="withdraw-liquidity-input"
-                      bg="bg5"
+            {/* <!-- BALN / bnUSD --> */}
+            <tr>
+              <td>BALN / bnUSD</td>
+              <td>
+                {formatBigNumber(liquiditySupply.BALNSuppliedPoolBALNbnUSD, 'currency')} BALN
+                <br />
+                {formatBigNumber(liquiditySupply.bnUSDSuppliedPoolBALNbnUSD, 'currency')} bnUSD
+              </td>
+              <td>{!account ? '-' : formatBigNumber(BALNbnUSDSuppliedShare, 'currency')}%</td>
+              <td>
+                ~{' '}
+                {formatBigNumber(
+                  BALNbnUSDpoolDailyReward?.multipliedBy(BALNbnUSDSuppliedShare.dividedBy(100)),
+                  'currency',
+                )}{' '}
+                BALN
+              </td>
+              <td>
+                <ClickAwayListener onClickAway={closeDropdownBALNbnUSD}>
+                  <div>
+                    <UnderlineTextWithArrow
+                      onClick={handleToggleDropdownBALNbnUSD}
+                      text="Withdraw"
+                      arrowRef={arrowRefBALNbnUSD}
                     />
-                  </Box>
-                  <Box mb={3}>
-                    <CurrencyInputPanel
-                      value={amountWithdrawBNUSDPoolBALNbnUSD}
-                      showMaxButton={false}
-                      currency={CURRENCYLIST['bnusd']}
-                      onUserInput={handleTypeAmountWithdrawBNUSDPoolBALNbnUSD}
-                      id="withdraw-liquidity-input"
-                      bg="bg5"
-                    />
-                  </Box>
-                  <Typography mb={5} textAlign="right">
-                    Wallet: {formatBigNumber(walletBalance.BALNbalance, 'currency')} BALN /{' '}
-                    {formatBigNumber(walletBalance.bnUSDbalance, 'currency')} bnUSD
-                  </Typography>
-                  <Nouislider
-                    id="slider-supply"
-                    start={[0]}
-                    padding={[0]}
-                    connect={[true, false]}
-                    range={{
-                      min: [0],
-                      max: [amountWithdrawBALNbnUSDMax],
-                    }}
-                    onSlide={handleSlideWithdrawBALNPoolBALNbnUSD}
-                  />
-                  <Flex alignItems="center" justifyContent="center">
-                    <Button mt={5} onClick={handleWithdrawalBALNbnUSD}>
-                      Withdraw liquidity
-                    </Button>
-                  </Flex>
-                </Flex>
-              </DropdownText>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </BoxPanel>
+                    <DropdownPopper show={Boolean(anchorBALNbnUSD)} anchorEl={anchorBALNbnUSD}>
+                      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
+                        <Typography variant="h3" mb={3}>
+                          Withdraw:&nbsp;
+                          <Typography as="span">BALN / bnUSD</Typography>
+                        </Typography>
+                        <Box mb={3}>
+                          <CurrencyInputPanel
+                            value={amountWithdrawBALNPoolBALNbnUSD}
+                            showMaxButton={false}
+                            currency={CURRENCYLIST['baln']}
+                            onUserInput={handleTypeAmountWithdrawBALNPoolBALNbnUSD}
+                            id="withdraw-liquidity-input"
+                            bg="bg5"
+                          />
+                        </Box>
+                        <Box mb={3}>
+                          <CurrencyInputPanel
+                            value={amountWithdrawBNUSDPoolBALNbnUSD}
+                            showMaxButton={false}
+                            currency={CURRENCYLIST['bnusd']}
+                            onUserInput={handleTypeAmountWithdrawBNUSDPoolBALNbnUSD}
+                            id="withdraw-liquidity-input"
+                            bg="bg5"
+                          />
+                        </Box>
+                        <Typography mb={5} textAlign="right">
+                          Wallet: {formatBigNumber(walletBalance.BALNbalance, 'currency')} BALN /{' '}
+                          {formatBigNumber(walletBalance.bnUSDbalance, 'currency')} bnUSD
+                        </Typography>
+                        <Nouislider
+                          id="slider-supply"
+                          start={[0]}
+                          padding={[0]}
+                          connect={[true, false]}
+                          range={{
+                            min: [0],
+                            max: [amountWithdrawBALNbnUSDMax],
+                          }}
+                          onSlide={handleSlideWithdrawBALNPoolBALNbnUSD}
+                        />
+                        <Flex alignItems="center" justifyContent="center">
+                          <Button mt={5} onClick={handleWithdrawBALNbnUSD}>
+                            Withdraw liquidity
+                          </Button>
+                        </Flex>
+                      </Flex>
+                    </DropdownPopper>
+                  </div>
+                </ClickAwayListener>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </BoxPanel>
+      <Modal isOpen={showSwapConfirm} onDismiss={handleWithdrawConfirmDismiss}>
+        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+          <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
+            Withdraw liquidity?
+          </Typography>
+
+          <Typography variant="p" fontWeight="bold" textAlign="center">
+            {withdrawInputAmount} {inputCurrency}
+            <br />
+            {withdrawOutputAmount} {outputCurrency}
+          </Typography>
+
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            <TextButton onClick={handleWithdrawConfirmDismiss}>Cancel</TextButton>
+            <Button onClick={handleWithdrawConfirm}>Withdraw</Button>
+          </Flex>
+        </Flex>
+      </Modal>
+    </>
   );
 };
 

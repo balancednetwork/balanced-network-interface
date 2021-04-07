@@ -177,7 +177,7 @@ const LiquidityDetails = () => {
     if (!account) return;
     setInputCurrency('BALN');
     setOutputCurrency('bnUSD');
-    setwithdrawInputAmount(amountWithdrawBNUSDPoolBALNbnUSD);
+    setwithdrawInputAmount(amountWithdrawBALNPoolBALNbnUSD);
     setwithdrawOutputAmount(amountWithdrawBNUSDPoolBALNbnUSD);
     closeDropdownBALNbnUSD();
     setShowWithdrawConfirm(true);

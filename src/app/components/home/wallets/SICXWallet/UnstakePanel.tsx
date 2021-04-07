@@ -47,7 +47,7 @@ export default function UnstakePanel() {
 
   const handleSend = () => {
     bnJs
-      .eject({ account })
+      .inject({ account })
       .sICX.unstake(BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {

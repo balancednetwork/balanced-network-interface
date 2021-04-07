@@ -17,6 +17,10 @@ export default class Loans extends Contract {
       params: { _value: IconConverter.toHex(value) },
     });
 
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+
     return this.callIconex(payload);
   }
 
@@ -26,6 +30,10 @@ export default class Loans extends Contract {
       value: value,
     });
 
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+
     return this.callIconex(payload);
   }
 
@@ -34,6 +42,10 @@ export default class Loans extends Contract {
       method: 'originateLoan',
       params: { _asset: asset, _amount: IconConverter.toHex(value), _from: from },
     });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
 
     return this.callIconex(payload);
   }

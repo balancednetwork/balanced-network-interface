@@ -19,15 +19,16 @@ const RewardsPanel = () => {
   const { account } = useIconReact();
   const wallet = useWalletBalances();
   const addTransaction = useTransactionAdder();
+  const walletBalance = useWalletBalances();
 
   const handleClaim = () => {
     if (account) {
       bnJs
-        .eject({ account: account })
+        .inject({ account: account })
         .Rewards.claimRewards()
         .then(res => {
           addTransaction(
-            { hash: res.result }, //
+            { hash: res.result || res }, //
             {
               summary: `Claimed ${reward.dp(2).toFormat()} BALN.`,
             },
@@ -41,6 +42,34 @@ const RewardsPanel = () => {
   };
 
   const reward = wallet.BALNreward;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleClose = () => {
+    bnJs
+      .inject({ account: account })
+      .Rewards.claimRewards()
+      .then(res => {
+        addTransaction(
+          { hash: res.result || res }, //
+          {
+            summary: `${
+              !account
+                ? '-'
+                : walletBalance.BALNreward?.toNumber() === 0 || walletBalance.BALNreward?.isNaN()
+                ? '0 BALN'
+                : walletBalance.BALNreward?.toFixed(2) + 'BALN'
+            } ICX added to your wallet.`,
+          },
+        );
+        // close modal
+        //toggleOpen();
+        // reset collateral panel values
+        setOpen(false);
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
 
   const ratio = useRatio();
 

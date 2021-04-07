@@ -190,12 +190,12 @@ const LiquidityDetails = () => {
   const withdrawICX = (withdrawICXamount: string) => {
     if (!account) return;
     bnJs
-      .eject({ account: account })
+      .inject({ account: account })
       .Dex.cancelSicxIcxOrder()
       .then(res => {
         changeLiquiditySupply({ ICXBalance: new BigNumber(0) });
         addTransaction(
-          { hash: res.result },
+          { hash: res.result || res },
           {
             pending: withdrawMessage(withdrawICXamount, 'ICX', '', 'sICX').pendingMessage,
             summary: withdrawMessage(withdrawICXamount, 'ICX', '', 'sICX').successMessage,
@@ -223,7 +223,7 @@ const LiquidityDetails = () => {
     }
 
     bnJs
-      .eject({ account: account })
+      .inject({ account: account })
       .Dex.remove(BalancedJs.utils.POOL_IDS.sICXbnUSD, withdrawTotal)
       .then(result => {
         console.log(result);
@@ -257,7 +257,7 @@ const LiquidityDetails = () => {
     }
 
     bnJs
-      .eject({ account: account })
+      .inject({ account: account })
       .Dex.remove(BalancedJs.utils.POOL_IDS.BALNbnUSD, new BigNumber(withdrawTotal))
       .then(result => {
         console.log(result);

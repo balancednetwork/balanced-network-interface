@@ -9,6 +9,16 @@ export enum NetworkId {
   PAGODA = 80,
 }
 
+export interface LedgerSettings {
+  path?: string;
+  transport?: any;
+  actived?: boolean;
+}
+
+export const LEDGER_BASE_PATH = "44'/4801368'/0'/0'";
+
+export const getLedgerAddressPath = (point: number) => `${LEDGER_BASE_PATH}/${point}'`;
+
 const connections = {
   [NetworkId.MAINNET]: 'https://ctz.solidwallet.io/api/v3',
   [NetworkId.YEOUIDO]: 'https://bicon.net.solidwallet.io/api/v3',
@@ -22,6 +32,12 @@ class ContractSettings {
   networkId: NetworkId;
   provider: any;
   account: AccountType = '';
+  ledgerSettings: LedgerSettings = {
+    path: LEDGER_BASE_PATH,
+    transport: null,
+    actived: false,
+  };
+
   /**
    * @constructor
    * @param provider {Object} -

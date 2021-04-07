@@ -62,7 +62,7 @@ export default class Baln extends Contract {
       method: 'transfer',
       params: {
         _to: to,
-        _value: IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop()),
+        _value: IconConverter.toHex(IconAmount.of(value, IconAmount.Unit.ICX).toLoop()),
       },
     });
 

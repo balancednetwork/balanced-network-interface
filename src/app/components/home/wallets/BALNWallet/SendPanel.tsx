@@ -13,7 +13,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
 
 import { Grid, MaxButton } from '../utils';
 
@@ -34,7 +34,9 @@ export default function SendPanel() {
 
   const wallet = useWalletBalances();
 
-  const maxAmount = wallet.BALNbalance;
+  const details = useBALNDetails();
+
+  const maxAmount: BigNumber = details['Available balance'] || new BigNumber(0);
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());

@@ -102,7 +102,7 @@ export function useFetchLiquidity(account?: string | null) {
   };
 
   const fetchLiquidity = React.useCallback(() => {
-    const getSuppliedToken = (poolId: string, baseAddress: string, quoteAddress: string) => {
+    const getSuppliedToken = (poolId: number, baseAddress: string, quoteAddress: string) => {
       return new Promise((resolve, reject) => {
         Promise.all([
           bnJs.Dex.balanceOf(poolId),
@@ -124,7 +124,7 @@ export function useFetchLiquidity(account?: string | null) {
 
     if (account) {
       Promise.all([
-        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXICXpoolId.toString()),
+        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXICXpoolId),
         bnJs.eject({ account: account }).Dex.getICXBalance(),
       ]).then(result => {
         const [sICXICXTotalSupply, ICXBalance] = result.map(v => convertLoopToIcx(v as BigNumber));
@@ -135,7 +135,7 @@ export function useFetchLiquidity(account?: string | null) {
         });
       });
 
-      getSuppliedToken(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.sICX.address, bnJs.bnUSD.address)
+      getSuppliedToken(BalancedJs.utils.sICXbnUSDpoolId, bnJs.sICX.address, bnJs.bnUSD.address)
         .then((result: any) =>
           changeLiquiditySupply({
             sICXbnUSDBalance: result.balance,
@@ -148,7 +148,7 @@ export function useFetchLiquidity(account?: string | null) {
         )
         .catch(e => console.error(e));
 
-      getSuppliedToken(BalancedJs.utils.BALNbnUSDpoolId.toString(), bnJs.Baln.address, bnJs.bnUSD.address)
+      getSuppliedToken(BalancedJs.utils.BALNbnUSDpoolId, bnJs.Baln.address, bnJs.bnUSD.address)
         .then((result: any) =>
           changeLiquiditySupply({
             BALNbnUSDBalance: result.balance,

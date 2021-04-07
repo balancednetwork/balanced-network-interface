@@ -5,11 +5,11 @@ import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
 
-enum SlippageError {
-  InvalidInput = 'InvalidInput',
-  RiskyLow = 'RiskyLow',
-  RiskyHigh = 'RiskyHigh',
-}
+// enum SlippageError {
+//   InvalidInput = 'InvalidInput',
+//   RiskyLow = 'RiskyLow',
+//   RiskyHigh = 'RiskyHigh',
+// }
 
 // enum DeadlineError {
 //   InvalidInput = 'InvalidInput',
@@ -70,16 +70,16 @@ export default function SlippageSettings({
     slippageInput === '' || (rawSlippage / 100).toFixed(2) === Number.parseFloat(slippageInput).toFixed(2);
   // const deadlineInputIsValid = deadlineInput === '' || (deadline / 60).toString() === deadlineInput;
 
-  let slippageError: SlippageError | undefined;
-  if (slippageInput !== '' && !slippageInputIsValid) {
-    slippageError = SlippageError.InvalidInput;
-  } else if (slippageInputIsValid && rawSlippage < 50) {
-    slippageError = SlippageError.RiskyLow;
-  } else if (slippageInputIsValid && rawSlippage > 500) {
-    slippageError = SlippageError.RiskyHigh;
-  } else {
-    slippageError = undefined;
-  }
+  // let slippageError: SlippageError | undefined;
+  // if (slippageInput !== '' && !slippageInputIsValid) {
+  //   slippageError = SlippageError.InvalidInput;
+  // } else if (slippageInputIsValid && rawSlippage < 50) {
+  //   slippageError = SlippageError.RiskyLow;
+  // } else if (slippageInputIsValid && rawSlippage > 500) {
+  //   slippageError = SlippageError.RiskyHigh;
+  // } else {
+  //   slippageError = undefined;
+  // }
 
   // let deadlineError: DeadlineError | undefined;
   // if (deadlineInput !== '' && !deadlineInputIsValid) {

@@ -109,7 +109,10 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair) },
+          {
+            pending: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair).pendingMessage,
+            summary: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair).successMessage,
+          },
         );
       })
       .catch(e => {
@@ -125,7 +128,10 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair) },
+          {
+            pending: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair).pendingMessage,
+            summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair).successMessage,
+          },
         );
       })
       .catch(e => {
@@ -141,7 +147,10 @@ export default function LPPanel() {
         console.log('res', res);
         addTransaction(
           { hash: res.result },
-          { summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair) },
+          {
+            pending: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair).pendingMessage,
+            summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair).successMessage,
+          },
         );
       })
       .catch(e => {
@@ -158,10 +167,14 @@ export default function LPPanel() {
         addTransaction(
           { hash: res.result },
           {
+            pending: supplyMessage(
+              formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ).pendingMessage,
             summary: supplyMessage(
               formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
               selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-            ),
+            ).successMessage,
           },
         );
       })
@@ -247,10 +260,14 @@ export default function LPPanel() {
         addTransaction(
           { hash: res.result },
           {
+            pending: supplyMessage(
+              formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ).pendingMessage,
             summary: supplyMessage(
               formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
               selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-            ),
+            ).successMessage,
           },
         );
         setShowSupplyConfirm(false);
@@ -261,7 +278,6 @@ export default function LPPanel() {
   };
 
   const supplyBALNbnUSD = () => {
-    alert(new BigNumber(supplyOutputAmount).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair())).toString());
     bnJs
       .eject({ account: account })
       .Dex.add(
@@ -275,10 +291,14 @@ export default function LPPanel() {
         addTransaction(
           { hash: res.result },
           {
+            pending: supplyMessage(
+              formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ).pendingMessage,
             summary: supplyMessage(
               formatBigNumber(new BigNumber(supplyInputAmount), 'currency'),
               selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-            ),
+            ).successMessage,
           },
         );
         setShowSupplyConfirm(false);

@@ -10,7 +10,6 @@ import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/L
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { CURRENCYLIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
-import { useWalletICXBalance } from 'hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 import { Currency } from 'types';
 import { escapeRegExp } from 'utils';
@@ -34,7 +33,6 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
   transition: border 0.3s ease, background-color 0.3s ease, color 0.3s ease;
   cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-
   :hover,
   :focus {
     border: 2px solid #2ca9b7;
@@ -65,7 +63,6 @@ const NumberInput = styled.input<{ bg?: string }>`
   font-size: 100%;
   line-height: 1.15;
   margin: 0;
-
   :hover,
   :focus {
     border: 2px solid #2ca9b7;
@@ -159,11 +156,11 @@ export default function CurrencyInputPanel({
 
   const { account } = useIconReact();
   const walletBalance = useWalletBalanceValue();
-  const ICXbalance = useWalletICXBalance(account);
+
   const tokenBalance = (symbol: string) => {
     if (account) {
       if (symbol === 'icx') {
-        return ICXbalance;
+        return walletBalance.ICXbalance;
       } else if (symbol === 'baln') {
         return walletBalance.BALNbalance;
       } else if (symbol === 'sicx') {

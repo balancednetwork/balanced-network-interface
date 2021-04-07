@@ -65,7 +65,13 @@ export default function ICXWallet() {
       .transfer(address, differenceAmount)
       .then(res => {
         if (res.result) {
-          addTransaction({ hash: res.result }, { summary: `Sent ${differenceAmount.toNumber()} ICX to ${address}.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: `Sending ICX...`,
+              summary: `Sent ${differenceAmount.dp(2).toFormat()} ICX.`,
+            },
+          );
           toggleOpen();
           setValue('');
           setAddress('');
@@ -144,8 +150,10 @@ export default function ICXWallet() {
               <Typography>Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
 
               <Box>
-                {list.map(item => (
-                  <Typography variant="p">{item.dp(2).toFormat()} ICX unstaking</Typography>
+                {list.map((item, index) => (
+                  <Typography key={index} variant="p">
+                    {item.dp(2).toFormat()} ICX unstaking
+                  </Typography>
                 ))}
               </Box>
             </Grid>

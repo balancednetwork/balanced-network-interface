@@ -20,6 +20,8 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
+import { withdrawMessage } from './utils';
+
 const LiquidityDetails = () => {
   const { account } = useIconReact();
 
@@ -102,7 +104,10 @@ const LiquidityDetails = () => {
         changeLiquiditySupply({ ICXBalance: new BigNumber(0) });
         addTransaction(
           { hash: res.result },
-          { summary: `Withdrawn ${formatBigNumber(ICXBalance, 'currency')} ICX from the DEX.` },
+          {
+            pending: withdrawMessage(amountWithdrawICX, 'ICX', '', 'sICX').pendingMessage,
+            summary: withdrawMessage(amountWithdrawICX, 'ICX', '', 'sICX').successMessage,
+          },
         );
       })
       .catch(e => {

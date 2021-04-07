@@ -65,6 +65,9 @@ export function theme(): DefaultTheme {
 
       // divider
       divider: 'rgba(255, 255, 255, 0.15)',
+
+      // alert
+      alert: '#fb6a6a',
     },
 
     fontSizes: [12, 14, 16, 20, 25, 35],

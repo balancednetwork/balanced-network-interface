@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { IconAmount } from 'icon-sdk-js';
+import { IconAmount, IconConverter } from 'icon-sdk-js';
 
 import { ResponseJsonRPCPayload } from '..';
 import addresses from '../addresses';
@@ -12,44 +12,28 @@ export default class Dex extends Contract {
     this.address = addresses[this.nid].dex;
   }
 
-  getPrice(pid: string) {
+  getPrice(pid: number) {
     const callParams = this.paramsBuilder({
       method: 'getPrice',
       params: {
-        _pid: pid,
+        _pid: IconConverter.toHex(pid),
       },
     });
 
     return this.call(callParams);
   }
 
-  async dexSupplysICXbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const hexBasePrice =
-      '0x' + IconAmount.of(baseValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
-    const hexQuotePrice =
-      '0x' + IconAmount.of(quoteValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+  async add(
+    baseValue: BigNumber,
+    quoteValue: BigNumber,
+    _baseToken: string,
+    _quoteToken: string,
+  ): Promise<ResponseJsonRPCPayload> {
+    const hexBasePrice = IconConverter.toHex(IconAmount.of(baseValue.toNumber(), IconAmount.Unit.ICX).toLoop());
+    const hexQuotePrice = IconConverter.toHex(IconAmount.of(quoteValue.toNumber(), IconAmount.Unit.ICX).toLoop());
     const params = {
-      _baseToken: addresses[this.nid].sicx,
-      _quoteToken: addresses[this.nid].bnUSD,
-      _maxBaseValue: hexBasePrice,
-      _quoteValue: hexQuotePrice,
-    };
-    const payload = this.transactionParamsBuilder({
-      method: 'add',
-      params,
-    });
-    console.log(payload);
-    return this.callIconex(payload);
-  }
-
-  async supplyBALNbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const hexBasePrice =
-      '0x' + IconAmount.of(baseValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
-    const hexQuotePrice =
-      '0x' + IconAmount.of(quoteValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
-    const params = {
-      _baseToken: addresses[this.nid].baln,
-      _quoteToken: addresses[this.nid].bnUSD,
+      _baseToken: _baseToken,
+      _quoteToken: _quoteToken,
       _maxBaseValue: hexBasePrice,
       _quoteValue: hexQuotePrice,
     };
@@ -109,7 +93,7 @@ export default class Dex extends Contract {
 
   transferICX(value: BigNumber) {
     const payload = this.transferICXParamsBuilder({
-      value: value.integerValue(BigNumber.ROUND_DOWN),
+      value: value,
     });
 
     return this.callIconex(payload);
@@ -144,9 +128,8 @@ export default class Dex extends Contract {
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
-  remove(pid: number, value: BigNumber) {
-    const valueHex =
-      '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+  withdrawalTokens(pid: number, value: BigNumber) {
+    const valueHex = IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop());
     const payload = this.transactionParamsBuilder({
       method: 'remove',
       params: {

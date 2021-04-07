@@ -61,7 +61,13 @@ export default function SendPanel() {
       .sICX.transfer(address, differenceAmount)
       .then(res => {
         if (res.result) {
-          addTransaction({ hash: res.result }, { summary: `Sent ${differenceAmount.toNumber()} sICX to ${address}.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: `Sending sICX...`,
+              summary: `Sent ${differenceAmount.dp(2).toFormat()} sICX to ${address}.`,
+            },
+          );
           toggleOpen();
           setValue('');
           setAddress('');

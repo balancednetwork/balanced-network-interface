@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import Divider from 'app/components/Divider';
+import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -31,6 +32,7 @@ const RewardsPanel = () => {
               summary: `Claimed ${reward.dp(2).toFormat()} BALN.`,
             },
           );
+          toggleOpen();
         })
         .catch(e => {
           console.error('error', e);
@@ -49,6 +51,12 @@ const RewardsPanel = () => {
   const hasRewardableLiquidity = useHasRewardableLiquidity();
 
   const hashNetworkFees = useHasNetworkFees();
+
+  // stake new balance tokens modal
+  const [open, setOpen] = React.useState(false);
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
 
   if (!hasRewardableCollateral && !hasRewardableLiquidity) {
     return (
@@ -107,6 +115,29 @@ const RewardsPanel = () => {
           </Button>
         </Flex>
       </BoxPanel>
+
+      {/* Stake new Balance Tokens Modal */}
+      <Modal isOpen={open} onDismiss={toggleOpen}>
+        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+          <Typography textAlign="center" mb={1}>
+            Stake new Balance Tokens
+          </Typography>
+
+          <Typography variant="p" textAlign="center" fontSize={19} mb={3}>
+            Stake your new BALN from your wallet to accrue rewards from network fees*.
+          </Typography>
+
+          <Typography textAlign="center">
+            *Must borrow at least 50 bnUSD and keep your risk below the reward threshold.
+          </Typography>
+
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            <Button onClick={toggleOpen} fontSize={14}>
+              Close
+            </Button>
+          </Flex>
+        </Flex>
+      </Modal>
 
       {/* Stake new Balance Tokens Modal */}
       {/* <Modal isOpen={open} onDismiss={handleClose}>

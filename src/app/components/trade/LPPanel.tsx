@@ -127,7 +127,10 @@ export default function LPPanel() {
       .then(res => {
         addTransaction(
           { hash: res.result },
-          { summary: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair) },
+          {
+            pending: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair).pendingMessage,
+            summary: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair).successMessage,
+          },
         );
       })
       .catch(e => {
@@ -142,7 +145,10 @@ export default function LPPanel() {
       .then(res => {
         addTransaction(
           { hash: res.result },
-          { summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair) },
+          {
+            pending: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair).pendingMessage,
+            summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair).successMessage,
+          },
         );
       })
       .catch(e => {
@@ -157,7 +163,10 @@ export default function LPPanel() {
       .then(res => {
         addTransaction(
           { hash: res.result },
-          { summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair) },
+          {
+            pending: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair).pendingMessage,
+            summary: depositMessage(selectedPair.baseCurrencyKey, selectedPair.pair).successMessage,
+          },
         );
       })
       .catch(e => {
@@ -173,10 +182,14 @@ export default function LPPanel() {
         addTransaction(
           { hash: res.result },
           {
+            pending: supplyMessage(
+              formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ).pendingMessage,
             summary: supplyMessage(
               formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
               selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-            ),
+            ).successMessage,
           },
         );
       })
@@ -234,10 +247,14 @@ export default function LPPanel() {
         addTransaction(
           { hash: res.result },
           {
-            summary: supplyMessage(
-              formatBigNumber(new BigNumber(parsedAmounts[Field.CURRENCY_A]), 'currency'),
+            pending: supplyMessage(
+              formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
               selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-            ),
+            ).pendingMessage,
+            summary: supplyMessage(
+              formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ).successMessage,
           },
         );
         setShowSupplyConfirm(false);
@@ -261,10 +278,14 @@ export default function LPPanel() {
         addTransaction(
           { hash: res.result },
           {
-            summary: supplyMessage(
-              formatBigNumber(new BigNumber(parsedAmounts[Field.CURRENCY_A]), 'currency'),
+            pending: supplyMessage(
+              formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
               selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-            ),
+            ).pendingMessage,
+            summary: supplyMessage(
+              formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
+              selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
+            ).successMessage,
           },
         );
         setShowSupplyConfirm(false);

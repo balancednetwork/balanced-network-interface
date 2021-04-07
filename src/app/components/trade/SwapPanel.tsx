@@ -95,10 +95,10 @@ export default function SwapPanel() {
     const sICXICXratio = convertLoopToIcx(await bnJs.Staking.getTodayRate());
     changeRatioValue({ sICXICXratio });
 
-    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId.toString()));
+    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId));
     changeRatioValue({ sICXbnUSDratio });
 
-    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId.toString()));
+    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId));
     changeRatioValue({ BALNbnUSDratio });
   }, [changeRatioValue]);
 
@@ -265,7 +265,10 @@ export default function SwapPanel() {
           addTransaction(
             { hash: res.result },
             {
-              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
+              pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .pendingMessage,
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .successMessage,
             },
           );
           refreshPrice();
@@ -284,7 +287,10 @@ export default function SwapPanel() {
           addTransaction(
             { hash: res.result },
             {
-              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
+              pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .pendingMessage,
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .successMessage,
             },
           );
           refreshPrice();
@@ -302,7 +308,12 @@ export default function SwapPanel() {
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
-            { summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol) },
+            {
+              pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .pendingMessage,
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .successMessage,
+            },
           );
           refreshPrice();
           setSwapInputAmount('0');
@@ -319,7 +330,12 @@ export default function SwapPanel() {
           setShowSwapConfirm(false);
           addTransaction(
             { hash: res.result },
-            { summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol) },
+            {
+              pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .pendingMessage,
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .successMessage,
+            },
           );
           refreshPrice();
           setSwapInputAmount('0');
@@ -337,7 +353,10 @@ export default function SwapPanel() {
           addTransaction(
             { hash: res.result },
             {
-              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol),
+              pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .pendingMessage,
+              summary: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
+                .successMessage,
             },
           );
           refreshPrice();

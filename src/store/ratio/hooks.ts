@@ -53,13 +53,13 @@ export function useFetchPrice() {
 
   // sICX / bnUSD price
   useInterval(async () => {
-    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId.toString()));
+    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId));
     changeRatioValue({ sICXbnUSDratio });
   }, PERIOD);
 
   // BALN / bnUSD price
   useInterval(async () => {
-    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId.toString()));
+    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId));
     changeRatioValue({ BALNbnUSDratio });
   }, PERIOD);
 }

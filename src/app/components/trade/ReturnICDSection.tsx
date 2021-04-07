@@ -105,7 +105,8 @@ const ReturnICDSection = () => {
         addTransaction(
           { hash: res.result },
           {
-            summary: retireMessage(retireAmount),
+            pending: retireMessage(retireAmount, 'sICX').pendingMessage,
+            summary: retireMessage(retireAmount, 'sICX').successMessage,
           },
         );
       })

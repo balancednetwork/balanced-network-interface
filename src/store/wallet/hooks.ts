@@ -48,7 +48,7 @@ export function useFetchBalance(account?: string | null) {
         bnJs.sICX.balanceOf(),
         bnJs.Baln.balanceOf(),
         bnJs.bnUSD.balanceOf(),
-        bnJs.Rewards.getRewards(),
+        bnJs.Rewards.getBalnHolding(account),
       ]).then(result => {
         const [ICXbalance, sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v));
         changeBalanceValue({ ICXbalance, sICXbalance, BALNbalance, bnUSDbalance, BALNreward });

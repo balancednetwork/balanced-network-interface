@@ -12,11 +12,11 @@ export default class Dex extends Contract {
     this.address = addresses[this.nid].dex;
   }
 
-  getPrice(pid: string) {
+  getPrice(pid: number) {
     const callParams = this.paramsBuilder({
       method: 'getPrice',
       params: {
-        _pid: pid,
+        _pid: IconConverter.toHex(pid),
       },
     });
 
@@ -128,7 +128,7 @@ export default class Dex extends Contract {
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
-  withdrawalTokens(pid: number, value: BigNumber) {
+  remove(pid: number, value: BigNumber) {
     const valueHex = IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop());
     const payload = this.transactionParamsBuilder({
       method: 'remove',
@@ -145,6 +145,18 @@ export default class Dex extends Contract {
   getFees() {
     const callParams = this.paramsBuilder({
       method: 'getFees',
+    });
+
+    return this.call(callParams);
+  }
+
+  isEarningRewards(address: string, id: number) {
+    const callParams = this.paramsBuilder({
+      method: 'isEarningRewards',
+      params: {
+        _address: address,
+        _id: IconConverter.toHex(id),
+      },
     });
 
     return this.call(callParams);

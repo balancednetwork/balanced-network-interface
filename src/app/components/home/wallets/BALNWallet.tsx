@@ -15,9 +15,9 @@ import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCY_LIST } from 'constants/currency';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 import { StyledTabList, StyledTab, Grid, MaxButton } from './utils';
 
@@ -36,7 +36,7 @@ export default function BALNWallet() {
 
   const { account } = useIconReact();
 
-  const wallet = useWalletBalanceValue();
+  const wallet = useWalletBalances();
 
   const maxAmount = wallet.BALNbalance;
 
@@ -139,7 +139,7 @@ export default function BALNWallet() {
               <CurrencyInputPanel
                 value={value}
                 showMaxButton={false}
-                currency={CURRENCYLIST['baln']}
+                currency={CURRENCY_LIST['baln']}
                 onUserInput={handleCurrencyInput}
                 id="baln-currency-input-in-baln-wallet"
               />

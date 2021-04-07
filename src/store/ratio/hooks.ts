@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { BalancedJs } from 'packages/BalancedJs';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
@@ -12,9 +12,8 @@ import { changeRatioValue } from './actions';
 import { RatioState } from './reducer';
 
 // #redux-step-5: define function get value of variable from store
-export function useRatioValue(): AppState['ratio'] {
-  const ratio = useSelector((state: AppState) => state.ratio);
-  return useMemo(() => ratio, [ratio]);
+export function useRatio(): AppState['ratio'] {
+  return useSelector((state: AppState) => state.ratio);
 }
 
 // #redux-step-6: define function working with variable on store

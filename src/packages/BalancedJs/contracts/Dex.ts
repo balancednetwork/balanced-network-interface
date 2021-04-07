@@ -57,33 +57,33 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  balanceOf(pid: string) {
+  balanceOf(pid: number) {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',
       params: {
         _owner: this.account,
-        _id: pid,
+        _id: IconConverter.toHex(pid),
       },
     });
     return this.call(callParams);
   }
 
-  getTotalSupply(pid: string) {
+  getTotalSupply(pid: number) {
     const callParams = this.paramsBuilder({
       method: 'totalSupply',
       params: {
-        _pid: pid,
+        _pid: IconConverter.toHex(pid),
       },
     });
 
     return this.call(callParams);
   }
 
-  getPoolTotal(pid: string, tokenAddress: string) {
+  getPoolTotal(pid: number, tokenAddress: string) {
     const callParams = this.paramsBuilder({
       method: 'getPoolTotal',
       params: {
-        _pid: pid,
+        _pid: IconConverter.toHex(pid),
         _token: tokenAddress,
       },
     });
@@ -133,7 +133,7 @@ export default class Dex extends Contract {
     const payload = this.transactionParamsBuilder({
       method: 'remove',
       params: {
-        _pid: pid.toString(16),
+        _pid: IconConverter.toHex(pid),
         _value: valueHex,
         _withdraw: '0x1',
       },

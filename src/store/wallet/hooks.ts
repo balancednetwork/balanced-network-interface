@@ -11,7 +11,7 @@ import { changeValueBalance } from './actions';
 import { WalletState } from './reducer';
 
 // #redux-step-5: define function get value of variable from store
-export function useWalletBalanceValue(): AppState['walletBalance'] {
+export function useWalletBalances(): AppState['walletBalance'] {
   const walletBalance = useSelector((state: AppState) => state.walletBalance);
   return useMemo(() => walletBalance, [walletBalance]);
 }

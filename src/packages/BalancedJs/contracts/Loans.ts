@@ -47,7 +47,6 @@ export default class Loans extends Contract {
       method: 'originateLoan',
       params,
     });
-    console.log(payload);
     return this.callIconex(payload);
   }
 

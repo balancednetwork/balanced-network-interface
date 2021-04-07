@@ -8,10 +8,10 @@ import styled from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCY_LIST } from 'constants/currency';
 import '@reach/tabs/styles.css';
-import { useRatioValue } from 'store/ratio/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useRatio } from 'store/ratio/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 import BALNWallet from './wallets/BALNWallet';
 import BnUSDWallet from './wallets/BnUSDWallet';
@@ -19,9 +19,9 @@ import ICXWallet from './wallets/ICXWallet';
 import SICXWallet from './wallets/SICXWallet';
 
 const WalletPanel = () => {
-  const walletBalance = useWalletBalanceValue();
+  const walletBalance = useWalletBalances();
   const { account } = useIconReact();
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
   return (
     <BoxPanel bg="bg2">
@@ -43,9 +43,9 @@ const WalletPanel = () => {
               <StyledAccordionButton>
                 <ListItem>
                   <AssetSymbol>
-                    <CurrencyLogo currency={CURRENCYLIST['icx']} />
+                    <CurrencyLogo currency={CURRENCY_LIST['icx']} />
                     <Typography fontSize={16} fontWeight="bold">
-                      {CURRENCYLIST['icx'].symbol}
+                      {CURRENCY_LIST['icx'].symbol}
                     </Typography>
                   </AssetSymbol>
                   <DataText>{!account ? '-' : walletBalance.ICXbalance.dp(2).toFormat()}</DataText>
@@ -65,9 +65,9 @@ const WalletPanel = () => {
               <StyledAccordionButton>
                 <ListItem>
                   <AssetSymbol>
-                    <CurrencyLogo currency={CURRENCYLIST['sicx']} />
+                    <CurrencyLogo currency={CURRENCY_LIST['sicx']} />
                     <Typography fontSize={16} fontWeight="bold">
-                      {CURRENCYLIST['sicx'].symbol}
+                      {CURRENCY_LIST['sicx'].symbol}
                     </Typography>
                   </AssetSymbol>
                   <DataText>{!account ? '-' : walletBalance.sICXbalance.dp(2).toFormat()}</DataText>
@@ -92,9 +92,9 @@ const WalletPanel = () => {
               <StyledAccordionButton>
                 <ListItem>
                   <AssetSymbol>
-                    <CurrencyLogo currency={CURRENCYLIST['bnusd']} />
+                    <CurrencyLogo currency={CURRENCY_LIST['bnusd']} />
                     <Typography fontSize={16} fontWeight="bold">
-                      {CURRENCYLIST['bnusd'].symbol}
+                      {CURRENCY_LIST['bnusd'].symbol}
                     </Typography>
                   </AssetSymbol>
                   <DataText>{!account ? '-' : walletBalance.bnUSDbalance.dp(2).toFormat()}</DataText>
@@ -112,9 +112,9 @@ const WalletPanel = () => {
               <StyledAccordionButton>
                 <ListItem border={false}>
                   <AssetSymbol>
-                    <CurrencyLogo currency={CURRENCYLIST['baln']} />
+                    <CurrencyLogo currency={CURRENCY_LIST['baln']} />
                     <Typography fontSize={16} fontWeight="bold">
-                      {CURRENCYLIST['baln'].symbol}
+                      {CURRENCY_LIST['baln'].symbol}
                     </Typography>
                   </AssetSymbol>
                   <DataText>{!account ? '-' : walletBalance.BALNbalance.dp(2).toFormat()}</DataText>

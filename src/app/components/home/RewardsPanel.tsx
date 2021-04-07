@@ -10,14 +10,14 @@ import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableCollateral, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 const RewardsPanel = () => {
   const { account } = useIconReact();
-  const wallet = useWalletBalanceValue();
+  const wallet = useWalletBalances();
   const addTransaction = useTransactionAdder();
 
   const handleClaim = () => {
@@ -42,7 +42,7 @@ const RewardsPanel = () => {
 
   const reward = wallet.BALNreward;
 
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
   const rewardAmountByUSD = reward.multipliedBy(ratio.BALNbnUSDratio);
 

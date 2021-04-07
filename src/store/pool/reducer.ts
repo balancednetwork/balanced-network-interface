@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { Pair, SupportedPairs } from 'constants/currency';
+import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
 
 import { setPair } from './actions';
 
@@ -9,7 +9,7 @@ export interface PoolState {
 }
 
 const initialState: PoolState = {
-  selectedPair: SupportedPairs[0],
+  selectedPair: SUPPORTED_PAIRS[0],
 };
 
 export default createReducer(initialState, builder =>

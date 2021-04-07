@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -128,7 +128,7 @@ export function useLoanAdjust(): (isAdjust: boolean) => void {
 }
 
 export function useLoanTotalBorrowableAmount() {
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
   const stakedICXAmount = useCollateralInputAmount();
 
@@ -153,7 +153,7 @@ export function useLoanInputAmount() {
 const MANDATORY_COLLATERAL_RATIO = 4;
 
 export function useLockedICXAmount() {
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
   const bnUSDLoanAmount = useLoanInputAmount();
 

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { useCollateralDepositedAmount } from 'store/collateral/hooks';
 import { useLoanBorrowedAmount } from 'store/loan/hooks';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -71,7 +71,7 @@ export const useCollateralRatio = () => {
   // sICX collateral * sICXICX price * ICXUSD price / bnUSD loan
   const sICXAmount = useCollateralDepositedAmount();
   const borrowedAmount = useLoanBorrowedAmount();
-  const ratio = useRatioValue();
+  const ratio = useRatio();
   return sICXAmount.times(ratio.sICXICXratio).times(ratio.ICXUSDratio).div(borrowedAmount);
 };
 

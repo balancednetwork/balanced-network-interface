@@ -12,7 +12,7 @@ export interface WalletState {
   BALNreward: BigNumber;
 }
 
-// #redux-step-2: inital state
+// #redux-step-2: initial state
 const initialState: WalletState = {
   ICXbalance: new BigNumber(0),
   sICXbalance: new BigNumber(0),
@@ -21,7 +21,7 @@ const initialState: WalletState = {
   BALNreward: new BigNumber(0),
 };
 
-// #redux-step-7: define function reducer, what happend when the action have dispatch
+// #redux-step-7: define function reducer, what happened when the action have dispatch
 export default createReducer(initialState, builder =>
   builder.addCase(
     changeValueBalance,

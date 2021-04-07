@@ -11,9 +11,9 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCY_LIST } from 'constants/currency';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 import { Grid, MaxButton } from '../utils';
 
@@ -32,7 +32,7 @@ export default function SendPanel() {
 
   const { account } = useIconReact();
 
-  const wallet = useWalletBalanceValue();
+  const wallet = useWalletBalances();
 
   const maxAmount = wallet.sICXbalance;
 
@@ -97,7 +97,7 @@ export default function SendPanel() {
         <CurrencyInputPanel
           value={value}
           showMaxButton={false}
-          currency={CURRENCYLIST['sicx']}
+          currency={CURRENCY_LIST['sicx']}
           onUserInput={handleCurrencyInput}
           id="sicx-currency-input-in-sicx-wallet"
         />

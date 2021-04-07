@@ -78,14 +78,18 @@ const useSelectedPairSuppliedMaxAmount = () => {
 
   switch (selectedPair.pair) {
     case SUPPORTED_PAIRS[0].pair: {
-      if (walletBalance.sICXbalance.multipliedBy(ratio.sICXbnUSDratio).isLessThan(walletBalance.bnUSDbalance)) {
+      if (
+        walletBalance.sICXbalance.multipliedBy(ratio.sICXbnUSDratio).isLessThanOrEqualTo(walletBalance.bnUSDbalance)
+      ) {
         return { value: walletBalance.sICXbalance.toNumber(), key: 'input' };
       } else {
         return { value: walletBalance.bnUSDbalance.toNumber(), key: 'output' };
       }
     }
     case SUPPORTED_PAIRS[1].pair: {
-      if (walletBalance.BALNbalance.multipliedBy(ratio.BALNbnUSDratio).isLessThan(walletBalance.bnUSDbalance)) {
+      if (
+        walletBalance.BALNbalance.multipliedBy(ratio.BALNbnUSDratio).isLessThanOrEqualTo(walletBalance.bnUSDbalance)
+      ) {
         return { value: walletBalance.BALNbalance.toNumber(), key: 'input' };
       } else {
         return { value: walletBalance.bnUSDbalance.toNumber(), key: 'output' };

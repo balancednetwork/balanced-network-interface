@@ -105,7 +105,7 @@ const LiquidityDetails = () => {
     if (
       liquiditySupply.sICXSuppliedPoolsICXbnUSD
         ?.multipliedBy(ratio.sICXbnUSDratio)
-        .isGreaterThanOrEqualTo(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || new BigNumber(0))
+        .isLessThanOrEqualTo(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || new BigNumber(0))
     ) {
       setAmountWithdrawsICXbnUSDMax(liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toNumber() || 0);
     } else {
@@ -117,7 +117,7 @@ const LiquidityDetails = () => {
 
   React.useEffect(() => {
     if (
-      liquiditySupply.BALNSuppliedPoolBALNbnUSD?.multipliedBy(ratio.BALNbnUSDratio).isGreaterThanOrEqualTo(
+      liquiditySupply.BALNSuppliedPoolBALNbnUSD?.multipliedBy(ratio.BALNbnUSDratio).isLessThanOrEqualTo(
         liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || new BigNumber(0),
       )
     ) {

@@ -1,5 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 
+import BigNumber from 'bignumber.js';
+import _ from 'lodash';
+import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -60,3 +63,29 @@ export function useFetchBalance(account?: string | null) {
     fetchBalances();
   }, [fetchBalances, transactions, account]);
 }
+
+export const useBALNDetails = (): { [key in string]?: BigNumber } => {
+  const { account } = useIconReact();
+  const transactions = useAllTransactions();
+  const [details, setDetails] = React.useState({});
+
+  React.useEffect(() => {
+    const fetchDetails = async () => {
+      if (account) {
+        const result = await bnJs.Baln.detailsBalanceOf(account);
+
+        const temp = {};
+
+        _.forEach(result, function (value, key) {
+          temp[key] = convertLoopToIcx(new BigNumber(value));
+        });
+
+        setDetails(temp);
+      }
+    };
+
+    fetchDetails();
+  }, [account, transactions]);
+
+  return details;
+};

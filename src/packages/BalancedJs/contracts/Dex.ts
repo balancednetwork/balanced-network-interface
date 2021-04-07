@@ -68,7 +68,7 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  getTotalSupply(pid: number) {
+  totalSupply(pid: number) {
     const callParams = this.paramsBuilder({
       method: 'totalSupply',
       params: {

@@ -106,7 +106,7 @@ export function useFetchLiquidity(account?: string | null) {
       return new Promise((resolve, reject) => {
         Promise.all([
           bnJs.Dex.balanceOf(poolId),
-          bnJs.Dex.getTotalSupply(poolId),
+          bnJs.Dex.totalSupply(poolId),
           bnJs.Dex.getPoolTotal(poolId, baseAddress),
           bnJs.Dex.getPoolTotal(poolId, quoteAddress),
         ])
@@ -124,7 +124,7 @@ export function useFetchLiquidity(account?: string | null) {
 
     if (account) {
       Promise.all([
-        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXICXpoolId),
+        bnJs.Dex.totalSupply(BalancedJs.utils.sICXICXpoolId),
         bnJs.eject({ account: account }).Dex.getICXBalance(),
       ]).then(result => {
         const [sICXICXTotalSupply, ICXBalance] = result.map(v => convertLoopToIcx(v as BigNumber));

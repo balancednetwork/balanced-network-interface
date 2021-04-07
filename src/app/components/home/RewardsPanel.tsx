@@ -1,7 +1,5 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -11,58 +9,10 @@ import Divider from 'app/components/Divider';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useCollateralDepositedAmount } from 'store/collateral/hooks';
-import { useLoanBorrowedAmount } from 'store/loan/hooks';
 import { useRatioValue } from 'store/ratio/hooks';
+import { useHasRewardableCollateral, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalanceValue } from 'store/wallet/hooks';
-
-const useCollateralRatio = () => {
-  // sICX collateral * sICXICX price * ICXUSD price / bnUSD loan
-  const sICXAmount = useCollateralDepositedAmount();
-  const borrowedAmount = useLoanBorrowedAmount();
-  const ratio = useRatioValue();
-  return sICXAmount.times(ratio.sICXICXratio).times(ratio.ICXUSDratio).div(borrowedAmount);
-};
-
-const useHasRewardableCollateral = () => {
-  const borrowedAmount = useLoanBorrowedAmount();
-  const collateralRatio = useCollateralRatio();
-
-  if (
-    borrowedAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
-    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(5))
-  ) {
-    return true;
-  }
-
-  return false;
-};
-
-const useHasRewardableLiquidity = () => {
-  const { account } = useIconReact();
-
-  const [hasRewardableLiquidity, setHasRewardableLiquidity] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkIfRewardable = async () => {
-      if (account) {
-        const result = await Promise.all([
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.BALNbnUSDpoolId),
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.sICXbnUSDpoolId),
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.sICXICXpoolId),
-        ]);
-
-        if (result.find(pool => Number(pool))) setHasRewardableLiquidity(true);
-        else setHasRewardableLiquidity(false);
-      }
-    };
-
-    checkIfRewardable();
-  }, [account]);
-
-  return hasRewardableLiquidity;
-};
 
 const RewardsPanel = () => {
   const { account } = useIconReact();
@@ -98,6 +48,8 @@ const RewardsPanel = () => {
 
   const hasRewardableLiquidity = useHasRewardableLiquidity();
 
+  const hashNetworkFees = useHasNetworkFees();
+
   if (!hasRewardableCollateral && !hasRewardableLiquidity) {
     return (
       <div>
@@ -126,10 +78,15 @@ const RewardsPanel = () => {
 
         <RewardGrid>
           <Row>
-            <Typography variant="p">Loan rewards</Typography>
+            <Typography variant="p">Balance Tokens</Typography>
             <Typography variant="p">
               {!account ? '-' : reward.isZero() ? 'Pending' : `${reward.dp(2).toFormat()} BALN`}
             </Typography>
+          </Row>
+
+          <Row>
+            <Typography variant="p">Network fees</Typography>
+            <Typography variant="p">{!account ? '-' : hashNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
           </Row>
 
           <Divider />

@@ -91,4 +91,15 @@ export default class Baln extends Contract {
 
     return this.callIconex(payload);
   }
+
+  public detailsBalanceOf(owner: string) {
+    const callParams = this.paramsBuilder({
+      method: 'detailsBalanceOf',
+      params: {
+        _owner: owner,
+      },
+    });
+
+    return this.call(callParams);
+  }
 }

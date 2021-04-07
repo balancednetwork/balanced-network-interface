@@ -247,8 +247,6 @@ export default function LPPanel() {
   };
 
   const supply_sICXbnUSD = () => {
-    //alert(new BigNumber(supplyOutputAmount).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair())).toString());
-    //alert(new BigNumber(supplyOutputAmount).toString());
     bnJs
       .eject({ account: account })
       .Dex.add(
@@ -280,7 +278,6 @@ export default function LPPanel() {
   };
 
   const supplyBALNbnUSD = () => {
-    alert(new BigNumber(supplyOutputAmount).multipliedBy(new BigNumber(1).dividedBy(getRatioByPair())).toString());
     bnJs
       .eject({ account: account })
       .Dex.add(

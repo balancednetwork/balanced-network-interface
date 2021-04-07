@@ -1,27 +1,23 @@
 import React from 'react';
 
-import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
-import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
-import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
-import { StyledTabList, StyledTab, Grid, MaxButton } from './utils';
+import { Grid, MaxButton } from '../utils';
 
-export default function BALNWallet() {
+export default function SendPanel() {
   const [value, setValue] = React.useState('');
 
   const handleCurrencyInput = (value: string) => {
@@ -76,9 +72,6 @@ export default function BALNWallet() {
           setValue('');
           setAddress('');
         } else {
-          // to do
-          // need to handle error case
-          // for example: out of balance
           console.error(res);
         }
       });
@@ -91,86 +84,29 @@ export default function BALNWallet() {
     differenceAmount.isGreaterThan(maxAmount);
 
   return (
-    <BoxPanel bg="bg3">
-      <Tabs>
-        <StyledTabList>
-          <StyledTab>Stake</StyledTab>
-          <StyledTab>Send</StyledTab>
-          <StyledTab>Unstaking</StyledTab>
-        </StyledTabList>
-        <Divider mb={3} />
-        <TabPanels>
-          <TabPanel>
-            <Typography variant="h3">Stake Balance Tokens</Typography>
+    <>
+      <Grid>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Typography variant="h3">Send BALN</Typography>
+          <MaxButton onClick={handleMax}>Send max</MaxButton>
+        </Flex>
 
-            <Typography my={1}>Stake your Balance Tokens to earn dividends.</Typography>
+        <CurrencyInputPanel
+          value={value}
+          showMaxButton={false}
+          currency={CURRENCY_LIST['baln']}
+          onUserInput={handleCurrencyInput}
+          id="baln-currency-input-in-baln-wallet"
+        />
 
-            <Box my={3}>
-              <Nouislider
-                disabled
-                id="slider-collateral"
-                start={[10000]}
-                padding={[0]}
-                connect={[true, false]}
-                range={{
-                  min: [0],
-                  max: [15000],
-                }}
-              />
-            </Box>
+        <AddressInputPanel value={address} onUserInput={handleAddressInput} />
+      </Grid>
 
-            <Flex my={1} alignItems="center" justifyContent="space-between">
-              <Typography>0 / 724</Typography>
-              <Typography>97% staked</Typography>
-            </Flex>
-
-            <Flex alignItems="center" justifyContent="center" mt={5}>
-              <Button>Adjust</Button>
-            </Flex>
-          </TabPanel>
-
-          <TabPanel>
-            <Grid>
-              <Flex alignItems="center" justifyContent="space-between">
-                <Typography variant="h3">Send BALN</Typography>
-                <MaxButton onClick={handleMax}>Send max</MaxButton>
-              </Flex>
-
-              <CurrencyInputPanel
-                value={value}
-                showMaxButton={false}
-                currency={CURRENCY_LIST['baln']}
-                onUserInput={handleCurrencyInput}
-                id="baln-currency-input-in-baln-wallet"
-              />
-
-              <AddressInputPanel value={address} onUserInput={handleAddressInput} />
-            </Grid>
-
-            <Flex alignItems="center" justifyContent="center" mt={5}>
-              <Button onClick={toggleOpen} disabled={isDisabled}>
-                Send
-              </Button>
-            </Flex>
-          </TabPanel>
-
-          <TabPanel>
-            <Grid>
-              <Typography variant="h3">Unstaking</Typography>
-
-              <Box>
-                <Typography>Collateral unstaking</Typography>
-                <Typography variant="p">9,716 ICX ~12 days remaining.</Typography>
-              </Box>
-
-              <Box>
-                <Typography>Liquidity unstaking</Typography>
-                <Typography variant="p">3,468 ICX ~5 days remaining.</Typography>
-              </Box>
-            </Grid>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+      <Flex alignItems="center" justifyContent="center" mt={5}>
+        <Button onClick={toggleOpen} disabled={isDisabled}>
+          Send
+        </Button>
+      </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
@@ -208,6 +144,6 @@ export default function BALNWallet() {
           </Flex>
         </Flex>
       </Modal>
-    </BoxPanel>
+    </>
   );
 }

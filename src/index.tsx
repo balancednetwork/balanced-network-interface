@@ -33,7 +33,8 @@ const fmt = {
   suffix: '',
 };
 
-BigNumber.config({ FORMAT: fmt });
+BigNumber.config({ FORMAT: fmt, ROUNDING_MODE: BigNumber.ROUND_DOWN });
+BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN }); // equivalent
 
 ReactDOM.render(
   <Provider store={store}>

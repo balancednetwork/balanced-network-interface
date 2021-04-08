@@ -97,6 +97,10 @@ const LiquidityDetails = () => {
 
   React.useEffect(() => {
     setAmountWithdrawICX('0');
+    setAmountWithdrawBALNPoolBALNbnUSD('0');
+    setAmountWithdrawBNUSDPoolsBALNbnUSD('0');
+    setAmountWithdrawSICXPoolsICXbnUSD('0');
+    setAmountWithdrawBNUSDPoolsICXbnUSD('0');
   }, [liquiditySupply.ICXBalance]);
 
   const [amountWithdrawsICXbnUSDMax, setAmountWithdrawsICXbnUSDMax] = React.useState(0);

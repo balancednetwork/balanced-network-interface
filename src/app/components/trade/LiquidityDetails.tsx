@@ -245,8 +245,8 @@ const LiquidityDetails = () => {
     if (!account) return;
     let withdrawTotal = new BigNumber(0);
     if (
-      parseFloat(withdrawBALNamount) >= amountWithdrawsICXbnUSDMax ||
-      parseFloat(withdrawBNUSDamount) >= amountWithdrawsICXbnUSDMax
+      parseFloat(withdrawBALNamount) >= amountWithdrawBALNbnUSDMax ||
+      parseFloat(withdrawBNUSDamount) >= amountWithdrawBALNbnUSDMax
     ) {
       withdrawTotal = liquiditySupply.BALNbnUSDBalance || new BigNumber(0);
     } else {

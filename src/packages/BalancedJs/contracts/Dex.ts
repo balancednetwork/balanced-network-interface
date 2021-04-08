@@ -47,10 +47,6 @@ export default class Dex extends Contract {
       hexQuotePrice = IconConverter.toHex(IconAmount.of(quoteValue.toNumber(), IconAmount.Unit.ICX).toLoop());
     }
 
-    alert('input: ' + baseValue);
-    alert('hex input: ' + hexBasePrice);
-    alert('output: ' + quoteValue);
-    alert('hex output: ' + hexQuotePrice);
     const params = {
       _baseToken: _baseToken,
       _quoteToken: _quoteToken,

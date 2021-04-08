@@ -207,8 +207,8 @@ const LiquidityDetails = () => {
     if (!account) return;
     let withdrawTotal = 0;
     if (
-      formatBigNumber(new BigNumber(amountWithdrawsICXbnUSDMax), 'input') === withdrawSICXamount ||
-      formatBigNumber(new BigNumber(amountWithdrawsICXbnUSDMax), 'input') === withdrawBNUSDamount
+      parseFloat(withdrawSICXamount) >= amountWithdrawsICXbnUSDMax ||
+      parseFloat(withdrawBNUSDamount) >= amountWithdrawsICXbnUSDMax
     ) {
       withdrawTotal = liquiditySupply.sICXbnUSDBalance?.toNumber() || 0;
     } else {

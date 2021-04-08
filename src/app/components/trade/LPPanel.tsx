@@ -242,8 +242,9 @@ export default function LPPanel() {
     bnJs
       .eject({ account: account })
       .Dex.add(
-        parsedAmounts[Field.CURRENCY_B].multipliedBy(new BigNumber(1).dividedBy(selectedPairRatio)),
+        parsedAmounts[Field.CURRENCY_A],
         parsedAmounts[Field.CURRENCY_B],
+        selectedPairRatio,
         bnJs.sICX.address,
         bnJs.bnUSD.address,
       )
@@ -269,12 +270,12 @@ export default function LPPanel() {
   };
 
   const supplyBALNbnUSD = () => {
-    alert(parsedAmounts[Field.CURRENCY_B].multipliedBy(new BigNumber(1).dividedBy(selectedPairRatio)).toString());
     bnJs
       .eject({ account: account })
       .Dex.add(
-        parsedAmounts[Field.CURRENCY_B].multipliedBy(new BigNumber(1).dividedBy(selectedPairRatio)),
+        parsedAmounts[Field.CURRENCY_A],
         parsedAmounts[Field.CURRENCY_B],
+        selectedPairRatio,
         bnJs.Baln.address,
         bnJs.bnUSD.address,
       )

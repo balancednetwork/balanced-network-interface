@@ -26,11 +26,29 @@ export default class Dex extends Contract {
   async add(
     baseValue: BigNumber,
     quoteValue: BigNumber,
+    baseToQuoteRatio: BigNumber,
     _baseToken: string,
     _quoteToken: string,
   ): Promise<ResponseJsonRPCPayload> {
-    const hexBasePrice = IconConverter.toHex(IconAmount.of(baseValue.toNumber(), IconAmount.Unit.ICX).toLoop());
-    const hexQuotePrice = IconConverter.toHex(IconAmount.of(quoteValue.toNumber(), IconAmount.Unit.ICX).toLoop());
+    const calculatedQuoteValue = baseValue.multipliedBy(baseToQuoteRatio);
+    const calculatedBaseValue = quoteValue.multipliedBy(new BigNumber(1).dividedBy(baseToQuoteRatio));
+    let hexBasePrice = '';
+    let hexQuotePrice = '';
+
+    if (calculatedBaseValue.toString().length > calculatedQuoteValue.toString().length) {
+      hexBasePrice = IconConverter.toHex(IconAmount.of(baseValue.toNumber(), IconAmount.Unit.ICX).toLoop());
+      hexQuotePrice = IconConverter.toHex(IconAmount.of(calculatedQuoteValue.toNumber(), IconAmount.Unit.ICX).toLoop());
+    } else {
+      hexBasePrice = IconConverter.toHex(
+        IconAmount.of(calculatedBaseValue.toFormat(17, BigNumber.ROUND_UP), IconAmount.Unit.ICX).toLoop(),
+      );
+      hexQuotePrice = IconConverter.toHex(IconAmount.of(quoteValue.toNumber(), IconAmount.Unit.ICX).toLoop());
+    }
+
+    alert('input: ' + baseValue);
+    alert('hex input: ' + hexBasePrice);
+    alert('output: ' + quoteValue);
+    alert('hex output: ' + hexQuotePrice);
     const params = {
       _baseToken: _baseToken,
       _quoteToken: _quoteToken,

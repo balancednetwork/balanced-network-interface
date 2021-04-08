@@ -24,7 +24,7 @@ const SlippageEmojiContainer = styled.span`
 
 const SlippageInput = styled(Flex)`
   height: 32px;
-  color: ${({ theme, color }) => (color === 'red' ? 'red' : theme.colors.text1)};
+  color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors.text1)};
   outline: none;
   border-radius: 8px;
   border: 2px solid #0c2a4d;
@@ -42,7 +42,7 @@ const SlippageInput = styled(Flex)`
 
 const Input = styled.input`
   width: 48px;
-  color: ${({ theme, color }) => (color === 'red' ? 'red' : theme.colors.text1)};
+  color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors.text1)};
   outline: none;
   border: none;
   background-color: #0c2a4d;
@@ -122,7 +122,7 @@ export default function SlippageSettings({
                 parseCustomSlippage((rawSlippage / 100).toFixed(2));
               }}
               onChange={e => parseCustomSlippage(e.target.value)}
-              color={!slippageInputIsValid ? 'red' : ''}
+              color={!slippageInputIsValid ? '#fb6a6a' : ''}
             />
             %
           </SlippageInput>
@@ -132,7 +132,7 @@ export default function SlippageSettings({
         <Flex mb={2} ml={2} mr={2}>
           <SlippageEmojiContainer>
             <Box width={1}>
-              <Typography as="span" textAlign="center" color={'red'}>
+              <Typography as="span" textAlign="center" color={'#fb6a6a'}>
                 10% max
               </Typography>
             </Box>

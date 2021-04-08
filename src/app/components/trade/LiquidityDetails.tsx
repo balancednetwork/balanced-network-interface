@@ -205,21 +205,21 @@ const LiquidityDetails = () => {
 
   const withdrawSICXBNUSD = (withdrawSICXamount: string, withdrawBNUSDamount: string) => {
     if (!account) return;
-    let withdrawTotal = 0;
+    let withdrawTotal = new BigNumber(0);
     if (
       parseFloat(withdrawSICXamount) >= amountWithdrawsICXbnUSDMax ||
       parseFloat(withdrawBNUSDamount) >= amountWithdrawsICXbnUSDMax
     ) {
-      withdrawTotal = liquiditySupply.sICXbnUSDBalance?.toNumber() || 0;
+      withdrawTotal = liquiditySupply.sICXbnUSDBalance || new BigNumber(0);
     } else {
-      withdrawTotal =
-        (parseFloat(withdrawSICXamount) / (liquiditySupply.sICXPoolsICXbnUSDTotal?.toNumber() || 0)) *
-        (liquiditySupply.sICXbnUSDTotalSupply?.toNumber() || 0);
+      withdrawTotal = new BigNumber(withdrawSICXamount)
+        .dividedBy(liquiditySupply.sICXPoolsICXbnUSDTotal || new BigNumber(0))
+        .multipliedBy(liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0));
     }
 
     bnJs
       .eject({ account: account })
-      .Dex.remove(BalancedJs.utils.sICXbnUSDpoolId, new BigNumber(withdrawTotal))
+      .Dex.remove(BalancedJs.utils.sICXbnUSDpoolId, withdrawTotal)
       .then(result => {
         console.log(result);
         addTransaction(

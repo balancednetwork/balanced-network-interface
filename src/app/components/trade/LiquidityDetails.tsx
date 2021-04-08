@@ -144,7 +144,7 @@ const LiquidityDetails = () => {
 
   const handleWithdrawConfirm = () => {
     if (inputCurrency.toLowerCase() === 'sicx' && outputCurrency.toLowerCase() === 'bnusd') {
-      withdrawSICXBNUSD(withdrawInputAmount);
+      withdrawSICXBNUSD(withdrawInputAmount, withdrawOutputAmount);
     } else if (inputCurrency.toLowerCase() === 'baln' && outputCurrency.toLowerCase() === 'bnusd') {
       withdrawBALNbnUSD(withdrawInputAmount);
     } else if (inputCurrency.toLowerCase() === 'icx' && outputCurrency.toLowerCase() === 'sicx') {
@@ -203,11 +203,20 @@ const LiquidityDetails = () => {
       });
   };
 
-  const withdrawSICXBNUSD = (withdrawSICXamount: string) => {
+  const withdrawSICXBNUSD = (withdrawSICXamount: string, withdrawBNUSDamount: string) => {
     if (!account) return;
-    const withdrawTotal =
-      (parseFloat(withdrawSICXamount) / (liquiditySupply.sICXPoolsICXbnUSDTotal?.toNumber() || 0)) *
-      (liquiditySupply.sICXbnUSDTotalSupply?.toNumber() || 0);
+    let withdrawTotal = 0;
+    if (
+      formatBigNumber(new BigNumber(amountWithdrawsICXbnUSDMax), 'input') === withdrawSICXamount ||
+      formatBigNumber(new BigNumber(amountWithdrawsICXbnUSDMax), 'input') === withdrawBNUSDamount
+    ) {
+      withdrawTotal = liquiditySupply.sICXbnUSDBalance?.toNumber() || 0;
+    } else {
+      withdrawTotal =
+        (parseFloat(withdrawSICXamount) / (liquiditySupply.sICXPoolsICXbnUSDTotal?.toNumber() || 0)) *
+        (liquiditySupply.sICXbnUSDTotalSupply?.toNumber() || 0);
+    }
+
     bnJs
       .eject({ account: account })
       .Dex.remove(BalancedJs.utils.sICXbnUSDpoolId, new BigNumber(withdrawTotal))

@@ -43,12 +43,16 @@ export function escapeRegExp(string: string): string {
 }
 
 export function formatBigNumber(value: BigNumber | undefined, type: 'currency' | 'ratio' | 'input') {
-  if (value === undefined || value.isNaN()) {
+  if (value === undefined || value.isNaN() || value.isEqualTo(0)) {
     return '0';
   } else {
     switch (type) {
       case 'currency': {
-        return value.toFixed(2, 0);
+        if (value.decimalPlaces() === 0) {
+          return value.toFormat(0, BigNumber.ROUND_UP);
+        } else {
+          return value.toFormat(2, BigNumber.ROUND_UP);
+        }
       }
       case 'input': {
         return value.toFixed(2, 1);

@@ -31,7 +31,7 @@ const LiquidityDetails = () => {
   const changeLiquiditySupply = useChangeLiquiditySupply();
   const liquiditySupply = useLiquiditySupply();
   const addTransaction = useTransactionAdder();
-  const walletBalance = useWalletBalances();
+  const balances = useWalletBalances();
   const ratio = useRatio();
   const poolReward = useReward();
 
@@ -390,7 +390,7 @@ const LiquidityDetails = () => {
                           />
                         </Box>
                         <Typography mb={5} textAlign="right">
-                          Wallet: {formatBigNumber(walletBalance.ICXbalance, 'currency')} ICX
+                          Wallet: {formatBigNumber(balances['ICX'], 'currency')} ICX
                         </Typography>
                         <Nouislider
                           id="slider-supply"
@@ -473,8 +473,8 @@ const LiquidityDetails = () => {
                           />
                         </Box>
                         <Typography mb={5} textAlign="right">
-                          Wallet: {formatBigNumber(walletBalance.sICXbalance, 'currency')} sICX /{' '}
-                          {formatBigNumber(walletBalance.bnUSDbalance, 'currency')} bnUSD
+                          Wallet: {formatBigNumber(balances['sICX'], 'currency')} sICX /{' '}
+                          {formatBigNumber(balances['bnUSD'], 'currency')} bnUSD
                         </Typography>
                         <Nouislider
                           id="slider-supply"
@@ -551,8 +551,8 @@ const LiquidityDetails = () => {
                           />
                         </Box>
                         <Typography mb={5} textAlign="right">
-                          Wallet: {formatBigNumber(walletBalance.BALNbalance, 'currency')} BALN /{' '}
-                          {formatBigNumber(walletBalance.bnUSDbalance, 'currency')} bnUSD
+                          Wallet: {formatBigNumber(balances['BALN'], 'currency')} BALN /{' '}
+                          {formatBigNumber(balances['bnUSD'], 'currency')} bnUSD
                         </Typography>
                         <Nouislider
                           id="slider-supply"

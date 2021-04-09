@@ -49,7 +49,7 @@ export default function SendPanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.BALNbalance;
+  const beforeAmount = wallet['BALN'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 

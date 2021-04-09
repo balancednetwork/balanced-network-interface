@@ -68,24 +68,10 @@ export enum Field {
 
 export default function SwapPanel() {
   const { account } = useIconReact();
-  const walletBalance = useWalletBalances();
+  const balances = useWalletBalances();
   const ratio = useRatio();
   const addTransaction = useTransactionAdder();
   const changeRatioValue = useChangeRatio();
-
-  const tokenBalance = (symbol: string) => {
-    if (account) {
-      if (symbol === 'ICX') {
-        return walletBalance.ICXbalance;
-      } else if (symbol === 'BALN') {
-        return walletBalance.BALNbalance;
-      } else if (symbol === 'sICX') {
-        return walletBalance.sICXbalance;
-      } else if (symbol === 'bnUSD') {
-        return walletBalance.bnUSDbalance;
-      }
-    }
-  };
 
   const refreshPrice = React.useCallback(async () => {
     const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
@@ -457,8 +443,7 @@ export default function SwapPanel() {
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">Swap</Typography>
             <Typography>
-              Wallet: {formatBigNumber(new BigNumber(tokenBalance(inputCurrency.symbol) || 0), 'currency')}{' '}
-              {inputCurrency.symbol}{' '}
+              {`Wallet: ${formatBigNumber(balances[inputCurrency.symbol], 'currency')} ${inputCurrency.symbol}`}
             </Typography>
           </Flex>
 
@@ -477,8 +462,7 @@ export default function SwapPanel() {
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">For</Typography>
             <Typography>
-              Wallet: {formatBigNumber(new BigNumber(tokenBalance(outputCurrency.symbol) || 0), 'currency')}{' '}
-              {outputCurrency.symbol}
+              {`Wallet: ${formatBigNumber(balances[outputCurrency.symbol], 'currency')} ${outputCurrency.symbol}`}
             </Typography>
           </Flex>
 

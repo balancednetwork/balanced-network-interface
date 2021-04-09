@@ -15,8 +15,7 @@ import bnJs from 'bnJs';
 import { CURRENCY_LIST, SUPPORTED_PAIRS } from 'constants/currency';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
-import { usePoolPair, useSelectedPoolRate } from 'store/pool/hooks';
-import { useRatio } from 'store/ratio/hooks';
+import { usePool, usePoolPair, useSelectedPoolRate } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
@@ -26,63 +25,25 @@ import { SectionPanel, BrightPanel, depositMessage, supplyMessage } from './util
 
 const useSelectedPairBalances = () => {
   const selectedPair = usePoolPair();
-  const walletBalance = useWalletBalances();
+  const balances = useWalletBalances();
 
-  switch (selectedPair.pair) {
-    case SUPPORTED_PAIRS[0].pair: {
-      return {
-        base: walletBalance.sICXbalance,
-        quote: walletBalance.bnUSDbalance,
-      };
-    }
-
-    case SUPPORTED_PAIRS[1].pair: {
-      return {
-        base: walletBalance.BALNbalance,
-        quote: walletBalance.bnUSDbalance,
-      };
-    }
-
-    case SUPPORTED_PAIRS[2].pair: {
-      return { base: walletBalance.ICXbalance, quote: new BigNumber(0) };
-    }
-
-    default: {
-      return { base: new BigNumber(0), quote: new BigNumber(0) };
-    }
-  }
+  return {
+    base: balances[selectedPair.baseCurrencyKey],
+    quote: balances[selectedPair.quoteCurrencyKey],
+  };
 };
+
+const ZERO = new BigNumber(0);
 
 const useSelectedPairSuppliedMaxAmount = () => {
   const selectedPair = usePoolPair();
-  const walletBalance = useWalletBalances();
-  const ratio = useRatio();
+  const balances = useWalletBalances();
+  const pool = usePool(selectedPair.poolId);
 
-  switch (selectedPair.pair) {
-    case SUPPORTED_PAIRS[0].pair: {
-      if (
-        walletBalance.sICXbalance.multipliedBy(ratio.sICXbnUSDratio).isLessThanOrEqualTo(walletBalance.bnUSDbalance)
-      ) {
-        return { value: walletBalance.sICXbalance.toNumber(), key: 'input' };
-      } else {
-        return { value: walletBalance.bnUSDbalance.toNumber(), key: 'output' };
-      }
-    }
-    case SUPPORTED_PAIRS[1].pair: {
-      if (
-        walletBalance.BALNbalance.multipliedBy(ratio.BALNbnUSDratio).isLessThanOrEqualTo(walletBalance.bnUSDbalance)
-      ) {
-        return { value: walletBalance.BALNbalance.toNumber(), key: 'input' };
-      } else {
-        return { value: walletBalance.bnUSDbalance.toNumber(), key: 'output' };
-      }
-    }
-    case SUPPORTED_PAIRS[2].pair: {
-      return { value: walletBalance.ICXbalance.toNumber(), key: 'input' };
-    }
-    default: {
-      return { value: 0, key: 'input' };
-    }
+  if (pool) {
+    return BigNumber.min(balances[pool?.baseCurrencyKey].times(pool?.rate), balances[pool?.quoteCurrencyKey]);
+  } else {
+    return ZERO;
   }
 };
 
@@ -381,7 +342,7 @@ export default function LPPanel() {
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [maxAmountSupply.value],
+                max: [maxAmountSupply.dp(2).toNumber()],
               }}
               onSlide={handleSlider}
             />

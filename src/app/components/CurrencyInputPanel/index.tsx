@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -154,22 +153,7 @@ export default function CurrencyInputPanel({
     }
   };
 
-  const { account } = useIconReact();
-  const walletBalance = useWalletBalances();
-
-  const tokenBalance = (symbol: string) => {
-    if (account) {
-      if (symbol === 'icx') {
-        return walletBalance.ICXbalance;
-      } else if (symbol === 'baln') {
-        return walletBalance.BALNbalance;
-      } else if (symbol === 'sicx') {
-        return walletBalance.sICXbalance;
-      } else if (symbol === 'bnusd') {
-        return walletBalance.bnUSDbalance;
-      }
-    }
-  };
+  const balances = useWalletBalances();
 
   return (
     <InputContainer ref={ref}>
@@ -195,7 +179,7 @@ export default function CurrencyInputPanel({
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      {tokenBalance(currency.toLowerCase())?.dp(2).toFormat()} {currency}
+                      {balances[currency]?.dp(2).toFormat()} {currency}
                     </DataText>
                   </ListItem>
                 ))}

@@ -20,17 +20,11 @@ export function useWalletBalances(): AppState['walletBalance'] {
 }
 
 // #redux-step-6: define function working with variable on store
-export function useChangeWalletBalance(): ({
-  ICXbalance,
-  sICXbalance,
-  bnUSDbalance,
-  BALNbalance,
-  BALNreward,
-}: Partial<WalletState>) => void {
+export function useChangeWalletBalance(): ({ ICX, sICX, bnUSD, BALN, BALNreward }: Partial<WalletState>) => void {
   const dispatch = useDispatch();
   return useCallback(
-    ({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance, BALNreward }) => {
-      dispatch(changeValueBalance({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance, BALNreward }));
+    ({ ICX, sICX, bnUSD, BALN, BALNreward }) => {
+      dispatch(changeValueBalance({ ICX, sICX, bnUSD, BALN, BALNreward }));
     },
     [dispatch],
   );
@@ -53,8 +47,8 @@ export function useFetchBalance(account?: string | null) {
         bnJs.bnUSD.balanceOf(),
         bnJs.Rewards.getBalnHolding(account),
       ]).then(result => {
-        const [ICXbalance, sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v));
-        changeBalanceValue({ ICXbalance, sICXbalance, BALNbalance, bnUSDbalance, BALNreward });
+        const [ICX, sICX, BALN, bnUSD, BALNreward] = result.map(v => convertLoopToIcx(v));
+        changeBalanceValue({ ICX, sICX, BALN, bnUSD, BALNreward });
       });
     }
   }, [account, changeBalanceValue]);

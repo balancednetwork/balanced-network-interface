@@ -38,7 +38,7 @@ export default function ICXWallet() {
 
   const wallet = useWalletBalances();
 
-  const maxAmount = wallet.ICXbalance.minus(0.1).isNegative() ? new BigNumber(0) : wallet.ICXbalance.minus(0.1);
+  const maxAmount = wallet['ICX'].minus(0.1).isNegative() ? new BigNumber(0) : wallet['ICX'].minus(0.1);
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -51,7 +51,7 @@ export default function ICXWallet() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.ICXbalance;
+  const beforeAmount = wallet['ICX'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 

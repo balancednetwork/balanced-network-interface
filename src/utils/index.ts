@@ -48,7 +48,7 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   } else {
     switch (type) {
       case 'currency': {
-        return value.toFixed(2, 0);
+        return value.dp(2).toFormat();
       }
       case 'input': {
         return value.toFixed(2, 1);

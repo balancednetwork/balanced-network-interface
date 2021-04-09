@@ -15,7 +15,7 @@ import bnJs from 'bnJs';
 import { CURRENCY_LIST, SUPPORTED_PAIRS } from 'constants/currency';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
-import { usePoolPair } from 'store/pool/hooks';
+import { usePoolPair, useSelectedPoolRate } from 'store/pool/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -23,24 +23,6 @@ import { formatBigNumber } from 'utils';
 
 import LPDescription from './LPDescription';
 import { SectionPanel, BrightPanel, depositMessage, supplyMessage } from './utils';
-
-const useSelectedPairRatio = () => {
-  const ratio = useRatio();
-  const selectedPair = usePoolPair();
-
-  switch (selectedPair.pair) {
-    case SUPPORTED_PAIRS[0].pair: {
-      return ratio.sICXbnUSDratio;
-    }
-    case SUPPORTED_PAIRS[1].pair: {
-      return ratio.BALNbnUSDratio;
-    }
-    case SUPPORTED_PAIRS[2].pair: {
-      return ratio.sICXICXratio;
-    }
-  }
-  return new BigNumber(1);
-};
 
 const useSelectedPairBalances = () => {
   const selectedPair = usePoolPair();
@@ -120,7 +102,7 @@ export default function LPPanel() {
 
   const selectedPair = usePoolPair();
 
-  const selectedPairRatio = useSelectedPairRatio();
+  const selectedPairRatio = useSelectedPoolRate();
 
   const addTransaction = useTransactionAdder();
 

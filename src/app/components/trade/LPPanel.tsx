@@ -13,6 +13,7 @@ import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, SUPPORTED_PAIRS } from 'constants/currency';
+import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { usePoolPair } from 'store/pool/hooks';
@@ -106,6 +107,7 @@ const useSelectedPairSuppliedMaxAmount = () => {
 
 export default function LPPanel() {
   const { account } = useIconReact();
+  const toggleWalletModal = useWalletModalToggle();
 
   // modal
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
@@ -115,7 +117,11 @@ export default function LPPanel() {
   };
 
   const handleSupply = () => {
-    setShowSupplyConfirm(true);
+    if (!account) {
+      toggleWalletModal();
+    } else {
+      setShowSupplyConfirm(true);
+    }
   };
 
   const selectedPair = usePoolPair();

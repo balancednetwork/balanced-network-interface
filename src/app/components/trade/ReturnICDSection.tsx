@@ -16,6 +16,7 @@ import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
+import { useWalletModalToggle } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -38,6 +39,7 @@ const ReturnICDSection = () => {
   const [receiveAmount, setReceiveAmount] = React.useState('0');
   const [swapFee, setSwapFee] = React.useState('0');
   const [open, setOpen] = React.useState(false);
+  const toggleWalletModal = useWalletModalToggle();
 
   const handleTypeInput = React.useCallback(
     (val: string) => {
@@ -89,8 +91,13 @@ const ReturnICDSection = () => {
   };
 
   const handleRetire = () => {
-    closeDropdown();
-    setOpen(true);
+    if (!account) {
+      closeDropdown();
+      toggleWalletModal();
+    } else {
+      closeDropdown();
+      setOpen(true);
+    }
   };
 
   const handleRetireDismiss = () => {

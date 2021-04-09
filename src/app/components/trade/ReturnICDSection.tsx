@@ -19,6 +19,7 @@ import { CURRENCY_LIST } from 'constants/currency';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
+import { formatBigNumber } from 'utils';
 
 import { retireMessage } from './utils';
 
@@ -50,7 +51,11 @@ const ReturnICDSection = () => {
           const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
           setSwapFee(fee.toFixed(2).toString());
           val = (parseFloat(val) - fee).toString();
-          setReceiveAmount((parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString());
+          setReceiveAmount(
+            isNaN(parseFloat(val))
+              ? formatBigNumber(new BigNumber(0), 'currency')
+              : (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
+          );
         })
         .catch(e => {
           console.error('error', e);
@@ -183,7 +188,9 @@ const ReturnICDSection = () => {
                 {receiveAmount} sICX
               </Typography>
               <Typography textAlign="center">
-                ~ {(parseFloat(receiveAmount) * ratio.sICXICXratio?.toNumber()).toFixed(2)} ICX
+                ~{' '}
+                {formatBigNumber(new BigNumber(parseFloat(receiveAmount) * ratio.sICXICXratio?.toNumber()), 'currency')}{' '}
+                ICX
               </Typography>
             </Box>
           </Flex>

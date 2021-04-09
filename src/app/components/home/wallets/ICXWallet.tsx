@@ -96,7 +96,7 @@ export default function ICXWallet() {
     setTabIndex(index);
   };
 
-  const [unstakingAmount, setUnstakingAmount] = React.useState<BigNumber>();
+  const [unstakingAmount, setUnstakingAmount] = React.useState<BigNumber>(new BigNumber(0));
 
   React.useEffect(() => {
     const fetchUserUnstakeInfo = async () => {
@@ -151,11 +151,15 @@ export default function ICXWallet() {
             <Grid>
               <Typography variant="h3">Unstaking</Typography>
 
-              <Typography>Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
+              {!unstakingAmount.isZero() ? (
+                <>
+                  <Typography>Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
 
-              <Box>
-                <Typography variant="p">{unstakingAmount?.dp(2).toFormat()} ICX unstaking</Typography>
-              </Box>
+                  <Typography variant="p">{unstakingAmount.dp(2).toFormat()} ICX unstaking</Typography>
+                </>
+              ) : (
+                <Typography>There's no ICX unstaking.</Typography>
+              )}
             </Grid>
           </TabPanel>
         </TabPanels>

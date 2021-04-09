@@ -96,13 +96,17 @@ export default function ICXWallet() {
     setTabIndex(index);
   };
 
-  const [list, setList] = React.useState<BigNumber[]>([]);
+  const [unstakingAmount, setUnstakingAmount] = React.useState<BigNumber>();
 
   React.useEffect(() => {
     const fetchUserUnstakeInfo = async () => {
       if (account) {
-        const result = await bnJs.Staking.getUserUnstakeInfo(account);
-        setList(result.map(record => convertLoopToIcx(new BigNumber(record[0], 16))));
+        const result: Array<{ amount: string }> = await bnJs.Staking.getUserUnstakeInfo(account);
+        setUnstakingAmount(
+          result
+            .map(record => convertLoopToIcx(new BigNumber(record['amount'], 16)))
+            .reduce((sum, cur) => sum.plus(cur), new BigNumber(0)),
+        );
       }
     };
 
@@ -150,11 +154,7 @@ export default function ICXWallet() {
               <Typography>Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
 
               <Box>
-                {list.map((item, index) => (
-                  <Typography key={index} variant="p">
-                    {item.dp(2).toFormat()} ICX unstaking
-                  </Typography>
-                ))}
+                <Typography variant="p">{unstakingAmount?.dp(2).toFormat()} ICX unstaking</Typography>
               </Box>
             </Grid>
           </TabPanel>

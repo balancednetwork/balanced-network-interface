@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 
 import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
 
-import { setPair, setPoolData, setBalance, setReward } from './actions';
+import { setPair, setPoolData, setBalance, setReward, clearBalances } from './actions';
 
 export interface Pool {
   baseCurrencyKey: string;
@@ -72,5 +72,8 @@ export default createReducer(initialState, builder =>
         ...state.rewards,
         [poolId]: reward,
       };
+    })
+    .addCase(clearBalances, (state, { payload }) => {
+      state.balances = {};
     }),
 );

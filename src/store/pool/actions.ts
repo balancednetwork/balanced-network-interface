@@ -12,3 +12,5 @@ export const setPoolData = createAction<{ poolId: number; poolData: Partial<Pool
 export const setBalance = createAction<{ poolId: number; balance: Balance }>('pool/setBalance');
 
 export const setReward = createAction<{ poolId: number; reward: BigNumber }>('pool/setReward');
+
+export const clearBalances = createAction('pool/clearBalances');

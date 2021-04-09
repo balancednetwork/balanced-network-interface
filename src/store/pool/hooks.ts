@@ -13,7 +13,7 @@ import { Pair, BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppDispatch, AppState } from '../index';
-import { setBalance, setPair, setPoolData, setReward } from './actions';
+import { setBalance, setPair, setPoolData, setReward, clearBalances as clearBalancesCreator } from './actions';
 import { Balance, Pool } from './reducer';
 
 export function usePoolPair(): Pair {
@@ -42,15 +42,21 @@ export function useChangePool(): (poolId: number, poolData: Partial<Pool>) => vo
   );
 }
 
-export function useChangeBalance(): (poolId: number, balance: Balance) => void {
+export function useBalanceActionHandlers() {
   const dispatch = useDispatch<AppDispatch>();
 
-  return React.useCallback(
+  const changeBalance = React.useCallback(
     (poolId, balance) => {
       dispatch(setBalance({ poolId, balance }));
     },
     [dispatch],
   );
+
+  const clearBalances = React.useCallback(() => {
+    dispatch(clearBalancesCreator());
+  }, [dispatch]);
+
+  return { changeBalance, clearBalances };
 }
 
 export function useChangeReward(): (poolId: number, reward: BigNumber) => void {
@@ -147,36 +153,40 @@ export function useFetchPools() {
 
   // fetch LP token balances
   const { account } = useIconReact();
-  const changeBalance = useChangeBalance();
+  const { changeBalance, clearBalances } = useBalanceActionHandlers();
 
   React.useEffect(() => {
-    BASE_SUPPORTED_PAIRS.forEach(pair => {
-      const poolId = pair.poolId;
-      if (poolId === BalancedJs.utils.sICXICXpoolId) {
-        bnJs
-          .eject({ account })
-          .Dex.getICXBalance()
-          .then(res => {
-            changeBalance(poolId, {
-              baseCurrencyKey: pair.baseCurrencyKey,
-              quoteCurrencyKey: pair.quoteCurrencyKey,
-              balance: convertLoopToIcx(res),
+    if (account) {
+      BASE_SUPPORTED_PAIRS.forEach(pair => {
+        const poolId = pair.poolId;
+        if (poolId === BalancedJs.utils.sICXICXpoolId) {
+          bnJs
+            .eject({ account })
+            .Dex.getICXBalance()
+            .then(res => {
+              changeBalance(poolId, {
+                baseCurrencyKey: pair.baseCurrencyKey,
+                quoteCurrencyKey: pair.quoteCurrencyKey,
+                balance: convertLoopToIcx(res),
+              });
             });
-          });
-      } else {
-        bnJs
-          .eject({ account })
-          .Dex.balanceOf(poolId)
-          .then(res => {
-            changeBalance(poolId, {
-              baseCurrencyKey: pair.baseCurrencyKey,
-              quoteCurrencyKey: pair.quoteCurrencyKey,
-              balance: convertLoopToIcx(res),
+        } else {
+          bnJs
+            .eject({ account })
+            .Dex.balanceOf(poolId)
+            .then(res => {
+              changeBalance(poolId, {
+                baseCurrencyKey: pair.baseCurrencyKey,
+                quoteCurrencyKey: pair.quoteCurrencyKey,
+                balance: convertLoopToIcx(res),
+              });
             });
-          });
-      }
-    });
-  }, [account, transactions, changeBalance]);
+        }
+      });
+    } else {
+      clearBalances();
+    }
+  }, [account, transactions, changeBalance, clearBalances]);
 }
 
 export function usePools() {
@@ -249,13 +259,13 @@ export function usePoolData(poolId: number) {
   const poolShare = usePoolShare(poolId);
 
   return React.useMemo(() => {
-    if (pool && balance && reward) {
+    if (pool && reward) {
       return {
         totalBase: pool.base,
         totalQuote: pool.quote,
         totalReward: reward,
-        suppliedBase: balance.base,
-        suppliedQuote: balance.quote,
+        suppliedBase: balance?.base,
+        suppliedQuote: balance?.quote,
         suppliedReward: reward.times(poolShare),
         poolShare,
       };

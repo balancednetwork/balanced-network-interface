@@ -1,8 +1,9 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import Nouislider from 'nouislider-react';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
+import Nouislider from 'packages/nouislider-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -13,6 +14,7 @@ import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, SUPPORTED_PAIRS } from 'constants/currency';
+import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { usePool, usePoolPair, useSelectedPoolRate } from 'store/pool/hooks';
@@ -23,25 +25,27 @@ import { formatBigNumber } from 'utils';
 import LPDescription from './LPDescription';
 import { SectionPanel, BrightPanel, depositMessage, supplyMessage } from './utils';
 
-const useSelectedPairBalances = () => {
-  const selectedPair = usePoolPair();
-  const balances = useWalletBalances();
-
-  return {
-    base: balances[selectedPair.baseCurrencyKey],
-    quote: balances[selectedPair.quoteCurrencyKey],
-  };
-};
-
 const ZERO = new BigNumber(0);
 
-const useSelectedPairSuppliedMaxAmount = () => {
+const useAvailableLPTokenBalance = () => {
   const selectedPair = usePoolPair();
   const balances = useWalletBalances();
   const pool = usePool(selectedPair.poolId);
 
-  if (pool) {
-    return BigNumber.min(balances[pool?.baseCurrencyKey].times(pool?.rate), balances[pool?.quoteCurrencyKey]);
+  if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
+    if (selectedPair.poolId === BalancedJs.utils.sICXICXpoolId) {
+      return balances['ICX'];
+    }
+
+    if (
+      (balances[pool?.baseCurrencyKey] as BigNumber)
+        .times(pool?.rate)
+        .isLessThanOrEqualTo(balances[pool?.quoteCurrencyKey])
+    ) {
+      return balances[pool?.baseCurrencyKey].times(pool.total).div(pool.base);
+    } else {
+      return balances[pool?.quoteCurrencyKey].times(pool.total).div(pool.quote);
+    }
   } else {
     return ZERO;
   }
@@ -49,6 +53,7 @@ const useSelectedPairSuppliedMaxAmount = () => {
 
 export default function LPPanel() {
   const { account } = useIconReact();
+  const balances = useWalletBalances();
 
   // modal
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
@@ -263,12 +268,14 @@ export default function LPPanel() {
     }
   };
 
-  const walletBalanceSelected = useSelectedPairBalances();
+  const maxSliderAmount = useAvailableLPTokenBalance();
 
-  const maxAmountSupply = useSelectedPairSuppliedMaxAmount();
-
+  const pool = usePool(selectedPair.poolId);
   const handleSlider = (values: string[], handle: number) => {
-    onFieldAInput(values[handle]);
+    if (pool && !pool.total.isZero()) {
+      const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
+      onFieldAInput(baseAmount.toFixed());
+    }
   };
 
   const { independentField, typedValue, otherTypedValue } = useMintState();
@@ -297,6 +304,8 @@ export default function LPPanel() {
       ? ''
       : parsedAmounts[dependentField].toFixed(6),
   };
+
+  const toggleWalletModal = useWalletModalToggle();
 
   return (
     <>
@@ -328,10 +337,13 @@ export default function LPPanel() {
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            Wallet: {formatBigNumber(walletBalanceSelected.base, 'currency')} {selectedPair.baseCurrencyKey}
+            Wallet: {formatBigNumber(balances[selectedPair.baseCurrencyKey], 'currency')} {selectedPair.baseCurrencyKey}
             {selectedPair === SUPPORTED_PAIRS[2]
               ? ''
-              : ' / ' + formatBigNumber(walletBalanceSelected.quote, 'currency') + ' ' + selectedPair.quoteCurrencyKey}
+              : ' / ' +
+                formatBigNumber(balances[selectedPair.quoteCurrencyKey], 'currency') +
+                ' ' +
+                selectedPair.quoteCurrencyKey}
           </Typography>
 
           <Box mt={5}>
@@ -342,16 +354,22 @@ export default function LPPanel() {
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [maxAmountSupply.dp(2).toNumber()],
+                max: [maxSliderAmount.dp(2).toNumber()],
               }}
               onSlide={handleSlider}
             />
           </Box>
 
           <Flex justifyContent="center">
-            <Button color="primary" marginTop={5} onClick={handleSupply}>
-              Supply
-            </Button>
+            {account ? (
+              <Button color="primary" marginTop={5} onClick={handleSupply}>
+                Supply
+              </Button>
+            ) : (
+              <Button color="primary" marginTop={5} onClick={toggleWalletModal}>
+                Connect Wallet
+              </Button>
+            )}
           </Flex>
         </BrightPanel>
 

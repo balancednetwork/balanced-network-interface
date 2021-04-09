@@ -43,7 +43,7 @@ export function escapeRegExp(string: string): string {
 }
 
 export function formatBigNumber(value: BigNumber | undefined, type: 'currency' | 'ratio' | 'input') {
-  if (value === undefined || value.isNaN()) {
+  if (value === undefined || value.isNaN() || value.isEqualTo(0)) {
     return '0';
   } else {
     switch (type) {

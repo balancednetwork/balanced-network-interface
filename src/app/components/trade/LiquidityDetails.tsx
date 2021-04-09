@@ -263,7 +263,7 @@ const LiquidityDetails = () => {
         addTransaction(
           { hash: result.result },
           {
-            pending: withdrawMessage(amountWithdrawBALNPoolBALNbnUSD, 'sICX', amountWithdrawBNUSDPoolBALNbnUSD, 'bnUSD')
+            pending: withdrawMessage(amountWithdrawBALNPoolBALNbnUSD, 'BALN', amountWithdrawBNUSDPoolBALNbnUSD, 'bnUSD')
               .pendingMessage,
             summary: `${amountWithdrawBALNPoolBALNbnUSD} BALN and ${amountWithdrawBNUSDPoolBALNbnUSD} bnUSD added to your wallet.`,
           },

@@ -1,7 +1,10 @@
 import React from 'react';
 
+import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
+import { useIconReact } from 'packages/icon-react';
+import { convertLoopToIcx } from 'packages/icon-react/utils';
 import ClickAwayListener from 'react-click-away-listener';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -17,6 +20,7 @@ import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
 import { useLoanInputAmount, useLoanTotalBorrowableAmount, useLoanDebtHoldingShare } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
+import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
 
@@ -152,6 +156,7 @@ enum Period {
 const PERIODS = [Period.day, Period.week, Period.month];
 
 const PositionDetailPanel = () => {
+  const { account } = useIconReact();
   const [show, setShow] = React.useState<boolean>(false);
 
   const open = React.useCallback(() => setShow(true), [setShow]);
@@ -159,6 +164,28 @@ const PositionDetailPanel = () => {
 
   // ratio
   const ratio = useRatio();
+
+  // Rebalancing section
+  const [totalLoanRepaid, seTtotalLoanRepaid] = React.useState(new BigNumber(0));
+
+  const updateTotalLoanRepaid = React.useCallback(() => {
+    try {
+      axios
+        .get(
+          `https://balanced.techiast.com:8069/api/v1/loan-repaid-sum?address=${account}&symbol=bnUSD&date-preset=last-month`,
+        )
+        .then(res => {
+          const value = res.data['loan_repaid_sum'];
+          seTtotalLoanRepaid(convertLoopToIcx(new BigNumber(value)));
+        });
+    } catch (e) {
+      console.error(e);
+    }
+  }, [seTtotalLoanRepaid, account]);
+
+  React.useEffect(() => {
+    updateTotalLoanRepaid();
+  }, [updateTotalLoanRepaid]);
 
   // loan
   const loanInputAmount = useLoanInputAmount();
@@ -199,6 +226,7 @@ const PositionDetailPanel = () => {
   const handlePeriod = (p: Period) => {
     closeMenu();
     setPeriod(p);
+    alert(p);
   };
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
@@ -353,7 +381,7 @@ const PositionDetailPanel = () => {
                 <Typography>Collateral sold</Typography>
               </Box>
               <Box width={1 / 2}>
-                <Typography variant="p">0 bnUSD</Typography>
+                <Typography variant="p">{formatBigNumber(totalLoanRepaid, 'currency')} bnUSD</Typography>
                 <Typography>Loan repaid</Typography>
               </Box>
             </Flex>

@@ -12,6 +12,8 @@ export const changeBadDebt = createAction<{ badDebt: BigNumber }>('loan/changeBa
 
 export const changeTotalSupply = createAction<{ totalSupply: BigNumber }>('loan/changeTotalSupply');
 
+export const changeTotalRepaid = createAction<{ totalRepaid: BigNumber }>('loan/changeTotalRepaid');
+
 export const adjust = createAction('loan/adjust');
 
 export const cancel = createAction('loan/cancel');

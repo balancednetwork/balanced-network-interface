@@ -1,6 +1,8 @@
 import React from 'react';
 
+import axios from 'axios';
 import BigNumber from 'bignumber.js';
+import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,7 +12,16 @@ import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
-import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, Field, adjust, cancel, type } from './actions';
+import {
+  changeBorrowedAmount,
+  changeBadDebt,
+  changeTotalSupply,
+  changeTotalRepaid,
+  Field,
+  adjust,
+  cancel,
+  type,
+} from './actions';
 
 export function useLoanBorrowedAmount(): AppState['loan']['borrowedAmount'] {
   return useSelector((state: AppState) => state.loan.borrowedAmount);
@@ -22,6 +33,10 @@ export function useLoanBadDebt(): AppState['loan']['badDebt'] {
 
 export function useLoanTotalSupply(): AppState['loan']['totalSupply'] {
   return useSelector((state: AppState) => state.loan.totalSupply);
+}
+
+export function useLoanTotalRepaid(): AppState['loan']['totalRepaid'] {
+  return useSelector((state: AppState) => state.loan.totalRepaid);
 }
 
 export function useLoanChangeBorrowedAmount(): (borrowedAmount: BigNumber) => void {
@@ -51,6 +66,49 @@ export function useLoanChangeTotalSupply(): (totalSupply: BigNumber) => void {
       dispatch(changeTotalSupply({ totalSupply }));
     },
     [dispatch],
+  );
+}
+
+export function useLoanChangeTotalRepaid(): (totalRepaid: BigNumber) => void {
+  const dispatch = useDispatch();
+  return React.useCallback(
+    (totalRepaid: BigNumber) => {
+      dispatch(changeTotalRepaid({ totalRepaid }));
+    },
+    [dispatch],
+  );
+}
+
+export function useLoanFetchTotalRepaid(): (interval?: string | null) => void {
+  const { account } = useIconReact();
+  const dispatch = useDispatch();
+  return React.useCallback(
+    interval => {
+      if (interval) {
+        if (interval?.toLowerCase() === 'day') {
+          interval = 'yesterday';
+        } else if (interval?.toLowerCase() === 'week') {
+          interval = 'last-week';
+        } else {
+          interval = 'last-month';
+        }
+        try {
+          axios
+            .get(
+              `https://balanced.techiast.com:8069/api/v1/loan-repaid-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`,
+            )
+            .then(res => {
+              const value = res.data['loan_repaid_sum'];
+              dispatch(changeTotalRepaid({ totalRepaid: convertLoopToIcx(new BigNumber(value)) }));
+            });
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        dispatch(cancel());
+      }
+    },
+    [dispatch, account],
   );
 }
 

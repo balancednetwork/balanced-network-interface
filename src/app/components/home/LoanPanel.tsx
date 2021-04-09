@@ -21,12 +21,14 @@ import {
   useLoanState,
   useLoanType,
   useLoanTotalBorrowableAmount,
+  useLoanFetchTotalRepaid,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
+  const updateLoanTotalRepaid = useLoanFetchTotalRepaid();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -105,7 +107,9 @@ const LoanPanel = () => {
   const fee = differenceAmount.multipliedBy(1 / 100);
   const addTransaction = useTransactionAdder();
 
-  const handleLoanConfirm = () => {
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
+  const handleLoanConfirm = async () => {
     if (!account) return;
 
     if (shouldBorrow) {
@@ -149,6 +153,8 @@ const LoanPanel = () => {
           console.error('error', e);
         });
     }
+    await delay(15000);
+    updateLoanTotalRepaid('day');
   };
 
   // reset loan ui state if cancel adjusting

@@ -313,9 +313,9 @@ const LiquidityDetails = () => {
 
   if (
     !account ||
-    (liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toNumber() === 0 &&
-      liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toNumber() === 0 &&
-      liquiditySupply.ICXBalance?.toNumber() === 0)
+    (formatBigNumber(liquiditySupply.sICXSuppliedPoolsICXbnUSD, 'currency') === '0' &&
+      formatBigNumber(liquiditySupply.BALNSuppliedPoolBALNbnUSD, 'currency') === '0' &&
+      formatBigNumber(liquiditySupply.ICXBalance, 'currency') === '0')
   ) {
     return null;
   }

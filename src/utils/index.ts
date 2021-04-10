@@ -58,7 +58,11 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
         return value.toFixed(2, 1);
       }
       case 'ratio': {
-        return value.toFixed(4, 1);
+        if (value.decimalPlaces() === 0) {
+          return value.toFormat(0, BigNumber.ROUND_UP);
+        } else {
+          return value.toFixed(4, 1);
+        }
       }
     }
   }

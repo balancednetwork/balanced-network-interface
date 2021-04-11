@@ -70,6 +70,25 @@ export function useIsTransactionPending(transactionHash?: string): boolean {
   return !transactions[transactionHash].receipt;
 }
 
+export enum TransactionStatus {
+  'pending' = 'pending',
+  'success' = 'success',
+  'failure' = 'failure',
+}
+
+export function useTransactionStatus(transactionHash?: string): TransactionStatus {
+  const transactions = useAllTransactions();
+
+  if (!transactionHash || !transactions[transactionHash]) return TransactionStatus.pending;
+
+  if (transactions[transactionHash].receipt) {
+    if (transactions[transactionHash].receipt?.status) return TransactionStatus.success;
+    else return TransactionStatus.failure;
+  } else {
+    return TransactionStatus.pending;
+  }
+}
+
 /**
  * Returns whether a transaction happened in the last day (86400 seconds * 1000 milliseconds / second)
  * @param tx to check for recency

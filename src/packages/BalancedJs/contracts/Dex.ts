@@ -178,4 +178,16 @@ export default class Dex extends Contract {
 
     return this.call(callParams);
   }
+
+  withdraw(token: string, value: BigNumber) {
+    const payload = this.transactionParamsBuilder({
+      method: 'withdraw',
+      params: {
+        _token: token,
+        _value: IconConverter.toHex(IconAmount.of(value.toFixed(18, 1), IconAmount.Unit.ICX).toLoop()),
+      },
+    });
+
+    return this.callIconex(payload);
+  }
 }

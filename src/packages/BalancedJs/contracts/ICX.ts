@@ -6,7 +6,7 @@ import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
 
-export default class BALN extends Contract {
+export default class ICX extends Contract {
   constructor(contractSettings: ContractSettings) {
     super(contractSettings);
     this.address = addresses[this.nid].baln;
@@ -81,25 +81,10 @@ export default class BALN extends Contract {
   }
 
   async dexDeposit(value: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const data = '0x' + Buffer.from('{"method": "_deposit"}', 'utf8').toString('hex');
-    const valueHex = IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop());
-    const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
-    const payload = this.transactionParamsBuilder({
-      method: 'transfer',
-      params,
+    const payload = this.transferICXParamsBuilder({
+      value: value,
     });
 
     return this.callIconex(payload);
-  }
-
-  public detailsBalanceOf(owner: string) {
-    const callParams = this.paramsBuilder({
-      method: 'detailsBalanceOf',
-      params: {
-        _owner: owner,
-      },
-    });
-
-    return this.call(callParams);
   }
 }

@@ -43,7 +43,7 @@ export function useFetchBalance(account?: string | null) {
       Promise.all([
         bnJs.sICX.getICXBalance(),
         bnJs.sICX.balanceOf(),
-        bnJs.Baln.balanceOf(),
+        bnJs.BALN.balanceOf(),
         bnJs.bnUSD.balanceOf(),
         bnJs.Rewards.getBalnHolding(account),
       ]).then(result => {
@@ -66,7 +66,7 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
   React.useEffect(() => {
     const fetchDetails = async () => {
       if (account) {
-        const result = await bnJs.Baln.detailsBalanceOf(account);
+        const result = await bnJs.BALN.detailsBalanceOf(account);
 
         const temp = {};
 

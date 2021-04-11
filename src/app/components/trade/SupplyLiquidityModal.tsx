@@ -9,7 +9,6 @@ import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { usePoolPair, useSelectedPoolRate } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
@@ -23,16 +22,15 @@ interface ModalProps {
   children?: React.ReactNode;
 }
 
-const MESSAGES = {
-  [TransactionStatus.pending]: 'Sending',
-  [TransactionStatus.success]: 'Success',
-  [TransactionStatus.failure]: 'Failure',
-};
-
 enum SupplyModalStatus {
   'Supply' = 'Supply',
   'Cancel' = 'Cancel',
   'Remove' = 'Remove',
+}
+
+export enum Field {
+  CURRENCY_A = 'CURRENCY_A',
+  CURRENCY_B = 'CURRENCY_B',
 }
 
 export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
@@ -44,51 +42,52 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
 
   const addTransaction = useTransactionAdder();
 
-  const [inputATx, setInputATx] = React.useState('');
+  const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
 
-  const handleSupplyInputDepositConfirm = () => {
+  const handleAdd = (currencyType: Field) => () => {
     if (!account) return;
 
-    return bnJs
+    const currencyKey =
+      currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
+
+    bnJs
       .eject({ account: account })
-      [selectedPair.baseCurrencyKey].dexDeposit(parsedAmounts[Field.CURRENCY_A])
+      [currencyKey].dexDeposit(parsedAmounts[currencyType])
       .then(res => {
         addTransaction(
           { hash: res.result },
           {
-            pending: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair).pendingMessage,
-            summary: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair).successMessage,
+            pending: depositMessage(currencyKey, selectedPair.pair).pendingMessage,
+            summary: depositMessage(currencyKey, selectedPair.pair).successMessage,
           },
         );
 
-        setInputATx(res.result);
+        setAddingTxs(state => ({ ...state, [currencyType]: res.result }));
       })
       .catch(e => {
         console.error('error', e);
       });
   };
 
-  const [inputBTx, setInputBTx] = React.useState('');
+  const [removingTxs, setRemovingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
 
-  const handleSupplyOutputDepositConfirm = () => {
+  const handleRemove = (currencyType: Field) => () => {
     if (!account) return;
-    return bnJs
-      .eject({ account: account })
-      [selectedPair.baseCurrencyKey].dexDeposit(parsedAmounts[Field.CURRENCY_B])
-      .then(res => {
-        addTransaction(
-          { hash: res.result },
-          {
-            pending: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair).pendingMessage,
-            summary: depositMessage(selectedPair.quoteCurrencyKey, selectedPair.pair).successMessage,
-          },
-        );
 
-        setInputBTx(res.result);
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
+    const currencyKey =
+      currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
+
+    bnJs.Dex.withdraw(bnJs[currencyKey].address, parsedAmounts[currencyType]).then(res => {
+      addTransaction(
+        { hash: res.result },
+        {
+          pending: `Withdrawing ${currencyKey}`,
+          summary: `${parsedAmounts[currencyType]}${currencyKey} added to your wallet`,
+        },
+      );
+
+      setRemovingTxs(state => ({ ...state, [currencyType]: res.result }));
+    });
   };
 
   const [confirmTx, setConfirmTx] = React.useState('');
@@ -161,8 +160,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   // refresh Modal UI
   React.useEffect(() => {
     if (isOpen) {
-      setInputATx('');
-      setInputBTx('');
+      setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
+      setRemovingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
+      setHasErrorMessage(false);
     }
   }, [isOpen]);
 
@@ -178,60 +178,48 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
     // error
   } = useDerivedMintInfo();
 
-  const inputATxStatus: TransactionStatus = useTransactionStatus(inputATx);
-  const inputBTxStatus: TransactionStatus = useTransactionStatus(inputBTx);
+  const addingATxStatus: TransactionStatus = useTransactionStatus(addingTxs[Field.CURRENCY_A]);
+  const addingBTxStatus: TransactionStatus = useTransactionStatus(addingTxs[Field.CURRENCY_B]);
 
-  const isSupplyEnabled =
-    selectedPair.poolId === BalancedJs.utils.sICXICXpoolId ||
-    (inputATx !== '' &&
-      inputBTx !== '' &&
-      inputATxStatus === TransactionStatus.success &&
-      inputBTxStatus === TransactionStatus.success);
-
-  const handleRemoveDeposit = () => {
-    if (inputATx && inputATxStatus === TransactionStatus.success) {
-      bnJs.Dex.withdraw(bnJs[selectedPair.baseCurrencyKey].address, parsedAmounts[Field.CURRENCY_A]).then(res => {
-        addTransaction(
-          { hash: res.result },
-          {
-            pending: `Withdrawing ${selectedPair.baseCurrencyKey}`,
-            summary: `${parsedAmounts[Field.CURRENCY_A]}${selectedPair.baseCurrencyKey} added to your wallet`,
-          },
-        );
-      });
-    }
-
-    if (inputBTx && inputBTxStatus === TransactionStatus.success) {
-      bnJs.Dex.withdraw(bnJs[selectedPair.quoteCurrencyKey].address, parsedAmounts[Field.CURRENCY_B]).then(res => {
-        addTransaction(
-          { hash: res.result },
-          {
-            pending: `Withdrawing ${selectedPair.quoteCurrencyKey}`,
-            summary: `${parsedAmounts[Field.CURRENCY_B]}${selectedPair.quoteCurrencyKey} added to your wallet`,
-          },
-        );
-      });
-    }
-
-    onClose();
-  };
+  const removingATxStatus: TransactionStatus = useTransactionStatus(removingTxs[Field.CURRENCY_A]);
+  const removingBTxStatus: TransactionStatus = useTransactionStatus(removingTxs[Field.CURRENCY_B]);
 
   const [modalStatus, setModalStatus] = React.useState(SupplyModalStatus.Supply);
 
+  React.useEffect(() => {
+    if (addingATxStatus === TransactionStatus.success) {
+      setRemovingTxs(state => ({ ...state, [Field.CURRENCY_A]: '' }));
+    }
+  }, [addingATxStatus]);
+
+  React.useEffect(() => {
+    if (removingATxStatus === TransactionStatus.success) {
+      setAddingTxs(state => ({ ...state, [Field.CURRENCY_A]: '' }));
+    }
+  }, [removingATxStatus]);
+
+  React.useEffect(() => {
+    if (addingBTxStatus === TransactionStatus.success) {
+      setRemovingTxs(state => ({ ...state, [Field.CURRENCY_B]: '' }));
+    }
+  }, [addingBTxStatus]);
+
+  React.useEffect(() => {
+    if (removingBTxStatus === TransactionStatus.success) {
+      setAddingTxs(state => ({ ...state, [Field.CURRENCY_B]: '' }));
+    }
+  }, [removingBTxStatus]);
+
+  const [hasErrorMessage, setHasErrorMessage] = React.useState(false);
   const handleCancelSupply = () => {
-    if (
-      (inputATx && inputATxStatus === TransactionStatus.success) ||
-      (inputBTx && inputBTxStatus === TransactionStatus.success)
-    ) {
-      setModalStatus(SupplyModalStatus.Cancel);
+    if (addingATxStatus === TransactionStatus.success || addingBTxStatus === TransactionStatus.success) {
+      setHasErrorMessage(true);
     } else {
       onClose();
     }
   };
 
-  const handleGoBack = () => {
-    setModalStatus(SupplyModalStatus.Supply);
-  };
+  const isEnabled = addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success;
 
   const getModalContent = () => {
     if (modalStatus === SupplyModalStatus.Supply) {
@@ -262,9 +250,22 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
               </Typography>
             </Box>
             <Box width={1 / 2} style={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? { display: 'none' } : {}}>
-              <SupplyButton disabled={!!inputATx} ml={3} onClick={handleSupplyInputDepositConfirm}>
-                {inputATx ? MESSAGES[inputATxStatus] : 'Send'}
-              </SupplyButton>
+              {((addingTxs[Field.CURRENCY_A] === '' && removingTxs[Field.CURRENCY_A] === '') ||
+                (addingATxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_A] === '') ||
+                removingATxStatus === TransactionStatus.success) && (
+                <SupplyButton disabled={!!addingTxs[Field.CURRENCY_A]} ml={3} onClick={handleAdd(Field.CURRENCY_A)}>
+                  {addingTxs[Field.CURRENCY_A] ? 'Sending' : 'Send'}
+                </SupplyButton>
+              )}
+              {addingATxStatus === TransactionStatus.success && (
+                <RemoveButton
+                  disabled={!!removingTxs[Field.CURRENCY_A]}
+                  ml={3}
+                  onClick={handleRemove(Field.CURRENCY_A)}
+                >
+                  {removingTxs[Field.CURRENCY_A] ? 'Removing' : 'Remove'}
+                </RemoveButton>
+              )}
             </Box>
           </Flex>
 
@@ -279,13 +280,26 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
               </Typography>
             </Box>
             <Box width={1 / 2}>
-              <SupplyButton disabled={!!inputBTx} ml={3} onClick={handleSupplyOutputDepositConfirm}>
-                {inputBTx ? MESSAGES[inputBTxStatus] : 'Send'}
-              </SupplyButton>
+              {((addingTxs[Field.CURRENCY_B] === '' && removingTxs[Field.CURRENCY_B] === '') ||
+                (addingBTxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_B] === '') ||
+                removingBTxStatus === TransactionStatus.success) && (
+                <SupplyButton disabled={!!addingTxs[Field.CURRENCY_B]} ml={3} onClick={handleAdd(Field.CURRENCY_B)}>
+                  {addingTxs[Field.CURRENCY_B] ? 'Sending' : 'Send'}
+                </SupplyButton>
+              )}
+              {addingBTxStatus === TransactionStatus.success && (
+                <RemoveButton
+                  disabled={!!removingTxs[Field.CURRENCY_B]}
+                  ml={3}
+                  onClick={handleRemove(Field.CURRENCY_B)}
+                >
+                  {removingTxs[Field.CURRENCY_B] ? 'Removing' : 'Remove'}
+                </RemoveButton>
+              )}
             </Box>
           </Flex>
 
-          <Typography textAlign="center">
+          <Typography textAlign="center" mb={2}>
             {selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? (
               <>Your ICX will be locked in the pool for the first 24 hours.</>
             ) : (
@@ -296,56 +310,62 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
             )}
           </Typography>
 
+          {hasErrorMessage && (
+            <Typography textAlign="center" color="alert">
+              Remove your assets to cancel this transaction.
+            </Typography>
+          )}
+
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={handleCancelSupply}>Cancel</TextButton>
-            <Button disabled={!isSupplyEnabled} onClick={handleSupplyConfirm}>
-              Supply
+            <Button disabled={!isEnabled} onClick={handleSupplyConfirm}>
+              {confirmTx ? 'Supplying' : 'Supply'}
             </Button>
           </Flex>
         </Flex>
       );
     }
 
-    if (modalStatus === SupplyModalStatus.Cancel) {
-      return (
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
-            Cancel supply?
-          </Typography>
+    // if (modalStatus === SupplyModalStatus.Cancel) {
+    //   return (
+    //     <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+    //       <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
+    //         Cancel supply?
+    //       </Typography>
 
-          <Typography
-            variant="p"
-            textAlign="center"
-            mb={4}
-            style={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? { display: 'none' } : {}}
-          >
-            Remove your assets from the <br />
-            pool to cancel this transaction
-          </Typography>
+    //       <Typography
+    //         variant="p"
+    //         textAlign="center"
+    //         mb={4}
+    //         style={selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? { display: 'none' } : {}}
+    //       >
+    //         Remove your assets from the <br />
+    //         pool to cancel this transaction
+    //       </Typography>
 
-          {inputATx && inputATxStatus === TransactionStatus.success && (
-            <Flex alignItems="center" justifyContent="center" mb={4}>
-              <Typography variant="p" fontWeight="bold">
-                {formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'ratio')} {selectedPair.baseCurrencyKey}
-              </Typography>
-            </Flex>
-          )}
+    //       {inputATx && inputATxStatus === TransactionStatus.success && (
+    //         <Flex alignItems="center" justifyContent="center" mb={4}>
+    //           <Typography variant="p" fontWeight="bold">
+    //             {formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'ratio')} {selectedPair.baseCurrencyKey}
+    //           </Typography>
+    //         </Flex>
+    //       )}
 
-          {inputBTx && inputBTxStatus === TransactionStatus.success && (
-            <Flex alignItems="center" justifyContent="center" mb={4}>
-              <Typography variant="p" fontWeight="bold" textAlign="right">
-                {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
-              </Typography>
-            </Flex>
-          )}
+    //       {inputBTx && inputBTxStatus === TransactionStatus.success && (
+    //         <Flex alignItems="center" justifyContent="center" mb={4}>
+    //           <Typography variant="p" fontWeight="bold" textAlign="right">
+    //             {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
+    //           </Typography>
+    //         </Flex>
+    //       )}
 
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleGoBack}>Go back</TextButton>
-            <RedButton onClick={handleRemoveDeposit}>Remove and cancel</RedButton>
-          </Flex>
-        </Flex>
-      );
-    }
+    //       <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+    //         <TextButton onClick={handleGoBack}>Go back</TextButton>
+    //         <RemoveButton onClick={handleRemoveDeposit}>Remove and cancel</RemoveButton>
+    //       </Flex>
+    //     </Flex>
+    //   );
+    // }
   };
 
   return (
@@ -360,11 +380,11 @@ const SupplyButton = styled(Button)`
   font-size: 12px;
 `;
 
-const RedButton = styled(Button)`
-  background-color: red;
+const RemoveButton = styled(SupplyButton)`
+  background-color: #fb6a6a;
 
   &:hover {
-    background-color: red;
+    background-color: #fb6a6a;
   }
 
   &:disabled {

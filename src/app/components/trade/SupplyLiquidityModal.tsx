@@ -184,7 +184,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   const removingATxStatus: TransactionStatus = useTransactionStatus(removingTxs[Field.CURRENCY_A]);
   const removingBTxStatus: TransactionStatus = useTransactionStatus(removingTxs[Field.CURRENCY_B]);
 
-  const [modalStatus, setModalStatus] = React.useState(SupplyModalStatus.Supply);
+  const [modalStatus] = React.useState(SupplyModalStatus.Supply);
 
   React.useEffect(() => {
     if (addingATxStatus === TransactionStatus.success) {

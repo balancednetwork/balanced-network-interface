@@ -48,11 +48,7 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   } else {
     switch (type) {
       case 'currency': {
-        if (value.decimalPlaces() === 0) {
-          return value.toFormat(0, BigNumber.ROUND_UP);
-        } else {
-          return value.toFormat(2, BigNumber.ROUND_UP);
-        }
+        return value.dp(2).toFormat();
       }
       case 'input': {
         return value.toFixed(2, 1);

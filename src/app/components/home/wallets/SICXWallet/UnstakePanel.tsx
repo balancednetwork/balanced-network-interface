@@ -26,7 +26,7 @@ export default function UnstakePanel() {
 
   const ratio = useRatio();
 
-  const maxAmount = wallet.sICXbalance;
+  const maxAmount = wallet['sICX'];
 
   // modal logic
   const [open, setOpen] = React.useState(false);
@@ -35,7 +35,7 @@ export default function UnstakePanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.sICXbalance;
+  const beforeAmount = wallet['sICX'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 

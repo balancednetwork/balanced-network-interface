@@ -172,7 +172,7 @@ const LoanPanel = () => {
 
   // Add Used indicator to the Loan section #73
   // https://github.com/balancednetwork/balanced-network-interface/issues/73
-  const { bnUSDbalance: remainingBNUSDAmount } = useWalletBalances();
+  const remainingBNUSDAmount = useWalletBalances()['bnUSD'];
 
   const usedBNUSDAmount = React.useMemo(() => {
     return BigNumber.max(borrowedAmount.minus(remainingBNUSDAmount as BigNumber), new BigNumber(0));

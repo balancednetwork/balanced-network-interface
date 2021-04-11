@@ -143,7 +143,7 @@ const ReturnICDSection = () => {
                 />
 
                 <Flex flexDirection="column" alignItems="flex-end">
-                  <Typography>Wallet: {formatBigNumber(wallet.bnUSDbalance, 'currency')} bnUSD</Typography>
+                  <Typography>Wallet: {formatBigNumber(wallet['bnUSD'], 'currency')} bnUSD</Typography>
                 </Flex>
 
                 <Divider />

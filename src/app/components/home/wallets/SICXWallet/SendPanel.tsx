@@ -34,7 +34,7 @@ export default function SendPanel() {
 
   const wallet = useWalletBalances();
 
-  const maxAmount = wallet.sICXbalance;
+  const maxAmount = wallet['sICX'];
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -47,7 +47,7 @@ export default function SendPanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.sICXbalance;
+  const beforeAmount = wallet['sICX'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 

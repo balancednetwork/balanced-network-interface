@@ -159,9 +159,10 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
 
   // refresh Modal UI
   React.useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) {
       setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
       setRemovingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
+      setConfirmTx('');
       setHasErrorMessage(false);
     }
   }, [isOpen]);

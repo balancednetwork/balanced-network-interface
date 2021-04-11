@@ -82,7 +82,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
         { hash: res.result },
         {
           pending: `Withdrawing ${currencyKey}`,
-          summary: `${parsedAmounts[currencyType]}${currencyKey} added to your wallet`,
+          summary: `${parsedAmounts[currencyType]} ${currencyKey} added to your wallet`,
         },
       );
 
@@ -220,7 +220,10 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
     }
   };
 
-  const isEnabled = addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success;
+  const isEnabled =
+    selectedPair.poolId === BalancedJs.utils.sICXICXpoolId
+      ? true
+      : addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success;
 
   const getModalContent = () => {
     if (modalStatus === SupplyModalStatus.Supply) {
@@ -299,17 +302,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
               )}
             </Box>
           </Flex>
-
-          <Typography textAlign="center" mb={2}>
-            {selectedPair.baseCurrencyKey.toLowerCase() === 'icx' ? (
-              <>Your ICX will be locked in the pool for the first 24 hours.</>
-            ) : (
-              <>
-                Your ICX will be staked, and your
-                <br /> assets will be locked for 24 hours.
-              </>
-            )}
-          </Typography>
 
           {hasErrorMessage && (
             <Typography textAlign="center" color="alert">

@@ -47,7 +47,7 @@ const LiquidityDetails = () => {
   const ICXBalance = liquiditySupply.ICXBalance || new BigNumber(0);
   const sICXICXSuppliedShare = ICXBalance.dividedBy(sICXICXTotalSupply).multipliedBy(100);
 
-  const [amountWithdrawICX, setAmountWithdrawICX] = React.useState('0');
+  //const [amountWithdrawICX, setAmountWithdrawICX] = React.useState('0');
 
   const [showSwapConfirm, setShowWithdrawConfirm] = React.useState(false);
 
@@ -96,7 +96,7 @@ const LiquidityDetails = () => {
   // };
 
   React.useEffect(() => {
-    setAmountWithdrawICX('0');
+    //setAmountWithdrawICX('0');
     setAmountWithdrawBALNPoolBALNbnUSD('0');
     setAmountWithdrawBNUSDPoolsBALNbnUSD('0');
     setAmountWithdrawSICXPoolsICXbnUSD('0');
@@ -152,7 +152,7 @@ const LiquidityDetails = () => {
     } else if (inputCurrency.toLowerCase() === 'baln' && outputCurrency.toLowerCase() === 'bnusd') {
       withdrawBALNbnUSD(withdrawInputAmount, withdrawOutputAmount);
     } else if (inputCurrency.toLowerCase() === 'icx' && outputCurrency.toLowerCase() === 'sicx') {
-      withdrawICX(withdrawInputAmount);
+      withdrawICX(formatBigNumber(ICXBalance, 'currency'));
     }
   };
 
@@ -162,7 +162,7 @@ const LiquidityDetails = () => {
     setOutputCurrency('sICX');
     setwithdrawInputAmount(formatBigNumber(new BigNumber(ICXBalance), 'currency'));
     setwithdrawOutputAmount('');
-    setAmountWithdrawICX(formatBigNumber(new BigNumber(ICXBalance), 'currency'));
+    //setAmountWithdrawICX(formatBigNumber(new BigNumber(ICXBalance), 'currency'));
     //closeDropdownSICXICX();
     setShowWithdrawConfirm(true);
   };
@@ -197,8 +197,8 @@ const LiquidityDetails = () => {
         addTransaction(
           { hash: res.result },
           {
-            pending: withdrawMessage(amountWithdrawICX, 'ICX', '', 'sICX').pendingMessage,
-            summary: withdrawMessage(amountWithdrawICX, 'ICX', '', 'sICX').successMessage,
+            pending: withdrawMessage(withdrawICXamount, 'ICX', '', 'sICX').pendingMessage,
+            summary: withdrawMessage(withdrawICXamount, 'ICX', '', 'sICX').successMessage,
           },
         );
         handleWithdrawConfirmDismiss();

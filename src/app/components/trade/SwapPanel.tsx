@@ -398,7 +398,7 @@ export default function SwapPanel() {
         axios
           .get(
             `https://balanced.techiast.com:8069/api/v1/chart/lines?symbol=${
-              inputSymbol === 'bnusd' ? outputSymbol + inputSymbol : inputSymbol + outputSymbol
+              inputSymbol === 'bnusd' || inputSymbol === 'icx' ? outputSymbol + inputSymbol : inputSymbol + outputSymbol
             }&interval=${interval}&limit=500&order=desc`,
           )
           .then(res => {
@@ -406,7 +406,7 @@ export default function SwapPanel() {
             let t = d.map(item => ({
               time: item.time,
               value:
-                inputSymbol === 'bnusd'
+                inputSymbol === 'bnusd' || inputSymbol === 'icx'
                   ? 1 / convertLoopToIcx(new BigNumber(item.price)).toNumber()
                   : convertLoopToIcx(new BigNumber(item.price)).toNumber(),
             }));

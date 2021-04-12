@@ -25,7 +25,7 @@ export interface RootState {
   liquidity: LiquidityState;
   reward: RewardState;
   ratio: RatioState;
-  walletBalance: WalletState;
+  wallet: WalletState;
   transactions: TransactionState;
   mint: MintState;
 }

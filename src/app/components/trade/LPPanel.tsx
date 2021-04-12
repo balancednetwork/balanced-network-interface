@@ -61,7 +61,11 @@ export default function LPPanel() {
   };
 
   const handleSupply = () => {
-    setShowSupplyConfirm(true);
+    if (account) {
+      setShowSupplyConfirm(true);
+    } else {
+      toggleWalletModal();
+    }
   };
 
   const selectedPair = usePoolPair();
@@ -157,15 +161,9 @@ export default function LPPanel() {
           </Box>
 
           <Flex justifyContent="center">
-            {account ? (
-              <Button color="primary" marginTop={5} onClick={handleSupply}>
-                Supply
-              </Button>
-            ) : (
-              <Button color="primary" marginTop={5} onClick={toggleWalletModal}>
-                Connect Wallet
-              </Button>
-            )}
+            <Button color="primary" marginTop={5} onClick={handleSupply}>
+              Supply
+            </Button>
           </Flex>
         </BrightPanel>
 

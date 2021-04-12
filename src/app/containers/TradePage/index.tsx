@@ -14,13 +14,13 @@ import { useFetchLiquidity } from 'store/liquidity/hooks';
 import { useFetchPools } from 'store/pool/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchReward } from 'store/reward/hooks';
-import { useFetchBalance } from 'store/wallet/hooks';
+import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 export function TradePage() {
   const { account } = useIconReact();
 
   useFetchPrice();
-  useFetchBalance(account);
+  useWalletFetchBalances(account);
   useFetchLiquidity(account);
   useFetchReward(account);
   useFetchPools();

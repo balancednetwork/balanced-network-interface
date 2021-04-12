@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { changeValueBalance } from './actions';
+import { changeBalances, resetBalances } from './actions';
 
 // #redux-step-1: define interface for variable
 export interface WalletState {
@@ -23,11 +23,19 @@ const initialState: WalletState = {
 
 // #redux-step-7: define function reducer, what happened when the action have dispatch
 export default createReducer(initialState, builder =>
-  builder.addCase(changeValueBalance, (state, { payload: { ICX, sICX, bnUSD, BALN, BALNreward } }) => {
-    state.ICX = ICX || state.ICX;
-    state.sICX = sICX || state.sICX;
-    state.bnUSD = bnUSD || state.bnUSD;
-    state.BALN = BALN || state.BALN;
-    state.BALNreward = BALNreward || state.BALNreward;
-  }),
+  builder
+    .addCase(changeBalances, (state, { payload: { ICX, sICX, bnUSD, BALN, BALNreward } }) => {
+      state.ICX = ICX || state.ICX;
+      state.sICX = sICX || state.sICX;
+      state.bnUSD = bnUSD || state.bnUSD;
+      state.BALN = BALN || state.BALN;
+      state.BALNreward = BALNreward || state.BALNreward;
+    })
+    .addCase(resetBalances, state => {
+      state.ICX = new BigNumber(0);
+      state.sICX = new BigNumber(0);
+      state.bnUSD = new BigNumber(0);
+      state.BALN = new BigNumber(0);
+      state.BALNreward = new BigNumber(0);
+    }),
 );

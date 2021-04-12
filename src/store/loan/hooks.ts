@@ -5,6 +5,7 @@ import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { MANDATORY_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -149,8 +150,6 @@ export function useLoanInputAmount() {
 
   return parsedAmount[Field.LEFT];
 }
-
-const MANDATORY_COLLATERAL_RATIO = 4;
 
 export function useLockedICXAmount() {
   const ratio = useRatio();

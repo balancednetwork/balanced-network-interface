@@ -7,8 +7,9 @@ import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { useCollateralDepositedAmount } from 'store/collateral/hooks';
-import { useLoanBorrowedAmount } from 'store/loan/hooks';
+import { PLUS_INFINITY, REWARDS_COLLATERAL_RATIO } from 'constants/index';
+import { useCollateralInputAmount } from 'store/collateral/hooks';
+import { useLoanInputAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
@@ -27,12 +28,13 @@ export function useChangeReward(): ({
   sICXbnUSDreward,
   BALNbnUSDreward,
   sICXICXreward,
+  loan,
   poolDailyReward,
 }: Partial<RewardState>) => void {
   const dispatch = useDispatch();
   return useCallback(
-    ({ sICXbnUSDreward, BALNbnUSDreward, sICXICXreward, poolDailyReward }) => {
-      dispatch(changeReward({ sICXbnUSDreward, BALNbnUSDreward, sICXICXreward, poolDailyReward }));
+    ({ sICXbnUSDreward, BALNbnUSDreward, sICXICXreward, loan, poolDailyReward }) => {
+      dispatch(changeReward({ sICXbnUSDreward, BALNbnUSDreward, sICXICXreward, loan, poolDailyReward }));
     },
     [dispatch],
   );
@@ -46,16 +48,18 @@ export function useFetchReward(account?: string | null) {
 
   const fetchReward = React.useCallback(() => {
     if (account) {
-      Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission(new BigNumber(1))]).then(result => {
+      Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission()]).then(result => {
         const [poolsReward, poolEmission] = result.map(v => v);
         const sICXICXreward = convertLoopToIcx(poolsReward['SICXICX']);
         const sICXbnUSDreward = convertLoopToIcx(poolsReward['SICXbnUSD']);
         const BALNbnUSDreward = convertLoopToIcx(poolsReward['BALNbnUSD']);
+        const loan = convertLoopToIcx(poolsReward['Loans']);
         const poolDailyReward = convertLoopToIcx(poolEmission);
         changeReward({
           sICXICXreward,
           sICXbnUSDreward,
           BALNbnUSDreward,
+          loan,
           poolDailyReward,
         });
       });
@@ -67,21 +71,24 @@ export function useFetchReward(account?: string | null) {
   }, [fetchReward, transactions, account]);
 }
 
-export const useCollateralRatio = () => {
-  // sICX collateral * sICXICX price * ICXUSD price / bnUSD loan
-  const sICXAmount = useCollateralDepositedAmount();
-  const borrowedAmount = useLoanBorrowedAmount();
+export const useCurrentCollateralRatio = (): BigNumber => {
+  const collateralInputAmount = useCollateralInputAmount();
+  const loanInputAmount = useLoanInputAmount();
   const ratio = useRatio();
-  return sICXAmount.times(ratio.sICXICXratio).times(ratio.ICXUSDratio).div(borrowedAmount);
-};
 
-export const useHasRewardableCollateral = () => {
-  const borrowedAmount = useLoanBorrowedAmount();
-  const collateralRatio = useCollateralRatio();
+  return React.useMemo(() => {
+    if (loanInputAmount.isZero()) return PLUS_INFINITY;
+
+    return collateralInputAmount.times(ratio.ICXUSDratio).dividedBy(loanInputAmount).multipliedBy(100);
+  }, [collateralInputAmount, loanInputAmount, ratio.ICXUSDratio]);
+};
+export const useHasRewardableLoan = () => {
+  const loanInputAmount = useLoanInputAmount();
+  const collateralRatio = useCurrentCollateralRatio();
 
   if (
-    borrowedAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
-    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(5))
+    loanInputAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
+    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(REWARDS_COLLATERAL_RATIO * 100))
   ) {
     return true;
   }
@@ -124,7 +131,7 @@ export const useHasNetworkFees = () => {
       if (account) {
         const [hasLP, balnDetails] = await Promise.all([
           bnJs.Dex.isEarningRewards(account, BalancedJs.utils.BALNbnUSDpoolId),
-          bnJs.Baln.detailsBalanceOf(account),
+          bnJs.BALN.detailsBalanceOf(account),
         ]);
 
         if (Number(hasLP) || Number(balnDetails['Staked balance'])) setHasNetworkFees(true);

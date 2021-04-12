@@ -148,7 +148,7 @@ export function useFetchLiquidity(account?: string | null) {
         )
         .catch(e => console.error(e));
 
-      getSuppliedToken(BalancedJs.utils.BALNbnUSDpoolId, bnJs.Baln.address, bnJs.bnUSD.address)
+      getSuppliedToken(BalancedJs.utils.BALNbnUSDpoolId, bnJs.BALN.address, bnJs.bnUSD.address)
         .then((result: any) =>
           changeLiquiditySupply({
             BALNbnUSDBalance: result.balance,

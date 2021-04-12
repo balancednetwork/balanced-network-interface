@@ -35,7 +35,7 @@ export default function BnUSDWallet() {
 
   const wallet = useWalletBalances();
 
-  const maxAmount = wallet.bnUSDbalance;
+  const maxAmount = wallet['bnUSD'];
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -48,7 +48,7 @@ export default function BnUSDWallet() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.bnUSDbalance;
+  const beforeAmount = wallet['bnUSD'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 

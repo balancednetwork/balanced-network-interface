@@ -38,7 +38,7 @@ export default function ICXWallet() {
 
   const wallet = useWalletBalances();
 
-  const maxAmount = wallet.ICXbalance.minus(0.1).isNegative() ? new BigNumber(0) : wallet.ICXbalance.minus(0.1);
+  const maxAmount = wallet['ICX'].minus(0.1).isNegative() ? new BigNumber(0) : wallet['ICX'].minus(0.1);
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -51,7 +51,7 @@ export default function ICXWallet() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.ICXbalance;
+  const beforeAmount = wallet['ICX'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
@@ -96,13 +96,17 @@ export default function ICXWallet() {
     setTabIndex(index);
   };
 
-  const [list, setList] = React.useState<BigNumber[]>([]);
+  const [unstakingAmount, setUnstakingAmount] = React.useState<BigNumber>(new BigNumber(0));
 
   React.useEffect(() => {
     const fetchUserUnstakeInfo = async () => {
       if (account) {
-        const result = await bnJs.Staking.getUserUnstakeInfo(account);
-        setList(result.map(record => convertLoopToIcx(new BigNumber(record[0], 16))));
+        const result: Array<{ amount: string }> = await bnJs.Staking.getUserUnstakeInfo(account);
+        setUnstakingAmount(
+          result
+            .map(record => convertLoopToIcx(new BigNumber(record['amount'], 16)))
+            .reduce((sum, cur) => sum.plus(cur), new BigNumber(0)),
+        );
       }
     };
 
@@ -147,15 +151,15 @@ export default function ICXWallet() {
             <Grid>
               <Typography variant="h3">Unstaking</Typography>
 
-              <Typography>Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
+              {!unstakingAmount.isZero() ? (
+                <>
+                  <Typography>Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
 
-              <Box>
-                {list.map((item, index) => (
-                  <Typography key={index} variant="p">
-                    {item.dp(2).toFormat()} ICX unstaking
-                  </Typography>
-                ))}
-              </Box>
+                  <Typography variant="p">{unstakingAmount.dp(2).toFormat()} ICX unstaking</Typography>
+                </>
+              ) : (
+                <Typography>There's no ICX unstaking.</Typography>
+              )}
             </Grid>
           </TabPanel>
         </TabPanels>

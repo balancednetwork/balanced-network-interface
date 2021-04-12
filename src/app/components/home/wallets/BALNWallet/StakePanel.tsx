@@ -63,7 +63,7 @@ export default React.memo(function StakePanel() {
   const handleConfirm = () => {
     bnJs
       .eject({ account: account })
-      .Baln.stake(afterAmount)
+      .BALN.stake(afterAmount)
       .then(res => {
         addTransaction(
           { hash: res.result },

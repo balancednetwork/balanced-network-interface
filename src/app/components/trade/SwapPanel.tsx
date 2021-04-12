@@ -2,6 +2,8 @@ import React from 'react';
 
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
+import { isEmpty } from 'lodash';
+import moment from 'moment';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
@@ -74,6 +76,7 @@ export default function SwapPanel() {
   const addTransaction = useTransactionAdder();
   const changeRatioValue = useChangeRatio();
   const toggleWalletModal = useWalletModalToggle();
+  const [ratioPercentChanged, updateRatioPecrentChanged] = React.useState('0');
 
   const refreshPrice = React.useCallback(async () => {
     const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
@@ -389,20 +392,44 @@ export default function SwapPanel() {
               inputSymbol === 'bnusd' || inputSymbol === 'icx' ? outputSymbol + inputSymbol : inputSymbol + outputSymbol
             }&interval=${interval}&limit=500&order=desc`,
           )
-          .then(res => {
-            const { data: d } = res;
-            let t = d.map(item => ({
-              time: item.time,
-              value:
-                inputSymbol === 'bnusd' || inputSymbol === 'icx'
-                  ? 1 / convertLoopToIcx(new BigNumber(item.price)).toNumber()
-                  : convertLoopToIcx(new BigNumber(item.price)).toNumber(),
-            }));
-
-            if (!t.length) {
+          .then(({ data }) => {
+            if (!data.length) {
               console.log('No chart data, switch to others trading pairs');
               return;
             }
+
+            const currentValue = data[data.length - 1];
+            let yesterdayValue: any = {};
+
+            let t = data.map(({ time, price }) => {
+              if (
+                moment(currentValue.time * 1000)
+                  .subtract(24, 'h')
+                  .valueOf() /
+                  1000 ===
+                time
+              ) {
+                yesterdayValue = {
+                  time,
+                  price,
+                };
+              }
+              return {
+                time,
+                value:
+                  inputSymbol === 'bnusd' || inputSymbol === 'icx'
+                    ? 1 / convertLoopToIcx(new BigNumber(price)).toNumber()
+                    : convertLoopToIcx(new BigNumber(price)).toNumber(),
+              };
+            });
+
+            if (!isEmpty(yesterdayValue)) {
+              const bigCurrentValue = new BigNumber(currentValue.price);
+              const bigYesterdayValue = new BigNumber(yesterdayValue.price);
+              const changedValue = bigCurrentValue.minus(bigYesterdayValue);
+              updateRatioPecrentChanged(changedValue.times(100).div(bigYesterdayValue).toNumber().toFixed(2));
+            }
+
             setData(t);
             setLoading(false);
           });
@@ -416,11 +443,14 @@ export default function SwapPanel() {
   );
 
   React.useEffect(() => {
+    const interval = '5m';
+
     loadChartData({
       inputSymbol: inputCurrency.symbol.toLowerCase(),
       outputSymbol: outputCurrency.symbol.toLowerCase(),
-      interval: '5m',
+      interval,
     });
+
     refreshPrice();
   }, [inputCurrency.symbol, outputCurrency.symbol, loadChartData, refreshPrice]);
 
@@ -537,7 +567,7 @@ export default function SwapPanel() {
               </Typography>
               <Typography variant="p">
                 {formatBigNumber(new BigNumber(tokenRatio(inputCurrency.symbol, outputCurrency.symbol)), 'currency')}{' '}
-                {outputCurrency.symbol} per {inputCurrency.symbol} <span className="alert">-1.21%</span>
+                {outputCurrency.symbol} per {inputCurrency.symbol} <span className="alert">{ratioPercentChanged}%</span>
               </Typography>
             </Box>
             <Box width={[1, 1 / 2]} marginTop={[3, 0]}>

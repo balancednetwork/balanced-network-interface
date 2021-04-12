@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -9,9 +8,8 @@ import CurrencyLogo from 'app/components/CurrencyLogo';
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
-import { CURRENCYLIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
-import { useWalletICXBalance } from 'hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { CURRENCY_LIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
+import { useWalletBalances } from 'store/wallet/hooks';
 import { Currency } from 'types';
 import { escapeRegExp } from 'utils';
 
@@ -145,7 +143,7 @@ export default function CurrencyInputPanel({
   React.useEffect(() => {
     const t = otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList;
     if (t?.indexOf(currency?.symbol as string) === -1) {
-      onCurrencySelect && onCurrencySelect(CURRENCYLIST[t[0].toLowerCase()]);
+      onCurrencySelect && onCurrencySelect(CURRENCY_LIST[t[0].toLowerCase()]);
     }
   }, [currency, otherCurrency, onCurrencySelect, currencyList]);
 
@@ -155,22 +153,7 @@ export default function CurrencyInputPanel({
     }
   };
 
-  const { account } = useIconReact();
-  const walletBalance = useWalletBalanceValue();
-  const ICXbalance = useWalletICXBalance(account);
-  const tokenBalance = (symbol: string) => {
-    if (account) {
-      if (symbol === 'icx') {
-        return ICXbalance;
-      } else if (symbol === 'baln') {
-        return walletBalance.BALNbalance;
-      } else if (symbol === 'sicx') {
-        return walletBalance.sICXbalance;
-      } else if (symbol === 'bnusd') {
-        return walletBalance.bnUSDbalance;
-      }
-    }
-  };
+  const balances = useWalletBalances();
 
   return (
     <InputContainer ref={ref}>
@@ -188,15 +171,15 @@ export default function CurrencyInputPanel({
                   <HeaderText textAlign="right">Wallet</HeaderText>
                 </DashGrid>
                 {availableCurrencies.map(currency => (
-                  <ListItem key={currency} onClick={handleCurrencySelect(CURRENCYLIST[currency.toLowerCase()])}>
+                  <ListItem key={currency} onClick={handleCurrencySelect(CURRENCY_LIST[currency.toLowerCase()])}>
                     <Flex>
-                      <CurrencyLogo currency={CURRENCYLIST[currency.toLowerCase()]} style={{ marginRight: '8px' }} />
+                      <CurrencyLogo currency={CURRENCY_LIST[currency.toLowerCase()]} style={{ marginRight: '8px' }} />
                       <DataText variant="p" fontWeight="bold">
                         {currency}
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      {tokenBalance(currency.toLowerCase())?.dp(2).toFormat()} {currency}
+                      {balances[currency]?.dp(2).toFormat()} {currency}
                     </DataText>
                   </ListItem>
                 ))}

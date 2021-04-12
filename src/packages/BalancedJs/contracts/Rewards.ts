@@ -18,11 +18,11 @@ export default class Rewards extends Contract {
     return this.callIconex(payload);
   }
 
-  getRewards() {
+  getBalnHolding(holder: string) {
     const payload = this.paramsBuilder({
       method: 'getBalnHolding',
       params: {
-        _holder: this.account,
+        _holder: holder,
       },
     });
 

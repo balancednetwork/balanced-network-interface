@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { BalancedJs } from 'packages/BalancedJs';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
@@ -12,9 +12,8 @@ import { changeRatioValue } from './actions';
 import { RatioState } from './reducer';
 
 // #redux-step-5: define function get value of variable from store
-export function useRatioValue(): AppState['ratio'] {
-  const ratio = useSelector((state: AppState) => state.ratio);
-  return useMemo(() => ratio, [ratio]);
+export function useRatio(): AppState['ratio'] {
+  return useSelector((state: AppState) => state.ratio);
 }
 
 // #redux-step-6: define function working with variable on store
@@ -54,13 +53,13 @@ export function useFetchPrice() {
 
   // sICX / bnUSD price
   useInterval(async () => {
-    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId.toString()));
+    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId));
     changeRatioValue({ sICXbnUSDratio });
   }, PERIOD);
 
   // BALN / bnUSD price
   useInterval(async () => {
-    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId.toString()));
+    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId));
     changeRatioValue({ BALNbnUSDratio });
   }, PERIOD);
 }

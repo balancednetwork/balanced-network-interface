@@ -1,5 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 
+import BigNumber from 'bignumber.js';
+import _ from 'lodash';
+import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,23 +14,17 @@ import { changeValueBalance } from './actions';
 import { WalletState } from './reducer';
 
 // #redux-step-5: define function get value of variable from store
-export function useWalletBalanceValue(): AppState['walletBalance'] {
+export function useWalletBalances(): AppState['walletBalance'] {
   const walletBalance = useSelector((state: AppState) => state.walletBalance);
   return useMemo(() => walletBalance, [walletBalance]);
 }
 
 // #redux-step-6: define function working with variable on store
-export function useChangeWalletBalance(): ({
-  ICXbalance,
-  sICXbalance,
-  bnUSDbalance,
-  BALNbalance,
-  BALNreward,
-}: Partial<WalletState>) => void {
+export function useChangeWalletBalance(): ({ ICX, sICX, bnUSD, BALN, BALNreward }: Partial<WalletState>) => void {
   const dispatch = useDispatch();
   return useCallback(
-    ({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance, BALNreward }) => {
-      dispatch(changeValueBalance({ ICXbalance, sICXbalance, bnUSDbalance, BALNbalance, BALNreward }));
+    ({ ICX, sICX, bnUSD, BALN, BALNreward }) => {
+      dispatch(changeValueBalance({ ICX, sICX, bnUSD, BALN, BALNreward }));
     },
     [dispatch],
   );
@@ -46,12 +43,12 @@ export function useFetchBalance(account?: string | null) {
       Promise.all([
         bnJs.sICX.getICXBalance(),
         bnJs.sICX.balanceOf(),
-        bnJs.Baln.balanceOf(),
+        bnJs.BALN.balanceOf(),
         bnJs.bnUSD.balanceOf(),
-        bnJs.Rewards.getRewards(),
+        bnJs.Rewards.getBalnHolding(account),
       ]).then(result => {
-        const [ICXbalance, sICXbalance, BALNbalance, bnUSDbalance, BALNreward] = result.map(v => convertLoopToIcx(v));
-        changeBalanceValue({ ICXbalance, sICXbalance, BALNbalance, bnUSDbalance, BALNreward });
+        const [ICX, sICX, BALN, bnUSD, BALNreward] = result.map(v => convertLoopToIcx(v));
+        changeBalanceValue({ ICX, sICX, BALN, bnUSD, BALNreward });
       });
     }
   }, [account, changeBalanceValue]);
@@ -60,3 +57,29 @@ export function useFetchBalance(account?: string | null) {
     fetchBalances();
   }, [fetchBalances, transactions, account]);
 }
+
+export const useBALNDetails = (): { [key in string]?: BigNumber } => {
+  const { account } = useIconReact();
+  const transactions = useAllTransactions();
+  const [details, setDetails] = React.useState({});
+
+  React.useEffect(() => {
+    const fetchDetails = async () => {
+      if (account) {
+        const result = await bnJs.BALN.detailsBalanceOf(account);
+
+        const temp = {};
+
+        _.forEach(result, function (value, key) {
+          temp[key] = convertLoopToIcx(new BigNumber(value));
+        });
+
+        setDetails(temp);
+      }
+    };
+
+    fetchDetails();
+  }, [account, transactions]);
+
+  return details;
+};

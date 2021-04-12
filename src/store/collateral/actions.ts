@@ -6,9 +6,9 @@ export enum Field {
   RIGHT = 'RIGHT',
 }
 
-export const changeDeposite = createAction<{ depositedValue: BigNumber }>('collateral/changeDepositedValue');
+export const changeDepositedAmount = createAction<{ depositedAmount: BigNumber }>('collateral/changeDepositedAmount');
 
-export const changeBalance = createAction<{ balance: BigNumber }>('collateral/changeBalanceValue');
+export const changeBalance = createAction<{ balance: BigNumber }>('collateral/changeBalance');
 
 export const adjust = createAction('collateral/adjust');
 

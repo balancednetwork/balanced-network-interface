@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
+import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -8,20 +9,37 @@ import styled from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCY_LIST, CURRENCY } from 'constants/currency';
 import '@reach/tabs/styles.css';
-import { useRatioValue } from 'store/ratio/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useRatio } from 'store/ratio/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 import BALNWallet from './wallets/BALNWallet';
 import BnUSDWallet from './wallets/BnUSDWallet';
 import ICXWallet from './wallets/ICXWallet';
 import SICXWallet from './wallets/SICXWallet';
 
+const WalletUIs = {
+  ICX: ICXWallet,
+  sICX: SICXWallet,
+  bnUSD: BnUSDWallet,
+  BALN: BALNWallet,
+};
+
 const WalletPanel = () => {
-  const walletBalance = useWalletBalanceValue();
+  const balances = useWalletBalances();
   const { account } = useIconReact();
-  const ratio = useRatioValue();
+  const ratio = useRatio();
+
+  const rates = React.useMemo(
+    () => ({
+      ICX: ratio.ICXUSDratio,
+      sICX: ratio.sICXICXratio.times(ratio.ICXUSDratio),
+      bnUSD: new BigNumber(1),
+      BALN: ratio.BALNbnUSDratio,
+    }),
+    [ratio],
+  );
 
   return (
     <BoxPanel bg="bg2">
@@ -38,96 +56,31 @@ const WalletPanel = () => {
 
         <List>
           <Accordion collapsible>
-            {/* icx section */}
-            <AccordionItem>
-              <StyledAccordionButton>
-                <ListItem>
-                  <AssetSymbol>
-                    <CurrencyLogo currency={CURRENCYLIST['icx']} />
-                    <Typography fontSize={16} fontWeight="bold">
-                      {CURRENCYLIST['icx'].symbol}
-                    </Typography>
-                  </AssetSymbol>
-                  <DataText>{!account ? '-' : walletBalance.ICXbalance.dp(2).toFormat()}</DataText>
-                  <DataText>
-                    {!account ? '-' : `$${walletBalance.ICXbalance.multipliedBy(ratio.ICXUSDratio).dp(2).toFormat()}`}
-                  </DataText>
-                </ListItem>
-              </StyledAccordionButton>
+            {CURRENCY.map(currency => {
+              const WalletUI = WalletUIs[currency];
+              return (
+                <AccordionItem key={currency}>
+                  <StyledAccordionButton>
+                    <ListItem>
+                      <AssetSymbol>
+                        <CurrencyLogo currency={CURRENCY_LIST[currency.toLowerCase()]} />
+                        <Typography fontSize={16} fontWeight="bold">
+                          {currency}
+                        </Typography>
+                      </AssetSymbol>
+                      <DataText>{!account ? '-' : balances[currency].dp(2).toFormat()}</DataText>
+                      <DataText>
+                        {!account ? '-' : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
+                      </DataText>
+                    </ListItem>
+                  </StyledAccordionButton>
 
-              <AccordionPanel>
-                <ICXWallet />
-              </AccordionPanel>
-            </AccordionItem>
-
-            {/* sicx section */}
-            <AccordionItem>
-              <StyledAccordionButton>
-                <ListItem>
-                  <AssetSymbol>
-                    <CurrencyLogo currency={CURRENCYLIST['sicx']} />
-                    <Typography fontSize={16} fontWeight="bold">
-                      {CURRENCYLIST['sicx'].symbol}
-                    </Typography>
-                  </AssetSymbol>
-                  <DataText>{!account ? '-' : walletBalance.sICXbalance.dp(2).toFormat()}</DataText>
-                  <DataText>
-                    {!account
-                      ? '-'
-                      : `$${walletBalance.sICXbalance
-                          .times(ratio.sICXICXratio)
-                          .times(ratio.ICXUSDratio)
-                          .dp(2)
-                          .toFormat()}`}
-                  </DataText>
-                </ListItem>
-              </StyledAccordionButton>
-              <AccordionPanel>
-                <SICXWallet />
-              </AccordionPanel>
-            </AccordionItem>
-
-            {/* bnusd section */}
-            <AccordionItem>
-              <StyledAccordionButton>
-                <ListItem>
-                  <AssetSymbol>
-                    <CurrencyLogo currency={CURRENCYLIST['bnusd']} />
-                    <Typography fontSize={16} fontWeight="bold">
-                      {CURRENCYLIST['bnusd'].symbol}
-                    </Typography>
-                  </AssetSymbol>
-                  <DataText>{!account ? '-' : walletBalance.bnUSDbalance.dp(2).toFormat()}</DataText>
-                  <DataText>{!account ? '-' : `$${walletBalance.bnUSDbalance.dp(2).toFormat()}`}</DataText>
-                </ListItem>
-              </StyledAccordionButton>
-
-              <AccordionPanel>
-                <BnUSDWallet />
-              </AccordionPanel>
-            </AccordionItem>
-
-            {/* baln section */}
-            <AccordionItem>
-              <StyledAccordionButton>
-                <ListItem border={false}>
-                  <AssetSymbol>
-                    <CurrencyLogo currency={CURRENCYLIST['baln']} />
-                    <Typography fontSize={16} fontWeight="bold">
-                      {CURRENCYLIST['baln'].symbol}
-                    </Typography>
-                  </AssetSymbol>
-                  <DataText>{!account ? '-' : walletBalance.BALNbalance.dp(2).toFormat()}</DataText>
-                  <DataText>
-                    {!account ? '-' : `$${walletBalance.BALNbalance.times(ratio.BALNbnUSDratio).dp(2).toFormat()}`}
-                  </DataText>
-                </ListItem>
-              </StyledAccordionButton>
-
-              <AccordionPanel>
-                <BALNWallet />
-              </AccordionPanel>
-            </AccordionItem>
+                  <AccordionPanel>
+                    <WalletUI />
+                  </AccordionPanel>
+                </AccordionItem>
+              );
+            })}
           </Accordion>
         </List>
       </Wrapper>

@@ -80,7 +80,7 @@ const AreaOption: DeepPartial<ChartOptions> = {
 //   },
 // };
 
-const TradingViewChart = ({ type = CHART_TYPES.AREA, data, candleData, width }) => {
+const TradingViewChart = ({ type = CHART_TYPES.AREA, data, width }) => {
   // reference for DOM element to create with chart
   const ref = useRef<HTMLDivElement>(null);
 
@@ -101,7 +101,6 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, candleData, width }) 
         lineColor: 'rgba(44, 169, 183, 1)',
         lineWidth: 2,
       });
-      console.log(data);
       series.setData(data);
 
       chart.applyOptions({
@@ -114,7 +113,7 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, candleData, width }) 
 
       setChartCreated(chart);
     }
-  }, [chartCreated, data, candleData, topScale, type, width]);
+  }, [chartCreated, data, topScale, type, width]);
 
   // responsiveness
   useEffect(() => {

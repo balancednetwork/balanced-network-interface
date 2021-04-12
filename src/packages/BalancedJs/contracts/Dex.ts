@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { IconAmount } from 'icon-sdk-js';
+import { IconAmount, IconConverter } from 'icon-sdk-js';
 
 import { ResponseJsonRPCPayload } from '..';
 import addresses from '../addresses';
@@ -12,44 +12,44 @@ export default class Dex extends Contract {
     this.address = addresses[this.nid].dex;
   }
 
-  getPrice(pid: string) {
+  getPrice(pid: number) {
     const callParams = this.paramsBuilder({
       method: 'getPrice',
       params: {
-        _pid: pid,
+        _pid: IconConverter.toHex(pid),
       },
     });
 
     return this.call(callParams);
   }
 
-  async dexSupplysICXbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const hexBasePrice =
-      '0x' + IconAmount.of(baseValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
-    const hexQuotePrice =
-      '0x' + IconAmount.of(quoteValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
-    const params = {
-      _baseToken: addresses[this.nid].sicx,
-      _quoteToken: addresses[this.nid].bnUSD,
-      _maxBaseValue: hexBasePrice,
-      _quoteValue: hexQuotePrice,
-    };
-    const payload = this.transactionParamsBuilder({
-      method: 'add',
-      params,
-    });
-    console.log(payload);
-    return this.callIconex(payload);
-  }
+  async add(
+    baseValue: BigNumber,
+    quoteValue: BigNumber,
+    baseToQuoteRatio: BigNumber,
+    _baseToken: string,
+    _quoteToken: string,
+  ): Promise<ResponseJsonRPCPayload> {
+    const calculatedQuoteValue = baseValue.multipliedBy(baseToQuoteRatio);
+    const calculatedBaseValue = quoteValue.multipliedBy(new BigNumber(1).dividedBy(baseToQuoteRatio));
+    let hexBasePrice = '';
+    let hexQuotePrice = '';
 
-  async supplyBALNbnUSD(baseValue: BigNumber, quoteValue: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const hexBasePrice =
-      '0x' + IconAmount.of(baseValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
-    const hexQuotePrice =
-      '0x' + IconAmount.of(quoteValue.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+    if (calculatedBaseValue.toString().length > calculatedQuoteValue.toString().length) {
+      hexBasePrice = IconConverter.toHex(IconAmount.of(baseValue.toNumber(), IconAmount.Unit.ICX).toLoop());
+      hexQuotePrice = IconConverter.toHex(
+        IconAmount.of(calculatedQuoteValue.toFixed(17, 1), IconAmount.Unit.ICX).toLoop(),
+      );
+    } else {
+      hexBasePrice = IconConverter.toHex(
+        IconAmount.of(calculatedBaseValue.toFixed(17, 0), IconAmount.Unit.ICX).toLoop(),
+      );
+      hexQuotePrice = IconConverter.toHex(IconAmount.of(quoteValue.toNumber(), IconAmount.Unit.ICX).toLoop());
+    }
+
     const params = {
-      _baseToken: addresses[this.nid].baln,
-      _quoteToken: addresses[this.nid].bnUSD,
+      _baseToken: _baseToken,
+      _quoteToken: _quoteToken,
       _maxBaseValue: hexBasePrice,
       _quoteValue: hexQuotePrice,
     };
@@ -73,33 +73,33 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  balanceOf(pid: string) {
+  balanceOf(pid: number) {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',
       params: {
         _owner: this.account,
-        _id: pid,
+        _id: IconConverter.toHex(pid),
       },
     });
     return this.call(callParams);
   }
 
-  getTotalSupply(pid: string) {
+  totalSupply(pid: number) {
     const callParams = this.paramsBuilder({
       method: 'totalSupply',
       params: {
-        _pid: pid,
+        _pid: IconConverter.toHex(pid),
       },
     });
 
     return this.call(callParams);
   }
 
-  getPoolTotal(pid: string, tokenAddress: string) {
+  getPoolTotal(pid: number, tokenAddress: string) {
     const callParams = this.paramsBuilder({
       method: 'getPoolTotal',
       params: {
-        _pid: pid,
+        _pid: IconConverter.toHex(pid),
         _token: tokenAddress,
       },
     });
@@ -109,7 +109,7 @@ export default class Dex extends Contract {
 
   transferICX(value: BigNumber) {
     const payload = this.transferICXParamsBuilder({
-      value: value.integerValue(BigNumber.ROUND_DOWN),
+      value: value,
     });
 
     return this.callIconex(payload);
@@ -144,13 +144,13 @@ export default class Dex extends Contract {
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
-  withdrawalTokens(pid: number, value: BigNumber) {
-    const valueHex =
-      '0x' + IconAmount.of(value.integerValue(BigNumber.ROUND_DOWN), IconAmount.Unit.ICX).toLoop().toString(16);
+  remove(pid: number, value: BigNumber) {
+    const valueHex = IconConverter.toHex(IconAmount.of(value.toFixed(18, 1), IconAmount.Unit.ICX).toLoop());
+
     const payload = this.transactionParamsBuilder({
       method: 'remove',
       params: {
-        _pid: pid.toString(16),
+        _pid: IconConverter.toHex(pid),
         _value: valueHex,
         _withdraw: '0x1',
       },
@@ -165,5 +165,29 @@ export default class Dex extends Contract {
     });
 
     return this.call(callParams);
+  }
+
+  isEarningRewards(address: string, id: number) {
+    const callParams = this.paramsBuilder({
+      method: 'isEarningRewards',
+      params: {
+        _address: address,
+        _id: IconConverter.toHex(id),
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  withdraw(token: string, value: BigNumber) {
+    const payload = this.transactionParamsBuilder({
+      method: 'withdraw',
+      params: {
+        _token: token,
+        _value: IconConverter.toHex(IconAmount.of(value.toFixed(18, 1), IconAmount.Unit.ICX).toLoop()),
+      },
+    });
+
+    return this.callIconex(payload);
   }
 }

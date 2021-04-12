@@ -1,10 +1,15 @@
 import React, { useCallback, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
+import { useIconReact } from 'packages/icon-react';
 import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { useCollateralDepositedAmount } from 'store/collateral/hooks';
+import { useLoanBorrowedAmount } from 'store/loan/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -61,3 +66,74 @@ export function useFetchReward(account?: string | null) {
     fetchReward();
   }, [fetchReward, transactions, account]);
 }
+
+export const useCollateralRatio = () => {
+  // sICX collateral * sICXICX price * ICXUSD price / bnUSD loan
+  const sICXAmount = useCollateralDepositedAmount();
+  const borrowedAmount = useLoanBorrowedAmount();
+  const ratio = useRatio();
+  return sICXAmount.times(ratio.sICXICXratio).times(ratio.ICXUSDratio).div(borrowedAmount);
+};
+
+export const useHasRewardableCollateral = () => {
+  const borrowedAmount = useLoanBorrowedAmount();
+  const collateralRatio = useCollateralRatio();
+
+  if (
+    borrowedAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
+    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(5))
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+export const useHasRewardableLiquidity = () => {
+  const { account } = useIconReact();
+
+  const [hasRewardableLiquidity, setHasRewardableLiquidity] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkIfRewardable = async () => {
+      if (account) {
+        const result = await Promise.all([
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.BALNbnUSDpoolId),
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.sICXbnUSDpoolId),
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.sICXICXpoolId),
+        ]);
+
+        if (result.find(pool => Number(pool))) setHasRewardableLiquidity(true);
+        else setHasRewardableLiquidity(false);
+      }
+    };
+
+    checkIfRewardable();
+  }, [account]);
+
+  return hasRewardableLiquidity;
+};
+
+export const useHasNetworkFees = () => {
+  const { account } = useIconReact();
+  const transactions = useAllTransactions();
+  const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkIfHasNetworkFees = async () => {
+      if (account) {
+        const [hasLP, balnDetails] = await Promise.all([
+          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.BALNbnUSDpoolId),
+          bnJs.BALN.detailsBalanceOf(account),
+        ]);
+
+        if (Number(hasLP) || Number(balnDetails['Staked balance'])) setHasNetworkFees(true);
+        else setHasNetworkFees(false);
+      }
+    };
+
+    checkIfHasNetworkFees();
+  }, [account, transactions]);
+
+  return hasNetworkFees;
+};

@@ -11,9 +11,9 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
+import { CURRENCY_LIST } from 'constants/currency';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 import { Grid, MaxButton } from '../utils';
 
@@ -32,9 +32,9 @@ export default function SendPanel() {
 
   const { account } = useIconReact();
 
-  const wallet = useWalletBalanceValue();
+  const wallet = useWalletBalances();
 
-  const maxAmount = wallet.sICXbalance;
+  const maxAmount = wallet['sICX'];
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -47,7 +47,7 @@ export default function SendPanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.sICXbalance;
+  const beforeAmount = wallet['sICX'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
@@ -61,7 +61,13 @@ export default function SendPanel() {
       .sICX.transfer(address, differenceAmount)
       .then(res => {
         if (res.result) {
-          addTransaction({ hash: res.result }, { summary: `Sent ${differenceAmount.toNumber()} sICX to ${address}.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: `Sending sICX...`,
+              summary: `Sent ${differenceAmount.dp(2).toFormat()} sICX to ${address}.`,
+            },
+          );
           toggleOpen();
           setValue('');
           setAddress('');
@@ -91,7 +97,7 @@ export default function SendPanel() {
         <CurrencyInputPanel
           value={value}
           showMaxButton={false}
-          currency={CURRENCYLIST['sicx']}
+          currency={CURRENCY_LIST['sicx']}
           onUserInput={handleCurrencyInput}
           id="sicx-currency-input-in-sicx-wallet"
         />

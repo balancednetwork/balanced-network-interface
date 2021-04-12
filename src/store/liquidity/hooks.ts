@@ -102,11 +102,11 @@ export function useFetchLiquidity(account?: string | null) {
   };
 
   const fetchLiquidity = React.useCallback(() => {
-    const getSuppliedToken = (poolId: string, baseAddress: string, quoteAddress: string) => {
+    const getSuppliedToken = (poolId: number, baseAddress: string, quoteAddress: string) => {
       return new Promise((resolve, reject) => {
         Promise.all([
           bnJs.Dex.balanceOf(poolId),
-          bnJs.Dex.getTotalSupply(poolId),
+          bnJs.Dex.totalSupply(poolId),
           bnJs.Dex.getPoolTotal(poolId, baseAddress),
           bnJs.Dex.getPoolTotal(poolId, quoteAddress),
         ])
@@ -124,7 +124,7 @@ export function useFetchLiquidity(account?: string | null) {
 
     if (account) {
       Promise.all([
-        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXICXpoolId.toString()),
+        bnJs.Dex.totalSupply(BalancedJs.utils.sICXICXpoolId),
         bnJs.eject({ account: account }).Dex.getICXBalance(),
       ]).then(result => {
         const [sICXICXTotalSupply, ICXBalance] = result.map(v => convertLoopToIcx(v as BigNumber));
@@ -135,7 +135,7 @@ export function useFetchLiquidity(account?: string | null) {
         });
       });
 
-      getSuppliedToken(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.sICX.address, bnJs.bnUSD.address)
+      getSuppliedToken(BalancedJs.utils.sICXbnUSDpoolId, bnJs.sICX.address, bnJs.bnUSD.address)
         .then((result: any) =>
           changeLiquiditySupply({
             sICXbnUSDBalance: result.balance,
@@ -146,9 +146,9 @@ export function useFetchLiquidity(account?: string | null) {
             sICXbnUSDTotalSupply: result.poolTotalSupply,
           }),
         )
-        .catch(e => console.log(e));
+        .catch(e => console.error(e));
 
-      getSuppliedToken(BalancedJs.utils.BALNbnUSDpoolId.toString(), bnJs.Baln.address, bnJs.bnUSD.address)
+      getSuppliedToken(BalancedJs.utils.BALNbnUSDpoolId, bnJs.BALN.address, bnJs.bnUSD.address)
         .then((result: any) =>
           changeLiquiditySupply({
             BALNbnUSDBalance: result.balance,
@@ -159,85 +159,9 @@ export function useFetchLiquidity(account?: string | null) {
             BALNbnUSDTotalSupply: result.poolTotalSupply,
           }),
         )
-        .catch(e => console.log(e));
+        .catch(e => console.error(e));
     }
   }, [account, changeLiquiditySupply]);
-
-  /*const fetchLiquidity = React.useCallback(() => {
-    if (account) {
-      Promise.all([
-        bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.sICX.address),
-        bnJs.Dex.getPoolTotal(BalancedJs.utils.sICXbnUSDpoolId.toString(), bnJs.bnUSD.address),
-        bnJs.Dex.balanceOf(BalancedJs.utils.sICXbnUSDpoolId.toString()),
-        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXbnUSDpoolId.toString()),
-
-        bnJs.Dex.getPoolTotal(BalancedJs.utils.BALNbnUSDpoolId.toString(), bnJs.Baln.address),
-        bnJs.Dex.getPoolTotal(BalancedJs.utils.BALNbnUSDpoolId.toString(), bnJs.bnUSD.address),
-        bnJs.Dex.balanceOf(BalancedJs.utils.BALNbnUSDpoolId.toString()),
-        bnJs.Dex.getTotalSupply(BalancedJs.utils.BALNbnUSDpoolId.toString()),
-
-        bnJs.Dex.getTotalSupply(BalancedJs.utils.sICXICXpoolId.toString()),
-        bnJs.eject({ account: account }).Dex.getICXBalance(),
-      ]).then(result => {
-        const [
-          sICXPoolsICXbnUSDTotal, // sm method `getPoolTotal`
-          bnUSDPoolsICXbnUSDTotal, // sm method `getPoolTotal`
-          sICXbnUSDBalance, // sm method `balanceOf`
-          sICXbnUSDTotalSupply, // sm method `totalSupply` pool sICXbnUSDpoolId
-
-          BALNPoolBALNbnUSDTotal,
-          bnUSDPoolBALNbnUSDTotal,
-          BALNbnUSDBalance,
-          BALNbnUSDTotalSupply,
-
-          sICXICXTotalSupply, // sm method `totalSupply` pool sICXICXpoolId
-          ICXBalance,
-        ] = result.map(v => convertLoopToIcx(v as BigNumber));
-        const sICXSuppliedPoolsICXbnUSD = calculateTokenSupplied(
-          sICXbnUSDBalance,
-          sICXPoolsICXbnUSDTotal,
-          sICXbnUSDTotalSupply,
-        );
-        const bnUSDSuppliedPoolsICXbnUSD = calculateTokenSupplied(
-          sICXbnUSDBalance,
-          bnUSDPoolsICXbnUSDTotal,
-          sICXbnUSDTotalSupply,
-        );
-
-        const BALNSuppliedPoolBALNbnUSD = calculateTokenSupplied(
-          BALNbnUSDBalance,
-          BALNPoolBALNbnUSDTotal,
-          BALNbnUSDTotalSupply,
-        );
-        const bnUSDSuppliedPoolBALNbnUSD = calculateTokenSupplied(
-          BALNbnUSDBalance,
-          bnUSDPoolBALNbnUSDTotal,
-          BALNbnUSDTotalSupply,
-        );
-
-        changeLiquiditySupply({
-          sICXPoolsICXbnUSDTotal,
-          bnUSDPoolsICXbnUSDTotal,
-          sICXbnUSDBalance,
-          sICXbnUSDTotalSupply,
-
-          BALNPoolBALNbnUSDTotal,
-          bnUSDPoolBALNbnUSDTotal,
-          BALNbnUSDBalance,
-          BALNbnUSDTotalSupply,
-
-          sICXSuppliedPoolsICXbnUSD,
-          bnUSDSuppliedPoolsICXbnUSD,
-
-          BALNSuppliedPoolBALNbnUSD,
-          bnUSDSuppliedPoolBALNbnUSD,
-
-          sICXICXTotalSupply,
-          ICXBalance,
-        });
-      });
-    }
-  }, [account, changeLiquiditySupply]);*/
 
   React.useEffect(() => {
     fetchLiquidity();

@@ -1,7 +1,9 @@
 import React from 'react';
 
-import { Flex } from 'rebass/styled-components';
+import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
+
+import { Typography } from 'app/theme';
 
 // enum SlippageError {
 //   InvalidInput = 'InvalidInput',
@@ -13,16 +15,16 @@ import styled from 'styled-components';
 //   InvalidInput = 'InvalidInput',
 // }
 
-// const SlippageEmojiContainer = styled.span`
-//   color: #f3841e;
-//   ${({ theme }) => theme.mediaWidth.upToSmall`
-//     display: none;
-//   `}
-// `;
+const SlippageEmojiContainer = styled.span`
+  color: #f3841e;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+     display: none;
+   `}
+`;
 
 const SlippageInput = styled(Flex)`
   height: 32px;
-  color: ${({ theme, color }) => (color === 'red' ? 'red' : theme.colors.text1)};
+  color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors.text1)};
   outline: none;
   border-radius: 8px;
   border: 2px solid #0c2a4d;
@@ -40,7 +42,7 @@ const SlippageInput = styled(Flex)`
 
 const Input = styled.input`
   width: 48px;
-  color: ${({ theme, color }) => (color === 'red' ? 'red' : theme.colors.text1)};
+  color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors.text1)};
   outline: none;
   border: none;
   background-color: #0c2a4d;
@@ -91,7 +93,7 @@ export default function SlippageSettings({
 
     try {
       const valueAsIntFromRoundedFloat = Number.parseInt((Number.parseFloat(value) * 100).toString());
-      if (!Number.isNaN(valueAsIntFromRoundedFloat) && valueAsIntFromRoundedFloat < 5000) {
+      if (!Number.isNaN(valueAsIntFromRoundedFloat) && valueAsIntFromRoundedFloat <= 1000) {
         setRawSlippage(valueAsIntFromRoundedFloat);
       }
     } catch {}
@@ -109,28 +111,34 @@ export default function SlippageSettings({
   // }
 
   return (
-    <Flex>
-      {/* {!!slippageInput && (slippageError === SlippageError.RiskyLow || slippageError === SlippageError.RiskyHigh) ? (
-        <SlippageEmojiContainer>
-          <span role="img" aria-label="warning">
-            ⚠️
-          </span>
-        </SlippageEmojiContainer>
-      ) : null} */}
-      <Flex p={1}>
-        <SlippageInput>
-          <Input
-            placeholder={(rawSlippage / 100).toFixed(2)}
-            value={slippageInput}
-            onBlur={() => {
-              parseCustomSlippage((rawSlippage / 100).toFixed(2));
-            }}
-            onChange={e => parseCustomSlippage(e.target.value)}
-            color={!slippageInputIsValid ? 'red' : ''}
-          />
-          %
-        </SlippageInput>
+    <>
+      <Flex>
+        <Flex p={1}>
+          <SlippageInput>
+            <Input
+              placeholder={(rawSlippage / 100).toFixed(2)}
+              value={slippageInput}
+              onBlur={() => {
+                parseCustomSlippage((rawSlippage / 100).toFixed(2));
+              }}
+              onChange={e => parseCustomSlippage(e.target.value)}
+              color={!slippageInputIsValid ? '#fb6a6a' : ''}
+            />
+            %
+          </SlippageInput>
+        </Flex>
       </Flex>
-    </Flex>
+      {!slippageInputIsValid ? (
+        <Flex mb={2} ml={2} mr={2}>
+          <SlippageEmojiContainer>
+            <Box width={1}>
+              <Typography as="span" textAlign="center" color={'#fb6a6a'}>
+                10% max
+              </Typography>
+            </Box>
+          </SlippageEmojiContainer>
+        </Flex>
+      ) : null}
+    </>
   );
 }

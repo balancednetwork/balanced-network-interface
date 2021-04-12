@@ -15,10 +15,11 @@ import Modal from 'app/components/Modal';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCYLIST } from 'constants/currency';
-import { useRatioValue } from 'store/ratio/hooks';
+import { CURRENCY_LIST } from 'constants/currency';
+import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
+import { formatBigNumber } from 'utils';
 
 import { retireMessage } from './utils';
 
@@ -29,8 +30,8 @@ const Grid = styled.div`
 `;
 
 const ReturnICDSection = () => {
-  const wallet = useWalletBalanceValue();
-  const ratio = useRatioValue();
+  const wallet = useWalletBalances();
+  const ratio = useRatio();
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
   const [retireAmount, setRetireAmount] = React.useState('0');
@@ -50,7 +51,11 @@ const ReturnICDSection = () => {
           const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
           setSwapFee(fee.toFixed(2).toString());
           val = (parseFloat(val) - fee).toString();
-          setReceiveAmount((parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString());
+          setReceiveAmount(
+            isNaN(parseFloat(val))
+              ? formatBigNumber(new BigNumber(0), 'currency')
+              : (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
+          );
         })
         .catch(e => {
           console.error('error', e);
@@ -101,12 +106,12 @@ const ReturnICDSection = () => {
       .eject({ account: account })
       .bnUSD.retireBnUSD(new BigNumber(retireAmount))
       .then(res => {
-        console.log('res', res);
         setOpen(false);
         addTransaction(
           { hash: res.result },
           {
-            summary: retireMessage(retireAmount),
+            pending: retireMessage(retireAmount, 'sICX').pendingMessage,
+            summary: retireMessage(retireAmount, 'sICX').successMessage,
           },
         );
       })
@@ -129,7 +134,7 @@ const ReturnICDSection = () => {
                 <Typography>Sell your bnUSD for $1 of sICX (staked ICX).</Typography>
 
                 <CurrencyInputPanel
-                  currency={CURRENCYLIST['bnusd']}
+                  currency={CURRENCY_LIST['bnusd']}
                   value={retireAmount}
                   onUserInput={handleTypeInput}
                   showMaxButton={false}
@@ -138,8 +143,7 @@ const ReturnICDSection = () => {
                 />
 
                 <Flex flexDirection="column" alignItems="flex-end">
-                  <Typography mb={2}>Minimum: 1000 bnUSD</Typography>
-                  <Typography>Wallet: {wallet.bnUSDbalance?.toFixed(2)} bnUSD</Typography>
+                  <Typography>Wallet: {formatBigNumber(wallet['bnUSD'], 'currency')} bnUSD</Typography>
                 </Flex>
 
                 <Divider />
@@ -183,7 +187,9 @@ const ReturnICDSection = () => {
                 {receiveAmount} sICX
               </Typography>
               <Typography textAlign="center">
-                ~ {(parseFloat(receiveAmount) * ratio.sICXICXratio?.toNumber()).toFixed(2)} ICX
+                ~{' '}
+                {formatBigNumber(new BigNumber(parseFloat(receiveAmount) * ratio.sICXICXratio?.toNumber()), 'currency')}{' '}
+                ICX
               </Typography>
             </Box>
           </Flex>

@@ -9,9 +9,9 @@ import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 export default function DepositPanel() {
   const [value, setValue] = React.useState('0');
@@ -22,11 +22,11 @@ export default function DepositPanel() {
 
   const { account } = useIconReact();
 
-  const wallet = useWalletBalanceValue();
+  const wallet = useWalletBalances();
 
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
-  const maxAmount = wallet.sICXbalance;
+  const maxAmount = wallet['sICX'];
 
   // modal logic
   const [open, setOpen] = React.useState(false);
@@ -35,7 +35,7 @@ export default function DepositPanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.sICXbalance;
+  const beforeAmount = wallet['sICX'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
@@ -51,7 +51,10 @@ export default function DepositPanel() {
         if (res.result) {
           addTransaction(
             { hash: res.result },
-            { summary: `Deposit ${differenceAmount.toNumber()} sICX to the collateral pool.` },
+            {
+              pending: `Depositing collateral...`,
+              summary: `Deposited ${differenceAmount.dp(2).toFormat()} sICX as collateral.`,
+            },
           );
           toggleOpen();
           setValue('0');

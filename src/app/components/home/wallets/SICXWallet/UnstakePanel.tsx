@@ -9,9 +9,9 @@ import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useRatioValue } from 'store/ratio/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalanceValue } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 export default function UnstakePanel() {
   const [value, setValue] = React.useState('0');
@@ -22,11 +22,11 @@ export default function UnstakePanel() {
 
   const { account } = useIconReact();
 
-  const wallet = useWalletBalanceValue();
+  const wallet = useWalletBalances();
 
-  const ratio = useRatioValue();
+  const ratio = useRatio();
 
-  const maxAmount = wallet.sICXbalance;
+  const maxAmount = wallet['sICX'];
 
   // modal logic
   const [open, setOpen] = React.useState(false);
@@ -35,7 +35,7 @@ export default function UnstakePanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.sICXbalance;
+  const beforeAmount = wallet['sICX'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
@@ -49,7 +49,13 @@ export default function UnstakePanel() {
       .sICX.unstake(differenceAmount)
       .then(res => {
         if (res.result) {
-          addTransaction({ hash: res.result }, { summary: `Unstake ${differenceAmount.toNumber()} sICX.` });
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: `Preparing to unstake sICX...`,
+              summary: `Unstaking ${differenceAmount.dp(2).toFormat()} sICX. Check ICX in your wallet for details.`,
+            },
+          );
           toggleOpen();
           setValue('0');
         } else {

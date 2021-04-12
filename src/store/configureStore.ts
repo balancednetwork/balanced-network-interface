@@ -11,6 +11,7 @@ import application from './application/reducer';
 import collateral from './collateral/reducer';
 import liquidity from './liquidity/reducer';
 import loan from './loan/reducer';
+import mint from './mint/reducer';
 import pool from './pool/reducer';
 import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
@@ -47,6 +48,7 @@ export function configureAppStore() {
       ratio,
       walletBalance,
       transactions,
+      mint,
     }),
     middleware: [
       ...getDefaultMiddleware({

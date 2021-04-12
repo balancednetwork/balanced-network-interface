@@ -5,32 +5,29 @@ import { changeValueBalance } from './actions';
 
 // #redux-step-1: define interface for variable
 export interface WalletState {
-  ICXbalance: BigNumber;
-  sICXbalance: BigNumber;
-  bnUSDbalance: BigNumber;
-  BALNbalance: BigNumber;
+  ICX: BigNumber;
+  sICX: BigNumber;
+  bnUSD: BigNumber;
+  BALN: BigNumber;
   BALNreward: BigNumber;
 }
 
-// #redux-step-2: inital state
+// #redux-step-2: initial state
 const initialState: WalletState = {
-  ICXbalance: new BigNumber(0),
-  sICXbalance: new BigNumber(0),
-  bnUSDbalance: new BigNumber(0),
-  BALNbalance: new BigNumber(0),
+  ICX: new BigNumber(0),
+  sICX: new BigNumber(0),
+  bnUSD: new BigNumber(0),
+  BALN: new BigNumber(0),
   BALNreward: new BigNumber(0),
 };
 
-// #redux-step-7: define function reducer, what happend when the action have dispatch
+// #redux-step-7: define function reducer, what happened when the action have dispatch
 export default createReducer(initialState, builder =>
-  builder.addCase(
-    changeValueBalance,
-    (state, { payload: { ICXbalance, sICXbalance, bnUSDbalance, BALNbalance, BALNreward } }) => {
-      state.BALNbalance = BALNbalance || state.BALNbalance;
-      state.ICXbalance = ICXbalance || state.ICXbalance;
-      state.sICXbalance = sICXbalance || state.sICXbalance;
-      state.bnUSDbalance = bnUSDbalance || state.bnUSDbalance;
-      state.BALNreward = BALNreward || state.BALNreward;
-    },
-  ),
+  builder.addCase(changeValueBalance, (state, { payload: { ICX, sICX, bnUSD, BALN, BALNreward } }) => {
+    state.ICX = ICX || state.ICX;
+    state.sICX = sICX || state.sICX;
+    state.bnUSD = bnUSD || state.bnUSD;
+    state.BALN = BALN || state.BALN;
+    state.BALNreward = BALNreward || state.BALNreward;
+  }),
 );

@@ -50,6 +50,7 @@ const useAvailableLPTokenBalance = () => {
 
 export default function LPPanel() {
   const { account } = useIconReact();
+  const toggleWalletModal = useWalletModalToggle();
   const balances = useWalletBalances();
 
   // modal
@@ -60,7 +61,11 @@ export default function LPPanel() {
   };
 
   const handleSupply = () => {
-    setShowSupplyConfirm(true);
+    if (account) {
+      setShowSupplyConfirm(true);
+    } else {
+      toggleWalletModal();
+    }
   };
 
   const selectedPair = usePoolPair();
@@ -101,8 +106,6 @@ export default function LPPanel() {
       ? ''
       : parsedAmounts[dependentField].toFixed(6),
   };
-
-  const toggleWalletModal = useWalletModalToggle();
 
   return (
     <>
@@ -158,15 +161,9 @@ export default function LPPanel() {
           </Box>
 
           <Flex justifyContent="center">
-            {account ? (
-              <Button color="primary" marginTop={5} onClick={handleSupply}>
-                Supply
-              </Button>
-            ) : (
-              <Button color="primary" marginTop={5} onClick={toggleWalletModal}>
-                Connect Wallet
-              </Button>
-            )}
+            <Button color="primary" marginTop={5} onClick={handleSupply}>
+              Supply
+            </Button>
           </Flex>
         </BrightPanel>
 

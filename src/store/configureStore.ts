@@ -17,7 +17,7 @@ import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
 import reward from './reward/reducer';
 import transactions from './transactions/reducer';
-import walletBalance from './wallet/reducer';
+import wallet from './wallet/reducer';
 
 const PERSISTED_KEYS: string[] = ['transactions'];
 
@@ -46,7 +46,7 @@ export function configureAppStore() {
       liquidity,
       loan,
       ratio,
-      walletBalance,
+      wallet,
       transactions,
       mint,
     }),

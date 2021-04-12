@@ -20,6 +20,7 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/compon
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, getFilteredCurrencies, SUPPORTED_BASE_CURRENCIES } from 'constants/currency';
+import { useWalletModalToggle } from 'store/application/hooks';
 import { useRatio, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -72,6 +73,7 @@ export default function SwapPanel() {
   const ratio = useRatio();
   const addTransaction = useTransactionAdder();
   const changeRatioValue = useChangeRatio();
+  const toggleWalletModal = useWalletModalToggle();
 
   const refreshPrice = React.useCallback(async () => {
     const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
@@ -230,7 +232,7 @@ export default function SwapPanel() {
 
   const handleSwap = () => {
     if (!account) {
-      // todo: require access to wallet to execute trade
+      toggleWalletModal();
     } else {
       if (!swapInputAmount || !swapOutputAmount) {
         return;

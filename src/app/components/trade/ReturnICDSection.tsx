@@ -143,8 +143,7 @@ const ReturnICDSection = () => {
                 />
 
                 <Flex flexDirection="column" alignItems="flex-end">
-                  <Typography mb={2}>Minimum: 1000 bnUSD</Typography>
-                  <Typography>Wallet: {wallet.bnUSDbalance?.toFixed(2)} bnUSD</Typography>
+                  <Typography>Wallet: {formatBigNumber(wallet['bnUSD'], 'currency')} bnUSD</Typography>
                 </Flex>
 
                 <Divider />

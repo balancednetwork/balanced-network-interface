@@ -30,7 +30,7 @@ const YEOUIDO_ADDRESSES = {
   governance: 'cx805cc8a62e5836b4c8adff6fde2cf18d4285633b',
   band: 'cx61a36e5d10412e03c907a507d1e8c6c3856d9964',
   sicx: 'cx299655d0586811ff6173c21946206894c1008ca3',
-  bnUSD: 'cxb871c2c0bb8e37df7686c033b47c1e552018794a',
+  bnusd: 'cxb871c2c0bb8e37df7686c033b47c1e552018794a',
   baln: 'cx6420155143c7eac8fa79fee9b5282c9b267ef31c',
   bwt: 'cx5a5e2e315b908b57a88a7818d78410d4fb3bc492',
 };

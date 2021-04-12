@@ -124,7 +124,7 @@ export const useHasNetworkFees = () => {
       if (account) {
         const [hasLP, balnDetails] = await Promise.all([
           bnJs.Dex.isEarningRewards(account, BalancedJs.utils.BALNbnUSDpoolId),
-          bnJs.Baln.detailsBalanceOf(account),
+          bnJs.BALN.detailsBalanceOf(account),
         ]);
 
         if (Number(hasLP) || Number(balnDetails['Staked balance'])) setHasNetworkFees(true);

@@ -45,31 +45,12 @@ export function useMintActionHandlers(
 
 const useSelectedPairBalances = () => {
   const selectedPair = usePoolPair();
-  const walletBalance = useWalletBalances();
+  const balances = useWalletBalances();
 
-  switch (selectedPair.pair) {
-    case SUPPORTED_PAIRS[0].pair: {
-      return {
-        [Field.CURRENCY_A]: walletBalance.sICXbalance,
-        [Field.CURRENCY_B]: walletBalance.bnUSDbalance,
-      };
-    }
-
-    case SUPPORTED_PAIRS[1].pair: {
-      return {
-        [Field.CURRENCY_A]: walletBalance.BALNbalance,
-        [Field.CURRENCY_B]: walletBalance.bnUSDbalance,
-      };
-    }
-
-    case SUPPORTED_PAIRS[2].pair: {
-      return { [Field.CURRENCY_A]: walletBalance.ICXbalance, [Field.CURRENCY_B]: new BigNumber(0) };
-    }
-
-    default: {
-      return { [Field.CURRENCY_A]: new BigNumber(0), [Field.CURRENCY_B]: new BigNumber(0) };
-    }
-  }
+  return {
+    [Field.CURRENCY_A]: balances[selectedPair.baseCurrencyKey],
+    [Field.CURRENCY_B]: balances[selectedPair.quoteCurrencyKey],
+  };
 };
 
 const useSelectedPairRatio = () => {

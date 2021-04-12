@@ -199,8 +199,9 @@ export default function SwapPanel() {
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const interval: any = event.currentTarget.value;
     loadChartData({
+      inputSymbol: inputCurrency.symbol.toLowerCase(),
+      outputSymbol: outputCurrency.symbol.toLowerCase(),
       interval: interval.toLowerCase(),
-      symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
     });
     setChartOption({
       ...chartOption,
@@ -376,37 +377,46 @@ export default function SwapPanel() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  const loadChartData = React.useCallback(({ interval, symbol }: { interval: string; symbol: string }) => {
-    setLoading(true);
-    try {
-      axios
-        .get(
-          `https://balanced.techiast.com:8069/api/v1/chart/lines?symbol=${symbol}&interval=${interval}&limit=500&order=desc`,
-        )
-        .then(res => {
-          const { data: d } = res;
-          let t = d.map(item => ({
-            time: item.time,
-            value: convertLoopToIcx(new BigNumber(item.price)).toNumber(),
-          }));
+  const loadChartData = React.useCallback(
+    ({ interval, inputSymbol, outputSymbol }: { interval: string; inputSymbol: string; outputSymbol: string }) => {
+      setLoading(true);
+      try {
+        axios
+          .get(
+            `https://balanced.techiast.com:8069/api/v1/chart/lines?symbol=${
+              inputSymbol === 'bnusd' || inputSymbol === 'icx' ? outputSymbol + inputSymbol : inputSymbol + outputSymbol
+            }&interval=${interval}&limit=500&order=desc`,
+          )
+          .then(res => {
+            const { data: d } = res;
+            let t = d.map(item => ({
+              time: item.time,
+              value:
+                inputSymbol === 'bnusd' || inputSymbol === 'icx'
+                  ? 1 / convertLoopToIcx(new BigNumber(item.price)).toNumber()
+                  : convertLoopToIcx(new BigNumber(item.price)).toNumber(),
+            }));
 
-          if (!t.length) {
-            console.log('No chart data, switch to others trading pairs');
-            return;
-          }
-          setData(t);
-          setLoading(false);
-        });
-    } catch (e) {
-      console.error(e);
-      setData([]);
-      setLoading(false);
-    }
-  }, []);
+            if (!t.length) {
+              console.log('No chart data, switch to others trading pairs');
+              return;
+            }
+            setData(t);
+            setLoading(false);
+          });
+      } catch (e) {
+        console.error(e);
+        setData([]);
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
   React.useEffect(() => {
     loadChartData({
-      symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
+      inputSymbol: inputCurrency.symbol.toLowerCase(),
+      outputSymbol: outputCurrency.symbol.toLowerCase(),
       interval: '5m',
     });
     refreshPrice();
@@ -417,8 +427,9 @@ export default function SwapPanel() {
       setInputCurrency(ccy);
       handleConvertOutputRate(ccy, outputCurrency, swapInputAmount);
       loadChartData({
+        inputSymbol: ccy.symbol.toLowerCase(),
+        outputSymbol: outputCurrency.symbol.toLowerCase(),
         interval: chartOption.period.toLowerCase(),
-        symbol: `${ccy.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
       });
     },
     [swapInputAmount, handleConvertOutputRate, outputCurrency, chartOption, loadChartData],
@@ -429,8 +440,9 @@ export default function SwapPanel() {
       setOutputCurrency(ccy);
       handleConvertOutputRate(inputCurrency, ccy, swapInputAmount);
       loadChartData({
+        inputSymbol: inputCurrency.symbol.toLowerCase(),
+        outputSymbol: ccy.symbol.toLowerCase(),
         interval: chartOption.period.toLowerCase(),
-        symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${ccy.symbol}`,
       });
     },
     [swapInputAmount, handleConvertOutputRate, inputCurrency, chartOption, loadChartData],
@@ -522,8 +534,8 @@ export default function SwapPanel() {
                 {inputCurrency.symbol} / {outputCurrency.symbol}
               </Typography>
               <Typography variant="p">
-                {formatBigNumber(ratio.sICXbnUSDratio, 'currency')} {outputCurrency.symbol} per {inputCurrency.symbol}{' '}
-                <span className="alert">-1.21%</span>
+                {formatBigNumber(new BigNumber(tokenRatio(inputCurrency.symbol, outputCurrency.symbol)), 'currency')}{' '}
+                {outputCurrency.symbol} per {inputCurrency.symbol} <span className="alert">-1.21%</span>
               </Typography>
             </Box>
             <Box width={[1, 1 / 2]} marginTop={[3, 0]}>

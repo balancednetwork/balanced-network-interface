@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -37,11 +37,11 @@ export default class Rewards extends Contract {
     return this.call(payload);
   }
 
-  getEmission(day: BigNumber) {
+  getEmission(day?: number) {
     const payload = this.paramsBuilder({
       method: 'getEmission',
       params: {
-        _day: day.toString(),
+        _day: day && IconConverter.toHex(day),
       },
     });
 

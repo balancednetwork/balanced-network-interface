@@ -5,5 +5,6 @@ export const changeReward = createAction<{
   sICXbnUSDreward?: BigNumber;
   BALNbnUSDreward?: BigNumber;
   sICXICXreward?: BigNumber;
+  loan?: BigNumber;
   poolDailyReward?: BigNumber;
 }>('reward/changeReward');

@@ -125,7 +125,7 @@ export function useFetchPools() {
 
   React.useEffect(() => {
     const fetchRewardsRule = async () => {
-      let result = await Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission(new BigNumber(1))]);
+      let result = await Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission()]);
 
       const [_rules, _emission] = result;
 

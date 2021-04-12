@@ -13,6 +13,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
@@ -210,13 +211,13 @@ const CollateralPanel = () => {
           <Nouislider
             id="slider-collateral"
             disabled={!isAdjusting}
-            start={[stakedICXAmount.toNumber()]}
-            padding={[Math.max(tLockedICXAmount.toNumber(), 0), 0]}
+            start={[stakedICXAmount.dp(2).toNumber()]}
+            padding={[Math.max(tLockedICXAmount.dp(2).toNumber(), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],
               // https://github.com/balancednetwork/balanced-network-interface/issues/50
-              max: [totalICXAmount.isZero() ? 1 : totalICXAmount.toNumber()],
+              max: [totalICXAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalICXAmount.dp(2).toNumber()],
             }}
             instanceRef={instance => {
               if (instance && !sliderInstance.current) {

@@ -11,6 +11,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import { CURRENCY_LIST, SUPPORTED_PAIRS } from 'constants/currency';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
@@ -24,7 +25,7 @@ import { SectionPanel, BrightPanel } from './utils';
 
 const ZERO = new BigNumber(0);
 
-const useAvailableLPTokenBalance = () => {
+const useAvailableLPTokenBalance = (): BigNumber => {
   const selectedPair = usePoolPair();
   const balances = useWalletBalances();
   const pool = usePool(selectedPair.poolId);
@@ -149,12 +150,13 @@ export default function LPPanel() {
           <Box mt={5}>
             <Nouislider
               id="slider-supply"
+              disabled={maxSliderAmount.dp(2).isZero()}
               start={[0]}
               padding={[0]}
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [maxSliderAmount.dp(2).toNumber()],
+                max: [maxSliderAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxSliderAmount.dp(2).toNumber()],
               }}
               onSlide={handleSlider}
             />

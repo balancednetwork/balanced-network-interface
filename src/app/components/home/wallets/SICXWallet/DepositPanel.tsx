@@ -9,6 +9,7 @@ import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -82,7 +83,7 @@ export default function DepositPanel() {
           connect={[true, false]}
           range={{
             min: [0],
-            max: [maxAmount.isZero() ? 0.001 : maxAmount.toNumber()],
+            max: [maxAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxAmount.dp(2).toNumber()],
           }}
           onSlide={handleSlider}
         />

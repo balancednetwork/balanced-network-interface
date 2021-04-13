@@ -354,7 +354,7 @@ const LiquidityDetails = () => {
 
           <tbody>
             {/* <!-- sICX / ICX --> */}
-            <tr>
+            <tr style={ICXBalance.toNumber() === 0 ? { display: 'none' } : {}}>
               <td>sICX / ICX</td>
               <td>{formatBigNumber(ICXBalance, 'currency')} ICX</td>
               <td>{sICXICXSuppliedShare?.isNaN() ? '0.00' : formatBigNumber(sICXICXSuppliedShare, 'currency')}%</td>
@@ -373,7 +373,7 @@ const LiquidityDetails = () => {
               </td>
             </tr>
 
-            <tr>
+            <tr style={liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toNumber() === 0 ? { display: 'none' } : {}}>
               <td>sICX / bnUSD</td>
               <td>
                 {formatBigNumber(liquiditySupply.sICXSuppliedPoolsICXbnUSD, 'currency') + ' sICX'}
@@ -458,7 +458,7 @@ const LiquidityDetails = () => {
             </tr>
 
             {/* <!-- BALN / bnUSD --> */}
-            <tr>
+            <tr style={liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toNumber() === 0 ? { display: 'none' } : {}}>
               <td>BALN / bnUSD</td>
               <td>
                 {formatBigNumber(liquiditySupply.BALNSuppliedPoolBALNbnUSD, 'currency')} BALN

@@ -3,7 +3,6 @@ import React, { useCallback, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -50,11 +49,11 @@ export function useFetchReward(account?: string | null) {
     if (account) {
       Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission()]).then(result => {
         const [poolsReward, poolEmission] = result.map(v => v);
-        const sICXICXreward = convertLoopToIcx(poolsReward['SICXICX']);
-        const sICXbnUSDreward = convertLoopToIcx(poolsReward['SICXbnUSD']);
-        const BALNbnUSDreward = convertLoopToIcx(poolsReward['BALNbnUSD']);
-        const loan = convertLoopToIcx(poolsReward['Loans']);
-        const poolDailyReward = convertLoopToIcx(poolEmission);
+        const sICXICXreward = BalancedJs.utils.toIcx(poolsReward['SICXICX']);
+        const sICXbnUSDreward = BalancedJs.utils.toIcx(poolsReward['SICXbnUSD']);
+        const BALNbnUSDreward = BalancedJs.utils.toIcx(poolsReward['BALNbnUSD']);
+        const loan = BalancedJs.utils.toIcx(poolsReward['Loans']);
+        const poolDailyReward = BalancedJs.utils.toIcx(poolEmission);
         changeReward({
           sICXICXreward,
           sICXbnUSDreward,
@@ -105,9 +104,9 @@ export const useHasRewardableLiquidity = () => {
     const checkIfRewardable = async () => {
       if (account) {
         const result = await Promise.all([
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.BALNbnUSDpoolId),
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.sICXbnUSDpoolId),
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.sICXICXpoolId),
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXbnUSD),
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXICX),
         ]);
 
         if (result.find(pool => Number(pool))) setHasRewardableLiquidity(true);
@@ -130,7 +129,7 @@ export const useHasNetworkFees = () => {
     const checkIfHasNetworkFees = async () => {
       if (account) {
         const [hasLP, balnDetails] = await Promise.all([
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.BALNbnUSDpoolId),
+          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
           bnJs.BALN.detailsBalanceOf(account),
         ]);
 

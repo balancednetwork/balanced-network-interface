@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -61,7 +62,7 @@ export default React.memo(function StakePanel() {
   const handleConfirm = () => {
     bnJs
       .eject({ account: account })
-      .BALN.stake(afterAmount)
+      .BALN.stake(BalancedJs.utils.toLoop(afterAmount))
       .then(res => {
         addTransaction(
           { hash: res.result },
@@ -93,7 +94,7 @@ export default React.memo(function StakePanel() {
           connect={[true, false]}
           range={{
             min: [0],
-            max: [totalBalance.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalBalance.dp(2).toNumber()],
+            max: [totalBalance.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalBalance.dp(2).toNumber()],
           }}
           onSlide={handleSlide}
         />

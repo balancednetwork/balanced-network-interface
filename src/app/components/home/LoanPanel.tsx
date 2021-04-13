@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -112,7 +113,7 @@ const LoanPanel = () => {
     if (shouldBorrow) {
       bnJs
         .eject({ account })
-        .Loans.borrowAdd(differenceAmount)
+        .Loans.originateLoan('bnUSD', BalancedJs.utils.toLoop(differenceAmount), account)
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -132,7 +133,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .eject({ account })
-        .bnUSD.repayLoan(differenceAmount.abs())
+        .bnUSD.repayLoan(BalancedJs.utils.toLoop(differenceAmount).abs())
         .then(res => {
           addTransaction(
             { hash: res.result },

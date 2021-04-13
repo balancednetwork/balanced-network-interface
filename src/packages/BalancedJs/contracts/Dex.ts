@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
-import { IconAmount, IconConverter } from 'icon-sdk-js';
+import { IconConverter } from 'icon-sdk-js';
 
-import { ResponseJsonRPCPayload } from '..';
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
@@ -23,61 +22,25 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  async add(
-    baseValue: BigNumber,
-    quoteValue: BigNumber,
-    baseToQuoteRatio: BigNumber,
-    _baseToken: string,
-    _quoteToken: string,
-  ): Promise<ResponseJsonRPCPayload> {
-    const calculatedQuoteValue = baseValue.multipliedBy(baseToQuoteRatio);
-    const calculatedBaseValue = quoteValue.multipliedBy(new BigNumber(1).dividedBy(baseToQuoteRatio));
-    let hexBasePrice = '';
-    let hexQuotePrice = '';
-
-    if (calculatedBaseValue.toString().length > calculatedQuoteValue.toString().length) {
-      hexBasePrice = IconConverter.toHex(IconAmount.of(baseValue.toNumber(), IconAmount.Unit.ICX).toLoop());
-      hexQuotePrice = IconConverter.toHex(
-        IconAmount.of(calculatedQuoteValue.toFixed(17, 1), IconAmount.Unit.ICX).toLoop(),
-      );
-    } else {
-      hexBasePrice = IconConverter.toHex(
-        IconAmount.of(calculatedBaseValue.toFixed(17, 0), IconAmount.Unit.ICX).toLoop(),
-      );
-      hexQuotePrice = IconConverter.toHex(IconAmount.of(quoteValue.toNumber(), IconAmount.Unit.ICX).toLoop());
-    }
-
-    const params = {
-      _baseToken: _baseToken,
-      _quoteToken: _quoteToken,
-      _maxBaseValue: hexBasePrice,
-      _quoteValue: hexQuotePrice,
-    };
+  add(baseToken: string, quoteToken: string, maxBaseValue: BigNumber, quoteValue: BigNumber) {
     const payload = this.transactionParamsBuilder({
       method: 'add',
-      params,
-    });
-    console.log(payload);
-    return this.callIconex(payload);
-  }
-
-  getDeposit(tokenAddress: string) {
-    const callParams = this.paramsBuilder({
-      method: 'getDeposit',
       params: {
-        _tokenAddress: tokenAddress,
-        _user: this.account,
+        _baseToken: baseToken,
+        _quoteToken: quoteToken,
+        _maxBaseValue: IconConverter.toHex(maxBaseValue),
+        _quoteValue: IconConverter.toHex(quoteValue),
       },
     });
 
-    return this.call(callParams);
+    return this.callIconex(payload);
   }
 
-  balanceOf(pid: number) {
+  balanceOf(owner: string, pid: number) {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',
       params: {
-        _owner: this.account,
+        _owner: owner,
         _id: IconConverter.toHex(pid),
       },
     });
@@ -95,12 +58,12 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  getPoolTotal(pid: number, tokenAddress: string) {
+  getPoolTotal(pid: number, token: string) {
     const callParams = this.paramsBuilder({
       method: 'getPoolTotal',
       params: {
         _pid: IconConverter.toHex(pid),
-        _token: tokenAddress,
+        _token: token,
       },
     });
 
@@ -113,17 +76,6 @@ export default class Dex extends Contract {
     });
 
     return this.callIconex(payload);
-  }
-
-  getICXBalance() {
-    const callParams = this.paramsBuilder({
-      method: 'getICXBalance',
-      params: {
-        _address: this.account,
-      },
-    });
-
-    return this.call(callParams);
   }
 
   getICXWithdrawLock() {
@@ -144,18 +96,15 @@ export default class Dex extends Contract {
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
-  remove(pid: number, value: BigNumber) {
-    const valueHex = IconConverter.toHex(IconAmount.of(value.toFixed(18, 1), IconAmount.Unit.ICX).toLoop());
-
+  remove(pid: number, value: BigNumber, withdraw: number = 1) {
     const payload = this.transactionParamsBuilder({
       method: 'remove',
       params: {
         _pid: IconConverter.toHex(pid),
-        _value: valueHex,
-        _withdraw: '0x1',
+        _value: IconConverter.toHex(value),
+        _withdraw: IconConverter.toHex(withdraw),
       },
     });
-    console.log(payload);
     return this.callIconex(payload);
   }
 
@@ -184,7 +133,7 @@ export default class Dex extends Contract {
       method: 'withdraw',
       params: {
         _token: token,
-        _value: IconConverter.toHex(IconAmount.of(value.toFixed(18, 1), IconAmount.Unit.ICX).toLoop()),
+        _value: IconConverter.toHex(value),
       },
     });
 

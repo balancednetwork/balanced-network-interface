@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -111,7 +112,7 @@ const ReturnICDSection = () => {
     }
     bnJs
       .eject({ account: account })
-      .bnUSD.retireBnUSD(new BigNumber(retireAmount))
+      .bnUSD.retireAsset(BalancedJs.utils.toLoop(new BigNumber(retireAmount)))
       .then(res => {
         setOpen(false);
         addTransaction(

@@ -15,7 +15,7 @@ const MAINNET_ADDRESSES = {
   governance: '',
   band: '',
   sicx: '',
-  bnUSD: '',
+  bnusd: '',
   baln: '',
   bwt: '',
 };

@@ -10,7 +10,7 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useDerivedMintInfo } from 'store/mint/hooks';
-import { usePoolPair, useSelectedPoolRate } from 'store/pool/hooks';
+import { usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { formatBigNumber } from 'utils';
 
@@ -38,8 +38,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
 
   const selectedPair = usePoolPair();
 
-  const selectedPairRatio = useSelectedPoolRate();
-
   const addTransaction = useTransactionAdder();
 
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
@@ -52,7 +50,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
 
     bnJs
       .eject({ account: account })
-      [currencyKey].dexDeposit(parsedAmounts[currencyType])
+      [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]))
       .then(res => {
         addTransaction(
           { hash: res.result },
@@ -77,12 +75,12 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
     const currencyKey =
       currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
 
-    bnJs.Dex.withdraw(bnJs[currencyKey].address, parsedAmounts[currencyType]).then(res => {
+    bnJs.Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(parsedAmounts[currencyType])).then(res => {
       addTransaction(
         { hash: res.result },
         {
           pending: `Withdrawing ${currencyKey}`,
-          summary: `${parsedAmounts[currencyType]} ${currencyKey} added to your wallet`,
+          summary: `${parsedAmounts[currencyType].dp(2).toFormat()} ${currencyKey} added to your wallet`,
         },
       );
 
@@ -93,10 +91,10 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   const [confirmTx, setConfirmTx] = React.useState('');
 
   const handleSupplyConfirm = () => {
-    if (selectedPair.poolId === BalancedJs.utils.sICXICXpoolId) {
+    if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
       bnJs
         .eject({ account: account })
-        .Dex.transferICX(parsedAmounts[Field.CURRENCY_A])
+        .Dex.transferICX(BalancedJs.utils.toLoop(parsedAmounts[Field.CURRENCY_A]))
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -121,11 +119,10 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
       bnJs
         .eject({ account: account })
         .Dex.add(
-          parsedAmounts[Field.CURRENCY_A],
-          parsedAmounts[Field.CURRENCY_B],
-          selectedPairRatio,
           bnJs[selectedPair.baseCurrencyKey].address,
           bnJs[selectedPair.quoteCurrencyKey].address,
+          BalancedJs.utils.toLoop(parsedAmounts[Field.CURRENCY_A]),
+          BalancedJs.utils.toLoop(parsedAmounts[Field.CURRENCY_B]),
         )
         .then(res => {
           addTransaction(
@@ -221,7 +218,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   };
 
   const isEnabled =
-    selectedPair.poolId === BalancedJs.utils.sICXICXpoolId
+    selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX
       ? true
       : addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success;
 

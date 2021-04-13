@@ -9,6 +9,7 @@ import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails } from 'store/wallet/hooks';
 
@@ -16,12 +17,9 @@ export default React.memo(function StakePanel() {
   const details = useBALNDetails();
 
   const totalBalance: BigNumber = details['Total balance'] || new BigNumber(0);
-  // const availableBalance: BigNumber = details['Available balance'] || new BigNumber(0);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const stakedBalance: BigNumber = details['Staked balance'] || new BigNumber(0);
-  // const unstakingBalance: BigNumber = details['Unstaking balance'] || new BigNumber(0);
 
-  //
+  const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
+
   const [isAdjusting, setAdjusting] = React.useState(false);
   const handleAdjust = () => {
     setAdjusting(true);
@@ -95,7 +93,7 @@ export default React.memo(function StakePanel() {
           connect={[true, false]}
           range={{
             min: [0],
-            max: [totalBalance.dp(2).toNumber()],
+            max: [totalBalance.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalBalance.dp(2).toNumber()],
           }}
           onSlide={handleSlide}
         />

@@ -62,7 +62,7 @@ export default class sICX extends Contract {
       '0x' +
       Buffer.from(
         '{"method": "_swap", "params": {"toToken":"' +
-          addresses[this.nid].bnUSD +
+          addresses[this.nid].bnusd +
           '", "maxSlippage":' +
           slippage +
           '}}',

@@ -114,11 +114,11 @@ export default function SwapPanel() {
       } else if (symbolInput === 'sICX' && symbolOutput === 'ICX') {
         return ratio.sICXICXratio || new BigNumber(0);
       } else if (symbolInput === 'bnUSD' && symbolOutput === 'sICX') {
-        let bnUSDRatio = ratio.sICXbnUSDratio?.toNumber() || 0;
-        return bnUSDRatio ? new BigNumber(1 / bnUSDRatio) : new BigNumber(0);
+        let bnUSDRatio = ratio.sICXbnUSDratio || new BigNumber(0);
+        return bnUSDRatio ? new BigNumber(1).dividedBy(bnUSDRatio) : new BigNumber(0);
       } else if (symbolInput === 'bnUSD' && symbolOutput === 'BALN') {
-        let bnUSDRatio = ratio.BALNbnUSDratio?.toNumber() || 0;
-        return bnUSDRatio ? new BigNumber(1 / bnUSDRatio) : new BigNumber(0);
+        let bnUSDRatio = ratio.BALNbnUSDratio || new BigNumber(0);
+        return bnUSDRatio ? new BigNumber(1).dividedBy(bnUSDRatio) : new BigNumber(0);
       }
       return 0;
     },
@@ -589,7 +589,7 @@ export default function SwapPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(new BigNumber(tokenRatio(inputCurrency.symbol, outputCurrency.symbol)), 'ratio')}{' '}
+            {formatBigNumber(new BigNumber(tokenRatio(outputCurrency.symbol, inputCurrency.symbol)), 'ratio')}{' '}
             {inputCurrency.symbol} per {outputCurrency.symbol}
           </Typography>
 

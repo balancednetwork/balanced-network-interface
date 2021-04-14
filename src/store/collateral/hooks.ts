@@ -1,7 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -49,9 +49,9 @@ export function useCollateralFetchInfo(account?: string | null) {
         bnJs.contractSettings.provider.getBalance(account).execute(),
       ]).then(([stakedICXResult, balance]: Array<any>) => {
         const stakedICXVal = stakedICXResult['assets']
-          ? convertLoopToIcx(new BigNumber(parseInt(stakedICXResult['assets']['sICX'], 16)))
+          ? BalancedJs.utils.toIcx(stakedICXResult['assets']['sICX'])
           : new BigNumber(0);
-        const unStakedVal = convertLoopToIcx(balance);
+        const unStakedVal = BalancedJs.utils.toIcx(balance);
 
         changeStakedICXAmount(stakedICXVal);
         changeUnStackedICXAmount(unStakedVal);

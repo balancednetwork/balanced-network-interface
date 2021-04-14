@@ -1,7 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -70,11 +70,11 @@ export function useLoanFetchInfo(account?: string | null) {
           bnJs.bnUSD.totalSupply(),
           bnJs.Loans.eject({ account }).getAccountPositions(),
         ]).then(([resultGetAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
-          const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
-          const bnUSDTotalSupply = convertLoopToIcx(resultTotalSupply);
+          const bnUSDbadDebt = BalancedJs.utils.toIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
+          const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
 
           const bnUSDDebt = resultDebt['assets']
-            ? convertLoopToIcx(new BigNumber(parseInt(resultDebt['assets']['bnUSD'] || 0, 16)))
+            ? BalancedJs.utils.toIcx(new BigNumber(parseInt(resultDebt['assets']['bnUSD'] || 0, 16)))
             : new BigNumber(0);
 
           changeBadDebt(bnUSDbadDebt);

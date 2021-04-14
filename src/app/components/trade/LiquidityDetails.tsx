@@ -224,7 +224,7 @@ const LiquidityDetails = () => {
 
     bnJs
       .eject({ account: account })
-      .Dex.remove(BalancedJs.utils.sICXbnUSDpoolId, withdrawTotal)
+      .Dex.remove(BalancedJs.utils.POOL_IDS.sICXbnUSD, withdrawTotal)
       .then(result => {
         console.log(result);
         addTransaction(
@@ -258,7 +258,7 @@ const LiquidityDetails = () => {
 
     bnJs
       .eject({ account: account })
-      .Dex.remove(BalancedJs.utils.BALNbnUSDpoolId, new BigNumber(withdrawTotal))
+      .Dex.remove(BalancedJs.utils.POOL_IDS.BALNbnUSD, new BigNumber(withdrawTotal))
       .then(result => {
         console.log(result);
         addTransaction(

@@ -31,7 +31,7 @@ const useAvailableLPTokenBalance = (): BigNumber => {
   const pool = usePool(selectedPair.poolId);
 
   if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
-    if (selectedPair.poolId === BalancedJs.utils.sICXICXpoolId) {
+    if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
       return balances['ICX'];
     }
 
@@ -156,7 +156,9 @@ export default function LPPanel() {
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [maxSliderAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxSliderAmount.dp(2).toNumber()],
+                max: [
+                  maxSliderAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxSliderAmount.dp(2).toNumber(),
+                ],
               }}
               onSlide={handleSlider}
             />

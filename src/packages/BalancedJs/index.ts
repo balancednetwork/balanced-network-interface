@@ -24,6 +24,8 @@ export type SettingEjection = {
   account: AccountType;
 };
 
+const LOOP = new BigNumber('1000000000000000000');
+
 export class BalancedJs {
   contractSettings: ContractSettings;
   networkId: NetworkId;
@@ -39,18 +41,25 @@ export class BalancedJs {
   Dex: Dex;
   Rewards: Rewards;
 
-  // static
   static utils = {
-    BALNbnUSDpoolId: 3,
-    sICXbnUSDpoolId: 2,
-    sICXICXpoolId: 1,
+    toLoop(value: BigNumber | number | string): BigNumber {
+      return new BigNumber(value).times(LOOP).integerValue(BigNumber.ROUND_DOWN);
+    },
+    toIcx(value: BigNumber | number | string): BigNumber {
+      return new BigNumber(value).div(LOOP);
+    },
+    POOL_IDS: {
+      BALNbnUSD: 3,
+      sICXbnUSD: 2,
+      sICXICX: 1,
+    },
   };
+
   /**
    * Creates instances of balanced contracts based on ContractSettings.
    * Usage example:
    * import {BalancedJs} = require('BalancedJs');
    * const bnjs = new BalancedJs(); //uses default ContractSettings - use mainnet
-   * const totalSupply = await bnjs.Synthetix.totalSupply();
    * @constructor
    * @param contractSettings {Partial<ContractSettings>}
    */

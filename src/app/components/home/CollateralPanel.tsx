@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -115,7 +116,7 @@ const CollateralPanel = () => {
     if (shouldDeposit) {
       bnJs
         .eject({ account: account })
-        .Loans.depositAddCollateral(collateralAmount)
+        .Loans.addCollateral(BalancedJs.utils.toLoop(collateralAmount))
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -135,7 +136,7 @@ const CollateralPanel = () => {
     } else {
       bnJs
         .eject({ account: account })
-        .Loans.depositWithdrawCollateral(collateralAmount)
+        .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmount))
         .then(res => {
           addTransaction(
             { hash: res.result }, //

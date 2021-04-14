@@ -4,7 +4,6 @@ import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -77,16 +76,16 @@ export default function SwapPanel() {
 
   const refreshPrice = React.useCallback(async () => {
     const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
-    const ICXUSDratio = convertLoopToIcx(res['rate']);
+    const ICXUSDratio = BalancedJs.utils.toIcx(res['rate']);
     changeRatioValue({ ICXUSDratio });
 
-    const sICXICXratio = convertLoopToIcx(await bnJs.Staking.getTodayRate());
+    const sICXICXratio = BalancedJs.utils.toIcx(await bnJs.Staking.getTodayRate());
     changeRatioValue({ sICXICXratio });
 
-    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId));
+    const sICXbnUSDratio = BalancedJs.utils.toIcx(await bnJs.Dex.getPrice(BalancedJs.utils.POOL_IDS.sICXbnUSD));
     changeRatioValue({ sICXbnUSDratio });
 
-    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId));
+    const BALNbnUSDratio = BalancedJs.utils.toIcx(await bnJs.Dex.getPrice(BalancedJs.utils.POOL_IDS.BALNbnUSD));
     changeRatioValue({ BALNbnUSDratio });
   }, [changeRatioValue]);
 
@@ -246,8 +245,6 @@ export default function SwapPanel() {
     if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
       bnJs
         .eject({ account: account })
-        //.sICX.borrowAdd(newBorrowValue)
-        //.bnUSD.swapBysICX(parseFloat(swapInputAmount), '10')
         .sICX.swapBybnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
         .then(res => {
           setShowSwapConfirm(false);
@@ -314,7 +311,7 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol === 'ICX') {
       bnJs
         .eject({ account: account })
-        .Staking.stakeICX(new BigNumber(swapInputAmount))
+        .Staking.stakeICX(account, new BigNumber(swapInputAmount))
         .then(res => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -395,8 +392,8 @@ export default function SwapPanel() {
               time: item.time,
               value:
                 inputSymbol === 'bnusd' || inputSymbol === 'icx'
-                  ? 1 / convertLoopToIcx(new BigNumber(item.price)).toNumber()
-                  : convertLoopToIcx(new BigNumber(item.price)).toNumber(),
+                  ? 1 / BalancedJs.utils.toIcx(new BigNumber(item.price)).toNumber()
+                  : BalancedJs.utils.toIcx(new BigNumber(item.price)).toNumber(),
             }));
 
             if (!t.length) {

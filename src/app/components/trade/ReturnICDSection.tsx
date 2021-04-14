@@ -44,26 +44,16 @@ const ReturnICDSection = () => {
   const handleTypeInput = React.useCallback(
     (val: string) => {
       setRetireAmount(val);
-      bnJs
-        .eject({ account: account })
-        .Dex.getFees()
-        .then(res => {
-          const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
-          const lp_fee = parseInt(res[`pool_lp_fee`], 16);
-          const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
-          setSwapFee(fee.toFixed(2).toString());
-          val = (parseFloat(val) - fee).toString();
-          setReceiveAmount(
-            isNaN(parseFloat(val))
-              ? formatBigNumber(new BigNumber(0), 'currency')
-              : (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
-          );
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
+      const fee = (parseFloat(val) * 0.5) / 100;
+      setSwapFee(fee.toFixed(2).toString());
+      val = (parseFloat(val) - fee).toString();
+      setReceiveAmount(
+        isNaN(parseFloat(val))
+          ? formatBigNumber(new BigNumber(0), 'currency')
+          : (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
+      );
     },
-    [account, ratio],
+    [ratio],
   );
 
   // handle retire balance dropdown

@@ -34,7 +34,11 @@ export function useCollateralChangeBalance(): (balance: BigNumber) => void {
 }
 
 export function useCollateralAvailableAmount() {
-  return useSelector((state: AppState) => state.collateral.balance);
+  const ICXAmount = useSelector((state: AppState) => state.collateral.balance);
+
+  return React.useMemo(() => {
+    return BigNumber.max(ICXAmount.minus(1), new BigNumber(0));
+  }, [ICXAmount]);
 }
 
 export function useCollateralFetchInfo(account?: string | null) {

@@ -151,14 +151,15 @@ const CollateralPanel = () => {
   // display locked sICX for borrowed bnUSD
   const lockedICXAmount = useLockedICXAmount();
 
-  const tLockedICXAmount = React.useMemo(() => BigNumber.min(lockedICXAmount, totalICXAmount), [
-    lockedICXAmount,
-    totalICXAmount,
-  ]);
+  const shouldShowLock = !lockedICXAmount.isZero();
+
+  // add one more ICX to the locked marker if user has debt to remove insufficient error.
+  const tLockedICXAmount = React.useMemo(
+    () => BigNumber.min(lockedICXAmount.plus(shouldShowLock ? 1 : 0), totalICXAmount),
+    [lockedICXAmount, totalICXAmount, shouldShowLock],
+  );
 
   const percent = totalICXAmount.isZero() ? 0 : tLockedICXAmount.div(totalICXAmount).times(100).toNumber();
-
-  const shouldShowLock = !lockedICXAmount.isZero();
 
   return (
     <>

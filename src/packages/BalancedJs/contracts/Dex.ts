@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
+import { IconConverter, IconAmount } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -101,7 +101,7 @@ export default class Dex extends Contract {
       method: 'remove',
       params: {
         _pid: IconConverter.toHex(pid),
-        _value: IconConverter.toHex(value),
+        _value: IconConverter.toHex(IconAmount.of(value.toFixed(18, 1), IconAmount.Unit.ICX).toLoop()),
         _withdraw: IconConverter.toHex(withdraw),
       },
     });

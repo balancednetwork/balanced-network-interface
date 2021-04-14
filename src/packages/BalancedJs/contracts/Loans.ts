@@ -46,11 +46,11 @@ export default class Loans extends Contract {
     return this.call(callParams);
   }
 
-  getAccountPositions() {
+  getAccountPositions(owner: string) {
     const callParams = this.paramsBuilder({
       method: 'getAccountPositions',
       params: {
-        _owner: this.account,
+        _owner: owner,
       },
     });
 

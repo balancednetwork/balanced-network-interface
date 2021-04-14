@@ -18,12 +18,12 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
-  useCollateralType,
-  useCollateralAdjust,
   useCollateralDepositedAmountInICX,
   useCollateralTotalICXAmount,
+  useCollateralActionHandlers,
 } from 'store/collateral/hooks';
-import { useLockedICXAmount, useLoanAdjust } from 'store/loan/hooks';
+import { useLockedICXAmount, useLoanActionHandlers } from 'store/loan/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
 const CollateralPanel = () => {
@@ -36,32 +36,8 @@ const CollateralPanel = () => {
   const { independentField, typedValue, isAdjusting, inputType } = useCollateralState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
-  const type = useCollateralType();
-
-  const handleStakedAmountType = React.useCallback(
-    (value: string) => {
-      type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' });
-    },
-    [type],
-  );
-
-  const handleUnstakedAmountType = React.useCallback(
-    (value: string) => {
-      type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' });
-    },
-    [type],
-  );
-
-  const handleCollateralSlider = React.useCallback(
-    (values: string[], handle: number) => {
-      type({ typedValue: values[handle], inputType: 'slider' });
-    },
-    [type],
-  );
-
-  const adjust = useCollateralAdjust();
-
-  const adjustLoan = useLoanAdjust();
+  const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useCollateralActionHandlers();
+  const { onAdjust: adjustLoan } = useLoanActionHandlers();
 
   const handleEnableAdjusting = () => {
     adjust(true);
@@ -110,9 +86,8 @@ const CollateralPanel = () => {
 
   //
   const addTransaction = useTransactionAdder();
-
+  const ratio = useRatio();
   const handleCollateralConfirm = () => {
-    bnJs.eject({ account });
     if (shouldDeposit) {
       bnJs
         .eject({ account: account })
@@ -134,9 +109,10 @@ const CollateralPanel = () => {
           console.error('error', e);
         });
     } else {
+      const collateralAmountInSICX = collateralAmount.div(ratio.sICXICXratio);
       bnJs
         .eject({ account: account })
-        .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmount))
+        .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX))
         .then(res => {
           addTransaction(
             { hash: res.result }, //
@@ -160,9 +136,9 @@ const CollateralPanel = () => {
   // change typedValue if sICX and ratio changes
   React.useEffect(() => {
     if (!isAdjusting) {
-      type({ independentField: Field.LEFT, typedValue: stakedICXAmount.isZero() ? '0' : stakedICXAmount.toFixed(2) });
+      onFieldAInput(stakedICXAmount.isZero() ? '0' : stakedICXAmount.toFixed(2));
     }
-  }, [type, stakedICXAmount, isAdjusting]);
+  }, [onFieldAInput, stakedICXAmount, isAdjusting]);
 
   // optimize slider performance
   // change slider value if only a user types
@@ -225,7 +201,7 @@ const CollateralPanel = () => {
                 sliderInstance.current = instance;
               }
             }}
-            onSlide={handleCollateralSlider}
+            onSlide={onSlide}
           />
         </Box>
 
@@ -239,7 +215,7 @@ const CollateralPanel = () => {
               tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
               value={!account ? '-' : formattedAmounts[Field.LEFT]}
               currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['icx']}
-              onUserInput={handleStakedAmountType}
+              onUserInput={onFieldAInput}
             />
           </Box>
 
@@ -252,7 +228,7 @@ const CollateralPanel = () => {
               tooltipText="The amount of ICX available to deposit from your wallet."
               value={!account ? '-' : formattedAmounts[Field.RIGHT]}
               currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['icx']}
-              onUserInput={handleUnstakedAmountType}
+              onUserInput={onFieldBInput}
             />
           </Box>
         </Flex>

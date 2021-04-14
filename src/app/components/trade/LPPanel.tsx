@@ -56,7 +56,7 @@ const useCalculateLPToken = (baseValue: string, quoteValue: string): BigNumber =
 
   if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
     if (selectedPair.poolId === BalancedJs.utils.sICXICXpoolId) {
-      return balances['ICX'];
+      return new BigNumber(baseValue).times(pool.total).div(pool.base);
     }
 
     if (

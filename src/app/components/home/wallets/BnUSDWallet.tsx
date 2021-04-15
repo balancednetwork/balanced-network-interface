@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
@@ -35,7 +36,7 @@ export default function BnUSDWallet() {
 
   const wallet = useWalletBalances();
 
-  const maxAmount = wallet.bnUSDbalance;
+  const maxAmount = wallet['bnUSD'];
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -48,7 +49,7 @@ export default function BnUSDWallet() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.bnUSDbalance;
+  const beforeAmount = wallet['bnUSD'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
@@ -59,7 +60,7 @@ export default function BnUSDWallet() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .bnUSD.transfer(address, differenceAmount)
+      .bnUSD.transfer(address, BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {
           addTransaction(

@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -34,7 +35,7 @@ export default function SendPanel() {
 
   const wallet = useWalletBalances();
 
-  const maxAmount = wallet.sICXbalance;
+  const maxAmount = wallet['sICX'];
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -47,7 +48,7 @@ export default function SendPanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.sICXbalance;
+  const beforeAmount = wallet['sICX'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
@@ -58,7 +59,7 @@ export default function SendPanel() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .sICX.transfer(address, differenceAmount)
+      .sICX.transfer(address, BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {
           addTransaction(

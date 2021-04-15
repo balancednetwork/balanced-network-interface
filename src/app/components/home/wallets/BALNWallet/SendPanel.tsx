@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -49,7 +50,7 @@ export default function SendPanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.BALNbalance;
+  const beforeAmount = wallet['BALN'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
@@ -60,7 +61,7 @@ export default function SendPanel() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .Baln.transfer(address, differenceAmount)
+      .BALN.transfer(address, BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {
           addTransaction(

@@ -43,18 +43,26 @@ export function escapeRegExp(string: string): string {
 }
 
 export function formatBigNumber(value: BigNumber | undefined, type: 'currency' | 'ratio' | 'input') {
-  if (value === undefined || value.isNaN()) {
+  if (value === undefined || value.isNaN() || value.isEqualTo(0)) {
     return '0';
   } else {
     switch (type) {
       case 'currency': {
-        return value.toFixed(2, 0);
+        if (value.isLessThan(new BigNumber(1))) {
+          return value.precision(2, BigNumber.ROUND_DOWN).toString();
+        } else {
+          return value.dp(2).toFormat();
+        }
       }
       case 'input': {
         return value.toFixed(2, 1);
       }
       case 'ratio': {
-        return value.toFixed(4, 1);
+        if (value.decimalPlaces() === 0) {
+          return value.toFormat(0, BigNumber.ROUND_UP);
+        } else {
+          return value.toFixed(4, 1);
+        }
       }
     }
   }

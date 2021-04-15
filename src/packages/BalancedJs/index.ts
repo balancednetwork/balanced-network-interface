@@ -1,11 +1,12 @@
 import BigNumber from 'bignumber.js';
 
 import { NetworkId } from './addresses';
-import Baln from './contracts/Baln';
+import BALN from './contracts/BALN';
 import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
 import { Contract } from './contracts/contract';
 import Dex from './contracts/Dex';
+import ICX from './contracts/ICX';
 import Loans from './contracts/Loans';
 import Rewards from './contracts/Rewards';
 import sICX from './contracts/sICX';
@@ -23,32 +24,42 @@ export type SettingEjection = {
   account: AccountType;
 };
 
+const LOOP = new BigNumber('1000000000000000000');
+
 export class BalancedJs {
   contractSettings: ContractSettings;
   networkId: NetworkId;
 
   // contracts
-  Baln: Baln;
-  Loans: Loans;
+  BALN: BALN;
   sICX: sICX;
+  bnUSD: bnUSD;
+  ICX: ICX;
+  Loans: Loans;
   Band: Band;
   Staking: Staking;
   Dex: Dex;
-  bnUSD: bnUSD;
   Rewards: Rewards;
 
-  // static
   static utils = {
-    BALNbnUSDpoolId: 3,
-    sICXbnUSDpoolId: 2,
-    sICXICXpoolId: 1,
+    toLoop(value: BigNumber | number | string): BigNumber {
+      return new BigNumber(value).times(LOOP).integerValue(BigNumber.ROUND_DOWN);
+    },
+    toIcx(value: BigNumber | number | string): BigNumber {
+      return new BigNumber(value).div(LOOP);
+    },
+    POOL_IDS: {
+      BALNbnUSD: 3,
+      sICXbnUSD: 2,
+      sICXICX: 1,
+    },
   };
+
   /**
    * Creates instances of balanced contracts based on ContractSettings.
    * Usage example:
    * import {BalancedJs} = require('BalancedJs');
    * const bnjs = new BalancedJs(); //uses default ContractSettings - use mainnet
-   * const totalSupply = await bnjs.Synthetix.totalSupply();
    * @constructor
    * @param contractSettings {Partial<ContractSettings>}
    */
@@ -62,13 +73,16 @@ export class BalancedJs {
     //   this[name] = new Contract(_contractSettings);
     // });
 
-    this.Baln = new Baln(this.contractSettings);
-    this.Loans = new Loans(this.contractSettings);
+    // token
+    this.BALN = new BALN(this.contractSettings);
+    this.ICX = new ICX(this.contractSettings);
+    this.bnUSD = new bnUSD(this.contractSettings);
     this.sICX = new sICX(this.contractSettings);
+
+    this.Loans = new Loans(this.contractSettings);
     this.Band = new Band(this.contractSettings);
     this.Staking = new Staking(this.contractSettings);
     this.Dex = new Dex(this.contractSettings);
-    this.bnUSD = new bnUSD(this.contractSettings);
     this.Rewards = new Rewards(this.contractSettings);
   }
 

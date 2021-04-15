@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -13,6 +14,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
@@ -22,6 +24,7 @@ import {
   useCollateralTotalICXAmount,
 } from 'store/collateral/hooks';
 import { useLockedICXAmount, useLoanAdjust } from 'store/loan/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
 const CollateralPanel = () => {
@@ -101,6 +104,8 @@ const CollateralPanel = () => {
   const afterAmount = parsedAmount[Field.LEFT];
   //difference = after-before
   const differenceAmount = afterAmount.minus(beforeAmount);
+  const ratio = useRatio();
+  const differenceAmountInSICX = differenceAmount.div(ratio.sICXICXratio);
   //collateral amount
   const collateralAmount = differenceAmount.abs();
   //whether if deposit or withdraw
@@ -114,7 +119,7 @@ const CollateralPanel = () => {
     if (shouldDeposit) {
       bnJs
         .eject({ account: account })
-        .Loans.depositAddCollateral(collateralAmount)
+        .Loans.addCollateral(BalancedJs.utils.toLoop(collateralAmount))
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -134,7 +139,7 @@ const CollateralPanel = () => {
     } else {
       bnJs
         .eject({ account: account })
-        .Loans.depositWithdrawCollateral(collateralAmount)
+        .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmount))
         .then(res => {
           addTransaction(
             { hash: res.result }, //
@@ -210,13 +215,13 @@ const CollateralPanel = () => {
           <Nouislider
             id="slider-collateral"
             disabled={!isAdjusting}
-            start={[stakedICXAmount.toNumber()]}
-            padding={[Math.max(tLockedICXAmount.toNumber(), 0), 0]}
+            start={[stakedICXAmount.dp(2).toNumber()]}
+            padding={[Math.max(tLockedICXAmount.dp(2).toNumber(), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],
               // https://github.com/balancednetwork/balanced-network-interface/issues/50
-              max: [totalICXAmount.isZero() ? 1 : totalICXAmount.toNumber()],
+              max: [totalICXAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalICXAmount.dp(2).toNumber()],
             }}
             instanceRef={instance => {
               if (instance && !sliderInstance.current) {
@@ -266,6 +271,10 @@ const CollateralPanel = () => {
             {differenceAmount.dp(2).toFormat() + ' ICX'}
           </Typography>
 
+          {!shouldDeposit && (
+            <Typography textAlign="center">{differenceAmountInSICX.dp(2).toFormat() + ' sICX'}</Typography>
+          )}
+
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
@@ -282,7 +291,11 @@ const CollateralPanel = () => {
             </Box>
           </Flex>
 
-          <Typography textAlign="center">Your ICX will be staked as sICX.</Typography>
+          <Typography textAlign="center">
+            {shouldDeposit
+              ? 'Your ICX will be staked as sICX.'
+              : "You'll receive sICX (staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."}
+          </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>

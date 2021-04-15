@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -105,14 +104,14 @@ export function useFetchLiquidity(account?: string | null) {
     const getSuppliedToken = (poolId: number, baseAddress: string, quoteAddress: string) => {
       return new Promise((resolve, reject) => {
         Promise.all([
-          bnJs.Dex.balanceOf(poolId),
+          bnJs.Dex.balanceOf(account as string, poolId),
           bnJs.Dex.totalSupply(poolId),
           bnJs.Dex.getPoolTotal(poolId, baseAddress),
           bnJs.Dex.getPoolTotal(poolId, quoteAddress),
         ])
           .then(result => {
             const [balance, poolTotalSupply, poolBaseTotal, poolQuoteTotal] = result.map(v =>
-              convertLoopToIcx(v as BigNumber),
+              BalancedJs.utils.toIcx(v as BigNumber),
             );
             const baseTokenSupplied = calculateTokenSupplied(balance, poolTotalSupply, poolBaseTotal);
             const quoteTokenSupplied = calculateTokenSupplied(balance, poolTotalSupply, poolQuoteTotal);
@@ -124,10 +123,10 @@ export function useFetchLiquidity(account?: string | null) {
 
     if (account) {
       Promise.all([
-        bnJs.Dex.totalSupply(BalancedJs.utils.sICXICXpoolId),
+        bnJs.Dex.totalSupply(BalancedJs.utils.POOL_IDS.sICXICX),
         bnJs.eject({ account: account }).Dex.getICXBalance(),
       ]).then(result => {
-        const [sICXICXTotalSupply, ICXBalance] = result.map(v => convertLoopToIcx(v as BigNumber));
+        const [sICXICXTotalSupply, ICXBalance] = result.map(v => BalancedJs.utils.toIcx(v as BigNumber));
 
         changeLiquiditySupply({
           sICXICXTotalSupply,
@@ -135,7 +134,7 @@ export function useFetchLiquidity(account?: string | null) {
         });
       });
 
-      getSuppliedToken(BalancedJs.utils.sICXbnUSDpoolId, bnJs.sICX.address, bnJs.bnUSD.address)
+      getSuppliedToken(BalancedJs.utils.POOL_IDS.sICXbnUSD, bnJs.sICX.address, bnJs.bnUSD.address)
         .then((result: any) =>
           changeLiquiditySupply({
             sICXbnUSDBalance: result.balance,
@@ -148,7 +147,7 @@ export function useFetchLiquidity(account?: string | null) {
         )
         .catch(e => console.error(e));
 
-      getSuppliedToken(BalancedJs.utils.BALNbnUSDpoolId, bnJs.Baln.address, bnJs.bnUSD.address)
+      getSuppliedToken(BalancedJs.utils.POOL_IDS.BALNbnUSD, bnJs.BALN.address, bnJs.bnUSD.address)
         .then((result: any) =>
           changeLiquiditySupply({
             BALNbnUSDBalance: result.balance,

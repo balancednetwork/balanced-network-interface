@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -16,6 +17,7 @@ import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
+import { useWalletModalToggle } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -38,30 +40,21 @@ const ReturnICDSection = () => {
   const [receiveAmount, setReceiveAmount] = React.useState('0');
   const [swapFee, setSwapFee] = React.useState('0');
   const [open, setOpen] = React.useState(false);
+  const toggleWalletModal = useWalletModalToggle();
 
   const handleTypeInput = React.useCallback(
     (val: string) => {
       setRetireAmount(val);
-      bnJs
-        .eject({ account: account })
-        .Dex.getFees()
-        .then(res => {
-          const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
-          const lp_fee = parseInt(res[`pool_lp_fee`], 16);
-          const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
-          setSwapFee(fee.toFixed(2).toString());
-          val = (parseFloat(val) - fee).toString();
-          setReceiveAmount(
-            isNaN(parseFloat(val))
-              ? formatBigNumber(new BigNumber(0), 'currency')
-              : (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
-          );
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
+      const fee = (parseFloat(val) * 0.5) / 100;
+      setSwapFee(fee.toFixed(2).toString());
+      val = (parseFloat(val) - fee).toString();
+      setReceiveAmount(
+        isNaN(parseFloat(val))
+          ? formatBigNumber(new BigNumber(0), 'currency')
+          : (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
+      );
     },
-    [account, ratio],
+    [ratio],
   );
 
   // handle retire balance dropdown
@@ -89,8 +82,13 @@ const ReturnICDSection = () => {
   };
 
   const handleRetire = () => {
-    closeDropdown();
-    setOpen(true);
+    if (!account) {
+      closeDropdown();
+      toggleWalletModal();
+    } else {
+      closeDropdown();
+      setOpen(true);
+    }
   };
 
   const handleRetireDismiss = () => {
@@ -104,7 +102,7 @@ const ReturnICDSection = () => {
     }
     bnJs
       .eject({ account: account })
-      .bnUSD.retireBnUSD(new BigNumber(retireAmount))
+      .bnUSD.retireAsset(BalancedJs.utils.toLoop(new BigNumber(retireAmount)))
       .then(res => {
         setOpen(false);
         addTransaction(
@@ -143,8 +141,7 @@ const ReturnICDSection = () => {
                 />
 
                 <Flex flexDirection="column" alignItems="flex-end">
-                  <Typography mb={2}>Minimum: 1000 bnUSD</Typography>
-                  <Typography>Wallet: {wallet.bnUSDbalance?.toFixed(2)} bnUSD</Typography>
+                  <Typography>Wallet: {formatBigNumber(wallet['bnUSD'], 'currency')} bnUSD</Typography>
                 </Flex>
 
                 <Divider />

@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import IconService, { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
+import IconService, { IconBuilder, IconConverter } from 'icon-sdk-js';
 import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 
 import { AccountType, ResponseJsonRPCPayload, SettingEjection } from '..';
@@ -34,13 +34,11 @@ export class Contract {
       [key: string]: any;
     };
   }) {
-    return new IconBuilder.CallBuilder().from(this.account).to(this.address).method(method).params(params).build();
+    return new IconBuilder.CallBuilder().to(this.address).method(method).params(params).build();
   }
 
-  async call(params: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.provider.call(params).execute().then(resolve).catch(reject);
-    });
+  call(params) {
+    return this.provider.call(params).execute();
   }
 
   /**
@@ -57,8 +55,7 @@ export class Contract {
       [key: string]: any;
     };
   }) {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-    const payload = callTransactionBuilder
+    const payload = new IconBuilder.CallTransactionBuilder()
       .from(this.account)
       .to(this.address)
       .method(method)
@@ -66,7 +63,7 @@ export class Contract {
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)
       .stepLimit(IconConverter.toBigNumber(10000000))
-      .value(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop())
+      .value(value)
       .version(IconConverter.toBigNumber(3))
       .build();
 
@@ -88,7 +85,7 @@ export class Contract {
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)
       .stepLimit(IconConverter.toBigNumber(1000000))
-      .value(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop())
+      .value(value)
       .version(IconConverter.toBigNumber(3))
       .build();
 

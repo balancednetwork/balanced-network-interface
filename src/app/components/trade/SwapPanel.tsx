@@ -4,7 +4,6 @@ import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -20,6 +19,7 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/compon
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, getFilteredCurrencies, SUPPORTED_BASE_CURRENCIES } from 'constants/currency';
+import { useWalletModalToggle } from 'store/application/hooks';
 import { useRatio, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -68,37 +68,24 @@ export enum Field {
 
 export default function SwapPanel() {
   const { account } = useIconReact();
-  const walletBalance = useWalletBalances();
+  const balances = useWalletBalances();
   const ratio = useRatio();
   const addTransaction = useTransactionAdder();
   const changeRatioValue = useChangeRatio();
-
-  const tokenBalance = (symbol: string) => {
-    if (account) {
-      if (symbol === 'ICX') {
-        return walletBalance.ICXbalance;
-      } else if (symbol === 'BALN') {
-        return walletBalance.BALNbalance;
-      } else if (symbol === 'sICX') {
-        return walletBalance.sICXbalance;
-      } else if (symbol === 'bnUSD') {
-        return walletBalance.bnUSDbalance;
-      }
-    }
-  };
+  const toggleWalletModal = useWalletModalToggle();
 
   const refreshPrice = React.useCallback(async () => {
     const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
-    const ICXUSDratio = convertLoopToIcx(res['rate']);
+    const ICXUSDratio = BalancedJs.utils.toIcx(res['rate']);
     changeRatioValue({ ICXUSDratio });
 
-    const sICXICXratio = convertLoopToIcx(await bnJs.Staking.getTodayRate());
+    const sICXICXratio = BalancedJs.utils.toIcx(await bnJs.Staking.getTodayRate());
     changeRatioValue({ sICXICXratio });
 
-    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId));
+    const sICXbnUSDratio = BalancedJs.utils.toIcx(await bnJs.Dex.getPrice(BalancedJs.utils.POOL_IDS.sICXbnUSD));
     changeRatioValue({ sICXbnUSDratio });
 
-    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId));
+    const BALNbnUSDratio = BalancedJs.utils.toIcx(await bnJs.Dex.getPrice(BalancedJs.utils.POOL_IDS.BALNbnUSD));
     changeRatioValue({ BALNbnUSDratio });
   }, [changeRatioValue]);
 
@@ -126,11 +113,11 @@ export default function SwapPanel() {
       } else if (symbolInput === 'sICX' && symbolOutput === 'ICX') {
         return ratio.sICXICXratio || new BigNumber(0);
       } else if (symbolInput === 'bnUSD' && symbolOutput === 'sICX') {
-        let bnUSDRatio = ratio.sICXbnUSDratio?.toNumber() || 0;
-        return bnUSDRatio ? new BigNumber(1 / bnUSDRatio) : new BigNumber(0);
+        let bnUSDRatio = ratio.sICXbnUSDratio || new BigNumber(0);
+        return bnUSDRatio ? new BigNumber(1).dividedBy(bnUSDRatio) : new BigNumber(0);
       } else if (symbolInput === 'bnUSD' && symbolOutput === 'BALN') {
-        let bnUSDRatio = ratio.BALNbnUSDratio?.toNumber() || 0;
-        return bnUSDRatio ? new BigNumber(1 / bnUSDRatio) : new BigNumber(0);
+        let bnUSDRatio = ratio.BALNbnUSDratio || new BigNumber(0);
+        return bnUSDRatio ? new BigNumber(1).dividedBy(bnUSDRatio) : new BigNumber(0);
       }
       return 0;
     },
@@ -213,8 +200,9 @@ export default function SwapPanel() {
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const interval: any = event.currentTarget.value;
     loadChartData({
+      inputSymbol: inputCurrency.symbol.toLowerCase(),
+      outputSymbol: outputCurrency.symbol.toLowerCase(),
       interval: interval.toLowerCase(),
-      symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
     });
     setChartOption({
       ...chartOption,
@@ -243,7 +231,7 @@ export default function SwapPanel() {
 
   const handleSwap = () => {
     if (!account) {
-      // todo: require access to wallet to execute trade
+      toggleWalletModal();
     } else {
       if (!swapInputAmount || !swapOutputAmount) {
         return;
@@ -257,8 +245,6 @@ export default function SwapPanel() {
     if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
       bnJs
         .eject({ account: account })
-        //.sICX.borrowAdd(newBorrowValue)
-        //.bnUSD.swapBysICX(parseFloat(swapInputAmount), '10')
         .sICX.swapBybnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
         .then(res => {
           setShowSwapConfirm(false);
@@ -303,7 +289,7 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol === 'BALN') {
       bnJs
         .eject({ account: account })
-        .Baln.swapToBnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
+        .BALN.swapToBnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
         .then(res => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -325,7 +311,7 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol === 'ICX') {
       bnJs
         .eject({ account: account })
-        .Staking.stakeICX(new BigNumber(swapInputAmount))
+        .Staking.stakeICX(account, new BigNumber(swapInputAmount))
         .then(res => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -390,37 +376,46 @@ export default function SwapPanel() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
-  const loadChartData = React.useCallback(({ interval, symbol }: { interval: string; symbol: string }) => {
-    setLoading(true);
-    try {
-      axios
-        .get(
-          `https://balanced.techiast.com:8069/api/v1/chart/lines?symbol=${symbol}&interval=${interval}&limit=500&order=desc`,
-        )
-        .then(res => {
-          const { data: d } = res;
-          let t = d.map(item => ({
-            time: item.time,
-            value: convertLoopToIcx(new BigNumber(item.price)).toNumber(),
-          }));
+  const loadChartData = React.useCallback(
+    ({ interval, inputSymbol, outputSymbol }: { interval: string; inputSymbol: string; outputSymbol: string }) => {
+      setLoading(true);
+      try {
+        axios
+          .get(
+            `https://balanced.techiast.com:8069/api/v1/chart/lines?symbol=${
+              inputSymbol === 'bnusd' || inputSymbol === 'icx' ? outputSymbol + inputSymbol : inputSymbol + outputSymbol
+            }&interval=${interval}&limit=500&order=desc`,
+          )
+          .then(res => {
+            const { data: d } = res;
+            let t = d.map(item => ({
+              time: item.time,
+              value:
+                inputSymbol === 'bnusd' || inputSymbol === 'icx'
+                  ? 1 / BalancedJs.utils.toIcx(new BigNumber(item.price)).toNumber()
+                  : BalancedJs.utils.toIcx(new BigNumber(item.price)).toNumber(),
+            }));
 
-          if (!t.length) {
-            console.log('No chart data, switch to others trading pairs');
-            return;
-          }
-          setData(t);
-          setLoading(false);
-        });
-    } catch (e) {
-      console.error(e);
-      setData([]);
-      setLoading(false);
-    }
-  }, []);
+            if (!t.length) {
+              console.log('No chart data, switch to others trading pairs');
+              return;
+            }
+            setData(t);
+            setLoading(false);
+          });
+      } catch (e) {
+        console.error(e);
+        setData([]);
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
   React.useEffect(() => {
     loadChartData({
-      symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
+      inputSymbol: inputCurrency.symbol.toLowerCase(),
+      outputSymbol: outputCurrency.symbol.toLowerCase(),
       interval: '5m',
     });
     refreshPrice();
@@ -431,8 +426,9 @@ export default function SwapPanel() {
       setInputCurrency(ccy);
       handleConvertOutputRate(ccy, outputCurrency, swapInputAmount);
       loadChartData({
+        inputSymbol: ccy.symbol.toLowerCase(),
+        outputSymbol: outputCurrency.symbol.toLowerCase(),
         interval: chartOption.period.toLowerCase(),
-        symbol: `${ccy.symbol.toLocaleUpperCase()}${outputCurrency.symbol}`,
       });
     },
     [swapInputAmount, handleConvertOutputRate, outputCurrency, chartOption, loadChartData],
@@ -443,8 +439,9 @@ export default function SwapPanel() {
       setOutputCurrency(ccy);
       handleConvertOutputRate(inputCurrency, ccy, swapInputAmount);
       loadChartData({
+        inputSymbol: inputCurrency.symbol.toLowerCase(),
+        outputSymbol: ccy.symbol.toLowerCase(),
         interval: chartOption.period.toLowerCase(),
-        symbol: `${inputCurrency.symbol.toLocaleUpperCase()}${ccy.symbol}`,
       });
     },
     [swapInputAmount, handleConvertOutputRate, inputCurrency, chartOption, loadChartData],
@@ -457,8 +454,7 @@ export default function SwapPanel() {
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">Swap</Typography>
             <Typography>
-              Wallet: {formatBigNumber(new BigNumber(tokenBalance(inputCurrency.symbol) || 0), 'currency')}{' '}
-              {inputCurrency.symbol}{' '}
+              {`Wallet: ${formatBigNumber(balances[inputCurrency.symbol], 'currency')} ${inputCurrency.symbol}`}
             </Typography>
           </Flex>
 
@@ -477,8 +473,7 @@ export default function SwapPanel() {
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">For</Typography>
             <Typography>
-              Wallet: {formatBigNumber(new BigNumber(tokenBalance(outputCurrency.symbol) || 0), 'currency')}{' '}
-              {outputCurrency.symbol}
+              {`Wallet: ${formatBigNumber(balances[outputCurrency.symbol], 'currency')} ${outputCurrency.symbol}`}
             </Typography>
           </Flex>
 
@@ -538,8 +533,8 @@ export default function SwapPanel() {
                 {inputCurrency.symbol} / {outputCurrency.symbol}
               </Typography>
               <Typography variant="p">
-                {formatBigNumber(ratio.sICXbnUSDratio, 'currency')} {outputCurrency.symbol} per {inputCurrency.symbol}{' '}
-                <span className="alert">-1.21%</span>
+                {formatBigNumber(new BigNumber(tokenRatio(inputCurrency.symbol, outputCurrency.symbol)), 'currency')}{' '}
+                {outputCurrency.symbol} per {inputCurrency.symbol} <span className="alert">-1.21%</span>
               </Typography>
             </Box>
             <Box width={[1, 1 / 2]} marginTop={[3, 0]}>
@@ -591,7 +586,7 @@ export default function SwapPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(new BigNumber(tokenRatio(inputCurrency.symbol, outputCurrency.symbol)), 'ratio')}{' '}
+            {formatBigNumber(new BigNumber(tokenRatio(outputCurrency.symbol, inputCurrency.symbol)), 'ratio')}{' '}
             {inputCurrency.symbol} per {outputCurrency.symbol}
           </Typography>
 

@@ -3,8 +3,8 @@ import React from 'react';
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { Box, Flex } from 'rebass/styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
@@ -38,7 +38,7 @@ export default function ICXWallet() {
 
   const wallet = useWalletBalances();
 
-  const maxAmount = wallet.ICXbalance.minus(0.1).isNegative() ? new BigNumber(0) : wallet.ICXbalance.minus(0.1);
+  const maxAmount = wallet['ICX'].minus(0.1).isNegative() ? new BigNumber(0) : wallet['ICX'].minus(0.1);
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -51,7 +51,7 @@ export default function ICXWallet() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.ICXbalance;
+  const beforeAmount = wallet['ICX'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
@@ -62,7 +62,7 @@ export default function ICXWallet() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .transfer(address, differenceAmount)
+      .transfer(address, BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {
           addTransaction(
@@ -104,7 +104,7 @@ export default function ICXWallet() {
         const result: Array<{ amount: string }> = await bnJs.Staking.getUserUnstakeInfo(account);
         setUnstakingAmount(
           result
-            .map(record => convertLoopToIcx(new BigNumber(record['amount'], 16)))
+            .map(record => BalancedJs.utils.toIcx(new BigNumber(record['amount'], 16)))
             .reduce((sum, cur) => sum.plus(cur), new BigNumber(0)),
         );
       }

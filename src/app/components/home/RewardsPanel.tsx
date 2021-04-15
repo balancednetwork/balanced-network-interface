@@ -11,7 +11,7 @@ import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useRatio } from 'store/ratio/hooks';
-import { useHasRewardableCollateral, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
+import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
@@ -46,7 +46,7 @@ const RewardsPanel = () => {
 
   const rewardAmountByUSD = reward.multipliedBy(ratio.BALNbnUSDratio);
 
-  const hasRewardableCollateral = useHasRewardableCollateral();
+  const hasRewardableLoan = useHasRewardableLoan();
 
   const hasRewardableLiquidity = useHasRewardableLiquidity();
 
@@ -58,7 +58,7 @@ const RewardsPanel = () => {
     setOpen(!open);
   };
 
-  if (!hasRewardableCollateral && !hasRewardableLiquidity) {
+  if (!hasRewardableLoan && !hasRewardableLiquidity) {
     return (
       <div>
         <FlexPanel bg="bg2" flexDirection="column">

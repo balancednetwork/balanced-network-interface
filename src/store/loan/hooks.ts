@@ -2,11 +2,12 @@ import React from 'react';
 
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { MANDATORY_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -99,7 +100,7 @@ export function useLoanFetchTotalRepaid(): (interval?: string | null) => void {
             )
             .then(res => {
               const value = res.data['loan_repaid_sum'];
-              dispatch(changeTotalRepaid({ totalRepaid: convertLoopToIcx(new BigNumber(value)) }));
+              //dispatch(changeTotalRepaid({ totalRepaid: convertLoopToIcx(new BigNumber(value)) }));
             });
         } catch (e) {
           console.error(e);
@@ -127,11 +128,11 @@ export function useLoanFetchInfo(account?: string | null) {
           bnJs.bnUSD.totalSupply(),
           bnJs.Loans.eject({ account }).getAccountPositions(),
         ]).then(([resultGetAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
-          const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
-          const bnUSDTotalSupply = convertLoopToIcx(resultTotalSupply);
+          const bnUSDbadDebt = BalancedJs.utils.toIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
+          const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
 
           const bnUSDDebt = resultDebt['assets']
-            ? convertLoopToIcx(new BigNumber(parseInt(resultDebt['assets']['bnUSD'] || 0, 16)))
+            ? BalancedJs.utils.toIcx(new BigNumber(parseInt(resultDebt['assets']['bnUSD'] || 0, 16)))
             : new BigNumber(0);
 
           changeBadDebt(bnUSDbadDebt);
@@ -207,8 +208,6 @@ export function useLoanInputAmount() {
 
   return parsedAmount[Field.LEFT];
 }
-
-const MANDATORY_COLLATERAL_RATIO = 4;
 
 export function useLockedICXAmount() {
   const ratio = useRatio();

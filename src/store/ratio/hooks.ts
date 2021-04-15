@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
 import { BalancedJs } from 'packages/BalancedJs';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -41,25 +40,25 @@ export function useFetchPrice() {
   // ICX / USD price
   useInterval(async () => {
     const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
-    const ICXUSDratio = convertLoopToIcx(res['rate']);
+    const ICXUSDratio = BalancedJs.utils.toIcx(res['rate']);
     changeRatioValue({ ICXUSDratio });
   }, PERIOD);
 
   // sICX / ICX price
   useInterval(async () => {
-    const sICXICXratio = convertLoopToIcx(await bnJs.Staking.getTodayRate());
+    const sICXICXratio = BalancedJs.utils.toIcx(await bnJs.Staking.getTodayRate());
     changeRatioValue({ sICXICXratio });
   }, PERIOD);
 
   // sICX / bnUSD price
   useInterval(async () => {
-    const sICXbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId));
+    const sICXbnUSDratio = BalancedJs.utils.toIcx(await bnJs.Dex.getPrice(BalancedJs.utils.POOL_IDS.sICXbnUSD));
     changeRatioValue({ sICXbnUSDratio });
   }, PERIOD);
 
   // BALN / bnUSD price
   useInterval(async () => {
-    const BALNbnUSDratio = convertLoopToIcx(await bnJs.Dex.getPrice(BalancedJs.utils.BALNbnUSDpoolId));
+    const BALNbnUSDratio = BalancedJs.utils.toIcx(await bnJs.Dex.getPrice(BalancedJs.utils.POOL_IDS.BALNbnUSD));
     changeRatioValue({ BALNbnUSDratio });
   }, PERIOD);
 }

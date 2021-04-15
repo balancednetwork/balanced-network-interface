@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -9,6 +10,7 @@ import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -26,7 +28,7 @@ export default function DepositPanel() {
 
   const ratio = useRatio();
 
-  const maxAmount = wallet.sICXbalance;
+  const maxAmount = wallet['sICX'];
 
   // modal logic
   const [open, setOpen] = React.useState(false);
@@ -35,7 +37,7 @@ export default function DepositPanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet.sICXbalance;
+  const beforeAmount = wallet['sICX'];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
@@ -46,7 +48,7 @@ export default function DepositPanel() {
   const handleSend = () => {
     bnJs
       .eject({ account })
-      .sICX.collateralDeposit(differenceAmount)
+      .sICX.depositAndBorrow(BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {
           addTransaction(
@@ -77,12 +79,13 @@ export default function DepositPanel() {
 
       <Box my={3}>
         <Nouislider
+          disabled={maxAmount.dp(2).isZero()}
           start={[0]}
           padding={[0]}
           connect={[true, false]}
           range={{
             min: [0],
-            max: [maxAmount.isZero() ? 0.001 : maxAmount.toNumber()],
+            max: [maxAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxAmount.dp(2).toNumber()],
           }}
           onSlide={handleSlider}
         />

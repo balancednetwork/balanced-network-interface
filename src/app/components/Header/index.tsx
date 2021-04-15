@@ -11,7 +11,6 @@ import Logo from 'app/components/Logo';
 import { DropdownPopper } from 'app/components/Popover';
 import WalletModal from 'app/components/WalletModal';
 import { Typography } from 'app/theme';
-// import { ReactComponent as NotificationIcon } from 'assets/icons/notification.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
@@ -58,14 +57,7 @@ const WalletMenuButton = styled(Button)`
 export default React.memo(function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
-  const { account, requestAddress, disconnect } = useIconReact();
-
-  const handleWalletIconClick = async (_event: React.MouseEvent) => {
-    if (!account) requestAddress();
-    else {
-      toggleWalletMenu();
-    }
-  };
+  const { account, disconnect } = useIconReact();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const walletButtonRef = React.useRef<HTMLElement>(null);
@@ -82,6 +74,7 @@ export default React.memo(function Header(props: { title?: string; className?: s
   };
 
   const handleDisconnectWallet = () => {
+    closeWalletMenu();
     disconnect();
   };
 
@@ -111,7 +104,7 @@ export default React.memo(function Header(props: { title?: string; className?: s
             <WalletButtonWrapper>
               <ClickAwayListener onClickAway={closeWalletMenu}>
                 <div>
-                  <IconButton ref={walletButtonRef} onClick={handleWalletIconClick}>
+                  <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
                     <WalletIcon />
                   </IconButton>
 
@@ -124,11 +117,6 @@ export default React.memo(function Header(props: { title?: string; className?: s
                 </div>
               </ClickAwayListener>
             </WalletButtonWrapper>
-
-            {/* https://github.com/WeiLi512/balanced-network-interface/issues/12 */}
-            {/* <IconButton onClick={handleNotification}>
-              <NotificationIcon />
-            </IconButton> */}
           </Flex>
         )}
       </Flex>

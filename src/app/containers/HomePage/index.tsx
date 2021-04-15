@@ -14,7 +14,8 @@ import { DefaultLayout } from 'app/components/Layout';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useLoanFetchInfo } from 'store/loan/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
-import { useFetchBalance } from 'store/wallet/hooks';
+import { useFetchReward } from 'store/reward/hooks';
+import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 const Grid = styled.div`
   flex: 1;
@@ -40,9 +41,10 @@ export function HomePage() {
   const { account } = useIconReact();
 
   useFetchPrice();
-  useFetchBalance(account);
+  useWalletFetchBalances(account);
   useCollateralFetchInfo(account);
   useLoanFetchInfo(account);
+  useFetchReward(account);
 
   return (
     <DefaultLayout>

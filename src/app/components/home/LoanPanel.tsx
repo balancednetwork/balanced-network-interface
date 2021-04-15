@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -13,6 +14,7 @@ import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useCollateralAdjust } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
@@ -115,7 +117,7 @@ const LoanPanel = () => {
     if (shouldBorrow) {
       bnJs
         .eject({ account })
-        .Loans.borrowAdd(differenceAmount)
+        .Loans.originateLoan('bnUSD', BalancedJs.utils.toLoop(differenceAmount), account)
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -135,7 +137,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .eject({ account })
-        .bnUSD.repayLoan(differenceAmount.abs())
+        .bnUSD.repayLoan(BalancedJs.utils.toLoop(differenceAmount).abs())
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -178,7 +180,7 @@ const LoanPanel = () => {
 
   // Add Used indicator to the Loan section #73
   // https://github.com/balancednetwork/balanced-network-interface/issues/73
-  const { bnUSDbalance: remainingBNUSDAmount } = useWalletBalances();
+  const remainingBNUSDAmount = useWalletBalances()['bnUSD'];
 
   const usedBNUSDAmount = React.useMemo(() => {
     return BigNumber.max(borrowedAmount.minus(remainingBNUSDAmount as BigNumber), new BigNumber(0));
@@ -240,7 +242,7 @@ const LoanPanel = () => {
           <Nouislider
             disabled={!isAdjusting}
             id="slider-loan"
-            start={[borrowedAmount.toNumber()]}
+            start={[borrowedAmount.dp(2).toNumber()]}
             // don't refactor the below code
             // it solved the race condition issue that caused padding value exceeds the max range value
             // need to find a good approach in the future
@@ -249,7 +251,11 @@ const LoanPanel = () => {
             range={{
               min: [0],
               // https://github.com/balancednetwork/balanced-network-interface/issues/50
-              max: [totalBorrowableAmount.isZero() ? 1 : totalBorrowableAmount.toNumber()],
+              max: [
+                totalBorrowableAmount.isZero()
+                  ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
+                  : totalBorrowableAmount.dp(2).toNumber(),
+              ],
             }}
             instanceRef={instance => {
               if (instance && !sliderInstance.current) {

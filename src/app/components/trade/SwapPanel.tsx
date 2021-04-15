@@ -534,10 +534,13 @@ export default function SwapPanel() {
               </Typography>
               <Typography variant="p">
                 {formatBigNumber(new BigNumber(tokenRatio(inputCurrency.symbol, outputCurrency.symbol)), 'currency')}{' '}
-                {outputCurrency.symbol} per {inputCurrency.symbol} <span className="alert">-1.21%</span>
+                {outputCurrency.symbol} per {inputCurrency.symbol}{' '}
+                <span className="alert" style={{ display: 'none' }}>
+                  -1.21%
+                </span>
               </Typography>
             </Box>
-            <Box width={[1, 1 / 2]} marginTop={[3, 0]}>
+            <Box width={[1, 1 / 2]} marginTop={[3, 0]} style={{ display: 'none' }}>
               <ChartControlGroup mb={2}>
                 {Object.keys(CHART_PERIODS).map(key => (
                   <ChartControlButton
@@ -565,9 +568,16 @@ export default function SwapPanel() {
               </ChartControlGroup>
             </Box>
           </Flex>
-
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            mt={3}
+            style={{ height: 'calc(100% - 60px)', marginTop: '0px' }}
+          >
+            Chart coming soon.
+          </Flex>
           {chartOption.type === CHART_TYPES.AREA && (
-            <ChartContainer ref={ref}>
+            <ChartContainer ref={ref} style={{ display: 'none' }}>
               {loading ? <Spinner centered /> : <TradingViewChart data={data} width={width} type={CHART_TYPES.AREA} />}
             </ChartContainer>
           )}

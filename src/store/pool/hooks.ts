@@ -159,7 +159,7 @@ export function useFetchPools() {
       BASE_SUPPORTED_PAIRS.forEach(pair => {
         const poolId = pair.poolId;
         if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-          bnJs.Dex.getICXBalance().then(res => {
+          bnJs.Dex.getICXBalance(account).then(res => {
             changeBalance(poolId, {
               baseCurrencyKey: pair.baseCurrencyKey,
               quoteCurrencyKey: pair.quoteCurrencyKey,

@@ -38,7 +38,7 @@ const StyledModal = styled(Modal).attrs({
   'aria-label': 'dialog',
 })`
   &[data-reach-dialog-content] {
-    width: 300px;
+    width: 320px;
   }
 `;
 
@@ -60,7 +60,7 @@ export default function WalletModal() {
           Sign in with:
         </Typography>
 
-        <Flex alignItems="stretch" justifyContent="space-between">
+        <Flex alignItems="stretch" justifyContent="space-between" mx={3}>
           {hasExtension ? (
             <WalletOption onClick={handleOpenWallet}>
               <IconexIcon width="50" height="50" />
@@ -83,6 +83,10 @@ export default function WalletModal() {
             <Text>Ledger</Text>
           </WalletOption>
         </Flex>
+
+        <Typography mx={4} mt={6} textAlign="center">
+          Use at your own risk. Money lost via liquidation or a smart contract bug cannot be recovered.
+        </Typography>
       </Box>
     </StyledModal>
   );

@@ -79,6 +79,8 @@ const CollateralPanel = () => {
   const afterAmount = parsedAmount[Field.LEFT];
   //difference = after-before
   const differenceAmount = afterAmount.minus(beforeAmount);
+  const ratio = useRatio();
+  const differenceAmountInSICX = differenceAmount.div(ratio.sICXICXratio);
   //collateral amount
   const collateralAmount = differenceAmount.abs();
   //whether if deposit or withdraw
@@ -86,7 +88,7 @@ const CollateralPanel = () => {
 
   //
   const addTransaction = useTransactionAdder();
-  const ratio = useRatio();
+
   const handleCollateralConfirm = () => {
     if (shouldDeposit) {
       bnJs
@@ -245,6 +247,10 @@ const CollateralPanel = () => {
             {differenceAmount.dp(2).toFormat() + ' ICX'}
           </Typography>
 
+          {!shouldDeposit && (
+            <Typography textAlign="center">{differenceAmountInSICX.dp(2).toFormat() + ' sICX'}</Typography>
+          )}
+
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
@@ -261,7 +267,11 @@ const CollateralPanel = () => {
             </Box>
           </Flex>
 
-          <Typography textAlign="center">Your ICX will be staked as sICX.</Typography>
+          <Typography textAlign="center">
+            {shouldDeposit
+              ? 'Your ICX will be staked as sICX.'
+              : "You'll receive sICX (staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."}
+          </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>

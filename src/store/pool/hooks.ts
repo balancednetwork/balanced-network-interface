@@ -159,27 +159,21 @@ export function useFetchPools() {
       BASE_SUPPORTED_PAIRS.forEach(pair => {
         const poolId = pair.poolId;
         if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-          bnJs
-            .eject({ account })
-            .Dex.getICXBalance()
-            .then(res => {
-              changeBalance(poolId, {
-                baseCurrencyKey: pair.baseCurrencyKey,
-                quoteCurrencyKey: pair.quoteCurrencyKey,
-                balance: BalancedJs.utils.toIcx(res),
-              });
+          bnJs.Dex.getICXBalance().then(res => {
+            changeBalance(poolId, {
+              baseCurrencyKey: pair.baseCurrencyKey,
+              quoteCurrencyKey: pair.quoteCurrencyKey,
+              balance: BalancedJs.utils.toIcx(res),
             });
+          });
         } else {
-          bnJs
-            .eject({ account })
-            .Dex.balanceOf(account, poolId)
-            .then(res => {
-              changeBalance(poolId, {
-                baseCurrencyKey: pair.baseCurrencyKey,
-                quoteCurrencyKey: pair.quoteCurrencyKey,
-                balance: BalancedJs.utils.toIcx(res),
-              });
+          bnJs.Dex.balanceOf(account, poolId).then(res => {
+            changeBalance(poolId, {
+              baseCurrencyKey: pair.baseCurrencyKey,
+              quoteCurrencyKey: pair.quoteCurrencyKey,
+              balance: BalancedJs.utils.toIcx(res),
             });
+          });
         }
       });
     } else {

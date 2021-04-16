@@ -66,9 +66,9 @@ export function useLoanFetchInfo(account?: string | null) {
     (account: string) => {
       if (account) {
         Promise.all([
-          bnJs.Loans.eject({ account }).getAvailableAssets(),
+          bnJs.Loans.getAvailableAssets(),
           bnJs.bnUSD.totalSupply(),
-          bnJs.Loans.eject({ account }).getAccountPositions(),
+          bnJs.Loans.getAccountPositions(account),
         ]).then(([resultGetAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
           const bnUSDbadDebt = BalancedJs.utils.toIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
           const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
@@ -98,25 +98,31 @@ export function useLoanState() {
   return state;
 }
 
-export function useLoanType(): (payload: {
-  independentField?: Field;
-  typedValue?: string;
-  inputType?: 'slider' | 'text';
-}) => void {
+export function useLoanActionHandlers() {
   const dispatch = useDispatch();
 
-  return React.useCallback(
-    payload => {
-      dispatch(type(payload));
+  const onFieldAInput = React.useCallback(
+    (value: string) => {
+      dispatch(type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' }));
     },
     [dispatch],
   );
-}
 
-export function useLoanAdjust(): (isAdjust: boolean) => void {
-  const dispatch = useDispatch();
+  const onFieldBInput = React.useCallback(
+    (value: string) => {
+      dispatch(type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' }));
+    },
+    [dispatch],
+  );
 
-  return React.useCallback(
+  const onSlide = React.useCallback(
+    (values: string[], handle: number) => {
+      dispatch(type({ typedValue: values[handle], inputType: 'slider' }));
+    },
+    [dispatch],
+  );
+
+  const onAdjust = React.useCallback(
     isAdjust => {
       if (isAdjust) {
         dispatch(adjust());
@@ -126,6 +132,13 @@ export function useLoanAdjust(): (isAdjust: boolean) => void {
     },
     [dispatch],
   );
+
+  return {
+    onFieldAInput,
+    onFieldBInput,
+    onSlide,
+    onAdjust,
+  };
 }
 
 export function useLoanTotalBorrowableAmount() {

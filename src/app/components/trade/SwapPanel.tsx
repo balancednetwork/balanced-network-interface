@@ -153,7 +153,9 @@ export default function SwapPanel() {
             setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
             val = (parseFloat(val) - fee).toString();
             const new_from_token = liquiditySupply.sICXPoolsICXbnUSDTotal?.plus(new BigNumber(val));
-            //new_to_token = getPoolTotal(pid, from_address) * getPoolTotal(pid, to_address) / new_from_token)
+            const new_to_token = liquiditySupply.sICXPoolsICXbnUSDTotal
+              ?.multipliedBy(liquiditySupply.bnUSDPoolsICXbnUSDTotal || new BigNumber(0))
+              .dividedBy(new_from_token || new BigNumber(0));
             setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
           })
           .catch(e => {

@@ -139,4 +139,15 @@ export default class Dex extends Contract {
 
     return this.callIconex(payload);
   }
+
+  getICXBalance(address: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getICXBalance',
+      params: {
+        _address: address,
+      },
+    });
+
+    return this.call(callParams);
+  }
 }

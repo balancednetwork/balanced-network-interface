@@ -159,7 +159,7 @@ export function useFetchPools() {
       BASE_SUPPORTED_PAIRS.forEach(pair => {
         const poolId = pair.poolId;
         if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-          bnJs.Dex.getICXBalance().then(res => {
+          bnJs.Dex.getICXBalance(account).then(res => {
             changeBalance(poolId, {
               baseCurrencyKey: pair.baseCurrencyKey,
               quoteCurrencyKey: pair.quoteCurrencyKey,
@@ -224,8 +224,16 @@ export function useBalance(poolId: number) {
 
   return React.useMemo(() => {
     if (pool && balance) {
-      let suppliedBaseTokens = pool.base.times(poolShare);
-      let suppliedQuoteTokens = pool.quote.times(poolShare);
+      let suppliedBaseTokens: BigNumber;
+      let suppliedQuoteTokens: BigNumber;
+
+      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        suppliedBaseTokens = balance.balance;
+        suppliedQuoteTokens = balance.balance;
+      } else {
+        suppliedBaseTokens = pool.base.times(poolShare);
+        suppliedQuoteTokens = pool.quote.times(poolShare);
+      }
 
       return {
         ...balance,
@@ -233,7 +241,7 @@ export function useBalance(poolId: number) {
         quote: suppliedQuoteTokens,
       };
     } else return;
-  }, [balance, pool, poolShare]);
+  }, [balance, pool, poolShare, poolId]);
 }
 
 export function useRewards() {

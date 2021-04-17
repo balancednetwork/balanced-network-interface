@@ -123,8 +123,8 @@ export function useFetchLiquidity(account?: string | null) {
 
     if (account) {
       Promise.all([
-        bnJs.Dex.totalSupply(BalancedJs.utils.POOL_IDS.sICXICX),
-        bnJs.eject({ account: account }).Dex.getICXBalance(),
+        bnJs.Dex.totalSupply(BalancedJs.utils.POOL_IDS.sICXICX), //
+        bnJs.Dex.getICXBalance(account),
       ]).then(result => {
         const [sICXICXTotalSupply, ICXBalance] = result.map(v => BalancedJs.utils.toIcx(v as BigNumber));
 

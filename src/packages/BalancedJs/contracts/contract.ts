@@ -117,9 +117,4 @@ export class Contract {
       window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
     });
   }
-
-  public async getICXBalance(): Promise<BigNumber> {
-    const balance = await this.provider.getBalance(this.account).execute();
-    return balance;
-  }
 }

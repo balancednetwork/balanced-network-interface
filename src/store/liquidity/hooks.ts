@@ -89,7 +89,7 @@ export function useChangeLiquiditySupply(): ({
 
 export function useFetchLiquidity(account?: string | null) {
   // eject this account and we don't need to account params for when call contract
-  bnJs.eject({ account });
+  bnJs.inject({ account });
   const transactions = useAllTransactions();
   const changeLiquiditySupply = useChangeLiquiditySupply();
 

@@ -42,6 +42,10 @@ export default class BALN extends Contract {
       },
     });
 
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(callParams.params);
+    }
+
     return this.callIconex(callParams);
   }
 

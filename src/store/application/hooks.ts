@@ -3,7 +3,8 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, AppState } from '../index';
-import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from './actions';
+import { addPopup, ApplicationModal, changeWalletType, PopupContent, removePopup, setOpenModal } from './actions';
+import { WalletType } from './reducer';
 
 // returns a function that allows adding a popup
 export function useAddPopup(): (content: PopupContent, key?: string) => void {
@@ -47,4 +48,19 @@ export function useToggleModal(modal: ApplicationModal): () => void {
 
 export function useWalletModalToggle(): () => void {
   return useToggleModal(ApplicationModal.WALLET);
+}
+
+export function useWalletType(): AppState['application']['walletType'] {
+  const walletType = useSelector((state: AppState) => state.application.walletType);
+  return walletType;
+}
+
+export function useChangeWalletType(): (walletType: WalletType) => void {
+  const dispatch = useDispatch();
+  return useCallback(
+    (walletType: WalletType) => {
+      dispatch(changeWalletType({ walletType }));
+    },
+    [dispatch],
+  );
 }

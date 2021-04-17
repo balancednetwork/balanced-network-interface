@@ -142,7 +142,7 @@ export default function SwapPanel() {
         setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
       } else {
         bnJs
-          .eject({ account: account })
+          .inject({ account })
           .Dex.getFees()
           .then(res => {
             const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
@@ -178,7 +178,7 @@ export default function SwapPanel() {
       setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
     } else {
       bnJs
-        .eject({ account: account })
+        .inject({ account })
         .Dex.getFees()
         .then(res => {
           const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
@@ -244,12 +244,12 @@ export default function SwapPanel() {
     if (!account) return;
     if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
       bnJs
-        .eject({ account: account })
+        .inject({ account })
         .sICX.swapBybnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
-        .then(res => {
+        .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
                 .pendingMessage,
@@ -266,12 +266,12 @@ export default function SwapPanel() {
         });
     } else if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'ICX') {
       bnJs
-        .eject({ account: account })
+        .inject({ account })
         .sICX.swapToICX(new BigNumber(swapInputAmount))
-        .then(res => {
+        .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
                 .pendingMessage,
@@ -288,12 +288,12 @@ export default function SwapPanel() {
         });
     } else if (inputCurrency.symbol === 'BALN') {
       bnJs
-        .eject({ account: account })
+        .inject({ account: account })
         .BALN.swapToBnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
-        .then(res => {
+        .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
                 .pendingMessage,
@@ -310,12 +310,12 @@ export default function SwapPanel() {
         });
     } else if (inputCurrency.symbol === 'ICX') {
       bnJs
-        .eject({ account: account })
+        .inject({ account: account })
         .Staking.stakeICX(account, new BigNumber(swapInputAmount))
-        .then(res => {
+        .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
                 .pendingMessage,
@@ -332,12 +332,12 @@ export default function SwapPanel() {
         });
     } else if (inputCurrency.symbol === 'bnUSD') {
       bnJs
-        .eject({ account: account })
+        .inject({ account })
         .bnUSD.swapToOutputCurrency(new BigNumber(swapInputAmount), outputCurrency.symbol, rawSlippage + '')
-        .then(res => {
+        .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
                 .pendingMessage,

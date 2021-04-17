@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
+import { ledgerConfirmAlert } from 'packages/BalancedJs/ledger';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -27,7 +28,7 @@ import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
 const CollateralPanel = () => {
-  const { account } = useIconReact();
+  const { account, ledgerAddressPoint } = useIconReact();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -90,13 +91,20 @@ const CollateralPanel = () => {
   const addTransaction = useTransactionAdder();
 
   const handleCollateralConfirm = () => {
+    if (ledgerAddressPoint >= 0) {
+      if (!ledgerConfirmAlert('Click Ok and check your ledger device?')) {
+        return;
+      }
+    }
+
+    bnJs.inject({ account });
     if (shouldDeposit) {
       bnJs
-        .eject({ account: account })
+        .inject({ account: account })
         .Loans.addCollateral(BalancedJs.utils.toLoop(collateralAmount))
-        .then(res => {
+        .then((res: any) => {
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: 'Depositing collateral...',
               summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
@@ -113,11 +121,11 @@ const CollateralPanel = () => {
     } else {
       const collateralAmountInSICX = collateralAmount.div(ratio.sICXICXratio);
       bnJs
-        .eject({ account: account })
+        .inject({ account: account })
         .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX))
-        .then(res => {
+        .then((res: any) => {
           addTransaction(
-            { hash: res.result }, //
+            { hash: res.result || res }, //
             {
               pending: 'Withdrawing collateral...',
               summary: `${collateralAmount.dp(2).toFormat()} sICX added to your wallet.`,

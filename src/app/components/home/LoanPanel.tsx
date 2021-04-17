@@ -88,11 +88,11 @@ const LoanPanel = () => {
 
     if (shouldBorrow) {
       bnJs
-        .eject({ account })
+        .inject({ account })
         .Loans.originateLoan('bnUSD', BalancedJs.utils.toLoop(differenceAmount), account)
         .then(res => {
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: 'Borrowing bnUSD...',
               summary: `Borrowed ${differenceAmount.dp(2).toFormat()} bnUSD.`,
@@ -108,11 +108,11 @@ const LoanPanel = () => {
         });
     } else {
       bnJs
-        .eject({ account })
+        .inject({ account })
         .bnUSD.repayLoan(BalancedJs.utils.toLoop(differenceAmount).abs())
         .then(res => {
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: 'Repaying bnUSD...',
               summary: `Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,

@@ -20,6 +20,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, getFilteredCurrencies, SUPPORTED_BASE_CURRENCIES } from 'constants/currency';
 import { useWalletModalToggle } from 'store/application/hooks';
+import { useLiquiditySupply } from 'store/liquidity/hooks';
 import { useRatio, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -70,6 +71,7 @@ export default function SwapPanel() {
   const { account } = useIconReact();
   const balances = useWalletBalances();
   const ratio = useRatio();
+  const liquiditySupply = useLiquiditySupply();
   const addTransaction = useTransactionAdder();
   const changeRatioValue = useChangeRatio();
   const toggleWalletModal = useWalletModalToggle();
@@ -150,6 +152,8 @@ export default function SwapPanel() {
             const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
             setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
             val = (parseFloat(val) - fee).toString();
+            const new_from_token = liquiditySupply.sICXPoolsICXbnUSDTotal?.plus(new BigNumber(val));
+            //new_to_token = getPoolTotal(pid, from_address) * getPoolTotal(pid, to_address) / new_from_token)
             setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
           })
           .catch(e => {

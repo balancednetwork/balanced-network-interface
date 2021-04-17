@@ -122,16 +122,17 @@ export function useFetchLiquidity(account?: string | null) {
     };
 
     if (account) {
-      Promise.all([bnJs.Dex.totalSupply(BalancedJs.utils.POOL_IDS.sICXICX), bnJs.ICX.balanceOf(account)]).then(
-        result => {
-          const [sICXICXTotalSupply, ICXBalance] = result.map(v => BalancedJs.utils.toIcx(v as BigNumber));
+      Promise.all([
+        bnJs.Dex.totalSupply(BalancedJs.utils.POOL_IDS.sICXICX), //
+        bnJs.Dex.getICXBalance(account),
+      ]).then(result => {
+        const [sICXICXTotalSupply, ICXBalance] = result.map(v => BalancedJs.utils.toIcx(v as BigNumber));
 
-          changeLiquiditySupply({
-            sICXICXTotalSupply,
-            ICXBalance,
-          });
-        },
-      );
+        changeLiquiditySupply({
+          sICXICXTotalSupply,
+          ICXBalance,
+        });
+      });
 
       getSuppliedToken(BalancedJs.utils.POOL_IDS.sICXbnUSD, bnJs.sICX.address, bnJs.bnUSD.address)
         .then((result: any) =>

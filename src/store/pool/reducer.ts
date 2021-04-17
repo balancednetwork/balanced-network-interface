@@ -13,6 +13,7 @@ export interface Pool {
   total: BigNumber;
   rewards: BigNumber;
   rate: BigNumber;
+  inverseRate: BigNumber;
 }
 
 export interface Balance {

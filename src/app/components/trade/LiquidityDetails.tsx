@@ -1,11 +1,13 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import Nouislider from 'nouislider-react';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
+import Nouislider from 'packages/nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
+import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
@@ -15,323 +17,21 @@ import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST } from 'constants/currency';
-import { useLiquiditySupply, useChangeLiquiditySupply } from 'store/liquidity/hooks';
-import { useRatio } from 'store/ratio/hooks';
-import { useReward } from 'store/reward/hooks';
+import { CURRENCY_LIST, BASE_SUPPORTED_PAIRS } from 'constants/currency';
+import { ONE, ZERO } from 'constants/index';
+import { Field } from 'store/mint/actions';
+import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
 import { withdrawMessage } from './utils';
 
-const LiquidityDetails = () => {
-  const { account } = useIconReact();
+export default function LiquidityDetails() {
+  const below800 = useMedia('(max-width: 800px)');
+  const balances = useAvailableBalances();
 
-  const changeLiquiditySupply = useChangeLiquiditySupply();
-  const liquiditySupply = useLiquiditySupply();
-  const addTransaction = useTransactionAdder();
-  const balances = useWalletBalances();
-  const ratio = useRatio();
-  const poolReward = useReward();
-
-  const sICXbnUSDTotalSupply = liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0);
-  const sICXbnUSDSuppliedShare =
-    liquiditySupply.sICXbnUSDBalance?.dividedBy(sICXbnUSDTotalSupply)?.multipliedBy(100) || new BigNumber(0);
-
-  const BALNbnUSDTotalSupply = liquiditySupply.BALNbnUSDTotalSupply || new BigNumber(0);
-  const BALNbnUSDSuppliedShare =
-    liquiditySupply.BALNbnUSDBalance?.dividedBy(BALNbnUSDTotalSupply)?.multipliedBy(100) || new BigNumber(0);
-
-  const sICXICXTotalSupply = liquiditySupply.sICXICXTotalSupply || new BigNumber(0);
-  const ICXBalance = liquiditySupply.ICXBalance || new BigNumber(0);
-  const sICXICXSuppliedShare = ICXBalance.dividedBy(sICXICXTotalSupply).multipliedBy(100);
-
-  //const [amountWithdrawICX, setAmountWithdrawICX] = React.useState('0');
-
-  const [showSwapConfirm, setShowWithdrawConfirm] = React.useState(false);
-
-  const [inputCurrency, setInputCurrency] = React.useState('');
-
-  const [outputCurrency, setOutputCurrency] = React.useState('');
-
-  const [withdrawInputAmount, setwithdrawInputAmount] = React.useState('0');
-
-  const [withdrawOutputAmount, setwithdrawOutputAmount] = React.useState('0');
-
-  const handleWithdrawConfirmDismiss = () => {
-    setShowWithdrawConfirm(false);
-  };
-
-  const [anchorSICXbnUSD, setAnchorSICXbnUSD] = React.useState<HTMLElement | null>(null);
-  const [anchorBALNbnUSD, setAnchorBALNbnUSD] = React.useState<HTMLElement | null>(null);
-  //const [anchorSICXICX, setAnchorSICXICX] = React.useState<HTMLElement | null>(null);
-
-  const arrowRefSICXbnUSD = React.useRef(null);
-  const arrowRefBALNbnUSD = React.useRef(null);
-  //const arrowRefSICXICX = React.useRef(null);
-
-  const closeDropdownSICXbnUSD = () => {
-    setAnchorSICXbnUSD(null);
-  };
-
-  const closeDropdownBALNbnUSD = () => {
-    setAnchorBALNbnUSD(null);
-  };
-
-  // const closeDropdownSICXICX = () => {
-  //   setAnchorSICXICX(null);
-  // };
-
-  const handleToggleDropdownSICXbnUSD = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchorSICXbnUSD(anchorSICXbnUSD ? null : arrowRefSICXbnUSD.current);
-  };
-
-  const handleToggleDropdownBALNbnUSD = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchorBALNbnUSD(anchorBALNbnUSD ? null : arrowRefBALNbnUSD.current);
-  };
-
-  // const handleToggleDropdownSICXICX = (e: React.MouseEvent<HTMLElement>) => {
-  //   setAnchorSICXICX(anchorSICXICX ? null : arrowRefSICXICX.current);
-  // };
-
-  React.useEffect(() => {
-    //setAmountWithdrawICX('0');
-    setAmountWithdrawBALNPoolBALNbnUSD('0');
-    setAmountWithdrawBNUSDPoolsBALNbnUSD('0');
-    setAmountWithdrawSICXPoolsICXbnUSD('0');
-    setAmountWithdrawBNUSDPoolsICXbnUSD('0');
-  }, [liquiditySupply.ICXBalance]);
-
-  const [amountWithdrawsICXbnUSDMax, setAmountWithdrawsICXbnUSDMax] = React.useState(0);
-
-  React.useEffect(() => {
-    if (
-      liquiditySupply.sICXSuppliedPoolsICXbnUSD
-        ?.multipliedBy(ratio.sICXbnUSDratio)
-        .isLessThanOrEqualTo(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || new BigNumber(0))
-    ) {
-      setAmountWithdrawsICXbnUSDMax(liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toNumber() || 0);
-    } else {
-      setAmountWithdrawsICXbnUSDMax(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD?.toNumber() || 0);
-    }
-  }, [liquiditySupply.sICXSuppliedPoolsICXbnUSD, liquiditySupply.bnUSDSuppliedPoolsICXbnUSD, ratio.sICXbnUSDratio]);
-
-  const [amountWithdrawBALNbnUSDMax, setAmountWithdrawBALNbnUSDMax] = React.useState(0);
-
-  React.useEffect(() => {
-    if (
-      liquiditySupply.BALNSuppliedPoolBALNbnUSD?.multipliedBy(ratio.BALNbnUSDratio).isLessThanOrEqualTo(
-        liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || new BigNumber(0),
-      )
-    ) {
-      setAmountWithdrawBALNbnUSDMax(liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toNumber() || 0);
-    } else {
-      setAmountWithdrawBALNbnUSDMax(liquiditySupply.bnUSDSuppliedPoolBALNbnUSD?.toNumber() || 0);
-    }
-  }, [liquiditySupply.BALNSuppliedPoolBALNbnUSD, liquiditySupply.bnUSDSuppliedPoolBALNbnUSD, ratio.BALNbnUSDratio]);
-
-  // const handleTypeAmountWithdrawICX = (val: string) => {
-  //   setAmountWithdrawICX(val);
-  // };
-
-  const sICXICXpoolDailyReward =
-    (poolReward.sICXICXreward?.toNumber() || 0) * (poolReward.poolDailyReward?.toNumber() || 0);
-
-  const sICXbnUSDpoolDailyReward = poolReward.sICXbnUSDreward?.multipliedBy(
-    poolReward.poolDailyReward || new BigNumber(0),
-  );
-
-  const BALNbnUSDpoolDailyReward = poolReward.BALNbnUSDreward?.multipliedBy(
-    poolReward.poolDailyReward || new BigNumber(0),
-  );
-
-  const handleWithdrawConfirm = () => {
-    if (inputCurrency.toLowerCase() === 'sicx' && outputCurrency.toLowerCase() === 'bnusd') {
-      withdrawSICXBNUSD(withdrawInputAmount, withdrawOutputAmount);
-    } else if (inputCurrency.toLowerCase() === 'baln' && outputCurrency.toLowerCase() === 'bnusd') {
-      withdrawBALNbnUSD(withdrawInputAmount, withdrawOutputAmount);
-    } else if (inputCurrency.toLowerCase() === 'icx' && outputCurrency.toLowerCase() === 'sicx') {
-      withdrawICX(formatBigNumber(ICXBalance, 'currency'));
-    }
-  };
-
-  const handleWithdrawSICXICX = () => {
-    if (!account) return;
-    setInputCurrency('ICX');
-    setOutputCurrency('sICX');
-    setwithdrawInputAmount(formatBigNumber(new BigNumber(ICXBalance), 'currency'));
-    setwithdrawOutputAmount('');
-    //setAmountWithdrawICX(formatBigNumber(new BigNumber(ICXBalance), 'currency'));
-    //closeDropdownSICXICX();
-    setShowWithdrawConfirm(true);
-  };
-
-  const handleWithdrawSICXbnUSD = () => {
-    if (!account) return;
-    setInputCurrency('sICX');
-    setOutputCurrency('bnUSD');
-    setwithdrawInputAmount(amountWithdrawSICXPoolsICXbnUSD);
-    setwithdrawOutputAmount(amountWithdrawBNUSDPoolsICXbnUSD);
-    closeDropdownSICXbnUSD();
-    setShowWithdrawConfirm(true);
-  };
-
-  const handleWithdrawBALNbnUSD = () => {
-    if (!account) return;
-    setInputCurrency('BALN');
-    setOutputCurrency('bnUSD');
-    setwithdrawInputAmount(amountWithdrawBALNPoolBALNbnUSD);
-    setwithdrawOutputAmount(amountWithdrawBNUSDPoolBALNbnUSD);
-    closeDropdownBALNbnUSD();
-    setShowWithdrawConfirm(true);
-  };
-
-  const withdrawICX = (withdrawICXamount: string) => {
-    if (!account) return;
-    bnJs
-      .eject({ account: account })
-      .Dex.cancelSicxIcxOrder()
-      .then(res => {
-        changeLiquiditySupply({ ICXBalance: new BigNumber(0) });
-        addTransaction(
-          { hash: res.result },
-          {
-            pending: withdrawMessage(withdrawICXamount, 'ICX', '', 'sICX').pendingMessage,
-            summary: withdrawMessage(withdrawICXamount, 'ICX', '', 'sICX').successMessage,
-          },
-        );
-        handleWithdrawConfirmDismiss();
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
-  };
-
-  const withdrawSICXBNUSD = (withdrawSICXamount: string, withdrawBNUSDamount: string) => {
-    if (!account) return;
-    let withdrawTotal = new BigNumber(0);
-    if (
-      parseFloat(withdrawSICXamount) >= amountWithdrawsICXbnUSDMax ||
-      parseFloat(withdrawBNUSDamount) >= amountWithdrawsICXbnUSDMax
-    ) {
-      withdrawTotal = liquiditySupply.sICXbnUSDBalance || new BigNumber(0);
-    } else {
-      withdrawTotal = new BigNumber(withdrawSICXamount)
-        .dividedBy(liquiditySupply.sICXPoolsICXbnUSDTotal || new BigNumber(0))
-        .multipliedBy(liquiditySupply.sICXbnUSDTotalSupply || new BigNumber(0));
-    }
-
-    bnJs
-      .eject({ account: account })
-      .Dex.remove(BalancedJs.utils.POOL_IDS.sICXbnUSD, withdrawTotal)
-      .then(result => {
-        console.log(result);
-        addTransaction(
-          { hash: result.result },
-          {
-            pending: withdrawMessage(amountWithdrawSICXPoolsICXbnUSD, 'sICX', amountWithdrawBNUSDPoolsICXbnUSD, 'bnUSD')
-              .pendingMessage,
-            summary: `${amountWithdrawSICXPoolsICXbnUSD} sICX and ${amountWithdrawBNUSDPoolsICXbnUSD} bnUSD added to your wallet.`,
-          },
-        );
-        handleWithdrawConfirmDismiss();
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
-  };
-
-  const withdrawBALNbnUSD = (withdrawBALNamount: string, withdrawBNUSDamount: string) => {
-    if (!account) return;
-    let withdrawTotal = new BigNumber(0);
-    if (
-      parseFloat(withdrawBALNamount) >= amountWithdrawBALNbnUSDMax ||
-      parseFloat(withdrawBNUSDamount) >= amountWithdrawBALNbnUSDMax
-    ) {
-      withdrawTotal = liquiditySupply.BALNbnUSDBalance || new BigNumber(0);
-    } else {
-      withdrawTotal = new BigNumber(withdrawBALNamount)
-        .dividedBy(liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0))
-        .multipliedBy(liquiditySupply.BALNbnUSDTotalSupply || new BigNumber(0));
-    }
-
-    bnJs
-      .eject({ account: account })
-      .Dex.remove(BalancedJs.utils.POOL_IDS.BALNbnUSD, new BigNumber(withdrawTotal))
-      .then(result => {
-        console.log(result);
-        addTransaction(
-          { hash: result.result },
-          {
-            pending: withdrawMessage(amountWithdrawBALNPoolBALNbnUSD, 'BALN', amountWithdrawBNUSDPoolBALNbnUSD, 'bnUSD')
-              .pendingMessage,
-            summary: `${amountWithdrawBALNPoolBALNbnUSD} BALN and ${amountWithdrawBNUSDPoolBALNbnUSD} bnUSD added to your wallet.`,
-          },
-        );
-        handleWithdrawConfirmDismiss();
-      })
-      .catch(e => {
-        console.error('error', e);
-      });
-  };
-
-  const [amountWithdrawSICXPoolsICXbnUSD, setAmountWithdrawSICXPoolsICXbnUSD] = React.useState('0');
-  const [amountWithdrawBNUSDPoolsICXbnUSD, setAmountWithdrawBNUSDPoolsICXbnUSD] = React.useState('0');
-
-  const handleTypeAmountWithdrawsICXPoolsICXbnUSD = (val: string) => {
-    setAmountWithdrawSICXPoolsICXbnUSD(val);
-    let outputAmount = new BigNumber(val).multipliedBy(ratio.sICXbnUSDratio);
-    if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
-    setAmountWithdrawBNUSDPoolsICXbnUSD(formatBigNumber(outputAmount, 'input'));
-  };
-
-  const handleTypeAmountWithdrawBNUSDPoolsICXbnUSD = (val: string) => {
-    setAmountWithdrawBNUSDPoolsICXbnUSD(val);
-    let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(ratio.sICXbnUSDratio));
-    if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
-    setAmountWithdrawSICXPoolsICXbnUSD(formatBigNumber(inputAmount, 'input'));
-  };
-
-  /** withdraw BALNbnUSD */
-
-  const [amountWithdrawBALNPoolBALNbnUSD, setAmountWithdrawBALNPoolBALNbnUSD] = React.useState('0');
-  const [amountWithdrawBNUSDPoolBALNbnUSD, setAmountWithdrawBNUSDPoolsBALNbnUSD] = React.useState('0');
-
-  const handleTypeAmountWithdrawBALNPoolBALNbnUSD = (val: string) => {
-    setAmountWithdrawBALNPoolBALNbnUSD(val);
-    let outputAmount = new BigNumber(val).multipliedBy(ratio.BALNbnUSDratio);
-    if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
-    setAmountWithdrawBNUSDPoolsBALNbnUSD(formatBigNumber(outputAmount, 'input'));
-  };
-
-  const handleTypeAmountWithdrawBNUSDPoolBALNbnUSD = (val: string) => {
-    setAmountWithdrawBNUSDPoolsBALNbnUSD(val);
-    let inputAmount = new BigNumber(val).multipliedBy(new BigNumber(1).dividedBy(ratio.BALNbnUSDratio));
-    if (inputAmount.isNaN()) inputAmount = new BigNumber(0);
-    setAmountWithdrawBALNPoolBALNbnUSD(formatBigNumber(inputAmount, 'input'));
-  };
-
-  if (
-    !account ||
-    (formatBigNumber(liquiditySupply.sICXSuppliedPoolsICXbnUSD, 'currency') === '0' &&
-      formatBigNumber(liquiditySupply.BALNSuppliedPoolBALNbnUSD, 'currency') === '0' &&
-      formatBigNumber(liquiditySupply.ICXBalance, 'currency') === '0')
-  ) {
-    return null;
-  }
-
-  // const handleSlideWithdrawalICX = (values: string[], handle: number) => {
-  //   setAmountWithdrawICX(values[handle]);
-  // };
-
-  const handleSlideWithdrawsICXPoolsICXbnUSD = (values: string[], handle: number) => {
-    handleTypeAmountWithdrawsICXPoolsICXbnUSD(values[handle]);
-  };
-
-  const handleSlideWithdrawBALNPoolBALNbnUSD = (values: string[], handle: number) => {
-    handleTypeAmountWithdrawBALNPoolBALNbnUSD(values[handle]);
-  };
+  if (Object.keys(balances).length === 0) return null;
 
   return (
     <>
@@ -340,218 +40,176 @@ const LiquidityDetails = () => {
           Liquidity details
         </Typography>
 
-        {/* <!-- Liquidity list --> */}
-        <table className="list liquidity">
-          <thead>
-            <tr>
-              <th>Pool</th>
-              <th>Your supply</th>
-              <th>Pool share</th>
-              <th>Daily rewards</th>
-              <th></th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {/* <!-- sICX / ICX --> */}
-            <tr style={ICXBalance.toNumber() === 0 ? { display: 'none' } : {}}>
-              <td>sICX / ICX</td>
-              <td>{formatBigNumber(ICXBalance, 'currency')} ICX</td>
-              <td>{sICXICXSuppliedShare?.isNaN() ? '0.00' : formatBigNumber(sICXICXSuppliedShare, 'currency')}%</td>
-              <td>
-                ~{' '}
-                {formatBigNumber(
-                  new BigNumber(sICXICXpoolDailyReward * (ICXBalance.toNumber() / sICXICXTotalSupply.toNumber())),
-                  'currency',
-                )}{' '}
-                BALN
-              </td>
-              <td style={{ paddingRight: '16px' }}>
-                <Wrapper>
-                  <UnderlineText onClick={handleWithdrawSICXICX}>Withdraw</UnderlineText>
-                </Wrapper>
-              </td>
-            </tr>
-
-            <tr style={liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toNumber() === 0 ? { display: 'none' } : {}}>
-              <td>sICX / bnUSD</td>
-              <td>
-                {formatBigNumber(liquiditySupply.sICXSuppliedPoolsICXbnUSD, 'currency') + ' sICX'}
-                <br />
-                {formatBigNumber(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD, 'currency') + ' bnUSD'}
-              </td>
-              <td>
-                {!account
-                  ? '-'
-                  : sICXbnUSDSuppliedShare?.isNaN()
-                  ? '0.00'
-                  : formatBigNumber(sICXbnUSDSuppliedShare, 'currency')}
-                %
-              </td>
-              <td>
-                ~{' '}
-                {formatBigNumber(
-                  sICXbnUSDpoolDailyReward?.multipliedBy(sICXbnUSDSuppliedShare?.dividedBy(100)),
-                  'currency',
-                )}{' '}
-                BALN
-              </td>
-              <td>
-                <ClickAwayListener onClickAway={closeDropdownSICXbnUSD}>
-                  <div>
-                    <UnderlineTextWithArrow
-                      onClick={handleToggleDropdownSICXbnUSD}
-                      text="Withdraw"
-                      arrowRef={arrowRefSICXbnUSD}
-                    />
-                    <DropdownPopper show={Boolean(anchorSICXbnUSD)} anchorEl={anchorSICXbnUSD}>
-                      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
-                        <Typography variant="h3" mb={3}>
-                          Withdraw:&nbsp;
-                          <Typography as="span">sICX / bnUSD</Typography>
-                        </Typography>
-                        <Box mb={3}>
-                          <CurrencyInputPanel
-                            value={amountWithdrawSICXPoolsICXbnUSD}
-                            showMaxButton={false}
-                            currency={CURRENCY_LIST['sicx']}
-                            onUserInput={handleTypeAmountWithdrawsICXPoolsICXbnUSD}
-                            id="withdraw-liquidity-input"
-                            bg="bg5"
-                          />
-                        </Box>
-                        <Box mb={3}>
-                          <CurrencyInputPanel
-                            value={amountWithdrawBNUSDPoolsICXbnUSD}
-                            showMaxButton={false}
-                            currency={CURRENCY_LIST['bnusd']}
-                            onUserInput={handleTypeAmountWithdrawBNUSDPoolsICXbnUSD}
-                            id="withdraw-liquidity-input"
-                            bg="bg5"
-                          />
-                        </Box>
-                        <Typography mb={5} textAlign="right">
-                          Wallet: {formatBigNumber(balances['sICX'], 'currency')} sICX /{' '}
-                          {formatBigNumber(balances['bnUSD'], 'currency')} bnUSD
-                        </Typography>
-                        <Nouislider
-                          id="slider-supply"
-                          start={[0]}
-                          padding={[0]}
-                          connect={[true, false]}
-                          range={{
-                            min: [0],
-                            max: [amountWithdrawsICXbnUSDMax],
-                          }}
-                          onSlide={handleSlideWithdrawsICXPoolsICXbnUSD}
-                        />
-                        <Flex alignItems="center" justifyContent="center">
-                          <Button mt={5} onClick={handleWithdrawSICXbnUSD}>
-                            Withdraw liquidity
-                          </Button>
-                        </Flex>
-                      </Flex>
-                    </DropdownPopper>
-                  </div>
-                </ClickAwayListener>
-              </td>
-            </tr>
-
-            {/* <!-- BALN / bnUSD --> */}
-            <tr style={liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toNumber() === 0 ? { display: 'none' } : {}}>
-              <td>BALN / bnUSD</td>
-              <td>
-                {formatBigNumber(liquiditySupply.BALNSuppliedPoolBALNbnUSD, 'currency')} BALN
-                <br />
-                {formatBigNumber(liquiditySupply.bnUSDSuppliedPoolBALNbnUSD, 'currency')} bnUSD
-              </td>
-              <td>{!account ? '-' : formatBigNumber(BALNbnUSDSuppliedShare, 'currency')}%</td>
-              <td>
-                ~{' '}
-                {formatBigNumber(
-                  BALNbnUSDpoolDailyReward?.multipliedBy(BALNbnUSDSuppliedShare.dividedBy(100)),
-                  'currency',
-                )}{' '}
-                BALN
-              </td>
-              <td>
-                <ClickAwayListener onClickAway={closeDropdownBALNbnUSD}>
-                  <div>
-                    <UnderlineTextWithArrow
-                      onClick={handleToggleDropdownBALNbnUSD}
-                      text="Withdraw"
-                      arrowRef={arrowRefBALNbnUSD}
-                    />
-                    <DropdownPopper show={Boolean(anchorBALNbnUSD)} anchorEl={anchorBALNbnUSD}>
-                      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
-                        <Typography variant="h3" mb={3}>
-                          Withdraw:&nbsp;
-                          <Typography as="span">BALN / bnUSD</Typography>
-                        </Typography>
-                        <Box mb={3}>
-                          <CurrencyInputPanel
-                            value={amountWithdrawBALNPoolBALNbnUSD}
-                            showMaxButton={false}
-                            currency={CURRENCY_LIST['baln']}
-                            onUserInput={handleTypeAmountWithdrawBALNPoolBALNbnUSD}
-                            id="withdraw-liquidity-input"
-                            bg="bg5"
-                          />
-                        </Box>
-                        <Box mb={3}>
-                          <CurrencyInputPanel
-                            value={amountWithdrawBNUSDPoolBALNbnUSD}
-                            showMaxButton={false}
-                            currency={CURRENCY_LIST['bnusd']}
-                            onUserInput={handleTypeAmountWithdrawBNUSDPoolBALNbnUSD}
-                            id="withdraw-liquidity-input"
-                            bg="bg5"
-                          />
-                        </Box>
-                        <Typography mb={5} textAlign="right">
-                          Wallet: {formatBigNumber(balances['BALN'], 'currency')} BALN /{' '}
-                          {formatBigNumber(balances['bnUSD'], 'currency')} bnUSD
-                        </Typography>
-                        <Nouislider
-                          id="slider-supply"
-                          start={[0]}
-                          padding={[0]}
-                          connect={[true, false]}
-                          range={{
-                            min: [0],
-                            max: [amountWithdrawBALNbnUSDMax],
-                          }}
-                          onSlide={handleSlideWithdrawBALNPoolBALNbnUSD}
-                        />
-                        <Flex alignItems="center" justifyContent="center">
-                          <Button mt={5} onClick={handleWithdrawBALNbnUSD}>
-                            Withdraw liquidity
-                          </Button>
-                        </Flex>
-                      </Flex>
-                    </DropdownPopper>
-                  </div>
-                </ClickAwayListener>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <TableWrapper>
+          <DashGrid>
+            <HeaderText>Pool</HeaderText>
+            <HeaderText>Your supply</HeaderText>
+            {!below800 && <HeaderText>Pool share</HeaderText>}
+            {!below800 && <HeaderText>Daily rewards</HeaderText>}
+            <HeaderText></HeaderText>
+          </DashGrid>
+          {Object.keys(balances).map(poolId => (
+            <PoolRecord key={poolId} poolId={parseInt(poolId)} />
+          ))}
+        </TableWrapper>
       </BoxPanel>
-      <Modal isOpen={showSwapConfirm} onDismiss={handleWithdrawConfirmDismiss}>
+    </>
+  );
+}
+
+const TableWrapper = styled.div``;
+
+const DashGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-areas: 'name supply share rewards action';
+  align-items: center;
+
+  & > * {
+    justify-content: flex-end;
+    text-align: right;
+
+    &:first-child {
+      justify-content: flex-start;
+      text-align: left;
+    }
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    grid-template-columns: 1.5fr 1.5fr 1fr;
+    grid-template-areas: 'name supply action';
+  `}
+`;
+
+const HeaderText = styled(Typography)`
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+`;
+
+const DataText = styled(Box)`
+  font-size: 16px;
+`;
+
+const ListItem = styled(DashGrid)<{ border?: boolean }>`
+  padding: 20px 0;
+  cursor: pointer;
+  color: #ffffff;
+  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
+
+  :hover {
+    color: #2ca9b7;
+    transition: color 0.2s ease;
+  }
+`;
+
+const PoolRecord = ({ poolId }: { poolId: number }) => {
+  const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
+  const poolData = usePoolData(pair.poolId);
+  const below800 = useMedia('(max-width: 800px)');
+
+  return (
+    <ListItem>
+      <DataText>{pair.pair}</DataText>
+      <DataText>
+        {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
+          <>{`${formatBigNumber(poolData?.suppliedBase, 'currency')} ${pair.baseCurrencyKey}`}</>
+        ) : (
+          <>
+            {`${formatBigNumber(poolData?.suppliedBase, 'currency')} ${pair.baseCurrencyKey}`}
+            <br />
+            {`${formatBigNumber(poolData?.suppliedQuote, 'currency')} ${pair.quoteCurrencyKey}`}
+          </>
+        )}
+      </DataText>
+      {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare, 'currency')}%`}</DataText>}
+      {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
+      <DataText>
+        {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
+          <WithdrawText1 poolId={pair.poolId} />
+        ) : (
+          <WithdrawText poolId={pair.poolId} />
+        )}
+      </DataText>
+    </ListItem>
+  );
+};
+
+const WithdrawText = ({ poolId }: { poolId: number }) => {
+  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+
+  const arrowRef = React.useRef(null);
+
+  const toggle = () => {
+    setAnchor(anchor ? null : arrowRef.current);
+  };
+
+  const close = () => {
+    setAnchor(null);
+  };
+
+  return (
+    <ClickAwayListener onClickAway={close}>
+      <div>
+        <UnderlineTextWithArrow onClick={toggle} text="Withdraw" arrowRef={arrowRef} />
+        <DropdownPopper show={Boolean(anchor)} anchorEl={anchor}>
+          <WithdrawModal poolId={poolId} onClose={close} />
+        </DropdownPopper>
+      </div>
+    </ClickAwayListener>
+  );
+};
+
+const WithdrawText1 = ({ poolId }: { poolId: number }) => {
+  const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
+  const { account } = useIconReact();
+  const addTransaction = useTransactionAdder();
+  const poolData = usePoolData(poolId);
+
+  const handleWithdraw = () => {
+    if (!account) return;
+    bnJs
+      .eject({ account: account })
+      .Dex.cancelSicxIcxOrder()
+      .then(res => {
+        addTransaction(
+          { hash: res.result },
+          {
+            pending: withdrawMessage(poolData?.suppliedBase?.dp(2).toFormat() || '', 'ICX', '', 'sICX').pendingMessage,
+            summary: withdrawMessage(poolData?.suppliedBase?.dp(2).toFormat() || '', 'ICX', '', 'sICX').successMessage,
+          },
+        );
+        toggleOpen();
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const [open, setOpen] = React.useState(false);
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
+
+  return (
+    <>
+      <Wrapper>
+        <UnderlineText onClick={toggleOpen}>Withdraw</UnderlineText>
+      </Wrapper>
+
+      <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
             Withdraw liquidity?
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {withdrawInputAmount} {inputCurrency}
-            <br />
-            {inputCurrency === 'ICX' ? '' : withdrawOutputAmount + ' ' + outputCurrency}
+            {poolData?.suppliedBase?.dp(2).toFormat()} {pair.baseCurrencyKey}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleWithdrawConfirmDismiss}>Cancel</TextButton>
-            <Button onClick={handleWithdrawConfirm}>Withdraw</Button>
+            <TextButton onClick={toggleOpen}>Cancel</TextButton>
+            <Button onClick={handleWithdraw}>Withdraw</Button>
           </Flex>
         </Flex>
       </Modal>
@@ -559,4 +217,184 @@ const LiquidityDetails = () => {
   );
 };
 
-export default LiquidityDetails;
+const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => void }) => {
+  const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
+  const balances = useWalletBalances();
+  const lpBalance = useBalance(poolId);
+  const pool = usePool(pair.poolId);
+
+  const [{ typedValue, independentField, inputType }, setState] = React.useState<{
+    typedValue: string;
+    independentField: Field;
+    inputType: 'slider' | 'text';
+  }>({
+    typedValue: '',
+    independentField: Field.CURRENCY_A,
+    inputType: 'text',
+  });
+  const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
+  const price = independentField === Field.CURRENCY_A ? pool?.rate || ONE : pool?.inverseRate || ONE;
+  //  calculate dependentField value
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const parsedAmount = {
+    [independentField]: new BigNumber(typedValue || '0'),
+    [dependentField]: new BigNumber(typedValue || '0').times(price),
+  };
+
+  const formattedAmounts = {
+    [independentField]: typedValue,
+    [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
+  };
+
+  const handleFieldAInput = (value: string) => {
+    setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text' });
+  };
+
+  const handleFieldBInput = (value: string) => {
+    setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text' });
+  };
+
+  const rate1 = pool ? pool.base.div(pool.total) : ONE;
+  const rate2 = pool ? pool.quote.div(pool.total) : ONE;
+
+  const handleSlide = (values: string[], handle: number) => {
+    const t = new BigNumber(values[handle]).times(rate1);
+    setState({ independentField: Field.CURRENCY_A, typedValue: t.dp(2).toFixed(), inputType: 'slider' });
+  };
+
+  const sliderInstance = React.useRef<any>(null);
+
+  React.useEffect(() => {
+    if (inputType === 'text') {
+      const t = parsedAmount[Field.CURRENCY_A].div(rate1);
+      sliderInstance.current.noUiSlider.set(t.dp(2).toNumber());
+    }
+  }, [parsedAmount, rate1, sliderInstance, inputType]);
+
+  const [open, setOpen] = React.useState(false);
+
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
+
+  const { account } = useIconReact();
+  const addTransaction = useTransactionAdder();
+
+  const handleWithdraw = () => {
+    if (!account) return;
+
+    const t = BigNumber.min(parsedAmount[Field.CURRENCY_A].div(rate1), lpBalance?.balance || ZERO);
+
+    const baseT = t.times(rate1);
+    const quoteT = t.times(rate2);
+
+    bnJs
+      .eject({ account: account })
+      .Dex.remove(pair.poolId, BalancedJs.utils.toLoop(t))
+      .then(result => {
+        addTransaction(
+          { hash: result.result },
+          {
+            pending: withdrawMessage(
+              baseT.dp(2).toFormat(),
+              pair.baseCurrencyKey,
+              quoteT.dp(2).toFormat(),
+              pair.quoteCurrencyKey,
+            ).pendingMessage,
+            summary: withdrawMessage(
+              baseT.dp(2).toFormat(),
+              pair.baseCurrencyKey,
+              quoteT.dp(2).toFormat(),
+              pair.quoteCurrencyKey,
+            ).successMessage,
+          },
+        );
+        toggleOpen();
+      })
+      .catch(e => {
+        console.error('error', e);
+      });
+  };
+
+  const handleShowConfirm = () => {
+    toggleOpen();
+    onClose();
+  };
+
+  return (
+    <>
+      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
+        <Typography variant="h3" mb={3}>
+          Withdraw:&nbsp;
+          <Typography as="span">{pair.pair}</Typography>
+        </Typography>
+        <Box mb={3}>
+          <CurrencyInputPanel
+            value={formattedAmounts[Field.CURRENCY_A]}
+            showMaxButton={false}
+            currency={CURRENCY_LIST[pair.baseCurrencyKey.toLowerCase()]}
+            onUserInput={handleFieldAInput}
+            id="withdraw-liquidity-input"
+            bg="bg5"
+          />
+        </Box>
+        <Box mb={3}>
+          <CurrencyInputPanel
+            value={formattedAmounts[Field.CURRENCY_B]}
+            showMaxButton={false}
+            currency={CURRENCY_LIST[pair.quoteCurrencyKey.toLowerCase()]}
+            onUserInput={handleFieldBInput}
+            id="withdraw-liquidity-input"
+            bg="bg5"
+          />
+        </Box>
+        <Typography mb={5} textAlign="right">
+          {`Wallet: ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} ${pair.baseCurrencyKey}
+          / ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} ${pair.quoteCurrencyKey}`}
+        </Typography>
+        <Box mb={5}>
+          <Nouislider
+            id="slider-supply"
+            start={[0]}
+            padding={[0]}
+            connect={[true, false]}
+            range={{
+              min: [0],
+              max: [lpBalance?.balance.dp(2).toNumber() || 0],
+            }}
+            onSlide={handleSlide}
+            instanceRef={instance => {
+              if (instance && !sliderInstance.current) {
+                sliderInstance.current = instance;
+              }
+            }}
+          />
+        </Box>
+        <Flex alignItems="center" justifyContent="center">
+          <Button onClick={handleShowConfirm}>Withdraw liquidity</Button>
+        </Flex>
+      </Flex>
+
+      <Modal isOpen={open} onDismiss={toggleOpen}>
+        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+          <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
+            Withdraw liquidity?
+          </Typography>
+
+          <Typography variant="p" fontWeight="bold" textAlign="center">
+            {parsedAmount[Field.CURRENCY_A].dp(2).toFormat()} {pair.baseCurrencyKey}
+          </Typography>
+
+          <Typography variant="p" fontWeight="bold" textAlign="center">
+            {parsedAmount[Field.CURRENCY_B].dp(2).toFormat()} {pair.quoteCurrencyKey}
+          </Typography>
+
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            <TextButton onClick={toggleOpen}>Cancel</TextButton>
+            <Button onClick={handleWithdraw}>Withdraw</Button>
+          </Flex>
+        </Flex>
+      </Modal>
+    </>
+  );
+};

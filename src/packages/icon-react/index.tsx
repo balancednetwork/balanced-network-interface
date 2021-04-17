@@ -53,7 +53,7 @@ const IconReactContext = React.createContext<ICONReactContextInterface>({
 const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
 export function IconReactProvider({ children }) {
-  const [account, setAccount] = React.useState<string | null>();
+  const [account, setAccount] = React.useState<string | null>('hxfe331088beab933779fdd250e82b6e023cb6062a');
   const [hasExtension, setHasExtension] = React.useState<boolean>(false);
 
   const requestAddress = React.useCallback(async () => {

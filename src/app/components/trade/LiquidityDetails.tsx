@@ -456,7 +456,7 @@ const LiquidityDetails = () => {
                           connect={[true, false]}
                           range={{
                             min: [0],
-                            max: [amountWithdrawsICXbnUSDMax],
+                            max: [parseFloat(formatBigNumber(new BigNumber(amountWithdrawsICXbnUSDMax), 'input'))],
                           }}
                           onSlide={handleSlideWithdrawsICXPoolsICXbnUSD}
                         />

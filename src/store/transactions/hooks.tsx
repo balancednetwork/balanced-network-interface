@@ -31,8 +31,6 @@ export function useTransactionAdder(): (
       if (!account) return;
       if (!networkId) return;
 
-      alert(account);
-
       const { hash } = response;
       if (!hash) {
         throw Error('No transaction hash found.');

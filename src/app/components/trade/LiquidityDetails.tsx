@@ -103,7 +103,8 @@ const LiquidityDetails = () => {
     setAmountWithdrawBNUSDPoolsICXbnUSD('0');
   }, [liquiditySupply.ICXBalance]);
 
-  const [amountWithdrawsICXbnUSDMax, setAmountWithdrawsICXbnUSDMax] = React.useState(0);
+  const [amountWithdrawsICXbnUSDMax, setAmountWithdrawsICXbnUSDMax] = React.useState('0');
+  const [amountWithdrawBALNbnUSDMax, setAmountWithdrawBALNbnUSDMax] = React.useState('0');
 
   React.useEffect(() => {
     if (
@@ -111,13 +112,11 @@ const LiquidityDetails = () => {
         ?.multipliedBy(ratio.sICXbnUSDratio)
         .isLessThanOrEqualTo(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD || new BigNumber(0))
     ) {
-      setAmountWithdrawsICXbnUSDMax(liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toNumber() || 0);
+      setAmountWithdrawsICXbnUSDMax(liquiditySupply.sICXSuppliedPoolsICXbnUSD?.toString() || '0');
     } else {
-      setAmountWithdrawsICXbnUSDMax(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD?.toNumber() || 0);
+      setAmountWithdrawsICXbnUSDMax(liquiditySupply.bnUSDSuppliedPoolsICXbnUSD?.toString() || '0');
     }
-  }, [liquiditySupply.sICXSuppliedPoolsICXbnUSD, liquiditySupply.bnUSDSuppliedPoolsICXbnUSD, ratio.sICXbnUSDratio]);
-
-  const [amountWithdrawBALNbnUSDMax, setAmountWithdrawBALNbnUSDMax] = React.useState('0');
+  }, [liquiditySupply, ratio]);
 
   React.useEffect(() => {
     if (
@@ -129,7 +128,7 @@ const LiquidityDetails = () => {
     } else {
       setAmountWithdrawBALNbnUSDMax(liquiditySupply.bnUSDSuppliedPoolBALNbnUSD?.toString() || '0');
     }
-  }, [liquiditySupply.BALNSuppliedPoolBALNbnUSD, liquiditySupply.bnUSDSuppliedPoolBALNbnUSD, ratio.BALNbnUSDratio]);
+  }, [liquiditySupply, ratio]);
 
   // const handleTypeAmountWithdrawICX = (val: string) => {
   //   setAmountWithdrawICX(val);
@@ -212,8 +211,8 @@ const LiquidityDetails = () => {
     if (!account) return;
     let withdrawTotal = new BigNumber(0);
     if (
-      parseFloat(withdrawSICXamount) >= amountWithdrawsICXbnUSDMax ||
-      parseFloat(withdrawBNUSDamount) >= amountWithdrawsICXbnUSDMax
+      parseFloat(withdrawSICXamount) >= parseFloat(amountWithdrawsICXbnUSDMax) ||
+      parseFloat(withdrawBNUSDamount) >= parseFloat(amountWithdrawsICXbnUSDMax)
     ) {
       withdrawTotal = liquiditySupply.sICXbnUSDBalance || new BigNumber(0);
     } else {
@@ -279,8 +278,12 @@ const LiquidityDetails = () => {
   const [amountWithdrawSICXPoolsICXbnUSD, setAmountWithdrawSICXPoolsICXbnUSD] = React.useState('0');
   const [amountWithdrawBNUSDPoolsICXbnUSD, setAmountWithdrawBNUSDPoolsICXbnUSD] = React.useState('0');
 
-  const handleTypeAmountWithdrawsICXPoolsICXbnUSD = (val: string) => {
-    setAmountWithdrawSICXPoolsICXbnUSD(val);
+  const handleTypeAmountWithdrawsICXPoolsICXbnUSD = (val: string, inputType?: 'slider' | 'text') => {
+    if (inputType === 'slider') {
+      setAmountWithdrawSICXPoolsICXbnUSD(formatBigNumber(new BigNumber(val), 'input'));
+    } else {
+      setAmountWithdrawSICXPoolsICXbnUSD(val);
+    }
     let outputAmount = new BigNumber(val).multipliedBy(ratio.sICXbnUSDratio);
     if (outputAmount.isNaN()) outputAmount = new BigNumber(0);
     setAmountWithdrawBNUSDPoolsICXbnUSD(formatBigNumber(outputAmount, 'input'));
@@ -330,7 +333,11 @@ const LiquidityDetails = () => {
   // };
 
   const handleSlideWithdrawsICXPoolsICXbnUSD = (values: string[], handle: number) => {
-    handleTypeAmountWithdrawsICXPoolsICXbnUSD(values[handle]);
+    if (new BigNumber(values[handle]).isGreaterThanOrEqualTo(new BigNumber(amountWithdrawsICXbnUSDMax))) {
+      handleTypeAmountWithdrawsICXPoolsICXbnUSD(amountWithdrawsICXbnUSDMax, 'slider');
+    } else {
+      handleTypeAmountWithdrawsICXPoolsICXbnUSD(values[handle], 'slider');
+    }
   };
 
   const handleSlideWithdrawBALNPoolBALNbnUSD = (values: string[], handle: number) => {

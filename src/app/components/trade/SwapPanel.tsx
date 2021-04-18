@@ -20,6 +20,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, getFilteredCurrencies, SUPPORTED_BASE_CURRENCIES } from 'constants/currency';
 import { useWalletModalToggle } from 'store/application/hooks';
+import { useLiquiditySupply } from 'store/liquidity/hooks';
 import { useRatio, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -70,6 +71,7 @@ export default function SwapPanel() {
   const { account } = useIconReact();
   const balances = useWalletBalances();
   const ratio = useRatio();
+  const liquiditySupply = useLiquiditySupply();
   const addTransaction = useTransactionAdder();
   const changeRatioValue = useChangeRatio();
   const toggleWalletModal = useWalletModalToggle();
@@ -124,6 +126,38 @@ export default function SwapPanel() {
     [ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
   );
 
+  const calculateOutputAmount = React.useCallback(
+    (symbolInput: string, symbolOutput: string, amountInput: string, amountOutput: string) => {
+      let poolTotalInput = new BigNumber(0);
+      let poolTotalOutput = new BigNumber(0);
+      if (symbolInput === 'sicx' && symbolOutput === 'bnusd') {
+        poolTotalInput = liquiditySupply.sICXPoolsICXbnUSDTotal || new BigNumber(0);
+        poolTotalOutput = liquiditySupply.bnUSDPoolsICXbnUSDTotal || new BigNumber(0);
+      } else if (symbolInput === 'bnusd' && symbolOutput === 'sicx') {
+        poolTotalInput = liquiditySupply.bnUSDPoolsICXbnUSDTotal || new BigNumber(0);
+        poolTotalOutput = liquiditySupply.sICXPoolsICXbnUSDTotal || new BigNumber(0);
+      } else if (symbolInput === 'baln' && symbolOutput === 'bnusd') {
+        poolTotalInput = liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0);
+        poolTotalOutput = liquiditySupply.bnUSDPoolBALNbnUSDTotal || new BigNumber(0);
+      } else if (symbolInput === 'bnusd' && symbolOutput === 'baln') {
+        poolTotalInput = liquiditySupply.bnUSDPoolBALNbnUSDTotal || new BigNumber(0);
+        poolTotalOutput = liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0);
+      }
+      if (amountOutput === '') {
+        let new_from_token = poolTotalInput.plus(new BigNumber(amountInput));
+        let new_to_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_from_token);
+        let receive_token = poolTotalOutput.minus(new_to_token);
+        return receive_token;
+      } else {
+        let new_to_token = poolTotalOutput.minus(new BigNumber(amountOutput));
+        let new_from_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_to_token);
+        let amountInput = new_from_token.minus(poolTotalInput);
+        return amountInput;
+      }
+    },
+    [liquiditySupply],
+  );
+
   const handleConvertOutputRate = React.useCallback(
     (inputCurrency: any, outputCurrency: any, val: string) => {
       let ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
@@ -137,7 +171,7 @@ export default function SwapPanel() {
         setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
       } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
         const fee = parseFloat(val) / 100;
-        setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
+        setSwapFee(new BigNumber(fee).toString());
         val = (parseFloat(val) - fee).toString();
         setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
       } else {
@@ -148,16 +182,23 @@ export default function SwapPanel() {
             const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
             const lp_fee = parseInt(res[`pool_lp_fee`], 16);
             const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
-            setSwapFee(formatBigNumber(new BigNumber(fee), 'input'));
+            setSwapFee(new BigNumber(fee).toString());
             val = (parseFloat(val) - fee).toString();
-            setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
+
+            setSwapOutputAmount(
+              formatBigNumber(
+                calculateOutputAmount(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase(), val, ''),
+                'ratio',
+              ),
+            );
+            //setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
           })
           .catch(e => {
             console.error('error', e);
           });
       }
     },
-    [account, tokenRatio],
+    [account, tokenRatio, calculateOutputAmount],
   );
 
   const handleTypeOutput = (val: string) => {
@@ -169,7 +210,12 @@ export default function SwapPanel() {
     if (!val) {
       val = '0';
     }
-    let inputAmount = new BigNumber(val).dividedBy(ratioLocal);
+    let inputAmount = calculateOutputAmount(
+      inputCurrency.symbol.toLowerCase(),
+      outputCurrency.symbol.toLowerCase(),
+      '',
+      val,
+    );
     if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
       inputAmount = inputAmount.plus(inputAmount.multipliedBy(0.01));
       setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
@@ -183,7 +229,9 @@ export default function SwapPanel() {
         .then(res => {
           const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
           const lp_fee = parseInt(res[`pool_lp_fee`], 16);
-          inputAmount = inputAmount.plus((inputAmount.toNumber() * (bal_holder_fee + lp_fee)) / 10000);
+          const fee = inputAmount.multipliedBy(new BigNumber(bal_holder_fee + lp_fee)).dividedBy(new BigNumber(10000));
+          setSwapFee(new BigNumber(fee).toString());
+          inputAmount = inputAmount.plus(fee);
           setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
         })
         .catch(e => {

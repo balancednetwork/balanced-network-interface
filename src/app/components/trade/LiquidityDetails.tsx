@@ -341,6 +341,17 @@ const LiquidityDetails = () => {
   };
 
   const handleSlideWithdrawBALNPoolBALNbnUSD = (values: string[], handle: number) => {
+    if (
+      liquiditySupply.BALNSuppliedPoolBALNbnUSD?.multipliedBy(ratio.BALNbnUSDratio).isLessThanOrEqualTo(
+        liquiditySupply.bnUSDSuppliedPoolBALNbnUSD || new BigNumber(0),
+      )
+    ) {
+      setAmountWithdrawBALNbnUSDMax(liquiditySupply.BALNSuppliedPoolBALNbnUSD?.toString() || '0');
+      alert(liquiditySupply.BALNSuppliedPoolBALNbnUSD.toString());
+    } else {
+      setAmountWithdrawBALNbnUSDMax(liquiditySupply.bnUSDSuppliedPoolBALNbnUSD?.toString() || '0');
+    }
+    alert(amountWithdrawBALNbnUSDMax);
     if (new BigNumber(values[handle]).isGreaterThanOrEqualTo(new BigNumber(amountWithdrawBALNbnUSDMax))) {
       handleTypeAmountWithdrawBALNPoolBALNbnUSD(amountWithdrawBALNbnUSDMax, 'slider');
     } else {

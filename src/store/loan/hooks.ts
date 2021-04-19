@@ -5,10 +5,11 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { MANDATORY_COLLATERAL_RATIO } from 'constants/index';
+import { MANDATORY_COLLATERAL_RATIO, ZERO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 import { AppState } from '..';
 import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, Field, adjust, cancel, type } from './actions';
@@ -183,4 +184,13 @@ export function useLoanDebtHoldingShare() {
   return React.useMemo(() => {
     return loanInputAmount.div(loanTotalSupply.minus(loanBadDebt)).multipliedBy(100);
   }, [loanInputAmount, loanBadDebt, loanTotalSupply]);
+}
+
+export function useLoanUsedAmount(): BigNumber {
+  const remainingAmount = useWalletBalances()['bnUSD'];
+  const borrowedAmount = useLoanBorrowedAmount();
+
+  return React.useMemo(() => {
+    return borrowedAmount.isGreaterThan(remainingAmount) ? borrowedAmount.minus(remainingAmount).plus(0.1) : ZERO;
+  }, [borrowedAmount, remainingAmount]);
 }

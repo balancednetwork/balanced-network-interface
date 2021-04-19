@@ -22,9 +22,9 @@ import {
   useLoanState,
   useLoanTotalBorrowableAmount,
   useLoanActionHandlers,
+  useLoanUsedAmount,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
@@ -145,20 +145,12 @@ const LoanPanel = () => {
     }
   }, [afterAmount, inputType]);
 
-  // Add Used indicator to the Loan section #73
-  // https://github.com/balancednetwork/balanced-network-interface/issues/73
-  const remainingBNUSDAmount = useWalletBalances()['bnUSD'];
-
-  const usedBNUSDAmount = React.useMemo(() => {
-    return BigNumber.max(borrowedAmount.minus(remainingBNUSDAmount as BigNumber), new BigNumber(0));
-  }, [borrowedAmount, remainingBNUSDAmount]);
+  const usedAmount = useLoanUsedAmount();
 
   const _totalBorrowableAmount = totalBorrowableAmount.times(0.99);
-  const percent = _totalBorrowableAmount.isZero()
-    ? 0
-    : usedBNUSDAmount.div(_totalBorrowableAmount).times(100).toNumber();
+  const percent = _totalBorrowableAmount.isZero() ? 0 : usedAmount.div(_totalBorrowableAmount).times(100).toNumber();
 
-  const shouldShowLock = !usedBNUSDAmount.isZero();
+  const shouldShowLock = !usedAmount.isZero();
 
   if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative()) {
     return (
@@ -213,10 +205,7 @@ const LoanPanel = () => {
             disabled={!isAdjusting}
             id="slider-loan"
             start={[borrowedAmount.dp(2).toNumber()]}
-            padding={[
-              Math.max(Math.min(usedBNUSDAmount.dp(2).toNumber(), _totalBorrowableAmount.dp(2).toNumber()), 0),
-              0,
-            ]}
+            padding={[Math.max(Math.min(usedAmount.dp(2).toNumber(), _totalBorrowableAmount.dp(2).toNumber()), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],

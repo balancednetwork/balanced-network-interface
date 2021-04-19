@@ -66,7 +66,7 @@ const requestLedgerAddress = async ({
             .then(balance => {
               resolve({
                 ...address,
-                balance: BalancedJs.utils.toIcx(balance),
+                balance: BalancedJs.utils.toIcx(balance).toFixed(2),
               });
             })
             .catch(reject);
@@ -117,9 +117,9 @@ const StyledModal = styled(Modal).attrs({
   }
 `;
 
-export default function WalletModal() {
-  let transport = null;
+let transport = null;
 
+export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
   const [showLedgerAddress, updateShowledgerAddress] = useState(false);
@@ -173,35 +173,36 @@ export default function WalletModal() {
     }
   };
 
-  const getBack = async () => {
-    const currentOffset = offset - LIMIT_PAGING_LEDGER;
-
-    if (currentOffset < 0) {
+  const getBack = React.useCallback(async () => {
+    if (offset <= 0) {
       // should disable page number < 0;
       alert('This is first pages, cannot request more address, try other please.');
       return;
     }
+    const currentOffset = offset - limit;
+
+    await updateLedgerAddress({ offset: currentOffset, limit });
 
     updatePaging({
-      limit: LIMIT_PAGING_LEDGER,
+      limit,
       offset: currentOffset,
     });
+  }, [offset, limit]);
 
-    await updateLedgerAddress({ offset, limit });
-  };
-
-  const getNext = async () => {
+  const getNext = React.useCallback(async () => {
     try {
-      updatePaging({
-        limit: LIMIT_PAGING_LEDGER,
-        offset: offset + LIMIT_PAGING_LEDGER,
-      });
+      const next = offset + LIMIT_PAGING_LEDGER;
 
-      await updateLedgerAddress({ offset, limit });
+      await updateLedgerAddress({ offset: next, limit });
+
+      updatePaging({
+        limit,
+        offset: next,
+      });
     } catch (e) {
       console.error('Error when request more address from Ledger: ', e);
     }
-  };
+  }, [offset, limit]);
 
   const chooseLedgerAddress = ({ address, point }: { address: string; point: number }) => {
     console.info(address);

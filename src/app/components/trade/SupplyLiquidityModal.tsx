@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
@@ -12,6 +13,7 @@ import bnJs from 'bnJs';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
 import { depositMessage, supplyMessage } from './utils';
@@ -35,6 +37,7 @@ export enum Field {
 
 export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   const { account } = useIconReact();
+  const balances = useWalletBalances();
 
   const selectedPair = usePoolPair();
 
@@ -93,6 +96,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   const [confirmTx, setConfirmTx] = React.useState('');
 
   const handleSupplyConfirm = () => {
+    if (
+      balances.ICX.minus(parsedAmounts[Field.CURRENCY_A])
+        .minus(new BigNumber(0.1))
+        .isLessThanOrEqualTo(new BigNumber(0))
+    ) {
+      parsedAmounts[Field.CURRENCY_A] = parsedAmounts[Field.CURRENCY_A].minus(new BigNumber(0.1));
+    }
     if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
       bnJs
         .inject({ account: account })

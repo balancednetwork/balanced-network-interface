@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 import LogoSrc from 'assets/images/balanced-logo.png';
@@ -19,11 +18,11 @@ const LogoImg = styled.img`
 export default function Logo(props) {
   return (
     <div {...props}>
-      <NavLink exact to="/">
+      <a href="https://balanced.network">
         <MouseoverTooltip text="Back to the Balanced website" placement="right">
           <LogoImg src={LogoSrc} alt="Balanced logo" />
         </MouseoverTooltip>
-      </NavLink>
+      </a>
     </div>
   );
 }

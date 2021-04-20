@@ -97,11 +97,10 @@ const CollateralPanel = () => {
       }
     }
 
-    bnJs.inject({ account });
     if (shouldDeposit) {
       bnJs
         .inject({ account: account })
-        .Loans.addCollateral(BalancedJs.utils.toLoop(collateralAmount))
+        .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount))
         .then((res: any) => {
           addTransaction(
             { hash: res.result || res },

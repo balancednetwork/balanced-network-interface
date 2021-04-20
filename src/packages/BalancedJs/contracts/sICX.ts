@@ -12,7 +12,7 @@ export default class sICX extends Contract {
   }
 
   depositAndBorrow(value: BigNumber) {
-    const data = { method: '_deposit_and_borrow', params: { _sender: this.account, _asset: '', _amount: 0 } };
+    const data = { _asset: '', _amount: 0 };
     return this.transfer(addresses[this.nid].loans, value, JSON.stringify(data));
   }
 

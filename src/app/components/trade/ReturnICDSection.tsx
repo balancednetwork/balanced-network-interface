@@ -102,7 +102,7 @@ const ReturnICDSection = () => {
     }
     bnJs
       .inject({ account: account })
-      .bnUSD.retireAsset(BalancedJs.utils.toLoop(new BigNumber(retireAmount)))
+      .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(new BigNumber(retireAmount)))
       .then(res => {
         setOpen(false);
         addTransaction(

@@ -14,7 +14,7 @@ import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useCollateralActionHandlers } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
@@ -89,7 +89,7 @@ const LoanPanel = () => {
     if (shouldBorrow) {
       bnJs
         .inject({ account })
-        .Loans.originateLoan('bnUSD', BalancedJs.utils.toLoop(differenceAmount), account)
+        .Loans.depositAndBorrow(ZERO, { asset: 'bnUSD', amount: BalancedJs.utils.toLoop(differenceAmount) })
         .then(res => {
           addTransaction(
             { hash: res.result || res },
@@ -109,7 +109,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .inject({ account })
-        .bnUSD.repayLoan(BalancedJs.utils.toLoop(differenceAmount).abs())
+        .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(differenceAmount).abs())
         .then(res => {
           addTransaction(
             { hash: res.result || res },

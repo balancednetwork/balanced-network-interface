@@ -96,29 +96,19 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   const [confirmTx, setConfirmTx] = React.useState('');
 
   const handleSupplyConfirm = () => {
-    if (
-      balances.ICX.minus(parsedAmounts[Field.CURRENCY_A])
-        .minus(new BigNumber(0.1))
-        .isLessThanOrEqualTo(new BigNumber(0))
-    ) {
-      parsedAmounts[Field.CURRENCY_A] = parsedAmounts[Field.CURRENCY_A].minus(new BigNumber(0.1));
-    }
     if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+      const t = BigNumber.max(BigNumber.min(parsedAmounts[Field.CURRENCY_A], balances['ICX'].minus(0.1)), 0);
+      if (t.isZero()) return;
+
       bnJs
         .inject({ account: account })
-        .Dex.transferICX(BalancedJs.utils.toLoop(parsedAmounts[Field.CURRENCY_A]))
+        .Dex.transferICX(BalancedJs.utils.toLoop(t))
         .then(res => {
           addTransaction(
             { hash: res.result || res },
             {
-              pending: supplyMessage(
-                formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
-                selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-              ).pendingMessage,
-              summary: supplyMessage(
-                formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
-                selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-              ).successMessage,
+              pending: supplyMessage(selectedPair.pair).pendingMessage,
+              summary: supplyMessage(selectedPair.pair).successMessage,
             },
           );
 
@@ -140,14 +130,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
           addTransaction(
             { hash: res.result || res },
             {
-              pending: supplyMessage(
-                formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
-                selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-              ).pendingMessage,
-              summary: supplyMessage(
-                formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
-                selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-              ).successMessage,
+              pending: supplyMessage(selectedPair.pair).pendingMessage,
+              summary: supplyMessage(selectedPair.pair).successMessage,
             },
           );
 

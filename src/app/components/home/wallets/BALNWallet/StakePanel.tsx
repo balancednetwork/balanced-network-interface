@@ -61,21 +61,22 @@ export default React.memo(function StakePanel() {
   const { account } = useIconReact();
   const handleConfirm = () => {
     bnJs
-      .eject({ account: account })
+      .inject({ account: account })
       .BALN.stake(BalancedJs.utils.toLoop(afterAmount))
       .then(res => {
-        addTransaction(
-          { hash: res.result },
-          {
-            pending: 'Staking BALN tokens...',
-            summary: `Staked ${afterAmount.dp(2).toFormat()} BALN tokens.`,
-          },
-        );
-        toggleOpen();
-        handleCancel();
-      })
-      .catch(e => {
-        console.error('error', e);
+        if (res.result) {
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: 'Staking BALN tokens...',
+              summary: `Staked ${afterAmount.dp(2).toFormat()} BALN tokens.`,
+            },
+          );
+          toggleOpen();
+          handleCancel();
+        } else {
+          console.error(res);
+        }
       });
   };
 

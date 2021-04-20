@@ -16,11 +16,9 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
-  width: 100px;
   margin-right: 75px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 75px;
     margin-right: 15px;
   `}
 `;

@@ -58,7 +58,7 @@ export default function SendPanel() {
 
   const handleSend = () => {
     bnJs
-      .eject({ account })
+      .inject({ account })
       .sICX.transfer(address, BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {

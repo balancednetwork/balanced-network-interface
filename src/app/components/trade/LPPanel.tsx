@@ -76,8 +76,12 @@ export default function LPPanel() {
   const pool = usePool(selectedPair.poolId);
   const handleSlider = (values: string[], handle: number) => {
     if (pool && !pool.total.isZero()) {
-      const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
-      onFieldAInput(baseAmount.toFixed());
+      if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        onFieldAInput(values[handle]);
+      } else {
+        const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
+        onFieldAInput(baseAmount.toFixed());
+      }
     }
   };
 

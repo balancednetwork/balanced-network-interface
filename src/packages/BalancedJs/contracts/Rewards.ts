@@ -10,10 +10,14 @@ export default class Rewards extends Contract {
     this.address = addresses[this.nid].rewards;
   }
 
-  claimRewards() {
+  async claimRewards() {
     const payload = this.transactionParamsBuilder({
       method: 'claimRewards',
     });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
 
     return this.callIconex(payload);
   }

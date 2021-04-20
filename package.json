@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ledgerhq/hw-app-icx": "file:src/packages/hw-app-icx",
+    "@ledgerhq/hw-transport": "5.48.0",
+    "@ledgerhq/hw-transport-webusb": "5.48.0",
     "@popperjs/core": "2.8.4",
     "@reach/accordion": "0.13.0",
     "@reach/dialog": "0.12.1",

@@ -212,7 +212,7 @@ export function useAvailableBalances() {
     let t = {};
 
     Object.keys(balances)
-      .filter(poolId => !balances[poolId].balance.dp(2).isZero())
+      .filter(poolId => !balances[poolId].balance.dp(0).isZero())
       .forEach(poolId => {
         t[poolId] = balances[poolId];
       });

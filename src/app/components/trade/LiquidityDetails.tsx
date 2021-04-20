@@ -169,7 +169,7 @@ const WithdrawText1 = ({ poolId }: { poolId: number }) => {
   const handleWithdraw = () => {
     if (!account) return;
     bnJs
-      .eject({ account: account })
+      .inject({ account: account })
       .Dex.cancelSicxIcxOrder()
       .then(res => {
         addTransaction(
@@ -289,7 +289,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
     const quoteT = t.times(rate2);
 
     bnJs
-      .eject({ account: account })
+      .inject({ account: account })
       .Dex.remove(pair.poolId, BalancedJs.utils.toLoop(t))
       .then(result => {
         addTransaction(

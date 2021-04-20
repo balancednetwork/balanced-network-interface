@@ -28,6 +28,10 @@ export default class Staking extends Contract {
       },
     });
 
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+
     return this.callIconex(payload);
   }
 

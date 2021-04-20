@@ -61,6 +61,10 @@ export default class sICX extends Contract {
       },
     });
 
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(callParams.params);
+    }
+
     return this.callIconex(callParams);
   }
 

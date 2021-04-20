@@ -129,7 +129,7 @@ const PositionDetailPanel = () => {
 
   return (
     <ActivityPanel bg="bg2">
-      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]} style={{ paddingTop: 30 }}>
+      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]}>
         <Typography variant="h2" mb={5}>
           Position details
         </Typography>
@@ -171,7 +171,7 @@ const PositionDetailPanel = () => {
           </QuestionWrapper>
         </Typography>
 
-        <Flex alignItems="center" justifyContent="space-between" mt={5} mb={4}>
+        <Flex alignItems="center" justifyContent="space-between" mt={[10, 10, 10, 10, 5]} mb={4}>
           <Tooltip
             text="If the bar only fills this section, you have a low risk of liquidation."
             show={show}
@@ -325,6 +325,10 @@ const ActivityPanel = styled(FlexPanel)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     grid-area: initial;
     flex-direction: column;
+  `}
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 0px;
   `}
 `;
 

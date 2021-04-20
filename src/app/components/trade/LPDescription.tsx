@@ -12,7 +12,7 @@ export default function LPDescription() {
   const data = usePoolData(selectedPair.poolId);
 
   return (
-    <Box bg="bg2" flex={1} padding={7}>
+    <Box bg="bg2" flex={1} padding={[5, 7]}>
       <Typography variant="h3" mb={2}>
         {selectedPair.pair} liquidity pool
       </Typography>

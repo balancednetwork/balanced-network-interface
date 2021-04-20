@@ -503,7 +503,7 @@ export default function SwapPanel() {
   return (
     <>
       <SectionPanel bg="bg2">
-        <BrightPanel bg="bg3" p={7} flexDirection="column" alignItems="stretch" flex={1}>
+        <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">Swap</Typography>
             <Typography>
@@ -579,7 +579,7 @@ export default function SwapPanel() {
           </Flex>
         </BrightPanel>
 
-        <Box bg="bg2" flex={1} padding={7}>
+        <Box bg="bg2" flex={1} padding={[5, 7]}>
           <Flex mb={5} flexWrap="wrap">
             <Box width={[1, 1 / 2]}>
               <Typography variant="h3" mb={2}>

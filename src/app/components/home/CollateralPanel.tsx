@@ -128,7 +128,7 @@ const CollateralPanel = () => {
             { hash: res.result || res }, //
             {
               pending: 'Withdrawing collateral...',
-              summary: `${collateralAmount.dp(2).toFormat()} sICX added to your wallet.`,
+              summary: `${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
             },
           );
           // close modal

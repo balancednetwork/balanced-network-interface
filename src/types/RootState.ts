@@ -6,7 +6,6 @@
 */
 import { ApplicationState } from 'store/application/reducer';
 import { CollateralState } from 'store/collateral/reducer';
-import { LiquidityState } from 'store/liquidity/reducer';
 import { LoanState } from 'store/loan/reducer';
 import { MintState } from 'store/mint/reducer';
 import { PoolState } from 'store/pool/reducer';
@@ -22,7 +21,6 @@ export interface RootState {
   pool: PoolState;
   collateral: CollateralState;
   loan: LoanState;
-  liquidity: LiquidityState;
   reward: RewardState;
   ratio: RatioState;
   wallet: WalletState;

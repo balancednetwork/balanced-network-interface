@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { Pair, BASE_SUPPORTED_PAIRS } from 'constants/currency';
+import { ONE } from 'constants/index';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppDispatch, AppState } from '../index';
@@ -109,6 +110,7 @@ export function useFetchPools() {
         quote: quote,
         total: total,
         rate: rate,
+        inverseRate: ONE.div(rate),
       });
     },
     [changePool, networkId],
@@ -191,8 +193,6 @@ export function usePool(poolId: number): Pool | undefined {
   return pools[poolId];
 }
 
-const ONE = new BigNumber(1);
-
 export function useSelectedPoolRate() {
   const selectedPair = usePoolPair();
 
@@ -203,6 +203,22 @@ export function useSelectedPoolRate() {
 
 export function useBalances() {
   return useSelector((state: AppState) => state.pool.balances);
+}
+
+export function useAvailableBalances() {
+  const balances = useBalances();
+
+  return React.useMemo(() => {
+    let t = {};
+
+    Object.keys(balances)
+      .filter(poolId => !balances[poolId].balance.dp(0).isZero())
+      .forEach(poolId => {
+        t[poolId] = balances[poolId];
+      });
+
+    return t;
+  }, [balances]);
 }
 
 export function usePoolShare(poolId: number) {

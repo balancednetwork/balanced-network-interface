@@ -96,14 +96,14 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   const [confirmTx, setConfirmTx] = React.useState('');
 
   const handleSupplyConfirm = () => {
-    if (
-      balances.ICX.minus(parsedAmounts[Field.CURRENCY_A])
-        .minus(new BigNumber(0.1))
-        .isLessThanOrEqualTo(new BigNumber(0))
-    ) {
-      parsedAmounts[Field.CURRENCY_A] = parsedAmounts[Field.CURRENCY_A].minus(new BigNumber(0.1));
-    }
     if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+      if (
+        balances.ICX.minus(parsedAmounts[Field.CURRENCY_A])
+          .minus(new BigNumber(0.1))
+          .isLessThanOrEqualTo(new BigNumber(0))
+      ) {
+        parsedAmounts[Field.CURRENCY_A] = parsedAmounts[Field.CURRENCY_A].minus(new BigNumber(0.1));
+      }
       bnJs
         .inject({ account: account })
         .Dex.transferICX(BalancedJs.utils.toLoop(parsedAmounts[Field.CURRENCY_A]))

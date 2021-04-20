@@ -48,8 +48,8 @@ export default function LiquidityDetails() {
             {!below800 && <HeaderText>Daily rewards</HeaderText>}
             <HeaderText></HeaderText>
           </DashGrid>
-          {Object.keys(balances).map(poolId => (
-            <PoolRecord key={poolId} poolId={parseInt(poolId)} />
+          {Object.keys(balances).map((poolId, index, arr) => (
+            <PoolRecord key={poolId} poolId={parseInt(poolId)} border={index !== arr.length - 1} />
           ))}
         </TableWrapper>
       </BoxPanel>
@@ -76,7 +76,7 @@ const DashGrid = styled.div`
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-template-columns: 1.5fr 1.5fr 1fr;
+    grid-template-columns: 4fr 5fr 3fr;
     grid-template-areas: 'name supply action';
   `}
 `;
@@ -103,13 +103,13 @@ const ListItem = styled(DashGrid)<{ border?: boolean }>`
   }
 `;
 
-const PoolRecord = ({ poolId }: { poolId: number }) => {
+const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => {
   const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
   const below800 = useMedia('(max-width: 800px)');
 
   return (
-    <ListItem>
+    <ListItem border={border}>
       <DataText>{pair.pair}</DataText>
       <DataText>
         {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (

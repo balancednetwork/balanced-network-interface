@@ -19,8 +19,9 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/compon
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, getFilteredCurrencies, SUPPORTED_BASE_CURRENCIES } from 'constants/currency';
+import { ZERO } from 'constants/index';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useLiquiditySupply } from 'store/liquidity/hooks';
+import { usePools } from 'store/pool/hooks';
 import { useRatio, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -71,7 +72,7 @@ export default function SwapPanel() {
   const { account } = useIconReact();
   const balances = useWalletBalances();
   const ratio = useRatio();
-  const liquiditySupply = useLiquiditySupply();
+  const pools = usePools();
   const addTransaction = useTransactionAdder();
   const changeRatioValue = useChangeRatio();
   const toggleWalletModal = useWalletModalToggle();
@@ -131,18 +132,22 @@ export default function SwapPanel() {
       let poolTotalInput = new BigNumber(0);
       let poolTotalOutput = new BigNumber(0);
       if (symbolInput === 'sicx' && symbolOutput === 'bnusd') {
-        poolTotalInput = liquiditySupply.sICXPoolsICXbnUSDTotal || new BigNumber(0);
-        poolTotalOutput = liquiditySupply.bnUSDPoolsICXbnUSDTotal || new BigNumber(0);
+        poolTotalInput = pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base;
+        poolTotalOutput = pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote;
       } else if (symbolInput === 'bnusd' && symbolOutput === 'sicx') {
-        poolTotalInput = liquiditySupply.bnUSDPoolsICXbnUSDTotal || new BigNumber(0);
-        poolTotalOutput = liquiditySupply.sICXPoolsICXbnUSDTotal || new BigNumber(0);
+        poolTotalInput = pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote;
+        poolTotalOutput = pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base;
       } else if (symbolInput === 'baln' && symbolOutput === 'bnusd') {
-        poolTotalInput = liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0);
-        poolTotalOutput = liquiditySupply.bnUSDPoolBALNbnUSDTotal || new BigNumber(0);
+        poolTotalInput = pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base;
+        poolTotalOutput = pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote;
       } else if (symbolInput === 'bnusd' && symbolOutput === 'baln') {
-        poolTotalInput = liquiditySupply.bnUSDPoolBALNbnUSDTotal || new BigNumber(0);
-        poolTotalOutput = liquiditySupply.BALNPoolBALNbnUSDTotal || new BigNumber(0);
+        poolTotalInput = pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote;
+        poolTotalOutput = pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base;
       }
+
+      poolTotalInput = poolTotalInput || ZERO;
+      poolTotalOutput = poolTotalOutput || ZERO;
+
       if (amountOutput === '') {
         let new_from_token = poolTotalInput.plus(new BigNumber(amountInput));
         let new_to_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_from_token);
@@ -155,7 +160,7 @@ export default function SwapPanel() {
         return amountInput;
       }
     },
-    [liquiditySupply],
+    [pools],
   );
 
   const handleConvertOutputRate = React.useCallback(

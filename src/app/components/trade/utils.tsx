@@ -35,7 +35,7 @@ export function depositMessage(currency: string, pair: string) {
   return { pendingMessage, successMessage, failureMessage };
 }
 
-export function supplyMessage(amount: string, pair: string) {
+export function supplyMessage(pair: string) {
   const pendingMessage = `Supplying ${pair} liquidity...`;
   const successMessage = `Supplied ${pair} liquidity.`;
   const failureMessage = `Couldn't supply ${pair} liquidity. Try again.`;

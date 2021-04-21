@@ -160,15 +160,25 @@ export default function SwapPanel() {
       let poolTotalOutput = getPoolData(symbolInput, symbolOutput)?.poolTotalOutput || ZERO;
 
       if (amountOutput === '') {
-        let new_from_token = poolTotalInput.plus(new BigNumber(amountInput));
-        let new_to_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_from_token);
-        let receive_token = poolTotalOutput.minus(new_to_token);
+        // let new_from_token = poolTotalInput.plus(new BigNumber(amountInput));
+        // let new_to_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_from_token);
+        // let receive_token = poolTotalOutput.minus(new_to_token);
+
+        let receive_token = poolTotalOutput.minus(
+          poolTotalOutput.multipliedBy(poolTotalInput).dividedBy(poolTotalInput.plus(new BigNumber(amountInput))),
+        );
 
         return receive_token;
       } else {
-        let new_to_token = poolTotalOutput.minus(new BigNumber(amountOutput));
-        let new_from_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_to_token);
-        let amountInput = new_from_token.minus(poolTotalInput);
+        // let new_to_token = poolTotalOutput.minus(new BigNumber(amountOutput));
+        // let new_from_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_to_token);
+        // let amountInput = new_from_token.minus(poolTotalInput);
+
+        let amountInput = poolTotalOutput
+          .multipliedBy(poolTotalInput)
+          .dividedBy(poolTotalOutput.minus(amountOutput))
+          .minus(poolTotalInput);
+
         return amountInput;
       }
     },
@@ -219,46 +229,80 @@ export default function SwapPanel() {
   );
 
   const handleTypeOutput = (val: string) => {
-    let poolTotalQuote =
-      getPoolData(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase())?.poolTotalOutput || ZERO;
-    if (new BigNumber(val).isGreaterThanOrEqualTo(poolTotalQuote)) {
-      val = formatBigNumber(poolTotalQuote, 'input');
-    }
-    setSwapOutputAmount(val);
     let ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
+    let poolTotalBase =
+      getPoolData(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase())?.poolTotalInput || ZERO;
+    let maxOutputAmount = calculateOutputAmount(
+      inputCurrency.symbol.toLowerCase(),
+      outputCurrency.symbol.toLowerCase(),
+      poolTotalBase.toString(),
+      '',
+    );
     if (!ratioLocal) {
       console.log(`Cannot get rate from this pair`);
     }
     if (!val) {
       val = '0';
     }
-    let inputAmount = calculateOutputAmount(
-      inputCurrency.symbol.toLowerCase(),
-      outputCurrency.symbol.toLowerCase(),
-      '',
-      val,
-    );
+
     if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
-      inputAmount = inputAmount.plus(inputAmount.multipliedBy(0.01));
+      setSwapOutputAmount(val);
+      let inputAmount = new BigNumber(val).plus(new BigNumber(val).multipliedBy(0.01));
       setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
     } else if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
       // fee on this pair is zero so do nothing on this case
-      setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
+      setSwapOutputAmount(val);
+      setSwapInputAmount(formatBigNumber(new BigNumber(val), 'ratio'));
     } else {
-      bnJs
-        .inject({ account })
-        .Dex.getFees()
-        .then(res => {
-          const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
-          const lp_fee = parseInt(res[`pool_lp_fee`], 16);
-          const fee = inputAmount.multipliedBy(new BigNumber(bal_holder_fee + lp_fee)).dividedBy(new BigNumber(10000));
-          setSwapFee(new BigNumber(fee).toString());
-          inputAmount = inputAmount.plus(fee);
-          setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
+      if (new BigNumber(val).isGreaterThanOrEqualTo(maxOutputAmount)) {
+        setSwapOutputAmount(formatBigNumber(maxOutputAmount, 'input'));
+        bnJs
+          .inject({ account })
+          .Dex.getFees()
+          .then(res => {
+            let inputAmount = calculateOutputAmount(
+              inputCurrency.symbol.toLowerCase(),
+              outputCurrency.symbol.toLowerCase(),
+              '',
+              maxOutputAmount.toString(),
+            );
+            const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
+            const lp_fee = parseInt(res[`pool_lp_fee`], 16);
+            const fee = inputAmount
+              .multipliedBy(new BigNumber(bal_holder_fee + lp_fee))
+              .dividedBy(new BigNumber(10000));
+            setSwapFee(new BigNumber(fee).toString());
+            inputAmount = inputAmount.plus(fee);
+            setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
+          })
+          .catch(e => {
+            console.error('error', e);
+          });
+      } else {
+        setSwapOutputAmount(val);
+        bnJs
+          .inject({ account })
+          .Dex.getFees()
+          .then(res => {
+            let inputAmount = calculateOutputAmount(
+              inputCurrency.symbol.toLowerCase(),
+              outputCurrency.symbol.toLowerCase(),
+              '',
+              val,
+            );
+            const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
+            const lp_fee = parseInt(res[`pool_lp_fee`], 16);
+            const fee = inputAmount
+              .multipliedBy(new BigNumber(bal_holder_fee + lp_fee))
+              .dividedBy(new BigNumber(10000));
+            setSwapFee(new BigNumber(fee).toString());
+            inputAmount = inputAmount.plus(fee);
+            setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
+          })
+          .catch(e => {
+            console.error('error', e);
+          });
+      }
     }
   };
 

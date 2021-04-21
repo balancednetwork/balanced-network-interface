@@ -70,7 +70,7 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  async transferICX(value: BigNumber) {
+  transferICX(value: BigNumber) {
     const payload = this.transferICXParamsBuilder({
       value: value,
     });
@@ -90,7 +90,7 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  async cancelSicxIcxOrder() {
+  cancelSicxIcxOrder() {
     const payload = this.transactionParamsBuilder({
       method: 'cancelSicxicxOrder',
     });
@@ -162,5 +162,28 @@ export default class Dex extends Contract {
     });
 
     return this.call(callParams);
+  }
+
+  getSicxEarnings(user: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getSicxEarnings',
+      params: {
+        _user: user,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  withdrawSicxEarnings() {
+    const payload = this.transactionParamsBuilder({
+      method: 'withdrawSicxEarnings',
+    });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+
+    return this.callIconex(payload);
   }
 }

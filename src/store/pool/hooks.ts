@@ -42,7 +42,10 @@ export function useChangePool(): (poolId: number, poolData: Partial<Pool>) => vo
   );
 }
 
-export function useBalanceActionHandlers() {
+export function useBalanceActionHandlers(): {
+  changeBalance: (poolId: number, balance: Balance) => void;
+  clearBalances: () => void;
+} {
   const dispatch = useDispatch<AppDispatch>();
 
   const changeBalance = React.useCallback(
@@ -161,11 +164,13 @@ export function useFetchPools() {
       BASE_SUPPORTED_PAIRS.forEach(pair => {
         const poolId = pair.poolId;
         if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-          bnJs.Dex.getICXBalance(account).then(res => {
+          Promise.all([bnJs.Dex.getICXBalance(account), bnJs.Dex.getSicxEarnings(account)]).then(([res1, res2]) => {
+            console.log(res1, BalancedJs.utils.toIcx(res2));
             changeBalance(poolId, {
               baseCurrencyKey: pair.baseCurrencyKey,
               quoteCurrencyKey: pair.quoteCurrencyKey,
-              balance: BalancedJs.utils.toIcx(res),
+              balance: BalancedJs.utils.toIcx(res1),
+              balance1: BalancedJs.utils.toIcx(res2),
             });
           });
         } else {
@@ -213,6 +218,7 @@ export function useAvailableBalances() {
 
     Object.keys(balances)
       .filter(poolId => !balances[poolId].balance.isZero())
+      .filter(poolId => parseInt(poolId) !== BalancedJs.utils.POOL_IDS.sICXICX)
       .forEach(poolId => {
         t[poolId] = balances[poolId];
       });

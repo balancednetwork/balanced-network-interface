@@ -20,6 +20,7 @@ export interface Balance {
   baseCurrencyKey: string;
   quoteCurrencyKey: string;
   balance: BigNumber;
+  balance1?: BigNumber;
 }
 
 export interface PoolState {

@@ -61,10 +61,11 @@ export default function BnUSDWallet() {
     bnJs
       .inject({ account })
       .bnUSD.transfer(address, BalancedJs.utils.toLoop(differenceAmount))
-      .then(res => {
-        if (res.result) {
+      .then((res: any) => {
+        res = res.result || res;
+        if (res) {
           addTransaction(
-            { hash: res.result },
+            { hash: res },
             {
               pending: `Sending bnUSD...`,
               summary: `Sent ${differenceAmount.dp(2).toFormat()} bnUSD.`,

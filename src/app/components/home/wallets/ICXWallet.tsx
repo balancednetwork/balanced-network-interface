@@ -63,10 +63,11 @@ export default function ICXWallet() {
     bnJs
       .inject({ account })
       .transfer(address, BalancedJs.utils.toLoop(differenceAmount))
-      .then(res => {
-        if (res.result) {
+      .then((res: any) => {
+        res = res.result || res;
+        if (res) {
           addTransaction(
-            { hash: res.result },
+            { hash: res },
             {
               pending: `Sending ICX...`,
               summary: `Sent ${differenceAmount.dp(2).toFormat()} ICX.`,

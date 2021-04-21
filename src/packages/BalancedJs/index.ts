@@ -105,6 +105,11 @@ export class BalancedJs {
     const payload = contract.transferICXParamsBuilder({
       value,
     });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return contract.callLedger(payload.params);
+    }
+
     return contract.callIconex(payload);
   }
 }

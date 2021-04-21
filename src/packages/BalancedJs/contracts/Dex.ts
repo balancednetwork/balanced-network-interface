@@ -22,13 +22,13 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  add(baseToken: string, quoteToken: string, maxBaseValue: BigNumber, quoteValue: BigNumber) {
+  add(baseToken: string, quoteToken: string, baseValue: BigNumber, quoteValue: BigNumber) {
     const payload = this.transactionParamsBuilder({
       method: 'add',
       params: {
         _baseToken: baseToken,
         _quoteToken: quoteToken,
-        _maxBaseValue: IconConverter.toHex(maxBaseValue),
+        _baseValue: IconConverter.toHex(baseValue),
         _quoteValue: IconConverter.toHex(quoteValue),
       },
     });

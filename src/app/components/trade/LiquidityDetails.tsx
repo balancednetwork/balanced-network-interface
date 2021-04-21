@@ -260,11 +260,9 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const rate2 = pool ? pool.quote.div(pool.total) : ONE;
 
   const handleSlide = (values: string[], handle: number) => {
-    let t = new BigNumber(values[handle]);
+    let t = new BigNumber(values[handle]).times(rate1);
     if (t.isLessThanOrEqualTo(new BigNumber(0.01))) {
       t = lpBalance?.balance.times(rate1) || new BigNumber(0);
-    } else {
-      t = t.times(rate1);
     }
     setState({ independentField: Field.CURRENCY_A, typedValue: formatBigNumber(t, 'input'), inputType: 'slider' });
   };
@@ -291,7 +289,10 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
     if (!account) return;
 
     let t = new BigNumber(0);
-    if (t.isLessThanOrEqualTo(new BigNumber(0.01))) {
+    if (
+      parsedAmount[Field.CURRENCY_A].isLessThanOrEqualTo(new BigNumber(0.01)) ||
+      parsedAmount[Field.CURRENCY_B].isLessThanOrEqualTo(new BigNumber(0.01))
+    ) {
       t = lpBalance?.balance || new BigNumber(0);
     } else {
       t = BigNumber.min(parsedAmount[Field.CURRENCY_A].div(rate1), lpBalance?.balance || ZERO);

@@ -204,7 +204,7 @@ const WithdrawText1 = ({ poolId }: { poolId: number }) => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {poolData?.suppliedBase?.dp(2).toFormat()} {pair.baseCurrencyKey}
+            {formatBigNumber(poolData?.suppliedBase, 'currency')} {pair.baseCurrencyKey}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -243,7 +243,9 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
 
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
+    [dependentField]: parsedAmount[dependentField].isZero()
+      ? '0'
+      : formatBigNumber(parsedAmount[dependentField], 'input').toString(),
   };
 
   const handleFieldAInput = (value: string) => {
@@ -258,8 +260,13 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const rate2 = pool ? pool.quote.div(pool.total) : ONE;
 
   const handleSlide = (values: string[], handle: number) => {
-    const t = new BigNumber(values[handle]).times(rate1);
-    setState({ independentField: Field.CURRENCY_A, typedValue: t.dp(2).toFixed(), inputType: 'slider' });
+    let t = new BigNumber(values[handle]);
+    if (t.isLessThanOrEqualTo(new BigNumber(0.01))) {
+      t = lpBalance?.balance.times(rate1) || new BigNumber(0);
+    } else {
+      t = t.times(rate1);
+    }
+    setState({ independentField: Field.CURRENCY_A, typedValue: formatBigNumber(t, 'input'), inputType: 'slider' });
   };
 
   const sliderInstance = React.useRef<any>(null);
@@ -267,7 +274,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   React.useEffect(() => {
     if (inputType === 'text') {
       const t = parsedAmount[Field.CURRENCY_A].div(rate1);
-      sliderInstance.current.noUiSlider.set(t.dp(2).toNumber());
+      sliderInstance.current.noUiSlider.set(formatBigNumber(t, 'input'));
     }
   }, [parsedAmount, rate1, sliderInstance, inputType]);
 
@@ -283,7 +290,12 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const handleWithdraw = () => {
     if (!account) return;
 
-    const t = BigNumber.min(parsedAmount[Field.CURRENCY_A].div(rate1), lpBalance?.balance || ZERO);
+    let t = new BigNumber(0);
+    if (t.isLessThanOrEqualTo(new BigNumber(0.01))) {
+      t = lpBalance?.balance || new BigNumber(0);
+    } else {
+      t = BigNumber.min(parsedAmount[Field.CURRENCY_A].div(rate1), lpBalance?.balance || ZERO);
+    }
 
     const baseT = t.times(rate1);
     const quoteT = t.times(rate2);
@@ -296,15 +308,15 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           { hash: result.result },
           {
             pending: withdrawMessage(
-              baseT.dp(2).toFormat(),
+              formatBigNumber(baseT, 'currency'),
               pair.baseCurrencyKey,
-              quoteT.dp(2).toFormat(),
+              formatBigNumber(quoteT, 'currency'),
               pair.quoteCurrencyKey,
             ).pendingMessage,
             summary: withdrawMessage(
-              baseT.dp(2).toFormat(),
+              formatBigNumber(baseT, 'currency'),
               pair.baseCurrencyKey,
-              quoteT.dp(2).toFormat(),
+              formatBigNumber(quoteT, 'currency'),
               pair.quoteCurrencyKey,
             ).successMessage,
           },
@@ -360,7 +372,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
             connect={[true, false]}
             range={{
               min: [0],
-              max: [lpBalance?.balance.dp(2).toNumber() || 0],
+              max: [parseFloat(formatBigNumber(lpBalance?.balance, 'input'))],
             }}
             onSlide={handleSlide}
             instanceRef={instance => {
@@ -382,11 +394,11 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_A].dp(2).toFormat()} {pair.baseCurrencyKey}
+            {formatBigNumber(parsedAmount[Field.CURRENCY_A], 'currency')} {pair.baseCurrencyKey}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_B].dp(2).toFormat()} {pair.quoteCurrencyKey}
+            {formatBigNumber(parsedAmount[Field.CURRENCY_B], 'currency')} {pair.quoteCurrencyKey}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

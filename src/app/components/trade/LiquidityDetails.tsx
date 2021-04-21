@@ -122,7 +122,7 @@ const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => 
           </>
         )}
       </DataText>
-      {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare, 'currency')}%`}</DataText>}
+      {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
       {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
       <DataText>
         {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (

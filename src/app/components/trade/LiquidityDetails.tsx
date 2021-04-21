@@ -206,11 +206,11 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
         addTransaction(
           { hash: res.result },
           {
-            pending: withdrawMessage(balance1?.balance1?.dp(2).toFormat() || '', 'ICX', '', 'sICX').pendingMessage,
-            summary: withdrawMessage(balance1?.balance1?.dp(2).toFormat() || '', 'ICX', '', 'sICX').successMessage,
+            pending: 'Withdrawing sICX',
+            summary: `${balance1?.balance1?.dp(2).toFormat()} sICX added to your wallet.`,
           },
         );
-        toggleOpen1();
+        toggleOpen2();
       })
       .catch(e => {
         console.error('error', e);

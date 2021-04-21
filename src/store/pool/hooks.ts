@@ -165,7 +165,6 @@ export function useFetchPools() {
         const poolId = pair.poolId;
         if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
           Promise.all([bnJs.Dex.getICXBalance(account), bnJs.Dex.getSicxEarnings(account)]).then(([res1, res2]) => {
-            console.log(res1, BalancedJs.utils.toIcx(res2));
             changeBalance(poolId, {
               baseCurrencyKey: pair.baseCurrencyKey,
               quoteCurrencyKey: pair.quoteCurrencyKey,

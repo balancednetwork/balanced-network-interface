@@ -127,31 +127,43 @@ export default function SwapPanel() {
     [ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
   );
 
+  const getPoolData = React.useCallback(
+    (symbolInput: string, symbolOutput: string) => {
+      if (symbolInput === 'sicx' && symbolOutput === 'bnusd') {
+        return {
+          poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base,
+          poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote,
+        };
+      } else if (symbolInput === 'bnusd' && symbolOutput === 'sicx') {
+        return {
+          poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote,
+          poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base,
+        };
+      } else if (symbolInput === 'baln' && symbolOutput === 'bnusd') {
+        return {
+          poolTotalInput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base,
+          poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote,
+        };
+      } else if (symbolInput === 'bnusd' && symbolOutput === 'baln') {
+        return {
+          poolTotalInput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote,
+          poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base,
+        };
+      }
+    },
+    [pools],
+  );
+
   const calculateOutputAmount = React.useCallback(
     (symbolInput: string, symbolOutput: string, amountInput: string, amountOutput: string) => {
-      let poolTotalInput = new BigNumber(0);
-      let poolTotalOutput = new BigNumber(0);
-      if (symbolInput === 'sicx' && symbolOutput === 'bnusd') {
-        poolTotalInput = pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base;
-        poolTotalOutput = pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote;
-      } else if (symbolInput === 'bnusd' && symbolOutput === 'sicx') {
-        poolTotalInput = pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote;
-        poolTotalOutput = pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base;
-      } else if (symbolInput === 'baln' && symbolOutput === 'bnusd') {
-        poolTotalInput = pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base;
-        poolTotalOutput = pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote;
-      } else if (symbolInput === 'bnusd' && symbolOutput === 'baln') {
-        poolTotalInput = pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote;
-        poolTotalOutput = pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base;
-      }
-
-      poolTotalInput = poolTotalInput || ZERO;
-      poolTotalOutput = poolTotalOutput || ZERO;
+      let poolTotalInput = getPoolData(symbolInput, symbolOutput)?.poolTotalInput || ZERO;
+      let poolTotalOutput = getPoolData(symbolInput, symbolOutput)?.poolTotalOutput || ZERO;
 
       if (amountOutput === '') {
         let new_from_token = poolTotalInput.plus(new BigNumber(amountInput));
         let new_to_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_from_token);
         let receive_token = poolTotalOutput.minus(new_to_token);
+
         return receive_token;
       } else {
         let new_to_token = poolTotalOutput.minus(new BigNumber(amountOutput));
@@ -160,7 +172,7 @@ export default function SwapPanel() {
         return amountInput;
       }
     },
-    [pools],
+    [getPoolData],
   );
 
   const handleConvertOutputRate = React.useCallback(
@@ -207,6 +219,11 @@ export default function SwapPanel() {
   );
 
   const handleTypeOutput = (val: string) => {
+    let poolTotalQuote =
+      getPoolData(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase())?.poolTotalOutput || ZERO;
+    if (new BigNumber(val).isGreaterThanOrEqualTo(poolTotalQuote)) {
+      val = formatBigNumber(poolTotalQuote, 'input');
+    }
     setSwapOutputAmount(val);
     let ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
     if (!ratioLocal) {
@@ -272,10 +289,15 @@ export default function SwapPanel() {
 
   const handleTypeInput = React.useCallback(
     (val: string) => {
+      let poolTotalBase =
+        getPoolData(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase())?.poolTotalInput || ZERO;
+      if (new BigNumber(val).isGreaterThanOrEqualTo(poolTotalBase)) {
+        val = formatBigNumber(poolTotalBase, 'input');
+      }
       setSwapInputAmount(val);
       handleConvertOutputRate(inputCurrency, outputCurrency, val);
     },
-    [inputCurrency, outputCurrency, handleConvertOutputRate],
+    [inputCurrency, outputCurrency, handleConvertOutputRate, getPoolData],
   );
 
   const handleSwapConfirmDismiss = () => {

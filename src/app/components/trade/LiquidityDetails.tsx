@@ -21,10 +21,8 @@ import { ReactComponent as SICXIcon } from 'assets/logos/sicx.svg';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
-import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
 import { withdrawMessage } from './utils';
@@ -328,62 +326,20 @@ const OptionButton = styled(Box)`
 
 const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => void }) => {
   const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
-  const balances = useWalletBalances();
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.poolId);
 
-  const [{ typedValue, independentField, inputType }, setState] = React.useState<{
-    typedValue: string;
-    independentField: Field;
-    inputType: 'slider' | 'text';
-  }>({
-    typedValue: '',
-    independentField: Field.CURRENCY_A,
-    inputType: 'text',
-  });
-  const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
-  const price = independentField === Field.CURRENCY_A ? pool?.rate || ONE : pool?.inverseRate || ONE;
-  //  calculate dependentField value
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const parsedAmount = {
-    [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: new BigNumber(typedValue || '0').times(price),
-  };
-
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: parsedAmount[dependentField].isZero()
-      ? '0'
-      : formatBigNumber(parsedAmount[dependentField], 'input').toString(),
-  };
-
-  const handleFieldAInput = (value: string) => {
-    setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text' });
-  };
-
-  const handleFieldBInput = (value: string) => {
-    setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text' });
-  };
-
   const rate1 = pool ? pool.base.div(pool.total) : ONE;
   const rate2 = pool ? pool.quote.div(pool.total) : ONE;
+  const [portion, setPortion] = React.useState(new BigNumber(0));
+
+  const tBalance = (lpBalance?.balance || ZERO).times(portion);
+  const tBase = tBalance.times(rate1);
+  const tQuote = tBalance.times(rate2);
 
   const handleSlide = (values: string[], handle: number) => {
-    let t = new BigNumber(values[handle]).times(rate1);
-    if (t.isLessThanOrEqualTo(new BigNumber(0.01))) {
-      t = lpBalance?.balance.times(rate1) || new BigNumber(0);
-    }
-    setState({ independentField: Field.CURRENCY_A, typedValue: formatBigNumber(t, 'input'), inputType: 'slider' });
+    setPortion(new BigNumber(values[handle]));
   };
-
-  const sliderInstance = React.useRef<any>(null);
-
-  React.useEffect(() => {
-    if (inputType === 'text') {
-      const t = parsedAmount[Field.CURRENCY_A].div(rate1);
-      sliderInstance.current.noUiSlider.set(formatBigNumber(t, 'input'));
-    }
-  }, [parsedAmount, rate1, sliderInstance, inputType]);
 
   const [open, setOpen] = React.useState(false);
 
@@ -395,38 +351,23 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const addTransaction = useTransactionAdder();
 
   const handleWithdraw = () => {
-    if (!account) return;
-
-    let t = new BigNumber(0);
-    if (
-      parsedAmount[Field.CURRENCY_A].isLessThanOrEqualTo(new BigNumber(0.01)) ||
-      parsedAmount[Field.CURRENCY_B].isLessThanOrEqualTo(new BigNumber(0.01))
-    ) {
-      t = lpBalance?.balance || new BigNumber(0);
-    } else {
-      t = BigNumber.min(parsedAmount[Field.CURRENCY_A].div(rate1), lpBalance?.balance || ZERO);
-    }
-
-    const baseT = t.times(rate1);
-    const quoteT = t.times(rate2);
-
     bnJs
       .inject({ account: account })
-      .Dex.remove(pair.poolId, BalancedJs.utils.toLoop(t))
+      .Dex.remove(pair.poolId, BalancedJs.utils.toLoop(tBalance))
       .then(result => {
         addTransaction(
           { hash: result.result },
           {
             pending: withdrawMessage(
-              formatBigNumber(baseT, 'currency'),
+              formatBigNumber(tBase, 'currency'),
               pair.baseCurrencyKey,
-              formatBigNumber(quoteT, 'currency'),
+              formatBigNumber(tQuote, 'currency'),
               pair.quoteCurrencyKey,
             ).pendingMessage,
             summary: withdrawMessage(
-              formatBigNumber(baseT, 'currency'),
+              formatBigNumber(tBase, 'currency'),
               pair.baseCurrencyKey,
-              formatBigNumber(quoteT, 'currency'),
+              formatBigNumber(tQuote, 'currency'),
               pair.quoteCurrencyKey,
             ).successMessage,
           },
@@ -452,44 +393,34 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
         </Typography>
         <Box mb={3}>
           <CurrencyInputPanel
-            value={formattedAmounts[Field.CURRENCY_A]}
+            value={tBase?.dp(2).toFormat() || ''}
             showMaxButton={false}
             currency={CURRENCY_LIST[pair.baseCurrencyKey.toLowerCase()]}
-            onUserInput={handleFieldAInput}
             id="withdraw-liquidity-input"
             bg="bg5"
           />
         </Box>
         <Box mb={3}>
           <CurrencyInputPanel
-            value={formattedAmounts[Field.CURRENCY_B]}
+            value={tQuote?.dp(2).toFormat() || ''}
             showMaxButton={false}
             currency={CURRENCY_LIST[pair.quoteCurrencyKey.toLowerCase()]}
-            onUserInput={handleFieldBInput}
             id="withdraw-liquidity-input"
             bg="bg5"
           />
         </Box>
-        <Typography mb={5} textAlign="right">
-          {`Wallet: ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} ${pair.baseCurrencyKey}
-          / ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} ${pair.quoteCurrencyKey}`}
+        <Typography variant="h1" mb={3}>
+          {portion.times(100).integerValue().toFormat()}%
         </Typography>
         <Box mb={5}>
           <Nouislider
-            id="slider-supply"
             start={[0]}
-            padding={[0]}
-            connect={[true, false]}
             range={{
               min: [0],
-              max: [parseFloat(formatBigNumber(lpBalance?.balance, 'input'))],
+              max: [1],
             }}
+            step={0.01}
             onSlide={handleSlide}
-            instanceRef={instance => {
-              if (instance && !sliderInstance.current) {
-                sliderInstance.current = instance;
-              }
-            }}
           />
         </Box>
         <Flex alignItems="center" justifyContent="center">
@@ -504,11 +435,11 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(parsedAmount[Field.CURRENCY_A], 'currency')} {pair.baseCurrencyKey}
+            {formatBigNumber(tBase, 'currency')} {pair.baseCurrencyKey}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(parsedAmount[Field.CURRENCY_B], 'currency')} {pair.quoteCurrencyKey}
+            {formatBigNumber(tQuote, 'currency')} {pair.quoteCurrencyKey}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

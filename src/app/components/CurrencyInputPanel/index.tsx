@@ -66,6 +66,11 @@ const NumberInput = styled.input<{ bg?: string }>`
   :focus {
     border: 2px solid #2ca9b7;
   }
+
+  &:disabled {
+    border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
+    cursor: auto;
+  }
 `;
 
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
@@ -74,7 +79,7 @@ const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
 
 interface CurrencyInputPanelProps {
   value: string;
-  onUserInput: (value: string) => void;
+  onUserInput?: (value: string) => void;
   onMax?: () => void;
   showMaxButton: boolean;
   label?: string;
@@ -149,7 +154,7 @@ export default function CurrencyInputPanel({
 
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-      onUserInput(nextUserInput);
+      onUserInput && onUserInput(nextUserInput);
     }
   };
 
@@ -190,6 +195,7 @@ export default function CurrencyInputPanel({
       </ClickAwayListener>
 
       <NumberInput
+        disabled={!onUserInput}
         value={value}
         onChange={event => {
           enforcer(event.target.value.replace(/,/g, '.'));

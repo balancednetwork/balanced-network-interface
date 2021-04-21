@@ -290,7 +290,12 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const handleWithdraw = () => {
     if (!account) return;
 
-    const t = BigNumber.min(parsedAmount[Field.CURRENCY_A].div(rate1), lpBalance?.balance || ZERO);
+    let t = new BigNumber(0);
+    if (t.isLessThanOrEqualTo(new BigNumber(0.01))) {
+      t = lpBalance?.balance || new BigNumber(0);
+    } else {
+      t = BigNumber.min(parsedAmount[Field.CURRENCY_A].div(rate1), lpBalance?.balance || ZERO);
+    }
 
     const baseT = t.times(rate1);
     const quoteT = t.times(rate2);
@@ -303,15 +308,15 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           { hash: result.result },
           {
             pending: withdrawMessage(
-              baseT.dp(2).toFormat(),
+              formatBigNumber(baseT, 'currency'),
               pair.baseCurrencyKey,
-              quoteT.dp(2).toFormat(),
+              formatBigNumber(quoteT, 'currency'),
               pair.quoteCurrencyKey,
             ).pendingMessage,
             summary: withdrawMessage(
-              baseT.dp(2).toFormat(),
+              formatBigNumber(baseT, 'currency'),
               pair.baseCurrencyKey,
-              quoteT.dp(2).toFormat(),
+              formatBigNumber(quoteT, 'currency'),
               pair.quoteCurrencyKey,
             ).successMessage,
           },

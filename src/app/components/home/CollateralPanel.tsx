@@ -6,6 +6,7 @@ import { ledgerConfirmAlert } from 'packages/BalancedJs/ledger';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
+import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
@@ -27,8 +28,15 @@ import { useLockedICXAmount, useLoanActionHandlers } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
+const DepositStakeMessage = styled.p`
+  padding-top: 5px;
+  text-align: center;
+  color: white;
+`;
+
 const CollateralPanel = () => {
   const { account, ledgerAddressPoint } = useIconReact();
+  const [shouldShowDepositStakeMessage, uShouldShowDepositStakeMessage] = React.useState(false);
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -90,54 +98,64 @@ const CollateralPanel = () => {
   //
   const addTransaction = useTransactionAdder();
 
-  const handleCollateralConfirm = () => {
+  const handleCollateralConfirm = async () => {
     if (ledgerAddressPoint >= 0) {
       if (!ledgerConfirmAlert('Click Ok and check your ledger device?')) {
         return;
       }
     }
-
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      uShouldShowDepositStakeMessage(true);
+    }
     if (shouldDeposit) {
-      bnJs
-        .inject({ account: account })
-        .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount))
-        .then((res: any) => {
-          addTransaction(
-            { hash: res.result || res },
-            {
-              pending: 'Depositing collateral...',
-              summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
-            },
-          );
-          // close modal
-          toggleOpen();
-          // reset collateral panel values
-          adjust(false);
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
+      try {
+        const hash = await bnJs
+          .inject({ account: account })
+          .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount))
+          .then((res: any) => {
+            return res.result || res;
+          });
+        addTransaction(
+          { hash },
+          {
+            pending: 'Depositing collateral...',
+            summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
+          },
+        );
+        // close modal
+        toggleOpen();
+        // reset collateral panel values
+        adjust(false);
+      } catch (error) {
+        console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
+      } finally {
+        uShouldShowDepositStakeMessage(false);
+      }
     } else {
-      const collateralAmountInSICX = collateralAmount.div(ratio.sICXICXratio);
-      bnJs
-        .inject({ account: account })
-        .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX))
-        .then((res: any) => {
-          addTransaction(
-            { hash: res.result || res }, //
-            {
-              pending: 'Withdrawing collateral...',
-              summary: `${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
-            },
-          );
-          // close modal
-          toggleOpen();
-          // reset collateral panel values
-          adjust(false);
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
+      try {
+        const collateralAmountInSICX = collateralAmount.div(ratio.sICXICXratio);
+        const hash = await bnJs
+          .inject({ account: account })
+          .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX))
+          .then((res: any) => {
+            return res.result || res;
+          });
+        addTransaction(
+          { hash }, //
+          {
+            pending: 'Withdrawing collateral...',
+            summary: `${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
+          },
+        );
+        // close modal
+        toggleOpen();
+        // reset collateral panel values
+        adjust(false);
+      } catch (error) {
+        console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
+      } finally {
+        uShouldShowDepositStakeMessage(false);
+      }
     }
   };
 
@@ -288,6 +306,11 @@ const CollateralPanel = () => {
               {shouldDeposit ? 'Deposit' : 'Withdraw'}
             </Button>
           </Flex>
+          {shouldShowDepositStakeMessage && (
+            <DepositStakeMessage className="label text-center text-white">
+              Confirm the transaction on your Ledger.
+            </DepositStakeMessage>
+          )}
         </Flex>
       </Modal>
     </>

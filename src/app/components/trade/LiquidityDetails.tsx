@@ -332,58 +332,70 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.poolId);
 
-  const [{ typedValue, independentField, inputType }, setState] = React.useState<{
+  const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
     typedValue: string;
     independentField: Field;
     inputType: 'slider' | 'text';
+    portion: BigNumber;
   }>({
     typedValue: '',
     independentField: Field.CURRENCY_A,
     inputType: 'text',
+    portion: ZERO,
   });
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
   const price = independentField === Field.CURRENCY_A ? pool?.rate || ONE : pool?.inverseRate || ONE;
-  //  calculate dependentField value
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const parsedAmount = {
-    [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: new BigNumber(typedValue || '0').times(price),
-  };
 
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: parsedAmount[dependentField].isZero()
-      ? '0'
-      : formatBigNumber(parsedAmount[dependentField], 'input').toString(),
-  };
+  let parsedAmount, formattedAmounts;
 
-  const handleFieldAInput = (value: string) => {
-    setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text' });
-  };
+  if (inputType === 'slider') {
+    parsedAmount = {
+      [Field.CURRENCY_A]: lpBalance?.base.times(portion) || ZERO,
+      [Field.CURRENCY_B]: lpBalance?.quote.times(portion) || ZERO,
+    };
 
-  const handleFieldBInput = (value: string) => {
-    setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text' });
-  };
+    formattedAmounts = {
+      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A].toFixed(2),
+      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B].toFixed(2),
+    };
+  } else {
+    parsedAmount = {
+      [independentField]: new BigNumber(typedValue || '0'),
+      [dependentField]: new BigNumber(typedValue || '0').times(price),
+    };
+
+    formattedAmounts = {
+      [independentField]: typedValue,
+      [dependentField]: parsedAmount[dependentField].isZero()
+        ? ''
+        : formatBigNumber(parsedAmount[dependentField], 'input').toString(),
+    };
+  }
 
   const rate1 = pool ? pool.base.div(pool.total) : ONE;
   const rate2 = pool ? pool.quote.div(pool.total) : ONE;
 
+  const handleFieldAInput = (value: string) => {
+    const p = new BigNumber(value || '0').div(lpBalance?.base || ONE);
+    setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
+  };
+
+  const handleFieldBInput = (value: string) => {
+    const p = new BigNumber(value || '0').div(lpBalance?.quote || ONE);
+    setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
+  };
+
   const handleSlide = (values: string[], handle: number) => {
-    let t = new BigNumber(values[handle]).times(rate1);
-    if (t.isLessThanOrEqualTo(new BigNumber(0.01))) {
-      t = lpBalance?.balance.times(rate1) || new BigNumber(0);
-    }
-    setState({ independentField: Field.CURRENCY_A, typedValue: formatBigNumber(t, 'input'), inputType: 'slider' });
+    setState({ typedValue, independentField, inputType: 'slider', portion: new BigNumber(values[handle]).div(100) });
   };
 
   const sliderInstance = React.useRef<any>(null);
 
   React.useEffect(() => {
     if (inputType === 'text') {
-      const t = parsedAmount[Field.CURRENCY_A].div(rate1);
-      sliderInstance.current.noUiSlider.set(formatBigNumber(t, 'input'));
+      sliderInstance.current.noUiSlider.set(portion.times(100).dp(2).toNumber());
     }
-  }, [parsedAmount, rate1, sliderInstance, inputType]);
+  }, [sliderInstance, inputType, portion]);
 
   const [open, setOpen] = React.useState(false);
 
@@ -397,16 +409,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const handleWithdraw = () => {
     if (!account) return;
 
-    let t = new BigNumber(0);
-    if (
-      parsedAmount[Field.CURRENCY_A].isLessThanOrEqualTo(new BigNumber(0.01)) ||
-      parsedAmount[Field.CURRENCY_B].isLessThanOrEqualTo(new BigNumber(0.01))
-    ) {
-      t = lpBalance?.balance || new BigNumber(0);
-    } else {
-      t = BigNumber.min(parsedAmount[Field.CURRENCY_A].div(rate1), lpBalance?.balance || ZERO);
-    }
-
+    const t = lpBalance?.balance.times(portion) || ZERO;
     const baseT = t.times(rate1);
     const quoteT = t.times(rate2);
 
@@ -470,20 +473,21 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
             bg="bg5"
           />
         </Box>
-        <Typography mb={5} textAlign="right">
+        <Typography mb={3} textAlign="right">
           {`Wallet: ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} ${pair.baseCurrencyKey}
           / ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} ${pair.quoteCurrencyKey}`}
         </Typography>
+        <Typography variant="h1" mb={5}>
+          {portion.times(100).dp(2).toFormat()}%
+        </Typography>
         <Box mb={5}>
           <Nouislider
-            id="slider-supply"
             start={[0]}
-            padding={[0]}
-            connect={[true, false]}
             range={{
               min: [0],
-              max: [parseFloat(formatBigNumber(lpBalance?.balance, 'input'))],
+              max: [100],
             }}
+            step={0.01}
             onSlide={handleSlide}
             instanceRef={instance => {
               if (instance && !sliderInstance.current) {
@@ -493,7 +497,9 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           />
         </Box>
         <Flex alignItems="center" justifyContent="center">
-          <Button onClick={handleShowConfirm}>Withdraw liquidity</Button>
+          <Button disabled={portion.isGreaterThan(ONE)} onClick={handleShowConfirm}>
+            Withdraw liquidity
+          </Button>
         </Flex>
       </Flex>
 

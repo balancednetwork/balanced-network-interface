@@ -284,25 +284,21 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
       setSwapInputAmount(formatBigNumber(new BigNumber(val), 'ratio'));
     } else {
-      if (new BigNumber(val).isGreaterThanOrEqualTo(maxOutputAmount)) {
-        setSwapOutputAmount(formatBigNumber(maxOutputAmount, 'input'));
-        bnJs
-          .inject({ account })
-          .Dex.getFees()
-          .then(res => {
-            const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
-            const lp_fee = parseInt(res[`pool_lp_fee`], 16);
-            const fee = inputAmount
-              .multipliedBy(new BigNumber(bal_holder_fee + lp_fee))
-              .dividedBy(new BigNumber(10000));
-            setSwapFee(new BigNumber(fee).toString());
-            inputAmount = inputAmount.plus(fee);
-            setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
-          })
-          .catch(e => {
-            console.error('error', e);
-          });
-      }
+      bnJs
+        .inject({ account })
+        .Dex.getFees()
+        .then(res => {
+          const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
+          const lp_fee = parseInt(res[`pool_lp_fee`], 16);
+          const fee = inputAmount.multipliedBy(new BigNumber(bal_holder_fee + lp_fee)).dividedBy(new BigNumber(10000));
+          setSwapFee(new BigNumber(fee).toString());
+          inputAmount = inputAmount.plus(fee);
+          console.log(inputAmount.toString());
+          setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
     }
   };
 

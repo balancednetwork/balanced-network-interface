@@ -169,7 +169,7 @@ export default function SwapPanel() {
       let poolTotalInput = getPoolData(symbolInput, symbolOutput)?.poolTotalInput || ZERO;
       let poolTotalOutput = getPoolData(symbolInput, symbolOutput)?.poolTotalOutput || ZERO;
 
-      if (symbolInput === 'icx' || symbolInput === 'sicx') {
+      if ((symbolInput === 'icx' && symbolOutput === 'sicx') || (symbolInput === 'sicx' && symbolOutput === 'icx')) {
         return amountInput ? new BigNumber(amountInput) : new BigNumber(amountOutput);
       }
 
@@ -225,7 +225,6 @@ export default function SwapPanel() {
             const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
             setSwapFee(new BigNumber(fee).toString());
             val = (parseFloat(val) - fee).toString();
-
             setSwapOutputAmount(
               formatBigNumber(
                 calculateOutputAmount(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase(), val, ''),
@@ -252,7 +251,6 @@ export default function SwapPanel() {
       poolTotalBase.toString(),
       '',
     );
-    console.log(maxOutputAmount.toString());
     let inputAmount = new BigNumber(0);
     if (!ratioLocal) {
       console.log(`Cannot get rate from this pair`);
@@ -337,7 +335,6 @@ export default function SwapPanel() {
     (val: string) => {
       let poolTotalBase =
         getPoolData(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase())?.poolTotalInput || ZERO;
-      console.log(poolTotalBase.toString());
       if (new BigNumber(val).isGreaterThanOrEqualTo(poolTotalBase)) {
         val = formatBigNumber(poolTotalBase, 'input');
       }

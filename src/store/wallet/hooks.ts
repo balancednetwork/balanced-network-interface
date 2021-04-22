@@ -2,8 +2,8 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -25,15 +25,14 @@ export function useWalletFetchBalances(account?: string | null) {
   React.useEffect(() => {
     const fetchBalances = () => {
       if (account) {
-        bnJs.eject({ account });
         Promise.all([
-          bnJs.sICX.getICXBalance(),
-          bnJs.sICX.balanceOf(),
-          bnJs.BALN.balanceOf(),
-          bnJs.bnUSD.balanceOf(),
+          bnJs.ICX.balanceOf(account),
+          bnJs.sICX.balanceOf(account),
+          bnJs.BALN.balanceOf(account),
+          bnJs.bnUSD.balanceOf(account),
           bnJs.Rewards.getBalnHolding(account),
         ]).then(result => {
-          const [ICX, sICX, BALN, bnUSD, BALNreward] = result.map(v => convertLoopToIcx(v));
+          const [ICX, sICX, BALN, bnUSD, BALNreward] = result.map(v => BalancedJs.utils.toIcx(v));
           dispatch(changeBalances({ ICX, sICX, BALN, bnUSD, BALNreward }));
         });
       } else {
@@ -58,7 +57,7 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
         const temp = {};
 
         _.forEach(result, function (value, key) {
-          temp[key] = convertLoopToIcx(new BigNumber(value));
+          temp[key] = BalancedJs.utils.toIcx(value);
         });
 
         setDetails(temp);

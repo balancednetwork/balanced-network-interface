@@ -1,6 +1,8 @@
 import { createAction } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
+import { WalletType } from './reducer';
+
 export type PopupContent = {
   txn: {
     hash: string;
@@ -31,3 +33,5 @@ export const setOpenModal = createAction<ApplicationModal | null>('application/s
 export const changeDeposite = createAction<{ depositedValue: BigNumber }>('application/changeDepositedValue');
 
 export const changeBalance = createAction<{ balance: BigNumber }>('application/changeBalanceValue');
+
+export const changeWalletType = createAction<{ walletType: WalletType }>('application/changeWalletType');

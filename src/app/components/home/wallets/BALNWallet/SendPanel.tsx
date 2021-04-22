@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -59,8 +60,8 @@ export default function SendPanel() {
 
   const handleSend = () => {
     bnJs
-      .eject({ account })
-      .BALN.transfer(address, differenceAmount)
+      .inject({ account })
+      .BALN.transfer(address, BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {
           addTransaction(

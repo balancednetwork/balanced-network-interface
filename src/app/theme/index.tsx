@@ -207,6 +207,62 @@ export const FixedGlobalStyle = createGlobalStyle`
     font-weight: bold;
   }
 
+  /* Ledger Wallet style */
+  .wallet tbody tr {
+    border-bottom: 0px;
+    border-radius: 10px;
+  }
+
+  .wallet tbody tr:hover {
+    background-color: #2ca9b7;
+  }
+
+  .wallet tbody tr:hover td {
+    cursor: pointer;
+  }
+
+  .wallet td {
+    color: white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .wallet td:first-of-type {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+
+  .wallet td:last-of-type {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  ul.pagination {
+    display: block;
+    padding: 0;
+    text-align: center;
+    margin: 0;
+    margin-top: 15px;
+  }
+
+  ul.pagination li {
+    display: inline-block;
+    padding: 5px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    width: 35px;
+    text-align: center;
+    transition: border 0.2s ease;
+  }
+
+  ul.pagination li:hover {
+    border: 2px solid #2ca9b7;
+    cursor: pointer;
+    transition: border 0.3s ease;
+  }
+
   /* Borders */
 
   .border-left {

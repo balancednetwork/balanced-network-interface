@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { SUPPORTED_PAIRS } from 'constants/currency';
-import { usePoolPair } from 'store/pool/hooks';
+import { usePool, usePoolPair } from 'store/pool/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
@@ -81,14 +81,14 @@ export function useDerivedMintInfo(): {
   currencyBalances: { [field in Field]: BigNumber };
   parsedAmounts: { [field in Field]: BigNumber };
 } {
-  // const selectedPair = usePoolPair();
-
   const { independentField, typedValue, otherTypedValue } = useMintState();
 
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
 
-  //
-  const noLiquidity = false;
+  // check liquidity
+  const selectedPair = usePoolPair();
+  const poolData = usePool(selectedPair.poolId);
+  const noLiquidity = poolData?.total.isZero() ? true : false;
 
   // balances
   const currencyBalances = useSelectedPairBalances();

@@ -1,19 +1,23 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit';
 
-import { addPopup, PopupContent, removePopup, ApplicationModal, setOpenModal } from './actions';
+import { addPopup, PopupContent, removePopup, ApplicationModal, setOpenModal, changeWalletType } from './actions';
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>;
+
+export type WalletType = 'ICONEX' | 'LEDGER';
 
 export interface ApplicationState {
   readonly popupList: PopupList;
   readonly openModal: ApplicationModal | null;
   account: string;
+  walletType: WalletType;
 }
 
 const initialState: ApplicationState = {
   popupList: [],
   openModal: null,
   account: '',
+  walletType: 'ICONEX',
 };
 
 export default createReducer(initialState, builder =>
@@ -37,5 +41,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setOpenModal, (state, action) => {
       state.openModal = action.payload;
+    })
+    .addCase(changeWalletType, (state, action) => {
+      state.walletType = action.payload.walletType;
     }),
 );

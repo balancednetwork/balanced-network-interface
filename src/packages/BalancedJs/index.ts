@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { isEmpty } from 'lodash';
 
 import { NetworkId } from './addresses';
 import BALN from './contracts/BALN';
@@ -11,7 +12,7 @@ import Loans from './contracts/Loans';
 import Rewards from './contracts/Rewards';
 import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
-import ContractSettings from './contractSettings';
+import ContractSettings, { LedgerSettings } from './contractSettings';
 
 export type AccountType = string | undefined | null;
 export type ResponseJsonRPCPayload = {
@@ -20,13 +21,17 @@ export type ResponseJsonRPCPayload = {
   result: string;
 };
 
-export type SettingEjection = {
-  account: AccountType;
+export type SettingInjection = {
+  account?: AccountType;
+  legerSettings?: LedgerSettings;
 };
+
+const LOOP = new BigNumber('1000000000000000000');
 
 export class BalancedJs {
   contractSettings: ContractSettings;
   networkId: NetworkId;
+  provider: any;
 
   // contracts
   BALN: BALN;
@@ -39,18 +44,25 @@ export class BalancedJs {
   Dex: Dex;
   Rewards: Rewards;
 
-  // static
   static utils = {
-    BALNbnUSDpoolId: 3,
-    sICXbnUSDpoolId: 2,
-    sICXICXpoolId: 1,
+    toLoop(value: BigNumber | number | string): BigNumber {
+      return new BigNumber(value).times(LOOP).integerValue(BigNumber.ROUND_DOWN);
+    },
+    toIcx(value: BigNumber | number | string): BigNumber {
+      return new BigNumber(value).div(LOOP);
+    },
+    POOL_IDS: {
+      BALNbnUSD: 3,
+      sICXbnUSD: 2,
+      sICXICX: 1,
+    },
   };
+
   /**
    * Creates instances of balanced contracts based on ContractSettings.
    * Usage example:
    * import {BalancedJs} = require('BalancedJs');
    * const bnjs = new BalancedJs(); //uses default ContractSettings - use mainnet
-   * const totalSupply = await bnjs.Synthetix.totalSupply();
    * @constructor
    * @param contractSettings {Partial<ContractSettings>}
    */
@@ -58,6 +70,7 @@ export class BalancedJs {
   constructor(contractSettings?: Partial<ContractSettings>) {
     this.contractSettings = new ContractSettings(contractSettings);
     this.networkId = this.contractSettings.networkId;
+    this.provider = this.contractSettings.provider;
 
     // Object.keys(contracts).forEach(name => {
     //   const Contract = contracts[name];
@@ -77,8 +90,12 @@ export class BalancedJs {
     this.Rewards = new Rewards(this.contractSettings);
   }
 
-  eject({ account }: SettingEjection) {
-    this.contractSettings.account = account;
+  inject({ account, legerSettings }: SettingInjection) {
+    this.contractSettings.account = account || this.contractSettings.account;
+    this.contractSettings.ledgerSettings.transport =
+      legerSettings?.transport || this.contractSettings.ledgerSettings.transport;
+    this.contractSettings.ledgerSettings.actived = !isEmpty(this.contractSettings.ledgerSettings.transport);
+    this.contractSettings.ledgerSettings.path = legerSettings?.path || this.contractSettings.ledgerSettings.path;
     return this;
   }
 

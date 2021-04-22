@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -60,21 +61,22 @@ export default React.memo(function StakePanel() {
   const { account } = useIconReact();
   const handleConfirm = () => {
     bnJs
-      .eject({ account: account })
-      .BALN.stake(afterAmount)
+      .inject({ account: account })
+      .BALN.stake(BalancedJs.utils.toLoop(afterAmount))
       .then(res => {
-        addTransaction(
-          { hash: res.result },
-          {
-            pending: 'Staking BALN tokens...',
-            summary: `Staked ${afterAmount.dp(2).toFormat()} BALN tokens.`,
-          },
-        );
-        toggleOpen();
-        handleCancel();
-      })
-      .catch(e => {
-        console.error('error', e);
+        if (res.result) {
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: 'Staking BALN tokens...',
+              summary: `Staked ${afterAmount.dp(2).toFormat()} BALN tokens.`,
+            },
+          );
+          toggleOpen();
+          handleCancel();
+        } else {
+          console.error(res);
+        }
       });
   };
 
@@ -93,7 +95,7 @@ export default React.memo(function StakePanel() {
           connect={[true, false]}
           range={{
             min: [0],
-            max: [totalBalance.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalBalance.dp(2).toNumber()],
+            max: [totalBalance.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalBalance.dp(2).toNumber()],
           }}
           onSlide={handleSlide}
         />

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -44,26 +45,16 @@ const ReturnICDSection = () => {
   const handleTypeInput = React.useCallback(
     (val: string) => {
       setRetireAmount(val);
-      bnJs
-        .eject({ account: account })
-        .Dex.getFees()
-        .then(res => {
-          const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
-          const lp_fee = parseInt(res[`pool_lp_fee`], 16);
-          const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
-          setSwapFee(fee.toFixed(2).toString());
-          val = (parseFloat(val) - fee).toString();
-          setReceiveAmount(
-            isNaN(parseFloat(val))
-              ? formatBigNumber(new BigNumber(0), 'currency')
-              : (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
-          );
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
+      const fee = (parseFloat(val) * 0.5) / 100;
+      setSwapFee(fee.toFixed(2).toString());
+      val = (parseFloat(val) - fee).toString();
+      setReceiveAmount(
+        isNaN(parseFloat(val))
+          ? formatBigNumber(new BigNumber(0), 'currency')
+          : (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
+      );
     },
-    [account, ratio],
+    [ratio],
   );
 
   // handle retire balance dropdown
@@ -110,12 +101,12 @@ const ReturnICDSection = () => {
       return;
     }
     bnJs
-      .eject({ account: account })
-      .bnUSD.retireBnUSD(new BigNumber(retireAmount))
+      .inject({ account: account })
+      .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(new BigNumber(retireAmount)))
       .then(res => {
         setOpen(false);
         addTransaction(
-          { hash: res.result },
+          { hash: res.result || res },
           {
             pending: retireMessage(retireAmount, 'sICX').pendingMessage,
             summary: retireMessage(retireAmount, 'sICX').successMessage,

@@ -1,14 +1,15 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { MANDATORY_COLLATERAL_RATIO } from 'constants/index';
+import { MANDATORY_COLLATERAL_RATIO, ZERO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 import { AppState } from '..';
 import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, Field, adjust, cancel, type } from './actions';
@@ -66,15 +67,15 @@ export function useLoanFetchInfo(account?: string | null) {
     (account: string) => {
       if (account) {
         Promise.all([
-          bnJs.Loans.eject({ account }).getAvailableAssets(),
+          bnJs.Loans.getAvailableAssets(),
           bnJs.bnUSD.totalSupply(),
-          bnJs.Loans.eject({ account }).getAccountPositions(),
+          bnJs.Loans.getAccountPositions(account),
         ]).then(([resultGetAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
-          const bnUSDbadDebt = convertLoopToIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
-          const bnUSDTotalSupply = convertLoopToIcx(resultTotalSupply);
+          const bnUSDbadDebt = BalancedJs.utils.toIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
+          const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
 
           const bnUSDDebt = resultDebt['assets']
-            ? convertLoopToIcx(new BigNumber(parseInt(resultDebt['assets']['bnUSD'] || 0, 16)))
+            ? BalancedJs.utils.toIcx(new BigNumber(parseInt(resultDebt['assets']['bnUSD'] || 0, 16)))
             : new BigNumber(0);
 
           changeBadDebt(bnUSDbadDebt);
@@ -98,25 +99,31 @@ export function useLoanState() {
   return state;
 }
 
-export function useLoanType(): (payload: {
-  independentField?: Field;
-  typedValue?: string;
-  inputType?: 'slider' | 'text';
-}) => void {
+export function useLoanActionHandlers() {
   const dispatch = useDispatch();
 
-  return React.useCallback(
-    payload => {
-      dispatch(type(payload));
+  const onFieldAInput = React.useCallback(
+    (value: string) => {
+      dispatch(type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' }));
     },
     [dispatch],
   );
-}
 
-export function useLoanAdjust(): (isAdjust: boolean) => void {
-  const dispatch = useDispatch();
+  const onFieldBInput = React.useCallback(
+    (value: string) => {
+      dispatch(type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' }));
+    },
+    [dispatch],
+  );
 
-  return React.useCallback(
+  const onSlide = React.useCallback(
+    (values: string[], handle: number) => {
+      dispatch(type({ typedValue: values[handle], inputType: 'slider' }));
+    },
+    [dispatch],
+  );
+
+  const onAdjust = React.useCallback(
     isAdjust => {
       if (isAdjust) {
         dispatch(adjust());
@@ -126,6 +133,13 @@ export function useLoanAdjust(): (isAdjust: boolean) => void {
     },
     [dispatch],
   );
+
+  return {
+    onFieldAInput,
+    onFieldBInput,
+    onSlide,
+    onAdjust,
+  };
 }
 
 export function useLoanTotalBorrowableAmount() {
@@ -170,4 +184,13 @@ export function useLoanDebtHoldingShare() {
   return React.useMemo(() => {
     return loanInputAmount.div(loanTotalSupply.minus(loanBadDebt)).multipliedBy(100);
   }, [loanInputAmount, loanBadDebt, loanTotalSupply]);
+}
+
+export function useLoanUsedAmount(): BigNumber {
+  const remainingAmount = useWalletBalances()['bnUSD'];
+  const borrowedAmount = useLoanBorrowedAmount();
+
+  return React.useMemo(() => {
+    return borrowedAmount.isGreaterThan(remainingAmount) ? borrowedAmount.minus(remainingAmount).plus(0.1) : ZERO;
+  }, [borrowedAmount, remainingAmount]);
 }

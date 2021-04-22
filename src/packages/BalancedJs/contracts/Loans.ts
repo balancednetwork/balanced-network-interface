@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
-import { IconAmount, IconConverter } from 'icon-sdk-js';
+import { IconConverter } from 'icon-sdk-js';
 
-import { ResponseJsonRPCPayload } from '..';
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
@@ -11,42 +10,55 @@ export default class Loans extends Contract {
     super(contractSettings);
     this.address = addresses[this.nid].loans;
   }
-  /**
-   * addCollateral and withdrawCollateral
-   * @returns payload to call iconex
-   */
-  async depositWithdrawCollateral(value: BigNumber): Promise<ResponseJsonRPCPayload> {
-    //const data1 = Buffer.from('{"method": "_deposit_and_borrow", "params": {"_sender": "', 'utf8').toString('hex');
-    //const data2 = Buffer.from('", "_asset": "", "_amount": 0}}', 'utf8').toString('hex');
-    const valueHex = IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop());
-    const params = { _value: valueHex };
+
+  withdrawCollateral(value: BigNumber) {
     const payload = this.transactionParamsBuilder({
       method: 'withdrawCollateral',
-      params,
+      params: { _value: IconConverter.toHex(value) },
     });
-    return this.callIconex(payload);
-  }
-  /**
-   * addCollateral and withdrawCollateral
-   * @returns payload to call iconex
-   */
-  async depositAddCollateral(value: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const params = { _asset: '', _amount: '0x0' };
-    const payload = this.transactionParamsBuilder({
-      method: 'addCollateral',
-      value: value,
-      params,
-    });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+
     return this.callIconex(payload);
   }
 
-  async borrowAdd(value: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const valueHex = IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop());
-    const params = { _asset: 'bnUSD', _amount: valueHex, _from: this.account };
+  depositAndBorrow(
+    value: BigNumber,
+    params: { asset?: 'bnUSD'; amount?: BigNumber; from?: string; value?: BigNumber } = {},
+  ) {
     const payload = this.transactionParamsBuilder({
-      method: 'originateLoan',
-      params,
+      method: 'depositAndBorrow',
+      value: value,
+      params: {
+        _asset: params.asset,
+        _amount: params.amount && IconConverter.toHex(params.amount),
+        _from: params.from,
+        _value: params.value && IconConverter.toHex(params.value),
+      },
     });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+
+    return this.callIconex(payload);
+  }
+
+  returnAsset(symbol: string, value: BigNumber) {
+    const payload = this.transactionParamsBuilder({
+      method: 'returnAsset',
+      params: {
+        _symbol: symbol,
+        _value: IconConverter.toHex(value),
+      },
+    });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+
     return this.callIconex(payload);
   }
 
@@ -54,14 +66,15 @@ export default class Loans extends Contract {
     const callParams = this.paramsBuilder({
       method: 'getAvailableAssets',
     });
+
     return this.call(callParams);
   }
 
-  getAccountPositions() {
+  getAccountPositions(owner: string) {
     const callParams = this.paramsBuilder({
       method: 'getAccountPositions',
       params: {
-        _owner: this.account,
+        _owner: owner,
       },
     });
 

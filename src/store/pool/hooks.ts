@@ -5,11 +5,11 @@ import _ from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
-import { convertLoopToIcx } from 'packages/icon-react/utils';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { Pair, BASE_SUPPORTED_PAIRS } from 'constants/currency';
+import { ONE } from 'constants/index';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppDispatch, AppState } from '../index';
@@ -42,7 +42,10 @@ export function useChangePool(): (poolId: number, poolData: Partial<Pool>) => vo
   );
 }
 
-export function useBalanceActionHandlers() {
+export function useBalanceActionHandlers(): {
+  changeBalance: (poolId: number, balance: Balance) => void;
+  clearBalances: () => void;
+} {
   const dispatch = useDispatch<AppDispatch>();
 
   const changeBalance = React.useCallback(
@@ -88,7 +91,7 @@ export function useFetchPools() {
 
       let result;
 
-      if (poolId === BalancedJs.utils.sICXICXpoolId) {
+      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
         const [t, rate] = await Promise.all([bnJs.Dex.totalSupply(poolId), await bnJs.Staking.getTodayRate()]);
 
         result = [t, t, t, rate];
@@ -101,7 +104,7 @@ export function useFetchPools() {
         ]);
       }
 
-      const [total, base, quote, rate] = result.map(v => convertLoopToIcx(v));
+      const [total, base, quote, rate] = result.map(v => BalancedJs.utils.toIcx(v));
 
       changePool(poolId, {
         baseCurrencyKey: pair.baseCurrencyKey,
@@ -110,6 +113,7 @@ export function useFetchPools() {
         quote: quote,
         total: total,
         rate: rate,
+        inverseRate: ONE.div(rate),
       });
     },
     [changePool, networkId],
@@ -131,11 +135,11 @@ export function useFetchPools() {
 
       const a = {};
       _.forOwn(_rules, function (value, key) {
-        a[key] = convertLoopToIcx(value);
+        a[key] = BalancedJs.utils.toIcx(value);
       });
 
       setRules(a);
-      setEmission(convertLoopToIcx(_emission));
+      setEmission(BalancedJs.utils.toIcx(_emission));
     };
     fetchRewardsRule();
   }, []);
@@ -159,28 +163,23 @@ export function useFetchPools() {
     if (account) {
       BASE_SUPPORTED_PAIRS.forEach(pair => {
         const poolId = pair.poolId;
-        if (poolId === BalancedJs.utils.sICXICXpoolId) {
-          bnJs
-            .eject({ account })
-            .Dex.getICXBalance()
-            .then(res => {
-              changeBalance(poolId, {
-                baseCurrencyKey: pair.baseCurrencyKey,
-                quoteCurrencyKey: pair.quoteCurrencyKey,
-                balance: convertLoopToIcx(res),
-              });
+        if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+          Promise.all([bnJs.Dex.getICXBalance(account), bnJs.Dex.getSicxEarnings(account)]).then(([res1, res2]) => {
+            changeBalance(poolId, {
+              baseCurrencyKey: pair.baseCurrencyKey,
+              quoteCurrencyKey: pair.quoteCurrencyKey,
+              balance: BalancedJs.utils.toIcx(res1),
+              balance1: BalancedJs.utils.toIcx(res2),
             });
+          });
         } else {
-          bnJs
-            .eject({ account })
-            .Dex.balanceOf(poolId)
-            .then(res => {
-              changeBalance(poolId, {
-                baseCurrencyKey: pair.baseCurrencyKey,
-                quoteCurrencyKey: pair.quoteCurrencyKey,
-                balance: convertLoopToIcx(res),
-              });
+          bnJs.Dex.balanceOf(account, poolId).then(res => {
+            changeBalance(poolId, {
+              baseCurrencyKey: pair.baseCurrencyKey,
+              quoteCurrencyKey: pair.quoteCurrencyKey,
+              balance: BalancedJs.utils.toIcx(res),
             });
+          });
         }
       });
     } else {
@@ -198,8 +197,6 @@ export function usePool(poolId: number): Pool | undefined {
   return pools[poolId];
 }
 
-const ONE = new BigNumber(1);
-
 export function useSelectedPoolRate() {
   const selectedPair = usePoolPair();
 
@@ -210,6 +207,23 @@ export function useSelectedPoolRate() {
 
 export function useBalances() {
   return useSelector((state: AppState) => state.pool.balances);
+}
+
+export function useAvailableBalances() {
+  const balances = useBalances();
+
+  return React.useMemo(() => {
+    let t = {};
+
+    Object.keys(balances)
+      .filter(poolId => !balances[poolId].balance.isZero())
+      .filter(poolId => parseInt(poolId) !== BalancedJs.utils.POOL_IDS.sICXICX)
+      .forEach(poolId => {
+        t[poolId] = balances[poolId];
+      });
+
+    return t;
+  }, [balances]);
 }
 
 export function usePoolShare(poolId: number) {
@@ -231,8 +245,16 @@ export function useBalance(poolId: number) {
 
   return React.useMemo(() => {
     if (pool && balance) {
-      let suppliedBaseTokens = pool.base.times(poolShare);
-      let suppliedQuoteTokens = pool.quote.times(poolShare);
+      let suppliedBaseTokens: BigNumber;
+      let suppliedQuoteTokens: BigNumber;
+
+      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        suppliedBaseTokens = balance.balance;
+        suppliedQuoteTokens = balance.balance;
+      } else {
+        suppliedBaseTokens = pool.base.times(poolShare);
+        suppliedQuoteTokens = pool.quote.times(poolShare);
+      }
 
       return {
         ...balance,
@@ -240,7 +262,7 @@ export function useBalance(poolId: number) {
         quote: suppliedQuoteTokens,
       };
     } else return;
-  }, [balance, pool, poolShare]);
+  }, [balance, pool, poolShare, poolId]);
 }
 
 export function useRewards() {
@@ -281,13 +303,13 @@ export function useRates() {
   React.useEffect(() => {
     const fetchRates = async () => {
       const [sicx, res] = await Promise.all([
-        bnJs.Dex.getPrice(BalancedJs.utils.sICXbnUSDpoolId),
+        bnJs.Dex.getPrice(BalancedJs.utils.POOL_IDS.sICXbnUSD),
         bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' }),
       ]);
 
       setRates({
-        sICX: convertLoopToIcx(sicx),
-        ICX: convertLoopToIcx(res['rate']),
+        sICX: BalancedJs.utils.toIcx(sicx),
+        ICX: BalancedJs.utils.toIcx(res['rate']),
         bnUSD: new BigNumber(1),
       });
     };
@@ -301,7 +323,7 @@ export function useRates() {
 export function useAPYs() {
   const pools = usePools();
   const rewards = useRewards();
-  const BALNbnUSDPool = usePool(BalancedJs.utils.BALNbnUSDpoolId);
+  const BALNbnUSDPool = usePool(BalancedJs.utils.POOL_IDS.BALNbnUSD);
   const rates = useRates();
 
   return React.useMemo(() => {
@@ -316,7 +338,7 @@ export function useAPYs() {
 
       if (pool) {
         let totalPoolLiquidityInBNUSD = ZERO;
-        if (pair.poolId === BalancedJs.utils.sICXICXpoolId) {
+        if (pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
           totalPoolLiquidityInBNUSD = pool.quote.times(rates[pool.quoteCurrencyKey]);
         } else {
           totalPoolLiquidityInBNUSD = pool.quote.times(2).times(rates[pool.quoteCurrencyKey]);

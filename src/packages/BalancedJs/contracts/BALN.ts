@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { IconAmount, IconConverter } from 'icon-sdk-js';
 
-import { ResponseJsonRPCPayload } from '..';
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
@@ -12,87 +11,60 @@ export default class BALN extends Contract {
     this.address = addresses[this.nid].baln;
   }
 
-  balanceOf() {
+  balanceOf(owner: string) {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',
       params: {
-        _owner: this.account,
+        _owner: owner,
       },
     });
 
     return this.call(callParams);
   }
 
-  getLiquidityBALNSupply() {
-    const callParams = this.paramsBuilder({
-      method: 'balanceOf',
-      params: {
-        _owner: this.account,
-        _id: this.address,
-      },
-    });
+  swapToBnUSD(value: BigNumber, slippage: string) {
+    const data = { method: '_swap', params: { toToken: addresses[this.nid].bnusd }, maxSlippage: slippage };
 
-    return this.call(callParams);
+    return this.transfer(
+      addresses[this.nid].dex,
+      IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop(),
+      JSON.stringify(data),
+    );
   }
 
-  async swapToBnUSD(value: BigNumber, slippage: string): Promise<ResponseJsonRPCPayload> {
-    const data =
-      '0x' +
-      Buffer.from(
-        '{"method": "_swap", "params": {"toToken":"' +
-          addresses[this.nid].bnUSD +
-          '", "maxSlippage":' +
-          slippage +
-          '}}',
-        'utf8',
-      ).toString('hex');
-    const valueHex = IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop());
-    const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
-
-    const payload = this.transactionParamsBuilder({
-      method: 'transfer',
-      params,
-    });
-
-    return this.callIconex(payload);
-  }
-
-  public async transfer(to: string, value: BigNumber): Promise<any> {
+  transfer(to: string, value: BigNumber, data?: string) {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
       params: {
         _to: to,
-        _value: IconConverter.toHex(IconAmount.of(value, IconAmount.Unit.ICX).toLoop()),
+        _value: IconConverter.toHex(value),
+        _data: data && IconConverter.toHex(data),
       },
     });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(callParams.params);
+    }
 
     return this.callIconex(callParams);
   }
 
-  async stake(value: BigNumber): Promise<ResponseJsonRPCPayload> {
+  stake(value: BigNumber) {
     const payload = this.transactionParamsBuilder({
       method: 'stake',
       params: {
-        _value: IconConverter.toHex(IconAmount.of(value, IconAmount.Unit.ICX).toLoop()),
+        _value: IconConverter.toHex(value),
       },
     });
 
     return this.callIconex(payload);
   }
 
-  async dexDeposit(value: BigNumber): Promise<ResponseJsonRPCPayload> {
-    const data = '0x' + Buffer.from('{"method": "_deposit"}', 'utf8').toString('hex');
-    const valueHex = IconConverter.toHex(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop());
-    const params = { _to: addresses[this.nid].dex, _value: valueHex, _data: data };
-    const payload = this.transactionParamsBuilder({
-      method: 'transfer',
-      params,
-    });
-
-    return this.callIconex(payload);
+  deposit(value: BigNumber) {
+    return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
   }
 
-  public detailsBalanceOf(owner: string) {
+  detailsBalanceOf(owner: string) {
     const callParams = this.paramsBuilder({
       method: 'detailsBalanceOf',
       params: {

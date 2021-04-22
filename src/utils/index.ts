@@ -48,10 +48,18 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   } else {
     switch (type) {
       case 'currency': {
-        return value.dp(2).toFormat();
+        if (value.isLessThan(new BigNumber(1))) {
+          return value.precision(2, BigNumber.ROUND_DOWN).toString();
+        } else {
+          return value.dp(2).toFormat();
+        }
       }
       case 'input': {
-        return value.toFixed(2, 1);
+        if (value.isLessThan(new BigNumber(1))) {
+          return value.precision(2, BigNumber.ROUND_DOWN).toString();
+        } else {
+          return value.toFixed(2, 1);
+        }
       }
       case 'ratio': {
         if (value.decimalPlaces() === 0) {

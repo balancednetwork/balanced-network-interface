@@ -9,7 +9,6 @@ import createSagaMiddleware from 'redux-saga';
 
 import application from './application/reducer';
 import collateral from './collateral/reducer';
-import liquidity from './liquidity/reducer';
 import loan from './loan/reducer';
 import mint from './mint/reducer';
 import pool from './pool/reducer';
@@ -43,7 +42,6 @@ export function configureAppStore() {
       pool,
       reward,
       collateral,
-      liquidity,
       loan,
       ratio,
       wallet,

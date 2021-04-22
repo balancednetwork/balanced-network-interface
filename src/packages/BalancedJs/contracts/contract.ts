@@ -1,28 +1,52 @@
 import BigNumber from 'bignumber.js';
-import IconService, { IconBuilder, IconConverter, IconAmount } from 'icon-sdk-js';
+import IconService, { IconBuilder, IconConverter } from 'icon-sdk-js';
+import { isEmpty } from 'lodash';
 import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 
-import { AccountType, ResponseJsonRPCPayload, SettingEjection } from '..';
+import { AccountType, ResponseJsonRPCPayload, SettingInjection } from '..';
 import { NetworkId } from '../addresses';
 import ContractSettings from '../contractSettings';
+import { Ledger } from '../ledger';
+
+export interface TransactionParams {
+  jsonrpc: string;
+  method: string;
+  params: any;
+  id: number;
+}
 
 export class Contract {
   protected provider: IconService;
   protected nid: NetworkId;
   public address: string = '';
+  public ledger: Ledger;
 
-  constructor(private contractSettings: ContractSettings) {
+  constructor(protected contractSettings: ContractSettings) {
     this.provider = contractSettings.provider;
     this.nid = contractSettings.networkId;
+    this.ledger = new Ledger(contractSettings);
+    this.contractSettings.ledgerSettings.actived = !isEmpty(this.ledger.viewSetting().transport);
   }
 
   protected get account(): AccountType {
     return this.contractSettings.account;
   }
 
-  public eject({ account }: SettingEjection) {
-    this.contractSettings.account = account;
+  public inject({ account, legerSettings }: SettingInjection) {
+    this.contractSettings.account = account || this.contractSettings.account;
+    this.contractSettings.ledgerSettings.transport =
+      legerSettings?.transport || this.contractSettings.ledgerSettings.transport;
+    this.contractSettings.ledgerSettings.actived = !isEmpty(this.contractSettings.ledgerSettings.transport);
+    this.contractSettings.ledgerSettings.path = legerSettings?.path || this.contractSettings.ledgerSettings.path;
     return this;
+  }
+
+  cleanParams(params: any) {
+    return JSON.parse(
+      JSON.stringify(params, (key, value) => {
+        return isEmpty(value) && value !== 0 ? undefined : value;
+      }),
+    );
   }
 
   public paramsBuilder({
@@ -34,17 +58,15 @@ export class Contract {
       [key: string]: any;
     };
   }) {
-    return new IconBuilder.CallBuilder().from(this.account).to(this.address).method(method).params(params).build();
+    return new IconBuilder.CallBuilder().to(this.address).method(method).params(params).build();
   }
 
-  async call(params: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.provider.call(params).execute().then(resolve).catch(reject);
-    });
+  call(params) {
+    return this.provider.call(params).execute();
   }
 
   /**
-   * @returns payload to call Iconex wallet
+   * @returns Transaction params packaging.
    */
   public transactionParamsBuilder({
     method,
@@ -56,7 +78,7 @@ export class Contract {
     params?: {
       [key: string]: any;
     };
-  }) {
+  }): TransactionParams {
     const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
     const payload = callTransactionBuilder
       .from(this.account)
@@ -66,7 +88,7 @@ export class Contract {
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)
       .stepLimit(IconConverter.toBigNumber(10000000))
-      .value(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop())
+      .value(value)
       .version(IconConverter.toBigNumber(3))
       .build();
 
@@ -81,14 +103,14 @@ export class Contract {
   /**
    * @returns transaction transfer ICX to call ICONex
    */
-  public transferICXParamsBuilder({ value }: { value: BigNumber }) {
+  public transferICXParamsBuilder({ value }: { value: BigNumber }): TransactionParams {
     const payload = new IconBuilder.IcxTransactionBuilder()
       .from(this.account)
       .to(this.address)
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(1000000))
-      .value(IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop())
+      .stepLimit(IconConverter.toBigNumber(2000000))
+      .value(value)
       .version(IconConverter.toBigNumber(3))
       .build();
 
@@ -121,8 +143,11 @@ export class Contract {
     });
   }
 
-  public async getICXBalance(): Promise<BigNumber> {
-    const balance = await this.provider.getBalance(this.account).execute();
-    return balance;
+  public async callLedger(payload: any): Promise<any> {
+    payload = this.cleanParams(payload);
+    if (this.contractSettings.ledgerSettings.actived) {
+      const signedTransaction = await this.ledger.signTransaction(payload);
+      return this.provider.sendTransaction(signedTransaction).execute();
+    }
   }
 }

@@ -31,7 +31,7 @@ const useAvailableLPTokenBalance = (): BigNumber => {
   const pool = usePool(selectedPair.poolId);
 
   if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
-    if (selectedPair.poolId === BalancedJs.utils.sICXICXpoolId) {
+    if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
       return balances['ICX'];
     }
 
@@ -55,7 +55,7 @@ const useCalculateLPToken = (baseValue: string, quoteValue: string): BigNumber =
   const pool = usePool(selectedPair.poolId);
 
   if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
-    if (selectedPair.poolId === BalancedJs.utils.sICXICXpoolId) {
+    if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
       return new BigNumber(baseValue).times(pool.total).div(pool.base);
     }
 
@@ -100,8 +100,12 @@ export default function LPPanel() {
   const pool = usePool(selectedPair.poolId);
   const handleSlider = (values: string[], handle: number) => {
     if (pool && !pool.total.isZero()) {
-      const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
-      onFieldAInput(baseAmount.toFixed(), 'slider');
+      if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        onFieldAInput(values[handle], 'slider');
+      } else {
+        const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
+        onFieldAInput(baseAmount.toFixed(), 'slider');
+      }
     }
   };
 
@@ -159,7 +163,7 @@ export default function LPPanel() {
   return (
     <>
       <SectionPanel bg="bg2">
-        <BrightPanel bg="bg3" p={7} flexDirection="column" alignItems="stretch" flex={1}>
+        <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <Flex alignItems="flex-end">
             <Typography variant="h2">Supply:&nbsp;</Typography>
             <LiquiditySelect />
@@ -204,7 +208,9 @@ export default function LPPanel() {
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [maxSliderAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxSliderAmount.dp(2).toNumber()],
+                max: [
+                  maxSliderAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxSliderAmount.dp(2).toNumber(),
+                ],
               }}
               instanceRef={instance => {
                 if (instance && !sliderInstance.current) {

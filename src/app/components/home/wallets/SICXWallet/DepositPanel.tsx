@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -46,12 +47,12 @@ export default function DepositPanel() {
 
   const handleSend = () => {
     bnJs
-      .eject({ account })
-      .sICX.collateralDeposit(differenceAmount)
+      .inject({ account })
+      .sICX.depositAndBorrow(BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: `Depositing collateral...`,
               summary: `Deposited ${differenceAmount.dp(2).toFormat()} sICX as collateral.`,
@@ -78,12 +79,13 @@ export default function DepositPanel() {
 
       <Box my={3}>
         <Nouislider
+          disabled={maxAmount.dp(2).isZero()}
           start={[0]}
           padding={[0]}
           connect={[true, false]}
           range={{
             min: [0],
-            max: [maxAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxAmount.dp(2).toNumber()],
+            max: [maxAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxAmount.dp(2).toNumber()],
           }}
           onSlide={handleSlider}
         />

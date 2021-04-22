@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -13,18 +14,17 @@ import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
-import { useCollateralAdjust } from 'store/collateral/hooks';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
+import { useCollateralActionHandlers } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
-  useLoanAdjust,
   useLoanBorrowedAmount,
   useLoanState,
-  useLoanType,
   useLoanTotalBorrowableAmount,
+  useLoanActionHandlers,
+  useLoanUsedAmount,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
@@ -36,31 +36,8 @@ const LoanPanel = () => {
   const { independentField, typedValue, isAdjusting, inputType } = useLoanState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
-  const type = useLoanType();
-
-  const handleLeftAmountType = React.useCallback(
-    (value: string) => {
-      type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' });
-    },
-    [type],
-  );
-
-  const handleRightAmountType = React.useCallback(
-    (value: string) => {
-      type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' });
-    },
-    [type],
-  );
-
-  const handleSlider = React.useCallback(
-    (values: string[], handle: number) => {
-      type({ typedValue: values[handle], inputType: 'slider' });
-    },
-    [type],
-  );
-
-  const adjust = useLoanAdjust();
-  const adjustCollateral = useCollateralAdjust();
+  const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useLoanActionHandlers();
+  const { onAdjust: adjustCollateral } = useCollateralActionHandlers();
 
   const handleEnableAdjusting = () => {
     adjust(true);
@@ -111,11 +88,11 @@ const LoanPanel = () => {
 
     if (shouldBorrow) {
       bnJs
-        .eject({ account })
-        .Loans.borrowAdd(differenceAmount)
+        .inject({ account })
+        .Loans.depositAndBorrow(ZERO, { asset: 'bnUSD', amount: BalancedJs.utils.toLoop(differenceAmount) })
         .then(res => {
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: 'Borrowing bnUSD...',
               summary: `Borrowed ${differenceAmount.dp(2).toFormat()} bnUSD.`,
@@ -131,11 +108,11 @@ const LoanPanel = () => {
         });
     } else {
       bnJs
-        .eject({ account })
-        .bnUSD.repayLoan(differenceAmount.abs())
+        .inject({ account })
+        .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(differenceAmount).abs())
         .then(res => {
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
               pending: 'Repaying bnUSD...',
               summary: `Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,
@@ -156,12 +133,9 @@ const LoanPanel = () => {
   // change typedValue if sICX and ratio changes
   React.useEffect(() => {
     if (!isAdjusting) {
-      type({
-        independentField: Field.LEFT,
-        typedValue: borrowedAmount.isZero() ? '0' : borrowedAmount.toFixed(2),
-      });
+      onFieldAInput(borrowedAmount.isZero() ? '0' : borrowedAmount.toFixed(2));
     }
-  }, [type, borrowedAmount, isAdjusting]);
+  }, [onFieldAInput, borrowedAmount, isAdjusting]);
 
   // optimize slider performance
   // change slider value if only a user types
@@ -171,17 +145,12 @@ const LoanPanel = () => {
     }
   }, [afterAmount, inputType]);
 
-  // Add Used indicator to the Loan section #73
-  // https://github.com/balancednetwork/balanced-network-interface/issues/73
-  const remainingBNUSDAmount = useWalletBalances()['bnUSD'];
+  const usedAmount = useLoanUsedAmount();
 
-  const usedBNUSDAmount = React.useMemo(() => {
-    return BigNumber.max(borrowedAmount.minus(remainingBNUSDAmount as BigNumber), new BigNumber(0));
-  }, [borrowedAmount, remainingBNUSDAmount]);
+  const _totalBorrowableAmount = totalBorrowableAmount.times(0.99);
+  const percent = _totalBorrowableAmount.isZero() ? 0 : usedAmount.div(_totalBorrowableAmount).times(100).toNumber();
 
-  const percent = totalBorrowableAmount.isZero() ? 0 : usedBNUSDAmount.div(totalBorrowableAmount).times(100).toNumber();
-
-  const shouldShowLock = !usedBNUSDAmount.isZero();
+  const shouldShowLock = !usedAmount.isZero();
 
   if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative()) {
     return (
@@ -236,18 +205,15 @@ const LoanPanel = () => {
             disabled={!isAdjusting}
             id="slider-loan"
             start={[borrowedAmount.dp(2).toNumber()]}
-            // don't refactor the below code
-            // it solved the race condition issue that caused padding value exceeds the max range value
-            // need to find a good approach in the future
-            padding={[Math.max(Math.min(usedBNUSDAmount.toNumber(), totalBorrowableAmount.toNumber()), 0), 0]}
+            padding={[Math.max(Math.min(usedAmount.dp(2).toNumber(), _totalBorrowableAmount.dp(2).toNumber()), 0), 0]}
             connect={[true, false]}
             range={{
               min: [0],
               // https://github.com/balancednetwork/balanced-network-interface/issues/50
               max: [
-                totalBorrowableAmount.isZero()
+                _totalBorrowableAmount.dp(2).isZero()
                   ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                  : totalBorrowableAmount.dp(2).toNumber(),
+                  : _totalBorrowableAmount.dp(2).toNumber(),
               ],
             }}
             instanceRef={instance => {
@@ -255,7 +221,7 @@ const LoanPanel = () => {
                 sliderInstance.current = instance;
               }
             }}
-            onSlide={handleSlider}
+            onSlide={onSlide}
           />
         </Box>
 
@@ -268,7 +234,7 @@ const LoanPanel = () => {
               tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
               value={!account ? '-' : formattedAmounts[Field.LEFT]}
               currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['bnusd']}
-              onUserInput={handleLeftAmountType}
+              onUserInput={onFieldAInput}
             />
           </Box>
 
@@ -280,7 +246,7 @@ const LoanPanel = () => {
               tooltipText="The amount of ICX available to deposit from your wallet."
               value={!account ? '-' : formattedAmounts[Field.RIGHT]}
               currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['bnusd']}
-              onUserInput={handleRightAmountType}
+              onUserInput={onFieldBInput}
             />
           </Box>
         </Flex>

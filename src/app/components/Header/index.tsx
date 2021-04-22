@@ -16,11 +16,9 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
-  width: 100px;
   margin-right: 75px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 75px;
     margin-right: 15px;
   `}
 `;
@@ -52,6 +50,10 @@ const WalletMenu = styled.div`
 
 const WalletMenuButton = styled(Button)`
   padding: 7px 25px;
+`;
+
+const ChangeWalletButton = styled(Link)`
+  cursor: pointer;
 `;
 
 export default React.memo(function Header(props: { title?: string; className?: string }) {
@@ -88,7 +90,7 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
         {!account && (
           <Flex alignItems="center">
-            <Button onClick={toggleWalletModal}>Sign In</Button>
+            <Button onClick={toggleWalletModal}>Sign in</Button>
           </Flex>
         )}
 
@@ -110,8 +112,8 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <WalletMenu>
-                      <Link onClick={handleChangeWallet}>Change wallet</Link>
-                      <WalletMenuButton onClick={handleDisconnectWallet}>Sign Out</WalletMenuButton>
+                      <ChangeWalletButton onClick={handleChangeWallet}>Change wallet</ChangeWalletButton>
+                      <WalletMenuButton onClick={handleDisconnectWallet}>Sign out</WalletMenuButton>
                     </WalletMenu>
                   </DropdownPopper>
                 </div>

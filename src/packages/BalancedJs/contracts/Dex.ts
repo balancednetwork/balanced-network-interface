@@ -11,11 +11,11 @@ export default class Dex extends Contract {
     this.address = addresses[this.nid].dex;
   }
 
-  getPrice(pid: number) {
+  getPrice(id: number) {
     const callParams = this.paramsBuilder({
       method: 'getPrice',
       params: {
-        _pid: IconConverter.toHex(pid),
+        _id: IconConverter.toHex(id),
       },
     });
 
@@ -36,33 +36,33 @@ export default class Dex extends Contract {
     return this.callIconex(payload);
   }
 
-  balanceOf(owner: string, pid: number) {
+  balanceOf(owner: string, id: number) {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',
       params: {
         _owner: owner,
-        _id: IconConverter.toHex(pid),
+        _id: IconConverter.toHex(id),
       },
     });
     return this.call(callParams);
   }
 
-  totalSupply(pid: number) {
+  totalSupply(id: number) {
     const callParams = this.paramsBuilder({
       method: 'totalSupply',
       params: {
-        _pid: IconConverter.toHex(pid),
+        _id: IconConverter.toHex(id),
       },
     });
 
     return this.call(callParams);
   }
 
-  getPoolTotal(pid: number, token: string) {
+  getPoolTotal(id: number, token: string) {
     const callParams = this.paramsBuilder({
       method: 'getPoolTotal',
       params: {
-        _pid: IconConverter.toHex(pid),
+        _id: IconConverter.toHex(id),
         _token: token,
       },
     });
@@ -104,11 +104,11 @@ export default class Dex extends Contract {
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
-  remove(pid: number, value: BigNumber, withdraw: number = 1) {
+  remove(id: number, value: BigNumber, withdraw: number = 1) {
     const payload = this.transactionParamsBuilder({
       method: 'remove',
       params: {
-        _pid: IconConverter.toHex(pid),
+        _id: IconConverter.toHex(id),
         _value: IconConverter.toHex(value),
         _withdraw: IconConverter.toHex(withdraw),
       },

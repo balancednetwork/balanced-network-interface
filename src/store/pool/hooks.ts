@@ -287,8 +287,6 @@ export function usePoolData(poolId: number) {
   }, [pool, balance, reward, poolShare]);
 }
 
-const ZERO = new BigNumber(0);
-
 export function useRates() {
   const [rates, setRates] = React.useState({});
 
@@ -313,38 +311,27 @@ export function useRates() {
 }
 
 export function useAPYs() {
-  const pools = usePools();
-  const rewards = useRewards();
-  const BALNbnUSDPool = usePool(BalancedJs.utils.POOL_IDS.BALNbnUSD);
-  const rates = useRates();
+  const [apys, setAPYs] = React.useState<{ [key: string]: BigNumber }>({});
 
-  return React.useMemo(() => {
-    let apys = {};
+  React.useEffect(() => {
+    const fetchAPYs = async () => {
+      const [res0, res1, res2, res3] = await Promise.all([
+        bnJs.Rewards.getAPY('sICX/ICX'),
+        bnJs.Rewards.getAPY('sICX/bnUSD'),
+        bnJs.Rewards.getAPY('BALN/bnUSD'),
+        bnJs.Rewards.getAPY('Loans'),
+      ]);
 
-    BASE_SUPPORTED_PAIRS.forEach(pair => {
-      const dailyRewardPerPoolInBALN = rewards[pair.poolId] || ZERO;
+      setAPYs({
+        [BalancedJs.utils.POOL_IDS.sICXICX]: BalancedJs.utils.toIcx(res0),
+        [BalancedJs.utils.POOL_IDS.sICXbnUSD]: BalancedJs.utils.toIcx(res1),
+        [BalancedJs.utils.POOL_IDS.BALNbnUSD]: BalancedJs.utils.toIcx(res2),
+        Loans: BalancedJs.utils.toIcx(res3),
+      });
+    };
 
-      const YearlyRewardPerPoolInBNUSD = dailyRewardPerPoolInBALN.times(365).times(BALNbnUSDPool?.rate || ZERO);
+    fetchAPYs();
+  }, []);
 
-      const pool = pools[pair.poolId];
-
-      if (pool) {
-        let totalPoolLiquidityInBNUSD = ZERO;
-        if (pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-          totalPoolLiquidityInBNUSD = pool.quote.times(rates[pool.quoteCurrencyKey]);
-        } else {
-          totalPoolLiquidityInBNUSD = pool.quote.times(2).times(rates[pool.quoteCurrencyKey]);
-        }
-
-        const apy = YearlyRewardPerPoolInBNUSD.div(totalPoolLiquidityInBNUSD).times(100);
-
-        apys = {
-          ...apys,
-          [pair.poolId]: apy,
-        };
-      }
-    });
-
-    return apys;
-  }, [pools, rewards, BALNbnUSDPool, rates]);
+  return apys;
 }

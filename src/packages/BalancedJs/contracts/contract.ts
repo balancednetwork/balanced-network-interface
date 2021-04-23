@@ -3,6 +3,9 @@ import IconService, { IconBuilder, IconConverter } from 'icon-sdk-js';
 import { isEmpty } from 'lodash';
 import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 
+import store from 'store';
+import { changeShouldLedgedSignMessage } from 'store/application/actions';
+
 import { AccountType, ResponseJsonRPCPayload, SettingInjection } from '..';
 import { NetworkId } from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -41,7 +44,7 @@ export class Contract {
     return this;
   }
 
-  cleanParams(params: any) {
+  protected cleanParams(params: any) {
     return JSON.parse(
       JSON.stringify(params, (key, value) => {
         return isEmpty(value) && value !== 0 ? undefined : value;
@@ -144,10 +147,19 @@ export class Contract {
   }
 
   public async callLedger(payload: any): Promise<any> {
+    store.dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign: true }));
+
     payload = this.cleanParams(payload);
+
     if (this.contractSettings.ledgerSettings.actived) {
       const signedTransaction = await this.ledger.signTransaction(payload);
-      return this.provider.sendTransaction(signedTransaction).execute();
+      return this.provider
+        .sendTransaction(signedTransaction)
+        .execute()
+        .then(data => {
+          store.dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign: false }));
+          return data;
+        });
     }
   }
 }

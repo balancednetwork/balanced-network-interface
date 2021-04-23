@@ -35,3 +35,7 @@ export const changeDeposite = createAction<{ depositedValue: BigNumber }>('appli
 export const changeBalance = createAction<{ balance: BigNumber }>('application/changeBalanceValue');
 
 export const changeWalletType = createAction<{ walletType: WalletType }>('application/changeWalletType');
+
+export const changeShouldLedgedSignMessage = createAction<{ shouldLedgerSign: boolean }>(
+  'application/changeShouldLedgedSignMessage',
+);

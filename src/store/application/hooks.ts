@@ -64,3 +64,8 @@ export function useChangeWalletType(): (walletType: WalletType) => void {
     [dispatch],
   );
 }
+
+export function useShouldLedgerSign(): AppState['application']['shouldLedgerSign'] {
+  const shouldSignLedger = useSelector((state: AppState) => state.application.shouldLedgerSign);
+  return shouldSignLedger;
+}

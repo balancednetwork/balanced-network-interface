@@ -1,6 +1,14 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit';
 
-import { addPopup, PopupContent, removePopup, ApplicationModal, setOpenModal, changeWalletType } from './actions';
+import {
+  addPopup,
+  PopupContent,
+  removePopup,
+  ApplicationModal,
+  setOpenModal,
+  changeWalletType,
+  changeShouldLedgedSignMessage,
+} from './actions';
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>;
 
@@ -11,6 +19,7 @@ export interface ApplicationState {
   readonly openModal: ApplicationModal | null;
   account: string;
   walletType: WalletType;
+  shouldLedgerSign: boolean;
 }
 
 const initialState: ApplicationState = {
@@ -18,6 +27,7 @@ const initialState: ApplicationState = {
   openModal: null,
   account: '',
   walletType: 'ICONEX',
+  shouldLedgerSign: false,
 };
 
 export default createReducer(initialState, builder =>
@@ -44,5 +54,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(changeWalletType, (state, action) => {
       state.walletType = action.payload.walletType;
+    })
+    .addCase(changeShouldLedgedSignMessage, (state, action) => {
+      state.shouldLedgerSign = action.payload.shouldLedgerSign;
     }),
 );

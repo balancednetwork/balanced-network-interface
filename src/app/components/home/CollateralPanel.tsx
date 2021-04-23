@@ -16,6 +16,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
@@ -37,7 +38,7 @@ const DepositStakeMessage = styled.p`
 
 const CollateralPanel = () => {
   const { account, ledgerAddressPoint } = useIconReact();
-  const [shouldShowDepositStakeMessage, uShouldShowDepositStakeMessage] = React.useState(false);
+  const shouldLedgerSign = useShouldLedgerSign();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -105,9 +106,9 @@ const CollateralPanel = () => {
       //return;
       //}
     }
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      uShouldShowDepositStakeMessage(true);
-    }
+    // if (bnJs.contractSettings.ledgerSettings.actived) {
+    //   changeShouldLedgedSignMessage(true);
+    // }
     if (shouldDeposit) {
       try {
         const hash = await bnJs
@@ -130,7 +131,7 @@ const CollateralPanel = () => {
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
       } finally {
-        uShouldShowDepositStakeMessage(false);
+        // uShouldShowDepositStakeMessage(false);
       }
     } else {
       try {
@@ -155,7 +156,7 @@ const CollateralPanel = () => {
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
       } finally {
-        uShouldShowDepositStakeMessage(false);
+        // uShouldShowDepositStakeMessage(false);
       }
     }
   };
@@ -307,7 +308,7 @@ const CollateralPanel = () => {
               {shouldDeposit ? 'Deposit' : 'Withdraw'}
             </Button>
           </Flex>
-          {shouldShowDepositStakeMessage && (
+          {shouldLedgerSign && (
             <DepositStakeMessage className="label text-center text-white">
               Confirm the transaction on your Ledger.
             </DepositStakeMessage>

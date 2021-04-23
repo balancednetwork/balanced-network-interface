@@ -352,10 +352,11 @@ export default function SwapPanel() {
 
   const handleSwapConfirm = () => {
     if (!account) return;
+    const minimumToReceive = new BigNumber(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4);
     if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
       bnJs
         .inject({ account })
-        .sICX.swapBybnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
+        .sICX.swapBybnUSD(new BigNumber(swapInputAmount), BalancedJs.utils.toLoop(minimumToReceive))
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -399,7 +400,7 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol === 'BALN') {
       bnJs
         .inject({ account: account })
-        .BALN.swapToBnUSD(new BigNumber(swapInputAmount), rawSlippage + '')
+        .BALN.swapToBnUSD(new BigNumber(swapInputAmount), BalancedJs.utils.toLoop(minimumToReceive))
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -443,7 +444,11 @@ export default function SwapPanel() {
     } else if (inputCurrency.symbol === 'bnUSD') {
       bnJs
         .inject({ account })
-        .bnUSD.swapToOutputCurrency(new BigNumber(swapInputAmount), outputCurrency.symbol, rawSlippage + '')
+        .bnUSD.swapToOutputCurrency(
+          new BigNumber(swapInputAmount),
+          outputCurrency.symbol,
+          BalancedJs.utils.toLoop(minimumToReceive),
+        )
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(

@@ -17,9 +17,7 @@ import bnJs from 'bnJs';
 import { ApplicationModal } from 'store/application/actions';
 import { useWalletModalToggle, useModalOpen, useChangeWalletType } from 'store/application/hooks';
 
-//const displayAddress = (address: string) => `${address.slice(0, 10)}...${address.slice(-15)}`;
-
-const displayAddress = (address: string) => `${address}`;
+const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
 const generatePaths = (point: number) => {
   const paths = HwUtils.splitPath(`${LEDGER_BASE_PATH}/${point}'`);
@@ -276,8 +274,8 @@ export default function WalletModal() {
                       });
                     }}
                   >
-                    <td>{displayAddress(address.address)}</td>
-                    <td>{address.balance} ICX</td>
+                    <td style={{ textAlign: 'left' }}>{displayAddress(address.address)}</td>
+                    <td style={{ textAlign: 'right' }}>{address.balance} ICX</td>
                   </tr>
                 );
               })}

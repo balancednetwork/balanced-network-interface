@@ -2,7 +2,6 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
-import { ledgerConfirmAlert } from 'packages/BalancedJs/ledger';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -31,6 +30,8 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 const DepositStakeMessage = styled.p`
   padding-top: 5px;
   text-align: center;
+  margin-top: 0px;
+  margin-bottom: 0px;
   color: white;
 `;
 
@@ -100,9 +101,9 @@ const CollateralPanel = () => {
 
   const handleCollateralConfirm = async () => {
     if (ledgerAddressPoint >= 0) {
-      if (!ledgerConfirmAlert('Click Ok and check your ledger device?')) {
-        return;
-      }
+      //if (!ledgerConfirmAlert('Click Ok and check your ledger device?')) {
+      //return;
+      //}
     }
     if (bnJs.contractSettings.ledgerSettings.actived) {
       uShouldShowDepositStakeMessage(true);

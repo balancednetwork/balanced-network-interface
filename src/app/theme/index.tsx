@@ -166,47 +166,6 @@ export const FixedGlobalStyle = createGlobalStyle`
     outline: none;
   }
 
-  .list {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  /* Default Table style */
-  .list th {
-    text-align: left;
-    text-transform: uppercase;
-    font-size: 14px;
-    font-weight: normal;
-    letter-spacing: 3px;
-    color: #d5d7db;
-  }
-  .list tbody tr {
-    border-bottom: 1px solid #304a68;
-  }
-  .list tbody tr:last-of-type {
-    border-bottom: none;
-  }
-  .list td {
-    padding-top: 20px;
-    padding-bottom: 20px;
-  }
-  .list tbody tr:last-of-type td {
-    padding-bottom: 0;
-  }
-
-  /* Liquidity Table style */
-  .list.liquidity thead th,
-  .list.liquidity tbody td {
-    text-align: right;
-  }
-  .list.liquidity thead th:first-of-type,
-  .list.liquidity tbody td:first-of-type {
-    text-align: left;
-  }
-  .list.liquidity tbody td:first-of-type {
-    font-weight: bold;
-  }
-
   /* Ledger Wallet style */
   .wallet tbody tr {
     border-bottom: 0px;

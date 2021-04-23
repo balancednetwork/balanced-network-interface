@@ -63,11 +63,6 @@ const ChartContainer = styled(Box)`
   height: ${HEIGHT}px;
 `;
 
-export enum Field {
-  INPUT = 'INPUT',
-  OUTPUT = 'OUTPUT',
-}
-
 export default function SwapPanel() {
   const { account } = useIconReact();
   const balances = useWalletBalances();
@@ -696,12 +691,6 @@ export default function SwapPanel() {
               {loading ? <Spinner centered /> : <TradingViewChart data={data} width={width} type={CHART_TYPES.AREA} />}
             </ChartContainer>
           )}
-          {/* 
-          {chartOption.type === CHART_TYPES.CANDLE && (
-            <Box ref={ref}>
-              <TradingViewChart data={volumeData} candleData={candleData} width={width} type={CHART_TYPES.CANDLE} />
-            </Box>
-          )} */}
         </Box>
       </SectionPanel>
       <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>

@@ -58,7 +58,7 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
         if (value.isLessThan(new BigNumber(1))) {
           return value.precision(2, BigNumber.ROUND_DOWN).toString();
         } else {
-          return value.toFixed(2, 1);
+          return value.toFixed(2, BigNumber.ROUND_DOWN);
         }
       }
       case 'ratio': {

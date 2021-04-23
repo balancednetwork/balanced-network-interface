@@ -473,12 +473,9 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
             bg="bg5"
           />
         </Box>
-        <Typography mb={3} textAlign="right">
+        <Typography mb={5} textAlign="right">
           {`Wallet: ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} ${pair.baseCurrencyKey}
           / ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} ${pair.quoteCurrencyKey}`}
-        </Typography>
-        <Typography variant="h1" mb={5}>
-          {portion.times(100).dp(2).toFormat()}%
         </Typography>
         <Box mb={5}>
           <Nouislider

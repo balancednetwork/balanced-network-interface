@@ -51,12 +51,12 @@ export default class bnUSD extends Contract {
     return this.callIconex(callParams);
   }
 
-  swapToOutputCurrency(value: BigNumber, outputSymbol: string, slippage: string) {
+  swapToOutputCurrency(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
     const data = {
       method: '_swap',
       params: {
         toToken: addresses[this.nid][outputSymbol.toLowerCase()],
-        maxSlippage: slippage,
+        minimumReceive: minimumReceive.toString(),
       },
     };
 

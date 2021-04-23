@@ -197,14 +197,6 @@ export function usePool(poolId: number): Pool | undefined {
   return pools[poolId];
 }
 
-export function useSelectedPoolRate() {
-  const selectedPair = usePoolPair();
-
-  const pool = usePool(selectedPair.poolId);
-
-  return pool?.rate || ONE;
-}
-
 export function useBalances() {
   return useSelector((state: AppState) => state.pool.balances);
 }

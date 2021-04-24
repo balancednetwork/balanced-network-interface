@@ -59,7 +59,7 @@ export default function BnUSDWallet() {
 
   const handleSend = () => {
     bnJs
-      .eject({ account })
+      .inject({ account })
       .bnUSD.transfer(address, BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {

@@ -60,7 +60,7 @@ export default function SendPanel() {
 
   const handleSend = () => {
     bnJs
-      .eject({ account })
+      .inject({ account })
       .BALN.transfer(address, BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {

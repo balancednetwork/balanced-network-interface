@@ -22,8 +22,11 @@ export default class BALN extends Contract {
     return this.call(callParams);
   }
 
-  swapToBnUSD(value: BigNumber, slippage: string) {
-    const data = { method: '_swap', params: { toToken: addresses[this.nid].bnusd }, maxSlippage: slippage };
+  swapToBnUSD(value: BigNumber, minimumReceive: BigNumber) {
+    const data = {
+      method: '_swap',
+      params: { toToken: addresses[this.nid].bnusd, minimumReceive: minimumReceive.toString() },
+    };
 
     return this.transfer(
       addresses[this.nid].dex,
@@ -41,6 +44,10 @@ export default class BALN extends Contract {
         _data: data && IconConverter.toHex(data),
       },
     });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(callParams.params);
+    }
 
     return this.callIconex(callParams);
   }

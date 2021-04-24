@@ -34,10 +34,6 @@ export default class bnUSD extends Contract {
     return this.call(callParams);
   }
 
-  repayLoan(value: BigNumber) {
-    return this.transfer(addresses[this.nid].loans, value, JSON.stringify({ method: '_repay_loan', params: {} }));
-  }
-
   transfer(to: string, value: BigNumber, data?: string) {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
@@ -48,19 +44,19 @@ export default class bnUSD extends Contract {
       },
     });
 
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(callParams.params);
+    }
+
     return this.callIconex(callParams);
   }
 
-  retireAsset(value: BigNumber) {
-    return this.transfer(addresses[this.nid].loans, value, JSON.stringify({ method: '_retire_asset', params: {} }));
-  }
-
-  swapToOutputCurrency(value: BigNumber, outputSymbol: string, slippage: string) {
+  swapToOutputCurrency(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
     const data = {
       method: '_swap',
       params: {
         toToken: addresses[this.nid][outputSymbol.toLowerCase()],
-        maxSlippage: slippage,
+        minimumReceive: minimumReceive.toString(),
       },
     };
 

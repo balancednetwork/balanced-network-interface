@@ -20,9 +20,9 @@ import {
   useLoanInputAmount,
   useLoanTotalBorrowableAmount,
   useLoanDebtHoldingShare,
+  useLoanAPY,
   useLoanTotalRepaid,
   useLoanFetchTotalRepaid,
-  useLoanTotalSupply,
 } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useReward, useCurrentCollateralRatio } from 'store/reward/hooks';
@@ -57,14 +57,6 @@ const useOwnDailyRewards = (): BigNumber => {
   return totalDailyRewards.times(debtHoldShare).div(100);
 };
 
-const useRewardsAPY = (): BigNumber => {
-  const totalSupply = useLoanTotalSupply();
-  const totalDailyRewards = useTotalDailyRewards();
-  const ratio = useRatio();
-
-  return totalDailyRewards.times(365).times(ratio.BALNbnUSDratio).div(totalSupply).times(100);
-};
-
 enum Period {
   'day' = 'Day',
   'week' = 'Week',
@@ -75,7 +67,7 @@ const PERIODS = [Period.day, Period.week, Period.month];
 
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
-  const rewardsAPY = useRewardsAPY();
+  const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
 
   const [show, setShow] = React.useState<boolean>(false);
@@ -141,7 +133,7 @@ const PositionDetailPanel = () => {
 
   return (
     <ActivityPanel bg="bg2">
-      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]} style={{ paddingTop: 30 }}>
+      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]}>
         <Typography variant="h2" mb={5}>
           Position details
         </Typography>
@@ -183,7 +175,7 @@ const PositionDetailPanel = () => {
           </QuestionWrapper>
         </Typography>
 
-        <Flex alignItems="center" justifyContent="space-between" mt={5} mb={4}>
+        <Flex alignItems="center" justifyContent="space-between" mt={[10, 10, 10, 10, 5]} mb={4}>
           <Tooltip
             text="If the bar only fills this section, you have a low risk of liquidation."
             show={show}
@@ -337,6 +329,10 @@ const ActivityPanel = styled(FlexPanel)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     grid-area: initial;
     flex-direction: column;
+  `}
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 0px;
   `}
 `;
 

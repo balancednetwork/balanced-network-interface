@@ -11,24 +11,24 @@ export default class Dex extends Contract {
     this.address = addresses[this.nid].dex;
   }
 
-  getPrice(pid: number) {
+  getPrice(id: number) {
     const callParams = this.paramsBuilder({
       method: 'getPrice',
       params: {
-        _pid: IconConverter.toHex(pid),
+        _id: IconConverter.toHex(id),
       },
     });
 
     return this.call(callParams);
   }
 
-  add(baseToken: string, quoteToken: string, maxBaseValue: BigNumber, quoteValue: BigNumber) {
+  add(baseToken: string, quoteToken: string, baseValue: BigNumber, quoteValue: BigNumber) {
     const payload = this.transactionParamsBuilder({
       method: 'add',
       params: {
         _baseToken: baseToken,
         _quoteToken: quoteToken,
-        _maxBaseValue: IconConverter.toHex(maxBaseValue),
+        _baseValue: IconConverter.toHex(baseValue),
         _quoteValue: IconConverter.toHex(quoteValue),
       },
     });
@@ -36,33 +36,33 @@ export default class Dex extends Contract {
     return this.callIconex(payload);
   }
 
-  balanceOf(owner: string, pid: number) {
+  balanceOf(owner: string, id: number) {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',
       params: {
         _owner: owner,
-        _id: IconConverter.toHex(pid),
+        _id: IconConverter.toHex(id),
       },
     });
     return this.call(callParams);
   }
 
-  totalSupply(pid: number) {
+  totalSupply(id: number) {
     const callParams = this.paramsBuilder({
       method: 'totalSupply',
       params: {
-        _pid: IconConverter.toHex(pid),
+        _id: IconConverter.toHex(id),
       },
     });
 
     return this.call(callParams);
   }
 
-  getPoolTotal(pid: number, token: string) {
+  getPoolTotal(id: number, token: string) {
     const callParams = this.paramsBuilder({
       method: 'getPoolTotal',
       params: {
-        _pid: IconConverter.toHex(pid),
+        _id: IconConverter.toHex(id),
         _token: token,
       },
     });
@@ -74,6 +74,10 @@ export default class Dex extends Contract {
     const payload = this.transferICXParamsBuilder({
       value: value,
     });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
 
     return this.callIconex(payload);
   }
@@ -91,20 +95,29 @@ export default class Dex extends Contract {
       method: 'cancelSicxicxOrder',
     });
 
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+
     return this.callIconex(payload);
   }
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
-  remove(pid: number, value: BigNumber, withdraw: number = 1) {
+  remove(id: number, value: BigNumber, withdraw: number = 1) {
     const payload = this.transactionParamsBuilder({
       method: 'remove',
       params: {
-        _pid: IconConverter.toHex(pid),
+        _id: IconConverter.toHex(id),
         _value: IconConverter.toHex(value),
         _withdraw: IconConverter.toHex(withdraw),
       },
     });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+
     return this.callIconex(payload);
   }
 
@@ -136,6 +149,40 @@ export default class Dex extends Contract {
         _value: IconConverter.toHex(value),
       },
     });
+
+    return this.callIconex(payload);
+  }
+
+  getICXBalance(address: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getICXBalance',
+      params: {
+        _address: address,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  getSicxEarnings(user: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getSicxEarnings',
+      params: {
+        _user: user,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  withdrawSicxEarnings() {
+    const payload = this.transactionParamsBuilder({
+      method: 'withdrawSicxEarnings',
+    });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
 
     return this.callIconex(payload);
   }

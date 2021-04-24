@@ -4,6 +4,7 @@ import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
+import { isMobile } from 'react-device-detect';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -113,7 +114,18 @@ export default function WalletModal() {
 
   const handleOpenWallet = () => {
     toggleWalletModal();
-    requestAddress();
+    if (isMobile) {
+      requestAddress();
+    } else {
+      if (hasExtension) {
+        requestAddress();
+      } else {
+        window.open(
+          'https://chrome.google.com/webstore/detail/iconex/flpiciilemghbmfalicajoolhkkenfel?hl=en',
+          '_blank',
+        );
+      }
+    }
   };
 
   const handleOpenLedger = async () => {
@@ -180,20 +192,10 @@ export default function WalletModal() {
           </Typography>
 
           <Flex alignItems="stretch" justifyContent="space-between" mx={3}>
-            {hasExtension ? (
-              <WalletOption onClick={handleOpenWallet}>
-                <IconexIcon width="50" height="50" />
-                <Text>ICONex</Text>
-              </WalletOption>
-            ) : (
-              <WalletOption
-                as="a"
-                href="https://chrome.google.com/webstore/detail/iconex/flpiciilemghbmfalicajoolhkkenfel?hl=en"
-              >
-                <IconexIcon width="50" height="50" />
-                <Text>ICONex</Text>
-              </WalletOption>
-            )}
+            <WalletOption onClick={handleOpenWallet}>
+              <IconexIcon width="50" height="50" />
+              <Text>ICONex</Text>
+            </WalletOption>
 
             <VerticalDivider text="or"></VerticalDivider>
 

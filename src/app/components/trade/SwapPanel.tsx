@@ -9,6 +9,7 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
 import DropdownText from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
@@ -20,7 +21,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, getFilteredCurrencies, SUPPORTED_BASE_CURRENCIES } from 'constants/currency';
 import { ZERO } from 'constants/index';
-import { useWalletModalToggle } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { usePools } from 'store/pool/hooks';
 import { useRatio, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -76,6 +77,9 @@ export default function SwapPanel() {
   const addTransaction = useTransactionAdder();
   const changeRatioValue = useChangeRatio();
   const toggleWalletModal = useWalletModalToggle();
+
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const refreshPrice = React.useCallback(async () => {
     const res = await bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' });
@@ -355,8 +359,13 @@ export default function SwapPanel() {
     }
   };
 
-  const handleSwapConfirm = () => {
+  const handleSwapConfirm = async () => {
     if (!account) return;
+
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
       bnJs
         .inject({ account })
@@ -364,7 +373,7 @@ export default function SwapPanel() {
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
-            { hash: res.result || res },
+            { hash: res.result },
             {
               pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
                 .pendingMessage,
@@ -378,6 +387,9 @@ export default function SwapPanel() {
         })
         .catch(e => {
           console.error('error', e);
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
         });
     } else if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'ICX') {
       bnJs
@@ -386,7 +398,7 @@ export default function SwapPanel() {
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
-            { hash: res.result || res },
+            { hash: res.result },
             {
               pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
                 .pendingMessage,
@@ -400,6 +412,9 @@ export default function SwapPanel() {
         })
         .catch(e => {
           console.error('error', e);
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
         });
     } else if (inputCurrency.symbol === 'BALN') {
       bnJs
@@ -408,7 +423,7 @@ export default function SwapPanel() {
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
-            { hash: res.result || res },
+            { hash: res.result },
             {
               pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
                 .pendingMessage,
@@ -422,6 +437,9 @@ export default function SwapPanel() {
         })
         .catch(e => {
           console.error('error', e);
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
         });
     } else if (inputCurrency.symbol === 'ICX') {
       bnJs
@@ -430,7 +448,7 @@ export default function SwapPanel() {
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
-            { hash: res.result || res },
+            { hash: res.result },
             {
               pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
                 .pendingMessage,
@@ -444,6 +462,9 @@ export default function SwapPanel() {
         })
         .catch(e => {
           console.error('error', e);
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
         });
     } else if (inputCurrency.symbol === 'bnUSD') {
       bnJs
@@ -452,7 +473,7 @@ export default function SwapPanel() {
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
-            { hash: res.result || res },
+            { hash: res.result },
             {
               pending: swapMessage(swapInputAmount, inputCurrency.symbol, swapOutputAmount, outputCurrency.symbol)
                 .pendingMessage,
@@ -466,6 +487,9 @@ export default function SwapPanel() {
         })
         .catch(e => {
           console.error('error', e);
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
         });
     } else {
       console.log(`this pair is currently not supported on balanced interface`);
@@ -746,6 +770,7 @@ export default function SwapPanel() {
             <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
             <Button onClick={handleSwapConfirm}>Swap</Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>

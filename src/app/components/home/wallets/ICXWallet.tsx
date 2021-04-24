@@ -3,6 +3,7 @@ import React from 'react';
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { isEmpty } from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -64,8 +65,7 @@ export default function ICXWallet() {
       .inject({ account })
       .transfer(address, BalancedJs.utils.toLoop(differenceAmount))
       .then((res: any) => {
-        res = res.result || res;
-        if (res) {
+        if (!isEmpty(res.result)) {
           addTransaction(
             { hash: res },
             {

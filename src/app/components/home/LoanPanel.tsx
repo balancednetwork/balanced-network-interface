@@ -7,6 +7,7 @@ import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { CurrencyField } from 'app/components/Form';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
@@ -15,6 +16,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useCollateralActionHandlers } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
@@ -28,6 +30,9 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
+
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -86,13 +91,17 @@ const LoanPanel = () => {
   const handleLoanConfirm = () => {
     if (!account) return;
 
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     if (shouldBorrow) {
       bnJs
         .inject({ account })
         .Loans.depositAndBorrow(ZERO, { asset: 'bnUSD', amount: BalancedJs.utils.toLoop(differenceAmount) })
-        .then(res => {
+        .then((res: any) => {
           addTransaction(
-            { hash: res.result || res },
+            { hash: res.result },
             {
               pending: 'Borrowing bnUSD...',
               summary: `Borrowed ${differenceAmount.dp(2).toFormat()} bnUSD.`,
@@ -105,6 +114,9 @@ const LoanPanel = () => {
         })
         .catch(e => {
           console.error('error', e);
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
         });
     } else {
       bnJs
@@ -112,7 +124,7 @@ const LoanPanel = () => {
         .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(differenceAmount).abs())
         .then(res => {
           addTransaction(
-            { hash: res.result || res },
+            { hash: res.result },
             {
               pending: 'Repaying bnUSD...',
               summary: `Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,
@@ -125,6 +137,9 @@ const LoanPanel = () => {
         })
         .catch(e => {
           console.error('error', e);
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
         });
     }
   };
@@ -288,6 +303,7 @@ const LoanPanel = () => {
               {shouldBorrow ? 'Borrow' : 'Repay'}
             </Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>

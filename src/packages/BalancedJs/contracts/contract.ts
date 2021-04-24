@@ -3,9 +3,6 @@ import IconService, { IconBuilder, IconConverter } from 'icon-sdk-js';
 import { isEmpty } from 'lodash';
 import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 
-import store from 'store';
-import { changeShouldLedgedSignMessage } from 'store/application/actions';
-
 import { AccountType, ResponseJsonRPCPayload, SettingInjection } from '..';
 import { NetworkId } from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -125,7 +122,14 @@ export class Contract {
     };
   }
 
-  public async callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
+  public async callICONPlugins(payload: any): Promise<ResponseJsonRPCPayload> {
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+    return this.callIconex(payload);
+  }
+
+  private callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
     window.dispatchEvent(
       new CustomEvent('ICONEX_RELAY_REQUEST', {
         detail: {
@@ -146,20 +150,13 @@ export class Contract {
     });
   }
 
-  public async callLedger(payload: any): Promise<any> {
-    store.dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign: true }));
-
+  private async callLedger(payload: any): Promise<any> {
     payload = this.cleanParams(payload);
 
     if (this.contractSettings.ledgerSettings.actived) {
       const signedTransaction = await this.ledger.signTransaction(payload);
-      return this.provider
-        .sendTransaction(signedTransaction)
-        .execute()
-        .then(data => {
-          store.dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign: false }));
-          return data;
-        });
+      const result = await this.provider.sendTransaction(signedTransaction).execute();
+      return { result };
     }
   }
 }

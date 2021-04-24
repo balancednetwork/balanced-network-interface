@@ -3,7 +3,15 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, AppState } from '../index';
-import { addPopup, ApplicationModal, changeWalletType, PopupContent, removePopup, setOpenModal } from './actions';
+import {
+  addPopup,
+  ApplicationModal,
+  changeShouldLedgedSignMessage,
+  changeWalletType,
+  PopupContent,
+  removePopup,
+  setOpenModal,
+} from './actions';
 import { WalletType } from './reducer';
 
 // returns a function that allows adding a popup
@@ -68,4 +76,14 @@ export function useChangeWalletType(): (walletType: WalletType) => void {
 export function useShouldLedgerSign(): AppState['application']['shouldLedgerSign'] {
   const shouldSignLedger = useSelector((state: AppState) => state.application.shouldLedgerSign);
   return shouldSignLedger;
+}
+
+export function useChangeShouldLedgerSign(): (shouldLedgerSign: boolean) => void {
+  const dispatch = useDispatch();
+  return useCallback(
+    (shouldLedgerSign: boolean) => {
+      dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign }));
+    },
+    [dispatch],
+  );
 }

@@ -5,9 +5,9 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { CurrencyField } from 'app/components/Form';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
@@ -16,7 +16,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
-import { useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
@@ -28,17 +28,11 @@ import { useLockedICXAmount, useLoanActionHandlers } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
-const DepositStakeMessage = styled.p`
-  padding-top: 5px;
-  text-align: center;
-  margin-top: 0px;
-  margin-bottom: 0px;
-  color: white;
-`;
-
 const CollateralPanel = () => {
   const { account, ledgerAddressPoint } = useIconReact();
+
   const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -106,17 +100,14 @@ const CollateralPanel = () => {
       //return;
       //}
     }
-    // if (bnJs.contractSettings.ledgerSettings.actived) {
-    //   changeShouldLedgedSignMessage(true);
-    // }
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
     if (shouldDeposit) {
       try {
-        const hash = await bnJs
+        const { result: hash } = await bnJs
           .inject({ account: account })
-          .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount))
-          .then((res: any) => {
-            return res.result || res;
-          });
+          .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount));
         addTransaction(
           { hash },
           {
@@ -131,17 +122,14 @@ const CollateralPanel = () => {
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
       } finally {
-        // uShouldShowDepositStakeMessage(false);
+        changeShouldLedgerSign(false);
       }
     } else {
       try {
         const collateralAmountInSICX = collateralAmount.div(ratio.sICXICXratio);
-        const hash = await bnJs
+        const { result: hash } = await bnJs
           .inject({ account: account })
-          .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX))
-          .then((res: any) => {
-            return res.result || res;
-          });
+          .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX));
         addTransaction(
           { hash }, //
           {
@@ -156,7 +144,7 @@ const CollateralPanel = () => {
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
       } finally {
-        // uShouldShowDepositStakeMessage(false);
+        changeShouldLedgerSign(false);
       }
     }
   };
@@ -308,11 +296,7 @@ const CollateralPanel = () => {
               {shouldDeposit ? 'Deposit' : 'Withdraw'}
             </Button>
           </Flex>
-          {shouldLedgerSign && (
-            <DepositStakeMessage className="label text-center text-white">
-              Confirm the transaction on your Ledger.
-            </DepositStakeMessage>
-          )}
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>

@@ -17,11 +17,7 @@ export default class Loans extends Contract {
       params: { _value: IconConverter.toHex(value) },
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
-
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 
   depositAndBorrow(
@@ -39,11 +35,7 @@ export default class Loans extends Contract {
       },
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
-
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 
   returnAsset(symbol: string, value: BigNumber) {
@@ -55,11 +47,7 @@ export default class Loans extends Contract {
       },
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
-
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 
   getAvailableAssets() {

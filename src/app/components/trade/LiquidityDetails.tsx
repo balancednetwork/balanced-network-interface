@@ -11,6 +11,7 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
@@ -21,6 +22,7 @@ import { ReactComponent as SICXIcon } from 'assets/logos/sicx.svg';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -179,7 +181,14 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   const addTransaction = useTransactionAdder();
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
+
   const handleCancelOrder = () => {
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     bnJs
       .inject({ account })
       .Dex.cancelSicxIcxOrder()
@@ -195,6 +204,9 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
       })
       .catch(e => {
         console.error('error', e);
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
       });
   };
 
@@ -214,6 +226,9 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
       })
       .catch(e => {
         console.error('error', e);
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
       });
   };
 
@@ -270,6 +285,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
             <TextButton onClick={toggleOpen1}>Cancel</TextButton>
             <Button onClick={handleCancelOrder}>Withdraw</Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
 
@@ -287,6 +303,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
             <TextButton onClick={toggleOpen2}>Cancel</TextButton>
             <Button onClick={handleWithdrawEarnings}>Withdraw</Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>
@@ -331,6 +348,9 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const balances = useWalletBalances();
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.poolId);
+
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
     typedValue: string;
@@ -409,6 +429,10 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const handleWithdraw = () => {
     if (!account) return;
 
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     const t = lpBalance?.balance.times(portion) || ZERO;
     const baseT = t.times(rate1);
     const quoteT = t.times(rate2);
@@ -438,6 +462,9 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
       })
       .catch(e => {
         console.error('error', e);
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
       });
   };
 
@@ -518,6 +545,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
             <TextButton onClick={toggleOpen}>Cancel</TextButton>
             <Button onClick={handleWithdraw}>Withdraw</Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>

@@ -103,10 +103,10 @@ const ReturnICDSection = () => {
     bnJs
       .inject({ account: account })
       .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(new BigNumber(retireAmount)))
-      .then(res => {
+      .then((res: any) => {
         setOpen(false);
         addTransaction(
-          { hash: res.result || res },
+          { hash: res.result },
           {
             pending: retireMessage(retireAmount, 'sICX').pendingMessage,
             summary: retireMessage(retireAmount, 'sICX').successMessage,

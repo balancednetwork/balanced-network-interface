@@ -106,10 +106,6 @@ export class BalancedJs {
       value,
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return contract.callLedger(payload.params);
-    }
-
-    return contract.callIconex(payload);
+    return contract.callICONPlugins(payload);
   }
 }

@@ -9,10 +9,12 @@ import { Box, Flex } from 'rebass/styled-components';
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
@@ -20,6 +22,9 @@ import { Grid, MaxButton } from '../utils';
 
 export default function SendPanel() {
   const [value, setValue] = React.useState('');
+
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleCurrencyInput = (value: string) => {
     setValue(value);
@@ -57,6 +62,10 @@ export default function SendPanel() {
   const addTransaction = useTransactionAdder();
 
   const handleSend = () => {
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     bnJs
       .inject({ account })
       .sICX.transfer(address, BalancedJs.utils.toLoop(differenceAmount))
@@ -78,6 +87,9 @@ export default function SendPanel() {
           // for example: out of balance
           console.error(res);
         }
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
       });
   };
 
@@ -146,6 +158,7 @@ export default function SendPanel() {
               Send
             </Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>

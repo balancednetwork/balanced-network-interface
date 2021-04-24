@@ -15,11 +15,7 @@ export default class Rewards extends Contract {
       method: 'claimRewards',
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
-
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 
   getBalnHolding(holder: string) {

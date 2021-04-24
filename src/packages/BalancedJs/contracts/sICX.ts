@@ -61,11 +61,7 @@ export default class sICX extends Contract {
       },
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(callParams.params);
-    }
-
-    return this.callIconex(callParams);
+    return this.callICONPlugins(callParams);
   }
 
   unstake(value: BigNumber) {

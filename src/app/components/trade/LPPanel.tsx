@@ -30,22 +30,22 @@ const useAvailableLPTokenBalance = (): BigNumber => {
   const balances = useWalletBalances();
   const pool = usePool(selectedPair.poolId);
 
-  if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
-    if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-      return balances['ICX'];
-    }
-
-    if (
-      (balances[pool?.baseCurrencyKey] as BigNumber)
-        .times(pool?.rate)
-        .isLessThanOrEqualTo(balances[pool?.quoteCurrencyKey])
-    ) {
-      return balances[pool?.baseCurrencyKey].times(pool.total).div(pool.base);
-    } else {
-      return balances[pool?.quoteCurrencyKey].times(pool.total).div(pool.quote);
-    }
+  if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+    return balances['ICX'];
   } else {
-    return ZERO;
+    if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
+      if (
+        (balances[pool?.baseCurrencyKey] as BigNumber)
+          .times(pool?.rate)
+          .isLessThanOrEqualTo(balances[pool?.quoteCurrencyKey])
+      ) {
+        return balances[pool?.baseCurrencyKey].times(pool.total).div(pool.base);
+      } else {
+        return balances[pool?.quoteCurrencyKey].times(pool.total).div(pool.quote);
+      }
+    } else {
+      return ZERO;
+    }
   }
 };
 

@@ -6,6 +6,7 @@ import {
   changeBadDebt,
   changeTotalSupply,
   changeTotalRepaid,
+  changeTotalCollateralSold,
   adjust,
   cancel,
   type,
@@ -17,6 +18,7 @@ export interface LoanState {
   badDebt: BigNumber;
   totalSupply: BigNumber;
   totalRepaid: BigNumber;
+  totalCollateralSold: BigNumber;
 
   // loan panel UI state
   state: {
@@ -32,6 +34,7 @@ const initialState: LoanState = {
   badDebt: new BigNumber(0),
   totalSupply: new BigNumber(0),
   totalRepaid: new BigNumber(0),
+  totalCollateralSold: new BigNumber(0),
 
   // loan panel UI state
   state: {
@@ -67,5 +70,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(changeTotalRepaid, (state, { payload: { totalRepaid } }) => {
       state.totalRepaid = totalRepaid;
+    })
+    .addCase(changeTotalCollateralSold, (state, { payload: { totalCollateralSold } }) => {
+      state.totalCollateralSold = totalCollateralSold;
     }),
 );

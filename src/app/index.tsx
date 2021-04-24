@@ -11,8 +11,9 @@ import TransactionUpdater from 'store/transactions/updater';
 
 import { NotFoundPage } from './components/NotFoundPage/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
-import { TradePage } from './containers/TradePage/Loadable';
-import { VotePage } from './containers/VotePage/Loadable';
+import { StyleGuidePage } from './containers/StyleGuidePage';
+import { TradePage } from './containers/TradePage';
+import { VotePage } from './containers/VotePage';
 
 function Updaters() {
   return (
@@ -48,6 +49,7 @@ export function App() {
               <Route exact path="/" component={HomePage} />
               <Route exact path="/vote" component={VotePage} />
               <Route exact path="/trade" component={TradePage} />
+              <Route exact path="/style-guide" component={StyleGuidePage} />
               <Route component={NotFoundPage} />
             </Switch>
           </BrowserRouter>

@@ -16,9 +16,11 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
+  width: 100px;
   margin-right: 75px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 75px;
     margin-right: 15px;
   `}
 `;
@@ -52,24 +54,6 @@ const WalletMenuButton = styled(Button)`
   padding: 7px 25px;
 `;
 
-const ChangeWalletButton = styled(Link)`
-  cursor: pointer;
-`;
-
-export enum NetworkId {
-  MAINNET = 1,
-  YEOUIDO = 3,
-  EULJIRO = 2,
-  PAGODA = 80,
-}
-
-const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
-
-const NETWORK_NAMES = {
-  [NetworkId.MAINNET]: 'Mainet',
-  [NetworkId.YEOUIDO]: 'YEOUDIO',
-};
-
 export default React.memo(function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
@@ -100,16 +84,11 @@ export default React.memo(function Header(props: { title?: string; className?: s
         <Flex alignItems="center">
           <StyledLogo />
           <Typography variant="h1">{title}</Typography>
-          {NETWORK_ID !== NetworkId.MAINNET && (
-            <Typography variant="h3" color="alert">
-              {NETWORK_NAMES[NETWORK_ID]}
-            </Typography>
-          )}
         </Flex>
 
         {!account && (
           <Flex alignItems="center">
-            <Button onClick={toggleWalletModal}>Sign in</Button>
+            <Button onClick={toggleWalletModal}>Sign In</Button>
           </Flex>
         )}
 
@@ -131,8 +110,8 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <WalletMenu>
-                      <ChangeWalletButton onClick={handleChangeWallet}>Change wallet</ChangeWalletButton>
-                      <WalletMenuButton onClick={handleDisconnectWallet}>Sign out</WalletMenuButton>
+                      <Link onClick={handleChangeWallet}>Change wallet</Link>
+                      <WalletMenuButton onClick={handleDisconnectWallet}>Sign Out</WalletMenuButton>
                     </WalletMenu>
                   </DropdownPopper>
                 </div>

@@ -55,11 +55,7 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
         }
       }
       case 'input': {
-        if (value.isLessThan(new BigNumber(1))) {
-          return value.precision(2, BigNumber.ROUND_DOWN).toString();
-        } else {
-          return value.toFixed(2, BigNumber.ROUND_DOWN);
-        }
+        return value.toFixed(2, 1);
       }
       case 'ratio': {
         if (value.decimalPlaces() === 0) {

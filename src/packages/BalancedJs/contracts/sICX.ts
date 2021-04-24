@@ -12,7 +12,7 @@ export default class sICX extends Contract {
   }
 
   depositAndBorrow(value: BigNumber) {
-    const data = { _asset: '', _amount: 0 };
+    const data = { method: '_deposit_and_borrow', params: { _sender: this.account, _asset: '', _amount: 0 } };
     return this.transfer(addresses[this.nid].loans, value, JSON.stringify(data));
   }
 
@@ -20,11 +20,8 @@ export default class sICX extends Contract {
     return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
   }
 
-  swapBybnUSD(value: BigNumber, minimumReceive: BigNumber) {
-    const data = {
-      method: '_swap',
-      params: { toToken: addresses[this.nid].bnusd, minimumReceive: minimumReceive.toString() },
-    };
+  swapBybnUSD(value: BigNumber, slippage: string) {
+    const data = { method: '_swap', params: { toToken: addresses[this.nid].bnusd }, maxSlippage: slippage };
 
     return this.transfer(
       addresses[this.nid].dex,
@@ -63,10 +60,6 @@ export default class sICX extends Contract {
         _data: data && IconConverter.toHex(data),
       },
     });
-
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(callParams.params);
-    }
 
     return this.callIconex(callParams);
   }

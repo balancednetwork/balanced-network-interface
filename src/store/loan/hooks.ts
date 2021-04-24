@@ -7,12 +7,10 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { MANDATORY_COLLATERAL_RATIO, ZERO } from 'constants/index';
+import { MANDATORY_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
-import { useAPYs } from 'store/pool/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
 
 import { AppState } from '..';
 import {
@@ -126,9 +124,9 @@ export function useLoanFetchInfo(account?: string | null) {
     (account: string) => {
       if (account) {
         Promise.all([
-          bnJs.Loans.getAvailableAssets(),
+          bnJs.Loans.eject({ account }).getAvailableAssets(),
           bnJs.bnUSD.totalSupply(),
-          bnJs.Loans.getAccountPositions(account),
+          bnJs.Loans.eject({ account }).getAccountPositions(),
         ]).then(([resultGetAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
           const bnUSDbadDebt = BalancedJs.utils.toIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
           const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
@@ -158,31 +156,25 @@ export function useLoanState() {
   return state;
 }
 
-export function useLoanActionHandlers() {
+export function useLoanType(): (payload: {
+  independentField?: Field;
+  typedValue?: string;
+  inputType?: 'slider' | 'text';
+}) => void {
   const dispatch = useDispatch();
 
-  const onFieldAInput = React.useCallback(
-    (value: string) => {
-      dispatch(type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' }));
+  return React.useCallback(
+    payload => {
+      dispatch(type(payload));
     },
     [dispatch],
   );
+}
 
-  const onFieldBInput = React.useCallback(
-    (value: string) => {
-      dispatch(type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' }));
-    },
-    [dispatch],
-  );
+export function useLoanAdjust(): (isAdjust: boolean) => void {
+  const dispatch = useDispatch();
 
-  const onSlide = React.useCallback(
-    (values: string[], handle: number) => {
-      dispatch(type({ typedValue: values[handle], inputType: 'slider' }));
-    },
-    [dispatch],
-  );
-
-  const onAdjust = React.useCallback(
+  return React.useCallback(
     isAdjust => {
       if (isAdjust) {
         dispatch(adjust());
@@ -192,13 +184,6 @@ export function useLoanActionHandlers() {
     },
     [dispatch],
   );
-
-  return {
-    onFieldAInput,
-    onFieldBInput,
-    onSlide,
-    onAdjust,
-  };
 }
 
 export function useLoanTotalBorrowableAmount() {
@@ -243,18 +228,4 @@ export function useLoanDebtHoldingShare() {
   return React.useMemo(() => {
     return loanInputAmount.div(loanTotalSupply.minus(loanBadDebt)).multipliedBy(100);
   }, [loanInputAmount, loanBadDebt, loanTotalSupply]);
-}
-
-export function useLoanUsedAmount(): BigNumber {
-  const remainingAmount = useWalletBalances()['bnUSD'];
-  const borrowedAmount = useLoanBorrowedAmount();
-
-  return React.useMemo(() => {
-    return borrowedAmount.isGreaterThan(remainingAmount) ? borrowedAmount.minus(remainingAmount).plus(0.1) : ZERO;
-  }, [borrowedAmount, remainingAmount]);
-}
-
-export function useLoanAPY(): BigNumber {
-  const apys = useAPYs();
-  return apys['Loans'] || ZERO;
 }

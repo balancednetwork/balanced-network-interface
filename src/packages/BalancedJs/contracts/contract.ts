@@ -1,52 +1,28 @@
 import BigNumber from 'bignumber.js';
 import IconService, { IconBuilder, IconConverter } from 'icon-sdk-js';
-import { isEmpty } from 'lodash';
 import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 
-import { AccountType, ResponseJsonRPCPayload, SettingInjection } from '..';
+import { AccountType, ResponseJsonRPCPayload, SettingEjection } from '..';
 import { NetworkId } from '../addresses';
 import ContractSettings from '../contractSettings';
-import { Ledger } from '../ledger';
-
-export interface TransactionParams {
-  jsonrpc: string;
-  method: string;
-  params: any;
-  id: number;
-}
 
 export class Contract {
   protected provider: IconService;
   protected nid: NetworkId;
   public address: string = '';
-  public ledger: Ledger;
 
-  constructor(protected contractSettings: ContractSettings) {
+  constructor(private contractSettings: ContractSettings) {
     this.provider = contractSettings.provider;
     this.nid = contractSettings.networkId;
-    this.ledger = new Ledger(contractSettings);
-    this.contractSettings.ledgerSettings.actived = !isEmpty(this.ledger.viewSetting().transport);
   }
 
   protected get account(): AccountType {
     return this.contractSettings.account;
   }
 
-  public inject({ account, legerSettings }: SettingInjection) {
-    this.contractSettings.account = account || this.contractSettings.account;
-    this.contractSettings.ledgerSettings.transport =
-      legerSettings?.transport || this.contractSettings.ledgerSettings.transport;
-    this.contractSettings.ledgerSettings.actived = !isEmpty(this.contractSettings.ledgerSettings.transport);
-    this.contractSettings.ledgerSettings.path = legerSettings?.path || this.contractSettings.ledgerSettings.path;
+  public eject({ account }: SettingEjection) {
+    this.contractSettings.account = account;
     return this;
-  }
-
-  cleanParams(params: any) {
-    return JSON.parse(
-      JSON.stringify(params, (key, value) => {
-        return isEmpty(value) && value !== 0 ? undefined : value;
-      }),
-    );
   }
 
   public paramsBuilder({
@@ -66,7 +42,7 @@ export class Contract {
   }
 
   /**
-   * @returns Transaction params packaging.
+   * @returns payload to call Iconex wallet
    */
   public transactionParamsBuilder({
     method,
@@ -78,9 +54,8 @@ export class Contract {
     params?: {
       [key: string]: any;
     };
-  }): TransactionParams {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-    const payload = callTransactionBuilder
+  }) {
+    const payload = new IconBuilder.CallTransactionBuilder()
       .from(this.account)
       .to(this.address)
       .method(method)
@@ -103,13 +78,13 @@ export class Contract {
   /**
    * @returns transaction transfer ICX to call ICONex
    */
-  public transferICXParamsBuilder({ value }: { value: BigNumber }): TransactionParams {
+  public transferICXParamsBuilder({ value }: { value: BigNumber }) {
     const payload = new IconBuilder.IcxTransactionBuilder()
       .from(this.account)
       .to(this.address)
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)
-      .stepLimit(IconConverter.toBigNumber(2000000))
+      .stepLimit(IconConverter.toBigNumber(1000000))
       .value(value)
       .version(IconConverter.toBigNumber(3))
       .build();
@@ -143,11 +118,8 @@ export class Contract {
     });
   }
 
-  public async callLedger(payload: any): Promise<any> {
-    payload = this.cleanParams(payload);
-    if (this.contractSettings.ledgerSettings.actived) {
-      const signedTransaction = await this.ledger.signTransaction(payload);
-      return this.provider.sendTransaction(signedTransaction).execute();
-    }
+  public async getICXBalance(): Promise<BigNumber> {
+    const balance = await this.provider.getBalance(this.account).execute();
+    return balance;
   }
 }

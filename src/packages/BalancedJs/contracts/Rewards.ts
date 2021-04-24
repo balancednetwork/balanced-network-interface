@@ -10,14 +10,10 @@ export default class Rewards extends Contract {
     this.address = addresses[this.nid].rewards;
   }
 
-  async claimRewards() {
+  claimRewards() {
     const payload = this.transactionParamsBuilder({
       method: 'claimRewards',
     });
-
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
 
     return this.callIconex(payload);
   }
@@ -46,17 +42,6 @@ export default class Rewards extends Contract {
       method: 'getEmission',
       params: {
         _day: day && IconConverter.toHex(day),
-      },
-    });
-
-    return this.call(payload);
-  }
-
-  getAPY(name: string) {
-    const payload = this.paramsBuilder({
-      method: 'getAPY',
-      params: {
-        _name: name,
       },
     });
 

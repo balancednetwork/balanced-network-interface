@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { MANDATORY_COLLATERAL_RATIO, ZERO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
+import { useAPYs } from 'store/pool/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -193,4 +194,9 @@ export function useLoanUsedAmount(): BigNumber {
   return React.useMemo(() => {
     return borrowedAmount.isGreaterThan(remainingAmount) ? borrowedAmount.minus(remainingAmount).plus(0.1) : ZERO;
   }, [borrowedAmount, remainingAmount]);
+}
+
+export function useLoanAPY(): BigNumber {
+  const apys = useAPYs();
+  return apys['Loans'] || ZERO;
 }

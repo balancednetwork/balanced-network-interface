@@ -89,6 +89,7 @@ const PositionDetailPanel = () => {
 
   // Rebalancing section
   const loanTotalRepaid = useLoanTotalRepaid();
+  const collateralTotalSold = useLoanTotalCollateralSold();
   const updateLoanTotalRepaid = useLoanFetchTotalRepaid();
 
   React.useEffect(() => {

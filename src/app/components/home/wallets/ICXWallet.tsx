@@ -75,7 +75,7 @@ export default function ICXWallet() {
       .then((res: any) => {
         if (!isEmpty(res.result)) {
           addTransaction(
-            { hash: res },
+            { hash: res.result },
             {
               pending: `Sending ICX...`,
               summary: `Sent ${differenceAmount.dp(2).toFormat()} ICX.`,

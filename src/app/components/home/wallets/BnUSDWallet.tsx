@@ -74,7 +74,7 @@ export default function BnUSDWallet() {
       .then((res: any) => {
         if (!isEmpty(res.result)) {
           addTransaction(
-            { hash: res },
+            { hash: res.result },
             {
               pending: `Sending bnUSD...`,
               summary: `Sent ${differenceAmount.dp(2).toFormat()} bnUSD.`,

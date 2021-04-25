@@ -155,8 +155,9 @@ export class Contract {
 
     if (this.contractSettings.ledgerSettings.actived) {
       const signedTransaction = await this.ledger.signTransaction(payload);
-      const result = await this.provider.sendTransaction(signedTransaction).execute();
-      return { result };
+      return {
+        result: await this.provider.sendTransaction(signedTransaction).execute(),
+      };
     }
   }
 }

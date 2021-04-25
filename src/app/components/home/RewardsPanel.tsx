@@ -5,13 +5,13 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+//import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -23,7 +23,7 @@ const RewardsPanel = () => {
   const addTransaction = useTransactionAdder();
   // const walletBalance = useWalletBalances();
 
-  const shouldLedgerSign = useShouldLedgerSign();
+  //const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleClaim = () => {
@@ -154,7 +154,6 @@ const RewardsPanel = () => {
             Claim rewards
           </Button>
         </Flex>
-        {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
       </BoxPanel>
 
       {/* Stake new Balance Tokens Modal */}

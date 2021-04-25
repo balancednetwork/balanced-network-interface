@@ -186,7 +186,7 @@ export default function WalletModal() {
   const getBack = React.useCallback(async () => {
     if (offset <= 0) {
       // should disable page number < 0;
-      alert('This is first pages, cannot request more address, try other please.');
+      console.log('This is first pages, cannot request more address, try other please.');
       return;
     }
     const currentOffset = offset - limit;

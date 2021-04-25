@@ -71,12 +71,14 @@ export function useLoanFetchInfo(account?: string | null) {
           bnJs.Loans.getAvailableAssets(),
           bnJs.bnUSD.totalSupply(),
           bnJs.Loans.getAccountPositions(account),
-        ]).then(([resultGetAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
-          const bnUSDbadDebt = BalancedJs.utils.toIcx(resultGetAvailableAssets['bnUSD']['bad_debt']);
+        ]).then(([resultAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
+          const bnUSDbadDebt = resultAvailableAssets['bnUSD']
+            ? BalancedJs.utils.toIcx(resultAvailableAssets['bnUSD']['bad_debt'] || '0')
+            : new BigNumber(0);
           const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
 
           const bnUSDDebt = resultDebt['assets']
-            ? BalancedJs.utils.toIcx(new BigNumber(parseInt(resultDebt['assets']['bnUSD'] || 0, 16)))
+            ? BalancedJs.utils.toIcx(resultDebt['assets']['bnUSD'] || '0')
             : new BigNumber(0);
 
           changeBadDebt(bnUSDbadDebt);

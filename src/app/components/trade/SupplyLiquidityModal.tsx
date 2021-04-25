@@ -76,6 +76,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
       })
       .catch(e => {
         console.error('error', e);
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
       });
   };
 

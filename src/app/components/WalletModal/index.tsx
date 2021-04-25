@@ -296,7 +296,7 @@ export default function WalletModal() {
             {getPageNumbers(currentLedgerAddressPage).map(value => {
               return (
                 <li
-                  key={Date.now()}
+                  key={Date.now() + Math.random()}
                   className={value === currentLedgerAddressPage ? 'actived' : ''}
                   onClick={async () => {
                     await getLedgerPage(value);

@@ -149,8 +149,12 @@ export function useFetchPools() {
   React.useEffect(() => {
     BASE_SUPPORTED_PAIRS.forEach(pair => {
       const poolId = pair.poolId;
-      const rewardShare = rules[pair.id];
-
+      let rewardShare: BigNumber;
+      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        rewardShare = rules['sICX/ICX'];
+      } else {
+        rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
+      }
       changeReward(poolId, emission.times(rewardShare));
     });
   }, [rules, emission, changeReward]);

@@ -20,10 +20,14 @@ import {
   useLoanInputAmount,
   useLoanTotalBorrowableAmount,
   useLoanDebtHoldingShare,
+  useLoanTotalRepaid,
+  useLoanFetchTotalRepaid,
+  useLoanTotalCollateralSold,
   useLoanAPY,
 } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useReward, useCurrentCollateralRatio } from 'store/reward/hooks';
+import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
 
@@ -75,6 +79,15 @@ const PositionDetailPanel = () => {
   // ratio
   const ratio = useRatio();
 
+  // Rebalancing section
+  const loanTotalRepaid = useLoanTotalRepaid();
+  const collateralTotalSold = useLoanTotalCollateralSold();
+  const updateLoanTotalRepaid = useLoanFetchTotalRepaid();
+
+  React.useEffect(() => {
+    updateLoanTotalRepaid(Period.day);
+  }, [updateLoanTotalRepaid]);
+
   // loan
   const loanInputAmount = useLoanInputAmount();
   const totalAvailableLoanAmount = useLoanTotalBorrowableAmount();
@@ -113,6 +126,7 @@ const PositionDetailPanel = () => {
   const handlePeriod = (p: Period) => {
     closeMenu();
     setPeriod(p);
+    updateLoanTotalRepaid(p);
   };
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
@@ -272,11 +286,11 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">0 ICX</Typography>
+                <Typography variant="p">{formatBigNumber(collateralTotalSold, 'currency')} ICX</Typography>
                 <Typography>Collateral sold</Typography>
               </Box>
               <Box width={1 / 2}>
-                <Typography variant="p">0 bnUSD</Typography>
+                <Typography variant="p">{formatBigNumber(loanTotalRepaid, 'currency')} bnUSD</Typography>
                 <Typography>Loan repaid</Typography>
               </Box>
             </Flex>

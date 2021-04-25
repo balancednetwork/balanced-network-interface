@@ -10,6 +10,7 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
@@ -17,7 +18,7 @@ import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
-import { useWalletModalToggle } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -41,6 +42,8 @@ const ReturnICDSection = () => {
   const [swapFee, setSwapFee] = React.useState('0');
   const [open, setOpen] = React.useState(false);
   const toggleWalletModal = useWalletModalToggle();
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleTypeInput = React.useCallback(
     (val: string) => {
@@ -93,9 +96,14 @@ const ReturnICDSection = () => {
 
   const handleRetireDismiss = () => {
     setOpen(false);
+    changeShouldLedgerSign(false);
   };
 
   const handleRetireConfirm = () => {
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     if (parseFloat(retireAmount) < 10) {
       console.log(`Can not retire with amount lower than minimum value`);
       return;
@@ -103,10 +111,10 @@ const ReturnICDSection = () => {
     bnJs
       .inject({ account: account })
       .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(new BigNumber(retireAmount)))
-      .then(res => {
+      .then((res: any) => {
         setOpen(false);
         addTransaction(
-          { hash: res.result || res },
+          { hash: res.result },
           {
             pending: retireMessage(retireAmount, 'sICX').pendingMessage,
             summary: retireMessage(retireAmount, 'sICX').successMessage,
@@ -115,6 +123,9 @@ const ReturnICDSection = () => {
       })
       .catch(e => {
         console.error('error', e);
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
       });
   };
 
@@ -198,6 +209,7 @@ const ReturnICDSection = () => {
             <TextButton onClick={handleRetireDismiss}>Cancel</TextButton>
             <Button onClick={handleRetireConfirm}>Confirm</Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>

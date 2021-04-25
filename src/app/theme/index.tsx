@@ -245,6 +245,10 @@ export const FixedGlobalStyle = createGlobalStyle`
   .white {
     color: #FFFFFF;
   }
+
+  .actived {
+    border-color: #2ca9b7 !important;
+  }
 `;
 
 export const ThemedGlobalStyle = createGlobalStyle`

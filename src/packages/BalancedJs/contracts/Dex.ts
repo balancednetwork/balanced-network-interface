@@ -33,7 +33,7 @@ export default class Dex extends Contract {
       },
     });
 
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 
   balanceOf(owner: string, id: number) {
@@ -75,11 +75,7 @@ export default class Dex extends Contract {
       value: value,
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
-
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 
   getICXWithdrawLock() {
@@ -95,11 +91,7 @@ export default class Dex extends Contract {
       method: 'cancelSicxicxOrder',
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
-
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
@@ -114,11 +106,7 @@ export default class Dex extends Contract {
       },
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
-
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 
   getFees() {
@@ -150,7 +138,7 @@ export default class Dex extends Contract {
       },
     });
 
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 
   getICXBalance(address: string) {
@@ -180,10 +168,6 @@ export default class Dex extends Contract {
       method: 'withdrawSicxEarnings',
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
-
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 }

@@ -25,6 +25,6 @@ export default class ICX extends Contract {
       },
     });
 
-    return this.callIconex(callParams);
+    return this.callICONPlugins(callParams);
   }
 }

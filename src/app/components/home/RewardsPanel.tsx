@@ -5,11 +5,13 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
+//import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -19,57 +21,66 @@ const RewardsPanel = () => {
   const { account } = useIconReact();
   const wallet = useWalletBalances();
   const addTransaction = useTransactionAdder();
-  const walletBalance = useWalletBalances();
+  // const walletBalance = useWalletBalances();
+
+  //const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleClaim = () => {
-    if (account) {
-      bnJs
-        .inject({ account: account })
-        .Rewards.claimRewards()
-        .then(res => {
-          addTransaction(
-            { hash: res.result || res }, //
-            {
-              summary: `Claimed ${reward.dp(2).toFormat()} BALN.`,
-            },
-          );
-          toggleOpen();
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
+    if (!account) return;
+
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
     }
-  };
 
-  const reward = wallet.BALNreward;
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleClose = () => {
     bnJs
       .inject({ account: account })
       .Rewards.claimRewards()
       .then(res => {
         addTransaction(
-          { hash: res.result || res }, //
+          { hash: res.result }, //
           {
-            summary: `${
-              !account
-                ? '-'
-                : walletBalance.BALNreward?.toNumber() === 0 || walletBalance.BALNreward?.isNaN()
-                ? '0 BALN'
-                : walletBalance.BALNreward?.toFixed(2) + 'BALN'
-            } ICX added to your wallet.`,
+            summary: `Claimed ${reward.dp(2).toFormat()} BALN.`,
           },
         );
-        // close modal
-        //toggleOpen();
-        // reset collateral panel values
-        setOpen(false);
+        toggleOpen();
       })
       .catch(e => {
         console.error('error', e);
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
       });
   };
+
+  const reward = wallet.BALNreward;
+
+  // const handleClose = () => {
+  //   bnJs
+  //     .inject({ account: account })
+  //     .Rewards.claimRewards()
+  //     .then(res => {
+  //       addTransaction(
+  //         { hash: res.result }, //
+  //         {
+  //           summary: `${
+  //             !account
+  //               ? '-'
+  //               : walletBalance.BALNreward?.toNumber() === 0 || walletBalance.BALNreward?.isNaN()
+  //               ? '0 BALN'
+  //               : walletBalance.BALNreward?.toFixed(2) + 'BALN'
+  //           } ICX added to your wallet.`,
+  //         },
+  //       );
+  //       // close modal
+  //       //toggleOpen();
+  //       // reset collateral panel values
+  //       setOpen(false);
+  //     })
+  //     .catch(e => {
+  //       console.error('error', e);
+  //     });
+  // };
 
   const ratio = useRatio();
 

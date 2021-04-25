@@ -44,11 +44,7 @@ export default class bnUSD extends Contract {
       },
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(callParams.params);
-    }
-
-    return this.callIconex(callParams);
+    return this.callICONPlugins(callParams);
   }
 
   swapToOutputCurrency(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {

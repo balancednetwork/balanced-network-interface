@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, AppState } from '../index';
-import { ApplicationModal, changeWalletType, setOpenModal } from './actions';
+import { changeShouldLedgedSignMessage, ApplicationModal, changeWalletType, setOpenModal } from './actions';
 import { WalletType } from './reducer';
 
 export function useModalOpen(modal: ApplicationModal): boolean {
@@ -31,6 +31,21 @@ export function useChangeWalletType(): (walletType: WalletType) => void {
   return useCallback(
     (walletType: WalletType) => {
       dispatch(changeWalletType({ walletType }));
+    },
+    [dispatch],
+  );
+}
+
+export function useShouldLedgerSign(): AppState['application']['shouldLedgerSign'] {
+  const shouldSignLedger = useSelector((state: AppState) => state.application.shouldLedgerSign);
+  return shouldSignLedger;
+}
+
+export function useChangeShouldLedgerSign(): (shouldLedgerSign: boolean) => void {
+  const dispatch = useDispatch();
+  return useCallback(
+    (shouldLedgerSign: boolean) => {
+      dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign }));
     },
     [dispatch],
   );

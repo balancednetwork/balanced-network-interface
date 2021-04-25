@@ -7,16 +7,21 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
 export default function UnstakePanel() {
   const [value, setValue] = React.useState('0');
+
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleSlider = (values: string[], handle: number) => {
     setValue(values[handle]);
@@ -46,6 +51,10 @@ export default function UnstakePanel() {
   const addTransaction = useTransactionAdder();
 
   const handleUnstake = () => {
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     bnJs
       .inject({ account })
       .sICX.unstake(BalancedJs.utils.toLoop(differenceAmount))
@@ -66,6 +75,9 @@ export default function UnstakePanel() {
           // for example: out of balance
           console.error(res);
         }
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
       });
   };
 
@@ -144,6 +156,7 @@ export default function UnstakePanel() {
               Unstake
             </Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>

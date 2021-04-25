@@ -7,9 +7,11 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
@@ -43,10 +45,17 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
 
   const addTransaction = useTransactionAdder();
 
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
+
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
 
   const handleAdd = (currencyType: Field) => () => {
     if (!account) return;
+
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
 
     const currencyKey =
       currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
@@ -54,9 +63,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
     bnJs
       .inject({ account: account })
       [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]))
-      .then(res => {
+      .then((res: any) => {
         addTransaction(
-          { hash: res.result || res },
+          { hash: res.result },
           {
             pending: depositMessage(currencyKey, selectedPair.pair).pendingMessage,
             summary: depositMessage(currencyKey, selectedPair.pair).successMessage,
@@ -67,6 +76,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
       })
       .catch(e => {
         console.error('error', e);
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
       });
   };
 
@@ -75,13 +87,17 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   const handleRemove = (currencyType: Field) => () => {
     if (!account) return;
 
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     const currencyKey =
       currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
 
-    bnJs.Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(parsedAmounts[currencyType])).then(
-      (res: any) => {
+    bnJs.Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(parsedAmounts[currencyType]))
+      .then((res: any) => {
         addTransaction(
-          { hash: res.result || res },
+          { hash: res.result },
           {
             pending: `Withdrawing ${currencyKey}`,
             summary: `${parsedAmounts[currencyType].dp(2).toFormat()} ${currencyKey} added to your wallet`,
@@ -89,13 +105,19 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
         );
 
         setRemovingTxs(state => ({ ...state, [currencyType]: res.result }));
-      },
-    );
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
+      });
   };
 
   const [confirmTx, setConfirmTx] = React.useState('');
 
   const handleSupplyConfirm = () => {
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
       const t = BigNumber.max(BigNumber.min(parsedAmounts[Field.CURRENCY_A], balances['ICX'].minus(0.1)), 0);
       if (t.isZero()) return;
@@ -103,9 +125,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
       bnJs
         .inject({ account: account })
         .Dex.transferICX(BalancedJs.utils.toLoop(t))
-        .then(res => {
+        .then((res: any) => {
           addTransaction(
-            { hash: res.result || res },
+            { hash: res.result },
             {
               pending: supplyMessage(selectedPair.pair).pendingMessage,
               summary: supplyMessage(selectedPair.pair).successMessage,
@@ -116,6 +138,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
         })
         .catch(e => {
           console.error('error', e);
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
         });
     } else {
       bnJs
@@ -128,7 +153,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
         )
         .then((res: any) => {
           addTransaction(
-            { hash: res.result || res },
+            { hash: res.result },
             {
               pending: supplyMessage(selectedPair.pair).pendingMessage,
               summary: supplyMessage(selectedPair.pair).successMessage,
@@ -139,6 +164,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
         })
         .catch(e => {
           console.error('error', e);
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
         });
     }
   };
@@ -211,6 +239,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
     } else {
       onClose();
     }
+    changeShouldLedgerSign(false);
   };
 
   const isEnabled =
@@ -308,6 +337,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
               {confirmTx ? 'Supplying' : 'Supply'}
             </Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       );
     }

@@ -105,6 +105,7 @@ export class BalancedJs {
     const payload = contract.transferICXParamsBuilder({
       value,
     });
-    return contract.callIconex(payload);
+
+    return contract.callICONPlugins(payload);
   }
 }

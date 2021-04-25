@@ -96,9 +96,9 @@ export function useLoanFetchTotalRepaid(): (interval?: string | null) => void {
         }
         try {
           axios
-            .get(`${getAPIEnpoint()}/api/v1/asset-redeemed-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`)
+            .get(`${getAPIEnpoint()}/api/v1/loan-repaid-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`)
             .then(res => {
-              const value = res.data['asset_redeemed_sum'];
+              const value = res.data['loan_repaid_sum'];
               dispatch(changeTotalRepaid({ totalRepaid: BalancedJs.utils.toIcx(new BigNumber(value)) }));
             });
         } catch (e) {

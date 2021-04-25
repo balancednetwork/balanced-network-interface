@@ -10,7 +10,7 @@ export function shortenAddress(address: string, chars = 7): string {
 }
 
 const API_ENDPOINTS = {
-  [NetworkId.MAINNET]: '',
+  [NetworkId.MAINNET]: 'https://balnmainnet.techiast.com:8069',
   [NetworkId.YEOUIDO]: 'https://balanced.techiast.com:8069',
 };
 

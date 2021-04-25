@@ -14,7 +14,7 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import { REWARDS_COLLATERAL_RATIO, MANDATORY_COLLATERAL_RATIO } from 'constants/index';
+import { REWARDS_COLLATERAL_RATIO, MANDATORY_COLLATERAL_RATIO, LIQUIDATION_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
 import {
   useLoanInputAmount,
@@ -31,16 +31,17 @@ import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
 
-const useThresholdPrices = () => {
+const useThresholdPrices = (): [BigNumber, BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmount();
   const loanInputAmount = useLoanInputAmount();
 
   return React.useMemo(() => {
-    if (collateralInputAmount.isZero()) return [new BigNumber(0), new BigNumber(0)];
+    if (collateralInputAmount.isZero()) return [new BigNumber(0), new BigNumber(0), new BigNumber(0)];
 
     return [
       loanInputAmount.multipliedBy(REWARDS_COLLATERAL_RATIO).div(collateralInputAmount),
       loanInputAmount.multipliedBy(MANDATORY_COLLATERAL_RATIO).div(collateralInputAmount),
+      loanInputAmount.multipliedBy(LIQUIDATION_COLLATERAL_RATIO).div(collateralInputAmount),
     ];
   }, [collateralInputAmount, loanInputAmount]);
 };
@@ -99,7 +100,7 @@ const PositionDetailPanel = () => {
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
-  const [rewardThresholdPrice, lockThresholdPrice] = useThresholdPrices();
+  const [rewardThresholdPrice, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
 
   const currentRatio = useCurrentCollateralRatio();
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
@@ -240,7 +241,8 @@ const PositionDetailPanel = () => {
           </Box>
 
           <Tooltip
-            text="If the ICX price reaches $0.8618, your collateral will be liquidated."
+            text={`If the ICX price reaches $${liquidationThresholdPrice.toFixed(3)}, 
+                    your collateral will be liquidated.`}
             show={show}
             placement="bottom"
           >

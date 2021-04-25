@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 
 import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
+import { BalancedJs } from 'packages/BalancedJs';
 import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
 import { isMobile } from 'react-device-detect';
@@ -17,9 +18,7 @@ import bnJs from 'bnJs';
 import { ApplicationModal } from 'store/application/actions';
 import { useWalletModalToggle, useModalOpen, useChangeWalletType } from 'store/application/hooks';
 
-//const displayAddress = (address: string) => `${address.slice(0, 10)}...${address.slice(-15)}`;
-
-const displayAddress = (address: string) => `${address}`;
+const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
 const generatePaths = (point: number) => {
   const paths = HwUtils.splitPath(`${LEDGER_BASE_PATH}/${point}'`);
@@ -31,7 +30,7 @@ const generatePaths = (point: number) => {
   return buffer;
 };
 
-const getAddress = async ({
+const requestLedgerAddress = async ({
   transport,
   paging: { offset, limit },
 }: {
@@ -41,22 +40,44 @@ const getAddress = async ({
     limit: number;
   };
 }): Promise<any[]> => {
-  const result: any[] = [];
-  for (let i = offset; i < offset + limit; i++) {
-    const buffer = generatePaths(i);
-    const response = await transport.send(0xe0, 0x02, 0x00, 0x01, buffer);
+  try {
+    const addressFromLedger: any[] = [];
 
-    const publicKeyLength = response[0];
-    const addressLength = response[1 + publicKeyLength];
+    for (let i = offset; i < offset + limit; i++) {
+      const buffer = generatePaths(i);
+      const response = await transport.send(0xe0, 0x02, 0x00, 0x01, buffer);
 
-    result.push({
-      publicKey: response.slice(1, 1 + publicKeyLength).toString('hex'),
-      address: response.slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength).toString(),
-      chainCode: '',
-      point: i,
-    });
+      const publicKeyLength = response[0];
+      const addressLength = response[1 + publicKeyLength];
+
+      addressFromLedger.push({
+        publicKey: response.slice(1, 1 + publicKeyLength).toString('hex'),
+        address: response.slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength).toString(),
+        chainCode: '',
+        point: i,
+      });
+    }
+
+    const addressListWithBalance: any[] = await Promise.all(
+      addressFromLedger.map((address: any) => {
+        return new Promise((resolve, reject) => {
+          bnJs.ICX.balanceOf(address.address)
+            .then(balance => {
+              resolve({
+                ...address,
+                balance: BalancedJs.utils.toIcx(balance).toFixed(2),
+              });
+            })
+            .catch(reject);
+        });
+      }),
+    );
+
+    return addressListWithBalance;
+  } catch (error) {
+    console.error('Error from requestLedgerAddress():', error);
+    return [];
   }
-  return result;
 };
 
 const LIMIT_PAGING_LEDGER = 5;
@@ -95,11 +116,13 @@ const StyledModal = styled(Modal).attrs({
   }
 `;
 
+let transport = null;
+
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
   const [showLedgerAddress, updateShowledgerAddress] = useState(false);
-  const [addressList, updateAddressList] = useState([]);
+  const [addressList, updateAddressList] = useState<any>([]);
   const [{ offset, limit }, updatePaging] = useState({
     offset: 0,
     limit: LIMIT_PAGING_LEDGER,
@@ -128,20 +151,27 @@ export default function WalletModal() {
     }
   };
 
+  const updateLedgerAddress = async ({ offset, limit }) => {
+    const addressList: any = await requestLedgerAddress({
+      transport,
+      paging: {
+        offset,
+        limit,
+      },
+    });
+
+    updateAddressList(addressList);
+  };
+
   const handleOpenLedger = async () => {
     changeWalletType('LEDGER');
     try {
-      const transport = await TransportWebUSB.create();
+      transport = await TransportWebUSB.create();
+
       toggleShowledgerAddress();
 
-      const result: any = await getAddress({
-        transport,
-        paging: {
-          offset,
-          limit,
-        },
-      });
-      updateAddressList(result);
+      updateLedgerAddress({ offset, limit });
+
       bnJs.inject({
         legerSettings: {
           transport,
@@ -153,19 +183,36 @@ export default function WalletModal() {
     }
   };
 
-  const getBack = () => {
-    updatePaging({
-      limit: LIMIT_PAGING_LEDGER,
-      offset: offset - LIMIT_PAGING_LEDGER,
-    });
-  };
+  const getBack = React.useCallback(async () => {
+    if (offset <= 0) {
+      // should disable page number < 0;
+      console.log('This is first pages, cannot request more address, try other please.');
+      return;
+    }
+    const currentOffset = offset - limit;
 
-  const getNext = () => {
+    await updateLedgerAddress({ offset: currentOffset, limit });
+
     updatePaging({
-      limit: LIMIT_PAGING_LEDGER,
-      offset: offset + LIMIT_PAGING_LEDGER,
+      limit,
+      offset: currentOffset,
     });
-  };
+  }, [offset, limit]);
+
+  const getNext = React.useCallback(async () => {
+    try {
+      const next = offset + LIMIT_PAGING_LEDGER;
+
+      await updateLedgerAddress({ offset: next, limit });
+
+      updatePaging({
+        limit,
+        offset: next,
+      });
+    } catch (e) {
+      console.error('Error when request more address from Ledger: ', e);
+    }
+  }, [offset, limit]);
 
   const chooseLedgerAddress = ({ address, point }: { address: string; point: number }) => {
     console.info(address);
@@ -221,6 +268,7 @@ export default function WalletModal() {
               {addressList.map((address: any) => {
                 return (
                   <tr
+                    key={address.point}
                     onClick={() => {
                       chooseLedgerAddress({
                         address: address.address,
@@ -228,8 +276,8 @@ export default function WalletModal() {
                       });
                     }}
                   >
-                    <td>{displayAddress(address.address)}</td>
-                    <td>ICX</td>
+                    <td style={{ textAlign: 'left' }}>{displayAddress(address.address)}</td>
+                    <td style={{ textAlign: 'right' }}>{address.balance} ICX</td>
                   </tr>
                 );
               })}

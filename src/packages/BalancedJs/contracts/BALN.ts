@@ -45,11 +45,7 @@ export default class BALN extends Contract {
       },
     });
 
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(callParams.params);
-    }
-
-    return this.callIconex(callParams);
+    return this.callICONPlugins(callParams);
   }
 
   stake(value: BigNumber) {
@@ -60,7 +56,7 @@ export default class BALN extends Contract {
       },
     });
 
-    return this.callIconex(payload);
+    return this.callICONPlugins(payload);
   }
 
   deposit(value: BigNumber) {

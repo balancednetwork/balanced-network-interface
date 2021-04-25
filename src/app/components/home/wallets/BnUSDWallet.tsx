@@ -2,6 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { isEmpty } from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
@@ -9,11 +10,13 @@ import { Flex, Box } from 'rebass/styled-components';
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
@@ -21,6 +24,9 @@ import { Grid, MaxButton } from './utils';
 
 export default function BnUSDWallet() {
   const [value, setValue] = React.useState('');
+
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleCurrencyInput = (value: string) => {
     setValue(value);
@@ -58,11 +64,15 @@ export default function BnUSDWallet() {
   const addTransaction = useTransactionAdder();
 
   const handleSend = () => {
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     bnJs
       .inject({ account })
       .bnUSD.transfer(address, BalancedJs.utils.toLoop(differenceAmount))
-      .then(res => {
-        if (res.result) {
+      .then((res: any) => {
+        if (!isEmpty(res.result)) {
           addTransaction(
             { hash: res.result },
             {
@@ -79,6 +89,9 @@ export default function BnUSDWallet() {
           // for example: out of balance
           console.error(res);
         }
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
       });
   };
 
@@ -147,6 +160,7 @@ export default function BnUSDWallet() {
               Send
             </Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </BoxPanel>

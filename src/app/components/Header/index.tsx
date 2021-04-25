@@ -9,6 +9,7 @@ import { IconButton, Button } from 'app/components/Button';
 import { Link } from 'app/components/Link';
 import Logo from 'app/components/Logo';
 import { DropdownPopper } from 'app/components/Popover';
+import { MouseoverTooltip } from 'app/components/Tooltip';
 import WalletModal from 'app/components/WalletModal';
 import { Typography } from 'app/theme';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
@@ -56,6 +57,12 @@ const ChangeWalletButton = styled(Link)`
   cursor: pointer;
 `;
 
+const StyledAddress = styled(Typography)`
+  :hover {
+    color: #2fccdc;
+    cursor: pointer;
+  }
+`;
 export enum NetworkId {
   MAINNET = 1,
   YEOUIDO = 3,
@@ -77,6 +84,9 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const walletButtonRef = React.useRef<HTMLElement>(null);
+
+  const [isCopied, updateCopyState] = React.useState(false);
+
   const toggleWalletMenu = () => {
     setAnchor(anchor ? null : walletButtonRef.current);
   };
@@ -93,6 +103,11 @@ export default React.memo(function Header(props: { title?: string; className?: s
     closeWalletMenu();
     disconnect();
   };
+
+  const copyAddress = React.useCallback(async (account: string) => {
+    await navigator.clipboard.writeText(account);
+    updateCopyState(true);
+  }, []);
 
   return (
     <header className={className}>
@@ -119,7 +134,18 @@ export default React.memo(function Header(props: { title?: string; className?: s
               <Typography variant="p" textAlign="right">
                 Wallet
               </Typography>
-              {account && <Typography>{shortenAddress(account)}</Typography>}
+              {account && (
+                <MouseoverTooltip text={isCopied ? 'Copied' : 'Copy address'} placement="left">
+                  <StyledAddress
+                    onMouseLeave={() => {
+                      setTimeout(() => updateCopyState(false), 250);
+                    }}
+                    onClick={() => copyAddress(account)}
+                  >
+                    {shortenAddress(account)}
+                  </StyledAddress>
+                </MouseoverTooltip>
+              )}
             </WalletInfo>
 
             <WalletButtonWrapper>

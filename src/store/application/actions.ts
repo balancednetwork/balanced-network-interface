@@ -30,3 +30,7 @@ export const removePopup = createAction<{ key: string }>('application/removePopu
 export const setOpenModal = createAction<ApplicationModal | null>('application/setOpenModal');
 
 export const changeWalletType = createAction<{ walletType: WalletType }>('application/changeWalletType');
+
+export const changeShouldLedgedSignMessage = createAction<{ shouldLedgerSign: boolean }>(
+  'application/changeShouldLedgedSignMessage',
+);

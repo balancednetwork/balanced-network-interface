@@ -2,12 +2,12 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
-import { ledgerConfirmAlert } from 'packages/BalancedJs/ledger';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { CurrencyField } from 'app/components/Form';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
@@ -16,6 +16,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
@@ -29,6 +30,9 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 
 const CollateralPanel = () => {
   const { account, ledgerAddressPoint } = useIconReact();
+
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -72,6 +76,7 @@ const CollateralPanel = () => {
 
   const toggleOpen = () => {
     setOpen(!open);
+    changeShouldLedgerSign(false);
   };
 
   //before
@@ -90,54 +95,58 @@ const CollateralPanel = () => {
   //
   const addTransaction = useTransactionAdder();
 
-  const handleCollateralConfirm = () => {
+  const handleCollateralConfirm = async () => {
     if (ledgerAddressPoint >= 0) {
-      if (!ledgerConfirmAlert('Click Ok and check your ledger device?')) {
-        return;
-      }
+      //if (!ledgerConfirmAlert('Click Ok and check your ledger device?')) {
+      //return;
+      //}
     }
-
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
     if (shouldDeposit) {
-      bnJs
-        .inject({ account: account })
-        .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount))
-        .then((res: any) => {
-          addTransaction(
-            { hash: res.result || res },
-            {
-              pending: 'Depositing collateral...',
-              summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
-            },
-          );
-          // close modal
-          toggleOpen();
-          // reset collateral panel values
-          adjust(false);
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
+      try {
+        const { result: hash } = await bnJs
+          .inject({ account: account })
+          .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount));
+        addTransaction(
+          { hash },
+          {
+            pending: 'Depositing collateral...',
+            summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
+          },
+        );
+        // close modal
+        toggleOpen();
+        // reset collateral panel values
+        adjust(false);
+      } catch (error) {
+        console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
+      } finally {
+        changeShouldLedgerSign(false);
+      }
     } else {
-      const collateralAmountInSICX = collateralAmount.div(ratio.sICXICXratio);
-      bnJs
-        .inject({ account: account })
-        .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX))
-        .then((res: any) => {
-          addTransaction(
-            { hash: res.result || res }, //
-            {
-              pending: 'Withdrawing collateral...',
-              summary: `${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
-            },
-          );
-          // close modal
-          toggleOpen();
-          // reset collateral panel values
-          adjust(false);
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
+      try {
+        const collateralAmountInSICX = collateralAmount.div(ratio.sICXICXratio);
+        const { result: hash } = await bnJs
+          .inject({ account: account })
+          .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX));
+        addTransaction(
+          { hash }, //
+          {
+            pending: 'Withdrawing collateral...',
+            summary: `${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
+          },
+        );
+        // close modal
+        toggleOpen();
+        // reset collateral panel values
+        adjust(false);
+      } catch (error) {
+        console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
+      } finally {
+        changeShouldLedgerSign(false);
+      }
     }
   };
 
@@ -288,6 +297,7 @@ const CollateralPanel = () => {
               {shouldDeposit ? 'Deposit' : 'Withdraw'}
             </Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>

@@ -41,7 +41,7 @@ export class Contract {
     return this;
   }
 
-  cleanParams(params: any) {
+  protected cleanParams(params: any) {
     return JSON.parse(
       JSON.stringify(params, (key, value) => {
         return isEmpty(value) && value !== 0 ? undefined : value;
@@ -122,7 +122,14 @@ export class Contract {
     };
   }
 
-  public async callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
+  public async callICONPlugins(payload: any): Promise<ResponseJsonRPCPayload> {
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+    return this.callIconex(payload);
+  }
+
+  private callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
     window.dispatchEvent(
       new CustomEvent('ICONEX_RELAY_REQUEST', {
         detail: {
@@ -143,11 +150,14 @@ export class Contract {
     });
   }
 
-  public async callLedger(payload: any): Promise<any> {
+  private async callLedger(payload: any): Promise<any> {
     payload = this.cleanParams(payload);
+
     if (this.contractSettings.ledgerSettings.actived) {
       const signedTransaction = await this.ledger.signTransaction(payload);
-      return this.provider.sendTransaction(signedTransaction).execute();
+      return {
+        result: await this.provider.sendTransaction(signedTransaction).execute(),
+      };
     }
   }
 }

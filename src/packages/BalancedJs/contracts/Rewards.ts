@@ -47,4 +47,15 @@ export default class Rewards extends Contract {
 
     return this.call(payload);
   }
+
+  getAPY(name: string) {
+    const payload = this.paramsBuilder({
+      method: 'getAPY',
+      params: {
+        _name: name,
+      },
+    });
+
+    return this.call(payload);
+  }
 }

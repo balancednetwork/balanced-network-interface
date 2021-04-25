@@ -20,8 +20,11 @@ export default class sICX extends Contract {
     return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
   }
 
-  swapBybnUSD(value: BigNumber, slippage: string) {
-    const data = { method: '_swap', params: { toToken: addresses[this.nid].bnusd }, maxSlippage: slippage };
+  swapBybnUSD(value: BigNumber, minimumReceive: BigNumber) {
+    const data = {
+      method: '_swap',
+      params: { toToken: addresses[this.nid].bnusd, minimumReceive: minimumReceive.toString() },
+    };
 
     return this.transfer(
       addresses[this.nid].dex,

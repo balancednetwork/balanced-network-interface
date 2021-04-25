@@ -104,7 +104,7 @@ const ReturnICDSection = () => {
       changeShouldLedgerSign(true);
     }
 
-    if (parseFloat(retireAmount) < 10) {
+    if (parseFloat(retireAmount) < 1) {
       console.log(`Can not retire with amount lower than minimum value`);
       return;
     }

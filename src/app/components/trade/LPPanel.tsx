@@ -30,9 +30,33 @@ const useAvailableLPTokenBalance = (): BigNumber => {
   const balances = useWalletBalances();
   const pool = usePool(selectedPair.poolId);
 
+  if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+    return balances['ICX'];
+  } else {
+    if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
+      if (
+        (balances[pool?.baseCurrencyKey] as BigNumber)
+          .times(pool?.rate)
+          .isLessThanOrEqualTo(balances[pool?.quoteCurrencyKey])
+      ) {
+        return balances[pool?.baseCurrencyKey].times(pool.total).div(pool.base);
+      } else {
+        return balances[pool?.quoteCurrencyKey].times(pool.total).div(pool.quote);
+      }
+    } else {
+      return ZERO;
+    }
+  }
+};
+
+const useCalculateLPToken = (baseValue: string, quoteValue: string): BigNumber => {
+  const selectedPair = usePoolPair();
+  const balances = useWalletBalances();
+  const pool = usePool(selectedPair.poolId);
+
   if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
     if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-      return balances['ICX'];
+      return new BigNumber(baseValue).times(pool.total).div(pool.base);
     }
 
     if (
@@ -40,9 +64,9 @@ const useAvailableLPTokenBalance = (): BigNumber => {
         .times(pool?.rate)
         .isLessThanOrEqualTo(balances[pool?.quoteCurrencyKey])
     ) {
-      return balances[pool?.baseCurrencyKey].times(pool.total).div(pool.base);
+      return new BigNumber(baseValue).times(pool.total).div(pool.base);
     } else {
-      return balances[pool?.quoteCurrencyKey].times(pool.total).div(pool.quote);
+      return new BigNumber(quoteValue).times(pool.total).div(pool.quote);
     }
   } else {
     return ZERO;
@@ -76,12 +100,16 @@ export default function LPPanel() {
   const pool = usePool(selectedPair.poolId);
   const handleSlider = (values: string[], handle: number) => {
     if (pool && !pool.total.isZero()) {
-      const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
-      onFieldAInput(baseAmount.toFixed());
+      if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        onFieldAInput(values[handle], 'slider');
+      } else {
+        const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
+        onFieldAInput(baseAmount.toFixed(), 'slider');
+      }
     }
   };
 
-  const { independentField, typedValue, otherTypedValue } = useMintState();
+  const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
   const {
     dependentField,
     // currencies,
@@ -98,6 +126,20 @@ export default function LPPanel() {
 
   const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity);
 
+  const handleBaseAmountType = React.useCallback(
+    (value: string) => {
+      onFieldAInput(value, 'text');
+    },
+    [onFieldAInput],
+  );
+
+  const handleQuoteAmountType = React.useCallback(
+    (value: string) => {
+      onFieldBInput(value, 'text');
+    },
+    [onFieldBInput],
+  );
+
   // get formatted amounts
   const formattedAmounts = {
     [independentField]: typedValue,
@@ -108,10 +150,20 @@ export default function LPPanel() {
       : parsedAmounts[dependentField].toFixed(6),
   };
 
+  const sliderValue = useCalculateLPToken(formattedAmounts[Field.CURRENCY_A], formattedAmounts[Field.CURRENCY_B]);
+
+  const sliderInstance = React.useRef<any>(null);
+
+  React.useEffect(() => {
+    if (inputType === 'text') {
+      sliderInstance.current?.noUiSlider.set(sliderValue);
+    }
+  }, [inputType, sliderValue]);
+
   return (
     <>
       <SectionPanel bg="bg2">
-        <BrightPanel bg="bg3" p={7} flexDirection="column" alignItems="stretch" flex={1}>
+        <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <Flex alignItems="flex-end">
             <Typography variant="h2">Supply:&nbsp;</Typography>
             <LiquiditySelect />
@@ -122,7 +174,7 @@ export default function LPPanel() {
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
               currency={CURRENCY_LIST[selectedPair.baseCurrencyKey.toLowerCase()]}
-              onUserInput={onFieldAInput}
+              onUserInput={handleBaseAmountType}
               id="supply-liquidity-input-token-a"
             />
           </Flex>
@@ -132,7 +184,7 @@ export default function LPPanel() {
               value={formattedAmounts[Field.CURRENCY_B]}
               showMaxButton={false}
               currency={CURRENCY_LIST[selectedPair.quoteCurrencyKey.toLowerCase()]}
-              onUserInput={onFieldBInput}
+              onUserInput={handleQuoteAmountType}
               id="supply-liquidity-input-token-b"
             />
           </Flex>
@@ -159,6 +211,11 @@ export default function LPPanel() {
                 max: [
                   maxSliderAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxSliderAmount.dp(2).toNumber(),
                 ],
+              }}
+              instanceRef={instance => {
+                if (instance && !sliderInstance.current) {
+                  sliderInstance.current = instance;
+                }
               }}
               onSlide={handleSlider}
             />

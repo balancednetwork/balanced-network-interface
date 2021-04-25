@@ -40,8 +40,6 @@ export function useChangeReward(): ({
 }
 
 export function useFetchReward(account?: string | null) {
-  // eject this account and we don't need to account params for when call contract
-  bnJs.eject({ account });
   const transactions = useAllTransactions();
   const changeReward = useChangeReward();
 

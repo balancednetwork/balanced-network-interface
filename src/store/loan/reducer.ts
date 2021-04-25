@@ -1,24 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import {
-  changeBorrowedAmount,
-  changeBadDebt,
-  changeTotalSupply,
-  changeTotalRepaid,
-  changeTotalCollateralSold,
-  adjust,
-  cancel,
-  type,
-  Field,
-} from './actions';
+import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, adjust, cancel, type, Field } from './actions';
 
 export interface LoanState {
   borrowedAmount: BigNumber;
   badDebt: BigNumber;
   totalSupply: BigNumber;
-  totalRepaid: BigNumber;
-  totalCollateralSold: BigNumber;
 
   // loan panel UI state
   state: {
@@ -33,8 +21,6 @@ const initialState: LoanState = {
   borrowedAmount: new BigNumber(0),
   badDebt: new BigNumber(0),
   totalSupply: new BigNumber(0),
-  totalRepaid: new BigNumber(0),
-  totalCollateralSold: new BigNumber(0),
 
   // loan panel UI state
   state: {
@@ -67,11 +53,5 @@ export default createReducer(initialState, builder =>
     })
     .addCase(changeTotalSupply, (state, { payload: { totalSupply } }) => {
       state.totalSupply = totalSupply;
-    })
-    .addCase(changeTotalRepaid, (state, { payload: { totalRepaid } }) => {
-      state.totalRepaid = totalRepaid;
-    })
-    .addCase(changeTotalCollateralSold, (state, { payload: { totalCollateralSold } }) => {
-      state.totalCollateralSold = totalCollateralSold;
     }),
 );

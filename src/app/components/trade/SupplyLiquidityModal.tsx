@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
@@ -12,6 +13,7 @@ import bnJs from 'bnJs';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
 import { depositMessage, supplyMessage } from './utils';
@@ -35,6 +37,7 @@ export enum Field {
 
 export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   const { account } = useIconReact();
+  const balances = useWalletBalances();
 
   const selectedPair = usePoolPair();
 
@@ -49,11 +52,11 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
       currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
 
     bnJs
-      .eject({ account: account })
+      .inject({ account: account })
       [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]))
       .then(res => {
         addTransaction(
-          { hash: res.result },
+          { hash: res.result || res },
           {
             pending: depositMessage(currencyKey, selectedPair.pair).pendingMessage,
             summary: depositMessage(currencyKey, selectedPair.pair).successMessage,
@@ -75,38 +78,37 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
     const currencyKey =
       currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
 
-    bnJs.Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(parsedAmounts[currencyType])).then(res => {
-      addTransaction(
-        { hash: res.result },
-        {
-          pending: `Withdrawing ${currencyKey}`,
-          summary: `${parsedAmounts[currencyType].dp(2).toFormat()} ${currencyKey} added to your wallet`,
-        },
-      );
+    bnJs.Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(parsedAmounts[currencyType])).then(
+      (res: any) => {
+        addTransaction(
+          { hash: res.result || res },
+          {
+            pending: `Withdrawing ${currencyKey}`,
+            summary: `${parsedAmounts[currencyType].dp(2).toFormat()} ${currencyKey} added to your wallet`,
+          },
+        );
 
-      setRemovingTxs(state => ({ ...state, [currencyType]: res.result }));
-    });
+        setRemovingTxs(state => ({ ...state, [currencyType]: res.result }));
+      },
+    );
   };
 
   const [confirmTx, setConfirmTx] = React.useState('');
 
   const handleSupplyConfirm = () => {
     if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+      const t = BigNumber.max(BigNumber.min(parsedAmounts[Field.CURRENCY_A], balances['ICX'].minus(0.1)), 0);
+      if (t.isZero()) return;
+
       bnJs
-        .eject({ account: account })
-        .Dex.transferICX(BalancedJs.utils.toLoop(parsedAmounts[Field.CURRENCY_A]))
+        .inject({ account: account })
+        .Dex.transferICX(BalancedJs.utils.toLoop(t))
         .then(res => {
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
-              pending: supplyMessage(
-                formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
-                selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-              ).pendingMessage,
-              summary: supplyMessage(
-                formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
-                selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-              ).successMessage,
+              pending: supplyMessage(selectedPair.pair).pendingMessage,
+              summary: supplyMessage(selectedPair.pair).successMessage,
             },
           );
 
@@ -117,25 +119,19 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
         });
     } else {
       bnJs
-        .eject({ account: account })
+        .inject({ account: account })
         .Dex.add(
           bnJs[selectedPair.baseCurrencyKey].address,
           bnJs[selectedPair.quoteCurrencyKey].address,
           BalancedJs.utils.toLoop(parsedAmounts[Field.CURRENCY_A]),
           BalancedJs.utils.toLoop(parsedAmounts[Field.CURRENCY_B]),
         )
-        .then(res => {
+        .then((res: any) => {
           addTransaction(
-            { hash: res.result },
+            { hash: res.result || res },
             {
-              pending: supplyMessage(
-                formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
-                selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-              ).pendingMessage,
-              summary: supplyMessage(
-                formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'currency'),
-                selectedPair.baseCurrencyKey + ' / ' + selectedPair.quoteCurrencyKey,
-              ).successMessage,
+              pending: supplyMessage(selectedPair.pair).pendingMessage,
+              summary: supplyMessage(selectedPair.pair).successMessage,
             },
           );
 

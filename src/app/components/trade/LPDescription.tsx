@@ -12,13 +12,13 @@ export default function LPDescription() {
   const data = usePoolData(selectedPair.poolId);
 
   return (
-    <Box bg="bg2" flex={1} padding={7}>
+    <Box bg="bg2" flex={1} padding={[5, 7]}>
       <Typography variant="h3" mb={2}>
         {selectedPair.pair} liquidity pool
       </Typography>
       <Typography mb={5} lineHeight={'25px'}>
         {selectedPair.baseCurrencyKey.toLowerCase() === 'icx'
-          ? 'Earn Balance Tokens every day you supply liquidity. Your ICX will be locked for the first 24 hours, and your supply ratio will fluctuate with the price.'
+          ? 'Earn Balance Tokens every day you supply ICX as liquidity. This pool works like a queue, so you can claim sICX from the liquidity details section as your order is filled.'
           : selectedPair.baseCurrencyKey.toLowerCase() === 'baln'
           ? 'Earn Balance Tokens every day you supply liquidity, and start accruing network fees. Your supply ratio will fluctuate with the price.'
           : selectedPair.baseCurrencyKey.toLowerCase() === 'sicx'

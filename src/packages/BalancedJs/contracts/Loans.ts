@@ -17,23 +17,47 @@ export default class Loans extends Contract {
       params: { _value: IconConverter.toHex(value) },
     });
 
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
+
     return this.callIconex(payload);
   }
 
-  addCollateral(value: BigNumber) {
+  depositAndBorrow(
+    value: BigNumber,
+    params: { asset?: 'bnUSD'; amount?: BigNumber; from?: string; value?: BigNumber } = {},
+  ) {
     const payload = this.transactionParamsBuilder({
-      method: 'addCollateral',
+      method: 'depositAndBorrow',
       value: value,
+      params: {
+        _asset: params.asset,
+        _amount: params.amount && IconConverter.toHex(params.amount),
+        _from: params.from,
+        _value: params.value && IconConverter.toHex(params.value),
+      },
     });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
 
     return this.callIconex(payload);
   }
 
-  originateLoan(asset: string = 'bnUSD', value: BigNumber, from: string) {
+  returnAsset(symbol: string, value: BigNumber) {
     const payload = this.transactionParamsBuilder({
-      method: 'originateLoan',
-      params: { _asset: asset, _amount: IconConverter.toHex(value), _from: from },
+      method: 'returnAsset',
+      params: {
+        _symbol: symbol,
+        _value: IconConverter.toHex(value),
+      },
     });
+
+    if (this.contractSettings.ledgerSettings.actived) {
+      return this.callLedger(payload.params);
+    }
 
     return this.callIconex(payload);
   }
@@ -46,11 +70,11 @@ export default class Loans extends Contract {
     return this.call(callParams);
   }
 
-  getAccountPositions() {
+  getAccountPositions(owner: string) {
     const callParams = this.paramsBuilder({
       method: 'getAccountPositions',
       params: {
-        _owner: this.account,
+        _owner: owner,
       },
     });
 

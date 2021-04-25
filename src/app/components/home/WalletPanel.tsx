@@ -56,12 +56,12 @@ const WalletPanel = () => {
 
         <List>
           <Accordion collapsible>
-            {CURRENCY.filter(currency => !balances[currency].dp(2).isZero()).map((currency, index, arr) => {
+            {CURRENCY.map(currency => {
               const WalletUI = WalletUIs[currency];
               return (
                 <AccordionItem key={currency}>
                   <StyledAccordionButton>
-                    <ListItem border={index !== arr.length - 1}>
+                    <ListItem>
                       <AssetSymbol>
                         <CurrencyLogo currency={CURRENCY_LIST[currency.toLowerCase()]} />
                         <Typography fontSize={16} fontWeight="bold">

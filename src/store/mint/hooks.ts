@@ -18,25 +18,21 @@ export function useMintState(): AppState['mint'] {
 export function useMintActionHandlers(
   noLiquidity: boolean | undefined,
 ): {
-  onFieldAInput: (typedValue: string, inputType: 'slider' | 'text') => void;
-  onFieldBInput: (typedValue: string, inputType: 'slider' | 'text') => void;
+  onFieldAInput: (typedValue: string) => void;
+  onFieldBInput: (typedValue: string) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
 
   const onFieldAInput = useCallback(
-    (typedValue: string, inputType: 'slider' | 'text') => {
-      dispatch(
-        typeInput({ field: Field.CURRENCY_A, typedValue, noLiquidity: noLiquidity === true, inputType: inputType }),
-      );
+    (typedValue: string) => {
+      dispatch(typeInput({ field: Field.CURRENCY_A, typedValue, noLiquidity: noLiquidity === true }));
     },
     [dispatch, noLiquidity],
   );
 
   const onFieldBInput = useCallback(
-    (typedValue: string, inputType: 'slider' | 'text') => {
-      dispatch(
-        typeInput({ field: Field.CURRENCY_B, typedValue, noLiquidity: noLiquidity === true, inputType: inputType }),
-      );
+    (typedValue: string) => {
+      dispatch(typeInput({ field: Field.CURRENCY_B, typedValue, noLiquidity: noLiquidity === true }));
     },
     [dispatch, noLiquidity],
   );

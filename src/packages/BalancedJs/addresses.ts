@@ -26,7 +26,6 @@ const YEOUIDO_ADDRESSES = {
   staking: 'cxa9f43524798efbdab0533d8bbbd6ccc68b879b59',
   dividends: 'cx7cd77844be7e1a5daf387524956acb80c9dc4ec3',
   reserve: 'cx25e6ad96e337d35687ab5c607db06c7e4a88cb6a',
-  daofund: 'cx71fe767de1463679e2c8c5d4c48511fec43b8f31',
   rewards: 'cx281480a9e2af76f2f2601db0a76b7639d1f837a5',
   dex: 'cxf81975ac3018efcd1fe37582651c488f0ed3aa3c',
   governance: 'cxc3b5b44416dbca743ebc03aad96e92682ac5d22a',

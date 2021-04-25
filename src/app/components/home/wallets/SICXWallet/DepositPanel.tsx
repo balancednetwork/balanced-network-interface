@@ -47,12 +47,12 @@ export default function DepositPanel() {
 
   const handleSend = () => {
     bnJs
-      .inject({ account })
+      .eject({ account })
       .sICX.depositAndBorrow(BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {
           addTransaction(
-            { hash: res.result || res },
+            { hash: res.result },
             {
               pending: `Depositing collateral...`,
               summary: `Deposited ${differenceAmount.dp(2).toFormat()} sICX as collateral.`,

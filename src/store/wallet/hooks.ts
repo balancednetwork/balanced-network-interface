@@ -25,8 +25,9 @@ export function useWalletFetchBalances(account?: string | null) {
   React.useEffect(() => {
     const fetchBalances = () => {
       if (account) {
+        bnJs.eject({ account });
         Promise.all([
-          bnJs.ICX.balanceOf(account),
+          bnJs.sICX.getICXBalance(),
           bnJs.sICX.balanceOf(account),
           bnJs.BALN.balanceOf(account),
           bnJs.bnUSD.balanceOf(account),

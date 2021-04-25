@@ -49,5 +49,4 @@ module.exports = {
       rules: { 'prettier/prettier': ['warn', prettierOptions] },
     },
   ],
-  ignorePatterns: ['**/hw-app-icx/**/*.js'],
 };

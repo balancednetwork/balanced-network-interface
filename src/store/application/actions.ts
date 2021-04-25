@@ -1,6 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-
-import { WalletType } from './reducer';
+import BigNumber from 'bignumber.js';
 
 export type PopupContent = {
   txn: {
@@ -28,5 +27,7 @@ export const addPopup = createAction<{ key?: string; removeAfterMs?: number | nu
 export const removePopup = createAction<{ key: string }>('application/removePopup');
 
 export const setOpenModal = createAction<ApplicationModal | null>('application/setOpenModal');
+// Collateral
+export const changeDeposite = createAction<{ depositedValue: BigNumber }>('application/changeDepositedValue');
 
-export const changeWalletType = createAction<{ walletType: WalletType }>('application/changeWalletType');
+export const changeBalance = createAction<{ balance: BigNumber }>('application/changeBalanceValue');

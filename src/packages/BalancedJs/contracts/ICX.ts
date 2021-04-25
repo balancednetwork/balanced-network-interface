@@ -11,8 +11,15 @@ export default class ICX extends Contract {
     this.address = addresses[this.nid].baln;
   }
 
-  balanceOf(account: string) {
-    return this.provider.getBalance(account).execute();
+  balanceOf() {
+    const callParams = this.paramsBuilder({
+      method: 'balanceOf',
+      params: {
+        _owner: this.account,
+      },
+    });
+
+    return this.call(callParams);
   }
 
   transfer(to: string, value: BigNumber, data: string) {

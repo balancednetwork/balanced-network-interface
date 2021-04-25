@@ -34,11 +34,7 @@ export function useCollateralChangeBalance(): (balance: BigNumber) => void {
 }
 
 export function useCollateralAvailableAmount() {
-  const ICXAmount = useSelector((state: AppState) => state.collateral.balance);
-
-  return React.useMemo(() => {
-    return BigNumber.max(ICXAmount.minus(1), new BigNumber(0));
-  }, [ICXAmount]);
+  return useSelector((state: AppState) => state.collateral.balance);
 }
 
 export function useCollateralFetchInfo(account?: string | null) {
@@ -49,8 +45,8 @@ export function useCollateralFetchInfo(account?: string | null) {
   const fetchCollateralInfo = React.useCallback(
     (account: string) => {
       Promise.all([
-        bnJs.Loans.getAccountPositions(account), //
-        bnJs.ICX.balanceOf(account),
+        bnJs.Loans.eject({ account }).getAccountPositions(),
+        bnJs.contractSettings.provider.getBalance(account).execute(),
       ]).then(([stakedICXResult, balance]: Array<any>) => {
         const stakedICXVal = stakedICXResult['assets']
           ? BalancedJs.utils.toIcx(stakedICXResult['assets']['sICX'])
@@ -75,31 +71,25 @@ export function useCollateralState() {
   return useSelector((state: AppState) => state.collateral.state);
 }
 
-export function useCollateralActionHandlers() {
+export function useCollateralType(): (payload: {
+  independentField?: Field;
+  typedValue?: string;
+  inputType?: 'slider' | 'text';
+}) => void {
   const dispatch = useDispatch();
 
-  const onFieldAInput = React.useCallback(
-    (value: string) => {
-      dispatch(type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' }));
+  return React.useCallback(
+    payload => {
+      dispatch(type(payload));
     },
     [dispatch],
   );
+}
 
-  const onFieldBInput = React.useCallback(
-    (value: string) => {
-      dispatch(type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' }));
-    },
-    [dispatch],
-  );
+export function useCollateralAdjust(): (isAdjust: boolean) => void {
+  const dispatch = useDispatch();
 
-  const onSlide = React.useCallback(
-    (values: string[], handle: number) => {
-      dispatch(type({ typedValue: values[handle], inputType: 'slider' }));
-    },
-    [dispatch],
-  );
-
-  const onAdjust = React.useCallback(
+  return React.useCallback(
     isAdjust => {
       if (isAdjust) {
         dispatch(adjust());
@@ -109,13 +99,6 @@ export function useCollateralActionHandlers() {
     },
     [dispatch],
   );
-
-  return {
-    onFieldAInput,
-    onFieldBInput,
-    onSlide,
-    onAdjust,
-  };
 }
 
 export function useCollateralDepositedAmount() {

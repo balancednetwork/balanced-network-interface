@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { IconAmount } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -22,15 +21,11 @@ export default class Staking extends Contract {
   stakeICX(to: string, value: BigNumber) {
     const payload = this.transactionParamsBuilder({
       method: 'stakeICX',
-      value: IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop(),
+      value: value,
       params: {
         _to: to,
       },
     });
-
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
 
     return this.callIconex(payload);
   }

@@ -9,8 +9,6 @@ import {
   ICONexResponseEventType,
 } from 'packages/iconex';
 
-import { useWalletType } from 'store/application/hooks';
-
 export const GOVERNANCE_BASE_ADDRESS = 'cx0000000000000000000000000000000000000001';
 
 export const API_VERSION = IconConverter.toBigNumber(3);
@@ -27,7 +25,7 @@ const API_ENDPOINTS = {
   [NetworkId.YEOUIDO]: 'https://bicon.net.solidwallet.io/api/v3',
 };
 
-const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
+export const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
 const iconService = new IconService(new IconService.HttpProvider(API_ENDPOINTS[NETWORK_ID]));
 
@@ -39,9 +37,8 @@ export const getDefaultStepCost = async () => {
 
 interface ICONReactContextInterface {
   account?: string | null;
-  ledgerAddressPoint: number;
   request: (event: ICONexRequestEvent) => Promise<ICONexResponseEvent>;
-  requestAddress: (ledgerAccount?: { address: string; point: number }) => void;
+  requestAddress: () => void;
   iconService: any;
   hasExtension: boolean;
   disconnect: () => void;
@@ -50,9 +47,8 @@ interface ICONReactContextInterface {
 
 const IconReactContext = React.createContext<ICONReactContextInterface>({
   account: undefined,
-  ledgerAddressPoint: -1,
   request: request,
-  requestAddress: (ledgerAccount?: { address: string; point: number }) => null,
+  requestAddress: () => null,
   iconService: iconService,
   hasExtension: false,
   disconnect: () => null,
@@ -60,28 +56,18 @@ const IconReactContext = React.createContext<ICONReactContextInterface>({
 });
 
 export function IconReactProvider({ children }) {
-  const walletType = useWalletType();
-  const [ledgerAddressPoint, setLedgerAddressPoint] = React.useState(-1);
   const [account, setAccount] = React.useState<string | null>();
   const [hasExtension, setHasExtension] = React.useState<boolean>(false);
 
-  const requestAddress = React.useCallback(
-    async (ledgerAccount?: { address: string; point: number }) => {
-      if (walletType === 'ICONEX') {
-        const detail = await request({
-          type: ICONexRequestEventType.REQUEST_ADDRESS,
-        });
+  const requestAddress = React.useCallback(async () => {
+    const detail = await request({
+      type: ICONexRequestEventType.REQUEST_ADDRESS,
+    });
 
-        if (detail?.type === ICONexResponseEventType.RESPONSE_ADDRESS) {
-          setAccount(detail?.payload);
-        }
-      } else if (walletType === 'LEDGER') {
-        setAccount(ledgerAccount?.address);
-        setLedgerAddressPoint(ledgerAccount?.point || 0);
-      }
-    },
-    [walletType],
-  );
+    if (detail?.type === ICONexResponseEventType.RESPONSE_ADDRESS) {
+      setAccount(detail?.payload);
+    }
+  }, []);
 
   const disconnect = React.useCallback(() => {
     setAccount(null);
@@ -102,7 +88,6 @@ export function IconReactProvider({ children }) {
 
   const context: ICONReactContextInterface = {
     account,
-    ledgerAddressPoint,
     requestAddress,
     request,
     iconService,

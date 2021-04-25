@@ -45,9 +45,9 @@ export default function UnstakePanel() {
 
   const addTransaction = useTransactionAdder();
 
-  const handleUnstake = () => {
+  const handleSend = () => {
     bnJs
-      .inject({ account })
+      .eject({ account })
       .sICX.unstake(BalancedJs.utils.toLoop(differenceAmount))
       .then(res => {
         if (res.result) {
@@ -140,8 +140,8 @@ export default function UnstakePanel() {
             <TextButton onClick={toggleOpen} fontSize={14}>
               Cancel
             </TextButton>
-            <Button onClick={handleUnstake} fontSize={14}>
-              Unstake
+            <Button onClick={handleSend} fontSize={14}>
+              Send
             </Button>
           </Flex>
         </Flex>

@@ -10,10 +10,6 @@ export const FlexPanel = styled(Flex)<{
   padding: 35px;
   padding: ${({ padding }) => padding};
   border-radius: ${({ borderRadius }) => borderRadius};
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 25px;
-  `}
 `;
 
 export const BoxPanel = styled(Box)<{
@@ -25,8 +21,4 @@ export const BoxPanel = styled(Box)<{
   padding: 35px;
   padding: ${({ padding }) => padding};
   border-radius: ${({ borderRadius }) => borderRadius};
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 25px;
-  `}
 `;

@@ -260,7 +260,7 @@ export function useLoanUsedAmount(): BigNumber {
   }, [borrowedAmount, remainingAmount]);
 }
 
-export function useLoanAPY(): BigNumber {
+export function useLoanAPY(): BigNumber | undefined {
   const apys = useAPYs();
-  return apys['Loans'] || ZERO;
+  return apys['Loans'];
 }

@@ -76,6 +76,7 @@ const CollateralPanel = () => {
 
   const toggleOpen = () => {
     setOpen(!open);
+    changeShouldLedgerSign(false);
   };
 
   //before

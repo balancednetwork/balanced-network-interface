@@ -232,6 +232,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
     } else {
       onClose();
     }
+    changeShouldLedgerSign(false);
   };
 
   const isEnabled =

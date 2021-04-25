@@ -235,6 +235,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   const [open1, setOpen1] = React.useState(false);
   const toggleOpen1 = () => {
     setOpen1(!open1);
+    changeShouldLedgerSign(false);
   };
   const handleOption1 = () => {
     toggleOpen1();
@@ -244,6 +245,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   const [open2, setOpen2] = React.useState(false);
   const toggleOpen2 = () => {
     setOpen2(!open2);
+    changeShouldLedgerSign(false);
   };
   const handleOption2 = () => {
     toggleOpen2();
@@ -421,6 +423,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
 
   const toggleOpen = () => {
     setOpen(!open);
+    changeShouldLedgerSign(false);
   };
 
   const { account } = useIconReact();

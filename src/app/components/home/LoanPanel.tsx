@@ -51,6 +51,7 @@ const LoanPanel = () => {
 
   const handleCancelAdjusting = () => {
     adjust(false);
+    changeShouldLedgerSign(false);
   };
 
   //

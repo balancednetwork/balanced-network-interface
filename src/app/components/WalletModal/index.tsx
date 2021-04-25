@@ -123,11 +123,14 @@ export default function WalletModal() {
   const toggleWalletModal = useWalletModalToggle();
   const [showLedgerAddress, updateShowledgerAddress] = useState(false);
   const [addressList, updateAddressList] = useState<any>([]);
+
+  const changeWalletType = useChangeWalletType();
+
   const [{ offset, limit }, updatePaging] = useState({
     offset: 0,
     limit: LIMIT_PAGING_LEDGER,
   });
-  const changeWalletType = useChangeWalletType();
+  const [currentLedgerAddressPage, changeCurrentLedgerAddressPage] = useState(1);
 
   const toggleShowledgerAddress = useCallback(() => {
     updateShowledgerAddress(!showLedgerAddress);
@@ -183,25 +186,20 @@ export default function WalletModal() {
     }
   };
 
-  const getBack = React.useCallback(async () => {
-    if (offset <= 0) {
-      // should disable page number < 0;
-      console.log('This is first pages, cannot request more address, try other please.');
-      return;
-    }
-    const currentOffset = offset - limit;
+  const getLedgerPage = React.useCallback(
+    async (pageNum: number) => {
+      if (pageNum <= 0) {
+        // should disable page number < 0;
+        console.log('This is first pages, cannot request more address, try other please.');
+        return;
+      }
 
-    await updateLedgerAddress({ offset: currentOffset, limit });
+      // disable current page
+      if (pageNum === currentLedgerAddressPage) {
+        return;
+      }
 
-    updatePaging({
-      limit,
-      offset: currentOffset,
-    });
-  }, [offset, limit]);
-
-  const getNext = React.useCallback(async () => {
-    try {
-      const next = offset + LIMIT_PAGING_LEDGER;
+      const next = (pageNum - 1) * limit;
 
       await updateLedgerAddress({ offset: next, limit });
 
@@ -209,10 +207,10 @@ export default function WalletModal() {
         limit,
         offset: next,
       });
-    } catch (e) {
-      console.error('Error when request more address from Ledger: ', e);
-    }
-  }, [offset, limit]);
+      changeCurrentLedgerAddressPage(pageNum);
+    },
+    [limit, currentLedgerAddressPage, updatePaging, changeCurrentLedgerAddressPage],
+  );
 
   const chooseLedgerAddress = ({ address, point }: { address: string; point: number }) => {
     console.info(address);
@@ -229,6 +227,10 @@ export default function WalletModal() {
     toggleShowledgerAddress();
     toggleWalletModal();
   };
+
+  function getPageNumbers(index: number) {
+    return index - 1 <= 0 ? [1, 2, 3] : [index - 1, index, index + 1];
+  }
 
   return (
     <>
@@ -284,8 +286,33 @@ export default function WalletModal() {
             </tbody>
           </table>
           <ul className="pagination">
-            <li onClick={getBack}>˂</li>
-            <li onClick={getNext}>˃</li>
+            <li
+              onClick={async () => {
+                await getLedgerPage(currentLedgerAddressPage - 1);
+              }}
+            >
+              ˂
+            </li>
+            {getPageNumbers(currentLedgerAddressPage).map(value => {
+              return (
+                <li
+                  key={Date.now() + Math.random()}
+                  className={value === currentLedgerAddressPage ? 'actived' : ''}
+                  onClick={async () => {
+                    await getLedgerPage(value);
+                  }}
+                >
+                  {value}
+                </li>
+              );
+            })}
+            <li
+              onClick={async () => {
+                await getLedgerPage(currentLedgerAddressPage + 1);
+              }}
+            >
+              ˃
+            </li>
           </ul>
         </Flex>
       </LedgerAddressList>

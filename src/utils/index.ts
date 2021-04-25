@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
-import { NetworkId } from 'packages/icon-react';
+import { NetworkId, NETWORK_ID } from 'packages/icon-react';
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
   if (!isEoaAddress(address)) {
@@ -8,6 +8,13 @@ export function shortenAddress(address: string, chars = 7): string {
   }
   return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
 }
+
+const API_ENDPOINTS = {
+  [NetworkId.MAINNET]: '',
+  [NetworkId.YEOUIDO]: 'https://balanced.techiast.com:8069',
+};
+
+export const getAPIEnpoint = () => API_ENDPOINTS[NETWORK_ID];
 
 const Trackers = {
   [NetworkId.MAINNET]: 'https://tracker.icon.foundation',

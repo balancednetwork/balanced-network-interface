@@ -23,7 +23,7 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { useRatio, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { formatBigNumber } from 'utils';
+import { formatBigNumber, getAPIEnpoint } from 'utils';
 
 import { SectionPanel, BrightPanel, swapMessage } from './utils';
 
@@ -382,7 +382,7 @@ export default function SwapPanel() {
       try {
         axios
           .get(
-            `https://balanced.techiast.com:8069/api/v1/chart/lines?symbol=${
+            `${getAPIEnpoint()}/api/v1/chart/lines?symbol=${
               inputSymbol === 'bnusd' || inputSymbol === 'icx' ? outputSymbol + inputSymbol : inputSymbol + outputSymbol
             }&interval=${interval}&limit=500&order=desc`,
           )

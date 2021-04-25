@@ -11,6 +11,7 @@ import { MANDATORY_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { getAPIEnpoint } from 'utils';
 
 import { AppState } from '..';
 import {
@@ -95,9 +96,7 @@ export function useLoanFetchTotalRepaid(): (interval?: string | null) => void {
         }
         try {
           axios
-            .get(
-              `https://balanced.techiast.com:8069/api/v1/asset-redeemed-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`,
-            )
+            .get(`${getAPIEnpoint()}/api/v1/asset-redeemed-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`)
             .then(res => {
               const value = res.data['asset_redeemed_sum'];
               dispatch(changeTotalRepaid({ totalRepaid: BalancedJs.utils.toIcx(new BigNumber(value)) }));

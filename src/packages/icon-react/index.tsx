@@ -25,7 +25,7 @@ const API_ENDPOINTS = {
   [NetworkId.YEOUIDO]: 'https://bicon.net.solidwallet.io/api/v3',
 };
 
-const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
+export const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
 const iconService = new IconService(new IconService.HttpProvider(API_ENDPOINTS[NETWORK_ID]));
 

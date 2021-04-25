@@ -10,6 +10,7 @@ import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { VerticalDivider } from 'app/components/Divider';
+import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import { ReactComponent as IconexIcon } from 'assets/icons/iconex.svg';
@@ -255,7 +256,11 @@ export default function WalletModal() {
           </Flex>
 
           <Typography mx={4} mt={6} textAlign="center">
-            Use at your own risk. Money lost via liquidation or a smart contract bug cannot be recovered.
+            Use at your own risk. Project contributors are not liable for any lost or stolen funds.{' '}
+            <Link href="https://balanced.network/disclaimer/" target="_blank">
+              View disclaimer
+            </Link>
+            .
           </Typography>
         </Box>
       </StyledModal>

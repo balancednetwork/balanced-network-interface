@@ -211,6 +211,9 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   };
 
   const handleWithdrawEarnings = () => {
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
     bnJs
       .inject({ account })
       .Dex.withdrawSicxEarnings()

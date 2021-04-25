@@ -11,18 +11,22 @@ import { Box, Flex } from 'rebass/styled-components';
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
 import { StyledTabList, StyledTab, Grid, MaxButton } from './utils';
 
 export default function ICXWallet() {
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const [value, setValue] = React.useState('');
 
   const handleCurrencyInput = (value: string) => {
@@ -50,6 +54,7 @@ export default function ICXWallet() {
 
   const toggleOpen = () => {
     setOpen(!open);
+    changeShouldLedgerSign(false);
   };
 
   const beforeAmount = wallet['ICX'];
@@ -61,6 +66,9 @@ export default function ICXWallet() {
   const addTransaction = useTransactionAdder();
 
   const handleSend = () => {
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
     bnJs
       .inject({ account })
       .transfer(address, BalancedJs.utils.toLoop(differenceAmount))
@@ -200,6 +208,7 @@ export default function ICXWallet() {
               Send
             </Button>
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </BoxPanel>

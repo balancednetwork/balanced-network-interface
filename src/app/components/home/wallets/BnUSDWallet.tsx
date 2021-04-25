@@ -159,8 +159,8 @@ export default function BnUSDWallet() {
             <Button onClick={handleSend} fontSize={14}>
               Send
             </Button>
-            {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </BoxPanel>

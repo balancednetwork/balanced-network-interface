@@ -153,8 +153,8 @@ const RewardsPanel = () => {
           <Button onClick={handleClaim} disabled={reward.isZero()}>
             Claim rewards
           </Button>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
+        {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
       </BoxPanel>
 
       {/* Stake new Balance Tokens Modal */}

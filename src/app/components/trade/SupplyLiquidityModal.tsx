@@ -53,6 +53,10 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
   const handleAdd = (currencyType: Field) => () => {
     if (!account) return;
 
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
     const currencyKey =
       currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
 
@@ -285,7 +289,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
                   {removingTxs[Field.CURRENCY_A] ? 'Removing' : 'Remove'}
                 </RemoveButton>
               )}
-              {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
             </Box>
           </Flex>
 
@@ -316,7 +319,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
                   {removingTxs[Field.CURRENCY_B] ? 'Removing' : 'Remove'}
                 </RemoveButton>
               )}
-              {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
             </Box>
           </Flex>
 

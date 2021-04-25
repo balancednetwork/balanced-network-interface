@@ -19,6 +19,7 @@ import {
   changeBadDebt,
   changeTotalSupply,
   changeTotalRepaid,
+  changeTotalCollateralSold,
   Field,
   adjust,
   cancel,
@@ -39,6 +40,10 @@ export function useLoanTotalSupply(): AppState['loan']['totalSupply'] {
 
 export function useLoanTotalRepaid(): AppState['loan']['totalRepaid'] {
   return useSelector((state: AppState) => state.loan.totalRepaid);
+}
+
+export function useLoanTotalCollateralSold(): AppState['loan']['totalCollateralSold'] {
+  return useSelector((state: AppState) => state.loan.totalCollateralSold);
 }
 
 export function useLoanChangeBorrowedAmount(): (borrowedAmount: BigNumber) => void {
@@ -100,6 +105,16 @@ export function useLoanFetchTotalRepaid(): (interval?: string | null) => void {
             .then(res => {
               const value = res.data['loan_repaid_sum'];
               dispatch(changeTotalRepaid({ totalRepaid: BalancedJs.utils.toIcx(new BigNumber(value)) }));
+            });
+          axios
+            .get(
+              `${getAPIEnpoint()}/api/v1/sold-collateral-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`,
+            )
+            .then(res => {
+              const value = res.data['loan_repaid_sum'];
+              dispatch(
+                changeTotalCollateralSold({ totalCollateralSold: BalancedJs.utils.toIcx(new BigNumber(value)) }),
+              );
             });
         } catch (e) {
           console.error(e);

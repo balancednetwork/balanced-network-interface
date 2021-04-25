@@ -22,6 +22,7 @@ import {
   useLoanDebtHoldingShare,
   useLoanTotalRepaid,
   useLoanFetchTotalRepaid,
+  useLoanTotalCollateralSold,
   useLoanTotalSupply,
 } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -292,7 +293,7 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">0 ICX</Typography>
+                <Typography variant="p">{formatBigNumber(collateralTotalSold, 'currency')} ICX</Typography>
                 <Typography>Collateral sold</Typography>
               </Box>
               <Box width={1 / 2}>

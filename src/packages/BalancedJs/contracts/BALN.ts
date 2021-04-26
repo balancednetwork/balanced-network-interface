@@ -25,7 +25,7 @@ export default class BALN extends Contract {
   swapToBnUSD(value: BigNumber, minimumReceive: BigNumber) {
     const data = {
       method: '_swap',
-      params: { toToken: addresses[this.nid].bnusd, minimumReceive: minimumReceive.toString() },
+      params: { toToken: addresses[this.nid].bnusd, minimumReceive: minimumReceive.toFixed() },
     };
 
     return this.transfer(

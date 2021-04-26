@@ -52,7 +52,7 @@ export default class bnUSD extends Contract {
       method: '_swap',
       params: {
         toToken: addresses[this.nid][outputSymbol.toLowerCase()],
-        minimumReceive: minimumReceive.toString(),
+        minimumReceive: minimumReceive.toFixed(),
       },
     };
 

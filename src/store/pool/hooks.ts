@@ -333,7 +333,7 @@ export function useAPYs() {
   );
 
   React.useEffect(() => {
-    if (rewards && !rewards.isNaN()) {
+    if (rewards && !rewards.isNaN() && !rewards.isZero()) {
       setAPYs(state => ({ ...state, '1': rewards }));
     }
   }, [rewards, setAPYs]);

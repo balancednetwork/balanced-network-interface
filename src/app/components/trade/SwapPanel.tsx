@@ -208,12 +208,12 @@ export default function SwapPanel() {
         val = '0';
       }
       if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
-        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
+        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
       } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
         const fee = parseFloat(val) / 100;
         setSwapFee(new BigNumber(fee).toString());
         val = (parseFloat(val) - fee).toString();
-        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
+        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
       } else {
         bnJs
           .inject({ account })

@@ -9,7 +9,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { Pair, BASE_SUPPORTED_PAIRS } from 'constants/currency';
-import { ONE } from 'constants/index';
+import { ONE, ZERO } from 'constants/index';
+import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppDispatch, AppState } from '../index';
@@ -317,10 +318,30 @@ export function useRates() {
 export function useAPYs() {
   const [apys, setAPYs] = React.useState<{ [key: string]: BigNumber }>({});
 
+  // calculate sICX/ICX APY
+  const totalDailyReward = useReward(BalancedJs.utils.POOL_IDS.sICXICX);
+  const totalICXLiquidity = usePool(BalancedJs.utils.POOL_IDS.sICXICX);
+  const ratio = useRatio();
+  const rewards = React.useMemo(
+    () =>
+      totalDailyReward
+        ?.times(365)
+        .times(ratio.BALNbnUSDratio)
+        .div(totalICXLiquidity?.total || ZERO)
+        .div(ratio.ICXUSDratio),
+    [totalDailyReward, ratio.BALNbnUSDratio, totalICXLiquidity, ratio.ICXUSDratio],
+  );
+
+  React.useEffect(() => {
+    if (rewards && !rewards.isNaN()) {
+      setAPYs(state => ({ ...state, '1': rewards }));
+    }
+  }, [rewards, setAPYs]);
+
+  //
   React.useEffect(() => {
     const fetchAPYs = async () => {
       const t = {
-        'sICX/ICX': 1,
         'sICX/bnUSD': 2,
         'BALN/bnUSD': 3,
       };

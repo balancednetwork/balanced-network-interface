@@ -12,7 +12,6 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useDerivedMintInfo } from 'store/mint/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -24,6 +23,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children?: React.ReactNode;
+  parsedAmounts: { [field in Field]: BigNumber };
 }
 
 enum SupplyModalStatus {
@@ -37,7 +37,7 @@ export enum Field {
   CURRENCY_B = 'CURRENCY_B',
 }
 
-export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
+export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }: ModalProps) {
   const { account } = useIconReact();
   const balances = useWalletBalances();
 
@@ -187,18 +187,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose }: ModalProps) {
       setHasErrorMessage(false);
     }
   }, [isOpen]);
-
-  const {
-    // currencies,
-    // pair,
-    // pairState,
-    // currencyBalances,
-    parsedAmounts,
-    // price,
-    // liquidityMinted,
-    // poolTokenPercentage,
-    // error
-  } = useDerivedMintInfo();
 
   const addingATxStatus: TransactionStatus = useTransactionStatus(addingTxs[Field.CURRENCY_A]);
   const addingBTxStatus: TransactionStatus = useTransactionStatus(addingTxs[Field.CURRENCY_B]);

@@ -319,23 +319,33 @@ export function useAPYs() {
 
   React.useEffect(() => {
     const fetchAPYs = async () => {
-      const [res0, res1, res2, res3, res4, res5] = await Promise.all([
-        bnJs.Rewards.getAPY('sICX/ICX'),
-        bnJs.Rewards.getAPY('sICX/bnUSD'),
-        bnJs.Rewards.getAPY('BALN/bnUSD'),
+      const t = {
+        'sICX/ICX': 1,
+        'sICX/bnUSD': 2,
+        'BALN/bnUSD': 3,
+      };
+
+      Object.entries(t).forEach(async ([poolName, poolId]) => {
+        try {
+          const res = await bnJs.Rewards.getAPY(poolName);
+          setAPYs(state => ({ ...state, [poolId]: BalancedJs.utils.toIcx(res) }));
+        } catch (e) {
+          console.error(e);
+        }
+      });
+
+      const [res3, res4, res5] = await Promise.all([
         bnJs.Rewards.getAPY('Loans'),
         bnJs.Dex.getQuotePriceInBase(BalancedJs.utils.POOL_IDS.sICXbnUSD),
         bnJs.Band.getReferenceData({ _base: 'USD', _quote: 'ICX' }),
       ]);
 
-      setAPYs({
-        [BalancedJs.utils.POOL_IDS.sICXICX]: BalancedJs.utils.toIcx(res0),
-        [BalancedJs.utils.POOL_IDS.sICXbnUSD]: BalancedJs.utils.toIcx(res1),
-        [BalancedJs.utils.POOL_IDS.BALNbnUSD]: BalancedJs.utils.toIcx(res2),
+      setAPYs(state => ({
+        ...state,
         Loans: BalancedJs.utils
           .toIcx(res3)
           .multipliedBy(BalancedJs.utils.toIcx(res4).dividedBy(BalancedJs.utils.toIcx(res5['rate']))),
-      });
+      }));
     };
 
     fetchAPYs();

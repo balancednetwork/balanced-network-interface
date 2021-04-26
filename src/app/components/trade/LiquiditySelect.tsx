@@ -10,7 +10,6 @@ import { PopperWithoutArrow } from 'app/components/Popover';
 import { Pair, BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { resetMintState } from 'store/mint/actions';
 import { useSetPair, usePoolPair, useAPYs } from 'store/pool/hooks';
-import { formatBigNumber } from 'utils';
 
 export default function LiquiditySelect() {
   const [open, setOpen] = React.useState(false);
@@ -53,7 +52,7 @@ export default function LiquiditySelect() {
                   {pool.pair}
                 </DataText>
                 <DataText variant="p" textAlign="right">
-                  {formatBigNumber(apys[pool.poolId], 'currency')}%
+                  {apys[pool.poolId] ? apys[pool.poolId].dp(2).toFormat() : '-'}%
                 </DataText>
               </ListItem>
             ))}

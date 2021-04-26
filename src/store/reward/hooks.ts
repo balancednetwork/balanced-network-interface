@@ -1,11 +1,13 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
+import _ from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { PLUS_INFINITY, REWARDS_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useLoanInputAmount } from 'store/loan/hooks';
@@ -13,8 +15,7 @@ import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
-import { changeReward } from './actions';
-import { RewardState } from './reducer';
+import { setReward } from './actions';
 
 // #redux-step-5: define function get value of variable from store
 export function useReward(): AppState['reward'] {
@@ -22,50 +23,53 @@ export function useReward(): AppState['reward'] {
   return useMemo(() => reward, [reward]);
 }
 
-// #redux-step-6: define function working with variable on store
-export function useChangeReward(): ({
-  sICXbnUSDreward,
-  BALNbnUSDreward,
-  sICXICXreward,
-  loan,
-  poolDailyReward,
-}: Partial<RewardState>) => void {
+export function useChangeReward(): (poolId: string, reward: BigNumber) => void {
   const dispatch = useDispatch();
-  return useCallback(
-    ({ sICXbnUSDreward, BALNbnUSDreward, sICXICXreward, loan, poolDailyReward }) => {
-      dispatch(changeReward({ sICXbnUSDreward, BALNbnUSDreward, sICXICXreward, loan, poolDailyReward }));
+
+  return React.useCallback(
+    (poolId, reward) => {
+      dispatch(setReward({ poolId, reward }));
     },
     [dispatch],
   );
 }
 
 export function useFetchReward(account?: string | null) {
-  const transactions = useAllTransactions();
-  const changeReward = useChangeReward();
-
-  const fetchReward = React.useCallback(() => {
-    if (account) {
-      Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission()]).then(result => {
-        const [poolsReward, poolEmission] = result.map(v => v);
-        const sICXICXreward = BalancedJs.utils.toIcx(poolsReward['SICXICX']);
-        const sICXbnUSDreward = BalancedJs.utils.toIcx(poolsReward['SICXbnUSD']);
-        const BALNbnUSDreward = BalancedJs.utils.toIcx(poolsReward['BALNbnUSD']);
-        const loan = BalancedJs.utils.toIcx(poolsReward['Loans']);
-        const poolDailyReward = BalancedJs.utils.toIcx(poolEmission);
-        changeReward({
-          sICXICXreward,
-          sICXbnUSDreward,
-          BALNbnUSDreward,
-          loan,
-          poolDailyReward,
-        });
-      });
-    }
-  }, [account, changeReward]);
-
+  // fetch rewards rule
+  const [rules, setRules] = React.useState({});
+  const [emission, setEmission] = React.useState(new BigNumber(0));
   React.useEffect(() => {
-    fetchReward();
-  }, [fetchReward, transactions, account]);
+    const fetchRewardsRule = async () => {
+      let result = await Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission()]);
+      const [_rules, _emission] = result;
+      const a = {};
+      _.forOwn(_rules, function (value, key) {
+        a[key] = BalancedJs.utils.toIcx(value);
+      });
+
+      setRules(a);
+      setEmission(BalancedJs.utils.toIcx(_emission));
+    };
+    fetchRewardsRule();
+  }, []);
+
+  const changeReward = useChangeReward();
+  // calculate rewards per pool
+  React.useEffect(() => {
+    BASE_SUPPORTED_PAIRS.forEach(pair => {
+      const poolId = pair.poolId;
+      let rewardShare: BigNumber;
+      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        rewardShare = rules['sICX/ICX'];
+      } else {
+        rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
+      }
+      changeReward(poolId.toString(), emission.times(rewardShare));
+    });
+
+    const rewardShare = rules['Loans'];
+    changeReward('Loans', emission.times(rewardShare));
+  }, [rules, emission, changeReward]);
 }
 
 export const useCurrentCollateralRatio = (): BigNumber => {

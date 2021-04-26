@@ -14,7 +14,12 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import { REWARDS_COLLATERAL_RATIO, MANDATORY_COLLATERAL_RATIO, LIQUIDATION_COLLATERAL_RATIO } from 'constants/index';
+import {
+  REWARDS_COLLATERAL_RATIO,
+  MANDATORY_COLLATERAL_RATIO,
+  LIQUIDATION_COLLATERAL_RATIO,
+  ZERO,
+} from 'constants/index';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
 import {
   useLoanInputAmount,
@@ -46,15 +51,12 @@ const useThresholdPrices = (): [BigNumber, BigNumber, BigNumber] => {
   }, [collateralInputAmount, loanInputAmount]);
 };
 
-const useTotalDailyRewards = (): BigNumber => {
-  const rewards = useReward();
-  return rewards.poolDailyReward.times(rewards.loan);
-};
-
 const useOwnDailyRewards = (): BigNumber => {
   const debtHoldShare = useLoanDebtHoldingShare();
 
-  const totalDailyRewards = useTotalDailyRewards();
+  const rewards = useReward();
+
+  const totalDailyRewards = rewards['Loans'] || ZERO;
 
   return totalDailyRewards.times(debtHoldShare).div(100);
 };
@@ -313,7 +315,7 @@ const PositionDetailPanel = () => {
               </Box>
               <Box width={1 / 2}>
                 <Typography variant="p" color={hasRewardableCollateral ? 'white' : 'alert'}>
-                  {rewardsAPY.dp(2).toFormat()}%
+                  {rewardsAPY ? rewardsAPY.dp(2).toFormat() : '-'}%
                 </Typography>
                 <Typography>APY</Typography>
               </Box>

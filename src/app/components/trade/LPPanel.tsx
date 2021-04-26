@@ -85,9 +85,14 @@ export default function LPPanel() {
     setShowSupplyConfirm(false);
   };
 
+  const [amounts, setAmounts] = React.useState<{ [field in Field]: BigNumber }>({
+    [Field.CURRENCY_A]: ZERO,
+    [Field.CURRENCY_B]: ZERO,
+  });
   const handleSupply = () => {
     if (account) {
       setShowSupplyConfirm(true);
+      setAmounts(parsedAmounts);
     } else {
       toggleWalletModal();
     }
@@ -231,7 +236,7 @@ export default function LPPanel() {
         <LPDescription />
       </SectionPanel>
 
-      <SupplyLiquidityModal isOpen={showSupplyConfirm} onClose={handleSupplyConfirmDismiss} />
+      <SupplyLiquidityModal isOpen={showSupplyConfirm} onClose={handleSupplyConfirmDismiss} parsedAmounts={amounts} />
     </>
   );
 }

@@ -22,6 +22,17 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
+  getQuotePriceInBase(id: number) {
+    const callParams = this.paramsBuilder({
+      method: 'getQuotePriceInBase',
+      params: {
+        _id: IconConverter.toHex(id),
+      },
+    });
+
+    return this.call(callParams);
+  }
+
   add(baseToken: string, quoteToken: string, baseValue: BigNumber, quoteValue: BigNumber) {
     const payload = this.transactionParamsBuilder({
       method: 'add',

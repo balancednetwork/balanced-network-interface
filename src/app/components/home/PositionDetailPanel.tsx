@@ -315,7 +315,7 @@ const PositionDetailPanel = () => {
               </Box>
               <Box width={1 / 2}>
                 <Typography variant="p" color={hasRewardableCollateral ? 'white' : 'alert'}>
-                  {rewardsAPY ? rewardsAPY.dp(2).toFormat() : '-'}%
+                  {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
                 </Typography>
                 <Typography>APY</Typography>
               </Box>

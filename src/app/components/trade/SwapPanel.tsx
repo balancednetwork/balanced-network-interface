@@ -103,6 +103,21 @@ export default function SwapPanel() {
 
   const [swapFee, setSwapFee] = React.useState('0');
 
+  const getBalance = React.useCallback(
+    (symbol: string) => {
+      if (symbol.toLocaleLowerCase() === 'icx') {
+        return balances.ICX;
+      } else if (symbol.toLocaleLowerCase() === 'sicx') {
+        return balances.sICX;
+      } else if (symbol.toLocaleLowerCase() === 'baln') {
+        return balances.BALN;
+      } else if (symbol.toLocaleLowerCase() === 'bnusd') {
+        return balances.bnUSD;
+      }
+    },
+    [balances],
+  );
+
   const tokenRatio = React.useCallback(
     (symbolInput: string, symbolOutput: string) => {
       if (symbolInput === 'ICX') {
@@ -191,11 +206,14 @@ export default function SwapPanel() {
           .multipliedBy(poolTotalInput)
           .dividedBy(poolTotalOutput.minus(amountOutput))
           .minus(poolTotalInput);
-
+        let inputBalance = getBalance(symbolInput) || new BigNumber(0);
+        if (amountInput.isGreaterThanOrEqualTo(inputBalance)) {
+          amountInput = inputBalance;
+        }
         return amountInput;
       }
     },
-    [getPoolData],
+    [getPoolData, getBalance],
   );
 
   const handleConvertOutputRate = React.useCallback(
@@ -328,6 +346,10 @@ export default function SwapPanel() {
 
   const handleTypeInput = React.useCallback(
     (val: string) => {
+      let inputBalance = getBalance(inputCurrency.symbol.toLowerCase()) || new BigNumber(0);
+      if (new BigNumber(val).isGreaterThanOrEqualTo(inputBalance)) {
+        val = formatBigNumber(inputBalance, 'input');
+      }
       let poolTotalBase =
         getPoolData(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase())?.poolTotalInput || ZERO;
       if (new BigNumber(val).isGreaterThanOrEqualTo(poolTotalBase)) {
@@ -336,7 +358,7 @@ export default function SwapPanel() {
       setSwapInputAmount(val);
       handleConvertOutputRate(inputCurrency, outputCurrency, val);
     },
-    [inputCurrency, outputCurrency, handleConvertOutputRate, getPoolData],
+    [inputCurrency, outputCurrency, handleConvertOutputRate, getPoolData, getBalance],
   );
 
   const handleSwapConfirmDismiss = () => {

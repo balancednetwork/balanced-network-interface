@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
@@ -264,7 +265,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between">
-          <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1} mr={2}>
+          {/* <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1} mr={2}>
             <ICXIcon width="35" height="35" />
             <Typography>{balance1?.balance.dp(2).toFormat()} ICX</Typography>
           </OptionButton>
@@ -272,7 +273,8 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2}>
             <SICXIcon width="35" height="35" />
             <Typography>{balance1?.balance1?.dp(2).toFormat()} sICX</Typography>
-          </OptionButton>
+          </OptionButton> */}
+          <Button disabled={true}>Maintenance Now</Button>
         </Flex>
       </Flex>
 
@@ -527,9 +529,10 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           />
         </Box>
         <Flex alignItems="center" justifyContent="center">
-          <Button disabled={portion.isGreaterThan(ONE)} onClick={handleShowConfirm}>
+          {/* <Button disabled={portion.isGreaterThan(ONE)} onClick={handleShowConfirm}>
             Withdraw liquidity
-          </Button>
+          </Button> */}
+          <Button disabled={true}>Maintenance Now</Button>
         </Flex>
       </Flex>
 

@@ -14,7 +14,7 @@ import { DefaultLayout } from 'app/components/Layout';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useLoanFetchInfo } from 'store/loan/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
-import { useFetchReward } from 'store/reward/hooks';
+import { useFetchRewardsInfo } from 'store/reward/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 const Grid = styled.div`
@@ -44,7 +44,7 @@ export function HomePage() {
   useWalletFetchBalances(account);
   useCollateralFetchInfo(account);
   useLoanFetchInfo(account);
-  useFetchReward(account);
+  useFetchRewardsInfo();
 
   return (
     <DefaultLayout>

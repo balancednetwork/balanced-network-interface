@@ -12,7 +12,7 @@ import LPPanel from 'app/components/trade/LPPanel';
 import SwapPanel from 'app/components/trade/SwapPanel';
 import { useFetchPools } from 'store/pool/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
-import { useFetchReward } from 'store/reward/hooks';
+import { useFetchRewardsInfo } from 'store/reward/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 export function TradePage() {
@@ -20,7 +20,7 @@ export function TradePage() {
 
   useFetchPrice();
   useWalletFetchBalances(account);
-  useFetchReward(account);
+  useFetchRewardsInfo();
   useFetchPools();
 
   const [value, setValue] = React.useState<number>(0);

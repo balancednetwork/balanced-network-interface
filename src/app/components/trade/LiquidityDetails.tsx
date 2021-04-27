@@ -165,7 +165,7 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
   return (
     <ListItem border={border}>
       <DataText>{pair.pair}</DataText>
-      <DataText>{`${formatBigNumber(poolData?.suppliedBase, 'currency')} ${pair.baseCurrencyKey}`}</DataText>
+      <DataText>{`${formatBigNumber(poolData?.suppliedQuote, 'currency')} ${pair.quoteCurrencyKey}`}</DataText>
       {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
       {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
       <DataText>

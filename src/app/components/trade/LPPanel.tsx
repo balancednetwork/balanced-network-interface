@@ -10,7 +10,7 @@ import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
-import { CURRENCY_LIST, SUPPORTED_PAIRS } from 'constants/currency';
+import { CURRENCY_LIST } from 'constants/currency';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
@@ -174,7 +174,7 @@ export default function LPPanel() {
             <LiquiditySelect />
           </Flex>
 
-          <Flex mt={3}>
+          <Flex mt={3} hidden={selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX}>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
@@ -184,7 +184,7 @@ export default function LPPanel() {
             />
           </Flex>
 
-          <Flex mt={3} style={selectedPair.quoteCurrencyKey.toLowerCase() === 'sicx' ? { display: 'none' } : {}}>
+          <Flex mt={3}>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               showMaxButton={false}
@@ -195,13 +195,15 @@ export default function LPPanel() {
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            Wallet: {formatBigNumber(balances[selectedPair.baseCurrencyKey], 'currency')} {selectedPair.baseCurrencyKey}
-            {selectedPair === SUPPORTED_PAIRS[2]
-              ? ''
-              : ' / ' +
-                formatBigNumber(balances[selectedPair.quoteCurrencyKey], 'currency') +
-                ' ' +
-                selectedPair.quoteCurrencyKey}
+            {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
+              ? `Wallet: 
+                  ${formatBigNumber(balances[selectedPair.baseCurrencyKey], 'currency')} 
+                  ${selectedPair.baseCurrencyKey} /  
+                  ${formatBigNumber(balances[selectedPair.quoteCurrencyKey], 'currency')} 
+                  ${selectedPair.quoteCurrencyKey}`
+              : `Wallet: 
+                  ${formatBigNumber(balances[selectedPair.quoteCurrencyKey], 'currency')} 
+                  ${selectedPair.quoteCurrencyKey}`}
           </Typography>
 
           <Box mt={5}>

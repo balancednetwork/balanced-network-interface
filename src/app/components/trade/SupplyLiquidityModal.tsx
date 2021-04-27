@@ -118,8 +118,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
       changeShouldLedgerSign(true);
     }
 
-    if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-      const t = BigNumber.max(BigNumber.min(parsedAmounts[Field.CURRENCY_A], balances['ICX'].minus(0.1)), 0);
+    if (isQueue) {
+      const t = BigNumber.max(BigNumber.min(parsedAmounts[Field.CURRENCY_B], balances['ICX'].minus(0.1)), 0);
       if (t.isZero()) return;
 
       bnJs

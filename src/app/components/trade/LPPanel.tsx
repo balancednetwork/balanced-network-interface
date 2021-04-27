@@ -195,15 +195,11 @@ export default function LPPanel() {
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-              ? `Wallet: 
-                  ${formatBigNumber(balances[selectedPair.baseCurrencyKey], 'currency')} 
-                  ${selectedPair.baseCurrencyKey} /  
-                  ${formatBigNumber(balances[selectedPair.quoteCurrencyKey], 'currency')} 
-                  ${selectedPair.quoteCurrencyKey}`
-              : `Wallet: 
-                  ${formatBigNumber(balances[selectedPair.quoteCurrencyKey], 'currency')} 
-                  ${selectedPair.quoteCurrencyKey}`}
+            {`Wallet: 
+              ${formatBigNumber(balances[selectedPair.baseCurrencyKey], 'currency')} 
+              ${selectedPair.baseCurrencyKey} /  
+              ${formatBigNumber(balances[selectedPair.quoteCurrencyKey], 'currency')} 
+              ${selectedPair.quoteCurrencyKey}`}
           </Typography>
 
           <Box mt={5}>

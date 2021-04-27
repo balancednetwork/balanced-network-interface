@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import AppBar from 'app/components/AppBar';
 import Header from 'app/components/Header';
+import { Typography } from 'app/theme';
 
 const StyledHeader = styled(Header)`
   margin-top: 50px;
@@ -56,6 +57,12 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
 
   return (
     <>
+      <Box bg="alert">
+        <Typography variant="h3" textAlign="center" py={2}>
+          Withdraw feature is temporarily disabled for reward calculations.
+        </Typography>
+      </Box>
+
       <Container>
         <StyledHeader title={title} />
 

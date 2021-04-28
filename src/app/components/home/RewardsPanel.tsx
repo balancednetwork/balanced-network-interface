@@ -21,9 +21,7 @@ const RewardsPanel = () => {
   const { account } = useIconReact();
   const wallet = useWalletBalances();
   const addTransaction = useTransactionAdder();
-  // const walletBalance = useWalletBalances();
 
-  //const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleClaim = () => {
@@ -54,33 +52,6 @@ const RewardsPanel = () => {
   };
 
   const reward = wallet.BALNreward;
-
-  // const handleClose = () => {
-  //   bnJs
-  //     .inject({ account: account })
-  //     .Rewards.claimRewards()
-  //     .then(res => {
-  //       addTransaction(
-  //         { hash: res.result }, //
-  //         {
-  //           summary: `${
-  //             !account
-  //               ? '-'
-  //               : walletBalance.BALNreward?.toNumber() === 0 || walletBalance.BALNreward?.isNaN()
-  //               ? '0 BALN'
-  //               : walletBalance.BALNreward?.toFixed(2) + 'BALN'
-  //           } ICX added to your wallet.`,
-  //         },
-  //       );
-  //       // close modal
-  //       //toggleOpen();
-  //       // reset collateral panel values
-  //       setOpen(false);
-  //     })
-  //     .catch(e => {
-  //       console.error('error', e);
-  //     });
-  // };
 
   const ratio = useRatio();
 
@@ -178,49 +149,6 @@ const RewardsPanel = () => {
           </Flex>
         </Flex>
       </Modal>
-
-      {/* Stake new Balance Tokens Modal */}
-      {/* <Modal isOpen={open} onDismiss={handleClose}>
-          <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-            <Typography textAlign="center" mb="5px">
-              Stake new Balance Tokens?
-            </Typography>
-
-            <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-              8 BALN
-            </Typography>
-
-            <Flex my={5}>
-              <Box width={1 / 2} className="border-right">
-                <Typography textAlign="center">Before</Typography>
-                <Typography variant="p" textAlign="center">
-                  50 BALN
-                </Typography>
-              </Box>
-
-              <Box width={1 / 2}>
-                <Typography textAlign="center">After</Typography>
-                <Typography variant="p" textAlign="center">
-                  58 BALN
-                </Typography>
-              </Box>
-            </Flex>
-
-            <Typography textAlign="center">
-              Stake your Balance Tokens to earn dividends.
-              <br /> Unstaking takes 3 days.
-            </Typography>
-
-            <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-              <TextButton onClick={handleClose} fontSize={14}>
-                Not now
-              </TextButton>
-              <Button fontSize={14} onClick={handleClaimReward}>
-                Stake
-              </Button>
-            </Flex>
-          </Flex>
-        </Modal> */}
     </div>
   );
 };

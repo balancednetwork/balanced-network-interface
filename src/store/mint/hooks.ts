@@ -6,6 +6,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
+import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { usePool, usePoolPair } from 'store/pool/hooks';
 import { Pool } from 'store/pool/reducer';
 import { useRatio } from 'store/ratio/hooks';
@@ -150,7 +151,10 @@ export function useDerivedMintInfo(): {
       error = error ?? 'Insufficient balance';
     }
 
-    if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.isLessThan(currencyBAmount)) {
+    if (
+      currencyBAmount &&
+      currencyBalances?.[Field.CURRENCY_B]?.isLessThan(currencyBAmount.plus(MINIMUM_ICX_AMOUNT_IN_WALLET))
+    ) {
       error = error ?? 'Insufficient balance';
     }
   } else {

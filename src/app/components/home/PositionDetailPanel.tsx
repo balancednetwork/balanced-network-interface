@@ -31,7 +31,7 @@ import {
   useLoanAPY,
 } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
-import { useHasRewardableLoan, useReward, useCurrentCollateralRatio } from 'store/reward/hooks';
+import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
@@ -54,7 +54,7 @@ const useThresholdPrices = (): [BigNumber, BigNumber, BigNumber] => {
 const useOwnDailyRewards = (): BigNumber => {
   const debtHoldShare = useLoanDebtHoldingShare();
 
-  const rewards = useReward();
+  const rewards = useRewards();
 
   const totalDailyRewards = rewards['Loans'] || ZERO;
 

@@ -21,7 +21,6 @@ export interface Pair {
   baseCurrencyKey: CurrencyKey;
   quoteCurrencyKey: CurrencyKey;
   pair: string;
-  id: string;
   poolId: number;
 }
 
@@ -30,42 +29,36 @@ export const SUPPORTED_PAIRS: Array<Pair> = [
     baseCurrencyKey: CURRENCY_MAP['sICX'],
     quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
     pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['bnUSD']),
-    id: 'SICXbnUSD',
     poolId: 2,
   },
   {
     baseCurrencyKey: CURRENCY_MAP['BALN'],
     quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
     pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['bnUSD']),
-    id: 'BALNbnUSD',
     poolId: 3,
-  },
-  {
-    baseCurrencyKey: CURRENCY_MAP['ICX'],
-    quoteCurrencyKey: CURRENCY_MAP['sICX'],
-    pair: toMarketPair(CURRENCY_MAP['ICX'], CURRENCY_MAP['sICX']),
-    id: 'SICXICX',
-    poolId: 1,
   },
   {
     baseCurrencyKey: CURRENCY_MAP['sICX'],
     quoteCurrencyKey: CURRENCY_MAP['ICX'],
     pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['ICX']),
-    id: 'SICXICX',
+    poolId: 1,
+  },
+  {
+    baseCurrencyKey: CURRENCY_MAP['ICX'],
+    quoteCurrencyKey: CURRENCY_MAP['sICX'],
+    pair: toMarketPair(CURRENCY_MAP['ICX'], CURRENCY_MAP['sICX']),
     poolId: 1,
   },
   {
     baseCurrencyKey: CURRENCY_MAP['bnUSD'],
     quoteCurrencyKey: CURRENCY_MAP['sICX'],
     pair: toMarketPair(CURRENCY_MAP['bnUSD'], CURRENCY_MAP['sICX']),
-    id: '',
     poolId: 2,
   },
   {
     baseCurrencyKey: CURRENCY_MAP['bnUSD'],
     quoteCurrencyKey: CURRENCY_MAP['BALN'],
     pair: toMarketPair(CURRENCY_MAP['bnUSD'], CURRENCY_MAP['BALN']),
-    id: '',
     poolId: 3,
   },
 ];

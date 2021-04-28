@@ -89,61 +89,42 @@ export default function LPPanel() {
     [Field.CURRENCY_A]: ZERO,
     [Field.CURRENCY_B]: ZERO,
   });
-  const handleSupply = () => {
-    if (account) {
-      setShowSupplyConfirm(true);
-      setAmounts(parsedAmounts);
-    } else {
-      toggleWalletModal();
-    }
+
+  const handleConnectToWallet = () => {
+    toggleWalletModal();
   };
 
-  const selectedPair = usePoolPair();
+  const handleSupply = () => {
+    setShowSupplyConfirm(true);
+    setAmounts(parsedAmounts);
+  };
 
   const maxSliderAmount = useAvailableLPTokenBalance();
-
-  const pool = usePool(selectedPair.poolId);
-  const handleSlider = (values: string[], handle: number) => {
-    if (pool && !pool.total.isZero()) {
-      if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        onFieldAInput(values[handle], 'slider');
-      } else {
-        const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
-        onFieldAInput(baseAmount.toFixed(), 'slider');
-      }
-    }
-  };
 
   const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
   const {
     dependentField,
-    // currencies,
-    // pair,
-    // pairState,
-    // currencyBalances,
+    pair,
+    pool,
     parsedAmounts,
-    // price,
     noLiquidity,
     // liquidityMinted,
     // poolTokenPercentage,
-    // error
+    error,
   } = useDerivedMintInfo();
 
-  const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity);
+  const { onFieldAInput, onFieldBInput, onSlide } = useMintActionHandlers(noLiquidity);
 
-  const handleBaseAmountType = React.useCallback(
-    (value: string) => {
-      onFieldAInput(value, 'text');
-    },
-    [onFieldAInput],
-  );
-
-  const handleQuoteAmountType = React.useCallback(
-    (value: string) => {
-      onFieldBInput(value, 'text');
-    },
-    [onFieldBInput],
-  );
+  const handleSlider = (values: string[], handle: number) => {
+    if (pool && !pool.total.isZero()) {
+      if (pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        onSlide(values[handle]);
+      } else {
+        const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
+        onSlide(baseAmount.toFixed());
+      }
+    }
+  };
 
   // get formatted amounts
   const formattedAmounts = {
@@ -165,6 +146,8 @@ export default function LPPanel() {
     }
   }, [inputType, sliderValue]);
 
+  const isValid = !error;
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -174,12 +157,12 @@ export default function LPPanel() {
             <LiquiditySelect />
           </Flex>
 
-          <Flex mt={3} hidden={selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX}>
+          <Flex mt={3} hidden={pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX}>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
-              currency={CURRENCY_LIST[selectedPair.baseCurrencyKey.toLowerCase()]}
-              onUserInput={handleBaseAmountType}
+              currency={CURRENCY_LIST[pair.baseCurrencyKey.toLowerCase()]}
+              onUserInput={onFieldAInput}
               id="supply-liquidity-input-token-a"
             />
           </Flex>
@@ -188,18 +171,18 @@ export default function LPPanel() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               showMaxButton={false}
-              currency={CURRENCY_LIST[selectedPair.quoteCurrencyKey.toLowerCase()]}
-              onUserInput={handleQuoteAmountType}
+              currency={CURRENCY_LIST[pair.quoteCurrencyKey.toLowerCase()]}
+              onUserInput={onFieldBInput}
               id="supply-liquidity-input-token-b"
             />
           </Flex>
 
           <Typography mt={3} textAlign="right">
             {`Wallet: 
-              ${formatBigNumber(balances[selectedPair.baseCurrencyKey], 'currency')} 
-              ${selectedPair.baseCurrencyKey} /  
-              ${formatBigNumber(balances[selectedPair.quoteCurrencyKey], 'currency')} 
-              ${selectedPair.quoteCurrencyKey}`}
+              ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} 
+              ${pair.baseCurrencyKey} /  
+              ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} 
+              ${pair.quoteCurrencyKey}`}
           </Typography>
 
           <Box mt={5}>
@@ -216,7 +199,7 @@ export default function LPPanel() {
                 ],
               }}
               instanceRef={instance => {
-                if (instance && !sliderInstance.current) {
+                if (instance && !sliderInstance.current && !maxSliderAmount.dp(2).isZero()) {
                   sliderInstance.current = instance;
                 }
               }}
@@ -225,9 +208,15 @@ export default function LPPanel() {
           </Box>
 
           <Flex justifyContent="center">
-            <Button color="primary" marginTop={5} onClick={handleSupply}>
-              Supply
-            </Button>
+            {isValid ? (
+              <Button color="primary" marginTop={5} onClick={handleSupply}>
+                Supply
+              </Button>
+            ) : (
+              <Button disabled={!!account} color="primary" marginTop={5} onClick={handleConnectToWallet}>
+                {error}
+              </Button>
+            )}
           </Flex>
         </BrightPanel>
 

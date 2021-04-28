@@ -41,6 +41,7 @@ const RewardsPanel = () => {
           { hash: res.result }, //
           {
             summary: `Claimed ${reward.dp(2).toFormat()} BALN.`,
+            pending: "Claiming rewards...",
           },
         );
         toggleOpen();

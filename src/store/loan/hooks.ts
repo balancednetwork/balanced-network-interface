@@ -279,7 +279,7 @@ export function useLoanAPY(): BigNumber | undefined {
 
   return React.useMemo(() => {
     if (totalbnUSDDebt.isGreaterThan(ZERO))
-      return totalLoanDailyRewards.times(365).times(ratio.BALNbnUSDratio).div(totalbnUSDDebt).times(100);
+      return totalLoanDailyRewards.times(365).times(ratio.BALNbnUSDratio).div(totalbnUSDDebt);
     else return;
   }, [totalLoanDailyRewards, ratio.BALNbnUSDratio, totalbnUSDDebt]);
 }

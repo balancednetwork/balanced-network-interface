@@ -54,7 +54,7 @@ const ReturnICDSection = () => {
       setReceiveAmount(
         isNaN(parseFloat(val))
           ? formatBigNumber(new BigNumber(0), 'currency')
-          : (parseFloat(val) * ratio.ICXUSDratio?.toNumber() * ratio.sICXICXratio?.toNumber()).toFixed(2).toString(),
+          : ((parseFloat(val) / ratio.ICXUSDratio?.toNumber()) * ratio.sICXICXratio?.toNumber()).toFixed(2).toString(),
         //: (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
       );
     },
@@ -117,8 +117,8 @@ const ReturnICDSection = () => {
         addTransaction(
           { hash: res.result },
           {
-            pending: retireMessage(retireAmount, 'sICX').pendingMessage,
-            summary: retireMessage(retireAmount, 'sICX').successMessage,
+            pending: retireMessage(receiveAmount, 'sICX').pendingMessage,
+            summary: retireMessage(receiveAmount, 'sICX').successMessage,
           },
         );
       })

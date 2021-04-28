@@ -137,23 +137,27 @@ const RewardsPanel = () => {
             <Typography variant="p">{!account ? '-' : hashNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
           </Row>
 
-          <Divider />
+          {!reward.isZero() && (
+            <>
+              <Divider />
 
-          <Row>
-            <Typography variant="p" fontWeight="bold">
-              Total
-            </Typography>
-            <Typography variant="p" fontWeight="bold">
-              {`$${rewardAmountByUSD.dp(2).toFormat()}`}
-            </Typography>
-          </Row>
+              <Row>
+                <Typography variant="p" fontWeight="bold">
+                  Total
+                </Typography>
+                <Typography variant="p" fontWeight="bold">
+                  {`$${rewardAmountByUSD.dp(2).toFormat()}`}
+                </Typography>
+              </Row>
+            </>
+          )}
         </RewardGrid>
 
-        <Flex alignItems="center" justifyContent="center" mt={3}>
-          <Button onClick={handleClaim} disabled={reward.isZero()}>
-            Claim rewards
-          </Button>
-        </Flex>
+        {!reward.isZero() && (
+          <Flex alignItems="center" justifyContent="center" mt={3}>
+            <Button onClick={handleClaim}>Claim rewards</Button>
+          </Flex>
+        )}
       </BoxPanel>
 
       {/* Stake new Balance Tokens Modal */}

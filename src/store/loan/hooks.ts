@@ -9,8 +9,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { MANDATORY_COLLATERAL_RATIO, ZERO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
-import { useAPYs } from 'store/pool/hooks';
 import { useRatio } from 'store/ratio/hooks';
+import { useRewards } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { getAPIEnpoint } from 'utils';
@@ -260,7 +260,26 @@ export function useLoanUsedAmount(): BigNumber {
   }, [borrowedAmount, remainingAmount]);
 }
 
+export function useLoanTotalbnUSDDebt() {
+  const loanBadDebt = useLoanBadDebt();
+  const loanTotalSupply = useLoanTotalSupply();
+
+  return React.useMemo(() => {
+    return loanTotalSupply.minus(loanBadDebt);
+  }, [loanTotalSupply, loanBadDebt]);
+}
+
+// calculate loans apy in frontend
+// https://github.com/balancednetwork/balanced-network-interface/issues/363
 export function useLoanAPY(): BigNumber | undefined {
-  const apys = useAPYs();
-  return apys['Loans'];
+  const rewards = useRewards();
+  const totalLoanDailyRewards = React.useMemo(() => rewards['Loans'] || ZERO, [rewards]);
+  const ratio = useRatio();
+  const totalbnUSDDebt = useLoanTotalbnUSDDebt();
+
+  return React.useMemo(() => {
+    if (totalbnUSDDebt.isGreaterThan(ZERO))
+      return totalLoanDailyRewards.times(365).times(ratio.BALNbnUSDratio).div(totalbnUSDDebt);
+    else return;
+  }, [totalLoanDailyRewards, ratio.BALNbnUSDratio, totalbnUSDDebt]);
 }

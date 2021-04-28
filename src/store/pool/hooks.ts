@@ -1,7 +1,6 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import _ from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
@@ -11,10 +10,11 @@ import bnJs from 'bnJs';
 import { Pair, BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
 import { useRatio } from 'store/ratio/hooks';
+import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppDispatch, AppState } from '../index';
-import { setBalance, setPair, setPoolData, setReward, clearBalances as clearBalancesCreator } from './actions';
+import { setBalance, setPair, setPoolData, clearBalances as clearBalancesCreator } from './actions';
 import { Balance, Pool } from './reducer';
 
 export function usePoolPair(): Pair {
@@ -61,17 +61,6 @@ export function useBalanceActionHandlers(): {
   }, [dispatch]);
 
   return { changeBalance, clearBalances };
-}
-
-export function useChangeReward(): (poolId: number, reward: BigNumber) => void {
-  const dispatch = useDispatch<AppDispatch>();
-
-  return React.useCallback(
-    (poolId, reward) => {
-      dispatch(setReward({ poolId, reward }));
-    },
-    [dispatch],
-  );
 }
 
 // fetch pools
@@ -123,42 +112,6 @@ export function useFetchPools() {
   React.useEffect(() => {
     BASE_SUPPORTED_PAIRS.forEach(pair => fetchPool(pair));
   }, [fetchPool, transactions, networkId]);
-
-  // fetch rewards rule
-  const [rules, setRules] = React.useState({});
-  const [emission, setEmission] = React.useState(new BigNumber(0));
-
-  React.useEffect(() => {
-    const fetchRewardsRule = async () => {
-      let result = await Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission()]);
-
-      const [_rules, _emission] = result;
-
-      const a = {};
-      _.forOwn(_rules, function (value, key) {
-        a[key] = BalancedJs.utils.toIcx(value);
-      });
-
-      setRules(a);
-      setEmission(BalancedJs.utils.toIcx(_emission));
-    };
-    fetchRewardsRule();
-  }, []);
-
-  const changeReward = useChangeReward();
-  // calculate rewards per pool
-  React.useEffect(() => {
-    BASE_SUPPORTED_PAIRS.forEach(pair => {
-      const poolId = pair.poolId;
-      let rewardShare: BigNumber;
-      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        rewardShare = rules['sICX/ICX'];
-      } else {
-        rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
-      }
-      changeReward(poolId, emission.times(rewardShare));
-    });
-  }, [rules, emission, changeReward]);
 
   // fetch LP token balances
   const { account } = useIconReact();
@@ -262,15 +215,6 @@ export function useBalance(poolId: number) {
   }, [balance, pool, poolShare, poolId]);
 }
 
-export function useRewards() {
-  return useSelector((state: AppState) => state.pool.rewards);
-}
-
-export function useReward(poolId: number): BigNumber | undefined {
-  const rewards = useRewards();
-  return rewards[poolId];
-}
-
 export function usePoolData(poolId: number) {
   const pool = usePool(poolId);
   const balance = useBalance(poolId);
@@ -333,7 +277,7 @@ export function useAPYs() {
   );
 
   React.useEffect(() => {
-    if (rewards && !rewards.isNaN() && !rewards.isZero()) {
+    if (rewards && !rewards.isNaN() && !rewards.isZero() && rewards.isFinite()) {
       setAPYs(state => ({ ...state, '1': rewards }));
     }
   }, [rewards, setAPYs]);

@@ -22,7 +22,7 @@ export default React.memo(function StakePanel() {
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const totalBalance: BigNumber = details['Total balance'] || new BigNumber(0);
+  const totalBalance: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
 
   const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
 
@@ -35,20 +35,28 @@ export default React.memo(function StakePanel() {
   };
 
   const [tempBalance, setTempBalance] = React.useState(stakedBalance);
-  const stakedPercent = totalBalance.isZero() ? new BigNumber(0) : tempBalance.div(totalBalance).times(100);
+  const [tempStakedPercent, setTempStakedPercent] = React.useState(
+    totalBalance.isZero() ? new BigNumber(0) : stakedBalance.dividedBy(totalBalance).times(100),
+  );
 
   const handleSlide = React.useCallback(
     (values: string[], handle: number) => {
-      setTempBalance(new BigNumber(values[handle]));
+      setTempStakedPercent(new BigNumber(values[handle]));
     },
-    [setTempBalance],
+    [setTempStakedPercent],
   );
 
   React.useEffect(() => {
+    setTempBalance(tempStakedPercent.multipliedBy(totalBalance).dividedBy(100));
+  }, [tempStakedPercent, totalBalance]);
+
+  React.useEffect(() => {
     if (!isAdjusting) {
-      setTempBalance(stakedBalance);
+      setTempStakedPercent(
+        !totalBalance.isZero() ? stakedBalance.dividedBy(totalBalance).multipliedBy(100) : new BigNumber(0),
+      );
     }
-  }, [stakedBalance, isAdjusting]);
+  }, [stakedBalance, isAdjusting, totalBalance]);
 
   // modal
   const [open, setOpen] = React.useState(false);
@@ -112,12 +120,12 @@ export default React.memo(function StakePanel() {
         <Nouislider
           disabled={!isAdjusting}
           id="slider-collateral"
-          start={[stakedBalance.dp(2).toNumber()]}
+          start={[tempStakedPercent.dp(2).toNumber()]}
           padding={[0]}
           connect={[true, false]}
           range={{
             min: [0],
-            max: [totalBalance.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalBalance.dp(2).toNumber()],
+            max: [totalBalance.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
           }}
           onSlide={handleSlide}
         />
@@ -127,7 +135,7 @@ export default React.memo(function StakePanel() {
         <Typography>
           {tempBalance.dp(2).toFormat()} / {totalBalance.dp(2).toFormat()}
         </Typography>
-        <Typography>{stakedPercent.dp(2, BigNumber.ROUND_UP).toFormat()}% staked</Typography>
+        <Typography>{tempStakedPercent.dp(2, BigNumber.ROUND_UP).toFormat()}% staked</Typography>
       </Flex>
 
       <Flex alignItems="center" justifyContent="center" mt={5}>

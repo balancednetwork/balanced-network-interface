@@ -134,7 +134,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
           setConfirmTx(res.result);
         })
         .catch(e => {
-          console.error('error', e);
+          console.error('errors', e);
         })
         .finally(() => {
           changeShouldLedgerSign(false);

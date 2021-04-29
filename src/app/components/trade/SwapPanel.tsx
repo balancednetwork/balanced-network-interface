@@ -26,7 +26,7 @@ import { usePools } from 'store/pool/hooks';
 import { useRatio, useChangeRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { formatBigNumber, numberWithCommas } from 'utils';
+import { formatBigNumber } from 'utils';
 
 import { SectionPanel, BrightPanel, swapMessage } from './utils';
 
@@ -636,8 +636,9 @@ export default function SwapPanel() {
             <Typography>
               {!swapOutputAmount
                 ? formatBigNumber(new BigNumber(0), 'ratio')
-                : numberWithCommas(
-                    formatBigNumber(new BigNumber(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4), 'ratio'),
+                : formatBigNumber(
+                    new BigNumber(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4),
+                    'currency',
                   )}{' '}
               {outputCurrency.symbol}
             </Typography>

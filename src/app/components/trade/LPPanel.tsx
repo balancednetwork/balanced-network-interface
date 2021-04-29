@@ -11,7 +11,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import { CURRENCY_LIST } from 'constants/currency';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { MINIMUM_ICX_AMOUNT_IN_WALLET, SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
@@ -31,7 +31,7 @@ const useAvailableLPTokenBalance = (): BigNumber => {
   const pool = usePool(selectedPair.poolId);
 
   if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-    return balances['ICX'];
+    return BigNumber.max(balances['ICX'].minus(MINIMUM_ICX_AMOUNT_IN_WALLET), ZERO);
   } else {
     if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
       if (

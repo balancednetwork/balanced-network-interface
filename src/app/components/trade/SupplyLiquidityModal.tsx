@@ -14,7 +14,6 @@ import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
 import { depositMessage, supplyMessage } from './utils';
@@ -39,7 +38,6 @@ export enum Field {
 
 export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }: ModalProps) {
   const { account } = useIconReact();
-  const balances = useWalletBalances();
 
   const selectedPair = usePoolPair();
 
@@ -119,8 +117,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
     }
 
     if (isQueue) {
-      const t = BigNumber.max(BigNumber.min(parsedAmounts[Field.CURRENCY_B], balances['ICX'].minus(0.1)), 0);
-      if (t.isZero()) return;
+      const t = parsedAmounts[Field.CURRENCY_B];
 
       bnJs
         .inject({ account: account })

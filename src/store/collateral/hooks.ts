@@ -5,11 +5,13 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
 import { AppState } from '../index';
-import { adjust, cancel, changeBalance, changeDepositedAmount, type, Field } from './actions';
+import { adjust, cancel, changeDepositedAmount, type, Field } from './actions';
 
 export function useCollateralChangeDepositedAmount(): (depositedAmount: BigNumber) => void {
   const dispatch = useDispatch();
@@ -22,46 +24,27 @@ export function useCollateralChangeDepositedAmount(): (depositedAmount: BigNumbe
   );
 }
 
-export function useCollateralChangeBalance(): (balance: BigNumber) => void {
-  const dispatch = useDispatch();
-
-  return React.useCallback(
-    (balance: BigNumber) => {
-      dispatch(changeBalance({ balance }));
-    },
-    [dispatch],
-  );
-}
-
 export function useCollateralAvailableAmount() {
-  const ICXAmount = useSelector((state: AppState) => state.collateral.balance);
+  const ICXAmount = useWalletBalances()['ICX'];
 
   return React.useMemo(() => {
-    return BigNumber.max(ICXAmount.minus(1), new BigNumber(0));
+    return BigNumber.max(ICXAmount.minus(MINIMUM_ICX_AMOUNT_IN_WALLET), new BigNumber(0));
   }, [ICXAmount]);
 }
 
 export function useCollateralFetchInfo(account?: string | null) {
   const changeStakedICXAmount = useCollateralChangeDepositedAmount();
-  const changeUnStackedICXAmount = useCollateralChangeBalance();
   const transactions = useAllTransactions();
 
   const fetchCollateralInfo = React.useCallback(
-    (account: string) => {
-      Promise.all([
-        bnJs.Loans.getAccountPositions(account), //
-        bnJs.ICX.balanceOf(account),
-      ]).then(([stakedICXResult, balance]: Array<any>) => {
-        const stakedICXVal = stakedICXResult['assets']
-          ? BalancedJs.utils.toIcx(stakedICXResult['assets']['sICX'])
-          : new BigNumber(0);
-        const unStakedVal = BalancedJs.utils.toIcx(balance);
+    async (account: string) => {
+      const res = await bnJs.Loans.getAccountPositions(account);
 
-        changeStakedICXAmount(stakedICXVal);
-        changeUnStackedICXAmount(unStakedVal);
-      });
+      const depositedsICX = res['assets'] ? BalancedJs.utils.toIcx(res['assets']['sICX']) : new BigNumber(0);
+
+      changeStakedICXAmount(depositedsICX);
     },
-    [changeUnStackedICXAmount, changeStakedICXAmount],
+    [changeStakedICXAmount],
   );
 
   React.useEffect(() => {

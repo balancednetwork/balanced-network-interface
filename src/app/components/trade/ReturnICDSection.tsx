@@ -54,7 +54,8 @@ const ReturnICDSection = () => {
       setReceiveAmount(
         isNaN(parseFloat(val))
           ? formatBigNumber(new BigNumber(0), 'currency')
-          : (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
+          : (parseFloat(val) * ratio.ICXUSDratio?.toNumber() * ratio.sICXICXratio?.toNumber()).toFixed(2).toString(),
+        //: (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
       );
     },
     [ratio],

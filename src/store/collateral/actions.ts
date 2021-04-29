@@ -8,8 +8,6 @@ export enum Field {
 
 export const changeDepositedAmount = createAction<{ depositedAmount: BigNumber }>('collateral/changeDepositedAmount');
 
-export const changeBalance = createAction<{ balance: BigNumber }>('collateral/changeBalance');
-
 export const adjust = createAction('collateral/adjust');
 
 export const cancel = createAction('collateral/cancel');

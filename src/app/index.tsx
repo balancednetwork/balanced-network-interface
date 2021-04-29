@@ -6,10 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
 
 import NotificationContainer from 'app/components/Notification/NotificationContainer';
+import WalletModal from 'app/components/WalletModal';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import TransactionUpdater from 'store/transactions/updater';
 
 import { NotFoundPage } from './components/NotFoundPage/Loadable';
+import { Airdrip } from './containers/Airdrip/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
 import { VotePage } from './containers/VotePage/Loadable';
@@ -34,6 +36,7 @@ export function App() {
         <ThemeProvider>
           <ThemedGlobalStyle />
           <NotificationContainer />
+          <WalletModal />
 
           <BrowserRouter>
             <Helmet
@@ -48,6 +51,7 @@ export function App() {
               <Route exact path="/" component={HomePage} />
               <Route exact path="/vote" component={VotePage} />
               <Route exact path="/trade" component={TradePage} />
+              <Route exact path="/airdrip" component={Airdrip} />
               <Route component={NotFoundPage} />
             </Switch>
           </BrowserRouter>

@@ -22,19 +22,19 @@ const MAINNET_ADDRESSES = {
 };
 
 const YEOUIDO_ADDRESSES = {
-  loans: 'cxca3583ed5c2577c35fbc5d6018b7acc53b371dbd',
-  staking: 'cx6008e00e91d4d54c0f111140880ccb0f50081714',
-  dividends: 'cxbd0cf1843ef952ba4dd54eb5264a0fd0c2a95571',
-  reserve: 'cx4d9bbd3d23117faea8bf5c1362fb11d5ebdbe2fa',
-  daofund: 'cx59aeeea3f025686dfd4ce8639ffa24f421726b4c',
-  rewards: 'cxde0d2b42b55b4e9305affc21dc4e7a4f01acf014',
-  dex: 'cxb7aa0ad52cb09407f7730bc24697ee46a1afc16a',
-  governance: 'cx231678864e72135bae7312b4b59c9902386b4987',
+  loans: 'cxb858032bd1af2547c1e0c985d492b6d2c93963e6',
+  staking: 'cxa5dc5a7c23e51f5d60ce5cf9d9e8d9fb3aac0cfc',
+  dividends: 'cxbdbac613e45c94c32f27f88987d01b2b16b67ec1',
+  reserve: 'cx6be5461d45332d3acae9255e04186eb05299f167',
+  daofund: 'cx06cde50bd80c412592d2e30cf21faf69a9c10300',
+  rewards: 'cxaffb4ba2fd7373851b4418d22d267d8ee1f36719',
+  dex: 'cx98e8d675f329778ffc16774913d106bd7eeae31c',
+  governance: 'cx1851db9b584eb1f15103600775b07bd1ed7ba615',
   band: 'cx61a36e5d10412e03c907a507d1e8c6c3856d9964',
-  sicx: 'cx53b3346dc782f26c4a686d537ef8fb38c4dba291',
-  bnusd: 'cxb0a005e7741cd17e9b2e8afad3ede43001084727',
-  baln: 'cx2d525581c442b7f885c289fe0d13db30c6ad2f58',
-  bwt: 'cxc578f12080cf43c54104fca3d9a93f914d5d0c78',
+  sicx: 'cx6ca5ad464a60469a1bc7aebdffee086b93f3e5c5',
+  bnusd: 'cxa297f51cb8ee156db9a8c48a79c6acb753b8b713',
+  baln: 'cx922425e694fdf3264e195b8bbd5fb9dc7edee345',
+  bwt: 'cx35c2801d16eebeca9230c69c7108bdd0f8ca8ccb',
 };
 
 const addresses = {

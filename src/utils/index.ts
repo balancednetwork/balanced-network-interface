@@ -80,3 +80,8 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
     }
   }
 }
+
+// format number so that thousands are separated by commas
+export function numberWithCommas(amount: string) {
+  return parseFloat(amount).toString() === amount ? Number(amount).toLocaleString('en') : amount;
+}

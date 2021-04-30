@@ -1,6 +1,5 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -11,20 +10,20 @@ import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
 export default function DepositPanel() {
-  const [value, setValue] = React.useState('0');
+  const [value, setValue] = React.useState(ZERO);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleSlider = (values: string[], handle: number) => {
-    setValue(values[handle]);
+    setValue(maxAmount.multipliedBy(values[handle]).div(100));
   };
 
   const { account } = useIconReact();
@@ -44,7 +43,7 @@ export default function DepositPanel() {
 
   const beforeAmount = wallet['sICX'];
 
-  const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
+  const differenceAmount = value;
 
   const afterAmount = beforeAmount.minus(differenceAmount);
 
@@ -68,7 +67,7 @@ export default function DepositPanel() {
             },
           );
           toggleOpen();
-          setValue('0');
+          setValue(ZERO);
         } else {
           // to do
           // need to handle error case
@@ -97,7 +96,7 @@ export default function DepositPanel() {
           connect={[true, false]}
           range={{
             min: [0],
-            max: [maxAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxAmount.dp(2).toNumber()],
+            max: [maxAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
           }}
           onSlide={handleSlider}
         />
@@ -105,7 +104,7 @@ export default function DepositPanel() {
 
       <Flex my={1} alignItems="center" justifyContent="space-between">
         <Typography>
-          {new BigNumber(value).dp(2).toFormat()} / {maxAmount.dp(2).toFormat()} sICX
+          {value.dp(2).toFormat()} / {maxAmount.dp(2).toFormat()} sICX
         </Typography>
         <Typography>~ {differenceAmountByICX.dp(2).toFormat()} ICX</Typography>
       </Flex>

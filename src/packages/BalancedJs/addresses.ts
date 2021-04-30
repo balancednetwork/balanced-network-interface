@@ -19,6 +19,7 @@ const MAINNET_ADDRESSES = {
   bnusd: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
   baln: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
   bwt: 'cxcfe9d1f83fa871e903008471cca786662437e58d',
+  airdrip: '',
 };
 
 const YEOUIDO_ADDRESSES = {
@@ -35,6 +36,7 @@ const YEOUIDO_ADDRESSES = {
   bnusd: 'cxb0a005e7741cd17e9b2e8afad3ede43001084727',
   baln: 'cx2d525581c442b7f885c289fe0d13db30c6ad2f58',
   bwt: 'cxc578f12080cf43c54104fca3d9a93f914d5d0c78',
+  airdrip: 'cx8ed4fbee9d6497f91ea90933db288ff4b43e54ba',
 };
 
 const addresses = {

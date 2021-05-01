@@ -46,7 +46,7 @@ const NumberInput = styled.input`
 
 const CurrencyUnit = styled.span``;
 
-const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`);
+const inputRegex = RegExp(`^\\d+(?:\\\\[.])?\\d*$`);
 
 export const CurrencyField: React.FC<{
   id?: string;
@@ -64,7 +64,7 @@ export const CurrencyField: React.FC<{
     const nextUserInput = event.target.value.replace(/,/g, '.');
 
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-      onUserInput && onUserInput(event.target.value);
+      onUserInput && onUserInput(nextUserInput);
     }
   };
 

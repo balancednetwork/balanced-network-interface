@@ -113,7 +113,7 @@ export default React.memo(function StakePanel() {
         <Nouislider
           disabled={!isAdjusting}
           id="slider-collateral"
-          start={[stakedPercent.dp(2).toNumber()]}
+          start={[stakedBalance.dividedBy(totalBalance).multipliedBy(100).dp(2).toNumber()]}
           padding={[0]}
           connect={[true, false]}
           range={{

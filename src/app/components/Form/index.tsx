@@ -4,8 +4,10 @@ import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-// import { MouseoverTooltip } from 'app/components/Tooltip';
+import { QuestionWrapper } from 'app/components/QuestionHelper';
+import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
+import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { Currency } from 'types';
 import { escapeRegExp } from 'utils'; // match escaped "." characters via in a non-capturing group
 
@@ -55,10 +57,11 @@ export const CurrencyField: React.FC<{
   label: string;
   value: string;
   currency: Currency;
-  tooltipText: string;
+  tooltip?: boolean;
+  tooltipText?: string;
   onUserInput?: (value: string) => void;
 }> = function (props) {
-  const { id, isActive, label, value, currency, /*tooltipText,*/ editable, onUserInput } = props;
+  const { id, isActive, label, value, currency, tooltip, tooltipText, editable, onUserInput } = props;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextUserInput = event.target.value.replace(/,/g, '.');
@@ -74,7 +77,14 @@ export const CurrencyField: React.FC<{
         <Flex>
           <CheckBox isActive={isActive} mr={2} />
           <Typography as="label" htmlFor={label} unselectable="on" sx={{ userSelect: 'none' }}>
-            {label}
+            {label}{' '}
+            {tooltip && (
+              <MouseoverTooltip text={tooltipText ?? ' '} placement="top">
+                <QuestionWrapper>
+                  <QuestionIcon width={14} style={{ marginTop: -5 }} />
+                </QuestionWrapper>
+              </MouseoverTooltip>
+            )}
           </Typography>
         </Flex>
       </Flex>

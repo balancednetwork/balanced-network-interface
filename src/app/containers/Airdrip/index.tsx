@@ -75,6 +75,27 @@ const Separator = styled.h1`
   }
 `;
 
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+const startDate = new Date('2021-05-03T07:00:00Z');
+
+const formatDate = (date: Date) => {
+  return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]}`;
+};
+
 export function Airdrip() {
   const toggleWalletModal = useWalletModalToggle();
   const { account, networkId } = useIconReact();
@@ -240,7 +261,7 @@ export function Airdrip() {
                   This drip dries up on
                 </Typography>
                 <Typography variant="p" fontWeight="bold">
-                  {date?.toLocaleString()}
+                  {date && formatDate(date)}
                 </Typography>
               </>
             ) : (
@@ -264,7 +285,7 @@ export function Airdrip() {
                 </Typography>
 
                 <Typography variant="p" fontWeight="bold">
-                  Sunday, 2 May
+                  {formatDate(startDate)}
                 </Typography>
               </>
             )}

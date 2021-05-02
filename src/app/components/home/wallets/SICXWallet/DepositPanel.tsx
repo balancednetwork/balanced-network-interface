@@ -18,13 +18,20 @@ import { useWalletBalances } from 'store/wallet/hooks';
 
 export default function DepositPanel() {
   const [value, setValue] = React.useState(ZERO);
+  const [depositPercent, setDepositPercent] = React.useState('0');
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
+  const sliderInstance = React.useRef<any>(null);
+
   const handleSlider = (values: string[], handle: number) => {
-    setValue(maxAmount.multipliedBy(values[handle]).div(100));
+    setDepositPercent(values[handle]);
   };
+
+  React.useEffect(() => {
+    setValue(maxAmount.multipliedBy(depositPercent).div(100));
+  }, [depositPercent]);
 
   const { account } = useIconReact();
 
@@ -68,6 +75,7 @@ export default function DepositPanel() {
           );
           toggleOpen();
           setValue(ZERO);
+          sliderInstance?.current?.noUiSlider.set(0);
         } else {
           // to do
           // need to handle error case
@@ -99,6 +107,11 @@ export default function DepositPanel() {
             max: [maxAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
           }}
           onSlide={handleSlider}
+          instanceRef={instance => {
+            if (instance && !sliderInstance.current) {
+              sliderInstance.current = instance;
+            }
+          }}
         />
       </Box>
 

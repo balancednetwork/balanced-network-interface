@@ -638,7 +638,7 @@ export default function SwapPanel() {
                 ? formatBigNumber(new BigNumber(0), 'ratio')
                 : formatBigNumber(
                     new BigNumber(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4),
-                    'ratio',
+                    'currency',
                   )}{' '}
               {outputCurrency.symbol}
             </Typography>

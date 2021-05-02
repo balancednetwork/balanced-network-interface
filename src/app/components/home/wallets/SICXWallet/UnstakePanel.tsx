@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -17,8 +18,7 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
 export default function UnstakePanel() {
-  const [value, setValue] = React.useState(ZERO);
-  const [unstakePercent, setUnstakePercent] = React.useState('0');
+  const [portion, setPortion] = React.useState(ZERO);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -26,12 +26,8 @@ export default function UnstakePanel() {
   const sliderInstance = React.useRef<any>(null);
 
   const handleSlider = (values: string[], handle: number) => {
-    setUnstakePercent(values[handle]);
+    setPortion(new BigNumber(values[handle]).div(100));
   };
-
-  React.useEffect(() => {
-    setValue(maxAmount.multipliedBy(unstakePercent).div(100));
-  }, [unstakePercent]);
 
   const { account } = useIconReact();
 
@@ -50,7 +46,7 @@ export default function UnstakePanel() {
 
   const beforeAmount = wallet['sICX'];
 
-  const differenceAmount = value;
+  const differenceAmount = wallet['sICX'].times(portion);
 
   const afterAmount = beforeAmount.minus(differenceAmount);
 
@@ -74,12 +70,9 @@ export default function UnstakePanel() {
             },
           );
           toggleOpen();
-          setValue(ZERO);
+          setPortion(ZERO);
           sliderInstance?.current?.noUiSlider.set(0);
         } else {
-          // to do
-          // need to handle error case
-          // for example: out of balance
           console.error(res);
         }
       })
@@ -96,13 +89,13 @@ export default function UnstakePanel() {
 
       <Box my={3}>
         <Nouislider
-          disabled={maxAmount.dp(2).isZero()}
+          disabled={maxAmount.isZero()}
           start={[0]}
           padding={[0]}
           connect={[true, false]}
           range={{
             min: [0],
-            max: [maxAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
+            max: [maxAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
           }}
           onSlide={handleSlider}
           instanceRef={instance => {
@@ -115,7 +108,7 @@ export default function UnstakePanel() {
 
       <Flex my={1} alignItems="center" justifyContent="space-between">
         <Typography>
-          {value.dp(2).toFormat()} / {maxAmount.dp(2).toFormat()} sICX
+          {differenceAmount.dp(2).toFormat()} / {maxAmount.dp(2).toFormat()} sICX
         </Typography>
         <Typography>~ {differenceAmountByICX.dp(2).toFormat()} ICX</Typography>
       </Flex>

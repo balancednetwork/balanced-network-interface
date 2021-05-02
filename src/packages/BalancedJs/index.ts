@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { isEmpty } from 'lodash';
 
 import { NetworkId } from './addresses';
+import Airdrip from './contracts/Airdrip';
 import BALN from './contracts/BALN';
 import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
@@ -43,6 +44,7 @@ export class BalancedJs {
   Staking: Staking;
   Dex: Dex;
   Rewards: Rewards;
+  Airdrip: Airdrip;
 
   static utils = {
     toLoop(value: BigNumber | number | string): BigNumber {
@@ -88,6 +90,7 @@ export class BalancedJs {
     this.Staking = new Staking(this.contractSettings);
     this.Dex = new Dex(this.contractSettings);
     this.Rewards = new Rewards(this.contractSettings);
+    this.Airdrip = new Airdrip(this.contractSettings);
   }
 
   inject({ account, legerSettings }: SettingInjection) {

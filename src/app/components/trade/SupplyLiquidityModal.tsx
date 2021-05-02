@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { isEmpty } from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
@@ -48,36 +49,35 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
 
-  const handleAdd = (currencyType: Field) => () => {
+  const handleAdd = (currencyType: Field) => async () => {
     if (!account) return;
 
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
+    try {
+      if (bnJs.contractSettings.ledgerSettings.actived) {
+        changeShouldLedgerSign(true);
+      }
+
+      const currencyKey =
+        currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
+
+      const res: any = await bnJs
+        .inject({ account: account })
+        [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]));
+      addTransaction(
+        { hash: res.result },
+        {
+          pending: depositMessage(currencyKey, selectedPair.pair).pendingMessage,
+          summary: depositMessage(currencyKey, selectedPair.pair).successMessage,
+        },
+      );
+
+      setAddingTxs(state => ({ ...state, [currencyType]: res.result }));
+    } catch (error) {
+      console.error('error', error);
+      setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
+    } finally {
+      changeShouldLedgerSign(false);
     }
-
-    const currencyKey =
-      currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
-
-    bnJs
-      .inject({ account: account })
-      [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]))
-      .then((res: any) => {
-        addTransaction(
-          { hash: res.result },
-          {
-            pending: depositMessage(currencyKey, selectedPair.pair).pendingMessage,
-            summary: depositMessage(currencyKey, selectedPair.pair).successMessage,
-          },
-        );
-
-        setAddingTxs(state => ({ ...state, [currencyType]: res.result }));
-      })
-      .catch(e => {
-        console.error('error', e);
-      })
-      .finally(() => {
-        changeShouldLedgerSign(false);
-      });
   };
 
   const [removingTxs, setRemovingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
@@ -134,7 +134,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
           setConfirmTx(res.result);
         })
         .catch(e => {
-          console.error('error', e);
+          console.error('errors', e);
         })
         .finally(() => {
           changeShouldLedgerSign(false);
@@ -231,6 +231,22 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
     ? true
     : addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success;
 
+  const isInitialValueA = addingTxs[Field.CURRENCY_A] === '' && removingTxs[Field.CURRENCY_A] === '';
+  const isPendingA = addingATxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_A] === '';
+  const isFailureA = addingATxStatus === TransactionStatus.failure && removingTxs[Field.CURRENCY_A] === '';
+  const isRemoveSuccessA = removingATxStatus === TransactionStatus.success;
+  const shouldShowSendBtnA = isInitialValueA || isPendingA || isFailureA || isRemoveSuccessA;
+  const shouldShowSendA = isEmpty(addingTxs[Field.CURRENCY_A]) || isFailureA;
+  const shouldShowRemoveA = isEmpty(removingTxs[Field.CURRENCY_A]);
+
+  const isInitialValueB = addingTxs[Field.CURRENCY_B] === '' && removingTxs[Field.CURRENCY_B] === '';
+  const isPendingB = addingBTxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_B] === '';
+  const isFailureB = addingBTxStatus === TransactionStatus.failure && removingTxs[Field.CURRENCY_B] === '';
+  const isRemoveSuccessB = removingBTxStatus === TransactionStatus.success;
+  const shouldShowSendBtnB = isInitialValueB || isPendingB || isFailureB || isRemoveSuccessB;
+  const shouldShowSendB = isEmpty(addingTxs[Field.CURRENCY_B]) || isFailureB;
+  const shouldShowRemoveB = isEmpty(removingTxs[Field.CURRENCY_B]);
+
   return (
     <Modal isOpen={isOpen} onDismiss={() => undefined}>
       <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
@@ -250,16 +266,14 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
             </Typography>
           </Box>
           <Box width={1 / 2}>
-            {((addingTxs[Field.CURRENCY_A] === '' && removingTxs[Field.CURRENCY_A] === '') ||
-              (addingATxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_A] === '') ||
-              removingATxStatus === TransactionStatus.success) && (
-              <SupplyButton disabled={!!addingTxs[Field.CURRENCY_A]} ml={3} onClick={handleAdd(Field.CURRENCY_A)}>
-                {addingTxs[Field.CURRENCY_A] ? 'Sending' : 'Send'}
+            {shouldShowSendBtnA && (
+              <SupplyButton disabled={!shouldShowSendA} ml={3} onClick={handleAdd(Field.CURRENCY_A)}>
+                {shouldShowSendA ? 'Send' : 'Sending'}
               </SupplyButton>
             )}
             {addingATxStatus === TransactionStatus.success && (
-              <RemoveButton disabled={!!removingTxs[Field.CURRENCY_A]} ml={3} onClick={handleRemove(Field.CURRENCY_A)}>
-                {removingTxs[Field.CURRENCY_A] ? 'Removing' : 'Remove'}
+              <RemoveButton disabled={!shouldShowRemoveA} ml={3} onClick={handleRemove(Field.CURRENCY_A)}>
+                {shouldShowRemoveA ? 'Remove' : 'Removing'}
               </RemoveButton>
             )}
           </Box>
@@ -272,16 +286,14 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
             </Typography>
           </Box>
           <Box width={1 / 2} hidden={isQueue}>
-            {((addingTxs[Field.CURRENCY_B] === '' && removingTxs[Field.CURRENCY_B] === '') ||
-              (addingBTxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_B] === '') ||
-              removingBTxStatus === TransactionStatus.success) && (
-              <SupplyButton disabled={!!addingTxs[Field.CURRENCY_B]} ml={3} onClick={handleAdd(Field.CURRENCY_B)}>
-                {addingTxs[Field.CURRENCY_B] ? 'Sending' : 'Send'}
+            {shouldShowSendBtnB && (
+              <SupplyButton disabled={!shouldShowSendB} ml={3} onClick={handleAdd(Field.CURRENCY_B)}>
+                {shouldShowSendB ? 'Send' : 'Sending'}
               </SupplyButton>
             )}
             {addingBTxStatus === TransactionStatus.success && (
-              <RemoveButton disabled={!!removingTxs[Field.CURRENCY_B]} ml={3} onClick={handleRemove(Field.CURRENCY_B)}>
-                {removingTxs[Field.CURRENCY_B] ? 'Removing' : 'Remove'}
+              <RemoveButton disabled={!shouldShowRemoveB} ml={3} onClick={handleRemove(Field.CURRENCY_B)}>
+                {shouldShowRemoveB ? 'Remove' : 'Removing'}
               </RemoveButton>
             )}
           </Box>

@@ -77,7 +77,7 @@ const Separator = styled.h1`
 
 export function Airdrip() {
   const toggleWalletModal = useWalletModalToggle();
-  const { account } = useIconReact();
+  const { account, networkId } = useIconReact();
 
   const addTransaction = useTransactionAdder();
   const txs = useAllTransactions();
@@ -115,7 +115,11 @@ export function Airdrip() {
   React.useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const { data: res } = await axios.get(`https://stage.airdrip.co/api/v1/claim-detail?address=${account}`);
+        const url =
+          networkId === 1
+            ? `https://airdrip.co/api/v1/claim-detail?address=${account}`
+            : `https://stage.airdrip.co/api/v1/claim-detail?address=${account}`;
+        const { data: res } = await axios.get(url);
         if (res.success) {
           setData(res.data);
         } else {
@@ -127,7 +131,7 @@ export function Airdrip() {
     };
 
     if (account) fetchStatus();
-  }, [account, txs]);
+  }, [account, txs, networkId]);
 
   const [tokenDetails, setTokenDetails] = React.useState<{
     name: string;
@@ -148,16 +152,16 @@ export function Airdrip() {
         distributingThisWeek: string;
         distributedAmount: string;
       }> = await bnJs.Airdrip.getTokensDetails();
-      const bnUSDTokenDetails = res.find(token => token.address === bnJs.BALN.address);
+      const BALNTokenDetails = res.find(token => token.address === bnJs.BALN.address);
 
-      if (bnUSDTokenDetails) {
+      if (BALNTokenDetails) {
         setTokenDetails({
-          name: bnUSDTokenDetails.name,
-          address: bnUSDTokenDetails.address,
-          symbol: bnUSDTokenDetails.symbol,
-          totalBalance: BalancedJs.utils.toIcx(bnUSDTokenDetails.totalBalance),
-          distributingThisWeek: BalancedJs.utils.toIcx(bnUSDTokenDetails.distributingThisWeek),
-          distributedAmount: BalancedJs.utils.toIcx(bnUSDTokenDetails.distributedAmount),
+          name: BALNTokenDetails.name,
+          address: BALNTokenDetails.address,
+          symbol: BALNTokenDetails.symbol,
+          totalBalance: BalancedJs.utils.toIcx(BALNTokenDetails.totalBalance),
+          distributingThisWeek: BalancedJs.utils.toIcx(BALNTokenDetails.distributingThisWeek),
+          distributedAmount: BalancedJs.utils.toIcx(BALNTokenDetails.distributedAmount),
         });
       }
     };
@@ -240,16 +244,28 @@ export function Airdrip() {
                 </Typography>
               </>
             ) : (
-              <Typography variant="h3" fontWeight="bold">
-                There is no airdrip
+              <Typography variant="p" fontSize="18px" lineHeight="35px" color="rgba(255,255,255,0.75)">
+                Accumulating BALN...
               </Typography>
             )}
           </Flex>
 
           <Flex flex={1} flexDirection="column" alignItems="center" py={['25px', '35px']}>
-            {!account && (
+            {!account && tokenDetails && (
               <>
                 <Button onClick={toggleWalletModal}>Sign in to claim</Button>
+              </>
+            )}
+
+            {!account && !tokenDetails && (
+              <>
+                <Typography variant="p" fontSize="18px" lineHeight="35px" color="rgba(255,255,255,0.75)">
+                  The first airdrip drops on
+                </Typography>
+
+                <Typography variant="p" fontWeight="bold">
+                  Sunday, 2 May
+                </Typography>
               </>
             )}
 

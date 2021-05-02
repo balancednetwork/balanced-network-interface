@@ -185,6 +185,14 @@ export default function ICXWallet() {
             {differenceAmount.dp(2).toFormat() + ' ICX'}
           </Typography>
 
+          <Typography textAlign="center" mb="2px" mt="20px">
+            Address
+          </Typography>
+
+          <Typography variant="p" textAlign="center" mr="30px" ml="30px" fontSize={16}>
+            {address}
+          </Typography>
+
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>

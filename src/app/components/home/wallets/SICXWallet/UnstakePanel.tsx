@@ -11,20 +11,22 @@ import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
 export default function UnstakePanel() {
-  const [value, setValue] = React.useState('0');
+  const [portion, setPortion] = React.useState(ZERO);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
+  const sliderInstance = React.useRef<any>(null);
+
   const handleSlider = (values: string[], handle: number) => {
-    setValue(values[handle]);
+    setPortion(new BigNumber(values[handle]).div(100));
   };
 
   const { account } = useIconReact();
@@ -44,7 +46,7 @@ export default function UnstakePanel() {
 
   const beforeAmount = wallet['sICX'];
 
-  const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
+  const differenceAmount = wallet['sICX'].times(portion);
 
   const afterAmount = beforeAmount.minus(differenceAmount);
 
@@ -68,11 +70,9 @@ export default function UnstakePanel() {
             },
           );
           toggleOpen();
-          setValue('0');
+          setPortion(ZERO);
+          sliderInstance?.current?.noUiSlider.set(0);
         } else {
-          // to do
-          // need to handle error case
-          // for example: out of balance
           console.error(res);
         }
       })
@@ -89,21 +89,26 @@ export default function UnstakePanel() {
 
       <Box my={3}>
         <Nouislider
-          disabled={maxAmount.dp(2).isZero()}
+          disabled={maxAmount.isZero()}
           start={[0]}
           padding={[0]}
           connect={[true, false]}
           range={{
             min: [0],
-            max: [maxAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxAmount.dp(2).toNumber()],
+            max: [maxAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
           }}
           onSlide={handleSlider}
+          instanceRef={instance => {
+            if (instance && !sliderInstance.current) {
+              sliderInstance.current = instance;
+            }
+          }}
         />
       </Box>
 
       <Flex my={1} alignItems="center" justifyContent="space-between">
         <Typography>
-          {new BigNumber(value).dp(2).toFormat()} / {maxAmount.dp(2).toFormat()} sICX
+          {differenceAmount.dp(2).toFormat()} / {maxAmount.dp(2).toFormat()} sICX
         </Typography>
         <Typography>~ {differenceAmountByICX.dp(2).toFormat()} ICX</Typography>
       </Flex>

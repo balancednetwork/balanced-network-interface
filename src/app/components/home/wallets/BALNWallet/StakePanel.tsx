@@ -11,7 +11,7 @@ import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails } from 'store/wallet/hooks';
@@ -22,9 +22,9 @@ export default React.memo(function StakePanel() {
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const totalBalance: BigNumber = details['Total balance'] || new BigNumber(0);
+  const totalBalance: BigNumber = React.useMemo(() => details['Total balance'] || ZERO, [details]);
 
-  const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
+  const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || ZERO, [details]);
 
   const [isAdjusting, setAdjusting] = React.useState(false);
   const handleAdjust = () => {
@@ -34,21 +34,22 @@ export default React.memo(function StakePanel() {
     setAdjusting(false);
   };
 
-  const [tempBalance, setTempBalance] = React.useState(stakedBalance);
-  const stakedPercent = totalBalance.isZero() ? new BigNumber(0) : tempBalance.div(totalBalance).times(100);
+  const [stakedPercent, setStakedPercent] = React.useState(
+    totalBalance.isZero() ? ZERO : stakedBalance.dividedBy(totalBalance).times(100),
+  );
 
   const handleSlide = React.useCallback(
     (values: string[], handle: number) => {
-      setTempBalance(new BigNumber(values[handle]));
+      setStakedPercent(new BigNumber(values[handle]));
     },
-    [setTempBalance],
+    [setStakedPercent],
   );
 
   React.useEffect(() => {
     if (!isAdjusting) {
-      setTempBalance(stakedBalance);
+      setStakedPercent(!totalBalance.isZero() ? stakedBalance.dividedBy(totalBalance).multipliedBy(100) : ZERO);
     }
-  }, [stakedBalance, isAdjusting]);
+  }, [stakedBalance, isAdjusting, totalBalance]);
 
   // modal
   const [open, setOpen] = React.useState(false);
@@ -57,7 +58,7 @@ export default React.memo(function StakePanel() {
   };
 
   const beforeAmount = stakedBalance;
-  const afterAmount = tempBalance;
+  const afterAmount = stakedPercent.multipliedBy(totalBalance).div(100);
   const differenceAmount = afterAmount.minus(beforeAmount);
   const shouldStake = differenceAmount.isPositive();
 
@@ -112,12 +113,12 @@ export default React.memo(function StakePanel() {
         <Nouislider
           disabled={!isAdjusting}
           id="slider-collateral"
-          start={[stakedBalance.dp(2).toNumber()]}
+          start={[stakedBalance.dividedBy(totalBalance).multipliedBy(100).dp(2).toNumber()]}
           padding={[0]}
           connect={[true, false]}
           range={{
             min: [0],
-            max: [totalBalance.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalBalance.dp(2).toNumber()],
+            max: [totalBalance.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
           }}
           onSlide={handleSlide}
         />
@@ -125,7 +126,7 @@ export default React.memo(function StakePanel() {
 
       <Flex my={1} alignItems="center" justifyContent="space-between">
         <Typography>
-          {tempBalance.dp(2).toFormat()} / {totalBalance.dp(2).toFormat()}
+          {stakedPercent.multipliedBy(totalBalance).div(100).dp(2).toFormat()} / {totalBalance.dp(2).toFormat()}
         </Typography>
         <Typography>{stakedPercent.dp(2, BigNumber.ROUND_UP).toFormat()}% staked</Typography>
       </Flex>

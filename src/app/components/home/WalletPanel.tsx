@@ -76,7 +76,9 @@ const WalletPanel = () => {
                           : balances[currency].dp(2).toFormat()}
                         {currency.toLowerCase() === 'baln' && balances['BALNstaked'].isGreaterThan(new BigNumber(0)) && (
                           <>
-                            <Typography>Available: {balances['BALN'].dp(2).toFormat()}</Typography>
+                            <Typography color="rgba(255,255,255,0.75)">
+                              Available: {balances['BALN'].dp(2).toFormat()}
+                            </Typography>
                           </>
                         )}
                       </DataText>
@@ -93,7 +95,9 @@ const WalletPanel = () => {
                           : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
                         {currency.toLowerCase() === 'baln' && balances['BALNstaked'].isGreaterThan(new BigNumber(0)) && (
                           <>
-                            <Typography>${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}</Typography>
+                            <Typography color="rgba(255,255,255,0.75)">
+                              ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                            </Typography>
                           </>
                         )}
                       </DataText>

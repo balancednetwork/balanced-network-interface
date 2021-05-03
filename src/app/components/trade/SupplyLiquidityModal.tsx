@@ -136,8 +136,11 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
               summary: supplyMessage(selectedPair.pair).successMessage,
             },
           );
-
-          setConfirmTx(res.result);
+          if (confirmTxStatus === TransactionStatus.failure) {
+            setConfirmTx('');
+          } else {
+            setConfirmTx(res.result);
+          }
         })
         .catch(e => {
           console.error('errors', e);

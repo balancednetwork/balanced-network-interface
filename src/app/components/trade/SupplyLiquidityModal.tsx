@@ -273,7 +273,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
         </Typography>
 
         <Typography variant="p" textAlign="center" mb={4} hidden={isQueue}>
-          Send each asset to the pool, <br />
+          Send each asset to the contract, <br />
           then click Supply
         </Typography>
 
@@ -341,9 +341,10 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
                   </RemoveButton>
                 </>
               )}
+
               {pool?.quoteDeposited.isZero() ? (
                 <>
-                  <StyledEmpty style={{ marginTop: '15px' }}>-</StyledEmpty>
+                  <StyledEmpty style={{ marginTop: '10px' }}>-</StyledEmpty>
                 </>
               ) : (
                 <>
@@ -362,10 +363,20 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
             </StyledDL>
           </Box>
         </Flex>
-
-        <Flex alignItems="center" mb={1}>
-          <Box width={isQueue ? 1 : 1 / 2}></Box>
-          <Box width={1 / 2} hidden={isQueue}></Box>
+        <Typography mt={2} textAlign="center" hidden={isQueue}>
+          Your assets will be locked for 24 hours. <br />
+          To receive BALN, they must be in the pool at 1pm Eastern each day.
+        </Typography>
+        <Flex alignItems="center" hidden={!isQueue}>
+          <Box width={1}>
+            <Typography variant="p" fontWeight="bold" textAlign={isQueue ? 'center' : 'right'}>
+              {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
+            </Typography>
+            <Typography mt={2} textAlign="center">
+              Your ICX will be locked for 24 hours. <br />
+              To receive BALN, you must have ICX in the pool at 1pm Eastern each day.
+            </Typography>
+          </Box>
         </Flex>
 
         {hasErrorMessage && (
@@ -392,14 +403,21 @@ const SupplyButton = styled(Button)`
 `;
 
 const RemoveButton = styled(SupplyButton)`
-  background-color: #fb6a6a;
+  background-color: transparent;
+  font-size: 14px;
+  color: #fb6a6a;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-top: 6px;
+  margin-bottom: 4px;
 
   &:hover {
-    background-color: #fb6a6a;
+    background-color: transparent;
   }
 
   &:disabled {
-    background: #27264a;
+    color: #fb6a6a;
+    background-color: transparent;
   }
 `;
 

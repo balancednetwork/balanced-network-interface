@@ -73,45 +73,43 @@ export function useFetchPools() {
   // fetch pool stats
   const fetchPool = React.useCallback(
     async (pair: Pair) => {
-      if (account) {
-        const poolId = pair.poolId;
+      const poolId = pair.poolId;
 
-        if (!pair) return;
+      if (!pair) return;
 
-        const baseAddress = addresses[networkId][pair.baseCurrencyKey.toLowerCase()];
-        const quoteAddress = addresses[networkId][pair.quoteCurrencyKey.toLowerCase()];
+      const baseAddress = addresses[networkId][pair.baseCurrencyKey.toLowerCase()];
+      const quoteAddress = addresses[networkId][pair.quoteCurrencyKey.toLowerCase()];
 
-        let result;
+      let result;
 
-        if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-          const [t, rate] = await Promise.all([bnJs.Dex.totalSupply(poolId), await bnJs.Staking.getTodayRate()]);
+      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        const [t, rate] = await Promise.all([bnJs.Dex.totalSupply(poolId), await bnJs.Staking.getTodayRate()]);
 
-          result = [t, t, t, rate, 0, 0];
-        } else {
-          result = await Promise.all([
-            bnJs.Dex.totalSupply(poolId),
-            bnJs.Dex.getPoolTotal(poolId, baseAddress),
-            bnJs.Dex.getPoolTotal(poolId, quoteAddress),
-            bnJs.Dex.getPrice(poolId),
-            bnJs.Dex.getDeposit(baseAddress, account),
-            bnJs.Dex.getDeposit(quoteAddress, account),
-          ]);
-        }
-
-        const [total, base, quote, rate, baseDeposited, quoteDeposited] = result.map(v => BalancedJs.utils.toIcx(v));
-
-        changePool(poolId, {
-          baseCurrencyKey: pair.baseCurrencyKey,
-          quoteCurrencyKey: pair.quoteCurrencyKey,
-          base: base,
-          quote: quote,
-          baseDeposited: baseDeposited,
-          quoteDeposited: quoteDeposited,
-          total: total,
-          rate: rate,
-          inverseRate: ONE.div(rate),
-        });
+        result = [t, t, t, rate, 0, 0];
+      } else {
+        result = await Promise.all([
+          bnJs.Dex.totalSupply(poolId),
+          bnJs.Dex.getPoolTotal(poolId, baseAddress),
+          bnJs.Dex.getPoolTotal(poolId, quoteAddress),
+          bnJs.Dex.getPrice(poolId),
+          account && bnJs.Dex.getDeposit(baseAddress, account),
+          account && bnJs.Dex.getDeposit(quoteAddress, account),
+        ]);
       }
+
+      const [total, base, quote, rate, baseDeposited, quoteDeposited] = result.map(v => BalancedJs.utils.toIcx(v));
+
+      changePool(poolId, {
+        baseCurrencyKey: pair.baseCurrencyKey,
+        quoteCurrencyKey: pair.quoteCurrencyKey,
+        base: base,
+        quote: quote,
+        baseDeposited: baseDeposited,
+        quoteDeposited: quoteDeposited,
+        total: total,
+        rate: rate,
+        inverseRate: ONE.div(rate),
+      });
     },
     [changePool, networkId, account],
   );
@@ -138,7 +136,7 @@ export function useFetchPools() {
             });
           });
         } else {
-          Promise.all([bnJs.Dex.balanceOf(account, poolId)]).then(([res]) => {
+          bnJs.Dex.balanceOf(account, poolId).then(res => {
             changeBalance(poolId, {
               baseCurrencyKey: pair.baseCurrencyKey,
               quoteCurrencyKey: pair.quoteCurrencyKey,

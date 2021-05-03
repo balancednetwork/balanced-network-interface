@@ -607,7 +607,6 @@ export default function SwapPanel() {
               onCurrencySelect={handleInputSelect}
               id="swap-currency-input"
               currencyList={SUPPORTED_BASE_CURRENCIES}
-              hideCurrency={true}
             />
           </Flex>
 
@@ -627,7 +626,6 @@ export default function SwapPanel() {
               onCurrencySelect={handleOutputSelect}
               id="swap-currency-output"
               currencyList={getFilteredCurrencies(inputCurrency.symbol)}
-              hideCurrency={true}
             />
           </Flex>
 

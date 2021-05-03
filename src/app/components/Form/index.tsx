@@ -59,9 +59,10 @@ export const CurrencyField: React.FC<{
   currency: Currency;
   tooltip?: boolean;
   tooltipText?: string;
+  tooltipWider?: boolean;
   onUserInput?: (value: string) => void;
 }> = function (props) {
-  const { id, isActive, label, value, currency, tooltip, tooltipText, editable, onUserInput } = props;
+  const { id, isActive, label, value, currency, tooltip, tooltipText, tooltipWider, editable, onUserInput } = props;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextUserInput = event.target.value.replace(/,/g, '.');
@@ -79,7 +80,7 @@ export const CurrencyField: React.FC<{
           <Typography as="label" htmlFor={label} unselectable="on" sx={{ userSelect: 'none' }}>
             {label}{' '}
             {tooltip && (
-              <MouseoverTooltip text={tooltipText ?? ' '} placement="top">
+              <MouseoverTooltip wide={tooltipWider} text={tooltipText ?? ' '} placement="top">
                 <QuestionWrapper>
                   <QuestionIcon width={14} style={{ marginTop: -5 }} />
                 </QuestionWrapper>

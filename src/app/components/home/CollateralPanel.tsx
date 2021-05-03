@@ -235,9 +235,10 @@ const CollateralPanel = () => {
               isActive
               label="Deposited"
               tooltip={true}
-              tooltipText={`Your collateral balance is ${sICXAmount
+              tooltipWider={true}
+              tooltipText={`Your collateral balance is <b>${sICXAmount
                 .dp(2)
-                .toFormat()} sICX (staked ICX). The ICX value of your sICX is displayed, and will increase daily from staking rewards. You can't use it unless you withdraw it.`}
+                .toFormat()} sICX</b> (staked ICX). The ICX value of your sICX is displayed, and will increase over time from staking rewards. You can't use it unless you withdraw it.`}
               value={!account ? '-' : formattedAmounts[Field.LEFT]}
               currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['icx']}
               onUserInput={onFieldAInput}
@@ -291,7 +292,7 @@ const CollateralPanel = () => {
 
           <Typography textAlign="center">
             {shouldDeposit
-              ? 'Your ICX will be staked as sICX.'
+              ? 'Your ICX will be staked, so your collateral value will increase over time.'
               : "You'll receive sICX (staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."}
           </Typography>
 

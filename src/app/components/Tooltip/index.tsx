@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import Popover, { PopoverProps } from '../Popover';
 
-const TooltipContainer = styled.div`
-  width: 240px;
+const TooltipContainer = styled.div<{ wide?: boolean }>`
+  width: ${props => (props.wide ? '300px' : '240px')};
   padding: 12px 1rem;
   line-height: 150%;
   font-weight: 400;
@@ -15,10 +15,16 @@ const TooltipContainer = styled.div`
 
 interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: string;
+  wide?: boolean;
 }
 
-export default function Tooltip({ text, ...rest }: TooltipProps) {
-  return <Popover content={<TooltipContainer>{text}</TooltipContainer>} {...rest} />;
+export default function Tooltip({ text, wide, ...rest }: TooltipProps) {
+  return (
+    <Popover
+      content={<TooltipContainer wide={wide} dangerouslySetInnerHTML={{ __html: text }}></TooltipContainer>}
+      {...rest}
+    />
+  );
 }
 
 export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show'>) {

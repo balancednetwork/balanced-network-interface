@@ -2,6 +2,7 @@ import React from 'react';
 
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
+import { isEmpty } from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
@@ -19,7 +20,7 @@ import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST, getFilteredCurrencies, SUPPORTED_BASE_CURRENCIES } from 'constants/currency';
+import { CURRENCY_LIST, SUPPORTED_PAIRS } from 'constants/currency';
 import { ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { usePools } from 'store/pool/hooks';
@@ -69,11 +70,12 @@ export default function SwapPanel() {
   const balances = useWalletBalances();
   const ratio = useRatio();
   const pools = usePools();
+  const shouldLedgerSign = useShouldLedgerSign();
+
   const addTransaction = useTransactionAdder();
   const changeRatioValue = useChangeRatio();
   const toggleWalletModal = useWalletModalToggle();
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const refreshPrice = React.useCallback(async () => {
@@ -105,89 +107,98 @@ export default function SwapPanel() {
 
   const tokenRatio = React.useCallback(
     (symbolInput: string, symbolOutput: string) => {
-      if (symbolInput === 'ICX') {
-        let icxRatio = ratio.sICXICXratio?.toNumber() || 0;
-        return icxRatio ? new BigNumber(1 / icxRatio) : new BigNumber(0);
-      } else if (symbolInput === 'BALN') {
-        return ratio.BALNbnUSDratio || new BigNumber(0);
-      } else if (symbolInput === 'sICX' && symbolOutput === 'bnUSD') {
-        return ratio.sICXbnUSDratio || new BigNumber(0);
-      } else if (symbolInput === 'sICX' && symbolOutput === 'ICX') {
-        return ratio.sICXICXratio || new BigNumber(0);
-      } else if (symbolInput === 'bnUSD' && symbolOutput === 'sICX') {
-        let bnUSDRatio = ratio.sICXbnUSDratio || new BigNumber(0);
-        return bnUSDRatio ? new BigNumber(1).dividedBy(bnUSDRatio) : new BigNumber(0);
-      } else if (symbolInput === 'bnUSD' && symbolOutput === 'BALN') {
-        let bnUSDRatio = ratio.BALNbnUSDratio || new BigNumber(0);
-        return bnUSDRatio ? new BigNumber(1).dividedBy(bnUSDRatio) : new BigNumber(0);
+      const hasSICXICXRatio = !isEmpty(ratio.sICXICXratio?.toNumber());
+      const hasSICXbnUSDRatio = !isEmpty(ratio.sICXbnUSDratio?.toNumber());
+      const hasBALNbnUSDRatio = !isEmpty(ratio.BALNbnUSDratio?.toNumber());
+
+      switch (true) {
+        case symbolInput === 'ICX' && hasSICXICXRatio:
+          return new BigNumber(1).dividedBy(ratio.sICXICXratio);
+
+        case symbolInput === 'BALN':
+          return ratio.BALNbnUSDratio;
+
+        case symbolInput === 'sICX' && symbolOutput === 'bnUSD':
+          return ratio.sICXbnUSDratio;
+
+        case symbolInput === 'sICX' && symbolOutput === 'ICX':
+          return ratio.sICXICXratio;
+
+        case symbolInput === 'bnUSD' && symbolOutput === 'sICX' && hasSICXbnUSDRatio:
+          return new BigNumber(1).dividedBy(ratio.sICXbnUSDratio);
+
+        case symbolInput === 'bnUSD' && symbolOutput === 'BALN' && hasBALNbnUSDRatio:
+          return new BigNumber(1).dividedBy(ratio.BALNbnUSDratio);
+
+        default:
+          return new BigNumber(0);
       }
-      return 0;
     },
     [ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
   );
 
   const getPoolData = React.useCallback(
     (symbolInput: string, symbolOutput: string) => {
-      if (symbolInput === 'sicx' && symbolOutput === 'icx') {
-        return {
-          poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXICX].base,
-          poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXICX].quote,
-        };
-      } else if (symbolInput === 'icx' && symbolOutput === 'sicx') {
-        return {
-          poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXICX].quote,
-          poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXICX].base,
-        };
-      } else if (symbolInput === 'sicx' && symbolOutput === 'bnusd') {
-        return {
-          poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base,
-          poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote,
-        };
-      } else if (symbolInput === 'bnusd' && symbolOutput === 'sicx') {
-        return {
-          poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote,
-          poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base,
-        };
-      } else if (symbolInput === 'baln' && symbolOutput === 'bnusd') {
-        return {
-          poolTotalInput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base,
-          poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote,
-        };
-      } else if (symbolInput === 'bnusd' && symbolOutput === 'baln') {
-        return {
-          poolTotalInput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote,
-          poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base,
-        };
-      }
+      symbolInput = symbolInput.toLocaleLowerCase();
+      symbolOutput = symbolOutput.toLocaleLowerCase();
+
+      return {
+        sicx: {
+          icx: {
+            poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXICX].base,
+            poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXICX].quote,
+          },
+          bnusd: {
+            poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base,
+            poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote,
+          },
+        },
+        icx: {
+          sicx: {
+            poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXICX].quote,
+            poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXICX].base,
+          },
+        },
+        bnusd: {
+          sicx: {
+            poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote,
+            poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base,
+          },
+          baln: {
+            poolTotalInput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote,
+            poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base,
+          },
+        },
+        baln: {
+          bnusd: {
+            poolTotalInput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base,
+            poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote,
+          },
+        },
+      }[symbolInput][symbolOutput];
     },
     [pools],
   );
 
   const calculateOutputAmount = React.useCallback(
     (symbolInput: string, symbolOutput: string, amountInput: string, amountOutput: string) => {
-      let poolTotalInput = getPoolData(symbolInput, symbolOutput)?.poolTotalInput || ZERO;
-      let poolTotalOutput = getPoolData(symbolInput, symbolOutput)?.poolTotalOutput || ZERO;
+      const symbol = `${symbolInput}_${symbolOutput}`;
 
-      if ((symbolInput === 'icx' && symbolOutput === 'sicx') || (symbolInput === 'sicx' && symbolOutput === 'icx')) {
-        return amountInput ? new BigNumber(amountInput) : new BigNumber(amountOutput);
+      if (symbol === 'icx_sicx' || symbol === 'sicx_icx') {
+        return new BigNumber(amountInput || amountOutput);
       }
 
-      if (amountOutput === '') {
-        // let new_from_token = poolTotalInput.plus(new BigNumber(amountInput));
-        // let new_to_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_from_token);
-        // let receive_token = poolTotalOutput.minus(new_to_token);
+      const poolTotalInput = getPoolData(symbolInput, symbolOutput)?.poolTotalInput || ZERO;
+      const poolTotalOutput = getPoolData(symbolInput, symbolOutput)?.poolTotalOutput || ZERO;
 
-        let receive_token = poolTotalOutput.minus(
+      if (amountOutput === '') {
+        const receiveToken = poolTotalOutput.minus(
           poolTotalOutput.multipliedBy(poolTotalInput).dividedBy(poolTotalInput.plus(new BigNumber(amountInput))),
         );
 
-        return receive_token;
+        return receiveToken;
       } else {
-        // let new_to_token = poolTotalOutput.minus(new BigNumber(amountOutput));
-        // let new_from_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_to_token);
-        // let amountInput = new_from_token.minus(poolTotalInput);
-
-        let amountInput = poolTotalOutput
+        amountInput = poolTotalOutput
           .multipliedBy(poolTotalInput)
           .dividedBy(poolTotalOutput.minus(amountOutput))
           .minus(poolTotalInput);
@@ -198,107 +209,143 @@ export default function SwapPanel() {
     [getPoolData],
   );
 
+  const calculate_ICX_2_sICX_output_amount = ({ inputAmount, ratio }) => {
+    return formatBigNumber(new BigNumber(inputAmount).multipliedBy(ratio), 'input');
+  };
+
+  const calculate_sICX_2_ICX_output_amount = ({ inputAmount, ratio }) => {
+    const fee = parseFloat(inputAmount) / 100;
+    setSwapFee(new BigNumber(fee).toString());
+    inputAmount = (parseFloat(inputAmount) - fee).toString();
+    return formatBigNumber(new BigNumber(inputAmount).multipliedBy(ratio), 'input');
+  };
+
+  const calculate_default_output_amount = React.useCallback(
+    async ({ inputAmount, inputCurrencySymbol, outputCurrencySymbol }) => {
+      const res = await bnJs.inject({ account }).Dex.getFees();
+
+      const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
+      const lp_fee = parseInt(res[`pool_lp_fee`], 16);
+      const inputAmountF = parseFloat(inputAmount);
+      const fee = (inputAmountF * (bal_holder_fee + lp_fee)) / 10000;
+      setSwapFee(new BigNumber(fee).toString());
+      const amount = (inputAmountF - fee).toString();
+
+      return formatBigNumber(calculateOutputAmount(inputCurrencySymbol, outputCurrencySymbol, amount, ''), 'ratio');
+    },
+    [account, calculateOutputAmount],
+  );
+
   const handleConvertOutputRate = React.useCallback(
-    (inputCurrency: any, outputCurrency: any, val: string) => {
-      let ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
+    async (inputCurrency: any, outputCurrency: any, inputAmount: string) => {
+      let outputAmount;
+      const ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
+
+      const inputCurrencySymbol = inputCurrency.symbol.toLowerCase();
+      const outputCurrencySymbol = outputCurrency.symbol.toLowerCase();
+
+      inputAmount = inputAmount || '0';
+
       if (!ratioLocal) {
         console.log(`Cannot get rate from this pair`);
       }
-      if (!val) {
-        val = '0';
-      }
-      if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
-        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
-      } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
-        const fee = parseFloat(val) / 100;
-        setSwapFee(new BigNumber(fee).toString());
-        val = (parseFloat(val) - fee).toString();
-        setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'input'));
-      } else {
-        bnJs
-          .inject({ account })
-          .Dex.getFees()
-          .then(res => {
-            const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
-            const lp_fee = parseInt(res[`pool_lp_fee`], 16);
-            const fee = (parseFloat(val) * (bal_holder_fee + lp_fee)) / 10000;
-            setSwapFee(new BigNumber(fee).toString());
-            val = (parseFloat(val) - fee).toString();
-            setSwapOutputAmount(
-              formatBigNumber(
-                calculateOutputAmount(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase(), val, ''),
-                'ratio',
-              ),
-            );
-            //setSwapOutputAmount(formatBigNumber(new BigNumber(val).multipliedBy(ratioLocal), 'ratio'));
-          })
-          .catch(e => {
-            console.error('error', e);
+
+      const symbol = `${inputCurrencySymbol}_${outputCurrencySymbol}`;
+
+      switch (true) {
+        case symbol === 'icx_sicx':
+          outputAmount = calculate_ICX_2_sICX_output_amount({ inputAmount, ratio: ratioLocal });
+          break;
+
+        case symbol === 'sicx_icx':
+          outputAmount = calculate_sICX_2_ICX_output_amount({ inputAmount, ratio: ratioLocal });
+          break;
+
+        default:
+          outputAmount = await calculate_default_output_amount({
+            inputAmount,
+            inputCurrencySymbol,
+            outputCurrencySymbol,
           });
+          break;
       }
+
+      setSwapOutputAmount(outputAmount);
     },
-    [account, tokenRatio, calculateOutputAmount],
+    [tokenRatio, calculate_default_output_amount],
   );
 
-  const handleTypeOutput = (val: string) => {
-    let ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
-    let poolTotalBase =
-      getPoolData(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase())?.poolTotalInput || ZERO;
-    let maxOutputAmount = calculateOutputAmount(
-      inputCurrency.symbol.toLowerCase(),
-      outputCurrency.symbol.toLowerCase(),
-      poolTotalBase.toString(),
-      '',
-    );
-    let inputAmount = new BigNumber(0);
+  const calculate_sICX_2_ICX_intput_amount = outputTypedValue => {
+    const inputAmount = new BigNumber(outputTypedValue).plus(new BigNumber(outputTypedValue).multipliedBy(0.01));
+    return formatBigNumber(inputAmount, 'ratio');
+  };
+
+  const calculate_ICX_2_sICX_intput_amount = outputTypedValue => {
+    return formatBigNumber(new BigNumber(outputTypedValue), 'ratio');
+  };
+
+  const calculate_default_intput_amount = async inputAmount => {
+    if (!account) return '0';
+
+    const res = await bnJs.inject({ account }).Dex.getFees();
+    const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
+    const lp_fee = parseInt(res[`pool_lp_fee`], 16);
+    const fee = inputAmount.multipliedBy(new BigNumber(bal_holder_fee + lp_fee)).dividedBy(new BigNumber(10000));
+    setSwapFee(new BigNumber(fee).toString());
+    inputAmount = inputAmount.plus(fee);
+
+    return formatBigNumber(inputAmount, 'ratio');
+  };
+
+  const handleTypeOutput = async (outputTypedValue: string) => {
+    let inputAmount;
+    let amount;
+
+    const inputCurrencySymbol = inputCurrency.symbol.toLowerCase();
+    const outputCurrencySymbol = outputCurrency.symbol.toLowerCase();
+
+    const ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
+
     if (!ratioLocal) {
       console.log(`Cannot get rate from this pair`);
     }
 
-    if (new BigNumber(val).isGreaterThanOrEqualTo(maxOutputAmount)) {
+    const poolTotalBase = getPoolData(inputCurrency.symbol, outputCurrency.symbol)?.poolTotalInput || ZERO;
+
+    const maxOutputAmount = calculateOutputAmount(
+      inputCurrencySymbol,
+      outputCurrencySymbol,
+      poolTotalBase.toString(),
+      '',
+    );
+
+    if (new BigNumber(outputTypedValue).isGreaterThanOrEqualTo(maxOutputAmount)) {
       setSwapOutputAmount(formatBigNumber(maxOutputAmount, 'input'));
-      inputAmount = calculateOutputAmount(
-        inputCurrency.symbol.toLowerCase(),
-        outputCurrency.symbol.toLowerCase(),
-        '',
-        maxOutputAmount.toString(),
-      );
+      inputAmount = calculateOutputAmount(inputCurrencySymbol, outputCurrencySymbol, '', maxOutputAmount.toString());
     } else {
-      setSwapOutputAmount(val);
-      inputAmount = calculateOutputAmount(
-        inputCurrency.symbol.toLowerCase(),
-        outputCurrency.symbol.toLowerCase(),
-        '',
-        val,
-      );
+      setSwapOutputAmount(outputTypedValue);
+      inputAmount = calculateOutputAmount(inputCurrencySymbol, outputCurrencySymbol, '', outputTypedValue);
     }
 
-    if (!val) {
-      val = '0';
+    outputTypedValue = outputTypedValue || '0';
+
+    const symbol = `${inputCurrencySymbol}_${outputCurrencySymbol}`;
+
+    switch (true) {
+      case symbol === 'sicx_icx':
+        amount = calculate_sICX_2_ICX_intput_amount(outputTypedValue);
+        break;
+
+      case symbol === 'icx_sicx':
+        amount = calculate_ICX_2_sICX_intput_amount(outputTypedValue);
+        break;
+
+      default:
+        amount = await calculate_default_intput_amount(inputAmount);
+        break;
     }
 
-    if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
-      inputAmount = new BigNumber(val).plus(new BigNumber(val).multipliedBy(0.01));
-      setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
-    } else if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
-      setSwapInputAmount(formatBigNumber(new BigNumber(val), 'ratio'));
-    } else {
-      bnJs
-        .inject({ account })
-        .Dex.getFees()
-        .then(res => {
-          const bal_holder_fee = parseInt(res[`pool_baln_fee`], 16);
-          const lp_fee = parseInt(res[`pool_lp_fee`], 16);
-          const fee = inputAmount.multipliedBy(new BigNumber(bal_holder_fee + lp_fee)).dividedBy(new BigNumber(10000));
-          setSwapFee(new BigNumber(fee).toString());
-          inputAmount = inputAmount.plus(fee);
-          console.log(inputAmount.toString());
-          setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
-        })
-        .catch(e => {
-          console.error('error', e);
-        });
-    }
+    setSwapInputAmount(amount);
   };
 
   const [chartOption, setChartOption] = React.useState({
@@ -328,12 +375,14 @@ export default function SwapPanel() {
 
   const handleTypeInput = React.useCallback(
     (val: string) => {
-      let poolTotalBase =
-        getPoolData(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase())?.poolTotalInput || ZERO;
+      const poolTotalBase = getPoolData(inputCurrency.symbol, outputCurrency.symbol)?.poolTotalInput || ZERO;
+
       if (new BigNumber(val).isGreaterThanOrEqualTo(poolTotalBase)) {
         val = formatBigNumber(poolTotalBase, 'input');
       }
+
       setSwapInputAmount(val);
+
       handleConvertOutputRate(inputCurrency, outputCurrency, val);
     },
     [inputCurrency, outputCurrency, handleConvertOutputRate, getPoolData],
@@ -606,7 +655,7 @@ export default function SwapPanel() {
               onUserInput={handleTypeInput}
               onCurrencySelect={handleInputSelect}
               id="swap-currency-input"
-              currencyList={SUPPORTED_BASE_CURRENCIES}
+              currencyList={Object.keys(SUPPORTED_PAIRS)}
             />
           </Flex>
 
@@ -625,7 +674,7 @@ export default function SwapPanel() {
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
               id="swap-currency-output"
-              currencyList={getFilteredCurrencies(inputCurrency.symbol)}
+              currencyList={Object.keys(SUPPORTED_PAIRS[inputCurrency.symbol])}
             />
           </Flex>
 

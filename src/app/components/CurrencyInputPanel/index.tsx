@@ -8,7 +8,7 @@ import CurrencyLogo from 'app/components/CurrencyLogo';
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
-import { CURRENCY_LIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
+import { CURRENCY_LIST, CURRENCY, CurrencyKey } from 'constants/currency';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { Currency } from 'types';
 import { escapeRegExp } from 'utils';
@@ -96,20 +96,20 @@ const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." charac
 export default function CurrencyInputPanel({
   value,
   onUserInput,
+  onCurrencySelect,
+  currency,
+  currencyList = CURRENCY,
+  bg = 'bg2',
   onMax,
   showMaxButton,
   label = 'Input',
-  onCurrencySelect,
-  currency,
   hideBalance = false,
   // pair = null, // used for double token logo
   hideInput = false,
   otherCurrency,
-  currencyList = CURRENCY,
   id,
   showCommonBases,
   customBalanceText,
-  bg = 'bg2',
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -135,17 +135,13 @@ export default function CurrencyInputPanel({
     setOpen(false);
   };
 
-  const availableCurrencies = React.useMemo(
-    () => (otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList),
-    [otherCurrency, currencyList],
-  );
+  const availableCurrencies = React.useMemo(() => currencyList, [currencyList]);
 
   React.useEffect(() => {
-    const t = otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList;
-    if (t?.indexOf(currency?.symbol as string) === -1) {
-      onCurrencySelect && onCurrencySelect(CURRENCY_LIST[t[0].toLowerCase()]);
+    if (currencyList.indexOf(currency?.symbol as string) === -1) {
+      onCurrencySelect && onCurrencySelect(CURRENCY_LIST[currencyList[0].toLowerCase()]);
     }
-  }, [currency, otherCurrency, onCurrencySelect, currencyList]);
+  }, [currency, onCurrencySelect, currencyList]);
 
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {

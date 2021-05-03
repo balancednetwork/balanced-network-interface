@@ -5,7 +5,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
+import { SUPPORTED_PAIRS, Pair } from 'constants/currency';
 import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { usePool, usePoolPair } from 'store/pool/hooks';
 import { Pool } from 'store/pool/reducer';
@@ -77,13 +77,13 @@ const useSelectedPairRatio = () => {
   const selectedPair = usePoolPair();
 
   switch (selectedPair.pair) {
-    case SUPPORTED_PAIRS[0].pair: {
+    case SUPPORTED_PAIRS['sICX']['bnUSD'].pair: {
       return ratio.sICXbnUSDratio;
     }
-    case SUPPORTED_PAIRS[1].pair: {
+    case SUPPORTED_PAIRS['BALN']['bnUSD'].pair: {
       return ratio.BALNbnUSDratio;
     }
-    case SUPPORTED_PAIRS[2].pair: {
+    case SUPPORTED_PAIRS['sICX']['ICX'].pair: {
       return ratio.sICXICXratio;
     }
   }

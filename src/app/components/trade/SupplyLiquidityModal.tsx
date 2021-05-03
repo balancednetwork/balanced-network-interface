@@ -239,18 +239,22 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
       (pool?.baseDeposited.isGreaterThan(new BigNumber(0)) && pool?.quoteDeposited.isGreaterThan(new BigNumber(0)));
 
   const isInitialValueA = addingTxs[Field.CURRENCY_A] === '' && removingTxs[Field.CURRENCY_A] === '';
+  const isInitialWithdrawA =
+    removingTxs[Field.CURRENCY_A] !== '' && pool?.baseDeposited.isGreaterThan(new BigNumber(0));
   const isPendingA = addingATxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_A] === '';
   const isFailureA = addingATxStatus === TransactionStatus.failure && removingTxs[Field.CURRENCY_A] === '';
   const isRemoveSuccessA = removingATxStatus === TransactionStatus.success;
-  const shouldShowSendBtnA = isInitialValueA || isPendingA || isFailureA || isRemoveSuccessA;
+  const shouldShowSendBtnA = isInitialValueA || isPendingA || isFailureA || isRemoveSuccessA || isInitialWithdrawA;
   const shouldShowSendA = isEmpty(addingTxs[Field.CURRENCY_A]) || isFailureA;
   const shouldShowRemoveA = isEmpty(removingTxs[Field.CURRENCY_A]);
 
   const isInitialValueB = addingTxs[Field.CURRENCY_B] === '' && removingTxs[Field.CURRENCY_B] === '';
+  const isInitialWithdrawB =
+    removingTxs[Field.CURRENCY_B] !== '' && pool?.quoteDeposited.isGreaterThan(new BigNumber(0));
   const isPendingB = addingBTxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_B] === '';
   const isFailureB = addingBTxStatus === TransactionStatus.failure && removingTxs[Field.CURRENCY_B] === '';
   const isRemoveSuccessB = removingBTxStatus === TransactionStatus.success;
-  const shouldShowSendBtnB = isInitialValueB || isPendingB || isFailureB || isRemoveSuccessB;
+  const shouldShowSendBtnB = isInitialValueB || isPendingB || isFailureB || isRemoveSuccessB || isInitialWithdrawB;
   const shouldShowSendB = isEmpty(addingTxs[Field.CURRENCY_B]) || isFailureB;
   const shouldShowRemoveB = isEmpty(removingTxs[Field.CURRENCY_B]);
 

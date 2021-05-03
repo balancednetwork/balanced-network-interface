@@ -89,6 +89,7 @@ interface CurrencyInputPanelProps {
   showCommonBases?: boolean;
   customBalanceText?: string;
   bg?: string;
+  hideCurrency?: boolean;
 }
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -110,6 +111,7 @@ export default function CurrencyInputPanel({
   showCommonBases,
   customBalanceText,
   bg = 'bg2',
+  hideCurrency,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -179,7 +181,7 @@ export default function CurrencyInputPanel({
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      {balances[currency]?.dp(2).toFormat()} {currency}
+                      {balances[currency]?.dp(2).toFormat()} {!hideCurrency && currency}
                     </DataText>
                   </ListItem>
                 ))}

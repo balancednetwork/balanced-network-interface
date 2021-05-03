@@ -179,8 +179,8 @@ export default React.memo(function StakePanel() {
             <Button onClick={handleConfirm} fontSize={14}>
               {shouldStake ? 'Stake' : 'Unstake'}
             </Button>
-            {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
           </Flex>
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>

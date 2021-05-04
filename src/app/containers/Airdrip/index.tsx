@@ -133,8 +133,11 @@ export function Airdrip() {
   }>();
   const details = data?.claimDetails.find(item => item.address === bnJs.BALN.address);
 
+  const [errorMsg, setErrorMsg] = React.useState('');
   React.useEffect(() => {
     const fetchStatus = async () => {
+      setErrorMsg('');
+      setData(undefined);
       try {
         const url =
           networkId === 1
@@ -143,11 +146,13 @@ export function Airdrip() {
         const { data: res } = await axios.get(url);
         if (res.success) {
           setData(res.data);
-        } else {
-          setData(undefined);
         }
       } catch (e) {
-        setData(undefined);
+        if (e.response && e.response.status === 404) {
+          setErrorMsg('Not eligible. Stake and delegate your ICX, then try again next week.');
+        } else {
+          setErrorMsg(e.message);
+        }
       }
     };
 
@@ -300,6 +305,17 @@ export function Airdrip() {
               >
                 Wallet: {shortenAddress(account)}
               </Typography>
+            )}
+
+            {account && errorMsg && (
+              <>
+                <Typography variant="p" fontSize="18px" fontWeight="bold" color="alert" textAlign="center">
+                  {errorMsg}
+                </Typography>
+                <Button mt={5} onClick={toggleWalletModal}>
+                  Check another wallet
+                </Button>
+              </>
             )}
 
             {account && details && details.claimStatus === 'unclaimed' && (

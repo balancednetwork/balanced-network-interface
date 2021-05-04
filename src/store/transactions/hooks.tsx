@@ -54,12 +54,12 @@ export function useTransactionAdder(): (
 }
 
 // returns all the transactions for the current chain
-export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
+export function useAllTransactions(): { [txHash: string]: TransactionDetails } | undefined {
   const { networkId } = useIconReact();
 
   const state = useSelector<AppState, AppState['transactions']>(state => state.transactions);
 
-  return networkId ? state[networkId] ?? {} : {};
+  return networkId ? state[networkId] : undefined;
 }
 
 export enum TransactionStatus {
@@ -71,7 +71,7 @@ export enum TransactionStatus {
 export function useTransactionStatus(transactionHash?: string): TransactionStatus {
   const transactions = useAllTransactions();
 
-  if (!transactionHash || !transactions[transactionHash]) return TransactionStatus.pending;
+  if (!transactionHash || !transactions || !transactions[transactionHash]) return TransactionStatus.pending;
 
   if (transactions[transactionHash].receipt) {
     if (transactions[transactionHash].receipt?.status) return TransactionStatus.success;

@@ -38,12 +38,15 @@ export default function LPDescription() {
         >
           <StyledDL>
             <dt>Your supply</dt>
-            <dd>
-              {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                ? `${formatBigNumber(data?.suppliedBase, 'currency')} ${selectedPair.baseCurrencyKey} /
+            <dd
+              dangerouslySetInnerHTML={{
+                __html:
+                  selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
+                    ? `${formatBigNumber(data?.suppliedBase, 'currency')} ${selectedPair.baseCurrencyKey} <br />
                    ${formatBigNumber(data?.suppliedQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
-                : `${formatBigNumber(data?.suppliedQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`}
-            </dd>
+                    : `${formatBigNumber(data?.suppliedQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`,
+              }}
+            />
           </StyledDL>
           <StyledDL>
             <dt>Your daily rewards</dt>
@@ -53,12 +56,15 @@ export default function LPDescription() {
         <Box width={[1, 1 / 2]}>
           <StyledDL>
             <dt>Total supply</dt>
-            <dd>
-              {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                ? `${formatBigNumber(data?.totalBase, 'currency')} ${selectedPair.baseCurrencyKey} /
+            <dd
+              dangerouslySetInnerHTML={{
+                __html:
+                  selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
+                    ? `${formatBigNumber(data?.totalBase, 'currency')} ${selectedPair.baseCurrencyKey} <br />
                    ${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
-                : `${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`}
-            </dd>
+                    : `${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`,
+              }}
+            />
           </StyledDL>
           <StyledDL>
             <dt>Total daily rewards</dt>
@@ -74,7 +80,12 @@ const StyledDL = styled.dl`
   margin: 15px 0 15px 0;
   text-align: center;
 
+  > dt {
+    margin-bottom: 5px;
+  }
+
   > dd {
     margin-left: 0;
+    color: #fff;
   }
 `;

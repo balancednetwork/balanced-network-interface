@@ -85,6 +85,7 @@ export const SUPPORTED_PAIRS = {
   },
   BALN: {
     bnUSD: pairGernerator('BALN', 'bnUSD', 3),
+    sICX: pairGernerator('BALN', 'sICX', 3),
   },
   ICX: {
     sICX: pairGernerator('ICX', 'sICX', 1),

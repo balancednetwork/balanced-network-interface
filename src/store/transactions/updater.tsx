@@ -30,11 +30,10 @@ export default function Updater(): null {
   const transactions = useAllTransactions();
 
   React.useEffect(() => {
-    if (!networkId || !iconService) return;
+    if (!networkId || !iconService || !transactions) return;
 
-    const txs = transactions || {};
-    Object.keys(txs)
-      .filter(hash => shouldCheck(txs[hash]))
+    Object.keys(transactions)
+      .filter(hash => shouldCheck(transactions[hash]))
       .forEach(hash => {
         iconService
           .getTransactionResult(hash)
@@ -67,7 +66,7 @@ export default function Updater(): null {
               if (receipt.status === 1) {
                 toast.update(receipt.txHash, {
                   ...toastProps,
-                  render: <NotificationSuccess summary={txs[hash]?.summary} />,
+                  render: <NotificationSuccess summary={transactions[hash]?.summary} />,
                   autoClose: 10000,
                 });
               }

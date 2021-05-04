@@ -68,9 +68,38 @@ const WalletPanel = () => {
                           {currency}
                         </Typography>
                       </AssetSymbol>
-                      <DataText>{!account ? '-' : balances[currency].dp(2).toFormat()}</DataText>
-                      <DataText>
-                        {!account ? '-' : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
+                      <DataText as="div">
+                        {!account
+                          ? '-'
+                          : currency.toLowerCase() === 'baln'
+                          ? balances['BALN'].plus(balances['BALNstaked']).dp(2).toFormat()
+                          : balances[currency].dp(2).toFormat()}
+                        {currency.toLowerCase() === 'baln' && balances['BALNstaked'].isGreaterThan(new BigNumber(0)) && (
+                          <>
+                            <Typography color="rgba(255,255,255,0.75)">
+                              Available: {balances['BALN'].dp(2).toFormat()}
+                            </Typography>
+                          </>
+                        )}
+                      </DataText>
+
+                      <DataText as="div">
+                        {!account
+                          ? '-'
+                          : currency.toLowerCase() === 'baln'
+                          ? `$${balances['BALN']
+                              .plus(balances['BALNstaked'])
+                              .multipliedBy(rates[currency])
+                              .dp(2)
+                              .toFormat()}`
+                          : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
+                        {currency.toLowerCase() === 'baln' && balances['BALNstaked'].isGreaterThan(new BigNumber(0)) && (
+                          <>
+                            <Typography color="rgba(255,255,255,0.75)">
+                              ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                            </Typography>
+                          </>
+                        )}
                       </DataText>
                     </ListItem>
                   </StyledAccordionButton>

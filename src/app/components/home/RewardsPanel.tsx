@@ -70,7 +70,7 @@ const RewardsPanel = () => {
     setOpen(!open);
   };
 
-  if (!hasRewardableLoan && !hasRewardableLiquidity) {
+  if (reward.isZero()) {
     return (
       <div>
         <FlexPanel bg="bg2" flexDirection="column">
@@ -99,9 +99,7 @@ const RewardsPanel = () => {
         <RewardGrid>
           <Row>
             <Typography variant="p">Balance Tokens</Typography>
-            <Typography variant="p">
-              {!account ? '-' : reward.isZero() ? 'Pending' : `${reward.dp(2).toFormat()} BALN`}
-            </Typography>
+            <Typography variant="p">{!account ? '-' : `${reward.dp(2).toFormat()} BALN`}</Typography>
           </Row>
 
           <Row>
@@ -109,27 +107,21 @@ const RewardsPanel = () => {
             <Typography variant="p">{!account ? '-' : hashNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
           </Row>
 
-          {!reward.isZero() && (
-            <>
-              <Divider />
+          <Divider />
 
-              <Row>
-                <Typography variant="p" fontWeight="bold">
-                  Total
-                </Typography>
-                <Typography variant="p" fontWeight="bold">
-                  {`$${rewardAmountByUSD.dp(2).toFormat()}`}
-                </Typography>
-              </Row>
-            </>
-          )}
+          <Row>
+            <Typography variant="p" fontWeight="bold">
+              Total
+            </Typography>
+            <Typography variant="p" fontWeight="bold">
+              {`$${rewardAmountByUSD.dp(2).toFormat()}`}
+            </Typography>
+          </Row>
         </RewardGrid>
 
-        {!reward.isZero() && (
-          <Flex alignItems="center" justifyContent="center" mt={3}>
-            <Button onClick={handleClaim}>Claim rewards</Button>
-          </Flex>
-        )}
+        <Flex alignItems="center" justifyContent="center" mt={3}>
+          <Button onClick={handleClaim}>Claim rewards</Button>
+        </Flex>
       </BoxPanel>
 
       {/* Stake new Balance Tokens Modal */}

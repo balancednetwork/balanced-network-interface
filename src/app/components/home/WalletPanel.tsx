@@ -56,7 +56,12 @@ const WalletPanel = () => {
 
         <List>
           <Accordion collapsible>
-            {CURRENCY.filter(currency => !balances[currency].dp(2).isZero()).map((currency, index, arr) => {
+            {CURRENCY.filter(currency => {
+              if (currency === 'BALN') {
+                return !balances['BALN'].plus(balances['BALNstaked']).dp(2).isZero();
+              }
+              return !balances[currency].dp(2).isZero();
+            }).map((currency, index, arr) => {
               const WalletUI = WalletUIs[currency];
               return (
                 <AccordionItem key={currency}>

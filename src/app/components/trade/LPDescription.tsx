@@ -2,7 +2,6 @@ import React from 'react';
 
 import { BalancedJs } from 'packages/BalancedJs';
 import { Flex, Box } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
 import { usePoolPair, usePoolData } from 'store/pool/hooks';
@@ -36,56 +35,58 @@ export default function LPDescription() {
             borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
           }}
         >
-          <StyledDL>
-            <dt>Your supply</dt>
-            <dd
-              dangerouslySetInnerHTML={{
-                __html:
-                  selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                    ? `${formatBigNumber(data?.suppliedBase, 'currency')} ${selectedPair.baseCurrencyKey} <br />
-                   ${formatBigNumber(data?.suppliedQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
-                    : `${formatBigNumber(data?.suppliedQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`,
-              }}
-            />
-          </StyledDL>
-          <StyledDL>
-            <dt>Your daily rewards</dt>
-            <dd>~ {formatBigNumber(data?.suppliedReward, 'currency')} BALN</dd>
-          </StyledDL>
+          <Box sx={{ margin: '15px 0 25px 0' }}>
+            <Typography textAlign="center" marginBottom="5px" color="text1">
+              Your supply
+            </Typography>
+            <Typography textAlign="center" variant="p">
+              {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+                <>
+                  {formatBigNumber(data?.suppliedBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
+                  {formatBigNumber(data?.suppliedQuote, 'currency')} {selectedPair.quoteCurrencyKey}
+                </>
+              ) : (
+                `${formatBigNumber(data?.suppliedQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
+              )}
+            </Typography>
+          </Box>
+
+          <Box sx={{ margin: '15px 0 25px 0' }}>
+            <Typography textAlign="center" marginBottom="5px" color="text1">
+              Your daily rewards
+            </Typography>
+            <Typography textAlign="center" variant="p">
+              ~ {formatBigNumber(data?.suppliedReward, 'currency')} BALN
+            </Typography>
+          </Box>
         </Box>
         <Box width={[1, 1 / 2]}>
-          <StyledDL>
-            <dt>Total supply</dt>
-            <dd
-              dangerouslySetInnerHTML={{
-                __html:
-                  selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                    ? `${formatBigNumber(data?.totalBase, 'currency')} ${selectedPair.baseCurrencyKey} <br />
-                   ${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
-                    : `${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`,
-              }}
-            />
-          </StyledDL>
-          <StyledDL>
-            <dt>Total daily rewards</dt>
-            <dd>{formatBigNumber(data?.totalReward, 'currency')} BALN</dd>
-          </StyledDL>
+          <Box sx={{ margin: '15px 0 25px 0' }}>
+            <Typography textAlign="center" marginBottom="5px" color="text1">
+              Total supply
+            </Typography>
+            <Typography textAlign="center" variant="p">
+              {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+                <>
+                  {formatBigNumber(data?.totalBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
+                  {formatBigNumber(data?.totalQuote, 'currency')} {selectedPair.quoteCurrencyKey}
+                </>
+              ) : (
+                `${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
+              )}
+            </Typography>
+          </Box>
+
+          <Box sx={{ margin: '15px 0 25px 0' }}>
+            <Typography textAlign="center" marginBottom="5px" color="text1">
+              Total daily rewards
+            </Typography>
+            <Typography textAlign="center" variant="p">
+              {formatBigNumber(data?.totalReward, 'currency')} BALN
+            </Typography>
+          </Box>
         </Box>
       </Flex>
     </Box>
   );
 }
-
-const StyledDL = styled.dl`
-  margin: 15px 0 15px 0;
-  text-align: center;
-
-  > dt {
-    margin-bottom: 5px;
-  }
-
-  > dd {
-    margin-left: 0;
-    color: #fff;
-  }
-`;

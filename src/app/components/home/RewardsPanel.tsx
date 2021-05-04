@@ -13,7 +13,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
-import { useHasNetworkFees } from 'store/reward/hooks';
+import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
@@ -58,6 +58,10 @@ const RewardsPanel = () => {
 
   const rewardAmountByUSD = reward.multipliedBy(ratio.BALNbnUSDratio);
 
+  const hasRewardableLoan = useHasRewardableLoan();
+
+  const hasRewardableLiquidity = useHasRewardableLiquidity();
+
   const hashNetworkFees = useHasNetworkFees();
 
   // stake new balance tokens modal
@@ -66,7 +70,7 @@ const RewardsPanel = () => {
     setOpen(!open);
   };
 
-  if (reward.isZero()) {
+  if (!hasRewardableLoan && !hasRewardableLiquidity && reward.isZero()) {
     return (
       <div>
         <FlexPanel bg="bg2" flexDirection="column">
@@ -95,7 +99,9 @@ const RewardsPanel = () => {
         <RewardGrid>
           <Row>
             <Typography variant="p">Balance Tokens</Typography>
-            <Typography variant="p">{!account ? '-' : `${reward.dp(2).toFormat()} BALN`}</Typography>
+            <Typography variant="p">
+              {!account ? '-' : reward.isZero() ? 'Pending' : `${reward.dp(2).toFormat()} BALN`}
+            </Typography>
           </Row>
 
           <Row>
@@ -103,21 +109,27 @@ const RewardsPanel = () => {
             <Typography variant="p">{!account ? '-' : hashNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
           </Row>
 
-          <Divider />
+          {!reward.isZero() && (
+            <>
+              <Divider />
 
-          <Row>
-            <Typography variant="p" fontWeight="bold">
-              Total
-            </Typography>
-            <Typography variant="p" fontWeight="bold">
-              {`$${rewardAmountByUSD.dp(2).toFormat()}`}
-            </Typography>
-          </Row>
+              <Row>
+                <Typography variant="p" fontWeight="bold">
+                  Total
+                </Typography>
+                <Typography variant="p" fontWeight="bold">
+                  {`$${rewardAmountByUSD.dp(2).toFormat()}`}
+                </Typography>
+              </Row>
+            </>
+          )}
         </RewardGrid>
 
-        <Flex alignItems="center" justifyContent="center" mt={3}>
-          <Button onClick={handleClaim}>Claim rewards</Button>
-        </Flex>
+        {!reward.isZero() && (
+          <Flex alignItems="center" justifyContent="center" mt={3}>
+            <Button onClick={handleClaim}>Claim rewards</Button>
+          </Flex>
+        )}
       </BoxPanel>
 
       {/* Stake new Balance Tokens Modal */}

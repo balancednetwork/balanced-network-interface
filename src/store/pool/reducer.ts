@@ -10,6 +10,8 @@ export interface Pool {
   quoteCurrencyKey: string;
   base: BigNumber;
   quote: BigNumber;
+  baseDeposited: BigNumber;
+  quoteDeposited: BigNumber;
   total: BigNumber;
   rewards: BigNumber;
   rate: BigNumber;

@@ -179,7 +179,7 @@ export default function CurrencyInputPanel({
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      {balances[currency]?.dp(2).toFormat()} {currency}
+                      {balances[currency]?.dp(2).toFormat()}
                     </DataText>
                   </ListItem>
                 ))}

@@ -10,7 +10,6 @@ import { Link } from 'app/components/Link';
 import Logo from 'app/components/Logo';
 import { DropdownPopper } from 'app/components/Popover';
 import { MouseoverTooltip } from 'app/components/Tooltip';
-import WalletModal from 'app/components/WalletModal';
 import { Typography } from 'app/theme';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
 import { useWalletModalToggle } from 'store/application/hooks';
@@ -167,8 +166,6 @@ export default React.memo(function Header(props: { title?: string; className?: s
           </Flex>
         )}
       </Flex>
-
-      <WalletModal />
     </header>
   );
 });

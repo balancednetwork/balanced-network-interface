@@ -264,7 +264,6 @@ export const ThemedGlobalStyle = createGlobalStyle`
 
   body {
     min-height: 100vh;
-    background: ${({ theme }) => theme.colors.bg1}
   }
 
   /* ==========================================================================

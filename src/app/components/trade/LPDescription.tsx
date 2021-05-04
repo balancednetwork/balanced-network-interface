@@ -9,9 +9,9 @@ import { usePoolPair, usePoolData } from 'store/pool/hooks';
 import { formatBigNumber } from 'utils';
 
 const descriptions = {
-  1: 'Earn Balance Tokens every day you supply ICX as liquidity. This pool works like a queue, so you can claim sICX from the liquidity details section as your order is filled.',
-  2: 'Earn Balance Tokens every day you supply liquidity. Your supply ratio will fluctuate with the price.',
-  3: 'Earn Balance Tokens every day you supply liquidity, and start accruing network fees. Your supply ratio will fluctuate with the price.',
+  1: 'Supply ICX to earn Balance Tokens. Your ICX will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. This pool works like a queue, so you can withdraw your sICX from the liquidity details section as your order is filled.',
+  2: 'Supply an equal amount of sICX and bnUSD to earn BALN. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards.',
+  3: 'Supply an equal amount of BALN and bnUSD to earn Balance Tokens. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. All BALN in the pool accrues network fees.',
 };
 
 export default function LPDescription() {

@@ -22,5 +22,4 @@ yarn-error.log*
 generated-cra-app
 .cra-template-rb
 template
-.eslintcache
 .env

@@ -65,6 +65,7 @@ export function useBalanceActionHandlers(): {
 
 // fetch pools
 export function useFetchPools() {
+  const { account } = useIconReact();
   const transactions = useAllTransactions();
   const changePool = useChangePool();
   const { networkId } = useIconReact();
@@ -84,29 +85,33 @@ export function useFetchPools() {
       if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
         const [t, rate] = await Promise.all([bnJs.Dex.totalSupply(poolId), await bnJs.Staking.getTodayRate()]);
 
-        result = [t, t, t, rate];
+        result = [t, t, t, rate, 0, 0];
       } else {
         result = await Promise.all([
           bnJs.Dex.totalSupply(poolId),
           bnJs.Dex.getPoolTotal(poolId, baseAddress),
           bnJs.Dex.getPoolTotal(poolId, quoteAddress),
           bnJs.Dex.getPrice(poolId),
+          account && bnJs.Dex.getDeposit(baseAddress, account),
+          account && bnJs.Dex.getDeposit(quoteAddress, account),
         ]);
       }
 
-      const [total, base, quote, rate] = result.map(v => BalancedJs.utils.toIcx(v));
+      const [total, base, quote, rate, baseDeposited, quoteDeposited] = result.map(v => BalancedJs.utils.toIcx(v));
 
       changePool(poolId, {
         baseCurrencyKey: pair.baseCurrencyKey,
         quoteCurrencyKey: pair.quoteCurrencyKey,
         base: base,
         quote: quote,
+        baseDeposited: baseDeposited,
+        quoteDeposited: quoteDeposited,
         total: total,
         rate: rate,
         inverseRate: ONE.div(rate),
       });
     },
-    [changePool, networkId],
+    [changePool, networkId, account],
   );
 
   React.useEffect(() => {
@@ -114,7 +119,7 @@ export function useFetchPools() {
   }, [fetchPool, transactions, networkId]);
 
   // fetch LP token balances
-  const { account } = useIconReact();
+
   const { changeBalance, clearBalances } = useBalanceActionHandlers();
 
   React.useEffect(() => {

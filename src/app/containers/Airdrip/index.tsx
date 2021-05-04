@@ -15,7 +15,7 @@ import { Typography } from 'app/theme';
 import AirdripImg from 'assets/images/airdrip.png';
 import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 import { shortenAddress } from 'utils';
 
 import 'styles/airdrip.css';
@@ -101,7 +101,6 @@ export function Airdrip() {
   const { account, networkId } = useIconReact();
 
   const addTransaction = useTransactionAdder();
-  const txs = useAllTransactions();
   const handleClaim = async () => {
     if (data && account && details) {
       try {
@@ -157,7 +156,7 @@ export function Airdrip() {
     };
 
     if (account) fetchStatus();
-  }, [account, txs, networkId]);
+  }, [account, networkId]);
 
   const [tokenDetails, setTokenDetails] = React.useState<{
     name: string;
@@ -193,7 +192,7 @@ export function Airdrip() {
     };
 
     fetchTokensDetails();
-  }, [txs]);
+  }, []);
 
   const [date, setDate] = React.useState<Date>();
   React.useEffect(() => {

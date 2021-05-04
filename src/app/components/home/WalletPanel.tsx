@@ -68,7 +68,7 @@ const WalletPanel = () => {
                           {currency}
                         </Typography>
                       </AssetSymbol>
-                      <DataText>
+                      <DataText as="div">
                         {!account
                           ? '-'
                           : currency.toLowerCase() === 'baln'
@@ -83,7 +83,7 @@ const WalletPanel = () => {
                         )}
                       </DataText>
 
-                      <DataText>
+                      <DataText as="div">
                         {!account
                           ? '-'
                           : currency.toLowerCase() === 'baln'

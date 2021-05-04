@@ -13,7 +13,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
-import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
+import { useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
@@ -57,10 +57,6 @@ const RewardsPanel = () => {
   const ratio = useRatio();
 
   const rewardAmountByUSD = reward.multipliedBy(ratio.BALNbnUSDratio);
-
-  const hasRewardableLoan = useHasRewardableLoan();
-
-  const hasRewardableLiquidity = useHasRewardableLiquidity();
 
   const hashNetworkFees = useHasNetworkFees();
 

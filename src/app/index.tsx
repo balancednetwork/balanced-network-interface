@@ -40,7 +40,7 @@ export function App() {
 
           <BrowserRouter>
             <Helmet
-              titleTemplate="%s - Balanced Network"
+              titleTemplate="%s | Balanced"
               defaultTitle="Balanced Network"
               htmlAttributes={{ lang: i18n.language }}
             >

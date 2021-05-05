@@ -236,9 +236,13 @@ const CollateralPanel = () => {
               label="Deposited"
               tooltip={true}
               tooltipWider={true}
-              tooltipText={`Your collateral balance is <b>${sICXAmount
-                .dp(2)
-                .toFormat()} sICX</b> (staked ICX). The ICX value of your sICX is displayed, and will increase over time from staking rewards. You can't use it unless you withdraw it.`}
+              tooltipText={
+                <>
+                  Your collateral balance is <b>{sICXAmount.dp(2).toFormat()} sICX</b> (staked ICX). The ICX value of
+                  your sICX is displayed, and will increase over time from staking rewards. You can't use it unless you
+                  withdraw it.
+                </>
+              }
               value={!account ? '-' : formattedAmounts[Field.LEFT]}
               currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['icx']}
               onUserInput={onFieldAInput}

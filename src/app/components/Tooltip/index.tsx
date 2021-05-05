@@ -14,17 +14,12 @@ const TooltipContainer = styled.div<{ wide?: boolean }>`
 `;
 
 interface TooltipProps extends Omit<PopoverProps, 'content'> {
-  text: string;
+  text: React.ReactNode;
   wide?: boolean;
 }
 
 export default function Tooltip({ text, wide, ...rest }: TooltipProps) {
-  return (
-    <Popover
-      content={<TooltipContainer wide={wide} dangerouslySetInnerHTML={{ __html: text }}></TooltipContainer>}
-      {...rest}
-    />
-  );
+  return <Popover content={<TooltipContainer wide={wide}>{text}</TooltipContainer>} {...rest} />;
 }
 
 export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show'>) {

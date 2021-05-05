@@ -58,7 +58,7 @@ export const CurrencyField: React.FC<{
   value: string;
   currency: Currency;
   tooltip?: boolean;
-  tooltipText?: string;
+  tooltipText?: React.ReactNode;
   tooltipWider?: boolean;
   onUserInput?: (value: string) => void;
 }> = function (props) {
@@ -80,7 +80,7 @@ export const CurrencyField: React.FC<{
           <Typography as="label" htmlFor={label} unselectable="on" sx={{ userSelect: 'none' }}>
             {label}{' '}
             {tooltip && (
-              <MouseoverTooltip wide={tooltipWider} text={tooltipText ?? ' '} placement="top">
+              <MouseoverTooltip wide={tooltipWider} text={tooltipText} placement="top">
                 <QuestionWrapper>
                   <QuestionIcon width={14} style={{ marginTop: -5 }} />
                 </QuestionWrapper>

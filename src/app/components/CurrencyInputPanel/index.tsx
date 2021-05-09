@@ -89,6 +89,7 @@ interface CurrencyInputPanelProps {
   showCommonBases?: boolean;
   customBalanceText?: string;
   bg?: string;
+  placeholder?: string;
 }
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -110,6 +111,7 @@ export default function CurrencyInputPanel({
   showCommonBases,
   customBalanceText,
   bg = 'bg2',
+  placeholder = '0',
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -190,6 +192,7 @@ export default function CurrencyInputPanel({
       </ClickAwayListener>
 
       <NumberInput
+        placeholder={placeholder}
         value={value}
         onChange={event => {
           enforcer(event.target.value.replace(/,/g, '.'));

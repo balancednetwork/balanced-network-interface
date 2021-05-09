@@ -217,7 +217,7 @@ export default function LPPanel() {
               </Button>
             ) : (
               <Button disabled={!!account} color="primary" marginTop={5} onClick={handleConnectToWallet}>
-                {error}
+                {account ? error : 'Supply'}
               </Button>
             )}
           </Flex>

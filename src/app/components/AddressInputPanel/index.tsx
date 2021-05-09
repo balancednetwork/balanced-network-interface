@@ -59,7 +59,7 @@ export default function AddressInputPanel({ value, onUserInput }: AddressInputPa
     <InputContainer>
       <AddressInputLabel>Address</AddressInputLabel>
 
-      <AddressInput value={value} onChange={event => onUserInput(event.target.value)} />
+      <AddressInput placeholder="hx00000..." value={value} onChange={event => onUserInput(event.target.value)} />
     </InputContainer>
   );
 }

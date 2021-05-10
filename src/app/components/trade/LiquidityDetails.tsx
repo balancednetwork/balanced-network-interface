@@ -333,7 +333,7 @@ const OptionButton = styled(Box)`
   transition: border 0.3s ease;
 
   &[disabled] {
-    background: #27264a;
+    background: rgba(255, 255, 255, 0.15);
     cursor: default;
     pointer-events: none;
   }

@@ -19,7 +19,7 @@ export const Button = styled(RebassButton)`
   }
 
   &:disabled {
-    background: #27264a;
+    background: rgba(255, 255, 255, 0.15);
     cursor: default;
     pointer-events: none;
   }
@@ -44,7 +44,7 @@ export const TextButton = styled(RebassButton)`
   &:disabled {
     cursor: default;
     pointer-events: none;
-    color: #27264a;
+    color: rgba(255, 255, 255, 0.15);
   }
 `;
 
@@ -70,6 +70,6 @@ export const IconButton = styled(RebassButton)`
   &:disabled {
     cursor: default;
     pointer-events: none;
-    color: #27264a;
+    color: rgba(255, 255, 255, 0.15);
   }
 `;

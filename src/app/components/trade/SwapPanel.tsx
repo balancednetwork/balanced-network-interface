@@ -105,6 +105,21 @@ export default function SwapPanel() {
 
   const [swapFee, setSwapFee] = React.useState('0');
 
+  const getBalance = React.useCallback(
+    (symbol: string) => {
+      if (symbol.toLocaleLowerCase() === 'icx') {
+        return balances.ICX;
+      } else if (symbol.toLocaleLowerCase() === 'sicx') {
+        return balances.sICX;
+      } else if (symbol.toLocaleLowerCase() === 'baln') {
+        return balances.BALN;
+      } else if (symbol.toLocaleLowerCase() === 'bnusd') {
+        return balances.bnUSD;
+      }
+    },
+    [balances],
+  );
+
   const tokenRatio = React.useCallback(
     (symbolInput: string, symbolOutput: string) => {
       const hasSICXICXRatio = isEmpty(ratio.sICXICXratio?.toNumber());
@@ -208,7 +223,7 @@ export default function SwapPanel() {
         return amountInput;
       }
     },
-    [getPoolData],
+    [getPoolData, getBalance],
   );
 
   const calculate_ICX_2_sICX_output_amount = ({ inputAmount, ratio }) => {

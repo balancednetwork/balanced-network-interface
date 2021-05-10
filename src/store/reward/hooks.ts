@@ -10,7 +10,7 @@ import bnJs from 'bnJs';
 import { BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { PLUS_INFINITY, REWARDS_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
-import { useLoanInputAmount } from 'store/loan/hooks';
+import { useLoanInputAmount, useLoanBorrowedAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
@@ -126,6 +126,7 @@ export const useHasNetworkFees = () => {
   const { account } = useIconReact();
   const transactions = useAllTransactions();
   const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
+  const borrowedAmount = useLoanBorrowedAmount();
 
   React.useEffect(() => {
     const checkIfHasNetworkFees = async () => {
@@ -135,13 +136,14 @@ export const useHasNetworkFees = () => {
           bnJs.BALN.detailsBalanceOf(account),
         ]);
 
-        if (Number(hasLP) || Number(balnDetails['Staked balance'])) setHasNetworkFees(true);
+        if (Number(hasLP) || (Number(balnDetails['Staked balance']) && borrowedAmount.isGreaterThanOrEqualTo(50)))
+          setHasNetworkFees(true);
         else setHasNetworkFees(false);
       }
     };
 
     checkIfHasNetworkFees();
-  }, [account, transactions]);
+  }, [account, transactions, borrowedAmount]);
 
   return hasNetworkFees;
 };

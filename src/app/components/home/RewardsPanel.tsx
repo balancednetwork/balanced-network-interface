@@ -70,7 +70,7 @@ const RewardsPanel = () => {
     setOpen(!open);
   };
 
-  if (!hasRewardableLoan && !hasRewardableLiquidity) {
+  if (!hasRewardableLoan && !hasRewardableLiquidity && reward.isZero()) {
     return (
       <div>
         <FlexPanel bg="bg2" flexDirection="column">

@@ -89,6 +89,7 @@ interface CurrencyInputPanelProps {
   showCommonBases?: boolean;
   customBalanceText?: string;
   bg?: string;
+  placeholder?: string;
 }
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -96,20 +97,21 @@ const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." charac
 export default function CurrencyInputPanel({
   value,
   onUserInput,
-  onCurrencySelect,
-  currency,
-  currencyList = CURRENCY,
-  bg = 'bg2',
   onMax,
   showMaxButton,
   label = 'Input',
+  onCurrencySelect,
+  currency,
   hideBalance = false,
   // pair = null, // used for double token logo
   hideInput = false,
   otherCurrency,
+  currencyList = CURRENCY,
   id,
   showCommonBases,
   customBalanceText,
+  bg = 'bg2',
+  placeholder = '0',
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -175,7 +177,7 @@ export default function CurrencyInputPanel({
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      {balances[currency]?.dp(2).toFormat()} {currency}
+                      {balances[currency]?.dp(2).toFormat()}
                     </DataText>
                   </ListItem>
                 ))}
@@ -186,6 +188,7 @@ export default function CurrencyInputPanel({
       </ClickAwayListener>
 
       <NumberInput
+        placeholder={placeholder}
         value={value}
         onChange={event => {
           enforcer(event.target.value.replace(/,/g, '.'));

@@ -91,9 +91,9 @@ export default function SwapPanel() {
     changeRatioValue({ BALNbnUSDratio });
   }, [changeRatioValue]);
 
-  const [swapInputAmount, setSwapInputAmount] = React.useState('0');
+  const [swapInputAmount, setSwapInputAmount] = React.useState('');
 
-  const [swapOutputAmount, setSwapOutputAmount] = React.useState('0');
+  const [swapOutputAmount, setSwapOutputAmount] = React.useState('');
 
   const [inputCurrency, setInputCurrency] = React.useState(CURRENCY_LIST['sicx']);
 

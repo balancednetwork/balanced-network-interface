@@ -93,9 +93,9 @@ export default function SwapPanel() {
     changeRatioValue({ BALNbnUSDratio });
   }, [changeRatioValue]);
 
-  const [swapInputAmount, setSwapInputAmount] = React.useState('0');
+  const [swapInputAmount, setSwapInputAmount] = React.useState('');
 
-  const [swapOutputAmount, setSwapOutputAmount] = React.useState('0');
+  const [swapOutputAmount, setSwapOutputAmount] = React.useState('');
 
   const [inputCurrency, setInputCurrency] = React.useState(CURRENCY_LIST['sicx']);
 
@@ -107,27 +107,29 @@ export default function SwapPanel() {
 
   const tokenRatio = React.useCallback(
     (symbolInput: string, symbolOutput: string) => {
-      const hasSICXICXRatio = !isEmpty(ratio.sICXICXratio?.toNumber());
-      const hasSICXbnUSDRatio = !isEmpty(ratio.sICXbnUSDratio?.toNumber());
-      const hasBALNbnUSDRatio = !isEmpty(ratio.BALNbnUSDratio?.toNumber());
+      const hasSICXICXRatio = isEmpty(ratio.sICXICXratio?.toNumber());
+      const hasSICXbnUSDRatio = isEmpty(ratio.sICXbnUSDratio?.toNumber());
+      const hasBALNbnUSDRatio = isEmpty(ratio.BALNbnUSDratio?.toNumber());
+      symbolInput = symbolInput.toLowerCase();
+      symbolOutput = symbolOutput.toLowerCase();
 
       switch (true) {
-        case symbolInput === 'ICX' && hasSICXICXRatio:
+        case symbolInput === 'icx' && hasSICXICXRatio:
           return new BigNumber(1).dividedBy(ratio.sICXICXratio);
 
-        case symbolInput === 'BALN':
+        case symbolInput === 'baln':
           return ratio.BALNbnUSDratio;
 
-        case symbolInput === 'sICX' && symbolOutput === 'bnUSD':
+        case symbolInput === 'sicx' && symbolOutput === 'bnusd':
           return ratio.sICXbnUSDratio;
 
-        case symbolInput === 'sICX' && symbolOutput === 'ICX':
+        case symbolInput === 'sicx' && symbolOutput === 'icx':
           return ratio.sICXICXratio;
 
-        case symbolInput === 'bnUSD' && symbolOutput === 'sICX' && hasSICXbnUSDRatio:
+        case symbolInput === 'bnusd' && symbolOutput === 'sicx' && hasSICXbnUSDRatio:
           return new BigNumber(1).dividedBy(ratio.sICXbnUSDratio);
 
-        case symbolInput === 'bnUSD' && symbolOutput === 'BALN' && hasBALNbnUSDRatio:
+        case symbolInput === 'bnusd' && symbolOutput === 'baln' && hasBALNbnUSDRatio:
           return new BigNumber(1).dividedBy(ratio.BALNbnUSDratio);
 
         default:
@@ -239,6 +241,7 @@ export default function SwapPanel() {
   const handleConvertOutputRate = React.useCallback(
     async (inputCurrency: any, outputCurrency: any, inputAmount: string) => {
       let outputAmount;
+
       const ratioLocal = tokenRatio(inputCurrency.symbol, outputCurrency.symbol);
 
       const inputCurrencySymbol = inputCurrency.symbol.toLowerCase();
@@ -270,9 +273,31 @@ export default function SwapPanel() {
           break;
       }
 
-      setSwapOutputAmount(outputAmount);
+      if (outputAmount === '0') {
+        setSwapOutputAmount('');
+      } else {
+        setSwapOutputAmount(outputAmount);
+      }
     },
     [tokenRatio, calculate_default_output_amount],
+  );
+
+  const validate_with_wallet_balance = React.useCallback(
+    inputTypedValue => {
+      if (
+        new BigNumber(inputTypedValue).isGreaterThan(balances[inputCurrency.symbol].minus(new BigNumber(2))) &&
+        balances[inputCurrency.symbol].isGreaterThan(new BigNumber(0))
+      ) {
+        if (inputCurrency.symbol.toLowerCase() === 'icx') {
+          return formatBigNumber(balances[inputCurrency.symbol].minus(new BigNumber(2)), 'input');
+        } else {
+          return formatBigNumber(balances[inputCurrency.symbol], 'input');
+        }
+      } else {
+        return inputTypedValue;
+      }
+    },
+    [balances, inputCurrency],
   );
 
   const calculate_sICX_2_ICX_intput_amount = outputTypedValue => {
@@ -345,7 +370,11 @@ export default function SwapPanel() {
         break;
     }
 
-    setSwapInputAmount(amount);
+    if (amount === '0') {
+      setSwapInputAmount('');
+    } else {
+      setSwapInputAmount(amount);
+    }
   };
 
   const [chartOption, setChartOption] = React.useState({
@@ -381,11 +410,10 @@ export default function SwapPanel() {
         val = formatBigNumber(poolTotalBase, 'input');
       }
 
-      setSwapInputAmount(val);
-
+      setSwapInputAmount(validate_with_wallet_balance(val) || '');
       handleConvertOutputRate(inputCurrency, outputCurrency, val);
     },
-    [inputCurrency, outputCurrency, handleConvertOutputRate, getPoolData],
+    [inputCurrency, outputCurrency, handleConvertOutputRate, getPoolData, validate_with_wallet_balance],
   );
 
   const handleSwapConfirmDismiss = () => {
@@ -428,8 +456,8 @@ export default function SwapPanel() {
             },
           );
           refreshPrice();
-          setSwapInputAmount('0');
-          setSwapOutputAmount('0');
+          setSwapInputAmount('');
+          setSwapOutputAmount('');
         })
         .catch(e => {
           console.error('error', e);
@@ -453,8 +481,8 @@ export default function SwapPanel() {
             },
           );
           refreshPrice();
-          setSwapInputAmount('0');
-          setSwapOutputAmount('0');
+          setSwapInputAmount('');
+          setSwapOutputAmount('');
         })
         .catch(e => {
           console.error('error', e);
@@ -478,8 +506,8 @@ export default function SwapPanel() {
             },
           );
           refreshPrice();
-          setSwapInputAmount('0');
-          setSwapOutputAmount('0');
+          setSwapInputAmount('');
+          setSwapOutputAmount('');
         })
         .catch(e => {
           console.error('error', e);
@@ -503,8 +531,8 @@ export default function SwapPanel() {
             },
           );
           refreshPrice();
-          setSwapInputAmount('0');
-          setSwapOutputAmount('0');
+          setSwapInputAmount('');
+          setSwapOutputAmount('');
         })
         .catch(e => {
           console.error('error', e);
@@ -532,8 +560,8 @@ export default function SwapPanel() {
             },
           );
           refreshPrice();
-          setSwapInputAmount('0');
-          setSwapOutputAmount('0');
+          setSwapInputAmount('');
+          setSwapOutputAmount('');
         })
         .catch(e => {
           console.error('error', e);

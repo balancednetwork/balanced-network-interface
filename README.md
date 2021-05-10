@@ -34,6 +34,16 @@ Please run the lint task before commit.
 
 ### Configuring the environment (optional)
 
+Create an .env file
+
+```
+## For Yeouido Testnet
+REACT_APP_NETWORK_ID=3
+
+## For Mainnet
+REACT_APP_NETWORK_ID=1
+```
+
 ## Contributions
 
 **Please open all pull requests against the `master` branch.**

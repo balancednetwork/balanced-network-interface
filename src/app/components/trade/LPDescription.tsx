@@ -1,10 +1,12 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
-import { usePoolPair, usePoolData } from 'store/pool/hooks';
+import { usePoolPair, usePoolData, usePool } from 'store/pool/hooks';
+import { useRatio } from 'store/ratio/hooks';
 import { formatBigNumber } from 'utils';
 
 const descriptions = {
@@ -14,9 +16,30 @@ const descriptions = {
   4: 'Supply an equal amount of BALN and sICX to earn Balance Tokens. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. All BALN in the pool accrues network fees.',
 };
 
-export default function LPDescription() {
+interface ILPDescriptionProps {
+  baseSuplying: BigNumber;
+  quoteSupplying: BigNumber;
+}
+
+export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescriptionProps) {
   const selectedPair = usePoolPair();
+
+  const pool = usePool(selectedPair.poolId);
+
+  const ratio = useRatio();
+
+  const ratioByPoolId = {
+    1: ratio.sICXICXratio,
+    2: ratio.sICXbnUSDratio,
+    3: ratio.BALNbnUSDratio,
+  };
+
   const data = usePoolData(selectedPair.poolId);
+
+  const totalPool = pool?.total || new BigNumber(1);
+  const newSuppliedAmount = baseSuplying.times(ratioByPoolId[selectedPair.poolId]).plus(quoteSupplying);
+  const poolShare = newSuppliedAmount.div(totalPool) || new BigNumber(0);
+  const dailyReward = data?.totalReward.times(poolShare);
 
   return (
     <Box bg="bg2" flex={1} padding={[5, 7]}>
@@ -43,11 +66,15 @@ export default function LPDescription() {
             <Typography textAlign="center" variant="p">
               {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                 <>
-                  {formatBigNumber(data?.suppliedBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
-                  {formatBigNumber(data?.suppliedQuote, 'currency')} {selectedPair.quoteCurrencyKey}
+                  {formatBigNumber(data?.suppliedBase?.plus(baseSuplying), 'currency')} {selectedPair.baseCurrencyKey}{' '}
+                  <br />
+                  {formatBigNumber(data?.suppliedQuote?.plus(quoteSupplying), 'currency')}{' '}
+                  {selectedPair.quoteCurrencyKey}
                 </>
               ) : (
-                `${formatBigNumber(data?.suppliedQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
+                `${formatBigNumber(data?.suppliedQuote?.plus(quoteSupplying), 'currency')} ${
+                  selectedPair.quoteCurrencyKey
+                }`
               )}
             </Typography>
           </Box>
@@ -57,7 +84,7 @@ export default function LPDescription() {
               Your daily rewards
             </Typography>
             <Typography textAlign="center" variant="p">
-              ~ {formatBigNumber(data?.suppliedReward, 'currency')} BALN
+              ~ {formatBigNumber(dailyReward, 'currency')} BALN
             </Typography>
           </Box>
         </Box>

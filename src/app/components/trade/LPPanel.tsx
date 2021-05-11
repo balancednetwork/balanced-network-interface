@@ -148,6 +148,23 @@ export default function LPPanel() {
 
   const isValid = !error;
 
+  const baseDisplay = `${formatBigNumber(
+    balances[pair.baseCurrencyKey].minus(formattedAmounts[Field.CURRENCY_A] || new BigNumber(0)),
+    'currency',
+  )} 
+    ${pair.baseCurrencyKey}`;
+
+  const quoteDisplay = `${formatBigNumber(
+    balances[pair.quoteCurrencyKey].minus(formattedAmounts[Field.CURRENCY_B] || new BigNumber(0)),
+    'currency',
+  )} 
+  ${pair.quoteCurrencyKey}`;
+
+  const walletDisplayString =
+    pair.baseCurrencyKey === 'sICX' && pair.quoteCurrencyKey === 'ICX'
+      ? `${quoteDisplay}`
+      : `${baseDisplay} / ${quoteDisplay}`;
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -178,11 +195,8 @@ export default function LPPanel() {
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            {`Wallet: 
-              ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} 
-              ${pair.baseCurrencyKey} /  
-              ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} 
-              ${pair.quoteCurrencyKey}`}
+            Wallet:&nbsp;
+            {walletDisplayString}
           </Typography>
 
           {account && !maxSliderAmount.dp(2).isZero() && (
@@ -223,7 +237,10 @@ export default function LPPanel() {
           </Flex>
         </BrightPanel>
 
-        <LPDescription />
+        <LPDescription
+          baseSuplying={new BigNumber(formattedAmounts[Field.CURRENCY_A])}
+          quoteSupplying={new BigNumber(formattedAmounts[Field.CURRENCY_B])}
+        />
       </SectionPanel>
 
       <SupplyLiquidityModal isOpen={showSupplyConfirm} onClose={handleSupplyConfirmDismiss} parsedAmounts={amounts} />

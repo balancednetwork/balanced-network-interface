@@ -8,6 +8,7 @@ export interface RatioState {
   sICXbnUSDratio: BigNumber;
   sICXICXratio: BigNumber;
   BALNbnUSDratio: BigNumber;
+  BALNsICXratio: BigNumber;
 }
 
 const initialState: RatioState = {
@@ -15,16 +16,18 @@ const initialState: RatioState = {
   sICXbnUSDratio: new BigNumber(0),
   sICXICXratio: new BigNumber(0),
   BALNbnUSDratio: new BigNumber(0),
+  BALNsICXratio: new BigNumber(0),
 };
 
 export default createReducer(initialState, builder =>
   builder.addCase(
     changeRatioValue,
-    (state, { payload: { ICXUSDratio, sICXbnUSDratio, sICXICXratio, BALNbnUSDratio } }) => {
+    (state, { payload: { ICXUSDratio, sICXbnUSDratio, sICXICXratio, BALNbnUSDratio, BALNsICXratio } }) => {
       state.ICXUSDratio = ICXUSDratio || state.ICXUSDratio;
       state.sICXbnUSDratio = sICXbnUSDratio || state.sICXbnUSDratio;
       state.sICXICXratio = sICXICXratio || state.sICXICXratio;
       state.BALNbnUSDratio = BALNbnUSDratio || state.BALNbnUSDratio;
+      state.BALNsICXratio = BALNsICXratio || state.BALNsICXratio;
     },
   ),
 );

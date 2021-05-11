@@ -105,21 +105,6 @@ export default function SwapPanel() {
 
   const [swapFee, setSwapFee] = React.useState('0');
 
-  const getBalance = React.useCallback(
-    (symbol: string) => {
-      if (symbol.toLocaleLowerCase() === 'icx') {
-        return balances.ICX;
-      } else if (symbol.toLocaleLowerCase() === 'sicx') {
-        return balances.sICX;
-      } else if (symbol.toLocaleLowerCase() === 'baln') {
-        return balances.BALN;
-      } else if (symbol.toLocaleLowerCase() === 'bnusd') {
-        return balances.bnUSD;
-      }
-    },
-    [balances],
-  );
-
   const tokenRatio = React.useCallback(
     (symbolInput: string, symbolOutput: string) => {
       const hasSICXICXRatio = isEmpty(ratio.sICXICXratio?.toNumber());
@@ -132,11 +117,17 @@ export default function SwapPanel() {
         case symbolInput === 'icx' && hasSICXICXRatio:
           return new BigNumber(1).dividedBy(ratio.sICXICXratio);
 
-        case symbolInput === 'baln':
+        case symbolInput === 'baln' && symbolOutput === 'bnusd':
           return ratio.BALNbnUSDratio;
+
+        case symbolInput === 'baln' && symbolOutput === 'sicx':
+          return ratio.BALNsICXratio;
 
         case symbolInput === 'sicx' && symbolOutput === 'bnusd':
           return ratio.sICXbnUSDratio;
+
+        case symbolInput === 'sicx' && symbolOutput === 'baln':
+          return new BigNumber(1).dividedBy(ratio.BALNsICXratio);
 
         case symbolInput === 'sicx' && symbolOutput === 'icx':
           return ratio.sICXICXratio;
@@ -151,7 +142,7 @@ export default function SwapPanel() {
           return new BigNumber(0);
       }
     },
-    [ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
+    [ratio],
   );
 
   const getPoolData = React.useCallback(
@@ -168,6 +159,10 @@ export default function SwapPanel() {
           bnusd: {
             poolTotalInput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].base,
             poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.sICXbnUSD].quote,
+          },
+          baln: {
+            poolTotalInput: pools[BalancedJs.utils.POOL_IDS.BALNsICX].quote,
+            poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.BALNsICX].base,
           },
         },
         icx: {
@@ -190,6 +185,10 @@ export default function SwapPanel() {
           bnusd: {
             poolTotalInput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].base,
             poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.BALNbnUSD].quote,
+          },
+          sicx: {
+            poolTotalInput: pools[BalancedJs.utils.POOL_IDS.BALNsICX].base,
+            poolTotalOutput: pools[BalancedJs.utils.POOL_IDS.BALNsICX].quote,
           },
         },
       }[symbolInput][symbolOutput];
@@ -223,7 +222,7 @@ export default function SwapPanel() {
         return amountInput;
       }
     },
-    [getPoolData, getBalance],
+    [getPoolData],
   );
 
   const calculate_ICX_2_sICX_output_amount = ({ inputAmount, ratio }) => {

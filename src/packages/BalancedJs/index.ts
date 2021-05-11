@@ -54,6 +54,7 @@ export class BalancedJs {
       return new BigNumber(value).div(LOOP);
     },
     POOL_IDS: {
+      BALNsICX: 4,
       BALNbnUSD: 3,
       sICXbnUSD: 2,
       sICXICX: 1,

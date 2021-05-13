@@ -1,3 +1,5 @@
+import { BalancedJs } from 'packages/BalancedJs';
+
 export type CurrencyType = {
   symbol: CurrencyKey;
   decimals: number;
@@ -80,24 +82,27 @@ const pairGernerator = (base: JUAN_CurrencyKey, quote: JUAN_CurrencyKey, poolId:
 
 export const SUPPORTED_PAIRS = {
   sICX: {
-    bnUSD: pairGernerator('sICX', 'bnUSD', 2),
-    ICX: pairGernerator('sICX', 'ICX', 1),
+    bnUSD: pairGernerator('sICX', 'bnUSD', BalancedJs.utils.POOL_IDS.sICXbnUSD),
+    ICX: pairGernerator('sICX', 'ICX', BalancedJs.utils.POOL_IDS.sICXICX),
+    BALN: pairGernerator('sICX', 'BALN', BalancedJs.utils.POOL_IDS.BALNsICX),
   },
   BALN: {
-    bnUSD: pairGernerator('BALN', 'bnUSD', 3),
+    bnUSD: pairGernerator('BALN', 'bnUSD', BalancedJs.utils.POOL_IDS.BALNbnUSD),
+    sICX: pairGernerator('BALN', 'sICX', BalancedJs.utils.POOL_IDS.BALNsICX),
   },
   ICX: {
-    sICX: pairGernerator('ICX', 'sICX', 1),
+    sICX: pairGernerator('ICX', 'sICX', BalancedJs.utils.POOL_IDS.sICXICX),
   },
   bnUSD: {
-    sICX: pairGernerator('bnUSD', 'sICX', 2),
-    BALN: pairGernerator('sICX', 'BALN', 3),
+    sICX: pairGernerator('bnUSD', 'sICX', BalancedJs.utils.POOL_IDS.sICXbnUSD),
+    BALN: pairGernerator('bnUSD', 'BALN', BalancedJs.utils.POOL_IDS.BALNbnUSD),
   },
 };
 
 export const BASE_SUPPORTED_PAIRS = [
   SUPPORTED_PAIRS['sICX']['bnUSD'],
   SUPPORTED_PAIRS['BALN']['bnUSD'],
+  SUPPORTED_PAIRS['BALN']['sICX'],
   SUPPORTED_PAIRS['sICX']['ICX'],
 ];
 

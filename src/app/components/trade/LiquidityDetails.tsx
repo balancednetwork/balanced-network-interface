@@ -32,7 +32,7 @@ import { formatBigNumber } from 'utils';
 import { withdrawMessage } from './utils';
 
 export default function LiquidityDetails() {
-  const below800 = useMedia('(max-width: 800px)');
+  const upSmall = useMedia('(min-width: 800px)');
   const balances = useAvailableBalances();
 
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
@@ -51,8 +51,8 @@ export default function LiquidityDetails() {
         <DashGrid>
           <HeaderText>Pool</HeaderText>
           <HeaderText>Your supply</HeaderText>
-          {!below800 && <HeaderText>Pool share</HeaderText>}
-          {!below800 && <HeaderText>Daily rewards</HeaderText>}
+          {upSmall && <HeaderText>Pool share</HeaderText>}
+          {upSmall && <HeaderText>Daily rewards</HeaderText>}
           <HeaderText></HeaderText>
         </DashGrid>
 
@@ -70,8 +70,8 @@ const TableWrapper = styled.div``;
 
 const DashGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-template-areas: 'name supply share rewards action';
+  grid-template-columns: 4fr 5fr 3fr;
+  grid-template-areas: 'name supply action';
   align-items: center;
 
   & > * {
@@ -84,9 +84,9 @@ const DashGrid = styled.div`
     }
   }
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-template-columns: 4fr 5fr 3fr;
-    grid-template-areas: 'name supply action';
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas: 'name supply share rewards action';
   `}
 `;
 
@@ -109,7 +109,7 @@ const ListItem = styled(DashGrid)<{ border?: boolean }>`
 const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => {
   const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
-  const below800 = useMedia('(max-width: 800px)');
+  const upSmall = useMedia('(min-width: 800px)');
 
   return (
     <ListItem border={border}>
@@ -119,8 +119,8 @@ const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => 
         <br />
         {`${formatBigNumber(poolData?.suppliedQuote, 'currency')} ${pair.quoteCurrencyKey}`}
       </DataText>
-      {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
-      {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
+      {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
       <DataText>
         <WithdrawText poolId={pair.poolId} />
       </DataText>
@@ -160,14 +160,14 @@ const WithdrawText = ({ poolId }: { poolId: number }) => {
 const PoolRecord1 = ({ border }: { border: boolean }) => {
   const pair = BASE_SUPPORTED_PAIRS[2];
   const poolData = usePoolData(pair.poolId);
-  const below800 = useMedia('(max-width: 800px)');
+  const upSmall = useMedia('(min-width: 800px)');
 
   return (
     <ListItem border={border}>
       <DataText>{pair.pair}</DataText>
       <DataText>{`${formatBigNumber(poolData?.suppliedQuote, 'currency')} ${pair.quoteCurrencyKey}`}</DataText>
-      {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
-      {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
+      {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
       <DataText>
         <WithdrawText poolId={pair.poolId} />
       </DataText>

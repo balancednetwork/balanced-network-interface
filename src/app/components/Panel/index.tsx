@@ -7,12 +7,12 @@ export const FlexPanel = styled(Flex)<{
   borderRadius?: string;
 }>`
   border-radius: 10px;
-  padding: 35px;
+  padding: 25px;
   padding: ${({ padding }) => padding};
   border-radius: ${({ borderRadius }) => borderRadius};
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 25px;
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 35px;
   `}
 `;
 
@@ -22,11 +22,11 @@ export const BoxPanel = styled(Box)<{
   borderRadius?: string;
 }>`
   border-radius: 10px;
-  padding: 35px;
+  padding: 25px;
   padding: ${({ padding }) => padding};
   border-radius: ${({ borderRadius }) => borderRadius};
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 25px;
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 35px;
   `}
 `;

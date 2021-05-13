@@ -12,16 +12,15 @@ import texGyeAdventorRegularWoff2 from 'assets/font/tex-gyre-adventor-regular/te
 
 // Update your breakpoints if you want
 export const sizes = {
-  upToExtraSmall: 600,
-  upToSmall: 800,
-  upToMedium: 1000,
-  upToLarge: 1280,
+  upExtraSmall: 600,
+  upSmall: 800,
+  upMedium: 1000,
+  upLarge: 1280,
 };
 
-// Iterate through the sizes and create a media template
 export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce((acc, label) => {
   acc[label] = (first: any, ...interpolations: any[]) => css`
-    @media (max-width: ${sizes[label]}px) {
+    @media (min-width: ${sizes[label]}px) {
       ${css(first, ...interpolations)}
     }
   `;

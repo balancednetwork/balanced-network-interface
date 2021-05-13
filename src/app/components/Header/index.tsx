@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -16,10 +17,10 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
-  margin-right: 75px;
+  margin-right: 15px;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin-right: 15px;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    margin-right: 75px;
   `}
 `;
 
@@ -27,17 +28,9 @@ const WalletInfo = styled(Box)`
   text-align: right;
   margin-right: 15px;
   min-height: 42px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `}
 `;
 
-const WalletButtonWrapper = styled.div`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `}
-`;
+const WalletButtonWrapper = styled.div``;
 
 const WalletMenu = styled.div`
   max-width: 160px;
@@ -108,6 +101,8 @@ export default React.memo(function Header(props: { title?: string; className?: s
     updateCopyState(true);
   }, []);
 
+  const upSmall = useMedia('(min-width: 800px)');
+
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
@@ -127,7 +122,7 @@ export default React.memo(function Header(props: { title?: string; className?: s
           </Flex>
         )}
 
-        {account && (
+        {account && upSmall && (
           <Flex alignItems="center">
             <WalletInfo>
               <Typography variant="p" textAlign="right">

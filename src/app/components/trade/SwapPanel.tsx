@@ -44,10 +44,10 @@ const ChartControlButton = styled(Button)<{ active: boolean }>`
 `;
 
 const ChartControlGroup = styled(Box)`
-  text-align: right;
+  text-align: left;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    text-align: left;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    text-align: right;
   `}
 
   & button {

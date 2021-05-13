@@ -10,10 +10,11 @@ import { ReactComponent as TradeIcon } from 'assets/icons/trade.svg';
 
 const Navigation = styled.nav`
   display: inline-block;
-  width: 100px;
+  width: initial;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    width: initial;
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    display: block;
+    width: 100px;
   `}
 `;
 
@@ -32,20 +33,21 @@ const ListItem = styled.li`
     content: '';
   }
 
-  margin-bottom: 15px;
-  margin-right: 0;
+  display: inline-block;
+  margin-bottom: 0;
+  margin-right: 3px;
 
   &:last-child {
-    margin-bottom: 0;
+    margin-right: 0;
   }
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    display: inline-block;
-    margin-bottom: 0;
-    margin-right: 3px;
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    display: block;
+    margin-bottom: 15px;
+    margin-right: 0;
 
     &:last-child {
-      margin-right: 0;
+      margin-bottom: 0;
     }
   `}
 `;
@@ -56,8 +58,8 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   display: block;
   margin-left: 50%;
   transform: translate(-50%);
-  padding: 15px;
-  width: 114px;
+  padding: 5px;
+  width: 100px;
   border-radius: 20px;
   color: #8695a6;
   text-decoration: none;
@@ -78,9 +80,9 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
     opacity: 1;
   }
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    width: 100px;
-    padding: 5px;
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    width: 114px;
+    padding: 15px;
   `}
 
   > svg {

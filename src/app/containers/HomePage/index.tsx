@@ -20,12 +20,12 @@ import { useWalletFetchBalances } from 'store/wallet/hooks';
 const Grid = styled.div`
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-gap: 50px;
   margin-bottom: 50px;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-template-columns: 1fr;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    grid-template-columns: 1fr 1fr;
   `}
 `;
 

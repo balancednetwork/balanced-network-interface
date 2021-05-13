@@ -248,9 +248,9 @@ const PositionDetailPanel = () => {
 
         <Divider my={3} />
 
-        <Flex flexWrap="wrap" alignItems="flex-end">
-          <Box width={[1, 1 / 2]}>
-            <Flex alignItems="center" mb={15}>
+        <Flex flexWrap="wrap" alignItems="flex-end" mt={-1}>
+          <Box width={[1, 1, 1 / 2]} my={2}>
+            <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
                 Rebalancing{' '}
                 <MouseoverTooltip
@@ -294,8 +294,8 @@ const PositionDetailPanel = () => {
             </Flex>
           </Box>
 
-          <Box width={[1, 1 / 2]}>
-            <Flex alignItems="center" mb={15}>
+          <Box width={[1, 1, 1 / 2]} my={2}>
+            <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
                 Expected return
               </Typography>
@@ -325,14 +325,17 @@ export default PositionDetailPanel;
 
 const ActivityPanel = styled(FlexPanel)`
   padding: 0;
-  grid-area: 2 / 1 / 2 / 3;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-area: initial;
-    flex-direction: column;
+  grid-area: initial;
+  flex-direction: column;
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 0;
   `}
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 0px;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    padding: 0;
+    grid-area: 2 / 1 / 2 / 3;
+    flex-direction: row;
   `}
 `;
 

@@ -370,7 +370,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
         <Flex alignItems="center" hidden={!isQueue}>
           <Box width={1}>
             <Typography variant="p" fontWeight="bold" textAlign={isQueue ? 'center' : 'right'}>
-              {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
+              {formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'ratio')} {selectedPair.baseCurrencyKey}
             </Typography>
             <Typography mt={2} textAlign="center">
               Your ICX will be locked for 24 hours. <br />

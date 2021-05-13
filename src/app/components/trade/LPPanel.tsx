@@ -157,7 +157,7 @@ export default function LPPanel() {
             <LiquiditySelect />
           </Flex>
 
-          <Flex mt={3} hidden={pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX}>
+          <Flex mt={3}>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
@@ -167,7 +167,7 @@ export default function LPPanel() {
             />
           </Flex>
 
-          <Flex mt={3}>
+          <Flex mt={3} hidden={pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX}>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               showMaxButton={false}

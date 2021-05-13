@@ -116,7 +116,7 @@ export const BASE_SUPPORTED_PAIRS = [
   SUPPORTED_PAIRS['sICX']['bnUSD'],
   SUPPORTED_PAIRS['BALN']['bnUSD'],
   SUPPORTED_PAIRS['BALN']['sICX'],
-  SUPPORTED_PAIRS['sICX']['ICX'],
+  SUPPORTED_PAIRS['ICX']['sICX'],
 ];
 
 // export const getFilteredCurrencies = (baseCurrencyKey: CurrencyKey): CurrencyKey[] => {

@@ -150,13 +150,13 @@ export function useDerivedMintInfo(): {
   const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
 
   if (pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-    if (currencyBalances?.[Field.CURRENCY_B].isZero()) {
+    if (currencyBalances?.[Field.CURRENCY_A].isZero()) {
       error = error ?? 'Insufficient balance';
     }
 
     if (
       currencyBAmount &&
-      currencyBalances?.[Field.CURRENCY_B]?.isLessThan(currencyBAmount.plus(MINIMUM_ICX_AMOUNT_IN_WALLET))
+      currencyBalances?.[Field.CURRENCY_A]?.isLessThan(currencyAAmount.plus(MINIMUM_ICX_AMOUNT_IN_WALLET))
     ) {
       error = error ?? 'Insufficient balance';
     }

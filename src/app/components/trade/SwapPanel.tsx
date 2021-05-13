@@ -298,15 +298,15 @@ export default function SwapPanel() {
   );
 
   const validate_with_wallet_balance = React.useCallback(
-    inputTypedValue => {
+    (inputTypedValue: any, currency: string) => {
       if (
-        new BigNumber(inputTypedValue).isGreaterThan(balances[inputCurrency.symbol].minus(new BigNumber(2))) &&
-        balances[inputCurrency.symbol].isGreaterThan(new BigNumber(0))
+        new BigNumber(inputTypedValue).isGreaterThan(balances[currency].minus(new BigNumber(2))) &&
+        balances[currency].isGreaterThan(new BigNumber(0))
       ) {
-        if (inputCurrency.symbol.toLowerCase() === 'icx') {
-          return formatBigNumber(balances[inputCurrency.symbol].minus(new BigNumber(2)), 'input');
+        if (currency.toLowerCase() === 'icx') {
+          return formatBigNumber(balances[currency].minus(new BigNumber(2)), 'input');
         } else {
-          return formatBigNumber(balances[inputCurrency.symbol], 'input');
+          return formatBigNumber(balances[currency], 'input');
         }
       } else {
         return inputTypedValue;
@@ -317,11 +317,11 @@ export default function SwapPanel() {
 
   const calculate_sICX_2_ICX_intput_amount = outputTypedValue => {
     const inputAmount = new BigNumber(outputTypedValue).plus(new BigNumber(outputTypedValue).multipliedBy(0.01));
-    return formatBigNumber(inputAmount, 'ratio');
+    return formatBigNumber(inputAmount, 'input');
   };
 
   const calculate_ICX_2_sICX_intput_amount = outputTypedValue => {
-    return formatBigNumber(new BigNumber(outputTypedValue), 'ratio');
+    return formatBigNumber(new BigNumber(outputTypedValue), 'input');
   };
 
   const calculate_default_intput_amount = async inputAmount => {
@@ -334,7 +334,7 @@ export default function SwapPanel() {
     setSwapFee(new BigNumber(fee).toString());
     inputAmount = inputAmount.plus(fee);
 
-    return formatBigNumber(inputAmount, 'ratio');
+    return formatBigNumber(inputAmount, 'input');
   };
 
   const handleTypeOutput = async (outputTypedValue: string) => {
@@ -360,10 +360,12 @@ export default function SwapPanel() {
     );
 
     if (new BigNumber(outputTypedValue).isGreaterThanOrEqualTo(maxOutputAmount)) {
-      setSwapOutputAmount(formatBigNumber(maxOutputAmount, 'input'));
+      setSwapOutputAmount(
+        formatBigNumber(new BigNumber(validate_with_wallet_balance(maxOutputAmount, outputCurrency.symbol)), 'input'),
+      );
       inputAmount = calculateOutputAmount(inputCurrencySymbol, outputCurrencySymbol, '', maxOutputAmount.toString());
     } else {
-      setSwapOutputAmount(outputTypedValue);
+      setSwapOutputAmount(validate_with_wallet_balance(outputTypedValue, outputCurrency.symbol));
       inputAmount = calculateOutputAmount(inputCurrencySymbol, outputCurrencySymbol, '', outputTypedValue);
     }
 
@@ -425,7 +427,7 @@ export default function SwapPanel() {
         val = formatBigNumber(poolTotalBase, 'input');
       }
 
-      setSwapInputAmount(validate_with_wallet_balance(val) || '');
+      setSwapInputAmount(validate_with_wallet_balance(val, inputCurrency.symbol) || '');
       handleConvertOutputRate(inputCurrency, outputCurrency, val);
     },
     [inputCurrency, outputCurrency, handleConvertOutputRate, getPoolData, validate_with_wallet_balance],

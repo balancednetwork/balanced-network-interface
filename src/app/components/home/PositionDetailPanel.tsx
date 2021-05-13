@@ -23,7 +23,6 @@ import {
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
 import {
   useLoanInputAmount,
-  useLoanTotalBorrowableAmount,
   useLoanDebtHoldingShare,
   useLoanTotalRepaid,
   useLoanFetchTotalRepaid,
@@ -93,11 +92,8 @@ const PositionDetailPanel = () => {
 
   // loan
   const loanInputAmount = useLoanInputAmount();
-  const totalAvailableLoanAmount = useLoanTotalBorrowableAmount();
 
   const collateralInputAmountInUSD = useCollateralInputAmountInUSD();
-
-  const debtHoldShare = useLoanDebtHoldingShare();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -144,31 +140,29 @@ const PositionDetailPanel = () => {
         </Typography>
 
         <Flex>
-          <Box width={1 / 2}>
+          <Box flex={1}>
             <Typography mb={1}>Collateral</Typography>
             <Typography variant="p" fontSize={18}>
               ${collateralInputAmountInUSD.dp(2).toFormat()}
             </Typography>
           </Box>
 
-          <Box width={1 / 2}>
-            <Typography mb={1}>Loan</Typography>
+          <VerticalDivider mr={8} />
 
+          <Box flex={1}>
+            <Typography mb={1}>Loan</Typography>
             <Typography variant="p" fontSize={18} as="span">
-              ${loanInputAmount.dp(2).toFormat()}{' '}
-              <Typography as="span">/ ${totalAvailableLoanAmount.dp(2).toFormat()}</Typography>
+              ${loanInputAmount.dp(2).toFormat()}
             </Typography>
           </Box>
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
           The current ICX price is{' '}
-          <span className={isRewardWarning ? 'alert' : ''}>{'$' + ratio.ICXUSDratio.dp(4).toFormat()}</span>.
+          <span className={isRewardWarning ? 'alert' : 'white'}>${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
         </Typography>
-        <Typography>
-          You hold{' '}
-          <span className="white">{isNaN(debtHoldShare.toNumber()) ? '-' : debtHoldShare.dp(2).toFormat() + '%'}</span>{' '}
-          of the total debt.
+        <Typography mb={2}>
+          You will be liquidated at <span className="white">${liquidationThresholdPrice.dp(3).toFormat()}</span>.
         </Typography>
       </BoxPanel>
 
@@ -265,7 +259,7 @@ const PositionDetailPanel = () => {
                   }
                   placement="top"
                 >
-                  <QuestionIcon width={14} style={{ marginTop: -5 }} />
+                  <QuestionIcon width={14} color="text1" style={{ marginTop: -5, color: '#D5D7DB' }} />
                 </MouseoverTooltip>
               </Typography>
 
@@ -291,11 +285,11 @@ const PositionDetailPanel = () => {
             <Flex>
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(collateralTotalSold, 'currency')} ICX</Typography>
-                <Typography>Collateral sold</Typography>
+                <Typography mt={1}>Collateral sold</Typography>
               </Box>
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(loanTotalRepaid, 'currency')} bnUSD</Typography>
-                <Typography>Loan repaid</Typography>
+                <Typography mt={1}>Loan repaid</Typography>
               </Box>
             </Flex>
           </Box>
@@ -311,13 +305,13 @@ const PositionDetailPanel = () => {
                 <Typography variant="p">
                   {hasRewardableCollateral ? `~ ${dailyRewards.dp(2).toFormat()} BALN` : '-'}
                 </Typography>
-                <Typography>Daily rewards</Typography>
+                <Typography mt={1}>Daily rewards</Typography>
               </Box>
               <Box width={1 / 2}>
                 <Typography variant="p" color={hasRewardableCollateral ? 'white' : 'alert'}>
                   {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
                 </Typography>
-                <Typography>APY</Typography>
+                <Typography mt={1}>APY</Typography>
               </Box>
             </Flex>
           </Box>
@@ -424,4 +418,10 @@ const Locked = styled(Threshold)`
     width: 150px;
     margin-left: 15px;
   }
+`;
+
+const VerticalDivider = styled(Box)`
+  width: 1px;
+  height: initial;
+  background-color: ${({ theme }) => theme.colors.divider};
 `;

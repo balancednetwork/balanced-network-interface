@@ -31,8 +31,8 @@ export function useChangeRatio(): ({
   );
 }
 
-// 1 minute
-const PERIOD = 60 * 1000;
+// fetch price data every 30 secs
+const PERIOD = 30 * 1000;
 
 export function useFetchPrice() {
   const changeRatioValue = useChangeRatio();

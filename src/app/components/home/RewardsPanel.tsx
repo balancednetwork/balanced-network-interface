@@ -9,6 +9,7 @@ import { Button } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
+import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
@@ -21,9 +22,7 @@ const RewardsPanel = () => {
   const { account } = useIconReact();
   const wallet = useWalletBalances();
   const addTransaction = useTransactionAdder();
-  // const walletBalance = useWalletBalances();
 
-  //const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleClaim = () => {
@@ -41,6 +40,7 @@ const RewardsPanel = () => {
           { hash: res.result }, //
           {
             summary: `Claimed ${reward.dp(2).toFormat()} BALN.`,
+            pending: 'Claiming rewards...',
           },
         );
         toggleOpen();
@@ -54,33 +54,6 @@ const RewardsPanel = () => {
   };
 
   const reward = wallet.BALNreward;
-
-  // const handleClose = () => {
-  //   bnJs
-  //     .inject({ account: account })
-  //     .Rewards.claimRewards()
-  //     .then(res => {
-  //       addTransaction(
-  //         { hash: res.result }, //
-  //         {
-  //           summary: `${
-  //             !account
-  //               ? '-'
-  //               : walletBalance.BALNreward?.toNumber() === 0 || walletBalance.BALNreward?.isNaN()
-  //               ? '0 BALN'
-  //               : walletBalance.BALNreward?.toFixed(2) + 'BALN'
-  //           } ICX added to your wallet.`,
-  //         },
-  //       );
-  //       // close modal
-  //       //toggleOpen();
-  //       // reset collateral panel values
-  //       setOpen(false);
-  //     })
-  //     .catch(e => {
-  //       console.error('error', e);
-  //     });
-  // };
 
   const ratio = useRatio();
 
@@ -98,7 +71,7 @@ const RewardsPanel = () => {
     setOpen(!open);
   };
 
-  if (!hasRewardableLoan && !hasRewardableLiquidity) {
+  if (!hasRewardableLoan && !hasRewardableLiquidity && reward.isZero()) {
     return (
       <div>
         <FlexPanel bg="bg2" flexDirection="column">
@@ -133,27 +106,34 @@ const RewardsPanel = () => {
           </Row>
 
           <Row>
-            <Typography variant="p">Network fees</Typography>
+            <Typography variant="p">
+              Network fees
+              <QuestionHelper text="To be eligible for network fees, stake BALN and borrow at least 50 bnUSD, or supply liquidity to the BALN/bnUSD pool." />
+            </Typography>
             <Typography variant="p">{!account ? '-' : hashNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
           </Row>
 
-          <Divider />
+          {!reward.isZero() && (
+            <>
+              <Divider />
 
-          <Row>
-            <Typography variant="p" fontWeight="bold">
-              Total
-            </Typography>
-            <Typography variant="p" fontWeight="bold">
-              {`$${rewardAmountByUSD.dp(2).toFormat()}`}
-            </Typography>
-          </Row>
+              <Row>
+                <Typography variant="p" fontWeight="bold">
+                  Total
+                </Typography>
+                <Typography variant="p" fontWeight="bold">
+                  {`$${rewardAmountByUSD.dp(2).toFormat()}`}
+                </Typography>
+              </Row>
+            </>
+          )}
         </RewardGrid>
 
-        <Flex alignItems="center" justifyContent="center" mt={3}>
-          <Button onClick={handleClaim} disabled={reward.isZero()}>
-            Claim rewards
-          </Button>
-        </Flex>
+        {!reward.isZero() && (
+          <Flex alignItems="center" justifyContent="center" mt={3}>
+            <Button onClick={handleClaim}>Claim rewards</Button>
+          </Flex>
+        )}
       </BoxPanel>
 
       {/* Stake new Balance Tokens Modal */}
@@ -178,49 +158,6 @@ const RewardsPanel = () => {
           </Flex>
         </Flex>
       </Modal>
-
-      {/* Stake new Balance Tokens Modal */}
-      {/* <Modal isOpen={open} onDismiss={handleClose}>
-          <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-            <Typography textAlign="center" mb="5px">
-              Stake new Balance Tokens?
-            </Typography>
-
-            <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-              8 BALN
-            </Typography>
-
-            <Flex my={5}>
-              <Box width={1 / 2} className="border-right">
-                <Typography textAlign="center">Before</Typography>
-                <Typography variant="p" textAlign="center">
-                  50 BALN
-                </Typography>
-              </Box>
-
-              <Box width={1 / 2}>
-                <Typography textAlign="center">After</Typography>
-                <Typography variant="p" textAlign="center">
-                  58 BALN
-                </Typography>
-              </Box>
-            </Flex>
-
-            <Typography textAlign="center">
-              Stake your Balance Tokens to earn dividends.
-              <br /> Unstaking takes 3 days.
-            </Typography>
-
-            <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-              <TextButton onClick={handleClose} fontSize={14}>
-                Not now
-              </TextButton>
-              <Button fontSize={14} onClick={handleClaimReward}>
-                Stake
-              </Button>
-            </Flex>
-          </Flex>
-        </Modal> */}
     </div>
   );
 };

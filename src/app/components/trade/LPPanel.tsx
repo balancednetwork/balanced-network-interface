@@ -11,7 +11,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import { CURRENCY_LIST } from 'constants/currency';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { MINIMUM_ICX_AMOUNT_IN_WALLET, SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
@@ -31,7 +31,7 @@ const useAvailableLPTokenBalance = (): BigNumber => {
   const pool = usePool(selectedPair.poolId);
 
   if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-    return balances['ICX'];
+    return BigNumber.max(balances['ICX'].minus(MINIMUM_ICX_AMOUNT_IN_WALLET), ZERO);
   } else {
     if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
       if (
@@ -89,61 +89,42 @@ export default function LPPanel() {
     [Field.CURRENCY_A]: ZERO,
     [Field.CURRENCY_B]: ZERO,
   });
-  const handleSupply = () => {
-    if (account) {
-      setShowSupplyConfirm(true);
-      setAmounts(parsedAmounts);
-    } else {
-      toggleWalletModal();
-    }
+
+  const handleConnectToWallet = () => {
+    toggleWalletModal();
   };
 
-  const selectedPair = usePoolPair();
+  const handleSupply = () => {
+    setShowSupplyConfirm(true);
+    setAmounts(parsedAmounts);
+  };
 
   const maxSliderAmount = useAvailableLPTokenBalance();
-
-  const pool = usePool(selectedPair.poolId);
-  const handleSlider = (values: string[], handle: number) => {
-    if (pool && !pool.total.isZero()) {
-      if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        onFieldAInput(values[handle], 'slider');
-      } else {
-        const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
-        onFieldAInput(baseAmount.toFixed(), 'slider');
-      }
-    }
-  };
 
   const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
   const {
     dependentField,
-    // currencies,
-    // pair,
-    // pairState,
-    // currencyBalances,
+    pair,
+    pool,
     parsedAmounts,
-    // price,
     noLiquidity,
     // liquidityMinted,
     // poolTokenPercentage,
-    // error
+    error,
   } = useDerivedMintInfo();
 
-  const { onFieldAInput, onFieldBInput } = useMintActionHandlers(noLiquidity);
+  const { onFieldAInput, onFieldBInput, onSlide } = useMintActionHandlers(noLiquidity);
 
-  const handleBaseAmountType = React.useCallback(
-    (value: string) => {
-      onFieldAInput(value, 'text');
-    },
-    [onFieldAInput],
-  );
-
-  const handleQuoteAmountType = React.useCallback(
-    (value: string) => {
-      onFieldBInput(value, 'text');
-    },
-    [onFieldBInput],
-  );
+  const handleSlider = (values: string[], handle: number) => {
+    if (pool && !pool.total.isZero()) {
+      if (pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        onSlide(values[handle]);
+      } else {
+        const baseAmount = pool.base.times(new BigNumber(values[handle]).div(pool.total));
+        onSlide(baseAmount.toFixed());
+      }
+    }
+  };
 
   // get formatted amounts
   const formattedAmounts = {
@@ -165,6 +146,8 @@ export default function LPPanel() {
     }
   }, [inputType, sliderValue]);
 
+  const isValid = !error;
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -174,12 +157,12 @@ export default function LPPanel() {
             <LiquiditySelect />
           </Flex>
 
-          <Flex mt={3} hidden={selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX}>
+          <Flex mt={3} hidden={pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX}>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
-              currency={CURRENCY_LIST[selectedPair.baseCurrencyKey.toLowerCase()]}
-              onUserInput={handleBaseAmountType}
+              currency={CURRENCY_LIST[pair.baseCurrencyKey.toLowerCase()]}
+              onUserInput={onFieldAInput}
               id="supply-liquidity-input-token-a"
             />
           </Flex>
@@ -188,46 +171,55 @@ export default function LPPanel() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               showMaxButton={false}
-              currency={CURRENCY_LIST[selectedPair.quoteCurrencyKey.toLowerCase()]}
-              onUserInput={handleQuoteAmountType}
+              currency={CURRENCY_LIST[pair.quoteCurrencyKey.toLowerCase()]}
+              onUserInput={onFieldBInput}
               id="supply-liquidity-input-token-b"
             />
           </Flex>
 
           <Typography mt={3} textAlign="right">
             {`Wallet: 
-              ${formatBigNumber(balances[selectedPair.baseCurrencyKey], 'currency')} 
-              ${selectedPair.baseCurrencyKey} /  
-              ${formatBigNumber(balances[selectedPair.quoteCurrencyKey], 'currency')} 
-              ${selectedPair.quoteCurrencyKey}`}
+              ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} 
+              ${pair.baseCurrencyKey} /  
+              ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} 
+              ${pair.quoteCurrencyKey}`}
           </Typography>
 
-          <Box mt={5}>
-            <Nouislider
-              id="slider-supply"
-              disabled={maxSliderAmount.dp(2).isZero()}
-              start={[0]}
-              padding={[0]}
-              connect={[true, false]}
-              range={{
-                min: [0],
-                max: [
-                  maxSliderAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxSliderAmount.dp(2).toNumber(),
-                ],
-              }}
-              instanceRef={instance => {
-                if (instance && !sliderInstance.current) {
-                  sliderInstance.current = instance;
-                }
-              }}
-              onSlide={handleSlider}
-            />
-          </Box>
-
+          {account && !maxSliderAmount.dp(2).isZero() && (
+            <Box mt={5}>
+              <Nouislider
+                id="slider-supply"
+                disabled={maxSliderAmount.dp(2).isZero()}
+                start={[0]}
+                padding={[0]}
+                connect={[true, false]}
+                range={{
+                  min: [0],
+                  max: [
+                    maxSliderAmount.dp(2).isZero()
+                      ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
+                      : maxSliderAmount.dp(2).toNumber(),
+                  ],
+                }}
+                instanceRef={instance => {
+                  if (instance && !sliderInstance.current && !maxSliderAmount.dp(2).isZero()) {
+                    sliderInstance.current = instance;
+                  }
+                }}
+                onSlide={handleSlider}
+              />
+            </Box>
+          )}
           <Flex justifyContent="center">
-            <Button color="primary" marginTop={5} onClick={handleSupply}>
-              Supply
-            </Button>
+            {isValid ? (
+              <Button color="primary" marginTop={5} onClick={handleSupply}>
+                Supply
+              </Button>
+            ) : (
+              <Button disabled={!!account} color="primary" marginTop={5} onClick={handleConnectToWallet}>
+                {account ? error : 'Supply'}
+              </Button>
+            )}
           </Flex>
         </BrightPanel>
 

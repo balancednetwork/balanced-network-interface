@@ -91,9 +91,9 @@ export default function SwapPanel() {
     changeRatioValue({ BALNbnUSDratio });
   }, [changeRatioValue]);
 
-  const [swapInputAmount, setSwapInputAmount] = React.useState('0');
+  const [swapInputAmount, setSwapInputAmount] = React.useState('');
 
-  const [swapOutputAmount, setSwapOutputAmount] = React.useState('0');
+  const [swapOutputAmount, setSwapOutputAmount] = React.useState('');
 
   const [inputCurrency, setInputCurrency] = React.useState(CURRENCY_LIST['sicx']);
 
@@ -102,6 +102,21 @@ export default function SwapPanel() {
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
   const [swapFee, setSwapFee] = React.useState('0');
+
+  const getBalance = React.useCallback(
+    (symbol: string) => {
+      if (symbol.toLocaleLowerCase() === 'icx') {
+        return balances.ICX;
+      } else if (symbol.toLocaleLowerCase() === 'sicx') {
+        return balances.sICX;
+      } else if (symbol.toLocaleLowerCase() === 'baln') {
+        return balances.BALN;
+      } else if (symbol.toLocaleLowerCase() === 'bnusd') {
+        return balances.bnUSD;
+      }
+    },
+    [balances],
+  );
 
   const tokenRatio = React.useCallback(
     (symbolInput: string, symbolOutput: string) => {
@@ -172,6 +187,11 @@ export default function SwapPanel() {
         return amountInput ? new BigNumber(amountInput) : new BigNumber(amountOutput);
       }
 
+      let inputBalance = getBalance(symbolInput) || new BigNumber(0);
+      if (new BigNumber(amountInput).isGreaterThanOrEqualTo(inputBalance)) {
+        amountInput = inputBalance.toString();
+      }
+
       if (amountOutput === '') {
         // let new_from_token = poolTotalInput.plus(new BigNumber(amountInput));
         // let new_to_token = poolTotalInput.multipliedBy(poolTotalOutput).dividedBy(new_from_token);
@@ -191,11 +211,14 @@ export default function SwapPanel() {
           .multipliedBy(poolTotalInput)
           .dividedBy(poolTotalOutput.minus(amountOutput))
           .minus(poolTotalInput);
-
+        let inputBalance = getBalance(symbolInput) || new BigNumber(0);
+        if (amountInput.isGreaterThanOrEqualTo(inputBalance)) {
+          amountInput = inputBalance;
+        }
         return amountInput;
       }
     },
-    [getPoolData],
+    [getPoolData, getBalance],
   );
 
   const handleConvertOutputRate = React.useCallback(
@@ -279,9 +302,9 @@ export default function SwapPanel() {
 
     if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
       inputAmount = new BigNumber(val).plus(new BigNumber(val).multipliedBy(0.01));
-      setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
+      setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
     } else if (inputCurrency.symbol.toLowerCase() === 'icx' && outputCurrency.symbol.toLowerCase() === 'sicx') {
-      setSwapInputAmount(formatBigNumber(new BigNumber(val), 'ratio'));
+      setSwapInputAmount(formatBigNumber(new BigNumber(val), 'input'));
     } else {
       bnJs
         .inject({ account })
@@ -292,8 +315,21 @@ export default function SwapPanel() {
           const fee = inputAmount.multipliedBy(new BigNumber(bal_holder_fee + lp_fee)).dividedBy(new BigNumber(10000));
           setSwapFee(new BigNumber(fee).toString());
           inputAmount = inputAmount.plus(fee);
-          console.log(inputAmount.toString());
-          setSwapInputAmount(formatBigNumber(inputAmount, 'ratio'));
+          let inputBalance = getBalance(inputCurrency.symbol.toLowerCase()) || new BigNumber(0);
+          if (inputAmount.isGreaterThanOrEqualTo(inputBalance)) {
+            inputAmount = inputBalance;
+            setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
+            inputAmount = inputAmount.minus(fee);
+            let outputAmount = calculateOutputAmount(
+              inputCurrency.symbol.toLowerCase(),
+              outputCurrency.symbol.toLowerCase(),
+              inputAmount.toString(),
+              '',
+            );
+            setSwapOutputAmount(formatBigNumber(outputAmount, 'input'));
+          } else {
+            setSwapInputAmount(formatBigNumber(inputAmount, 'input'));
+          }
         })
         .catch(e => {
           console.error('error', e);
@@ -328,6 +364,10 @@ export default function SwapPanel() {
 
   const handleTypeInput = React.useCallback(
     (val: string) => {
+      let inputBalance = getBalance(inputCurrency.symbol.toLowerCase()) || new BigNumber(0);
+      if (new BigNumber(val).isGreaterThanOrEqualTo(inputBalance)) {
+        val = formatBigNumber(inputBalance, 'input');
+      }
       let poolTotalBase =
         getPoolData(inputCurrency.symbol.toLowerCase(), outputCurrency.symbol.toLowerCase())?.poolTotalInput || ZERO;
       if (new BigNumber(val).isGreaterThanOrEqualTo(poolTotalBase)) {
@@ -336,7 +376,7 @@ export default function SwapPanel() {
       setSwapInputAmount(val);
       handleConvertOutputRate(inputCurrency, outputCurrency, val);
     },
-    [inputCurrency, outputCurrency, handleConvertOutputRate, getPoolData],
+    [inputCurrency, outputCurrency, handleConvertOutputRate, getPoolData, getBalance],
   );
 
   const handleSwapConfirmDismiss = () => {
@@ -638,7 +678,7 @@ export default function SwapPanel() {
                 ? formatBigNumber(new BigNumber(0), 'ratio')
                 : formatBigNumber(
                     new BigNumber(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4),
-                    'ratio',
+                    'currency',
                   )}{' '}
               {outputCurrency.symbol}
             </Typography>

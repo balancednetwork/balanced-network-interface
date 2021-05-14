@@ -23,7 +23,7 @@ export default function QuestionHelper({ text }: { text: string }) {
   const close = useCallback(() => setShow(false), [setShow]);
 
   return (
-    <span style={{ marginLeft: 4, verticalAlign: 'middle' }}>
+    <span style={{ marginLeft: 4, verticalAlign: 'top' }}>
       <Tooltip text={text} show={show} placement="top">
         <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
           <QuestionIcon width={14} />

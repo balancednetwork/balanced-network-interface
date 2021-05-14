@@ -19,6 +19,8 @@ export function useWalletBalances(): AppState['wallet'] {
 
 export function useWalletFetchBalances(account?: string | null) {
   const dispatch = useDispatch();
+  const details = useBALNDetails();
+  const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
 
   const transactions = useAllTransactions();
 
@@ -28,12 +30,21 @@ export function useWalletFetchBalances(account?: string | null) {
         Promise.all([
           bnJs.ICX.balanceOf(account),
           bnJs.sICX.balanceOf(account),
-          bnJs.BALN.balanceOf(account),
           bnJs.bnUSD.balanceOf(account),
+          bnJs.BALN.balanceOf(account),
           bnJs.Rewards.getBalnHolding(account),
         ]).then(result => {
-          const [ICX, sICX, BALN, bnUSD, BALNreward] = result.map(v => BalancedJs.utils.toIcx(v));
-          dispatch(changeBalances({ ICX, sICX, BALN, bnUSD, BALNreward }));
+          const [ICX, sICX, bnUSD, BALN, BALNreward] = result.map(v => BalancedJs.utils.toIcx(v));
+          dispatch(
+            changeBalances({
+              ICX,
+              sICX,
+              bnUSD,
+              BALN: BALN.minus(stakedBalance),
+              BALNstaked: stakedBalance,
+              BALNreward,
+            }),
+          );
         });
       } else {
         dispatch(resetBalances());
@@ -41,7 +52,7 @@ export function useWalletFetchBalances(account?: string | null) {
     };
 
     fetchBalances();
-  }, [transactions, account, dispatch]);
+  }, [transactions, account, stakedBalance, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {

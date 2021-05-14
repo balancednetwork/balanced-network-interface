@@ -219,7 +219,7 @@ const CollateralPanel = () => {
               max: [totalICXAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalICXAmount.dp(2).toNumber()],
             }}
             instanceRef={instance => {
-              if (instance && !sliderInstance.current) {
+              if (instance) {
                 sliderInstance.current = instance;
               }
             }}

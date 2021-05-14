@@ -249,7 +249,7 @@ const PositionDetailPanel = () => {
         <Divider my={3} />
 
         <Flex flexWrap="wrap" alignItems="flex-end" mt={-1}>
-          <Box width={[1, 1, 1 / 2]} my={2}>
+          <Box width={[1, 1, 1, 1, 1 / 2]} my={2}>
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
                 Rebalancing{' '}
@@ -294,7 +294,7 @@ const PositionDetailPanel = () => {
             </Flex>
           </Box>
 
-          <Box width={[1, 1, 1 / 2]} my={2}>
+          <Box width={[1, 1, 1, 1, 1 / 2]} my={2}>
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
                 Expected return

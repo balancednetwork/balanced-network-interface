@@ -161,11 +161,19 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
   const pair = BASE_SUPPORTED_PAIRS[2];
   const poolData = usePoolData(pair.poolId);
   const below800 = useMedia('(max-width: 800px)');
+  const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
   return (
     <ListItem border={border}>
       <DataText>{pair.pair}</DataText>
-      <DataText>{`${formatBigNumber(poolData?.suppliedQuote, 'currency')} ${pair.quoteCurrencyKey}`}</DataText>
+      <DataText>
+        <Typography fontSize={16}>
+          {`${formatBigNumber(balance1?.balance, 'currency')} ${pair.quoteCurrencyKey}`}
+        </Typography>
+        <Typography color="text1">
+          {`${formatBigNumber(balance1?.balance1, 'currency')} ${pair.baseCurrencyKey}`}
+        </Typography>
+      </DataText>
       {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
       {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
       <DataText>

@@ -9,6 +9,7 @@ import { Button } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
+import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
@@ -105,7 +106,10 @@ const RewardsPanel = () => {
           </Row>
 
           <Row>
-            <Typography variant="p">Network fees</Typography>
+            <Typography variant="p">
+              Network fees
+              <QuestionHelper text="To be eligible for network fees, stake BALN and borrow at least 50 bnUSD, or supply liquidity to the BALN/bnUSD pool." />
+            </Typography>
             <Typography variant="p">{!account ? '-' : hashNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
           </Row>
 

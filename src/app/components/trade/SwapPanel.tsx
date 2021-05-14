@@ -477,10 +477,10 @@ export default function SwapPanel() {
     }
 
     const minimumToReceive = new BigNumber(((1e4 - rawSlippage) * parseFloat(swapOutputAmount)) / 1e4);
-    if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'bnUSD') {
+    if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() !== 'icx') {
       bnJs
         .inject({ account })
-        .sICX.swapBybnUSD(new BigNumber(swapInputAmount), BalancedJs.utils.toLoop(minimumToReceive))
+        .sICX.swap(new BigNumber(swapInputAmount), outputCurrency.symbol, BalancedJs.utils.toLoop(minimumToReceive))
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -502,7 +502,7 @@ export default function SwapPanel() {
         .finally(() => {
           changeShouldLedgerSign(false);
         });
-    } else if (inputCurrency.symbol === 'sICX' && outputCurrency.symbol === 'ICX') {
+    } else if (inputCurrency.symbol.toLowerCase() === 'sicx' && outputCurrency.symbol.toLowerCase() === 'icx') {
       bnJs
         .inject({ account })
         .sICX.swapToICX(new BigNumber(swapInputAmount))
@@ -527,10 +527,10 @@ export default function SwapPanel() {
         .finally(() => {
           changeShouldLedgerSign(false);
         });
-    } else if (inputCurrency.symbol === 'BALN') {
+    } else if (inputCurrency.symbol.toLowerCase() === 'baln') {
       bnJs
         .inject({ account: account })
-        .BALN.swapToBnUSD(new BigNumber(swapInputAmount), BalancedJs.utils.toLoop(minimumToReceive))
+        .BALN.swap(new BigNumber(swapInputAmount), outputCurrency.symbol, BalancedJs.utils.toLoop(minimumToReceive))
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -577,14 +577,10 @@ export default function SwapPanel() {
         .finally(() => {
           changeShouldLedgerSign(false);
         });
-    } else if (inputCurrency.symbol === 'bnUSD') {
+    } else if (inputCurrency.symbol.toLowerCase() === 'bnusd') {
       bnJs
         .inject({ account })
-        .bnUSD.swapToOutputCurrency(
-          new BigNumber(swapInputAmount),
-          outputCurrency.symbol,
-          BalancedJs.utils.toLoop(minimumToReceive),
-        )
+        .bnUSD.swap(new BigNumber(swapInputAmount), outputCurrency.symbol, BalancedJs.utils.toLoop(minimumToReceive))
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(

@@ -185,28 +185,31 @@ export default function LPPanel() {
               ${pair.quoteCurrencyKey}`}
           </Typography>
 
-          <Box mt={5}>
-            <Nouislider
-              id="slider-supply"
-              disabled={maxSliderAmount.dp(2).isZero()}
-              start={[0]}
-              padding={[0]}
-              connect={[true, false]}
-              range={{
-                min: [0],
-                max: [
-                  maxSliderAmount.dp(2).isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : maxSliderAmount.dp(2).toNumber(),
-                ],
-              }}
-              instanceRef={instance => {
-                if (instance && !sliderInstance.current && !maxSliderAmount.dp(2).isZero()) {
-                  sliderInstance.current = instance;
-                }
-              }}
-              onSlide={handleSlider}
-            />
-          </Box>
-
+          {account && !maxSliderAmount.dp(2).isZero() && (
+            <Box mt={5}>
+              <Nouislider
+                id="slider-supply"
+                disabled={maxSliderAmount.dp(2).isZero()}
+                start={[0]}
+                padding={[0]}
+                connect={[true, false]}
+                range={{
+                  min: [0],
+                  max: [
+                    maxSliderAmount.dp(2).isZero()
+                      ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
+                      : maxSliderAmount.dp(2).toNumber(),
+                  ],
+                }}
+                instanceRef={instance => {
+                  if (instance && !sliderInstance.current && !maxSliderAmount.dp(2).isZero()) {
+                    sliderInstance.current = instance;
+                  }
+                }}
+                onSlide={handleSlider}
+              />
+            </Box>
+          )}
           <Flex justifyContent="center">
             {isValid ? (
               <Button color="primary" marginTop={5} onClick={handleSupply}>
@@ -214,7 +217,7 @@ export default function LPPanel() {
               </Button>
             ) : (
               <Button disabled={!!account} color="primary" marginTop={5} onClick={handleConnectToWallet}>
-                {error}
+                {account ? error : 'Supply'}
               </Button>
             )}
           </Flex>

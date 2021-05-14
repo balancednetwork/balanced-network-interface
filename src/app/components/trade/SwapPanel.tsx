@@ -439,14 +439,15 @@ export default function SwapPanel() {
       if (new BigNumber(val).isGreaterThanOrEqualTo(poolTotalBase)) {
         val = formatBigNumber(poolTotalBase, 'input');
       }
+
       let validatedAmount = validate_with_wallet_balance(new BigNumber(val), inputCurrency.symbol);
-      setSwapInputAmount(
-        val === ''
-          ? ''
-          : validatedAmount.isEqualTo(new BigNumber(val))
-          ? val
-          : formatBigNumber(validatedAmount, 'input'),
-      );
+      if (!validatedAmount.isEqualTo(new BigNumber(val))) {
+        val = validatedAmount.toString();
+        setSwapInputAmount(formatBigNumber(validatedAmount, 'input'));
+      } else {
+        setSwapInputAmount(val ? val : '');
+      }
+
       handleConvertOutputRate(inputCurrency, outputCurrency, val);
     },
     [inputCurrency, outputCurrency, handleConvertOutputRate, getPoolData, validate_with_wallet_balance],

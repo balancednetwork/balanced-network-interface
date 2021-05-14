@@ -3,6 +3,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -72,7 +73,7 @@ const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
-
+  const upLarge = useMedia('(min-width: 1280px)');
   const [show, setShow] = React.useState<boolean>(false);
 
   const open = React.useCallback(() => setShow(true), [setShow]);
@@ -248,8 +249,8 @@ const PositionDetailPanel = () => {
 
         <Divider my={3} />
 
-        <Flex flexWrap="wrap" alignItems="flex-end" mt={-1}>
-          <Box width={[1, 1, 1, 1, 1 / 2]} my={2}>
+        <Flex flexWrap="wrap" mt={-1} flexDirection={['column', 'column', 'column', 'column', 'row']}>
+          <Box flex={1} my={2}>
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
                 Rebalancing{' '}
@@ -294,7 +295,9 @@ const PositionDetailPanel = () => {
             </Flex>
           </Box>
 
-          <Box width={[1, 1, 1, 1, 1 / 2]} my={2}>
+          {upLarge && <VerticalDivider mr={9} mt={3} mb={2} />}
+
+          <Box flex={1} my={2}>
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
                 Expected return

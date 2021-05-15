@@ -88,7 +88,7 @@ const PositionDetailPanel = () => {
   const updateLoanTotalRepaid = useLoanFetchTotalRepaid();
 
   React.useEffect(() => {
-    updateLoanTotalRepaid(Period.day);
+    updateLoanTotalRepaid(Period.week);
   }, [updateLoanTotalRepaid]);
 
   // loan
@@ -124,7 +124,7 @@ const PositionDetailPanel = () => {
     setAnchor(null);
   };
 
-  const [period, setPeriod] = React.useState(Period.day);
+  const [period, setPeriod] = React.useState(Period.week);
 
   const handlePeriod = (p: Period) => {
     closeMenu();

@@ -104,13 +104,15 @@ const WalletPanel = () => {
                               .dp(2)
                               .toFormat()}`
                           : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
-                        {currency.toLowerCase() === 'baln' && balances['BALNstaked'].isGreaterThan(new BigNumber(0)) && (
-                          <>
-                            <Typography color="rgba(255,255,255,0.75)">
-                              ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
-                            </Typography>
-                          </>
-                        )}
+                        {currency.toLowerCase() === 'baln' &&
+                          (balances['BALNstaked'].isGreaterThan(new BigNumber(0)) ||
+                            balances['BALNunstaking'].isGreaterThan(new BigNumber(0))) && (
+                            <>
+                              <Typography color="rgba(255,255,255,0.75)">
+                                ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                              </Typography>
+                            </>
+                          )}
                       </DataText>
                     </ListItem>
                   </StyledAccordionButton>

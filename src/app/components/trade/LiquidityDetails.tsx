@@ -158,7 +158,8 @@ const WithdrawText = ({ poolId }: { poolId: number }) => {
 };
 
 const PoolRecord1 = ({ border }: { border: boolean }) => {
-  const pair = BASE_SUPPORTED_PAIRS[2];
+  const pair =
+    BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || BASE_SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
   const below800 = useMedia('(max-width: 800px)');
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);

@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
+import { SUPPORTED_PAIRS, Pair } from 'constants/currency';
 
 import { setPair, setPoolData, setBalance, clearBalances } from './actions';
 
@@ -38,7 +38,7 @@ export interface PoolState {
 }
 
 const initialState: PoolState = {
-  selectedPair: SUPPORTED_PAIRS[0],
+  selectedPair: SUPPORTED_PAIRS['sICX']['bnUSD'],
   pools: {},
   balances: {},
 };

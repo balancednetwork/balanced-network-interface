@@ -80,11 +80,14 @@ const useSelectedPairRatio = () => {
     case SUPPORTED_PAIRS['sICX']['bnUSD'].pair: {
       return ratio.sICXbnUSDratio;
     }
+    case SUPPORTED_PAIRS['sICX']['ICX'].pair: {
+      return ratio.sICXICXratio;
+    }
     case SUPPORTED_PAIRS['BALN']['bnUSD'].pair: {
       return ratio.BALNbnUSDratio;
     }
-    case SUPPORTED_PAIRS['sICX']['ICX'].pair: {
-      return ratio.sICXICXratio;
+    case SUPPORTED_PAIRS['BALN']['sICX'].pair: {
+      return ratio.BALNsICXratio;
     }
   }
   return new BigNumber(1);

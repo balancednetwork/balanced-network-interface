@@ -52,7 +52,7 @@ const MobileAppBarWrapper = styled(Box)`
 
 export const DefaultLayout: React.FC<{ title?: string }> = props => {
   const { children, title = 'Home' } = props;
-  const upMedium = useMedia('(min-width: 1000px)');
+  const upLarge = useMedia('(min-width: 1200px)');
 
   return (
     <>
@@ -60,7 +60,7 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
         <StyledHeader title={title} />
 
         <Flex flex={[1, 1, 1, 'initial']}>
-          {upMedium && (
+          {upLarge && (
             <DesktopAppBarWrapper>
               <AppBar />
             </DesktopAppBarWrapper>
@@ -69,7 +69,7 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
           {children}
         </Flex>
 
-        {!upMedium && (
+        {!upLarge && (
           <MobileAppBarWrapper>
             <AppBar />
           </MobileAppBarWrapper>

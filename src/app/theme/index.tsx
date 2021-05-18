@@ -15,7 +15,7 @@ export const sizes = {
   upExtraSmall: 600,
   upSmall: 800,
   upMedium: 1000,
-  upLarge: 1280,
+  upLarge: 1200,
 };
 
 export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce((acc, label) => {

@@ -73,7 +73,7 @@ const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
-  const upLarge = useMedia('(min-width: 1280px)');
+  const upLarge = useMedia('(min-width: 1200px)');
   const [show, setShow] = React.useState<boolean>(false);
 
   const open = React.useCallback(() => setShow(true), [setShow]);
@@ -135,7 +135,7 @@ const PositionDetailPanel = () => {
 
   return (
     <ActivityPanel bg="bg2">
-      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]}>
+      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 'initial', 350]}>
         <Typography variant="h2" mb={5}>
           Position details
         </Typography>
@@ -249,7 +249,7 @@ const PositionDetailPanel = () => {
 
         <Divider my={3} />
 
-        <Flex flexWrap="wrap" mt={-1} flexDirection={['column', 'column', 'column', 'column', 'row']}>
+        <Flex flexWrap="wrap" mt={-1} flexDirection={['column', 'column', 'column', 'row', 'row']}>
           <Box flex={1} my={2}>
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
@@ -295,7 +295,7 @@ const PositionDetailPanel = () => {
             </Flex>
           </Box>
 
-          {upLarge && <VerticalDivider mr={9} mt={3} mb={2} />}
+          {upLarge && <VerticalDivider mr={8} mt={3} mb={2} />}
 
           <Box flex={1} my={2}>
             <Flex alignItems="center" mb={3}>
@@ -335,7 +335,7 @@ const ActivityPanel = styled(FlexPanel)`
     padding: 0;
   `}
 
-  ${({ theme }) => theme.mediaWidth.upSmall`
+  ${({ theme }) => theme.mediaWidth.upMedium`
     padding: 0;
     grid-area: 2 / 1 / 2 / 3;
     flex-direction: row;

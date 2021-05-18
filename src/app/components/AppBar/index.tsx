@@ -12,7 +12,7 @@ const Navigation = styled.nav`
   display: inline-block;
   width: initial;
 
-  ${({ theme }) => theme.mediaWidth.upMedium`
+  ${({ theme }) => theme.mediaWidth.upLarge`
     display: block;
     width: 100px;
   `}
@@ -41,7 +41,7 @@ const ListItem = styled.li`
     margin-right: 0;
   }
 
-  ${({ theme }) => theme.mediaWidth.upMedium`
+  ${({ theme }) => theme.mediaWidth.upLarge`
     display: block;
     margin-bottom: 15px;
     margin-right: 0;
@@ -80,7 +80,7 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
     opacity: 1;
   }
 
-  ${({ theme }) => theme.mediaWidth.upMedium`
+  ${({ theme }) => theme.mediaWidth.upLarge`
     width: 114px;
     padding: 15px;
   `}

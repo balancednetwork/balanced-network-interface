@@ -4,7 +4,7 @@ import styled from 'styled-components';
 export const Button = styled(RebassButton)`
   display: inline-block;
   border-radius: 10px;
-  padding: 7px 25px;
+  padding: 5px 15px;
   color: #ffffff;
   text-decoration: none;
   background-color: ${({ theme }) => theme.colors.primary};
@@ -23,12 +23,16 @@ export const Button = styled(RebassButton)`
     cursor: default;
     pointer-events: none;
   }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 7px 25px;
+  `}
 `;
 
 export const TextButton = styled(RebassButton)`
   background: transparent;
   font-size: 14px;
-  padding: 7px 25px;
+  padding: 5px 15px;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.75);
   cursor: pointer;
@@ -46,6 +50,10 @@ export const TextButton = styled(RebassButton)`
     pointer-events: none;
     color: rgba(255, 255, 255, 0.15);
   }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 7px 25px;
+  `}
 `;
 
 export const IconButton = styled(RebassButton)`

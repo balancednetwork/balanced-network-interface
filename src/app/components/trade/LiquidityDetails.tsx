@@ -71,6 +71,7 @@ const TableWrapper = styled.div``;
 const DashGrid = styled.div`
   display: grid;
   grid-template-columns: 4fr 5fr 3fr;
+  gap: 10px;
   grid-template-areas: 'name supply action';
   align-items: center;
 

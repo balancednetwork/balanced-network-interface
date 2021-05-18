@@ -108,7 +108,7 @@ const RewardsPanel = () => {
           <Row>
             <Typography variant="p">
               Network fees
-              <QuestionHelper text="To be eligible for network fees, stake BALN and borrow at least 50 bnUSD, or supply liquidity to the BALN/bnUSD pool." />
+              <QuestionHelper text="To be eligible for network fees, stake BALN and borrow at least 50 bnUSD, and/or supply BALN to a liquidity pool." />
             </Typography>
             <Typography variant="p">{!account ? '-' : hashNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
           </Row>

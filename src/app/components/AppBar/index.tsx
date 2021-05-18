@@ -78,7 +78,7 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100px;
-    padding: 5px;
+    padding: 10px 15px;
   `}
 
   > svg {

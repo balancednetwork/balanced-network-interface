@@ -8,7 +8,7 @@ import CurrencyLogo from 'app/components/CurrencyLogo';
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
-import { CURRENCY_LIST, CURRENCY, getFilteredCurrencies, CurrencyKey } from 'constants/currency';
+import { CURRENCY_LIST, CURRENCY, CurrencyKey } from 'constants/currency';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { Currency } from 'types';
 import { escapeRegExp } from 'utils';
@@ -137,17 +137,13 @@ export default function CurrencyInputPanel({
     setOpen(false);
   };
 
-  const availableCurrencies = React.useMemo(
-    () => (otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList),
-    [otherCurrency, currencyList],
-  );
+  const availableCurrencies = React.useMemo(() => currencyList, [currencyList]);
 
   React.useEffect(() => {
-    const t = otherCurrency ? getFilteredCurrencies(otherCurrency) : currencyList;
-    if (t?.indexOf(currency?.symbol as string) === -1) {
-      onCurrencySelect && onCurrencySelect(CURRENCY_LIST[t[0].toLowerCase()]);
+    if (currencyList.indexOf(currency?.symbol as string) === -1) {
+      onCurrencySelect && onCurrencySelect(CURRENCY_LIST[currencyList[0].toLowerCase()]);
     }
-  }, [currency, otherCurrency, onCurrencySelect, currencyList]);
+  }, [currency, onCurrencySelect, currencyList]);
 
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {

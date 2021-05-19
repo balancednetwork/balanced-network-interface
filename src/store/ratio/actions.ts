@@ -6,4 +6,5 @@ export const changeRatioValue = createAction<{
   sICXbnUSDratio?: BigNumber;
   sICXICXratio?: BigNumber;
   BALNbnUSDratio?: BigNumber;
+  BALNsICXratio?: BigNumber;
 }>('ratio/changeRatioValue');

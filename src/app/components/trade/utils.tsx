@@ -9,15 +9,17 @@ export const Panel = styled(Flex)`
 `;
 
 export const SectionPanel = styled(Panel)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    flex-direction: column;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    flex-direction: row;
   `}
 `;
 
 export const BrightPanel = styled(Panel)`
-  max-width: 360px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    max-width: initial;
+  max-width: initial;
+
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    max-width: 360px;
   `}
 `;
 

@@ -90,10 +90,10 @@ declare module 'styled-components' {
 
     // media queries
     mediaWidth: {
-      upToExtraSmall: MediaFunction;
-      upToSmall: MediaFunction;
-      upToMedium: MediaFunction;
-      upToLarge: MediaFunction;
+      upExtraSmall: MediaFunction;
+      upSmall: MediaFunction;
+      upMedium: MediaFunction;
+      upLarge: MediaFunction;
     };
 
     // breakpoints

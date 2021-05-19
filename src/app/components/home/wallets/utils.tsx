@@ -15,7 +15,7 @@ export const StyledTab = styled(Tab)`
     box-sizing: border-box;
     padding: 10px 15px;
     padding-top: 0;
-    margin-right: 15px;
+    margin-right: 0px;
     border-bottom: 3px solid #144a68;
     color: rgba(255, 255, 255, 0.75);
     background-color: transparent;
@@ -32,6 +32,10 @@ export const StyledTab = styled(Tab)`
       color: #ffffff;
       transition: border-bottom 0.2s ease, color 0.2s ease;
     }
+
+    ${({ theme }) => theme.mediaWidth.upExtraSmall`
+        margin-right: 15px;
+    `}
   }
 `;
 

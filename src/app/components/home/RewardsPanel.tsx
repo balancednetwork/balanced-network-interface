@@ -106,7 +106,7 @@ const RewardsPanel = () => {
           </Row>
 
           <Row>
-            <Typography variant="p">
+            <Typography variant="p" as="div">
               Network fees
               <QuestionHelper text="To be eligible for network fees, stake BALN and borrow at least 50 bnUSD, and/or supply BALN to a liquidity pool." />
             </Typography>

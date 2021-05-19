@@ -1,4 +1,10 @@
+import keyBy from 'lodash/keyBy';
 import { BalancedJs } from 'packages/BalancedJs';
+
+import { ReactComponent as BALNIcon } from 'assets/tokens/BALN.svg';
+import { ReactComponent as bnUSDIcon } from 'assets/tokens/bnUSD.svg';
+import { ReactComponent as ICXIcon } from 'assets/tokens/ICX.svg';
+import { ReactComponent as sICXIcon } from 'assets/tokens/sICX.svg';
 
 export type CurrencyType = {
   symbol: CurrencyKey;
@@ -18,7 +24,14 @@ export const CURRENCY_LIST: {
 
 export const CURRENCY = ['ICX', 'sICX', 'bnUSD', 'BALN'];
 
-// export const CURRENCY_MAP = keyBy(CURRENCY);
+export const CURRENCY_MAP = keyBy(CURRENCY);
+
+export const currencyKeyToIconMap = {
+  [CURRENCY_MAP.ICX]: ICXIcon,
+  [CURRENCY_MAP.sICX]: sICXIcon,
+  [CURRENCY_MAP.bnUSD]: bnUSDIcon,
+  [CURRENCY_MAP.BALN]: BALNIcon,
+};
 
 export type CurrencyKey = string;
 

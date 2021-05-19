@@ -11,14 +11,13 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import CurrencyLogo from 'app/components/CurrencyLogo';
 import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
-import { ReactComponent as ICXIcon } from 'assets/logos/icx.svg';
-import { ReactComponent as SICXIcon } from 'assets/logos/sicx.svg';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
@@ -275,12 +274,12 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
         <Flex alignItems="center" justifyContent="space-between">
           <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2} mr={2}>
-            <SICXIcon width="35" height="35" />
+            <CurrencyLogo currencyKey="sICX" size={35} />
             <Typography>{balance1?.balance1?.dp(2).toFormat()} sICX</Typography>
           </OptionButton>
 
           <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1}>
-            <ICXIcon width="35" height="35" />
+            <CurrencyLogo currencyKey="ICX" size={35} />
             <Typography>{balance1?.balance.dp(2).toFormat()} ICX</Typography>
           </OptionButton>
         </Flex>

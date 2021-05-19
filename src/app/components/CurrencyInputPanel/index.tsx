@@ -157,7 +157,9 @@ export default function CurrencyInputPanel({
     <InputContainer ref={ref}>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
-          {currency ? <CurrencyLogo currency={currency} style={{ marginRight: 8 }} /> : null}
+          {currency && currency.symbol ? (
+            <CurrencyLogo currencyKey={currency.symbol} style={{ marginRight: 8 }} />
+          ) : null}
           {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
           {onCurrencySelect && <StyledDropDown selected={!!currency} />}
 
@@ -171,7 +173,7 @@ export default function CurrencyInputPanel({
                 {availableCurrencies.map(currency => (
                   <ListItem key={currency} onClick={handleCurrencySelect(CURRENCY_LIST[currency.toLowerCase()])}>
                     <Flex>
-                      <CurrencyLogo currency={CURRENCY_LIST[currency.toLowerCase()]} style={{ marginRight: '8px' }} />
+                      <CurrencyLogo currencyKey={currency} style={{ marginRight: '8px' }} />
                       <DataText variant="p" fontWeight="bold">
                         {currency}
                       </DataText>

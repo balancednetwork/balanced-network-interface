@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
@@ -10,17 +10,20 @@ import bnJs from 'bnJs';
 import { BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { PLUS_INFINITY, REWARDS_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
-import { useLoanInputAmount } from 'store/loan/hooks';
+import { useLoanInputAmount, useLoanBorrowedAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
 import { setReward } from './actions';
 
-// #redux-step-5: define function get value of variable from store
-export function useReward(): AppState['reward'] {
-  const reward = useSelector((state: AppState) => state.reward);
-  return useMemo(() => reward, [reward]);
+export function useRewards(): AppState['reward'] {
+  return useSelector((state: AppState) => state.reward);
+}
+
+export function useReward(poolId: number): BigNumber | undefined {
+  const rewards = useRewards();
+  return rewards[poolId];
 }
 
 export function useChangeReward(): (poolId: string, reward: BigNumber) => void {
@@ -34,7 +37,7 @@ export function useChangeReward(): (poolId: string, reward: BigNumber) => void {
   );
 }
 
-export function useFetchReward(account?: string | null) {
+export function useFetchRewardsInfo() {
   // fetch rewards rule
   const [rules, setRules] = React.useState({});
   const [emission, setEmission] = React.useState(new BigNumber(0));
@@ -54,19 +57,15 @@ export function useFetchReward(account?: string | null) {
   }, []);
 
   const changeReward = useChangeReward();
-  // calculate rewards per pool
+  // calculate rewards
   React.useEffect(() => {
+    // calculate rewards per pool
     BASE_SUPPORTED_PAIRS.forEach(pair => {
-      const poolId = pair.poolId;
-      let rewardShare: BigNumber;
-      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        rewardShare = rules['sICX/ICX'];
-      } else {
-        rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
-      }
-      changeReward(poolId.toString(), emission.times(rewardShare));
+      const rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
+      changeReward(pair.poolId.toString(), emission.times(rewardShare));
     });
 
+    //calculate loan rewards
     const rewardShare = rules['Loans'];
     changeReward('Loans', emission.times(rewardShare));
   }, [rules, emission, changeReward]);
@@ -83,6 +82,7 @@ export const useCurrentCollateralRatio = (): BigNumber => {
     return collateralInputAmount.times(ratio.ICXUSDratio).dividedBy(loanInputAmount).multipliedBy(100);
   }, [collateralInputAmount, loanInputAmount, ratio.ICXUSDratio]);
 };
+
 export const useHasRewardableLoan = () => {
   const loanInputAmount = useLoanInputAmount();
   const collateralRatio = useCurrentCollateralRatio();
@@ -126,6 +126,7 @@ export const useHasNetworkFees = () => {
   const { account } = useIconReact();
   const transactions = useAllTransactions();
   const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
+  const borrowedAmount = useLoanBorrowedAmount();
 
   React.useEffect(() => {
     const checkIfHasNetworkFees = async () => {
@@ -135,13 +136,14 @@ export const useHasNetworkFees = () => {
           bnJs.BALN.detailsBalanceOf(account),
         ]);
 
-        if (Number(hasLP) || Number(balnDetails['Staked balance'])) setHasNetworkFees(true);
+        if (Number(hasLP) || (Number(balnDetails['Staked balance']) && borrowedAmount.isGreaterThanOrEqualTo(50)))
+          setHasNetworkFees(true);
         else setHasNetworkFees(false);
       }
     };
 
     checkIfHasNetworkFees();
-  }, [account, transactions]);
+  }, [account, transactions, borrowedAmount]);
 
   return hasNetworkFees;
 };

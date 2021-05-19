@@ -22,10 +22,10 @@ export default class BALN extends Contract {
     return this.call(callParams);
   }
 
-  swapToBnUSD(value: BigNumber, minimumReceive: BigNumber) {
+  swap(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
     const data = {
       method: '_swap',
-      params: { toToken: addresses[this.nid].bnusd, minimumReceive: minimumReceive.toString() },
+      params: { toToken: addresses[this.nid][outputSymbol.toLowerCase()], minimumReceive: minimumReceive.toFixed() },
     };
 
     return this.transfer(

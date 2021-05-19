@@ -158,14 +158,23 @@ const WithdrawText = ({ poolId }: { poolId: number }) => {
 };
 
 const PoolRecord1 = ({ border }: { border: boolean }) => {
-  const pair = BASE_SUPPORTED_PAIRS[2];
+  const pair =
+    BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || BASE_SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
   const below800 = useMedia('(max-width: 800px)');
+  const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
   return (
     <ListItem border={border}>
       <DataText>{pair.pair}</DataText>
-      <DataText>{`${formatBigNumber(poolData?.suppliedBase, 'currency')} ${pair.baseCurrencyKey}`}</DataText>
+      <DataText>
+        <Typography fontSize={16}>
+          {`${formatBigNumber(balance1?.balance, 'currency')} ${pair.quoteCurrencyKey}`}
+        </Typography>
+        <Typography color="text1">
+          {`${formatBigNumber(balance1?.balance1, 'currency')} ${pair.baseCurrencyKey}`}
+        </Typography>
+      </DataText>
       {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
       {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
       <DataText>
@@ -196,8 +205,8 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
         addTransaction(
           { hash: res.result },
           {
-            pending: withdrawMessage(balance1?.balance?.dp(2).toFormat() || '', 'ICX', '', 'sICX').pendingMessage,
-            summary: withdrawMessage(balance1?.balance?.dp(2).toFormat() || '', 'ICX', '', 'sICX').successMessage,
+            pending: 'Withdrawing ICX',
+            summary: `${balance1?.balance?.dp(2).toFormat()} ICX added to your wallet.`,
           },
         );
         toggleOpen1();
@@ -264,14 +273,14 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between">
-          <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1} mr={2}>
-            <ICXIcon width="35" height="35" />
-            <Typography>{balance1?.balance.dp(2).toFormat()} ICX</Typography>
-          </OptionButton>
-
-          <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2}>
+          <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2} mr={2}>
             <SICXIcon width="35" height="35" />
             <Typography>{balance1?.balance1?.dp(2).toFormat()} sICX</Typography>
+          </OptionButton>
+
+          <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1}>
+            <ICXIcon width="35" height="35" />
+            <Typography>{balance1?.balance.dp(2).toFormat()} ICX</Typography>
           </OptionButton>
         </Flex>
       </Flex>
@@ -283,7 +292,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(balance1?.balance, 'currency')} {pair.baseCurrencyKey}
+            {formatBigNumber(balance1?.balance, 'currency')} {pair.quoteCurrencyKey}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -301,7 +310,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(balance1?.balance1, 'currency')} {pair.quoteCurrencyKey}
+            {formatBigNumber(balance1?.balance1, 'currency')} {pair.baseCurrencyKey}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -333,7 +342,7 @@ const OptionButton = styled(Box)`
   transition: border 0.3s ease;
 
   &[disabled] {
-    background: #27264a;
+    background: rgba(255, 255, 255, 0.15);
     cursor: default;
     pointer-events: none;
   }
@@ -507,8 +516,9 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           />
         </Box>
         <Typography mb={5} textAlign="right">
-          {`Wallet: ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} ${pair.baseCurrencyKey}
-          / ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} ${pair.quoteCurrencyKey}`}
+          {`Wallet: 
+            ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} ${pair.baseCurrencyKey} /
+            ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} ${pair.quoteCurrencyKey}`}
         </Typography>
         <Box mb={5}>
           <Nouislider

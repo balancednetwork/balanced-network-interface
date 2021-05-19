@@ -249,6 +249,11 @@ export const FixedGlobalStyle = createGlobalStyle`
   .actived {
     border-color: #2ca9b7 !important;
   }
+
+  [hidden] {
+    display: none !important;
+  }
+
 `;
 
 export const ThemedGlobalStyle = createGlobalStyle`
@@ -259,7 +264,6 @@ export const ThemedGlobalStyle = createGlobalStyle`
 
   body {
     min-height: 100vh;
-    background: ${({ theme }) => theme.colors.bg1}
   }
 
   /* ==========================================================================
@@ -610,7 +614,7 @@ export const ThemedGlobalStyle = createGlobalStyle`
     font-size: 14px;
     margin-top: -20px;
     margin-left: -23px;
-    width: 100px;
+    width: 60px;
   }
   #indicator-used .label {
     margin-left: -17px;

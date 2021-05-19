@@ -18,6 +18,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
+import { ZERO, MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -43,7 +44,7 @@ export default function ICXWallet() {
 
   const wallet = useWalletBalances();
 
-  const maxAmount = wallet['ICX'].minus(0.1).isNegative() ? new BigNumber(0) : wallet['ICX'].minus(0.1);
+  const maxAmount = BigNumber.max(wallet['ICX'].minus(MINIMUM_ICX_AMOUNT_IN_WALLET), ZERO);
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -182,6 +183,14 @@ export default function ICXWallet() {
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
             {differenceAmount.dp(2).toFormat() + ' ICX'}
+          </Typography>
+
+          <Typography textAlign="center" mb="2px" mt="20px">
+            Address
+          </Typography>
+
+          <Typography variant="p" textAlign="center" mr="30px" ml="30px" fontSize={16}>
+            {address}
           </Typography>
 
           <Flex my={5}>

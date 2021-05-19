@@ -1,7 +1,6 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import _ from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
@@ -9,11 +8,13 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { Pair, BASE_SUPPORTED_PAIRS } from 'constants/currency';
-import { ONE } from 'constants/index';
+import { ONE, ZERO } from 'constants/index';
+import { useRatio } from 'store/ratio/hooks';
+import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppDispatch, AppState } from '../index';
-import { setBalance, setPair, setPoolData, setReward, clearBalances as clearBalancesCreator } from './actions';
+import { setBalance, setPair, setPoolData, clearBalances as clearBalancesCreator } from './actions';
 import { Balance, Pool } from './reducer';
 
 export function usePoolPair(): Pair {
@@ -62,19 +63,9 @@ export function useBalanceActionHandlers(): {
   return { changeBalance, clearBalances };
 }
 
-export function useChangeReward(): (poolId: number, reward: BigNumber) => void {
-  const dispatch = useDispatch<AppDispatch>();
-
-  return React.useCallback(
-    (poolId, reward) => {
-      dispatch(setReward({ poolId, reward }));
-    },
-    [dispatch],
-  );
-}
-
 // fetch pools
 export function useFetchPools() {
+  const { account } = useIconReact();
   const transactions = useAllTransactions();
   const changePool = useChangePool();
   const { networkId } = useIconReact();
@@ -94,73 +85,41 @@ export function useFetchPools() {
       if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
         const [t, rate] = await Promise.all([bnJs.Dex.totalSupply(poolId), await bnJs.Staking.getTodayRate()]);
 
-        result = [t, t, t, rate];
+        result = [t, t, t, rate, 0, 0];
       } else {
         result = await Promise.all([
           bnJs.Dex.totalSupply(poolId),
           bnJs.Dex.getPoolTotal(poolId, baseAddress),
           bnJs.Dex.getPoolTotal(poolId, quoteAddress),
           bnJs.Dex.getPrice(poolId),
+          account && bnJs.Dex.getDeposit(baseAddress, account),
+          account && bnJs.Dex.getDeposit(quoteAddress, account),
         ]);
       }
 
-      const [total, base, quote, rate] = result.map(v => BalancedJs.utils.toIcx(v));
+      const [total, base, quote, rate, baseDeposited, quoteDeposited] = result.map(v => BalancedJs.utils.toIcx(v));
 
       changePool(poolId, {
         baseCurrencyKey: pair.baseCurrencyKey,
         quoteCurrencyKey: pair.quoteCurrencyKey,
         base: base,
         quote: quote,
+        baseDeposited: baseDeposited,
+        quoteDeposited: quoteDeposited,
         total: total,
         rate: rate,
         inverseRate: ONE.div(rate),
       });
     },
-    [changePool, networkId],
+    [changePool, networkId, account],
   );
 
   React.useEffect(() => {
     BASE_SUPPORTED_PAIRS.forEach(pair => fetchPool(pair));
   }, [fetchPool, transactions, networkId]);
 
-  // fetch rewards rule
-  const [rules, setRules] = React.useState({});
-  const [emission, setEmission] = React.useState(new BigNumber(0));
-
-  React.useEffect(() => {
-    const fetchRewardsRule = async () => {
-      let result = await Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission()]);
-
-      const [_rules, _emission] = result;
-
-      const a = {};
-      _.forOwn(_rules, function (value, key) {
-        a[key] = BalancedJs.utils.toIcx(value);
-      });
-
-      setRules(a);
-      setEmission(BalancedJs.utils.toIcx(_emission));
-    };
-    fetchRewardsRule();
-  }, []);
-
-  const changeReward = useChangeReward();
-  // calculate rewards per pool
-  React.useEffect(() => {
-    BASE_SUPPORTED_PAIRS.forEach(pair => {
-      const poolId = pair.poolId;
-      let rewardShare: BigNumber;
-      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        rewardShare = rules['sICX/ICX'];
-      } else {
-        rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
-      }
-      changeReward(poolId, emission.times(rewardShare));
-    });
-  }, [rules, emission, changeReward]);
-
   // fetch LP token balances
-  const { account } = useIconReact();
+
   const { changeBalance, clearBalances } = useBalanceActionHandlers();
 
   React.useEffect(() => {
@@ -261,15 +220,6 @@ export function useBalance(poolId: number) {
   }, [balance, pool, poolShare, poolId]);
 }
 
-export function useRewards() {
-  return useSelector((state: AppState) => state.pool.rewards);
-}
-
-export function useReward(poolId: number): BigNumber | undefined {
-  const rewards = useRewards();
-  return rewards[poolId];
-}
-
 export function usePoolData(poolId: number) {
   const pool = usePool(poolId);
   const balance = useBalance(poolId);
@@ -317,21 +267,73 @@ export function useRates() {
 export function useAPYs() {
   const [apys, setAPYs] = React.useState<{ [key: string]: BigNumber }>({});
 
+  // calculate sICX/ICX APY
+  const totalDailyReward = useReward(BalancedJs.utils.POOL_IDS.sICXICX);
+  const totalICXLiquidity = usePool(BalancedJs.utils.POOL_IDS.sICXICX);
+  const ratio = useRatio();
+  const rewards = React.useMemo(
+    () =>
+      totalDailyReward
+        ?.times(365)
+        .times(ratio.BALNbnUSDratio)
+        .div(totalICXLiquidity?.total || ZERO)
+        .div(ratio.ICXUSDratio),
+    [totalDailyReward, ratio.BALNbnUSDratio, totalICXLiquidity, ratio.ICXUSDratio],
+  );
+
+  React.useEffect(() => {
+    if (rewards && !rewards.isNaN() && !rewards.isZero() && rewards.isFinite()) {
+      setAPYs(state => ({ ...state, [BalancedJs.utils.POOL_IDS.sICXICX]: rewards }));
+    }
+  }, [rewards, setAPYs]);
+
+  // calculate BALN/sICX APY
+  const totalDailyReward1 = useReward(BalancedJs.utils.POOL_IDS.BALNsICX);
+  const totalLiquidity1 = usePool(BalancedJs.utils.POOL_IDS.BALNsICX);
+  const rewards1 = React.useMemo(
+    () =>
+      totalDailyReward1
+        ?.times(365)
+        .div(totalLiquidity1?.base || ZERO)
+        .div(2),
+    [totalDailyReward1, totalLiquidity1],
+  );
+
+  React.useEffect(() => {
+    if (rewards1 && !rewards1.isNaN() && !rewards1.isZero() && rewards1.isFinite()) {
+      setAPYs(state => ({ ...state, [BalancedJs.utils.POOL_IDS.BALNsICX]: rewards1 }));
+    }
+  }, [rewards1, setAPYs]);
+
+  //
   React.useEffect(() => {
     const fetchAPYs = async () => {
-      const [res0, res1, res2, res3] = await Promise.all([
-        bnJs.Rewards.getAPY('sICX/ICX'),
-        bnJs.Rewards.getAPY('sICX/bnUSD'),
-        bnJs.Rewards.getAPY('BALN/bnUSD'),
+      const t = {
+        'sICX/bnUSD': 2,
+        'BALN/bnUSD': 3,
+      };
+
+      Object.entries(t).forEach(async ([poolName, poolId]) => {
+        try {
+          const res = await bnJs.Rewards.getAPY(poolName);
+          setAPYs(state => ({ ...state, [poolId]: BalancedJs.utils.toIcx(res) }));
+        } catch (e) {
+          console.error(e);
+        }
+      });
+
+      const [res3, res4, res5] = await Promise.all([
         bnJs.Rewards.getAPY('Loans'),
+        bnJs.Dex.getQuotePriceInBase(BalancedJs.utils.POOL_IDS.sICXbnUSD),
+        bnJs.Band.getReferenceData({ _base: 'USD', _quote: 'ICX' }),
       ]);
 
-      setAPYs({
-        [BalancedJs.utils.POOL_IDS.sICXICX]: BalancedJs.utils.toIcx(res0),
-        [BalancedJs.utils.POOL_IDS.sICXbnUSD]: BalancedJs.utils.toIcx(res1),
-        [BalancedJs.utils.POOL_IDS.BALNbnUSD]: BalancedJs.utils.toIcx(res2),
-        Loans: BalancedJs.utils.toIcx(res3),
-      });
+      setAPYs(state => ({
+        ...state,
+        Loans: BalancedJs.utils
+          .toIcx(res3)
+          .multipliedBy(BalancedJs.utils.toIcx(res4).dividedBy(BalancedJs.utils.toIcx(res5['rate']))),
+      }));
     };
 
     fetchAPYs();

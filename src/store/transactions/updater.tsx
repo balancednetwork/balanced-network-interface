@@ -30,10 +30,9 @@ export default function Updater(): null {
   const transactions = useAllTransactions();
 
   React.useEffect(() => {
-    if (!networkId || !iconService) return;
+    if (!networkId || !iconService || !transactions) return;
 
     Object.keys(transactions)
-      // .filter(hash => shouldCheck(lastBlockNumber, transactions[hash]))
       .filter(hash => shouldCheck(transactions[hash]))
       .forEach(hash => {
         iconService

@@ -50,8 +50,8 @@ export function withdrawMessage(
 ) {
   const pendingMessage = `Withdrawing ${inputCurrency} / ${outputCurrency} liquidity...`;
   const successMessage =
-    outputCurrency.toLowerCase() === 'sicx'
-      ? `${inputAmount} ${inputCurrency} added to your wallet.`
+    outputCurrency.toLowerCase() === 'icx'
+      ? `${outputAmount} ${outputCurrency} added to your wallet.`
       : `${inputAmount} ${inputCurrency} and ${outputAmount} ${outputCurrency} added to your wallet.`;
   const failureMessage = `Couldn't withdraw ${inputCurrency} / ${outputCurrency} liquidity. Try again.`;
   return { pendingMessage, successMessage, failureMessage };

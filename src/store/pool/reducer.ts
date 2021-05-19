@@ -1,15 +1,17 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
+import { SUPPORTED_PAIRS, Pair } from 'constants/currency';
 
-import { setPair, setPoolData, setBalance, setReward, clearBalances } from './actions';
+import { setPair, setPoolData, setBalance, clearBalances } from './actions';
 
 export interface Pool {
   baseCurrencyKey: string;
   quoteCurrencyKey: string;
   base: BigNumber;
   quote: BigNumber;
+  baseDeposited: BigNumber;
+  quoteDeposited: BigNumber;
   total: BigNumber;
   rewards: BigNumber;
   rate: BigNumber;
@@ -33,17 +35,12 @@ export interface PoolState {
   balances: {
     [poolId: string]: Balance;
   };
-
-  rewards: {
-    [poolId: string]: BigNumber;
-  };
 }
 
 const initialState: PoolState = {
-  selectedPair: SUPPORTED_PAIRS[0],
+  selectedPair: SUPPORTED_PAIRS['sICX']['bnUSD'],
   pools: {},
   balances: {},
-  rewards: {},
 };
 
 export default createReducer(initialState, builder =>
@@ -66,13 +63,6 @@ export default createReducer(initialState, builder =>
       state.balances = {
         ...state.balances,
         [poolId]: balance,
-      };
-    })
-    .addCase(setReward, (state, { payload }) => {
-      const { poolId, reward } = payload;
-      state.rewards = {
-        ...state.rewards,
-        [poolId]: reward,
       };
     })
     .addCase(clearBalances, (state, { payload }) => {

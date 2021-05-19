@@ -7,6 +7,7 @@ export const changeBalances = createAction<{
   sICX?: BigNumber;
   bnUSD?: BigNumber;
   BALN?: BigNumber;
+  BALNstaked?: BigNumber;
   BALNreward?: BigNumber;
 }>('wallet/changeBalances'); // #redux-note: make sure action name is unique in global store
 

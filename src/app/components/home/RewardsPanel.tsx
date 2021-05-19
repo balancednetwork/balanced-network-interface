@@ -5,14 +5,14 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
-//import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -23,6 +23,7 @@ const RewardsPanel = () => {
   const wallet = useWalletBalances();
   const addTransaction = useTransactionAdder();
 
+  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleClaim = () => {
@@ -133,6 +134,11 @@ const RewardsPanel = () => {
           <Flex alignItems="center" justifyContent="center" mt={3}>
             <Button onClick={handleClaim}>Claim rewards</Button>
           </Flex>
+        )}
+        {shouldLedgerSign && (
+          <>
+            <Row mt={3} /> <ShouldLedgerConfirmMessage />
+          </>
         )}
       </BoxPanel>
 

@@ -21,6 +21,7 @@ export function useWalletFetchBalances(account?: string | null) {
   const dispatch = useDispatch();
   const details = useBALNDetails();
   const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
+  const unstakingBalance: BigNumber = React.useMemo(() => details['Unstaking balance'] || new BigNumber(0), [details]);
 
   const transactions = useAllTransactions();
 
@@ -40,8 +41,9 @@ export function useWalletFetchBalances(account?: string | null) {
               ICX,
               sICX,
               bnUSD,
-              BALN: BALN.minus(stakedBalance),
+              BALN: BALN.minus(stakedBalance).minus(unstakingBalance),
               BALNstaked: stakedBalance,
+              BALNunstaking: unstakingBalance,
               BALNreward,
             }),
           );
@@ -52,7 +54,7 @@ export function useWalletFetchBalances(account?: string | null) {
     };
 
     fetchBalances();
-  }, [transactions, account, stakedBalance, dispatch]);
+  }, [transactions, account, stakedBalance, unstakingBalance, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {

@@ -75,9 +75,9 @@ const ReturnICDSection = () => {
   };
 
   //
-  const below800 = useMedia('(max-width: 800px)');
+  const upSmall = useMedia('(max-width: 800px)');
 
-  if (below800) {
+  if (upSmall) {
     return null;
   }
 

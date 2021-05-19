@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { CURRENCY_LIST, CURRENCY } from 'constants/currency';
+import { CURRENCY } from 'constants/currency';
 import '@reach/tabs/styles.css';
 import { useRatio } from 'store/ratio/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -68,7 +68,7 @@ const WalletPanel = () => {
                   <StyledAccordionButton>
                     <ListItem border={index !== arr.length - 1}>
                       <AssetSymbol>
-                        <CurrencyLogo currency={CURRENCY_LIST[currency.toLowerCase()]} />
+                        <CurrencyLogo currencyKey={currency} />
                         <Typography fontSize={16} fontWeight="bold">
                           {currency}
                         </Typography>

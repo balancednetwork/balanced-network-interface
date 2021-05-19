@@ -1,5 +1,6 @@
 # Balanced Network Interface
 
+consume env change
 SCOTT TEST BUILD
 An open source interface for Balanced: a decentralized synthetic asset generator and trading platform on the ICON Network.
 

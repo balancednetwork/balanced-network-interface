@@ -19,7 +19,7 @@ const Navigation = styled.nav`
 
 const List = styled.ul`
   width: 100%;
-  border-radius: 20px;
+  border-radius: 25px;
   padding: 0;
   margin: 0;
   background-color: ${({ theme }) => theme.colors.bg2};

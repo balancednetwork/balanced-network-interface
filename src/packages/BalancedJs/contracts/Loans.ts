@@ -68,4 +68,12 @@ export default class Loans extends Contract {
 
     return this.call(callParams);
   }
+
+  getParameters() {
+    const callParams = this.paramsBuilder({
+      method: 'getParameters',
+    });
+
+    return this.call(callParams);
+  }
 }

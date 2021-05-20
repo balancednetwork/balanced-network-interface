@@ -283,9 +283,27 @@ export function useAPYs() {
 
   React.useEffect(() => {
     if (rewards && !rewards.isNaN() && !rewards.isZero() && rewards.isFinite()) {
-      setAPYs(state => ({ ...state, '1': rewards }));
+      setAPYs(state => ({ ...state, [BalancedJs.utils.POOL_IDS.sICXICX]: rewards }));
     }
   }, [rewards, setAPYs]);
+
+  // calculate BALN/sICX APY
+  const totalDailyReward1 = useReward(BalancedJs.utils.POOL_IDS.BALNsICX);
+  const totalLiquidity1 = usePool(BalancedJs.utils.POOL_IDS.BALNsICX);
+  const rewards1 = React.useMemo(
+    () =>
+      totalDailyReward1
+        ?.times(365)
+        .div(totalLiquidity1?.base || ZERO)
+        .div(2),
+    [totalDailyReward1, totalLiquidity1],
+  );
+
+  React.useEffect(() => {
+    if (rewards1 && !rewards1.isNaN() && !rewards1.isZero() && rewards1.isFinite()) {
+      setAPYs(state => ({ ...state, [BalancedJs.utils.POOL_IDS.BALNsICX]: rewards1 }));
+    }
+  }, [rewards1, setAPYs]);
 
   //
   React.useEffect(() => {

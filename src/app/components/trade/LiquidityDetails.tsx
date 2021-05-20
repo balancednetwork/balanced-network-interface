@@ -11,14 +11,13 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import CurrencyLogo from 'app/components/CurrencyLogo';
 import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
-import { ReactComponent as ICXIcon } from 'assets/logos/icx.svg';
-import { ReactComponent as SICXIcon } from 'assets/logos/sicx.svg';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST, BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
@@ -32,7 +31,7 @@ import { formatBigNumber } from 'utils';
 import { withdrawMessage } from './utils';
 
 export default function LiquidityDetails() {
-  const below800 = useMedia('(max-width: 800px)');
+  const upSmall = useMedia('(min-width: 800px)');
   const balances = useAvailableBalances();
 
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
@@ -51,8 +50,8 @@ export default function LiquidityDetails() {
         <DashGrid>
           <HeaderText>Pool</HeaderText>
           <HeaderText>Your supply</HeaderText>
-          {!below800 && <HeaderText>Pool share</HeaderText>}
-          {!below800 && <HeaderText>Daily rewards</HeaderText>}
+          {upSmall && <HeaderText>Pool share</HeaderText>}
+          {upSmall && <HeaderText>Daily rewards</HeaderText>}
           <HeaderText></HeaderText>
         </DashGrid>
 
@@ -70,8 +69,9 @@ const TableWrapper = styled.div``;
 
 const DashGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-template-areas: 'name supply share rewards action';
+  grid-template-columns: 4fr 5fr 3fr;
+  gap: 10px;
+  grid-template-areas: 'name supply action';
   align-items: center;
 
   & > * {
@@ -84,9 +84,9 @@ const DashGrid = styled.div`
     }
   }
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-template-columns: 4fr 5fr 3fr;
-    grid-template-areas: 'name supply action';
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas: 'name supply share rewards action';
   `}
 `;
 
@@ -109,7 +109,7 @@ const ListItem = styled(DashGrid)<{ border?: boolean }>`
 const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => {
   const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
-  const below800 = useMedia('(max-width: 800px)');
+  const upSmall = useMedia('(min-width: 800px)');
 
   return (
     <ListItem border={border}>
@@ -119,8 +119,8 @@ const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => 
         <br />
         {`${formatBigNumber(poolData?.suppliedQuote, 'currency')} ${pair.quoteCurrencyKey}`}
       </DataText>
-      {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
-      {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
+      {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
       <DataText>
         <WithdrawText poolId={pair.poolId} />
       </DataText>
@@ -158,9 +158,10 @@ const WithdrawText = ({ poolId }: { poolId: number }) => {
 };
 
 const PoolRecord1 = ({ border }: { border: boolean }) => {
-  const pair = BASE_SUPPORTED_PAIRS[2];
+  const pair =
+    BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || BASE_SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
-  const below800 = useMedia('(max-width: 800px)');
+  const upSmall = useMedia('(min-width: 800px)');
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
   return (
@@ -174,8 +175,8 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
           {`${formatBigNumber(balance1?.balance1, 'currency')} ${pair.baseCurrencyKey}`}
         </Typography>
       </DataText>
-      {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
-      {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
+      {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
       <DataText>
         <WithdrawText poolId={pair.poolId} />
       </DataText>
@@ -273,12 +274,12 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
         <Flex alignItems="center" justifyContent="space-between">
           <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2} mr={2}>
-            <SICXIcon width="35" height="35" />
+            <CurrencyLogo currencyKey="sICX" size={35} />
             <Typography>{balance1?.balance1?.dp(2).toFormat()} sICX</Typography>
           </OptionButton>
 
           <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1}>
-            <ICXIcon width="35" height="35" />
+            <CurrencyLogo currencyKey="ICX" size={35} />
             <Typography>{balance1?.balance.dp(2).toFormat()} ICX</Typography>
           </OptionButton>
         </Flex>

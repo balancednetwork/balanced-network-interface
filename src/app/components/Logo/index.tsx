@@ -7,11 +7,11 @@ import LogoSrc from 'assets/images/balanced-logo.png';
 import { MouseoverTooltip } from '../Tooltip';
 
 const LogoImg = styled.img`
-  width: 100px;
+  width: 75px;
   cursor: pointer;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 75px;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    width: 100px;
   `}
 `;
 

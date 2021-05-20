@@ -1,6 +1,9 @@
 import BigNumber from 'bignumber.js';
 import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
 import { NetworkId, NETWORK_ID } from 'packages/icon-react';
+
+import { currencyKeyToIconMap, CurrencyKey } from 'constants/currency';
+
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
   if (!isEoaAddress(address)) {
@@ -80,3 +83,5 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
     }
   }
 }
+
+export const getCurrencyKeyIcon = (currencyKey: CurrencyKey) => currencyKeyToIconMap[currencyKey];

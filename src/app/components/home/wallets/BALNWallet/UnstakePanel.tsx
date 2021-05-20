@@ -11,6 +11,8 @@ export default function UnstakePanel() {
   const details = useBALNDetails();
 
   const unstakingBalance: BigNumber = details['Unstaking balance'] || new BigNumber(0);
+  const unstakingTime: BigNumber | undefined = details['Unstaking time (in microseconds)'];
+  const unstakingDate = unstakingTime && new Date(unstakingTime.div(1000).integerValue().toNumber());
 
   return (
     <>
@@ -21,7 +23,11 @@ export default function UnstakePanel() {
           <Typography>There's no BALN unstaking.</Typography>
         ) : (
           <>
-            <Typography>Your BALN will unstake within 3 days.</Typography>
+            <Typography>
+              {`Your BALN will unstake at 
+                ${unstakingDate && unstakingDate.toLocaleTimeString()} 
+                ${unstakingDate && unstakingDate.toLocaleDateString()}.`}
+            </Typography>
 
             <Typography variant="p">{unstakingBalance.dp(2).toFormat()} BALN unstaking</Typography>
           </>

@@ -49,7 +49,6 @@ const ReturnICDSection = () => {
       const res = await bnJs.inject({ account }).Loans.getParameters();
 
       const redemption_fee = parseInt(res[`redemption fee`], 16);
-      console.log(redemption_fee);
       const icx_price = 1 / ratio.ICXUSDratio.toNumber();
       const points = 10000;
 
@@ -124,10 +123,6 @@ const ReturnICDSection = () => {
       changeShouldLedgerSign(true);
     }
 
-    if (parseFloat(retireAmount) < 1) {
-      console.log(`Can not retire with amount lower than minimum value`);
-      return;
-    }
     bnJs
       .inject({ account: account })
       .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(new BigNumber(retireAmount)))

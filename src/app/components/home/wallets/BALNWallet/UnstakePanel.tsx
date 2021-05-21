@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { format } from 'date-fns';
 
 import { Typography } from 'app/theme';
 import { useBALNDetails } from 'store/wallet/hooks';
@@ -24,9 +25,8 @@ export default function UnstakePanel() {
         ) : (
           <>
             <Typography>
-              {`Your BALN will unstake at 
-                ${unstakingDate && unstakingDate.toLocaleTimeString()} 
-                ${unstakingDate && unstakingDate.toLocaleDateString()}.`}
+              {`Your BALN will unstake on ${unstakingDate && format(unstakingDate, 'MMM d')} at
+                ${unstakingDate && format(unstakingDate, 'h:maaa')}.`}
             </Typography>
 
             <Typography variant="p">{unstakingBalance.dp(2).toFormat()} BALN unstaking</Typography>

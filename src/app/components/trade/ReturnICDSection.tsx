@@ -39,7 +39,6 @@ const ReturnICDSection = () => {
   const addTransaction = useTransactionAdder();
   const [retireAmount, setRetireAmount] = React.useState('');
   const [receiveAmount, setReceiveAmount] = React.useState('0');
-  const [retireFee, setRetireFee] = React.useState('0');
   const [open, setOpen] = React.useState(false);
   const toggleWalletModal = useWalletModalToggle();
   const shouldLedgerSign = useShouldLedgerSign();
@@ -54,19 +53,11 @@ const ReturnICDSection = () => {
       const icx_price = 1 / ratio.ICXUSDratio.toNumber();
       const points = 10000;
 
-      setRetireFee(
-        formatBigNumber(
-          new BigNumber(
-            (parseFloat(retireAmount) * icx_price * redemption_fee) / (ratio.sICXICXratio.toNumber() * points),
-          ),
-          'ratio',
-        ),
-      );
       return new BigNumber(
         (parseFloat(retireAmount) * icx_price * (points - redemption_fee)) / (ratio.sICXICXratio.toNumber() * points),
       );
     },
-    [account, ratio, setRetireFee],
+    [account, ratio],
   );
 
   const [retireRatio, setRetireRatio] = React.useState('0');
@@ -239,8 +230,6 @@ const ReturnICDSection = () => {
               </Typography>
             </Box>
           </Flex>
-
-          <Typography textAlign="center">Includes a fee of {retireFee} bnUSD.</Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={handleRetireDismiss}>Cancel</TextButton>

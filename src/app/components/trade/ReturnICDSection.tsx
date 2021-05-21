@@ -38,7 +38,7 @@ const ReturnICDSection = () => {
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
   const [retireAmount, setRetireAmount] = React.useState('');
-  const [receiveAmount, setReceiveAmount] = React.useState('0');
+  const [redemptionFee, setRedemptionFee] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const toggleWalletModal = useWalletModalToggle();
   const shouldLedgerSign = useShouldLedgerSign();
@@ -48,15 +48,15 @@ const ReturnICDSection = () => {
     async (retireAmount: string) => {
       const res = await bnJs.inject({ account }).Loans.getParameters();
 
-      const redemption_fee = parseInt(res[`redemption fee`], 16);
-      const icx_price = 1 / ratio.ICXUSDratio.toNumber();
+      setRedemptionFee(parseInt(res[`redemption fee`], 16));
+      const icxPrice = 1 / ratio.ICXUSDratio.toNumber();
       const points = 10000;
 
       return new BigNumber(
-        (parseFloat(retireAmount) * icx_price * (points - redemption_fee)) / (ratio.sICXICXratio.toNumber() * points),
+        (parseFloat(retireAmount) * icxPrice * (points - redemptionFee)) / (ratio.sICXICXratio.toNumber() * points),
       );
     },
-    [account, ratio],
+    [account, ratio, redemptionFee, setRedemptionFee],
   );
 
   const [retireRatio, setRetireRatio] = React.useState('0');
@@ -67,17 +67,14 @@ const ReturnICDSection = () => {
     result();
   }, [calculateReturnSicx]);
 
-  const handleTypeInput = React.useCallback(
-    async (val: string) => {
-      setRetireAmount(val);
-      setReceiveAmount(
-        isNaN(parseFloat(val))
-          ? formatBigNumber(new BigNumber(0), 'currency')
-          : formatBigNumber(await calculateReturnSicx(val), 'currency'),
-      );
-    },
-    [calculateReturnSicx],
-  );
+  const handleTypeInput = React.useCallback(async (val: string) => {
+    setRetireAmount(val);
+    // setReceiveAmount(
+    //   isNaN(parseFloat(val))
+    //     ? formatBigNumber(new BigNumber(0), 'currency')
+    //     : formatBigNumber(await calculateReturnSicx(val), 'currency'),
+    // );
+  }, []);
 
   // handle retire balance dropdown
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -94,6 +91,18 @@ const ReturnICDSection = () => {
 
   //
   const upSmall = useMedia('(max-width: 800px)');
+
+  const calculateReceiveAmount = React.useCallback(() => {
+    const icxPrice = 1 / ratio.ICXUSDratio.toNumber();
+    const points = 10000;
+
+    const retireRatio =
+      (parseFloat(retireAmount) * icxPrice * (points - redemptionFee)) / (ratio.sICXICXratio.toNumber() * points);
+
+    return parseFloat(retireAmount) * retireRatio;
+  }, [retireAmount, redemptionFee, ratio.sICXICXratio, ratio.ICXUSDratio]);
+
+  const receiveAmount = calculateReceiveAmount();
 
   if (upSmall) {
     return null;
@@ -128,11 +137,12 @@ const ReturnICDSection = () => {
       .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(new BigNumber(retireAmount)))
       .then((res: any) => {
         setOpen(false);
+
         addTransaction(
           { hash: res.result },
           {
-            pending: retireMessage(receiveAmount, 'sICX').pendingMessage,
-            summary: retireMessage(receiveAmount, 'sICX').successMessage,
+            pending: retireMessage(receiveAmount.toString(), 'sICX').pendingMessage,
+            summary: retireMessage(receiveAmount.toString(), 'sICX').successMessage,
           },
         );
       })
@@ -219,9 +229,7 @@ const ReturnICDSection = () => {
                 {receiveAmount} sICX
               </Typography>
               <Typography textAlign="center">
-                ~{' '}
-                {formatBigNumber(new BigNumber(parseFloat(receiveAmount) * ratio.sICXICXratio?.toNumber()), 'currency')}{' '}
-                ICX
+                ~ {formatBigNumber(new BigNumber(receiveAmount * ratio.sICXICXratio?.toNumber()), 'currency')} ICX
               </Typography>
             </Box>
           </Flex>

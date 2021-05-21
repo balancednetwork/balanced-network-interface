@@ -44,8 +44,8 @@ const ReturnICDSection = () => {
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const calculate_return_sicx = React.useCallback(
-    async (retireAmount: string, returnFee: boolean) => {
+  const calculateReturnSicx = React.useCallback(
+    async (retireAmount: string) => {
       const res = await bnJs.inject({ account }).Loans.getParameters();
 
       const redemption_fee = parseInt(res[`redemption fee`], 16);
@@ -62,10 +62,10 @@ const ReturnICDSection = () => {
   const [retireRatio, setRetireRatio] = React.useState('0');
   React.useEffect(() => {
     const result = async () => {
-      setRetireRatio(formatBigNumber(await await calculate_return_sicx('1', true), 'currency'));
+      setRetireRatio(formatBigNumber(await calculateReturnSicx('1'), 'currency'));
     };
     result();
-  }, [calculate_return_sicx]);
+  }, [calculateReturnSicx]);
 
   const handleTypeInput = React.useCallback(
     async (val: string) => {
@@ -73,10 +73,10 @@ const ReturnICDSection = () => {
       setReceiveAmount(
         isNaN(parseFloat(val))
           ? formatBigNumber(new BigNumber(0), 'currency')
-          : formatBigNumber(await calculate_return_sicx(val, false), 'currency'),
+          : formatBigNumber(await calculateReturnSicx(val), 'currency'),
       );
     },
-    [calculate_return_sicx],
+    [calculateReturnSicx],
   );
 
   // handle retire balance dropdown

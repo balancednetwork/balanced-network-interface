@@ -47,7 +47,7 @@ export default function LPDescription() {
                   {formatBigNumber(data?.suppliedQuote, 'currency')} {selectedPair.quoteCurrencyKey}
                 </>
               ) : (
-                `${formatBigNumber(data?.suppliedQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
+                `${formatBigNumber(data?.suppliedQuote, 'currency')} ${selectedPair.baseCurrencyKey}`
               )}
             </Typography>
           </Box>
@@ -73,7 +73,7 @@ export default function LPDescription() {
                   {formatBigNumber(data?.totalQuote, 'currency')} {selectedPair.quoteCurrencyKey}
                 </>
               ) : (
-                `${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
+                `${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.baseCurrencyKey}`
               )}
             </Typography>
           </Box>

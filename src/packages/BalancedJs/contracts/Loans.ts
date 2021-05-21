@@ -44,7 +44,7 @@ export default class Loans extends Contract {
       params: {
         _symbol: symbol,
         _value: IconConverter.toHex(value),
-        _repay: false,
+        _repay: '0x0',
       },
     });
 

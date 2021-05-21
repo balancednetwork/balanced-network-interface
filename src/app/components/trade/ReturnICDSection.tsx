@@ -124,8 +124,8 @@ const ReturnICDSection = () => {
         addTransaction(
           { hash: res.result },
           {
-            pending: retireMessage(receiveAmount.toString(), 'sICX').pendingMessage,
-            summary: retireMessage(receiveAmount.toString(), 'sICX').successMessage,
+            pending: retireMessage(receiveAmount.dp(2).toFormat(), 'sICX').pendingMessage,
+            summary: retireMessage(receiveAmount.dp(2).toFormat(), 'sICX').successMessage,
           },
         );
       })

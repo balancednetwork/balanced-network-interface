@@ -91,7 +91,7 @@ export const CurrencyField: React.FC<{
       </Flex>
 
       {!editable && (
-        <Typography variant="p" ml={6} mt={1} fontSize={18}>
+        <Typography variant="p" ml={6} mt={1} fontSize={[16, 16, 16, 18]}>
           {`${new BigNumber(value).dp(2).toFormat()} ${currency.symbol}`}
         </Typography>
       )}

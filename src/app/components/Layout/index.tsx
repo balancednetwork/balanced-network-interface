@@ -8,12 +8,12 @@ import AppBar from 'app/components/AppBar';
 import Header from 'app/components/Header';
 
 const StyledHeader = styled(Header)`
-  margin-top: 50px;
-  margin-bottom: 50px;
+  margin-top: 25px;
+  margin-bottom: 25px;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin-top: 25px;
-    margin-bottom: 25px;
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    margin-top: 50px;
+    margin-bottom: 50px;
   `}
 `;
 
@@ -25,12 +25,12 @@ const Container = styled(Box)`
   min-height: 100vh;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding-left: 16px;
+  padding-right: 16px;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding-left: 16px;
-    padding-right: 16px;
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    padding-left: 40px;
+    padding-right: 40px;
   `}
 `;
 
@@ -57,7 +57,7 @@ const MobileAppBarWrapper = styled(Box)`
 
 export const DefaultLayout: React.FC<{ title?: string }> = props => {
   const { children, title = 'Home' } = props;
-  const below1000 = useMedia('(max-width: 1000px)');
+  const upLarge = useMedia('(min-width: 1200px)');
 
   return (
     <>
@@ -65,7 +65,7 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
         <StyledHeader title={title} />
 
         <Flex flex={[1, 1, 1, 'initial']}>
-          {!below1000 && (
+          {upLarge && (
             <DesktopAppBarWrapper>
               <AppBar />
             </DesktopAppBarWrapper>
@@ -74,7 +74,7 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
           {children}
         </Flex>
 
-        {below1000 && (
+        {!upLarge && (
           <MobileAppBarWrapper>
             <AppBar />
           </MobileAppBarWrapper>

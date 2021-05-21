@@ -21,11 +21,12 @@ export function useChangeRatio(): ({
   sICXbnUSDratio,
   sICXICXratio,
   BALNbnUSDratio,
+  BALNsICXratio,
 }: Partial<RatioState>) => void {
   const dispatch = useDispatch();
   return useCallback(
-    ({ ICXUSDratio, sICXbnUSDratio, sICXICXratio, BALNbnUSDratio }) => {
-      dispatch(changeRatioValue({ ICXUSDratio, sICXbnUSDratio, sICXICXratio, BALNbnUSDratio }));
+    ({ ICXUSDratio, sICXbnUSDratio, sICXICXratio, BALNbnUSDratio, BALNsICXratio }) => {
+      dispatch(changeRatioValue({ ICXUSDratio, sICXbnUSDratio, sICXICXratio, BALNbnUSDratio, BALNsICXratio }));
     },
     [dispatch],
   );
@@ -60,5 +61,10 @@ export function useFetchPrice() {
   useInterval(async () => {
     const BALNbnUSDratio = BalancedJs.utils.toIcx(await bnJs.Dex.getPrice(BalancedJs.utils.POOL_IDS.BALNbnUSD));
     changeRatioValue({ BALNbnUSDratio });
+  }, PERIOD);
+
+  useInterval(async () => {
+    const BALNsICXratio = BalancedJs.utils.toIcx(await bnJs.Dex.getPrice(BalancedJs.utils.POOL_IDS.BALNsICX));
+    changeRatioValue({ BALNsICXratio });
   }, PERIOD);
 }

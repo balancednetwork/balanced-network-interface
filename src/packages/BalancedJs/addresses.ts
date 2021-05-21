@@ -8,7 +8,7 @@ export enum NetworkId {
 const MAINNET_ADDRESSES = {
   loans: 'cx66d4d90f5f113eba575bf793570135f9b10cece1',
   staking: 'cx43e2eec79eb76293c298f2b17aec06097be606e0',
-  dividends: 'cx13f08df7106ae462c8358066e6d47bb68d995b6d',
+  dividends: 'cx203d9cd2a669be67177e997b8948ce2c35caffae',
   reserve: 'cxf58b9a1898998a31be7f1d99276204a3333ac9b3',
   daofund: 'cx835b300dcfe01f0bdb794e134a0c5628384f4367',
   rewards: 'cx10d59e8103ab44635190bd4139dbfd682fa2d07e',

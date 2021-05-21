@@ -5,14 +5,14 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
-//import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -23,6 +23,7 @@ const RewardsPanel = () => {
   const wallet = useWalletBalances();
   const addTransaction = useTransactionAdder();
 
+  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleClaim = () => {
@@ -106,9 +107,9 @@ const RewardsPanel = () => {
           </Row>
 
           <Row>
-            <Typography variant="p">
+            <Typography variant="p" as="div">
               Network fees
-              <QuestionHelper text="To be eligible for network fees, stake BALN and borrow at least 50 bnUSD, or supply liquidity to the BALN/bnUSD pool." />
+              <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
             </Typography>
             <Typography variant="p">{!account ? '-' : hashNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
           </Row>
@@ -134,6 +135,11 @@ const RewardsPanel = () => {
             <Button onClick={handleClaim}>Claim rewards</Button>
           </Flex>
         )}
+        {shouldLedgerSign && (
+          <>
+            <Row mt={3} /> <ShouldLedgerConfirmMessage />
+          </>
+        )}
       </BoxPanel>
 
       {/* Stake new Balance Tokens Modal */}
@@ -143,12 +149,8 @@ const RewardsPanel = () => {
             Stake new Balance Tokens
           </Typography>
 
-          <Typography variant="p" textAlign="center" fontSize={19} mb={3}>
-            Stake your new BALN from your wallet to accrue rewards from network fees*.
-          </Typography>
-
-          <Typography textAlign="center">
-            *Must borrow at least 50 bnUSD and keep your risk below the reward threshold.
+          <Typography variant="p" textAlign="center" fontSize={19}>
+            Stake your new BALN from your wallet to accrue rewards from network fees.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

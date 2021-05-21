@@ -10,7 +10,7 @@ import bnJs from 'bnJs';
 import { BASE_SUPPORTED_PAIRS } from 'constants/currency';
 import { PLUS_INFINITY, REWARDS_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
-import { useLoanInputAmount, useLoanBorrowedAmount } from 'store/loan/hooks';
+import { useLoanInputAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
@@ -126,24 +126,23 @@ export const useHasNetworkFees = () => {
   const { account } = useIconReact();
   const transactions = useAllTransactions();
   const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
-  const borrowedAmount = useLoanBorrowedAmount();
 
   React.useEffect(() => {
     const checkIfHasNetworkFees = async () => {
       if (account) {
-        const [hasLP, balnDetails] = await Promise.all([
+        const [hasLP1, hasLP2, balnDetails] = await Promise.all([
           bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
+          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNsICX),
           bnJs.BALN.detailsBalanceOf(account),
         ]);
 
-        if (Number(hasLP) || (Number(balnDetails['Staked balance']) && borrowedAmount.isGreaterThanOrEqualTo(50)))
-          setHasNetworkFees(true);
+        if (Number(hasLP1) || Number(hasLP2) || Number(balnDetails['Staked balance'])) setHasNetworkFees(true);
         else setHasNetworkFees(false);
       }
     };
 
     checkIfHasNetworkFees();
-  }, [account, transactions, borrowedAmount]);
+  }, [account, transactions]);
 
   return hasNetworkFees;
 };

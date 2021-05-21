@@ -109,7 +109,7 @@ const RewardsPanel = () => {
           <Row>
             <Typography variant="p" as="div">
               Network fees
-              <QuestionHelper text="To be eligible for network fees, stake BALN and borrow at least 50 bnUSD, and/or supply BALN to a liquidity pool." />
+              <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
             </Typography>
             <Typography variant="p">{!account ? '-' : hashNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
           </Row>
@@ -149,12 +149,8 @@ const RewardsPanel = () => {
             Stake new Balance Tokens
           </Typography>
 
-          <Typography variant="p" textAlign="center" fontSize={19} mb={3}>
-            Stake your new BALN from your wallet to accrue rewards from network fees*.
-          </Typography>
-
-          <Typography textAlign="center">
-            *Must borrow at least 50 bnUSD and keep your risk below the reward threshold.
+          <Typography variant="p" textAlign="center" fontSize={19}>
+            Stake your new BALN from your wallet to accrue rewards from network fees.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

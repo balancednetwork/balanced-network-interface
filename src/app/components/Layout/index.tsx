@@ -48,6 +48,11 @@ const MobileAppBarWrapper = styled(Box)`
   position: sticky;
   margin-top: 48px;
   bottom: 24px;
+  ul {
+    box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.068), 0 6.7px 5.3px rgba(0, 0, 0, 0.096),
+      0 12.5px 10px rgba(0, 0, 0, 0.12), 0 22.3px 17.9px rgba(0, 0, 0, 0.144), 0 41.8px 33.4px rgba(0, 0, 0, 0.172),
+      0 100px 80px rgba(0, 0, 0, 0.24);
+  }
 `;
 
 export const DefaultLayout: React.FC<{ title?: string }> = props => {

@@ -20,12 +20,15 @@ const Navigation = styled.nav`
 
 const List = styled.ul`
   width: 100%;
-  box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.068), 0 6.7px 5.3px rgba(0, 0, 0, 0.096), 0 12.5px 10px rgba(0, 0, 0, 0.12),
-    0 22.3px 17.9px rgba(0, 0, 0, 0.144), 0 41.8px 33.4px rgba(0, 0, 0, 0.172), 0 100px 80px rgba(0, 0, 0, 0.24);
-  border-radius: 20px;
+  border-radius: 25px;
   padding: 0;
   margin: 0;
   background-color: ${({ theme }) => theme.colors.bg2};
+  box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.068), 0 6.7px 5.3px rgba(0, 0, 0, 0.096), 0 12.5px 10px rgba(0, 0, 0, 0.12),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.144), 0 41.8px 33.4px rgba(0, 0, 0, 0.172), 0 100px 80px rgba(0, 0, 0, 0.24);
+  ${({ theme }) => theme.mediaWidth.upLarge`
+    box-shadow: none;
+  `}
 `;
 
 const ListItem = styled.li`
@@ -58,9 +61,9 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   display: block;
   margin-left: 50%;
   transform: translate(-50%);
-  padding: 5px;
-  width: 100px;
-  border-radius: 20px;
+  padding: 10px 15px;
+  width: 114px;
+  border-radius: 25px;
   color: #8695a6;
   text-decoration: none;
   text-align: center;

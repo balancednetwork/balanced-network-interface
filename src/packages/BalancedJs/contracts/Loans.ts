@@ -44,6 +44,7 @@ export default class Loans extends Contract {
       params: {
         _symbol: symbol,
         _value: IconConverter.toHex(value),
+        _repay: '0x0',
       },
     });
 
@@ -64,6 +65,14 @@ export default class Loans extends Contract {
       params: {
         _owner: owner,
       },
+    });
+
+    return this.call(callParams);
+  }
+
+  getParameters() {
+    const callParams = this.paramsBuilder({
+      method: 'getParameters',
     });
 
     return this.call(callParams);

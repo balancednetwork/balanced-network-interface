@@ -1,6 +1,5 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -18,6 +17,7 @@ import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY_LIST } from 'constants/currency';
+import { ONE } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -32,34 +32,44 @@ const Grid = styled.div`
   grid-gap: 15px;
 `;
 
+const useRedemptionFee = () => {
+  const [redemptionFee, setRedemptionFee] = React.useState(500);
+
+  React.useEffect(() => {
+    const fetchFee = async () => {
+      const res = await bnJs.Loans.getParameters();
+      setRedemptionFee(parseInt(res[`redemption fee`], 16));
+    };
+    fetchFee();
+  }, []);
+
+  return redemptionFee;
+};
+
+const useRetireRatio = () => {
+  const ratio = useRatio();
+  const redemptionFee = useRedemptionFee();
+  const points = 10000;
+  return ONE.div(ratio.sICXICXratio.times(ratio.ICXUSDratio)).times((points - redemptionFee) / points);
+};
+
 const ReturnICDSection = () => {
   const wallet = useWalletBalances();
   const ratio = useRatio();
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
-  const [retireAmount, setRetireAmount] = React.useState('0');
-  const [receiveAmount, setReceiveAmount] = React.useState('0');
-  const [swapFee, setSwapFee] = React.useState('0');
+  const [retireAmount, setRetireAmount] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const toggleWalletModal = useWalletModalToggle();
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const handleTypeInput = React.useCallback(
-    (val: string) => {
-      setRetireAmount(val);
-      const fee = (parseFloat(val) * 0.5) / 100;
-      setSwapFee(fee.toFixed(2).toString());
-      val = (parseFloat(val) - fee).toString();
-      setReceiveAmount(
-        isNaN(parseFloat(val))
-          ? formatBigNumber(new BigNumber(0), 'currency')
-          : (parseFloat(val) * ratio.ICXUSDratio?.toNumber() * ratio.sICXICXratio?.toNumber()).toFixed(2).toString(),
-        //: (parseFloat(val) * ratio.sICXbnUSDratio?.toNumber()).toFixed(2).toString(),
-      );
-    },
-    [ratio],
-  );
+  const retireRatio = useRetireRatio();
+  const receiveAmount = retireRatio.times(retireAmount || 0);
+
+  const handleTypeInput = (val: string) => {
+    setRetireAmount(val);
+  };
 
   // handle retire balance dropdown
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -105,20 +115,17 @@ const ReturnICDSection = () => {
       changeShouldLedgerSign(true);
     }
 
-    if (parseFloat(retireAmount) < 1) {
-      console.log(`Can not retire with amount lower than minimum value`);
-      return;
-    }
     bnJs
       .inject({ account: account })
-      .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(new BigNumber(retireAmount)))
+      .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(retireAmount))
       .then((res: any) => {
         setOpen(false);
+
         addTransaction(
           { hash: res.result },
           {
-            pending: retireMessage(retireAmount, 'sICX').pendingMessage,
-            summary: retireMessage(retireAmount, 'sICX').successMessage,
+            pending: retireMessage(receiveAmount.dp(2).toFormat(), 'sICX').pendingMessage,
+            summary: retireMessage(receiveAmount.dp(2).toFormat(), 'sICX').successMessage,
           },
         );
       })
@@ -137,11 +144,18 @@ const ReturnICDSection = () => {
           <UnderlineTextWithArrow onClick={handleToggleDropdown} text="Retire Balanced assets" arrowRef={arrowRef} />
 
           <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
-            <Box padding={5} bg="bg4">
+            <Box padding={5} bg="bg4" maxWidth={350}>
               <Grid>
                 <Typography variant="h2">Retire bnUSD</Typography>
 
-                <Typography>Sell your bnUSD for $1 of sICX (staked ICX).</Typography>
+                {/* <Typography>Sell your bnUSD for $1 of sICX (staked ICX).</Typography> */}
+
+                <Flex flexDirection="column" alignItems="flex-end" mt={1}>
+                  <Typography>
+                    Wallet:{' '}
+                    <span style={{ color: '#2fccdc' }}>{formatBigNumber(wallet['bnUSD'], 'currency')} bnUSD</span>
+                  </Typography>
+                </Flex>
 
                 <CurrencyInputPanel
                   currency={CURRENCY_LIST['bnusd']}
@@ -153,7 +167,7 @@ const ReturnICDSection = () => {
                 />
 
                 <Flex flexDirection="column" alignItems="flex-end">
-                  <Typography>Wallet: {formatBigNumber(wallet['bnUSD'], 'currency')} bnUSD</Typography>
+                  <Typography>1 bnUSD = {formatBigNumber(retireRatio, 'currency')} sICX</Typography>
                 </Flex>
 
                 <Divider />
@@ -161,12 +175,13 @@ const ReturnICDSection = () => {
                 <Flex alignItems="flex-start" justifyContent="space-between">
                   <Typography variant="p">Total</Typography>
                   <Flex flexDirection="column" alignItems="flex-end">
-                    <Typography variant="p">{receiveAmount} sICX</Typography>
-                    <Typography variant="p" color="text1" fontSize={14}>
-                      ~ {(parseFloat(receiveAmount) * ratio.sICXICXratio?.toNumber()).toFixed(2)} ICX
-                    </Typography>
+                    <Typography variant="p">{formatBigNumber(receiveAmount, 'currency')} sICX</Typography>
                   </Flex>
                 </Flex>
+                <Typography mt={2}>
+                  The maximum retire amount will vary with <br />
+                  each transaction.
+                </Typography>
               </Grid>
 
               <Flex justifyContent="center" mt={5}>
@@ -194,17 +209,13 @@ const ReturnICDSection = () => {
             <Box width={1 / 2}>
               <Typography textAlign="center">Receive</Typography>
               <Typography variant="p" textAlign="center">
-                {receiveAmount} sICX
+                {formatBigNumber(receiveAmount, 'currency')} sICX
               </Typography>
               <Typography textAlign="center">
-                ~{' '}
-                {formatBigNumber(new BigNumber(parseFloat(receiveAmount) * ratio.sICXICXratio?.toNumber()), 'currency')}{' '}
-                ICX
+                ~ {formatBigNumber(receiveAmount.times(ratio.sICXICXratio), 'currency')} ICX
               </Typography>
             </Box>
           </Flex>
-
-          <Typography textAlign="center">Includes a fee of {swapFee} bnUSD.</Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={handleRetireDismiss}>Cancel</TextButton>

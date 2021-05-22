@@ -67,7 +67,10 @@ const LoanPanel = () => {
 
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
+    [dependentField]:
+      parsedAmount[dependentField].isZero() || parsedAmount[dependentField].isNegative()
+        ? '0'
+        : parsedAmount[dependentField].toFixed(2),
   };
 
   const buttonText = borrowedAmount.isZero() ? 'Borrow' : 'Adjust';

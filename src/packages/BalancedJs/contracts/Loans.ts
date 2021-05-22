@@ -38,13 +38,13 @@ export default class Loans extends Contract {
     return this.callICONPlugins(payload);
   }
 
-  returnAsset(symbol: string, value: BigNumber) {
+  returnAsset(symbol: string, value: BigNumber, repay: number) {
     const payload = this.transactionParamsBuilder({
       method: 'returnAsset',
       params: {
         _symbol: symbol,
         _value: IconConverter.toHex(value),
-        _repay: '0x0',
+        _repay: IconConverter.toHex(repay),
       },
     });
 

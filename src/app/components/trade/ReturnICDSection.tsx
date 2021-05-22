@@ -117,7 +117,7 @@ const ReturnICDSection = () => {
 
     bnJs
       .inject({ account: account })
-      .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(retireAmount))
+      .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(retireAmount), 0)
       .then((res: any) => {
         setOpen(false);
 

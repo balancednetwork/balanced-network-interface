@@ -125,7 +125,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .inject({ account })
-        .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(differenceAmount).abs())
+        .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(differenceAmount).abs(), 1)
         .then(res => {
           addTransaction(
             { hash: res.result },

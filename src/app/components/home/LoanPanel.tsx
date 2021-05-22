@@ -67,7 +67,10 @@ const LoanPanel = () => {
 
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
+    [dependentField]:
+      parsedAmount[dependentField].isZero() || parsedAmount[dependentField].isNegative()
+        ? '0'
+        : parsedAmount[dependentField].toFixed(2),
   };
 
   const buttonText = borrowedAmount.isZero() ? 'Borrow' : 'Adjust';
@@ -163,7 +166,7 @@ const LoanPanel = () => {
 
   const usedAmount = useLoanUsedAmount();
 
-  const _totalBorrowableAmount = totalBorrowableAmount.times(0.99);
+  const _totalBorrowableAmount = BigNumber.max(totalBorrowableAmount.times(0.99), borrowedAmount);
   const percent = _totalBorrowableAmount.isZero() ? 0 : usedAmount.div(_totalBorrowableAmount).times(100).toNumber();
 
   const shouldShowLock = !usedAmount.isZero();
@@ -248,8 +251,8 @@ const LoanPanel = () => {
               isActive
               label="Borrowed"
               tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-              value={!account ? '-' : formattedAmounts[Field.LEFT]}
-              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['bnusd']}
+              value={formattedAmounts[Field.LEFT]}
+              currency={CURRENCY_LIST['bnusd']}
               onUserInput={onFieldAInput}
             />
           </Box>
@@ -260,8 +263,8 @@ const LoanPanel = () => {
               isActive={false}
               label="Available"
               tooltipText="The amount of ICX available to deposit from your wallet."
-              value={!account ? '-' : formattedAmounts[Field.RIGHT]}
-              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['bnusd']}
+              value={formattedAmounts[Field.RIGHT]}
+              currency={CURRENCY_LIST['bnusd']}
               onUserInput={onFieldBInput}
             />
           </Box>

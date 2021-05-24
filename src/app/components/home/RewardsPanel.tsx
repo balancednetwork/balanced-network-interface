@@ -64,7 +64,7 @@ const RewardsPanel = () => {
 
   const hasRewardableLiquidity = useHasRewardableLiquidity();
 
-  const hashNetworkFees = useHasNetworkFees();
+  const hasNetworkFees = useHasNetworkFees();
 
   // stake new balance tokens modal
   const [open, setOpen] = React.useState(false);
@@ -72,7 +72,7 @@ const RewardsPanel = () => {
     setOpen(!open);
   };
 
-  if (!hasRewardableLoan && !hasRewardableLiquidity && reward.isZero()) {
+  if (!hasRewardableLoan && !hasRewardableLiquidity && reward.isZero() && !hasNetworkFees) {
     return (
       <div>
         <FlexPanel bg="bg2" flexDirection="column">
@@ -111,7 +111,7 @@ const RewardsPanel = () => {
               Network fees
               <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
             </Typography>
-            <Typography variant="p">{!account ? '-' : hashNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
+            <Typography variant="p">{!account ? '-' : hasNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
           </Row>
 
           {!reward.isZero() && (

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { format, add } from 'date-fns';
 import Nouislider from 'nouislider-react';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -103,6 +104,11 @@ export default React.memo(function StakePanel() {
       });
   };
 
+  const date = add(new Date(), { days: 3 });
+  const description = shouldStake
+    ? 'Unstaking takes 3 days.'
+    : `They'll unstake on ${date && format(date, 'MMM d')}, around ${date && format(date, 'h:maaa')}.`;
+
   return (
     <>
       <Typography variant="h3">Stake Balance Tokens</Typography>
@@ -168,9 +174,7 @@ export default React.memo(function StakePanel() {
             </Box>
           </Flex>
 
-          <Typography textAlign="center">
-            {shouldStake ? 'Unstaking takes 3 days.' : `You'll receive them within 3 days.`}
-          </Typography>
+          <Typography textAlign="center">{description}</Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>

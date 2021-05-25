@@ -186,7 +186,8 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
 
 const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   const { account } = useIconReact();
-  const pair = BASE_SUPPORTED_PAIRS[2];
+  const pair =
+    BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || BASE_SUPPORTED_PAIRS[0];
   const addTransaction = useTransactionAdder();
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 

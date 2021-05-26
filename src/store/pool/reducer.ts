@@ -38,7 +38,7 @@ export interface PoolState {
 }
 
 const initialState: PoolState = {
-  selectedPair: SUPPORTED_PAIRS['sICX']['bnUSD'],
+  selectedPair: SUPPORTED_PAIRS[0],
   pools: {},
   balances: {},
 };

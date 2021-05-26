@@ -56,14 +56,9 @@ const Input = styled.input`
 export interface SlippageSettingsProps {
   rawSlippage: number;
   setRawSlippage: (rawSlippage: number) => void;
-  deadline: number;
-  setDeadline: (deadline: number) => void;
 }
 
-export default function SlippageSettings({
-  rawSlippage,
-  setRawSlippage /*,deadline, setDeadline */,
-}: SlippageSettingsProps) {
+export default function SlippageSettings({ rawSlippage, setRawSlippage }: SlippageSettingsProps) {
   const [slippageInput, setSlippageInput] = React.useState('');
   // const [deadlineInput, setDeadlineInput] = React.useState('');
 

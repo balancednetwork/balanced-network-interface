@@ -7,7 +7,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { Pair, BASE_SUPPORTED_PAIRS } from 'constants/currency';
+import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
 import { useRatio } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
@@ -115,7 +115,7 @@ export function useFetchPools() {
   );
 
   React.useEffect(() => {
-    BASE_SUPPORTED_PAIRS.forEach(pair => fetchPool(pair));
+    SUPPORTED_PAIRS.forEach(pair => fetchPool(pair));
   }, [fetchPool, transactions, networkId]);
 
   // fetch LP token balances
@@ -124,7 +124,7 @@ export function useFetchPools() {
 
   React.useEffect(() => {
     if (account) {
-      BASE_SUPPORTED_PAIRS.forEach(pair => {
+      SUPPORTED_PAIRS.forEach(pair => {
         const poolId = pair.poolId;
         if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
           Promise.all([bnJs.Dex.getICXBalance(account), bnJs.Dex.getSicxEarnings(account)]).then(([res1, res2]) => {

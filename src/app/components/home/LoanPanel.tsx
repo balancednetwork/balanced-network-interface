@@ -14,7 +14,6 @@ import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST } from 'constants/currency';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useCollateralActionHandlers } from 'store/collateral/hooks';
@@ -252,7 +251,7 @@ const LoanPanel = () => {
               label="Borrowed"
               tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
               value={formattedAmounts[Field.LEFT]}
-              currency={CURRENCY_LIST['bnusd']}
+              currency={'bnUSD'}
               onUserInput={onFieldAInput}
             />
           </Box>
@@ -264,7 +263,7 @@ const LoanPanel = () => {
               label="Available"
               tooltipText="The amount of ICX available to deposit from your wallet."
               value={formattedAmounts[Field.RIGHT]}
-              currency={CURRENCY_LIST['bnusd']}
+              currency={'bnUSD'}
               onUserInput={onFieldBInput}
             />
           </Box>

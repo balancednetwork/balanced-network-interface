@@ -13,7 +13,6 @@ import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST } from 'constants/currency';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -110,7 +109,7 @@ export default function SendPanel() {
         <CurrencyInputPanel
           value={value}
           showMaxButton={false}
-          currency={CURRENCY_LIST['sicx']}
+          currency={'sICX'}
           onUserInput={handleCurrencyInput}
           id="sicx-currency-input-in-sicx-wallet"
         />

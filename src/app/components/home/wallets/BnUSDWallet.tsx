@@ -15,7 +15,6 @@ import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST } from 'constants/currency';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -112,7 +111,7 @@ export default function BnUSDWallet() {
         <CurrencyInputPanel
           value={value}
           showMaxButton={false}
-          currency={CURRENCY_LIST['bnusd']}
+          currency={'bnUSD'}
           onUserInput={handleCurrencyInput}
           id="bnusd-currency-input-in-bnusd-wallet"
         />

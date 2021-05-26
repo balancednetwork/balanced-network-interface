@@ -17,7 +17,6 @@ import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST } from 'constants/currency';
 import { ZERO, MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -142,7 +141,7 @@ export default function ICXWallet() {
               <CurrencyInputPanel
                 value={value}
                 showMaxButton={false}
-                currency={CURRENCY_LIST['icx']}
+                currency={'ICX'}
                 onUserInput={handleCurrencyInput}
                 id="icx-currency-input-in-icx-wallet"
               />

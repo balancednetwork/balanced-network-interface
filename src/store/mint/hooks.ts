@@ -75,21 +75,23 @@ const useSelectedPairBalances = (): { [field in Field]: BigNumber } => {
 const useSelectedPairRatio = () => {
   const ratio = useRatio();
   const selectedPair = usePoolPair();
-
+  // !todo
+  // need to refactor
   switch (selectedPair.pair) {
-    case SUPPORTED_PAIRS['sICX']['bnUSD'].pair: {
-      return ratio.sICXbnUSDratio;
-    }
-    case SUPPORTED_PAIRS['sICX']['ICX'].pair: {
+    case SUPPORTED_PAIRS[0].pair: {
       return ratio.sICXICXratio;
     }
-    case SUPPORTED_PAIRS['BALN']['bnUSD'].pair: {
+    case SUPPORTED_PAIRS[1].pair: {
+      return ratio.sICXbnUSDratio;
+    }
+    case SUPPORTED_PAIRS[2].pair: {
       return ratio.BALNbnUSDratio;
     }
-    case SUPPORTED_PAIRS['BALN']['sICX'].pair: {
+    case SUPPORTED_PAIRS[3].pair: {
       return ratio.BALNsICXratio;
     }
   }
+
   return new BigNumber(1);
 };
 

@@ -62,7 +62,7 @@ const IconReactContext = React.createContext<ICONReactContextInterface>({
 export function IconReactProvider({ children }) {
   const walletType = useWalletType();
   const [ledgerAddressPoint, setLedgerAddressPoint] = React.useState(-1);
-  const [account, setAccount] = React.useState<string | null>();
+  const [account, setAccount] = React.useState<string | null | undefined>('hxc7af909ba751b8ed6a50eb461efe21f7a413d358');
   const [hasExtension, setHasExtension] = React.useState<boolean>(false);
 
   const requestAddress = React.useCallback(

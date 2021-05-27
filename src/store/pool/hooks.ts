@@ -155,7 +155,7 @@ export function usePools() {
   return useSelector((state: AppState) => state.pool.pools);
 }
 
-export function usePool(poolId: number): Pool | undefined {
+export function usePool(poolId: number): Pool {
   const pools = usePools();
   return pools[poolId];
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
@@ -28,18 +28,56 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
 
   const ratio = useRatio();
 
-  const ratioByPoolId = {
-    1: ratio.sICXICXratio,
-    2: ratio.sICXbnUSDratio,
-    3: ratio.BALNbnUSDratio,
+  const ratioByPoolId = useMemo(
+    () => ({
+      1: ratio.sICXICXratio,
+      2: ratio.sICXbnUSDratio,
+      3: ratio.BALNbnUSDratio,
+    }),
+    [ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
+  );
+
+  const data = usePoolData(selectedPair.poolId) || {
+    totalBase: new BigNumber(0),
+    totalQuote: new BigNumber(0),
+    totalReward: new BigNumber(0),
+    suppliedBase: new BigNumber(0),
+    suppliedQuote: new BigNumber(0),
+    suppliedReward: new BigNumber(0),
+    poolShare: new BigNumber(0),
   };
 
-  const data = usePoolData(selectedPair.poolId);
+  const totalPool = useMemo(() => pool.total || new BigNumber(1), [pool.total]);
+  const newSuppliedAmount = useMemo(() => baseSuplying.times(ratioByPoolId[selectedPair.poolId]).plus(quoteSupplying), [
+    baseSuplying,
+    selectedPair.poolId,
+    quoteSupplying,
+    ratioByPoolId,
+  ]);
+  const poolShare = useMemo(() => newSuppliedAmount.div(totalPool) || new BigNumber(0), [newSuppliedAmount, totalPool]);
 
-  const totalPool = pool?.total || new BigNumber(1);
-  const newSuppliedAmount = baseSuplying.times(ratioByPoolId[selectedPair.poolId]).plus(quoteSupplying);
-  const poolShare = newSuppliedAmount.div(totalPool) || new BigNumber(0);
-  const dailyReward = data?.totalReward.times(poolShare);
+  const supplyBase = useMemo(
+    () =>
+      data.suppliedBase?.isZero() || baseSuplying.isGreaterThan(0)
+        ? data?.suppliedBase?.plus(baseSuplying)
+        : data?.suppliedBase,
+    [baseSuplying, data.suppliedBase],
+  );
+  const supplyQuote = useMemo(
+    () =>
+      data.suppliedQuote?.isZero() || quoteSupplying.isGreaterThan(0)
+        ? data?.suppliedQuote?.plus(quoteSupplying)
+        : data?.suppliedQuote,
+    [data.suppliedQuote, quoteSupplying],
+  );
+
+  const dailyReward = useMemo(
+    () =>
+      data?.totalReward.isZero() || baseSuplying.isGreaterThan(0) || quoteSupplying.isGreaterThan(0)
+        ? data?.totalReward.times(poolShare)
+        : data?.totalReward,
+    [data.totalReward, poolShare, baseSuplying, quoteSupplying],
+  );
 
   return (
     <Box bg="bg2" flex={1} padding={[5, 7]}>
@@ -66,15 +104,11 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
             <Typography textAlign="center" variant="p">
               {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                 <>
-                  {formatBigNumber(data?.suppliedBase?.plus(baseSuplying), 'currency')} {selectedPair.baseCurrencyKey}{' '}
-                  <br />
-                  {formatBigNumber(data?.suppliedQuote?.plus(quoteSupplying), 'currency')}{' '}
-                  {selectedPair.quoteCurrencyKey}
+                  {formatBigNumber(supplyBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
+                  {formatBigNumber(supplyQuote, 'currency')} {selectedPair.quoteCurrencyKey}
                 </>
               ) : (
-                `${formatBigNumber(data?.suppliedQuote?.plus(quoteSupplying), 'currency')} ${
-                  selectedPair.quoteCurrencyKey
-                }`
+                `${formatBigNumber(supplyQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
               )}
             </Typography>
           </Box>

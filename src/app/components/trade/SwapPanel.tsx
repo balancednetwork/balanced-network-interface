@@ -632,7 +632,7 @@ export default function SwapPanel() {
       try {
         axios
           .get(
-            `https://balanced.techiast.com:8069/api/v1/chart/lines?symbol=${
+            `https://balanced.techiast.com/api/v1/chart/lines?symbol=${
               inputSymbol === 'bnusd' || inputSymbol === 'icx' ? outputSymbol + inputSymbol : inputSymbol + outputSymbol
             }&interval=${interval}&limit=500&order=desc`,
           )

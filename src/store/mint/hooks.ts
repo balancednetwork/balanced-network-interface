@@ -8,9 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SUPPORTED_PAIRS, Pair } from 'constants/currency';
 import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { usePool, usePoolPair } from 'store/pool/hooks';
-import { Pool } from 'store/pool/reducer';
 import { useRatio } from 'store/ratio/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
+import { Pool } from 'types';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, typeInput } from './actions';

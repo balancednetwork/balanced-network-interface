@@ -2,21 +2,9 @@ import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
 import { SUPPORTED_PAIRS, Pair } from 'constants/currency';
+import { Pool } from 'types';
 
 import { setPair, setPoolData, setBalance, clearBalances } from './actions';
-
-export interface Pool {
-  baseCurrencyKey: string;
-  quoteCurrencyKey: string;
-  base: BigNumber;
-  quote: BigNumber;
-  baseDeposited: BigNumber;
-  quoteDeposited: BigNumber;
-  total: BigNumber;
-  rewards: BigNumber;
-  rate: BigNumber;
-  inverseRate: BigNumber;
-}
 
 export interface Balance {
   baseCurrencyKey: string;

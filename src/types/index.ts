@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 
-import { ONE } from 'constants/index';
+import { ONE, ZERO } from 'constants/index';
 
 import { RootState } from './RootState';
 
@@ -29,6 +29,10 @@ export class CurrencyAmount {
   public constructor(currency: CurrencyKey, amount: BigNumber) {
     this.currencyKey = currency;
     this.amount = amount;
+  }
+
+  get raw(): BigNumber {
+    return this.amount;
   }
 
   public add(other: CurrencyAmount): CurrencyAmount {
@@ -65,6 +69,10 @@ export class Price {
     this.value = value;
   }
 
+  get raw(): BigNumber {
+    return this.value;
+  }
+
   public invert(): Price {
     return new Price(this.quoteCurrencyKey, this.baseCurrencyKey, ONE.div(this.value));
   }
@@ -81,6 +89,19 @@ export class Price {
 export enum TradeType {
   EXACT_INPUT,
   EXACT_OUTPUT,
+}
+
+/**
+ * Returns the percent difference between the mid price and the execution price, i.e. price impact.
+ * @param midPrice mid price before the trade
+ * @param inputAmount the input amount of the trade
+ * @param outputAmount the output amount of the trade
+ */
+function computePriceImpact(midPrice: Price, inputAmount: CurrencyAmount, outputAmount: CurrencyAmount): BigNumber {
+  const exactQuote = midPrice.raw.times(inputAmount.raw);
+  // calculate slippage := (exactQuote - outputAmount) / exactQuote
+  const slippage = exactQuote.minus(outputAmount.raw).div(exactQuote);
+  return slippage;
 }
 
 export class Trade {
@@ -111,7 +132,7 @@ export class Trade {
   /**
    * The percent difference between the mid price before the trade and the trade execution price.
    */
-  // public readonly priceImpact: Percent;
+  public readonly priceImpact: BigNumber;
 
   /**
    * Constructs an exact in trade with the given amount in and route
@@ -131,7 +152,7 @@ export class Trade {
   //   return new Trade(route, amountOut, TradeType.EXACT_OUTPUT);
   // }
 
-  public constructor(inputAmount: CurrencyAmount, outputAmount: CurrencyAmount) {
+  public constructor(inputAmount: CurrencyAmount, outputAmount: CurrencyAmount, pool: Pool) {
     this.inputAmount = inputAmount;
     this.outputAmount = outputAmount;
     this.executionPrice = new Price(
@@ -139,6 +160,16 @@ export class Trade {
       outputAmount.currencyKey,
       outputAmount.amount.div(inputAmount.amount),
     );
+
+    if (this.isQueue) {
+      this.priceImpact = ZERO;
+    } else {
+      const base = inputAmount.currencyKey === pool.baseCurrencyKey ? pool.base : pool.quote;
+      const quote = outputAmount.currencyKey === pool.quoteCurrencyKey ? pool.quote : pool.base;
+      const midPrice = new Price(pool.baseCurrencyKey, pool.quoteCurrencyKey, quote.div(base));
+      const realizedLPFee = 0.003;
+      this.priceImpact = computePriceImpact(midPrice, this.inputAmount, this.outputAmount).minus(realizedLPFee);
+    }
   }
 
   /**
@@ -210,4 +241,17 @@ export class InsufficientInputAmountError extends Error {
     this.name = this.constructor.name;
     if (CAN_SET_PROTOTYPE) Object.setPrototypeOf(this, new.target.prototype);
   }
+}
+
+export interface Pool {
+  baseCurrencyKey: string;
+  quoteCurrencyKey: string;
+  base: BigNumber;
+  quote: BigNumber;
+  baseDeposited: BigNumber;
+  quoteDeposited: BigNumber;
+  total: BigNumber;
+  rewards: BigNumber;
+  rate: BigNumber;
+  inverseRate: BigNumber;
 }

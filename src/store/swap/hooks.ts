@@ -9,9 +9,8 @@ import { getTradePair } from 'constants/currency';
 import { ONE } from 'constants/index';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
 import { usePools } from 'store/pool/hooks';
-import { Pool } from 'store/pool/reducer';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { CurrencyAmount, Price, CurrencyKey, Trade } from 'types';
+import { Pool, CurrencyAmount, Price, CurrencyKey, Trade } from 'types';
 import { InsufficientInputAmountError, InsufficientReservesError } from 'types/index';
 
 import { AppDispatch, AppState } from '../index';
@@ -185,7 +184,7 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
     }
   }
 
-  return new Trade(currencyAmountIn, currencyAmountOut);
+  return new Trade(currencyAmountIn, currencyAmountOut, pool);
 }
 
 export function useTradeExactOut(currencyIn?: CurrencyKey, currencyAmountOut?: CurrencyAmount) {
@@ -212,7 +211,7 @@ export function useTradeExactOut(currencyIn?: CurrencyKey, currencyAmountOut?: C
     }
   }
 
-  return new Trade(currencyAmountIn, currencyAmountOut);
+  return new Trade(currencyAmountIn, currencyAmountOut, pool);
 }
 
 export function usePrice(currencyIn?: CurrencyKey, currencyOut?: CurrencyKey): Price | undefined {

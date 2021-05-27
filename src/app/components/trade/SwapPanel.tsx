@@ -180,11 +180,6 @@ export default function SwapPanel() {
     } else {
       const minReceived = trade.minimumAmountOut(slippageTolerance);
       const tokenContract = bnJs.inject({ account })[trade.inputAmount.currencyKey];
-      console.log(
-        trade.inputAmount.amount.toFixed(),
-        trade.outputAmount.currencyKey,
-        BalancedJs.utils.toLoop(minReceived.amount).toFixed(),
-      );
 
       tokenContract
         .swap(
@@ -310,7 +305,7 @@ export default function SwapPanel() {
                     <Flex alignItems="center" justifyContent="space-between" mb={2}>
                       <Typography>Fee</Typography>
                       {trade && (
-                        <Typography>
+                        <Typography textAlign="right">
                           {trade.fee.amount.dp(4).toFormat()} {trade.fee.currencyKey}
                         </Typography>
                       )}
@@ -422,7 +417,7 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
   return (
     <StyledPriceContainer onClick={flipPrice} title={text}>
       <div style={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
-        <Typography>{text}</Typography>
+        <Typography textAlign="right">{text}</Typography>
       </div>
     </StyledPriceContainer>
   );

@@ -149,10 +149,10 @@ function getInputAmount1(outputAmount: CurrencyAmount, pool: Pool): CurrencyAmou
   let inputAmount: CurrencyAmount;
   if (outputAmount.currencyKey === pool.quoteCurrencyKey) {
     //unstaking sICX -> ICX fee: 1%
-    inputAmount = new CurrencyAmount(pool.quoteCurrencyKey, outputAmount.amount.div(pool.rate).times(100).div(99));
+    inputAmount = new CurrencyAmount(pool.baseCurrencyKey, outputAmount.amount.div(pool.rate).times(100).div(99));
   } else {
     //staking ICX -> sICX fee: 0%
-    inputAmount = new CurrencyAmount(pool.baseCurrencyKey, outputAmount.amount.times(pool.rate));
+    inputAmount = new CurrencyAmount(pool.quoteCurrencyKey, outputAmount.amount.times(pool.rate));
   }
   return inputAmount;
 }

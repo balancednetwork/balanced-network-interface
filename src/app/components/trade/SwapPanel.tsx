@@ -8,6 +8,7 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import DropdownText from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
@@ -22,6 +23,7 @@ import {
   useWalletModalToggle,
   useSetSlippageTolerance,
   useChangeShouldLedgerSign,
+  useShouldLedgerSign,
 } from 'store/application/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
@@ -95,6 +97,7 @@ export default function SwapPanel() {
   // old code
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
+  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleSwapConfirmDismiss = () => {
@@ -357,7 +360,7 @@ export default function SwapPanel() {
             <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
             <Button onClick={handleSwapConfirm}>Swap</Button>
           </Flex>
-          {/* {shouldLedgerSign && <ShouldLedgerConfirmMessage />} */}
+          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
         </Flex>
       </Modal>
     </>

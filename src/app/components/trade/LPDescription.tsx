@@ -48,13 +48,6 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
   };
 
   const totalPool = useMemo(() => pool.total || new BigNumber(1), [pool.total]);
-  const newSuppliedAmount = useMemo(() => baseSuplying.times(ratioByPoolId[selectedPair.poolId]).plus(quoteSupplying), [
-    baseSuplying,
-    selectedPair.poolId,
-    quoteSupplying,
-    ratioByPoolId,
-  ]);
-  const poolShare = useMemo(() => newSuppliedAmount.div(totalPool) || new BigNumber(0), [newSuppliedAmount, totalPool]);
 
   const supplyBase = useMemo(
     () =>
@@ -71,12 +64,21 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
     [data.suppliedQuote, quoteSupplying],
   );
 
+  const newSuppliedAmount = useMemo(
+    () => supplyBase?.times(ratioByPoolId[selectedPair.poolId]).plus(supplyQuote || new BigNumber(0)),
+    [supplyBase, selectedPair.poolId, supplyQuote, ratioByPoolId],
+  );
+  const poolShare = useMemo(() => newSuppliedAmount?.div(totalPool) || new BigNumber(1), [
+    newSuppliedAmount,
+    totalPool,
+  ]);
+
   const dailyReward = useMemo(
     () =>
-      data?.totalReward.isZero() || baseSuplying.isGreaterThan(0) || quoteSupplying.isGreaterThan(0)
-        ? data?.totalReward.times(poolShare)
-        : data?.totalReward,
-    [data.totalReward, poolShare, baseSuplying, quoteSupplying],
+      baseSuplying.isGreaterThan(0) || quoteSupplying.isGreaterThan(0)
+        ? data?.suppliedReward.plus(data?.suppliedReward.times(poolShare))
+        : data?.suppliedReward,
+    [data.suppliedReward, poolShare, baseSuplying, quoteSupplying],
   );
 
   return (

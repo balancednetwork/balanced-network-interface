@@ -23,7 +23,7 @@ function Updaters() {
     </>
   );
 }
-
+//  test purpose in production environment
 export function App() {
   const { i18n } = useTranslation();
 

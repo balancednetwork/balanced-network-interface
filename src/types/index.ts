@@ -158,7 +158,6 @@ export class Trade {
   }
 
   get fee(): CurrencyAmount {
-    console.log('fee', this.inputAmount.currencyKey, this.outputAmount.currencyKey);
     let feeAmount: BigNumber;
     if (this.inputAmount.currencyKey === 'sICX' && this.outputAmount.currencyKey === 'ICX') {
       feeAmount = this.inputAmount.amount.times(0.01);

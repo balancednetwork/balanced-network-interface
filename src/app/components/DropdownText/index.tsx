@@ -13,6 +13,7 @@ export const StyledArrowDownIcon = styled(ArrowDownIcon)`
 `;
 
 export const Wrapper = styled.span`
+  white-space: nowrap;
   &:hover {
     cursor: pointer;
   }

@@ -3,15 +3,17 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
+import ClickAwayListener from 'react-click-away-listener';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
-import DropdownText from 'app/components/DropdownText';
+import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
+import { DropdownPopper } from 'app/components/Popover';
 import QuestionHelper from 'app/components/QuestionHelper';
 import SlippageSetting from 'app/components/SlippageSetting';
 import { Typography } from 'app/theme';
@@ -81,11 +83,6 @@ export default function SwapPanel() {
   const handleMaxInput = React.useCallback(() => {
     maxInputAmount && onUserInput(Field.INPUT, maxInputAmount.toFixed());
   }, [maxInputAmount, onUserInput]);
-
-  const maxOutputAmount = maxAmountSpend(currencyBalances[Field.OUTPUT]);
-  const handleMaxOutput = React.useCallback(() => {
-    maxOutputAmount && onUserInput(Field.OUTPUT, maxOutputAmount.toFixed());
-  }, [maxOutputAmount, onUserInput]);
 
   const pairableCurrencyList = React.useMemo(() => getPairableCurrencies(currencyKeys[Field.INPUT]), [currencyKeys]);
 
@@ -183,11 +180,6 @@ export default function SwapPanel() {
     } else {
       const minReceived = trade.minimumAmountOut(slippageTolerance);
       const tokenContract = bnJs.inject({ account })[trade.inputAmount.currencyKey];
-      console.log(
-        trade.inputAmount.amount.toFixed(),
-        trade.outputAmount.currencyKey,
-        BalancedJs.utils.toLoop(minReceived.amount).toFixed(),
-      );
 
       tokenContract
         .swap(
@@ -216,6 +208,18 @@ export default function SwapPanel() {
     }
   };
 
+  //
+  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+
+  const arrowRef = React.useRef(null);
+
+  const handleToggleDropdown = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchor(anchor ? null : arrowRef.current);
+  };
+
+  const closeDropdown = () => {
+    setAnchor(null);
+  };
   return (
     <>
       <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -252,9 +256,7 @@ export default function SwapPanel() {
             <Typography variant="h2">For</Typography>
             <Typography as="div" hidden={!account}>
               {'Wallet: '}
-              <MaxButton onClick={handleMaxOutput}>
-                {`${formatBigNumber(currencyBalances[Field.OUTPUT]?.amount, 'currency')} ${currencyKeys[Field.OUTPUT]}`}
-              </MaxButton>
+              {`${formatBigNumber(currencyBalances[Field.OUTPUT]?.amount, 'currency')} ${currencyKeys[Field.OUTPUT]}`}
             </Typography>
           </Flex>
 
@@ -274,40 +276,55 @@ export default function SwapPanel() {
         <AutoColumn gap="5px" mt={5}>
           <Flex alignItems="center" justifyContent="space-between">
             <Typography>Minimum to receive</Typography>
-            {minimumToReceive && (
-              <Typography>
-                {minimumToReceive.amount.dp(4).toFormat()} {minimumToReceive.currencyKey}
-              </Typography>
-            )}
+
+            <ClickAwayListener onClickAway={closeDropdown}>
+              <div hidden={!minimumToReceive}>
+                <UnderlineTextWithArrow
+                  onClick={handleToggleDropdown}
+                  text={
+                    minimumToReceive
+                      ? `${minimumToReceive?.amount.dp(4).toFormat()} ${minimumToReceive?.currencyKey}`
+                      : ''
+                  }
+                  arrowRef={arrowRef}
+                />
+
+                <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
+                  <Box padding={5} bg="bg4" width={328}>
+                    <Flex alignItems="center" justifyContent="space-between" mb={2}>
+                      <Typography>Exchange rate</Typography>
+                      {trade && (
+                        <TradePrice
+                          price={trade?.executionPrice}
+                          showInverted={showInverted}
+                          setShowInverted={setShowInverted}
+                        />
+                      )}
+                    </Flex>
+
+                    <Flex alignItems="center" justifyContent="space-between" mb={2}>
+                      <Typography>Fee</Typography>
+                      {trade && (
+                        <Typography textAlign="right">
+                          {trade.fee.amount.dp(4).toFormat()} {trade.fee.currencyKey}
+                        </Typography>
+                      )}
+                    </Flex>
+
+                    <Flex alignItems="center" justifyContent="space-between">
+                      <Typography as="span">
+                        Slippage tolerance
+                        <QuestionHelper text="If the price slips by more than this amount, your swap will fail." />
+                      </Typography>
+                      <SlippageSetting rawSlippage={slippageTolerance} setRawSlippage={setSlippageTolerance} />
+                    </Flex>
+                  </Box>
+                </DropdownPopper>
+              </div>
+            </ClickAwayListener>
           </Flex>
 
-          <Flex alignItems="center" justifyContent="space-between">
-            <Typography>Execution price</Typography>
-            {trade && (
-              <TradePrice price={trade?.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
-            )}
-          </Flex>
-
-          <Flex alignItems="center" justifyContent="space-between">
-            <Typography>Liquidity provider fee</Typography>
-            {trade && (
-              <Typography>
-                {trade.fee.amount.dp(4).toFormat()} {trade.fee.currencyKey}
-              </Typography>
-            )}
-          </Flex>
-
-          <Flex alignItems="center" justifyContent="space-between">
-            <Typography as="span">
-              Slippage tolerance
-              <QuestionHelper text="If the price slips by more than this amount, your swap will fail." />
-            </Typography>
-            <DropdownText text={`${formatBigNumber(new BigNumber(slippageTolerance / 100), 'currency')}%`}>
-              <SlippageSetting rawSlippage={slippageTolerance} setRawSlippage={setSlippageTolerance} />
-            </DropdownText>
-          </Flex>
-
-          <Flex justifyContent="center" mt={5}>
+          <Flex justifyContent="center" mt={4}>
             {isValid ? (
               <Button color="primary" onClick={handleSwap}>
                 Swap
@@ -400,7 +417,7 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
   return (
     <StyledPriceContainer onClick={flipPrice} title={text}>
       <div style={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
-        <Typography>{text}</Typography>
+        <Typography textAlign="right">{text}</Typography>
       </div>
     </StyledPriceContainer>
   );

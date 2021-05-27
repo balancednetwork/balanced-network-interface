@@ -12,10 +12,11 @@ import { ONE, ZERO } from 'constants/index';
 import { useRatio } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { Pool } from 'types';
 
 import { AppDispatch, AppState } from '../index';
 import { setBalance, setPair, setPoolData, clearBalances as clearBalancesCreator } from './actions';
-import { Balance, Pool } from './reducer';
+import { Balance } from './reducer';
 
 export function usePoolPair(): Pair {
   return useSelector((state: AppState) => state.pool.selectedPair);

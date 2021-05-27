@@ -4,7 +4,7 @@ import { ReactComponent as BALNIcon } from 'assets/tokens/BALN.svg';
 import { ReactComponent as bnUSDIcon } from 'assets/tokens/bnUSD.svg';
 import { ReactComponent as ICXIcon } from 'assets/tokens/ICX.svg';
 import { ReactComponent as sICXIcon } from 'assets/tokens/sICX.svg';
-import { CurrencyKey } from 'types';
+import { CurrencyKey, Pool } from 'types';
 
 export const CURRENCY: CurrencyKey[] = ['ICX', 'sICX', 'bnUSD', 'BALN'];
 
@@ -78,4 +78,13 @@ export const getTradePair = (baseKey: CurrencyKey, quoteKey: CurrencyKey): [Pair
     return [pair2, true];
   }
   return [undefined, undefined];
+};
+
+export const isQueue = (t: Pool | Pair) => {
+  if (
+    (t.baseCurrencyKey === 'sICX' && t.quoteCurrencyKey === 'ICX') ||
+    (t.baseCurrencyKey === 'ICX' && t.quoteCurrencyKey === 'sICX')
+  )
+    return true;
+  return false;
 };

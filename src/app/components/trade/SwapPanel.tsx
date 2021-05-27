@@ -31,7 +31,7 @@ import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { CurrencyKey, Price } from 'types';
-import { formatBigNumber, maxAmountSpend } from 'utils';
+import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
 
 import { BrightPanel, swapMessage } from './utils';
 
@@ -113,7 +113,7 @@ export default function SwapPanel() {
   };
 
   const minimumToReceive = trade?.minimumAmountOut(slippageTolerance);
-
+  const priceImpact = formatPercent(trade?.priceImpact);
   const addTransaction = useTransactionAdder();
 
   const handleSwapConfirm = async () => {
@@ -274,6 +274,12 @@ export default function SwapPanel() {
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
+          <Flex alignItems="center" justifyContent="space-between">
+            <Typography>Price impact</Typography>
+
+            <Typography>{priceImpact}</Typography>
+          </Flex>
+
           <Flex alignItems="center" justifyContent="space-between">
             <Typography>Minimum to receive</Typography>
 

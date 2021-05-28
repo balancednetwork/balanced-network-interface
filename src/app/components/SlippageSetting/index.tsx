@@ -100,7 +100,7 @@ export default function SlippageSettings({ rawSlippage, setRawSlippage }: Slippa
         %
       </SlippageInput>
       {!slippageInputIsValid ? (
-        <Flex mb={2} ml={2} mr={2}>
+        <Flex>
           <SlippageEmojiContainer>
             <Box width={1}>
               <Typography as="span" textAlign="right" color={'#fb6a6a'}>

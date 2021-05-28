@@ -104,7 +104,7 @@ export function maxAmountSpend(currencyAmount?: CurrencyAmount): CurrencyAmount 
 }
 
 export function formatPercent(percent: BigNumber | undefined) {
-  if (!percent) return;
+  if (!percent) return '0%';
   if (percent.isZero()) return '0%';
   else return percent.times(100).isLessThan(0.01) ? '<0.01%' : `${percent.times(100).dp(2).toFixed()}%`;
 }

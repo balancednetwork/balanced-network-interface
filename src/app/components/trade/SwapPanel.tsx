@@ -284,13 +284,13 @@ export default function SwapPanel() {
             <Typography>Minimum to receive</Typography>
 
             <ClickAwayListener onClickAway={closeDropdown}>
-              <div hidden={!minimumToReceive}>
+              <div>
                 <UnderlineTextWithArrow
                   onClick={handleToggleDropdown}
                   text={
                     minimumToReceive
                       ? `${minimumToReceive?.amount.dp(4).toFormat()} ${minimumToReceive?.currencyKey}`
-                      : ''
+                      : `0 ${currencyKeys[Field.OUTPUT]}`
                   }
                   arrowRef={arrowRef}
                 />
@@ -337,7 +337,7 @@ export default function SwapPanel() {
               </Button>
             ) : (
               <Button disabled={!!account} color="primary" onClick={handleSwap}>
-                {account ? inputError : 'Sign In'}
+                {account ? inputError : 'Swap'}
               </Button>
             )}
           </Flex>

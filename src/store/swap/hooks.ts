@@ -6,7 +6,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getTradePair } from 'constants/currency';
-import { ONE } from 'constants/index';
+import { ONE, ZERO } from 'constants/index';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
 import { usePools } from 'store/pool/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -292,7 +292,7 @@ export function useDerivedSwapInfo(): {
   }
 
   if (!parsedAmount) {
-    inputError = inputError ?? 'Enter an amount';
+    inputError = inputError ?? 'Enter amount';
   }
 
   if (!currencyKeys[Field.INPUT] || !currencyKeys[Field.OUTPUT]) {
@@ -310,8 +310,15 @@ export function useDerivedSwapInfo(): {
   const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], minimumToReceive];
 
   if (balanceIn && amountIn && balanceIn.amount.isLessThan(amountIn)) {
-    inputError = 'Insufficient ' + currencyKeys[Field.INPUT] + ' balance';
+    inputError = 'Insufficient ' + currencyKeys[Field.INPUT];
   }
+
+  //
+  const userHasSpecifiedInputOutput = Boolean(
+    currencyKeys[Field.INPUT] && currencyKeys[Field.OUTPUT] && parsedAmount?.raw.isGreaterThan(ZERO),
+  );
+
+  if (userHasSpecifiedInputOutput && !trade) inputError = 'Insufficient liquidity';
 
   return {
     trade,

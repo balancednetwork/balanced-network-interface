@@ -12,15 +12,15 @@ import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useClaimableRewards } from 'store/wallet/hooks';
 
 const RewardsPanel = () => {
   const { account } = useIconReact();
-  const wallet = useWalletBalances();
   const addTransaction = useTransactionAdder();
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -40,7 +40,7 @@ const RewardsPanel = () => {
         addTransaction(
           { hash: res.result }, //
           {
-            summary: `Claimed ${reward.dp(2).toFormat()} BALN.`,
+            summary: `Claimed ${reward?.dp(2).toFormat()} BALN.`,
             pending: 'Claiming rewards...',
           },
         );
@@ -54,7 +54,7 @@ const RewardsPanel = () => {
       });
   };
 
-  const reward = wallet.BALNreward;
+  const reward = useClaimableRewards() || ZERO;
 
   const ratio = useRatio();
 

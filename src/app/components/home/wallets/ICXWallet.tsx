@@ -6,7 +6,6 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 
 import Divider from 'app/components/Divider';
-import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 
@@ -40,7 +39,7 @@ export default function ICXWallet() {
   }, [account, tabIndex]);
 
   return (
-    <BoxPanel bg="bg3">
+    <>
       <Tabs index={tabIndex} onChange={handleTabsChange}>
         <StyledTabList>
           <StyledTab>Send</StyledTab>
@@ -69,6 +68,6 @@ export default function ICXWallet() {
           </TabPanel>
         </TabPanels>
       </Tabs>
-    </BoxPanel>
+    </>
   );
 }

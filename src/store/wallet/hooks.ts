@@ -7,54 +7,38 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { CURRENCY } from 'constants/currency';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
 import { changeBalances, resetBalances } from './actions';
 
-// #redux-step-5: define function get value of variable from store
 export function useWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);
 }
 
 export function useWalletFetchBalances(account?: string | null) {
   const dispatch = useDispatch();
-  const details = useBALNDetails();
-  const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
-  const unstakingBalance: BigNumber = React.useMemo(() => details['Unstaking balance'] || new BigNumber(0), [details]);
-
   const transactions = useAllTransactions();
 
   React.useEffect(() => {
-    const fetchBalances = () => {
+    const fetchBalances = async () => {
       if (account) {
-        Promise.all([
-          bnJs.ICX.balanceOf(account),
-          bnJs.sICX.balanceOf(account),
-          bnJs.bnUSD.balanceOf(account),
-          bnJs.BALN.balanceOf(account),
-          bnJs.Rewards.getBalnHolding(account),
-        ]).then(result => {
-          const [ICX, sICX, bnUSD, BALN, BALNreward] = result.map(v => BalancedJs.utils.toIcx(v));
-          dispatch(
-            changeBalances({
-              ICX,
-              sICX,
-              bnUSD,
-              BALN: BALN.minus(stakedBalance).minus(unstakingBalance),
-              BALNstaked: stakedBalance,
-              BALNunstaking: unstakingBalance,
-              BALNreward,
-            }),
-          );
+        const results = await Promise.all(CURRENCY.map(currencyKey => bnJs[currencyKey].balanceOf(account)));
+        console.log(results);
+        const data = {};
+        results.forEach((result, index) => {
+          data[CURRENCY[index]] = BalancedJs.utils.toIcx(result);
         });
+        console.log(data);
+        dispatch(changeBalances(data));
       } else {
         dispatch(resetBalances());
       }
     };
 
     fetchBalances();
-  }, [transactions, account, stakedBalance, unstakingBalance, dispatch]);
+  }, [transactions, account, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {
@@ -82,4 +66,24 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
   }, [account, transactions]);
 
   return details;
+};
+
+export const useClaimableRewards = (): BigNumber | undefined => {
+  const { account } = useIconReact();
+  const transactions = useAllTransactions();
+  const [rewards, setRewards] = React.useState<BigNumber | undefined>();
+
+  React.useEffect(() => {
+    const fetchRewards = async () => {
+      if (account) {
+        const result = await bnJs.Rewards.getBalnHolding(account);
+
+        setRewards(BalancedJs.utils.toIcx(result));
+      }
+    };
+
+    fetchRewards();
+  }, [account, transactions]);
+
+  return rewards;
 };

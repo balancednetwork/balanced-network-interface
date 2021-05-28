@@ -86,7 +86,7 @@ export default function SlippageSettings({ rawSlippage, setRawSlippage }: Slippa
   }
 
   return (
-    <>
+    <Flex flexDirection="column" alignItems="flex-end">
       <SlippageInput>
         <Input
           placeholder={(rawSlippage / 100).toFixed(2)}
@@ -103,13 +103,13 @@ export default function SlippageSettings({ rawSlippage, setRawSlippage }: Slippa
         <Flex mb={2} ml={2} mr={2}>
           <SlippageEmojiContainer>
             <Box width={1}>
-              <Typography as="span" textAlign="center" color={'#fb6a6a'}>
+              <Typography as="span" textAlign="right" color={'#fb6a6a'}>
                 10% max
               </Typography>
             </Box>
           </SlippageEmojiContainer>
         </Flex>
       ) : null}
-    </>
+    </Flex>
   );
 }

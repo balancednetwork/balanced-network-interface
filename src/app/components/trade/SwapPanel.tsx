@@ -40,7 +40,7 @@ export default function SwapPanel() {
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
-  const { trade, currencyBalances, currencyKeys, parsedAmount, inputError } = useDerivedSwapInfo();
+  const { trade, currencyBalances, currencyKeys, parsedAmount, inputError, price } = useDerivedSwapInfo();
 
   const parsedAmounts = React.useMemo(
     () => ({
@@ -299,9 +299,10 @@ export default function SwapPanel() {
                   <Box padding={5} bg="bg4" width={328}>
                     <Flex alignItems="center" justifyContent="space-between" mb={2}>
                       <Typography>Exchange rate</Typography>
-                      {trade && (
+
+                      {(trade?.executionPrice || price) && (
                         <TradePrice
-                          price={trade?.executionPrice}
+                          price={(trade ? trade.executionPrice : price) as Price}
                           showInverted={showInverted}
                           setShowInverted={setShowInverted}
                         />
@@ -310,14 +311,13 @@ export default function SwapPanel() {
 
                     <Flex alignItems="center" justifyContent="space-between" mb={2}>
                       <Typography>Fee</Typography>
-                      {trade && (
-                        <Typography textAlign="right">
-                          {trade.fee.amount.dp(4).toFormat()} {trade.fee.currencyKey}
-                        </Typography>
-                      )}
+
+                      <Typography textAlign="right">
+                        {trade ? trade.fee.amount.dp(4).toFormat() : '0'} {currencyKeys[Field.INPUT]}
+                      </Typography>
                     </Flex>
 
-                    <Flex alignItems="center" justifyContent="space-between">
+                    <Flex alignItems="baseline" justifyContent="space-between">
                       <Typography as="span">
                         Slippage tolerance
                         <QuestionHelper text="If the price slips by more than this amount, your swap will fail." />

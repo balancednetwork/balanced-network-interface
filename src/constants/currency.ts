@@ -3,7 +3,10 @@ import keyBy from 'lodash/keyBy';
 import { ReactComponent as BALNIcon } from 'assets/tokens/BALN.svg';
 import { ReactComponent as bnUSDIcon } from 'assets/tokens/bnUSD.svg';
 import { ReactComponent as ICXIcon } from 'assets/tokens/ICX.svg';
+import { ReactComponent as IUSDCIcon } from 'assets/tokens/IUSDC.svg';
+import { ReactComponent as OMMIcon } from 'assets/tokens/OMM.svg';
 import { ReactComponent as sICXIcon } from 'assets/tokens/sICX.svg';
+import { ReactComponent as USDSIcon } from 'assets/tokens/USDS.svg';
 import { CurrencyKey, Pool } from 'types';
 
 export const CURRENCY: CurrencyKey[] = ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS'];
@@ -15,6 +18,9 @@ export const currencyKeyToIconMap = {
   [CURRENCY_MAP.sICX]: sICXIcon,
   [CURRENCY_MAP.bnUSD]: bnUSDIcon,
   [CURRENCY_MAP.BALN]: BALNIcon,
+  [CURRENCY_MAP.OMM]: OMMIcon,
+  [CURRENCY_MAP.IUSDC]: IUSDCIcon,
+  [CURRENCY_MAP.USDS]: USDSIcon,
 };
 
 export const toMarketPair = (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: string) =>

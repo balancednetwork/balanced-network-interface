@@ -25,12 +25,10 @@ export function useWalletFetchBalances(account?: string | null) {
     const fetchBalances = async () => {
       if (account) {
         const results = await Promise.all(CURRENCY.map(currencyKey => bnJs[currencyKey].balanceOf(account)));
-        console.log(results);
         const data = {};
         results.forEach((result, index) => {
           data[CURRENCY[index]] = BalancedJs.utils.toIcx(result);
         });
-        console.log(data);
         dispatch(changeBalances(data));
       } else {
         dispatch(resetBalances());

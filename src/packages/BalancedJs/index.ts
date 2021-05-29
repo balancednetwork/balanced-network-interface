@@ -9,10 +9,13 @@ import bnUSD from './contracts/bnUSD';
 import { Contract } from './contracts/contract';
 import Dex from './contracts/Dex';
 import ICX from './contracts/ICX';
+import IUSDC from './contracts/IUSDC';
 import Loans from './contracts/Loans';
+import OMM from './contracts/OMM';
 import Rewards from './contracts/Rewards';
 import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
+import USDS from './contracts/USDS';
 import ContractSettings, { LedgerSettings } from './contractSettings';
 
 export type AccountType = string | undefined | null;
@@ -34,11 +37,15 @@ export class BalancedJs {
   networkId: NetworkId;
   provider: any;
 
-  // contracts
+  // token contracts
   BALN: BALN;
   sICX: sICX;
   bnUSD: bnUSD;
   ICX: ICX;
+  OMM: OMM;
+  IUSDC: IUSDC;
+  USDS: USDS;
+  //
   Loans: Loans;
   Band: Band;
   Staking: Staking;
@@ -85,6 +92,9 @@ export class BalancedJs {
     this.ICX = new ICX(this.contractSettings);
     this.bnUSD = new bnUSD(this.contractSettings);
     this.sICX = new sICX(this.contractSettings);
+    this.OMM = new OMM(this.contractSettings);
+    this.IUSDC = new IUSDC(this.contractSettings);
+    this.USDS = new USDS(this.contractSettings);
 
     this.Loans = new Loans(this.contractSettings);
     this.Band = new Band(this.contractSettings);

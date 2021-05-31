@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CurrencyKey } from 'constants/currency';
+import { CurrencyKey } from 'types';
 import { getCurrencyKeyIcon } from 'utils';
 
 export default function CurrencyLogo({

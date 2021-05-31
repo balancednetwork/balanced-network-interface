@@ -2,7 +2,9 @@ import BigNumber from 'bignumber.js';
 import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
 import { NetworkId, NETWORK_ID } from 'packages/icon-react';
 
-import { currencyKeyToIconMap, CurrencyKey } from 'constants/currency';
+import { currencyKeyToIconMap } from 'constants/currency';
+import { MINIMUM_ICX_AMOUNT_IN_WALLET, ZERO } from 'constants/index';
+import { CurrencyKey, CurrencyAmount } from 'types';
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
@@ -52,7 +54,7 @@ export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-export function formatBigNumber(value: BigNumber | undefined, type: 'currency' | 'ratio' | 'input') {
+export function formatBigNumber(value: BigNumber | undefined, type: 'currency' | 'ratio' | 'input' | 'price') {
   if (value === undefined || value.isNaN() || value.isEqualTo(0)) {
     return '0';
   } else {
@@ -80,8 +82,29 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
           return value.toFixed(4, 1);
         }
       }
+      case 'price': {
+        return value.dp(4).toFormat();
+      }
     }
   }
 }
 
 export const getCurrencyKeyIcon = (currencyKey: CurrencyKey) => currencyKeyToIconMap[currencyKey];
+
+export function maxAmountSpend(currencyAmount?: CurrencyAmount): CurrencyAmount | undefined {
+  if (!currencyAmount) return undefined;
+  if (currencyAmount.currencyKey === 'ICX') {
+    if (currencyAmount.amount.isGreaterThan(MINIMUM_ICX_AMOUNT_IN_WALLET)) {
+      return new CurrencyAmount(currencyAmount.currencyKey, currencyAmount.amount.minus(MINIMUM_ICX_AMOUNT_IN_WALLET));
+    } else {
+      return new CurrencyAmount(currencyAmount.currencyKey, ZERO);
+    }
+  }
+  return currencyAmount;
+}
+
+export function formatPercent(percent: BigNumber | undefined) {
+  if (!percent) return '0%';
+  if (percent.isZero()) return '0%';
+  else return percent.times(100).isLessThan(0.01) ? '<0.01%' : `${percent.times(100).dp(2).toFixed()}%`;
+}

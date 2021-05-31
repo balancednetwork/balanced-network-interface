@@ -19,7 +19,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST, BASE_SUPPORTED_PAIRS } from 'constants/currency';
+import { SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
@@ -107,7 +107,7 @@ const ListItem = styled(DashGrid)<{ border?: boolean }>`
 `;
 
 const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => {
-  const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
+  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
   const upSmall = useMedia('(min-width: 800px)');
 
@@ -158,8 +158,7 @@ const WithdrawText = ({ poolId }: { poolId: number }) => {
 };
 
 const PoolRecord1 = ({ border }: { border: boolean }) => {
-  const pair =
-    BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || BASE_SUPPORTED_PAIRS[0];
+  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
   const upSmall = useMedia('(min-width: 800px)');
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
@@ -186,8 +185,7 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
 
 const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   const { account } = useIconReact();
-  const pair =
-    BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || BASE_SUPPORTED_PAIRS[0];
+  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
   const addTransaction = useTransactionAdder();
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
@@ -359,7 +357,7 @@ const OptionButton = styled(Box)`
 `;
 
 const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => void }) => {
-  const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
+  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || SUPPORTED_PAIRS[0];
   const balances = useWalletBalances();
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.poolId);
@@ -500,7 +498,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_A]}
             showMaxButton={false}
-            currency={CURRENCY_LIST[pair.baseCurrencyKey.toLowerCase()]}
+            currency={pair.baseCurrencyKey}
             onUserInput={handleFieldAInput}
             id="withdraw-liquidity-input"
             bg="bg5"
@@ -510,7 +508,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_B]}
             showMaxButton={false}
-            currency={CURRENCY_LIST[pair.quoteCurrencyKey.toLowerCase()]}
+            currency={pair.quoteCurrencyKey}
             onUserInput={handleFieldBInput}
             id="withdraw-liquidity-input"
             bg="bg5"

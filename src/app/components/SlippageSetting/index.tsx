@@ -11,10 +11,6 @@ import { Typography } from 'app/theme';
 //   RiskyHigh = 'RiskyHigh',
 // }
 
-// enum DeadlineError {
-//   InvalidInput = 'InvalidInput',
-// }
-
 const SlippageEmojiContainer = styled.span`
   color: #f3841e;
   display: none;
@@ -24,16 +20,18 @@ const SlippageEmojiContainer = styled.span`
 `;
 
 const SlippageInput = styled(Flex)`
-  height: 32px;
+  width: 100px;
+  height: 30px;
   color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors.text1)};
   outline: none;
   border-radius: 8px;
-  border: 2px solid #0c2a4d;
+  border: 2px solid rgb(44, 169, 183);
   background-color: #0c2a4d;
   transition: border 0.3s ease;
   line-height: 1.15;
   text-align: center;
   align-items: center;
+  overflow: hidden;
 
   :hover,
   :focus {
@@ -42,7 +40,7 @@ const SlippageInput = styled(Flex)`
 `;
 
 const Input = styled.input`
-  width: 48px;
+  width: 80px;
   color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors.text1)};
   outline: none;
   border: none;
@@ -56,14 +54,9 @@ const Input = styled.input`
 export interface SlippageSettingsProps {
   rawSlippage: number;
   setRawSlippage: (rawSlippage: number) => void;
-  deadline: number;
-  setDeadline: (deadline: number) => void;
 }
 
-export default function SlippageSettings({
-  rawSlippage,
-  setRawSlippage /*,deadline, setDeadline */,
-}: SlippageSettingsProps) {
+export default function SlippageSettings({ rawSlippage, setRawSlippage }: SlippageSettingsProps) {
   const [slippageInput, setSlippageInput] = React.useState('');
   // const [deadlineInput, setDeadlineInput] = React.useState('');
 
@@ -82,13 +75,6 @@ export default function SlippageSettings({
   //   slippageError = undefined;
   // }
 
-  // let deadlineError: DeadlineError | undefined;
-  // if (deadlineInput !== '' && !deadlineInputIsValid) {
-  //   deadlineError = DeadlineError.InvalidInput;
-  // } else {
-  //   deadlineError = undefined;
-  // }
-
   function parseCustomSlippage(value: string) {
     setSlippageInput(value);
 
@@ -100,46 +86,31 @@ export default function SlippageSettings({
     } catch {}
   }
 
-  // function parseCustomDeadline(value: string) {
-  //   setDeadlineInput(value);
-
-  //   try {
-  //     const valueAsInt: number = Number.parseInt(value) * 60;
-  //     if (!Number.isNaN(valueAsInt) && valueAsInt > 0) {
-  //       setDeadline(valueAsInt);
-  //     }
-  //   } catch {}
-  // }
-
   return (
-    <>
-      <Flex>
-        <Flex p={1}>
-          <SlippageInput>
-            <Input
-              placeholder={(rawSlippage / 100).toFixed(2)}
-              value={slippageInput}
-              onBlur={() => {
-                parseCustomSlippage((rawSlippage / 100).toFixed(2));
-              }}
-              onChange={e => parseCustomSlippage(e.target.value)}
-              color={!slippageInputIsValid ? '#fb6a6a' : ''}
-            />
-            %
-          </SlippageInput>
-        </Flex>
-      </Flex>
+    <Flex flexDirection="column" alignItems="flex-end">
+      <SlippageInput>
+        <Input
+          placeholder={(rawSlippage / 100).toFixed(2)}
+          value={slippageInput}
+          onBlur={() => {
+            parseCustomSlippage((rawSlippage / 100).toFixed(2));
+          }}
+          onChange={e => parseCustomSlippage(e.target.value)}
+          color={!slippageInputIsValid ? '#fb6a6a' : ''}
+        />
+        %
+      </SlippageInput>
       {!slippageInputIsValid ? (
-        <Flex mb={2} ml={2} mr={2}>
+        <Flex>
           <SlippageEmojiContainer>
             <Box width={1}>
-              <Typography as="span" textAlign="center" color={'#fb6a6a'}>
+              <Typography as="span" textAlign="right" color={'#fb6a6a'}>
                 10% max
               </Typography>
             </Box>
           </SlippageEmojiContainer>
         </Flex>
       ) : null}
-    </>
+    </Flex>
   );
 }

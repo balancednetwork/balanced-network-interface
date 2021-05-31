@@ -43,7 +43,6 @@
     "i18next-browser-languagedetector": "6.0.1",
     "i18next-scanner": "2.11.0",
     "icon-sdk-js": "0.0.18",
-    "invariant": "2.2.4",
     "jest-styled-components": "7.0.3",
     "lightweight-charts": "3.2.0",
     "lint-staged": "10.3.0",

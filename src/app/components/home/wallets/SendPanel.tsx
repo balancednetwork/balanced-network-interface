@@ -79,7 +79,7 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
             { hash: res.result },
             {
               pending: `Sending ${currencyKey}...`,
-              summary: `Sent ${differenceAmount.dp(2).toFormat()} ${currencyKey}.`,
+              summary: `Sent ${differenceAmount.dp(2).toFormat()} ${currencyKey} to ${address}.`,
             },
           );
           toggleOpen();

@@ -5,8 +5,8 @@ import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 import Divider from 'app/components/Divider';
 import { BoxPanel } from 'app/components/Panel';
 
+import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';
-import SendPanel from './SendPanel';
 import StakePanel from './StakePanel';
 import UnstakePanel from './UnstakePanel';
 
@@ -26,7 +26,7 @@ export default function BALNWallet() {
           </TabPanel>
 
           <TabPanel>
-            <SendPanel />
+            <SendPanel currencyKey="BALN" />
           </TabPanel>
 
           <TabPanel>

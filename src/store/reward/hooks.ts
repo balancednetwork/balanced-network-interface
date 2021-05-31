@@ -7,7 +7,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { BASE_SUPPORTED_PAIRS, SUPPORTED_PAIRS } from 'constants/currency';
+import { SUPPORTED_PAIRS } from 'constants/currency';
 import { PLUS_INFINITY, REWARDS_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useLoanInputAmount } from 'store/loan/hooks';
@@ -60,9 +60,9 @@ export function useFetchRewardsInfo() {
   // calculate rewards
   React.useEffect(() => {
     // calculate rewards per pool
-    BASE_SUPPORTED_PAIRS.forEach(pair => {
+    SUPPORTED_PAIRS.forEach(pair => {
       const rewardShare =
-        pair.poolId === SUPPORTED_PAIRS['ICX']['sICX'].poolId
+        pair.poolId === SUPPORTED_PAIRS[0].poolId
           ? rules[`${pair.quoteCurrencyKey}/${pair.baseCurrencyKey}`]
           : rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
       changeReward(pair.poolId.toString(), emission.times(rewardShare));

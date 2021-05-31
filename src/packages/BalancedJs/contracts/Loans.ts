@@ -38,12 +38,13 @@ export default class Loans extends Contract {
     return this.callICONPlugins(payload);
   }
 
-  returnAsset(symbol: string, value: BigNumber) {
+  returnAsset(symbol: string, value: BigNumber, repay: number) {
     const payload = this.transactionParamsBuilder({
       method: 'returnAsset',
       params: {
         _symbol: symbol,
         _value: IconConverter.toHex(value),
+        _repay: IconConverter.toHex(repay),
       },
     });
 
@@ -64,6 +65,14 @@ export default class Loans extends Contract {
       params: {
         _owner: owner,
       },
+    });
+
+    return this.call(callParams);
+  }
+
+  getParameters() {
+    const callParams = this.paramsBuilder({
+      method: 'getParameters',
     });
 
     return this.call(callParams);

@@ -8,7 +8,8 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import { Currency } from 'types';
+import { ZERO } from 'constants/index';
+import { CurrencyKey } from 'types';
 import { escapeRegExp } from 'utils'; // match escaped "." characters via in a non-capturing group
 
 export const CheckBox = styled(Box)<{ isActive: boolean }>`
@@ -56,7 +57,7 @@ export const CurrencyField: React.FC<{
   isActive: boolean;
   label: string;
   value: string;
-  currency: Currency;
+  currency: CurrencyKey;
   tooltip?: boolean;
   tooltipText?: React.ReactNode;
   tooltipWider?: boolean;
@@ -92,7 +93,7 @@ export const CurrencyField: React.FC<{
 
       {!editable && (
         <Typography variant="p" ml={6} mt={1} fontSize={[16, 16, 16, 18]}>
-          {`${new BigNumber(value).dp(2).toFormat()} ${currency.symbol}`}
+          {`${BigNumber.max(new BigNumber(value), ZERO).dp(2).toFormat()} ${currency}`}
         </Typography>
       )}
 
@@ -114,7 +115,7 @@ export const CurrencyField: React.FC<{
             maxLength={79}
             spellCheck="false"
           />
-          <CurrencyUnit>{currency.symbol}</CurrencyUnit>
+          <CurrencyUnit>{currency}</CurrencyUnit>
         </CurrencyInput>
       )}
     </Flex>

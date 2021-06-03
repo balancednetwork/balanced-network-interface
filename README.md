@@ -44,7 +44,7 @@ REACT_APP_NETWORK_ID=3
 REACT_APP_NETWORK_ID=1
 ```
 
-## Contributions
+## Contribution
 
 **Please open all pull requests against the `master` branch.**
 CI checks will run against all PRs.

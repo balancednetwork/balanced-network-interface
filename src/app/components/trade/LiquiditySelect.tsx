@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { Wrapper, UnderlineText, StyledArrowDownIcon } from 'app/components/DropdownText';
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
-import { Pair, BASE_SUPPORTED_PAIRS } from 'constants/currency';
+import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
 import { resetMintState } from 'store/mint/actions';
 import { useSetPair, usePoolPair, useAPYs } from 'store/pool/hooks';
 
@@ -46,7 +46,7 @@ export default function LiquiditySelect() {
               <HeaderText>POOL</HeaderText>
               <HeaderText textAlign="right">APY</HeaderText>
             </DashGrid>
-            {BASE_SUPPORTED_PAIRS.map(pool => (
+            {SUPPORTED_PAIRS.map(pool => (
               <ListItem key={pool.pair} onClick={() => handleSelectPool(pool)}>
                 <DataText variant="p" fontWeight="bold">
                   {pool.pair}

@@ -10,7 +10,6 @@ import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
-import { CURRENCY_LIST } from 'constants/currency';
 import { MINIMUM_ICX_AMOUNT_IN_WALLET, SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
@@ -178,7 +177,7 @@ export default function LPPanel() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
-              currency={CURRENCY_LIST[pair.baseCurrencyKey.toLowerCase()]}
+              currency={pair.baseCurrencyKey}
               onUserInput={onFieldAInput}
               id="supply-liquidity-input-token-a"
             />
@@ -188,7 +187,7 @@ export default function LPPanel() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               showMaxButton={false}
-              currency={CURRENCY_LIST[pair.quoteCurrencyKey.toLowerCase()]}
+              currency={pair.quoteCurrencyKey}
               onUserInput={onFieldBInput}
               id="supply-liquidity-input-token-b"
             />

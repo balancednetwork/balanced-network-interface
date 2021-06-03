@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { IconAmount, IconConverter } from 'icon-sdk-js';
+import { IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -28,11 +28,7 @@ export default class BALN extends Contract {
       params: { toToken: addresses[this.nid][outputSymbol.toLowerCase()], minimumReceive: minimumReceive.toFixed() },
     };
 
-    return this.transfer(
-      addresses[this.nid].dex,
-      IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop(),
-      JSON.stringify(data),
-    );
+    return this.transfer(addresses[this.nid].dex, value, JSON.stringify(data));
   }
 
   transfer(to: string, value: BigNumber, data?: string) {

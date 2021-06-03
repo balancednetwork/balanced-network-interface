@@ -1,5 +1,7 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit';
 
+import { DEFAULT_SLIPPAGE } from 'constants/index';
+
 import {
   addPopup,
   PopupContent,
@@ -8,6 +10,7 @@ import {
   setOpenModal,
   changeWalletType,
   changeShouldLedgedSignMessage,
+  updateSlippageTolerance,
 } from './actions';
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>;
@@ -20,6 +23,7 @@ export interface ApplicationState {
   account: string;
   walletType: WalletType;
   shouldLedgerSign: boolean;
+  slippageTolerance: number;
 }
 
 const initialState: ApplicationState = {
@@ -28,6 +32,7 @@ const initialState: ApplicationState = {
   account: '',
   walletType: 'ICONEX',
   shouldLedgerSign: false,
+  slippageTolerance: DEFAULT_SLIPPAGE,
 };
 
 export default createReducer(initialState, builder =>
@@ -57,5 +62,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(changeShouldLedgedSignMessage, (state, action) => {
       state.shouldLedgerSign = action.payload.shouldLedgerSign;
+    })
+    .addCase(updateSlippageTolerance, (state, action) => {
+      state.slippageTolerance = action.payload.slippageTolerance;
     }),
 );

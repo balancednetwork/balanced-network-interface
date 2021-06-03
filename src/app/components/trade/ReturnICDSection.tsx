@@ -16,7 +16,6 @@ import Modal from 'app/components/Modal';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST } from 'constants/currency';
 import { ONE } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -158,7 +157,7 @@ const ReturnICDSection = () => {
                 </Flex>
 
                 <CurrencyInputPanel
-                  currency={CURRENCY_LIST['bnusd']}
+                  currency={'bnUSD'}
                   value={retireAmount}
                   onUserInput={handleTypeInput}
                   showMaxButton={false}

@@ -8,9 +8,9 @@ import CurrencyLogo from 'app/components/CurrencyLogo';
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
-import { CURRENCY_LIST, CURRENCY, CurrencyKey } from 'constants/currency';
+import { CURRENCY } from 'constants/currency';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { Currency } from 'types';
+import { CurrencyKey } from 'types';
 import { escapeRegExp } from 'utils';
 
 const InputContainer = styled.div`
@@ -78,8 +78,8 @@ interface CurrencyInputPanelProps {
   onMax?: () => void;
   showMaxButton: boolean;
   label?: string;
-  onCurrencySelect?: (currency: Currency) => void;
-  currency?: Currency | null;
+  onCurrencySelect?: (currency: CurrencyKey) => void;
+  currency?: CurrencyKey | null;
   hideBalance?: boolean;
   // pair?: Pair | null;
   hideInput?: boolean;
@@ -132,16 +132,14 @@ export default function CurrencyInputPanel({
   }, [width]);
 
   //
-  const handleCurrencySelect = (ccy: Currency) => (e: React.MouseEvent) => {
+  const handleCurrencySelect = (ccy: CurrencyKey) => (e: React.MouseEvent) => {
     onCurrencySelect && onCurrencySelect(ccy);
     setOpen(false);
   };
 
-  const availableCurrencies = React.useMemo(() => currencyList, [currencyList]);
-
   React.useEffect(() => {
-    if (currencyList.indexOf(currency?.symbol as string) === -1) {
-      onCurrencySelect && onCurrencySelect(CURRENCY_LIST[currencyList[0].toLowerCase()]);
+    if (currency && currencyList.indexOf(currency) === -1) {
+      onCurrencySelect && onCurrencySelect(currencyList[0]);
     }
   }, [currency, onCurrencySelect, currencyList]);
 
@@ -157,10 +155,8 @@ export default function CurrencyInputPanel({
     <InputContainer ref={ref}>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
-          {currency && currency.symbol ? (
-            <CurrencyLogo currencyKey={currency.symbol} style={{ marginRight: 8 }} />
-          ) : null}
-          {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
+          {currency && <CurrencyLogo currencyKey={currency} style={{ marginRight: 8 }} />}
+          {currency ? <StyledTokenName className="token-symbol-container">{currency}</StyledTokenName> : null}
           {onCurrencySelect && <StyledDropDown selected={!!currency} />}
 
           {onCurrencySelect && (
@@ -170,16 +166,16 @@ export default function CurrencyInputPanel({
                   <HeaderText>Asset</HeaderText>
                   <HeaderText textAlign="right">Wallet</HeaderText>
                 </DashGrid>
-                {availableCurrencies.map(currency => (
-                  <ListItem key={currency} onClick={handleCurrencySelect(CURRENCY_LIST[currency.toLowerCase()])}>
+                {currencyList.map(ccy => (
+                  <ListItem key={ccy} onClick={handleCurrencySelect(ccy)}>
                     <Flex>
-                      <CurrencyLogo currencyKey={currency} style={{ marginRight: '8px' }} />
+                      <CurrencyLogo currencyKey={ccy} style={{ marginRight: '8px' }} />
                       <DataText variant="p" fontWeight="bold">
-                        {currency}
+                        {ccy}
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      {balances[currency]?.dp(2).toFormat()}
+                      {balances[ccy]?.dp(2).toFormat()}
                     </DataText>
                   </ListItem>
                 ))}

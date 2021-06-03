@@ -14,7 +14,6 @@ import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST } from 'constants/currency';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
@@ -244,7 +243,7 @@ const CollateralPanel = () => {
                 </>
               }
               value={!account ? '-' : formattedAmounts[Field.LEFT]}
-              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['icx']}
+              currency={'ICX'}
               onUserInput={onFieldAInput}
             />
           </Box>
@@ -257,7 +256,7 @@ const CollateralPanel = () => {
               label="Wallet"
               tooltipText="The amount of ICX available to deposit from your wallet."
               value={!account ? '-' : formattedAmounts[Field.RIGHT]}
-              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['icx']}
+              currency={'ICX'}
               onUserInput={onFieldBInput}
             />
           </Box>

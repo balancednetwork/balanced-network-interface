@@ -11,6 +11,7 @@ import { MintState } from 'store/mint/reducer';
 import { PoolState } from 'store/pool/reducer';
 import { RatioState } from 'store/ratio/reducer';
 import { RewardState } from 'store/reward/reducer';
+import { SwapState } from 'store/swap/reducer';
 import { TransactionState } from 'store/transactions/reducer';
 import { WalletState } from 'store/wallet/reducer';
 
@@ -26,4 +27,5 @@ export interface RootState {
   wallet: WalletState;
   transactions: TransactionState;
   mint: MintState;
+  swap: SwapState;
 }

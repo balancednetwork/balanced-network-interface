@@ -35,8 +35,6 @@ export type Transaction = {
   // to_address: 'cx66d4d90f5f113eba575bf793570135f9b10cece1';
   // transaction_index: 2;
   // type: 'transaction';
-  // value: '0x0';
-  // version: '0x3';
 };
 
 export const getLoanTransation = async (

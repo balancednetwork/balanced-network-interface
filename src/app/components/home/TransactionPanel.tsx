@@ -1,19 +1,18 @@
 import '@reach/tabs/styles.css';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { getLoanTransation, Transaction } from 'apis';
+import { getLoanTransation, getTotalTransactions, Transaction } from 'apis';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { Box, Flex, Link } from 'rebass';
 import styled from 'styled-components';
 
+import Pagination, { usePagination } from 'app/components/Pagination';
 import { BoxPanel } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import externalIcon from 'assets/images/external.svg';
 import { BLOCK_SCAN_URL } from 'constants/index';
-
-import Pagination from './Pagination';
 
 const Row = styled(Box)`
   display: grid;
@@ -108,9 +107,10 @@ const RowItem: React.FC<{ tran: Transaction }> = ({ tran }) => {
 
 const TransactionPanel = () => {
   const [list, setList] = useState<Transaction[]>([]);
-  const [skip, setSkip] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
   const { t } = useTranslation();
+  const { page, setPage } = usePagination();
   const limit = 10;
 
   useEffect(() => {
@@ -118,7 +118,7 @@ const TransactionPanel = () => {
       setLoading(() => true);
       try {
         const result = await getLoanTransation({
-          skip,
+          skip: page * limit,
           limit,
         });
         setList(result);
@@ -128,28 +128,17 @@ const TransactionPanel = () => {
       setLoading(() => false);
     };
     fetchData();
-  }, [skip]);
+  }, [page]);
 
-  const goPrev = () => {
-    if (skip > limit) {
-      setSkip(prev => prev - limit);
-    }
-  };
-
-  const goNext = () => {
-    setSkip(prev => prev + limit);
-  };
+  useEffect(() => {
+    (async () => {
+      const result = await getTotalTransactions();
+      setTotal(result.loans_transactions);
+    })();
+  }, []);
 
   return (
     <BoxPanel bg="bg2">
-      <Pagination
-        sx={{ flexDirection: ['column-reverse', 'row'] }}
-        limit={limit}
-        skip={skip}
-        next={goNext}
-        prev={goPrev}
-        loading={loading}
-      />
       <Flex mb={2} alignItems="center">
         <Typography mr={2} variant="h2">
           {t`Transaction history`}
@@ -170,7 +159,14 @@ const TransactionPanel = () => {
           <RowItem tran={item} key={item.block_hash} />
         ))}
       </Table>
-      <Pagination limit={limit} skip={skip} next={goNext} prev={goPrev} loading={loading} />
+      <Pagination
+        sx={{ mt: 2 }}
+        onChangePage={setPage}
+        currentPage={page}
+        total={50}
+        itemsPerPage={10}
+        displayPages={7}
+      />
     </BoxPanel>
   );
 };

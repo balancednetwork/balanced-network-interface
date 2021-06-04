@@ -5,8 +5,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
-import { usePoolPair, usePoolData, usePool } from 'store/pool/hooks';
-import { useRatio } from 'store/ratio/hooks';
+import { usePoolPair, usePoolData } from 'store/pool/hooks';
 import { formatBigNumber } from 'utils';
 
 const descriptions = {
@@ -24,19 +23,6 @@ interface ILPDescriptionProps {
 export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescriptionProps) {
   const selectedPair = usePoolPair();
 
-  const pool = usePool(selectedPair.poolId);
-
-  const ratio = useRatio();
-
-  const ratioByPoolId = useMemo(
-    () => ({
-      1: ratio.sICXICXratio,
-      2: ratio.sICXbnUSDratio,
-      3: ratio.BALNbnUSDratio,
-    }),
-    [ratio.BALNbnUSDratio, ratio.sICXICXratio, ratio.sICXbnUSDratio],
-  );
-
   const data = usePoolData(selectedPair.poolId) || {
     totalBase: new BigNumber(0),
     totalQuote: new BigNumber(0),
@@ -46,8 +32,6 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
     suppliedReward: new BigNumber(0),
     poolShare: new BigNumber(0),
   };
-
-  const totalPool = useMemo(() => pool.total || new BigNumber(1), [pool.total]);
 
   const supplyBase = useMemo(
     () =>
@@ -64,22 +48,12 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
     [data.suppliedQuote, quoteSupplying],
   );
 
-  const newSuppliedAmount = useMemo(
-    () => supplyBase?.times(ratioByPoolId[selectedPair.poolId]).plus(supplyQuote || new BigNumber(0)),
-    [supplyBase, selectedPair.poolId, supplyQuote, ratioByPoolId],
-  );
-  const poolShare = useMemo(() => newSuppliedAmount?.div(totalPool) || new BigNumber(1), [
-    newSuppliedAmount,
-    totalPool,
-  ]);
-
-  const dailyReward = useMemo(
-    () =>
-      baseSuplying.isGreaterThan(0) || quoteSupplying.isGreaterThan(0)
-        ? data?.suppliedReward.plus(data?.suppliedReward.times(poolShare))
-        : data?.suppliedReward,
-    [data.suppliedReward, poolShare, baseSuplying, quoteSupplying],
-  );
+  const dailyReward = useMemo(() => {
+    const percentageSupplyBase = supplyBase?.dividedBy(data.totalBase);
+    return percentageSupplyBase?.isGreaterThanOrEqualTo(1)
+      ? data?.totalReward
+      : percentageSupplyBase?.multipliedBy(data?.totalReward);
+  }, [data.totalBase, data.totalReward, supplyBase]);
 
   return (
     <Box bg="bg2" flex={1} padding={[5, 7]}>

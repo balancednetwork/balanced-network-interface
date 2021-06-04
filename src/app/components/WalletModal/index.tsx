@@ -1,12 +1,10 @@
 import React, { useState, useCallback } from 'react';
 
 import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
-import TransportWebU2F from '@ledgerhq/hw-transport-u2f';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { BalancedJs } from 'packages/BalancedJs';
 import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
-import * as platform from 'platform';
 import { isMobile } from 'react-device-detect';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -172,12 +170,7 @@ export default function WalletModal() {
   const handleOpenLedger = async () => {
     changeWalletType('LEDGER');
     try {
-      const isChrome = platform.name === 'Chrome';
-      const isFirefox = platform.name === 'Firefox';
-
-      const transportor = isChrome ? TransportWebHID : isFirefox ? TransportWebU2F : null;
-
-      if (!transport && transportor) {
+      if (!transport) {
         transport = await TransportWebHID.create();
         transport.setDebugMode && transport.setDebugMode(false);
       }

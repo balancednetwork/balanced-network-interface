@@ -6,8 +6,7 @@ import styled from 'styled-components';
 import { Button } from '../Button';
 
 interface Props {
-  total: number;
-  itemsPerPage: number;
+  totalPages: number;
   displayPages: number;
   currentPage: number;
   onChangePage?: (page: number) => void;
@@ -30,19 +29,29 @@ const NumberButton = styled(Button)`
   }
 `;
 
-const Pagination: React.FC<Props> = ({ total, itemsPerPage, displayPages = 7, currentPage, onChangePage, sx }) => {
-  const totalPages = total / itemsPerPage;
+const Pagination: React.FC<Props> = ({ totalPages, displayPages = 7, currentPage, onChangePage, sx }) => {
   const pages: React.ReactElement[] = [];
-  for (let i = 0; i < totalPages; i++) {
+  const pageRange = totalPages > displayPages ? displayPages : totalPages;
+
+  const nextPage = () => onChangePage && onChangePage(currentPage + 1);
+  const prevPage = () => onChangePage && onChangePage(currentPage > 0 ? currentPage - 1 : 0);
+
+  const halfRange = Math.floor(pageRange / 2);
+  let page = currentPage > halfRange ? currentPage - halfRange : 0;
+  for (let i = 0; i < pageRange; i++) {
+    let _p = page;
     pages.push(
       <NumberButton
-        className={currentPage === i ? 'active' : ''}
-        onClick={() => onChangePage && onChangePage(i)}
+        className={currentPage === page ? 'active' : ''}
+        onClick={() => {
+          onChangePage && onChangePage(_p);
+        }}
         key={i}
       >
-        {i + 1}
+        {page + 1}
       </NumberButton>,
     );
+    page++;
   }
 
   return (
@@ -53,7 +62,13 @@ const Pagination: React.FC<Props> = ({ total, itemsPerPage, displayPages = 7, cu
         ...sx,
       }}
     >
+      <NumberButton disabled={currentPage === 0} onClick={prevPage}>
+        {'<'}
+      </NumberButton>
       {pages}
+      <NumberButton disabled={currentPage === totalPages} onClick={nextPage}>
+        {'>'}
+      </NumberButton>
     </Flex>
   );
 };
@@ -63,8 +78,6 @@ export const usePagination = () => {
   return {
     page,
     setPage,
-    nextPage: () => setPage(prev => prev + 1),
-    prevPage: () => setPage(prev => (prev > 0 ? prev - 1 : 0)),
   };
 };
 

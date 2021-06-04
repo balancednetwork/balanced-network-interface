@@ -5,7 +5,7 @@ import { API_V1_ENDPOINT } from './constants';
 
 export type Transaction = {
   block_hash: string;
-  // block_number: 35117900;
+  block_number: number;
   block_timestamp: number;
   data: {
     method: string;

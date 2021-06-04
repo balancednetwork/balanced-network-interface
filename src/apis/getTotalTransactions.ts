@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { API_V1_ENDPOINT } from './constants';
+
 export type TotalTransactions = {
   total_transactions: number;
   loans_transactions: number;
@@ -13,5 +15,5 @@ export type TotalTransactions = {
   sicx_transactions: number;
 };
 export const getTotalTransactions = async (): Promise<TotalTransactions> => {
-  return await axios.get('/stats/total-transactions').then(res => res.data);
+  return await axios.get(`${API_V1_ENDPOINT}/stats/total-transactions`).then(res => res.data);
 };

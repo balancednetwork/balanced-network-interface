@@ -156,15 +156,18 @@ const TransactionPanel = () => {
           </Typography>
         </Row>
         {list.map(item => (
-          <RowItem tran={item} key={item.block_hash} />
+          <RowItem tran={item} key={item.item_id} />
         ))}
       </Table>
       <Pagination
         sx={{ mt: 2 }}
-        onChangePage={setPage}
+        onChangePage={page => {
+          if (!loading) {
+            setPage(page);
+          }
+        }}
         currentPage={page}
-        total={50}
-        itemsPerPage={10}
+        totalPages={Math.floor(total / limit)}
         displayPages={7}
       />
     </BoxPanel>

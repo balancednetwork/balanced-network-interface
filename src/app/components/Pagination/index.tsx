@@ -33,8 +33,8 @@ const Pagination: React.FC<Props> = ({ totalPages, displayPages = 7, currentPage
   const pages: React.ReactElement[] = [];
   const pageRange = totalPages > displayPages ? displayPages : totalPages;
 
-  const nextPage = () => onChangePage && onChangePage(currentPage + 1);
-  const prevPage = () => onChangePage && onChangePage(currentPage > 0 ? currentPage - 1 : 0);
+  // const nextPage = () => onChangePage && onChangePage(currentPage + 1);
+  // const prevPage = () => onChangePage && onChangePage(currentPage > 0 ? currentPage - 1 : 0);
 
   const halfRange = Math.floor(pageRange / 2);
   let page = currentPage > halfRange ? currentPage - halfRange : 0;
@@ -62,13 +62,13 @@ const Pagination: React.FC<Props> = ({ totalPages, displayPages = 7, currentPage
         ...sx,
       }}
     >
-      <NumberButton disabled={currentPage === 0} onClick={prevPage}>
+      {/* <NumberButton disabled={currentPage === 0} onClick={prevPage}>
         {'<'}
-      </NumberButton>
+      </NumberButton> */}
       {pages}
-      <NumberButton disabled={currentPage === totalPages} onClick={nextPage}>
+      {/* <NumberButton disabled={currentPage === totalPages} onClick={nextPage}>
         {'>'}
-      </NumberButton>
+      </NumberButton> */}
     </Flex>
   );
 };

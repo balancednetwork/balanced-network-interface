@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Flex, SxStyleProp } from 'rebass';
 import styled from 'styled-components';
 
+import { Typography } from 'app/theme';
+
 import { Button } from '../Button';
 
 interface Props {
@@ -16,7 +18,6 @@ interface Props {
 const NumberButton = styled(Button)`
   background: #087083;
   padding: 5px 10px !important;
-  margin-right: 8px;
   border-radius: 4px;
   :hover:not(.active) {
     background: #2ca9b7;
@@ -29,19 +30,27 @@ const NumberButton = styled(Button)`
   }
 `;
 
-const Pagination: React.FC<Props> = ({ totalPages, displayPages = 7, currentPage, onChangePage, sx }) => {
+const Pagination: React.FC<Props> = ({ totalPages, currentPage, onChangePage, sx }) => {
   const pages: React.ReactElement[] = [];
+  const displayPages = currentPage >= 4 && currentPage <= totalPages - 5 ? 3 : 4;
   const pageRange = totalPages > displayPages ? displayPages : totalPages;
 
-  // const nextPage = () => onChangePage && onChangePage(currentPage + 1);
-  // const prevPage = () => onChangePage && onChangePage(currentPage > 0 ? currentPage - 1 : 0);
-
   const halfRange = Math.floor(pageRange / 2);
-  let page = currentPage > halfRange ? currentPage - halfRange : 0;
+  let page = currentPage - halfRange;
+
+  if (currentPage < 4) {
+    page = 1;
+  } else if (currentPage > totalPages - 5) {
+    page = totalPages - 5;
+  }
+
+  console.log(currentPage, page);
+
   for (let i = 0; i < pageRange; i++) {
     let _p = page;
     pages.push(
       <NumberButton
+        mx={1}
         className={currentPage === page ? 'active' : ''}
         onClick={() => {
           onChangePage && onChangePage(_p);
@@ -62,13 +71,27 @@ const Pagination: React.FC<Props> = ({ totalPages, displayPages = 7, currentPage
         ...sx,
       }}
     >
-      {/* <NumberButton disabled={currentPage === 0} onClick={prevPage}>
-        {'<'}
-      </NumberButton> */}
+      <NumberButton
+        className={currentPage === 0 ? 'active' : ''}
+        onClick={() => {
+          onChangePage && onChangePage(0);
+        }}
+        mx="1"
+      >
+        1
+      </NumberButton>
+      {currentPage > 3 && <Typography mx="1">...</Typography>}
       {pages}
-      {/* <NumberButton disabled={currentPage === totalPages} onClick={nextPage}>
-        {'>'}
-      </NumberButton> */}
+      {currentPage <= totalPages - 5 && <Typography mx="1">...</Typography>}
+      <NumberButton
+        className={currentPage === totalPages ? 'active' : ''}
+        onClick={() => {
+          onChangePage && onChangePage(totalPages);
+        }}
+        mx="1"
+      >
+        {totalPages}
+      </NumberButton>
     </Flex>
   );
 };

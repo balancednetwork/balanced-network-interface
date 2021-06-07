@@ -44,8 +44,6 @@ const Pagination: React.FC<Props> = ({ totalPages, currentPage, onChangePage, sx
     page = totalPages - 5;
   }
 
-  console.log(currentPage, page);
-
   for (let i = 0; i < pageRange; i++) {
     let _p = page;
     pages.push(
@@ -62,6 +60,8 @@ const Pagination: React.FC<Props> = ({ totalPages, currentPage, onChangePage, sx
     );
     page++;
   }
+
+  if (totalPages === 0) return null;
 
   return (
     <Flex

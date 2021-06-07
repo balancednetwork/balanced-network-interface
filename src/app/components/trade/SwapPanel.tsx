@@ -40,19 +40,11 @@ export default function SwapPanel() {
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
-  const { trade, currencyBalances, currencyKeys, parsedAmount, inputError, price } = useDerivedSwapInfo();
-
-  const parsedAmounts = React.useMemo(
-    () => ({
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }),
-    [independentField, parsedAmount, trade],
-  );
+  const { trade, currencyBalances, currencyKeys, inputError, price } = useDerivedSwapInfo();
 
   const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+    [independentField]: independentField === Field.INPUT ? typedValue : formatBigNumber(price?.value, 'price'),
+    [dependentField]: independentField === Field.OUTPUT ? typedValue : formatBigNumber(price?.value, 'price'),
   };
 
   const { onUserInput, onCurrencySelection, onSwitchTokens } = useSwapActionHandlers();
@@ -220,6 +212,7 @@ export default function SwapPanel() {
   const closeDropdown = () => {
     setAnchor(null);
   };
+
   return (
     <>
       <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>

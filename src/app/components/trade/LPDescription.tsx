@@ -48,12 +48,17 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
     [data.suppliedQuote, quoteSupplying],
   );
 
+  const totalBase = baseSuplying.isGreaterThan(0) ? baseSuplying?.plus(data.totalBase) : data.totalBase;
+  const totalQuote = quoteSupplying.isGreaterThan(0) ? quoteSupplying?.plus(data.totalQuote) : data.totalQuote;
+
   const dailyReward = useMemo(() => {
-    const percentageSupplyBase = supplyBase?.dividedBy(data.totalBase);
-    return percentageSupplyBase?.isGreaterThanOrEqualTo(1)
-      ? data?.totalReward
-      : percentageSupplyBase?.multipliedBy(data?.totalReward);
-  }, [data.totalBase, data.totalReward, supplyBase]);
+    if (totalBase) {
+      const percentageSupplyBase = supplyBase?.dividedBy(totalBase);
+      return percentageSupplyBase?.isGreaterThanOrEqualTo(1)
+        ? data?.totalReward
+        : percentageSupplyBase?.multipliedBy(data?.totalReward);
+    }
+  }, [data.totalReward, supplyBase, totalBase]);
 
   return (
     <Box bg="bg2" flex={1} padding={[5, 7]}>
@@ -106,11 +111,11 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
             <Typography textAlign="center" variant="p">
               {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                 <>
-                  {formatBigNumber(data?.totalBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
+                  {formatBigNumber(totalBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
                   {formatBigNumber(data?.totalQuote, 'currency')} {selectedPair.quoteCurrencyKey}
                 </>
               ) : (
-                `${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
+                `${formatBigNumber(totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
               )}
             </Typography>
           </Box>

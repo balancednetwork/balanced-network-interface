@@ -6,7 +6,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getTradePair } from 'constants/currency';
-import { ONE, ZERO } from 'constants/index';
+import { ZERO } from 'constants/index';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
 import { usePools } from 'store/pool/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -135,7 +135,7 @@ function getInputAmount(outputAmount: CurrencyAmount, pool: Pool): CurrencyAmoun
   const denominator = outputReserve.minus(outputAmount.amount).times(_997);
   const inputAmount = new CurrencyAmount(
     outputAmount.currencyKey === pool.baseCurrencyKey ? pool.quoteCurrencyKey : pool.baseCurrencyKey,
-    numerator.div(denominator).plus(ONE),
+    numerator.div(denominator),
   );
   return inputAmount;
 }

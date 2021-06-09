@@ -18,5 +18,3 @@ export const SLIDER_RANGE_MAX_BOTTOM_THRESHOLD = 0.001;
 export const MINIMUM_ICX_AMOUNT_IN_WALLET = 1;
 
 export const DEFAULT_SLIPPAGE = 100;
-
-export const BLOCK_SCAN_URL = 'https://tracker.icon.foundation/transaction';

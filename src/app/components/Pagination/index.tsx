@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Flex, SxStyleProp } from 'rebass';
+import { Flex, SxStyleProp } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';

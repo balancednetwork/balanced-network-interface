@@ -28,7 +28,6 @@ export type SettingInjection = {
 };
 
 const LOOP = new BigNumber('1000000000000000000');
-
 export class BalancedJs {
   contractSettings: ContractSettings;
   networkId: NetworkId;

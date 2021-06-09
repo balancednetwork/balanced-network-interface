@@ -60,7 +60,7 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
       method,
     },
   } = tx;
-  const amount = tx.data.params._value ? BalancedJs.utils.toIcx(tx.data.params._value).toNumber().toFixed(4) : 0;
+  const amount = _value ? BalancedJs.utils.toIcx(_value).toNumber().toFixed(4) : 0;
   const sign = useMemo(() => {
     if (amount > 0) return '+';
     if (amount < 0) return '-';

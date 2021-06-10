@@ -16,17 +16,17 @@ interface Props {
 }
 
 const NumberButton = styled(Button)`
-  background: #087083;
+  background: ${({ theme }) => theme.colors.disabled};
   padding: 5px 10px !important;
   border-radius: 4px;
   :hover:not(.active) {
-    background: #2ca9b7;
+    background: ${({ theme }) => theme.colors.primary};
   }
   :hover.active {
     cursor: default;
   }
   &.active {
-    background: #2ca9b7;
+    background: ${({ theme }) => theme.colors.primary};
   }
 `;
 

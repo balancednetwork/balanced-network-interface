@@ -111,11 +111,11 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
             <Typography textAlign="center" variant="p">
               {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                 <>
-                  {formatBigNumber(totalBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
+                  {formatBigNumber(data?.totalBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
                   {formatBigNumber(data?.totalQuote, 'currency')} {selectedPair.quoteCurrencyKey}
                 </>
               ) : (
-                `${formatBigNumber(totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
+                `${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
               )}
             </Typography>
           </Box>

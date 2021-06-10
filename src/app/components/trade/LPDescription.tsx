@@ -49,7 +49,6 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
   );
 
   const totalBase = baseSuplying.isGreaterThan(0) ? baseSuplying?.plus(data.totalBase) : data.totalBase;
-  const totalQuote = quoteSupplying.isGreaterThan(0) ? quoteSupplying?.plus(data.totalQuote) : data.totalQuote;
 
   const dailyReward = useMemo(() => {
     if (totalBase) {

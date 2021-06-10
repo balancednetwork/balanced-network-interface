@@ -1,12 +1,11 @@
-import '@reach/tabs/styles.css';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { getLoanTransation, getTotalTransactions, Transaction } from 'apis';
 import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
-import { Box, Flex, Link } from 'rebass';
+import { Box, Flex, Link } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import Pagination, { usePagination } from 'app/components/Pagination';
@@ -61,12 +60,10 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
     },
   } = tx;
   const amount = _value ? BalancedJs.utils.toIcx(_value).toNumber().toFixed(4) : 0;
-  const sign = useMemo(() => {
-    if (amount > 0) return '+';
-    if (amount < 0) return '-';
-  }, [amount]);
+  let sign = '+';
+  if (amount < 0) sign = '-';
 
-  const content = useMemo(() => {
+  const getContent = () => {
     switch (method) {
       case RETURN_ASSET:
         return `Repaid ${amount} Balanced Dollars`;
@@ -75,22 +72,22 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
       default:
         return method;
     }
-  }, [method, amount]);
+  };
 
-  const trackerLink = useMemo(() => {
+  const trackerLink = () => {
     const hash = tx.item_id.split('_')[1];
     return getTrackerLink(networkId, hash, 'transaction');
-  }, [networkId, tx.item_id]);
+  };
 
   return (
     <RowContent>
       <Typography>{dayjs(tx.block_timestamp).format('D MMMM, HH:mm')}</Typography>
       <Flex>
         <Typography fontSize={16} sx={{ mr: '8px' }}>
-          {content}
+          {getContent()}
         </Typography>
         <Link
-          href={trackerLink}
+          href={trackerLink()}
           target="_blank"
           rel="noreferrer noopener"
           sx={{

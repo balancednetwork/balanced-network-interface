@@ -16,7 +16,7 @@ interface Props {
 }
 
 const NumberButton = styled(Button)`
-  background: ${({ theme }) => theme.colors.disabled};
+  background: ${({ theme }) => theme.colors.paginationButtonBG};
   padding: 5px 10px !important;
   border-radius: 4px;
   :hover:not(.active) {

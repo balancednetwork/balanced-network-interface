@@ -48,7 +48,7 @@ export interface Colors {
 
   alert: Color;
 
-  disabled: Color;
+  paginationButtonBG: Color;
 }
 
 export interface Grids {

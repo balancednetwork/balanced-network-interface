@@ -68,7 +68,7 @@ export function theme(): DefaultTheme {
       // alert
       alert: '#fb6a6a',
 
-      disabled: '#087083',
+      paginationButtonBG: '#087083',
     },
 
     fontSizes: [12, 14, 16, 20, 25, 35],

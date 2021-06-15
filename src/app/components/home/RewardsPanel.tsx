@@ -101,9 +101,7 @@ const RewardsPanel = () => {
         <RewardGrid>
           <Row>
             <Typography variant="p">Balance Tokens</Typography>
-            <Typography variant="p">
-              {!account ? '-' : reward.isZero() ? 'Pending' : `${reward.dp(2).toFormat()} BALN`}
-            </Typography>
+            <Typography variant="p">{!account ? '-' : `${reward.dp(2).toFormat()} BALN`}</Typography>
           </Row>
 
           <Row>

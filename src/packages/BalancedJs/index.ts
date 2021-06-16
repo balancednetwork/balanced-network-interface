@@ -8,6 +8,7 @@ import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
 import { Contract } from './contracts/contract';
 import Dex from './contracts/Dex';
+import Dividends from './contracts/Dividends';
 import ICX from './contracts/ICX';
 import Loans from './contracts/Loans';
 import Rewards from './contracts/Rewards';
@@ -45,6 +46,7 @@ export class BalancedJs {
   Dex: Dex;
   Rewards: Rewards;
   Airdrip: Airdrip;
+  Dividends: Dividends;
 
   static utils = {
     toLoop(value: BigNumber | number | string): BigNumber {
@@ -92,6 +94,7 @@ export class BalancedJs {
     this.Dex = new Dex(this.contractSettings);
     this.Rewards = new Rewards(this.contractSettings);
     this.Airdrip = new Airdrip(this.contractSettings);
+    this.Dividends = new Dividends(this.contractSettings);
   }
 
   inject({ account, legerSettings }: SettingInjection) {

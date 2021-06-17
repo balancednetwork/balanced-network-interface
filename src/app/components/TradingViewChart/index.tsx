@@ -62,7 +62,7 @@ const AreaOption: DeepPartial<ChartOptions> = {
         return '';
       }
 
-      return dayjs(time * 1000).format('DD MMM YY hh:mm');
+      return dayjs(time * 1000).format('DD MMM YY hh:mma');
     },
   },
 };
@@ -98,7 +98,7 @@ const CandleOption: DeepPartial<ChartOptions> = {
         return '';
       }
 
-      return dayjs(time * 1000).format('DD MMM YY hh:mm');
+      return dayjs(time * 1000).format('DD MMM YY hh:mm a');
     },
   },
 };

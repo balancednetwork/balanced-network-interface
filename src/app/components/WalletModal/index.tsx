@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 
 import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
-import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
+import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { BalancedJs } from 'packages/BalancedJs';
 import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
@@ -117,7 +117,7 @@ const StyledModal = styled(Modal).attrs({
   }
 `;
 
-let transport = null;
+let transport: any = null;
 
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
@@ -170,7 +170,10 @@ export default function WalletModal() {
   const handleOpenLedger = async () => {
     changeWalletType('LEDGER');
     try {
-      transport = await TransportWebUSB.create();
+      if (!transport) {
+        transport = await TransportWebHID.create();
+        transport.setDebugMode && transport.setDebugMode(false);
+      }
 
       toggleShowledgerAddress();
 

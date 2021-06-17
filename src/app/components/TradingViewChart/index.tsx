@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { createChart, IChartApi, ChartOptions, DeepPartial, CrosshairMode } from 'lightweight-charts';
+import dayjs from 'dayjs';
+import {
+  createChart,
+  IChartApi,
+  ChartOptions,
+  DeepPartial,
+  CrosshairMode,
+  isBusinessDay,
+  BusinessDay,
+  UTCTimestamp,
+} from 'lightweight-charts';
 import styled from 'styled-components';
 
 export enum CHART_PERIODS {
@@ -47,7 +57,13 @@ const AreaOption: DeepPartial<ChartOptions> = {
     mode: CrosshairMode.Magnet,
   },
   localization: {
-    dateFormat: 'yyyy-MM-dd',
+    timeFormatter: (time: BusinessDay | UTCTimestamp) => {
+      if (isBusinessDay(time)) {
+        return '';
+      }
+
+      return dayjs(time * 1000).format('DD MMM YY hh:mm');
+    },
   },
 };
 
@@ -75,6 +91,15 @@ const CandleOption: DeepPartial<ChartOptions> = {
   },
   crosshair: {
     mode: CrosshairMode.Normal,
+  },
+  localization: {
+    timeFormatter: (time: BusinessDay | UTCTimestamp) => {
+      if (isBusinessDay(time)) {
+        return '';
+      }
+
+      return dayjs(time * 1000).format('DD MMM YY hh:mm');
+    },
   },
 };
 

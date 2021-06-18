@@ -56,11 +56,14 @@ export class BalancedJs {
   Airdrip: Airdrip;
 
   static utils = {
-    toLoop(value: BigNumber | number | string): BigNumber {
-      return new BigNumber(value).times(LOOP).integerValue(BigNumber.ROUND_DOWN);
+    toLoop(value: BigNumber | number | string, currencyKey?: string): BigNumber {
+      if (currencyKey === 'IUSDC')
+        return new BigNumber(value).times(new BigNumber(10).pow(6)).integerValue(BigNumber.ROUND_DOWN);
+      else return new BigNumber(value).times(LOOP).integerValue(BigNumber.ROUND_DOWN);
     },
-    toIcx(value: BigNumber | number | string): BigNumber {
-      return new BigNumber(value).div(LOOP);
+    toIcx(value: BigNumber | number | string, currencyKey?: string): BigNumber {
+      if (currencyKey === 'IUSDC') return new BigNumber(value).div(new BigNumber(10).pow(6));
+      else return new BigNumber(value).div(LOOP);
     },
     POOL_IDS: {
       BALNsICX: 4,

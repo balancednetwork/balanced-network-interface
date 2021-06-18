@@ -72,7 +72,7 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
 
     const contract = currencyKey === 'ICX' ? bnJs.inject({ account }) : bnJs.inject({ account })[currencyKey];
     contract
-      .transfer(address, BalancedJs.utils.toLoop(differenceAmount))
+      .transfer(address, BalancedJs.utils.toLoop(differenceAmount, currencyKey))
       .then((res: any) => {
         if (!isEmpty(res.result)) {
           addTransaction(

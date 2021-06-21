@@ -8,6 +8,7 @@ import { Flex, Box } from 'rebass/styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import { MINIMUM_ICX_AMOUNT_IN_WALLET, SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
@@ -165,6 +166,10 @@ export default function LPPanel() {
       ? `${quoteDisplay}`
       : `${baseDisplay} / ${quoteDisplay}`;
 
+  const issICXICXPool = pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX;
+  const showMinimumTooltip =
+    account && !issICXICXPool ? parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') < 10 : false;
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -174,7 +179,7 @@ export default function LPPanel() {
             <LiquiditySelect />
           </Flex>
 
-          <Flex mt={3} hidden={pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX}>
+          <Flex mt={3} hidden={issICXICXPool}>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
@@ -184,15 +189,27 @@ export default function LPPanel() {
             />
           </Flex>
 
-          <Flex mt={3}>
-            <CurrencyInputPanel
-              value={formattedAmounts[Field.CURRENCY_B]}
-              showMaxButton={false}
-              currency={pair.quoteCurrencyKey}
-              onUserInput={onFieldBInput}
-              id="supply-liquidity-input-token-b"
-            />
-          </Flex>
+          <Tooltip
+            style={{ zIndex: 1000 }}
+            show={showMinimumTooltip}
+            text={`10 ${pair.quoteCurrencyKey} minimum`}
+            containerStyle={{ width: 'auto' }}
+          >
+            <Flex
+              mt={3}
+              sx={{
+                position: 'relative',
+              }}
+            >
+              <CurrencyInputPanel
+                value={formattedAmounts[Field.CURRENCY_B]}
+                showMaxButton={false}
+                currency={pair.quoteCurrencyKey}
+                onUserInput={onFieldBInput}
+                id="supply-liquidity-input-token-b"
+              />
+            </Flex>
+          </Tooltip>
 
           <Typography mt={3} textAlign="right">
             Wallet:&nbsp;
@@ -226,7 +243,7 @@ export default function LPPanel() {
           )}
           <Flex justifyContent="center">
             {isValid ? (
-              <Button color="primary" marginTop={5} onClick={handleSupply}>
+              <Button disabled={showMinimumTooltip} color="primary" marginTop={5} onClick={handleSupply}>
                 Supply
               </Button>
             ) : (

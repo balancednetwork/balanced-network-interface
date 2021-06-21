@@ -244,6 +244,7 @@ const CollateralPanel = () => {
               }
               value={!account ? '-' : formattedAmounts[Field.LEFT]}
               currency={'ICX'}
+              maxValue={totalICXAmount.toNumber().toFixed(2)}
               onUserInput={onFieldAInput}
             />
           </Box>
@@ -257,6 +258,7 @@ const CollateralPanel = () => {
               tooltipText="The amount of ICX available to deposit from your wallet."
               value={!account ? '-' : formattedAmounts[Field.RIGHT]}
               currency={'ICX'}
+              maxValue={totalICXAmount.toNumber().toFixed(2)}
               onUserInput={onFieldBInput}
             />
           </Box>

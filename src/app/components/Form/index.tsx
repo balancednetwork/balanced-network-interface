@@ -61,15 +61,36 @@ export const CurrencyField: React.FC<{
   tooltip?: boolean;
   tooltipText?: React.ReactNode;
   tooltipWider?: boolean;
+  maxValue?: string;
   onUserInput?: (value: string) => void;
 }> = function (props) {
-  const { id, isActive, label, value, currency, tooltip, tooltipText, tooltipWider, editable, onUserInput } = props;
+  const {
+    id,
+    isActive,
+    label,
+    value,
+    currency,
+    tooltip,
+    tooltipText,
+    tooltipWider,
+    editable,
+    maxValue,
+    onUserInput,
+  } = props;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextUserInput = event.target.value.replace(/,/g, '.');
 
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-      onUserInput && onUserInput(nextUserInput);
+      if (maxValue && nextUserInput) {
+        if (parseFloat(nextUserInput) < parseFloat(maxValue)) {
+          onUserInput && onUserInput(nextUserInput);
+        } else {
+          onUserInput && onUserInput(maxValue);
+        }
+      } else {
+        onUserInput && onUserInput(nextUserInput);
+      }
     }
   };
 

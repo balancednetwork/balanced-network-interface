@@ -252,12 +252,24 @@ const LoanPanel = () => {
 
         <Flex justifyContent="space-between">
           <Box width={[1, 1 / 2]} mr={4}>
-            <Tooltip
-              containerStyle={{ width: 'auto' }}
-              placement="bottom"
-              text="10 bnUSD minimum"
-              show={isLessThanMinimum && isAdjusting}
-            >
+            {isAdjusting ? (
+              <Tooltip
+                containerStyle={{ width: 'auto' }}
+                placement="bottom"
+                text="10 bnUSD minimum"
+                show={isLessThanMinimum}
+              >
+                <CurrencyField
+                  editable={isAdjusting}
+                  isActive
+                  label="Borrowed"
+                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                  value={formattedAmounts[Field.LEFT]}
+                  currency={'bnUSD'}
+                  onUserInput={onFieldAInput}
+                />
+              </Tooltip>
+            ) : (
               <CurrencyField
                 editable={isAdjusting}
                 isActive
@@ -267,7 +279,7 @@ const LoanPanel = () => {
                 currency={'bnUSD'}
                 onUserInput={onFieldAInput}
               />
-            </Tooltip>
+            )}
           </Box>
 
           <Box width={[1, 1 / 2]} ml={4}>

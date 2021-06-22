@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
@@ -11,7 +12,40 @@ import { FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
+import bnJs from 'bnJs';
 import { useTotalCollectedFees } from 'store/reward/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
+
+const useVoteStatus = () => {
+  const [status, setStatus] = React.useState<{
+    against: number;
+    for: number;
+    startDay: number;
+    endDay: number;
+    name: string;
+  }>();
+
+  React.useEffect(() => {
+    const fetch = async () => {
+      const res = await bnJs.Governance.checkVote(1);
+      const _status = {
+        id: parseInt(res.id, 16),
+        name: res['name'],
+        against: parseInt(res.against, 16),
+        for: parseInt(res.for, 16),
+        startDay: parseInt(res['start day'], 16),
+        endDay: parseInt(res['end day'], 16),
+        result: res['result'],
+      };
+      setStatus(_status);
+    };
+
+    fetch();
+  }, []);
+
+  return status;
+};
 
 const DividendVote = () => {
   const theme = useTheme();
@@ -22,11 +56,7 @@ const DividendVote = () => {
     setOpen(!open);
   };
 
-  const [hasVoted, setHasVoted] = React.useState(true);
-
-  const handleVote = () => {
-    setHasVoted(true);
-  };
+  const [hasVoted, setHasVoted] = React.useState(false);
 
   const handleCancel = () => {
     setHasVoted(false);
@@ -34,6 +64,29 @@ const DividendVote = () => {
   };
 
   const fees = useTotalCollectedFees();
+
+  const addTransaction = useTransactionAdder();
+  const { account } = useIconReact();
+
+  const handleVote = () => {
+    if (status) {
+      bnJs
+        .inject({ account })
+        .Governance.castVote(status.name, hasApproved)
+        .then((res: any) => {
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: `Voting...`,
+              summary: `Voted.`,
+            },
+          );
+        })
+        .catch(e => {
+          console.error('error', e);
+        });
+    }
+  };
 
   const getContent = () => {
     if (hasVoted) {
@@ -46,7 +99,7 @@ const DividendVote = () => {
                   Approved
                 </Typography>
                 <Typography variant="p" color="text">
-                  17%
+                  {status?.for}%
                 </Typography>
               </Flex>
               <Flex flex={1} flexDirection="column" alignItems="center">
@@ -54,7 +107,7 @@ const DividendVote = () => {
                   Rejected
                 </Typography>
                 <Typography variant="p" color="text">
-                  1%
+                  {status?.against}%
                 </Typography>
               </Flex>
             </Flex>
@@ -75,7 +128,7 @@ const DividendVote = () => {
                   Your weight
                 </Typography>
                 <Typography variant="p" color="text">
-                  2500 BALN
+                  {BALNstaked.dp(2).toFormat()} BALN
                 </Typography>
               </Flex>
             </Flex>
@@ -86,7 +139,7 @@ const DividendVote = () => {
             <Typography fontWeight="bold" color="white" as="span">
               2 days, 14 hours
             </Typography>
-            , or when 20% of staked BALN have approved the proposal.
+            .
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -117,7 +170,7 @@ const DividendVote = () => {
           <Typography textAlign="center">
             {'Your voting weight is '}
             <Typography fontWeight="bold" color="white" as="span">
-              2,500 BALN
+              {BALNstaked.dp(2).toFormat()} BALN
             </Typography>
             {'.'}
           </Typography>
@@ -142,6 +195,10 @@ const DividendVote = () => {
         </>
       );
   };
+
+  const status = useVoteStatus();
+
+  const { BALNstaked } = useWalletBalances();
 
   return (
     <>
@@ -183,7 +240,7 @@ const DividendVote = () => {
               {Object.keys(fees)
                 .filter((currencyKey: string) => !fees[currencyKey].isZero())
                 .map((currencyKey: string) => (
-                  <Flex flex={1} flexDirection="column" alignItems="center">
+                  <Flex key={currencyKey} flex={1} flexDirection="column" alignItems="center">
                     <Typography fontSize="16px" fontWeight="bold" color="white">
                       {fees[currencyKey].integerValue().toFormat()}
                     </Typography>

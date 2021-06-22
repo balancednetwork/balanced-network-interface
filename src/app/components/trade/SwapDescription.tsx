@@ -1,6 +1,8 @@
 import React from 'react';
 
 import axios from 'axios';
+import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -9,14 +11,46 @@ import { Button } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
-import { getTradePair } from 'constants/currency';
+import { getTradePair, isQueue } from 'constants/currency';
 import { ONE } from 'constants/index';
+import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { formatBigNumber } from 'utils';
+import { CurrencyKey } from 'types';
+import { formatBigNumber, sleep } from 'utils';
 
 const API_ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://balanced.geometry.io/api/v1' : '/api/v1';
 const LAUNCH_DAY = 1619398800000000;
+const ONE_DAY_DURATION = 86400000;
+
+const generateChartData = (rate: BigNumber, currencyKeys: { [field in Field]?: CurrencyKey }) => {
+  const today = dayjs().startOf('day');
+  const launchDay = dayjs(LAUNCH_DAY / 1000).startOf('day');
+  const platformDays = (today.valueOf() - launchDay.valueOf()) / ONE_DAY_DURATION + 1;
+  const stop = BalancedJs.utils.toLoop(rate);
+  const start = BalancedJs.utils.toLoop(ONE);
+  const step = stop.minus(start).div(platformDays - 1);
+
+  let _data;
+
+  if (currencyKeys[Field.INPUT] === 'sICX' && currencyKeys[Field.OUTPUT] === 'ICX') {
+    _data = Array(platformDays)
+      .fill(start)
+      .map((x, index) => ({
+        time: launchDay.add(index, 'day').valueOf() / 1_000,
+        value: BalancedJs.utils.toIcx(x.plus(step.times(index))).toNumber(),
+      }));
+  } else {
+    _data = Array(platformDays)
+      .fill(start)
+      .map((x, index) => ({
+        time: launchDay.add(index, 'day').valueOf() / 1_000,
+        value: ONE.div(BalancedJs.utils.toIcx(x.plus(step.times(index)))).toNumber(),
+      }));
+  }
+
+  return _data;
+};
 
 export default function SwapDescription() {
   const { currencyKeys, price } = useDerivedSwapInfo();
@@ -43,6 +77,7 @@ export default function SwapDescription() {
   >([]);
   const [loading, setLoading] = React.useState(false);
 
+  const ratio = useRatio();
   React.useEffect(() => {
     const [pair, inverse] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
 
@@ -91,8 +126,25 @@ export default function SwapDescription() {
       }
     };
 
-    if (pair) fetchData();
-  }, [currencyKeys, chartOption.period]);
+    const generateData = async () => {
+      setLoading(true);
+      await sleep(100);
+      const _data: any = generateChartData(ratio.sICXICXratio, currencyKeys);
+      setChartOption(options => ({ ...options, type: CHART_TYPES.AREA }));
+      setData(_data);
+      setLoading(false);
+    };
+
+    if (pair) {
+      if (isQueue(pair)) {
+        generateData();
+      } else {
+        fetchData();
+      }
+    }
+  }, [currencyKeys, chartOption.period, ratio.sICXICXratio]);
+
+  const [pair] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
@@ -123,7 +175,7 @@ export default function SwapDescription() {
             </span>
           </Typography>
         </Box>
-        <Box width={[1, 1 / 2]} marginTop={[3, 0]}>
+        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={pair && isQueue(pair)}>
           <ChartControlGroup mb={2}>
             {Object.keys(CHART_PERIODS).map(key => (
               <ChartControlButton

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import {
   createChart,
@@ -64,6 +65,7 @@ const AreaOption: DeepPartial<ChartOptions> = {
 
       return dayjs(time * 1000).format('DD MMM YY hh:mma');
     },
+    priceFormatter: price => new BigNumber(price).dp(4).toFormat(),
   },
 };
 
@@ -100,6 +102,7 @@ const CandleOption: DeepPartial<ChartOptions> = {
 
       return dayjs(time * 1000).format('DD MMM YY hh:mm a');
     },
+    priceFormatter: price => new BigNumber(price).dp(4).toFormat(),
   },
 };
 

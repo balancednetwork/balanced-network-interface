@@ -16,6 +16,8 @@ import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { getTrackerLink } from 'utils';
 
+import sample from './samples.json';
+
 const queryClient = new QueryClient();
 
 const Row = styled(Box)`
@@ -70,9 +72,9 @@ const METHOD_CONTENT = {
 const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
   const { networkId } = useIconReact();
 
-  const { indexed, method } = tx;
+  const { indexed, method, data } = tx;
   const getValue = () => {
-    let value = indexed.find(item => item.startsWith('0x'));
+    let value = indexed.find(item => item.startsWith('0x')) || data.find(item => item.startsWith('0x'));
     return value ? BalancedJs.utils.toIcx(value).toNumber().toFixed(4) : '';
   };
 
@@ -172,7 +174,7 @@ const TransactionTable = () => {
             AMOUNT
           </Typography>
         </Row>
-        {data?.map(item => (
+        {sample?.map(item => (
           <RowItem tx={item} key={item.item_id} />
         ))}
       </Table>

@@ -10,6 +10,7 @@ export type Transaction = {
   indexed: string[];
   item_id: string;
   method: string;
+  data: string[];
 };
 
 export const getAllTransactions = async (

@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { getLoanTransation, getTotalTransactions, Transaction } from 'apis';
+import { getTotalTransactions } from 'apis';
+import { getAllTransactions, Transaction } from 'apis/allTransaction';
 import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -47,31 +48,38 @@ const Table = styled(Box)`
   }
 `;
 
-const RETURN_ASSET = 'returnAsset';
-const WITHDRAWN = 'withdrawCollateral';
+const SYMBOLS = ['ICX', 'sICX', 'bnUSD', 'BALN'];
+const METHOD_CONTENT = {
+  UnstakeRequest: 'UnstakeRequest',
+};
 
 const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
   const { networkId } = useIconReact();
 
-  const {
-    data: {
-      params: { _value },
-      method,
-    },
-  } = tx;
-  const amount = _value ? BalancedJs.utils.toIcx(_value).toNumber().toFixed(4) : 0;
-  let sign = '+';
-  if (amount < 0) sign = '-';
+  const { indexed, method } = tx;
+  const getValue = () => {
+    let value = indexed.find(item => item.startsWith('0x'));
+    return value ? BalancedJs.utils.toIcx(value).toNumber().toFixed(4) : '';
+  };
+
+  const getSign = () => {
+    return '';
+  };
 
   const getContent = () => {
-    switch (method) {
-      case RETURN_ASSET:
-        return `Repaid ${amount} Balanced Dollars`;
-      case WITHDRAWN:
-        return `Withdrew ${amount} ICX collateral`;
-      default:
-        return method;
-    }
+    return METHOD_CONTENT[method] || method;
+    // switch (method) {
+    //   case RETURN_ASSET:
+    //     return `Repaid ${amount} Balanced Dollars`;
+    //   case WITHDRAWN:
+    //     return `Withdrew ${amount} ICX collateral`;
+    //   default:
+    //     return method;
+    // }
+  };
+
+  const getSymbol = () => {
+    return indexed.find(item => SYMBOLS.includes(item));
   };
 
   const trackerLink = () => {
@@ -101,12 +109,12 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
       <Typography fontSize={16} textAlign="right">
         <span
           style={{
-            color: sign === '+' ? '#2fccdc' : 'red',
+            color: getSign() === '+' ? '#2fccdc' : 'red',
           }}
         >
-          {sign}
+          {getSign()}
         </span>{' '}
-        {amount} {tx.data.params._symbol ?? 'ICX'}
+        {getValue()} {getSymbol()}
       </Typography>
     </RowContent>
   );
@@ -117,7 +125,7 @@ const TransactionTable = () => {
   const limit = 10;
 
   const { isLoading, data } = useQuery<Transaction[]>(['transactions', page], () =>
-    getLoanTransation({
+    getAllTransactions({
       skip: page * limit,
       limit,
     }),
@@ -125,7 +133,7 @@ const TransactionTable = () => {
 
   const { data: totalTx = 0 } = useQuery<number>('totalTransaction', async () => {
     const result = await getTotalTransactions();
-    return result.loans_transactions;
+    return result.total_transactions;
   });
 
   return (

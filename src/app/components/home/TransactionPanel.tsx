@@ -50,7 +50,21 @@ const Table = styled(Box)`
 
 const SYMBOLS = ['ICX', 'sICX', 'bnUSD', 'BALN'];
 const METHOD_CONTENT = {
-  UnstakeRequest: 'UnstakeRequest',
+  RewardsClaimed: 'Claimed (amount) Balance Tokens',
+  stake: 'Staked (amount) Balance Tokens',
+  stakeICX: 'Swapped (amount) ICX for (amount) sICX',
+  withdrawCollateral: 'Withdrew (amount) ICX collateral',
+  AssetRetired: 'Retired (amount) bnUSD for (amount) sICX',
+  LoanRepaid: 'Repaid (amount) Balanced Dollars',
+  OriginateLoan: 'Borrowed (amount) Balanced Dollars',
+  CollateralReceived: 'Deposited (amount) ICX as collateral ',
+  cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',
+  Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
+  Swap: 'Swapped (amount1) (currency1) for (amount2) (currency2)',
+  SupplyICX: 'Supplied (amount) ICX to the ICX / sICX pool',
+  Withdraw: 'Withdrew (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
+  Add: 'Transferred (amount1) (currency1) and (amount2) (currency2) to the (currency1) / (currency2) pool',
+  Deposit: 'Supplied (amount1) (currency1) and (amount2) (currency2) to the (currency1) / (currency2) pool',
 };
 
 const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
@@ -63,19 +77,23 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
   };
 
   const getSign = () => {
-    return '';
+    return '+';
   };
 
   const getContent = () => {
-    return METHOD_CONTENT[method] || method;
-    // switch (method) {
-    //   case RETURN_ASSET:
-    //     return `Repaid ${amount} Balanced Dollars`;
-    //   case WITHDRAWN:
-    //     return `Withdrew ${amount} ICX collateral`;
-    //   default:
-    //     return method;
-    // }
+    let content = METHOD_CONTENT[method] || '';
+    switch (method as keyof typeof METHOD_CONTENT) {
+      case 'RewardsClaimed':
+      case 'LoanRepaid':
+      case 'CollateralReceived':
+      case 'stake':
+      case 'withdrawCollateral':
+      case 'OriginateLoan':
+      case 'cancelSicxicxOrder':
+        return content.replace('(amount)', getValue());
+      default:
+        return method;
+    }
   };
 
   const getSymbol = () => {

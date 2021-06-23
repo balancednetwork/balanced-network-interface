@@ -194,7 +194,9 @@ const LoanPanel = () => {
     );
   }
 
-  const isLessThanMinimum = parseFloat(formattedAmounts[Field.LEFT]) < 10;
+  const currentValue = parseFloat(formattedAmounts[Field.LEFT]);
+
+  const isLessThanMinimum = currentValue > 0 && currentValue < 10;
 
   return (
     <>
@@ -211,7 +213,13 @@ const LoanPanel = () => {
             {isAdjusting ? (
               <>
                 <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
-                <Button disabled={isLessThanMinimum} onClick={toggleOpen} fontSize={14}>
+                <Button
+                  disabled={
+                    borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue > 0
+                  }
+                  onClick={toggleOpen}
+                  fontSize={14}
+                >
                   Confirm
                 </Button>
               </>
@@ -252,7 +260,7 @@ const LoanPanel = () => {
 
         <Flex justifyContent="space-between">
           <Box width={[1, 1 / 2]} mr={4}>
-            {isAdjusting ? (
+            {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
               <Tooltip
                 containerStyle={{ width: 'auto' }}
                 placement="bottom"

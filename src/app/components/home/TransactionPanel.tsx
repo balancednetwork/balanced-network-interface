@@ -16,7 +16,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { getTrackerLink } from 'utils';
 
-import sample from './samples.json';
+// import sample from './samples.json';
 
 const queryClient = new QueryClient();
 
@@ -78,8 +78,46 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
     return value ? BalancedJs.utils.toIcx(value).toNumber().toFixed(4) : '';
   };
 
-  const getSign = () => {
-    return '+';
+  const getAmountWithSign = () => {
+    const value = getValue();
+    switch (method as keyof typeof METHOD_CONTENT) {
+      case 'RewardsClaimed':
+      case 'withdrawCollateral':
+      case 'OriginateLoan':
+      case 'cancelSicxicxOrder':
+        return (
+          <>
+            <span
+              style={{
+                color: '#2fccdc',
+              }}
+            >
+              +
+            </span>{' '}
+            {value} {getSymbol()}
+          </>
+        );
+      case 'LoanRepaid':
+      case 'CollateralReceived':
+        return (
+          <>
+            <span
+              style={{
+                color: 'red',
+              }}
+            >
+              -
+            </span>{' '}
+            {value} {getSymbol()}
+          </>
+        );
+
+      case 'Deposit':
+        return '';
+
+      default:
+        return '';
+    }
   };
 
   const getContent = () => {
@@ -92,7 +130,33 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
       case 'withdrawCollateral':
       case 'OriginateLoan':
       case 'cancelSicxicxOrder':
-        return content.replace('(amount)', getValue());
+        const value = getValue();
+        return content.replace('(amount)', value);
+
+      case 'Deposit':
+        return content;
+
+      case 'AssetRetired':
+        return content;
+
+      case 'stakeICX':
+        return content;
+
+      case 'Add':
+        return content;
+
+      case 'Withdraw':
+        return content;
+
+      case 'Remove':
+        return content;
+
+      case 'Swap':
+        return content;
+
+      case 'SupplyICX':
+        return content;
+
       default:
         return method;
     }
@@ -127,14 +191,7 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
         </Link>
       </Flex>
       <Typography fontSize={16} textAlign="right">
-        <span
-          style={{
-            color: getSign() === '+' ? '#2fccdc' : 'red',
-          }}
-        >
-          {getSign()}
-        </span>{' '}
-        {getValue()} {getSymbol()}
+        {getAmountWithSign()}
       </Typography>
     </RowContent>
   );
@@ -174,7 +231,7 @@ const TransactionTable = () => {
             AMOUNT
           </Typography>
         </Row>
-        {sample?.map(item => (
+        {data?.map(item => (
           <RowItem tx={item} key={item.item_id} />
         ))}
       </Table>

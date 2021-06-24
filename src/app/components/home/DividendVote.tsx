@@ -1,6 +1,10 @@
 import React from 'react';
 
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
 import { useIconReact } from 'packages/icon-react';
+import { useVoteInfoQuery, useUserVoteStatusQuery, useUserWeightQuery, usePlatformDayQuery } from 'queries/vote';
 import { Flex, Box } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
@@ -14,38 +18,12 @@ import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import bnJs from 'bnJs';
 import { useTotalCollectedFees } from 'store/reward/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 
-const useVoteStatus = () => {
-  const [status, setStatus] = React.useState<{
-    against: number;
-    for: number;
-    startDay: number;
-    endDay: number;
-    name: string;
-  }>();
+dayjs.extend(utc);
+dayjs.extend(relativeTime);
 
-  React.useEffect(() => {
-    const fetch = async () => {
-      const res = await bnJs.Governance.checkVote(1);
-      const _status = {
-        id: parseInt(res.id, 16),
-        name: res['name'],
-        against: parseInt(res.against, 16),
-        for: parseInt(res.for, 16),
-        startDay: parseInt(res['start day'], 16),
-        endDay: parseInt(res['end day'], 16),
-        result: res['result'],
-      };
-      setStatus(_status);
-    };
-
-    fetch();
-  }, []);
-
-  return status;
-};
+const DIVIDEND_VOTE_INDEX = process.env.NODE_ENV === 'production' ? 1 : 2;
 
 const DividendVote = () => {
   const theme = useTheme();
@@ -56,23 +34,16 @@ const DividendVote = () => {
     setOpen(!open);
   };
 
-  const [hasVoted, setHasVoted] = React.useState(false);
-
-  const handleCancel = () => {
-    setHasVoted(false);
-    toggleOpen();
-  };
-
   const fees = useTotalCollectedFees();
 
   const addTransaction = useTransactionAdder();
   const { account } = useIconReact();
-
+  const [txHash, setTxHash] = React.useState('');
   const handleVote = () => {
-    if (status) {
+    if (voteInfo) {
       bnJs
         .inject({ account })
-        .Governance.castVote(status.name, hasApproved)
+        .Governance.castVote(voteInfo.name, hasApproved)
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
@@ -81,6 +52,8 @@ const DividendVote = () => {
               summary: `Voted.`,
             },
           );
+
+          setTxHash(res.result);
         })
         .catch(e => {
           console.error('error', e);
@@ -88,8 +61,36 @@ const DividendVote = () => {
     }
   };
 
+  const voteInfoQuery = useVoteInfoQuery(DIVIDEND_VOTE_INDEX);
+  const voteInfo = voteInfoQuery.data;
+  const voteStatusQuery = useUserVoteStatusQuery(DIVIDEND_VOTE_INDEX);
+  const voteStatus = voteStatusQuery.data;
+  const weightQuery = useUserWeightQuery(voteInfo?.snapshotDay);
+  const weight = weightQuery.data;
+  const platformDayQuery = usePlatformDayQuery();
+  const platformDay = platformDayQuery.data;
+
+  const txStatus = useTransactionStatus(txHash);
+
+  React.useEffect(() => {
+    if (txStatus === TransactionStatus.success) {
+      voteInfoQuery.refetch();
+      voteStatusQuery.refetch();
+    }
+  }, [voteInfoQuery, voteStatusQuery, txStatus]);
+
+  //
+  let endTimeStr =
+    voteInfo && platformDay
+      ? dayjs()
+          .utc()
+          .add(voteInfo.endDay - platformDay, 'day')
+          .hour(17)
+          .fromNow()
+      : '';
+
   const getContent = () => {
-    if (hasVoted) {
+    if (voteStatus && voteStatus.hasVoted) {
       return (
         <>
           <FlexPanel mt={5} mb={3} bg="bg3" flexDirection="column">
@@ -99,7 +100,7 @@ const DividendVote = () => {
                   Approved
                 </Typography>
                 <Typography variant="p" color="text">
-                  {status?.for}%
+                  {voteInfo?.for}%
                 </Typography>
               </Flex>
               <Flex flex={1} flexDirection="column" alignItems="center">
@@ -107,7 +108,7 @@ const DividendVote = () => {
                   Rejected
                 </Typography>
                 <Typography variant="p" color="text">
-                  {status?.against}%
+                  {voteInfo?.against}%
                 </Typography>
               </Flex>
             </Flex>
@@ -120,7 +121,8 @@ const DividendVote = () => {
                   Your vote
                 </Typography>
                 <Typography variant="p" color="text">
-                  Approve
+                  {!voteStatus?.approval.isZero() && 'Approve'}
+                  {!voteStatus?.reject.isZero() && 'Reject'}
                 </Typography>
               </Flex>
               <Flex flex={1} flexDirection="column" alignItems="center">
@@ -128,7 +130,7 @@ const DividendVote = () => {
                   Your weight
                 </Typography>
                 <Typography variant="p" color="text">
-                  {BALNstaked.dp(2).toFormat()} BALN
+                  {weight?.dp(2).toFormat()} BALN
                 </Typography>
               </Flex>
             </Flex>
@@ -137,13 +139,13 @@ const DividendVote = () => {
           <Typography variant="p" my={1} textAlign="center" color="text1">
             Voting ends in{' '}
             <Typography fontWeight="bold" color="white" as="span">
-              2 days, 14 hours
+              {endTimeStr}
             </Typography>
             .
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <Button onClick={handleCancel} fontSize={14}>
+            <Button onClick={toggleOpen} fontSize={14}>
               Close
             </Button>
           </Flex>
@@ -170,7 +172,7 @@ const DividendVote = () => {
           <Typography textAlign="center">
             {'Your voting weight is '}
             <Typography fontWeight="bold" color="white" as="span">
-              {BALNstaked.dp(2).toFormat()} BALN
+              {weight?.dp(2).toFormat()} BALN
             </Typography>
             {'.'}
           </Typography>
@@ -178,7 +180,7 @@ const DividendVote = () => {
           <Typography textAlign="center">
             {'Voting ends in '}
             <Typography fontWeight="bold" color="white" as="span">
-              2 days, 14 hours
+              {endTimeStr}
             </Typography>
             {'.'}
           </Typography>
@@ -196,13 +198,9 @@ const DividendVote = () => {
       );
   };
 
-  const status = useVoteStatus();
-
-  const { BALNstaked } = useWalletBalances();
-
   return (
     <>
-      {!hasVoted ? (
+      {!(voteStatus && voteStatus.hasVoted) ? (
         <Link onClick={toggleOpen}>Vote to distribute fees</Link>
       ) : (
         <Link onClick={toggleOpen}>Check voting progress</Link>

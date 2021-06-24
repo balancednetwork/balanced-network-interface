@@ -21,12 +21,32 @@ export default class Governance extends Contract {
     return this.call(callParams);
   }
 
+  getVotesOfUser(voteIndex: number, user: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getVotesOfUser',
+      params: {
+        vote_index: IconConverter.toHex(voteIndex),
+        user: user,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  getDay() {
+    const callParams = this.paramsBuilder({
+      method: 'getDay',
+    });
+
+    return this.call(callParams);
+  }
+
   castVote(name: string, vote: boolean) {
     const callParams = this.transactionParamsBuilder({
       method: 'castVote',
       params: {
         name: name,
-        vote: vote,
+        vote: IconConverter.toHex(vote ? 1 : 0),
       },
     });
 

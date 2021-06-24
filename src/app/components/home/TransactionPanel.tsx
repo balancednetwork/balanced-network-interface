@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { getTotalTransactions } from 'apis';
 import { getAllTransactions, Transaction } from 'apis/allTransaction';
 import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
@@ -69,7 +68,10 @@ const METHOD_CONTENT = {
   Deposit: 'Supplied (amount1) (currency1) and (amount2) (currency2) to the (currency1) / (currency2) pool',
 };
 
-const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
+const METHOD_WITH_2_SYMBOLS = ['Deposit', 'Add', 'Withdraw', 'Swap', 'Remove', 'AssetRetired', 'stakeICX'];
+const METHOD_POSITIVE_SIGN = ['RewardsClaimed', 'withdrawCollateral', 'OriginateLoan', 'cancelSicxicxOrder'];
+
+const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, secondTx }) => {
   const { networkId } = useIconReact();
 
   const { indexed, method, data } = tx;
@@ -78,88 +80,53 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
     return value ? BalancedJs.utils.toIcx(value).toNumber().toFixed(4) : '';
   };
 
+  const getSecondValue = () => {
+    if (!secondTx) return;
+    const { indexed, data } = secondTx;
+    let value = indexed.find(item => item.startsWith('0x')) || data.find(item => item.startsWith('0x'));
+    return value ? BalancedJs.utils.toIcx(value).toNumber().toFixed(4) : '';
+  };
+
   const getAmountWithSign = () => {
     const value = getValue();
-    switch (method as keyof typeof METHOD_CONTENT) {
-      case 'RewardsClaimed':
-      case 'withdrawCollateral':
-      case 'OriginateLoan':
-      case 'cancelSicxicxOrder':
-        return (
-          <>
+    if (!secondTx) {
+      const isPostive = METHOD_POSITIVE_SIGN.includes(method);
+      return (
+        <>
+          {parseFloat(value) !== 0 && (
             <span
               style={{
-                color: '#2fccdc',
+                color: isPostive ? '#2fccdc' : 'red',
               }}
             >
-              +
-            </span>{' '}
-            {value} {getSymbol()}
-          </>
-        );
-      case 'LoanRepaid':
-      case 'CollateralReceived':
-        return (
-          <>
-            <span
-              style={{
-                color: 'red',
-              }}
-            >
-              -
-            </span>{' '}
-            {value} {getSymbol()}
-          </>
-        );
-
-      case 'Deposit':
-        return '';
-
-      default:
-        return '';
+              +{' '}
+            </span>
+          )}
+          {value} {getSymbol()}
+        </>
+      );
     }
+  };
+
+  const getSecondSymbol = () => {
+    return '';
   };
 
   const getContent = () => {
     let content = METHOD_CONTENT[method] || '';
-    switch (method as keyof typeof METHOD_CONTENT) {
-      case 'RewardsClaimed':
-      case 'LoanRepaid':
-      case 'CollateralReceived':
-      case 'stake':
-      case 'withdrawCollateral':
-      case 'OriginateLoan':
-      case 'cancelSicxicxOrder':
-        const value = getValue();
-        return content.replace('(amount)', value);
-
-      case 'Deposit':
-        return content;
-
-      case 'AssetRetired':
-        return content;
-
-      case 'stakeICX':
-        return content;
-
-      case 'Add':
-        return content;
-
-      case 'Withdraw':
-        return content;
-
-      case 'Remove':
-        return content;
-
-      case 'Swap':
-        return content;
-
-      case 'SupplyICX':
-        return content;
-
-      default:
-        return method;
+    if (!secondTx) {
+      const value = getValue();
+      return content.replace('(amount)', value);
     }
+
+    const value = getValue();
+    const symbol = getSymbol();
+    const secondValue = getSecondValue();
+    const secondSymbol = getSecondSymbol();
+    content.replace('(amount1)', value);
+    content.replace('(currency1)', symbol);
+    content.replace('(amount2)', secondValue);
+    content.replace('(currency2)', secondSymbol);
   };
 
   const getSymbol = () => {
@@ -198,20 +165,56 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
 };
 
 const TransactionTable = () => {
+  const { account } = useIconReact();
   const { page, setPage } = usePagination();
+  const [count, setCount] = useState(0);
   const limit = 10;
 
-  const { isLoading, data } = useQuery<Transaction[]>(['transactions', page], () =>
-    getAllTransactions({
-      skip: page * limit,
-      limit,
-    }),
+  const { isLoading, data } = useQuery<{ count: number; transactions: Transaction[] }>(['transactions', page], () =>
+    account
+      ? getAllTransactions({
+          skip: page * limit,
+          limit: 20, // this is to handle merging transaction
+          // from_address: account,
+        })
+      : { count: 0, transactions: [] },
   );
 
-  const { data: totalTx = 0 } = useQuery<number>('totalTransaction', async () => {
-    const result = await getTotalTransactions();
-    return result.total_transactions;
-  });
+  const totalPages = Math.floor((data?.count || 0) / limit);
+  useEffect(() => {
+    totalPages && setCount(totalPages);
+  }, [totalPages]);
+
+  const getRows = () => {
+    const rows: React.ReactElement[] = [];
+    if (data?.transactions && data?.transactions?.length) {
+      const { transactions: txs } = data;
+      for (let i = 0; i < Math.min(10, txs.length); i++) {
+        const tx = txs[i];
+        if (tx.address) {
+          let secondTx: Transaction | undefined;
+
+          // check if this transaction has 2 symbols
+          if (METHOD_WITH_2_SYMBOLS.includes(tx.method)) {
+            const idx = txs.findIndex(
+              item => item.transaction_hash === tx.transaction_hash && item.item_id !== tx.item_id,
+            );
+            // get the second transaction to merge to the first one
+            secondTx = txs[idx];
+            // delete from array
+            if (secondTx) {
+              txs.splice(idx, 1);
+            }
+          }
+
+          console.log(tx);
+          rows.push(<RowItem secondTx={secondTx} tx={tx} key={tx.item_id} />);
+        }
+      }
+    }
+
+    return rows;
+  };
 
   return (
     <BoxPanel bg="bg2">
@@ -231,9 +234,7 @@ const TransactionTable = () => {
             AMOUNT
           </Typography>
         </Row>
-        {data?.map(item => (
-          <RowItem tx={item} key={item.item_id} />
-        ))}
+        {getRows()}
       </Table>
       <Pagination
         sx={{ mt: 2 }}
@@ -243,7 +244,7 @@ const TransactionTable = () => {
           }
         }}
         currentPage={page}
-        totalPages={Math.floor(totalTx / limit)}
+        totalPages={count}
         displayPages={7}
       />
     </BoxPanel>

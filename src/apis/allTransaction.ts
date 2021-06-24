@@ -3,9 +3,6 @@ import querystring from 'querystring';
 
 import { API_V1_ENDPOINT } from './constants';
 
-const ALL_TRANSACTION_ENDPOINT =
-  process.env.NODE_ENV === 'production' ? API_V1_ENDPOINT : 'https://b.balanced.geometry.io/api/v1';
-
 export type Transaction = {
   block_hash: string;
   block_number: number;
@@ -24,7 +21,7 @@ export const getAllTransactions = async (
     limit: 10,
   },
 ): Promise<{ count: number; transactions: Transaction[] }> => {
-  const endpoint = `${ALL_TRANSACTION_ENDPOINT}/stats/transaction-history?${querystring.stringify(params)}`;
+  const endpoint = `${API_V1_ENDPOINT}/stats/transaction-history?${querystring.stringify(params)}`;
 
   return axios(endpoint, {
     headers: {

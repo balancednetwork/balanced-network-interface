@@ -13,6 +13,7 @@ export type Transaction = {
   data: string[];
   transaction_hash: string;
   address?: string;
+  item_timestamp: string;
 };
 
 export const getAllTransactions = async (

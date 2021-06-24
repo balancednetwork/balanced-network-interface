@@ -289,7 +289,7 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
 
   return (
     <RowContent>
-      <Typography>{dayjs(tx.block_timestamp).format('D MMMM, HH:mm')}</Typography>
+      <Typography>{dayjs(tx.item_timestamp).format('D MMMM, HH:mm')}</Typography>
       <Flex>
         <Typography fontSize={16} sx={{ mr: '8px' }}>
           {getContent()}
@@ -320,7 +320,7 @@ const TransactionTable = () => {
   const limit = 10;
 
   const { isLoading, data } = useQuery<{ count: number; transactions: Transaction[] }>(
-    ['transactions', page],
+    ['transactions', page, account],
     // () => sample2,
     () =>
       account
@@ -341,9 +341,9 @@ const TransactionTable = () => {
     const rows: React.ReactElement[] = [];
     if (data?.transactions && data?.transactions?.length) {
       const { transactions: txs } = data;
-      for (let i = 0; i < Math.max(10, txs.length); i++) {
+      for (let i = 0; i < Math.min(10, txs.length); i++) {
         const tx = txs[i];
-        if (tx.address) {
+        if (tx && tx.address) {
           let secondTx: Transaction | undefined;
 
           // check if this transaction has 2 symbols
@@ -362,7 +362,6 @@ const TransactionTable = () => {
             }
           }
 
-          console.log(tx);
           rows.push(<RowItem secondTx={secondTx} tx={tx} key={tx.item_id} />);
         }
       }

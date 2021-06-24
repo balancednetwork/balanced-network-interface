@@ -99,7 +99,7 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
                 color: isPostive ? '#2fccdc' : 'red',
               }}
             >
-              +{' '}
+              {isPostive ? '+' : '-'}{' '}
             </span>
           )}
           {value} {getSymbol()}

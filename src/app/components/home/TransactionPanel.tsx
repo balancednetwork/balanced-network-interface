@@ -175,7 +175,7 @@ const TransactionTable = () => {
       ? getAllTransactions({
           skip: page * limit,
           limit: 20, // this is to handle merging transaction
-          // from_address: account,
+          from_address: account,
         })
       : { count: 0, transactions: [] },
   );

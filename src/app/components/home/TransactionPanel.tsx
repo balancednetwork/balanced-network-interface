@@ -14,7 +14,7 @@ import { BoxPanel } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
-import { getTrackerLink } from 'utils';
+import { formatBigNumber, getTrackerLink } from 'utils';
 
 // import sample2 from './sample2.json';
 
@@ -109,10 +109,10 @@ const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string
   </>
 );
 
-const convertValue = (value: string) => BalancedJs.utils.toIcx(value).toFixed(3);
+const convertValue = (value: string) => formatBigNumber(BalancedJs.utils.toIcx(value), 'currency');
 
 const getValue = ({ indexed, data }: Transaction) => {
-  let value = indexed.find(item => item.startsWith('0x')) || data.find(item => item.startsWith('0x'));
+  let value = indexed?.find(item => item.startsWith('0x')) || (data?.find && data?.find(item => item.startsWith('0x')));
   return value ? convertValue(value) : '';
 };
 
@@ -180,10 +180,60 @@ const getValuesAndSymbols = (tx: Transaction) => {
     }
     default: {
       const amount1 = getValue(tx);
-      const symbol1 = tx.indexed.find(item => SYMBOLS.includes(item)) || '';
+      const symbol1 = tx.indexed?.find(item => SYMBOLS.includes(item)) || '';
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
   }
+};
+
+const getAmountWithSign = (tx: Transaction) => {
+  const method = getMethod(tx);
+  switch (method) {
+    case 'Remove': {
+      const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
+      return (
+        <>
+          <AmountItem value={amount1} symbol={symbol1} positive />
+          <br />
+          <AmountItem value={amount2} symbol={symbol2} positive />
+        </>
+      );
+    }
+    case 'Add': {
+      const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
+      return (
+        <>
+          <AmountItem value={amount1} symbol={symbol1} positive={false} />
+          <br />
+          <AmountItem value={amount2} symbol={symbol2} positive={false} />
+        </>
+      );
+    }
+    case 'Swap': {
+      const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
+      return (
+        <>
+          <AmountItem value={amount1} symbol={symbol1} positive={true} />
+          <br />
+          <AmountItem value={amount2} symbol={symbol2} positive={false} />
+        </>
+      );
+    }
+    case 'ClaimSicxEarnings': {
+      const { amount1, symbol1 } = getValuesAndSymbols(tx);
+      return <AmountItem value={amount1} symbol={symbol1} positive />;
+    }
+    case 'Withdraw': {
+      const { amount1, symbol1 } = getValuesAndSymbols({ ...tx, method: 'Withdraw1Value' });
+      return <AmountItem value={amount1} symbol={symbol1} positive />;
+    }
+    default:
+      const positive = METHOD_POSITIVE_SIGN.includes(method);
+      const { amount1, symbol1 } = getValuesAndSymbols(tx);
+      return <AmountItem value={amount1} symbol={symbol1} positive={positive} />;
+  }
+
+  // handle merge 2 transaction
 };
 
 const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, secondTx }) => {
@@ -208,57 +258,6 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
     return indexed.find(item => SYMBOLS.includes(item)) || '';
   };
   //============
-
-  const getAmountWithSign = () => {
-    if (!secondTx) {
-      switch (method) {
-        case 'Remove': {
-          const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
-          return (
-            <>
-              <AmountItem value={amount1} symbol={symbol1} positive />
-              <br />
-              <AmountItem value={amount2} symbol={symbol2} positive />
-            </>
-          );
-        }
-        case 'Add': {
-          const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
-          return (
-            <>
-              <AmountItem value={amount1} symbol={symbol1} positive={false} />
-              <br />
-              <AmountItem value={amount2} symbol={symbol2} positive={false} />
-            </>
-          );
-        }
-        case 'Swap': {
-          const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
-          return (
-            <>
-              <AmountItem value={amount1} symbol={symbol1} positive={true} />
-              <br />
-              <AmountItem value={amount2} symbol={symbol2} positive={false} />
-            </>
-          );
-        }
-        case 'ClaimSicxEarnings': {
-          const { amount1, symbol1 } = getValuesAndSymbols(tx);
-          return <AmountItem value={amount1} symbol={symbol1} positive />;
-        }
-        case 'Withdraw': {
-          const { amount1, symbol1 } = getValuesAndSymbols({ ...tx, method: 'Withdraw1Value' });
-          return <AmountItem value={amount1} symbol={symbol1} positive />;
-        }
-        default:
-          const positive = METHOD_POSITIVE_SIGN.includes(method);
-          const { amount1, symbol1 } = getValuesAndSymbols(tx);
-          return <AmountItem value={amount1} symbol={symbol1} positive={positive} />;
-      }
-    }
-
-    // handle merge 2 transaction
-  };
 
   const getContent = () => {
     let content = METHOD_CONTENT[method] || method;
@@ -336,7 +335,7 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
         </Link>
       </Flex>
       <Typography fontSize={16} textAlign="right">
-        {getAmountWithSign()}
+        {getAmountWithSign(tx)}
       </Typography>
     </RowContent>
   );
@@ -372,7 +371,7 @@ const TransactionTable = () => {
     if (txs && txs?.length) {
       for (let i = 0; i < 10; i++) {
         const tx = txs[i];
-        if (tx) {
+        if (tx && (tx.data || tx.indexed)) {
           let secondTx: Transaction | undefined;
 
           // check if this transaction has 2 symbols

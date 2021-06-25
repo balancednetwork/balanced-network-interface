@@ -24,7 +24,7 @@ dayjs.extend(utc);
 dayjs.extend(relativeTime);
 
 // const DIVIDEND_VOTE_INDEX = process.env.NODE_ENV === 'production' ? 1 : 4;
-const DIVIDEND_VOTE_INDEX = 4;
+const DIVIDEND_VOTE_INDEX = 5;
 
 console.log(DIVIDEND_VOTE_INDEX);
 

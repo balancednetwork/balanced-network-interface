@@ -316,7 +316,7 @@ const DividendVote = () => {
       )}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <Flex className="scrollbar scrollbar-primary" flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb={1}>
             Balanced DAO vote
           </Typography>

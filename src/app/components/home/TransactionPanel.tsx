@@ -62,7 +62,7 @@ const METHOD_CONTENT = {
   CollateralReceived: 'Deposited (amount) ICX as collateral ',
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
-
+  ClaimSicxEarnings: '',
   //  2 symbols
   Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
   Swap: 'Swapped (amount1) (currency1) for (amount2) (currency2)',
@@ -102,16 +102,28 @@ const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string
   </>
 );
 
-const convertValue = (value: string) => BalancedJs.utils.toIcx(value).toFixed(2);
+const convertValue = (value: string) => BalancedJs.utils.toIcx(value).toFixed(3);
 
 const getValue = ({ indexed, data }: Transaction) => {
   let value = indexed.find(item => item.startsWith('0x')) || data.find(item => item.startsWith('0x'));
   return value ? convertValue(value) : '';
 };
 
+const getMethod = (tx: Transaction) => {
+  let method: keyof typeof METHOD_CONTENT = tx.method as any;
+  if (!method) {
+    method = (tx.data as any)?.method as any;
+  }
+  return method;
+};
+
 const getValuesAndSymbols = (tx: Transaction) => {
-  const method = tx.method as keyof typeof METHOD_CONTENT;
+  const method = getMethod(tx);
   switch (method) {
+    case 'stake': {
+      const amount1 = convertValue((tx.data as any)?.params?._value || 0);
+      return { amount1, amount2: '', symbol1: '', symbol2: '' };
+    }
     case 'Remove':
     case 'Add': {
       const poolId = parseInt(tx.indexed[1]);
@@ -133,7 +145,6 @@ const getValuesAndSymbols = (tx: Transaction) => {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
-    case 'stake':
     case 'RewardsClaimed': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'BALN', symbol2: '' };
@@ -318,7 +329,7 @@ const TransactionTable = () => {
   const [count, setCount] = useState(0);
   const limit = 10;
 
-  const { isLoading, data } = useQuery<{ count: number; transactions: Transaction[] }>(
+  const { isLoading, data } = useQuery<{ count: number; transactions: any }>(
     ['transactions', page, account],
     // () => sample2,
     () =>
@@ -338,11 +349,11 @@ const TransactionTable = () => {
 
   const getRows = () => {
     const rows: React.ReactElement[] = [];
-    if (data?.transactions && data?.transactions?.length) {
-      const { transactions: txs } = data;
+    const txs = (data?.transactions as any) as Transaction[];
+    if (txs && txs?.length) {
       for (let i = 0; i < 10; i++) {
         const tx = txs[i];
-        if (tx && tx.address) {
+        if (tx) {
           let secondTx: Transaction | undefined;
 
           // check if this transaction has 2 symbols

@@ -10,10 +10,11 @@ export type Transaction = {
   indexed: string[];
   item_id: string;
   method: string;
-  data: string[];
+  data: any;
   transaction_hash: string;
   address?: string;
   item_timestamp: string;
+  [key: string]: any;
 };
 
 export const getAllTransactions = async (

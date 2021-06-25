@@ -2,6 +2,40 @@
   "count": 396788,
   "transactions": [
     {
+      "data": {
+        "method": "stake",
+        "params": {
+          "_value": "0x8158fce53ccc30364f6"
+        }
+      },
+      "signature": "dcKSlTx7sccU2wl15S/w4RiMmBJz9AQIt99m1TCBt0c4npfxQDwJLKG6Xch+5N6PD/12BT2w1ybzIEc3eaFSXQA=",
+      "fee": null,
+      "nid": 1,
+      "block_number": 36122066,
+      "transaction_index": 3,
+      "type": "transaction",
+      "receipt_step_price": "0x2e90edd00",
+      "block_timestamp": 1624551634144492,
+      "step_limit": "0x2faf080",
+      "receipt_step_used": "0x224e8",
+      "from_address": "hxee13cca00d2b7a7530e330771a9961541f9780a0",
+      "value": "0x0",
+      "timestamp": "0x5c58566d67818",
+      "receipt_status": 1,
+      "method": "stake",
+      "item_id": "transaction_0xea029d4461702d6e20080edad1a544b042ddd1df4d632b8d1fbbafbc8555bf95",
+      "receipt_logs": null,
+      "block_hash": "228a355b0108ae5c327728cb4013f1bbf2d94ce9f7f0b46bff946f8202b7e9a7",
+      "to_address": "cxf61cd5a45dc9f91c15aa65831a30a90d59a09619",
+      "version": "0x3",
+      "nonce": null,
+      "receipt_cumulative_step_used": "0x79a90",
+      "receipt_score_address": null,
+      "data_type": "call",
+      "item_timestamp": "2021-06-24T16:20:34Z",
+      "hash": "0xea029d4461702d6e20080edad1a544b042ddd1df4d632b8d1fbbafbc8555bf95"
+    },
+    {
       "address": "cx66d4d90f5f113eba575bf793570135f9b10cece1",
       "data": ["Loan of 62430000000000000000 bnUSD from Balanced."],
       "method": "OriginateLoan",

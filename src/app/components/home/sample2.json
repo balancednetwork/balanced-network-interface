@@ -2,6 +2,26 @@
   "count": 396788,
   "transactions": [
     {
+      "address": "cxa0af3165c08318e988cb30993b3048335b94af6c",
+      "data": [],
+      "method": "ClaimSicxEarnings",
+      "indexed": [
+        "ClaimSicxEarnings(Address,int)",
+        "hxffdab3580ae733f63144079ff758365ae47f344d",
+        "0xe0790390d8a742c13"
+      ],
+      "item_id": "log_0xd1b5bce290ea34a930073b28dc340e94d4509feb2a13d8bc0ac2ee67c4c73e06_1",
+      "block_number": 36127998,
+      "block_hash": "88475ecb3f36f2390d9056a5a3f1ac668827cdf9af78d0be9c9329c5247175b5",
+      "transaction_index": 2,
+      "type": "log",
+      "log_index": 1,
+      "block_timestamp": 1624563856219035,
+      "from_address": "hxffdab3580ae733f63144079ff758365ae47f344d",
+      "item_timestamp": "2021-06-24T19:44:16Z",
+      "transaction_hash": "0xd1b5bce290ea34a930073b28dc340e94d4509feb2a13d8bc0ac2ee67c4c73e06"
+    },
+    {
       "data": {
         "method": "stake",
         "params": {

@@ -62,7 +62,7 @@ const METHOD_CONTENT = {
   CollateralReceived: 'Deposited (amount) ICX as collateral ',
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
-  ClaimSicxEarnings: '',
+  ClaimSicxEarnings: 'Withdrew (amount) ICX from ICX / sICX pool',
   //  2 symbols
   Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
   Swap: 'Swapped (amount1) (currency1) for (amount2) (currency2)',
@@ -122,7 +122,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
   switch (method) {
     case 'stake': {
       const amount1 = convertValue((tx.data as any)?.params?._value || 0);
-      return { amount1, amount2: '', symbol1: '', symbol2: '' };
+      return { amount1, amount2: '', symbol1: 'BALN', symbol2: '' };
     }
     case 'Remove':
     case 'Add': {
@@ -154,6 +154,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
       return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
     }
     case 'cancelSicxicxOrder':
+    case 'ClaimSicxEarnings':
     case 'CollateralReceived': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'ICX', symbol2: '' };
@@ -226,6 +227,10 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
               <AmountItem value={amount2} symbol={symbol2} positive={false} />
             </>
           );
+        }
+        case 'ClaimSicxEarnings': {
+          const { amount1, symbol1 } = getValuesAndSymbols(tx);
+          return <AmountItem value={amount1} symbol={symbol1} positive />;
         }
         case 'Withdraw': {
           const { amount1, symbol1 } = getValuesAndSymbols({ ...tx, method: 'Withdraw1Value' });

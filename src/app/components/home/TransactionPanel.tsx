@@ -61,6 +61,7 @@ const METHOD_CONTENT = {
   cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',
   ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
   CollateralReceived: 'Deposited (amount) ICX as collateral ',
+  UnstakeRequest: 'Unstaked (amount) sICX',
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
 
@@ -141,6 +142,10 @@ const getValuesAndSymbols = (tx: Transaction) => {
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
     case 'stake':
+    case 'UnstakeRequest': {
+      const amount1 = getValue(tx);
+      return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
+    }
     case 'RewardsClaimed': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'BALN', symbol2: '' };

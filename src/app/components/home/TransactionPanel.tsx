@@ -59,10 +59,11 @@ const METHOD_CONTENT = {
   LoanRepaid: 'Repaid (amount) Balanced Dollars',
   OriginateLoan: 'Borrowed (amount) Balanced Dollars',
   cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',
+  ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
   CollateralReceived: 'Deposited (amount) ICX as collateral ',
+  UnstakeRequest: 'Unstaked (amount) sICX',
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
-  ClaimSicxEarnings: 'Withdrew (amount) ICX from ICX / sICX pool',
   //  2 symbols
   Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
   Swap: 'Swapped (amount1) (currency1) for (amount2) (currency2)',
@@ -73,7 +74,13 @@ const METHOD_CONTENT = {
 };
 
 const METHOD_WITH_2_SYMBOLS = ['Withdraw', 'Swap', 'Remove', 'AssetRetired', 'stakeICX'];
-const METHOD_POSITIVE_SIGN = ['RewardsClaimed', 'withdrawCollateral', 'OriginateLoan', 'cancelSicxicxOrder'];
+const METHOD_POSITIVE_SIGN = [
+  'ClaimSicxEarnings',
+  'RewardsClaimed',
+  'withdrawCollateral',
+  'OriginateLoan',
+  'cancelSicxicxOrder',
+];
 
 const getContractName = (addr?: string) => {
   const name = Object.keys(addressses[NetworkId.MAINNET]).find(key => addressses[NetworkId.MAINNET][key] === addr);
@@ -145,6 +152,10 @@ const getValuesAndSymbols = (tx: Transaction) => {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
+    case 'UnstakeRequest': {
+      const amount1 = getValue(tx);
+      return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
+    }
     case 'RewardsClaimed': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'BALN', symbol2: '' };
@@ -154,10 +165,13 @@ const getValuesAndSymbols = (tx: Transaction) => {
       return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
     }
     case 'cancelSicxicxOrder':
-    case 'ClaimSicxEarnings':
     case 'CollateralReceived': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'ICX', symbol2: '' };
+    }
+    case 'ClaimSicxEarnings': {
+      const amount1 = getValue(tx);
+      return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
     }
     case 'LoanRepaid':
     case 'OriginateLoan': {

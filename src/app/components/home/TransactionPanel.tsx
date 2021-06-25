@@ -341,26 +341,26 @@ const TransactionTable = () => {
     const rows: React.ReactElement[] = [];
     if (data?.transactions && data?.transactions?.length) {
       const { transactions: txs } = data;
-      for (let i = 0; i < Math.min(10, txs.length); i++) {
+      for (let i = 0; i < 10; i++) {
         const tx = txs[i];
         if (tx && tx.address) {
           let secondTx: Transaction | undefined;
 
           // check if this transaction has 2 symbols
-          if (METHOD_WITH_2_SYMBOLS.includes(tx.method)) {
-            const idx = txs.findIndex(
-              item =>
-                item.transaction_hash === tx.transaction_hash &&
-                item.item_id !== tx.item_id &&
-                item.method === tx.method,
-            );
-            // get the second transaction to merge to the first one
-            secondTx = txs[idx];
-            // delete from array
-            if (secondTx) {
-              txs.splice(idx, 1);
-            }
-          }
+          // if (METHOD_WITH_2_SYMBOLS.includes(tx.method)) {
+          //   const idx = txs.findIndex(
+          //     item =>
+          //       item.transaction_hash === tx.transaction_hash &&
+          //       item.item_id !== tx.item_id &&
+          //       item.method === tx.method,
+          //   );
+          //   // get the second transaction to merge to the first one
+          //   secondTx = txs[idx];
+          //   // delete from array
+          //   if (secondTx) {
+          //     txs.splice(idx, 1);
+          //   }
+          // }
 
           rows.push(<RowItem secondTx={secondTx} tx={tx} key={tx.item_id} />);
         }

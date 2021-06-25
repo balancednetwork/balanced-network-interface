@@ -73,7 +73,6 @@ const METHOD_CONTENT = {
   Add: 'Supplied (amount1) (currency1) and (amount2) (currency2) to the (currency1) / (currency2) pool',
 };
 
-const METHOD_WITH_2_SYMBOLS = ['Withdraw', 'Swap', 'Remove', 'AssetRetired', 'stakeICX'];
 const METHOD_POSITIVE_SIGN = [
   'ClaimSicxEarnings',
   'RewardsClaimed',
@@ -111,9 +110,10 @@ const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string
 
 const convertValue = (value: string) => formatBigNumber(BalancedJs.utils.toIcx(value), 'currency');
 
-const getValue = ({ indexed, data }: Transaction) => {
-  let value = indexed?.find(item => item.startsWith('0x')) || (data?.find && data?.find(item => item.startsWith('0x')));
-  return value ? convertValue(value) : '';
+const getValue = ({ indexed, data, value }: Transaction) => {
+  let _value =
+    indexed?.find(item => item.startsWith('0x')) || (data?.find && data?.find(item => item.startsWith('0x'))) || value;
+  return _value ? convertValue(_value) : '';
 };
 
 const getMethod = (tx: Transaction) => {
@@ -178,6 +178,13 @@ const getValuesAndSymbols = (tx: Transaction) => {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'bnUSD', symbol2: '' };
     }
+    case 'Withdraw': {
+      const amount1 = convertValue(tx.data.fromValue);
+      const symbol1 = getContractName(tx.data.from);
+      const amount2 = convertValue(tx.data.toValue);
+      const symbol2 = getContractName(tx.data.to);
+      return { amount1, amount2, symbol1, symbol2 };
+    }
     default: {
       const amount1 = getValue(tx);
       const symbol1 = tx.indexed?.find(item => SYMBOLS.includes(item)) || '';
@@ -190,6 +197,16 @@ const getAmountWithSign = (tx: Transaction) => {
   const method = getMethod(tx);
   switch (method) {
     case 'Remove': {
+      const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
+      return (
+        <>
+          <AmountItem value={amount1} symbol={symbol1} positive />
+          <br />
+          <AmountItem value={amount2} symbol={symbol2} positive />
+        </>
+      );
+    }
+    case 'Withdraw': {
       const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
       return (
         <>
@@ -223,10 +240,7 @@ const getAmountWithSign = (tx: Transaction) => {
       const { amount1, symbol1 } = getValuesAndSymbols(tx);
       return <AmountItem value={amount1} symbol={symbol1} positive />;
     }
-    case 'Withdraw': {
-      const { amount1, symbol1 } = getValuesAndSymbols({ ...tx, method: 'Withdraw1Value' });
-      return <AmountItem value={amount1} symbol={symbol1} positive />;
-    }
+
     default:
       const positive = METHOD_POSITIVE_SIGN.includes(method);
       const { amount1, symbol1 } = getValuesAndSymbols(tx);
@@ -239,73 +253,36 @@ const getAmountWithSign = (tx: Transaction) => {
 const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, secondTx }) => {
   const { networkId } = useIconReact();
 
-  const { indexed } = tx;
   const method = tx.method as keyof typeof METHOD_CONTENT;
-
-  // handle merge 2 transaction
-  const getSecondValue = () => {
-    if (!secondTx) return '';
-    const { indexed, data } = secondTx;
-    let value = indexed.find(item => item.startsWith('0x')) || data.find(item => item.startsWith('0x'));
-    return value ? convertValue(value) : '';
-  };
-
-  const getSecondSymbol = () => {
-    return '';
-  };
-
-  const getSymbol = () => {
-    return indexed.find(item => SYMBOLS.includes(item)) || '';
-  };
-  //============
 
   const getContent = () => {
     let content = METHOD_CONTENT[method] || method;
-    if (!secondTx) {
-      switch (method) {
-        case 'Deposit': {
-          const { amount1, symbol1 } = getValuesAndSymbols(tx);
-          content = content.replace('(currency)', symbol1);
-          content = content.replace('(amount)', amount1);
-          break;
-        }
-        case 'Remove':
-        case 'Add':
-        case 'Swap': {
-          const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
-          content = content.replace(/\(currency1\)/gi, symbol1);
-          content = content.replace('(amount1)', amount1);
-          content = content.replace(/\(currency2\)/gi, symbol2);
-          content = content.replace('(amount2)', amount2);
-          break;
-        }
-
-        case 'Withdraw': {
-          content = METHOD_CONTENT.Withdraw1Value;
-          const { amount1, symbol1 } = getValuesAndSymbols({ ...tx, method: 'Withdraw1Value' });
-          content = content.replace('(currency)', symbol1);
-          content = content.replace('(amount)', amount1);
-          break;
-        }
-
-        default:
-          const { amount1, symbol1 } = getValuesAndSymbols(tx);
-          content = content.replace('(currency)', symbol1);
-          content = content.replace('(amount)', amount1);
-          break;
+    // if (!secondTx) {
+    switch (method) {
+      case 'Deposit': {
+        const { amount1, symbol1 } = getValuesAndSymbols(tx);
+        content = content.replace('(currency)', symbol1);
+        content = content.replace('(amount)', amount1);
+        break;
+      }
+      case 'Remove':
+      case 'Add':
+      case 'Withdraw':
+      case 'Swap': {
+        const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
+        content = content.replace(/\(currency1\)/gi, symbol1);
+        content = content.replace('(amount1)', amount1);
+        content = content.replace(/\(currency2\)/gi, symbol2);
+        content = content.replace('(amount2)', amount2);
+        break;
       }
 
-      return content;
+      default:
+        const { amount1, symbol1 } = getValuesAndSymbols(tx);
+        content = content.replace('(currency)', symbol1);
+        content = content.replace('(amount)', amount1);
+        break;
     }
-
-    const value = getValue(tx);
-    const symbol = getSymbol();
-    const secondValue = getSecondValue();
-    const secondSymbol = getSecondSymbol();
-    content.replace('(amount1)', value);
-    content.replace('(currency1)', symbol);
-    content.replace('(amount2)', secondValue);
-    content.replace('(currency2)', secondSymbol);
 
     return content;
   };
@@ -370,27 +347,37 @@ const TransactionTable = () => {
     const txs = (data?.transactions as any) as Transaction[];
     if (txs && txs?.length) {
       for (let i = 0; i < 10; i++) {
-        const tx = txs[i];
-        if (tx && (tx.data || tx.indexed)) {
-          let secondTx: Transaction | undefined;
+        const tx = { ...txs[i] };
+        if (tx && (tx.data || tx.indexed) && !tx.ignore) {
+          if (getMethod(tx) === 'Withdraw') {
+            // check if this is merging withdraw (2 tx and 1 tx remove)
+            const mergeTxs = [tx];
+            for (let j = i + 1; j < txs.length; j++) {
+              const _tx = txs[j];
+              const _method = getMethod(_tx);
+              if (_tx.transaction_hash === tx.transaction_hash && ['Withdraw', 'Remove'].includes(_method)) {
+                // ignore Remove, no need to show on ui
+                if (_method === 'Withdraw') {
+                  mergeTxs.push(_tx);
+                }
+                // mark ignored field
+                _tx.ignore = true;
+              }
+            }
 
-          // check if this transaction has 2 symbols
-          // if (METHOD_WITH_2_SYMBOLS.includes(tx.method)) {
-          //   const idx = txs.findIndex(
-          //     item =>
-          //       item.transaction_hash === tx.transaction_hash &&
-          //       item.item_id !== tx.item_id &&
-          //       item.method === tx.method,
-          //   );
-          //   // get the second transaction to merge to the first one
-          //   secondTx = txs[idx];
-          //   // delete from array
-          //   if (secondTx) {
-          //     txs.splice(idx, 1);
-          //   }
-          // }
-
-          rows.push(<RowItem secondTx={secondTx} tx={tx} key={tx.item_id} />);
+            if (mergeTxs.length === 2) {
+              const mergeData = {
+                from: mergeTxs[0].indexed.find(item => item.startsWith('cx')),
+                fromValue: mergeTxs[0].data[0],
+                to: mergeTxs[1].indexed.find(item => item.startsWith('cx')),
+                toValue: mergeTxs[1].data[0],
+              };
+              tx.data = mergeData;
+            } else {
+              tx.method = 'Withdraw1Value';
+            }
+          }
+          rows.push(<RowItem tx={tx} key={tx.item_id} />);
         }
       }
     }

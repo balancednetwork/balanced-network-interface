@@ -16,7 +16,6 @@ import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { getTrackerLink } from 'utils';
 
-// import sample from './samples.json';
 // import sample2 from './sample2.json';
 
 const queryClient = new QueryClient();

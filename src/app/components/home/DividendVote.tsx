@@ -25,6 +25,8 @@ dayjs.extend(relativeTime);
 
 const DIVIDEND_VOTE_INDEX = process.env.NODE_ENV === 'production' ? 1 : 4;
 
+console.log(DIVIDEND_VOTE_INDEX);
+
 const DividendVote = () => {
   const theme = useTheme();
   const [hasApproved, setHasApproved] = React.useState(false);
@@ -71,7 +73,7 @@ const DividendVote = () => {
   const platformDay = platformDayQuery.data;
 
   const txStatus = useTransactionStatus(txHash);
-
+  console.log(voteInfo, voteStatus, weight?.toFixed(), platformDay);
   React.useEffect(() => {
     if (txStatus === TransactionStatus.success) {
       voteInfoQuery.refetch();

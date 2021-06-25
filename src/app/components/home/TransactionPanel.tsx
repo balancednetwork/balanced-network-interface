@@ -59,6 +59,7 @@ const METHOD_CONTENT = {
   LoanRepaid: 'Repaid (amount) Balanced Dollars',
   OriginateLoan: 'Borrowed (amount) Balanced Dollars',
   cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',
+  ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
   CollateralReceived: 'Deposited (amount) ICX as collateral ',
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
@@ -73,7 +74,13 @@ const METHOD_CONTENT = {
 };
 
 const METHOD_WITH_2_SYMBOLS = ['Withdraw', 'Swap', 'Remove', 'AssetRetired', 'stakeICX'];
-const METHOD_POSITIVE_SIGN = ['RewardsClaimed', 'withdrawCollateral', 'OriginateLoan', 'cancelSicxicxOrder'];
+const METHOD_POSITIVE_SIGN = [
+  'ClaimSicxEarnings',
+  'RewardsClaimed',
+  'withdrawCollateral',
+  'OriginateLoan',
+  'cancelSicxicxOrder',
+];
 
 const getContractName = (addr?: string) => {
   const name = Object.keys(addressses[NetworkId.MAINNET]).find(key => addressses[NetworkId.MAINNET][key] === addr);
@@ -146,6 +153,10 @@ const getValuesAndSymbols = (tx: Transaction) => {
     case 'CollateralReceived': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'ICX', symbol2: '' };
+    }
+    case 'ClaimSicxEarnings': {
+      const amount1 = getValue(tx);
+      return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
     }
     case 'LoanRepaid':
     case 'OriginateLoan': {

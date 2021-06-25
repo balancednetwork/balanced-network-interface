@@ -23,7 +23,7 @@ import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'st
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
 
-const DIVIDEND_VOTE_INDEX = process.env.NODE_ENV === 'production' ? 1 : 2;
+const DIVIDEND_VOTE_INDEX = process.env.NODE_ENV === 'production' ? 1 : 4;
 
 const DividendVote = () => {
   const theme = useTheme();

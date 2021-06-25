@@ -23,11 +23,17 @@ export const useVoteInfoQuery = (voteIndex: number) => {
 
     if (!res.id) return;
 
+    const _against = BalancedJs.utils.toIcx(res['against']);
+    const _for = BalancedJs.utils.toIcx(res['for']);
+
+    const _against1 = _against.isZero() ? 0 : _against.div(_against.plus(_for)).times(100).dp(2).toNumber();
+    const _for1 = _for.isZero() ? 0 : _for.div(_against.plus(_for)).times(100).dp(2).toNumber();
+
     return {
       id: parseInt(res.id, 16),
       name: res['name'],
-      against: BalancedJs.utils.toIcx(res['against']).times(100).dp(2).toNumber(),
-      for: BalancedJs.utils.toIcx(res['for']).times(100).dp(2).toNumber(),
+      against: _against1,
+      for: _for1,
       snapshotDay: parseInt(res['vote snapshot'], 16),
       startDay: parseInt(res['start day'], 16),
       endDay: parseInt(res['end day'], 16),

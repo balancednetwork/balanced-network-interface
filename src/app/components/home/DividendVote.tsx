@@ -23,7 +23,15 @@ import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'st
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
 
-const DIVIDEND_VOTE_INDEX = process.env.NODE_ENV === 'production' ? 1 : 2;
+const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
+
+const DIVIDEND_VOTE_INDEX = NETWORK_ID === 1 ? 1 : 3;
+
+enum VoteState {
+  'PENDING' = 'PENDING',
+  'STARTED' = 'STARTED',
+  'ENDED' = 'ENDED',
+}
 
 const DividendVote = () => {
   const theme = useTheme();
@@ -79,18 +87,55 @@ const DividendVote = () => {
     }
   }, [voteInfoQuery, voteStatusQuery, txStatus]);
 
+  const getVoteState = (): VoteState | undefined => {
+    if (!voteInfo || !platformDay) return;
+
+    if (voteInfo.startDay > platformDay) return VoteState.PENDING;
+    else if (voteInfo.startDay <= platformDay && voteInfo.endDay > platformDay) return VoteState.STARTED;
+    else return VoteState.ENDED;
+  };
+
+  let voteState = getVoteState();
   //
+  let startTimeStr =
+    voteInfo && platformDay
+      ? dayjs()
+          .utc()
+          .add(voteInfo.startDay - platformDay, 'day')
+          .hour(17)
+          .fromNow()
+      : '';
+
   let endTimeStr =
     voteInfo && platformDay
       ? dayjs()
           .utc()
-          .add(voteInfo.endDay - platformDay, 'day')
+          .add(voteInfo.endDay - platformDay - 1, 'day')
           .hour(17)
           .fromNow()
       : '';
 
   const getContent = () => {
-    if (voteStatus && voteStatus.hasVoted) {
+    if (!voteState || !voteStatus) return;
+
+    if (voteState === VoteState.PENDING) {
+      return (
+        <>
+          <Typography variant="p" my={1} textAlign="center" color="text1">
+            {'Voting starts '}
+            <Typography fontWeight="bold" color="white" as="span">
+              {startTimeStr}
+            </Typography>
+            {'.'}
+          </Typography>
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            <Button onClick={toggleOpen} fontSize={14}>
+              Close
+            </Button>
+          </Flex>
+        </>
+      );
+    } else if (voteState === VoteState.STARTED && voteStatus.hasVoted) {
       return (
         <>
           <FlexPanel mt={5} mb={3} bg="bg3" flexDirection="column">
@@ -121,8 +166,8 @@ const DividendVote = () => {
                   Your vote
                 </Typography>
                 <Typography variant="p" color="text">
-                  {!voteStatus?.approval.isZero() && 'Approve'}
-                  {!voteStatus?.reject.isZero() && 'Reject'}
+                  {!voteStatus?.approval.isZero() && 'Approved'}
+                  {!voteStatus?.reject.isZero() && 'Rejected'}
                 </Typography>
               </Flex>
               <Flex flex={1} flexDirection="column" alignItems="center">
@@ -151,7 +196,7 @@ const DividendVote = () => {
           </Flex>
         </>
       );
-    } else
+    } else if (voteState === VoteState.STARTED && !voteStatus.hasVoted) {
       return (
         <>
           <Flex mt={5} mb={3} justifyContent="center">
@@ -196,7 +241,71 @@ const DividendVote = () => {
           </Flex>
         </>
       );
+    } else if (voteState === VoteState.ENDED) {
+      return (
+        <>
+          <FlexPanel mt={5} mb={3} bg="bg3" flexDirection="column">
+            <Flex justifyContent="space-between">
+              <Flex flex={1} flexDirection="column" alignItems="center">
+                <Typography variant="p" color="text1" mb={1}>
+                  Approved
+                </Typography>
+                <Typography variant="p" color="text">
+                  {voteInfo?.for}%
+                </Typography>
+              </Flex>
+              <Flex flex={1} flexDirection="column" alignItems="center">
+                <Typography variant="p" color="text1" mb={1}>
+                  Rejected
+                </Typography>
+                <Typography variant="p" color="text">
+                  {voteInfo?.against}%
+                </Typography>
+              </Flex>
+            </Flex>
+
+            <Divider my={3} />
+
+            <Flex justifyContent="space-between">
+              <Flex flex={1} flexDirection="column" alignItems="center">
+                <Typography variant="p" color="text1" mb={1}>
+                  Your vote
+                </Typography>
+                <Typography variant="p" color="text">
+                  {!voteStatus?.approval.isZero() && 'Approved'}
+                  {!voteStatus?.reject.isZero() && 'Rejected'}
+                </Typography>
+              </Flex>
+              <Flex flex={1} flexDirection="column" alignItems="center">
+                <Typography variant="p" color="text1" mb={1}>
+                  Your weight
+                </Typography>
+                <Typography variant="p" color="text">
+                  {weight?.dp(2).toFormat()} BALN
+                </Typography>
+              </Flex>
+            </Flex>
+          </FlexPanel>
+
+          <Typography variant="p" my={1} textAlign="center" color="text1">
+            Voting ended{' '}
+            <Typography fontWeight="bold" color="white" as="span">
+              {endTimeStr}
+            </Typography>
+            .
+          </Typography>
+
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            <Button onClick={toggleOpen} fontSize={14}>
+              Close
+            </Button>
+          </Flex>
+        </>
+      );
+    }
   };
+
+  if (!voteInfo) return null;
 
   return (
     <>

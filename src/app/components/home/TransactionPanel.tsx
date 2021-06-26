@@ -64,10 +64,11 @@ const METHOD_CONTENT = {
   UnstakeRequest: 'Unstaked (amount) sICX',
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
+  stakeICX: 'Swapped (amount) ICX',
+
   //  2 symbols
   Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
   Swap: 'Swapped (amount1) (currency1) for (amount2) (currency2)',
-  stakeICX: 'Swapped (amount1) ICX for (amount2) sICX',
   AssetRetired: 'Retired (amount) bnUSD for (amount) sICX',
   Withdraw: 'Withdrew (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
   Add: 'Supplied (amount1) (currency1) and (amount2) (currency2) to the (currency1) / (currency2) pool',
@@ -165,6 +166,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
       return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
     }
     case 'cancelSicxicxOrder':
+    case 'stakeICX':
     case 'CollateralReceived': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'ICX', symbol2: '' };
@@ -230,9 +232,9 @@ const getAmountWithSign = (tx: Transaction) => {
       const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
       return (
         <>
-          <AmountItem value={amount1} symbol={symbol1} positive={true} />
+          <AmountItem value={amount1} symbol={symbol1} positive={false} />
           <br />
-          <AmountItem value={amount2} symbol={symbol2} positive={false} />
+          <AmountItem value={amount2} symbol={symbol2} positive={true} />
         </>
       );
     }
@@ -367,10 +369,10 @@ const TransactionTable = () => {
 
             if (mergeTxs.length === 2) {
               const mergeData = {
-                from: mergeTxs[0].indexed.find(item => item.startsWith('cx')),
-                fromValue: mergeTxs[0].data[0],
-                to: mergeTxs[1].indexed.find(item => item.startsWith('cx')),
-                toValue: mergeTxs[1].data[0],
+                from: mergeTxs[1].indexed.find(item => item.startsWith('cx')),
+                fromValue: mergeTxs[1].data[0],
+                to: mergeTxs[0].indexed.find(item => item.startsWith('cx')),
+                toValue: mergeTxs[0].data[0],
               };
               tx.data = mergeData;
             } else {

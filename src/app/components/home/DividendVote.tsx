@@ -324,7 +324,7 @@ const DividendVote = () => {
             Distribute network fees?
           </Typography>
           <Flex flexDirection="column" alignItems="stretch">
-            <Typography>Vote to distribute network fees every day, starting from June 30.</Typography>
+            <Typography>Vote to distribute network fees every day.</Typography>
             <ul>
               <li>
                 <Typography>60% will go to eligible BALN holders</Typography>

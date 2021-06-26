@@ -407,7 +407,7 @@ const TransactionTable = () => {
     <BoxPanel bg="bg2">
       <Flex mb={2} alignItems="center">
         <Typography mr={2} variant="h2">
-          Transaction history
+          Activity history
         </Typography>
         {isLoading && <Spinner />}
       </Flex>

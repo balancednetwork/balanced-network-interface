@@ -109,11 +109,13 @@ const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string
   </>
 );
 
-const convertValue = (value: string) => formatBigNumber(BalancedJs.utils.toIcx(value), 'currency');
+const convertValue = (value: string) =>
+  BalancedJs.utils.toIcx(value).isGreaterThan(0.004) ? formatBigNumber(BalancedJs.utils.toIcx(value), 'currency') : '';
 
 const getValue = ({ indexed, data, value }: Transaction) => {
   let _value =
     indexed?.find(item => item.startsWith('0x')) || (data?.find && data?.find(item => item.startsWith('0x'))) || value;
+
   return _value ? convertValue(_value) : '';
 };
 
@@ -259,30 +261,41 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
 
   const getContent = () => {
     let content = METHOD_CONTENT[method] || method;
-    // if (!secondTx) {
     switch (method) {
-      case 'Deposit': {
-        const { amount1, symbol1 } = getValuesAndSymbols(tx);
-        content = content.replace('(currency)', symbol1);
-        content = content.replace('(amount)', amount1);
-        break;
-      }
+      // case 'Deposit': {
+      //   const { amount1, symbol1 } = getValuesAndSymbols(tx);
+      //   if (!amount1) {
+      //     content = '';
+      //   } else {
+      //     content = content.replace('(currency)', symbol1);
+      //     content = content.replace('(amount)', amount1);
+      //   }
+      //   break;
+      // }
       case 'Remove':
       case 'Add':
       case 'Withdraw':
       case 'Swap': {
         const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
-        content = content.replace(/\(currency1\)/gi, symbol1);
-        content = content.replace('(amount1)', amount1);
-        content = content.replace(/\(currency2\)/gi, symbol2);
-        content = content.replace('(amount2)', amount2);
+        if (!amount1 || !amount2) {
+          content = '';
+        } else {
+          content = content.replace(/\(currency1\)/gi, symbol1);
+          content = content.replace('(amount1)', amount1);
+          content = content.replace(/\(currency2\)/gi, symbol2);
+          content = content.replace('(amount2)', amount2);
+        }
         break;
       }
 
       default:
         const { amount1, symbol1 } = getValuesAndSymbols(tx);
-        content = content.replace('(currency)', symbol1);
-        content = content.replace('(amount)', amount1);
+        if (!amount1) {
+          content = '';
+        } else {
+          content = content.replace('(currency)', symbol1);
+          content = content.replace('(amount)', amount1);
+        }
         break;
     }
 
@@ -294,12 +307,15 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
     return getTrackerLink(networkId, hash, 'transaction');
   };
 
+  const content = getContent();
+  if (!content) return null;
+
   return (
     <RowContent>
       <Typography>{dayjs(tx.item_timestamp).format('D MMMM, HH:mm')}</Typography>
       <Flex>
         <Typography fontSize={16} sx={{ mr: '8px' }}>
-          {getContent()}
+          {content}
         </Typography>
         <Link
           href={trackerLink()}

@@ -376,7 +376,7 @@ const TransactionTable = () => {
         : { count: 0, transactions: [] },
   );
 
-  const totalPages = Math.floor((data?.count || 0) / limit);
+  const totalPages = Math.ceil((data?.count || 0) / limit);
   useEffect(() => {
     totalPages && setCount(totalPages);
   }, [totalPages]);

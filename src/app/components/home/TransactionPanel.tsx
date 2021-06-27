@@ -294,6 +294,10 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
         break;
       }
 
+      case 'VoteCast': {
+        break;
+      }
+
       default:
         const { amount1, symbol1 } = getValuesAndSymbols(tx);
         if (!amount1) {

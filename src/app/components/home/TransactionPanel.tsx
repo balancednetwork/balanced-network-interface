@@ -53,11 +53,11 @@ const Table = styled(Box)`
 const SYMBOLS = ['ICX', 'sICX', 'bnUSD', 'BALN'];
 const METHOD_CONTENT = {
   SupplyICX: 'Supplied (amount) ICX to the ICX / sICX pool',
-  RewardsClaimed: 'Claimed (amount) Balance Tokens',
-  stake: 'Staked (amount) Balance Tokens',
+  RewardsClaimed: 'Claimed (amount) BALN',
+  stake: 'Staked (amount) BALN',
   withdrawCollateral: 'Withdrew (amount) ICX collateral',
-  LoanRepaid: 'Repaid (amount) Balanced Dollars',
-  OriginateLoan: 'Borrowed (amount) Balanced Dollars',
+  LoanRepaid: 'Repaid (amount) bnUSD',
+  OriginateLoan: 'Borrowed (amount) bnUSD',
   cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',
   ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
   CollateralReceived: 'Deposited (amount) ICX as collateral ',

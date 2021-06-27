@@ -37,7 +37,7 @@ enum VoteState {
 
 const DividendVote = () => {
   const theme = useTheme();
-  const [hasApproved, setHasApproved] = React.useState(false);
+  const [hasApproved, setHasApproved] = React.useState(true);
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {

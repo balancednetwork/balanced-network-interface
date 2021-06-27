@@ -54,7 +54,7 @@ const SYMBOLS = ['ICX', 'sICX', 'bnUSD', 'BALN'];
 const METHOD_CONTENT = {
   SupplyICX: 'Supplied (amount) ICX to the ICX / sICX pool',
   RewardsClaimed: 'Claimed (amount) BALN',
-  stake: 'Staked (amount) BALN',
+  stake: 'Adjusted BALN stake',
   withdrawCollateral: 'Withdrew (amount) sICX collateral',
   LoanRepaid: 'Repaid (amount) bnUSD',
   OriginateLoan: 'Borrowed (amount) bnUSD',
@@ -145,8 +145,13 @@ const getValuesAndSymbols = (tx: Transaction) => {
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Swap': {
-      const symbol1 = getContractName(tx.data[0]);
-      const symbol2 = getContractName(tx.data[1]);
+      let symbol1 = getContractName(tx.data[0]);
+      let symbol2 = getContractName(tx.data[1]);
+
+      if (!symbol2) {
+        symbol1 = 'sICX';
+        symbol2 = 'ICX';
+      }
       const amount1 = convertValue(tx.data[4]);
       const amount2 = convertValue(tx.data[5]);
       return { amount1, amount2, symbol1, symbol2 };

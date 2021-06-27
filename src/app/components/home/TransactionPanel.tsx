@@ -90,10 +90,10 @@ const getContractName = (addr?: string) => {
 };
 
 const POOL_IDS = {
-  1: 'BALN sICX',
-  2: 'BALN bnUSD',
-  3: 'sICX bnUSD',
-  4: 'sICX ICX',
+  4: 'BALN sICX',
+  3: 'BALN bnUSD',
+  2: 'sICX bnUSD',
+  1: 'sICX ICX',
 };
 
 const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string; positive?: boolean }) => (
@@ -371,7 +371,7 @@ const TransactionTable = () => {
         ? getAllTransactions({
             skip: page * limit,
             limit: 20, // this is to handle merging transaction
-            from_address: account,
+            // from_address: 'hx6962ed17f9445971ef09dc8fcf117298de14b00f',
           })
         : { count: 0, transactions: [] },
   );

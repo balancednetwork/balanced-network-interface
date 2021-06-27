@@ -65,6 +65,7 @@ const METHOD_CONTENT = {
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
   stakeICX: 'Swapped (amount) ICX',
+  VoteCast: 'Cast a vote',
 
   //  2 symbols
   Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
@@ -240,6 +241,10 @@ const getAmountWithSign = (tx: Transaction) => {
           <AmountItem value={amount2} symbol={symbol2} positive={true} />
         </>
       );
+    }
+    case 'VoteCast': {
+      const approved = tx.indexed.find(item => item === '0x1');
+      return approved ? 'Approved' : 'Rejected';
     }
     case 'ClaimSicxEarnings': {
       const { amount1, symbol1 } = getValuesAndSymbols(tx);

@@ -55,7 +55,7 @@ const METHOD_CONTENT = {
   SupplyICX: 'Supplied (amount) ICX to the ICX / sICX pool',
   RewardsClaimed: 'Claimed (amount) BALN',
   stake: 'Staked (amount) BALN',
-  withdrawCollateral: 'Withdrew (amount) ICX collateral',
+  withdrawCollateral: 'Withdrew (amount) sICX collateral',
   LoanRepaid: 'Repaid (amount) bnUSD',
   OriginateLoan: 'Borrowed (amount) bnUSD',
   cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',

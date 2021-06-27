@@ -1,7 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { format, add } from 'date-fns';
+import dayjs from 'dayjs';
 import Nouislider from 'nouislider-react';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -104,10 +104,10 @@ export default React.memo(function StakePanel() {
       });
   };
 
-  const date = add(new Date(), { days: 3 });
+  const date = dayjs().add(3, 'days');
   const description = shouldStake
     ? 'Unstaking takes 3 days.'
-    : `They'll unstake on ${date && format(date, 'MMM d')}, around ${date && format(date, 'h:maaa')}.`;
+    : `They'll unstake on ${date && dayjs(date).format('MMM d')}, around ${date && dayjs(date).format('h:maaa')}.`;
 
   return (
     <>

@@ -104,7 +104,7 @@ const PositionDetailPanel = () => {
   const currentRatio = useCurrentCollateralRatio();
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
 
-  const isRewardWarning = rewardThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
+  const isRewardWarning = rewardThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThanOrEqualTo(0);
 
   const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
 
@@ -201,7 +201,7 @@ const PositionDetailPanel = () => {
                 >
                   <dt>Reward threshold</dt>
                 </Tooltip>
-                <dd>${rewardThresholdPrice.toFixed(3)}</dd>
+                <dd>${rewardThresholdPrice.toFixed(4)}</dd>
               </MetaData>
             </Rewards>
 

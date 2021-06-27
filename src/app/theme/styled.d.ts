@@ -47,6 +47,8 @@ export interface Colors {
   divider: Color;
 
   alert: Color;
+
+  paginationButtonBG: Color;
 }
 
 export interface Grids {

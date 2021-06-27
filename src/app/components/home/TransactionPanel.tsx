@@ -60,7 +60,7 @@ const METHOD_CONTENT = {
   OriginateLoan: 'Borrowed (amount) bnUSD',
   cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',
   ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
-  CollateralReceived: 'Deposited (amount) ICX as collateral ',
+  CollateralReceived: 'Deposited (amount) sICX as collateral ',
   UnstakeRequest: 'Unstaked (amount) sICX',
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
@@ -164,7 +164,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
       return { amount1, amount2: '', symbol1: 'BALN', symbol2: '' };
     }
     case 'withdrawCollateral': {
-      const amount1 = getValue(tx);
+      const amount1 = convertValue((tx.data as any)?.params?._value || 0);
       return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
     }
     case 'cancelSicxicxOrder':

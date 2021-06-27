@@ -2,21 +2,20 @@ import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
-import Divider from 'app/components/Divider';
 import Modal from 'app/components/Modal';
-import { BoxPanel, FlexPanel } from 'app/components/Panel';
+import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
+
+import DividendVote from './DividendVote';
 
 const RewardsPanel = () => {
   const { account } = useIconReact();
@@ -56,10 +55,6 @@ const RewardsPanel = () => {
 
   const reward = wallet.BALNreward;
 
-  const ratio = useRatio();
-
-  const rewardAmountByUSD = reward.multipliedBy(ratio.BALNbnUSDratio);
-
   const hasRewardableLoan = useHasRewardableLoan();
 
   const hasRewardableLiquidity = useHasRewardableLiquidity();
@@ -72,72 +67,69 @@ const RewardsPanel = () => {
     setOpen(!open);
   };
 
-  if (!hasRewardableLoan && !hasRewardableLiquidity && reward.isZero() && !hasNetworkFees) {
-    return (
-      <div>
-        <FlexPanel bg="bg2" flexDirection="column">
-          <Typography variant="h2" mb={5}>
-            Rewards
+  const getRewardsUI = () => {
+    if (!hasRewardableLoan && !hasRewardableLiquidity) {
+      return (
+        <>
+          <Typography variant="p" as="div">
+            Ineligible
+            <QuestionHelper text="To earn Balanced rewards, take out a loan or supply liquidity on the Trade page." />
           </Typography>
+        </>
+      );
+    } else if (reward.isZero()) {
+      return <Typography variant="p">Pending</Typography>;
+    } else {
+      return (
+        <>
+          <Typography variant="p" mb={2}>{`${reward.dp(2).toFormat()} BALN`}</Typography>
+          <Button onClick={handleClaim}>Claim</Button>
+        </>
+      );
+    }
+  };
 
-          <Flex flex={1} justifyContent="center" alignItems="center" minHeight={100}>
-            <Typography textAlign="center">
-              To earn Balanced rewards, take out a loan <br />
-              or supply liquidity on the Trade page.
-            </Typography>
-          </Flex>
-        </FlexPanel>
-      </div>
-    );
-  }
+  const getNetworkFeesUI = () => {
+    if (hasNetworkFees) {
+      return <Typography variant="p">Eligible</Typography>;
+    } else {
+      return (
+        <Typography variant="p" as="div">
+          Ineligible
+          <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
+        </Typography>
+      );
+    }
+  };
 
   return (
     <div>
       <BoxPanel bg="bg2">
-        <Typography variant="h2" mb={5}>
-          Rewards
-        </Typography>
+        <Flex alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h2">Rewards</Typography>
 
-        <RewardGrid>
-          <Row>
-            <Typography variant="p">Balance Tokens</Typography>
-            <Typography variant="p">
-              {!account ? '-' : reward.isZero() ? 'Pending' : `${reward.dp(2).toFormat()} BALN`}
+          <DividendVote />
+        </Flex>
+
+        <Flex>
+          <Flex flex={1} flexDirection="column" alignItems="center" className="border-right">
+            <Typography variant="p" mb={1}>
+              Balance Tokens
             </Typography>
-          </Row>
-
-          <Row>
-            <Typography variant="p" as="div">
-              Network fees
-              <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
-            </Typography>
-            <Typography variant="p">{!account ? '-' : hasNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
-          </Row>
-
-          {!reward.isZero() && (
-            <>
-              <Divider />
-
-              <Row>
-                <Typography variant="p" fontWeight="bold">
-                  Total
-                </Typography>
-                <Typography variant="p" fontWeight="bold">
-                  {`$${rewardAmountByUSD.dp(2).toFormat()}`}
-                </Typography>
-              </Row>
-            </>
-          )}
-        </RewardGrid>
-
-        {!reward.isZero() && (
-          <Flex alignItems="center" justifyContent="center" mt={3}>
-            <Button onClick={handleClaim}>Claim rewards</Button>
+            {getRewardsUI()}
           </Flex>
-        )}
+
+          <Flex flex={1} flexDirection="column" alignItems="center">
+            <Typography variant="p" mb={1} as="div">
+              Network fees
+            </Typography>
+            {getNetworkFeesUI()}
+          </Flex>
+        </Flex>
         {shouldLedgerSign && (
           <>
-            <Row mt={3} /> <ShouldLedgerConfirmMessage />
+            <div style={{ marginTop: 30 }}></div>
+            <ShouldLedgerConfirmMessage />
           </>
         )}
       </BoxPanel>
@@ -165,14 +157,3 @@ const RewardsPanel = () => {
 };
 
 export default RewardsPanel;
-
-const RewardGrid = styled.div`
-  display: grid;
-  grid-template-rows: auto;
-  grid-gap: 20px;
-`;
-
-const Row = styled(Flex)`
-  align-items: flex-start;
-  justify-content: space-between;
-`;

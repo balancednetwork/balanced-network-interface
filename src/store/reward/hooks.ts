@@ -146,3 +146,20 @@ export const useHasNetworkFees = () => {
 
   return hasNetworkFees;
 };
+
+export const useTotalCollectedFees = () => {
+  const [fees, setFees] = React.useState<{ [key in string]: BigNumber }>({});
+
+  React.useEffect(() => {
+    (async () => {
+      const data = await bnJs.Dividends.getBalances();
+      const t = {};
+      Object.keys(data).forEach(key => {
+        t[key] = BalancedJs.utils.toIcx(data[key]);
+      });
+      setFees(t);
+    })();
+  }, []);
+
+  return fees;
+};

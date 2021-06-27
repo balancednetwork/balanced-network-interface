@@ -1135,9 +1135,9 @@
     regenerator-runtime "^0.13.4"
 
 "@babel/runtime@^7.6.2":
-  version "7.14.0"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.14.0.tgz#46794bc20b612c5f75e62dd071e24dfd95f1cbe6"
-  integrity sha512-JELkvo/DlpNdJ7dlyw/eY7E0suy5i5GQH+Vlxaq1nsNJ+H7f4Vtv3jMeCEgRhZZQFXTjldYfQgv2qmM6M1v5wA==
+  version "7.14.6"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.14.6.tgz#535203bc0892efc7dec60bdc27b2ecf6e409062d"
+  integrity sha512-/PCB2uJ7oM44tz8YhC4Z/6PeOKXp4K588f+5M3clr1M4zbqztlo0XEfJ2LEzj/FgwfgGcIdl8n7YYjTCI0BYwg==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -3818,15 +3818,16 @@ braces@^3.0.1, braces@~3.0.2:
     fill-range "^7.0.1"
 
 broadcast-channel@^3.4.1:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/broadcast-channel/-/broadcast-channel-3.6.0.tgz#7843ffd86529be300dd1d03668a35301626ed03f"
-  integrity sha512-0x87tKJULniTOfECZP/LCsqWyMEbz0Oa+4yJ4i5dosOMxWUjx6mZ6nt9QmD2ox0r3MaCPojHrTQ2dj4ASZupeA==
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/broadcast-channel/-/broadcast-channel-3.7.0.tgz#2dfa5c7b4289547ac3f6705f9c00af8723889937"
+  integrity sha512-cIAKJXAxGJceNZGTZSBzMxzyOn72cVgPnKx4dc6LRjQgbaJUQqhy5rzL3zbMxkMWsGKkv2hSFkPRMEXfoMZ2Mg==
   dependencies:
     "@babel/runtime" "^7.7.2"
     detect-node "^2.1.0"
     js-sha3 "0.8.0"
     microseconds "0.2.0"
     nano-time "1.0.0"
+    oblivious-set "1.0.0"
     rimraf "3.0.2"
     unload "2.2.0"
 
@@ -9986,6 +9987,11 @@ object.values@^1.1.0, object.values@^1.1.1:
     function-bind "^1.1.1"
     has "^1.0.3"
 
+oblivious-set@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/oblivious-set/-/oblivious-set-1.0.0.tgz#c8316f2c2fb6ff7b11b6158db3234c49f733c566"
+  integrity sha512-z+pI07qxo4c2CulUHCDf9lcqDlMSo72N/4rLUpRXf6fu+q8vjt8y0xS+Tlf8NTJDdTXHbdeO1n3MlbctwEoXZw==
+
 obuf@^1.0.0, obuf@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"
@@ -11695,10 +11701,10 @@ react-popper@2.2.4:
     react-fast-compare "^3.0.1"
     warning "^4.0.2"
 
-react-query@3.16.1:
-  version "3.16.1"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.16.1.tgz#0bb9c5c45a74e14b5e204218fa602fe1a1065976"
-  integrity sha512-dof8XXSZ7HprfzvpbJE+YZrhUXcQYxy1j+NU8ZPYpKKDF79wlZAke+GyYhQ0b6SuOFp8ZpVXSpdD4AL3lxmeXQ==
+react-query@3.17.2:
+  version "3.17.2"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.17.2.tgz#3ed5b0460a5a05332fbb175c36da55fb2d3ff929"
+  integrity sha512-icMtYL/+jUv0Q3n8GRz6CTyMYKh+l5EBKwhkr8qhbtYRORr43YGiN6EJSyw9WFaSQ9bwD1G9ZhaFxow9NMV0Sw==
   dependencies:
     "@babel/runtime" "^7.5.5"
     broadcast-channel "^3.4.1"

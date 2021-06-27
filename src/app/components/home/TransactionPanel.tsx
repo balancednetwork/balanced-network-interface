@@ -65,7 +65,7 @@ const METHOD_CONTENT = {
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
   stakeICX: 'Swapped (amount) ICX',
-  VoteCast: 'Cast a vote',
+  VoteCast: '',
 
   //  2 symbols
   Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
@@ -96,15 +96,15 @@ const POOL_IDS = {
   4: 'sICX ICX',
 };
 
-const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string; positive: boolean }) => (
+const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string; positive?: boolean }) => (
   <>
     {parseFloat(value) !== 0 && (
       <span
         style={{
-          color: positive ? '#2fccdc' : 'red',
+          color: positive !== undefined ? (positive ? '#2fccdc' : 'red') : '',
         }}
       >
-        {positive ? '+' : '-'}{' '}
+        {positive !== undefined && (positive ? '+' : '-')}{' '}
       </span>
     )}
     {value} {symbol}
@@ -242,13 +242,17 @@ const getAmountWithSign = (tx: Transaction) => {
         </>
       );
     }
-    case 'VoteCast': {
-      const approved = tx.indexed.find(item => item === '0x1');
-      return approved ? 'Approved' : 'Rejected';
-    }
     case 'ClaimSicxEarnings': {
       const { amount1, symbol1 } = getValuesAndSymbols(tx);
       return <AmountItem value={amount1} symbol={symbol1} positive />;
+    }
+
+    case 'VoteCast':
+      return '';
+
+    case 'stake': {
+      const { amount1, symbol1 } = getValuesAndSymbols(tx);
+      return <AmountItem value={amount1} symbol={symbol1} />;
     }
 
     default:
@@ -295,6 +299,8 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
       }
 
       case 'VoteCast': {
+        const approved = tx.indexed.find(item => item === '0x1');
+        content = approved ? 'Approved a proposal' : 'Rejected a proposal';
         break;
       }
 

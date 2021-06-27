@@ -9,6 +9,7 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
+import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
 import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
@@ -17,6 +18,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import bnJs from 'bnJs';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTotalCollectedFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 
@@ -46,8 +48,13 @@ const DividendVote = () => {
 
   const addTransaction = useTransactionAdder();
   const { account } = useIconReact();
+  const shouldLedgerSign = useShouldLedgerSign();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const [txHash, setTxHash] = React.useState('');
   const handleVote = () => {
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
     if (voteInfo) {
       bnJs
         .inject({ account })
@@ -65,6 +72,9 @@ const DividendVote = () => {
         })
         .catch(e => {
           console.error('error', e);
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
         });
     }
   };
@@ -239,6 +249,12 @@ const DividendVote = () => {
               Submit vote
             </Button>
           </Flex>
+          {shouldLedgerSign && (
+            <>
+              <div style={{ marginTop: 10 }}></div>
+              <ShouldLedgerConfirmMessage />
+            </>
+          )}
         </>
       );
     } else if (voteState === VoteState.ENDED) {

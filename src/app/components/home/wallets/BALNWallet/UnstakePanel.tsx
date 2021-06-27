@@ -26,7 +26,7 @@ export default function UnstakePanel() {
           <>
             <Typography>
               {`Your BALN will unstake on ${unstakingDate && dayjs(unstakingDate).format('MMM d')} at
-                ${unstakingDate && dayjs(unstakingDate).format('h:maaa')}.`}
+                ${unstakingDate && dayjs(unstakingDate).format('h:ma')}.`}
             </Typography>
 
             <Typography variant="p">{unstakingBalance.dp(2).toFormat()} BALN unstaking</Typography>

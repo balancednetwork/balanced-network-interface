@@ -68,7 +68,7 @@ const RewardsPanel = () => {
   };
 
   const getRewardsUI = () => {
-    if (!hasRewardableLoan && !hasRewardableLiquidity) {
+    if (!hasRewardableLoan && !hasRewardableLiquidity && reward.isZero()) {
       return (
         <>
           <Typography variant="p" as="div">

@@ -31,35 +31,45 @@ const NumberButton = styled(Button)`
 `;
 
 const Pagination: React.FC<Props> = ({ totalPages, currentPage, onChangePage, sx }) => {
-  const pages: React.ReactElement[] = [];
-  const displayPages = currentPage >= 4 && currentPage <= totalPages - 5 ? 3 : 4;
-  const pageRange = totalPages > displayPages ? displayPages : totalPages;
+  let pages: Array<string | number> = [];
+  const hasManyPages = totalPages > 6;
 
-  const halfRange = Math.floor(pageRange / 2);
-  let page = currentPage - halfRange;
-
-  if (currentPage < 4) {
-    page = 1;
-  } else if (currentPage > totalPages - 5) {
-    page = totalPages - 5;
+  if (hasManyPages) {
+    const page = currentPage + 1;
+    if (page < 5) {
+      pages = [1, 2, 3, 4, 5, '...', totalPages];
+    } else {
+      const morePages = totalPages - (page + 1) > 1;
+      if (morePages) {
+        pages = [1, '...', page - 1, page, page + 1, '...', totalPages];
+      } else {
+        pages = [1, '...'];
+        for (let i = totalPages - 4; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      }
+    }
+  } else {
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
   }
-
-  for (let i = 0; i < pageRange; i++) {
-    let _p = page;
-    pages.push(
+  const _pages = pages.map(item => {
+    if (item === '...') return <Typography mx="1">...</Typography>;
+    const page = (item as number) - 1;
+    return (
       <NumberButton
+        key={item.toString()}
         mx={1}
         className={currentPage === page ? 'active' : ''}
         onClick={() => {
-          onChangePage && onChangePage(_p);
+          onChangePage && item !== '...' && onChangePage(page);
         }}
-        key={i}
       >
-        {page + 1}
-      </NumberButton>,
+        {item}
+      </NumberButton>
     );
-    page++;
-  }
+  });
 
   if (totalPages === 0) return null;
 
@@ -71,27 +81,7 @@ const Pagination: React.FC<Props> = ({ totalPages, currentPage, onChangePage, sx
         ...sx,
       }}
     >
-      <NumberButton
-        className={currentPage === 0 ? 'active' : ''}
-        onClick={() => {
-          onChangePage && onChangePage(0);
-        }}
-        mx="1"
-      >
-        1
-      </NumberButton>
-      {currentPage > 3 && <Typography mx="1">...</Typography>}
-      {pages}
-      {currentPage <= totalPages - 5 && <Typography mx="1">...</Typography>}
-      <NumberButton
-        className={currentPage === totalPages ? 'active' : ''}
-        onClick={() => {
-          onChangePage && onChangePage(totalPages);
-        }}
-        mx="1"
-      >
-        {totalPages}
-      </NumberButton>
+      {_pages}
     </Flex>
   );
 };

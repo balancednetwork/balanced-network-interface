@@ -80,6 +80,7 @@ const METHOD_POSITIVE_SIGN = [
   'withdrawCollateral',
   'OriginateLoan',
   'cancelSicxicxOrder',
+  'Withdraw1Value',
 ];
 
 const getContractName = (addr?: string) => {

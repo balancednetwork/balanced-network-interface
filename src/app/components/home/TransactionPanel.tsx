@@ -54,17 +54,18 @@ const SYMBOLS = ['ICX', 'sICX', 'bnUSD', 'BALN'];
 const METHOD_CONTENT = {
   SupplyICX: 'Supplied (amount) ICX to the ICX / sICX pool',
   RewardsClaimed: 'Claimed (amount) BALN',
-  stake: 'Staked (amount) BALN',
-  withdrawCollateral: 'Withdrew (amount) ICX collateral',
+  stake: 'Adjusted BALN stake',
+  withdrawCollateral: 'Withdrew (amount) sICX collateral',
   LoanRepaid: 'Repaid (amount) bnUSD',
   OriginateLoan: 'Borrowed (amount) bnUSD',
   cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',
   ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
-  CollateralReceived: 'Deposited (amount) ICX as collateral ',
+  CollateralReceived: 'Deposited (amount) sICX as collateral ',
   UnstakeRequest: 'Unstaked (amount) sICX',
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
   stakeICX: 'Swapped (amount) ICX',
+  VoteCast: '',
 
   //  2 symbols
   Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
@@ -80,6 +81,7 @@ const METHOD_POSITIVE_SIGN = [
   'withdrawCollateral',
   'OriginateLoan',
   'cancelSicxicxOrder',
+  'Withdraw1Value',
 ];
 
 const getContractName = (addr?: string) => {
@@ -94,15 +96,15 @@ const POOL_IDS = {
   4: 'sICX ICX',
 };
 
-const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string; positive: boolean }) => (
+const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string; positive?: boolean }) => (
   <>
     {parseFloat(value) !== 0 && (
       <span
         style={{
-          color: positive ? '#2fccdc' : 'red',
+          color: positive !== undefined ? (positive ? '#2fccdc' : 'red') : '',
         }}
       >
-        {positive ? '+' : '-'}{' '}
+        {positive !== undefined && (positive ? '+' : '-')}{' '}
       </span>
     )}
     {value} {symbol}
@@ -143,8 +145,13 @@ const getValuesAndSymbols = (tx: Transaction) => {
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Swap': {
-      const symbol1 = getContractName(tx.data[0]);
-      const symbol2 = getContractName(tx.data[1]);
+      let symbol1 = getContractName(tx.data[0]);
+      let symbol2 = getContractName(tx.data[1]);
+
+      if (!symbol2) {
+        symbol1 = 'sICX';
+        symbol2 = 'ICX';
+      }
       const amount1 = convertValue(tx.data[4]);
       const amount2 = convertValue(tx.data[5]);
       return { amount1, amount2, symbol1, symbol2 };
@@ -164,7 +171,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
       return { amount1, amount2: '', symbol1: 'BALN', symbol2: '' };
     }
     case 'withdrawCollateral': {
-      const amount1 = getValue(tx);
+      const amount1 = convertValue((tx.data as any)?.params?._value || 0);
       return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
     }
     case 'cancelSicxicxOrder':
@@ -245,6 +252,14 @@ const getAmountWithSign = (tx: Transaction) => {
       return <AmountItem value={amount1} symbol={symbol1} positive />;
     }
 
+    case 'VoteCast':
+      return '';
+
+    case 'stake': {
+      const { amount1, symbol1 } = getValuesAndSymbols(tx);
+      return <AmountItem value={amount1} symbol={symbol1} />;
+    }
+
     default:
       const positive = METHOD_POSITIVE_SIGN.includes(method);
       const { amount1, symbol1 } = getValuesAndSymbols(tx);
@@ -285,6 +300,12 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
           content = content.replace(/\(currency2\)/gi, symbol2);
           content = content.replace('(amount2)', amount2);
         }
+        break;
+      }
+
+      case 'VoteCast': {
+        const approved = tx.indexed.find(item => item === '0x1');
+        content = approved ? 'Approved a proposal' : 'Rejected a proposal';
         break;
       }
 

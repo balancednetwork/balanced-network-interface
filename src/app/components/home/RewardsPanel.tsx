@@ -78,7 +78,14 @@ const RewardsPanel = () => {
         </>
       );
     } else if (reward.isZero()) {
-      return <Typography variant="p">Pending</Typography>;
+      return (
+        <>
+          <Typography variant="p" as="div">
+            Pending
+            <QuestionHelper text="To earn Balanced rewards, take out a loan or supply liquidity on the Trade page." />
+          </Typography>
+        </>
+      );
     } else {
       return (
         <>
@@ -91,7 +98,12 @@ const RewardsPanel = () => {
 
   const getNetworkFeesUI = () => {
     if (hasNetworkFees) {
-      return <Typography variant="p">Eligible</Typography>;
+      return (
+        <Typography variant="p">
+          Eligible
+          <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
+        </Typography>
+      );
     } else {
       return (
         <Typography variant="p" as="div">

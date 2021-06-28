@@ -16,6 +16,9 @@ export const useVoteInfoQuery = (voteIndex: number) => {
         startDay: number;
         endDay: number;
         name: string;
+        majority: number;
+        quorum: number;
+        sum: number;
       }
     | undefined
   >(QUERY_KEYS.Vote.VoteInfo(voteIndex), async () => {
@@ -37,6 +40,9 @@ export const useVoteInfoQuery = (voteIndex: number) => {
       snapshotDay: parseInt(res['vote snapshot'], 16),
       startDay: parseInt(res['start day'], 16),
       endDay: parseInt(res['end day'], 16),
+      majority: BalancedJs.utils.toIcx(res['majority']).toNumber(),
+      quorum: BalancedJs.utils.toIcx(res['quorum']).times(100).dp(2).toNumber(),
+      sum: _against.plus(_for).times(100).dp(2).toNumber(),
     };
   });
 };
@@ -82,9 +88,22 @@ export const useUserWeightQuery = (day?: number) => {
   );
 };
 
-export const usePlatformDayQuery = (day?: number) => {
+export const usePlatformDayQuery = () => {
   return useQuery<number>(QUERY_KEYS.Vote.PlatformDay, async () => {
     const res = await bnJs.Governance.getDay();
     return parseInt(res, 16);
   });
+};
+
+export const useTotalStakedBalanceAt = (day?: number) => {
+  return useQuery<BigNumber>(
+    QUERY_KEYS.Vote.TotalStakedBalanceAt(day ?? 0),
+    async () => {
+      const res = await bnJs.BALN.totalStakedBalanceOfAt(day!);
+      return BalancedJs.utils.toIcx(res);
+    },
+    {
+      enabled: !!day,
+    },
+  );
 };

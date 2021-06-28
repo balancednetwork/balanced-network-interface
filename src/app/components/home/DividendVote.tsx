@@ -4,7 +4,13 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { useIconReact } from 'packages/icon-react';
-import { useVoteInfoQuery, useUserVoteStatusQuery, useUserWeightQuery, usePlatformDayQuery } from 'queries/vote';
+import {
+  useVoteInfoQuery,
+  useUserVoteStatusQuery,
+  useUserWeightQuery,
+  usePlatformDayQuery,
+  useTotalStakedBalanceAt,
+} from 'queries/vote';
 import { Flex, Box } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
@@ -87,6 +93,8 @@ const DividendVote = () => {
   const weight = weightQuery.data;
   const platformDayQuery = usePlatformDayQuery();
   const platformDay = platformDayQuery.data;
+  const totalStakedBALNQuery = useTotalStakedBalanceAt(voteInfo?.snapshotDay);
+  const totalStakedBALN = totalStakedBALNQuery.data;
 
   const txStatus = useTransactionStatus(txHash);
 
@@ -192,11 +200,13 @@ const DividendVote = () => {
           </FlexPanel>
 
           <Typography variant="p" my={1} textAlign="center" color="text1">
-            Voting ends in{' '}
+            {'Voting ends in '}
             <Typography fontWeight="bold" color="white" as="span">
               {endTimeStr}
             </Typography>
-            .
+            {'. '}
+            {`${totalStakedBALN?.integerValue().toFormat()} BALN is staked, and ${voteInfo?.sum}% has voted 
+              (${voteInfo?.quorum}% required).`}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

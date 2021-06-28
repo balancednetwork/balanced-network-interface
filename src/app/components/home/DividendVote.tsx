@@ -200,7 +200,7 @@ const DividendVote = () => {
           </FlexPanel>
 
           <Typography variant="p" my={1} textAlign="center" color="text1">
-            {'Voting ends in '}
+            {'Voting ends '}
             <Typography fontWeight="bold" color="white" as="span">
               {endTimeStr}
             </Typography>
@@ -242,12 +242,14 @@ const DividendVote = () => {
             {'.'}
           </Typography>
 
-          <Typography textAlign="center">
-            {'Voting ends in '}
+          <Typography variant="p" my={1} textAlign="center" color="text1">
+            {'Voting ends '}
             <Typography fontWeight="bold" color="white" as="span">
               {endTimeStr}
             </Typography>
-            {'.'}
+            {'. '}
+            {`${totalStakedBALN?.integerValue().toFormat()} BALN is staked, and ${voteInfo?.sum}% has voted 
+              (${voteInfo?.quorum}% required).`}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

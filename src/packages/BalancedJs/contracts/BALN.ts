@@ -81,4 +81,15 @@ export default class BALN extends Contract {
 
     return this.call(callParams);
   }
+
+  totalStakedBalanceOfAt(_day: number) {
+    const callParams = this.paramsBuilder({
+      method: 'totalStakedBalanceOfAt',
+      params: {
+        _day: IconConverter.toHex(_day),
+      },
+    });
+
+    return this.call(callParams);
+  }
 }

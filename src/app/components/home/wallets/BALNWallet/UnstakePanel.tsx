@@ -25,7 +25,7 @@ export default function UnstakePanel() {
         ) : (
           <>
             <Typography>
-              {`Your BALN will unstake on ${unstakingDate && dayjs(unstakingDate).format('MMM d')} at
+              {`Your BALN will unstake on ${unstakingDate && dayjs(unstakingDate).format('MMM D')} at
                 ${unstakingDate && dayjs(unstakingDate).format('h:ma')}.`}
             </Typography>
 

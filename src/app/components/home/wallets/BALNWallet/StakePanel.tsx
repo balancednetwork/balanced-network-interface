@@ -107,7 +107,7 @@ export default React.memo(function StakePanel() {
   const date = dayjs().add(3, 'days');
   const description = shouldStake
     ? 'Unstaking takes 3 days.'
-    : `They'll unstake on ${date && dayjs(date).format('MMM d')}, around ${date && dayjs(date).format('h:ma')}.`;
+    : `They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('h:ma')}.`;
 
   return (
     <>

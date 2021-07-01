@@ -68,7 +68,7 @@ const WalletPanel = () => {
                   <StyledAccordionButton>
                     <ListItem border={index !== arr.length - 1}>
                       <AssetSymbol>
-                        <CurrencyLogo currencyKey={currency} />
+                        <StyledCurrencyLogo currencyKey={currency} />
                         <Typography fontSize={16} fontWeight="bold">
                           {currency}
                         </Typography>
@@ -196,6 +196,10 @@ const StyledAccordionButton = styled(AccordionButton)`
       border-bottom: none;
     }
   }
+`;
+
+const StyledCurrencyLogo = styled(CurrencyLogo)`
+  position: relative;
 `;
 
 const Wrapper = styled.div``;

@@ -33,9 +33,8 @@ export function useWalletFetchBalances(account?: string | null) {
           bnJs.sICX.balanceOf(account),
           bnJs.bnUSD.balanceOf(account),
           bnJs.BALN.balanceOf(account),
-          bnJs.Rewards.getBalnHolding(account),
         ]).then(result => {
-          const [ICX, sICX, bnUSD, BALN, BALNreward] = result.map(v => BalancedJs.utils.toIcx(v));
+          const [ICX, sICX, bnUSD, BALN] = result.map(v => BalancedJs.utils.toIcx(v));
           dispatch(
             changeBalances({
               ICX,
@@ -44,7 +43,6 @@ export function useWalletFetchBalances(account?: string | null) {
               BALN: BALN.minus(stakedBalance).minus(unstakingBalance),
               BALNstaked: stakedBalance,
               BALNunstaking: unstakingBalance,
-              BALNreward,
             }),
           );
         });

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
+import { useUserCollectedFeesQuery, useRewardQuery } from 'queries/reward';
 import { Flex } from 'rebass/styled-components';
 
 import { Button } from 'app/components/Button';
@@ -10,22 +11,22 @@ import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { addressToCurrencyKeyMap } from 'constants/currency';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 
 import DividendVote from './DividendVote';
 
 const RewardsPanel = () => {
-  const { account } = useIconReact();
-  const wallet = useWalletBalances();
+  const { account, networkId } = useIconReact();
   const addTransaction = useTransactionAdder();
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const handleClaim = () => {
+  const [rewardTx, setRewardTx] = React.useState('');
+  const handleRewardClaim = () => {
     if (!account) return;
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
@@ -39,10 +40,11 @@ const RewardsPanel = () => {
         addTransaction(
           { hash: res.result }, //
           {
-            summary: `Claimed ${reward.dp(2).toFormat()} BALN.`,
+            summary: `Claimed ${reward?.dp(2).toFormat()} BALN.`,
             pending: 'Claiming rewards...',
           },
         );
+        setRewardTx(res.result);
         toggleOpen();
       })
       .catch(e => {
@@ -52,14 +54,54 @@ const RewardsPanel = () => {
         changeShouldLedgerSign(false);
       });
   };
+  const [feeTx, setFeeTx] = React.useState('');
+  const handleFeeClaim = () => {
+    if (!account) return;
 
-  const reward = wallet.BALNreward;
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
+    bnJs
+      .inject({ account: account })
+      .Dividends.claim()
+      .then(res => {
+        addTransaction(
+          { hash: res.result }, //
+          {
+            summary: `Claimed fees.`,
+            pending: 'Claiming fees...',
+          },
+        );
+        setFeeTx(res.result);
+      })
+      .catch(e => {
+        console.error('error', e);
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
+      });
+  };
+
+  const rewardQuery = useRewardQuery();
+  const reward = rewardQuery.data;
 
   const hasRewardableLoan = useHasRewardableLoan();
 
   const hasRewardableLiquidity = useHasRewardableLiquidity();
 
   const hasNetworkFees = useHasNetworkFees();
+
+  const feesQuery = useUserCollectedFeesQuery();
+  const fees = feesQuery.data;
+  const hasFee = fees && !!Object.values(fees).find(fee => !fee.isZero());
+
+  const rewardTxStatus = useTransactionStatus(rewardTx);
+  const feeTxStatus = useTransactionStatus(feeTx);
+  React.useEffect(() => {
+    if (rewardTxStatus === TransactionStatus.success) rewardQuery.refetch();
+    if (feeTxStatus === TransactionStatus.success) feesQuery.refetch();
+  }, [rewardTxStatus, feeTxStatus, rewardQuery, feesQuery]);
 
   // stake new balance tokens modal
   const [open, setOpen] = React.useState(false);
@@ -68,7 +110,7 @@ const RewardsPanel = () => {
   };
 
   const getRewardsUI = () => {
-    if (!hasRewardableLoan && !hasRewardableLiquidity && reward.isZero()) {
+    if (!hasRewardableLoan && !hasRewardableLiquidity && reward?.isZero()) {
       return (
         <>
           <Typography variant="p" as="div">
@@ -77,7 +119,7 @@ const RewardsPanel = () => {
           </Typography>
         </>
       );
-    } else if (reward.isZero()) {
+    } else if (reward?.isZero()) {
       return (
         <>
           <Typography variant="p" as="div">
@@ -89,20 +131,40 @@ const RewardsPanel = () => {
     } else {
       return (
         <>
-          <Typography variant="p" mb={2}>{`${reward.dp(2).toFormat()} BALN`}</Typography>
-          <Button onClick={handleClaim}>Claim</Button>
+          <Typography variant="p">{`${reward?.dp(2).toFormat()} BALN`}</Typography>
+          <Button mt={2} onClick={handleRewardClaim}>
+            Claim
+          </Button>
         </>
       );
     }
   };
 
   const getNetworkFeesUI = () => {
-    if (hasNetworkFees) {
+    if (hasNetworkFees && !hasFee) {
       return (
-        <Typography variant="p">
-          Eligible
+        <Typography variant="p" as="div">
+          Pending
           <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
         </Typography>
+      );
+    } else if (hasFee) {
+      return (
+        <>
+          {fees &&
+            Object.keys(fees).map(key => (
+              <Typography key={key} variant="p">
+                {`${fees[key].dp(2).toFormat()}`}{' '}
+                <Typography key={key} as="span" color="text1">
+                  {addressToCurrencyKeyMap[networkId][key]}
+                </Typography>
+              </Typography>
+            ))}
+
+          <Button mt={2} onClick={handleFeeClaim}>
+            Claim
+          </Button>
+        </>
       );
     } else {
       return (
@@ -125,14 +187,14 @@ const RewardsPanel = () => {
 
         <Flex>
           <Flex flex={1} flexDirection="column" alignItems="center" className="border-right">
-            <Typography variant="p" mb={1}>
+            <Typography variant="p" mb={2}>
               Balance Tokens
             </Typography>
             {getRewardsUI()}
           </Flex>
 
           <Flex flex={1} flexDirection="column" alignItems="center">
-            <Typography variant="p" mb={1} as="div">
+            <Typography variant="p" mb={2} as="div">
               Network fees
             </Typography>
             {getNetworkFeesUI()}

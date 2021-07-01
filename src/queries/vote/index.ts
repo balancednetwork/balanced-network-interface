@@ -88,14 +88,7 @@ export const useUserWeightQuery = (day?: number) => {
   );
 };
 
-export const usePlatformDayQuery = () => {
-  return useQuery<number>(QUERY_KEYS.Vote.PlatformDay, async () => {
-    const res = await bnJs.Governance.getDay();
-    return parseInt(res, 16);
-  });
-};
-
-export const useTotalStakedBalanceAt = (day?: number) => {
+export const useTotalStakedBalanceAtQuery = (day?: number) => {
   return useQuery<BigNumber>(
     QUERY_KEYS.Vote.TotalStakedBalanceAt(day ?? 0),
     async () => {
@@ -106,4 +99,15 @@ export const useTotalStakedBalanceAt = (day?: number) => {
       enabled: !!day,
     },
   );
+};
+
+export const useTotalCollectedFeesQuery = () => {
+  return useQuery<{ [key in string]: BigNumber }>(QUERY_KEYS.Vote.TotalCollectedFees, async () => {
+    const data = await bnJs.Dividends.getBalances();
+    const t = {};
+    Object.keys(data).forEach(key => {
+      t[key] = BalancedJs.utils.toIcx(data[key]);
+    });
+    return t;
+  });
 };

@@ -88,3 +88,25 @@ export const isQueue = (t: Pool | Pair) => {
     return true;
   return false;
 };
+
+export enum NetworkId {
+  MAINNET = 1,
+  YEOUIDO = 3,
+  EULJIRO = 2,
+  PAGODA = 80,
+}
+
+export const addressToCurrencyKeyMap = {
+  [NetworkId.MAINNET]: {
+    cx2609b924e33ef00b648a409245c7ea394c467824: 'sICX',
+    cx88fd7df7ddff82f7cc735c871dc519838cb235bb: 'bnUSD',
+    cxf61cd5a45dc9f91c15aa65831a30a90d59a09619: 'BALN',
+    cx0000000000000000000000000000000000000000: 'ICX',
+  },
+  [NetworkId.YEOUIDO]: {
+    cxae6334850f13dfd8b50f8544d5acb126bb8ef82d: 'sICX',
+    cxc48c9c81ceef04445c961c5cc8ff056d733dfe3a: 'bnUSD',
+    cx36169736b39f59bf19e8950f6c8fa4bfa18b710a: 'BALN',
+    cx0000000000000000000000000000000000000000: 'ICX',
+  },
+};

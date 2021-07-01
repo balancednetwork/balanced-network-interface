@@ -4,12 +4,13 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { useIconReact } from 'packages/icon-react';
+import { usePlatformDayQuery } from 'queries/reward';
 import {
   useVoteInfoQuery,
   useUserVoteStatusQuery,
   useUserWeightQuery,
-  usePlatformDayQuery,
-  useTotalStakedBalanceAt,
+  useTotalStakedBalanceAtQuery,
+  useTotalCollectedFeesQuery,
 } from 'queries/vote';
 import { Flex, Box } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
@@ -25,7 +26,6 @@ import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useTotalCollectedFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 
 dayjs.extend(utc);
@@ -49,8 +49,6 @@ const DividendVote = () => {
   const toggleOpen = () => {
     setOpen(!open);
   };
-
-  const fees = useTotalCollectedFees();
 
   const addTransaction = useTransactionAdder();
   const { account } = useIconReact();
@@ -93,8 +91,10 @@ const DividendVote = () => {
   const weight = weightQuery.data;
   const platformDayQuery = usePlatformDayQuery();
   const platformDay = platformDayQuery.data;
-  const totalStakedBALNQuery = useTotalStakedBalanceAt(voteInfo?.snapshotDay);
+  const totalStakedBALNQuery = useTotalStakedBalanceAtQuery(voteInfo?.snapshotDay);
   const totalStakedBALN = totalStakedBALNQuery.data;
+  const feesQuery = useTotalCollectedFeesQuery();
+  const fees = feesQuery.data;
 
   const txStatus = useTransactionStatus(txHash);
 
@@ -372,16 +372,17 @@ const DividendVote = () => {
             </Typography>
 
             <Flex>
-              {Object.keys(fees)
-                .filter((currencyKey: string) => !fees[currencyKey].isZero())
-                .map((currencyKey: string) => (
-                  <Flex key={currencyKey} flex={1} flexDirection="column" alignItems="center">
-                    <Typography fontSize="16px" fontWeight="bold" color="white">
-                      {fees[currencyKey].integerValue().toFormat()}
-                    </Typography>
-                    <Typography>{currencyKey}</Typography>
-                  </Flex>
-                ))}
+              {fees &&
+                Object.keys(fees)
+                  .filter((currencyKey: string) => !fees[currencyKey].isZero())
+                  .map((currencyKey: string) => (
+                    <Flex key={currencyKey} flex={1} flexDirection="column" alignItems="center">
+                      <Typography fontSize="16px" fontWeight="bold" color="white">
+                        {fees[currencyKey].integerValue().toFormat()}
+                      </Typography>
+                      <Typography>{currencyKey}</Typography>
+                    </Flex>
+                  ))}
             </Flex>
           </Flex>
 

@@ -131,7 +131,12 @@ const RewardsPanel = () => {
     } else {
       return (
         <>
-          <Typography variant="p">{`${reward?.dp(2).toFormat()} BALN`}</Typography>
+          <Typography variant="p">
+            {`${reward?.dp(2).toFormat()} `}
+            <Typography as="span" color="text1">
+              BALN
+            </Typography>
+          </Typography>
           <Button mt={2} onClick={handleRewardClaim}>
             Claim
           </Button>
@@ -152,14 +157,16 @@ const RewardsPanel = () => {
       return (
         <>
           {fees &&
-            Object.keys(fees).map(key => (
-              <Typography key={key} variant="p">
-                {`${fees[key].dp(2).toFormat()}`}{' '}
-                <Typography key={key} as="span" color="text1">
-                  {addressToCurrencyKeyMap[networkId][key]}
+            Object.keys(fees)
+              .filter(key => !fees[key].isZero())
+              .map(key => (
+                <Typography key={key} variant="p">
+                  {`${fees[key].dp(2).toFormat()}`}{' '}
+                  <Typography key={key} as="span" color="text1">
+                    {addressToCurrencyKeyMap[networkId][key]}
+                  </Typography>
                 </Typography>
-              </Typography>
-            ))}
+              ))}
 
           <Button mt={2} onClick={handleFeeClaim}>
             Claim

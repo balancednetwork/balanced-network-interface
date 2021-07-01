@@ -16,8 +16,6 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 
-import DividendVote from './DividendVote';
-
 const RewardsPanel = () => {
   const { account, networkId } = useIconReact();
   const addTransaction = useTransactionAdder();
@@ -188,8 +186,6 @@ const RewardsPanel = () => {
       <BoxPanel bg="bg2">
         <Flex alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h2">Rewards</Typography>
-
-          <DividendVote />
         </Flex>
 
         <Flex>

@@ -3,7 +3,6 @@ import React from 'react';
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 
 import Divider from 'app/components/Divider';
-import { BoxPanel } from 'app/components/Panel';
 
 import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';
@@ -12,7 +11,7 @@ import UnstakePanel from './UnstakePanel';
 
 export default function SICXWallet() {
   return (
-    <BoxPanel bg="bg3">
+    <>
       <Tabs>
         <StyledTabList>
           <StyledTab>Send</StyledTab>
@@ -33,6 +32,6 @@ export default function SICXWallet() {
           </TabPanel>
         </TabPanels>
       </Tabs>
-    </BoxPanel>
+    </>
   );
 }

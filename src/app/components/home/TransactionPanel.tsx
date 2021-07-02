@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { getAllTransactions, Transaction } from 'apis/allTransaction';
 import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
-import addressses, { NetworkId } from 'packages/BalancedJs/addresses';
+import addresses, { NetworkId } from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { Box, Flex, Link } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -14,11 +14,8 @@ import { BoxPanel } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
+import { CURRENCY } from 'constants/currency';
 import { formatBigNumber, getTrackerLink } from 'utils';
-
-// import sample2 from './sample2.json';
-
-const queryClient = new QueryClient();
 
 const Row = styled(Box)`
   display: grid;
@@ -50,7 +47,6 @@ const Table = styled(Box)`
   }
 `;
 
-const SYMBOLS = ['ICX', 'sICX', 'bnUSD', 'BALN'];
 const METHOD_CONTENT = {
   SupplyICX: 'Supplied (amount) ICX to the ICX / sICX pool',
   RewardsClaimed: 'Claimed (amount) BALN',
@@ -85,8 +81,8 @@ const METHOD_POSITIVE_SIGN = [
 ];
 
 const getContractName = (addr?: string) => {
-  const name = Object.keys(addressses[NetworkId.MAINNET]).find(key => addressses[NetworkId.MAINNET][key] === addr);
-  return SYMBOLS.find(item => item.toLowerCase() === name?.toLocaleLowerCase());
+  const name = Object.keys(addresses[NetworkId.MAINNET]).find(key => addresses[NetworkId.MAINNET][key] === addr);
+  return CURRENCY.find(item => item.toLowerCase() === name?.toLocaleLowerCase());
 };
 
 const POOL_IDS = {
@@ -198,7 +194,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
     }
     default: {
       const amount1 = getValue(tx);
-      const symbol1 = tx.indexed?.find(item => SYMBOLS.includes(item)) || '';
+      const symbol1 = tx.indexed?.find(item => CURRENCY.includes(item)) || '';
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
   }
@@ -460,9 +456,9 @@ const TransactionTable = () => {
 };
 
 const TransactionPanel = () => (
-  <QueryClientProvider client={queryClient}>
+  <Box sx={{ gridColumn: ['auto', 'auto', 'auto', '1 / span 2'] }}>
     <TransactionTable />
-  </QueryClientProvider>
+  </Box>
 );
 
 export default TransactionPanel;

@@ -62,13 +62,7 @@ export function HomePage() {
           <PositionDetailPanel />
           <WalletPanel />
           <RewardsPanel />
-          <Box
-            sx={{
-              gridColumn: ['auto', '1 / span 2'],
-            }}
-          >
-            <TransactionPanel />
-          </Box>
+          <TransactionPanel />
         </Grid>
       ) : (
         <SignInMessage>Sign in to use the Home page.</SignInMessage>

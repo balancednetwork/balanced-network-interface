@@ -117,9 +117,9 @@ const WalletPanel = () => {
                     </ListItem>
                   </StyledAccordionButton>
 
-                  <AccordionPanel>
+                  <StyledAccordionPanel currency={currency}>
                     <WalletUI />
-                  </AccordionPanel>
+                  </StyledAccordionPanel>
                 </AccordionItem>
               );
             })}
@@ -195,6 +195,31 @@ const StyledAccordionButton = styled(AccordionButton)`
       color: #2ca9b7;
       border-bottom: none;
     }
+  }
+`;
+
+const StyledAccordionPanel = styled(AccordionPanel)<{ currency?: string }>`
+  position: relative;
+
+  &:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 12px solid #144a68;
+    position: absolute;
+    bottom: 100%;
+    ${({ currency = 'ICX' }) =>
+      currency === 'ICX'
+        ? 'left: 37px'
+        : currency === 'sICX'
+        ? 'left: 42px'
+        : currency === 'bnUSD'
+        ? 'left: 47px'
+        : currency === 'BALN'
+        ? 'left: 43px'
+        : 'left: 40px'}
   }
 `;
 

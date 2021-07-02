@@ -15,14 +15,13 @@ import { useRatio } from 'store/ratio/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
 import BALNWallet from './wallets/BALNWallet';
-import BnUSDWallet from './wallets/BnUSDWallet';
 import ICXWallet from './wallets/ICXWallet';
+import SendPanel from './wallets/SendPanel';
 import SICXWallet from './wallets/SICXWallet';
 
 const WalletUIs = {
   ICX: ICXWallet,
   sICX: SICXWallet,
-  bnUSD: BnUSDWallet,
   BALN: BALNWallet,
 };
 
@@ -62,7 +61,7 @@ const WalletPanel = () => {
               }
               return !balances[currency].dp(2).isZero();
             }).map((currency, index, arr) => {
-              const WalletUI = WalletUIs[currency];
+              const WalletUI = WalletUIs[currency] || SendPanel;
               return (
                 <AccordionItem key={currency}>
                   <StyledAccordionButton>
@@ -118,7 +117,9 @@ const WalletPanel = () => {
                   </StyledAccordionButton>
 
                   <StyledAccordionPanel currency={currency}>
-                    <WalletUI />
+                    <BoxPanel bg="bg3">
+                      <WalletUI currencyKey={currency} />
+                    </BoxPanel>
                   </StyledAccordionPanel>
                 </AccordionItem>
               );

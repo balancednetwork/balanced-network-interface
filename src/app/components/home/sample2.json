@@ -2,6 +2,26 @@
   "count": 396788,
   "transactions": [
     {
+      "address": "cx203d9cd2a669be67177e997b8948ce2c35caffae",
+      "data": [
+        "0x12",
+        "0x44",
+        "{'cx0000000000000000000000000000000000000000': 0, 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619': 833980636823954621, 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb': 77813070854122104548, 'cx2609b924e33ef00b648a409245c7ea394c467824': 21083991100882440914}"
+      ],
+      "method": "Claimed",
+      "indexed": ["Claimed(Address,int,int,str)", "hxa9546e6e6ec8bcb1e52106914f5f1fba90013f44"],
+      "item_id": "log_0x55b6840c0a79e674c32edada0981a420a2890d27827d7f6b64a36f6ca3f3815f_6",
+      "block_number": 36460321,
+      "block_hash": "d65634efe0f84665f3e7335655f56dd2b070ec4fadac63b045725b25aa66fc96",
+      "transaction_index": 2,
+      "type": "log",
+      "log_index": 6,
+      "block_timestamp": 1625235646110957,
+      "from_address": "hxa9546e6e6ec8bcb1e52106914f5f1fba90013f44",
+      "item_timestamp": "2021-07-02T14:20:46Z",
+      "transaction_hash": "0x55b6840c0a79e674c32edada0981a420a2890d27827d7f6b64a36f6ca3f3815f"
+    },
+    {
       "address": "cx43e2eec79eb76293c298f2b17aec06097be606e0",
       "data": ["147 sICX minted to hxdf7c371a35b4acb19d9f869a68eed8721503eaea"],
       "method": "TokenTransfer",

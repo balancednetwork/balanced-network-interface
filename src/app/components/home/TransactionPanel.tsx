@@ -17,6 +17,8 @@ import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { CURRENCY } from 'constants/currency';
 import { formatBigNumber, getTrackerLink } from 'utils';
 
+// import sample2 from './sample2.json';
+
 const Row = styled(Box)`
   display: grid;
   padding: 20px 0;
@@ -61,7 +63,7 @@ const METHOD_CONTENT = {
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
   VoteCast: '',
-  Claimed: '',
+  Claimed: 'Claimed network fees',
   TokenTransfer: '',
 
   //  2 symbols
@@ -94,9 +96,9 @@ const POOL_IDS = {
   1: 'sICX ICX',
 };
 
-const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string; positive?: boolean }) => (
+const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: string; positive?: boolean }) => (
   <>
-    {parseFloat(value) !== 0 && (
+    {parseFloat(value || '') !== 0 && (
       <span
         style={{
           color: positive !== undefined ? (positive ? '#2fccdc' : 'red') : '',
@@ -130,6 +132,33 @@ const getMethod = (tx: Transaction) => {
 const getValuesAndSymbols = (tx: Transaction) => {
   const method = getMethod(tx);
   switch (method) {
+    case 'Claimed': {
+      const amounts: string[] = [];
+      const symbols: string[] = [];
+
+      if (Array.isArray(tx.data)) {
+        try {
+          const data = JSON.parse(tx.data[tx.data.length - 1].replace(/'/g, '"'));
+          Object.keys(data).forEach(key => {
+            if (data[key] !== 0) {
+              symbols.push(getContractName(key) || '');
+              amounts.push(convertValue(data[key]));
+            }
+          });
+        } catch (ex) {
+          console.log(ex);
+        }
+      }
+
+      return {
+        amount1: amounts[0],
+        amount2: amounts[1],
+        amount3: amounts[2],
+        symbol1: symbols[0],
+        symbol2: symbols[1],
+        symbol3: symbols[2],
+      };
+    }
     case 'stake': {
       const amount1 = convertValue((tx.data as any)?.params?._value || 0);
       return { amount1, amount2: '', symbol1: 'BALN', symbol2: '' };
@@ -264,6 +293,19 @@ const getAmountWithSign = (tx: Transaction) => {
       return <AmountItem value={amount1} symbol={symbol1} positive />;
     }
 
+    case 'Claimed': {
+      const { amount1, amount2, amount3, symbol1, symbol2, symbol3 } = getValuesAndSymbols(tx);
+      return (
+        <>
+          <AmountItem value={amount1} symbol={symbol1} positive={true} />
+          <br />
+          <AmountItem value={amount2} symbol={symbol2} positive={true} />
+          <br />
+          <AmountItem value={amount3} symbol={symbol3} positive={true} />
+        </>
+      );
+    }
+
     case 'VoteCast':
       return '';
 
@@ -374,7 +416,7 @@ const TransactionTable = () => {
         ? getAllTransactions({
             skip: page * limit,
             limit: 20, // this is to handle merging transaction
-            from_address: 'hxdf7c371a35b4acb19d9f869a68eed8721503eaea',
+            from_address: account,
           })
         : { count: 0, transactions: [] },
   );

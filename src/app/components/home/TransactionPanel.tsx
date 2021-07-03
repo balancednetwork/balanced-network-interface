@@ -60,10 +60,12 @@ const METHOD_CONTENT = {
   UnstakeRequest: 'Unstaked (amount) sICX',
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
-  stakeICX: 'Swapped (amount) ICX',
   VoteCast: '',
+  Claimed: '',
+  TokenTransfer: '',
 
   //  2 symbols
+  stakeICX: 'Swapped (amount1) ICX for (amount2) sICX',
   Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
   Swap: 'Swapped (amount1) (currency1) for (amount2) (currency2)',
   AssetRetired: 'Retired (amount) bnUSD for (amount) sICX',
@@ -170,8 +172,12 @@ const getValuesAndSymbols = (tx: Transaction) => {
       const amount1 = convertValue((tx.data as any)?.params?._value || 0);
       return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
     }
+    case 'stakeICX': {
+      const amount1 = getValue(tx);
+      const amount2 = convertValue(tx.to_value);
+      return { amount1, amount2: amount2, symbol1: 'ICX', symbol2: 'sICX' };
+    }
     case 'cancelSicxicxOrder':
-    case 'stakeICX':
     case 'CollateralReceived': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'ICX', symbol2: '' };
@@ -243,6 +249,16 @@ const getAmountWithSign = (tx: Transaction) => {
         </>
       );
     }
+    case 'stakeICX': {
+      const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
+      return (
+        <>
+          <AmountItem value={amount2} symbol={symbol2} positive={true} />
+          <br />
+          <AmountItem value={amount1} symbol={symbol1} positive={false} />
+        </>
+      );
+    }
     case 'ClaimSicxEarnings': {
       const { amount1, symbol1 } = getValuesAndSymbols(tx);
       return <AmountItem value={amount1} symbol={symbol1} positive />;
@@ -273,19 +289,10 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
   const getContent = () => {
     let content = METHOD_CONTENT[method] || method;
     switch (method) {
-      // case 'Deposit': {
-      //   const { amount1, symbol1 } = getValuesAndSymbols(tx);
-      //   if (!amount1) {
-      //     content = '';
-      //   } else {
-      //     content = content.replace('(currency)', symbol1);
-      //     content = content.replace('(amount)', amount1);
-      //   }
-      //   break;
-      // }
       case 'Remove':
       case 'Add':
       case 'Withdraw':
+      case 'stakeICX':
       case 'Swap': {
         const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
         if (!amount1 || !amount2) {
@@ -367,7 +374,7 @@ const TransactionTable = () => {
         ? getAllTransactions({
             skip: page * limit,
             limit: 20, // this is to handle merging transaction
-            from_address: account,
+            from_address: 'hxdf7c371a35b4acb19d9f869a68eed8721503eaea',
           })
         : { count: 0, transactions: [] },
   );
@@ -382,37 +389,71 @@ const TransactionTable = () => {
     const txs = (data?.transactions as any) as Transaction[];
     if (txs && txs?.length) {
       for (let i = 0; i < 10; i++) {
-        const tx = { ...txs[i] };
+        let tx: Transaction | null = { ...txs[i] };
         if (tx && (tx.data || tx.indexed) && !tx.ignore) {
-          if (getMethod(tx) === 'Withdraw') {
-            // check if this is merging withdraw (2 tx and 1 tx remove)
-            const mergeTxs = [tx];
-            for (let j = i + 1; j < txs.length; j++) {
-              const _tx = txs[j];
-              const _method = getMethod(_tx);
-              if (_tx.transaction_hash === tx.transaction_hash && ['Withdraw', 'Remove'].includes(_method)) {
-                // ignore Remove, no need to show on ui
-                if (_method === 'Withdraw') {
-                  mergeTxs.push(_tx);
+          const method = getMethod(tx);
+
+          switch (method) {
+            case 'Withdraw': {
+              // check if this is merging withdraw (2 tx and 1 tx remove)
+              const mergeTxs = [tx];
+              for (let j = i + 1; j < txs.length; j++) {
+                const _tx = txs[j];
+                const _method = getMethod(_tx);
+                if (_tx.transaction_hash === tx.transaction_hash && ['Withdraw', 'Remove'].includes(_method)) {
+                  // ignore Remove, no need to show on ui
+                  if (_method === 'Withdraw') {
+                    mergeTxs.push(_tx);
+                  }
+                  // mark ignored field
+                  _tx.ignore = true;
                 }
-                // mark ignored field
-                _tx.ignore = true;
               }
+
+              if (mergeTxs.length === 2) {
+                const mergeData = {
+                  from: mergeTxs[1].indexed.find(item => item.startsWith('cx')),
+                  fromValue: mergeTxs[1].data[0],
+                  to: mergeTxs[0].indexed.find(item => item.startsWith('cx')),
+                  toValue: mergeTxs[0].data[0],
+                };
+                tx.data = mergeData;
+              } else {
+                tx.method = 'Withdraw1Value';
+              }
+
+              rows.push(<RowItem tx={tx} key={tx.item_id} />);
+              break;
             }
 
-            if (mergeTxs.length === 2) {
-              const mergeData = {
-                from: mergeTxs[1].indexed.find(item => item.startsWith('cx')),
-                fromValue: mergeTxs[1].data[0],
-                to: mergeTxs[0].indexed.find(item => item.startsWith('cx')),
-                toValue: mergeTxs[0].data[0],
-              };
-              tx.data = mergeData;
-            } else {
-              tx.method = 'Withdraw1Value';
+            // don't show content for this method,
+            // because this transaction is combined with another transaction
+            case 'TokenTransfer': {
+              tx = null;
+              break;
             }
+            case 'stakeICX': {
+              // search for tokentransfer
+              const secondTx = txs.find(
+                item => getMethod(item) === 'TokenTransfer' && item.transaction_hash === tx?.hash,
+              );
+              console.log(secondTx);
+              if (secondTx) {
+                tx.to_value = secondTx.indexed?.find
+                  ? secondTx.indexed.find((item: string) => item.startsWith('0x'))
+                  : '';
+              } else {
+                tx = null;
+              }
+              console.log(tx);
+              break;
+            }
+            default:
           }
-          rows.push(<RowItem tx={tx} key={tx.item_id} />);
+
+          if (tx) {
+            rows.push(<RowItem tx={tx} key={tx.item_id} />);
+          }
         }
       }
     }

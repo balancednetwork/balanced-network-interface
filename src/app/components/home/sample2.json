@@ -2,6 +2,60 @@
   "count": 396788,
   "transactions": [
     {
+      "address": "cx43e2eec79eb76293c298f2b17aec06097be606e0",
+      "data": ["147 sICX minted to hxdf7c371a35b4acb19d9f869a68eed8721503eaea"],
+      "method": "TokenTransfer",
+      "indexed": [
+        "TokenTransfer(Address,int,str)",
+        "hxdf7c371a35b4acb19d9f869a68eed8721503eaea",
+        "0x7fbce84dd6d4adcc6"
+      ],
+      "item_id": "log_0xf553de1ac01404e7db1c7247db33c095c06639c6e63833e39cd8f331b44f62a4_5",
+      "block_number": 36427836,
+      "block_hash": "bbba454921a7da0b81b4ddd4779ea6a353e70c4524ff33cca48860b1184d0f4b",
+      "transaction_index": 1,
+      "type": "log",
+      "log_index": 5,
+      "block_timestamp": 1625169878329072,
+      "from_address": "hxdf7c371a35b4acb19d9f869a68eed8721503eaea",
+      "item_timestamp": "2021-07-01T20:04:38Z",
+      "transaction_hash": "0xf553de1ac01404e7db1c7247db33c095c06639c6e63833e39cd8f331b44f62a4"
+    },
+    {
+      "data": {
+        "method": "stakeICX",
+        "params": {
+          "_to": "hxdf7c371a35b4acb19d9f869a68eed8721503eaea"
+        }
+      },
+      "signature": "r78dyKjSCXhN3DVtsXmxJ5pgQmiCDQtnfZdy1P5vTdgaFV1uhtnq1chDLYp4RzWsHr0+VJUP1gI8OsIfJjYw5wE=",
+      "fee": null,
+      "nid": 1,
+      "block_number": 36427836,
+      "transaction_index": 1,
+      "type": "transaction",
+      "receipt_step_price": "0x2e90edd00",
+      "block_timestamp": 1625169878329072,
+      "step_limit": "0x2faf080",
+      "receipt_step_used": "0x19bd2cc",
+      "from_address": "hxdf7c371a35b4acb19d9f869a68eed8721503eaea",
+      "value": "0x821ab0d4414980000",
+      "timestamp": "0x5c61558b9d5a0",
+      "receipt_status": 1,
+      "method": "stakeICX",
+      "item_id": "transaction_0xf553de1ac01404e7db1c7247db33c095c06639c6e63833e39cd8f331b44f62a4",
+      "receipt_logs": null,
+      "block_hash": "bbba454921a7da0b81b4ddd4779ea6a353e70c4524ff33cca48860b1184d0f4b",
+      "to_address": "cx43e2eec79eb76293c298f2b17aec06097be606e0",
+      "version": "0x3",
+      "nonce": null,
+      "receipt_cumulative_step_used": "0x19bd2cc",
+      "receipt_score_address": null,
+      "data_type": "call",
+      "item_timestamp": "2021-07-01T20:04:38Z",
+      "hash": "0xf553de1ac01404e7db1c7247db33c095c06639c6e63833e39cd8f331b44f62a4"
+    },
+    {
       "address": "cxa0af3165c08318e988cb30993b3048335b94af6c",
       "data": ["0x515b4eebfcafab021d"],
       "method": "Withdraw",

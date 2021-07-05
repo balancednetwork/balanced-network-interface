@@ -13,7 +13,6 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
     QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
     async () => {
       const data = await bnJs.Dividends.getUserDividends(account!, start, end);
-      console.log(data);
       const t = {};
       Object.keys(data).forEach(key => {
         t[key] = BalancedJs.utils.toIcx(data[key]);

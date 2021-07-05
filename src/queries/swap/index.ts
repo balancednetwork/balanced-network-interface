@@ -17,7 +17,6 @@ export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: Curren
     QUERY_KEYS.Swap.PriceChart(currencyKeys, period),
     async () => {
       const [pair, inverse] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
-      console.log(pair);
       if (pair && !isQueue(pair)) {
         const day = new Date().valueOf() * 1_000;
         const {

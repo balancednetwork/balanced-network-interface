@@ -4,14 +4,6 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { useIconReact } from 'packages/icon-react';
-import { usePlatformDayQuery } from 'queries/reward';
-import {
-  useVoteInfoQuery,
-  useUserVoteStatusQuery,
-  useUserWeightQuery,
-  useTotalStakedBalanceAtQuery,
-  useTotalCollectedFeesQuery,
-} from 'queries/vote';
 import { Flex, Box } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
@@ -25,6 +17,14 @@ import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import bnJs from 'bnJs';
+import { usePlatformDayQuery } from 'queries/reward';
+import {
+  useVoteInfoQuery,
+  useUserVoteStatusQuery,
+  useUserWeightQuery,
+  useTotalStakedBalanceAtQuery,
+  useTotalCollectedFeesQuery,
+} from 'queries/vote';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 

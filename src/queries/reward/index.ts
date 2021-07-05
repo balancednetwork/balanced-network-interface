@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import QUERY_KEYS from 'queries/queryKeys';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
+import QUERY_KEYS from 'queries/queryKeys';
 
 export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) => {
   const { account } = useIconReact();

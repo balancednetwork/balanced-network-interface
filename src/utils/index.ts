@@ -1,9 +1,12 @@
 import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { NetworkId, NETWORK_ID } from 'packages/icon-react';
 
 import { currencyKeyToIconMap } from 'constants/currency';
-import { MINIMUM_ICX_AMOUNT_IN_WALLET, ZERO } from 'constants/index';
+import { MINIMUM_ICX_AMOUNT_IN_WALLET, ZERO, ONE } from 'constants/index';
+import { Field } from 'store/swap/actions';
 import { CurrencyKey, CurrencyAmount } from 'types';
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
@@ -112,3 +115,35 @@ export function formatPercent(percent: BigNumber | undefined) {
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+const LAUNCH_DAY = 1619398800000000;
+const ONE_DAY_DURATION = 86400000;
+
+export const generateChartData = (rate: BigNumber, currencyKeys: { [field in Field]?: CurrencyKey }) => {
+  const today = dayjs().startOf('day');
+  const launchDay = dayjs(LAUNCH_DAY / 1000).startOf('day');
+  const platformDays = (today.valueOf() - launchDay.valueOf()) / ONE_DAY_DURATION + 1;
+  const stop = BalancedJs.utils.toLoop(rate);
+  const start = BalancedJs.utils.toLoop(ONE);
+  const step = stop.minus(start).div(platformDays - 1);
+
+  let _data;
+
+  if (currencyKeys[Field.INPUT] === 'sICX' && currencyKeys[Field.OUTPUT] === 'ICX') {
+    _data = Array(platformDays)
+      .fill(start)
+      .map((x, index) => ({
+        time: launchDay.add(index, 'day').valueOf() / 1_000,
+        value: BalancedJs.utils.toIcx(x.plus(step.times(index))).toNumber(),
+      }));
+  } else {
+    _data = Array(platformDays)
+      .fill(start)
+      .map((x, index) => ({
+        time: launchDay.add(index, 'day').valueOf() / 1_000,
+        value: ONE.div(BalancedJs.utils.toIcx(x.plus(step.times(index)))).toNumber(),
+      }));
+  }
+
+  return _data;
+};

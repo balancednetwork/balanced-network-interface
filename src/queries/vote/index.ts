@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import QUERY_KEYS from 'queries/queryKeys';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
+import QUERY_KEYS from 'queries/queryKeys';
 
 export const useVoteInfoQuery = (voteIndex: number) => {
   return useQuery<

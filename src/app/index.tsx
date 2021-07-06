@@ -10,7 +10,6 @@ import WalletModal from 'app/components/WalletModal';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import TransactionUpdater from 'store/transactions/updater';
 
-import { NotFoundPage } from './components/NotFoundPage/Loadable';
 import { Airdrip } from './containers/Airdrip/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
@@ -52,7 +51,12 @@ export function App() {
               <Route exact path="/vote" component={VotePage} />
               <Route exact path="/trade" component={TradePage} />
               <Route exact path="/airdrip" component={Airdrip} />
-              <Route component={NotFoundPage} />
+              <Route
+                component={() => {
+                  window.location.href = 'https://balanced.network/404';
+                  return null;
+                }}
+              />
             </Switch>
           </BrowserRouter>
         </ThemeProvider>

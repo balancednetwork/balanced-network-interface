@@ -5,14 +5,14 @@ import { useUserCollectedFeesQuery, useRewardQuery } from 'queries/reward';
 import { Flex } from 'rebass/styled-components';
 
 import { Button } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { addressToCurrencyKeyMap } from 'constants/currency';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 
@@ -20,7 +20,6 @@ const RewardsPanel = () => {
   const { account, networkId } = useIconReact();
   const addTransaction = useTransactionAdder();
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const [rewardTx, setRewardTx] = React.useState('');
@@ -203,12 +202,8 @@ const RewardsPanel = () => {
             {getNetworkFeesUI()}
           </Flex>
         </Flex>
-        {shouldLedgerSign && (
-          <>
-            <div style={{ marginTop: 30 }}></div>
-            <ShouldLedgerConfirmMessage />
-          </>
-        )}
+        {/* ledger */}
+        <LedgerConfirmMessage mt={5} />
       </BoxPanel>
 
       {/* Stake new Balance Tokens Modal */}

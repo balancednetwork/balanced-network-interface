@@ -9,15 +9,15 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ONE } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -60,7 +60,6 @@ const ReturnICDSection = () => {
   const [retireAmount, setRetireAmount] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const toggleWalletModal = useWalletModalToggle();
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const retireRatio = useRetireRatio();
@@ -220,7 +219,8 @@ const ReturnICDSection = () => {
             <TextButton onClick={handleRetireDismiss}>Cancel</TextButton>
             <Button onClick={handleRetireConfirm}>Confirm</Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+          {/* ledger */}
+          <LedgerConfirmMessage />
         </Flex>
       </Modal>
     </>

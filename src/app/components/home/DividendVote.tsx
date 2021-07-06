@@ -8,8 +8,8 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
 import { FlexPanel } from 'app/components/Panel';
@@ -25,7 +25,7 @@ import {
   useTotalStakedBalanceAtQuery,
   useTotalCollectedFeesQuery,
 } from 'queries/vote';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 
 dayjs.extend(utc);
@@ -52,7 +52,6 @@ const DividendVote = () => {
 
   const addTransaction = useTransactionAdder();
   const { account } = useIconReact();
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const [txHash, setTxHash] = React.useState('');
   const handleVote = () => {
@@ -261,12 +260,8 @@ const DividendVote = () => {
               Submit vote
             </Button>
           </Flex>
-          {shouldLedgerSign && (
-            <>
-              <div style={{ marginTop: 10 }}></div>
-              <ShouldLedgerConfirmMessage />
-            </>
-          )}
+          {/* ledger */}
+          <LedgerConfirmMessage mt={2} />
         </>
       );
     } else if (voteState === VoteState.ENDED) {

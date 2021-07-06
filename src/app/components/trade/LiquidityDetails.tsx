@@ -12,8 +12,8 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
@@ -21,7 +21,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -189,7 +189,6 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   const addTransaction = useTransactionAdder();
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleCancelOrder = () => {
@@ -298,7 +297,8 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
             <TextButton onClick={toggleOpen1}>Cancel</TextButton>
             <Button onClick={handleCancelOrder}>Withdraw</Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+          {/* ledger */}
+          <LedgerConfirmMessage />
         </Flex>
       </Modal>
 
@@ -316,7 +316,8 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
             <TextButton onClick={toggleOpen2}>Cancel</TextButton>
             <Button onClick={handleWithdrawEarnings}>Withdraw</Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+          {/* ledger */}
+          <LedgerConfirmMessage />
         </Flex>
       </Modal>
     </>
@@ -362,7 +363,6 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.poolId);
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
@@ -560,7 +560,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
             <TextButton onClick={toggleOpen}>Cancel</TextButton>
             <Button onClick={handleWithdraw}>Withdraw</Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+          {/* ledger */}
+          <LedgerConfirmMessage />
         </Flex>
       </Modal>
     </>

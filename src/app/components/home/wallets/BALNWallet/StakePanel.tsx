@@ -8,19 +8,18 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails } from 'store/wallet/hooks';
 
 export default React.memo(function StakePanel() {
   const details = useBALNDetails();
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const totalBalance: BigNumber = React.useMemo(() => details['Total balance'] || ZERO, [details]);
@@ -184,7 +183,7 @@ export default React.memo(function StakePanel() {
               {shouldStake ? 'Stake' : 'Unstake'}
             </Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+          <LedgerConfirmMessage />
         </Flex>
       </Modal>
     </>

@@ -7,15 +7,15 @@ import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { CurrencyField } from 'app/components/Form';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
@@ -31,7 +31,6 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 const CollateralPanel = () => {
   const { account, ledgerAddressPoint } = useIconReact();
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   // collateral slider instance
@@ -309,7 +308,8 @@ const CollateralPanel = () => {
               {shouldDeposit ? 'Deposit' : 'Withdraw'}
             </Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+          {/* ledger */}
+          <LedgerConfirmMessage />
         </Flex>
       </Modal>
     </>

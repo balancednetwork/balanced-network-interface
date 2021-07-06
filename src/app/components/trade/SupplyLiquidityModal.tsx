@@ -8,12 +8,12 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import TickSrc from 'assets/icons/tick.svg';
 import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { usePool, usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { formatBigNumber } from 'utils';
@@ -46,7 +46,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
   const addTransaction = useTransactionAdder();
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
@@ -391,7 +390,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
             {confirmTx ? 'Supplying' : 'Supply'}
           </Button>
         </Flex>
-        {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+        {/* ledger */}
+        <LedgerConfirmMessage />
       </Flex>
     </Modal>
   );

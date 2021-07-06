@@ -10,12 +10,12 @@ import { Flex, Box } from 'rebass/styled-components';
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { CurrencyAmount, CurrencyKey } from 'types';
@@ -26,7 +26,6 @@ import { Grid, MaxButton } from './utils';
 export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey }) {
   const [value, setValue] = React.useState('');
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleCurrencyInput = (value: string) => {
@@ -167,7 +166,8 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
               Send
             </Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+          {/* ledger */}
+          <LedgerConfirmMessage />
         </Flex>
       </Modal>
     </>

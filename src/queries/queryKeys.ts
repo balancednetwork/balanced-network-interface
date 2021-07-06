@@ -17,6 +17,15 @@ export const QUERY_KEYS = {
     ],
     UserReward: (account: string) => ['Reward', 'UserReward', account],
   },
+  History: {
+    AllTransactions: (page: number, limit: number, account: string | undefined) => [
+      'History',
+      'AllTransactions',
+      page,
+      limit,
+      account,
+    ],
+  },
 };
 
 export default QUERY_KEYS;

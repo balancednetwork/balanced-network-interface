@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-import { getAllTransactions, Transaction } from 'apis/allTransaction';
 import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
 import addresses, { NetworkId } from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery } from 'react-query';
 import { Box, Flex, Link } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -15,6 +13,7 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { CURRENCY } from 'constants/currency';
+import { Transaction, useAllTransactionsQuery } from 'queries/history';
 import { formatBigNumber, getTrackerLink } from 'utils';
 
 const Row = styled(Box)`
@@ -60,10 +59,12 @@ const METHOD_CONTENT = {
   UnstakeRequest: 'Unstaked (amount) sICX',
   Deposit: 'Transferred (amount) (currency) to DEX pool',
   Withdraw1Value: 'Withdrew (amount) (currency)',
-  stakeICX: 'Swapped (amount) ICX',
   VoteCast: '',
+  Claimed: 'Claimed network fees',
+  TokenTransfer: '',
 
   //  2 symbols
+  stakeICX: 'Swapped (amount1) ICX for (amount2) sICX',
   Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
   Swap: 'Swapped (amount1) (currency1) for (amount2) (currency2)',
   AssetRetired: 'Retired (amount) bnUSD for (amount) sICX',
@@ -92,9 +93,9 @@ const POOL_IDS = {
   1: 'sICX ICX',
 };
 
-const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string; positive?: boolean }) => (
-  <>
-    {parseFloat(value) !== 0 && (
+const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: string; positive?: boolean }) => (
+  <Typography variant="p" textAlign="right">
+    {parseFloat(value || '') !== 0 && (
       <span
         style={{
           color: positive !== undefined ? (positive ? '#2fccdc' : 'red') : '',
@@ -104,7 +105,7 @@ const AmountItem = ({ value, symbol, positive }: { value: string; symbol: string
       </span>
     )}
     {value} {symbol}
-  </>
+  </Typography>
 );
 
 const convertValue = (value: string) =>
@@ -128,6 +129,33 @@ const getMethod = (tx: Transaction) => {
 const getValuesAndSymbols = (tx: Transaction) => {
   const method = getMethod(tx);
   switch (method) {
+    case 'Claimed': {
+      const amounts: string[] = [];
+      const symbols: string[] = [];
+
+      if (Array.isArray(tx.data)) {
+        try {
+          const data = JSON.parse(tx.data[tx.data.length - 1].replace(/'/g, '"'));
+          Object.keys(data).forEach(key => {
+            if (data[key] !== 0) {
+              symbols.push(getContractName(key) || '');
+              amounts.push(convertValue(data[key]));
+            }
+          });
+        } catch (ex) {
+          console.log(ex);
+        }
+      }
+
+      return {
+        amount1: amounts[0],
+        amount2: amounts[1],
+        amount3: amounts[2],
+        symbol1: symbols[0],
+        symbol2: symbols[1],
+        symbol3: symbols[2],
+      };
+    }
     case 'stake': {
       const amount1 = convertValue((tx.data as any)?.params?._value || 0);
       return { amount1, amount2: '', symbol1: 'BALN', symbol2: '' };
@@ -170,8 +198,12 @@ const getValuesAndSymbols = (tx: Transaction) => {
       const amount1 = convertValue((tx.data as any)?.params?._value || 0);
       return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
     }
+    case 'stakeICX': {
+      const amount1 = getValue(tx);
+      const amount2 = convertValue(tx.to_value);
+      return { amount1, amount2: amount2, symbol1: 'ICX', symbol2: 'sICX' };
+    }
     case 'cancelSicxicxOrder':
-    case 'stakeICX':
     case 'CollateralReceived': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'ICX', symbol2: '' };
@@ -208,7 +240,6 @@ const getAmountWithSign = (tx: Transaction) => {
       return (
         <>
           <AmountItem value={amount1} symbol={symbol1} positive />
-          <br />
           <AmountItem value={amount2} symbol={symbol2} positive />
         </>
       );
@@ -218,7 +249,6 @@ const getAmountWithSign = (tx: Transaction) => {
       return (
         <>
           <AmountItem value={amount1} symbol={symbol1} positive />
-          <br />
           <AmountItem value={amount2} symbol={symbol2} positive />
         </>
       );
@@ -228,7 +258,6 @@ const getAmountWithSign = (tx: Transaction) => {
       return (
         <>
           <AmountItem value={amount1} symbol={symbol1} positive={false} />
-          <br />
           <AmountItem value={amount2} symbol={symbol2} positive={false} />
         </>
       );
@@ -238,14 +267,33 @@ const getAmountWithSign = (tx: Transaction) => {
       return (
         <>
           <AmountItem value={amount1} symbol={symbol1} positive={false} />
-          <br />
           <AmountItem value={amount2} symbol={symbol2} positive={true} />
+        </>
+      );
+    }
+    case 'stakeICX': {
+      const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
+      return (
+        <>
+          <AmountItem value={amount2} symbol={symbol2} positive={true} />
+          <AmountItem value={amount1} symbol={symbol1} positive={false} />
         </>
       );
     }
     case 'ClaimSicxEarnings': {
       const { amount1, symbol1 } = getValuesAndSymbols(tx);
       return <AmountItem value={amount1} symbol={symbol1} positive />;
+    }
+
+    case 'Claimed': {
+      const { amount1, amount2, amount3, symbol1, symbol2, symbol3 } = getValuesAndSymbols(tx);
+      return (
+        <>
+          <AmountItem value={amount1} symbol={symbol1} positive={true} />
+          <AmountItem value={amount2} symbol={symbol2} positive={true} />
+          <AmountItem value={amount3} symbol={symbol3} positive={true} />
+        </>
+      );
     }
 
     case 'VoteCast':
@@ -265,7 +313,7 @@ const getAmountWithSign = (tx: Transaction) => {
   // handle merge 2 transaction
 };
 
-const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, secondTx }) => {
+const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
   const { networkId } = useIconReact();
 
   const method = tx.method as keyof typeof METHOD_CONTENT;
@@ -273,19 +321,10 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
   const getContent = () => {
     let content = METHOD_CONTENT[method] || method;
     switch (method) {
-      // case 'Deposit': {
-      //   const { amount1, symbol1 } = getValuesAndSymbols(tx);
-      //   if (!amount1) {
-      //     content = '';
-      //   } else {
-      //     content = content.replace('(currency)', symbol1);
-      //     content = content.replace('(amount)', amount1);
-      //   }
-      //   break;
-      // }
       case 'Remove':
       case 'Add':
       case 'Withdraw':
+      case 'stakeICX':
       case 'Swap': {
         const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
         if (!amount1 || !amount2) {
@@ -319,10 +358,7 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
     return content;
   };
 
-  const trackerLink = () => {
-    const hash = tx.item_id.split('_')[1];
-    return getTrackerLink(networkId, hash, 'transaction');
-  };
+  const hash = tx.item_id.split('_')[1];
 
   const content = getContent();
   if (!content) return null;
@@ -335,7 +371,7 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
           {content}
         </Typography>
         <Link
-          href={trackerLink()}
+          href={getTrackerLink(networkId, hash, 'transaction')}
           target="_blank"
           rel="noreferrer noopener"
           sx={{
@@ -346,79 +382,89 @@ const RowItem: React.FC<{ tx: Transaction; secondTx?: Transaction }> = ({ tx, se
           <ExternalIcon width="11px" height="11px" />
         </Link>
       </Flex>
-      <Typography fontSize={16} textAlign="right">
-        {getAmountWithSign(tx)}
-      </Typography>
+      <Box>{getAmountWithSign(tx)}</Box>
     </RowContent>
   );
+};
+
+const parseTransactions = (txs: Transaction[]) => {
+  const transactions: Transaction[] = [];
+
+  for (let i = 0; i < 10; i++) {
+    let tx: Transaction = txs[i] && { ...txs[i] };
+    if (tx && (tx.data || tx.indexed) && !tx.ignore) {
+      const method = getMethod(tx);
+
+      switch (method) {
+        case 'Withdraw': {
+          // check if this is merging withdraw (2 tx and 1 tx remove)
+          const mergeTxs = [tx];
+          for (let j = i + 1; j < txs.length; j++) {
+            const _tx = txs[j];
+            const _method = getMethod(_tx);
+            if (_tx.transaction_hash === tx.transaction_hash && ['Withdraw', 'Remove'].includes(_method)) {
+              // ignore Remove, no need to show on ui
+              if (_method === 'Withdraw') {
+                mergeTxs.push(_tx);
+              }
+              // mark ignored field
+              _tx.ignore = true;
+            }
+          }
+
+          if (mergeTxs.length === 2) {
+            const mergeData = {
+              from: mergeTxs[1].indexed.find(item => item.startsWith('cx')),
+              fromValue: mergeTxs[1].data[0],
+              to: mergeTxs[0].indexed.find(item => item.startsWith('cx')),
+              toValue: mergeTxs[0].data[0],
+            };
+            tx.data = mergeData;
+          } else {
+            tx.method = 'Withdraw1Value';
+          }
+
+          transactions.push(tx);
+          break;
+        }
+
+        // don't show content for this method,
+        // because this transaction is combined with another transaction
+        case 'TokenTransfer': {
+          break;
+        }
+
+        case 'stakeICX': {
+          // search for tokentransfer
+          const secondTx = txs.find(item => getMethod(item) === 'TokenTransfer' && item.transaction_hash === tx?.hash);
+          if (secondTx) {
+            tx.to_value = secondTx.indexed?.find((item: string) => item.startsWith('0x')) || '';
+            transactions.push(tx);
+          }
+          break;
+        }
+
+        default: {
+          transactions.push(tx);
+          break;
+        }
+      }
+    }
+  }
+
+  return transactions;
 };
 
 const TransactionTable = () => {
   const { account } = useIconReact();
   const { page, setPage } = usePagination();
-  const [count, setCount] = useState(0);
   const limit = 10;
 
-  const { isLoading, data } = useQuery<{ count: number; transactions: any }>(
-    ['transactions', page, account],
-    // () => sample2,
-    () =>
-      account
-        ? getAllTransactions({
-            skip: page * limit,
-            limit: 20, // this is to handle merging transaction
-            from_address: account,
-          })
-        : { count: 0, transactions: [] },
-  );
+  const { isLoading, data } = useAllTransactionsQuery(page, limit, account);
 
   const totalPages = Math.ceil((data?.count || 0) / limit);
-  useEffect(() => {
-    totalPages && setCount(totalPages);
-  }, [totalPages]);
 
-  const getRows = () => {
-    const rows: React.ReactElement[] = [];
-    const txs = (data?.transactions as any) as Transaction[];
-    if (txs && txs?.length) {
-      for (let i = 0; i < 10; i++) {
-        const tx = { ...txs[i] };
-        if (tx && (tx.data || tx.indexed) && !tx.ignore) {
-          if (getMethod(tx) === 'Withdraw') {
-            // check if this is merging withdraw (2 tx and 1 tx remove)
-            const mergeTxs = [tx];
-            for (let j = i + 1; j < txs.length; j++) {
-              const _tx = txs[j];
-              const _method = getMethod(_tx);
-              if (_tx.transaction_hash === tx.transaction_hash && ['Withdraw', 'Remove'].includes(_method)) {
-                // ignore Remove, no need to show on ui
-                if (_method === 'Withdraw') {
-                  mergeTxs.push(_tx);
-                }
-                // mark ignored field
-                _tx.ignore = true;
-              }
-            }
-
-            if (mergeTxs.length === 2) {
-              const mergeData = {
-                from: mergeTxs[1].indexed.find(item => item.startsWith('cx')),
-                fromValue: mergeTxs[1].data[0],
-                to: mergeTxs[0].indexed.find(item => item.startsWith('cx')),
-                toValue: mergeTxs[0].data[0],
-              };
-              tx.data = mergeData;
-            } else {
-              tx.method = 'Withdraw1Value';
-            }
-          }
-          rows.push(<RowItem tx={tx} key={tx.item_id} />);
-        }
-      }
-    }
-
-    return rows;
-  };
+  const txs = parseTransactions(data?.transactions || []);
 
   return (
     <BoxPanel bg="bg2">
@@ -438,7 +484,9 @@ const TransactionTable = () => {
             AMOUNT
           </Typography>
         </Row>
-        {getRows()}
+        {txs.map(tx => (
+          <RowItem tx={tx} key={tx.item_id} />
+        ))}
       </Table>
       <Pagination
         sx={{ mt: 2 }}
@@ -448,7 +496,7 @@ const TransactionTable = () => {
           }
         }}
         currentPage={page}
-        totalPages={count}
+        totalPages={totalPages}
         displayPages={7}
       />
     </BoxPanel>

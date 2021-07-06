@@ -55,7 +55,12 @@ const Pagination: React.FC<Props> = ({ totalPages, currentPage, onChangePage, sx
     }
   }
   const _pages = pages.map(item => {
-    if (item === '...') return <Typography mx="1">...</Typography>;
+    if (item === '...')
+      return (
+        <Typography key={item} mx="1">
+          ...
+        </Typography>
+      );
     const page = (item as number) - 1;
     return (
       <NumberButton

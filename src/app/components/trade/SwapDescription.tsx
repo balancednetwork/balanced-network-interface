@@ -19,7 +19,7 @@ export default function SwapDescription() {
 
   const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({
     type: CHART_TYPES.AREA,
-    period: CHART_PERIODS['1D'],
+    period: CHART_PERIODS['1H'],
   });
 
   // update the width on a window resize

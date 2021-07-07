@@ -12,6 +12,7 @@ import {
   BusinessDay,
   UTCTimestamp,
 } from 'lightweight-charts';
+import { usePrevious } from 'react-use';
 import styled from 'styled-components';
 
 export enum CHART_PERIODS {
@@ -112,6 +113,16 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
 
   // pointer to the chart object
   const [chartCreated, setChartCreated] = useState<IChartApi | null>(null);
+
+  const dataPrev = usePrevious(data);
+
+  React.useEffect(() => {
+    if (data !== dataPrev && chartCreated) {
+      // remove the tooltip element
+      chartCreated.resize(0, 0);
+      setChartCreated(null);
+    }
+  }, [chartCreated, data, dataPrev, type]);
 
   // adjust the scale based on the type of chart
   const topScale = type === CHART_TYPES.AREA ? 0.32 : 0.2;

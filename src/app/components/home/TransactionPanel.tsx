@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
 import addresses, { NetworkId } from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
-import { Transaction, useAllTransactionsQuery } from 'queries/history';
 import { Box, Flex, Link } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -14,6 +13,7 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { CURRENCY } from 'constants/currency';
+import { Transaction, useAllTransactionsQuery } from 'queries/history';
 import { formatBigNumber, getTrackerLink } from 'utils';
 
 const Row = styled(Box)`

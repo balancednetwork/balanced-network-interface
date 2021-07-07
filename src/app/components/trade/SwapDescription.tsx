@@ -1,9 +1,5 @@
 import React from 'react';
 
-import axios from 'axios';
-import BigNumber from 'bignumber.js';
-import dayjs from 'dayjs';
-import { BalancedJs } from 'packages/BalancedJs';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -12,52 +8,18 @@ import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import { getTradePair, isQueue } from 'constants/currency';
-import { ONE } from 'constants/index';
+import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { CurrencyKey } from 'types';
-import { formatBigNumber, sleep } from 'utils';
-
-const API_ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://balanced.geometry.io/api/v1' : '/api/v1';
-const LAUNCH_DAY = 1619398800000000;
-const ONE_DAY_DURATION = 86400000;
-
-const generateChartData = (rate: BigNumber, currencyKeys: { [field in Field]?: CurrencyKey }) => {
-  const today = dayjs().startOf('day');
-  const launchDay = dayjs(LAUNCH_DAY / 1000).startOf('day');
-  const platformDays = (today.valueOf() - launchDay.valueOf()) / ONE_DAY_DURATION + 1;
-  const stop = BalancedJs.utils.toLoop(rate);
-  const start = BalancedJs.utils.toLoop(ONE);
-  const step = stop.minus(start).div(platformDays - 1);
-
-  let _data;
-
-  if (currencyKeys[Field.INPUT] === 'sICX' && currencyKeys[Field.OUTPUT] === 'ICX') {
-    _data = Array(platformDays)
-      .fill(start)
-      .map((x, index) => ({
-        time: launchDay.add(index, 'day').valueOf() / 1_000,
-        value: BalancedJs.utils.toIcx(x.plus(step.times(index))).toNumber(),
-      }));
-  } else {
-    _data = Array(platformDays)
-      .fill(start)
-      .map((x, index) => ({
-        time: launchDay.add(index, 'day').valueOf() / 1_000,
-        value: ONE.div(BalancedJs.utils.toIcx(x.plus(step.times(index)))).toNumber(),
-      }));
-  }
-
-  return _data;
-};
+import { formatBigNumber, generateChartData } from 'utils';
 
 export default function SwapDescription() {
   const { currencyKeys, price } = useDerivedSwapInfo();
 
   const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({
     type: CHART_TYPES.AREA,
-    period: CHART_PERIODS['1D'],
+    period: CHART_PERIODS['1H'],
   });
 
   // update the width on a window resize
@@ -72,77 +34,15 @@ export default function SwapDescription() {
     return () => window.removeEventListener('resize', handleResize);
   }, [width]);
 
-  const [data, setData] = React.useState<
-    { time: number; open: number; close: number; high: number; low: number; volume: number }[]
-  >([]);
-  const [loading, setLoading] = React.useState(false);
+  const priceChartQuery = usePriceChartDataQuery(currencyKeys, chartOption.period);
+  const data = priceChartQuery.data;
+  const loading = priceChartQuery.isLoading;
 
   const ratio = useRatio();
-  React.useEffect(() => {
-    const [pair, inverse] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
-
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const day = new Date().valueOf() * 1_000;
-        const {
-          data: result,
-        }: {
-          data: { time: number; open: number; close: number; high: number; low: number; volume: number }[];
-        } = await axios.get(
-          `${API_ENDPOINT}/dex/swap-chart/${pair?.poolId}/${chartOption.period.toLowerCase()}/${LAUNCH_DAY}/${day}`,
-        );
-
-        let data1;
-
-        if (!inverse) {
-          data1 = result.map(item => ({
-            time: item.time / 1_000_000,
-            value: BalancedJs.utils.toIcx(item.open).toNumber(),
-            open: BalancedJs.utils.toIcx(item.open).toNumber(),
-            close: BalancedJs.utils.toIcx(item.close).toNumber(),
-            high: BalancedJs.utils.toIcx(item.high).toNumber(),
-            low: BalancedJs.utils.toIcx(item.low).toNumber(),
-            volume: BalancedJs.utils.toIcx(item.volume).toNumber(),
-          }));
-        } else {
-          data1 = result.map(item => ({
-            time: item.time / 1_000_000,
-            value: ONE.div(BalancedJs.utils.toIcx(item.open)).toNumber(),
-            open: ONE.div(BalancedJs.utils.toIcx(item.open)).toNumber(),
-            close: ONE.div(BalancedJs.utils.toIcx(item.close)).toNumber(),
-            high: ONE.div(BalancedJs.utils.toIcx(item.high)).toNumber(),
-            low: ONE.div(BalancedJs.utils.toIcx(item.low)).toNumber(),
-            volume: BalancedJs.utils.toIcx(item.volume).toNumber(),
-          }));
-        }
-
-        setData(data1);
-        setLoading(false);
-      } catch (e) {
-        console.error(e);
-        setData([]);
-        setLoading(false);
-      }
-    };
-
-    const generateData = async () => {
-      setLoading(true);
-      await sleep(100);
-      const _data: any = generateChartData(ratio.sICXICXratio, currencyKeys);
-      setChartOption(options => ({ ...options, type: CHART_TYPES.AREA }));
-      setData(_data);
-      setLoading(false);
-    };
-
-    if (pair) {
-      if (isQueue(pair)) {
-        generateData();
-      } else {
-        fetchData();
-      }
-    }
-  }, [currencyKeys, chartOption.period, ratio.sICXICXratio]);
+  const data1: any = React.useMemo(() => generateChartData(ratio.sICXICXratio, currencyKeys), [
+    ratio.sICXICXratio,
+    currencyKeys,
+  ]);
 
   const [pair] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
 
@@ -211,7 +111,12 @@ export default function SwapDescription() {
           {loading ? (
             <Spinner centered />
           ) : (
-            <TradingViewChart data={data} volumeData={data} width={width} type={CHART_TYPES.AREA} />
+            <TradingViewChart
+              data={pair && !isQueue(pair) ? data : data1}
+              volumeData={pair && !isQueue(pair) ? data : data1}
+              width={width}
+              type={CHART_TYPES.AREA}
+            />
           )}
         </ChartContainer>
       )}
@@ -221,7 +126,12 @@ export default function SwapDescription() {
           {loading ? (
             <Spinner centered />
           ) : (
-            <TradingViewChart data={data} volumeData={data} width={width} type={CHART_TYPES.CANDLE} />
+            <TradingViewChart
+              data={pair && !isQueue(pair) ? data : data1}
+              volumeData={pair && !isQueue(pair) ? data : data1}
+              width={width}
+              type={CHART_TYPES.CANDLE}
+            />
           )}
         </ChartContainer>
       )}

@@ -31,17 +31,6 @@ export function TradePage() {
     setValue(value);
   };
 
-  // update the width on a window resize
-  const ref = React.useRef<HTMLDivElement>();
-  const [width, setWidth] = React.useState(ref?.current?.clientWidth);
-  React.useEffect(() => {
-    function handleResize() {
-      setWidth(ref?.current?.clientWidth ?? width);
-    }
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [width]);
-
   return (
     <DefaultLayout title="Trade">
       <Helmet>

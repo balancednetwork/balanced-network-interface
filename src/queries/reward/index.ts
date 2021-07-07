@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import QUERY_KEYS from 'queries/queryKeys';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
+import QUERY_KEYS from 'queries/queryKeys';
 
 export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) => {
   const { account } = useIconReact();
@@ -13,7 +13,6 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
     QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
     async () => {
       const data = await bnJs.Dividends.getUserDividends(account!, start, end);
-      console.log(data);
       const t = {};
       Object.keys(data).forEach(key => {
         t[key] = BalancedJs.utils.toIcx(data[key]);

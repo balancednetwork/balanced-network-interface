@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
-import { useUserCollectedFeesQuery, useRewardQuery } from 'queries/reward';
 import { Flex } from 'rebass/styled-components';
 
 import { Button } from 'app/components/Button';
@@ -12,6 +11,7 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { addressToCurrencyKeyMap } from 'constants/currency';
+import { useUserCollectedFeesQuery, useRewardQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';

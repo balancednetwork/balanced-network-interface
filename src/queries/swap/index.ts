@@ -32,7 +32,7 @@ export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: Curren
         if (!inverse) {
           data1 = result.map(item => ({
             time: item.time / 1_000_000,
-            value: BalancedJs.utils.toIcx(item.open).toNumber(),
+            value: BalancedJs.utils.toIcx(item.close).toNumber(),
             open: BalancedJs.utils.toIcx(item.open).toNumber(),
             close: BalancedJs.utils.toIcx(item.close).toNumber(),
             high: BalancedJs.utils.toIcx(item.high).toNumber(),
@@ -42,7 +42,7 @@ export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: Curren
         } else {
           data1 = result.map(item => ({
             time: item.time / 1_000_000,
-            value: ONE.div(BalancedJs.utils.toIcx(item.open)).toNumber(),
+            value: ONE.div(BalancedJs.utils.toIcx(item.close)).toNumber(),
             open: ONE.div(BalancedJs.utils.toIcx(item.open)).toNumber(),
             close: ONE.div(BalancedJs.utils.toIcx(item.close)).toNumber(),
             high: ONE.div(BalancedJs.utils.toIcx(item.high)).toNumber(),

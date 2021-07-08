@@ -203,6 +203,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
       const amount2 = convertValue(tx.to_value);
       return { amount1, amount2: amount2, symbol1: 'ICX', symbol2: 'sICX' };
     }
+    case 'SupplyICX':
     case 'cancelSicxicxOrder':
     case 'CollateralReceived': {
       const amount1 = getValue(tx);

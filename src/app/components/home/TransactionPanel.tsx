@@ -119,11 +119,11 @@ const getValue = ({ indexed, data, value }: Transaction) => {
 };
 
 const getMethod = (tx: Transaction) => {
-  let method: keyof typeof METHOD_CONTENT = tx.method as any;
+  let method: keyof typeof METHOD_CONTENT | '' = tx.method as any;
   if (!method) {
     method = (tx.data as any)?.method as any;
   }
-  return method;
+  return method || '';
 };
 
 const getValuesAndSymbols = (tx: Transaction) => {
@@ -387,12 +387,29 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
   );
 };
 
+const isDexContract = (addr: string) => {
+  const contractName = Object.keys(addresses[NetworkId.MAINNET]).find(
+    key => addresses[NetworkId.MAINNET][key] === addr,
+  );
+  return contractName?.toLowerCase() === 'dex';
+};
+
+const checkAndParseICXToDex = (tx: Transaction): Transaction => {
+  const _tx = { ...tx };
+
+  if (!getMethod(_tx) && isDexContract(_tx.to_address)) {
+    _tx.method = 'SupplyICX';
+  }
+
+  return _tx;
+};
+
 const parseTransactions = (txs: Transaction[]) => {
   const transactions: Transaction[] = [];
 
   for (let i = 0; i < 10; i++) {
     let tx: Transaction = txs[i] && { ...txs[i] };
-    if (tx && (tx.data || tx.indexed) && !tx.ignore) {
+    if (tx && (tx.data || tx.indexed || tx.value) && !tx.ignore) {
       const method = getMethod(tx);
 
       switch (method) {
@@ -445,6 +462,8 @@ const parseTransactions = (txs: Transaction[]) => {
         }
 
         default: {
+          tx = checkAndParseICXToDex(tx);
+
           transactions.push(tx);
           break;
         }

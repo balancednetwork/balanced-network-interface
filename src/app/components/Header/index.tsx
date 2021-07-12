@@ -13,6 +13,7 @@ import { DropdownPopper } from 'app/components/Popover';
 import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
+import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
@@ -94,6 +95,7 @@ export default React.memo(function Header(props: { title?: string; className?: s
   const handleDisconnectWallet = () => {
     closeWalletMenu();
     disconnect();
+    bnJs.contractSettings.ledgerSettings.transport.close();
   };
 
   const copyAddress = React.useCallback(async (account: string) => {

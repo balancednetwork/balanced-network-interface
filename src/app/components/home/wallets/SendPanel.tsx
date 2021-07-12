@@ -13,19 +13,23 @@ import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMess
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { CurrencyAmount, CurrencyKey } from 'types';
 import { maxAmountSpend } from 'utils';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Grid, MaxButton } from './utils';
 
 export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey }) {
   const [value, setValue] = React.useState('');
+
+  const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
@@ -66,6 +70,8 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
   const addTransaction = useTransactionAdder();
 
   const handleSend = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -91,6 +97,7 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
@@ -162,12 +169,17 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Cancel
-            </TextButton>
-            <Button onClick={handleSend} fontSize={14} disabled={!hasEnoughICX}>
-              Send
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Cancel
+                </TextButton>
+                <Button onClick={handleSend} fontSize={14} disabled={!hasEnoughICX}>
+                  Send
+                </Button>
+              </>
+            )}
           </Flex>
 
           <LedgerConfirmMessage />

@@ -17,6 +17,7 @@ import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useHasNetworkFees, useHasRewardable } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
@@ -47,6 +48,8 @@ const RewardSection = () => {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleRewardClaim = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -70,6 +73,7 @@ const RewardSection = () => {
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.addEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 

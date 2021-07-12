@@ -12,10 +12,11 @@ import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
+import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
@@ -28,12 +29,14 @@ import { useLockedICXAmount, useLoanActionHandlers } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const CollateralPanel = () => {
   const { account } = useIconReact();
 
+  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   // collateral slider instance
@@ -100,14 +103,18 @@ const CollateralPanel = () => {
   const addTransaction = useTransactionAdder();
 
   const handleCollateralConfirm = async () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
+
     if (shouldDeposit) {
       try {
         const { result: hash } = await bnJs
           .inject({ account: account })
           .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount));
+
         addTransaction(
           { hash },
           {
@@ -115,21 +122,26 @@ const CollateralPanel = () => {
             summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
           },
         );
+
         // close modal
         toggleOpen();
+
         // reset collateral panel values
         adjust(false);
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
       } finally {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       }
     } else {
       try {
         const collateralAmountInSICX = collateralAmount.div(ratio.sICXICXratio);
+
         const { result: hash } = await bnJs
           .inject({ account: account })
           .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX));
+
         addTransaction(
           { hash }, //
           {
@@ -137,14 +149,17 @@ const CollateralPanel = () => {
             summary: `${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
           },
         );
+
         // close modal
         toggleOpen();
+
         // reset collateral panel values
         adjust(false);
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
       } finally {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       }
     }
   };
@@ -301,12 +316,17 @@ const CollateralPanel = () => {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Cancel
-            </TextButton>
-            <Button onClick={handleCollateralConfirm} fontSize={14} disabled={!hasEnoughICX}>
-              {shouldDeposit ? 'Deposit' : 'Withdraw'}
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Cancel
+                </TextButton>
+                <Button onClick={handleCollateralConfirm} fontSize={14} disabled={!hasEnoughICX}>
+                  {shouldDeposit ? 'Deposit' : 'Withdraw'}
+                </Button>
+              </>
+            )}
           </Flex>
 
           <LedgerConfirmMessage />

@@ -25,8 +25,11 @@ import {
   useTotalStakedBalanceAtQuery,
   useTotalCollectedFeesQuery,
 } from 'queries/vote';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
+import { showMessageOnBeforeUnload } from 'utils/messages';
+
+import Spinner from '../Spinner';
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
@@ -52,9 +55,12 @@ const DividendVote = () => {
 
   const addTransaction = useTransactionAdder();
   const { account } = useIconReact();
+  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const [txHash, setTxHash] = React.useState('');
   const handleVote = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -77,6 +83,7 @@ const DividendVote = () => {
           console.error('error', e);
         })
         .finally(() => {
+          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
           changeShouldLedgerSign(false);
         });
     }
@@ -252,13 +259,18 @@ const DividendVote = () => {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Not now
-            </TextButton>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Not now
+                </TextButton>
 
-            <Button onClick={handleVote} fontSize={14}>
-              Submit vote
-            </Button>
+                <Button onClick={handleVote} fontSize={14}>
+                  Submit vote
+                </Button>
+              </>
+            )}
           </Flex>
           {/* ledger */}
           <LedgerConfirmMessage mt={2} />

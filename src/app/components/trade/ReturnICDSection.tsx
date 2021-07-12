@@ -17,12 +17,14 @@ import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ONE } from 'constants/index';
-import { useChangeShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import Spinner from '../Spinner';
 import { retireMessage } from './utils';
 
 const Grid = styled.div`
@@ -60,6 +62,7 @@ const ReturnICDSection = () => {
   const [retireAmount, setRetireAmount] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const toggleWalletModal = useWalletModalToggle();
+  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const retireRatio = useRetireRatio();
@@ -109,6 +112,7 @@ const ReturnICDSection = () => {
   };
 
   const handleRetireConfirm = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -131,6 +135,7 @@ const ReturnICDSection = () => {
         console.error('error', e);
       })
       .finally(() => {
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         changeShouldLedgerSign(false);
       });
   };
@@ -216,8 +221,13 @@ const ReturnICDSection = () => {
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleRetireDismiss}>Cancel</TextButton>
-            <Button onClick={handleRetireConfirm}>Confirm</Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={handleRetireDismiss}>Cancel</TextButton>
+                <Button onClick={handleRetireConfirm}>Confirm</Button>
+              </>
+            )}
           </Flex>
           {/* ledger */}
           <LedgerConfirmMessage />

@@ -15,6 +15,7 @@ import { useUserCollectedFeesQuery, useRewardQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 const RewardsPanel = () => {
   const { account, networkId } = useIconReact();
@@ -25,6 +26,8 @@ const RewardsPanel = () => {
   const [rewardTx, setRewardTx] = React.useState('');
   const handleRewardClaim = () => {
     if (!account) return;
+
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
@@ -49,11 +52,13 @@ const RewardsPanel = () => {
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.addEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
   const [feeTx, setFeeTx] = React.useState('');
   const handleFeeClaim = () => {
     if (!account) return;
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
@@ -76,6 +81,7 @@ const RewardsPanel = () => {
         console.error('error', e);
       })
       .finally(() => {
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         changeShouldLedgerSign(false);
       });
   };

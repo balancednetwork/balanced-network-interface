@@ -1,3 +1,5 @@
+import bnJs from 'bnJs';
+
 /**
  * This function has two roles:
  * 1) If the `id` is empty it assings something so does i18next doesn't throw error. Typescript should prevent this anyway
@@ -10,4 +12,11 @@ export const _t = (id: string, ...rest: any[]): [string, ...any[]] => {
     id = '_NOT_TRANSLATED_';
   }
   return [id, ...rest];
+};
+
+export const showMessageOnBeforeUnload = function (e) {
+  e.preventDefault();
+  window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+  bnJs.contractSettings.ledgerSettings.transport.device.close();
+  return (e.returnValue = 'Your transaction will be canceled, and you’ll need to sign in again.');
 };

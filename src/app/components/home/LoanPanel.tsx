@@ -12,10 +12,11 @@ import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
+import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useCollateralActionHandlers } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
@@ -26,9 +27,12 @@ import {
   useLoanUsedAmount,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
+
+  const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
@@ -92,6 +96,7 @@ const LoanPanel = () => {
 
   const handleLoanConfirm = () => {
     if (!account) return;
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
@@ -119,6 +124,7 @@ const LoanPanel = () => {
         })
         .finally(() => {
           changeShouldLedgerSign(false);
+          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     } else {
       bnJs
@@ -142,6 +148,7 @@ const LoanPanel = () => {
         })
         .finally(() => {
           changeShouldLedgerSign(false);
+          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     }
   };
@@ -298,12 +305,25 @@ const LoanPanel = () => {
           {shouldBorrow && <Typography textAlign="center">Includes a fee of {fee.dp(2).toFormat()} bnUSD.</Typography>}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Cancel
-            </TextButton>
-            <Button onClick={handleLoanConfirm} fontSize={14}>
-              {shouldBorrow ? 'Borrow' : 'Repay'}
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton
+                  disabled={bnJs.contractSettings.ledgerSettings.actived && shouldLedgerSign}
+                  onClick={toggleOpen}
+                  fontSize={14}
+                >
+                  Cancel
+                </TextButton>
+                <Button
+                  disabled={bnJs.contractSettings.ledgerSettings.actived && shouldLedgerSign}
+                  onClick={handleLoanConfirm}
+                  fontSize={14}
+                >
+                  {shouldBorrow ? 'Borrow' : 'Repay'}
+                </Button>
+              </>
+            )}
           </Flex>
           {/* ledger */}
           <LedgerConfirmMessage />

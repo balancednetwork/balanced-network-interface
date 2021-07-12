@@ -10,15 +10,19 @@ import { Box, Flex } from 'rebass/styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails } from 'store/wallet/hooks';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default React.memo(function StakePanel() {
   const details = useBALNDetails();
+
+  const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
@@ -66,6 +70,8 @@ export default React.memo(function StakePanel() {
 
   const { account } = useIconReact();
   const handleConfirm = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -100,6 +106,7 @@ export default React.memo(function StakePanel() {
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
@@ -176,12 +183,17 @@ export default React.memo(function StakePanel() {
           <Typography textAlign="center">{description}</Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Cancel
-            </TextButton>
-            <Button onClick={handleConfirm} fontSize={14}>
-              {shouldStake ? 'Stake' : 'Unstake'}
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Cancel
+                </TextButton>
+                <Button onClick={handleConfirm} fontSize={14}>
+                  {shouldStake ? 'Stake' : 'Unstake'}
+                </Button>
+              </>
+            )}
           </Flex>
           <LedgerConfirmMessage />
         </Flex>

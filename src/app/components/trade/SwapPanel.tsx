@@ -25,13 +25,16 @@ import {
   useWalletModalToggle,
   useSetSlippageTolerance,
   useChangeShouldLedgerSign,
+  useShouldLedgerSign,
 } from 'store/application/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { CurrencyKey, Price } from 'types';
 import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import Spinner from '../Spinner';
 import { BrightPanel, swapMessage } from './utils';
 
 export default function SwapPanel() {
@@ -93,6 +96,7 @@ export default function SwapPanel() {
   // old code
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
+  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleSwapConfirmDismiss = () => {
@@ -116,6 +120,7 @@ export default function SwapPanel() {
 
   const handleSwapConfirm = async () => {
     if (!trade || !account) return;
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
@@ -150,6 +155,7 @@ export default function SwapPanel() {
             console.error('error', e);
           })
           .finally(() => {
+            window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
             changeShouldLedgerSign(false);
           });
       } else {
@@ -172,6 +178,7 @@ export default function SwapPanel() {
             console.error('error', e);
           })
           .finally(() => {
+            window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
             changeShouldLedgerSign(false);
           });
       }
@@ -201,6 +208,7 @@ export default function SwapPanel() {
           console.error('error', e);
         })
         .finally(() => {
+          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
           changeShouldLedgerSign(false);
         });
     }
@@ -378,8 +386,13 @@ export default function SwapPanel() {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
-            <Button onClick={handleSwapConfirm}>Swap</Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
+                <Button onClick={handleSwapConfirm}>Swap</Button>
+              </>
+            )}
           </Flex>
           {/* ledger */}
           <LedgerConfirmMessage />

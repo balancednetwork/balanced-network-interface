@@ -65,6 +65,7 @@ enum Period {
   'day' = 'Day',
   'week' = 'Week',
   'month' = 'Month',
+  'all' = 'all',
 }
 
 const PERIODS = [Period.day, Period.week, Period.month];
@@ -268,7 +269,7 @@ const PositionDetailPanel = () => {
                 <div>
                   <UnderlineTextWithArrow
                     onClick={handleToggle}
-                    text={`Past ${period.toLowerCase()}`}
+                    text={period === Period.all ? 'All time' : `Past ${period.toLowerCase()}`}
                     arrowRef={arrowRef}
                   />
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
@@ -278,6 +279,14 @@ const PositionDetailPanel = () => {
                           {p}
                         </MenuItem>
                       ))}
+                      <MenuItem
+                        style={{
+                          borderTop: `0.5px solid rgba(255, 255, 255, 0.15)`,
+                        }}
+                        onClick={() => handlePeriod(Period.all)}
+                      >
+                        All time
+                      </MenuItem>
                     </MenuList>
                   </DropdownPopper>
                 </div>

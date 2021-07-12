@@ -2,12 +2,14 @@ import React from 'react';
 
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { MANDATORY_COLLATERAL_RATIO, ZERO } from 'constants/index';
+import { queryRebalanced } from 'queries/queryRebalancing';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useRewards } from 'store/reward/hooks';
@@ -123,14 +125,19 @@ export function useLoanFetchTotalRepaid(): (interval?: string | null) => void {
   const dispatch = useDispatch();
   return React.useCallback(
     interval => {
+      let timestamp = 0;
       if (interval) {
         if (interval?.toLowerCase() === 'day') {
+          timestamp = dayjs().subtract(1, 'day').unix();
           interval = 'yesterday';
         } else if (interval?.toLowerCase() === 'week') {
+          timestamp = dayjs().subtract(1, 'week').unix();
           interval = 'last-week';
-        } else {
+        } else if (interval?.toLowerCase() === 'month') {
+          timestamp = dayjs().subtract(1, 'month').unix();
           interval = 'last-month';
         }
+
         try {
           axios
             .get(`${getAPIEnpoint()}/api/v1/loan-repaid-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`)
@@ -138,16 +145,18 @@ export function useLoanFetchTotalRepaid(): (interval?: string | null) => void {
               const value = res.data['loan_repaid_sum'];
               dispatch(changeTotalRepaid({ totalRepaid: BalancedJs.utils.toIcx(new BigNumber(value)) }));
             });
-          axios
-            .get(
-              `${getAPIEnpoint()}/api/v1/sold-collateral-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`,
-            )
-            .then(res => {
-              const value = res.data['loan_repaid_sum'];
-              dispatch(
-                changeTotalCollateralSold({ totalCollateralSold: BalancedJs.utils.toIcx(new BigNumber(value)) }),
-              );
-            });
+          // axios
+          // .get(
+          //   `${getAPIEnpoint()}/api/v1/sold-collateral-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`,
+          // )
+          queryRebalanced({
+            address: account,
+            symbol: 'bnUSD',
+            timestamp,
+          }).then(res => {
+            const value = res.data['loan_repaid_sum'];
+            dispatch(changeTotalCollateralSold({ totalCollateralSold: BalancedJs.utils.toIcx(new BigNumber(value)) }));
+          });
         } catch (e) {
           console.error(e);
         }

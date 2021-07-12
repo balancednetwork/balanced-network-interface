@@ -20,9 +20,10 @@ import { ONE } from 'constants/index';
 import { useChangeShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import { retireMessage } from './utils';
 
 const Grid = styled.div`
@@ -82,13 +83,6 @@ const ReturnICDSection = () => {
     setAnchor(null);
   };
 
-  //
-  const upSmall = useMedia('(max-width: 800px)');
-
-  if (upSmall) {
-    return null;
-  }
-
   const toggleOpen = () => {
     setOpen(!open);
   };
@@ -134,6 +128,15 @@ const ReturnICDSection = () => {
         changeShouldLedgerSign(false);
       });
   };
+
+  const hasEnoughICX = useHasEnoughICX();
+
+  // disable retire bnUSD feature in small screens
+  const upSmall = useMedia('(max-width: 800px)');
+
+  if (upSmall) {
+    return null;
+  }
 
   return (
     <>
@@ -217,10 +220,14 @@ const ReturnICDSection = () => {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={handleRetireDismiss}>Cancel</TextButton>
-            <Button onClick={handleRetireConfirm}>Confirm</Button>
+            <Button onClick={handleRetireConfirm} disabled={!hasEnoughICX}>
+              Confirm
+            </Button>
           </Flex>
-          {/* ledger */}
+
           <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

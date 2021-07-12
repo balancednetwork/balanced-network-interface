@@ -7,6 +7,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
+import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
@@ -15,7 +16,7 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 
 export default function UnstakePanel() {
   const [portion, setPortion] = React.useState(ZERO);
@@ -81,6 +82,8 @@ export default function UnstakePanel() {
   };
 
   const differenceAmountByICX = differenceAmount.multipliedBy(ratio.sICXICXratio);
+
+  const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
@@ -156,12 +159,14 @@ export default function UnstakePanel() {
             <TextButton onClick={toggleOpen} fontSize={14}>
               Cancel
             </TextButton>
-            <Button onClick={handleUnstake} fontSize={14}>
+            <Button onClick={handleUnstake} fontSize={14} disabled={!hasEnoughICX}>
               Unstake
             </Button>
           </Flex>
-          {/* ledger */}
+
           <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

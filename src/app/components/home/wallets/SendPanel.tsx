@@ -9,6 +9,7 @@ import { Flex, Box } from 'rebass/styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button, TextButton } from 'app/components/Button';
+import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
@@ -17,7 +18,7 @@ import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { CurrencyAmount, CurrencyKey } from 'types';
 import { maxAmountSpend } from 'utils';
 
@@ -99,6 +100,8 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
     differenceAmount.isZero() ||
     differenceAmount.isGreaterThan(maxAmount);
 
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <>
       <Grid>
@@ -162,12 +165,14 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
             <TextButton onClick={toggleOpen} fontSize={14}>
               Cancel
             </TextButton>
-            <Button onClick={handleSend} fontSize={14}>
+            <Button onClick={handleSend} fontSize={14} disabled={!hasEnoughICX}>
               Send
             </Button>
           </Flex>
-          {/* ledger */}
+
           <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

@@ -27,4 +27,14 @@ export default class ICX extends Contract {
 
     return this.callICONPlugins(callParams);
   }
+
+  claim(to: string) {
+    // const callParams = this.transactionParamsBuilder({
+    //   method: 'claimUnstakedICX',
+    //   params: {
+    //     _to: to,
+    //   },
+    // });
+    // return this.callICONPlugins(callParams);
+  }
 }

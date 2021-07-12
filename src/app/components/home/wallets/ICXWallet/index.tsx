@@ -9,8 +9,9 @@ import Divider from 'app/components/Divider';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 
-import SendPanel from './SendPanel';
-import { StyledTabList, StyledTab, Grid } from './utils';
+import SendPanel from '../SendPanel';
+import { StyledTabList, StyledTab, Grid } from '../utils';
+import UnstakePanel from './UnstakePanel';
 
 export default function ICXWallet() {
   const { account } = useIconReact();
@@ -52,19 +53,7 @@ export default function ICXWallet() {
           </TabPanel>
 
           <TabPanel>
-            <Grid>
-              <Typography variant="h3">Unstaking</Typography>
-
-              {!unstakingAmount.isZero() ? (
-                <>
-                  <Typography>Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
-
-                  <Typography variant="p">{unstakingAmount.dp(2).toFormat()} ICX unstaking</Typography>
-                </>
-              ) : (
-                <Typography>There's no ICX unstaking.</Typography>
-              )}
-            </Grid>
+            <UnstakePanel />
           </TabPanel>
         </TabPanels>
       </Tabs>

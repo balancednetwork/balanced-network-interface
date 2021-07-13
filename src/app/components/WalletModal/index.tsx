@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-// import AppIcx from '@ledgerhq/hw-app-icx';
 import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { BalancedJs } from 'packages/BalancedJs';

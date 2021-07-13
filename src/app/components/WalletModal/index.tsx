@@ -34,10 +34,8 @@ const generatePaths = (point: number) => {
 
 // read addresses from ledger
 const requestLedgerAddress = async ({
-  transport,
   paging: { offset, limit },
 }: {
-  transport: any;
   paging: {
     offset: number;
     limit: number;
@@ -47,7 +45,7 @@ const requestLedgerAddress = async ({
 
   for (let i = offset; i < offset + limit; i++) {
     const buffer = generatePaths(i);
-    const response = await transport.send(0xe0, 0x02, 0x00, 0x01, buffer);
+    const response = await bnJs.contractSettings.ledgerSettings.transport.send(0xe0, 0x02, 0x00, 0x01, buffer);
 
     const publicKeyLength = response[0];
     const addressLength = response[1 + publicKeyLength];
@@ -57,25 +55,11 @@ const requestLedgerAddress = async ({
       address: response.slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength).toString(),
       chainCode: '',
       point: i,
+      balance: '-',
     });
   }
 
-  const addressListWithBalance: any[] = await Promise.all(
-    addressFromLedger.map((address: any) => {
-      return new Promise((resolve, reject) => {
-        bnJs.ICX.balanceOf(address.address)
-          .then(balance => {
-            resolve({
-              ...address,
-              balance: BalancedJs.utils.toIcx(balance).toFixed(2),
-            });
-          })
-          .catch(reject);
-      });
-    }),
-  );
-
-  return addressListWithBalance;
+  return addressFromLedger;
 };
 
 const LIMIT_PAGING_LEDGER = 5;
@@ -150,9 +134,8 @@ export default function WalletModal() {
     }
   };
 
-  const updateLedgerAddress = async ({ offset, limit, transport }) => {
-    const addressList: any = await requestLedgerAddress({
-      transport,
+  const updateLedgerAddress = React.useCallback(async ({ offset, limit }) => {
+    const addressList: any[] = await requestLedgerAddress({
       paging: {
         offset,
         limit,
@@ -160,22 +143,42 @@ export default function WalletModal() {
     });
 
     updateAddressList(addressList);
+    resolveBalanceByAddress(addressList);
+  }, []);
+
+  const resolveBalanceByAddress = async (addressList: any[]) => {
+    const data = await Promise.all(
+      addressList.map((address: any) => {
+        return new Promise((resolve, reject) => {
+          bnJs.ICX.balanceOf(address.address)
+            .then(balance => {
+              resolve({
+                ...address,
+                balance: BalancedJs.utils.toIcx(balance).toFixed(2),
+              });
+            })
+            .catch(reject);
+        });
+      }),
+    );
+
+    updateAddressList(data);
+    setLedgerLoading(false);
   };
 
   const handleOpenLedger = async () => {
+    setLedgerLoading(true);
+    setIsLedgerErr(false);
     updateAddressList([]);
     updatePaging({
       offset: 0,
       limit: LIMIT_PAGING_LEDGER,
     });
     changeWalletType('LEDGER');
-    setLedgerLoading(true);
-    setIsLedgerErr(false);
 
     const timeout = setTimeout(() => {
-      setLedgerLoading(false);
       setIsLedgerErr(true);
-    }, 15 * 1000);
+    }, 3 * 1000);
 
     try {
       const transport = await TransportWebHID.create();
@@ -187,7 +190,7 @@ export default function WalletModal() {
       });
       updateShowledgerAddress(true);
 
-      await updateLedgerAddress({ offset, limit, transport });
+      await updateLedgerAddress({ offset, limit });
       clearTimeout(timeout);
     } catch (err) {
       clearTimeout(timeout);
@@ -200,11 +203,17 @@ export default function WalletModal() {
       }
       alert('Inject your ledger device, enter your password and retry');
     }
-    setLedgerLoading(false);
   };
 
   const getLedgerPage = React.useCallback(
     async (pageNum: number) => {
+      setLedgerLoading(true);
+      setIsLedgerErr(false);
+
+      const timeout = setTimeout(() => {
+        setIsLedgerErr(true);
+      }, 3 * 1000);
+
       if (pageNum <= 0) {
         // should disable page number < 0;
         console.log('This is first pages, cannot request more address, try other please.');
@@ -218,7 +227,11 @@ export default function WalletModal() {
 
       const next = (pageNum - 1) * limit;
 
-      // await updateLedgerAddress({ offset: next, limit });
+      await updateLedgerAddress({ offset: next, limit });
+      clearTimeout(timeout);
+
+      // setLedgerLoading(false);
+      setIsLedgerErr(false);
 
       updatePaging({
         limit,
@@ -226,7 +239,7 @@ export default function WalletModal() {
       });
       changeCurrentLedgerAddressPage(pageNum);
     },
-    [limit, currentLedgerAddressPage, updatePaging, changeCurrentLedgerAddressPage],
+    [limit, currentLedgerAddressPage, updatePaging, changeCurrentLedgerAddressPage, updateLedgerAddress],
   );
 
   const chooseLedgerAddress = ({ address, point }: { address: string; point: number }) => {
@@ -301,7 +314,7 @@ export default function WalletModal() {
               <Typography>Should cancel transaction from ledger device</Typography>
             </Flex>
           )}
-          {!isLedgerErr && !isLedgerLoading && (
+          {!isLedgerErr && (
             <>
               <table className="wallet">
                 <tbody>
@@ -323,35 +336,37 @@ export default function WalletModal() {
                   })}
                 </tbody>
               </table>
-              <ul className="pagination">
-                <li
-                  onClick={async () => {
-                    await getLedgerPage(currentLedgerAddressPage - 1);
-                  }}
-                >
-                  ˂
-                </li>
-                {getPageNumbers(currentLedgerAddressPage).map(value => {
-                  return (
-                    <li
-                      key={Date.now() + Math.random()}
-                      className={value === currentLedgerAddressPage ? 'actived' : ''}
-                      onClick={async () => {
-                        await getLedgerPage(value);
-                      }}
-                    >
-                      {value}
-                    </li>
-                  );
-                })}
-                <li
-                  onClick={async () => {
-                    await getLedgerPage(currentLedgerAddressPage + 1);
-                  }}
-                >
-                  ˃
-                </li>
-              </ul>
+              {!isLedgerLoading && (
+                <ul className="pagination">
+                  <li
+                    onClick={async () => {
+                      await getLedgerPage(currentLedgerAddressPage - 1);
+                    }}
+                  >
+                    ˂
+                  </li>
+                  {getPageNumbers(currentLedgerAddressPage).map(value => {
+                    return (
+                      <li
+                        key={Date.now() + Math.random()}
+                        className={value === currentLedgerAddressPage ? 'actived' : ''}
+                        onClick={async () => {
+                          await getLedgerPage(value);
+                        }}
+                      >
+                        {value}
+                      </li>
+                    );
+                  })}
+                  <li
+                    onClick={async () => {
+                      await getLedgerPage(currentLedgerAddressPage + 1);
+                    }}
+                  >
+                    ˃
+                  </li>
+                </ul>
+              )}
             </>
           )}
         </Flex>

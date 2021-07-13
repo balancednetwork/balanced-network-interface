@@ -207,6 +207,8 @@ export default function WalletModal() {
 
   const getLedgerPage = React.useCallback(
     async (pageNum: number) => {
+      updateAddressList([]);
+
       setLedgerLoading(true);
       setIsLedgerErr(false);
 

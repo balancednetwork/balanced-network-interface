@@ -15,9 +15,6 @@ import { useUserCollectedFeesQuery, useRewardQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
-
-import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const RewardsPanel = () => {
   const { account, networkId } = useIconReact();
@@ -137,7 +134,7 @@ const RewardsPanel = () => {
               BALN
             </Typography>
           </Typography>
-          <Button mt={2} onClick={handleRewardClaim} disabled={!hasEnoughICX}>
+          <Button mt={2} onClick={handleRewardClaim}>
             Claim
           </Button>
         </>
@@ -168,7 +165,7 @@ const RewardsPanel = () => {
                 </Typography>
               ))}
 
-          <Button mt={2} onClick={handleFeeClaim} disabled={!hasEnoughICX}>
+          <Button mt={2} onClick={handleFeeClaim}>
             Claim
           </Button>
         </>
@@ -182,8 +179,6 @@ const RewardsPanel = () => {
       );
     }
   };
-
-  const hasEnoughICX = useHasEnoughICX();
 
   return (
     <div>
@@ -209,8 +204,6 @@ const RewardsPanel = () => {
         </Flex>
 
         <LedgerConfirmMessage mt={5} />
-
-        {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
       </BoxPanel>
 
       {/* Stake new Balance Tokens Modal */}

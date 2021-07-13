@@ -32,7 +32,7 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const CollateralPanel = () => {
-  const { account, ledgerAddressPoint } = useIconReact();
+  const { account } = useIconReact();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
@@ -100,11 +100,6 @@ const CollateralPanel = () => {
   const addTransaction = useTransactionAdder();
 
   const handleCollateralConfirm = async () => {
-    if (ledgerAddressPoint >= 0) {
-      //if (!ledgerConfirmAlert('Click Ok and check your ledger device?')) {
-      //return;
-      //}
-    }
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }

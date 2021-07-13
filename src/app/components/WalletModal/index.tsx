@@ -132,6 +132,8 @@ export default function WalletModal() {
   const { requestAddress, hasExtension } = useIconReact();
 
   const handleOpenWallet = () => {
+    changeWalletType('ICONEX');
+
     toggleWalletModal();
     if (isMobile) {
       requestAddress();

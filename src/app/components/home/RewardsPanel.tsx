@@ -202,7 +202,7 @@ const RewardsPanel = () => {
             {getNetworkFeesUI()}
           </Flex>
         </Flex>
-        {/* ledger */}
+
         <LedgerConfirmMessage mt={5} />
       </BoxPanel>
 

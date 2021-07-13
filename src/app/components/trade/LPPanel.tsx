@@ -96,6 +96,7 @@ export default function LPPanel() {
   const handleSupply = () => {
     setShowSupplyConfirm(true);
     setAmounts(parsedAmounts);
+    onFieldAInput('');
   };
 
   const maxSliderAmount = useAvailableLPTokenBalance();

@@ -25,9 +25,10 @@ import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import { withdrawMessage } from './utils';
 
 export default function LiquidityDetails() {
@@ -262,6 +263,8 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
     onClose();
   };
 
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <>
       <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
@@ -295,10 +298,14 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen1}>Cancel</TextButton>
-            <Button onClick={handleCancelOrder}>Withdraw</Button>
+            <Button onClick={handleCancelOrder} disabled={!hasEnoughICX}>
+              Withdraw
+            </Button>
           </Flex>
-          {/* ledger */}
+
           <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
 
@@ -314,10 +321,14 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen2}>Cancel</TextButton>
-            <Button onClick={handleWithdrawEarnings}>Withdraw</Button>
+            <Button onClick={handleWithdrawEarnings} disabled={!hasEnoughICX}>
+              Withdraw
+            </Button>
           </Flex>
-          {/* ledger */}
+
           <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>
@@ -487,6 +498,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
     onClose();
   };
 
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <>
       <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
@@ -558,10 +571,14 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen}>Cancel</TextButton>
-            <Button onClick={handleWithdraw}>Withdraw</Button>
+            <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
+              Withdraw
+            </Button>
           </Flex>
-          {/* ledger */}
+
           <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

@@ -26,6 +26,9 @@ import {
   useLoanUsedAmount,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
+
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
@@ -169,6 +172,7 @@ const LoanPanel = () => {
 
   const shouldShowLock = !usedAmount.isZero();
 
+  const hasEnoughICX = useHasEnoughICX();
   if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative()) {
     return (
       <FlexPanel bg="bg3" flexDirection="column">
@@ -301,12 +305,14 @@ const LoanPanel = () => {
             <TextButton onClick={toggleOpen} fontSize={14}>
               Cancel
             </TextButton>
-            <Button onClick={handleLoanConfirm} fontSize={14}>
+            <Button onClick={handleLoanConfirm} fontSize={14} disabled={!hasEnoughICX}>
               {shouldBorrow ? 'Borrow' : 'Repay'}
             </Button>
           </Flex>
-          {/* ledger */}
+
           <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

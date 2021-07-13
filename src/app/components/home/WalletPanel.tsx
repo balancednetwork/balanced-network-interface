@@ -173,9 +173,14 @@ const ListItem = styled(DashGrid)<{ border?: boolean }>`
   color: #ffffff;
   border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
 
-  :hover {
-    color: #2ca9b7;
+  & > div {
     transition: color 0.2s ease;
+  }
+
+  :hover {
+    & > div {
+      color: #2ca9b7;
+    }
   }
 `;
 
@@ -220,8 +225,7 @@ const StyledAccordionButton = styled(AccordionButton)<{ currency?: string }>`
 
   &[aria-expanded='false'] {
     & > ${ListItem} {
-      transition: all ease-out 50ms;
-      transition-delay: 480ms;
+      transition: border-bottom ease-out 50ms 480ms;
     }
   }
 
@@ -231,8 +235,11 @@ const StyledAccordionButton = styled(AccordionButton)<{ currency?: string }>`
       opacity: 1;
     }
     & > ${ListItem} {
-      color: #2ca9b7;
       border-bottom: 1px solid transparent;
+
+      & > div {
+        color: #2ca9b7;
+      }
     }
   }
 `;

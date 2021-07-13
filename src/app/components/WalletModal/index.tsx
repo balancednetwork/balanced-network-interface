@@ -32,6 +32,7 @@ const generatePaths = (point: number) => {
   return buffer;
 };
 
+// read addresses from ledger
 const requestLedgerAddress = async ({
   transport,
   paging: { offset, limit },

@@ -194,7 +194,6 @@ export default function WalletModal() {
       clearTimeout(timeout);
     } catch (err) {
       clearTimeout(timeout);
-      console.log(err);
       if (err.id === 'InvalidChannel') {
         await bnJs.contractSettings.ledgerSettings.transport.close();
         return setTimeout(() => {
@@ -313,7 +312,9 @@ export default function WalletModal() {
           )}
           {isLedgerErr && (
             <Flex justifyContent="center" mt={4} mb={4}>
-              <Typography>Should cancel transaction from ledger device</Typography>
+              <Typography>
+                Cancel any pending transactions on your Ledger, or give Chrome permission to use it.
+              </Typography>
             </Flex>
           )}
           {!isLedgerErr && (

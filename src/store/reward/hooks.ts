@@ -123,6 +123,12 @@ export const useHasRewardableLiquidity = () => {
   return hasRewardableLiquidity;
 };
 
+export const useHasRewardable = () => {
+  const hasRewardableLiquidity = useHasRewardableLiquidity();
+  const hasRewardableLoan = useHasRewardableLoan();
+  return hasRewardableLiquidity || hasRewardableLoan;
+};
+
 export const useHasNetworkFees = () => {
   const { account } = useIconReact();
   const transactions = useAllTransactions();

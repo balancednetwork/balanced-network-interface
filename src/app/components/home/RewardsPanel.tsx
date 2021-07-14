@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
-import { Flex } from 'rebass/styled-components';
+import { Flex, Box } from 'rebass/styled-components';
 
-import { Button } from 'app/components/Button';
+import { Button, TextButton } from 'app/components/Button';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
@@ -11,10 +11,14 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { addressToCurrencyKeyMap } from 'constants/currency';
+import { ZERO } from 'constants/index';
 import { useUserCollectedFeesQuery, useRewardQuery, BATCH_SIZE, usePlatformDayQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
-import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
+import { useHasNetworkFees, useHasRewardable } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const RewardsPanel = () => {
   return (
@@ -72,23 +76,21 @@ const RewardSection = () => {
   const rewardQuery = useRewardQuery();
   const reward = rewardQuery.data;
 
-  const hasRewardableLoan = useHasRewardableLoan();
+  const hasRewardable = useHasRewardable();
 
-  const hasRewardableLiquidity = useHasRewardableLiquidity();
   const [rewardTx, setRewardTx] = React.useState('');
   const rewardTxStatus = useTransactionStatus(rewardTx);
   React.useEffect(() => {
     if (rewardTxStatus === TransactionStatus.success) rewardQuery.refetch();
   }, [rewardTxStatus, rewardQuery]);
 
-  // stake new balance tokens modal
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
     setOpen(!open);
   };
 
   const getRewardsUI = () => {
-    if (!hasRewardableLoan && !hasRewardableLiquidity && reward?.isZero()) {
+    if (!hasRewardable && reward?.isZero()) {
       return (
         <>
           <Typography variant="p" as="div">
@@ -115,7 +117,7 @@ const RewardSection = () => {
               BALN
             </Typography>
           </Typography>
-          <Button mt={2} onClick={handleRewardClaim}>
+          <Button mt={2} onClick={toggleOpen}>
             Claim
           </Button>
         </>
@@ -123,29 +125,63 @@ const RewardSection = () => {
     }
   };
 
+  const hasEnoughICX = useHasEnoughICX();
+
+  const balances = useWalletBalances();
+
+  const beforeAmount = balances['BALN'].plus(balances['BALNstaked']);
+
+  const afterAmount = beforeAmount.plus(reward || ZERO);
+
   return (
     <Flex flex={1} flexDirection="column" alignItems="center" className="border-right">
       <Typography variant="p" mb={2}>
         Balance Tokens
       </Typography>
-      {getRewardsUI()}
+      {reward && getRewardsUI()}
 
-      {/* Stake new Balance Tokens Modal */}
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb={1}>
-            Stake new Balance Tokens
+            Claim Balance Tokens?
           </Typography>
 
-          <Typography variant="p" textAlign="center" fontSize={19}>
-            Stake your new BALN from your wallet to accrue rewards from network fees.
+          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
+            {reward?.dp(2).toFormat() + ' BALN'}
+          </Typography>
+
+          <Flex my={5}>
+            <Box width={1 / 2} className="border-right">
+              <Typography textAlign="center">Before</Typography>
+              <Typography variant="p" textAlign="center">
+                {beforeAmount.dp(2).toFormat() + ' BALN'}
+              </Typography>
+            </Box>
+
+            <Box width={1 / 2}>
+              <Typography textAlign="center">After</Typography>
+              <Typography variant="p" textAlign="center">
+                {afterAmount.dp(2).toFormat() + ' BALN'}
+              </Typography>
+            </Box>
+          </Flex>
+
+          <Typography textAlign="center">
+            To earn network fees, stake BALN from your wallet and/or supply it to a liquidity pool.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <Button onClick={toggleOpen} fontSize={14}>
-              Close
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              Not now
+            </TextButton>
+            <Button onClick={handleRewardClaim} fontSize={14} disabled={!hasEnoughICX}>
+              Claim
             </Button>
           </Flex>
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </Flex>
@@ -177,6 +213,7 @@ const NetworkFeeSection = () => {
           },
         );
         setFeeTx(res.result);
+        toggleOpen();
       })
       .catch(e => {
         console.error('error', e);
@@ -199,6 +236,13 @@ const NetworkFeeSection = () => {
   const feesIndex = feesArr?.findIndex(fees => fees) || 0;
   const hasFee = !!fees;
   const count = feesArr?.reduce((c, v) => (v ? ++c : c), 0);
+
+  const [open, setOpen] = React.useState(false);
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
+
+  const hasEnoughICX = useHasEnoughICX();
 
   const getNetworkFeesUI = () => {
     if (hasNetworkFees && !hasFee) {
@@ -223,7 +267,7 @@ const NetworkFeeSection = () => {
                 </Typography>
               ))}
 
-          <Button mt={2} onClick={handleFeeClaim}>
+          <Button mt={2} onClick={toggleOpen}>
             {count && count > 1 ? `Claim (1 of ${count})` : 'Claim'}
           </Button>
         </>
@@ -244,6 +288,41 @@ const NetworkFeeSection = () => {
         Network fees
       </Typography>
       {getNetworkFeesUI()}
+
+      <Modal isOpen={open} onDismiss={toggleOpen}>
+        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+          <Typography textAlign="center" mb={1}>
+            Claim network fees?
+          </Typography>
+
+          <Flex flexDirection="column" alignItems="center" mt={2}>
+            {fees &&
+              Object.keys(fees)
+                .filter(key => !fees[key].isZero())
+                .map(key => (
+                  <Typography key={key} variant="p">
+                    {`${fees[key].dp(2).toFormat()}`}{' '}
+                    <Typography key={key} as="span" color="text1">
+                      {addressToCurrencyKeyMap[networkId][key]}
+                    </Typography>
+                  </Typography>
+                ))}
+          </Flex>
+
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              Not now
+            </TextButton>
+            <Button onClick={handleFeeClaim} fontSize={14} disabled={!hasEnoughICX}>
+              Claim
+            </Button>
+          </Flex>
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
+        </Flex>
+      </Modal>
     </Flex>
   );
 };

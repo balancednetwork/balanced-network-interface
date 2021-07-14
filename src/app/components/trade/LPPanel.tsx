@@ -167,11 +167,10 @@ export default function LPPanel() {
       : `${baseDisplay} / ${quoteDisplay}`;
 
   const issICXICXPool = pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX;
-  const showMinimumTooltip =
-    account && issICXICXPool
-      ? parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') > 0 &&
-        parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') < 10
-      : false;
+  const showMinimumTooltip = account
+    ? parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') > 0 &&
+      parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') < 10
+    : false;
 
   return (
     <>

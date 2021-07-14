@@ -16,8 +16,10 @@ import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { usePool, usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import { depositMessage, supplyMessage } from './utils';
 
 interface ModalProps {
@@ -264,6 +266,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
   const shouldShowSendB = isEmpty(addingTxs[Field.CURRENCY_B]) || isFailureB;
   const shouldShowRemoveB = isEmpty(removingTxs[Field.CURRENCY_B]);
 
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <Modal isOpen={isOpen} onDismiss={() => undefined}>
       <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
@@ -386,12 +390,14 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
         <Flex justifyContent="center" mt={4} pt={4} className="border-top">
           <TextButton onClick={handleCancelSupply}>Cancel</TextButton>
-          <Button disabled={!isEnabled} onClick={handleSupplyConfirm}>
+          <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
             {confirmTx ? 'Supplying' : 'Supply'}
           </Button>
         </Flex>
-        {/* ledger */}
+
         <LedgerConfirmMessage />
+
+        {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
       </Flex>
     </Modal>
   );

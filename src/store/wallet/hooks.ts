@@ -7,6 +7,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -80,4 +81,9 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
   }, [account, transactions]);
 
   return details;
+};
+
+export const useHasEnoughICX = () => {
+  const balances = useWalletBalances();
+  return balances['ICX'].isGreaterThan(MINIMUM_ICX_AMOUNT_IN_WALLET);
 };

@@ -27,9 +27,12 @@ import {
 import { useLockedICXAmount, useLoanActionHandlers } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
+
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const CollateralPanel = () => {
-  const { account, ledgerAddressPoint } = useIconReact();
+  const { account } = useIconReact();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
@@ -97,11 +100,6 @@ const CollateralPanel = () => {
   const addTransaction = useTransactionAdder();
 
   const handleCollateralConfirm = async () => {
-    if (ledgerAddressPoint >= 0) {
-      //if (!ledgerConfirmAlert('Click Ok and check your ledger device?')) {
-      //return;
-      //}
-    }
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -179,6 +177,8 @@ const CollateralPanel = () => {
   );
 
   const percent = totalICXAmount.isZero() ? 0 : tLockedICXAmount.div(totalICXAmount).times(100).toNumber();
+
+  const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
@@ -304,12 +304,14 @@ const CollateralPanel = () => {
             <TextButton onClick={toggleOpen} fontSize={14}>
               Cancel
             </TextButton>
-            <Button onClick={handleCollateralConfirm} fontSize={14}>
+            <Button onClick={handleCollateralConfirm} fontSize={14} disabled={!hasEnoughICX}>
               {shouldDeposit ? 'Deposit' : 'Withdraw'}
             </Button>
           </Flex>
-          {/* ledger */}
+
           <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

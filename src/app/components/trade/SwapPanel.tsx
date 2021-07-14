@@ -29,9 +29,11 @@ import {
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
 import { CurrencyKey, Price } from 'types';
 import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
 
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import { BrightPanel, swapMessage } from './utils';
 
 export default function SwapPanel() {
@@ -218,6 +220,9 @@ export default function SwapPanel() {
   const closeDropdown = () => {
     setAnchor(null);
   };
+
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <>
       <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -379,10 +384,14 @@ export default function SwapPanel() {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
-            <Button onClick={handleSwapConfirm}>Swap</Button>
+            <Button onClick={handleSwapConfirm} disabled={!hasEnoughICX}>
+              Swap
+            </Button>
           </Flex>
-          {/* ledger */}
+
           <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

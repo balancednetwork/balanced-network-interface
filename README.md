@@ -3,12 +3,12 @@
 An open source interface for Balanced: a decentralized synthetic asset generator and trading platform on the ICON Network.
 
 - Website: [balanced.network](https://balanced.network/)
-- Prototype: [balanced.network/prototype](https://balanced.network/prototype)
+- Demo: [balanced.network/demo](https://balanced.network/demo/)
 - Interface: [app.balanced.network](https://app.balanced.network/)
 - Twitter: [@BalancedDAO](https://twitter.com/BalancedDAO)
 - Telegram: [https://t.me/balanced_official](https://t.co/hgsB0U150t?amp=1)
 - Medium: [@BalancedDAO](https://balanceddao.medium.com/)
-- Whitepaper: [Link](https://balanced.network/resources/latest-white-paper.pdf)
+- Whitepaper: [Link](https://docs.balanced.network/technical/white-paper)
 
 ## Development
 

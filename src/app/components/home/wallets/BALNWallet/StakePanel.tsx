@@ -8,6 +8,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
+import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
@@ -15,7 +16,7 @@ import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useBALNDetails } from 'store/wallet/hooks';
+import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 
 export default React.memo(function StakePanel() {
   const details = useBALNDetails();
@@ -108,6 +109,8 @@ export default React.memo(function StakePanel() {
     ? 'Unstaking takes 3 days.'
     : `They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('h:ma')}.`;
 
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <>
       <Typography variant="h3">Stake Balance Tokens</Typography>
@@ -179,11 +182,14 @@ export default React.memo(function StakePanel() {
             <TextButton onClick={toggleOpen} fontSize={14}>
               Cancel
             </TextButton>
-            <Button onClick={handleConfirm} fontSize={14}>
+            <Button onClick={handleConfirm} fontSize={14} disabled={!hasEnoughICX}>
               {shouldStake ? 'Stake' : 'Unstake'}
             </Button>
           </Flex>
+
           <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

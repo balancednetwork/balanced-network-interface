@@ -1,15 +1,12 @@
 import React from 'react';
 
-import { Helmet } from 'react-helmet-async';
-
 import { DefaultLayout } from 'app/components/Layout';
+import { Pagemeta } from 'app/components/Pagemeta';
 
 export function VotePage() {
   return (
     <DefaultLayout title="Vote">
-      <Helmet>
-        <title>Vote</title>
-      </Helmet>
+      <Pagemeta title="Vote" />
     </DefaultLayout>
   );
 }

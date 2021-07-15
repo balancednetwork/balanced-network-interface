@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -12,6 +11,7 @@ import RewardsPanel from 'app/components/home/RewardsPanel';
 import TransactionPanel from 'app/components/home/TransactionPanel';
 import WalletPanel from 'app/components/home/WalletPanel';
 import { DefaultLayout } from 'app/components/Layout';
+import { Pagemeta } from 'app/components/Pagemeta';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useLoanFetchInfo } from 'store/loan/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
@@ -51,9 +51,11 @@ export function HomePage() {
 
   return (
     <DefaultLayout>
-      <Helmet>
-        <title>Home</title>
-      </Helmet>
+      <Pagemeta
+        title="Home"
+        description="Deposit ICX as collateral, borrow tokens pegged to real-world assets, and earn rewards for it."
+        image={`${window.location.origin}/home.png`}
+      />
 
       {account ? (
         <Grid>

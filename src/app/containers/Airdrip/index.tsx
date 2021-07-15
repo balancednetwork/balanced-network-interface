@@ -4,13 +4,13 @@ import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import Logo from 'app/components/Logo';
+import { Pagemeta } from 'app/components/Pagemeta';
 import { Typography } from 'app/theme';
 import AirdripImg from 'assets/images/airdrip.png';
 import bnJs from 'bnJs';
@@ -208,9 +208,7 @@ export function Airdrip() {
 
   return (
     <Container>
-      <Helmet>
-        <title>Airdrip</title>
-      </Helmet>
+      <Pagemeta title="Airdrip" />
 
       <StyledHeader>
         <Flex alignItems="center" justifyContent="space-between">

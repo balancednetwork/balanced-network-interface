@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { DefaultLayout } from 'app/components/Layout';
+import { Pagemeta } from 'app/components/Pagemeta';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import LiquidityDetails from 'app/components/trade/LiquidityDetails';
 import LPPanel from 'app/components/trade/LPPanel';
@@ -33,9 +33,11 @@ export function TradePage() {
 
   return (
     <DefaultLayout title="Trade">
-      <Helmet>
-        <title>Trade</title>
-      </Helmet>
+      <Pagemeta
+        title="Trade"
+        description="Swap assets, supply liquidity, and find arbitrage opportunities on the decentralized exchange."
+        image={`${window.location.origin}/trade.png`}
+      />
 
       <Box flex={1}>
         <Flex mb={10} flexDirection="column">

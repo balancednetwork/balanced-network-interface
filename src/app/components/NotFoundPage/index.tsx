@@ -1,17 +1,14 @@
 import * as React from 'react';
 
-import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components/macro';
 
+import { Pagemeta } from '../Pagemeta';
 import { P } from './P';
 
 export function NotFoundPage() {
   return (
     <>
-      <Helmet>
-        <title>404 Page Not Found</title>
-        <meta name="description" content="Page not found" />
-      </Helmet>
+      <Pagemeta title="404 Page Not Found" description="Page not found" />
       <Wrapper>
         <Title>
           4

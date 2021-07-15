@@ -54,7 +54,6 @@ export function HomePage() {
       <Pagemeta
         title="Home"
         description="Deposit ICX as collateral, borrow tokens pegged to real-world assets, and earn rewards for it."
-        image={`${window.location.origin}/home.png`}
       />
 
       {account ? (

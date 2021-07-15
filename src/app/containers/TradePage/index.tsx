@@ -36,7 +36,6 @@ export function TradePage() {
       <Pagemeta
         title="Trade"
         description="Swap assets, supply liquidity, and find arbitrage opportunities on the decentralized exchange."
-        image={`${window.location.origin}/trade.png`}
       />
 
       <Box flex={1}>

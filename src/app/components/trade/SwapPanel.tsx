@@ -102,6 +102,8 @@ export default function SwapPanel() {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleSwapConfirmDismiss = () => {
+    if (shouldLedgerSign) return;
+
     setShowSwapConfirm(false);
     changeShouldLedgerSign(false);
   };

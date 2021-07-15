@@ -10,16 +10,20 @@ import { Button, TextButton } from 'app/components/Button';
 import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default function UnstakePanel() {
   const [portion, setPortion] = React.useState(ZERO);
+
+  const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
@@ -41,6 +45,8 @@ export default function UnstakePanel() {
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
+
     setOpen(!open);
   };
 
@@ -53,6 +59,8 @@ export default function UnstakePanel() {
   const addTransaction = useTransactionAdder();
 
   const handleUnstake = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -78,6 +86,7 @@ export default function UnstakePanel() {
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
@@ -156,12 +165,17 @@ export default function UnstakePanel() {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Cancel
-            </TextButton>
-            <Button onClick={handleUnstake} fontSize={14} disabled={!hasEnoughICX}>
-              Unstake
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Cancel
+                </TextButton>
+                <Button onClick={handleUnstake} fontSize={14} disabled={!hasEnoughICX}>
+                  Unstake
+                </Button>
+              </>
+            )}
           </Flex>
 
           <LedgerConfirmMessage />

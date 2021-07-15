@@ -83,7 +83,10 @@ const LoanPanel = () => {
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
 
-  const toggleOpen = () => setOpen(!open);
+  const toggleOpen = () => {
+    if (shouldLedgerSign) return;
+    setOpen(!open);
+  };
 
   //before
   const beforeAmount = borrowedAmount;

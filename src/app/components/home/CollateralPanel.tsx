@@ -82,6 +82,7 @@ const CollateralPanel = () => {
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
     setOpen(!open);
     changeShouldLedgerSign(false);
   };

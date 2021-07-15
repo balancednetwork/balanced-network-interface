@@ -57,7 +57,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
 
   const handleAdd = (currencyType: Field) => async () => {
-    if (!account) return;
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
@@ -84,6 +84,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
       setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
     } finally {
       changeShouldLedgerSign(false);
+      window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
     }
   };
 
@@ -306,12 +307,17 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
               {shouldShowSendBtnA ? (
                 <>
-                  <Typography variant="p" fontWeight="bold" textAlign="center">
-                    {formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'ratio')} {selectedPair.baseCurrencyKey}
-                  </Typography>
-                  <SupplyButton disabled={!shouldShowSendA} mt={2} onClick={handleAdd(Field.CURRENCY_A)}>
-                    {shouldShowSendA ? 'Send' : 'Sending'}
-                  </SupplyButton>
+                  {shouldLedgerSign && <Spinner></Spinner>}
+                  {!shouldLedgerSign && (
+                    <>
+                      <Typography variant="p" fontWeight="bold" textAlign="center">
+                        {formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'ratio')} {selectedPair.baseCurrencyKey}
+                      </Typography>
+                      <SupplyButton disabled={!shouldShowSendA} mt={2} onClick={handleAdd(Field.CURRENCY_A)}>
+                        {shouldShowSendA ? 'Send' : 'Sending'}
+                      </SupplyButton>
+                    </>
+                  )}
                 </>
               ) : (
                 <TickImg src={TickSrc} />
@@ -319,12 +325,17 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
               {shouldShowSendBtnB ? (
                 <>
-                  <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
-                    {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
-                  </Typography>
-                  <SupplyButton disabled={!shouldShowSendB} mt={2} onClick={handleAdd(Field.CURRENCY_B)}>
-                    {shouldShowSendB ? 'Send' : 'Sending'}
-                  </SupplyButton>
+                  {shouldLedgerSign && <Spinner></Spinner>}
+                  {!shouldLedgerSign && (
+                    <>
+                      <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
+                        {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
+                      </Typography>
+                      <SupplyButton disabled={!shouldShowSendB} mt={2} onClick={handleAdd(Field.CURRENCY_B)}>
+                        {shouldShowSendB ? 'Send' : 'Sending'}
+                      </SupplyButton>
+                    </>
+                  )}
                 </>
               ) : (
                 <TickImg src={TickSrc} style={{ marginTop: '15px' }} />

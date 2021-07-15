@@ -58,6 +58,8 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
+
     setOpen(!open);
   };
 

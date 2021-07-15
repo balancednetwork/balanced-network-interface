@@ -13,13 +13,14 @@ import bnJs from 'bnJs';
 import { addressToCurrencyKeyMap } from 'constants/currency';
 import { ZERO } from 'constants/index';
 import { useUserCollectedFeesQuery, useRewardQuery, BATCH_SIZE, usePlatformDayQuery } from 'queries/reward';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useHasNetworkFees, useHasRewardable } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import Spinner from '../Spinner';
 
 const RewardsPanel = () => {
   return (
@@ -45,6 +46,8 @@ export default RewardsPanel;
 const RewardSection = () => {
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
+  const shouldLedgerSign = useShouldLedgerSign();
+
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleRewardClaim = () => {
@@ -73,7 +76,7 @@ const RewardSection = () => {
       })
       .finally(() => {
         changeShouldLedgerSign(false);
-        window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
@@ -90,6 +93,7 @@ const RewardSection = () => {
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
     setOpen(!open);
   };
 
@@ -175,12 +179,17 @@ const RewardSection = () => {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Not now
-            </TextButton>
-            <Button onClick={handleRewardClaim} fontSize={14} disabled={!hasEnoughICX}>
-              Claim
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Not now
+                </TextButton>
+                <Button onClick={handleRewardClaim} fontSize={14} disabled={!hasEnoughICX}>
+                  Claim
+                </Button>
+              </>
+            )}
           </Flex>
 
           <LedgerConfirmMessage />
@@ -195,9 +204,13 @@ const RewardSection = () => {
 const NetworkFeeSection = () => {
   const { account, networkId } = useIconReact();
   const [feeTx, setFeeTx] = React.useState('');
+  const shouldLedgerSign = useShouldLedgerSign();
+
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const handleFeeClaim = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -224,6 +237,7 @@ const NetworkFeeSection = () => {
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
@@ -243,6 +257,8 @@ const NetworkFeeSection = () => {
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
+
     setOpen(!open);
   };
 
@@ -314,12 +330,17 @@ const NetworkFeeSection = () => {
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Not now
-            </TextButton>
-            <Button onClick={handleFeeClaim} fontSize={14} disabled={!hasEnoughICX}>
-              Claim
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Not now
+                </TextButton>
+                <Button onClick={handleFeeClaim} fontSize={14} disabled={!hasEnoughICX}>
+                  Claim
+                </Button>
+              </>
+            )}
           </Flex>
 
           <LedgerConfirmMessage />

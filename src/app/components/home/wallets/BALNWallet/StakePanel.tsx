@@ -59,6 +59,7 @@ export default React.memo(function StakePanel() {
   // modal
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
     setOpen(!open);
   };
 

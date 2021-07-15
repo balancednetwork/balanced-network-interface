@@ -87,6 +87,8 @@ const ReturnICDSection = () => {
   };
 
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
+
     setOpen(!open);
   };
 
@@ -102,11 +104,11 @@ const ReturnICDSection = () => {
 
   const handleRetireDismiss = () => {
     setOpen(false);
-    changeShouldLedgerSign(false);
   };
 
   const handleRetireConfirm = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }

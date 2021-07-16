@@ -17,6 +17,7 @@ export default function ProposalInfo(props) {
     border-radius: 10px;
     flex: 1;
     width: 100%;
+    background: #144a68;
     border: 2px solid #144a68;
     padding: 20px 25px;
     transition: border 0.3s ease;

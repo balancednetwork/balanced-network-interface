@@ -5,6 +5,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Flex, Box } from 'rebass/styled-components';
+import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
@@ -72,6 +73,13 @@ const useCalculateLPToken = (baseValue: string, quoteValue: string): BigNumber =
     return ZERO;
   }
 };
+
+const Slider = styled(Box)`
+  margin-top: 40px;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+     margin-top: 25px;
+  `}
+`;
 
 export default function LPPanel() {
   const { account } = useIconReact();
@@ -219,7 +227,7 @@ export default function LPPanel() {
           </Typography>
 
           {account && !maxSliderAmount.dp(2).isZero() && (
-            <Box mt={5}>
+            <Slider mt={5}>
               <Nouislider
                 id="slider-supply"
                 disabled={maxSliderAmount.dp(2).isZero()}
@@ -241,7 +249,7 @@ export default function LPPanel() {
                 }}
                 onSlide={handleSlider}
               />
-            </Box>
+            </Slider>
           )}
           <Flex justifyContent="center">
             {isValid ? (

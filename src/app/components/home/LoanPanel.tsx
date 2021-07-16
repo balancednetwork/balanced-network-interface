@@ -29,7 +29,6 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
-
 import Tooltip from '../Tooltip';
 
 const LoanPanel = () => {

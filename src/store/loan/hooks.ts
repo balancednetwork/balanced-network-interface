@@ -120,48 +120,29 @@ export function useLoanFetchInfo(account?: string | null) {
   }, [fetchLoanInfo, account, transactions]);
 }
 
-export function useLoanFetchTotalRepaid(): (interval?: string | null) => void {
+export function useLoanFetchTotalRepaid(): (timestamp?: number) => void {
   const { account } = useIconReact();
   const dispatch = useDispatch();
   return React.useCallback(
-    interval => {
-      let timestamp = 0;
-      if (interval) {
-        if (interval?.toLowerCase() === 'day') {
-          timestamp = dayjs().subtract(1, 'day').unix();
-          interval = 'yesterday';
-        } else if (interval?.toLowerCase() === 'week') {
-          timestamp = dayjs().subtract(1, 'week').unix();
-          interval = 'last-week';
-        } else if (interval?.toLowerCase() === 'month') {
-          timestamp = dayjs().subtract(1, 'month').unix();
-          interval = 'last-month';
-        }
+    async timestamp => {
+      try {
+        const res = await queryRebalanced({
+          address: account,
+          symbol: 'bnUSD',
+          timestamp,
+        });
 
-        try {
-          axios
-            .get(`${getAPIEnpoint()}/api/v1/loan-repaid-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`)
-            .then(res => {
-              const value = res.data['loan_repaid_sum'];
-              dispatch(changeTotalRepaid({ totalRepaid: BalancedJs.utils.toIcx(new BigNumber(value)) }));
-            });
-          // axios
-          // .get(
-          //   `${getAPIEnpoint()}/api/v1/sold-collateral-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`,
-          // )
-          queryRebalanced({
-            address: account,
-            symbol: 'bnUSD',
-            timestamp,
-          }).then(res => {
-            const value = res.data['loan_repaid_sum'];
-            dispatch(changeTotalCollateralSold({ totalCollateralSold: BalancedJs.utils.toIcx(new BigNumber(value)) }));
-          });
-        } catch (e) {
-          console.error(e);
-        }
-      } else {
-        dispatch(cancel());
+        const { loan_repaid, collateral_sold } = res.data || {};
+        if (collateral_sold)
+          dispatch(
+            changeTotalCollateralSold({
+              totalCollateralSold: BalancedJs.utils.toIcx(new BigNumber(collateral_sold)),
+            }),
+          );
+        if (loan_repaid)
+          dispatch(changeTotalRepaid({ totalRepaid: BalancedJs.utils.toIcx(new BigNumber(loan_repaid)) }));
+      } catch (e) {
+        console.error(e);
       }
     },
     [dispatch, account],

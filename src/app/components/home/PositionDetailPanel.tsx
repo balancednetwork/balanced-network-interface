@@ -1,6 +1,8 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { timeStamp } from 'console';
+import dayjs from 'dayjs';
 import Nouislider from 'nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -65,7 +67,7 @@ enum Period {
   'day' = 'Day',
   'week' = 'Week',
   'month' = 'Month',
-  'all' = 'all',
+  'all' = 'All time',
 }
 
 const PERIODS = [Period.day, Period.week, Period.month];
@@ -89,7 +91,7 @@ const PositionDetailPanel = () => {
   const updateLoanTotalRepaid = useLoanFetchTotalRepaid();
 
   React.useEffect(() => {
-    updateLoanTotalRepaid(Period.day);
+    updateLoanTotalRepaid(dayjs().subtract(1, 'day').unix());
   }, [updateLoanTotalRepaid]);
 
   // loan
@@ -129,7 +131,21 @@ const PositionDetailPanel = () => {
   const handlePeriod = (p: Period) => {
     closeMenu();
     setPeriod(p);
-    updateLoanTotalRepaid(p);
+
+    let timestamp = 0; // all
+    switch (p) {
+      case Period.day:
+        timestamp = dayjs().subtract(1, 'day').unix();
+        break;
+      case Period.week:
+        timestamp = dayjs().subtract(1, 'week').unix();
+        break;
+      case Period.month:
+        timestamp = dayjs().subtract(1, 'month').unix();
+        break;
+      default:
+    }
+    updateLoanTotalRepaid(timestamp);
   };
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
@@ -273,7 +289,7 @@ const PositionDetailPanel = () => {
                 <div>
                   <UnderlineTextWithArrow
                     onClick={handleToggle}
-                    text={period === Period.all ? 'All time' : `Past ${period.toLowerCase()}`}
+                    text={period === Period.all ? Period.all : `Past ${period.toLowerCase()}`}
                     arrowRef={arrowRef}
                   />
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
@@ -289,7 +305,7 @@ const PositionDetailPanel = () => {
                         }}
                         onClick={() => handlePeriod(Period.all)}
                       >
-                        All time
+                        {Period.all}
                       </MenuItem>
                     </MenuList>
                   </DropdownPopper>

@@ -64,9 +64,9 @@ const useOwnDailyRewards = (): BigNumber => {
 };
 
 enum Period {
-  'day' = 'Day',
-  'week' = 'Week',
-  'month' = 'Month',
+  'day' = 'Past day',
+  'week' = 'Past week',
+  'month' = 'Past month',
   'all' = 'All time',
 }
 
@@ -287,11 +287,7 @@ const PositionDetailPanel = () => {
 
               <ClickAwayListener onClickAway={closeMenu}>
                 <div>
-                  <UnderlineTextWithArrow
-                    onClick={handleToggle}
-                    text={period === Period.all ? Period.all : `Past ${period.toLowerCase()}`}
-                    arrowRef={arrowRef}
-                  />
+                  <UnderlineTextWithArrow onClick={handleToggle} text={period} arrowRef={arrowRef} />
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (

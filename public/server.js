@@ -16,11 +16,11 @@ app.get('*', (req, res) => {
       .toString()
       .replace(/__SEO_TITLE__/gm, page.title)
       .replace(/__SEO_DESCRIPTION__/gm, page.description)
-      .replace(/__SEO_IMAGE__/gm, page.image)
-      .replace(/__SEO_URL__/gm, page.path);
+      .replace(/__SEO_IMAGE__/gm, 'https://' + req.headers.host + page.image)
+      .replace(/__SEO_URL__/gm, 'https://' + req.headers.host + page.path);
 
     return res.send(htmlWithSeo);
   }
   return res.sendFile(path.join(__dirname, '../build', 'index.html'));
 });
-app.listen(443);
+app.listen(80);

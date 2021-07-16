@@ -52,6 +52,12 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
   const shouldLedgerSign = useShouldLedgerSign();
 
+  const [shouldSendAssetsA, updateShouldSendAssetsA] = React.useState(false);
+  const [shouldSendAssetsB, updateShouldSendAssetsB] = React.useState(false);
+
+  const [shouldRemoveAssetsA, updateShouldRemoveAssetsA] = React.useState(false);
+  const [shouldRemoveAssetsB, updateShouldRemoveAssetsB] = React.useState(false);
+
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
@@ -61,7 +67,11 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
-        changeShouldLedgerSign(true);
+        if (currencyType === Field.CURRENCY_A) {
+          updateShouldSendAssetsA(true);
+        } else if (currencyType === Field.CURRENCY_B) {
+          updateShouldSendAssetsB(true);
+        }
       }
 
       const currencyKey =
@@ -83,7 +93,12 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
       console.error('error', error);
       setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
     } finally {
-      changeShouldLedgerSign(false);
+      if (currencyType === Field.CURRENCY_A) {
+        updateShouldSendAssetsA(false);
+      } else if (currencyType === Field.CURRENCY_B) {
+        updateShouldSendAssetsB(false);
+      }
+
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
     }
   };
@@ -100,7 +115,11 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
-        changeShouldLedgerSign(true);
+        if (currencyType === Field.CURRENCY_A) {
+          updateShouldRemoveAssetsA(true);
+        } else if (currencyType === Field.CURRENCY_B) {
+          updateShouldRemoveAssetsB(true);
+        }
       }
 
       const res: any = await bnJs
@@ -120,7 +139,11 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
       //setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
     } finally {
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-      changeShouldLedgerSign(false);
+      if (currencyType === Field.CURRENCY_A) {
+        updateShouldRemoveAssetsA(false);
+      } else if (currencyType === Field.CURRENCY_B) {
+        updateShouldRemoveAssetsB(false);
+      }
     }
   };
 
@@ -307,13 +330,24 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
               {shouldShowSendBtnA ? (
                 <>
-                  {shouldLedgerSign && <Spinner></Spinner>}
-                  {!shouldLedgerSign && (
+                  <Typography variant="p" fontWeight="bold" textAlign="center">
+                    {formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'ratio')} {selectedPair.baseCurrencyKey}
+                  </Typography>
+                  {shouldSendAssetsA && (
                     <>
-                      <Typography variant="p" fontWeight="bold" textAlign="center">
-                        {formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'ratio')} {selectedPair.baseCurrencyKey}
+                      <Spinner></Spinner>
+                      <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                        Confirm the transaction on your Ledger.
                       </Typography>
-                      <SupplyButton disabled={!shouldShowSendA} mt={2} onClick={handleAdd(Field.CURRENCY_A)}>
+                    </>
+                  )}
+                  {!shouldSendAssetsA && (
+                    <>
+                      <SupplyButton
+                        disabled={!shouldShowSendA || shouldSendAssetsB}
+                        mt={2}
+                        onClick={handleAdd(Field.CURRENCY_A)}
+                      >
                         {shouldShowSendA ? 'Send' : 'Sending'}
                       </SupplyButton>
                     </>
@@ -325,13 +359,24 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
               {shouldShowSendBtnB ? (
                 <>
-                  {shouldLedgerSign && <Spinner></Spinner>}
-                  {!shouldLedgerSign && (
+                  <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
+                    {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
+                  </Typography>
+                  {shouldSendAssetsB && (
                     <>
-                      <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
-                        {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
+                      <Spinner></Spinner>
+                      <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                        Confirm the transaction on your Ledger.
                       </Typography>
-                      <SupplyButton disabled={!shouldShowSendB} mt={2} onClick={handleAdd(Field.CURRENCY_B)}>
+                    </>
+                  )}
+                  {!shouldSendAssetsB && (
+                    <>
+                      <SupplyButton
+                        disabled={!shouldShowSendB || shouldSendAssetsA}
+                        mt={2}
+                        onClick={handleAdd(Field.CURRENCY_B)}
+                      >
                         {shouldShowSendB ? 'Send' : 'Sending'}
                       </SupplyButton>
                     </>
@@ -354,20 +399,25 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
                 </>
               ) : (
                 <>
-                  {shouldLedgerSign && <Spinner></Spinner>}
-                  {!shouldLedgerSign && (
+                  <Typography variant="p" fontWeight="bold" textAlign="center">
+                    {formatBigNumber(pool?.baseDeposited, 'ratio')} {selectedPair.baseCurrencyKey}
+                  </Typography>
+                  {shouldRemoveAssetsA && (
                     <>
-                      <Typography variant="p" fontWeight="bold" textAlign="center">
-                        {formatBigNumber(pool?.baseDeposited, 'ratio')} {selectedPair.baseCurrencyKey}
+                      <Spinner></Spinner>
+                      <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                        Confirm the transaction on your Ledger.
                       </Typography>
-                      <RemoveButton
-                        disabled={!shouldShowRemoveA}
-                        mt={2}
-                        onClick={handleRemove(Field.CURRENCY_A, pool?.baseDeposited || new BigNumber(0))}
-                      >
-                        {shouldShowRemoveA ? 'Remove' : 'Removing'}
-                      </RemoveButton>
                     </>
+                  )}
+                  {!shouldRemoveAssetsA && (
+                    <RemoveButton
+                      disabled={!shouldShowRemoveA || shouldRemoveAssetsB}
+                      mt={2}
+                      onClick={handleRemove(Field.CURRENCY_A, pool?.baseDeposited || new BigNumber(0))}
+                    >
+                      {shouldShowRemoveA ? 'Remove' : 'Removing'}
+                    </RemoveButton>
                   )}
                 </>
               )}
@@ -378,20 +428,25 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
                 </>
               ) : (
                 <>
-                  {shouldLedgerSign && <Spinner></Spinner>}
-                  {!shouldLedgerSign && (
+                  <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
+                    {formatBigNumber(pool?.quoteDeposited, 'ratio')} {selectedPair.quoteCurrencyKey}
+                  </Typography>
+                  {shouldRemoveAssetsB && (
                     <>
-                      <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
-                        {formatBigNumber(pool?.quoteDeposited, 'ratio')} {selectedPair.quoteCurrencyKey}
+                      <Spinner></Spinner>
+                      <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                        Confirm the transaction on your Ledger.
                       </Typography>
-                      <RemoveButton
-                        disabled={!shouldShowRemoveB}
-                        mt={2}
-                        onClick={handleRemove(Field.CURRENCY_B, pool?.quoteDeposited || new BigNumber(0))}
-                      >
-                        {shouldShowRemoveB ? 'Remove' : 'Removing'}
-                      </RemoveButton>
                     </>
+                  )}
+                  {!shouldRemoveAssetsB && (
+                    <RemoveButton
+                      disabled={!shouldShowRemoveB || shouldRemoveAssetsA}
+                      mt={2}
+                      onClick={handleRemove(Field.CURRENCY_B, pool?.quoteDeposited || new BigNumber(0))}
+                    >
+                      {shouldShowRemoveB ? 'Remove' : 'Removing'}
+                    </RemoveButton>
                   )}
                 </>
               )}

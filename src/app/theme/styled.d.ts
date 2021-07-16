@@ -7,7 +7,7 @@ export interface Colors {
   // text
   text: Color;
   text1: Color;
-  // text2: Color;
+  text2: Color;
   // text3: Color;
   // text4: Color;
   // text5: Color;

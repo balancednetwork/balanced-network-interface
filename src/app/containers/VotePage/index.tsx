@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -9,6 +10,14 @@ import { DefaultLayout } from 'app/components/Layout';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
 import { comparatorDesc } from 'utils';
+
+const metadata = {
+  voted: 16,
+  voters: 748,
+  approvePercentage: 53,
+  rejectPercentage: 14,
+  timestamp: 284400000,
+};
 
 export function VotePage() {
   const VoteContainer = styled(Box)`
@@ -25,13 +34,6 @@ export function VotePage() {
     margin-bottom: 30px;
   `;
 
-  const metadata = {
-    voted: 16,
-    voters: 748,
-    approvePercentage: 53,
-    rejectPercentage: 14,
-    timestamp: 284400000,
-  };
   const mockData = [
     {
       id: 3,
@@ -73,7 +75,9 @@ export function VotePage() {
         {mockData
           .sort((a, b) => comparatorDesc(a.id, b.id))
           .map(ele => (
-            <ProposalInfo key={ele?.id} title={ele?.title} content={ele?.content} metadata={ele?.metadata} />
+            <Link to={`/proposal/${ele?.id}`} style={{ textDecoration: 'none' }}>
+              <ProposalInfo key={ele?.id} title={ele?.title} content={ele?.content} metadata={ele?.metadata} />
+            </Link>
           ))}
       </VoteContainer>
     </DefaultLayout>

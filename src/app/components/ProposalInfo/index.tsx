@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
+import { theme, Typography } from 'app/theme';
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
@@ -23,8 +23,9 @@ export default function ProposalInfo(props) {
     transition: border 0.3s ease;
     outline: none;
     overflow: visible;
-    margin: 0;
+    margin: 0 0 25px;
     cursor: pointer;
+
     :hover,
     :focus {
       border: 2px solid #2ca9b7;
@@ -44,49 +45,54 @@ export default function ProposalInfo(props) {
     width: 20px;
     border-radius: 5px;
   `;
+  const Divider = styled.div`
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 15px;
+  `;
+  const ContentText = styled(Typography)`
+    color: ${({ theme }) => theme.colors.text2};
+    margin-bottom: 15px;
+    font-size: 16px;
+  `;
 
   const { title, content, metadata } = props;
   const { voted, voters, approvePercentage, rejectPercentage, timestamp } = metadata;
-
+  const themes = theme();
   return (
-    <div style={{ marginBottom: '25px' }}>
-      <ProposalWrapper>
-        <Typography variant="h3" style={{ marginBottom: '10px' }}>
-          {title}
+    <ProposalWrapper>
+      <Typography variant="h3" mb="10px">
+        {title}
+      </Typography>
+      <ContentText>{normalizeContent(content)}</ContentText>
+      <Divider />
+      <span style={{ display: 'flex', flexDirection: 'row' }}>
+        <CalendarIcon height="22" width="22" style={{ marginRight: '5px' }} />
+        <Typography variant="content" color={themes.colors.white} mr="20px">
+          {`${Math.floor(dayjs.duration(timestamp).asDays())} days, ${
+            dayjs.duration(timestamp).asHours() % 24
+          } hours left`}
         </Typography>
-        <Typography variant="p" style={{ color: '#A9BAC7', marginBottom: '15px' }}>
-          {normalizeContent(content)}
+        <PieChartIcon height="22" width="22" style={{ marginRight: '5px' }} />
+        <Typography variant="content" color={themes.colors.white} mr="20px">
+          {`${voted} voted`}
         </Typography>
-        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.15)', marginBottom: '15px' }} />
+        <UserIcon height="22" width="22" style={{ marginRight: '5px' }} />
+        <Typography variant="content" color={themes.colors.white} mr="20px">
+          {`${voters} voters`}
+        </Typography>
         <span style={{ display: 'flex', flexDirection: 'row' }}>
-          <CalendarIcon height="22" width="22" style={{ marginRight: '5px' }} />
-          <Typography variant="p" color="#FFFFFF" fontSize="0.875em" marginRight="20px">
-            {`${Math.floor(dayjs.duration(timestamp).asDays())} days, ${
-              dayjs.duration(timestamp).asHours() % 24
-            } hours left`}
+          <ApprovalSwatch />
+          <Typography variant="content" color={themes.colors.white} mr="20px">
+            {`${approvePercentage}%`}
           </Typography>
-          <PieChartIcon height="22" width="22" style={{ marginRight: '5px' }} />
-          <Typography variant="p" style={{ color: '#FFFFFF', fontSize: '0.875em', marginRight: '20px' }}>
-            {`${voted} voted`}
-          </Typography>
-          <UserIcon height="22" width="22" style={{ marginRight: '5px' }} />
-          <Typography variant="p" style={{ color: '#FFFFFF', fontSize: '0.875em', marginRight: '20px' }}>
-            {`${voters} voters`}
-          </Typography>
-          <span style={{ display: 'flex', flexDirection: 'row' }}>
-            <ApprovalSwatch />
-            <Typography variant="p" style={{ color: '#FFFFFF', fontSize: '0.875em', marginRight: '20px' }}>
-              {`${approvePercentage}%`}
-            </Typography>
-          </span>
-          <span style={{ display: 'flex', flexDirection: 'row' }}>
-            <RejectionSwatch />
-            <Typography variant="p" style={{ color: '#FFFFFF', fontSize: '0.875em', marginRight: '20px' }}>
-              {`${rejectPercentage}%`}
-            </Typography>
-          </span>
         </span>
-      </ProposalWrapper>
-    </div>
+        <span style={{ display: 'flex', flexDirection: 'row' }}>
+          <RejectionSwatch />
+          <Typography variant="content" color={themes.colors.white} mr="20px">
+            {`${rejectPercentage}%`}
+          </Typography>
+        </span>
+      </span>
+    </ProposalWrapper>
   );
 }

@@ -12,6 +12,7 @@ import TransactionUpdater from 'store/transactions/updater';
 
 import { Airdrip } from './containers/Airdrip/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
+import { ProposalPage } from './containers/ProposalPage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
 import { VotePage } from './containers/VotePage/Loadable';
 
@@ -51,6 +52,7 @@ export function App() {
               <Route exact path="/vote" component={VotePage} />
               <Route exact path="/trade" component={TradePage} />
               <Route exact path="/airdrip" component={Airdrip} />
+              <Route path="/proposal/:id" component={ProposalPage} />
               <Route
                 component={() => {
                   window.location.href = 'https://balanced.network/404';

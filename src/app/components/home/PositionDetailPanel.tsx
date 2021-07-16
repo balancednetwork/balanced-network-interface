@@ -180,6 +180,7 @@ const PositionDetailPanel = () => {
             text="If the bar only fills this section, you have a low risk of liquidation."
             show={show}
             placement="bottom"
+            small
           >
             <LeftChip
               bg="primary"
@@ -198,6 +199,7 @@ const PositionDetailPanel = () => {
                   text="You won’t earn any Balance Tokens if you go beyond this threshold."
                   show={show}
                   placement="top-end"
+                  small
                 >
                   <dt>Reward threshold</dt>
                 </Tooltip>
@@ -211,6 +213,7 @@ const PositionDetailPanel = () => {
                   text="You can’t withdraw any collateral if you go beyond this threshold."
                   show={show}
                   placement="top-start"
+                  small
                 >
                   <dt>All collateral locked</dt>
                 </Tooltip>
@@ -242,6 +245,7 @@ const PositionDetailPanel = () => {
                     your collateral will be liquidated.`}
             show={show}
             placement="bottom"
+            small
           >
             <RightChip bg="#fb6a6a">Liquidated</RightChip>
           </Tooltip>

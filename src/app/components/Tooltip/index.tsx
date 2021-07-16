@@ -4,7 +4,11 @@ import styled from 'styled-components';
 
 import Popover, { PopoverProps } from '../Popover';
 
-const TooltipContainer = styled.div<{ wide?: boolean }>`
+const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean }>`
+  ${({ theme }) => theme.mediaWidth.smartPhone`
+    ${props => props.small && ' width: 165px;  font-size: 12px; padding: 11px;'}
+  `}
+
   width: ${props => (props.wide ? '300px' : '244px')};
   padding: 12px 1rem;
   line-height: 150%;
@@ -16,10 +20,20 @@ const TooltipContainer = styled.div<{ wide?: boolean }>`
 interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: React.ReactNode;
   wide?: boolean;
+  small?: boolean;
 }
 
-export default function Tooltip({ text, wide, ...rest }: TooltipProps) {
-  return <Popover content={<TooltipContainer wide={wide}>{text}</TooltipContainer>} {...rest} />;
+export default function Tooltip({ text, wide, small, ...rest }: TooltipProps) {
+  return (
+    <Popover
+      content={
+        <TooltipContainer wide={wide} small={small}>
+          {text}
+        </TooltipContainer>
+      }
+      {...rest}
+    />
+  );
 }
 
 export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show'>) {

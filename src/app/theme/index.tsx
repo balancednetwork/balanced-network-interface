@@ -16,14 +16,22 @@ export const sizes = {
   upSmall: 800,
   upMedium: 1000,
   upLarge: 1200,
+  smartPhone: 600,
 };
 
 export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce((acc, label) => {
-  acc[label] = (first: any, ...interpolations: any[]) => css`
-    @media (min-width: ${sizes[label]}px) {
-      ${css(first, ...interpolations)}
-    }
-  `;
+  acc[label] = (first: any, ...interpolations: any[]) =>
+    label === 'smartPhone'
+      ? css`
+          @media (max-width: ${sizes[label]}px) {
+            ${css(first, ...interpolations)}
+          }
+        `
+      : css`
+          @media (min-width: ${sizes[label]}px) {
+            ${css(first, ...interpolations)}
+          }
+        `;
 
   return acc;
 }, {} as { [key in keyof typeof sizes]: MediaFunction });

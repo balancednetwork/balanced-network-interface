@@ -8,8 +8,7 @@ import { Button } from 'app/components/Button';
 import { DefaultLayout } from 'app/components/Layout';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
-
-import { comparatorDesc } from '../../../utils';
+import { comparatorDesc } from 'utils';
 
 export function VotePage() {
   const VoteContainer = styled(Box)`

@@ -75,7 +75,7 @@ export function VotePage() {
         {mockData
           .sort((a, b) => b.id - a.id)
           .map(ele => (
-            <Link to={`/proposal/${ele?.id}`} style={{ textDecoration: 'none' }}>
+            <Link to={`vote/proposal/${ele?.id}`} style={{ textDecoration: 'none' }}>
               <ProposalInfo key={ele?.id} title={ele?.title} content={ele?.content} metadata={ele?.metadata} />
             </Link>
           ))}

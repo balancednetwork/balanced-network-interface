@@ -52,7 +52,7 @@ export function App() {
               <Route exact path="/vote" component={VotePage} />
               <Route exact path="/trade" component={TradePage} />
               <Route exact path="/airdrip" component={Airdrip} />
-              <Route path="/proposal/:id" component={ProposalPage} />
+              <Route path="/vote/proposal/:id" component={ProposalPage} />
               <Route
                 component={() => {
                   window.location.href = 'https://balanced.network/404';

@@ -81,3 +81,31 @@ export const IconButton = styled(RebassButton)`
     color: rgba(255, 255, 255, 0.15);
   }
 `;
+
+export const AlertButton = styled(RebassButton)`
+  display: inline-block;
+  border-radius: 10px;
+  padding: 5px 15px;
+  color: #ffffff;
+  text-decoration: none;
+  background-color: ${({ theme }) => theme.colors.alert};
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+  line-height: 1.4;
+
+  &:hover {
+    background-color: #f72c2c;
+    transition: background-color 0.2s ease;
+  }
+
+  &:disabled {
+    background: rgba(255, 255, 255, 0.15);
+    cursor: default;
+    pointer-events: none;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 7px 25px;
+  `}
+`;

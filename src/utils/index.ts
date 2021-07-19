@@ -153,7 +153,3 @@ export const normalizeContent = (text: string): string => {
   const t = text.replaceAll(regex, ' ');
   return t.substring(0, 248) + '...';
 };
-
-export const comparatorDesc = (a: number, b: number): number => {
-  return b - a;
-};

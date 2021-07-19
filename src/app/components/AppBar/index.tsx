@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -94,6 +94,7 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
 `;
 
 export default React.memo(function AppBar() {
+  const location = useLocation();
   return (
     <Navigation>
       <List>
@@ -110,7 +111,7 @@ export default React.memo(function AppBar() {
           </StyledNavLink>
         </ListItem>
         <ListItem>
-          <StyledNavLink exact to="/vote">
+          <StyledNavLink exact to="/vote" className={location.pathname.startsWith('/vote') ? 'ACTIVE' : ''}>
             <VoteIcon width="30" height="35" />
             <Text>Vote</Text>
           </StyledNavLink>

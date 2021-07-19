@@ -68,15 +68,17 @@ export function VotePage() {
       <VoteContainer>
         <VoteHeader>
           <Typography variant="h2">Proposals</Typography>
-          <Box style={{ textAlign: 'right' }}>
-            <Button>New Proposal</Button>
-          </Box>
+          <Link to="/vote/new-proposal">
+            <Box style={{ textAlign: 'right' }}>
+              <Button>New Proposal</Button>
+            </Box>
+          </Link>
         </VoteHeader>
         {mockData
           .sort((a, b) => b.id - a.id)
           .map(ele => (
-            <Link to={`vote/proposal/${ele?.id}`} style={{ textDecoration: 'none' }}>
-              <ProposalInfo key={ele?.id} title={ele?.title} content={ele?.content} metadata={ele?.metadata} />
+            <Link key={`link-${ele?.id}`} to={`/vote/proposal/${ele?.id}`} style={{ textDecoration: 'none' }}>
+              <ProposalInfo title={ele?.title} content={ele?.content} metadata={ele?.metadata} />
             </Link>
           ))}
       </VoteContainer>

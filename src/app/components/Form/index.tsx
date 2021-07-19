@@ -8,7 +8,7 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import { ZERO } from 'constants/index';
+import { MINUS_INFINITY, PLUS_INFINITY, ZERO } from 'constants/index';
 import { CurrencyKey } from 'types';
 import { escapeRegExp } from 'utils'; // match escaped "." characters via in a non-capturing group
 
@@ -52,7 +52,6 @@ const CurrencyUnit = styled.span``;
 const inputRegex = RegExp(`^\\d+(?:\\\\[.])?\\d*$`);
 
 export const CurrencyField: React.FC<{
-  id?: string;
   editable: boolean;
   isActive: boolean;
   label: string;
@@ -61,11 +60,11 @@ export const CurrencyField: React.FC<{
   tooltip?: boolean;
   tooltipText?: React.ReactNode;
   tooltipWider?: boolean;
-  maxValue?: string;
+  minValue?: BigNumber;
+  maxValue?: BigNumber;
   onUserInput?: (value: string) => void;
 }> = function (props) {
   const {
-    id,
     isActive,
     label,
     value,
@@ -74,7 +73,8 @@ export const CurrencyField: React.FC<{
     tooltipText,
     tooltipWider,
     editable,
-    maxValue,
+    minValue = MINUS_INFINITY,
+    maxValue = PLUS_INFINITY,
     onUserInput,
   } = props;
 
@@ -82,20 +82,21 @@ export const CurrencyField: React.FC<{
     const nextUserInput = event.target.value.replace(/,/g, '.');
 
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-      if (maxValue && nextUserInput) {
-        if (parseFloat(nextUserInput) < parseFloat(maxValue)) {
-          onUserInput && onUserInput(nextUserInput);
-        } else {
-          onUserInput && onUserInput(maxValue);
-        }
-      } else {
-        onUserInput && onUserInput(nextUserInput);
+      let nextInput = nextUserInput;
+      const value = new BigNumber(nextUserInput || '0');
+
+      if (value.isGreaterThan(maxValue)) {
+        nextInput = maxValue.dp(2).toFixed();
+      } else if (value.isLessThan(minValue)) {
+        nextInput = minValue.dp(2).toFixed();
       }
+
+      onUserInput && onUserInput(nextInput);
     }
   };
 
   return (
-    <Flex id={id} flexDirection="column">
+    <Flex flexDirection="column">
       <Flex alignItems="center">
         <Flex>
           <CheckBox isActive={isActive} mr={2} />

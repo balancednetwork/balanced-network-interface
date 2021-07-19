@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { IconAmount, IconConverter } from 'icon-sdk-js';
+import { IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -47,7 +47,7 @@ export default class bnUSD extends Contract {
     return this.callICONPlugins(callParams);
   }
 
-  swapToOutputCurrency(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
+  swap(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
     const data = {
       method: '_swap',
       params: {
@@ -56,10 +56,6 @@ export default class bnUSD extends Contract {
       },
     };
 
-    return this.transfer(
-      addresses[this.nid].dex,
-      IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop(),
-      JSON.stringify(data),
-    );
+    return this.transfer(addresses[this.nid].dex, value, JSON.stringify(data));
   }
 }

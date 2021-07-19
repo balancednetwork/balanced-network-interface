@@ -7,16 +7,15 @@ import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { CurrencyField } from 'app/components/Form';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST } from 'constants/currency';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
@@ -28,11 +27,13 @@ import {
 import { useLockedICXAmount, useLoanActionHandlers } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
+
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const CollateralPanel = () => {
-  const { account, ledgerAddressPoint } = useIconReact();
+  const { account } = useIconReact();
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   // collateral slider instance
@@ -99,11 +100,6 @@ const CollateralPanel = () => {
   const addTransaction = useTransactionAdder();
 
   const handleCollateralConfirm = async () => {
-    if (ledgerAddressPoint >= 0) {
-      //if (!ledgerConfirmAlert('Click Ok and check your ledger device?')) {
-      //return;
-      //}
-    }
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -182,6 +178,8 @@ const CollateralPanel = () => {
 
   const percent = totalICXAmount.isZero() ? 0 : tLockedICXAmount.div(totalICXAmount).times(100).toNumber();
 
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <>
       <BoxPanel bg="bg3">
@@ -244,7 +242,8 @@ const CollateralPanel = () => {
                 </>
               }
               value={!account ? '-' : formattedAmounts[Field.LEFT]}
-              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['icx']}
+              currency={'ICX'}
+              maxValue={totalICXAmount.toNumber().toFixed(2)}
               onUserInput={onFieldAInput}
             />
           </Box>
@@ -257,7 +256,8 @@ const CollateralPanel = () => {
               label="Wallet"
               tooltipText="The amount of ICX available to deposit from your wallet."
               value={!account ? '-' : formattedAmounts[Field.RIGHT]}
-              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['icx']}
+              currency={'ICX'}
+              maxValue={totalICXAmount.toNumber().toFixed(2)}
               onUserInput={onFieldBInput}
             />
           </Box>
@@ -304,11 +304,14 @@ const CollateralPanel = () => {
             <TextButton onClick={toggleOpen} fontSize={14}>
               Cancel
             </TextButton>
-            <Button onClick={handleCollateralConfirm} fontSize={14}>
+            <Button onClick={handleCollateralConfirm} fontSize={14} disabled={!hasEnoughICX}>
               {shouldDeposit ? 'Deposit' : 'Withdraw'}
             </Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

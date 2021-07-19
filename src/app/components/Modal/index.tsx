@@ -39,7 +39,7 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
     background-color: ${({ theme }) => theme.colors.bg4};
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     padding: 0px;
-    width: 50vw;
+    width: 85vw;
     overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
     overflow-x: hidden;
 
@@ -59,21 +59,24 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
     display: flex;
     border-radius: 10px;
     border: 2px solid ${({ theme }) => theme.colors.primary};
-    ${({ theme }) => theme.mediaWidth.upToMedium`
+    ${({ mobile }) =>
+      mobile &&
+      css`
+        width: 100vw;
+        border-radius: 20px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        margin: 0;
+      `}
+
+    ${({ theme, mobile }) => theme.mediaWidth.upSmall`
       width: 65vw;
       margin: 0;
     `}
-    ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
-      width:  85vw;
-      ${
-        mobile &&
-        css`
-          width: 100vw;
-          border-radius: 20px;
-          border-bottom-left-radius: 0;
-          border-bottom-right-radius: 0;
-        `
-      }
+
+    ${({ theme }) => theme.mediaWidth.upMedium`
+      width: 50vw;
+      margin: 0;
     `}
   }
 `;

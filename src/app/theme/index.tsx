@@ -12,16 +12,15 @@ import texGyeAdventorRegularWoff2 from 'assets/font/tex-gyre-adventor-regular/te
 
 // Update your breakpoints if you want
 export const sizes = {
-  upToExtraSmall: 600,
-  upToSmall: 800,
-  upToMedium: 1000,
-  upToLarge: 1280,
+  upExtraSmall: 600,
+  upSmall: 800,
+  upMedium: 1000,
+  upLarge: 1200,
 };
 
-// Iterate through the sizes and create a media template
 export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce((acc, label) => {
   acc[label] = (first: any, ...interpolations: any[]) => css`
-    @media (max-width: ${sizes[label]}px) {
+    @media (min-width: ${sizes[label]}px) {
       ${css(first, ...interpolations)}
     }
   `;
@@ -68,6 +67,8 @@ export function theme(): DefaultTheme {
 
       // alert
       alert: '#fb6a6a',
+
+      paginationButtonBG: '#087083',
     },
 
     fontSizes: [12, 14, 16, 20, 25, 35],
@@ -640,5 +641,23 @@ export const ThemedGlobalStyle = createGlobalStyle`
   }
   #slider-risk[disabled].noUi-horizontal .noUi-connect {
     background: #144a68;
+  }
+
+  /* scrollbar */
+  .scrollbar {
+    overflow-y: auto;
+  }
+  .scrollbar-primary {
+    scrollbar-color: #2ca9b7 #144a68;
+  }
+  .scrollbar-primary::-webkit-scrollbar {
+    border-radius: 10px;
+    width: 10px;
+    background-color: #144a68; 
+  }
+  .scrollbar-primary::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    background-color: #2ca9b7; 
   }
 `;

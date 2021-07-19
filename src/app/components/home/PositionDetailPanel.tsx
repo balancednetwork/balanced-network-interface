@@ -3,6 +3,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -23,7 +24,6 @@ import {
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
 import {
   useLoanInputAmount,
-  useLoanTotalBorrowableAmount,
   useLoanDebtHoldingShare,
   useLoanTotalRepaid,
   useLoanFetchTotalRepaid,
@@ -73,7 +73,7 @@ const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
-
+  const upLarge = useMedia('(min-width: 1200px)');
   const [show, setShow] = React.useState<boolean>(false);
 
   const open = React.useCallback(() => setShow(true), [setShow]);
@@ -93,11 +93,8 @@ const PositionDetailPanel = () => {
 
   // loan
   const loanInputAmount = useLoanInputAmount();
-  const totalAvailableLoanAmount = useLoanTotalBorrowableAmount();
 
   const collateralInputAmountInUSD = useCollateralInputAmountInUSD();
-
-  const debtHoldShare = useLoanDebtHoldingShare();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -107,7 +104,7 @@ const PositionDetailPanel = () => {
   const currentRatio = useCurrentCollateralRatio();
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
 
-  const isRewardWarning = rewardThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
+  const isRewardWarning = rewardThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThanOrEqualTo(0);
 
   const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
 
@@ -138,37 +135,35 @@ const PositionDetailPanel = () => {
 
   return (
     <ActivityPanel bg="bg2">
-      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 350]}>
+      <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 'initial', 350]}>
         <Typography variant="h2" mb={5}>
           Position details
         </Typography>
 
         <Flex>
-          <Box width={1 / 2}>
+          <Box flex={1}>
             <Typography mb={1}>Collateral</Typography>
             <Typography variant="p" fontSize={18}>
               ${collateralInputAmountInUSD.dp(2).toFormat()}
             </Typography>
           </Box>
 
-          <Box width={1 / 2}>
-            <Typography mb={1}>Loan</Typography>
+          <VerticalDivider mr={8} />
 
+          <Box flex={1}>
+            <Typography mb={1}>Loan</Typography>
             <Typography variant="p" fontSize={18} as="span">
-              ${loanInputAmount.dp(2).toFormat()}{' '}
-              <Typography as="span">/ ${totalAvailableLoanAmount.dp(2).toFormat()}</Typography>
+              ${loanInputAmount.dp(2).toFormat()}
             </Typography>
           </Box>
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
           The current ICX price is{' '}
-          <span className={isRewardWarning ? 'alert' : ''}>{'$' + ratio.ICXUSDratio.dp(4).toFormat()}</span>.
+          <span className={isRewardWarning ? 'alert' : 'white'}>${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
         </Typography>
-        <Typography>
-          You hold{' '}
-          <span className="white">{isNaN(debtHoldShare.toNumber()) ? '-' : debtHoldShare.dp(2).toFormat() + '%'}</span>{' '}
-          of the total debt.
+        <Typography mb={2}>
+          You will be liquidated at <span className="white">${liquidationThresholdPrice.dp(3).toFormat()}</span>.
         </Typography>
       </BoxPanel>
 
@@ -206,7 +201,7 @@ const PositionDetailPanel = () => {
                 >
                   <dt>Reward threshold</dt>
                 </Tooltip>
-                <dd>${rewardThresholdPrice.toFixed(3)}</dd>
+                <dd>${rewardThresholdPrice.toFixed(4)}</dd>
               </MetaData>
             </Rewards>
 
@@ -254,9 +249,9 @@ const PositionDetailPanel = () => {
 
         <Divider my={3} />
 
-        <Flex flexWrap="wrap" alignItems="flex-end">
-          <Box width={[1, 1 / 2]}>
-            <Flex alignItems="center" mb={15}>
+        <Flex flexWrap="wrap" mt={-1} flexDirection={['column', 'column', 'column', 'row', 'row']}>
+          <Box flex={1} my={2}>
+            <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
                 Rebalancing{' '}
                 <MouseoverTooltip
@@ -265,7 +260,7 @@ const PositionDetailPanel = () => {
                   }
                   placement="top"
                 >
-                  <QuestionIcon width={14} style={{ marginTop: -5 }} />
+                  <QuestionIcon width={14} color="text1" style={{ marginTop: -5, color: '#D5D7DB' }} />
                 </MouseoverTooltip>
               </Typography>
 
@@ -291,17 +286,19 @@ const PositionDetailPanel = () => {
             <Flex>
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(collateralTotalSold, 'currency')} ICX</Typography>
-                <Typography>Collateral sold</Typography>
+                <Typography mt={1}>Collateral sold</Typography>
               </Box>
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(loanTotalRepaid, 'currency')} bnUSD</Typography>
-                <Typography>Loan repaid</Typography>
+                <Typography mt={1}>Loan repaid</Typography>
               </Box>
             </Flex>
           </Box>
 
-          <Box width={[1, 1 / 2]}>
-            <Flex alignItems="center" mb={15}>
+          {upLarge && <VerticalDivider mr={8} mt={3} mb={2} />}
+
+          <Box flex={1} my={2}>
+            <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
                 Expected return
               </Typography>
@@ -311,13 +308,13 @@ const PositionDetailPanel = () => {
                 <Typography variant="p">
                   {hasRewardableCollateral ? `~ ${dailyRewards.dp(2).toFormat()} BALN` : '-'}
                 </Typography>
-                <Typography>Daily rewards</Typography>
+                <Typography mt={1}>Daily rewards</Typography>
               </Box>
               <Box width={1 / 2}>
                 <Typography variant="p" color={hasRewardableCollateral ? 'white' : 'alert'}>
                   {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
                 </Typography>
-                <Typography>APY</Typography>
+                <Typography mt={1}>APY</Typography>
               </Box>
             </Flex>
           </Box>
@@ -331,14 +328,17 @@ export default PositionDetailPanel;
 
 const ActivityPanel = styled(FlexPanel)`
   padding: 0;
-  grid-area: 2 / 1 / 2 / 3;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-area: initial;
-    flex-direction: column;
+  grid-area: initial;
+  flex-direction: column;
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 0;
   `}
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 0px;
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    padding: 0;
+    grid-area: 2 / 1 / 2 / 3;
+    flex-direction: row;
   `}
 `;
 
@@ -424,4 +424,10 @@ const Locked = styled(Threshold)`
     width: 150px;
     margin-left: 15px;
   }
+`;
+
+const VerticalDivider = styled(Box)`
+  width: 1px;
+  height: initial;
+  background-color: ${({ theme }) => theme.colors.divider};
 `;

@@ -5,12 +5,11 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
-import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
+import { isQueue, Pair } from 'constants/currency';
+import { MINIMUM_ICX_AMOUNT_IN_WALLET, ONE } from 'constants/index';
 import { usePool, usePoolPair } from 'store/pool/hooks';
-import { Pool } from 'store/pool/reducer';
-import { useRatio } from 'store/ratio/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
+import { Pool } from 'types';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, typeInput } from './actions';
@@ -73,21 +72,10 @@ const useSelectedPairBalances = (): { [field in Field]: BigNumber } => {
 };
 
 const useSelectedPairRatio = () => {
-  const ratio = useRatio();
   const selectedPair = usePoolPair();
-
-  switch (selectedPair.pair) {
-    case SUPPORTED_PAIRS[0].pair: {
-      return ratio.sICXbnUSDratio;
-    }
-    case SUPPORTED_PAIRS[1].pair: {
-      return ratio.BALNbnUSDratio;
-    }
-    case SUPPORTED_PAIRS[2].pair: {
-      return ratio.sICXICXratio;
-    }
-  }
-  return new BigNumber(1);
+  const pool = usePool(selectedPair.poolId);
+  if (isQueue(selectedPair)) return ONE;
+  return pool?.rate || ONE;
 };
 
 export function useDerivedMintInfo(): {

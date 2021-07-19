@@ -7,20 +7,20 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 
 export default function UnstakePanel() {
   const [portion, setPortion] = React.useState(ZERO);
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const sliderInstance = React.useRef<any>(null);
@@ -82,6 +82,8 @@ export default function UnstakePanel() {
   };
 
   const differenceAmountByICX = differenceAmount.multipliedBy(ratio.sICXICXratio);
+
+  const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
@@ -157,11 +159,14 @@ export default function UnstakePanel() {
             <TextButton onClick={toggleOpen} fontSize={14}>
               Cancel
             </TextButton>
-            <Button onClick={handleUnstake} fontSize={14}>
+            <Button onClick={handleUnstake} fontSize={14} disabled={!hasEnoughICX}>
               Unstake
             </Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

@@ -7,15 +7,16 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { Pair, BASE_SUPPORTED_PAIRS } from 'constants/currency';
+import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
 import { useRatio } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { Pool } from 'types';
 
 import { AppDispatch, AppState } from '../index';
 import { setBalance, setPair, setPoolData, clearBalances as clearBalancesCreator } from './actions';
-import { Balance, Pool } from './reducer';
+import { Balance } from './reducer';
 
 export function usePoolPair(): Pair {
   return useSelector((state: AppState) => state.pool.selectedPair);
@@ -115,7 +116,7 @@ export function useFetchPools() {
   );
 
   React.useEffect(() => {
-    BASE_SUPPORTED_PAIRS.forEach(pair => fetchPool(pair));
+    SUPPORTED_PAIRS.forEach(pair => fetchPool(pair));
   }, [fetchPool, transactions, networkId]);
 
   // fetch LP token balances
@@ -124,7 +125,7 @@ export function useFetchPools() {
 
   React.useEffect(() => {
     if (account) {
-      BASE_SUPPORTED_PAIRS.forEach(pair => {
+      SUPPORTED_PAIRS.forEach(pair => {
         const poolId = pair.poolId;
         if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
           Promise.all([bnJs.Dex.getICXBalance(account), bnJs.Dex.getSicxEarnings(account)]).then(([res1, res2]) => {
@@ -155,7 +156,7 @@ export function usePools() {
   return useSelector((state: AppState) => state.pool.pools);
 }
 
-export function usePool(poolId: number): Pool | undefined {
+export function usePool(poolId: number): Pool {
   const pools = usePools();
   return pools[poolId];
 }
@@ -283,9 +284,27 @@ export function useAPYs() {
 
   React.useEffect(() => {
     if (rewards && !rewards.isNaN() && !rewards.isZero() && rewards.isFinite()) {
-      setAPYs(state => ({ ...state, '1': rewards }));
+      setAPYs(state => ({ ...state, [BalancedJs.utils.POOL_IDS.sICXICX]: rewards }));
     }
   }, [rewards, setAPYs]);
+
+  // calculate BALN/sICX APY
+  const totalDailyReward1 = useReward(BalancedJs.utils.POOL_IDS.BALNsICX);
+  const totalLiquidity1 = usePool(BalancedJs.utils.POOL_IDS.BALNsICX);
+  const rewards1 = React.useMemo(
+    () =>
+      totalDailyReward1
+        ?.times(365)
+        .div(totalLiquidity1?.base || ZERO)
+        .div(2),
+    [totalDailyReward1, totalLiquidity1],
+  );
+
+  React.useEffect(() => {
+    if (rewards1 && !rewards1.isNaN() && !rewards1.isZero() && rewards1.isFinite()) {
+      setAPYs(state => ({ ...state, [BalancedJs.utils.POOL_IDS.BALNsICX]: rewards1 }));
+    }
+  }, [rewards1, setAPYs]);
 
   //
   React.useEffect(() => {

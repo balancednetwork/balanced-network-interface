@@ -3,7 +3,13 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, AppState } from '../index';
-import { changeShouldLedgedSignMessage, ApplicationModal, changeWalletType, setOpenModal } from './actions';
+import {
+  changeShouldLedgedSignMessage,
+  ApplicationModal,
+  changeWalletType,
+  setOpenModal,
+  updateSlippageTolerance,
+} from './actions';
 import { WalletType } from './reducer';
 
 export function useModalOpen(modal: ApplicationModal): boolean {
@@ -46,6 +52,20 @@ export function useChangeShouldLedgerSign(): (shouldLedgerSign: boolean) => void
   return useCallback(
     (shouldLedgerSign: boolean) => {
       dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign }));
+    },
+    [dispatch],
+  );
+}
+
+export function useSwapSlippageTolerance() {
+  return useSelector((state: AppState) => state.application.slippageTolerance);
+}
+
+export function useSetSlippageTolerance() {
+  const dispatch = useDispatch();
+  return useCallback(
+    (slippageTolerance: number) => {
+      dispatch(updateSlippageTolerance({ slippageTolerance }));
     },
     [dispatch],
   );

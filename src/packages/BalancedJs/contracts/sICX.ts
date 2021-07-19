@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { IconAmount, IconConverter } from 'icon-sdk-js';
+import { IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -20,27 +20,19 @@ export default class sICX extends Contract {
     return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
   }
 
-  swapBybnUSD(value: BigNumber, minimumReceive: BigNumber) {
+  swap(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
     const data = {
       method: '_swap',
-      params: { toToken: addresses[this.nid].bnusd, minimumReceive: minimumReceive.toFixed() },
+      params: { toToken: addresses[this.nid][outputSymbol.toLowerCase()], minimumReceive: minimumReceive.toFixed() },
     };
 
-    return this.transfer(
-      addresses[this.nid].dex,
-      IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop(),
-      JSON.stringify(data),
-    );
+    return this.transfer(addresses[this.nid].dex, value, JSON.stringify(data));
   }
 
   swapToICX(value: BigNumber) {
     const data = { method: '_swap_icx' };
 
-    return this.transfer(
-      addresses[this.nid].dex,
-      IconAmount.of(value.toNumber(), IconAmount.Unit.ICX).toLoop(),
-      JSON.stringify(data),
-    );
+    return this.transfer(addresses[this.nid].dex, value, JSON.stringify(data));
   }
 
   balanceOf(owner: string) {

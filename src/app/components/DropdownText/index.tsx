@@ -13,6 +13,7 @@ export const StyledArrowDownIcon = styled(ArrowDownIcon)`
 `;
 
 export const Wrapper = styled.span`
+  white-space: nowrap;
   &:hover {
     cursor: pointer;
   }
@@ -31,6 +32,7 @@ export const UnderlineText = styled.span`
   margin-bottom: -9px;
   user-select: none;
   word-break: normal;
+  cursor: pointer;
 
   &:after {
     content: '';

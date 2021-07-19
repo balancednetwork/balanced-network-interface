@@ -7,10 +7,10 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { BASE_SUPPORTED_PAIRS } from 'constants/currency';
+import { SUPPORTED_PAIRS } from 'constants/currency';
 import { PLUS_INFINITY, REWARDS_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
-import { useLoanInputAmount, useLoanBorrowedAmount } from 'store/loan/hooks';
+import { useLoanInputAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
@@ -60,7 +60,7 @@ export function useFetchRewardsInfo() {
   // calculate rewards
   React.useEffect(() => {
     // calculate rewards per pool
-    BASE_SUPPORTED_PAIRS.forEach(pair => {
+    SUPPORTED_PAIRS.forEach(pair => {
       const rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
       changeReward(pair.poolId.toString(), emission.times(rewardShare));
     });
@@ -106,6 +106,7 @@ export const useHasRewardableLiquidity = () => {
     const checkIfRewardable = async () => {
       if (account) {
         const result = await Promise.all([
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNsICX),
           await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
           await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXbnUSD),
           await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXICX),
@@ -122,28 +123,33 @@ export const useHasRewardableLiquidity = () => {
   return hasRewardableLiquidity;
 };
 
+export const useHasRewardable = () => {
+  const hasRewardableLiquidity = useHasRewardableLiquidity();
+  const hasRewardableLoan = useHasRewardableLoan();
+  return hasRewardableLiquidity || hasRewardableLoan;
+};
+
 export const useHasNetworkFees = () => {
   const { account } = useIconReact();
   const transactions = useAllTransactions();
   const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
-  const borrowedAmount = useLoanBorrowedAmount();
 
   React.useEffect(() => {
     const checkIfHasNetworkFees = async () => {
       if (account) {
-        const [hasLP, balnDetails] = await Promise.all([
+        const [hasLP1, hasLP2, balnDetails] = await Promise.all([
           bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
+          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNsICX),
           bnJs.BALN.detailsBalanceOf(account),
         ]);
 
-        if (Number(hasLP) || (Number(balnDetails['Staked balance']) && borrowedAmount.isGreaterThanOrEqualTo(50)))
-          setHasNetworkFees(true);
+        if (Number(hasLP1) || Number(hasLP2) || Number(balnDetails['Staked balance'])) setHasNetworkFees(true);
         else setHasNetworkFees(false);
       }
     };
 
     checkIfHasNetworkFees();
-  }, [account, transactions, borrowedAmount]);
+  }, [account, transactions]);
 
   return hasNetworkFees;
 };

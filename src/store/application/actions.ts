@@ -34,3 +34,7 @@ export const changeWalletType = createAction<{ walletType: WalletType }>('applic
 export const changeShouldLedgedSignMessage = createAction<{ shouldLedgerSign: boolean }>(
   'application/changeShouldLedgedSignMessage',
 );
+
+export const updateSlippageTolerance = createAction<{ slippageTolerance: number }>(
+  'application/updateSlippageTolerance',
+);

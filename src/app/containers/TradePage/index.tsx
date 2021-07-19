@@ -8,8 +8,10 @@ import { DefaultLayout } from 'app/components/Layout';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import LiquidityDetails from 'app/components/trade/LiquidityDetails';
 import LPPanel from 'app/components/trade/LPPanel';
-// import ReturnICDSection from 'app/components/trade/ReturnICDSection';
+import ReturnICDSection from 'app/components/trade/ReturnICDSection';
+import SwapDescription from 'app/components/trade/SwapDescription';
 import SwapPanel from 'app/components/trade/SwapPanel';
+import { SectionPanel } from 'app/components/trade/utils';
 import { useFetchPools } from 'store/pool/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';
@@ -29,17 +31,6 @@ export function TradePage() {
     setValue(value);
   };
 
-  // update the width on a window resize
-  const ref = React.useRef<HTMLDivElement>();
-  const [width, setWidth] = React.useState(ref?.current?.clientWidth);
-  React.useEffect(() => {
-    function handleResize() {
-      setWidth(ref?.current?.clientWidth ?? width);
-    }
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [width]);
-
   return (
     <DefaultLayout title="Trade">
       <Helmet>
@@ -54,11 +45,14 @@ export function TradePage() {
               <Tab>Supply liquidity</Tab>
             </Tabs>
 
-            {/* <ReturnICDSection /> */}
+            <ReturnICDSection />
           </Flex>
 
           <TabPanel value={value} index={0}>
-            <SwapPanel />
+            <SectionPanel bg="bg2">
+              <SwapPanel />
+              <SwapDescription />
+            </SectionPanel>
           </TabPanel>
 
           <TabPanel value={value} index={1}>

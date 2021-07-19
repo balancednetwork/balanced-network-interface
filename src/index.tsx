@@ -6,6 +6,7 @@ import * as React from 'react';
 import BigNumber from 'bignumber.js';
 import * as ReactDOM from 'react-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import * as serviceWorker from 'serviceWorker';
 
@@ -21,6 +22,7 @@ import './locales/i18n';
 
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
 
+const queryClient = new QueryClient();
 // Set the global formatting options
 const fmt = {
   prefix: '',
@@ -39,9 +41,11 @@ BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN }); // equivalent
 ReactDOM.render(
   <Provider store={store}>
     <HelmetProvider>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      </QueryClientProvider>
     </HelmetProvider>
   </Provider>,
   MOUNT_NODE,

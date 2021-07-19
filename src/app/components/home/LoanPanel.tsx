@@ -7,16 +7,15 @@ import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { CurrencyField } from 'app/components/Form';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST } from 'constants/currency';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useCollateralActionHandlers } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
@@ -27,11 +26,13 @@ import {
   useLoanUsedAmount,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
+
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   // collateral slider instance
@@ -67,7 +68,10 @@ const LoanPanel = () => {
 
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
+    [dependentField]:
+      parsedAmount[dependentField].isZero() || parsedAmount[dependentField].isNegative()
+        ? '0'
+        : parsedAmount[dependentField].toFixed(2),
   };
 
   const buttonText = borrowedAmount.isZero() ? 'Borrow' : 'Adjust';
@@ -122,7 +126,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .inject({ account })
-        .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(differenceAmount).abs())
+        .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(differenceAmount).abs(), 1)
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -163,11 +167,12 @@ const LoanPanel = () => {
 
   const usedAmount = useLoanUsedAmount();
 
-  const _totalBorrowableAmount = totalBorrowableAmount.times(0.99);
+  const _totalBorrowableAmount = BigNumber.max(totalBorrowableAmount.times(0.99), borrowedAmount);
   const percent = _totalBorrowableAmount.isZero() ? 0 : usedAmount.div(_totalBorrowableAmount).times(100).toNumber();
 
   const shouldShowLock = !usedAmount.isZero();
 
+  const hasEnoughICX = useHasEnoughICX();
   if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative()) {
     return (
       <FlexPanel bg="bg3" flexDirection="column">
@@ -248,8 +253,8 @@ const LoanPanel = () => {
               isActive
               label="Borrowed"
               tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-              value={!account ? '-' : formattedAmounts[Field.LEFT]}
-              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['bnusd']}
+              value={formattedAmounts[Field.LEFT]}
+              currency={'bnUSD'}
               onUserInput={onFieldAInput}
             />
           </Box>
@@ -260,8 +265,8 @@ const LoanPanel = () => {
               isActive={false}
               label="Available"
               tooltipText="The amount of ICX available to deposit from your wallet."
-              value={!account ? '-' : formattedAmounts[Field.RIGHT]}
-              currency={!account ? CURRENCY_LIST['empty'] : CURRENCY_LIST['bnusd']}
+              value={formattedAmounts[Field.RIGHT]}
+              currency={'bnUSD'}
               onUserInput={onFieldBInput}
             />
           </Box>
@@ -300,11 +305,14 @@ const LoanPanel = () => {
             <TextButton onClick={toggleOpen} fontSize={14}>
               Cancel
             </TextButton>
-            <Button onClick={handleLoanConfirm} fontSize={14}>
+            <Button onClick={handleLoanConfirm} fontSize={14} disabled={!hasEnoughICX}>
               {shouldBorrow ? 'Borrow' : 'Repay'}
             </Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

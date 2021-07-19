@@ -5,6 +5,7 @@
   "dependencies": {
     "@ledgerhq/hw-app-icx": "file:src/packages/hw-app-icx",
     "@ledgerhq/hw-transport": "5.48.0",
+    "@ledgerhq/hw-transport-webhid": "5.51.1",
     "@ledgerhq/hw-transport-webusb": "5.48.0",
     "@popperjs/core": "2.8.4",
     "@reach/accordion": "0.13.0",
@@ -33,6 +34,7 @@
     "bignumber.js": "9.0.1",
     "chalk": "4.1.0",
     "cross-env": "7.0.2",
+    "dayjs": "1.10.5",
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-prettier": "3.1.4",
@@ -62,6 +64,7 @@
     "react-i18next": "11.7.2",
     "react-is": "17.0.1",
     "react-popper": "2.2.4",
+    "react-query": "3.17.2",
     "react-redux": "7.2.1",
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.1",
@@ -103,6 +106,7 @@
     "prettify": "prettier --write",
     "extract-messages": "i18next-scanner --config=internals/extractMessages/i18next-scanner.config.js"
   },
+  "proxy": "https://balanced.geometry.io",
   "browserslist": {
     "production": [
       ">0.2%",

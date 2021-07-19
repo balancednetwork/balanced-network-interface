@@ -1,25 +1,26 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 import Nouislider from 'nouislider-react';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useBALNDetails } from 'store/wallet/hooks';
+import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 
 export default React.memo(function StakePanel() {
   const details = useBALNDetails();
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const totalBalance: BigNumber = React.useMemo(() => details['Total balance'] || ZERO, [details]);
@@ -103,6 +104,13 @@ export default React.memo(function StakePanel() {
       });
   };
 
+  const date = dayjs().add(3, 'days');
+  const description = shouldStake
+    ? 'Unstaking takes 3 days.'
+    : `They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('h:ma')}.`;
+
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <>
       <Typography variant="h3">Stake Balance Tokens</Typography>
@@ -168,19 +176,20 @@ export default React.memo(function StakePanel() {
             </Box>
           </Flex>
 
-          <Typography textAlign="center">
-            {shouldStake ? 'Unstaking takes 3 days.' : `You'll receive them within 3 days.`}
-          </Typography>
+          <Typography textAlign="center">{description}</Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>
               Cancel
             </TextButton>
-            <Button onClick={handleConfirm} fontSize={14}>
+            <Button onClick={handleConfirm} fontSize={14} disabled={!hasEnoughICX}>
               {shouldStake ? 'Stake' : 'Unstake'}
             </Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

@@ -8,12 +8,12 @@ import AppBar from 'app/components/AppBar';
 import Header from 'app/components/Header';
 
 const StyledHeader = styled(Header)`
-  margin-top: 50px;
-  margin-bottom: 50px;
+  margin-top: 25px;
+  margin-bottom: 25px;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin-top: 25px;
-    margin-bottom: 25px;
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    margin-top: 50px;
+    margin-bottom: 50px;
   `}
 `;
 
@@ -25,12 +25,12 @@ const Container = styled(Box)`
   min-height: 100vh;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding-left: 16px;
+  padding-right: 16px;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding-left: 16px;
-    padding-right: 16px;
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    padding-left: 40px;
+    padding-right: 40px;
   `}
 `;
 
@@ -48,19 +48,24 @@ const MobileAppBarWrapper = styled(Box)`
   position: sticky;
   margin-top: 48px;
   bottom: 24px;
+  ul {
+    box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.068), 0 6.7px 5.3px rgba(0, 0, 0, 0.096),
+      0 12.5px 10px rgba(0, 0, 0, 0.12), 0 22.3px 17.9px rgba(0, 0, 0, 0.144), 0 41.8px 33.4px rgba(0, 0, 0, 0.172),
+      0 100px 80px rgba(0, 0, 0, 0.24);
+  }
 `;
 
 export const DefaultLayout: React.FC<{ title?: string }> = props => {
   const { children, title = 'Home' } = props;
-  const below1000 = useMedia('(max-width: 1000px)');
+  const upLarge = useMedia('(min-width: 1200px)');
 
   return (
     <>
       <Container>
         <StyledHeader title={title} />
 
-        <Flex flex={[1, 1, 1, 'initial']}>
-          {!below1000 && (
+        <Flex flex={[1, 1, 1, 1, 'initial']}>
+          {upLarge && (
             <DesktopAppBarWrapper>
               <AppBar />
             </DesktopAppBarWrapper>
@@ -69,7 +74,7 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
           {children}
         </Flex>
 
-        {below1000 && (
+        {!upLarge && (
           <MobileAppBarWrapper>
             <AppBar />
           </MobileAppBarWrapper>

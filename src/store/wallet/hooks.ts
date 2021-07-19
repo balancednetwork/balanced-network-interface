@@ -7,6 +7,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -21,6 +22,7 @@ export function useWalletFetchBalances(account?: string | null) {
   const dispatch = useDispatch();
   const details = useBALNDetails();
   const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
+  const unstakingBalance: BigNumber = React.useMemo(() => details['Unstaking balance'] || new BigNumber(0), [details]);
 
   const transactions = useAllTransactions();
 
@@ -32,17 +34,16 @@ export function useWalletFetchBalances(account?: string | null) {
           bnJs.sICX.balanceOf(account),
           bnJs.bnUSD.balanceOf(account),
           bnJs.BALN.balanceOf(account),
-          bnJs.Rewards.getBalnHolding(account),
         ]).then(result => {
-          const [ICX, sICX, bnUSD, BALN, BALNreward] = result.map(v => BalancedJs.utils.toIcx(v));
+          const [ICX, sICX, bnUSD, BALN] = result.map(v => BalancedJs.utils.toIcx(v));
           dispatch(
             changeBalances({
               ICX,
               sICX,
               bnUSD,
-              BALN: BALN.minus(stakedBalance),
+              BALN: BALN.minus(stakedBalance).minus(unstakingBalance),
               BALNstaked: stakedBalance,
-              BALNreward,
+              BALNunstaking: unstakingBalance,
             }),
           );
         });
@@ -52,7 +53,7 @@ export function useWalletFetchBalances(account?: string | null) {
     };
 
     fetchBalances();
-  }, [transactions, account, stakedBalance, dispatch]);
+  }, [transactions, account, stakedBalance, unstakingBalance, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {
@@ -68,7 +69,8 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
         const temp = {};
 
         _.forEach(result, function (value, key) {
-          temp[key] = BalancedJs.utils.toIcx(value);
+          if (key === 'Unstaking time (in microseconds)') temp[key] = new BigNumber(value);
+          else temp[key] = BalancedJs.utils.toIcx(value);
         });
 
         setDetails(temp);
@@ -79,4 +81,9 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
   }, [account, transactions]);
 
   return details;
+};
+
+export const useHasEnoughICX = () => {
+  const balances = useWalletBalances();
+  return balances['ICX'].isGreaterThan(MINIMUM_ICX_AMOUNT_IN_WALLET);
 };

@@ -11,28 +11,28 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import CurrencyLogo from 'app/components/CurrencyLogo';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
-import { ReactComponent as ICXIcon } from 'assets/logos/icx.svg';
-import { ReactComponent as SICXIcon } from 'assets/logos/sicx.svg';
 import bnJs from 'bnJs';
-import { CURRENCY_LIST, BASE_SUPPORTED_PAIRS } from 'constants/currency';
+import { SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import { withdrawMessage } from './utils';
 
 export default function LiquidityDetails() {
-  const below800 = useMedia('(max-width: 800px)');
+  const upSmall = useMedia('(min-width: 800px)');
   const balances = useAvailableBalances();
 
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
@@ -51,8 +51,8 @@ export default function LiquidityDetails() {
         <DashGrid>
           <HeaderText>Pool</HeaderText>
           <HeaderText>Your supply</HeaderText>
-          {!below800 && <HeaderText>Pool share</HeaderText>}
-          {!below800 && <HeaderText>Daily rewards</HeaderText>}
+          {upSmall && <HeaderText>Pool share</HeaderText>}
+          {upSmall && <HeaderText>Daily rewards</HeaderText>}
           <HeaderText></HeaderText>
         </DashGrid>
 
@@ -70,8 +70,9 @@ const TableWrapper = styled.div``;
 
 const DashGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-template-areas: 'name supply share rewards action';
+  grid-template-columns: 4fr 5fr 3fr;
+  gap: 10px;
+  grid-template-areas: 'name supply action';
   align-items: center;
 
   & > * {
@@ -84,9 +85,9 @@ const DashGrid = styled.div`
     }
   }
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    grid-template-columns: 4fr 5fr 3fr;
-    grid-template-areas: 'name supply action';
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas: 'name supply share rewards action';
   `}
 `;
 
@@ -107,9 +108,9 @@ const ListItem = styled(DashGrid)<{ border?: boolean }>`
 `;
 
 const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => {
-  const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
+  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
-  const below800 = useMedia('(max-width: 800px)');
+  const upSmall = useMedia('(min-width: 800px)');
 
   return (
     <ListItem border={border}>
@@ -119,8 +120,8 @@ const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => 
         <br />
         {`${formatBigNumber(poolData?.suppliedQuote, 'currency')} ${pair.quoteCurrencyKey}`}
       </DataText>
-      {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
-      {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
+      {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
       <DataText>
         <WithdrawText poolId={pair.poolId} />
       </DataText>
@@ -158,9 +159,9 @@ const WithdrawText = ({ poolId }: { poolId: number }) => {
 };
 
 const PoolRecord1 = ({ border }: { border: boolean }) => {
-  const pair = BASE_SUPPORTED_PAIRS[2];
+  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
-  const below800 = useMedia('(max-width: 800px)');
+  const upSmall = useMedia('(min-width: 800px)');
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
   return (
@@ -174,8 +175,8 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
           {`${formatBigNumber(balance1?.balance1, 'currency')} ${pair.baseCurrencyKey}`}
         </Typography>
       </DataText>
-      {!below800 && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
-      {!below800 && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
+      {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
       <DataText>
         <WithdrawText poolId={pair.poolId} />
       </DataText>
@@ -185,11 +186,10 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
 
 const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   const { account } = useIconReact();
-  const pair = BASE_SUPPORTED_PAIRS[2];
+  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
   const addTransaction = useTransactionAdder();
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleCancelOrder = () => {
@@ -263,6 +263,8 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
     onClose();
   };
 
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <>
       <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
@@ -273,12 +275,12 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
         <Flex alignItems="center" justifyContent="space-between">
           <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2} mr={2}>
-            <SICXIcon width="35" height="35" />
+            <CurrencyLogo currencyKey="sICX" size={35} />
             <Typography>{balance1?.balance1?.dp(2).toFormat()} sICX</Typography>
           </OptionButton>
 
           <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1}>
-            <ICXIcon width="35" height="35" />
+            <CurrencyLogo currencyKey="ICX" size={35} />
             <Typography>{balance1?.balance.dp(2).toFormat()} ICX</Typography>
           </OptionButton>
         </Flex>
@@ -296,9 +298,14 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen1}>Cancel</TextButton>
-            <Button onClick={handleCancelOrder}>Withdraw</Button>
+            <Button onClick={handleCancelOrder} disabled={!hasEnoughICX}>
+              Withdraw
+            </Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
 
@@ -314,9 +321,14 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen2}>Cancel</TextButton>
-            <Button onClick={handleWithdrawEarnings}>Withdraw</Button>
+            <Button onClick={handleWithdrawEarnings} disabled={!hasEnoughICX}>
+              Withdraw
+            </Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>
@@ -357,12 +369,11 @@ const OptionButton = styled(Box)`
 `;
 
 const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => void }) => {
-  const pair = BASE_SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || BASE_SUPPORTED_PAIRS[0];
+  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || SUPPORTED_PAIRS[0];
   const balances = useWalletBalances();
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.poolId);
 
-  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
@@ -487,6 +498,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
     onClose();
   };
 
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <>
       <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
@@ -498,7 +511,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_A]}
             showMaxButton={false}
-            currency={CURRENCY_LIST[pair.baseCurrencyKey.toLowerCase()]}
+            currency={pair.baseCurrencyKey}
             onUserInput={handleFieldAInput}
             id="withdraw-liquidity-input"
             bg="bg5"
@@ -508,7 +521,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_B]}
             showMaxButton={false}
-            currency={CURRENCY_LIST[pair.quoteCurrencyKey.toLowerCase()]}
+            currency={pair.quoteCurrencyKey}
             onUserInput={handleFieldBInput}
             id="withdraw-liquidity-input"
             bg="bg5"
@@ -558,9 +571,14 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen}>Cancel</TextButton>
-            <Button onClick={handleWithdraw}>Withdraw</Button>
+            <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
+              Withdraw
+            </Button>
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

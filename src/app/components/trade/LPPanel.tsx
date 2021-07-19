@@ -10,7 +10,6 @@ import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
-import { CURRENCY_LIST } from 'constants/currency';
 import { MINIMUM_ICX_AMOUNT_IN_WALLET, SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
@@ -97,6 +96,7 @@ export default function LPPanel() {
   const handleSupply = () => {
     setShowSupplyConfirm(true);
     setAmounts(parsedAmounts);
+    onFieldAInput('');
   };
 
   const maxSliderAmount = useAvailableLPTokenBalance();
@@ -148,6 +148,23 @@ export default function LPPanel() {
 
   const isValid = !error;
 
+  const baseDisplay = `${formatBigNumber(
+    balances[pair.baseCurrencyKey].minus(formattedAmounts[Field.CURRENCY_A] || new BigNumber(0)),
+    'currency',
+  )} 
+    ${pair.baseCurrencyKey}`;
+
+  const quoteDisplay = `${formatBigNumber(
+    balances[pair.quoteCurrencyKey].minus(formattedAmounts[Field.CURRENCY_B] || new BigNumber(0)),
+    'currency',
+  )} 
+  ${pair.quoteCurrencyKey}`;
+
+  const walletDisplayString =
+    pair.baseCurrencyKey === 'sICX' && pair.quoteCurrencyKey === 'ICX'
+      ? `${quoteDisplay}`
+      : `${baseDisplay} / ${quoteDisplay}`;
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -161,7 +178,7 @@ export default function LPPanel() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
-              currency={CURRENCY_LIST[pair.baseCurrencyKey.toLowerCase()]}
+              currency={pair.baseCurrencyKey}
               onUserInput={onFieldAInput}
               id="supply-liquidity-input-token-a"
             />
@@ -171,18 +188,15 @@ export default function LPPanel() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               showMaxButton={false}
-              currency={CURRENCY_LIST[pair.quoteCurrencyKey.toLowerCase()]}
+              currency={pair.quoteCurrencyKey}
               onUserInput={onFieldBInput}
               id="supply-liquidity-input-token-b"
             />
           </Flex>
 
           <Typography mt={3} textAlign="right">
-            {`Wallet: 
-              ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} 
-              ${pair.baseCurrencyKey} /  
-              ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} 
-              ${pair.quoteCurrencyKey}`}
+            Wallet:&nbsp;
+            {walletDisplayString}
           </Typography>
 
           {account && !maxSliderAmount.dp(2).isZero() && (
@@ -223,7 +237,10 @@ export default function LPPanel() {
           </Flex>
         </BrightPanel>
 
-        <LPDescription />
+        <LPDescription
+          baseSuplying={new BigNumber(formattedAmounts[Field.CURRENCY_A])}
+          quoteSupplying={new BigNumber(formattedAmounts[Field.CURRENCY_B])}
+        />
       </SectionPanel>
 
       <SupplyLiquidityModal isOpen={showSupplyConfirm} onClose={handleSupplyConfirmDismiss} parsedAmounts={amounts} />

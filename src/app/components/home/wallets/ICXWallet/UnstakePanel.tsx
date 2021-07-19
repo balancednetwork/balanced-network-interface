@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
@@ -10,21 +10,17 @@ import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
 
 export default function UnstakePanel() {
-  const [portion, setPortion] = React.useState(ZERO);
-
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const sliderInstance = React.useRef<any>(null);
+  // to detect if transaction change and reload cliamableICX
+  const transactions = useAllTransactions();
+  const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
 
   const { account } = useIconReact();
-
-  const wallet = useWalletBalances();
 
   // modal logic
   const [open, setOpen] = React.useState(false);
@@ -32,42 +28,27 @@ export default function UnstakePanel() {
   const toggleOpen = () => {
     setOpen(!open);
   };
+  const addTransaction = useTransactionAdder();
 
-  const beforeAmount = wallet['sICX'];
-
-  const differenceAmount = wallet['sICX'].times(portion);
-
-  const afterAmount = beforeAmount.minus(differenceAmount);
-
-  // const addTransaction = useTransactionAdder();
-
-  const handleUnstake = () => {
+  const handleUnstake = async () => {
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
 
-    // bnJs
-    //   .inject({ account })
-    //   .sICX.unstake(BalancedJs.utils.toLoop(differenceAmount))
-    //   .then(res => {
-    //     if (res.result) {
-    //       addTransaction(
-    //         { hash: res.result },
-    //         {
-    //           pending: `Preparing to unstake sICX...`,
-    //           summary: `Unstaking ${differenceAmount.dp(2).toFormat()} sICX. Check ICX in your wallet for details.`,
-    //         },
-    //       );
-    //       toggleOpen();
-    //       setPortion(ZERO);
-    //       sliderInstance?.current?.noUiSlider.set(0);
-    //     } else {
-    //       console.error(res);
-    //     }
-    //   })
-    //   .finally(() => {
-    //     changeShouldLedgerSign(false);
-    //   });
+    try {
+      const res = await bnJs.inject({ account }).Staking.claimICX();
+      console.log(res);
+      toggleOpen();
+      addTransaction(
+        { hash: res.result },
+        {
+          pending: `Claiming ICX...`,
+          summary: `Claimed ${claimableICX.toNumber()} ICX.`,
+        },
+      );
+    } catch (ex) {}
+
+    changeShouldLedgerSign(false);
   };
 
   const [unstakingAmount, setUnstakingAmount] = React.useState<BigNumber>(new BigNumber(0));
@@ -85,7 +66,16 @@ export default function UnstakePanel() {
     };
 
     fetchUserUnstakeInfo();
-  }, [account]);
+  }, [account, transactions]);
+
+  useEffect(() => {
+    (async () => {
+      if (account) {
+        const result = await bnJs.Staking.getClaimableICX(account);
+        setClaimableICX(BalancedJs.utils.toIcx(result));
+      }
+    })();
+  }, [account, transactions]);
 
   return (
     <>
@@ -95,7 +85,7 @@ export default function UnstakePanel() {
 
       {!unstakingAmount.isZero() ? (
         <>
-          <Typography>Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
+          <Typography mb="1">Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
 
           <Typography variant="p">{unstakingAmount.dp(2).toFormat()} ICX unstaking</Typography>
         </>
@@ -103,13 +93,17 @@ export default function UnstakePanel() {
         <Typography>There's no ICX unstaking.</Typography>
       )}
 
-      <Typography mt="1" fontSize={16} color="#fff">
-        2000 ICX is ready to claim
-      </Typography>
+      {claimableICX.isGreaterThan(0) && (
+        <Typography mt="1" fontSize={16} color="#fff">
+          {claimableICX.toFixed(2)} ICX is ready to claim
+        </Typography>
+      )}
 
-      <Flex mt={5}>
-        <Button onClick={toggleOpen}>Claim ICX</Button>
-      </Flex>
+      {claimableICX.isGreaterThan(0) && (
+        <Flex mt={5}>
+          <Button onClick={toggleOpen}>Claim ICX</Button>
+        </Flex>
+      )}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
@@ -118,21 +112,21 @@ export default function UnstakePanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.dp(2).toFormat()} ICX
+            {claimableICX.toFixed(2)} ICX
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(2).toFormat()} ICX
+                0 ICX
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(2).toFormat()} ICX
+                {claimableICX.toFixed(2)} ICX
               </Typography>
             </Box>
           </Flex>

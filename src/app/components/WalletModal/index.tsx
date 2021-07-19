@@ -296,6 +296,8 @@ export default function WalletModal() {
       <LedgerAddressList
         isOpen={showLedgerAddress}
         onDismiss={() => {
+          if (isLedgerLoading) return;
+
           updateShowledgerAddress(false);
           bnJs.contractSettings.ledgerSettings.transport.close();
         }}

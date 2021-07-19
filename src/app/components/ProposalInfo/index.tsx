@@ -65,7 +65,7 @@ export default function ProposalInfo(props) {
       </Typography>
       <ContentText>{normalizeContent(content)}</ContentText>
       <Divider />
-      <Flex as="span">
+      <Flex alignItems="center">
         <CalendarIcon height="22" width="22" style={{ marginRight: '5px' }} />
         <Typography variant="content" color="white" mr="20px">
           {`${Math.floor(dayjs.duration(timestamp).asDays())} days, ${

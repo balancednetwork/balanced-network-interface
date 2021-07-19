@@ -109,7 +109,7 @@ export function ProposalPage() {
           <Typography variant="h2" mb="20px">
             {title}
           </Typography>
-          <Flex as="span" mb="22px">
+          <Flex alignItems="center" mb="22px">
             <CalendarIcon height="22" width="22" style={{ marginRight: '5px' }} />
             <Typography variant="content" color="white" mr="20px">
               {`${Math.floor(dayjs.duration(fetchedData?.metadata?.timestamp).asDays())} days, ${
@@ -125,7 +125,7 @@ export function ProposalPage() {
               {`${fetchedData?.metadata?.voters} voters`}
             </Typography>
           </Flex>
-          <Flex as="span" sx={{ verticalAlign: 'center', lineHeight: '20px' }}>
+          <Flex alignItems="center">
             <Typography fontWeight="bold" variant="p" mr="5px">
               Approve
             </Typography>
@@ -148,7 +148,7 @@ export function ProposalPage() {
               </Button>
             </Column>
           </StatsContainer>
-          <Flex as="span" sx={{ verticalAlign: 'center', lineHeight: '20px' }}>
+          <Flex alignItems="center">
             <Typography fontWeight="bold" variant="p" mr="5px">
               Reject
             </Typography>
@@ -188,7 +188,7 @@ export function ProposalPage() {
           <Typography variant="p" mb="20px">
             {fetchedData?.content}
           </Typography>
-          <Flex as="span">
+          <Flex alignItems="center">
             <Typography variant="p" mr="5px" color="primaryBright" style={{ cursor: 'pointer' }}>
               Discussion
             </Typography>

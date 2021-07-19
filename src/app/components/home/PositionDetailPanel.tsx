@@ -226,7 +226,7 @@ const PositionDetailPanel = () => {
               disabled={true}
               id="slider-risk"
               direction="rtl"
-              start={[Math.min(isPassAllCollateralLocked ? 150 : currentRatio.toNumber(), 900)]}
+              start={[Math.min(currentRatio.toNumber(), 900)]}
               connect={[true, false]}
               range={{
                 min: [150],

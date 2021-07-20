@@ -97,7 +97,7 @@ export const CurrencyField: React.FC<{
   return (
     <Flex id={id} flexDirection="column">
       <Flex alignItems="center">
-        <Flex>
+        <Flex alignItems="center">
           <CheckBox isActive={isActive} mr={2} />
           <Typography as="label" htmlFor={label} unselectable="on" sx={{ userSelect: 'none' }}>
             {label}{' '}

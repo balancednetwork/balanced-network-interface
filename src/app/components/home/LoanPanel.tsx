@@ -31,6 +31,7 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import Tooltip from '../Tooltip';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
@@ -202,6 +203,10 @@ const LoanPanel = () => {
     );
   }
 
+  const currentValue = parseFloat(formattedAmounts[Field.LEFT]);
+
+  const isLessThanMinimum = currentValue > 0 && currentValue < 10;
+
   return (
     <>
       <BoxPanel bg="bg3">
@@ -217,7 +222,13 @@ const LoanPanel = () => {
             {isAdjusting ? (
               <>
                 <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
-                <Button onClick={toggleOpen} fontSize={14}>
+                <Button
+                  disabled={
+                    borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue > 0
+                  }
+                  onClick={toggleOpen}
+                  fontSize={14}
+                >
                   Confirm
                 </Button>
               </>
@@ -258,15 +269,34 @@ const LoanPanel = () => {
 
         <Flex justifyContent="space-between">
           <Box width={[1, 1 / 2]} mr={4}>
-            <CurrencyField
-              editable={isAdjusting}
-              isActive
-              label="Borrowed"
-              tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-              value={formattedAmounts[Field.LEFT]}
-              currency={'bnUSD'}
-              onUserInput={onFieldAInput}
-            />
+            {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
+              <Tooltip
+                containerStyle={{ width: 'auto' }}
+                placement="bottom"
+                text="10 bnUSD minimum"
+                show={isLessThanMinimum}
+              >
+                <CurrencyField
+                  editable={isAdjusting}
+                  isActive
+                  label="Borrowed"
+                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                  value={formattedAmounts[Field.LEFT]}
+                  currency={'bnUSD'}
+                  onUserInput={onFieldAInput}
+                />
+              </Tooltip>
+            ) : (
+              <CurrencyField
+                editable={isAdjusting}
+                isActive
+                label="Borrowed"
+                tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                value={formattedAmounts[Field.LEFT]}
+                currency={'bnUSD'}
+                onUserInput={onFieldAInput}
+              />
+            )}
           </Box>
 
           <Box width={[1, 1 / 2]} ml={4}>

@@ -24,5 +24,3 @@ generated-cra-app
 template
 .env
 .eslintcache
-
-# trigger deploy 2

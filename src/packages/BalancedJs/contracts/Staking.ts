@@ -40,4 +40,22 @@ export default class Staking extends Contract {
 
     return this.call(callParams);
   }
+
+  getClaimableICX(address: string) {
+    const callParams = this.paramsBuilder({
+      method: 'claimableICX',
+      params: {
+        _address: address,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  claimICX() {
+    const callParams = this.transactionParamsBuilder({
+      method: 'claimUnstakedICX',
+    });
+    return this.callICONPlugins(callParams);
+  }
 }

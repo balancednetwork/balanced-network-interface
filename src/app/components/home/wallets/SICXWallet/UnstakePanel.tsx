@@ -150,9 +150,7 @@ export default function UnstakePanel() {
           </Flex>
 
           <Typography textAlign="center">
-            You'll receive ICX as soon as it becomes available.
-            <br />
-            Track the unstaking progress from the ICX tab.
+            Takes up to 7 days. When it's ready, go to ICX {'>'} Unstaking in the Wallet section to claim it.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

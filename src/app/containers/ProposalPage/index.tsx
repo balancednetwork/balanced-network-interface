@@ -8,15 +8,17 @@ import styled from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
+import { Column } from 'app/components/Column';
 import { DefaultLayout } from 'app/components/Layout';
 import { ProposalModal } from 'app/components/ProposalModal';
-import { Typography } from 'app/theme';
+import { theme, Typography } from 'app/theme';
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 
 dayjs.extend(duration);
+const themes = theme();
 const title = 'Distribute more BALN to the DAO fund by reducing the BALN for loans and liquidity pools.';
 const content = `
 Too much income is being given back to people who use Balanced. While incentivization is good, we need to prevent Balanced from becoming a platform that people use purely to earn rewards.\nTo make sure Balanced has enough income in its treasury to cover ongoing costs, like security audits, a higher bug bounty, marketing initiatives, projects that utilize Balanced’s functionality, and so on, we should redirect some of the BALN allocated to borrowers and liquidity providers to the DAO fund instead.
@@ -59,13 +61,7 @@ const StatsContainer = styled.span`
   flex: 1;
 `;
 
-const Column = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const Bar = styled.div`
+const Progress = styled(Flex)`
   position: relative;
   height: 15px;
   width: 100%;
@@ -75,21 +71,14 @@ const Bar = styled.div`
   margin-bottom: 15px;
 `;
 
-const ApproveFill = styled.div<{ percentage: string }>`
-  background: ${({ theme }) => theme.colors.primary};
+const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
+  background: ${props =>
+    (props.type === 'Approve' && themes.colors.primary) || (props.type === 'Reject' && themes.colors.alert)};
   height: 100%;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   transition: width 0.2s ease-in;
-  width: ${props => `${props.percentage}%`};
-`;
-
-const RejectFill = styled.div<{ percentage: string }>`
-  background: ${({ theme }) => theme.colors.alert};
-  height: 100%;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  transition: width 0.2s ease-in;
+  justify-content: center;
   width: ${props => `${props.percentage}%`};
 `;
 
@@ -129,18 +118,18 @@ export function ProposalPage() {
             <Typography fontWeight="bold" variant="p" mr="5px">
               Approve
             </Typography>
-            <Typography opacity="0.85" mr="5px" sx={{ fontWeight: 'bold' }}>
+            <Typography opacity="0.85" mr="5px" fontWeight="bold">
               {fetchedData?.metadata?.approvePercentage}%
             </Typography>
-            <Typography opacity="0.85" sx={{ fontWeight: 'bold' }}>
+            <Typography opacity="0.85" fontWeight="bold">
               (67% required)
             </Typography>
           </Flex>
           <StatsContainer>
             <Column sx={{ flexGrow: '1' }}>
-              <Bar>
-                <ApproveFill percentage={`${fetchedData?.metadata?.approvePercentage}`} />
-              </Bar>
+              <Progress>
+                <ProgressBar percentage={`${fetchedData?.metadata?.approvePercentage}`} type={'Approve'} />
+              </Progress>
             </Column>
             <Column sx={{ textAlign: 'right' }}>
               <Button ml="20px" width="150px" onClick={() => setIsApproveModalVisible(true)}>
@@ -152,15 +141,15 @@ export function ProposalPage() {
             <Typography fontWeight="bold" variant="p" mr="5px">
               Reject
             </Typography>
-            <Typography opacity="0.85" mr="5px" sx={{ fontWeight: 'bold' }}>
+            <Typography opacity="0.85" mr="5px" fontWeight="bold">
               {fetchedData?.metadata?.rejectPercentage}%
             </Typography>
           </Flex>
           <StatsContainer>
             <Column sx={{ flexGrow: '1' }}>
-              <Bar>
-                <RejectFill percentage={`${fetchedData?.metadata?.rejectPercentage}`} />
-              </Bar>
+              <Progress>
+                <ProgressBar percentage={`${fetchedData?.metadata?.rejectPercentage}`} type={'Reject'} />
+              </Progress>
             </Column>
             <Column sx={{ textAlign: 'right', justifyContent: 'center' }}>
               <AlertButton ml="20px" width="150px" color="red" onClick={() => setIsRejectModalVisible(true)}>

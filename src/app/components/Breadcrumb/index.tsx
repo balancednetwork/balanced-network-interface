@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Flex, Link } from 'rebass/styled-components';
+import { Link } from 'react-router-dom';
+import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from '../../theme';
+import { Typography } from 'app/theme';
 
 interface BreadcrumbProps {
   title: string;
@@ -23,6 +24,7 @@ const BreadcrumbLink = styled(Link)`
 
 const LocationText = styled(Typography)`
   color: ${({ theme }) => theme.colors.primaryBright};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.bg1};
   padding-bottom: 5px;
   :hover,
   :focus {
@@ -36,7 +38,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
 
   return (
     <BreadcrumbRow>
-      <BreadcrumbLink href={locationPath}>
+      <BreadcrumbLink to={{ pathname: locationPath }}>
         <LocationText variant="p">{locationText}</LocationText>
       </BreadcrumbLink>
       <Typography variant="p" mr="10px" ml="10px">

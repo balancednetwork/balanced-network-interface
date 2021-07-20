@@ -111,7 +111,7 @@ export default React.memo(function AppBar() {
           </StyledNavLink>
         </ListItem>
         <ListItem>
-          <StyledNavLink exact to="/vote" className={location.pathname.startsWith('/vote') ? 'ACTIVE' : ''}>
+          <StyledNavLink to="/vote">
             <VoteIcon width="30" height="35" />
             <Text>Vote</Text>
           </StyledNavLink>

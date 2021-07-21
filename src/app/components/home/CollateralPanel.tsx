@@ -233,7 +233,7 @@ const CollateralPanel = () => {
               max: [totalICXAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : totalICXAmount.dp(2).toNumber()],
             }}
             instanceRef={instance => {
-              if (instance && !sliderInstance.current) {
+              if (instance) {
                 sliderInstance.current = instance;
               }
             }}
@@ -244,7 +244,6 @@ const CollateralPanel = () => {
         <Flex justifyContent="space-between">
           <Box width={[1, 1 / 2]} mr={4}>
             <CurrencyField
-              id="staked-icx-amount"
               editable={isAdjusting}
               isActive
               label="Deposited"
@@ -257,23 +256,22 @@ const CollateralPanel = () => {
                   withdraw it.
                 </>
               }
-              value={!account ? '-' : formattedAmounts[Field.LEFT]}
+              value={formattedAmounts[Field.LEFT]}
               currency={'ICX'}
-              maxValue={totalICXAmount.toNumber().toFixed(2)}
+              maxValue={totalICXAmount}
               onUserInput={onFieldAInput}
             />
           </Box>
 
           <Box width={[1, 1 / 2]} ml={4}>
             <CurrencyField
-              id="unstaked-icx-amount"
               editable={isAdjusting}
               isActive={false}
               label="Wallet"
               tooltipText="The amount of ICX available to deposit from your wallet."
-              value={!account ? '-' : formattedAmounts[Field.RIGHT]}
+              value={formattedAmounts[Field.RIGHT]}
               currency={'ICX'}
-              maxValue={totalICXAmount.toNumber().toFixed(2)}
+              maxValue={totalICXAmount}
               onUserInput={onFieldBInput}
             />
           </Box>

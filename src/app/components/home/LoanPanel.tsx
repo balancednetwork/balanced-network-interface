@@ -224,7 +224,7 @@ const LoanPanel = () => {
                 <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
                 <Button
                   disabled={
-                    borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue > 0
+                    borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
                   }
                   onClick={toggleOpen}
                   fontSize={14}

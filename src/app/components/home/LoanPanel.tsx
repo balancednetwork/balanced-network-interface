@@ -259,7 +259,7 @@ const LoanPanel = () => {
               ],
             }}
             instanceRef={instance => {
-              if (instance && !sliderInstance.current) {
+              if (instance) {
                 sliderInstance.current = instance;
               }
             }}

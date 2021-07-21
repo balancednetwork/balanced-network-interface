@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -94,7 +94,6 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
 `;
 
 export default React.memo(function AppBar() {
-  const location = useLocation();
   return (
     <Navigation>
       <List>

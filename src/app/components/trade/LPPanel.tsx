@@ -199,27 +199,27 @@ export default function LPPanel() {
             />
           </Flex>
 
-          <Tooltip
+          {/* <Tooltip
             style={{ zIndex: 1000 }}
             show={showMinimumTooltip}
             text={`10 ${pair.quoteCurrencyKey} minimum`}
             containerStyle={{ width: 'auto' }}
+          > */}
+          <Flex
+            mt={3}
+            sx={{
+              position: 'relative',
+            }}
           >
-            <Flex
-              mt={3}
-              sx={{
-                position: 'relative',
-              }}
-            >
-              <CurrencyInputPanel
-                value={formattedAmounts[Field.CURRENCY_B]}
-                showMaxButton={false}
-                currency={pair.quoteCurrencyKey}
-                onUserInput={onFieldBInput}
-                id="supply-liquidity-input-token-b"
-              />
-            </Flex>
-          </Tooltip>
+            <CurrencyInputPanel
+              value={formattedAmounts[Field.CURRENCY_B]}
+              showMaxButton={false}
+              currency={pair.quoteCurrencyKey}
+              onUserInput={onFieldBInput}
+              id="supply-liquidity-input-token-b"
+            />
+          </Flex>
+          {/* </Tooltip> */}
 
           <Typography mt={3} textAlign="right">
             Wallet:&nbsp;
@@ -253,7 +253,12 @@ export default function LPPanel() {
           )}
           <Flex justifyContent="center">
             {isValid ? (
-              <Button disabled={showMinimumTooltip} color="primary" marginTop={5} onClick={handleSupply}>
+              <Button
+                // disabled={showMinimumTooltip}
+                color="primary"
+                marginTop={5}
+                onClick={handleSupply}
+              >
                 Supply
               </Button>
             ) : (

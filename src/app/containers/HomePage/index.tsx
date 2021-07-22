@@ -50,23 +50,6 @@ export function HomePage() {
     <DefaultLayout>
       <Helmet>
         <title>Home</title>
-        <meta
-          name="description"
-          content="Deposit ICX as collateral, borrow tokens pegged to real-world assets, and earn rewards for it."
-        />
-        <meta property="og:title" content="Home | Balanced" />
-        <meta
-          property="og:description"
-          content="Deposit ICX as collateral, borrow tokens pegged to real-world assets, and earn rewards for it."
-        />
-        <meta property="og:image" content={window.location.origin + '/img-preview/home.png'} />
-        <meta name="twitter:title" content="Home | Balanced" />
-        <meta
-          name="twitter:description"
-          content="Deposit ICX as collateral, borrow tokens pegged to real-world assets, and earn rewards for it."
-        />
-        <meta name="twitter:image:src" content={window.location.origin + '/img-preview/home.png'} />
-        <meta name="twitter:image:alt" content="Screenshot of the Balanced 'Home' page." />
       </Helmet>
 
       {account ? (

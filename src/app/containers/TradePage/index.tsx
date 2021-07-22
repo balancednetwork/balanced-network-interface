@@ -44,24 +44,6 @@ export function TradePage() {
     <DefaultLayout title="Trade">
       <Helmet>
         <title>Trade</title>
-        <meta
-          name="description"
-          content="Swap assets, supply liquidity, and find arbitrage opportunities on the decentralized exchange."
-        />
-        <meta property="og:title" content="Trade | Balanced" />
-        <meta
-          property="og:description"
-          content="Swap assets, supply liquidity, and find arbitrage opportunities on the decentralized exchange."
-        />
-        <meta property="og:image" content={window.location.origin + '/img-preview/trade.png'} />
-        <meta property="og:url" content={window.location.origin + '/trade'} />
-        <meta name="twitter:title" content="Trade | Balanced" />
-        <meta
-          name="twitter:description"
-          content="Swap assets, supply liquidity, and find arbitrage opportunities on the decentralized exchange."
-        />
-        <meta name="twitter:image:src" content={window.location.origin + '/img-preview/trade.png'} />
-        <meta name="twitter:image:alt" content="Screenshot of the Balanced 'Trade' page." />
       </Helmet>
 
       <Box flex={1}>

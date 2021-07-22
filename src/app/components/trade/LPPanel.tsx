@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import Tooltip from 'app/components/Tooltip';
+// import Tooltip from 'app/components/Tooltip';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import { MINIMUM_ICX_AMOUNT_IN_WALLET, SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
@@ -175,10 +175,10 @@ export default function LPPanel() {
       : `${baseDisplay} / ${quoteDisplay}`;
 
   const issICXICXPool = pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX;
-  const showMinimumTooltip = account
-    ? parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') > 0 &&
-      parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') < 10
-    : false;
+  // const showMinimumTooltip = account
+  //   ? parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') > 0 &&
+  //     parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') < 10
+  //   : false;
 
   return (
     <>

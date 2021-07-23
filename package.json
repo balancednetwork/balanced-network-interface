@@ -124,7 +124,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
-      "yarn run eslint --fix"
+      "yarn run eslint --max-warnings=0"
     ],
     "*.{md,json}": [
       "prettier --write"

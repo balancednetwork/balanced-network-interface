@@ -1,12 +1,13 @@
 import React, { useCallback, useState } from 'react';
 
+import { isIOS } from 'react-device-detect';
 import styled from 'styled-components';
 
 import Popover, { PopoverProps } from '../Popover';
 
 const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean }>`
   ${({ theme }) => theme.mediaWidth.smartPhone`
-    ${props => props.small && ' width: 165px;  font-size: 12px; padding: 11px;'}
+    ${props => props.small && ' width: 156px;  font-size: 12px; padding: 11px;'}
   `}
 
   width: ${props => (props.wide ? '300px' : '244px')};
@@ -42,7 +43,7 @@ export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show
   const close = useCallback(() => setShow(false), [setShow]);
   return (
     <Tooltip {...rest} show={show}>
-      <div onMouseEnter={open} onMouseLeave={close}>
+      <div onClick={open} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
         {children}
       </div>
     </Tooltip>

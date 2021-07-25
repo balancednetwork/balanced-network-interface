@@ -3,6 +3,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { isIOS } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -170,7 +171,7 @@ const PositionDetailPanel = () => {
       <BoxPanel bg="bg2" flex={1}>
         <Typography variant="h3">
           Risk ratio{' '}
-          <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
+          <QuestionWrapper onClick={open} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
             <QuestionIcon width={14} style={{ marginTop: -5 }} />
           </QuestionWrapper>
         </Typography>

@@ -5,9 +5,11 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Flex, Box } from 'rebass/styled-components';
+import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+// import Tooltip from 'app/components/Tooltip';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import { MINIMUM_ICX_AMOUNT_IN_WALLET, SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
@@ -71,6 +73,13 @@ const useCalculateLPToken = (baseValue: string, quoteValue: string): BigNumber =
     return ZERO;
   }
 };
+
+const Slider = styled(Box)`
+  margin-top: 40px;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+     margin-top: 25px;
+  `}
+`;
 
 export default function LPPanel() {
   const { account } = useIconReact();
@@ -165,6 +174,12 @@ export default function LPPanel() {
       ? `${quoteDisplay}`
       : `${baseDisplay} / ${quoteDisplay}`;
 
+  const issICXICXPool = pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX;
+  // const showMinimumTooltip = account
+  //   ? parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') > 0 &&
+  //     parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') < 10
+  //   : false;
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -174,7 +189,7 @@ export default function LPPanel() {
             <LiquiditySelect />
           </Flex>
 
-          <Flex mt={3} hidden={pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX}>
+          <Flex mt={3} hidden={issICXICXPool}>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
@@ -184,7 +199,18 @@ export default function LPPanel() {
             />
           </Flex>
 
-          <Flex mt={3}>
+          {/* <Tooltip
+            style={{ zIndex: 1000 }}
+            show={showMinimumTooltip}
+            text={`10 ${pair.quoteCurrencyKey} minimum`}
+            containerStyle={{ width: 'auto' }}
+          > */}
+          <Flex
+            mt={3}
+            sx={{
+              position: 'relative',
+            }}
+          >
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               showMaxButton={false}
@@ -193,6 +219,7 @@ export default function LPPanel() {
               id="supply-liquidity-input-token-b"
             />
           </Flex>
+          {/* </Tooltip> */}
 
           <Typography mt={3} textAlign="right">
             Wallet:&nbsp;
@@ -200,7 +227,7 @@ export default function LPPanel() {
           </Typography>
 
           {account && !maxSliderAmount.dp(2).isZero() && (
-            <Box mt={5}>
+            <Slider mt={5}>
               <Nouislider
                 id="slider-supply"
                 disabled={maxSliderAmount.dp(2).isZero()}
@@ -222,11 +249,16 @@ export default function LPPanel() {
                 }}
                 onSlide={handleSlider}
               />
-            </Box>
+            </Slider>
           )}
           <Flex justifyContent="center">
             {isValid ? (
-              <Button color="primary" marginTop={5} onClick={handleSupply}>
+              <Button
+                // disabled={showMinimumTooltip}
+                color="primary"
+                marginTop={5}
+                onClick={handleSupply}
+              >
                 Supply
               </Button>
             ) : (

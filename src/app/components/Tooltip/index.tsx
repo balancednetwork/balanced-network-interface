@@ -22,13 +22,14 @@ interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: React.ReactNode;
   wide?: boolean;
   small?: boolean;
+  containerStyle?: React.CSSProperties;
 }
 
-export default function Tooltip({ text, wide, small, ...rest }: TooltipProps) {
+export default function Tooltip({ text, wide, small, containerStyle, ...rest }: TooltipProps) {
   return (
     <Popover
       content={
-        <TooltipContainer wide={wide} small={small}>
+        <TooltipContainer style={containerStyle} wide={wide} small={small}>
           {text}
         </TooltipContainer>
       }

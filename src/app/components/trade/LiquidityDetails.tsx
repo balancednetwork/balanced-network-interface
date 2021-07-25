@@ -21,14 +21,16 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import Spinner from '../Spinner';
 import { withdrawMessage } from './utils';
 
 export default function LiquidityDetails() {
@@ -190,9 +192,13 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   const addTransaction = useTransactionAdder();
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
+  const shouldLedgerSign = useShouldLedgerSign();
+
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleCancelOrder = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -214,11 +220,15 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
         console.error('error', e);
       })
       .finally(() => {
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+
         changeShouldLedgerSign(false);
       });
   };
 
   const handleWithdrawEarnings = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -240,13 +250,15 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
   const [open1, setOpen1] = React.useState(false);
   const toggleOpen1 = () => {
+    if (shouldLedgerSign) return;
+
     setOpen1(!open1);
-    changeShouldLedgerSign(false);
   };
   const handleOption1 = () => {
     toggleOpen1();
@@ -255,8 +267,9 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
   const [open2, setOpen2] = React.useState(false);
   const toggleOpen2 = () => {
+    if (shouldLedgerSign) return;
+
     setOpen2(!open2);
-    changeShouldLedgerSign(false);
   };
   const handleOption2 = () => {
     toggleOpen2();
@@ -297,10 +310,15 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen1}>Cancel</TextButton>
-            <Button onClick={handleCancelOrder} disabled={!hasEnoughICX}>
-              Withdraw
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen1}>Cancel</TextButton>
+                <Button onClick={handleCancelOrder} disabled={!hasEnoughICX}>
+                  Withdraw
+                </Button>
+              </>
+            )}
           </Flex>
 
           <LedgerConfirmMessage />
@@ -320,10 +338,15 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen2}>Cancel</TextButton>
-            <Button onClick={handleWithdrawEarnings} disabled={!hasEnoughICX}>
-              Withdraw
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen2}>Cancel</TextButton>
+                <Button onClick={handleWithdrawEarnings} disabled={!hasEnoughICX}>
+                  Withdraw
+                </Button>
+              </>
+            )}
           </Flex>
 
           <LedgerConfirmMessage />
@@ -374,6 +397,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.poolId);
 
+  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
@@ -444,8 +468,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
     setOpen(!open);
-    changeShouldLedgerSign(false);
   };
 
   const { account } = useIconReact();
@@ -453,6 +477,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
 
   const handleWithdraw = () => {
     if (!account) return;
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
@@ -489,6 +514,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
         console.error('error', e);
       })
       .finally(() => {
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+
         changeShouldLedgerSign(false);
       });
   };
@@ -570,10 +597,15 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen}>Cancel</TextButton>
-            <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
-              Withdraw
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen}>Cancel</TextButton>
+                <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
+                  Withdraw
+                </Button>
+              </>
+            )}
           </Flex>
 
           <LedgerConfirmMessage />

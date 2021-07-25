@@ -204,11 +204,11 @@ const getValuesAndSymbols = (tx: Transaction) => {
       return { amount1, amount2: amount2, symbol1: 'ICX', symbol2: 'sICX' };
     }
     case 'SupplyICX':
-    case 'cancelSicxicxOrder':
-    case 'CollateralReceived': {
+    case 'cancelSicxicxOrder': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'ICX', symbol2: '' };
     }
+    case 'CollateralReceived':
     case 'ClaimSicxEarnings': {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };

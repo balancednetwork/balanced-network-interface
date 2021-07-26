@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { CURRENCY } from 'constants/currency';
+import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -66,22 +67,7 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
   return details;
 };
 
-export const useClaimableRewards = (): BigNumber | undefined => {
-  const { account } = useIconReact();
-  const transactions = useAllTransactions();
-  const [rewards, setRewards] = React.useState<BigNumber | undefined>();
-
-  React.useEffect(() => {
-    const fetchRewards = async () => {
-      if (account) {
-        const result = await bnJs.Rewards.getBalnHolding(account);
-
-        setRewards(BalancedJs.utils.toIcx(result));
-      }
-    };
-
-    fetchRewards();
-  }, [account, transactions]);
-
-  return rewards;
+export const useHasEnoughICX = () => {
+  const balances = useWalletBalances();
+  return balances['ICX'].isGreaterThan(MINIMUM_ICX_AMOUNT_IN_WALLET);
 };

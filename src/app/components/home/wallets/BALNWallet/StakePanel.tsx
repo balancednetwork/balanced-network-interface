@@ -1,26 +1,30 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { format, add } from 'date-fns';
+import dayjs from 'dayjs';
 import Nouislider from 'nouislider-react';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useBALNDetails } from 'store/wallet/hooks';
+import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default React.memo(function StakePanel() {
   const details = useBALNDetails();
 
   const shouldLedgerSign = useShouldLedgerSign();
+
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const totalBalance: BigNumber = React.useMemo(() => details['Total balance'] || ZERO, [details]);
@@ -55,6 +59,7 @@ export default React.memo(function StakePanel() {
   // modal
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
     setOpen(!open);
   };
 
@@ -67,6 +72,8 @@ export default React.memo(function StakePanel() {
 
   const { account } = useIconReact();
   const handleConfirm = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -101,13 +108,16 @@ export default React.memo(function StakePanel() {
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
-  const date = add(new Date(), { days: 3 });
+  const date = dayjs().add(3, 'days');
   const description = shouldStake
     ? 'Unstaking takes 3 days.'
-    : `They'll unstake on ${date && format(date, 'MMM d')}, around ${date && format(date, 'h:maaa')}.`;
+    : `They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('h:ma')}.`;
+
+  const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
@@ -177,14 +187,22 @@ export default React.memo(function StakePanel() {
           <Typography textAlign="center">{description}</Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Cancel
-            </TextButton>
-            <Button onClick={handleConfirm} fontSize={14}>
-              {shouldStake ? 'Stake' : 'Unstake'}
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Cancel
+                </TextButton>
+                <Button onClick={handleConfirm} fontSize={14} disabled={!hasEnoughICX}>
+                  {shouldStake ? 'Stake' : 'Unstake'}
+                </Button>
+              </>
+            )}
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

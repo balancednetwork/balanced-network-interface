@@ -10,7 +10,7 @@ export default class Rewards extends Contract {
     this.address = addresses[this.nid].rewards;
   }
 
-  async claimRewards() {
+  claimRewards() {
     const payload = this.transactionParamsBuilder({
       method: 'claimRewards',
     });

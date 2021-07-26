@@ -106,6 +106,7 @@ export const useHasRewardableLiquidity = () => {
     const checkIfRewardable = async () => {
       if (account) {
         const result = await Promise.all([
+          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNsICX),
           await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
           await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXbnUSD),
           await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXICX),
@@ -120,6 +121,12 @@ export const useHasRewardableLiquidity = () => {
   }, [account]);
 
   return hasRewardableLiquidity;
+};
+
+export const useHasRewardable = () => {
+  const hasRewardableLiquidity = useHasRewardableLiquidity();
+  const hasRewardableLoan = useHasRewardableLoan();
+  return hasRewardableLiquidity || hasRewardableLoan;
 };
 
 export const useHasNetworkFees = () => {

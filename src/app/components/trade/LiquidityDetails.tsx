@@ -12,8 +12,8 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
@@ -25,9 +25,12 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import Spinner from '../Spinner';
 import { withdrawMessage } from './utils';
 
 export default function LiquidityDetails() {
@@ -190,9 +193,12 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
   const shouldLedgerSign = useShouldLedgerSign();
+
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleCancelOrder = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -214,11 +220,15 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
         console.error('error', e);
       })
       .finally(() => {
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+
         changeShouldLedgerSign(false);
       });
   };
 
   const handleWithdrawEarnings = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -240,13 +250,15 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
   const [open1, setOpen1] = React.useState(false);
   const toggleOpen1 = () => {
+    if (shouldLedgerSign) return;
+
     setOpen1(!open1);
-    changeShouldLedgerSign(false);
   };
   const handleOption1 = () => {
     toggleOpen1();
@@ -255,13 +267,16 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
   const [open2, setOpen2] = React.useState(false);
   const toggleOpen2 = () => {
+    if (shouldLedgerSign) return;
+
     setOpen2(!open2);
-    changeShouldLedgerSign(false);
   };
   const handleOption2 = () => {
     toggleOpen2();
     onClose();
   };
+
+  const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
@@ -295,10 +310,20 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen1}>Cancel</TextButton>
-            <Button onClick={handleCancelOrder}>Withdraw</Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen1}>Cancel</TextButton>
+                <Button onClick={handleCancelOrder} disabled={!hasEnoughICX}>
+                  Withdraw
+                </Button>
+              </>
+            )}
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
 
@@ -313,10 +338,20 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen2}>Cancel</TextButton>
-            <Button onClick={handleWithdrawEarnings}>Withdraw</Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen2}>Cancel</TextButton>
+                <Button onClick={handleWithdrawEarnings} disabled={!hasEnoughICX}>
+                  Withdraw
+                </Button>
+              </>
+            )}
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>
@@ -433,8 +468,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
     setOpen(!open);
-    changeShouldLedgerSign(false);
   };
 
   const { account } = useIconReact();
@@ -442,6 +477,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
 
   const handleWithdraw = () => {
     if (!account) return;
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
@@ -478,6 +514,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
         console.error('error', e);
       })
       .finally(() => {
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+
         changeShouldLedgerSign(false);
       });
   };
@@ -486,6 +524,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
     toggleOpen();
     onClose();
   };
+
+  const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
@@ -557,10 +597,20 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen}>Cancel</TextButton>
-            <Button onClick={handleWithdraw}>Withdraw</Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen}>Cancel</TextButton>
+                <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
+                  Withdraw
+                </Button>
+              </>
+            )}
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

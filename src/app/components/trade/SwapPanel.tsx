@@ -9,8 +9,8 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
 import { DropdownPopper } from 'app/components/Popover';
@@ -30,9 +30,13 @@ import {
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
 import { CurrencyKey, Price } from 'types';
 import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import Spinner from '../Spinner';
 import { BrightPanel, swapMessage } from './utils';
 
 export default function SwapPanel() {
@@ -98,6 +102,8 @@ export default function SwapPanel() {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleSwapConfirmDismiss = () => {
+    if (shouldLedgerSign) return;
+
     setShowSwapConfirm(false);
     changeShouldLedgerSign(false);
   };
@@ -118,6 +124,7 @@ export default function SwapPanel() {
 
   const handleSwapConfirm = async () => {
     if (!trade || !account) return;
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
@@ -152,6 +159,7 @@ export default function SwapPanel() {
             console.error('error', e);
           })
           .finally(() => {
+            window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
             changeShouldLedgerSign(false);
           });
       } else {
@@ -174,6 +182,7 @@ export default function SwapPanel() {
             console.error('error', e);
           })
           .finally(() => {
+            window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
             changeShouldLedgerSign(false);
           });
       }
@@ -203,6 +212,7 @@ export default function SwapPanel() {
           console.error('error', e);
         })
         .finally(() => {
+          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
           changeShouldLedgerSign(false);
         });
     }
@@ -220,6 +230,9 @@ export default function SwapPanel() {
   const closeDropdown = () => {
     setAnchor(null);
   };
+
+  const hasEnoughICX = useHasEnoughICX();
+
   return (
     <>
       <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -380,10 +393,20 @@ export default function SwapPanel() {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
-            <Button onClick={handleSwapConfirm}>Swap</Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
+                <Button onClick={handleSwapConfirm} disabled={!hasEnoughICX}>
+                  Swap
+                </Button>
+              </>
+            )}
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

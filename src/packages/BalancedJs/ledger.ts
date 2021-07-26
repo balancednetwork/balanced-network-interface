@@ -25,5 +25,3 @@ export class Ledger {
     };
   }
 }
-
-export const ledgerConfirmAlert = msg => window.confirm(msg);

@@ -9,6 +9,7 @@ export const Link = styled.a`
   position: relative;
   padding-bottom: 3px;
   margin-bottom: -9px;
+  cursor: pointer;
 
   &:after {
     content: '';

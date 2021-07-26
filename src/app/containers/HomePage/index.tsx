@@ -9,6 +9,7 @@ import CollateralPanel from 'app/components/home/CollateralPanel';
 import LoanPanel from 'app/components/home/LoanPanel';
 import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
 import RewardsPanel from 'app/components/home/RewardsPanel';
+import TransactionPanel from 'app/components/home/TransactionPanel';
 import WalletPanel from 'app/components/home/WalletPanel';
 import { DefaultLayout } from 'app/components/Layout';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
@@ -27,8 +28,8 @@ const Grid = styled.div`
   ${({ theme }) => theme.mediaWidth.upMedium`
     grid-gap: 50px;
     margin-bottom: 50px;
-    grid-template-columns: 1fr 1fr;    
-  `}
+    grid-template-columns: 1fr 1fr;
+  `};
 `;
 
 const SignInMessage = styled(Box)`
@@ -61,6 +62,7 @@ export function HomePage() {
           <PositionDetailPanel />
           <WalletPanel />
           <RewardsPanel />
+          <TransactionPanel />
         </Grid>
       ) : (
         <SignInMessage>Sign in to use the Home page.</SignInMessage>

@@ -64,7 +64,7 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
       <Container>
         <StyledHeader title={title} />
 
-        <Flex flex={[1, 1, 1, 'initial']}>
+        <Flex flex={[1, 1, 1, 1, 'initial']}>
           {upLarge && (
             <DesktopAppBarWrapper>
               <AppBar />

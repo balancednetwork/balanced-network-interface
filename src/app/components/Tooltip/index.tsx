@@ -16,10 +16,20 @@ const TooltipContainer = styled.div<{ wide?: boolean }>`
 interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: React.ReactNode;
   wide?: boolean;
+  containerStyle?: React.CSSProperties;
 }
 
-export default function Tooltip({ text, wide, ...rest }: TooltipProps) {
-  return <Popover content={<TooltipContainer wide={wide}>{text}</TooltipContainer>} {...rest} />;
+export default function Tooltip({ text, wide, containerStyle, ...rest }: TooltipProps) {
+  return (
+    <Popover
+      content={
+        <TooltipContainer style={containerStyle} wide={wide}>
+          {text}
+        </TooltipContainer>
+      }
+      {...rest}
+    />
+  );
 }
 
 export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show'>) {

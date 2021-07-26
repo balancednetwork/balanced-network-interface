@@ -1,8 +1,5 @@
 import React from 'react';
 
-import axios from 'axios';
-import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -10,16 +7,19 @@ import { Button } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
+import { getTradePair, isQueue } from 'constants/currency';
+import { usePriceChartDataQuery } from 'queries/swap';
+import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { formatBigNumber } from 'utils';
+import { formatBigNumber, generateChartData } from 'utils';
 
 export default function SwapDescription() {
   const { currencyKeys, price } = useDerivedSwapInfo();
 
-  const [chartOption, setChartOption] = React.useState({
+  const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({
     type: CHART_TYPES.AREA,
-    period: CHART_PERIODS['5m'],
+    period: CHART_PERIODS['1H'],
   });
 
   // update the width on a window resize
@@ -34,62 +34,29 @@ export default function SwapDescription() {
     return () => window.removeEventListener('resize', handleResize);
   }, [width]);
 
-  const [data, setData] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const priceChartQuery = usePriceChartDataQuery(currencyKeys, chartOption.period);
+  const data = priceChartQuery.data;
+  const loading = priceChartQuery.isLoading;
 
-  const loadChartData = React.useCallback(
-    ({ interval, inputSymbol, outputSymbol }: { interval: string; inputSymbol: string; outputSymbol: string }) => {
-      setLoading(true);
-      try {
-        axios
-          .get(
-            `https://balanced.techiast.com:8069/api/v1/chart/lines?symbol=${
-              inputSymbol === 'bnusd' || inputSymbol === 'icx' ? outputSymbol + inputSymbol : inputSymbol + outputSymbol
-            }&interval=${interval}&limit=500&order=desc`,
-          )
-          .then(res => {
-            const { data: d } = res;
-            let t = d.map(item => ({
-              time: item.time,
-              value:
-                inputSymbol === 'bnusd' || inputSymbol === 'icx'
-                  ? 1 / BalancedJs.utils.toIcx(new BigNumber(item.price)).toNumber()
-                  : BalancedJs.utils.toIcx(new BigNumber(item.price)).toNumber(),
-            }));
+  const ratio = useRatio();
+  const data1: any = React.useMemo(() => generateChartData(ratio.sICXICXratio, currencyKeys), [
+    ratio.sICXICXratio,
+    currencyKeys,
+  ]);
 
-            if (!t.length) {
-              console.log('No chart data, switch to others trading pairs');
-              return;
-            }
-            setData(t);
-            setLoading(false);
-          });
-      } catch (e) {
-        console.error(e);
-        setData([]);
-        setLoading(false);
-      }
-    },
-    [],
-  );
+  const [pair] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const interval: string = event.currentTarget.value;
-    loadChartData({
-      inputSymbol: currencyKeys[Field.INPUT]?.toLowerCase() || '',
-      outputSymbol: currencyKeys[Field.OUTPUT]?.toLowerCase() || '',
-      interval: interval.toLowerCase(),
-    });
     setChartOption({
       ...chartOption,
-      period: interval,
+      period: event.currentTarget.value as CHART_PERIODS,
     });
   };
 
   const handleChartTypeChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
       ...chartOption,
-      type: event.currentTarget.value,
+      type: event.currentTarget.value as CHART_TYPES,
     });
   };
 
@@ -108,7 +75,7 @@ export default function SwapDescription() {
             </span>
           </Typography>
         </Box>
-        <Box width={[1, 1 / 2]} marginTop={[3, 0]} style={{ display: 'none' }}>
+        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={pair && isQueue(pair)}>
           <ChartControlGroup mb={2}>
             {Object.keys(CHART_PERIODS).map(key => (
               <ChartControlButton
@@ -124,29 +91,48 @@ export default function SwapDescription() {
           </ChartControlGroup>
 
           <ChartControlGroup>
-            <ChartControlButton
-              key={CHART_TYPES.AREA}
-              type="button"
-              value={CHART_TYPES.AREA}
-              onClick={handleChartTypeChange}
-              active={chartOption.type === CHART_TYPES.AREA}
-            >
-              {CHART_TYPES.AREA}
-            </ChartControlButton>
+            {Object.keys(CHART_TYPES).map(key => (
+              <ChartControlButton
+                key={key}
+                type="button"
+                value={CHART_TYPES[key]}
+                onClick={handleChartTypeChange}
+                active={chartOption.type === CHART_TYPES[key]}
+              >
+                {CHART_TYPES[key]}
+              </ChartControlButton>
+            ))}
           </ChartControlGroup>
         </Box>
       </Flex>
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        mt={3}
-        style={{ height: 'calc(100% - 60px)', marginTop: '0px' }}
-      >
-        Chart coming soon.
-      </Flex>
+
       {chartOption.type === CHART_TYPES.AREA && (
-        <ChartContainer ref={ref} style={{ display: 'none' }}>
-          {loading ? <Spinner centered /> : <TradingViewChart data={data} width={width} type={CHART_TYPES.AREA} />}
+        <ChartContainer ref={ref}>
+          {loading ? (
+            <Spinner centered />
+          ) : (
+            <TradingViewChart
+              data={pair && !isQueue(pair) ? data : data1}
+              volumeData={pair && !isQueue(pair) ? data : data1}
+              width={width}
+              type={CHART_TYPES.AREA}
+            />
+          )}
+        </ChartContainer>
+      )}
+
+      {chartOption.type === CHART_TYPES.CANDLE && (
+        <ChartContainer ref={ref}>
+          {loading ? (
+            <Spinner centered />
+          ) : (
+            <TradingViewChart
+              data={pair && !isQueue(pair) ? data : data1}
+              volumeData={pair && !isQueue(pair) ? data : data1}
+              width={width}
+              type={CHART_TYPES.CANDLE}
+            />
+          )}
         </ChartContainer>
       )}
     </Box>
@@ -164,6 +150,10 @@ const ChartControlButton = styled(Button)<{ active: boolean }>`
   :hover {
     background-color: ${({ theme }) => theme.colors.primary};
   }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 1px 12px;
+  `}
 `;
 
 const ChartControlGroup = styled(Box)`

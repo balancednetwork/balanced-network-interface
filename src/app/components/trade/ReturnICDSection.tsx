@@ -9,9 +9,9 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
 import Divider from 'app/components/Divider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
@@ -20,9 +20,12 @@ import { ONE } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import Spinner from '../Spinner';
 import { retireMessage } from './utils';
 
 const Grid = styled.div`
@@ -83,14 +86,9 @@ const ReturnICDSection = () => {
     setAnchor(null);
   };
 
-  //
-  const upSmall = useMedia('(max-width: 800px)');
-
-  if (upSmall) {
-    return null;
-  }
-
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
+
     setOpen(!open);
   };
 
@@ -106,10 +104,11 @@ const ReturnICDSection = () => {
 
   const handleRetireDismiss = () => {
     setOpen(false);
-    changeShouldLedgerSign(false);
   };
 
   const handleRetireConfirm = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -132,9 +131,19 @@ const ReturnICDSection = () => {
         console.error('error', e);
       })
       .finally(() => {
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         changeShouldLedgerSign(false);
       });
   };
+
+  const hasEnoughICX = useHasEnoughICX();
+
+  // disable retire bnUSD feature in small screens
+  const upSmall = useMedia('(max-width: 800px)');
+
+  if (upSmall) {
+    return null;
+  }
 
   return (
     <>
@@ -217,10 +226,20 @@ const ReturnICDSection = () => {
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleRetireDismiss}>Cancel</TextButton>
-            <Button onClick={handleRetireConfirm}>Confirm</Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={handleRetireDismiss}>Cancel</TextButton>
+                <Button onClick={handleRetireConfirm} disabled={!hasEnoughICX}>
+                  Confirm
+                </Button>
+              </>
+            )}
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

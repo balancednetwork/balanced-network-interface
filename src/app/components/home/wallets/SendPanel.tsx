@@ -9,17 +9,20 @@ import { Flex, Box } from 'rebass/styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button, TextButton } from 'app/components/Button';
+import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { CurrencyAmount, CurrencyKey } from 'types';
 import { maxAmountSpend } from 'utils';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Grid, MaxButton } from './utils';
 
@@ -27,6 +30,7 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
   const [value, setValue] = React.useState('');
 
   const shouldLedgerSign = useShouldLedgerSign();
+
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleCurrencyInput = (value: string) => {
@@ -54,6 +58,8 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
+
     setOpen(!open);
   };
 
@@ -66,6 +72,8 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
   const addTransaction = useTransactionAdder();
 
   const handleSend = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
@@ -91,6 +99,7 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
@@ -99,6 +108,8 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
     differenceAmount.isNegative() ||
     differenceAmount.isZero() ||
     differenceAmount.isGreaterThan(maxAmount);
+
+  const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
@@ -160,14 +171,22 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Cancel
-            </TextButton>
-            <Button onClick={handleSend} fontSize={14}>
-              Send
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Cancel
+                </TextButton>
+                <Button onClick={handleSend} fontSize={14} disabled={!hasEnoughICX}>
+                  Send
+                </Button>
+              </>
+            )}
           </Flex>
-          {shouldLedgerSign && <ShouldLedgerConfirmMessage />}
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
     </>

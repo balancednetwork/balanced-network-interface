@@ -1,40 +1,64 @@
 import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
-import { Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import { Flex, Box } from 'rebass/styled-components';
 
-import { Button } from 'app/components/Button';
-import ShouldLedgerConfirmMessage from 'app/components/DepositStakeMessage';
-import Divider from 'app/components/Divider';
+import { Button, TextButton } from 'app/components/Button';
+import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
-import { BoxPanel, FlexPanel } from 'app/components/Panel';
+import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { addressToCurrencyKeyMap } from 'constants/currency';
 import { ZERO } from 'constants/index';
+import { useUserCollectedFeesQuery, useRewardQuery, BATCH_SIZE, usePlatformDayQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useRatio } from 'store/ratio/hooks';
-import { useHasRewardableLoan, useHasRewardableLiquidity, useHasNetworkFees } from 'store/reward/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useClaimableRewards } from 'store/wallet/hooks';
+import { useHasNetworkFees, useHasRewardable } from 'store/reward/hooks';
+import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { showMessageOnBeforeUnload } from 'utils/messages';
+
+import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import Spinner from '../Spinner';
 
 const RewardsPanel = () => {
+  return (
+    <div>
+      <BoxPanel bg="bg2">
+        <Flex alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h2">Rewards</Typography>
+        </Flex>
+
+        <Flex>
+          <RewardSection />
+          <NetworkFeeSection />
+        </Flex>
+
+        <LedgerConfirmMessage mt={5} />
+      </BoxPanel>
+    </div>
+  );
+};
+
+export default RewardsPanel;
+
+const RewardSection = () => {
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
-
   const shouldLedgerSign = useShouldLedgerSign();
+
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const handleClaim = () => {
-    if (!account) return;
+  const handleRewardClaim = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
 
     bnJs
-      .inject({ account: account })
+      .inject({ account })
       .Rewards.claimRewards()
       .then(res => {
         addTransaction(
@@ -44,6 +68,7 @@ const RewardsPanel = () => {
             pending: 'Claiming rewards...',
           },
         );
+        setRewardTx(res.result);
         toggleOpen();
       })
       .catch(e => {
@@ -51,128 +76,278 @@ const RewardsPanel = () => {
       })
       .finally(() => {
         changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
-  const reward = useClaimableRewards() || ZERO;
+  const rewardQuery = useRewardQuery();
+  const reward = rewardQuery.data;
 
-  const ratio = useRatio();
+  const hasRewardable = useHasRewardable();
 
-  const rewardAmountByUSD = reward.multipliedBy(ratio.BALNbnUSDratio);
+  const [rewardTx, setRewardTx] = React.useState('');
+  const rewardTxStatus = useTransactionStatus(rewardTx);
+  React.useEffect(() => {
+    if (rewardTxStatus === TransactionStatus.success) rewardQuery.refetch();
+  }, [rewardTxStatus, rewardQuery]);
 
-  const hasRewardableLoan = useHasRewardableLoan();
-
-  const hasRewardableLiquidity = useHasRewardableLiquidity();
-
-  const hasNetworkFees = useHasNetworkFees();
-
-  // stake new balance tokens modal
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
+    if (shouldLedgerSign) return;
     setOpen(!open);
   };
 
-  if (!hasRewardableLoan && !hasRewardableLiquidity && reward.isZero() && !hasNetworkFees) {
-    return (
-      <div>
-        <FlexPanel bg="bg2" flexDirection="column">
-          <Typography variant="h2" mb={5}>
-            Rewards
+  const getRewardsUI = () => {
+    if (!hasRewardable && reward?.isZero()) {
+      return (
+        <>
+          <Typography variant="p" as="div">
+            Ineligible
+            <QuestionHelper text="To earn Balanced rewards, take out a loan or supply liquidity on the Trade page." />
           </Typography>
-
-          <Flex flex={1} justifyContent="center" alignItems="center" minHeight={100}>
-            <Typography textAlign="center">
-              To earn Balanced rewards, take out a loan <br />
-              or supply liquidity on the Trade page.
+        </>
+      );
+    } else if (reward?.isZero()) {
+      return (
+        <>
+          <Typography variant="p" as="div">
+            Pending
+            <QuestionHelper text="To earn Balanced rewards, take out a loan or supply liquidity on the Trade page." />
+          </Typography>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Typography variant="p">
+            {`${reward?.dp(2).toFormat()} `}
+            <Typography as="span" color="text1">
+              BALN
             </Typography>
-          </Flex>
-        </FlexPanel>
-      </div>
-    );
-  }
+          </Typography>
+          <Button mt={2} onClick={toggleOpen}>
+            Claim
+          </Button>
+        </>
+      );
+    }
+  };
+
+  const hasEnoughICX = useHasEnoughICX();
+
+  const balances = useWalletBalances();
+
+  const beforeAmount = balances['BALN'].plus(balances['BALNstaked']);
+
+  const afterAmount = beforeAmount.plus(reward || ZERO);
 
   return (
-    <div>
-      <BoxPanel bg="bg2">
-        <Typography variant="h2" mb={5}>
-          Rewards
-        </Typography>
+    <Flex flex={1} flexDirection="column" alignItems="center" className="border-right">
+      <Typography variant="p" mb={2}>
+        Balance Tokens
+      </Typography>
+      {reward && getRewardsUI()}
 
-        <RewardGrid>
-          <Row>
-            <Typography variant="p">Balance Tokens</Typography>
-            <Typography variant="p">
-              {!account ? '-' : reward.isZero() ? 'Pending' : `${reward.dp(2).toFormat()} BALN`}
-            </Typography>
-          </Row>
-
-          <Row>
-            <Typography variant="p" as="div">
-              Network fees
-              <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
-            </Typography>
-            <Typography variant="p">{!account ? '-' : hasNetworkFees ? 'Eligible' : 'Ineligible'}</Typography>
-          </Row>
-
-          {!reward.isZero() && (
-            <>
-              <Divider />
-
-              <Row>
-                <Typography variant="p" fontWeight="bold">
-                  Total
-                </Typography>
-                <Typography variant="p" fontWeight="bold">
-                  {`$${rewardAmountByUSD.dp(2).toFormat()}`}
-                </Typography>
-              </Row>
-            </>
-          )}
-        </RewardGrid>
-
-        {!reward.isZero() && (
-          <Flex alignItems="center" justifyContent="center" mt={3}>
-            <Button onClick={handleClaim}>Claim rewards</Button>
-          </Flex>
-        )}
-        {shouldLedgerSign && (
-          <>
-            <Row mt={3} /> <ShouldLedgerConfirmMessage />
-          </>
-        )}
-      </BoxPanel>
-
-      {/* Stake new Balance Tokens Modal */}
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb={1}>
-            Stake new Balance Tokens
+            Claim Balance Tokens?
           </Typography>
 
-          <Typography variant="p" textAlign="center" fontSize={19}>
-            Stake your new BALN from your wallet to accrue rewards from network fees.
+          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
+            {reward?.dp(2).toFormat() + ' BALN'}
+          </Typography>
+
+          <Flex my={5}>
+            <Box width={1 / 2} className="border-right">
+              <Typography textAlign="center">Before</Typography>
+              <Typography variant="p" textAlign="center">
+                {beforeAmount.dp(2).toFormat() + ' BALN'}
+              </Typography>
+            </Box>
+
+            <Box width={1 / 2}>
+              <Typography textAlign="center">After</Typography>
+              <Typography variant="p" textAlign="center">
+                {afterAmount.dp(2).toFormat() + ' BALN'}
+              </Typography>
+            </Box>
+          </Flex>
+
+          <Typography textAlign="center">
+            To earn network fees, stake BALN from your wallet and/or supply it to a liquidity pool.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <Button onClick={toggleOpen} fontSize={14}>
-              Close
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Not now
+                </TextButton>
+                <Button onClick={handleRewardClaim} fontSize={14} disabled={!hasEnoughICX}>
+                  Claim
+                </Button>
+              </>
+            )}
           </Flex>
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
-    </div>
+    </Flex>
   );
 };
 
-export default RewardsPanel;
+const NetworkFeeSection = () => {
+  const { account, networkId } = useIconReact();
+  const [feeTx, setFeeTx] = React.useState('');
+  const shouldLedgerSign = useShouldLedgerSign();
 
-const RewardGrid = styled.div`
-  display: grid;
-  grid-template-rows: auto;
-  grid-gap: 20px;
-`;
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
+  const addTransaction = useTransactionAdder();
+  const handleFeeClaim = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-const Row = styled(Flex)`
-  align-items: flex-start;
-  justify-content: space-between;
-`;
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
+    const start = feesIndex * BATCH_SIZE + 1;
+    const end = start + BATCH_SIZE - 1 < platformDay ? start + BATCH_SIZE - 1 : 0;
+
+    bnJs
+      .inject({ account })
+      .Dividends.claim(start, end)
+      .then(res => {
+        addTransaction(
+          { hash: res.result }, //
+          {
+            summary: `Claimed fees.`,
+            pending: 'Claiming fees...',
+          },
+        );
+        setFeeTx(res.result);
+        toggleOpen();
+      })
+      .catch(e => {
+        console.error('error', e);
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+      });
+  };
+
+  const feeTxStatus = useTransactionStatus(feeTx);
+  React.useEffect(() => {
+    if (feeTxStatus === TransactionStatus.success) feesQuery.refetch();
+  });
+
+  const hasNetworkFees = useHasNetworkFees();
+  const { data: platformDay = 0 } = usePlatformDayQuery();
+  const feesQuery = useUserCollectedFeesQuery(1, platformDay);
+  const feesArr = feesQuery.data;
+  const fees = feesArr?.find(fees => fees);
+  const feesIndex = feesArr?.findIndex(fees => fees) || 0;
+  const hasFee = !!fees;
+  const count = feesArr?.reduce((c, v) => (v ? ++c : c), 0);
+
+  const [open, setOpen] = React.useState(false);
+  const toggleOpen = () => {
+    if (shouldLedgerSign) return;
+
+    setOpen(!open);
+  };
+
+  const hasEnoughICX = useHasEnoughICX();
+
+  const getNetworkFeesUI = () => {
+    if (hasNetworkFees && !hasFee) {
+      return (
+        <Typography variant="p" as="div">
+          Pending
+          <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
+        </Typography>
+      );
+    } else if (hasFee) {
+      return (
+        <>
+          {fees &&
+            Object.keys(fees)
+              .filter(key => !fees[key].isZero())
+              .map(key => (
+                <Typography key={key} variant="p">
+                  {`${fees[key].dp(2).toFormat()}`}{' '}
+                  <Typography key={key} as="span" color="text1">
+                    {addressToCurrencyKeyMap[networkId][key]}
+                  </Typography>
+                </Typography>
+              ))}
+
+          <Button mt={2} onClick={toggleOpen}>
+            {count && count > 1 ? `Claim (1 of ${count})` : 'Claim'}
+          </Button>
+        </>
+      );
+    } else {
+      return (
+        <Typography variant="p" as="div">
+          Ineligible
+          <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
+        </Typography>
+      );
+    }
+  };
+
+  return (
+    <Flex flex={1} flexDirection="column" alignItems="center">
+      <Typography variant="p" mb={2} as="div">
+        Network fees
+      </Typography>
+      {getNetworkFeesUI()}
+
+      <Modal isOpen={open} onDismiss={toggleOpen}>
+        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+          <Typography textAlign="center" mb={1}>
+            Claim network fees?
+          </Typography>
+
+          <Flex flexDirection="column" alignItems="center" mt={2}>
+            {fees &&
+              Object.keys(fees)
+                .filter(key => !fees[key].isZero())
+                .map(key => (
+                  <Typography key={key} variant="p">
+                    {`${fees[key].dp(2).toFormat()}`}{' '}
+                    <Typography key={key} as="span" color="text1">
+                      {addressToCurrencyKeyMap[networkId][key]}
+                    </Typography>
+                  </Typography>
+                ))}
+          </Flex>
+
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Not now
+                </TextButton>
+                <Button onClick={handleFeeClaim} fontSize={14} disabled={!hasEnoughICX}>
+                  Claim
+                </Button>
+              </>
+            )}
+          </Flex>
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
+        </Flex>
+      </Modal>
+    </Flex>
+  );
+};

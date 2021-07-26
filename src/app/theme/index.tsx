@@ -67,6 +67,8 @@ export function theme(): DefaultTheme {
 
       // alert
       alert: '#fb6a6a',
+
+      paginationButtonBG: '#087083',
     },
 
     fontSizes: [12, 14, 16, 20, 25, 35],
@@ -639,5 +641,23 @@ export const ThemedGlobalStyle = createGlobalStyle`
   }
   #slider-risk[disabled].noUi-horizontal .noUi-connect {
     background: #144a68;
+  }
+
+  /* scrollbar */
+  .scrollbar {
+    overflow-y: auto;
+  }
+  .scrollbar-primary {
+    scrollbar-color: #2ca9b7 #144a68;
+  }
+  .scrollbar-primary::-webkit-scrollbar {
+    border-radius: 10px;
+    width: 10px;
+    background-color: #144a68; 
+  }
+  .scrollbar-primary::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    background-color: #2ca9b7; 
   }
 `;

@@ -17,6 +17,7 @@ import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
 import { shortenAddress } from 'utils';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import 'styles/airdrip.css';
 
@@ -104,6 +105,7 @@ export function Airdrip() {
   const txs = useAllTransactions();
   const handleClaim = async () => {
     if (data && account && details) {
+      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
       try {
         const res = await bnJs
           .inject({ account })
@@ -117,6 +119,8 @@ export function Airdrip() {
         );
       } catch (e) {
         console.error(e);
+      } finally {
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       }
     }
   };

@@ -183,7 +183,7 @@ export function useLoanActionHandlers() {
 
   const onSlide = React.useCallback(
     (values: string[], handle: number) => {
-      dispatch(type({ typedValue: values[handle], inputType: 'slider' }));
+      dispatch(type({ independentField: Field.LEFT, typedValue: values[handle], inputType: 'slider' }));
     },
     [dispatch],
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { timeStamp } from 'console';
@@ -70,7 +70,7 @@ enum Period {
   'all' = 'All time',
 }
 
-const PERIODS = [Period.day, Period.week, Period.month];
+const PERIODS = [Period.day, Period.week, Period.month, Period.all];
 
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
@@ -78,6 +78,7 @@ const PositionDetailPanel = () => {
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
   const [show, setShow] = React.useState<boolean>(false);
+  const [timestamp, setTimeStamp] = useState(dayjs().subtract(1, 'day').unix());
 
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
@@ -88,11 +89,7 @@ const PositionDetailPanel = () => {
   // Rebalancing section
   const loanTotalRepaid = useLoanTotalRepaid();
   const collateralTotalSold = useLoanTotalCollateralSold();
-  const updateLoanTotalRepaid = useLoanFetchTotalRepaid();
-
-  React.useEffect(() => {
-    updateLoanTotalRepaid(dayjs().subtract(1, 'day').unix());
-  }, [updateLoanTotalRepaid]);
+  useLoanFetchTotalRepaid(timestamp);
 
   // loan
   const loanInputAmount = useLoanInputAmount();
@@ -143,7 +140,7 @@ const PositionDetailPanel = () => {
         break;
       default:
     }
-    updateLoanTotalRepaid(timestamp);
+    setTimeStamp(timestamp);
   };
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
@@ -287,18 +284,14 @@ const PositionDetailPanel = () => {
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (
-                        <MenuItem key={p} onClick={() => handlePeriod(p)}>
+                        <MenuItem
+                          className={p === Period.all ? 'border-top' : ''}
+                          key={p}
+                          onClick={() => handlePeriod(p)}
+                        >
                           {p}
                         </MenuItem>
                       ))}
-                      <MenuItem
-                        style={{
-                          borderTop: `0.5px solid rgba(255, 255, 255, 0.15)`,
-                        }}
-                        onClick={() => handlePeriod(Period.all)}
-                      >
-                        {Period.all}
-                      </MenuItem>
                     </MenuList>
                   </DropdownPopper>
                 </div>

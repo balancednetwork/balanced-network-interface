@@ -1,10 +1,9 @@
 import React from 'react';
 
-import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -15,7 +14,6 @@ import { useRatio } from 'store/ratio/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { getAPIEnpoint } from 'utils';
 
 import { AppState } from '..';
 import {
@@ -120,11 +118,12 @@ export function useLoanFetchInfo(account?: string | null) {
   }, [fetchLoanInfo, account, transactions]);
 }
 
-export function useLoanFetchTotalRepaid(): (timestamp?: number) => void {
+export function useLoanFetchTotalRepaid(timestamp: number) {
   const { account } = useIconReact();
   const dispatch = useDispatch();
-  return React.useCallback(
-    async timestamp => {
+  useQuery(
+    [account, timestamp],
+    async () => {
       try {
         const res = await queryRebalanced({
           address: account,
@@ -145,7 +144,9 @@ export function useLoanFetchTotalRepaid(): (timestamp?: number) => void {
         console.error(e);
       }
     },
-    [dispatch, account],
+    {
+      enabled: !!account,
+    },
   );
 }
 

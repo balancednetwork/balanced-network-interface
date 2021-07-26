@@ -128,7 +128,7 @@ export function useLoanFetchTotalRepaid(timestamp: number) {
         const res = await queryRebalanced({
           address: account,
           symbol: 'bnUSD',
-          timestamp,
+          timestamp: timestamp * 1_000_000, // convert to microsecond
         });
 
         const { loan_repaid, collateral_sold } = res.data || {};

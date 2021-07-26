@@ -94,7 +94,8 @@ const LoanPanel = () => {
   //after
   const afterAmount = parsedAmount[Field.LEFT];
   //difference = after-before
-  const differenceAmount = afterAmount.minus(beforeAmount);
+  const differenceAmount = afterAmount.minus(beforeAmount.toFixed(2));
+
   //whether if repay or borrow
   const shouldBorrow = differenceAmount.isPositive();
   //borrow fee

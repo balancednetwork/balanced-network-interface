@@ -12,10 +12,11 @@ import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
+import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useCollateralActionHandlers } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
@@ -27,11 +28,15 @@ import {
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import Tooltip from '../Tooltip';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
+
+  const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
@@ -79,7 +84,10 @@ const LoanPanel = () => {
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
 
-  const toggleOpen = () => setOpen(!open);
+  const toggleOpen = () => {
+    if (shouldLedgerSign) return;
+    setOpen(!open);
+  };
 
   //before
   const beforeAmount = borrowedAmount;
@@ -95,6 +103,7 @@ const LoanPanel = () => {
 
   const handleLoanConfirm = () => {
     if (!account) return;
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
@@ -122,6 +131,7 @@ const LoanPanel = () => {
         })
         .finally(() => {
           changeShouldLedgerSign(false);
+          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     } else {
       bnJs
@@ -145,6 +155,7 @@ const LoanPanel = () => {
         })
         .finally(() => {
           changeShouldLedgerSign(false);
+          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     }
   };
@@ -192,6 +203,10 @@ const LoanPanel = () => {
     );
   }
 
+  const currentValue = parseFloat(formattedAmounts[Field.LEFT]);
+
+  const isLessThanMinimum = currentValue > 0 && currentValue < 10;
+
   return (
     <>
       <BoxPanel bg="bg3">
@@ -207,7 +222,13 @@ const LoanPanel = () => {
             {isAdjusting ? (
               <>
                 <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
-                <Button onClick={toggleOpen} fontSize={14}>
+                <Button
+                  disabled={
+                    borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
+                  }
+                  onClick={toggleOpen}
+                  fontSize={14}
+                >
                   Confirm
                 </Button>
               </>
@@ -238,7 +259,7 @@ const LoanPanel = () => {
               ],
             }}
             instanceRef={instance => {
-              if (instance && !sliderInstance.current) {
+              if (instance) {
                 sliderInstance.current = instance;
               }
             }}
@@ -248,15 +269,34 @@ const LoanPanel = () => {
 
         <Flex justifyContent="space-between">
           <Box width={[1, 1 / 2]} mr={4}>
-            <CurrencyField
-              editable={isAdjusting}
-              isActive
-              label="Borrowed"
-              tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-              value={formattedAmounts[Field.LEFT]}
-              currency={'bnUSD'}
-              onUserInput={onFieldAInput}
-            />
+            {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
+              <Tooltip
+                containerStyle={{ width: 'auto' }}
+                placement="bottom"
+                text="10 bnUSD minimum"
+                show={isLessThanMinimum}
+              >
+                <CurrencyField
+                  editable={isAdjusting}
+                  isActive
+                  label="Borrowed"
+                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                  value={formattedAmounts[Field.LEFT]}
+                  currency={'bnUSD'}
+                  onUserInput={onFieldAInput}
+                />
+              </Tooltip>
+            ) : (
+              <CurrencyField
+                editable={isAdjusting}
+                isActive
+                label="Borrowed"
+                tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                value={formattedAmounts[Field.LEFT]}
+                currency={'bnUSD'}
+                onUserInput={onFieldAInput}
+              />
+            )}
           </Box>
 
           <Box width={[1, 1 / 2]} ml={4}>
@@ -302,12 +342,17 @@ const LoanPanel = () => {
           {shouldBorrow && <Typography textAlign="center">Includes a fee of {fee.dp(2).toFormat()} bnUSD.</Typography>}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Cancel
-            </TextButton>
-            <Button onClick={handleLoanConfirm} fontSize={14} disabled={!hasEnoughICX}>
-              {shouldBorrow ? 'Borrow' : 'Repay'}
-            </Button>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Cancel
+                </TextButton>
+                <Button disabled={!hasEnoughICX} onClick={handleLoanConfirm} fontSize={14}>
+                  {shouldBorrow ? 'Borrow' : 'Repay'}
+                </Button>
+              </>
+            )}
           </Flex>
 
           <LedgerConfirmMessage />

@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { timeStamp } from 'console';
-import dayjs from 'dayjs';
 import Nouislider from 'nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -27,10 +25,9 @@ import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/c
 import {
   useLoanInputAmount,
   useLoanDebtHoldingShare,
-  useLoanTotalRepaid,
-  useLoanFetchTotalRepaid,
   useLoanTotalCollateralSold,
   useLoanAPY,
+  Period,
 } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
@@ -63,14 +60,14 @@ const useOwnDailyRewards = (): BigNumber => {
   return totalDailyRewards.times(debtHoldShare).div(100);
 };
 
-enum Period {
-  'day' = 'Past day',
-  'week' = 'Past week',
-  'month' = 'Past month',
-  'all' = 'All time',
-}
+const displayPeriod: { [key: string]: string } = {
+  day: 'Past day',
+  week: 'Past week',
+  month: 'Past month',
+  all: 'All time',
+};
 
-const PERIODS = [Period.day, Period.week, Period.month, Period.all];
+const PERIODS: Period[] = Object.keys(displayPeriod) as Period[];
 
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
@@ -78,7 +75,7 @@ const PositionDetailPanel = () => {
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
   const [show, setShow] = React.useState<boolean>(false);
-  const [timestamp, setTimeStamp] = useState(dayjs().subtract(1, 'day').unix());
+  const [period, setPeriod] = React.useState<Period>('day');
 
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
@@ -87,9 +84,7 @@ const PositionDetailPanel = () => {
   const ratio = useRatio();
 
   // Rebalancing section
-  const loanTotalRepaid = useLoanTotalRepaid();
-  const collateralTotalSold = useLoanTotalCollateralSold();
-  useLoanFetchTotalRepaid(timestamp);
+  const { data } = useLoanTotalCollateralSold(period);
 
   // loan
   const loanInputAmount = useLoanInputAmount();
@@ -121,26 +116,9 @@ const PositionDetailPanel = () => {
     setAnchor(null);
   };
 
-  const [period, setPeriod] = React.useState(Period.day);
-
   const handlePeriod = (p: Period) => {
     closeMenu();
     setPeriod(p);
-
-    let timestamp = 0; // all
-    switch (p) {
-      case Period.day:
-        timestamp = dayjs().subtract(1, 'day').unix();
-        break;
-      case Period.week:
-        timestamp = dayjs().subtract(1, 'week').unix();
-        break;
-      case Period.month:
-        timestamp = dayjs().subtract(1, 'month').unix();
-        break;
-      default:
-    }
-    setTimeStamp(timestamp);
   };
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
@@ -280,16 +258,12 @@ const PositionDetailPanel = () => {
 
               <ClickAwayListener onClickAway={closeMenu}>
                 <div>
-                  <UnderlineTextWithArrow onClick={handleToggle} text={period} arrowRef={arrowRef} />
+                  <UnderlineTextWithArrow onClick={handleToggle} text={displayPeriod[period]} arrowRef={arrowRef} />
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (
-                        <MenuItem
-                          className={p === Period.all ? 'border-top' : ''}
-                          key={p}
-                          onClick={() => handlePeriod(p)}
-                        >
-                          {p}
+                        <MenuItem className={p === 'all' ? 'border-top' : ''} key={p} onClick={() => handlePeriod(p)}>
+                          {displayPeriod[p]}
                         </MenuItem>
                       ))}
                     </MenuList>
@@ -299,11 +273,11 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(collateralTotalSold, 'currency')} ICX</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} ICX</Typography>
                 <Typography mt={1}>Collateral sold</Typography>
               </Box>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(loanTotalRepaid, 'currency')} bnUSD</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalRepaid, 'currency')} bnUSD</Typography>
                 <Typography mt={1}>Loan repaid</Typography>
               </Box>
             </Flex>

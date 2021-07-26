@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
@@ -16,17 +17,7 @@ import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
 import { AppState } from '..';
-import {
-  changeBorrowedAmount,
-  changeBadDebt,
-  changeTotalSupply,
-  changeTotalRepaid,
-  changeTotalCollateralSold,
-  Field,
-  adjust,
-  cancel,
-  type,
-} from './actions';
+import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, Field, adjust, cancel, type } from './actions';
 
 export function useLoanBorrowedAmount(): AppState['loan']['borrowedAmount'] {
   return useSelector((state: AppState) => state.loan.borrowedAmount);
@@ -38,14 +29,6 @@ export function useLoanBadDebt(): AppState['loan']['badDebt'] {
 
 export function useLoanTotalSupply(): AppState['loan']['totalSupply'] {
   return useSelector((state: AppState) => state.loan.totalSupply);
-}
-
-export function useLoanTotalRepaid(): AppState['loan']['totalRepaid'] {
-  return useSelector((state: AppState) => state.loan.totalRepaid);
-}
-
-export function useLoanTotalCollateralSold(): AppState['loan']['totalCollateralSold'] {
-  return useSelector((state: AppState) => state.loan.totalCollateralSold);
 }
 
 export function useLoanChangeBorrowedAmount(): (borrowedAmount: BigNumber) => void {
@@ -118,31 +101,43 @@ export function useLoanFetchInfo(account?: string | null) {
   }, [fetchLoanInfo, account, transactions]);
 }
 
-export function useLoanFetchTotalRepaid(timestamp: number) {
+const getTimestamp = (period: Period) => {
+  let timestamp = 0; // all
+  switch (period) {
+    case 'day':
+      timestamp = dayjs().subtract(1, 'day').valueOf();
+      break;
+    case 'week':
+      timestamp = dayjs().subtract(1, 'week').valueOf();
+      break;
+    case 'month':
+      timestamp = dayjs().subtract(1, 'month').valueOf();
+      break;
+    default:
+  }
+
+  return timestamp * 1000; // convert to microsecond
+};
+
+export type Period = 'day' | 'week' | 'month' | 'all';
+export function useLoanTotalCollateralSold(period: Period) {
   const { account } = useIconReact();
-  const dispatch = useDispatch();
-  useQuery(
-    [account, timestamp],
+  return useQuery(
+    [account, period],
     async () => {
       try {
         const res = await queryRebalanced({
           address: account,
           symbol: 'bnUSD',
-          timestamp: timestamp * 1_000_000, // convert to microsecond
+          timestamp: getTimestamp(period), // convert to microsecond
         });
 
         const { loan_repaid, collateral_sold } = res.data || {};
-        if (collateral_sold)
-          dispatch(
-            changeTotalCollateralSold({
-              totalCollateralSold: BalancedJs.utils.toIcx(new BigNumber(collateral_sold)),
-            }),
-          );
-        if (loan_repaid)
-          dispatch(changeTotalRepaid({ totalRepaid: BalancedJs.utils.toIcx(new BigNumber(loan_repaid)) }));
-      } catch (e) {
-        console.error(e);
-      }
+        return {
+          totalCollateralSold: BalancedJs.utils.toIcx(new BigNumber(collateral_sold)),
+          totalRepaid: BalancedJs.utils.toIcx(new BigNumber(loan_repaid)),
+        };
+      } catch (e) {}
     },
     {
       enabled: !!account,

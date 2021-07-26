@@ -17,11 +17,14 @@ export const sizes = {
   upMedium: 1000,
   upLarge: 1200,
   smartPhone: 600,
+  small: 360,
 };
+
+const maxWidth = ['smartPhone', 'small'];
 
 export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce((acc, label) => {
   acc[label] = (first: any, ...interpolations: any[]) =>
-    label === 'smartPhone'
+    maxWidth.includes(label)
       ? css`
           @media (max-width: ${sizes[label]}px) {
             ${css(first, ...interpolations)}

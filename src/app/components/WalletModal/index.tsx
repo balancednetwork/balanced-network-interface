@@ -14,7 +14,7 @@ import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
-import { ReactComponent as IconexIcon } from 'assets/icons/iconex.svg';
+import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
 import { ApplicationModal } from 'store/application/actions';
@@ -121,10 +121,7 @@ export default function WalletModal() {
       if (hasExtension) {
         requestAddress();
       } else {
-        window.open(
-          'https://chrome.google.com/webstore/detail/iconex/flpiciilemghbmfalicajoolhkkenfel?hl=en',
-          '_blank',
-        );
+        window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
       }
     }
   };
@@ -266,8 +263,8 @@ export default function WalletModal() {
 
           <Flex alignItems="stretch" justifyContent="space-between" mx={3}>
             <WalletOption onClick={handleOpenWallet}>
-              <IconexIcon width="50" height="50" />
-              <Text>ICONex</Text>
+              <IconWalletIcon width="50" height="50" />
+              <Text>ICON Wallet</Text>
             </WalletOption>
 
             <VerticalDivider text="or"></VerticalDivider>
@@ -281,9 +278,8 @@ export default function WalletModal() {
           <Typography mx={4} mt={6} textAlign="center">
             Use at your own risk. Project contributors are not liable for any lost or stolen funds.{' '}
             <Link href="https://balanced.network/disclaimer/" target="_blank">
-              View disclaimer
+              View disclaimer.
             </Link>
-            .
           </Typography>
         </Box>
       </StyledModal>

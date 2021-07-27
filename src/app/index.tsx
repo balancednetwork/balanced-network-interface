@@ -39,12 +39,10 @@ export function App() {
 
           <BrowserRouter>
             <Helmet
-              titleTemplate="%s - Balanced Network"
+              titleTemplate="%s | Balanced"
               defaultTitle="Balanced Network"
               htmlAttributes={{ lang: i18n.language }}
-            >
-              <meta name="description" content="A Balanced Network interface" />
-            </Helmet>
+            />
 
             <Switch>
               <Route exact path="/" component={HomePage} />

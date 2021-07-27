@@ -1,5 +1,6 @@
 import React from 'react';
 
+import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -13,6 +14,7 @@ import { DropdownPopper } from 'app/components/Popover';
 import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
+import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
@@ -89,11 +91,23 @@ export default React.memo(function Header(props: { title?: string; className?: s
   const handleChangeWallet = () => {
     closeWalletMenu();
     toggleWalletModal();
+
+    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+      bnJs.contractSettings.ledgerSettings.transport.close();
+    }
   };
 
-  const handleDisconnectWallet = () => {
+  const handleDisconnectWallet = async () => {
     closeWalletMenu();
     disconnect();
+    if (!bnJs.contractSettings.ledgerSettings.transport) {
+      bnJs.inject({
+        legerSettings: {
+          transport: await TransportWebHID.create(),
+        },
+      });
+    }
+    bnJs.contractSettings.ledgerSettings.transport.close();
   };
 
   const copyAddress = React.useCallback(async (account: string) => {

@@ -103,6 +103,8 @@ const PositionDetailPanel = () => {
 
   const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
 
+  const isPassAllCollateralLocked = ratio.ICXUSDratio.isLessThan(lockThresholdPrice);
+
   // handle rebalancing logic
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -176,7 +178,9 @@ const PositionDetailPanel = () => {
             <LeftChip
               bg="primary"
               style={{
-                backgroundImage: 'linear-gradient(to right, #2ca9b7 ' + lowRisk1 + '%, #144a68 ' + lowRisk1 + '%)',
+                background: isPassAllCollateralLocked
+                  ? '#fb6a6a'
+                  : 'linear-gradient(to right, #2ca9b7 ' + lowRisk1 + '%, #144a68 ' + lowRisk1 + '%)',
               }}
             >
               Low risk
@@ -225,7 +229,7 @@ const PositionDetailPanel = () => {
                   sliderInstance.current = instance;
                 }
               }}
-              style={{ height: 16 }}
+              style={{ height: 16, backgroundColor: isPassAllCollateralLocked ? '#fb6a6a' : '' }}
             />
           </Box>
 

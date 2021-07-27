@@ -8,8 +8,9 @@ import { Wrapper, UnderlineText, StyledArrowDownIcon } from 'app/components/Drop
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
+import { useAllPairsAPY } from 'queries/reward';
 import { resetMintState } from 'store/mint/actions';
-import { useSetPair, usePoolPair, useAPYs } from 'store/pool/hooks';
+import { useSetPair, usePoolPair } from 'store/pool/hooks';
 
 export default function LiquiditySelect() {
   const [open, setOpen] = React.useState(false);
@@ -30,7 +31,7 @@ export default function LiquiditySelect() {
     dispatch(resetMintState());
   };
 
-  const apys = useAPYs();
+  const apys = useAllPairsAPY();
 
   return (
     <ClickAwayListener onClickAway={() => setOpen(false)}>
@@ -52,7 +53,7 @@ export default function LiquiditySelect() {
                   {pool.pair}
                 </DataText>
                 <DataText variant="p" textAlign="right">
-                  {apys[pool.poolId] ? apys[pool.poolId].times(100).dp(2).toFormat() : '-'}%
+                  {apys && apys[pool.poolId] ? apys[pool.poolId].times(100).dp(2).toFormat() : '-'}%
                 </DataText>
               </ListItem>
             ))}

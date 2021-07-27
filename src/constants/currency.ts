@@ -25,6 +25,7 @@ export interface Pair {
   quoteCurrencyKey: CurrencyKey;
   pair: string;
   poolId: number;
+  rewards?: number;
 }
 
 export const SUPPORTED_PAIRS: Array<Pair> = [
@@ -33,24 +34,28 @@ export const SUPPORTED_PAIRS: Array<Pair> = [
     quoteCurrencyKey: CURRENCY_MAP['ICX'],
     pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['ICX']),
     poolId: 1,
+    rewards: 10_000,
   },
   {
     baseCurrencyKey: CURRENCY_MAP['sICX'],
     quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
     pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['bnUSD']),
     poolId: 2,
+    rewards: 17_500,
   },
   {
     baseCurrencyKey: CURRENCY_MAP['BALN'],
     quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
     pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['bnUSD']),
     poolId: 3,
+    rewards: 17_500,
   },
   {
     baseCurrencyKey: CURRENCY_MAP['BALN'],
     quoteCurrencyKey: CURRENCY_MAP['sICX'],
     pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['sICX']),
     poolId: 4,
+    rewards: 5_000,
   },
 ];
 

@@ -1,15 +1,11 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
-import { useIconReact } from 'packages/icon-react';
-import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { MANDATORY_COLLATERAL_RATIO, ZERO } from 'constants/index';
-import { queryRebalanced } from 'queries/queryRebalancing';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useRewards } from 'store/reward/hooks';
@@ -99,50 +95,6 @@ export function useLoanFetchInfo(account?: string | null) {
       fetchLoanInfo(account);
     }
   }, [fetchLoanInfo, account, transactions]);
-}
-
-const getTimestamp = (period: Period) => {
-  let timestamp = 0; // all
-  switch (period) {
-    case 'day':
-      timestamp = dayjs().subtract(1, 'day').valueOf();
-      break;
-    case 'week':
-      timestamp = dayjs().subtract(1, 'week').valueOf();
-      break;
-    case 'month':
-      timestamp = dayjs().subtract(1, 'month').valueOf();
-      break;
-    default:
-  }
-
-  return timestamp * 1000; // convert to microsecond
-};
-
-export type Period = 'day' | 'week' | 'month' | 'all';
-export function useLoanTotalCollateralSold(period: Period) {
-  const { account } = useIconReact();
-  return useQuery(
-    [account, period],
-    async () => {
-      try {
-        const res = await queryRebalanced({
-          address: account,
-          symbol: 'bnUSD',
-          timestamp: getTimestamp(period), // convert to microsecond
-        });
-
-        const { loan_repaid, collateral_sold } = res.data || {};
-        return {
-          totalCollateralSold: BalancedJs.utils.toIcx(new BigNumber(collateral_sold)),
-          totalRepaid: BalancedJs.utils.toIcx(new BigNumber(loan_repaid)),
-        };
-      } catch (e) {}
-    },
-    {
-      enabled: !!account,
-    },
-  );
 }
 
 export function useLoanState() {

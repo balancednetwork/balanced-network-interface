@@ -21,14 +21,9 @@ import {
   LIQUIDATION_COLLATERAL_RATIO,
   ZERO,
 } from 'constants/index';
+import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
-import {
-  useLoanInputAmount,
-  useLoanDebtHoldingShare,
-  useLoanTotalCollateralSold,
-  useLoanAPY,
-  Period,
-} from 'store/loan/hooks';
+import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
@@ -67,7 +62,7 @@ const displayPeriod: { [key: string]: string } = {
   all: 'All time',
 };
 
-const PERIODS: Period[] = Object.keys(displayPeriod) as Period[];
+const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
@@ -75,7 +70,7 @@ const PositionDetailPanel = () => {
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
   const [show, setShow] = React.useState<boolean>(false);
-  const [period, setPeriod] = React.useState<Period>('day');
+  const [period, setPeriod] = React.useState<Period>(Period.day);
 
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
@@ -84,7 +79,7 @@ const PositionDetailPanel = () => {
   const ratio = useRatio();
 
   // Rebalancing section
-  const { data } = useLoanTotalCollateralSold(period);
+  const { data } = useRebalancingDataQuery(period);
 
   // loan
   const loanInputAmount = useLoanInputAmount();

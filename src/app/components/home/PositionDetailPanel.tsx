@@ -75,6 +75,7 @@ const PositionDetailPanel = () => {
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
+  const smallSp = useMedia('(max-width: 360px)');
   const [show, setShow] = React.useState<boolean>(false);
 
   const open = React.useCallback(() => setShow(true), [setShow]);
@@ -274,7 +275,7 @@ const PositionDetailPanel = () => {
                   }
                   placement="top"
                 >
-                  <QuestionIcon width={14} color="text1" style={{ marginTop: -5, color: '#D5D7DB' }} />
+                  {!smallSp && <QuestionIcon width={14} color="text1" style={{ marginTop: -5, color: '#D5D7DB' }} />}
                 </MouseoverTooltip>
               </Typography>
 

@@ -15,7 +15,7 @@ import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
 import bnJs from 'bnJs';
-import { useChangeWalletType, useWalletModalToggle } from 'store/application/hooks';
+import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
 const StyledLogo = styled(Logo)`
@@ -88,24 +88,16 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
   const toggleWalletModal = useWalletModalToggle();
 
-  const changeWalletType = useChangeWalletType();
-
-  const handleChangeWallet = async () => {
-    changeWalletType('ICONEX');
+  const handleChangeWallet = () => {
     closeWalletMenu();
     toggleWalletModal();
-    if (!bnJs.contractSettings.ledgerSettings.transport) {
-      bnJs.inject({
-        legerSettings: {
-          transport: await TransportWebHID.create(),
-        },
-      });
+
+    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+      bnJs.contractSettings.ledgerSettings.transport.close();
     }
-    bnJs.contractSettings.ledgerSettings.transport.close();
   };
 
   const handleDisconnectWallet = async () => {
-    changeWalletType('ICONEX');
     closeWalletMenu();
     disconnect();
     if (!bnJs.contractSettings.ledgerSettings.transport) {

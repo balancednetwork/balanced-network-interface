@@ -9,7 +9,8 @@ import QUERY_KEYS from 'queries/queryKeys';
 import { Field } from 'store/swap/actions';
 import { CurrencyKey } from 'types';
 
-const API_ENDPOINT = process.env.NODE_ENV === 'production' ? 'https://balanced.geometry.io/api/v1' : '/api/v1';
+import { API_ENDPOINT } from '../constants';
+
 const LAUNCH_DAY = 1619398800000000;
 
 export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: CurrencyKey }, period: CHART_PERIODS) => {

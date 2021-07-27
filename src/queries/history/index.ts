@@ -2,7 +2,7 @@ import axios from 'axios';
 import querystring from 'querystring';
 import { useQuery } from 'react-query';
 
-import { API_ENDPOINT_V1 } from '../constants';
+import { API_ENDPOINT } from '../constants';
 
 export type Transaction = {
   block_hash: string;
@@ -22,7 +22,7 @@ export const useAllTransactionsQuery = (page: number, limit: number, account: st
   return useQuery<{ count: number; transactions: Transaction[] }>(
     ['transactions', page, limit, account],
     async () => {
-      const endpoint = `${API_ENDPOINT_V1}/stats/transaction-history?${querystring.stringify({
+      const endpoint = `${API_ENDPOINT}/stats/transaction-history?${querystring.stringify({
         skip: page * limit,
         limit: 20,
         from_address: account,

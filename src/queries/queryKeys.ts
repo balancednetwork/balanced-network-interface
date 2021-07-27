@@ -37,6 +37,9 @@ export const QUERY_KEYS = {
       account,
     ],
   },
+  PositionDetails: {
+    Rebalancing: (account: string, period: string) => ['PositionDetails', 'Rebalancing', account, period],
+  },
 };
 
 export default QUERY_KEYS;

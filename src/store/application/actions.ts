@@ -1,7 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { WalletType } from './reducer';
-
 export type PopupContent = {
   txn: {
     hash: string;
@@ -28,8 +26,6 @@ export const addPopup = createAction<{ key?: string; removeAfterMs?: number | nu
 export const removePopup = createAction<{ key: string }>('application/removePopup');
 
 export const setOpenModal = createAction<ApplicationModal | null>('application/setOpenModal');
-
-export const changeWalletType = createAction<{ walletType: WalletType }>('application/changeWalletType');
 
 export const changeShouldLedgedSignMessage = createAction<{ shouldLedgerSign: boolean }>(
   'application/changeShouldLedgedSignMessage',

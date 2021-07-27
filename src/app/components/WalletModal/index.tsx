@@ -18,7 +18,7 @@ import { ReactComponent as IconexIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
 import { ApplicationModal } from 'store/application/actions';
-import { useWalletModalToggle, useModalOpen, useChangeWalletType } from 'store/application/hooks';
+import { useWalletModalToggle, useModalOpen } from 'store/application/hooks';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -105,8 +105,6 @@ export default function WalletModal() {
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
 
-  const changeWalletType = useChangeWalletType();
-
   const [{ offset, limit }, updatePaging] = useState({
     offset: 0,
     limit: LIMIT_PAGING_LEDGER,
@@ -116,8 +114,6 @@ export default function WalletModal() {
   const { requestAddress, hasExtension } = useIconReact();
 
   const handleOpenWallet = () => {
-    changeWalletType('ICONEX');
-
     toggleWalletModal();
     if (isMobile) {
       requestAddress();
@@ -173,7 +169,6 @@ export default function WalletModal() {
       offset: 0,
       limit: LIMIT_PAGING_LEDGER,
     });
-    changeWalletType('LEDGER');
 
     const timeout = setTimeout(() => {
       setIsLedgerErr(true);

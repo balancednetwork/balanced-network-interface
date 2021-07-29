@@ -189,3 +189,36 @@ export function DropdownPopper({ show, children, placement = 'auto', anchorEl }:
     </Portal>
   );
 }
+
+export interface Props {
+  show: boolean;
+  children: React.ReactNode;
+  placement?: Placement;
+  content: React.ReactNode;
+}
+
+export function PopperWithoutArrowAndBorder({ content, show, children, placement = 'auto' }: Props) {
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
+
+  const { styles, update, attributes } = usePopper(referenceElement, popperElement, {
+    placement,
+    strategy: 'fixed',
+    modifiers: [{ name: 'offset', options: { offset: [0, 12] } }],
+  });
+  const updateCallback = useCallback(() => {
+    update && update();
+  }, [update]);
+  useInterval(updateCallback, show ? 100 : null);
+
+  return (
+    <>
+      <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
+      <Portal>
+        <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+          <ContentWrapper style={{ border: 'none' }}>{content}</ContentWrapper>
+        </PopoverContainer>
+      </Portal>
+    </>
+  );
+}

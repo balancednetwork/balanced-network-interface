@@ -52,4 +52,11 @@ export default class Governance extends Contract {
 
     return this.callICONPlugins(callParams);
   }
+
+  getTotalProposal() {
+    const callParams = this.paramsBuilder({
+      method: 'getProposalCount',
+    });
+    return this.call(callParams);
+  }
 }

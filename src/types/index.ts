@@ -255,3 +255,16 @@ export interface Pool {
   rate: BigNumber;
   inverseRate: BigNumber;
 }
+
+export interface VoteInterface {
+  id: number;
+  against: number;
+  for: number;
+  snapshotDay: number;
+  startDay: number;
+  endDay: number;
+  name: string;
+  majority: number;
+  quorum: number;
+  sum: number;
+}

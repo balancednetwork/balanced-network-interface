@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Helmet } from 'react-helmet-async';
+import { QueryObserverResult } from 'react-query';
 import { Link } from 'react-router-dom';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -9,6 +10,8 @@ import { Button } from 'app/components/Button';
 import { DefaultLayout } from 'app/components/Layout';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
+import { useTotalProposalQuery } from 'queries/vote';
+import { VoteInterface } from 'types';
 
 const VoteContainer = styled(Box)`
   flex: 1;
@@ -31,6 +34,10 @@ const metadata = {
   rejectPercentage: 14,
   timestamp: 284400000,
 };
+
+/*
+
+Sample data for reference
 
 const mockData = [
   {
@@ -59,7 +66,12 @@ const mockData = [
   },
 ];
 
+*/
+
 export function VotePage() {
+  const totalProposal: QueryObserverResult<Array<VoteInterface>> = useTotalProposalQuery();
+  const { data } = totalProposal;
+
   return (
     <DefaultLayout title="Vote">
       <Helmet>
@@ -74,11 +86,19 @@ export function VotePage() {
             </Box>
           </Link>
         </VoteHeader>
-        {mockData
-          .sort((a, b) => b.id - a.id)
+        {data
+          ?.sort((a, b) => b?.id - a?.id)
           .map(ele => (
             <Link key={`link-${ele?.id}`} to={`/vote/proposal/${ele?.id}`} style={{ textDecoration: 'none' }}>
-              <ProposalInfo title={ele?.title} content={ele?.content} metadata={ele?.metadata} />
+              <ProposalInfo
+                title={ele?.name}
+                content={ele?.name}
+                metadata={{
+                  ...metadata, // Temporary mock data
+                  approvePercentage: ele?.for,
+                  rejectPercentage: ele?.against,
+                }}
+              />
             </Link>
           ))}
       </VoteContainer>

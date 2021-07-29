@@ -1,49 +1,17 @@
 import BigNumber from 'bignumber.js';
+import { IconHexadecimal } from 'icon-sdk-js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
 import QUERY_KEYS from 'queries/queryKeys';
+import { VoteInterface } from 'types';
+import { getProposal } from 'utils';
 
 export const useVoteInfoQuery = (voteIndex: number) => {
-  return useQuery<
-    | {
-        id: number;
-        against: number;
-        for: number;
-        snapshotDay: number;
-        startDay: number;
-        endDay: number;
-        name: string;
-        majority: number;
-        quorum: number;
-        sum: number;
-      }
-    | undefined
-  >(QUERY_KEYS.Vote.VoteInfo(voteIndex), async () => {
-    const res = await bnJs.Governance.checkVote(voteIndex);
-
-    if (!res.id) return;
-
-    const _against = BalancedJs.utils.toIcx(res['against']);
-    const _for = BalancedJs.utils.toIcx(res['for']);
-
-    const _against1 = _against.isZero() ? 0 : _against.div(_against.plus(_for)).times(100).dp(2).toNumber();
-    const _for1 = _for.isZero() ? 0 : _for.div(_against.plus(_for)).times(100).dp(2).toNumber();
-
-    return {
-      id: parseInt(res.id, 16),
-      name: res['name'],
-      against: _against1,
-      for: _for1,
-      snapshotDay: parseInt(res['vote snapshot'], 16),
-      startDay: parseInt(res['start day'], 16),
-      endDay: parseInt(res['end day'], 16),
-      majority: BalancedJs.utils.toIcx(res['majority']).toNumber(),
-      quorum: BalancedJs.utils.toIcx(res['quorum']).times(100).dp(2).toNumber(),
-      sum: _against.plus(_for).times(100).dp(2).toNumber(),
-    };
+  return useQuery<VoteInterface | undefined>(QUERY_KEYS.Vote.VoteInfo(voteIndex), async () => {
+    return getProposal(voteIndex);
   });
 };
 
@@ -109,5 +77,17 @@ export const useTotalCollectedFeesQuery = () => {
       t[key] = BalancedJs.utils.toIcx(data[key]);
     });
     return t;
+  });
+};
+
+export const useTotalProposalQuery = () => {
+  return useQuery<Array<VoteInterface>>(QUERY_KEYS.Vote.TotalProposals, async () => {
+    const res = await bnJs.Governance.getTotalProposal();
+    const totalProposal = parseInt(IconHexadecimal.remove0xPrefix(res));
+    const promises: Array<any> = [];
+    for (let i = 1; i < totalProposal + 1; i += 1) {
+      promises.push(getProposal(i));
+    }
+    return await Promise.all(promises);
   });
 };

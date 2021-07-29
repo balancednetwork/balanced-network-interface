@@ -1,19 +1,16 @@
 import chalk from 'chalk';
 import fs from 'fs';
+import nodePlop, { PlopGenerator as PG } from 'node-plop';
+import path from 'path';
 import rimraf from 'rimraf';
 import shell from 'shelljs';
-import path from 'path';
-import nodePlop from 'node-plop';
 
-import { BACKUPFILE_EXTENSION } from '../generators/plopfile';
 import { ComponentProptNames } from '../generators/component';
 import { ContainerProptNames } from '../generators/container';
-import { PlopGenerator as PG } from 'node-plop';
+import { BACKUPFILE_EXTENSION } from '../generators/plopfile';
 
 interface PlopGenerator extends PG {
-  runActions: <T extends string | number>(
-    props: { [P in T]: any },
-  ) => Promise<{ changes: []; failures: [] }>;
+  runActions: <T extends string | number>(props: { [P in T]: any }) => Promise<{ changes: []; failures: [] }>;
 }
 
 process.chdir(path.join(__dirname, '../generators'));
@@ -60,13 +57,7 @@ function removeContainer(name: string) {
   return rimraf.sync(path.join(containersPath, name));
 }
 
-async function handleResult({
-  changes,
-  failures,
-}: {
-  changes: [];
-  failures: [];
-}) {
+async function handleResult({ changes, failures }: { changes: []; failures: [] }) {
   return new Promise((resolve, reject) => {
     if (Array.isArray(failures) && failures.length > 0) {
       reject(new Error(JSON.stringify(failures, null, 2)));
@@ -94,10 +85,7 @@ function reportErrors(reason: Error, shouldExist = true) {
     process.exit(1);
   }
 }
-function restoreBackupFile(
-  path: string,
-  backupFileExtension = BACKUPFILE_EXTENSION,
-) {
+function restoreBackupFile(path: string, backupFileExtension = BACKUPFILE_EXTENSION) {
   const backupPath = path.concat(`.${backupFileExtension}`);
   fs.copyFileSync(backupPath, path);
   fs.unlinkSync(backupPath);

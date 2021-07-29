@@ -9,6 +9,8 @@ import { MINIMUM_ICX_AMOUNT_IN_WALLET, ZERO, ONE } from 'constants/index';
 import { Field } from 'store/swap/actions';
 import { CurrencyKey, CurrencyAmount } from 'types';
 
+import bnJs from '../bnJs';
+
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
   if (!isEoaAddress(address)) {
@@ -152,4 +154,33 @@ export const normalizeContent = (text: string): string => {
   const regex = /[\n\r]/g;
   const t = text.replaceAll(regex, ' ');
   return t.substring(0, 248) + '...';
+};
+
+export const getProposal = async (voteIndex: number) => {
+  const res = await bnJs.Governance.checkVote(voteIndex);
+  if (!res.id) return;
+
+  const _against = BalancedJs.utils.toIcx(res['against']);
+  const _for = BalancedJs.utils.toIcx(res['for']);
+
+  const _against1 = _against.isZero() ? 0 : _against.div(_against.plus(_for)).times(100).dp(2).toNumber();
+  const _for1 = _for.isZero() ? 0 : _for.div(_against.plus(_for)).times(100).dp(2).toNumber();
+
+  return {
+    id: parseInt(res.id, 16),
+    name: res['name'],
+    against: _against1,
+    for: _for1,
+    snapshotDay: parseInt(res['vote snapshot'], 16),
+    startDay: parseInt(res['start day'], 16),
+    endDay: parseInt(res['end day'], 16),
+    majority: BalancedJs.utils.toIcx(res['majority']).toNumber(),
+    quorum: BalancedJs.utils.toIcx(res['quorum']).times(100).dp(2).toNumber(),
+    sum: _against.plus(_for).times(100).dp(2).toNumber(),
+  };
+};
+
+export const getNumberFromEndURL = (pathName: string): number => {
+  const pathNameArr = pathName.split('/');
+  return parseInt(pathNameArr[pathNameArr.length - 1]);
 };

@@ -24,7 +24,10 @@ export default function Tooltip({ text, wide, containerStyle, noArrowAndBorder, 
   return (
     <>
       {noArrowAndBorder ? (
-        <PopperWithoutArrowAndBorder content={<TooltipContainer>{text}</TooltipContainer>} {...rest} />
+        <PopperWithoutArrowAndBorder
+          content={<TooltipContainer style={{ width: '100%' }}>{text}</TooltipContainer>}
+          {...rest}
+        />
       ) : (
         <Popover
           content={

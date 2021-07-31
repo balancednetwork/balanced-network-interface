@@ -47,7 +47,7 @@ export function VotePage() {
           <Typography variant="h2">Proposals</Typography>
           <Link to="/vote/new-proposal">
             <Box style={{ textAlign: 'right' }}>
-              <Button>New Proposal</Button>
+              <Button>New proposal</Button>
             </Box>
           </Link>
         </VoteHeader>

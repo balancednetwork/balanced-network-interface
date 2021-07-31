@@ -102,7 +102,7 @@ export function NewProposalPage() {
           <FieldInput type="text" onChange={onTitleInputChange} />
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
-              Forum Link
+              Forum link
             </Typography>
           </FieldContainer>
           <FieldInput type="text" onChange={onForumInputChange} />

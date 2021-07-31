@@ -76,7 +76,7 @@ export function ProposalModal(props: ProposalProps) {
         <Divider mb={5} />
         <Flex flexDirection="row" width="100%" justifyContent="center">
           <CancelButton onClick={() => toggleOpen(!isOpen)}>Cancel</CancelButton>
-          <SubmitButton onClick={() => toggleOpen(!isOpen)}>Submit Vote</SubmitButton>
+          <SubmitButton onClick={() => toggleOpen(!isOpen)}>Submit vote</SubmitButton>
         </Flex>
       </Flex>
     </Modal>

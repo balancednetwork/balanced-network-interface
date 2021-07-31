@@ -35,7 +35,7 @@ const SubmitButton = styled(Button)`
   flex-grow: 1;
   max-height: 33px;
   max-width: 130px;
-  font-size: 13px;
+  font-size: 14px;
 `;
 
 export function ProposalModal(props: ProposalProps) {

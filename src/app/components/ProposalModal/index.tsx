@@ -13,7 +13,7 @@ import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
 interface ProposalProps {
   isOpen: boolean;
   toggleOpen: Function;
-  balnWeight: number;
+  balnWeight: number | undefined;
   type: 'Approve' | 'Reject';
 }
 
@@ -71,7 +71,7 @@ export function ProposalModal(props: ProposalProps) {
         )}
         <Typography variant="content" textAlign="center" mb={3}>
           {/* Automatically format the number to put a comma every 3 zeros */}
-          {`Voting Weight: ${balnWeight.toLocaleString()} BALN`}
+          {balnWeight === undefined ? '' : `Voting Weight: ${balnWeight.toLocaleString()} BALN`}
         </Typography>
         <Divider mb={5} />
         <Flex flexDirection="row" width="100%" justifyContent="center">

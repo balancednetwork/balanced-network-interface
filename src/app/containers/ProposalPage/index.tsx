@@ -13,38 +13,17 @@ import { Button, AlertButton } from 'app/components/Button';
 import { Column } from 'app/components/Column';
 import { DefaultLayout } from 'app/components/Layout';
 import { ProposalModal } from 'app/components/ProposalModal';
+import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { theme, Typography } from 'app/theme';
-import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
-import { useVoteInfoQuery } from 'queries/vote';
-import { VoteInterface } from 'types';
+import { useProposalDataQuery } from 'queries/vote';
+import { ProposalInterface } from 'types';
 import { getNumberFromEndURL } from 'utils';
 
 dayjs.extend(duration);
 const themes = theme();
-const title = 'Distribute more BALN to the DAO fund by reducing the BALN for loans and liquidity pools.';
-const content = `
-Too much income is being given back to people who use Balanced. While incentivization is good, we need to prevent Balanced from becoming a platform that people use purely to earn rewards.\nTo make sure Balanced has enough income in its treasury to cover ongoing costs, like security audits, a higher bug bounty, marketing initiatives, projects that utilize Balanced’s functionality, and so on, we should redirect some of the BALN allocated to borrowers and liquidity providers to the DAO fund instead.
-`;
-
-const metadata = {
-  voted: 16,
-  voters: 748,
-  approvePercentage: 53,
-  rejectPercentage: 14,
-  timestamp: 284400000,
-};
-
-const balnWeight = 2500.12345;
-
-const fetchedData = {
-  title,
-  content,
-  metadata,
-  balnWeight,
-};
 
 const ProposalContainer = styled(Box)`
   flex: 1;
@@ -91,8 +70,7 @@ export function ProposalPage() {
   const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
   const location = useLocation();
   const proposalIndex = getNumberFromEndURL(location.pathname);
-  const voteInfoQuery: QueryObserverResult<VoteInterface | undefined> = useVoteInfoQuery(proposalIndex);
-  const { data } = voteInfoQuery;
+  const proposalData: QueryObserverResult<ProposalInterface | undefined> = useProposalDataQuery(proposalIndex);
 
   return (
     <DefaultLayout title="Vote">
@@ -100,25 +78,33 @@ export function ProposalPage() {
         <title>Vote</title>
       </Helmet>
       <ProposalContainer>
-        <Breadcrumb locationText="Vote" locationPath="/vote" title={data?.name === undefined ? '' : data?.name} />
+        <Breadcrumb
+          locationText="Vote"
+          locationPath="/vote"
+          title={proposalData?.data?.name === undefined ? '' : proposalData?.data?.name}
+        />
         <ProposalPanel>
           <Typography variant="h2" mb="20px">
-            {data?.name}
+            {proposalData?.data?.name}
           </Typography>
           <Flex alignItems="center" mb="22px">
-            <CalendarIcon height="22" width="22" style={{ marginRight: '5px' }} />
-            <Typography variant="content" color="white" mr="20px">
-              {`${Math.floor(dayjs.duration(fetchedData?.metadata?.timestamp).asDays())} days, ${
-                dayjs.duration(fetchedData?.metadata?.timestamp).asHours() % 24
-              } hours left`}
-            </Typography>
+            <ProposalStatusIcon
+              status={proposalData?.data?.status === undefined ? '' : proposalData?.data?.status}
+              startDay={proposalData?.data?.status === undefined ? 0 : proposalData?.data?.startDay}
+              endDay={proposalData?.data?.status === undefined ? 0 : proposalData?.data?.startDay}
+            />
             <PieChartIcon height="22" width="22" style={{ marginRight: '5px' }} />
             <Typography variant="content" color="white" mr="20px">
-              {`${fetchedData?.metadata?.voted} voted`}
+              {proposalData?.data?.for === undefined && proposalData?.data?.against === undefined
+                ? ''
+                : `${proposalData?.data?.for + proposalData?.data?.against}% voted`}
             </Typography>
             <UserIcon height="22" width="22" style={{ marginRight: '5px' }} />
             <Typography variant="content" color="white" mr="20px">
-              {`${fetchedData?.metadata?.voters} voters`}
+              {proposalData?.data?.uniqueApproveVoters === undefined &&
+              proposalData?.data?.uniqueRejectVoters === undefined
+                ? ''
+                : `${proposalData?.data?.uniqueApproveVoters + proposalData?.data?.uniqueRejectVoters} voters`}
             </Typography>
           </Flex>
           <Flex alignItems="center">
@@ -126,7 +112,7 @@ export function ProposalPage() {
               Approve
             </Typography>
             <Typography opacity="0.85" mr="5px" fontWeight="bold">
-              {data?.for}%
+              {proposalData?.data?.for}%
             </Typography>
             <Typography opacity="0.85" fontWeight="bold">
               (67% required)
@@ -135,7 +121,7 @@ export function ProposalPage() {
           <StatsContainer>
             <Column sx={{ flexGrow: '1' }}>
               <Progress>
-                <ProgressBar percentage={`${data?.for}`} type={'Approve'} />
+                <ProgressBar percentage={`${proposalData?.data?.for}`} type={'Approve'} />
               </Progress>
             </Column>
             <Column sx={{ textAlign: 'right' }}>
@@ -149,13 +135,13 @@ export function ProposalPage() {
               Reject
             </Typography>
             <Typography opacity="0.85" mr="5px" fontWeight="bold">
-              {data?.against}%
+              {proposalData?.data?.against}%
             </Typography>
           </Flex>
           <StatsContainer>
             <Column sx={{ flexGrow: '1' }}>
               <Progress>
-                <ProgressBar percentage={`${data?.against}`} type={'Reject'} />
+                <ProgressBar percentage={`${proposalData?.data?.against}`} type={'Reject'} />
               </Progress>
             </Column>
             <Column sx={{ textAlign: 'right', justifyContent: 'center' }}>
@@ -167,13 +153,13 @@ export function ProposalPage() {
           <ProposalModal
             isOpen={isApproveModalVisible}
             toggleOpen={setIsApproveModalVisible}
-            balnWeight={fetchedData?.balnWeight}
+            balnWeight={proposalData?.data?.for}
             type={'Approve'}
           />
           <ProposalModal
             isOpen={isRejectModalVisible}
             toggleOpen={setIsRejectModalVisible}
-            balnWeight={fetchedData?.balnWeight}
+            balnWeight={proposalData?.data?.against}
             type={'Reject'}
           />
         </ProposalPanel>
@@ -182,7 +168,7 @@ export function ProposalPage() {
             Description
           </Typography>
           <Typography variant="p" mb="20px">
-            {fetchedData?.content}
+            {proposalData?.data?.description}
           </Typography>
           <Flex alignItems="center">
             <Typography variant="p" mr="5px" color="primaryBright" style={{ cursor: 'pointer' }}>

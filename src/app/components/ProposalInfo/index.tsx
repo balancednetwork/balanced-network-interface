@@ -5,8 +5,8 @@ import duration from 'dayjs/plugin/duration';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
-import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import { normalizeContent } from 'utils';
@@ -57,28 +57,32 @@ const ContentText = styled(Typography)`
 
 export default function ProposalInfo(props) {
   const { title, content, metadata } = props;
-  const { voted, voters, approvePercentage, rejectPercentage, timestamp } = metadata;
+  const {
+    approvePercentage,
+    rejectPercentage,
+    uniqueApproveVoters,
+    uniqueRejectVoters,
+    status,
+    endDay,
+    startDay,
+  } = metadata;
+
   return (
     <ProposalWrapper>
       <Typography variant="h3" mb="10px">
         {title}
       </Typography>
-      <ContentText>{normalizeContent(content)}</ContentText>
+      <ContentText>{content !== '' && normalizeContent(content)}</ContentText>
       <Divider />
       <Flex alignItems="center">
-        <CalendarIcon height="22" width="22" style={{ marginRight: '5px' }} />
-        <Typography variant="content" color="white" mr="20px">
-          {`${Math.floor(dayjs.duration(timestamp).asDays())} days, ${
-            dayjs.duration(timestamp).asHours() % 24
-          } hours left`}
-        </Typography>
+        <ProposalStatusIcon status={status} startDay={startDay} endDay={endDay} />
         <PieChartIcon height="22" width="22" style={{ marginRight: '5px' }} />
         <Typography variant="content" color="white" mr="20px">
-          {`${voted} voted`}
+          {`${approvePercentage + rejectPercentage}% voted`}
         </Typography>
         <UserIcon height="22" width="22" style={{ marginRight: '5px' }} />
         <Typography variant="content" color="white" mr="20px">
-          {`${voters} voters`}
+          {`${uniqueApproveVoters + uniqueRejectVoters} voters`}
         </Typography>
         <ApprovalSwatch />
         <Typography variant="content" color="white" mr="20px">

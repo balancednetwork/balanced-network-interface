@@ -89,7 +89,7 @@ export function NewProposalPage() {
         <title>Vote</title>
       </Helmet>
       <NewProposalContainer>
-        <Breadcrumb title={'New Proposal'} locationText={'Vote'} locationPath={'/vote'} />
+        <Breadcrumb title={'New proposal'} locationText={'Vote'} locationPath={'/vote'} />
         <ProposalDetailContainer>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">

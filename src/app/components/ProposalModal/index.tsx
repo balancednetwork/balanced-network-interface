@@ -44,7 +44,7 @@ export function ProposalModal(props: ProposalProps) {
     <Modal isOpen={isOpen} onDismiss={() => toggleOpen(!isOpen)}>
       <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
         <Typography variant="content" textAlign="center" mb={1}>
-          Submit Vote?
+          Submit vote?
         </Typography>
         {type === 'Reject' ? (
           <>

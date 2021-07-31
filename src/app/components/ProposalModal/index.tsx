@@ -21,7 +21,7 @@ const CancelButton = styled(Button)`
   flex-grow: 1;
   max-height: 33px;
   max-width: 130px;
-  font-size: 13px;
+  font-size: 14px;
   background-color: inherit;
   color: ${({ theme }) => theme.colors.text1};
   &:hover {

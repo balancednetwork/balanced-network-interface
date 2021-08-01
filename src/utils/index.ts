@@ -153,14 +153,3 @@ export const normalizeContent = (text: string): string => {
   const t = text.replaceAll(regex, ' ');
   return t.substring(0, 248) + '...';
 };
-
-// returns latest
-export const getNumberFromEndURL = (pathName: string): number => {
-  const pathNameArr = pathName.split('/');
-  const integer = parseInt(pathNameArr[pathNameArr.length - 1]);
-  if (isNaN(integer)) {
-    return 1;
-  } else {
-    return integer;
-  }
-};

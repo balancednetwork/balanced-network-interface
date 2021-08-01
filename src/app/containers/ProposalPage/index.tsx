@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Helmet } from 'react-helmet-async';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -11,6 +11,7 @@ import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
 import { Column } from 'app/components/Column';
 import { DefaultLayout } from 'app/components/Layout';
+import { BoxPanel } from 'app/components/Panel';
 import { ProposalModal } from 'app/components/ProposalModal';
 import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
@@ -18,28 +19,12 @@ import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import { useProposalInfoQuery } from 'queries/vote';
-import { getNumberFromEndURL } from 'utils';
 
 dayjs.extend(duration);
 
 const ProposalContainer = styled(Box)`
   flex: 1;
   border-radius: 10px;
-`;
-
-const ProposalPanel = styled(Box)`
-  flex: 1;
-  border-radius: 10px;
-  padding: 35px 35px;
-  background-color: ${({ theme }) => theme.colors.bg2};
-  margin-bottom: 50px;
-  margin-top: 50px;
-`;
-
-const StatsContainer = styled.span`
-  display: flex;
-  flex-direction: row;
-  flex: 1;
 `;
 
 const Progress = styled(Flex)`
@@ -65,10 +50,10 @@ const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
 export function ProposalPage() {
   const [isApproveModalVisible, setIsApproveModalVisible] = useState(false);
   const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
-  const location = useLocation();
-  const pId = getNumberFromEndURL(location.pathname);
+  const { id: pId } = useParams<{ id: string }>();
+  const { data: proposal } = useProposalInfoQuery(parseInt(pId));
 
-  const { data: proposal } = useProposalInfoQuery(pId);
+  const isActive = proposal?.status === 'Active';
 
   return (
     <DefaultLayout title="Vote">
@@ -77,16 +62,15 @@ export function ProposalPage() {
       </Helmet>
       <ProposalContainer>
         <Breadcrumb locationText="Vote" locationPath="/vote" title={proposal?.name || ''} />
-        <ProposalPanel>
+
+        <BoxPanel bg="bg2" my={10}>
           <Typography variant="h2" mb="20px">
             {proposal?.name}
           </Typography>
           <Flex alignItems="center" mb="22px">
-            <ProposalStatusIcon
-              status={proposal?.status === undefined ? '' : proposal?.status}
-              startDay={proposal?.status === undefined ? 0 : proposal?.startDay}
-              endDay={proposal?.status === undefined ? 0 : proposal?.startDay}
-            />
+            {proposal && (
+              <ProposalStatusIcon status={proposal?.status} startDay={proposal?.startDay} endDay={proposal?.startDay} />
+            )}
             <PieChartIcon height="22" width="22" style={{ marginRight: '5px' }} />
             <Typography variant="content" color="white" mr="20px">
               {proposal?.for === undefined && proposal?.against === undefined
@@ -111,18 +95,20 @@ export function ProposalPage() {
               (67% required)
             </Typography>
           </Flex>
-          <StatsContainer>
-            <Column sx={{ flexGrow: '1' }}>
+          <Flex>
+            <Column flexGrow={1}>
               <Progress>
                 <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
               </Progress>
             </Column>
-            <Column sx={{ textAlign: 'right' }}>
-              <Button ml="20px" width="150px" onClick={() => setIsApproveModalVisible(true)}>
-                Approve
-              </Button>
-            </Column>
-          </StatsContainer>
+            {isActive && (
+              <Column>
+                <Button ml="20px" width="150px" onClick={() => setIsApproveModalVisible(true)}>
+                  Approve
+                </Button>
+              </Column>
+            )}
+          </Flex>
           <Flex alignItems="center">
             <Typography fontWeight="bold" variant="p" mr="5px">
               Reject
@@ -131,18 +117,20 @@ export function ProposalPage() {
               {proposal?.against}%
             </Typography>
           </Flex>
-          <StatsContainer>
-            <Column sx={{ flexGrow: '1' }}>
+          <Flex>
+            <Column flexGrow={1}>
               <Progress>
                 <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
               </Progress>
             </Column>
-            <Column sx={{ textAlign: 'right', justifyContent: 'center' }}>
-              <AlertButton ml="20px" width="150px" color="red" onClick={() => setIsRejectModalVisible(true)}>
-                Reject
-              </AlertButton>
-            </Column>
-          </StatsContainer>
+            {isActive && (
+              <Column>
+                <AlertButton ml="20px" width="150px" color="red" onClick={() => setIsRejectModalVisible(true)}>
+                  Reject
+                </AlertButton>
+              </Column>
+            )}
+          </Flex>
           <ProposalModal
             isOpen={isApproveModalVisible}
             toggleOpen={setIsApproveModalVisible}
@@ -155,8 +143,9 @@ export function ProposalPage() {
             balnWeight={proposal?.against}
             type={'Reject'}
           />
-        </ProposalPanel>
-        <ProposalPanel>
+        </BoxPanel>
+
+        <BoxPanel bg="bg2" my={10}>
           <Typography variant="h2" mb="20px">
             Description
           </Typography>
@@ -173,7 +162,7 @@ export function ProposalPage() {
             </Typography>
             <ExternalIcon width="15" height="15" />
           </Flex>
-        </ProposalPanel>
+        </BoxPanel>
       </ProposalContainer>
     </DefaultLayout>
   );

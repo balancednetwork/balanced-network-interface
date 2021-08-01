@@ -9,6 +9,7 @@ export const QUERY_KEYS = {
     TotalStakedBalanceAt: (day: number) => ['Vote', 'TotalStakedBalanceAt', day],
     TotalCollectedFees: ['Vote', 'TotalCollectedFees'],
     TotalProposals: 'TotalProposals',
+    TotalProposalsCount: ['Vote', 'TotalProposalsCount'],
     Proposal: 'ProposalData',
   },
   Reward: {

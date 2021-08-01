@@ -5,13 +5,13 @@ import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
 import QUERY_KEYS from 'queries/queryKeys';
-import { ProposalInterface, VoteInterface } from 'types';
+import { ProposalInterface } from 'types';
 
-export const useVoteInfoQuery = (voteIndex: number) => {
-  return useQuery<VoteInterface | undefined>(QUERY_KEYS.Vote.VoteInfo(voteIndex), async () => {
-    const res = await bnJs.Governance.checkVote(voteIndex);
+export const useProposalInfoQuery = (pId: number) => {
+  return useQuery<ProposalInterface | undefined>(QUERY_KEYS.Vote.VoteInfo(pId), async () => {
+    const res = await bnJs.Governance.checkVote(pId);
     if (!res.id) return;
-
+    console.log(res);
     const _against = BalancedJs.utils.toIcx(res['against']);
     const _for = BalancedJs.utils.toIcx(res['for']);
 
@@ -21,6 +21,8 @@ export const useVoteInfoQuery = (voteIndex: number) => {
     return {
       id: parseInt(res.id, 16),
       name: res['name'],
+      description: res['description'],
+      proposer: res['proposer'],
       against: _against1,
       for: _for1,
       snapshotDay: parseInt(res['vote snapshot'], 16),
@@ -29,11 +31,14 @@ export const useVoteInfoQuery = (voteIndex: number) => {
       majority: BalancedJs.utils.toIcx(res['majority']).toNumber(),
       quorum: BalancedJs.utils.toIcx(res['quorum']).times(100).dp(2).toNumber(),
       sum: _against.plus(_for).times(100).dp(2).toNumber(),
+      uniqueApproveVoters: parseInt(res['for_voter_count'], 16),
+      uniqueRejectVoters: parseInt(res['against_voter_count'], 16),
+      status: res['status'],
     };
   });
 };
 
-export const useUserVoteStatusQuery = (voteIndex: number) => {
+export const useUserVoteStatusQuery = (pId: number) => {
   const { account } = useIconReact();
 
   return useQuery<{
@@ -41,9 +46,9 @@ export const useUserVoteStatusQuery = (voteIndex: number) => {
     reject: BigNumber;
     approval: BigNumber;
   }>(
-    QUERY_KEYS.Vote.UserVoteStatus(voteIndex, account ?? ''),
+    QUERY_KEYS.Vote.UserVoteStatus(pId, account ?? ''),
     async () => {
-      const res = await bnJs.Governance.getVotesOfUser(voteIndex, account!);
+      const res = await bnJs.Governance.getVotesOfUser(pId, account!);
       const approval = BalancedJs.utils.toIcx(res['for']);
       const reject = BalancedJs.utils.toIcx(res['against']);
 
@@ -98,7 +103,7 @@ export const useTotalCollectedFeesQuery = () => {
   });
 };
 
-export const useTotalProposalQuery = (offset: number, batchSize: number = 20) => {
+export const useTotalProposalQuery = (offset: number = 1, batchSize: number = 20) => {
   return useQuery<Array<ProposalInterface>>(QUERY_KEYS.Vote.TotalProposals, async () => {
     const res = await bnJs.Governance.getProposals(offset, batchSize);
     const data = res.map(r => {
@@ -129,32 +134,9 @@ export const useTotalProposalQuery = (offset: number, batchSize: number = 20) =>
   });
 };
 
-export const useProposalDataQuery = (proposalId: number) => {
-  return useQuery<ProposalInterface>(QUERY_KEYS.Vote.Proposal, async () => {
-    const offset = Math.floor(proposalId / 20) + 1;
-    const res = await bnJs.Governance.getProposals(offset);
-    const data = res.filter(r => parseInt(r.id, 16) === proposalId);
-    const d = data[0];
-    const _against = BalancedJs.utils.toIcx(d['against']);
-    const _for = BalancedJs.utils.toIcx(d['for']);
-    const _against1 = _against.isZero() ? 0 : _against.div(_against.plus(_for)).times(100).dp(2).toNumber();
-    const _for1 = _for.isZero() ? 0 : _for.div(_against.plus(_for)).times(100).dp(2).toNumber();
-
-    return {
-      id: parseInt(d.id, 16),
-      name: d['name'],
-      proposer: d['proposer'],
-      description: d['description'],
-      majority: BalancedJs.utils.toIcx(d['majority']).toNumber(),
-      snapshotDay: parseInt(d['vote snapshot'], 16),
-      startDay: parseInt(d['start day'], 16),
-      endDay: parseInt(d['end day'], 16),
-      quorum: BalancedJs.utils.toIcx(d['quorum']).times(100).dp(2).toNumber(),
-      for: _for1,
-      against: _against1,
-      uniqueApproveVoters: parseInt(d['for_voter_count'], 16),
-      uniqueRejectVoters: parseInt(d['against_voter_count'], 16),
-      status: d['status'],
-    };
+export const useTotalProposalCountQuery = () => {
+  return useQuery<number>(QUERY_KEYS.Vote.TotalProposalsCount, async () => {
+    const res = await bnJs.Governance.getTotalProposal();
+    return parseInt(res, 16);
   });
 };

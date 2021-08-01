@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Helmet } from 'react-helmet-async';
-import { QueryObserverResult } from 'react-query';
 import { useLocation } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -14,16 +13,14 @@ import { Column } from 'app/components/Column';
 import { DefaultLayout } from 'app/components/Layout';
 import { ProposalModal } from 'app/components/ProposalModal';
 import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
-import { theme, Typography } from 'app/theme';
+import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
-import { useProposalDataQuery } from 'queries/vote';
-import { ProposalInterface } from 'types';
+import { useProposalInfoQuery } from 'queries/vote';
 import { getNumberFromEndURL } from 'utils';
 
 dayjs.extend(duration);
-const themes = theme();
 
 const ProposalContainer = styled(Box)`
   flex: 1;
@@ -57,7 +54,7 @@ const Progress = styled(Flex)`
 
 const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   background: ${props =>
-    (props.type === 'Approve' && themes.colors.primary) || (props.type === 'Reject' && themes.colors.alert)};
+    (props.type === 'Approve' && props.theme.colors.primary) || (props.type === 'Reject' && props.theme.colors.alert)};
   height: 100%;
   border-radius: ${props => (props.percentage === '100' ? '5px' : '5px 0 0 5px')};
   transition: width 0.2s ease-in;
@@ -69,8 +66,9 @@ export function ProposalPage() {
   const [isApproveModalVisible, setIsApproveModalVisible] = useState(false);
   const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
   const location = useLocation();
-  const proposalIndex = getNumberFromEndURL(location.pathname);
-  const proposalData: QueryObserverResult<ProposalInterface | undefined> = useProposalDataQuery(proposalIndex);
+  const pId = getNumberFromEndURL(location.pathname);
+
+  const { data: proposal } = useProposalInfoQuery(pId);
 
   return (
     <DefaultLayout title="Vote">
@@ -78,33 +76,28 @@ export function ProposalPage() {
         <title>Vote</title>
       </Helmet>
       <ProposalContainer>
-        <Breadcrumb
-          locationText="Vote"
-          locationPath="/vote"
-          title={proposalData?.data?.name === undefined ? '' : proposalData?.data?.name}
-        />
+        <Breadcrumb locationText="Vote" locationPath="/vote" title={proposal?.name || ''} />
         <ProposalPanel>
           <Typography variant="h2" mb="20px">
-            {proposalData?.data?.name}
+            {proposal?.name}
           </Typography>
           <Flex alignItems="center" mb="22px">
             <ProposalStatusIcon
-              status={proposalData?.data?.status === undefined ? '' : proposalData?.data?.status}
-              startDay={proposalData?.data?.status === undefined ? 0 : proposalData?.data?.startDay}
-              endDay={proposalData?.data?.status === undefined ? 0 : proposalData?.data?.startDay}
+              status={proposal?.status === undefined ? '' : proposal?.status}
+              startDay={proposal?.status === undefined ? 0 : proposal?.startDay}
+              endDay={proposal?.status === undefined ? 0 : proposal?.startDay}
             />
             <PieChartIcon height="22" width="22" style={{ marginRight: '5px' }} />
             <Typography variant="content" color="white" mr="20px">
-              {proposalData?.data?.for === undefined && proposalData?.data?.against === undefined
+              {proposal?.for === undefined && proposal?.against === undefined
                 ? ''
-                : `${proposalData?.data?.for + proposalData?.data?.against}% voted`}
+                : `${proposal?.for + proposal?.against}% voted`}
             </Typography>
             <UserIcon height="22" width="22" style={{ marginRight: '5px' }} />
             <Typography variant="content" color="white" mr="20px">
-              {proposalData?.data?.uniqueApproveVoters === undefined &&
-              proposalData?.data?.uniqueRejectVoters === undefined
+              {proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined
                 ? ''
-                : `${proposalData?.data?.uniqueApproveVoters + proposalData?.data?.uniqueRejectVoters} voters`}
+                : `${proposal?.uniqueApproveVoters + proposal?.uniqueRejectVoters} voters`}
             </Typography>
           </Flex>
           <Flex alignItems="center">
@@ -112,7 +105,7 @@ export function ProposalPage() {
               Approve
             </Typography>
             <Typography opacity="0.85" mr="5px" fontWeight="bold">
-              {proposalData?.data?.for}%
+              {proposal?.for}%
             </Typography>
             <Typography opacity="0.85" fontWeight="bold">
               (67% required)
@@ -121,7 +114,7 @@ export function ProposalPage() {
           <StatsContainer>
             <Column sx={{ flexGrow: '1' }}>
               <Progress>
-                <ProgressBar percentage={`${proposalData?.data?.for}`} type={'Approve'} />
+                <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
               </Progress>
             </Column>
             <Column sx={{ textAlign: 'right' }}>
@@ -135,13 +128,13 @@ export function ProposalPage() {
               Reject
             </Typography>
             <Typography opacity="0.85" mr="5px" fontWeight="bold">
-              {proposalData?.data?.against}%
+              {proposal?.against}%
             </Typography>
           </Flex>
           <StatsContainer>
             <Column sx={{ flexGrow: '1' }}>
               <Progress>
-                <ProgressBar percentage={`${proposalData?.data?.against}`} type={'Reject'} />
+                <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
               </Progress>
             </Column>
             <Column sx={{ textAlign: 'right', justifyContent: 'center' }}>
@@ -153,13 +146,13 @@ export function ProposalPage() {
           <ProposalModal
             isOpen={isApproveModalVisible}
             toggleOpen={setIsApproveModalVisible}
-            balnWeight={proposalData?.data?.for}
+            balnWeight={proposal?.for}
             type={'Approve'}
           />
           <ProposalModal
             isOpen={isRejectModalVisible}
             toggleOpen={setIsRejectModalVisible}
-            balnWeight={proposalData?.data?.against}
+            balnWeight={proposal?.against}
             type={'Reject'}
           />
         </ProposalPanel>
@@ -168,7 +161,7 @@ export function ProposalPage() {
             Description
           </Typography>
           <Typography variant="p" mb="20px">
-            {proposalData?.data?.description}
+            {proposal?.description}
           </Typography>
           <Flex alignItems="center">
             <Typography variant="p" mr="5px" color="primaryBright" style={{ cursor: 'pointer' }}>

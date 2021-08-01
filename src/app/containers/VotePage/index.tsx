@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Helmet } from 'react-helmet-async';
-import { QueryObserverResult } from 'react-query';
+import {} from 'react-query';
 import { Link } from 'react-router-dom';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -11,9 +11,6 @@ import { DefaultLayout } from 'app/components/Layout';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
 import { useTotalProposalQuery } from 'queries/vote';
-import { ProposalInterface } from 'types';
-
-import bnJs from '../../../bnJs';
 
 const VoteContainer = styled(Box)`
   flex: 1;
@@ -30,13 +27,8 @@ const VoteHeader = styled(Box)`
 `;
 
 export function VotePage() {
-  const totalProposalCount = bnJs.Governance.getTotalProposal();
-  const LATEST = totalProposalCount.data;
+  const { data: proposals } = useTotalProposalQuery();
 
-  const totalProposal: QueryObserverResult<Array<ProposalInterface>> = useTotalProposalQuery(
-    Math.floor(LATEST / 20) + 1,
-  );
-  const { data } = totalProposal;
   return (
     <DefaultLayout title="Vote">
       <Helmet>
@@ -51,23 +43,11 @@ export function VotePage() {
             </Box>
           </Link>
         </VoteHeader>
-        {data
+        {proposals
           ?.sort((a, b) => b?.id - a?.id)
-          .map(ele => (
-            <Link key={`link-${ele?.id}`} to={`/vote/proposal/${ele?.id}`} style={{ textDecoration: 'none' }}>
-              <ProposalInfo
-                title={ele?.name}
-                content={ele?.description}
-                metadata={{
-                  startDay: ele?.startDay,
-                  endDay: ele?.endDay,
-                  uniqueApproveVoters: ele?.uniqueApproveVoters,
-                  uniqueRejectVoters: ele?.uniqueRejectVoters,
-                  approvePercentage: ele?.for,
-                  rejectPercentage: ele?.against,
-                  status: ele?.status,
-                }}
-              />
+          .map(proposal => (
+            <Link key={proposal.id} to={`/vote/proposal/${proposal?.id}`} style={{ textDecoration: 'none' }}>
+              <ProposalInfo proposal={proposal} />
             </Link>
           ))}
       </VoteContainer>

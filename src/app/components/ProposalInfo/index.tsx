@@ -9,6 +9,7 @@ import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
+import { ProposalInterface } from 'types';
 import { normalizeContent } from 'utils';
 
 dayjs.extend(duration);
@@ -55,24 +56,25 @@ const ContentText = styled(Typography)`
   font-size: 16px;
 `;
 
-export default function ProposalInfo(props) {
-  const { title, content, metadata } = props;
+export default function ProposalInfo({ proposal }: { proposal: ProposalInterface }) {
   const {
-    approvePercentage,
-    rejectPercentage,
+    name: title,
+    description,
+    startDay,
+    endDay,
+    status,
+    for: approvePercentage,
+    against: rejectPercentage,
     uniqueApproveVoters,
     uniqueRejectVoters,
-    status,
-    endDay,
-    startDay,
-  } = metadata;
+  } = proposal;
 
   return (
     <ProposalWrapper>
       <Typography variant="h3" mb="10px">
         {title}
       </Typography>
-      <ContentText>{content !== '' && normalizeContent(content)}</ContentText>
+      <ContentText>{description && normalizeContent(description)}</ContentText>
       <Divider />
       <Flex alignItems="center">
         <ProposalStatusIcon status={status} startDay={startDay} endDay={endDay} />

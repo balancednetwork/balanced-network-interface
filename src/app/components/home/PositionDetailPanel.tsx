@@ -21,15 +21,9 @@ import {
   LIQUIDATION_COLLATERAL_RATIO,
   ZERO,
 } from 'constants/index';
+import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
-import {
-  useLoanInputAmount,
-  useLoanDebtHoldingShare,
-  useLoanTotalRepaid,
-  useLoanFetchTotalRepaid,
-  useLoanTotalCollateralSold,
-  useLoanAPY,
-} from 'store/loan/hooks';
+import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
@@ -61,13 +55,14 @@ const useOwnDailyRewards = (): BigNumber => {
   return totalDailyRewards.times(debtHoldShare).div(100);
 };
 
-enum Period {
-  'day' = 'Day',
-  'week' = 'Week',
-  'month' = 'Month',
-}
+const displayPeriod: { [key: string]: string } = {
+  day: 'Past day',
+  week: 'Past week',
+  month: 'Past month',
+  all: 'All time',
+};
 
-const PERIODS = [Period.day, Period.week, Period.month];
+const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
@@ -75,6 +70,7 @@ const PositionDetailPanel = () => {
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
   const [show, setShow] = React.useState<boolean>(false);
+  const [period, setPeriod] = React.useState<Period>(Period.day);
 
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
@@ -83,13 +79,7 @@ const PositionDetailPanel = () => {
   const ratio = useRatio();
 
   // Rebalancing section
-  const loanTotalRepaid = useLoanTotalRepaid();
-  const collateralTotalSold = useLoanTotalCollateralSold();
-  const updateLoanTotalRepaid = useLoanFetchTotalRepaid();
-
-  React.useEffect(() => {
-    updateLoanTotalRepaid(Period.day);
-  }, [updateLoanTotalRepaid]);
+  const { data } = useRebalancingDataQuery(period);
 
   // loan
   const loanInputAmount = useLoanInputAmount();
@@ -123,12 +113,9 @@ const PositionDetailPanel = () => {
     setAnchor(null);
   };
 
-  const [period, setPeriod] = React.useState(Period.day);
-
   const handlePeriod = (p: Period) => {
     closeMenu();
     setPeriod(p);
-    updateLoanTotalRepaid(p);
   };
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
@@ -270,16 +257,12 @@ const PositionDetailPanel = () => {
 
               <ClickAwayListener onClickAway={closeMenu}>
                 <div>
-                  <UnderlineTextWithArrow
-                    onClick={handleToggle}
-                    text={`Past ${period.toLowerCase()}`}
-                    arrowRef={arrowRef}
-                  />
+                  <UnderlineTextWithArrow onClick={handleToggle} text={displayPeriod[period]} arrowRef={arrowRef} />
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (
-                        <MenuItem key={p} onClick={() => handlePeriod(p)}>
-                          {p}
+                        <MenuItem className={p === 'all' ? 'border-top' : ''} key={p} onClick={() => handlePeriod(p)}>
+                          {displayPeriod[p]}
                         </MenuItem>
                       ))}
                     </MenuList>
@@ -289,11 +272,11 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(collateralTotalSold, 'currency')} ICX</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} ICX</Typography>
                 <Typography mt={1}>Collateral sold</Typography>
               </Box>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(loanTotalRepaid, 'currency')} bnUSD</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalRepaid, 'currency')} bnUSD</Typography>
                 <Typography mt={1}>Loan repaid</Typography>
               </Box>
             </Flex>

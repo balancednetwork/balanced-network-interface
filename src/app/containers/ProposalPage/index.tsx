@@ -114,7 +114,7 @@ export function ProposalPage() {
           </Typography>
           <Flex alignItems="center" mb="22px">
             {proposal && (
-              <ProposalStatusIcon status={proposal?.status} startDay={proposal?.startDay} endDay={proposal?.startDay} />
+              <ProposalStatusIcon status={proposal?.status} startDay={proposal?.startDay} endDay={proposal?.endDay} />
             )}
             <PieChartIcon height="22" width="22" style={{ marginRight: '5px' }} />
             <Typography variant="content" color="white" mr="20px">

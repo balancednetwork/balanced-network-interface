@@ -71,6 +71,9 @@ export function NewProposalPage() {
   const [forumLink, setForumLink] = useState('');
   const [description, setDescription] = useState('');
 
+  // Will remove when forumLink is used in later sprints
+  console.log(forumLink);
+
   const onTitleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
     setTitle(event.currentTarget.value);
   };
@@ -120,7 +123,7 @@ export function NewProposalPage() {
             It costs 100 bnUSD to submit a proposal.
           </Typography>
           <div style={{ textAlign: 'center' }}>
-            <Button>Submit</Button>
+            <Button disabled={description.length > 500 || title.length > 100}>Submit</Button>
           </div>
         </ProposalDetailContainer>
       </NewProposalContainer>

@@ -36,7 +36,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   const platformDay = platformDayQuery.data;
 
   let startTimeStr =
-    status === 'Pending' && platformDay
+    (status === 'Pending' || status === 'Confirmed') && platformDay
       ? dayjs()
           .utc()
           .add(startDay - platformDay, 'day')
@@ -64,7 +64,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
     );
   }
 
-  if (status === 'Pending' && startDay !== undefined && endDay !== undefined) {
+  if ((status === 'Pending' || status === 'Confirmed') && startDay !== undefined && endDay !== undefined) {
     return (
       <>
         <CalendarIcon height="22" width="22" style={{ marginRight: '5px' }} />

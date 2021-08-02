@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { usePrevious } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -9,13 +10,6 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import { ReactComponent as CrossIcon } from 'assets/icons/failure.svg';
 import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
-
-interface ProposalProps {
-  isOpen: boolean;
-  toggleOpen: Function;
-  balnWeight: number | undefined;
-  type: 'Approve' | 'Reject';
-}
 
 const CancelButton = styled(Button)`
   flex-grow: 1;
@@ -38,15 +32,34 @@ const SubmitButton = styled(Button)`
   font-size: 14px;
 `;
 
+export enum ModalStatus {
+  'None' = 'None',
+  'Approve' = 'Approve',
+  'Reject' = 'Reject',
+}
+
+interface ProposalProps {
+  status: ModalStatus;
+  onCancel: () => void;
+  onSubmit: () => void;
+  weight: number | undefined;
+}
+
 export function ProposalModal(props: ProposalProps) {
-  const { isOpen, toggleOpen, balnWeight, type } = props;
+  const { status, onCancel, onSubmit, weight } = props;
+  const isOpen = status !== ModalStatus.None;
+
+  // the code prevents flicking while this modal is closing.
+  const prevStatus = usePrevious(status);
+  const UIStatus = status === ModalStatus.None ? prevStatus : status;
+
   return (
-    <Modal isOpen={isOpen} onDismiss={() => toggleOpen(!isOpen)}>
+    <Modal isOpen={isOpen} onDismiss={onCancel}>
       <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
         <Typography variant="content" textAlign="center" mb={1}>
           Submit vote?
         </Typography>
-        {type === 'Reject' ? (
+        {UIStatus === ModalStatus.Reject && (
           <>
             <CrossIcon
               width="35px"
@@ -57,7 +70,8 @@ export function ProposalModal(props: ProposalProps) {
               Reject
             </Typography>
           </>
-        ) : (
+        )}
+        {UIStatus === ModalStatus.Approve && (
           <>
             <TickIcon
               width="35px"
@@ -69,14 +83,15 @@ export function ProposalModal(props: ProposalProps) {
             </Typography>
           </>
         )}
-        <Typography variant="content" textAlign="center" mb={3}>
-          {/* Automatically format the number to put a comma every 3 zeros */}
-          {balnWeight === undefined ? '' : `Voting Weight: ${balnWeight.toLocaleString()} BALN`}
-        </Typography>
+        {weight && (
+          <Typography variant="content" textAlign="center" mb={3}>
+            {`Voting Weight: ${weight.toLocaleString()} BALN`}
+          </Typography>
+        )}
         <Divider mb={5} />
         <Flex flexDirection="row" width="100%" justifyContent="center">
-          <CancelButton onClick={() => toggleOpen(!isOpen)}>Cancel</CancelButton>
-          <SubmitButton onClick={() => toggleOpen(!isOpen)}>Submit vote</SubmitButton>
+          <CancelButton onClick={onCancel}>Cancel</CancelButton>
+          <SubmitButton onClick={onSubmit}>Submit vote</SubmitButton>
         </Flex>
       </Flex>
     </Modal>

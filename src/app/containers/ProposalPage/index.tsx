@@ -12,13 +12,13 @@ import { Button, AlertButton } from 'app/components/Button';
 import { Column } from 'app/components/Column';
 import { DefaultLayout } from 'app/components/Layout';
 import { BoxPanel } from 'app/components/Panel';
-import { ProposalModal } from 'app/components/ProposalModal';
+import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
 import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
-import { useProposalInfoQuery } from 'queries/vote';
+import { useProposalInfoQuery, useUserWeightQuery } from 'queries/vote';
 
 dayjs.extend(duration);
 
@@ -48,12 +48,13 @@ const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
 `;
 
 export function ProposalPage() {
-  const [isApproveModalVisible, setIsApproveModalVisible] = useState(false);
-  const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
+  const [modalStatus, setModalStatus] = useState(ModalStatus.None);
   const { id: pId } = useParams<{ id: string }>();
   const { data: proposal } = useProposalInfoQuery(parseInt(pId));
-
+  const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotDay);
   const isActive = proposal?.status === 'Active';
+
+  const handleSubmit = () => {};
 
   return (
     <DefaultLayout title="Vote">
@@ -103,7 +104,7 @@ export function ProposalPage() {
             </Column>
             {isActive && (
               <Column>
-                <Button ml="20px" width="150px" onClick={() => setIsApproveModalVisible(true)}>
+                <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
                   Approve
                 </Button>
               </Column>
@@ -125,23 +126,18 @@ export function ProposalPage() {
             </Column>
             {isActive && (
               <Column>
-                <AlertButton ml="20px" width="150px" color="red" onClick={() => setIsRejectModalVisible(true)}>
+                <AlertButton ml="20px" width="150px" color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
                   Reject
                 </AlertButton>
               </Column>
             )}
           </Flex>
+
           <ProposalModal
-            isOpen={isApproveModalVisible}
-            toggleOpen={setIsApproveModalVisible}
-            balnWeight={proposal?.for}
-            type={'Approve'}
-          />
-          <ProposalModal
-            isOpen={isRejectModalVisible}
-            toggleOpen={setIsRejectModalVisible}
-            balnWeight={proposal?.against}
-            type={'Reject'}
+            status={modalStatus}
+            onCancel={() => setModalStatus(ModalStatus.None)}
+            onSubmit={() => handleSubmit}
+            weight={votingWeight?.dp(2).toNumber()}
           />
         </BoxPanel>
 

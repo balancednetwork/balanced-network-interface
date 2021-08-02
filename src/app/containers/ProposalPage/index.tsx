@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
@@ -18,7 +19,10 @@ import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
+import bnJs from 'bnJs';
 import { useProposalInfoQuery, useUserWeightQuery } from 'queries/vote';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 
 dayjs.extend(duration);
 
@@ -50,11 +54,51 @@ const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
 export function ProposalPage() {
   const [modalStatus, setModalStatus] = useState(ModalStatus.None);
   const { id: pId } = useParams<{ id: string }>();
-  const { data: proposal } = useProposalInfoQuery(parseInt(pId));
+  const proposalQuery = useProposalInfoQuery(parseInt(pId));
+  const { data: proposal } = proposalQuery;
   const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotDay);
   const isActive = proposal?.status === 'Active';
 
-  const handleSubmit = () => {};
+  const { account } = useIconReact();
+  const changeShouldLedgerSign = useChangeShouldLedgerSign();
+  const addTransaction = useTransactionAdder();
+  const [txHash, setTxHash] = useState('');
+  const handleSubmit = () => {
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
+    const hasApproved = modalStatus === ModalStatus.Approve;
+
+    bnJs
+      .inject({ account })
+      .Governance.castVote(proposal?.name!, hasApproved)
+      .then((res: any) => {
+        addTransaction(
+          { hash: res.result },
+          {
+            pending: `Voting...`,
+            summary: `Voted.`,
+          },
+        );
+
+        setTxHash(res.result);
+      })
+      .catch(e => {
+        console.error('error', e);
+      })
+      .finally(() => {
+        changeShouldLedgerSign(false);
+      });
+  };
+
+  const txStatus = useTransactionStatus(txHash);
+
+  React.useEffect(() => {
+    if (txStatus === TransactionStatus.success) {
+      proposalQuery.refetch();
+    }
+  }, [proposalQuery, txStatus]);
 
   return (
     <DefaultLayout title="Vote">
@@ -136,8 +180,8 @@ export function ProposalPage() {
           <ProposalModal
             status={modalStatus}
             onCancel={() => setModalStatus(ModalStatus.None)}
-            onSubmit={() => handleSubmit}
-            weight={votingWeight?.dp(2).toNumber()}
+            onSubmit={handleSubmit}
+            weight={votingWeight}
           />
         </BoxPanel>
 

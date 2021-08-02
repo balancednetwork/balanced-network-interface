@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import { usePrevious } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -42,7 +43,7 @@ interface ProposalProps {
   status: ModalStatus;
   onCancel: () => void;
   onSubmit: () => void;
-  weight: number | undefined;
+  weight: BigNumber | undefined;
 }
 
 export function ProposalModal(props: ProposalProps) {
@@ -83,11 +84,9 @@ export function ProposalModal(props: ProposalProps) {
             </Typography>
           </>
         )}
-        {weight && (
-          <Typography variant="content" textAlign="center" mb={3}>
-            {`Voting Weight: ${weight.toLocaleString()} BALN`}
-          </Typography>
-        )}
+        <Typography variant="content" textAlign="center" mb={3}>
+          {`Voting Weight: ${weight?.dp(2).toFormat()} BALN`}
+        </Typography>
         <Divider mb={5} />
         <Flex flexDirection="row" width="100%" justifyContent="center">
           <CancelButton onClick={onCancel}>Cancel</CancelButton>

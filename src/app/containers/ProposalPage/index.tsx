@@ -112,18 +112,18 @@ export function ProposalPage() {
           <Typography variant="h2" mb="20px">
             {proposal?.name}
           </Typography>
-          <Flex alignItems="center" mb="22px">
+          <Flex alignItems="center" mb="22px" flexWrap="wrap">
             {proposal && (
               <ProposalStatusIcon status={proposal?.status} startDay={proposal?.startDay} endDay={proposal?.endDay} />
             )}
-            <PieChartIcon height="22" width="22" style={{ marginRight: '5px' }} />
-            <Typography variant="content" color="white" mr="20px">
+            <PieChartIcon height="22" width="22" style={{ margin: '5px' }} />
+            <Typography variant="content" color="white" mr="20px" my="5px">
               {proposal?.for === undefined && proposal?.against === undefined
                 ? ''
                 : `${proposal?.for + proposal?.against}% voted`}
             </Typography>
-            <UserIcon height="22" width="22" style={{ marginRight: '5px' }} />
-            <Typography variant="content" color="white" mr="20px">
+            <UserIcon height="22" width="22" style={{ margin: '5px' }} />
+            <Typography variant="content" color="white" mr="20px" my="5px">
               {proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined
                 ? ''
                 : `${proposal?.uniqueApproveVoters + proposal?.uniqueRejectVoters} voters`}

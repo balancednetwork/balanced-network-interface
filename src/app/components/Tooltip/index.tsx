@@ -48,7 +48,7 @@ export function MouseoverTooltip({ children, noArrowAndBorder, ...rest }: Omit<T
   const close = useCallback(() => setShow(false), [setShow]);
   return (
     <Tooltip {...rest} show={show} noArrowAndBorder={noArrowAndBorder}>
-      <div onMouseEnter={open} onMouseLeave={open}>
+      <div onMouseEnter={open} onMouseLeave={close}>
         {children}
       </div>
     </Tooltip>

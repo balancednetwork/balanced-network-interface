@@ -6,7 +6,7 @@ import Popover, { PopoverProps, PopperWithoutArrowAndBorder } from '../Popover';
 
 const TooltipContainer = styled.div<{ wide?: boolean }>`
   width: ${props => (props.wide ? '300px' : '244px')};
-  padding: 12px 1rem;
+  padding: 10px 0.9375rem;
   line-height: 150%;
   font-weight: 400;
   font-size: 14px;
@@ -48,7 +48,7 @@ export function MouseoverTooltip({ children, noArrowAndBorder, ...rest }: Omit<T
   const close = useCallback(() => setShow(false), [setShow]);
   return (
     <Tooltip {...rest} show={show} noArrowAndBorder={noArrowAndBorder}>
-      <div onMouseEnter={open} onMouseLeave={close}>
+      <div onMouseEnter={open} onMouseLeave={open}>
         {children}
       </div>
     </Tooltip>

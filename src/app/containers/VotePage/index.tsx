@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button } from 'app/components/Button';
 import { DefaultLayout } from 'app/components/Layout';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
@@ -30,9 +29,6 @@ export function VotePage() {
       <VoteContainer>
         <Flex justifyContent="space-between" mb={5}>
           <Typography variant="h2">Proposals</Typography>
-          <Link to="/vote/new-proposal">
-            <Button>New proposal</Button>
-          </Link>
         </Flex>
         {proposals
           ?.sort((a, b) => b?.id - a?.id)

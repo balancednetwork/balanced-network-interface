@@ -6,7 +6,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
@@ -16,11 +16,13 @@ import { BoxPanel } from 'app/components/Panel';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
 import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
+import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
+import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import bnJs from 'bnJs';
-import { useProposalInfoQuery, useUserWeightQuery } from 'queries/vote';
+import { useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 
@@ -37,8 +39,6 @@ const Progress = styled(Flex)`
   width: 100%;
   background-color: #123955;
   border-radius: 5px;
-  margin-top: 15px;
-  margin-bottom: 15px;
 `;
 
 const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
@@ -51,13 +51,35 @@ const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   width: ${props => `${props.percentage}%`};
 `;
 
+const ResultPanel = styled(Flex)`
+  border-radius: 10px;
+  width: 100%;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 25px;
+  height: 90px;
+  max-width: 'initial';
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 15px 40px;
+  `}
+
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    padding: 15px 40px;
+    max-width: 360px;
+  `}
+`;
+
 export function ProposalPage() {
   const [modalStatus, setModalStatus] = useState(ModalStatus.None);
   const { id: pId } = useParams<{ id: string }>();
   const proposalQuery = useProposalInfoQuery(parseInt(pId));
   const { data: proposal } = proposalQuery;
   const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotDay);
+  const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
+  const { data: userStatus } = voteStatusQuery;
   const isActive = proposal?.status === 'Active';
+  const hasUserVoted = isActive && userStatus?.hasVoted;
 
   const { account } = useIconReact();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -83,6 +105,7 @@ export function ProposalPage() {
         );
 
         setTxHash(res.result);
+        setModalStatus(ModalStatus.None);
       })
       .catch(e => {
         console.error('error', e);
@@ -97,9 +120,11 @@ export function ProposalPage() {
   React.useEffect(() => {
     if (txStatus === TransactionStatus.success) {
       proposalQuery.refetch();
+      voteStatusQuery.refetch();
     }
-  }, [proposalQuery, txStatus]);
+  }, [proposalQuery, voteStatusQuery, txStatus]);
 
+  const theme = useTheme();
   return (
     <DefaultLayout title="Vote">
       <Helmet>
@@ -109,10 +134,10 @@ export function ProposalPage() {
         <Breadcrumb locationText="Vote" locationPath="/vote" title={proposal?.name || ''} />
 
         <BoxPanel bg="bg2" my={10}>
-          <Typography variant="h2" mb="20px">
+          <Typography variant="h2" mb={4}>
             {proposal?.name}
           </Typography>
-          <Flex alignItems="center" mb="22px" flexWrap="wrap">
+          <Flex alignItems="center" mb={3} flexWrap="wrap">
             {proposal && (
               <ProposalStatusIcon status={proposal?.status} startDay={proposal?.startDay} endDay={proposal?.endDay} />
             )}
@@ -129,53 +154,113 @@ export function ProposalPage() {
                 : `${proposal?.uniqueApproveVoters + proposal?.uniqueRejectVoters} voters`}
             </Typography>
           </Flex>
-          <Flex alignItems="center">
-            <Typography fontWeight="bold" variant="p" mr="5px">
-              Approve
-            </Typography>
-            <Typography opacity="0.85" mr="5px" fontWeight="bold">
-              {proposal?.for}%
-            </Typography>
-            <Typography opacity="0.85" fontWeight="bold">
-              (67% required)
-            </Typography>
-          </Flex>
-          <Flex>
-            <Column flexGrow={1}>
-              <Progress>
-                <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
-              </Progress>
-            </Column>
-            {isActive && (
-              <Column>
-                <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
+
+          {hasUserVoted ? (
+            <Flex
+              sx={{ gap: 20 }}
+              alignItems={['stretch', 'stretch', 'flex-end']}
+              flexDirection={['column', 'column', 'row']}
+            >
+              <Flex flex={1} flexDirection="column" width="100%" sx={{ rowGap: '15px' }}>
+                <Flex alignItems="center">
+                  <Typography fontWeight="bold" variant="p" mr="5px">
+                    Approve
+                  </Typography>
+                  <Typography opacity="0.85" mr="5px" fontWeight="bold">
+                    {proposal?.for}%
+                  </Typography>
+                </Flex>
+
+                <Progress>
+                  <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
+                </Progress>
+
+                <Flex alignItems="center">
+                  <Typography fontWeight="bold" variant="p" mr="5px">
+                    Reject
+                  </Typography>
+                  <Typography opacity="0.85" mr="5px" fontWeight="bold">
+                    {proposal?.against}%
+                  </Typography>
+                </Flex>
+
+                <Progress>
+                  <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
+                </Progress>
+              </Flex>
+
+              {!userStatus?.approval.isZero() && (
+                <ResultPanel bg="bg3">
+                  <CheckCircleIcon width="30px" height="30px" color={theme.colors.primary} />
+                  <Flex flexDirection="column">
+                    <Typography variant="h3" mb={1}>
+                      You approved
+                    </Typography>
+                    <Typography>{`Voting weight: ${userStatus?.approval.dp(2).toFormat()} BALN`}</Typography>
+                  </Flex>
+                </ResultPanel>
+              )}
+
+              {!userStatus?.reject.isZero() && (
+                <ResultPanel bg="bg3">
+                  <CancelIcon width="30px" height="30px" color={theme.colors.alert} />
+                  <Flex flexDirection="column">
+                    <Typography variant="h3" mb={1}>
+                      You rejected
+                    </Typography>
+                    <Typography>{`Voting weight: ${userStatus?.reject.dp(2).toFormat()} BALN`}</Typography>
+                  </Flex>
+                </ResultPanel>
+              )}
+            </Flex>
+          ) : (
+            <Flex flexDirection="column">
+              <Flex alignItems="center">
+                <Typography fontWeight="bold" variant="p" mr="5px">
                   Approve
-                </Button>
-              </Column>
-            )}
-          </Flex>
-          <Flex alignItems="center">
-            <Typography fontWeight="bold" variant="p" mr="5px">
-              Reject
-            </Typography>
-            <Typography opacity="0.85" mr="5px" fontWeight="bold">
-              {proposal?.against}%
-            </Typography>
-          </Flex>
-          <Flex>
-            <Column flexGrow={1}>
-              <Progress>
-                <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
-              </Progress>
-            </Column>
-            {isActive && (
-              <Column>
-                <AlertButton ml="20px" width="150px" color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
+                </Typography>
+                <Typography opacity="0.85" mr="5px" fontWeight="bold">
+                  {proposal?.for}%
+                </Typography>
+              </Flex>
+              <Flex>
+                <Column flexGrow={1}>
+                  <Progress my={3}>
+                    <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
+                  </Progress>
+                </Column>
+                {isActive && account && (
+                  <Column>
+                    <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
+                      Approve
+                    </Button>
+                  </Column>
+                )}
+              </Flex>
+              <Flex alignItems="center">
+                <Typography fontWeight="bold" variant="p" mr="5px">
                   Reject
-                </AlertButton>
-              </Column>
-            )}
-          </Flex>
+                </Typography>
+                <Typography opacity="0.85" mr="5px" fontWeight="bold">
+                  {proposal?.against}%
+                </Typography>
+              </Flex>
+              <Flex>
+                <Column flexGrow={1}>
+                  <Progress my={3}>
+                    <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
+                  </Progress>
+                </Column>
+                {isActive && account && (
+                  <Column>
+                    <AlertButton ml="20px" width="150px" color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
+                      Reject
+                    </AlertButton>
+                  </Column>
+                )}
+              </Flex>
+            </Flex>
+          )}
 
           <ProposalModal
             status={modalStatus}

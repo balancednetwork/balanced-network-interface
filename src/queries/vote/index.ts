@@ -38,7 +38,7 @@ export const useProposalInfoQuery = (pId: number) => {
   });
 };
 
-export const useUserVoteStatusQuery = (pId: number) => {
+export const useUserVoteStatusQuery = (pId?: number) => {
   const { account } = useIconReact();
 
   return useQuery<{
@@ -46,9 +46,9 @@ export const useUserVoteStatusQuery = (pId: number) => {
     reject: BigNumber;
     approval: BigNumber;
   }>(
-    QUERY_KEYS.Vote.UserVoteStatus(pId, account ?? ''),
+    QUERY_KEYS.Vote.UserVoteStatus(pId || 0, account ?? ''),
     async () => {
-      const res = await bnJs.Governance.getVotesOfUser(pId, account!);
+      const res = await bnJs.Governance.getVotesOfUser(pId!, account!);
       const approval = BalancedJs.utils.toIcx(res['for']);
       const reject = BalancedJs.utils.toIcx(res['against']);
 
@@ -59,7 +59,7 @@ export const useUserVoteStatusQuery = (pId: number) => {
       };
     },
     {
-      enabled: !!account,
+      enabled: !!account && !!pId,
     },
   );
 };

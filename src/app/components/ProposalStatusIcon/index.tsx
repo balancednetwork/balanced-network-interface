@@ -3,6 +3,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
+import { Flex } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
@@ -55,50 +56,52 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
 
   if (status === 'Defeated' || status === 'No Quorum' || status === 'Failed Executed' || status === 'Cancelled') {
     return (
-      <>
-        <FailureIcon height="22" width="22" style={{ marginRight: '5px' }} />
-        <Typography variant="content" color="white" mr="20px">
+      <Flex alignItems="center" sx={{ columnGap: '10px' }}>
+        <FailureIcon height="22" width="22" />
+        <Typography variant="content" color="white">
           {StatusMap[status]}
         </Typography>
-      </>
+      </Flex>
     );
   }
 
   if ((status === 'Pending' || status === 'Confirmed') && startDay !== undefined && endDay !== undefined) {
     return (
-      <>
-        <CalendarIcon height="22" width="22" style={{ marginRight: '5px' }} />
-        <Typography variant="content" color="white" mr="20px">
+      <Flex alignItems="center" sx={{ columnGap: '10px' }}>
+        <CalendarIcon height="22" width="22" />
+        <Typography variant="content" color="white">
           {`Starting in ${startTimeStr}`}
         </Typography>
-      </>
+      </Flex>
     );
   }
 
   if (status === 'Active') {
     return (
-      <>
-        <CalendarIcon height="22" width="22" style={{ marginRight: '5px' }} />
-        <Typography variant="content" color="white" mr="20px">
+      <Flex alignItems="center" sx={{ columnGap: '10px' }}>
+        <CalendarIcon height="22" width="22" />
+        <Typography variant="content" color="white">
           {`${endTimeStr} left`}
         </Typography>
-      </>
+      </Flex>
     );
   }
 
   if (status === 'Succeeded' || status === 'Executed') {
     return (
-      <>
-        <TickIcon height="22" width="22" style={{ marginRight: '5px' }} />
-        <Typography variant="content" color="white" mr="20px">
+      <Flex alignItems="center" sx={{ columnGap: '10px' }}>
+        <TickIcon height="22" width="22" />
+        <Typography variant="content" color="white">
           {StatusMap[status]}
         </Typography>
-      </>
+      </Flex>
     );
   }
   return (
-    <Typography variant="content" color="white" mr="20px">
-      {StatusMap[status]}
-    </Typography>
+    <Flex alignItems="center">
+      <Typography variant="content" color="white">
+        {StatusMap[status]}
+      </Typography>
+    </Flex>
   );
 }

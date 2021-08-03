@@ -61,8 +61,8 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   display: block;
   margin-left: 50%;
   transform: translate(-50%);
-  padding: 10px 15px;
-  width: 114px;
+  padding: 10px 10px;
+  width: 100px;
   border-radius: 25px;
   color: #8695a6;
   text-decoration: none;
@@ -82,6 +82,11 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
     background-color: ${({ theme }) => theme.colors.primary};
     opacity: 1;
   }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    width: 114px;
+    padding: 10px 15px;
+  `}
 
   ${({ theme }) => theme.mediaWidth.upLarge`
     width: 114px;

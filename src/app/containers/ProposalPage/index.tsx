@@ -137,22 +137,28 @@ export function ProposalPage() {
           <Typography variant="h2" mb={4}>
             {proposal?.name}
           </Typography>
-          <Flex alignItems="center" mb={3} flexWrap="wrap">
+          <Flex alignItems="center" mb={3} flexWrap="wrap" sx={{ columnGap: '15px' }}>
             {proposal && (
               <ProposalStatusIcon status={proposal?.status} startDay={proposal?.startDay} endDay={proposal?.endDay} />
             )}
-            <PieChartIcon height="22" width="22" style={{ margin: '5px' }} />
-            <Typography variant="content" color="white" mr="20px" my="5px">
-              {proposal?.for === undefined && proposal?.against === undefined
-                ? ''
-                : `${proposal?.for + proposal?.against}% voted`}
-            </Typography>
-            <UserIcon height="22" width="22" style={{ margin: '5px' }} />
-            <Typography variant="content" color="white" mr="20px" my="5px">
-              {proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined
-                ? ''
-                : `${proposal?.uniqueApproveVoters + proposal?.uniqueRejectVoters} voters`}
-            </Typography>
+
+            <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
+              <PieChartIcon height="22" width="22" />
+              <Typography variant="content" color="white">
+                {proposal?.for === undefined && proposal?.against === undefined
+                  ? ''
+                  : `${proposal?.for + proposal?.against}% voted`}
+              </Typography>
+            </Flex>
+
+            <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
+              <UserIcon height="22" width="22" />
+              <Typography variant="content" color="white">
+                {proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined
+                  ? ''
+                  : `${proposal?.uniqueApproveVoters + proposal?.uniqueRejectVoters} voters`}
+              </Typography>
+            </Flex>
           </Flex>
 
           {hasUserVoted ? (

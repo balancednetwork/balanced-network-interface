@@ -2,7 +2,7 @@ import React from 'react';
 
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { Flex } from 'rebass/styled-components';
+import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
@@ -32,15 +32,13 @@ const ProposalWrapper = styled.div`
     border: 2px solid #2ca9b7;
   }
 `;
-const ApprovalSwatch = styled.div`
-  margin-right: 7px;
+const ApprovalSwatch = styled(Box)`
   background: #2ca9b7;
   height: 20px;
   width: 20px;
   border-radius: 5px;
 `;
-const RejectionSwatch = styled.div`
-  margin-right: 7px;
+const RejectionSwatch = styled(Box)`
   background: #fb6a6a;
   height: 20px;
   width: 20px;
@@ -76,24 +74,36 @@ export default function ProposalInfo({ proposal }: { proposal: ProposalInterface
       </Typography>
       <ContentText>{description && normalizeContent(description)}</ContentText>
       <Divider />
-      <Flex alignItems="center" flexWrap="wrap">
+      <Flex alignItems="center" flexWrap="wrap" sx={{ columnGap: '15px' }}>
         <ProposalStatusIcon status={status} startDay={startDay} endDay={endDay} />
-        <PieChartIcon height="22" width="22" style={{ margin: '5px' }} />
-        <Typography variant="content" color="white" mr="20px" my="5px">
-          {`${approvePercentage + rejectPercentage}% voted`}
-        </Typography>
-        <UserIcon height="22" width="22" style={{ margin: '5px' }} />
-        <Typography variant="content" color="white" mr="20px" my="5px">
-          {`${uniqueApproveVoters + uniqueRejectVoters} voters`}
-        </Typography>
-        <ApprovalSwatch />
-        <Typography variant="content" color="white" mr="20px" my="5px">
-          {`${approvePercentage}%`}
-        </Typography>
-        <RejectionSwatch />
-        <Typography variant="content" color="white" mr="20px" my="5px">
-          {`${rejectPercentage}%`}
-        </Typography>
+
+        <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
+          <PieChartIcon height="22" width="22" />
+          <Typography variant="content" color="white">
+            {`${approvePercentage + rejectPercentage}% voted`}
+          </Typography>
+        </Flex>
+
+        <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
+          <UserIcon height="22" width="22" />
+          <Typography variant="content" color="white">
+            {`${uniqueApproveVoters + uniqueRejectVoters} voters`}
+          </Typography>
+        </Flex>
+
+        <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
+          <ApprovalSwatch />
+          <Typography variant="content" color="white">
+            {`${approvePercentage}%`}
+          </Typography>
+        </Flex>
+
+        <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
+          <RejectionSwatch />
+          <Typography variant="content" color="white">
+            {`${rejectPercentage}%`}
+          </Typography>
+        </Flex>
       </Flex>
     </ProposalWrapper>
   );

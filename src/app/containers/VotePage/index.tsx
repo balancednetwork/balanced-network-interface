@@ -2,21 +2,13 @@ import React from 'react';
 
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import { Flex } from 'rebass/styled-components';
 
 import { DefaultLayout } from 'app/components/Layout';
+import { BoxPanel } from 'app/components/Panel';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
 import { useTotalProposalQuery } from 'queries/vote';
-
-const VoteContainer = styled(Box)`
-  flex: 1;
-  border-radius: 10px;
-  padding: 35px 35px;
-  background-color: ${({ theme }) => theme.colors.bg2};
-  margin-bottom: 50px;
-`;
 
 export function VotePage() {
   const { data: proposals } = useTotalProposalQuery();
@@ -26,7 +18,8 @@ export function VotePage() {
       <Helmet>
         <title>Vote</title>
       </Helmet>
-      <VoteContainer>
+
+      <BoxPanel bg="bg2" width="100%">
         <Flex justifyContent="space-between" mb={5}>
           <Typography variant="h2">Proposals</Typography>
         </Flex>
@@ -37,7 +30,7 @@ export function VotePage() {
               <ProposalInfo proposal={proposal} />
             </Link>
           ))}
-      </VoteContainer>
+      </BoxPanel>
     </DefaultLayout>
   );
 }

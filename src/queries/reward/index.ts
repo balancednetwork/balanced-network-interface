@@ -75,14 +75,26 @@ export const useRatesQuery = () => {
   return useQuery<{ [key in string]: BigNumber }>('useRatesQuery', fetch);
 };
 
+export const useBnJsContractQuery = <T>(bnJs: BalancedJs, contract: string, method: string, args: any[]) => {
+  return useQuery<T, string>(QUERY_KEYS.BnJs(contract, method, args), async () => {
+    return bnJs[contract][method](...args);
+  });
+};
+
 export const useAllPairsAPY = () => {
   const tvls = useAllPairsTVL();
   const { data: rates } = useRatesQuery();
+  const dailyDistributionQuery = useBnJsContractQuery<string>(bnJs, 'Rewards', 'getEmission', []);
 
-  if (tvls && rates) {
+  if (tvls && rates && dailyDistributionQuery.isSuccess) {
+    const dailyDistribution = BalancedJs.utils.toIcx(dailyDistributionQuery.data);
     const t = {};
     SUPPORTED_PAIRS.forEach(pair => {
-      t[pair.poolId] = new BigNumber(pair.rewards || 0).times(365).times(rates['BALN']).div(tvls[pair.poolId]);
+      t[pair.poolId] = dailyDistribution
+        .times(pair.rewards || 0)
+        .times(365)
+        .times(rates['BALN'])
+        .div(tvls[pair.poolId]);
     });
     return t;
   }

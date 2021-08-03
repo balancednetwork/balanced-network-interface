@@ -76,22 +76,22 @@ export default function ProposalInfo({ proposal }: { proposal: ProposalInterface
       </Typography>
       <ContentText>{description && normalizeContent(description)}</ContentText>
       <Divider />
-      <Flex alignItems="center">
+      <Flex alignItems="center" flexWrap="wrap">
         <ProposalStatusIcon status={status} startDay={startDay} endDay={endDay} />
-        <PieChartIcon height="22" width="22" style={{ marginRight: '5px' }} />
-        <Typography variant="content" color="white" mr="20px">
+        <PieChartIcon height="22" width="22" style={{ margin: '5px' }} />
+        <Typography variant="content" color="white" mr="20px" my="5px">
           {`${approvePercentage + rejectPercentage}% voted`}
         </Typography>
-        <UserIcon height="22" width="22" style={{ marginRight: '5px' }} />
-        <Typography variant="content" color="white" mr="20px">
+        <UserIcon height="22" width="22" style={{ margin: '5px' }} />
+        <Typography variant="content" color="white" mr="20px" my="5px">
           {`${uniqueApproveVoters + uniqueRejectVoters} voters`}
         </Typography>
         <ApprovalSwatch />
-        <Typography variant="content" color="white" mr="20px">
+        <Typography variant="content" color="white" mr="20px" my="5px">
           {`${approvePercentage}%`}
         </Typography>
         <RejectionSwatch />
-        <Typography variant="content" color="white" mr="20px">
+        <Typography variant="content" color="white" mr="20px" my="5px">
           {`${rejectPercentage}%`}
         </Typography>
       </Flex>

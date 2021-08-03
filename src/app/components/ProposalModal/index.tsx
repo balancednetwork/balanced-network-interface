@@ -85,7 +85,7 @@ export function ProposalModal(props: ProposalProps) {
           </>
         )}
         <Typography variant="content" textAlign="center" mb={3}>
-          {`Voting Weight: ${weight?.dp(2).toFormat()} BALN`}
+          {`Voting weight: ${weight?.dp(2).toFormat()} BALN`}
         </Typography>
         <Divider mb={5} />
         <Flex flexDirection="row" width="100%" justifyContent="center">

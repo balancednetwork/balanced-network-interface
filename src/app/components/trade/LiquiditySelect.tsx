@@ -2,6 +2,7 @@ import React from 'react';
 
 import ClickAwayListener from 'react-click-away-listener';
 import { useDispatch } from 'react-redux';
+import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -15,6 +16,7 @@ import { resetMintState } from 'store/mint/actions';
 import { useSetPair, usePoolPair } from 'store/pool/hooks';
 
 export default function LiquiditySelect() {
+  const upSmall = useMedia('(min-width:768px)');
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
@@ -26,7 +28,9 @@ export default function LiquiditySelect() {
   const [width, setWidth] = React.useState(ref?.current?.clientWidth);
   React.useEffect(() => {
     function handleResize() {
-      setWidth(ref?.current?.clientWidth ?? width);
+      const clientWidth = ref?.current?.clientWidth || 0;
+      //margin-left and margin-right are 15px
+      setWidth(clientWidth + (upSmall ? 40 : 20) ?? width);
     }
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -51,11 +55,11 @@ export default function LiquiditySelect() {
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <div>
           <StyledWrapper onClick={toggleOpen}>
-            <UnderlineText>{selectedPair.pair}</UnderlineText>
+            <Text active={open}>{selectedPair.pair}</Text>
             <StyledArrowDownIcon />
           </StyledWrapper>
 
-          <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom">
+          <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom" style={{ marginTop: '10px' }}>
             <List style={{ width: width }}>
               <DashGrid>
                 <HeaderText>POOL</HeaderText>
@@ -81,9 +85,27 @@ export default function LiquiditySelect() {
 
 const StyledWrapper = styled(Wrapper)`
   font-size: 18px;
-  padding-bottom: 5px;
   color: white;
   :hover {
     color: ${({ theme }) => theme.colors.primary};
   }
+`;
+
+const Text = styled(UnderlineText)<{ active: boolean }>`
+  ${props =>
+    props.active &&
+    ` 
+    color: #2fccdc;
+    &:after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin-top: 3px;
+    background: transparent;
+    border-radius: 3px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+    background-color: #2fccdc;
+  }
+   `}
 `;

@@ -122,9 +122,10 @@ export interface PopperProps {
   show: boolean;
   children: React.ReactNode;
   placement?: Placement;
+  style?: React.CSSProperties;
 }
 
-export function PopperWithoutArrow({ show, children, placement = 'auto', anchorEl }: PopperProps) {
+export function PopperWithoutArrow({ show, children, placement = 'auto', anchorEl, style = {} }: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
@@ -140,7 +141,12 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
 
   return (
     <Portal>
-      <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+      <PopoverContainer
+        show={show}
+        ref={setPopperElement as any}
+        style={{ ...style, ...styles.popper }}
+        {...attributes.popper}
+      >
         <ContentWrapper>{children}</ContentWrapper>
       </PopoverContainer>
     </Portal>

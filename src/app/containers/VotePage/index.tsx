@@ -23,13 +23,25 @@ export function VotePage() {
         <Flex justifyContent="space-between" mb={5}>
           <Typography variant="h2">Proposals</Typography>
         </Flex>
-        {proposals
-          ?.sort((a, b) => b?.id - a?.id)
-          .map(proposal => (
-            <Link key={proposal.id} to={`/vote/proposal/${proposal?.id}`} style={{ textDecoration: 'none' }}>
-              <ProposalInfo proposal={proposal} />
-            </Link>
-          ))}
+
+        {proposals ? (
+          proposals
+            .sort((a, b) => b?.id - a?.id)
+            .map(proposal => (
+              <Link key={proposal.id} to={`/vote/proposal/${proposal?.id}`} style={{ textDecoration: 'none' }}>
+                <ProposalInfo proposal={proposal} />
+              </Link>
+            ))
+        ) : (
+          <>
+            <ProposalInfo proposal={null} />
+            <ProposalInfo proposal={null} />
+            <ProposalInfo proposal={null} />
+            <ProposalInfo proposal={null} />
+            <ProposalInfo proposal={null} />
+            <ProposalInfo proposal={null} />
+          </>
+        )}
       </BoxPanel>
     </DefaultLayout>
   );

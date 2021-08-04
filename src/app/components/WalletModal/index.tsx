@@ -6,6 +6,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
 import { isMobile } from 'react-device-detect';
+import { useMedia } from 'react-use';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -79,6 +80,10 @@ const WalletOption = styled(Box)`
   color: white;
   user-select: none;
 
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    width: 140px;
+  `}
+
   > *:first-child {
     margin-bottom: 10px;
   }
@@ -94,6 +99,10 @@ const StyledModal = styled(Modal).attrs({
 })`
   &[data-reach-dialog-content] {
     width: 320px;
+
+    ${({ theme }) => theme.mediaWidth.upExtraSmall`
+      width: 370px
+    `}
   }
 `;
 
@@ -104,6 +113,7 @@ export default function WalletModal() {
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
+  const upExtraSmall = useMedia('(min-width: 600px)');
 
   const [{ offset, limit }, updatePaging] = useState({
     offset: 0,
@@ -267,7 +277,7 @@ export default function WalletModal() {
               <Text>ICON Wallet</Text>
             </WalletOption>
 
-            <VerticalDivider text="or"></VerticalDivider>
+            {upExtraSmall && <VerticalDivider text="or"></VerticalDivider>}
 
             <WalletOption onClick={handleOpenLedger}>
               <LedgerIcon width="50" height="50" />

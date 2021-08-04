@@ -41,6 +41,9 @@ export function theme(): DefaultTheme {
       // balanced dark grey
       text1: '#D5D7DB',
 
+      // light grey for vote content
+      text2: '#A9BAC7',
+
       // backgrounds
       // Balanced navy blue
       bg1: '#01002A',
@@ -57,6 +60,8 @@ export function theme(): DefaultTheme {
 
       // Balanced turqoise
       primary: '#2ca9b7',
+
+      primaryBright: '#2fccdc',
 
       //specialty colors
       modalBG: 'rgba(1, 0, 42, 0.75)',
@@ -95,7 +100,7 @@ export function theme(): DefaultTheme {
   };
 }
 
-type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'body';
+type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'body' | 'content';
 
 export const Typography = React.forwardRef((props: TextProps & { variant?: TypographyVariant }, ref) => {
   const { variant, ...rest } = props;
@@ -113,6 +118,8 @@ export const Typography = React.forwardRef((props: TextProps & { variant?: Typog
       return <Text ref={ref} as="label" fontSize={14} {...rest} />;
     case 'body':
       return <Text ref={ref} as="p" fontSize={14} {...rest} />;
+    case 'content':
+      return <Text ref={ref} as="p" fontSize="0.875em" {...rest} />;
     default:
       return <Text ref={ref} as="p" fontSize={14} {...rest} />;
   }

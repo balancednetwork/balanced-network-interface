@@ -32,9 +32,7 @@ export const containerGenerator: PlopGeneratorConfig = {
       default: 'Form',
       validate: value => {
         if (/.+/.test(value)) {
-          return containerExists(value)
-            ? 'A container with this name already exists'
-            : true;
+          return containerExists(value) ? 'A container with this name already exists' : true;
         }
 
         return 'The name is required';
@@ -56,8 +54,7 @@ export const containerGenerator: PlopGeneratorConfig = {
       type: 'confirm',
       name: ContainerProptNames.wantSlice,
       default: true,
-      message:
-        'Do you want a redux slice(actions/selectors/reducer) for this container?',
+      message: 'Do you want a redux slice(actions/selectors/reducer) for this container?',
     },
     {
       type: 'confirm',
@@ -75,8 +72,7 @@ export const containerGenerator: PlopGeneratorConfig = {
       type: 'confirm',
       name: ContainerProptNames.wantTranslations,
       default: false,
-      message:
-        'Do you want i18n translations (i.e. will this component use text)?',
+      message: 'Do you want i18n translations (i.e. will this component use text)?',
     },
     {
       type: 'confirm',

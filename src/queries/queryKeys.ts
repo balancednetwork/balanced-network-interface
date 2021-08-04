@@ -8,6 +8,9 @@ export const QUERY_KEYS = {
     UserWeight: (walletAddress: string) => ['Vote', 'UserWeight', walletAddress],
     TotalStakedBalanceAt: (day: number) => ['Vote', 'TotalStakedBalanceAt', day],
     TotalCollectedFees: ['Vote', 'TotalCollectedFees'],
+    TotalProposals: 'TotalProposals',
+    TotalProposalsCount: ['Vote', 'TotalProposalsCount'],
+    Proposal: 'ProposalData',
   },
   Reward: {
     PlatformDay: ['Reward', 'PlatformDay'],

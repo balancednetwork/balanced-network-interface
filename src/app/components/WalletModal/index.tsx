@@ -274,7 +274,7 @@ export default function WalletModal() {
           <Flex alignItems="stretch" justifyContent="space-between" mx={3}>
             <WalletOption onClick={handleOpenWallet}>
               <IconWalletIcon width="50" height="50" />
-              <Text>ICON Wallet</Text>
+              <Text>ICON wallet</Text>
             </WalletOption>
 
             {upExtraSmall && <VerticalDivider text="or"></VerticalDivider>}

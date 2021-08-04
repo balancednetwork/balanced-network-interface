@@ -87,7 +87,10 @@ export default function ProposalInfo({ proposal }: { proposal: ProposalInterface
         <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
           <UserIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {`${uniqueApproveVoters + uniqueRejectVoters} voters`}
+            {(proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined) ||
+            proposal?.endDay === 68
+              ? '- voters'
+              : `${uniqueApproveVoters + uniqueRejectVoters} voters`}
           </Typography>
         </Flex>
 

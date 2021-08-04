@@ -116,7 +116,7 @@ export default React.memo(function AppBar() {
         </ListItem>
         <ListItem>
           <StyledNavLink to="/vote">
-            <VoteIcon width="30" height="35" />
+            <VoteIcon width="35" height="33" />
             <Text>Vote</Text>
           </StyledNavLink>
         </ListItem>

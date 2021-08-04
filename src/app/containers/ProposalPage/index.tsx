@@ -99,8 +99,8 @@ export function ProposalPage() {
         addTransaction(
           { hash: res.result },
           {
-            pending: `Voting...`,
-            summary: `Voted.`,
+            pending: `Casting your vote...`,
+            summary: `Vote casted.`,
           },
         );
 
@@ -154,8 +154,9 @@ export function ProposalPage() {
             <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
               <UserIcon height="22" width="22" />
               <Typography variant="content" color="white">
-                {proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined
-                  ? ''
+                {(proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined) ||
+                proposal?.endDay === 68
+                  ? '- voters'
                   : `${proposal?.uniqueApproveVoters + proposal?.uniqueRejectVoters} voters`}
               </Typography>
             </Flex>

@@ -18,7 +18,6 @@ import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
-import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import bnJs from 'bnJs';
@@ -283,16 +282,6 @@ export function ProposalPage() {
           <Typography variant="p" mb="20px">
             {proposal?.description}
           </Typography>
-          <Flex alignItems="center">
-            <Typography variant="p" mr="5px" color="primaryBright" style={{ cursor: 'pointer' }}>
-              Discussion
-            </Typography>
-            <ExternalIcon width="15" height="15" style={{ marginRight: '20px' }} />
-            <Typography variant="p" mr="5px" color="primaryBright" style={{ cursor: 'pointer' }}>
-              Transaction
-            </Typography>
-            <ExternalIcon width="15" height="15" />
-          </Flex>
         </BoxPanel>
       </ProposalContainer>
     </DefaultLayout>

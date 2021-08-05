@@ -88,7 +88,7 @@ export default function ProposalInfo({ proposal }: { proposal: ProposalInterface
           <UserIcon height="22" width="22" />
           <Typography variant="content" color="white">
             {(proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined) ||
-            proposal?.endDay === 68
+            proposal?.id === 1
               ? '- voters'
               : `${uniqueApproveVoters + uniqueRejectVoters} voters`}
           </Typography>

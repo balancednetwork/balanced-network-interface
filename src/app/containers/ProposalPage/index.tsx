@@ -155,7 +155,7 @@ export function ProposalPage() {
               <UserIcon height="22" width="22" />
               <Typography variant="content" color="white">
                 {(proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined) ||
-                proposal?.endDay === 68
+                proposal?.id === 1
                   ? '- voters'
                   : `${proposal?.uniqueApproveVoters + proposal?.uniqueRejectVoters} voters`}
               </Typography>

@@ -80,9 +80,9 @@ const WalletOption = styled(Box)`
   color: white;
   user-select: none;
 
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+  @media all and (min-width: 370px) {
     width: 140px;
-  `}
+  }
 
   > *:first-child {
     margin-bottom: 10px;
@@ -100,9 +100,9 @@ const StyledModal = styled(Modal).attrs({
   &[data-reach-dialog-content] {
     width: 320px;
 
-    ${({ theme }) => theme.mediaWidth.upExtraSmall`
-      width: 370px
-    `}
+    @media all and (min-width: 370px) {
+      width: 370px;
+    }
   }
 `;
 
@@ -113,7 +113,7 @@ export default function WalletModal() {
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
-  const upExtraSmall = useMedia('(min-width: 600px)');
+  const upExtraSmall = useMedia('(min-width: 370px)');
 
   const [{ offset, limit }, updatePaging] = useState({
     offset: 0,

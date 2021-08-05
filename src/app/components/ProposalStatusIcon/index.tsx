@@ -36,23 +36,23 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   const platformDayQuery = usePlatformDayQuery();
   const platformDay = platformDayQuery.data;
 
-  let startTimeStr =
-    (status === 'Pending' || status === 'Confirmed') && platformDay
-      ? dayjs()
-          .utc()
-          .add(startDay - platformDay, 'day')
-          .hour(17)
-          .fromNow(true)
-      : '';
+  let startTimeStr = platformDay
+    ? dayjs()
+        .utc()
+        .add(startDay - platformDay, 'day')
+        .hour(17)
+        .fromNow(true)
+    : '';
 
-  let endTimeStr =
-    status === 'Active' && platformDay
-      ? dayjs()
-          .utc()
-          .add(endDay - platformDay - 1, 'day')
-          .hour(17)
-          .fromNow(true)
-      : '';
+  let endTimeStr = platformDay
+    ? dayjs()
+        .utc()
+        .add(endDay - platformDay - 1, 'day')
+        .hour(17)
+        .fromNow(true)
+    : '';
+
+  const isActive = platformDay ? startDay <= platformDay && platformDay < endDay : false;
 
   if (status === 'Defeated' || status === 'No Quorum' || status === 'Failed Executed' || status === 'Cancelled') {
     return (
@@ -65,7 +65,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
     );
   }
 
-  if ((status === 'Pending' || status === 'Confirmed') && startDay !== undefined && endDay !== undefined) {
+  if (status === 'Pending' || status === 'Confirmed') {
     return (
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <CalendarIcon height="22" width="22" />
@@ -77,14 +77,25 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   }
 
   if (status === 'Active') {
-    return (
-      <Flex alignItems="center" sx={{ columnGap: '10px' }}>
-        <CalendarIcon height="22" width="22" />
-        <Typography variant="content" color="white">
-          {`${endTimeStr} left`}
-        </Typography>
-      </Flex>
-    );
+    if (isActive) {
+      return (
+        <Flex alignItems="center" sx={{ columnGap: '10px' }}>
+          <CalendarIcon height="22" width="22" />
+          <Typography variant="content" color="white">
+            {`${endTimeStr} left`}
+          </Typography>
+        </Flex>
+      );
+    } else {
+      return (
+        <Flex alignItems="center" sx={{ columnGap: '10px' }}>
+          <CalendarIcon height="22" width="22" />
+          <Typography variant="content" color="white">
+            {`Starting in ${startTimeStr}`}
+          </Typography>
+        </Flex>
+      );
+    }
   }
 
   if (status === 'Succeeded' || status === 'Executed') {

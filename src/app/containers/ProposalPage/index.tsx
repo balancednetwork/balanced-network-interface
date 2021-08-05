@@ -22,6 +22,7 @@ import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import bnJs from 'bnJs';
+import { usePlatformDayQuery } from 'queries/reward';
 import { useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
@@ -87,7 +88,13 @@ export function ProposalPage() {
   const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotDay);
   const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
   const { data: userStatus } = voteStatusQuery;
-  const isActive = proposal?.status === 'Active';
+  const { data: platformDay } = usePlatformDayQuery();
+  const isActive =
+    proposal &&
+    platformDay &&
+    proposal.status === 'Active' &&
+    proposal.startDay <= platformDay &&
+    proposal.endDay > platformDay;
   const hasUserVoted = isActive && userStatus?.hasVoted;
 
   const { account } = useIconReact();

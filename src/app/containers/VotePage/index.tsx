@@ -34,12 +34,12 @@ export function VotePage() {
             ))
         ) : (
           <>
-            <ProposalInfo proposal={null} />
-            <ProposalInfo proposal={null} />
-            <ProposalInfo proposal={null} />
-            <ProposalInfo proposal={null} />
-            <ProposalInfo proposal={null} />
-            <ProposalInfo proposal={null} />
+            <ProposalInfo />
+            <ProposalInfo />
+            <ProposalInfo />
+            <ProposalInfo />
+            <ProposalInfo />
+            <ProposalInfo />
           </>
         )}
       </BoxPanel>

@@ -59,16 +59,18 @@ export const StyledSkeleton = styled(Skeleton)`
   background-color: rgba(44, 169, 183, 0.2) !important;
 `;
 
-export default function ProposalInfo({ proposal }: { proposal: ProposalInterface | null }) {
-  const title = proposal?.name;
-  const description = proposal?.description;
-  const startDay = proposal?.startDay;
-  const endDay = proposal?.endDay;
-  const status = proposal?.status;
-  const approvePercentage = proposal?.for;
-  const rejectPercentage = proposal?.against;
-  const uniqueApproveVoters = proposal?.uniqueApproveVoters;
-  const uniqueRejectVoters = proposal?.uniqueRejectVoters;
+export default function ProposalInfo({ proposal }: { proposal?: ProposalInterface }) {
+  const {
+    name: title,
+    description,
+    startDay,
+    endDay,
+    status,
+    for: approvePercentage,
+    against: rejectPercentage,
+    uniqueApproveVoters,
+    uniqueRejectVoters,
+  } = proposal || {};
 
   return (
     <ProposalWrapper>

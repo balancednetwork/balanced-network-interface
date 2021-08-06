@@ -6,22 +6,23 @@ import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
-import styled, { useTheme } from 'styled-components';
+import styled, { useTheme, keyframes } from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
 import { Column } from 'app/components/Column';
 import { DefaultLayout } from 'app/components/Layout';
 import { BoxPanel } from 'app/components/Panel';
+import { StyledSkeleton } from 'app/components/ProposalInfo';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
 import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
-import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import bnJs from 'bnJs';
+import { usePlatformDayQuery } from 'queries/reward';
 import { useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
@@ -41,6 +42,15 @@ const Progress = styled(Flex)`
   border-radius: 5px;
 `;
 
+const setBarWidth = (width: string) => keyframes`
+    0% {
+        width : 0; 
+    }
+    100% {
+        width : ${width}%;
+    }
+`;
+
 const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   background: ${props =>
     (props.type === 'Approve' && props.theme.colors.primary) || (props.type === 'Reject' && props.theme.colors.alert)};
@@ -48,7 +58,7 @@ const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   border-radius: ${props => (props.percentage === '100' ? '5px' : '5px 0 0 5px')};
   transition: width 0.2s ease-in;
   justify-content: center;
-  width: ${props => `${props.percentage}%`};
+  animation: ${({ percentage }) => setBarWidth(percentage)} 2s ease-in-out forwards;
 `;
 
 const ResultPanel = styled(Flex)`
@@ -78,7 +88,13 @@ export function ProposalPage() {
   const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotDay);
   const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
   const { data: userStatus } = voteStatusQuery;
-  const isActive = proposal?.status === 'Active';
+  const { data: platformDay } = usePlatformDayQuery();
+  const isActive =
+    proposal &&
+    platformDay &&
+    proposal.status === 'Active' &&
+    proposal.startDay <= platformDay &&
+    proposal.endDay > platformDay;
   const hasUserVoted = isActive && userStatus?.hasVoted;
 
   const { account } = useIconReact();
@@ -131,33 +147,45 @@ export function ProposalPage() {
         <title>Vote</title>
       </Helmet>
       <ProposalContainer>
-        <Breadcrumb locationText="Vote" locationPath="/vote" title={proposal?.name || ''} />
+        {proposal ? (
+          <Breadcrumb locationText="Vote" locationPath="/vote" title={proposal?.name || ''} />
+        ) : (
+          <StyledSkeleton animation="wave" width={280} height={28} />
+        )}
 
         <BoxPanel bg="bg2" my={10}>
           <Typography variant="h2" mb={4}>
-            {proposal?.name}
+            {proposal ? proposal.name : <StyledSkeleton animation="wave" height={35} />}
           </Typography>
           <Flex alignItems="center" mb={3} flexWrap="wrap" sx={{ columnGap: '15px' }}>
-            {proposal && (
-              <ProposalStatusIcon status={proposal?.status} startDay={proposal?.startDay} endDay={proposal?.endDay} />
+            {proposal?.status && proposal?.startDay && proposal?.endDay ? (
+              <ProposalStatusIcon status={proposal.status} startDay={proposal.startDay} endDay={proposal.endDay} />
+            ) : (
+              <>
+                <StyledSkeleton animation="wave" width={22} height={22} variant="circle" />
+                <StyledSkeleton animation="wave" width={80} />
+              </>
             )}
 
             <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
               <PieChartIcon height="22" width="22" />
               <Typography variant="content" color="white">
-                {proposal?.for === undefined && proposal?.against === undefined
-                  ? ''
-                  : `${proposal?.for + proposal?.against}% voted`}
+                {proposal?.for === undefined && proposal?.against === undefined ? (
+                  <StyledSkeleton animation="wave" width={80} />
+                ) : (
+                  `${proposal?.for + proposal?.against}% voted`
+                )}
               </Typography>
             </Flex>
 
             <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
               <UserIcon height="22" width="22" />
               <Typography variant="content" color="white">
-                {(proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined) ||
-                proposal?.id === 1
-                  ? '- voters'
-                  : `${proposal?.uniqueApproveVoters + proposal?.uniqueRejectVoters} voters`}
+                {proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined ? (
+                  <StyledSkeleton animation="wave" width={80} />
+                ) : (
+                  `${proposal?.uniqueApproveVoters + proposal?.uniqueRejectVoters} voters`
+                )}
               </Typography>
             </Flex>
           </Flex>
@@ -282,18 +310,16 @@ export function ProposalPage() {
             Description
           </Typography>
           <Typography variant="p" mb="20px">
-            {proposal?.description}
+            {proposal ? (
+              proposal?.description
+            ) : (
+              <>
+                <StyledSkeleton height={22} />
+                <StyledSkeleton height={22} />
+                <StyledSkeleton height={22} width={220} />
+              </>
+            )}
           </Typography>
-          <Flex alignItems="center">
-            <Typography variant="p" mr="5px" color="primaryBright" style={{ cursor: 'pointer' }}>
-              Discussion
-            </Typography>
-            <ExternalIcon width="15" height="15" style={{ marginRight: '20px' }} />
-            <Typography variant="p" mr="5px" color="primaryBright" style={{ cursor: 'pointer' }}>
-              Transaction
-            </Typography>
-            <ExternalIcon width="15" height="15" />
-          </Flex>
         </BoxPanel>
       </ProposalContainer>
     </DefaultLayout>

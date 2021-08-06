@@ -271,4 +271,5 @@ export interface ProposalInterface {
   uniqueApproveVoters: number;
   uniqueRejectVoters: number;
   status: string;
+  sum: number;
 }

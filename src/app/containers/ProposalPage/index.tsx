@@ -170,11 +170,7 @@ export function ProposalPage() {
             <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
               <PieChartIcon height="22" width="22" />
               <Typography variant="content" color="white">
-                {proposal?.for === undefined && proposal?.against === undefined ? (
-                  <StyledSkeleton animation="wave" width={80} />
-                ) : (
-                  `${proposal?.for + proposal?.against}% voted`
-                )}
+                {proposal?.sum ? `${proposal?.sum}% voted` : <StyledSkeleton animation="wave" width={80} />}
               </Typography>
             </Flex>
 
@@ -203,6 +199,9 @@ export function ProposalPage() {
                   </Typography>
                   <Typography opacity="0.85" mr="5px" fontWeight="bold">
                     {proposal?.for}%
+                  </Typography>
+                  <Typography opacity="0.85" fontWeight="bold">
+                    {`(${proposal?.majority}% required)`}
                   </Typography>
                 </Flex>
 
@@ -256,6 +255,9 @@ export function ProposalPage() {
                 </Typography>
                 <Typography opacity="0.85" mr="5px" fontWeight="bold">
                   {proposal?.for}%
+                </Typography>
+                <Typography opacity="0.85" fontWeight="bold">
+                  {`(${proposal?.majority}% required)`}
                 </Typography>
               </Flex>
               <Flex>

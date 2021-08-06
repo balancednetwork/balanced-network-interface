@@ -28,7 +28,7 @@ export const useProposalInfoQuery = (pId: number) => {
       snapshotDay: parseInt(res['vote snapshot'], 16),
       startDay: parseInt(res['start day'], 16),
       endDay: parseInt(res['end day'], 16),
-      majority: BalancedJs.utils.toIcx(res['majority']).toNumber(),
+      majority: BalancedJs.utils.toIcx(res['majority']).times(100).dp(2).toNumber(),
       quorum: BalancedJs.utils.toIcx(res['quorum']).times(100).dp(2).toNumber(),
       sum: _against.plus(_for).times(100).dp(2).toNumber(),
       uniqueApproveVoters: parseInt(res['for_voter_count'], 16),

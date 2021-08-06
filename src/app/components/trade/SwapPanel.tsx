@@ -11,7 +11,6 @@ import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
-import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
 import { DropdownPopper } from 'app/components/Popover';
 import QuestionHelper from 'app/components/QuestionHelper';
@@ -30,7 +29,7 @@ import {
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { CurrencyKey, Price } from 'types';
 import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -44,7 +43,15 @@ export default function SwapPanel() {
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
-  const { trade, currencyBalances, currencyKeys, parsedAmount, inputError, price } = useDerivedSwapInfo();
+  const {
+    trade,
+    currencyBalances,
+    currencyKeys,
+    parsedAmount,
+    inputError,
+    price,
+    instantAmounts,
+  } = useDerivedSwapInfo();
 
   const parsedAmounts = React.useMemo(
     () => ({
@@ -59,7 +66,7 @@ export default function SwapPanel() {
     [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
   };
 
-  const { onUserInput, onCurrencySelection, onSwitchTokens } = useSwapActionHandlers();
+  const { onUserInput, onCurrencySelection, onSwitchTokens, onInstantAmountsSelection } = useSwapActionHandlers();
 
   const handleTypeInput = React.useCallback(
     (value: string) => {
@@ -74,19 +81,50 @@ export default function SwapPanel() {
     [onUserInput],
   );
 
+  const balances = useWalletBalances();
+  const maxInputAmount = maxAmountSpend(currencyBalances[Field.INPUT]);
+  const maxOutputAmount = maxAmountSpend(currencyBalances[Field.OUTPUT]);
+
   const handleInputSelect = React.useCallback(
-    (inputCurrencyKey: CurrencyKey) => onCurrencySelection(Field.INPUT, inputCurrencyKey),
-    [onCurrencySelection],
-  );
-  const handleOutputSelect = React.useCallback(
-    (outputCurrencyKey: CurrencyKey) => onCurrencySelection(Field.OUTPUT, outputCurrencyKey),
-    [onCurrencySelection],
+    (inputCurrencyKey: CurrencyKey) => {
+      onCurrencySelection(Field.INPUT, inputCurrencyKey);
+      instantAmounts[Field.INPUT] &&
+        onUserInput(
+          Field.INPUT,
+          (((instantAmounts[Field.INPUT] || 0) * Number(balances[inputCurrencyKey].toFixed())) / 100).toString(),
+        );
+    },
+    [onCurrencySelection, onUserInput, balances, instantAmounts],
   );
 
-  const maxInputAmount = maxAmountSpend(currencyBalances[Field.INPUT]);
-  const handleMaxInput = React.useCallback(() => {
-    maxInputAmount && onUserInput(Field.INPUT, maxInputAmount.toFixed());
-  }, [maxInputAmount, onUserInput]);
+  const handleInputInstantSelect = React.useCallback(
+    (instantAmount: number) => {
+      onInstantAmountsSelection(Field.INPUT, instantAmount);
+      maxInputAmount && onUserInput(Field.INPUT, ((instantAmount * Number(maxInputAmount.toFixed())) / 100).toString());
+    },
+    [onInstantAmountsSelection, onUserInput, maxInputAmount],
+  );
+
+  const handleOutputSelect = React.useCallback(
+    (outputCurrencyKey: CurrencyKey) => {
+      onCurrencySelection(Field.OUTPUT, outputCurrencyKey);
+      instantAmounts[Field.OUTPUT] &&
+        onUserInput(
+          Field.OUTPUT,
+          (((instantAmounts[Field.OUTPUT] || 0) * Number(balances[outputCurrencyKey].toFixed())) / 100).toString(),
+        );
+    },
+    [onCurrencySelection, onUserInput, balances, instantAmounts],
+  );
+
+  const handleOutputInstantSelect = React.useCallback(
+    (instantAmount: number) => {
+      onInstantAmountsSelection(Field.OUTPUT, instantAmount);
+      maxOutputAmount &&
+        onUserInput(Field.OUTPUT, ((instantAmount * Number(maxOutputAmount.toFixed())) / 100).toString());
+    },
+    [onInstantAmountsSelection, onUserInput, maxOutputAmount],
+  );
 
   const pairableCurrencyList = React.useMemo(() => getPairableCurrencies(currencyKeys[Field.INPUT]), [currencyKeys]);
 
@@ -241,9 +279,7 @@ export default function SwapPanel() {
             <Typography variant="h2">Swap</Typography>
             <Typography as="div" hidden={!account}>
               {'Wallet: '}
-              <MaxButton onClick={handleMaxInput}>
-                {`${formatBigNumber(currencyBalances[Field.INPUT]?.amount, 'currency')} ${currencyKeys[Field.INPUT]}`}
-              </MaxButton>
+              {`${formatBigNumber(currencyBalances[Field.INPUT]?.amount, 'currency')} ${currencyKeys[Field.INPUT]}`}
             </Typography>
           </Flex>
 
@@ -256,6 +292,8 @@ export default function SwapPanel() {
               onCurrencySelect={handleInputSelect}
               id="swap-currency-input"
               currencyList={CURRENCY}
+              onInstantAmountSelect={handleInputInstantSelect}
+              instantAmount={instantAmounts[Field.INPUT]}
             />
           </Flex>
 
@@ -282,6 +320,8 @@ export default function SwapPanel() {
               onCurrencySelect={handleOutputSelect}
               id="swap-currency-output"
               currencyList={pairableCurrencyList}
+              onInstantAmountSelect={handleOutputInstantSelect}
+              instantAmount={instantAmounts[Field.OUTPUT]}
             />
           </Flex>
         </AutoColumn>
@@ -453,10 +493,6 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
 }
 
 const FlipButton = styled(Box)`
-  cursor: pointer;
-`;
-
-const MaxButton = styled(Link)`
   cursor: pointer;
 `;
 

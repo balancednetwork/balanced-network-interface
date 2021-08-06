@@ -14,7 +14,7 @@ import { Pool, CurrencyAmount, Price, CurrencyKey, Trade } from 'types';
 import { InsufficientInputAmountError, InsufficientReservesError } from 'types/index';
 
 import { AppDispatch, AppState } from '../index';
-import { Field, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions';
+import { Field, selectCurrency, selectInstantAmount, setRecipient, switchCurrencies, typeInput } from './actions';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -22,6 +22,7 @@ export function useSwapState(): AppState['swap'] {
 
 export function useSwapActionHandlers(): {
   onCurrencySelection: (field: Field, currencyId: CurrencyKey) => void;
+  onInstantAmountsSelection: (field: Field, instantAmount: number) => void;
   onSwitchTokens: () => void;
   onUserInput: (field: Field, typedValue: string) => void;
   onChangeRecipient: (recipient: string | null) => void;
@@ -33,6 +34,18 @@ export function useSwapActionHandlers(): {
         selectCurrency({
           field,
           currencyId: currencyId,
+        }),
+      );
+    },
+    [dispatch],
+  );
+
+  const onInstantAmountsSelection = useCallback(
+    (field: Field, instantAmount: number) => {
+      dispatch(
+        selectInstantAmount({
+          field,
+          instantAmount: instantAmount,
         }),
       );
     },
@@ -62,6 +75,7 @@ export function useSwapActionHandlers(): {
     onCurrencySelection,
     onUserInput,
     onChangeRecipient,
+    onInstantAmountsSelection,
   };
 }
 
@@ -244,6 +258,7 @@ export function tryParseAmount(value?: string, currencyKey?: CurrencyKey): Curre
 export function useDerivedSwapInfo(): {
   trade: Trade | undefined;
   currencyKeys: { [field in Field]?: CurrencyKey };
+  instantAmounts: { [field in Field]?: number };
   currencyBalances: { [field in Field]?: CurrencyAmount | undefined };
   price: Price | undefined;
   parsedAmount: CurrencyAmount | undefined;
@@ -255,10 +270,10 @@ export function useDerivedSwapInfo(): {
   const {
     independentField,
     typedValue,
-    [Field.INPUT]: { currencyId: inputCurrencyId },
-    [Field.OUTPUT]: { currencyId: outputCurrencyId },
+    [Field.INPUT]: { currencyId: inputCurrencyId, instantAmount: inputInstantAmount },
+    [Field.OUTPUT]: { currencyId: outputCurrencyId, instantAmount: outputInstantAmount },
   } = useSwapState();
-
+  console.log('useSwapState', useSwapState());
   const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
     inputCurrencyId ?? undefined,
     outputCurrencyId ?? undefined,
@@ -279,7 +294,13 @@ export function useDerivedSwapInfo(): {
     }),
     [inputCurrencyId, outputCurrencyId],
   );
-
+  const instantAmounts: { [field in Field]?: number } = React.useMemo(
+    () => ({
+      [Field.INPUT]: inputInstantAmount,
+      [Field.OUTPUT]: outputInstantAmount,
+    }),
+    [inputInstantAmount, outputInstantAmount],
+  );
   const price = usePrice(inputCurrencyId, outputCurrencyId);
   //
   const trade1 = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrencyId);
@@ -328,5 +349,6 @@ export function useDerivedSwapInfo(): {
     price,
     inputError,
     allowedSlippage,
+    instantAmounts,
   };
 }

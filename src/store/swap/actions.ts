@@ -5,7 +5,10 @@ export enum Field {
   OUTPUT = 'OUTPUT',
 }
 
+export const instantAmounts = [25, 50, 75, 100];
+
 export const selectCurrency = createAction<{ field: Field; currencyId: string }>('swap/selectCurrency');
+export const selectInstantAmount = createAction<{ field: Field; instantAmount: number }>('swap/selectInstantAmount');
 export const switchCurrencies = createAction<void>('swap/switchCurrencies');
 export const typeInput = createAction<{ field: Field; typedValue: string }>('swap/typeInput');
 export const replaceSwapState = createAction<{

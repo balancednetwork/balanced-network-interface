@@ -5,10 +5,11 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
-import { PopperWithoutArrow } from 'app/components/Popover';
+import { List, ListItem, DashGrid, HeaderText, DataText, HorizontalList, Option } from 'app/components/List';
+import { PopperWithoutArrow, SelectorPopover } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { CURRENCY } from 'constants/currency';
+import { instantAmounts } from 'store/swap/actions';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { CurrencyKey } from 'types';
 import { escapeRegExp } from 'utils';
@@ -45,7 +46,7 @@ const StyledTokenName = styled.span`
   font-weight: bold;
 `;
 
-const NumberInput = styled.input<{ bg?: string }>`
+const NumberInput = styled.input<{ bg?: string; active?: boolean }>`
   flex: 1;
   width: 100%;
   height: 43px;
@@ -66,10 +67,15 @@ const NumberInput = styled.input<{ bg?: string }>`
   :focus {
     border: 2px solid #2ca9b7;
   }
+  ${props => props.active && 'border-bottom-right-radius: 0;'}
 `;
 
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
   width: 10px;
+`;
+
+const ItemList = styled(Option)<{ selected: boolean }>`
+  ${props => props.selected && ' background-color: #2ca9b7;'}
 `;
 
 interface CurrencyInputPanelProps {
@@ -80,6 +86,8 @@ interface CurrencyInputPanelProps {
   label?: string;
   onCurrencySelect?: (currency: CurrencyKey) => void;
   currency?: CurrencyKey | null;
+  onInstantAmountSelect?: (instantAmount: number) => void;
+  instantAmount?: number;
   hideBalance?: boolean;
   // pair?: Pair | null;
   hideInput?: boolean;
@@ -102,6 +110,8 @@ export default function CurrencyInputPanel({
   label = 'Input',
   onCurrencySelect,
   currency,
+  onInstantAmountSelect,
+  instantAmount,
   hideBalance = false,
   // pair = null, // used for double token logo
   hideInput = false,
@@ -114,7 +124,7 @@ export default function CurrencyInputPanel({
   placeholder = '0',
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
-
+  const [showInstantAmounts, setShowInstantAmounts] = React.useState(false);
   const toggleOpen = () => {
     setOpen(!open);
   };
@@ -135,6 +145,10 @@ export default function CurrencyInputPanel({
   const handleCurrencySelect = (ccy: CurrencyKey) => (e: React.MouseEvent) => {
     onCurrencySelect && onCurrencySelect(ccy);
     setOpen(false);
+  };
+
+  const handleInstantAmountSelect = (instant: number) => (e: React.MouseEvent) => {
+    onInstantAmountSelect && onInstantAmountSelect(instant);
   };
 
   React.useEffect(() => {
@@ -188,6 +202,8 @@ export default function CurrencyInputPanel({
       <NumberInput
         placeholder={placeholder}
         value={value}
+        onClick={() => setShowInstantAmounts(!showInstantAmounts)}
+        onBlur={() => setShowInstantAmounts(!showInstantAmounts)}
         onChange={event => {
           enforcer(event.target.value.replace(/,/g, '.'));
         }}
@@ -204,7 +220,19 @@ export default function CurrencyInputPanel({
         spellCheck="false"
         //style
         bg={bg}
+        active={showInstantAmounts}
       />
+      <SelectorPopover show={showInstantAmounts} anchorEl={ref.current} placement="bottom-end">
+        <HorizontalList justifyContent="center" alignItems="center">
+          {instantAmounts.map(value => (
+            <ItemList
+              key={value}
+              onClick={handleInstantAmountSelect(value)}
+              selected={value === instantAmount}
+            >{`${value}%`}</ItemList>
+          ))}
+        </HorizontalList>
+      </SelectorPopover>
     </InputContainer>
   );
 }

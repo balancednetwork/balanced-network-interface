@@ -61,6 +61,7 @@ export const StyledSkeleton = styled(Skeleton)`
 
 export default function ProposalInfo({ proposal }: { proposal?: ProposalInterface }) {
   const {
+    id,
     name: title,
     description,
     startDay,
@@ -68,8 +69,8 @@ export default function ProposalInfo({ proposal }: { proposal?: ProposalInterfac
     status,
     for: approvePercentage,
     against: rejectPercentage,
-    uniqueApproveVoters,
-    uniqueRejectVoters,
+    sum,
+    voters,
   } = proposal || {};
 
   return (
@@ -94,21 +95,21 @@ export default function ProposalInfo({ proposal }: { proposal?: ProposalInterfac
         <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
           <PieChartIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {typeof approvePercentage === 'number' && typeof rejectPercentage === 'number' ? (
-              `${approvePercentage + rejectPercentage}% voted`
-            ) : (
-              <StyledSkeleton animation="wave" width={80} />
-            )}
+            {typeof sum === 'number' ? `${sum}% voted` : <StyledSkeleton animation="wave" width={80} />}
           </Typography>
         </Flex>
 
         <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
           <UserIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {typeof uniqueApproveVoters === 'number' && typeof uniqueRejectVoters === 'number' ? (
-              `${uniqueApproveVoters + uniqueRejectVoters} voters`
+            {typeof voters === 'number' ? (
+              id === 1 ? (
+                `- voters`
+              ) : (
+                `${voters} voters`
+              )
             ) : (
-              <StyledSkeleton animation="wave" width={60} />
+              <StyledSkeleton animation="wave" width={80} />
             )}
           </Typography>
         </Flex>

@@ -177,10 +177,14 @@ export function ProposalPage() {
             <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
               <UserIcon height="22" width="22" />
               <Typography variant="content" color="white">
-                {proposal?.uniqueApproveVoters === undefined && proposal?.uniqueRejectVoters === undefined ? (
-                  <StyledSkeleton animation="wave" width={80} />
+                {typeof proposal?.voters === 'number' ? (
+                  proposal.id === 1 ? (
+                    `- voters`
+                  ) : (
+                    `${proposal?.voters} voters`
+                  )
                 ) : (
-                  `${proposal?.uniqueApproveVoters + proposal?.uniqueRejectVoters} voters`
+                  <StyledSkeleton animation="wave" width={80} />
                 )}
               </Typography>
             </Flex>

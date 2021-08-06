@@ -33,6 +33,7 @@ export const useProposalInfoQuery = (pId: number) => {
       sum: _against.plus(_for).times(100).dp(2).toNumber(),
       uniqueApproveVoters: parseInt(res['for_voter_count'], 16),
       uniqueRejectVoters: parseInt(res['against_voter_count'], 16),
+      voters: parseInt(res['for_voter_count'], 16) + parseInt(res['against_voter_count'], 16),
       status: res['status'],
     };
   });
@@ -125,8 +126,10 @@ export const useTotalProposalQuery = (offset: number = 1, batchSize: number = 20
         quorum: BalancedJs.utils.toIcx(r['quorum']).times(100).dp(2).toNumber(),
         for: _for1,
         against: _against1,
+        sum: _against.plus(_for).times(100).dp(2).toNumber(),
         uniqueApproveVoters: parseInt(r['for_voter_count'], 16),
         uniqueRejectVoters: parseInt(r['against_voter_count'], 16),
+        voters: parseInt(r['for_voter_count'], 16) + parseInt(r['against_voter_count'], 16),
         status: r['status'],
       };
     });

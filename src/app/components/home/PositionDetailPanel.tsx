@@ -174,14 +174,11 @@ const PositionDetailPanel = () => {
       <BoxPanel bg="bg2" flex={1}>
         <Typography variant="h3">
           Risk ratio{' '}
-          <QuestionWrapper
-            onClick={open}
-            {...(!isIOS ? { onMouseEnter: open } : null)}
-            onMouseLeave={close}
-            hideOnExtraSp
-          >
-            <QuestionIcon width={14} style={{ marginTop: -5 }} />
-          </QuestionWrapper>
+          {!smallSp && (
+            <QuestionWrapper onClick={open} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
+              <QuestionIcon width={14} style={{ marginTop: -5 }} />
+            </QuestionWrapper>
+          )}
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between" mt={[10, 10, 10, 10, 5]} mb={4}>

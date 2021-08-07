@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import Popover, { PopoverProps } from '../Popover';
 
 const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean }>`
-  ${({ theme }) => theme.mediaWidth.smartPhone`
+  ${({ theme }) => theme.mediaWidth.aBitSmall`
     ${props => props.small && ' width: 156px;  font-size: 12px; padding: 11px;'}
   `}
 

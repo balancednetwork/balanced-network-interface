@@ -96,8 +96,7 @@ declare module 'styled-components' {
       upSmall: MediaFunction;
       upMedium: MediaFunction;
       upLarge: MediaFunction;
-      smartPhone: MediaFunction;
-      small: MediaFunction;
+      aBitSmall: MediaFunction;
     };
 
     // breakpoints

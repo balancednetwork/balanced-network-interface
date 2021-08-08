@@ -67,7 +67,6 @@ const METHOD_CONTENT = {
   stakeICX: 'Swapped (amount1) ICX for (amount2) sICX',
   Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
   Swap: 'Swapped (amount1) (currency1) for (amount2) (currency2)',
-  AssetRetired: 'Retired (amount) bnUSD for (amount) sICX',
   Withdraw: 'Withdrew (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
   Add: 'Supplied (amount1) (currency1) and (amount2) (currency2) to the (currency1) / (currency2) pool',
 };

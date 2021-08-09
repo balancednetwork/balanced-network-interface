@@ -160,7 +160,7 @@ export default function CurrencyInputPanel({
           {onCurrencySelect && <StyledDropDown selected={!!currency} />}
 
           {onCurrencySelect && (
-            <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom">
+            <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom" offset={[0, 2]}>
               <List style={{ width: width }}>
                 <DashGrid>
                   <HeaderText>Asset</HeaderText>

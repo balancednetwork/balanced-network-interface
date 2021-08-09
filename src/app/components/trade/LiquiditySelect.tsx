@@ -24,13 +24,11 @@ export default function LiquiditySelect() {
   };
 
   // update the width on a window resize
-  const ref = React.useRef<HTMLElement>(null);
+  const ref = React.useRef<HTMLDivElement>(null);
   const [width, setWidth] = React.useState(ref?.current?.clientWidth);
   React.useEffect(() => {
     function handleResize() {
-      const clientWidth = ref?.current?.clientWidth || 0;
-      //margin-left and margin-right are 15px
-      setWidth(clientWidth + (upSmall ? 40 : 20) ?? width);
+      setWidth(ref?.current?.clientWidth ?? width);
     }
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -59,8 +57,8 @@ export default function LiquiditySelect() {
             <StyledArrowDownIcon />
           </StyledWrapper>
 
-          <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom" style={{ marginTop: '10px' }}>
-            <List style={{ width: width }}>
+          <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom" offset={[0, 10]}>
+            <List style={{ width: (width ?? 0) + (upSmall ? 40 : 20) }}>
               <DashGrid>
                 <HeaderText>POOL</HeaderText>
                 <HeaderText textAlign="right">APY</HeaderText>

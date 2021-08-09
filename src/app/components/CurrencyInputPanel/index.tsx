@@ -220,19 +220,22 @@ export default function CurrencyInputPanel({
         spellCheck="false"
         //style
         bg={bg}
-        active={isActive}
+        active={onPercentSelect && isActive}
       />
-      <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">
-        <HorizontalList justifyContent="center" alignItems="center">
-          {COMMON_PERCENTS.map(value => (
-            <ItemList
-              key={value}
-              onClick={handlePercentSelect(value)}
-              selected={value === percent}
-            >{`${value}%`}</ItemList>
-          ))}
-        </HorizontalList>
-      </SelectorPopover>
+
+      {onPercentSelect && (
+        <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">
+          <HorizontalList justifyContent="center" alignItems="center">
+            {COMMON_PERCENTS.map(value => (
+              <ItemList
+                key={value}
+                onClick={handlePercentSelect(value)}
+                selected={value === percent}
+              >{`${value}%`}</ItemList>
+            ))}
+          </HorizontalList>
+        </SelectorPopover>
+      )}
     </InputContainer>
   );
 }

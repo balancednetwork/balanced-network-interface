@@ -13,27 +13,18 @@ import texGyeAdventorRegularWoff2 from 'assets/font/tex-gyre-adventor-regular/te
 // Update your breakpoints if you want
 export const sizes = {
   upExtraSmall: 600,
-  aBitSmall: 650,
   upSmall: 800,
   upMedium: 1000,
   upLarge: 1200,
 };
 
-const maxWidth = ['aBitSmall'];
-
 export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce((acc, label) => {
   acc[label] = (first: any, ...interpolations: any[]) =>
-    maxWidth.includes(label)
-      ? css`
-          @media (max-width: ${sizes[label]}px) {
-            ${css(first, ...interpolations)}
-          }
-        `
-      : css`
-          @media (min-width: ${sizes[label]}px) {
-            ${css(first, ...interpolations)}
-          }
-        `;
+    css`
+      @media (min-width: ${sizes[label]}px) {
+        ${css(first, ...interpolations)}
+      }
+    `;
 
   return acc;
 }, {} as { [key in keyof typeof sizes]: MediaFunction });

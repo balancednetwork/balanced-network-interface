@@ -41,11 +41,11 @@ export default class Governance extends Contract {
     return this.call(callParams);
   }
 
-  castVote(name: string, vote: boolean) {
+  castVote(voteIndex: number, vote: boolean) {
     const callParams = this.transactionParamsBuilder({
       method: 'castVote',
       params: {
-        name: name,
+        vote_index: IconConverter.toHex(voteIndex),
         vote: IconConverter.toHex(vote ? 1 : 0),
       },
     });

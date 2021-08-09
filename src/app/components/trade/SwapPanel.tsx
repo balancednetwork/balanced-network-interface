@@ -29,7 +29,7 @@ import {
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
 import { CurrencyKey, Price } from 'types';
 import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -43,15 +43,7 @@ export default function SwapPanel() {
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
-  const {
-    trade,
-    currencyBalances,
-    currencyKeys,
-    parsedAmount,
-    inputError,
-    price,
-    instantAmounts,
-  } = useDerivedSwapInfo();
+  const { trade, currencyBalances, currencyKeys, parsedAmount, inputError, price, percents } = useDerivedSwapInfo();
 
   const parsedAmounts = React.useMemo(
     () => ({
@@ -66,7 +58,7 @@ export default function SwapPanel() {
     [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
   };
 
-  const { onUserInput, onCurrencySelection, onSwitchTokens, onInstantAmountsSelection } = useSwapActionHandlers();
+  const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection } = useSwapActionHandlers();
 
   const handleTypeInput = React.useCallback(
     (value: string) => {
@@ -81,49 +73,32 @@ export default function SwapPanel() {
     [onUserInput],
   );
 
-  const balances = useWalletBalances();
   const maxInputAmount = maxAmountSpend(currencyBalances[Field.INPUT]);
   const maxOutputAmount = maxAmountSpend(currencyBalances[Field.OUTPUT]);
 
   const handleInputSelect = React.useCallback(
-    (inputCurrencyKey: CurrencyKey) => {
-      onCurrencySelection(Field.INPUT, inputCurrencyKey);
-      instantAmounts[Field.INPUT] &&
-        onUserInput(
-          Field.INPUT,
-          (((instantAmounts[Field.INPUT] || 0) * Number(balances[inputCurrencyKey].toFixed())) / 100).toString(),
-        );
-    },
-    [onCurrencySelection, onUserInput, balances, instantAmounts],
-  );
-
-  const handleInputInstantSelect = React.useCallback(
-    (instantAmount: number) => {
-      onInstantAmountsSelection(Field.INPUT, instantAmount);
-      maxInputAmount && onUserInput(Field.INPUT, ((instantAmount * Number(maxInputAmount.toFixed())) / 100).toString());
-    },
-    [onInstantAmountsSelection, onUserInput, maxInputAmount],
+    (inputCurrencyKey: CurrencyKey) => onCurrencySelection(Field.INPUT, inputCurrencyKey),
+    [onCurrencySelection],
   );
 
   const handleOutputSelect = React.useCallback(
-    (outputCurrencyKey: CurrencyKey) => {
-      onCurrencySelection(Field.OUTPUT, outputCurrencyKey);
-      instantAmounts[Field.OUTPUT] &&
-        onUserInput(
-          Field.OUTPUT,
-          (((instantAmounts[Field.OUTPUT] || 0) * Number(balances[outputCurrencyKey].toFixed())) / 100).toString(),
-        );
-    },
-    [onCurrencySelection, onUserInput, balances, instantAmounts],
+    (outputCurrencyKey: CurrencyKey) => onCurrencySelection(Field.OUTPUT, outputCurrencyKey),
+    [onCurrencySelection],
   );
 
-  const handleOutputInstantSelect = React.useCallback(
-    (instantAmount: number) => {
-      onInstantAmountsSelection(Field.OUTPUT, instantAmount);
-      maxOutputAmount &&
-        onUserInput(Field.OUTPUT, ((instantAmount * Number(maxOutputAmount.toFixed())) / 100).toString());
+  const handleInputPercentSelect = React.useCallback(
+    (percent: number) => {
+      maxInputAmount && onPercentSelection(Field.INPUT, percent, maxInputAmount.amount.times(percent / 100).toFixed());
     },
-    [onInstantAmountsSelection, onUserInput, maxOutputAmount],
+    [onPercentSelection, maxInputAmount],
+  );
+
+  const handleOutputPercentSelect = React.useCallback(
+    (percent: number) => {
+      maxOutputAmount &&
+        onPercentSelection(Field.OUTPUT, percent, maxOutputAmount.amount.times(percent / 100).toFixed());
+    },
+    [onPercentSelection, maxOutputAmount],
   );
 
   const pairableCurrencyList = React.useMemo(() => getPairableCurrencies(currencyKeys[Field.INPUT]), [currencyKeys]);
@@ -292,8 +267,8 @@ export default function SwapPanel() {
               onCurrencySelect={handleInputSelect}
               id="swap-currency-input"
               currencyList={CURRENCY}
-              onInstantAmountSelect={handleInputInstantSelect}
-              instantAmount={instantAmounts[Field.INPUT]}
+              onPercentSelect={handleInputPercentSelect}
+              percent={percents[Field.INPUT]}
             />
           </Flex>
 
@@ -320,8 +295,8 @@ export default function SwapPanel() {
               onCurrencySelect={handleOutputSelect}
               id="swap-currency-output"
               currencyList={pairableCurrencyList}
-              onInstantAmountSelect={handleOutputInstantSelect}
-              instantAmount={instantAmounts[Field.OUTPUT]}
+              onPercentSelect={handleOutputPercentSelect}
+              percent={percents[Field.OUTPUT]}
             />
           </Flex>
         </AutoColumn>

@@ -9,7 +9,7 @@ import { List, ListItem, DashGrid, HeaderText, DataText, HorizontalList, Option 
 import { PopperWithoutArrow, SelectorPopover } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { CURRENCY } from 'constants/currency';
-import { instantAmounts } from 'store/swap/actions';
+import { COMMON_PERCENTS } from 'store/swap/actions';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { CurrencyKey } from 'types';
 import { escapeRegExp } from 'utils';
@@ -86,8 +86,8 @@ interface CurrencyInputPanelProps {
   label?: string;
   onCurrencySelect?: (currency: CurrencyKey) => void;
   currency?: CurrencyKey | null;
-  onInstantAmountSelect?: (instantAmount: number) => void;
-  instantAmount?: number;
+  onPercentSelect?: (percent: number) => void;
+  percent?: number;
   hideBalance?: boolean;
   // pair?: Pair | null;
   hideInput?: boolean;
@@ -110,8 +110,8 @@ export default function CurrencyInputPanel({
   label = 'Input',
   onCurrencySelect,
   currency,
-  onInstantAmountSelect,
-  instantAmount,
+  onPercentSelect,
+  percent,
   hideBalance = false,
   // pair = null, // used for double token logo
   hideInput = false,
@@ -124,7 +124,7 @@ export default function CurrencyInputPanel({
   placeholder = '0',
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
-  const [showInstantAmounts, setShowInstantAmounts] = React.useState(false);
+  const [isActive, setIsActive] = React.useState(false);
   const toggleOpen = () => {
     setOpen(!open);
   };
@@ -147,8 +147,8 @@ export default function CurrencyInputPanel({
     setOpen(false);
   };
 
-  const handleInstantAmountSelect = (instant: number) => (e: React.MouseEvent) => {
-    onInstantAmountSelect && onInstantAmountSelect(instant);
+  const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
+    onPercentSelect && onPercentSelect(instant);
   };
 
   React.useEffect(() => {
@@ -202,8 +202,8 @@ export default function CurrencyInputPanel({
       <NumberInput
         placeholder={placeholder}
         value={value}
-        onClick={() => setShowInstantAmounts(!showInstantAmounts)}
-        onBlur={() => setShowInstantAmounts(!showInstantAmounts)}
+        onClick={() => setIsActive(!isActive)}
+        onBlur={() => setIsActive(false)}
         onChange={event => {
           enforcer(event.target.value.replace(/,/g, '.'));
         }}
@@ -220,15 +220,15 @@ export default function CurrencyInputPanel({
         spellCheck="false"
         //style
         bg={bg}
-        active={showInstantAmounts}
+        active={isActive}
       />
-      <SelectorPopover show={showInstantAmounts} anchorEl={ref.current} placement="bottom-end">
+      <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">
         <HorizontalList justifyContent="center" alignItems="center">
-          {instantAmounts.map(value => (
+          {COMMON_PERCENTS.map(value => (
             <ItemList
               key={value}
-              onClick={handleInstantAmountSelect(value)}
-              selected={value === instantAmount}
+              onClick={handlePercentSelect(value)}
+              selected={value === percent}
             >{`${value}%`}</ItemList>
           ))}
         </HorizontalList>

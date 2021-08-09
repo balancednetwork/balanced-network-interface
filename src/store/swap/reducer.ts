@@ -7,7 +7,7 @@ import {
   Field,
   replaceSwapState,
   selectCurrency,
-  selectInstantAmount,
+  selectPercent,
   setRecipient,
   switchCurrencies,
   typeInput,
@@ -18,11 +18,11 @@ export interface SwapState {
   readonly typedValue: string;
   readonly [Field.INPUT]: {
     readonly currencyId: CurrencyKey | undefined;
-    readonly instantAmount?: number | undefined;
+    readonly percent: number;
   };
   readonly [Field.OUTPUT]: {
     readonly currencyId: CurrencyKey | undefined;
-    readonly instantAmount?: number | undefined;
+    readonly percent: number;
   };
   // the typed recipient address or ENS name, or null if swap should go to sender
   readonly recipient: string | null;
@@ -33,11 +33,11 @@ const initialState: SwapState = {
   typedValue: '',
   [Field.INPUT]: {
     currencyId: SUPPORTED_PAIRS[0].baseCurrencyKey,
-    instantAmount: undefined,
+    percent: 0,
   },
   [Field.OUTPUT]: {
     currencyId: SUPPORTED_PAIRS[0].quoteCurrencyKey,
-    instantAmount: undefined,
+    percent: 0,
   },
   recipient: null,
 };
@@ -50,9 +50,11 @@ export default createReducer<SwapState>(initialState, builder =>
         return {
           [Field.INPUT]: {
             currencyId: inputCurrencyId,
+            percent: 0,
           },
           [Field.OUTPUT]: {
             currencyId: outputCurrencyId,
+            percent: 0,
           },
           independentField: field,
           typedValue: typedValue,
@@ -68,36 +70,45 @@ export default createReducer<SwapState>(initialState, builder =>
         return {
           ...state,
           independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
-          [field]: { ...state[field], currencyId: currencyId },
-          [otherField]: { ...state[field], currencyId: state[field].currencyId },
+          [field]: { ...state[field], currencyId: currencyId, percent: 0 },
+          [otherField]: { ...state[otherField], currencyId: state[field].currencyId, percent: 0 },
         };
       } else {
         // the normal case
         return {
           ...state,
-          [field]: { ...state[field], currencyId: currencyId },
+          [field]: { ...state[field], currencyId: currencyId, percent: 0 },
         };
       }
     })
-    .addCase(selectInstantAmount, (state, { payload: { instantAmount, field } }) => {
+    .addCase(selectPercent, (state, { payload: { percent, field, value } }) => {
+      const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
+
       return {
         ...state,
-        [field]: { ...state[field], instantAmount: instantAmount },
+        independentField: field,
+        typedValue: value,
+        [field]: { ...state[field], percent: percent },
+        [otherField]: { ...state[otherField], percent: 0 },
       };
     })
     .addCase(switchCurrencies, state => {
       return {
         ...state,
         independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
-        [Field.INPUT]: { ...state[Field.OUTPUT], currencyId: state[Field.OUTPUT].currencyId },
-        [Field.OUTPUT]: { ...state[Field.INPUT], currencyId: state[Field.INPUT].currencyId },
+        [Field.INPUT]: { ...state[Field.OUTPUT], currencyId: state[Field.OUTPUT].currencyId, percent: 0 },
+        [Field.OUTPUT]: { ...state[Field.INPUT], currencyId: state[Field.INPUT].currencyId, percent: 0 },
       };
     })
     .addCase(typeInput, (state, { payload: { field, typedValue } }) => {
+      const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
+
       return {
         ...state,
         independentField: field,
         typedValue,
+        [field]: { ...state[field], percent: 0 },
+        [otherField]: { ...state[otherField], percent: 0 },
       };
     })
     .addCase(setRecipient, (state, { payload: { recipient } }) => {

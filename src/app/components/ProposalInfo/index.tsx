@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Skeleton from '@material-ui/lab/Skeleton';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Flex, Box } from 'rebass/styled-components';
@@ -54,8 +55,13 @@ const ContentText = styled(Typography)`
   font-size: 16px;
 `;
 
-export default function ProposalInfo({ proposal }: { proposal: ProposalInterface }) {
+export const StyledSkeleton = styled(Skeleton)`
+  background-color: rgba(44, 169, 183, 0.2) !important;
+`;
+
+export default function ProposalInfo({ proposal }: { proposal?: ProposalInterface }) {
   const {
+    id,
     name: title,
     description,
     startDay,
@@ -63,45 +69,70 @@ export default function ProposalInfo({ proposal }: { proposal: ProposalInterface
     status,
     for: approvePercentage,
     against: rejectPercentage,
-    uniqueApproveVoters,
-    uniqueRejectVoters,
-  } = proposal;
+    sum,
+    voters,
+  } = proposal || {};
 
   return (
     <ProposalWrapper>
       <Typography variant="h3" mb="10px">
-        {title}
+        {title ? title : <StyledSkeleton animation="wave" height={30} />}
       </Typography>
-      <ContentText>{description && normalizeContent(description)}</ContentText>
+      <ContentText>
+        {title ? description && normalizeContent(description) : <StyledSkeleton animation="wave" height={20} />}
+      </ContentText>
       <Divider />
       <Flex alignItems="center" flexWrap="wrap" sx={{ columnGap: '15px' }}>
-        <ProposalStatusIcon status={status} startDay={startDay} endDay={endDay} />
+        {status && startDay && endDay ? (
+          <ProposalStatusIcon status={status} startDay={startDay} endDay={endDay} />
+        ) : (
+          <>
+            <StyledSkeleton animation="wave" width={22} height={22} variant="circle" />
+            <StyledSkeleton animation="wave" width={80} />
+          </>
+        )}
 
         <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
           <PieChartIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {`${approvePercentage + rejectPercentage}% voted`}
+            {typeof sum === 'number' ? `${sum}% voted` : <StyledSkeleton animation="wave" width={80} />}
           </Typography>
         </Flex>
 
         <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
           <UserIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {`${uniqueApproveVoters + uniqueRejectVoters} voters`}
+            {typeof voters === 'number' ? (
+              id === 1 ? (
+                `- voters`
+              ) : (
+                `${voters} voters`
+              )
+            ) : (
+              <StyledSkeleton animation="wave" width={80} />
+            )}
           </Typography>
         </Flex>
 
         <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
           <ApprovalSwatch />
           <Typography variant="content" color="white">
-            {`${approvePercentage}%`}
+            {typeof approvePercentage === 'number' ? (
+              `${approvePercentage}%`
+            ) : (
+              <StyledSkeleton animation="wave" width={40} />
+            )}
           </Typography>
         </Flex>
 
         <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
           <RejectionSwatch />
           <Typography variant="content" color="white">
-            {`${rejectPercentage}%`}
+            {typeof rejectPercentage === 'number' ? (
+              `${rejectPercentage}%`
+            ) : (
+              <StyledSkeleton animation="wave" width={40} />
+            )}
           </Typography>
         </Flex>
       </Flex>

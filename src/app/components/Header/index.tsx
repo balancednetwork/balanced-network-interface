@@ -143,7 +143,7 @@ export default React.memo(function Header(props: { title?: string; className?: s
                 Wallet
               </Typography>
               {account && (
-                <MouseoverTooltip text={isCopied ? 'Copied' : 'Copy address'} placement="left">
+                <MouseoverTooltip text={isCopied ? 'Copied' : 'Copy address'} placement="left" noArrowAndBorder>
                   <StyledAddress
                     onMouseLeave={() => {
                       setTimeout(() => updateCopyState(false), 250);

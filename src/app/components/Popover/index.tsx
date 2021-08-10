@@ -117,20 +117,23 @@ export default function Popover({ style = {}, content, show, children, placement
   );
 }
 
+type OffsetModifier = [number, number];
+
 export interface PopperProps {
   anchorEl: HTMLElement | null;
   show: boolean;
   children: React.ReactNode;
   placement?: Placement;
+  offset?: OffsetModifier;
 }
 
-export function PopperWithoutArrow({ show, children, placement = 'auto', anchorEl }: PopperProps) {
+export function PopperWithoutArrow({ show, children, placement = 'auto', anchorEl, offset }: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
     placement,
     strategy: 'fixed',
-    modifiers: [{ name: 'offset', options: { offset: [0, 2] } }],
+    modifiers: [{ name: 'offset', options: { offset: offset } }],
   });
 
   const updateCallback = useCallback(() => {
@@ -140,7 +143,7 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
 
   return (
     <Portal>
-      <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+      <PopoverContainer show={show} ref={setPopperElement as any} style={{ ...styles.popper }} {...attributes.popper}>
         <ContentWrapper>{children}</ContentWrapper>
       </PopoverContainer>
     </Portal>
@@ -187,5 +190,38 @@ export function DropdownPopper({ show, children, placement = 'auto', anchorEl }:
         />
       </PopoverContainer>
     </Portal>
+  );
+}
+
+export interface Props {
+  show: boolean;
+  children: React.ReactNode;
+  placement?: Placement;
+  content: React.ReactNode;
+}
+
+export function PopperWithoutArrowAndBorder({ content, show, children, placement = 'auto' }: Props) {
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
+
+  const { styles, update, attributes } = usePopper(referenceElement, popperElement, {
+    placement,
+    strategy: 'fixed',
+    modifiers: [{ name: 'offset', options: { offset: [0, 12] } }],
+  });
+  const updateCallback = useCallback(() => {
+    update && update();
+  }, [update]);
+  useInterval(updateCallback, show ? 100 : null);
+
+  return (
+    <>
+      <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
+      <Portal>
+        <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+          <ContentWrapper style={{ border: 'none' }}>{content}</ContentWrapper>
+        </PopoverContainer>
+      </Portal>
+    </>
   );
 }

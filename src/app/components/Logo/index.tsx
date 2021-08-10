@@ -19,7 +19,7 @@ export default function Logo(props) {
   return (
     <div {...props}>
       <a href="https://balanced.network">
-        <MouseoverTooltip text="Back to the Balanced website" placement="right" noArrowAndBorder>
+        <MouseoverTooltip text="Back to the Balanced website" placement="right">
           <LogoImg src={LogoSrc} alt="Balanced logo" />
         </MouseoverTooltip>
       </a>

@@ -20,10 +20,6 @@ const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  span {
-    white-space: nowrap;
-  }
 `;
 
 export const VerticalDivider = ({ text, ...rest }: { text: string }) => {

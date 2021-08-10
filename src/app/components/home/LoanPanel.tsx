@@ -95,8 +95,6 @@ const LoanPanel = () => {
   const afterAmount = parsedAmount[Field.LEFT];
   //difference = after-before
   const differenceAmount = afterAmount.minus(beforeAmount);
-  const roundedDisplayDiffAmount = afterAmount.minus(beforeAmount.dp(2));
-
   //whether if repay or borrow
   const shouldBorrow = differenceAmount.isPositive();
   //borrow fee
@@ -322,7 +320,7 @@ const LoanPanel = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {roundedDisplayDiffAmount.dp(2).toFormat()} bnUSD
+            {differenceAmount.dp(2).toFormat()} bnUSD
           </Typography>
 
           <Flex my={5}>

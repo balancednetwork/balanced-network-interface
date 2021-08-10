@@ -41,29 +41,15 @@ export default class Governance extends Contract {
     return this.call(callParams);
   }
 
-  castVote(voteIndex: number, vote: boolean) {
+  castVote(name: string, vote: boolean) {
     const callParams = this.transactionParamsBuilder({
       method: 'castVote',
       params: {
-        vote_index: IconConverter.toHex(voteIndex),
+        name: name,
         vote: IconConverter.toHex(vote ? 1 : 0),
       },
     });
 
     return this.callICONPlugins(callParams);
-  }
-
-  getTotalProposal() {
-    const callParams = this.paramsBuilder({
-      method: 'getProposalCount',
-    });
-    return this.call(callParams);
-  }
-
-  getProposals(offset: number, batch_size: number = 20) {
-    const callParams = this.paramsBuilder({
-      method: 'getProposals',
-    });
-    return this.call(callParams);
   }
 }

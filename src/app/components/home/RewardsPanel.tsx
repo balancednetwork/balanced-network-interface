@@ -215,8 +215,8 @@ const NetworkFeeSection = () => {
       changeShouldLedgerSign(true);
     }
 
-    const start = feesIndex * BATCH_SIZE;
-    const end = start + BATCH_SIZE < platformDay ? start + BATCH_SIZE : 0;
+    const start = feesIndex * BATCH_SIZE + 1;
+    const end = start + BATCH_SIZE - 1 < platformDay ? start + BATCH_SIZE - 1 : 0;
 
     bnJs
       .inject({ account })

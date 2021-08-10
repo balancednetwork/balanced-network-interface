@@ -27,7 +27,9 @@ export const componentGenerator: PlopGeneratorConfig = {
       default: 'Button',
       validate: value => {
         if (/.+/.test(value)) {
-          return componentExists(value) ? 'A component with this name already exists' : true;
+          return componentExists(value)
+            ? 'A component with this name already exists'
+            : true;
         }
 
         return 'The name is required';
@@ -55,7 +57,8 @@ export const componentGenerator: PlopGeneratorConfig = {
       type: 'confirm',
       name: ComponentProptNames.wantTranslations,
       default: false,
-      message: 'Do you want i18n translations (i.e. will this component use text)?',
+      message:
+        'Do you want i18n translations (i.e. will this component use text)?',
     },
     {
       type: 'confirm',
@@ -71,9 +74,11 @@ export const componentGenerator: PlopGeneratorConfig = {
     },
   ],
   actions: (data: { [P in ComponentProptNames]: string }) => {
-    const componentPath = `${path.join(__dirname, '../../../', data.componentPath)}/{{properCase ${
-      ComponentProptNames.ComponentName
-    }}}`;
+    const componentPath = `${path.join(
+      __dirname,
+      '../../../',
+      data.componentPath,
+    )}/{{properCase ${ComponentProptNames.ComponentName}}}`;
 
     const actions: Actions = [
       {

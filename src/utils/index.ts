@@ -147,9 +147,3 @@ export const generateChartData = (rate: BigNumber, currencyKeys: { [field in Fie
 
   return _data;
 };
-
-export const normalizeContent = (text: string): string => {
-  const regex = /[\n\r]/g;
-  const t = text.replaceAll(regex, ' ');
-  return t.substring(0, 248) + '...';
-};

@@ -6,6 +6,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
 import { isMobile } from 'react-device-detect';
+import { useMedia } from 'react-use';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -14,11 +15,11 @@ import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
-import { ReactComponent as IconexIcon } from 'assets/icons/iconex.svg';
+import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
 import { ApplicationModal } from 'store/application/actions';
-import { useWalletModalToggle, useModalOpen, useChangeWalletType } from 'store/application/hooks';
+import { useWalletModalToggle, useModalOpen } from 'store/application/hooks';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -79,6 +80,10 @@ const WalletOption = styled(Box)`
   color: white;
   user-select: none;
 
+  @media all and (min-width: 370px) {
+    width: 140px;
+  }
+
   > *:first-child {
     margin-bottom: 10px;
   }
@@ -94,6 +99,10 @@ const StyledModal = styled(Modal).attrs({
 })`
   &[data-reach-dialog-content] {
     width: 320px;
+
+    @media all and (min-width: 370px) {
+      width: 370px;
+    }
   }
 `;
 
@@ -104,8 +113,7 @@ export default function WalletModal() {
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
-
-  const changeWalletType = useChangeWalletType();
+  const upExtraSmall = useMedia('(min-width: 370px)');
 
   const [{ offset, limit }, updatePaging] = useState({
     offset: 0,
@@ -116,8 +124,6 @@ export default function WalletModal() {
   const { requestAddress, hasExtension } = useIconReact();
 
   const handleOpenWallet = () => {
-    changeWalletType('ICONEX');
-
     toggleWalletModal();
     if (isMobile) {
       requestAddress();
@@ -125,10 +131,7 @@ export default function WalletModal() {
       if (hasExtension) {
         requestAddress();
       } else {
-        window.open(
-          'https://chrome.google.com/webstore/detail/iconex/flpiciilemghbmfalicajoolhkkenfel?hl=en',
-          '_blank',
-        );
+        window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
       }
     }
   };
@@ -173,7 +176,6 @@ export default function WalletModal() {
       offset: 0,
       limit: LIMIT_PAGING_LEDGER,
     });
-    changeWalletType('LEDGER');
 
     const timeout = setTimeout(() => {
       setIsLedgerErr(true);
@@ -271,11 +273,11 @@ export default function WalletModal() {
 
           <Flex alignItems="stretch" justifyContent="space-between" mx={3}>
             <WalletOption onClick={handleOpenWallet}>
-              <IconexIcon width="50" height="50" />
-              <Text>ICONex</Text>
+              <IconWalletIcon width="50" height="50" />
+              <Text>ICON wallet</Text>
             </WalletOption>
 
-            <VerticalDivider text="or"></VerticalDivider>
+            {upExtraSmall && <VerticalDivider text="or"></VerticalDivider>}
 
             <WalletOption onClick={handleOpenLedger}>
               <LedgerIcon width="50" height="50" />
@@ -286,9 +288,8 @@ export default function WalletModal() {
           <Typography mx={4} mt={6} textAlign="center">
             Use at your own risk. Project contributors are not liable for any lost or stolen funds.{' '}
             <Link href="https://balanced.network/disclaimer/" target="_blank">
-              View disclaimer
+              View disclaimer.
             </Link>
-            .
           </Typography>
         </Box>
       </StyledModal>

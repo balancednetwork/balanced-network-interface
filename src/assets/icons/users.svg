@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 20" style="clip-rule:evenodd;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;version:1.1">
+    <style>.a{fill-rule:nonzero;fill:none;stroke-width:1.5px;stroke:rgb(44,169,183);}</style>
+    <g transform="matrix(1 0 0 1 -0.25 -2.25)">
+        <path d="M17 21L17 19C17 16.806 15.194 15 13 15L5 15C2.806 15 1 16.806 1 19L1 21" class="a"/>
+        <circle cx="9" cy="7" r="4" style="fill:none;stroke-width:1.5px;stroke:rgb(44,169,183)"/>
+        <path d="M23 21L23 19C22.999 17.183 21.759 15.584 20 15.13" class="a"/>
+        <path d="M16 3.13C17.764 3.582 19.008 5.184 19.008 7.005 19.008 8.826 17.764 10.428 16 10.88" class="a"/>
+    </g>
+</svg>

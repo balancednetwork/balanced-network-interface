@@ -1,4 +1,4 @@
-/* eslint-disable */ 
+/* eslint-disable */
 const sortObjectKeys = obj =>
   Object.entries(obj)
     .sort()

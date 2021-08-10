@@ -110,7 +110,7 @@ export function ProposalPage() {
 
     bnJs
       .inject({ account })
-      .Governance.castVote(proposal?.name!, hasApproved)
+      .Governance.castVote(proposal?.id!, hasApproved)
       .then((res: any) => {
         addTransaction(
           { hash: res.result },

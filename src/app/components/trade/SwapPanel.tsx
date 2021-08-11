@@ -74,7 +74,6 @@ export default function SwapPanel() {
   );
 
   const maxInputAmount = maxAmountSpend(currencyBalances[Field.INPUT]);
-  const maxOutputAmount = maxAmountSpend(currencyBalances[Field.OUTPUT]);
 
   const handleInputSelect = React.useCallback(
     (inputCurrencyKey: CurrencyKey) => onCurrencySelection(Field.INPUT, inputCurrencyKey),
@@ -95,10 +94,9 @@ export default function SwapPanel() {
 
   const handleOutputPercentSelect = React.useCallback(
     (percent: number) => {
-      maxOutputAmount &&
-        onPercentSelection(Field.OUTPUT, percent, maxOutputAmount.amount.times(percent / 100).toFixed());
+      maxInputAmount && onPercentSelection(Field.INPUT, percent, maxInputAmount.amount.times(percent / 100).toFixed());
     },
-    [onPercentSelection, maxOutputAmount],
+    [onPercentSelection, maxInputAmount],
   );
 
   const pairableCurrencyList = React.useMemo(() => getPairableCurrencies(currencyKeys[Field.INPUT]), [currencyKeys]);
@@ -269,6 +267,7 @@ export default function SwapPanel() {
               currencyList={CURRENCY}
               onPercentSelect={handleInputPercentSelect}
               percent={percents[Field.INPUT]}
+              isLoggedIn={!!account}
             />
           </Flex>
 
@@ -297,6 +296,7 @@ export default function SwapPanel() {
               currencyList={pairableCurrencyList}
               onPercentSelect={handleOutputPercentSelect}
               percent={percents[Field.OUTPUT]}
+              isLoggedIn={!!account}
             />
           </Flex>
         </AutoColumn>

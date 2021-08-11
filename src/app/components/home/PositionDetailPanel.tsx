@@ -89,12 +89,10 @@ const PositionDetailPanel = () => {
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
-  const [safetyThresholdPrice, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
+  const [, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
 
   const currentRatio = useCurrentCollateralRatio();
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
-
-  const isSafetyWarning = safetyThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThanOrEqualTo(0);
 
   const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
 
@@ -148,8 +146,7 @@ const PositionDetailPanel = () => {
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
-          The current ICX price is{' '}
-          <span className={isSafetyWarning ? 'alert' : 'white'}>${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
+          The current ICX price is <span className="white">${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
         </Typography>
         <Typography mb={2}>
           You will be liquidated at <span className="white">${liquidationThresholdPrice.dp(3).toFormat()}</span>.
@@ -183,19 +180,6 @@ const PositionDetailPanel = () => {
           </Tooltip>
 
           <Box flex={1} style={{ position: 'relative' }}>
-            <Rewards warned={isSafetyWarning}>
-              <MetaData as="dl" style={{ textAlign: 'right' }}>
-                <Tooltip
-                  text="You’re more vulnerable to price movements if you go beyond this threshold."
-                  show={show}
-                  placement="top-end"
-                >
-                  <dt>Safety threshold</dt>
-                </Tooltip>
-                <dd>${safetyThresholdPrice.toFixed(4)}</dd>
-              </MetaData>
-            </Rewards>
-
             <Locked warned={isLockWarning}>
               <MetaData as="dl" style={{ textAlign: 'left' }}>
                 <Tooltip
@@ -387,16 +371,6 @@ const MetaData = styled(Box)`
 
   & dd {
     margin-inline: 0px;
-  }
-`;
-
-const Rewards = styled(Threshold)`
-  left: 53.2%;
-  /* text-align: right; */
-
-  ${MetaData} {
-    width: 125px;
-    margin-left: -140px;
   }
 `;
 

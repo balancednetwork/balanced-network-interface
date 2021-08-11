@@ -16,7 +16,7 @@ import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import {
-  REWARDS_COLLATERAL_RATIO,
+  SAFETY_COLLATERAL_RATIO,
   MANDATORY_COLLATERAL_RATIO,
   LIQUIDATION_COLLATERAL_RATIO,
   ZERO,
@@ -38,9 +38,9 @@ const useThresholdPrices = (): [BigNumber, BigNumber, BigNumber] => {
     if (collateralInputAmount.isZero()) return [new BigNumber(0), new BigNumber(0), new BigNumber(0)];
 
     return [
-      loanInputAmount.multipliedBy(REWARDS_COLLATERAL_RATIO).div(collateralInputAmount),
-      loanInputAmount.multipliedBy(MANDATORY_COLLATERAL_RATIO).div(collateralInputAmount),
-      loanInputAmount.multipliedBy(LIQUIDATION_COLLATERAL_RATIO).div(collateralInputAmount),
+      loanInputAmount.div(collateralInputAmount).times(SAFETY_COLLATERAL_RATIO),
+      loanInputAmount.div(collateralInputAmount).times(MANDATORY_COLLATERAL_RATIO),
+      loanInputAmount.div(collateralInputAmount).times(LIQUIDATION_COLLATERAL_RATIO),
     ];
   }, [collateralInputAmount, loanInputAmount]);
 };
@@ -89,12 +89,12 @@ const PositionDetailPanel = () => {
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
-  const [rewardThresholdPrice, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
+  const [safetyThresholdPrice, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
 
   const currentRatio = useCurrentCollateralRatio();
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
 
-  const isRewardWarning = rewardThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThanOrEqualTo(0);
+  const isSafetyWarning = safetyThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThanOrEqualTo(0);
 
   const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
 
@@ -149,7 +149,7 @@ const PositionDetailPanel = () => {
         <Divider my={4} />
         <Typography mb={2}>
           The current ICX price is{' '}
-          <span className={isRewardWarning ? 'alert' : 'white'}>${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
+          <span className={isSafetyWarning ? 'alert' : 'white'}>${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
         </Typography>
         <Typography mb={2}>
           You will be liquidated at <span className="white">${liquidationThresholdPrice.dp(3).toFormat()}</span>.
@@ -183,16 +183,16 @@ const PositionDetailPanel = () => {
           </Tooltip>
 
           <Box flex={1} style={{ position: 'relative' }}>
-            <Rewards warned={isRewardWarning}>
+            <Rewards warned={isSafetyWarning}>
               <MetaData as="dl" style={{ textAlign: 'right' }}>
                 <Tooltip
-                  text="You won’t earn any Balance Tokens if you go beyond this threshold."
+                  text="You’re more vulnerable to price movements if you go beyond this threshold."
                   show={show}
                   placement="top-end"
                 >
-                  <dt>Reward threshold</dt>
+                  <dt>Safety threshold</dt>
                 </Tooltip>
-                <dd>${rewardThresholdPrice.toFixed(4)}</dd>
+                <dd>${safetyThresholdPrice.toFixed(4)}</dd>
               </MetaData>
             </Rewards>
 
@@ -401,7 +401,7 @@ const Rewards = styled(Threshold)`
 `;
 
 const Locked = styled(Threshold)`
-  left: 66.5%;
+  left: 81.905%;
 
   ::after {
     margin-left: initial;

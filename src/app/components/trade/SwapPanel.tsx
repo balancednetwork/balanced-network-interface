@@ -87,16 +87,18 @@ export default function SwapPanel() {
 
   const handleInputPercentSelect = React.useCallback(
     (percent: number) => {
-      maxInputAmount && onPercentSelection(Field.INPUT, percent, maxInputAmount.amount.times(percent / 100).toFixed());
+      onPercentSelection(Field.INPUT, percent);
+      maxInputAmount && onUserInput(Field.INPUT, maxInputAmount.amount.times(percent / 100).toFixed());
     },
-    [onPercentSelection, maxInputAmount],
+    [onPercentSelection, onUserInput, maxInputAmount],
   );
 
   const handleOutputPercentSelect = React.useCallback(
     (percent: number) => {
-      maxInputAmount && onPercentSelection(Field.INPUT, percent, maxInputAmount.amount.times(percent / 100).toFixed());
+      onPercentSelection(Field.OUTPUT, percent);
+      maxInputAmount && onUserInput(Field.INPUT, maxInputAmount.amount.times(percent / 100).toFixed());
     },
-    [onPercentSelection, maxInputAmount],
+    [onPercentSelection, onUserInput, maxInputAmount],
   );
 
   const pairableCurrencyList = React.useMemo(() => getPairableCurrencies(currencyKeys[Field.INPUT]), [currencyKeys]);

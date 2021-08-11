@@ -181,11 +181,11 @@ const PositionDetailPanel = () => {
 
           <Box flex={1} style={{ position: 'relative' }}>
             <Locked warned={isLockWarning}>
-              <MetaData as="dl" style={{ textAlign: 'left' }}>
+              <MetaData as="dl" style={{ textAlign: 'right' }}>
                 <Tooltip
                   text="You can’t withdraw any collateral if you go beyond this threshold."
                   show={show}
-                  placement="top-start"
+                  placement="top-end"
                 >
                   <dt>All collateral locked</dt>
                 </Tooltip>
@@ -371,19 +371,16 @@ const MetaData = styled(Box)`
 
   & dd {
     margin-inline: 0px;
+    color: rgba(255, 255, 255, 0.75);
   }
 `;
 
 const Locked = styled(Threshold)`
   left: 81.905%;
 
-  ::after {
-    margin-left: initial;
-  }
-
   ${MetaData} {
     width: 150px;
-    margin-left: 15px;
+    margin-left: -165px;
   }
 `;
 

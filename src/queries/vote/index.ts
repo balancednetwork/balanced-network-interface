@@ -1,3 +1,4 @@
+import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -142,4 +143,23 @@ export const useTotalProposalCountQuery = () => {
     const res = await bnJs.Governance.getTotalProposal();
     return parseInt(res, 16);
   });
+};
+
+export const useAdditionalInfoQuery = () => {
+  const fetch = async () => {
+    const { data } = await axios.get(
+      'https://raw.githubusercontent.com/balancednetwork/BIP-info-list/main/proposals.json',
+    );
+    return data;
+  };
+
+  return useQuery<[{ id: number; hash?: string; discussionURL?: string }]>('useAdditionalInfoQuery', fetch);
+};
+
+export const useAdditionalInfoById = (id?: number) => {
+  const { data: items } = useAdditionalInfoQuery();
+
+  if (!id) return;
+
+  return items?.find(item => item.id === id);
 };

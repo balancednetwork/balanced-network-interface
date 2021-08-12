@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -77,6 +78,7 @@ export const CurrencyField: React.FC<{
     maxValue = PLUS_INFINITY,
     onUserInput,
   } = props;
+  const smallSp = useMedia('(max-width: 360px)');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextUserInput = event.target.value.replace(/,/g, '.');
@@ -104,9 +106,11 @@ export const CurrencyField: React.FC<{
             {label}{' '}
             {tooltip && (
               <MouseoverTooltip wide={tooltipWider} text={tooltipText} placement="top">
-                <QuestionWrapper>
-                  <QuestionIcon width={14} style={{ marginTop: -5 }} />
-                </QuestionWrapper>
+                {!smallSp && (
+                  <QuestionWrapper>
+                    <QuestionIcon width={14} style={{ marginTop: -5 }} />
+                  </QuestionWrapper>
+                )}
               </MouseoverTooltip>
             )}
           </Typography>

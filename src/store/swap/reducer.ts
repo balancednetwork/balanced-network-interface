@@ -81,12 +81,13 @@ export default createReducer<SwapState>(initialState, builder =>
         };
       }
     })
-    .addCase(selectPercent, (state, { payload: { percent, field } }) => {
+    .addCase(selectPercent, (state, { payload: { percent, field, value } }) => {
       const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
       return {
         ...state,
         independentField: field,
+        typedValue: value,
         [field]: { ...state[field], percent: percent },
         [otherField]: { ...state[otherField], percent: 0 },
       };
@@ -106,8 +107,8 @@ export default createReducer<SwapState>(initialState, builder =>
         ...state,
         independentField: field,
         typedValue,
-        [field]: { ...state[field] },
-        [otherField]: { ...state[otherField] },
+        [field]: { ...state[field], percent: 0 },
+        [otherField]: { ...state[otherField], percent: 0 },
       };
     })
     .addCase(setRecipient, (state, { payload: { recipient } }) => {

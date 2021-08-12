@@ -22,7 +22,7 @@ export function useSwapState(): AppState['swap'] {
 
 export function useSwapActionHandlers(): {
   onCurrencySelection: (field: Field, currencyId: CurrencyKey) => void;
-  onPercentSelection: (field: Field, percent: number) => void;
+  onPercentSelection: (field: Field, percent: number, value: string) => void;
   onSwitchTokens: () => void;
   onUserInput: (field: Field, typedValue: string) => void;
   onChangeRecipient: (recipient: string | null) => void;
@@ -41,8 +41,8 @@ export function useSwapActionHandlers(): {
   );
 
   const onPercentSelection = useCallback(
-    (field: Field, percent: number) => {
-      dispatch(selectPercent({ field, percent }));
+    (field: Field, percent: number, value: string) => {
+      dispatch(selectPercent({ field, percent, value }));
     },
     [dispatch],
   );

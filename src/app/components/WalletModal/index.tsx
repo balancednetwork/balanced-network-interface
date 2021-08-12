@@ -137,15 +137,16 @@ export default function WalletModal() {
   };
 
   const updateLedgerAddress = React.useCallback(async ({ offset, limit }) => {
-    const addressList: any[] = await requestLedgerAddress({
+    const currentAddressList: any[] = await requestLedgerAddress({
       paging: {
         offset,
         limit,
       },
     });
 
-    updateAddressList(addressList);
-    resolveBalanceByAddress(addressList);
+    setIsLedgerErr(false);
+    updateAddressList(currentAddressList);
+    resolveBalanceByAddress(currentAddressList);
   }, []);
 
   const resolveBalanceByAddress = async (addressList: any[]) => {

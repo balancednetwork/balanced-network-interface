@@ -22,7 +22,6 @@ export interface SwapState {
   };
   readonly [Field.OUTPUT]: {
     readonly currencyId: CurrencyKey | undefined;
-    readonly percent: number;
   };
   // the typed recipient address or ENS name, or null if swap should go to sender
   readonly recipient: string | null;
@@ -37,7 +36,6 @@ const initialState: SwapState = {
   },
   [Field.OUTPUT]: {
     currencyId: SUPPORTED_PAIRS[0].quoteCurrencyKey,
-    percent: 0,
   },
   recipient: null,
 };
@@ -54,7 +52,6 @@ export default createReducer<SwapState>(initialState, builder =>
           },
           [Field.OUTPUT]: {
             currencyId: outputCurrencyId,
-            percent: 0,
           },
           independentField: field,
           typedValue: typedValue,
@@ -82,14 +79,11 @@ export default createReducer<SwapState>(initialState, builder =>
       }
     })
     .addCase(selectPercent, (state, { payload: { percent, field, value } }) => {
-      const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-
       return {
         ...state,
         independentField: field,
         typedValue: value,
         [field]: { ...state[field], percent: percent },
-        [otherField]: { ...state[otherField], percent: 0 },
       };
     })
     .addCase(switchCurrencies, state => {
@@ -97,7 +91,7 @@ export default createReducer<SwapState>(initialState, builder =>
         ...state,
         independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
         [Field.INPUT]: { ...state[Field.OUTPUT], currencyId: state[Field.OUTPUT].currencyId, percent: 0 },
-        [Field.OUTPUT]: { ...state[Field.INPUT], currencyId: state[Field.INPUT].currencyId, percent: 0 },
+        [Field.OUTPUT]: { ...state[Field.INPUT], currencyId: state[Field.INPUT].currencyId },
       };
     })
     .addCase(typeInput, (state, { payload: { field, typedValue } }) => {

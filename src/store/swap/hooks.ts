@@ -266,7 +266,7 @@ export function useDerivedSwapInfo(): {
     independentField,
     typedValue,
     [Field.INPUT]: { currencyId: inputCurrencyId, percent: inputPercent },
-    [Field.OUTPUT]: { currencyId: outputCurrencyId, percent: outputPercent },
+    [Field.OUTPUT]: { currencyId: outputCurrencyId },
   } = useSwapState();
 
   const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
@@ -292,9 +292,8 @@ export function useDerivedSwapInfo(): {
   const percents: { [field in Field]?: number } = React.useMemo(
     () => ({
       [Field.INPUT]: inputPercent,
-      [Field.OUTPUT]: outputPercent,
     }),
-    [inputPercent, outputPercent],
+    [inputPercent],
   );
   const price = usePrice(inputCurrencyId, outputCurrencyId);
   //

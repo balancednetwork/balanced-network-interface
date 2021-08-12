@@ -92,13 +92,6 @@ export default function SwapPanel() {
     [onPercentSelection, maxInputAmount],
   );
 
-  const handleOutputPercentSelect = React.useCallback(
-    (percent: number) => {
-      maxInputAmount && onPercentSelection(Field.INPUT, percent, maxInputAmount.amount.times(percent / 100).toFixed());
-    },
-    [onPercentSelection, maxInputAmount],
-  );
-
   const pairableCurrencyList = React.useMemo(() => getPairableCurrencies(currencyKeys[Field.INPUT]), [currencyKeys]);
 
   const [showInverted, setShowInverted] = React.useState<boolean>(false);
@@ -294,9 +287,6 @@ export default function SwapPanel() {
               onCurrencySelect={handleOutputSelect}
               id="swap-currency-output"
               currencyList={pairableCurrencyList}
-              onPercentSelect={handleOutputPercentSelect}
-              percent={percents[Field.OUTPUT]}
-              isLoggedIn={!!account}
             />
           </Flex>
         </AutoColumn>

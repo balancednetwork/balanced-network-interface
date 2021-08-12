@@ -3,6 +3,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { isIOS } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -69,6 +70,7 @@ const PositionDetailPanel = () => {
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
+  const smallSp = useMedia('(max-width: 360px)');
   const [show, setShow] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
 
@@ -156,9 +158,11 @@ const PositionDetailPanel = () => {
       <BoxPanel bg="bg2" flex={1}>
         <Typography variant="h3">
           Risk ratio{' '}
-          <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
-            <QuestionIcon width={14} style={{ marginTop: -5 }} />
-          </QuestionWrapper>
+          {!smallSp && (
+            <QuestionWrapper onClick={open} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
+              <QuestionIcon width={14} style={{ marginTop: -5 }} />
+            </QuestionWrapper>
+          )}
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between" mt={[10, 10, 10, 10, 5]} mb={4}>
@@ -166,6 +170,7 @@ const PositionDetailPanel = () => {
             text="If the bar only fills this section, you have a low risk of liquidation."
             show={show}
             placement="bottom"
+            small
           >
             <LeftChip
               bg="primary"
@@ -186,6 +191,7 @@ const PositionDetailPanel = () => {
                   text="You can’t withdraw any collateral if you go beyond this threshold."
                   show={show}
                   placement="top-end"
+                  small
                 >
                   <dt>All collateral locked</dt>
                 </Tooltip>
@@ -217,6 +223,7 @@ const PositionDetailPanel = () => {
                     your collateral will be liquidated.`}
             show={show}
             placement="bottom"
+            small
           >
             <RightChip bg="#fb6a6a">Liquidated</RightChip>
           </Tooltip>
@@ -235,7 +242,7 @@ const PositionDetailPanel = () => {
                   }
                   placement="top"
                 >
-                  <QuestionIcon width={14} color="text1" style={{ marginTop: -5, color: '#D5D7DB' }} />
+                  {!smallSp && <QuestionIcon width={14} color="text1" style={{ marginTop: -5, color: '#D5D7DB' }} />}
                 </MouseoverTooltip>
               </Typography>
 

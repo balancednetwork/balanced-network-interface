@@ -1,10 +1,15 @@
 import React, { useCallback, useState } from 'react';
 
+import { isIOS } from 'react-device-detect';
 import styled from 'styled-components';
 
 import Popover, { PopoverProps, PopperWithoutArrowAndBorder } from '../Popover';
 
-const TooltipContainer = styled.div<{ wide?: boolean }>`
+const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean }>`
+  @media (max-width: 650px) {
+    ${props => props.small && ' width: 156px;  font-size: 12px; padding: 11px;'}
+  }
+
   width: ${props => (props.wide ? '300px' : '244px')};
   padding: 10px 0.9375rem;
   line-height: 150%;
@@ -16,11 +21,12 @@ const TooltipContainer = styled.div<{ wide?: boolean }>`
 interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: React.ReactNode;
   wide?: boolean;
+  small?: boolean;
   containerStyle?: React.CSSProperties;
   noArrowAndBorder?: boolean;
 }
 
-export default function Tooltip({ text, wide, containerStyle, noArrowAndBorder, ...rest }: TooltipProps) {
+export default function Tooltip({ text, wide, small, containerStyle, noArrowAndBorder, ...rest }: TooltipProps) {
   return (
     <>
       {noArrowAndBorder ? (
@@ -31,7 +37,7 @@ export default function Tooltip({ text, wide, containerStyle, noArrowAndBorder, 
       ) : (
         <Popover
           content={
-            <TooltipContainer style={containerStyle} wide={wide}>
+            <TooltipContainer style={containerStyle} wide={wide} small={small}>
               {text}
             </TooltipContainer>
           }
@@ -48,7 +54,7 @@ export function MouseoverTooltip({ children, noArrowAndBorder, ...rest }: Omit<T
   const close = useCallback(() => setShow(false), [setShow]);
   return (
     <Tooltip {...rest} show={show} noArrowAndBorder={noArrowAndBorder}>
-      <div onMouseEnter={open} onMouseLeave={close}>
+      <div onClick={open} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
         {children}
       </div>
     </Tooltip>

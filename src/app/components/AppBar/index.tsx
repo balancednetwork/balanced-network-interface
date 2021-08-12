@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { ReactComponent as HomeIcon } from 'assets/icons/home.svg';
 import { ReactComponent as TradeIcon } from 'assets/icons/trade.svg';
-// import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
+import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
 
 const Navigation = styled.nav`
   display: inline-block;
@@ -61,8 +61,8 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   display: block;
   margin-left: 50%;
   transform: translate(-50%);
-  padding: 10px 15px;
-  width: 114px;
+  padding: 10px 10px;
+  width: 100px;
   border-radius: 25px;
   color: #8695a6;
   text-decoration: none;
@@ -82,6 +82,11 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
     background-color: ${({ theme }) => theme.colors.primary};
     opacity: 1;
   }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    width: 114px;
+    padding: 10px 15px;
+  `}
 
   ${({ theme }) => theme.mediaWidth.upLarge`
     width: 114px;
@@ -103,20 +108,16 @@ export default React.memo(function AppBar() {
             <Text>Home</Text>
           </StyledNavLink>
         </ListItem>
-
-        {/* 
-        // move vote feature to next phase
-        <ListItem>
-          <StyledNavLink exact to="/vote">
-            <VoteIcon width="30" height="35" />
-            <Text>Vote</Text>
-          </StyledNavLink>
-        </ListItem> */}
-
         <ListItem>
           <StyledNavLink exact to="/trade">
             <TradeIcon width="35" height="33" />
             <Text>Trade</Text>
+          </StyledNavLink>
+        </ListItem>
+        <ListItem>
+          <StyledNavLink to="/vote">
+            <VoteIcon width="35" height="33" />
+            <Text>Vote</Text>
           </StyledNavLink>
         </ListItem>
       </List>

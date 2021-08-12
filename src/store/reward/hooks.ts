@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { SUPPORTED_PAIRS } from 'constants/currency';
-import { PLUS_INFINITY, REWARDS_COLLATERAL_RATIO } from 'constants/index';
+import { PLUS_INFINITY, MANDATORY_COLLATERAL_RATIO } from 'constants/index';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useLoanInputAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -89,7 +89,7 @@ export const useHasRewardableLoan = () => {
 
   if (
     loanInputAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
-    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(REWARDS_COLLATERAL_RATIO * 100))
+    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(MANDATORY_COLLATERAL_RATIO * 100))
   ) {
     return true;
   }

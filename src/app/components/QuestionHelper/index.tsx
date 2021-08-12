@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
+import { useMedia } from 'react-use';
 import styled from 'styled-components';
 
 import Tooltip from 'app/components/Tooltip';
@@ -22,12 +23,16 @@ export default function QuestionHelper({ text }: { text: string }) {
   const open = useCallback(() => setShow(true), [setShow]);
   const close = useCallback(() => setShow(false), [setShow]);
 
+  const smallSp = useMedia('(max-width: 360px)');
+
   return (
     <span style={{ marginLeft: 4, verticalAlign: 'top' }}>
       <Tooltip text={text} show={show} placement="top">
-        <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
-          <QuestionIcon width={14} />
-        </QuestionWrapper>
+        {!smallSp && (
+          <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
+            <QuestionIcon width={14} />
+          </QuestionWrapper>
+        )}
       </Tooltip>
     </span>
   );

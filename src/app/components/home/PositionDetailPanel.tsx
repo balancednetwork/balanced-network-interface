@@ -3,6 +3,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { isIOS } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -16,20 +17,14 @@ import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import {
-  REWARDS_COLLATERAL_RATIO,
+  SAFETY_COLLATERAL_RATIO,
   MANDATORY_COLLATERAL_RATIO,
   LIQUIDATION_COLLATERAL_RATIO,
   ZERO,
 } from 'constants/index';
+import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
-import {
-  useLoanInputAmount,
-  useLoanDebtHoldingShare,
-  useLoanTotalRepaid,
-  useLoanFetchTotalRepaid,
-  useLoanTotalCollateralSold,
-  useLoanAPY,
-} from 'store/loan/hooks';
+import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
@@ -44,9 +39,9 @@ const useThresholdPrices = (): [BigNumber, BigNumber, BigNumber] => {
     if (collateralInputAmount.isZero()) return [new BigNumber(0), new BigNumber(0), new BigNumber(0)];
 
     return [
-      loanInputAmount.multipliedBy(REWARDS_COLLATERAL_RATIO).div(collateralInputAmount),
-      loanInputAmount.multipliedBy(MANDATORY_COLLATERAL_RATIO).div(collateralInputAmount),
-      loanInputAmount.multipliedBy(LIQUIDATION_COLLATERAL_RATIO).div(collateralInputAmount),
+      loanInputAmount.div(collateralInputAmount).times(SAFETY_COLLATERAL_RATIO),
+      loanInputAmount.div(collateralInputAmount).times(MANDATORY_COLLATERAL_RATIO),
+      loanInputAmount.div(collateralInputAmount).times(LIQUIDATION_COLLATERAL_RATIO),
     ];
   }, [collateralInputAmount, loanInputAmount]);
 };
@@ -61,20 +56,23 @@ const useOwnDailyRewards = (): BigNumber => {
   return totalDailyRewards.times(debtHoldShare).div(100);
 };
 
-enum Period {
-  'day' = 'Day',
-  'week' = 'Week',
-  'month' = 'Month',
-}
+const displayPeriod: { [key: string]: string } = {
+  day: 'Past day',
+  week: 'Past week',
+  month: 'Past month',
+  all: 'All time',
+};
 
-const PERIODS = [Period.day, Period.week, Period.month];
+const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
+  const smallSp = useMedia('(max-width: 360px)');
   const [show, setShow] = React.useState<boolean>(false);
+  const [period, setPeriod] = React.useState<Period>(Period.day);
 
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
@@ -83,13 +81,7 @@ const PositionDetailPanel = () => {
   const ratio = useRatio();
 
   // Rebalancing section
-  const loanTotalRepaid = useLoanTotalRepaid();
-  const collateralTotalSold = useLoanTotalCollateralSold();
-  const updateLoanTotalRepaid = useLoanFetchTotalRepaid();
-
-  React.useEffect(() => {
-    updateLoanTotalRepaid(Period.day);
-  }, [updateLoanTotalRepaid]);
+  const { data } = useRebalancingDataQuery(period);
 
   // loan
   const loanInputAmount = useLoanInputAmount();
@@ -99,12 +91,10 @@ const PositionDetailPanel = () => {
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
-  const [rewardThresholdPrice, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
+  const [, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
 
   const currentRatio = useCurrentCollateralRatio();
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
-
-  const isRewardWarning = rewardThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThanOrEqualTo(0);
 
   const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
 
@@ -123,12 +113,9 @@ const PositionDetailPanel = () => {
     setAnchor(null);
   };
 
-  const [period, setPeriod] = React.useState(Period.day);
-
   const handlePeriod = (p: Period) => {
     closeMenu();
     setPeriod(p);
-    updateLoanTotalRepaid(p);
   };
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
@@ -161,8 +148,7 @@ const PositionDetailPanel = () => {
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
-          The current ICX price is{' '}
-          <span className={isRewardWarning ? 'alert' : 'white'}>${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
+          The current ICX price is <span className="white">${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
         </Typography>
         <Typography mb={2}>
           You will be liquidated at <span className="white">${liquidationThresholdPrice.dp(3).toFormat()}</span>.
@@ -172,9 +158,11 @@ const PositionDetailPanel = () => {
       <BoxPanel bg="bg2" flex={1}>
         <Typography variant="h3">
           Risk ratio{' '}
-          <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
-            <QuestionIcon width={14} style={{ marginTop: -5 }} />
-          </QuestionWrapper>
+          {!smallSp && (
+            <QuestionWrapper onClick={open} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
+              <QuestionIcon width={14} style={{ marginTop: -5 }} />
+            </QuestionWrapper>
+          )}
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between" mt={[10, 10, 10, 10, 5]} mb={4}>
@@ -182,6 +170,7 @@ const PositionDetailPanel = () => {
             text="If the bar only fills this section, you have a low risk of liquidation."
             show={show}
             placement="bottom"
+            small
           >
             <LeftChip
               bg="primary"
@@ -196,25 +185,13 @@ const PositionDetailPanel = () => {
           </Tooltip>
 
           <Box flex={1} style={{ position: 'relative' }}>
-            <Rewards warned={isRewardWarning}>
-              <MetaData as="dl" style={{ textAlign: 'right' }}>
-                <Tooltip
-                  text="You won’t earn any Balance Tokens if you go beyond this threshold."
-                  show={show}
-                  placement="top-end"
-                >
-                  <dt>Reward threshold</dt>
-                </Tooltip>
-                <dd>${rewardThresholdPrice.toFixed(4)}</dd>
-              </MetaData>
-            </Rewards>
-
             <Locked warned={isLockWarning}>
-              <MetaData as="dl" style={{ textAlign: 'left' }}>
+              <MetaData as="dl" style={{ textAlign: 'right' }}>
                 <Tooltip
                   text="You can’t withdraw any collateral if you go beyond this threshold."
                   show={show}
-                  placement="top-start"
+                  placement="top-end"
+                  small
                 >
                   <dt>All collateral locked</dt>
                 </Tooltip>
@@ -246,6 +223,7 @@ const PositionDetailPanel = () => {
                     your collateral will be liquidated.`}
             show={show}
             placement="bottom"
+            small
           >
             <RightChip bg="#fb6a6a">Liquidated</RightChip>
           </Tooltip>
@@ -264,22 +242,18 @@ const PositionDetailPanel = () => {
                   }
                   placement="top"
                 >
-                  <QuestionIcon width={14} color="text1" style={{ marginTop: -5, color: '#D5D7DB' }} />
+                  {!smallSp && <QuestionIcon width={14} color="text1" style={{ marginTop: -5, color: '#D5D7DB' }} />}
                 </MouseoverTooltip>
               </Typography>
 
               <ClickAwayListener onClickAway={closeMenu}>
                 <div>
-                  <UnderlineTextWithArrow
-                    onClick={handleToggle}
-                    text={`Past ${period.toLowerCase()}`}
-                    arrowRef={arrowRef}
-                  />
+                  <UnderlineTextWithArrow onClick={handleToggle} text={displayPeriod[period]} arrowRef={arrowRef} />
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (
-                        <MenuItem key={p} onClick={() => handlePeriod(p)}>
-                          {p}
+                        <MenuItem className={p === 'all' ? 'border-top' : ''} key={p} onClick={() => handlePeriod(p)}>
+                          {displayPeriod[p]}
                         </MenuItem>
                       ))}
                     </MenuList>
@@ -289,11 +263,11 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(collateralTotalSold, 'currency')} ICX</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} ICX</Typography>
                 <Typography mt={1}>Collateral sold</Typography>
               </Box>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(loanTotalRepaid, 'currency')} bnUSD</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalRepaid, 'currency')} bnUSD</Typography>
                 <Typography mt={1}>Loan repaid</Typography>
               </Box>
             </Flex>
@@ -404,29 +378,16 @@ const MetaData = styled(Box)`
 
   & dd {
     margin-inline: 0px;
-  }
-`;
-
-const Rewards = styled(Threshold)`
-  left: 53.2%;
-  /* text-align: right; */
-
-  ${MetaData} {
-    width: 125px;
-    margin-left: -140px;
+    color: rgba(255, 255, 255, 0.75);
   }
 `;
 
 const Locked = styled(Threshold)`
-  left: 66.5%;
-
-  ::after {
-    margin-left: initial;
-  }
+  left: 81.905%;
 
   ${MetaData} {
     width: 150px;
-    margin-left: 15px;
+    margin-left: -165px;
   }
 `;
 

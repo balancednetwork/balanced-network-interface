@@ -1,9 +1,7 @@
 import React from 'react';
 
-import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
-import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -13,20 +11,9 @@ import { useRatio } from 'store/ratio/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { getAPIEnpoint } from 'utils';
 
 import { AppState } from '..';
-import {
-  changeBorrowedAmount,
-  changeBadDebt,
-  changeTotalSupply,
-  changeTotalRepaid,
-  changeTotalCollateralSold,
-  Field,
-  adjust,
-  cancel,
-  type,
-} from './actions';
+import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, Field, adjust, cancel, type } from './actions';
 
 export function useLoanBorrowedAmount(): AppState['loan']['borrowedAmount'] {
   return useSelector((state: AppState) => state.loan.borrowedAmount);
@@ -38,14 +25,6 @@ export function useLoanBadDebt(): AppState['loan']['badDebt'] {
 
 export function useLoanTotalSupply(): AppState['loan']['totalSupply'] {
   return useSelector((state: AppState) => state.loan.totalSupply);
-}
-
-export function useLoanTotalRepaid(): AppState['loan']['totalRepaid'] {
-  return useSelector((state: AppState) => state.loan.totalRepaid);
-}
-
-export function useLoanTotalCollateralSold(): AppState['loan']['totalCollateralSold'] {
-  return useSelector((state: AppState) => state.loan.totalCollateralSold);
 }
 
 export function useLoanChangeBorrowedAmount(): (borrowedAmount: BigNumber) => void {
@@ -116,47 +95,6 @@ export function useLoanFetchInfo(account?: string | null) {
       fetchLoanInfo(account);
     }
   }, [fetchLoanInfo, account, transactions]);
-}
-
-export function useLoanFetchTotalRepaid(): (interval?: string | null) => void {
-  const { account } = useIconReact();
-  const dispatch = useDispatch();
-  return React.useCallback(
-    interval => {
-      if (interval) {
-        if (interval?.toLowerCase() === 'day') {
-          interval = 'yesterday';
-        } else if (interval?.toLowerCase() === 'week') {
-          interval = 'last-week';
-        } else {
-          interval = 'last-month';
-        }
-        try {
-          axios
-            .get(`${getAPIEnpoint()}/api/v1/loan-repaid-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`)
-            .then(res => {
-              const value = res.data['loan_repaid_sum'];
-              dispatch(changeTotalRepaid({ totalRepaid: BalancedJs.utils.toIcx(new BigNumber(value)) }));
-            });
-          axios
-            .get(
-              `${getAPIEnpoint()}/api/v1/sold-collateral-sum?address=${account}&symbol=bnUSD&date-preset=${interval}`,
-            )
-            .then(res => {
-              const value = res.data['loan_repaid_sum'];
-              dispatch(
-                changeTotalCollateralSold({ totalCollateralSold: BalancedJs.utils.toIcx(new BigNumber(value)) }),
-              );
-            });
-        } catch (e) {
-          console.error(e);
-        }
-      } else {
-        dispatch(cancel());
-      }
-    },
-    [dispatch, account],
-  );
 }
 
 export function useLoanState() {

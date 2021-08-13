@@ -1,7 +1,7 @@
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
-import { useIconReact } from 'packages/icon-react';
+import { NetworkId, useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
@@ -145,10 +145,11 @@ export const useTotalProposalCountQuery = () => {
   });
 };
 
-export const useAdditionalInfoQuery = () => {
+export const useAdditionalInfoQuery = (networkId: NetworkId) => {
   const fetch = async () => {
+    const fileName = networkId === NetworkId.MAINNET ? 'mainnet' : 'yeouido';
     const { data } = await axios.get(
-      'https://raw.githubusercontent.com/balancednetwork/BIP-info-list/main/proposals.json',
+      `https://raw.githubusercontent.com/balancednetwork/BIP-info-list/main/proposals/${fileName}.json`,
     );
     return data;
   };
@@ -157,7 +158,8 @@ export const useAdditionalInfoQuery = () => {
 };
 
 export const useAdditionalInfoById = (id?: number) => {
-  const { data: items } = useAdditionalInfoQuery();
+  const { networkId } = useIconReact();
+  const { data: items } = useAdditionalInfoQuery(networkId);
 
   if (!id) return;
 

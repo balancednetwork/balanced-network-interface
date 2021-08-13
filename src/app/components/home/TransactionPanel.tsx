@@ -62,6 +62,7 @@ const METHOD_CONTENT = {
   VoteCast: '',
   Claimed: 'Claimed network fees',
   TokenTransfer: '',
+  Transfer: '',
 
   //  2 symbols
   stakeICX: 'Swapped (amount1) ICX for (amount2) sICX',
@@ -389,10 +390,11 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
 };
 
 const isDexContract = (addr: string) => {
-  const contractName = Object.keys(addresses[NetworkId.MAINNET]).find(
-    key => addresses[NetworkId.MAINNET][key] === addr,
-  );
-  return contractName?.toLowerCase() === 'dex';
+  return addresses[NetworkId.MAINNET].dex === addr;
+};
+
+const issICXContract = (_tx: Transaction) => {
+  return _tx.indexed.find(item => item === addresses[NetworkId.MAINNET].staking);
 };
 
 const checkAndParseICXToDex = (tx: Transaction): Transaction => {
@@ -400,6 +402,16 @@ const checkAndParseICXToDex = (tx: Transaction): Transaction => {
 
   if (!getMethod(_tx) && isDexContract(_tx.to_address)) {
     _tx.method = 'SupplyICX';
+  }
+
+  return _tx;
+};
+
+const checkAndParseICXTosICX = (tx: Transaction): Transaction => {
+  const _tx = { ...tx };
+
+  if (getMethod(_tx) === 'Transfer' && issICXContract(_tx)) {
+    _tx.method = 'UnstakeRequest';
   }
 
   return _tx;
@@ -464,6 +476,7 @@ const parseTransactions = (txs: Transaction[]) => {
 
         default: {
           tx = checkAndParseICXToDex(tx);
+          tx = checkAndParseICXTosICX(tx);
 
           transactions.push(tx);
           break;

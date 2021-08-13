@@ -137,15 +137,16 @@ export default function WalletModal() {
   };
 
   const updateLedgerAddress = React.useCallback(async ({ offset, limit }) => {
-    const addressList: any[] = await requestLedgerAddress({
+    const currentAddressList: any[] = await requestLedgerAddress({
       paging: {
         offset,
         limit,
       },
     });
 
-    updateAddressList(addressList);
-    resolveBalanceByAddress(addressList);
+    setIsLedgerErr(false);
+    updateAddressList(currentAddressList);
+    resolveBalanceByAddress(currentAddressList);
   }, []);
 
   const resolveBalanceByAddress = async (addressList: any[]) => {
@@ -182,6 +183,9 @@ export default function WalletModal() {
     }, 3 * 1000);
 
     try {
+      if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+        bnJs.contractSettings.ledgerSettings.transport.close();
+      }
       const transport = await TransportWebHID.create();
       transport.setDebugMode && transport.setDebugMode(false);
       bnJs.inject({
@@ -300,7 +304,6 @@ export default function WalletModal() {
           if (isLedgerLoading) return;
 
           updateShowledgerAddress(false);
-          bnJs.contractSettings.ledgerSettings.transport.close();
         }}
       >
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">

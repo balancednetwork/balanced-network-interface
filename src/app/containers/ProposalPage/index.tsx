@@ -12,6 +12,7 @@ import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
 import { Column } from 'app/components/Column';
 import { DefaultLayout } from 'app/components/Layout';
+import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton } from 'app/components/ProposalInfo';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
@@ -19,13 +20,15 @@ import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
+import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
-import { useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
+import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
+import { getTrackerLink } from 'utils';
 
 dayjs.extend(duration);
 
@@ -141,6 +144,10 @@ export function ProposalPage() {
   }, [proposalQuery, voteStatusQuery, txStatus]);
 
   const theme = useTheme();
+
+  const { networkId } = useIconReact();
+  const additionalInfo = useAdditionalInfoById(proposal?.id);
+
   return (
     <DefaultLayout title="Vote">
       <Helmet>
@@ -326,8 +333,33 @@ export function ProposalPage() {
               </>
             )}
           </Typography>
+          <Flex alignItems="center">
+            {additionalInfo?.discussionURL && (
+              <>
+                <InfoLink href={additionalInfo?.discussionURL} target="_blank">
+                  Discussion
+                </InfoLink>
+                <ExternalIcon width="15" height="15" style={{ marginLeft: 5, marginRight: 15 }} />
+              </>
+            )}
+            {additionalInfo?.hash && (
+              <>
+                <InfoLink
+                  href={additionalInfo?.hash && getTrackerLink(networkId, additionalInfo?.hash, 'transaction')}
+                  target="_blank"
+                >
+                  Transaction
+                </InfoLink>
+                <ExternalIcon width="15" height="15" style={{ marginLeft: 5 }} />
+              </>
+            )}
+          </Flex>
         </BoxPanel>
       </ProposalContainer>
     </DefaultLayout>
   );
 }
+
+const InfoLink = styled(Link)`
+  font-size: 16px;
+`;

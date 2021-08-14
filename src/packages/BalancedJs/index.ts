@@ -14,7 +14,7 @@ import ICX from './contracts/ICX';
 import IUSDC from './contracts/IUSDC';
 import Loans from './contracts/Loans';
 import OMM from './contracts/OMM';
-import OMM5 from './contracts/OMM5';
+import OMM6 from './contracts/OMM6';
 import Rewards from './contracts/Rewards';
 import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
@@ -45,7 +45,7 @@ export class BalancedJs {
   bnUSD: bnUSD;
   ICX: ICX;
   OMM: OMM;
-  OMM5: OMM5;
+  OMM6: OMM6;
   IUSDC: IUSDC;
   USDS: USDS;
   //
@@ -101,7 +101,7 @@ export class BalancedJs {
     this.bnUSD = new bnUSD(this.contractSettings);
     this.sICX = new sICX(this.contractSettings);
     this.OMM = new OMM(this.contractSettings);
-    this.OMM5 = new OMM5(this.contractSettings);
+    this.OMM6 = new OMM6(this.contractSettings);
     this.IUSDC = new IUSDC(this.contractSettings);
     this.USDS = new USDS(this.contractSettings);
 

@@ -5,10 +5,10 @@ import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
 
-export default class OMM5 extends Contract {
+export default class OMM6 extends Contract {
   constructor(contractSettings: ContractSettings) {
     super(contractSettings);
-    this.address = addresses[this.nid].omm5;
+    this.address = addresses[this.nid].omm6;
   }
 
   balanceOf(owner: string) {

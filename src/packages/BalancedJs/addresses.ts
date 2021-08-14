@@ -36,7 +36,7 @@ const YEOUIDO_ADDRESSES = {
   bnusd: 'cxc48c9c81ceef04445c961c5cc8ff056d733dfe3a',
   baln: 'cx36169736b39f59bf19e8950f6c8fa4bfa18b710a',
   omm: 'cxa96491850d5dd69efa5d64afa9138fd4a66cd348',
-  omm5: 'cxe2e8da3a0f1532c50ce91c6f864e78139f2d0b87',
+  omm6: 'cxc58f32a437c8e5a5fcb8129626662f2252ad2678',
   iusdc: 'cx65f639254090820361da483df233f6d0e69af9b7',
   usds: 'cxc0666df567a6e0b49342648e98ccbe5362b264ea',
   bwt: 'cx5d886977b7d24b9f73a460c9ca2d43847997c285',

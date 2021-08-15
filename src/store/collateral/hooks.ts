@@ -9,9 +9,10 @@ import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
+import { CurrencyKey } from 'types';
 
 import { AppState } from '../index';
-import { adjust, cancel, changeDepositedAmount, type, Field } from './actions';
+import { adjust, cancel, changeDepositedAmount, changeCollateralType, type, Field } from './actions';
 
 export function useCollateralChangeDepositedAmount(): (depositedAmount: BigNumber) => void {
   const dispatch = useDispatch();
@@ -24,27 +25,52 @@ export function useCollateralChangeDepositedAmount(): (depositedAmount: BigNumbe
   );
 }
 
-export function useCollateralAvailableAmount() {
-  const ICXAmount = useWalletBalances()['ICX'];
+export function useCollateralChangeCollateralType(): (collateralType: CurrencyKey) => void {
+  const dispatch = useDispatch();
+
+  return React.useCallback(
+    (collateralType: CurrencyKey) => {
+      dispatch(changeCollateralType({ collateralType }));
+    },
+    [dispatch],
+  );
+}
+
+export function useCollateralType() {
+  return useSelector((state: AppState) => state.collateral.collateralType);
+}
+
+export function useCollateralAvailableAmount(currencyKey?: CurrencyKey): BigNumber {
+  const walletBalances = useWalletBalances();
 
   return React.useMemo(() => {
-    return BigNumber.max(ICXAmount.minus(MINIMUM_ICX_AMOUNT_IN_WALLET), new BigNumber(0));
-  }, [ICXAmount]);
+    function getCurrencyBalance(currencyKey: CurrencyKey): BigNumber {
+      return currencyKey === 'ICX'
+        ? walletBalances['ICX'].minus(MINIMUM_ICX_AMOUNT_IN_WALLET)
+        : walletBalances[currencyKey];
+    }
+
+    return BigNumber.max(getCurrencyBalance(currencyKey || 'ICX'), new BigNumber(0));
+  }, [walletBalances, currencyKey]);
 }
 
 export function useCollateralFetchInfo(account?: string | null) {
-  const changeStakedICXAmount = useCollateralChangeDepositedAmount();
+  const changeCollateralAmount = useCollateralChangeDepositedAmount();
+  const collateralType = useCollateralType();
   const transactions = useAllTransactions();
 
   const fetchCollateralInfo = React.useCallback(
     async (account: string) => {
       const res = await bnJs.Loans.getAccountPositions(account);
 
-      const depositedsICX = res['assets'] ? BalancedJs.utils.toIcx(res['assets']['sICX']) : new BigNumber(0);
+      const depositedAmount =
+        res['assets'] && res['assets'][collateralType]
+          ? BalancedJs.utils.toIcx(res['assets'][collateralType])
+          : new BigNumber(0);
 
-      changeStakedICXAmount(depositedsICX);
+      changeCollateralAmount(depositedAmount);
     },
-    [changeStakedICXAmount],
+    [changeCollateralAmount, collateralType],
   );
 
   React.useEffect(() => {

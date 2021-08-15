@@ -258,9 +258,8 @@ export default function SwapPanel() {
               onCurrencySelect={handleInputSelect}
               id="swap-currency-input"
               currencyList={CURRENCY}
-              onPercentSelect={handleInputPercentSelect}
+              onPercentSelect={!!account ? handleInputPercentSelect : undefined}
               percent={percents[Field.INPUT]}
-              isLoggedIn={!!account}
             />
           </Flex>
 

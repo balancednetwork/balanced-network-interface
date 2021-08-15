@@ -88,7 +88,6 @@ interface CurrencyInputPanelProps {
   currency?: CurrencyKey | null;
   onPercentSelect?: (percent: number) => void;
   percent?: number;
-  isLoggedIn?: boolean;
   hideBalance?: boolean;
   // pair?: Pair | null;
   hideInput?: boolean;
@@ -113,7 +112,6 @@ export default function CurrencyInputPanel({
   currency,
   onPercentSelect,
   percent,
-  isLoggedIn,
   hideBalance = false,
   // pair = null, // used for double token logo
   hideInput = false,
@@ -150,7 +148,7 @@ export default function CurrencyInputPanel({
   };
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
-    isLoggedIn && onPercentSelect && onPercentSelect(instant);
+    onPercentSelect && onPercentSelect(instant);
   };
 
   React.useEffect(() => {
@@ -222,10 +220,10 @@ export default function CurrencyInputPanel({
         spellCheck="false"
         //style
         bg={bg}
-        active={isLoggedIn && onPercentSelect && isActive}
+        active={onPercentSelect && isActive}
       />
 
-      {isLoggedIn && onPercentSelect && (
+      {onPercentSelect && (
         <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">
           <HorizontalList justifyContent="center" alignItems="center">
             {COMMON_PERCENTS.map(value => (

@@ -60,7 +60,7 @@ const StyledTab = styled.li<{ selected: boolean }>`
   transition: background-color 0.3s ease;
   outline: none;
 
-  &:hover {
+  &:not([aria-selected='true']):hover {
     cursor: pointer !important;
     background-color: #0f3859;
     transition: background-color 0.2s ease;

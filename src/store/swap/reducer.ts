@@ -31,11 +31,11 @@ const initialState: SwapState = {
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {
-    currencyId: SUPPORTED_PAIRS[0].baseCurrencyKey,
+    currencyId: SUPPORTED_PAIRS[2].baseCurrencyKey,
     percent: 0,
   },
   [Field.OUTPUT]: {
-    currencyId: SUPPORTED_PAIRS[0].quoteCurrencyKey,
+    currencyId: SUPPORTED_PAIRS[2].quoteCurrencyKey,
   },
   recipient: null,
 };

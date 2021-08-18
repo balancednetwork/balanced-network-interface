@@ -20,7 +20,7 @@ export default function ICXWallet() {
       <Tabs index={tabIndex} onChange={handleTabsChange}>
         <StyledTabList>
           <StyledTab>Send</StyledTab>
-          <StyledTab>Unstaking</StyledTab>
+          <StyledTab hasNotification={true}>Unstaking</StyledTab>
         </StyledTabList>
         <Divider mb={3} />
         <TabPanels>

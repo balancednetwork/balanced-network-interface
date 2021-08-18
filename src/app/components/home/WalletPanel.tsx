@@ -99,6 +99,7 @@ const WalletPanel = () => {
                           : currency.toLowerCase() === 'baln'
                           ? `$${balances['BALN']
                               .plus(balances['BALNstaked'])
+                              .plus(balances['BALNunstaking'])
                               .multipliedBy(rates[currency])
                               .dp(2)
                               .toFormat()}`

@@ -67,7 +67,7 @@ export default function Updater(): null {
                 toast.update(receipt.txHash, {
                   ...toastProps,
                   render: <NotificationSuccess summary={transactions[hash]?.summary} />,
-                  autoClose: 10000,
+                  autoClose: 5000,
                 });
               }
 
@@ -76,7 +76,7 @@ export default function Updater(): null {
                 toast.update(receipt.txHash, {
                   ...toastProps,
                   render: <NotificationError failureReason={receipt.failure.message} />,
-                  autoClose: 10000,
+                  autoClose: 5000,
                 });
               }
             }

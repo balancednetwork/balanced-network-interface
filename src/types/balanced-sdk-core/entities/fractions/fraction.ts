@@ -1,4 +1,4 @@
-import _Big, { RoundingMode } from 'big.js';
+import _Big from 'big.js';
 import _Decimal from 'decimal.js-light';
 import JSBI from 'jsbi';
 import invariant from 'tiny-invariant';
@@ -16,9 +16,9 @@ const toSignificantRounding = {
 };
 
 const toFixedRounding = {
-  [Rounding.ROUND_DOWN]: RoundingMode.RoundDown,
-  [Rounding.ROUND_HALF_UP]: RoundingMode.RoundHalfUp,
-  [Rounding.ROUND_UP]: RoundingMode.RoundUp,
+  [Rounding.ROUND_DOWN]: _Big.roundDown,
+  [Rounding.ROUND_HALF_UP]: _Big.roundHalfUp,
+  [Rounding.ROUND_UP]: _Big.roundUp,
 };
 
 export class Fraction {

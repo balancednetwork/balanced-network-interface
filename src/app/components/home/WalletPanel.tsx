@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
@@ -9,9 +10,11 @@ import styled, { css } from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
+import bnJs from 'bnJs';
 import { CURRENCY } from 'constants/currency';
 import '@reach/tabs/styles.css';
 import { useRatio } from 'store/ratio/hooks';
+import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 
 import BALNWallet from './wallets/BALNWallet';
@@ -29,6 +32,8 @@ const WalletPanel = () => {
   const balances = useWalletBalances();
   const { account } = useIconReact();
   const ratio = useRatio();
+  const transactions = useAllTransactions();
+  const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
 
   const rates = React.useMemo(
     () => ({
@@ -39,6 +44,15 @@ const WalletPanel = () => {
     }),
     [ratio],
   );
+
+  useEffect(() => {
+    (async () => {
+      if (account) {
+        const result = await bnJs.Staking.getClaimableICX(account);
+        setClaimableICX(BalancedJs.utils.toIcx(result));
+      }
+    })();
+  }, [account, transactions]);
 
   return (
     <BoxPanel bg="bg2">
@@ -93,7 +107,10 @@ const WalletPanel = () => {
                           )}
                       </DataText>
 
-                      <StyledDataText as="div" hasNotification={currency.toLowerCase() === 'icx'}>
+                      <StyledDataText
+                        as="div"
+                        hasNotification={currency.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}
+                      >
                         {!account
                           ? '-'
                           : currency.toLowerCase() === 'baln'
@@ -119,7 +136,11 @@ const WalletPanel = () => {
 
                   <StyledAccordionPanel hidden={false}>
                     <BoxPanel bg="bg3">
-                      <WalletUI currencyKey={currency} />
+                      {currency.toLocaleLowerCase() === 'icx' ? (
+                        <WalletUI currencyKey={currency} claimableICX={claimableICX} />
+                      ) : (
+                        <WalletUI currencyKey={currency} />
+                      )}
                     </BoxPanel>
                   </StyledAccordionPanel>
                 </AccordionItem>
@@ -335,7 +356,7 @@ const StyledAccordionButton = styled(AccordionButton)<{ currency?: string }>`
 
         &:after {
           transform: rotate(-135deg);
-          right: 7px;
+          right: 8px;
         }
       }
     }

@@ -1,7 +1,7 @@
 import JSBI from 'jsbi';
 
 import { MaxUint256 } from '../../constants';
-import { Ether } from '../ether';
+import { ICX } from '../icx';
 import { Token } from '../token';
 import { CurrencyAmount } from './currencyAmount';
 import { Percent } from './percent';
@@ -25,11 +25,11 @@ describe('CurrencyAmount', () => {
     });
   });
 
-  describe('#ether', () => {
-    it('produces ether amount', () => {
-      const amount = CurrencyAmount.fromRawAmount(Ether.onChain(1), 100);
+  describe('#icx', () => {
+    it('produces icx amount', () => {
+      const amount = CurrencyAmount.fromRawAmount(ICX.onChain(1), 100);
       expect(amount.quotient).toEqual(JSBI.BigInt(100));
-      expect(amount.currency).toEqual(Ether.onChain(1));
+      expect(amount.currency).toEqual(ICX.onChain(1));
     });
   });
 

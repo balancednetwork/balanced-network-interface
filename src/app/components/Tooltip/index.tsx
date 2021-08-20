@@ -6,12 +6,11 @@ import styled from 'styled-components';
 import Popover, { PopoverProps, PopperWithoutArrowAndBorder } from '../Popover';
 
 const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean }>`
-  width: ${props => (props.wide ? '300px' : '244px')};
+  width: ${props => (props.wide ? '300px' : '260px')};
   padding: 10px 0.9375rem;
   line-height: 150%;
   font-weight: 400;
   font-size: 14px;
-  margin: 0 10px;
   color: ${({ theme }) => theme.colors.white};
 
   @media (max-width: 650px) {

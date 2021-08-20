@@ -171,7 +171,6 @@ const PositionDetailPanel = () => {
             show={show}
             placement="bottom"
             small
-            wide
           >
             <LeftChip
               bg="primary"
@@ -193,7 +192,6 @@ const PositionDetailPanel = () => {
                   show={show}
                   placement="top-end"
                   small
-                  wide
                 >
                   <dt>All collateral locked</dt>
                 </Tooltip>
@@ -226,7 +224,6 @@ const PositionDetailPanel = () => {
             show={show}
             placement="bottom"
             small
-            wide
           >
             <RightChip bg="#fb6a6a">Liquidated</RightChip>
           </Tooltip>
@@ -244,7 +241,6 @@ const PositionDetailPanel = () => {
                     'If bnUSD is 5% above or below $1, some of your collateral may be sold and a larger amount of debt repaid to rebalance the price.'
                   }
                   placement="top"
-                  wide
                 >
                   {!smallSp && <QuestionIcon width={14} color="text1" style={{ marginTop: -5, color: '#D5D7DB' }} />}
                 </MouseoverTooltip>

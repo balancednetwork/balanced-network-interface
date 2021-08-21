@@ -119,7 +119,7 @@ export function ProposalPage() {
           { hash: res.result },
           {
             pending: `Casting your vote...`,
-            summary: `Vote casted.`,
+            summary: `Vote cast.`,
           },
         );
 

@@ -36,13 +36,18 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   const platformDayQuery = usePlatformDayQuery();
   const platformDay = platformDayQuery.data;
 
-  let startTimeStr = platformDay
-    ? dayjs()
+  const startTimeStr = () => {
+    if (platformDay && startDay >= platformDay) {
+      const startTime = dayjs()
         .utc()
         .add(startDay - platformDay, 'day')
-        .hour(17)
-        .fromNow(true)
-    : '';
+        .hour(17);
+      const timeLeft = startTime.diff(dayjs().utc(), 'hours');
+      if (timeLeft < 0) return '';
+      return startTime.fromNow(true);
+    }
+    return '';
+  };
 
   const endTimeStr = () => {
     if (platformDay) {
@@ -52,6 +57,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
         .hour(17);
 
       const timeLeft = endTime.diff(dayjs().utc(), 'hours');
+      if (timeLeft < 0) return '';
       const hours = timeLeft % 24;
       const days = Math.floor(timeLeft / 24);
 
@@ -73,19 +79,19 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
     );
   }
 
-  if (status === 'Pending' || status === 'Confirmed') {
+  if ((status === 'Pending' || status === 'Confirmed') && !!startTimeStr()) {
     return (
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <CalendarIcon height="22" width="22" />
         <Typography variant="content" color="white">
-          {`Starting in ${startTimeStr}`}
+          {`Starting in ${startTimeStr()}`}
         </Typography>
       </Flex>
     );
   }
 
   if (status === 'Active') {
-    if (isActive) {
+    if (isActive && !!endTimeStr()) {
       return (
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
@@ -94,12 +100,12 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
           </Typography>
         </Flex>
       );
-    } else {
+    } else if (!!startTimeStr()) {
       return (
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {`Starting in ${startTimeStr}`}
+            {`Starting in ${startTimeStr()}`}
           </Typography>
         </Flex>
       );

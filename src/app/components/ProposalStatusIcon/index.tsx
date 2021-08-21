@@ -19,9 +19,9 @@ const StatusMap = {
   Active: 'Active',
   Cancelled: 'Cancelled',
   Defeated: 'Rejected',
-  Succeeded: 'Approve',
+  Succeeded: 'Approved',
   'No Quorum': 'Quorum not reached',
-  Executed: 'Executed',
+  Executed: 'Enacted',
   'Failed Execution': 'Execution Failed',
 };
 
@@ -44,13 +44,19 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
         .fromNow(true)
     : '';
 
-  let endTimeStr = platformDay
-    ? dayjs()
+  const endTimeStr = () => {
+    if (platformDay) {
+      const endTime = dayjs()
         .utc()
         .add(endDay - platformDay - 1, 'day')
-        .hour(17)
-        .fromNow(true)
-    : '';
+        .hour(17);
+      const timeLeft = endTime.unix() - dayjs().utc().unix();
+      const hours = Math.floor((timeLeft / (60 * 60)) % 24);
+      const days = Math.floor(timeLeft / (60 * 60 * 24));
+      return `${days ? `${days === 1 ? 'a day' : `${days} days`},` : ''} ${hours === 1 ? 'an' : hours} hours`;
+    }
+    return '';
+  };
 
   const isActive = platformDay ? startDay <= platformDay && platformDay < endDay : false;
 
@@ -82,7 +88,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {`${endTimeStr} left`}
+            {`${endTimeStr()} left`}
           </Typography>
         </Flex>
       );

@@ -50,10 +50,12 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
         .utc()
         .add(endDay - platformDay - 1, 'day')
         .hour(17);
-      const timeLeft = endTime.unix() - dayjs().utc().unix();
-      const hours = Math.floor((timeLeft / (60 * 60)) % 24);
-      const days = Math.floor(timeLeft / (60 * 60 * 24));
-      return `${days ? `${days === 1 ? 'a day' : `${days} days`},` : ''} ${hours === 1 ? 'an' : hours} hours`;
+
+      const timeLeft = endTime.diff(dayjs().utc(), 'hours');
+      const hours = timeLeft % 24;
+      const days = Math.floor(timeLeft / 24);
+
+      return days <= 1 ? endTime.fromNow(true) : `${days} days, ${hours} hours`;
     }
     return '';
   };

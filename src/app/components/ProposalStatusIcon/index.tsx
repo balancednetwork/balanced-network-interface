@@ -22,7 +22,7 @@ const StatusMap = {
   Succeeded: 'Approved',
   'No Quorum': 'Quorum not reached',
   Executed: 'Enacted',
-  'Failed Execution': 'Execution Failed',
+  'Failed Execution': 'Failed to enact',
 };
 
 interface ProposalStatusProps {

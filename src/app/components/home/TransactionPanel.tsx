@@ -57,7 +57,7 @@ const METHOD_CONTENT = {
   ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
   CollateralReceived: 'Deposited (amount) sICX as collateral ',
   UnstakeRequest: 'Unstaked (amount) sICX',
-  Deposit: 'Transferred (amount) (currency) to DEX pool',
+  Deposit: 'Transferred (amount) (currency) to the Balanced exchange',
   Withdraw1Value: 'Withdrew (amount) (currency)',
   VoteCast: '',
   Claimed: 'Claimed network fees',

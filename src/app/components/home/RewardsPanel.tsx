@@ -16,7 +16,7 @@ import { useUserCollectedFeesQuery, useRewardQuery, BATCH_SIZE, usePlatformDayQu
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useHasNetworkFees, useHasRewardable } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
-import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -135,9 +135,9 @@ const RewardSection = () => {
 
   const hasEnoughICX = useHasEnoughICX();
 
-  const balances = useWalletBalances();
+  const BALNDetails = useBALNDetails();
 
-  const beforeAmount = balances['BALN'].plus(balances['BALNstaked']);
+  const beforeAmount = BALNDetails['Total balance'] || ZERO;
 
   const afterAmount = beforeAmount.plus(reward || ZERO);
 

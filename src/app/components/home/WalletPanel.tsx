@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box } from 'rebass/styled-components';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { BoxPanel } from 'app/components/Panel';
@@ -21,6 +21,7 @@ import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';
 import SendPanel from './wallets/SendPanel';
 import SICXWallet from './wallets/SICXWallet';
+import { notificationCSS } from './wallets/utils';
 
 const WalletUIs = {
   ICX: ICXWallet,
@@ -193,47 +194,6 @@ const DataText = styled(Typography)`
   font-size: 16px;
 `;
 
-export const notificationCSS = css`
-  position: relative;
-
-  @keyframes pulse {
-    0% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    100% {
-      opacity: 0;
-      transform: scale(1.8);
-    }
-  }
-
-  &:before,
-  &:after {
-    content: '';
-    position: absolute;
-    display: inline-block;
-    transition: all ease 0.2s;
-    top: 7px;
-  }
-
-  &:before {
-    width: 10px;
-    height: 10px;
-    background: ${({ theme }) => theme.colors.primary};
-    border-radius: 50%;
-    right: 1px;
-  }
-
-  &:after {
-    width: 10px;
-    height: 10px;
-    background: ${({ theme }) => theme.colors.primary};
-    border-radius: 50%;
-    right: 1px;
-    animation: pulse 1s ease 1s infinite;
-  }
-`;
-
 const StyledDataText = styled(DataText)<{ hasNotification?: boolean }>`
   padding-right: 25px;
   position: relative;
@@ -352,6 +312,7 @@ const StyledAccordionButton = styled(AccordionButton)<{ currency?: string }>`
 
         &:before {
           transform: rotate(135deg);
+          right: 2px;
         }
 
         &:after {

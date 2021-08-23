@@ -72,7 +72,7 @@ export const useUserWeightQuery = (day?: number) => {
   return useQuery<BigNumber>(
     QUERY_KEYS.Vote.UserWeight(account ?? ''),
     async () => {
-      const res = await bnJs.BALN.stakedBalanceOfAt(account!, day!);
+      const res = await bnJs.Governance.myVotingWeight(account!, day!);
       return BalancedJs.utils.toIcx(res);
     },
     {

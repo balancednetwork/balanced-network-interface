@@ -20,16 +20,23 @@ export function useWalletBalances(): AppState['wallet'] {
 
 export function useWalletFetchBalances(account?: string | null) {
   const dispatch = useDispatch();
+  const details = useBALNDetails();
+  const availableBALN: BigNumber = React.useMemo(() => details['Available balance'] || new BigNumber(0), [details]);
+
   const transactions = useAllTransactions();
 
   React.useEffect(() => {
     const fetchBalances = async () => {
       if (account) {
         const results = await Promise.all(CURRENCY.map(currencyKey => bnJs[currencyKey].balanceOf(account)));
-        const data = {};
-        results.forEach((result, index) => {
-          data[CURRENCY[index]] = BalancedJs.utils.toIcx(result, CURRENCY[index]);
-        });
+
+        const data = results.reduce((prev, result, index) => {
+          prev[CURRENCY[index]] = BalancedJs.utils.toIcx(result, CURRENCY[index]);
+          if (CURRENCY[index] === 'BALN') {
+            prev[CURRENCY[index]] = availableBALN;
+          }
+          return prev;
+        }, {});
         dispatch(changeBalances(data));
       } else {
         dispatch(resetBalances());
@@ -37,7 +44,7 @@ export function useWalletFetchBalances(account?: string | null) {
     };
 
     fetchBalances();
-  }, [transactions, account, dispatch]);
+  }, [transactions, account, availableBALN, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {

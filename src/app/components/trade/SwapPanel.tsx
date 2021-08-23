@@ -11,7 +11,6 @@ import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
-import { Link } from 'app/components/Link';
 import Modal from 'app/components/Modal';
 import { DropdownPopper } from 'app/components/Popover';
 import QuestionHelper from 'app/components/QuestionHelper';
@@ -44,7 +43,7 @@ export default function SwapPanel() {
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
-  const { trade, currencyBalances, currencyKeys, parsedAmount, inputError, price } = useDerivedSwapInfo();
+  const { trade, currencyBalances, currencyKeys, parsedAmount, inputError, price, percents } = useDerivedSwapInfo();
 
   const parsedAmounts = React.useMemo(
     () => ({
@@ -59,7 +58,7 @@ export default function SwapPanel() {
     [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
   };
 
-  const { onUserInput, onCurrencySelection, onSwitchTokens } = useSwapActionHandlers();
+  const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection } = useSwapActionHandlers();
 
   const handleTypeInput = React.useCallback(
     (value: string) => {
@@ -74,19 +73,24 @@ export default function SwapPanel() {
     [onUserInput],
   );
 
+  const maxInputAmount = maxAmountSpend(currencyBalances[Field.INPUT]);
+
   const handleInputSelect = React.useCallback(
     (inputCurrencyKey: CurrencyKey) => onCurrencySelection(Field.INPUT, inputCurrencyKey),
     [onCurrencySelection],
   );
+
   const handleOutputSelect = React.useCallback(
     (outputCurrencyKey: CurrencyKey) => onCurrencySelection(Field.OUTPUT, outputCurrencyKey),
     [onCurrencySelection],
   );
 
-  const maxInputAmount = maxAmountSpend(currencyBalances[Field.INPUT]);
-  const handleMaxInput = React.useCallback(() => {
-    maxInputAmount && onUserInput(Field.INPUT, maxInputAmount.toFixed());
-  }, [maxInputAmount, onUserInput]);
+  const handleInputPercentSelect = React.useCallback(
+    (percent: number) => {
+      maxInputAmount && onPercentSelection(Field.INPUT, percent, maxInputAmount.amount.times(percent / 100).toFixed());
+    },
+    [onPercentSelection, maxInputAmount],
+  );
 
   const pairableCurrencyList = React.useMemo(() => getPairableCurrencies(currencyKeys[Field.INPUT]), [currencyKeys]);
 
@@ -241,9 +245,7 @@ export default function SwapPanel() {
             <Typography variant="h2">Swap</Typography>
             <Typography as="div" hidden={!account}>
               {'Wallet: '}
-              <MaxButton onClick={handleMaxInput}>
-                {`${formatBigNumber(currencyBalances[Field.INPUT]?.amount, 'currency')} ${currencyKeys[Field.INPUT]}`}
-              </MaxButton>
+              {`${formatBigNumber(currencyBalances[Field.INPUT]?.amount, 'currency')} ${currencyKeys[Field.INPUT]}`}
             </Typography>
           </Flex>
 
@@ -256,6 +258,8 @@ export default function SwapPanel() {
               onCurrencySelect={handleInputSelect}
               id="swap-currency-input"
               currencyList={CURRENCY}
+              onPercentSelect={!!account ? handleInputPercentSelect : undefined}
+              percent={percents[Field.INPUT]}
             />
           </Flex>
 
@@ -453,10 +457,6 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
 }
 
 const FlipButton = styled(Box)`
-  cursor: pointer;
-`;
-
-const MaxButton = styled(Link)`
   cursor: pointer;
 `;
 

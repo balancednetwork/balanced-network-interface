@@ -14,6 +14,13 @@ const PopoverContainer = styled.div<{ show: boolean }>`
   transition: visibility 150ms linear, opacity 150ms linear;
 `;
 
+const SelectorPopoverWrapper = styled.div`
+  background: ${({ theme }) => theme.colors.bg4};
+  color: ${({ theme }) => theme.colors.text1};
+  border-radius: 0px 0px 10px 10px;
+  overflow: hidden;
+`;
+
 const ContentWrapper = styled.div`
   background: ${({ theme }) => theme.colors.bg4};
   border: 2px solid ${({ theme }) => theme.colors.primary};
@@ -193,6 +200,33 @@ export function DropdownPopper({ show, children, placement = 'auto', anchorEl }:
   );
 }
 
+export interface PopperProps {
+  anchorEl: HTMLElement | null;
+  show: boolean;
+  children: React.ReactNode;
+  placement?: Placement;
+}
+
+export function SelectorPopover({ show, children, placement = 'auto', anchorEl }: PopperProps) {
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+
+  const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
+    placement,
+    strategy: 'fixed',
+    modifiers: [{ name: 'offset', options: { offset: [0, 1] } }],
+  });
+  const updateCallback = useCallback(() => {
+    update && update();
+  }, [update]);
+  useInterval(updateCallback, show ? 100 : null);
+  return (
+    <Portal>
+      <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+        <SelectorPopoverWrapper>{children}</SelectorPopoverWrapper>
+      </PopoverContainer>
+    </Portal>
+  );
+}
 export interface Props {
   show: boolean;
   children: React.ReactNode;

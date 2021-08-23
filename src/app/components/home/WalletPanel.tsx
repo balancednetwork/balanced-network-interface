@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
+import { useIconReact } from 'packages/icon-react';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -11,7 +12,7 @@ import { Typography } from 'app/theme';
 import { CURRENCY } from 'constants/currency';
 import '@reach/tabs/styles.css';
 import { useRatio } from 'store/ratio/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useBALNDetails, useWalletBalances } from 'store/wallet/hooks';
 
 import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';
@@ -26,7 +27,13 @@ const WalletUIs = {
 
 const WalletPanel = () => {
   const balances = useWalletBalances();
+  const { account } = useIconReact();
   const ratio = useRatio();
+  const details = useBALNDetails();
+  const stakedBALN: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
+  const unstakingBALN: BigNumber = React.useMemo(() => details['Unstaking balance'] || new BigNumber(0), [details]);
+  const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
+  const isAvailable = stakedBALN.isGreaterThan(new BigNumber(0)) || unstakingBALN.isGreaterThan(new BigNumber(0));
 
   const rates = React.useMemo(
     () => ({
@@ -54,7 +61,10 @@ const WalletPanel = () => {
         <List>
           <Accordion collapsible>
             {CURRENCY.filter(currency => {
-              return !balances[currency]?.dp(2).isZero();
+              if (currency === 'BALN') {
+                return !totalBALN.dp(2).isZero();
+              }
+              return !balances[currency].dp(2).isZero();
             }).map((currency, index, arr) => {
               const WalletUI = WalletUIs[currency] || SendPanel;
               return (
@@ -67,10 +77,34 @@ const WalletPanel = () => {
                           {currency}
                         </Typography>
                       </AssetSymbol>
-                      <DataText as="div">{balances[currency].dp(2).toFormat()}</DataText>
+                      <DataText as="div">
+                        {!account
+                          ? '-'
+                          : currency.toLowerCase() === 'baln'
+                          ? totalBALN.dp(2).toFormat()
+                          : balances[currency].dp(2).toFormat()}
+                        {currency.toLowerCase() === 'baln' && isAvailable && (
+                          <>
+                            <Typography color="rgba(255,255,255,0.75)">
+                              Available: {balances['BALN'].dp(2).toFormat()}
+                            </Typography>
+                          </>
+                        )}
+                      </DataText>
 
                       <DataText as="div">
-                        {`$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
+                        {!account
+                          ? '-'
+                          : currency.toLowerCase() === 'baln'
+                          ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
+                          : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
+                        {currency.toLowerCase() === 'baln' && isAvailable && (
+                          <>
+                            <Typography color="rgba(255,255,255,0.75)">
+                              ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                            </Typography>
+                          </>
+                        )}
                       </DataText>
                     </ListItem>
                   </StyledAccordionButton>

@@ -12,7 +12,7 @@ import { Typography } from 'app/theme';
 import { CURRENCY } from 'constants/currency';
 import '@reach/tabs/styles.css';
 import { useRatio } from 'store/ratio/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useBALNDetails, useWalletBalances } from 'store/wallet/hooks';
 
 import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';
@@ -29,6 +29,11 @@ const WalletPanel = () => {
   const balances = useWalletBalances();
   const { account } = useIconReact();
   const ratio = useRatio();
+  const details = useBALNDetails();
+  const stakedBALN: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
+  const unstakingBALN: BigNumber = React.useMemo(() => details['Unstaking balance'] || new BigNumber(0), [details]);
+  const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
+  const isAvailable = stakedBALN.isGreaterThan(new BigNumber(0)) || unstakingBALN.isGreaterThan(new BigNumber(0));
 
   const rates = React.useMemo(
     () => ({
@@ -57,7 +62,7 @@ const WalletPanel = () => {
           <Accordion collapsible>
             {CURRENCY.filter(currency => {
               if (currency === 'BALN') {
-                return !balances['BALN'].plus(balances['BALNstaked']).plus(balances['BALNunstaking']).dp(2).isZero();
+                return !totalBALN.dp(2).isZero();
               }
               return !balances[currency].dp(2).isZero();
             }).map((currency, index, arr) => {
@@ -76,43 +81,30 @@ const WalletPanel = () => {
                         {!account
                           ? '-'
                           : currency.toLowerCase() === 'baln'
-                          ? balances['BALN']
-                              .plus(balances['BALNstaked'])
-                              .plus(balances['BALNunstaking'])
-                              .dp(2)
-                              .toFormat()
+                          ? totalBALN.dp(2).toFormat()
                           : balances[currency].dp(2).toFormat()}
-                        {currency.toLowerCase() === 'baln' &&
-                          (balances['BALNstaked'].isGreaterThan(new BigNumber(0)) ||
-                            balances['BALNunstaking'].isGreaterThan(new BigNumber(0))) && (
-                            <>
-                              <Typography color="rgba(255,255,255,0.75)">
-                                Available: {balances['BALN'].dp(2).toFormat()}
-                              </Typography>
-                            </>
-                          )}
+                        {currency.toLowerCase() === 'baln' && isAvailable && (
+                          <>
+                            <Typography color="rgba(255,255,255,0.75)">
+                              Available: {balances['BALN'].dp(2).toFormat()}
+                            </Typography>
+                          </>
+                        )}
                       </DataText>
 
                       <DataText as="div">
                         {!account
                           ? '-'
                           : currency.toLowerCase() === 'baln'
-                          ? `$${balances['BALN']
-                              .plus(balances['BALNstaked'])
-                              .plus(balances['BALNunstaking'])
-                              .multipliedBy(rates[currency])
-                              .dp(2)
-                              .toFormat()}`
+                          ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
                           : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
-                        {currency.toLowerCase() === 'baln' &&
-                          (balances['BALNstaked'].isGreaterThan(new BigNumber(0)) ||
-                            balances['BALNunstaking'].isGreaterThan(new BigNumber(0))) && (
-                            <>
-                              <Typography color="rgba(255,255,255,0.75)">
-                                ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
-                              </Typography>
-                            </>
-                          )}
+                        {currency.toLowerCase() === 'baln' && isAvailable && (
+                          <>
+                            <Typography color="rgba(255,255,255,0.75)">
+                              ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                            </Typography>
+                          </>
+                        )}
                       </DataText>
                     </ListItem>
                   </StyledAccordionButton>

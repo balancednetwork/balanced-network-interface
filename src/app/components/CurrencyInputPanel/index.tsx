@@ -22,7 +22,7 @@ const InputContainer = styled.div`
 const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-right: ${({ theme }) => `1px solid ${theme.colors.divider}`};
   display: flex;
   align-items: center;
   width: 128px;
@@ -35,7 +35,8 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   :hover,
   :focus {
-    border: 2px solid #2ca9b7;
+    border: ${({ theme }) => `2px solid ${theme.colors.primary}`};
+    border-right: ${({ theme }) => `1px solid ${theme.colors.primary}`};
   }
 `;
 

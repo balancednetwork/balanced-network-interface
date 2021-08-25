@@ -196,9 +196,9 @@ export default function SwapPanel() {
 
       tokenContract
         .swap(
-          BalancedJs.utils.toLoop(trade.inputAmount.amount, currencyKeys[Field.INPUT]),
+          BalancedJs.utils.toLoop(trade.inputAmount.amount),
           trade.outputAmount.currencyKey,
-          BalancedJs.utils.toLoop(minReceived.amount, currencyKeys[Field.OUTPUT]),
+          BalancedJs.utils.toLoop(minReceived.amount),
         )
         .then((res: any) => {
           setShowSwapConfirm(false);

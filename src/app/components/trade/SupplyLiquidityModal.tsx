@@ -79,7 +79,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
       const res: any = await bnJs
         .inject({ account: account })
-        [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]));
+        [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType], currencyKey));
       addTransaction(
         { hash: res.result },
         {
@@ -124,7 +124,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
       const res: any = await bnJs
         .inject({ account: account })
-        .Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(amountWithdraw));
+        .Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(amountWithdraw, currencyKey));
       addTransaction(
         { hash: res.result },
         {
@@ -189,8 +189,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
         .Dex.add(
           bnJs[selectedPair.baseCurrencyKey].address,
           bnJs[selectedPair.quoteCurrencyKey].address,
-          BalancedJs.utils.toLoop(pool?.baseDeposited || new BigNumber(0)),
-          BalancedJs.utils.toLoop(pool?.quoteDeposited || new BigNumber(0)),
+          BalancedJs.utils.toLoop(pool?.baseDeposited || new BigNumber(0), selectedPair.baseCurrencyKey),
+          BalancedJs.utils.toLoop(pool?.quoteDeposited || new BigNumber(0), selectedPair.quoteCurrencyKey),
         )
         .then((res: any) => {
           addTransaction(

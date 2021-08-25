@@ -32,6 +32,8 @@ export const ListItem = styled(DashGrid)`
 `;
 
 export const List = styled(Box)`
+  max-height: 300px;
+  overflow: auto;
   width: 316px;
   padding: 25px;
   -webkit-overflow-scrolling: touch;

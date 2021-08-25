@@ -88,6 +88,7 @@ const getContractName = (addr?: string) => {
 };
 
 const POOL_IDS = {
+  5: 'IUSDC bnUSD',
   4: 'BALN sICX',
   3: 'BALN bnUSD',
   2: 'sICX bnUSD',

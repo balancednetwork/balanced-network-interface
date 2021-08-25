@@ -83,31 +83,22 @@ export function useFetchPools() {
 
       let result;
 
-      let rate;
       if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        const [t, _rate] = await Promise.all([bnJs.Dex.totalSupply(poolId), await bnJs.Staking.getTodayRate()]);
+        const [t, rate] = await Promise.all([bnJs.Dex.totalSupply(poolId), await bnJs.Staking.getTodayRate()]);
 
-        result = [t, t, t, 0, 0];
-        rate = BalancedJs.utils.toIcx(_rate);
+        result = [t, t, t, rate, 0, 0];
       } else {
         result = await Promise.all([
           bnJs.Dex.totalSupply(poolId),
           bnJs.Dex.getPoolTotal(poolId, baseAddress),
           bnJs.Dex.getPoolTotal(poolId, quoteAddress),
+          bnJs.Dex.getPrice(poolId),
           account && bnJs.Dex.getDeposit(baseAddress, account),
           account && bnJs.Dex.getDeposit(quoteAddress, account),
         ]);
       }
 
-      const [total, base, quote, baseDeposited, quoteDeposited] = [
-        BalancedJs.utils.toIcx(result[0]),
-        BalancedJs.utils.toIcx(result[1], pair.baseCurrencyKey),
-        BalancedJs.utils.toIcx(result[2], pair.quoteCurrencyKey),
-        BalancedJs.utils.toIcx(result[3], pair.baseCurrencyKey),
-        BalancedJs.utils.toIcx(result[4], pair.quoteCurrencyKey),
-      ];
-
-      if (poolId !== BalancedJs.utils.POOL_IDS.sICXICX) rate = quote.div(base);
+      const [total, base, quote, rate, baseDeposited, quoteDeposited] = result.map(v => BalancedJs.utils.toIcx(v));
 
       changePool(poolId, {
         baseCurrencyKey: pair.baseCurrencyKey,

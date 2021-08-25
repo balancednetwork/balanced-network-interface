@@ -10,6 +10,7 @@ import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
 import { ReactComponent as FailureIcon } from 'assets/icons/failure.svg';
 import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
 import { usePlatformDayQuery } from 'queries/reward';
+import { formatTimeStr } from 'utils/timeformat';
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
@@ -36,35 +37,9 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   const platformDayQuery = usePlatformDayQuery();
   const platformDay = platformDayQuery.data;
 
-  const startTimeStr = () => {
-    if (platformDay && startDay >= platformDay) {
-      const startTime = dayjs()
-        .utc()
-        .add(startDay - platformDay, 'day')
-        .hour(17);
-      const timeLeft = startTime.diff(dayjs().utc(), 'hours');
-      if (timeLeft < 0) return '';
-      return startTime.fromNow(true);
-    }
-    return '';
-  };
+  const startTimeStr = platformDay && startDay >= platformDay ? formatTimeStr(startDay, platformDay, 'start') : '';
 
-  const endTimeStr = () => {
-    if (platformDay) {
-      const endTime = dayjs()
-        .utc()
-        .add(endDay - platformDay - 1, 'day')
-        .hour(17);
-
-      const timeLeft = endTime.diff(dayjs().utc(), 'hours');
-      if (timeLeft < 0) return '';
-      const hours = timeLeft % 24;
-      const days = Math.floor(timeLeft / 24);
-
-      return days <= 1 ? endTime.fromNow(true) : `${days} days, ${hours} hours`;
-    }
-    return '';
-  };
+  const endTimeStr = platformDay ? formatTimeStr(endDay, platformDay, 'end') : '';
 
   const isActive = platformDay ? startDay <= platformDay && platformDay < endDay : false;
 
@@ -79,33 +54,33 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
     );
   }
 
-  if ((status === 'Pending' || status === 'Confirmed') && !!startTimeStr()) {
+  if ((status === 'Pending' || status === 'Confirmed') && !!startTimeStr) {
     return (
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <CalendarIcon height="22" width="22" />
         <Typography variant="content" color="white">
-          {`Starting in ${startTimeStr()}`}
+          {`Starting in ${startTimeStr}`}
         </Typography>
       </Flex>
     );
   }
 
   if (status === 'Active') {
-    if (isActive && !!endTimeStr()) {
+    if (isActive && !!endTimeStr) {
       return (
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {`${endTimeStr()} left`}
+            {`${endTimeStr} left`}
           </Typography>
         </Flex>
       );
-    } else if (!!startTimeStr()) {
+    } else if (!!startTimeStr) {
       return (
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {`Starting in ${startTimeStr()}`}
+            {`Starting in ${startTimeStr}`}
           </Typography>
         </Flex>
       );

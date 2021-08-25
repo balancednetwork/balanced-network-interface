@@ -9,7 +9,6 @@ import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-// import Tooltip from 'app/components/Tooltip';
 import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
 import { MINIMUM_ICX_AMOUNT_IN_WALLET, SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
@@ -175,10 +174,6 @@ export default function LPPanel() {
       : `${baseDisplay} / ${quoteDisplay}`;
 
   const issICXICXPool = pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX;
-  // const showMinimumTooltip = account
-  //   ? parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') > 0 &&
-  //     parseFloat(formattedAmounts[Field.CURRENCY_B] || '0') < 10
-  //   : false;
 
   return (
     <>
@@ -196,12 +191,6 @@ export default function LPPanel() {
             />
           </Flex>
 
-          {/* <Tooltip
-            style={{ zIndex: 1000 }}
-            show={showMinimumTooltip}
-            text={`10 ${pair.quoteCurrencyKey} minimum`}
-            containerStyle={{ width: 'auto' }}
-          > */}
           <Flex
             mt={3}
             sx={{
@@ -216,7 +205,6 @@ export default function LPPanel() {
               id="supply-liquidity-input-token-b"
             />
           </Flex>
-          {/* </Tooltip> */}
 
           <Typography mt={3} textAlign="right">
             Wallet:&nbsp;

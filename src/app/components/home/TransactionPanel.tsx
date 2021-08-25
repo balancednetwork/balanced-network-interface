@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
 import addresses, { NetworkId } from 'packages/BalancedJs/addresses';
@@ -88,6 +89,7 @@ const getContractName = (addr?: string) => {
 };
 
 const POOL_IDS = {
+  5: 'IUSDC bnUSD',
   4: 'BALN sICX',
   3: 'BALN bnUSD',
   2: 'sICX bnUSD',
@@ -118,6 +120,8 @@ const getValue = ({ indexed, data, value }: Transaction) => {
 
   return _value ? convertValue(_value) : '';
 };
+
+const convertIUSDC = (value: BigNumber) => formatBigNumber(value.div(10e5), 'currency');
 
 const getMethod = (tx: Transaction) => {
   let method: keyof typeof METHOD_CONTENT | '' = tx.method as any;
@@ -165,8 +169,12 @@ const getValuesAndSymbols = (tx: Transaction) => {
     case 'Add': {
       const poolId = parseInt(tx.indexed[1]);
       const [symbol1, symbol2] = POOL_IDS[poolId]?.split(' ') || [];
-      const amount1 = convertValue(tx.data[0]);
+
+      let amount1 = convertValue(tx.data[0]);
       const amount2 = convertValue(tx.data[1]);
+      if (poolId === 5) {
+        amount1 = convertIUSDC(new BigNumber(tx.data[0]));
+      }
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Swap': {
@@ -329,6 +337,7 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
       case 'stakeICX':
       case 'Swap': {
         const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
+
         if (!amount1 || !amount2) {
           content = '';
         } else {

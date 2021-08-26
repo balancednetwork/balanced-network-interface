@@ -88,6 +88,8 @@ const getContractName = (addr?: string) => {
   return CURRENCY.find(item => item.toLowerCase() === name?.toLocaleLowerCase());
 };
 
+const getContractAddr = (tx: Transaction) => tx.indexed.find(item => item.startsWith('cx'));
+
 const POOL_IDS = {
   5: 'IUSDC bnUSD',
   4: 'BALN sICX',
@@ -114,11 +116,16 @@ const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: stri
 const convertValue = (value: string) =>
   BalancedJs.utils.toIcx(value).isGreaterThan(0.004) ? formatBigNumber(BalancedJs.utils.toIcx(value), 'currency') : '';
 
-const getValue = ({ indexed, data, value }: Transaction) => {
+const getValue = (tx: Transaction) => {
+  const { indexed, data, value } = tx;
   let _value =
     indexed?.find(item => item.startsWith('0x')) || (data?.find && data?.find(item => item.startsWith('0x'))) || value;
 
-  return _value ? convertValue(_value) : '';
+  if (!_value) return '';
+
+  return getContractAddr(tx) === addresses[NetworkId.MAINNET].iusdc
+    ? convertIUSDC(new BigNumber(_value))
+    : convertValue(_value);
 };
 
 const convertIUSDC = (value: BigNumber) => formatBigNumber(value.div(10e5), 'currency');
@@ -191,7 +198,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
     }
     case 'Withdraw1Value':
     case 'Deposit': {
-      const symbol1 = getContractName(tx.indexed.find(item => item.startsWith('cx'))) || '';
+      const symbol1 = getContractName(getContractAddr(tx)) || '';
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }

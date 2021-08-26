@@ -88,7 +88,7 @@ const getContractName = (addr?: string) => {
   return CURRENCY.find(item => item.toLowerCase() === name?.toLocaleLowerCase());
 };
 
-const getContractAddr = (tx: Transaction) => tx.indexed.find(item => item.startsWith('cx'));
+const getContractAddr = (tx: Transaction) => tx.indexed?.find(item => item.startsWith('cx'));
 
 const POOL_IDS = {
   5: 'IUSDC bnUSD',

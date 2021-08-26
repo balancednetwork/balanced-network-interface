@@ -7,6 +7,7 @@ export const QUERY_KEYS = {
     UserVoteStatus: (voteIndex: number, walletAddress: string) => ['Vote', 'UserVoteStatus', voteIndex, walletAddress],
     UserWeight: (walletAddress: string) => ['Vote', 'UserWeight', walletAddress],
     TotalStakedBalanceAt: (day: number) => ['Vote', 'TotalStakedBalanceAt', day],
+    IsAnyProposalActive: (walletAddress: string) => ['Vote', 'IsAnyProposalActive', walletAddress],
     TotalCollectedFees: ['Vote', 'TotalCollectedFees'],
     TotalProposals: 'TotalProposals',
     TotalProposalsCount: ['Vote', 'TotalProposalsCount'],

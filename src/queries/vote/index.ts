@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
 import QUERY_KEYS from 'queries/queryKeys';
+import { usePlatformDayQuery } from 'queries/reward';
 import { ProposalInterface } from 'types';
 
 export const useProposalInfoQuery = (pId: number) => {
@@ -164,4 +165,32 @@ export const useAdditionalInfoById = (id?: number) => {
   if (!id) return;
 
   return items?.find(item => item.id === id);
+};
+
+export const useHasAccountActiveProposal = () => {
+  const { account } = useIconReact();
+  const { data: platformDay } = usePlatformDayQuery();
+
+  return useQuery<boolean | undefined>(QUERY_KEYS.Vote.IsAnyProposalActive(account || ''), async () => {
+    if (account) {
+      const proposals = await bnJs.Governance.getProposals(1, 100);
+      return (
+        (await proposals
+          .filter(
+            proposal =>
+              platformDay &&
+              proposal.status === 'Active' &&
+              proposal.startDay <= platformDay &&
+              proposal.endDay > platformDay,
+          )
+          .filter(async proposal => {
+            const res = await bnJs.Governance.getVotesOfUser(parseInt(proposal.id), account!);
+            const approval = BalancedJs.utils.toIcx(res['for']);
+            const reject = BalancedJs.utils.toIcx(res['against']);
+            const hasVoted = !(approval.isZero() && reject.isZero());
+            return !hasVoted;
+          }).length) > 0
+      );
+    }
+  });
 };

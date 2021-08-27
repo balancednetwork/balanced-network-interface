@@ -165,7 +165,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
     case 'Remove':
     case 'Add': {
       const poolId = parseInt(tx.indexed[1]);
-      const [symbol1, symbol2] = POOL_IDS[poolId].split(' ');
+      const [symbol1, symbol2] = (POOL_IDS[poolId] || '').split(' ');
       const amount1 = convertValue(tx.data[0]);
       const amount2 = convertValue(tx.data[1]);
       return { amount1, amount2, symbol1, symbol2 };

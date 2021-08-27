@@ -89,6 +89,7 @@ const getContractName = (addr?: string) => {
 };
 
 const getContractAddr = (tx: Transaction) => tx.indexed?.find(item => item.startsWith('cx'));
+const isIUSDC = (addr: string) => addresses[NetworkId.MAINNET].iusdc === addr;
 
 const POOL_IDS = {
   5: 'IUSDC bnUSD',
@@ -192,7 +193,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
         symbol1 = 'sICX';
         symbol2 = 'ICX';
       }
-      const amount1 = convertValue(tx.data[4]);
+      const amount1 = isIUSDC(tx.data[0]) ? convertIUSDC(new BigNumber(tx.data[4])) : convertValue(tx.data[4]);
       const amount2 = convertValue(tx.data[5]);
       return { amount1, amount2, symbol1, symbol2 };
     }

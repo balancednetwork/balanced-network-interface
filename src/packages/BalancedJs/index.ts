@@ -33,6 +33,7 @@ export type SettingInjection = {
 };
 
 const LOOP = new BigNumber('1000000000000000000');
+const TEN = new BigNumber('10');
 export class BalancedJs {
   contractSettings: ContractSettings;
   networkId: NetworkId;
@@ -65,6 +66,9 @@ export class BalancedJs {
     toIcx(value: BigNumber | number | string, currencyKey?: string): BigNumber {
       if (currencyKey === 'IUSDC') return new BigNumber(value).div(new BigNumber(10).pow(6));
       else return new BigNumber(value).div(LOOP);
+    },
+    toFormat(value: BigNumber | number | string, decimals: number = 18) {
+      return new BigNumber(value).div(TEN.pow(decimals));
     },
     POOL_IDS: {
       BALNsICX: 4,

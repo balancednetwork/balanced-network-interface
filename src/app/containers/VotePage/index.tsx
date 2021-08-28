@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 
+import { ButtonLink } from 'app/components/Button';
 import { DefaultLayout } from 'app/components/Layout';
 import { BoxPanel } from 'app/components/Panel';
 import ProposalInfo from 'app/components/ProposalInfo';
@@ -22,6 +23,7 @@ export function VotePage() {
       <BoxPanel bg="bg2" width="100%">
         <Flex justifyContent="space-between" mb={5}>
           <Typography variant="h2">Proposals</Typography>
+          <ButtonLink to="/vote/new-proposal/">New proposal</ButtonLink>
         </Flex>
 
         {proposals ? (

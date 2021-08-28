@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Button as RebassButton } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -27,6 +28,25 @@ export const Button = styled(RebassButton)`
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
     padding: 7px 25px;
   `}
+`;
+
+export const ButtonLink = styled(Link)`
+  display: inline-block;
+  border-radius: 10px;
+  padding: 7px 25px;
+  color: #ffffff;
+  text-decoration: none;
+  background-color: ${({ theme }) => theme.colors.primary};
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+  line-height: 1.4;
+  font-size: 14px;
+
+  &:hover {
+    background-color: #087083;
+    transition: background-color 0.2s ease;
+  }
 `;
 
 export const TextButton = styled(RebassButton)`

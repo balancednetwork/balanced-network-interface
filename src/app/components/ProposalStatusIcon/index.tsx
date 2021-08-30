@@ -43,7 +43,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
 
   const isActive = platformDay ? startDay <= platformDay && platformDay < endDay : false;
 
-  if (status === 'Defeated' || status === 'No Quorum' || status === 'Failed Executed' || status === 'Cancelled') {
+  if (status === 'Defeated' || status === 'No Quorum' || status === 'Failed Execution' || status === 'Cancelled') {
     return (
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <FailureIcon height="22" width="22" />

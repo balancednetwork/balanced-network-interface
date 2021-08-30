@@ -17,7 +17,7 @@ export enum NetworkId {
 }
 
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
-  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC'],
+  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS'],
   [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS'],
 };
 
@@ -83,6 +83,24 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
       quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
       pair: toMarketPair(CURRENCY_MAP['IUSDC'], CURRENCY_MAP['bnUSD']),
       poolId: 5,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['OMM'],
+      quoteCurrencyKey: CURRENCY_MAP['IUSDC'],
+      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['IUSDC']),
+      poolId: 6,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['OMM'],
+      quoteCurrencyKey: CURRENCY_MAP['sICX'],
+      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['sICX']),
+      poolId: 7,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['OMM'],
+      quoteCurrencyKey: CURRENCY_MAP['USDS'],
+      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['USDS']),
+      poolId: 8,
     },
   ],
 
@@ -180,6 +198,8 @@ export const addressToCurrencyKeyMap = {
     cxf61cd5a45dc9f91c15aa65831a30a90d59a09619: 'BALN',
     cx0000000000000000000000000000000000000000: 'ICX',
     cxae3034235540b924dfcc1b45836c293dcc82bfb7: 'IUSDC',
+    cxbb2871f468a3008f80b08fdde5b8b951583acf06: 'USDS',
+    cx1a29259a59f463a67bb2ef84398b30ca56b5830a: 'OMM',
   },
   [NetworkId.YEOUIDO]: {
     cxae6334850f13dfd8b50f8544d5acb126bb8ef82d: 'sICX',

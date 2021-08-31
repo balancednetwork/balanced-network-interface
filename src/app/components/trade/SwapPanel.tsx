@@ -1,6 +1,5 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -30,7 +29,7 @@ import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { CurrencyKey, Price } from 'types';
+import { CurrencyKey, Price, Trade } from 'types';
 import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -114,11 +113,13 @@ export default function SwapPanel() {
 
   const toggleWalletModal = useWalletModalToggle();
 
+  const [executionTrade, setExecutionTrade] = React.useState<Trade>();
   const handleSwap = () => {
     if (!account) {
       toggleWalletModal();
     } else {
       setShowSwapConfirm(true);
+      setExecutionTrade(trade);
     }
   };
 
@@ -127,7 +128,7 @@ export default function SwapPanel() {
   const addTransaction = useTransactionAdder();
 
   const handleSwapConfirm = async () => {
-    if (!trade || !account) return;
+    if (!executionTrade || !account) return;
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
@@ -135,18 +136,18 @@ export default function SwapPanel() {
     }
 
     const message = swapMessage(
-      trade.inputAmount.amount.dp(2).toFormat(),
-      trade.inputAmount.currencyKey,
-      trade.outputAmount.amount.dp(2).toFormat(),
-      trade.outputAmount.currencyKey,
+      executionTrade.inputAmount.amount.dp(2).toFormat(),
+      executionTrade.inputAmount.currencyKey,
+      executionTrade.outputAmount.amount.dp(2).toFormat(),
+      executionTrade.outputAmount.currencyKey,
     );
 
-    if (trade.isQueue) {
+    if (executionTrade.isQueue) {
       //handle queue
-      if (trade.inputAmount.currencyKey === 'sICX') {
+      if (executionTrade.inputAmount.currencyKey === 'sICX') {
         bnJs
           .inject({ account })
-          .sICX.swapToICX(BalancedJs.utils.toLoop(trade.inputAmount.amount))
+          .sICX.swapToICX(BalancedJs.utils.toLoop(executionTrade.inputAmount.amount))
           .then((res: any) => {
             setShowSwapConfirm(false);
             addTransaction(
@@ -169,7 +170,7 @@ export default function SwapPanel() {
       } else {
         bnJs
           .inject({ account })
-          .Staking.stakeICX(account, BalancedJs.utils.toLoop(trade.inputAmount.amount))
+          .Staking.stakeICX(account, BalancedJs.utils.toLoop(executionTrade.inputAmount.amount))
           .then((res: any) => {
             setShowSwapConfirm(false);
             addTransaction(
@@ -191,13 +192,13 @@ export default function SwapPanel() {
           });
       }
     } else {
-      const minReceived = trade.minimumAmountOut(slippageTolerance);
-      const tokenContract = bnJs.inject({ account })[trade.inputAmount.currencyKey];
+      const minReceived = executionTrade.minimumAmountOut(slippageTolerance);
+      const tokenContract = bnJs.inject({ account })[executionTrade.inputAmount.currencyKey];
 
       tokenContract
         .swap(
-          BalancedJs.utils.toLoop(trade.inputAmount.amount, currencyKeys[Field.INPUT]),
-          trade.outputAmount.currencyKey,
+          BalancedJs.utils.toLoop(executionTrade.inputAmount.amount, currencyKeys[Field.INPUT]),
+          executionTrade.outputAmount.currencyKey,
           BalancedJs.utils.toLoop(minReceived.amount, currencyKeys[Field.OUTPUT]),
         )
         .then((res: any) => {
@@ -368,23 +369,24 @@ export default function SwapPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {`${formatBigNumber(trade?.executionPrice.value, 'ratio')} ${trade?.executionPrice.quoteCurrencyKey} 
-              per ${trade?.executionPrice.baseCurrencyKey}`}
+            {`${formatBigNumber(executionTrade?.executionPrice.value, 'ratio')} ${
+              executionTrade?.executionPrice.quoteCurrencyKey
+            } 
+              per ${executionTrade?.executionPrice.baseCurrencyKey}`}
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Pay</Typography>
               <Typography variant="p" textAlign="center">
-                {formatBigNumber(new BigNumber(formattedAmounts[Field.INPUT]), 'currency')} {currencyKeys[Field.INPUT]}
+                {formatBigNumber(executionTrade?.inputAmount.amount, 'currency')} {currencyKeys[Field.INPUT]}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">Receive</Typography>
               <Typography variant="p" textAlign="center">
-                {formatBigNumber(new BigNumber(formattedAmounts[Field.OUTPUT]), 'currency')}{' '}
-                {currencyKeys[Field.OUTPUT]}
+                {formatBigNumber(executionTrade?.outputAmount.amount, 'currency')} {currencyKeys[Field.OUTPUT]}
               </Typography>
             </Box>
           </Flex>
@@ -393,7 +395,7 @@ export default function SwapPanel() {
             textAlign="center"
             hidden={currencyKeys[Field.INPUT] === 'ICX' && currencyKeys[Field.OUTPUT] === 'sICX'}
           >
-            Includes a fee of {formatBigNumber(trade?.fee.amount, 'currency')} {currencyKeys[Field.INPUT]}.
+            Includes a fee of {formatBigNumber(executionTrade?.fee.amount, 'currency')} {currencyKeys[Field.INPUT]}.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

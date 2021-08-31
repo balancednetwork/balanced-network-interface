@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
+import useInterval from 'hooks/useInterval';
 import { useRatio } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -71,6 +72,10 @@ export function useFetchPools() {
   const changePool = useChangePool();
   const { networkId } = useIconReact();
 
+  //call useEffect per 15000ms
+  const [last, setLast] = React.useState(0);
+  const increment = React.useCallback(() => setLast(last => last + 1), [setLast]);
+  useInterval(increment, 15000);
   // fetch pool stats
   const fetchPool = React.useCallback(
     async (pair: Pair) => {
@@ -126,7 +131,7 @@ export function useFetchPools() {
 
   React.useEffect(() => {
     SUPPORTED_PAIRS.forEach(pair => fetchPool(pair));
-  }, [fetchPool, transactions, networkId]);
+  }, [fetchPool, transactions, networkId, last]);
 
   // fetch LP token balances
 

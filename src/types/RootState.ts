@@ -9,6 +9,7 @@ import { CollateralState } from 'store/collateral/reducer';
 import { LoanState } from 'store/loan/reducer';
 import { MintState } from 'store/mint/reducer';
 import { PoolState } from 'store/pool/reducer';
+import { ProposalState } from 'store/proposal/reducer';
 import { RatioState } from 'store/ratio/reducer';
 import { RewardState } from 'store/reward/reducer';
 import { SwapState } from 'store/swap/reducer';
@@ -28,4 +29,5 @@ export interface RootState {
   transactions: TransactionState;
   mint: MintState;
   swap: SwapState;
+  proposal: ProposalState;
 }

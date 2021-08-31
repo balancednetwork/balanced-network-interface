@@ -12,6 +12,7 @@ import collateral from './collateral/reducer';
 import loan from './loan/reducer';
 import mint from './mint/reducer';
 import pool from './pool/reducer';
+import proposal from './proposal/reducer';
 import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
 import reward from './reward/reducer';
@@ -49,6 +50,7 @@ export function configureAppStore() {
       transactions,
       mint,
       swap,
+      proposal,
     }),
     middleware: [
       ...getDefaultMiddleware({

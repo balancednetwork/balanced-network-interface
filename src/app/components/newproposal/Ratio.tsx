@@ -93,7 +93,7 @@ export default function Ratio({ onRecipientChange, showErrorMessage = false, val
                   <ListItem hasTitle={!!recipient_name}>
                     {recipient_name && <Typography variant="p">{recipient_name}</Typography>}
                     <FieldInput
-                      value={value ? value[recipient_name || dist_percent] : ''}
+                      value={(value && value[recipient_name || dist_percent]) || ''}
                       hasTitle={!!recipient_name}
                       // universal input options
                       inputMode="decimal"

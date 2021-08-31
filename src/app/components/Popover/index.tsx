@@ -82,9 +82,17 @@ export interface PopoverProps {
   children: React.ReactNode;
   placement?: Placement;
   style?: React.CSSProperties;
+  refStyle?: React.CSSProperties;
 }
 
-export default function Popover({ style = {}, content, show, children, placement = 'auto' }: PopoverProps) {
+export default function Popover({
+  style = {},
+  refStyle = {},
+  content,
+  show,
+  children,
+  placement = 'auto',
+}: PopoverProps) {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
@@ -103,7 +111,9 @@ export default function Popover({ style = {}, content, show, children, placement
 
   return (
     <>
-      <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
+      <ReferenceElement ref={setReferenceElement as any} style={refStyle}>
+        {children}
+      </ReferenceElement>
       <Portal>
         <PopoverContainer
           show={show}

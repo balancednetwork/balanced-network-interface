@@ -21,6 +21,8 @@ const decimals = {
   bnUSD: 18,
   BALN: 18,
   IUSDC: 6,
+  OMM: 18,
+  USDS: 18,
 };
 
 export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: CurrencyKey }, period: CHART_PERIODS) => {
@@ -40,7 +42,7 @@ export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: Curren
 
         let data1;
 
-        const decimal = Math.abs(decimals[currencyKeys[Field.INPUT]!] - decimals[currencyKeys[Field.OUTPUT]!]) + 18;
+        const decimal = decimals[pair.quoteCurrencyKey] - decimals[pair.baseCurrencyKey] + 18;
         if (!inverse) {
           data1 = result.map(item => ({
             time: item.time / 1_000_000,

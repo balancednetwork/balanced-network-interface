@@ -562,6 +562,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
         <Box mb={5}>
           <Nouislider
             start={[0]}
+            connect={[true, false]}
             range={{
               min: [0],
               max: [100],

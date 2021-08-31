@@ -1,5 +1,7 @@
 import { IconConverter } from 'icon-sdk-js';
 
+import { Recipient } from 'app/components/newproposal/Ratio';
+
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
@@ -57,5 +59,15 @@ export default class Rewards extends Contract {
     });
 
     return this.call(payload);
+  }
+
+  updateBalTokenDistPercentage(recipient_list: Recipient[]) {
+    const payload = this.transactionParamsBuilder({
+      method: 'updateBalTokenDistPercentage',
+      params: {
+        _recipient_list: recipient_list,
+      },
+    });
+    return this.callICONPlugins(payload);
   }
 }

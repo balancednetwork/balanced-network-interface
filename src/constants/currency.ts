@@ -86,15 +86,15 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
     },
     {
       baseCurrencyKey: CURRENCY_MAP['OMM'],
-      quoteCurrencyKey: CURRENCY_MAP['IUSDC'],
-      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['IUSDC']),
-      poolId: 6,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['OMM'],
       quoteCurrencyKey: CURRENCY_MAP['sICX'],
       pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['sICX']),
       poolId: 7,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['OMM'],
+      quoteCurrencyKey: CURRENCY_MAP['IUSDC'],
+      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['IUSDC']),
+      poolId: 6,
     },
     {
       baseCurrencyKey: CURRENCY_MAP['OMM'],

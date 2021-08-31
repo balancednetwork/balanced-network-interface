@@ -181,10 +181,16 @@ const getValuesAndSymbols = (tx: Transaction) => {
       const poolId = parseInt(tx.indexed[1]);
       const [symbol1, symbol2] = (POOL_IDS[poolId] || '').split(' ');
       let amount1 = convertValue(tx.data[0]);
-      const amount2 = convertValue(tx.data[1]);
+      let amount2 = convertValue(tx.data[1]);
+
       if (poolId === 5) {
         amount1 = convertIUSDC(new BigNumber(tx.data[0]));
       }
+
+      if (symbol2?.toLowerCase() === 'iusdc') {
+        amount2 = convertIUSDC(new BigNumber(tx.data[1]));
+      }
+
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Swap': {

@@ -93,14 +93,16 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
             </Typography>
           </Box>
 
-          <Box sx={{ margin: '15px 0 25px 0' }}>
-            <Typography textAlign="center" marginBottom="5px" color="text1">
-              Your daily rewards
-            </Typography>
-            <Typography textAlign="center" variant="p">
-              ~ {formatBigNumber(dailyReward, 'currency')} BALN
-            </Typography>
-          </Box>
+          {selectedPair.rewards && (
+            <Box sx={{ margin: '15px 0 25px 0' }}>
+              <Typography textAlign="center" marginBottom="5px" color="text1">
+                Your daily rewards
+              </Typography>
+              <Typography textAlign="center" variant="p">
+                ~ {formatBigNumber(dailyReward, 'currency')} BALN
+              </Typography>
+            </Box>
+          )}
         </Box>
         <Box width={[1, 1 / 2]}>
           <Box sx={{ margin: '15px 0 25px 0' }}>
@@ -119,14 +121,16 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
             </Typography>
           </Box>
 
-          <Box sx={{ margin: '15px 0 25px 0' }}>
-            <Typography textAlign="center" marginBottom="5px" color="text1">
-              Total daily rewards
-            </Typography>
-            <Typography textAlign="center" variant="p">
-              {formatBigNumber(data?.totalReward, 'currency')} BALN
-            </Typography>
-          </Box>
+          {selectedPair.rewards && (
+            <Box sx={{ margin: '15px 0 25px 0' }}>
+              <Typography textAlign="center" marginBottom="5px" color="text1">
+                Total daily rewards
+              </Typography>
+              <Typography textAlign="center" variant="p">
+                {formatBigNumber(data?.totalReward, 'currency')} BALN
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Flex>
     </Box>

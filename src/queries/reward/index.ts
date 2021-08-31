@@ -90,11 +90,8 @@ export const useAllPairsAPY = () => {
     const dailyDistribution = BalancedJs.utils.toIcx(dailyDistributionQuery.data);
     const t = {};
     SUPPORTED_PAIRS.forEach(pair => {
-      t[pair.poolId] = dailyDistribution
-        .times(pair.rewards || 0)
-        .times(365)
-        .times(rates['BALN'])
-        .div(tvls[pair.poolId]);
+      t[pair.poolId] =
+        pair.rewards && dailyDistribution.times(pair.rewards).times(365).times(rates['BALN']).div(tvls[pair.poolId]);
     });
     return t;
   }

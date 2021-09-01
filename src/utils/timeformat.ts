@@ -1,22 +1,22 @@
 import dayjs from 'dayjs';
 
-export const formatTimeStr = (targetDay, platformDay, type: 'end' | 'start') => {
-  const isStart = type === 'start';
-  const targetTime = dayjs()
+export const formatTimeStr = (targetDay, platformDay, isStartTime?: boolean) => {
+  const targetDate = dayjs()
     .utc()
-    .add(targetDay - platformDay - (isStart ? 0 : 1), 'day')
+    .add(targetDay - platformDay - (isStartTime ? 0 : 1), 'day')
     .hour(17);
-  const timeLeft = targetTime.diff(dayjs().utc(), 'hours');
 
-  if (timeLeft < 0) return '';
-  if (isStart) return targetTime.fromNow(true);
+  const hoursDiff = targetDate.diff(dayjs().utc(), 'hours');
 
-  const hours = timeLeft % 24;
-  const days = Math.floor(timeLeft / 24);
+  if (hoursDiff < 0) return '';
 
-  return days < 1
-    ? targetTime.fromNow(true)
-    : `${days === 1 ? 'a day' : `${days} days`}${hours > 0 ? ', ' : ''}${
-        hours > 0 ? (hours === 1 ? 'an hour' : hours) : ''
-      }${hours > 1 ? ' hours' : ''}`;
+  const hoursLeft = hoursDiff % 24;
+  const daysLeft = Math.floor(hoursDiff / 24);
+
+  if (daysLeft < 1) return targetDate.fromNow(true);
+
+  const hoursLeftString = hoursLeft === 0 ? '' : hoursLeft === 1 ? 'an hour' : hoursLeft + ' hours';
+  const daysLeftString = daysLeft === 1 ? 'a day' : daysLeft + ' days';
+
+  return daysLeftString + (hoursLeftString ? ', ' + hoursLeftString : hoursLeftString);
 };

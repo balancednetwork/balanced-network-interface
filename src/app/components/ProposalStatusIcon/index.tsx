@@ -37,9 +37,9 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   const platformDayQuery = usePlatformDayQuery();
   const platformDay = platformDayQuery.data;
 
-  const startTimeStr = platformDay && startDay >= platformDay ? formatTimeStr(startDay, platformDay, 'start') : '';
+  const startTimeStr = platformDay && startDay >= platformDay ? formatTimeStr(startDay, platformDay, true) : '';
 
-  const endTimeStr = platformDay ? formatTimeStr(endDay, platformDay, 'end') : '';
+  const endTimeStr = platformDay ? formatTimeStr(endDay, platformDay) : '';
 
   const isActive = platformDay ? startDay <= platformDay && platformDay < endDay : false;
 

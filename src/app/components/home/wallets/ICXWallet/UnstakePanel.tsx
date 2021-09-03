@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
@@ -12,13 +12,18 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 
-export default function UnstakePanel() {
+interface UnstakePanelProps {
+  claimableICX: BigNumber;
+}
+
+export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
+  const balances = useWalletBalances();
 
   // to detect if transaction change and reload cliamableICX
   const transactions = useAllTransactions();
-  const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
 
   const { account } = useIconReact();
 
@@ -68,15 +73,6 @@ export default function UnstakePanel() {
     fetchUserUnstakeInfo();
   }, [account, transactions]);
 
-  useEffect(() => {
-    (async () => {
-      if (account) {
-        const result = await bnJs.Staking.getClaimableICX(account);
-        setClaimableICX(BalancedJs.utils.toIcx(result));
-      }
-    })();
-  }, [account, transactions]);
-
   return (
     <>
       <Typography mb="3" variant="h3">
@@ -112,21 +108,21 @@ export default function UnstakePanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {claimableICX.toFixed(2)} ICX
+            {`${claimableICX.toFixed(2)} ICX`}
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                0 ICX
+                {`${balances['ICX'].toFixed(2)} ICX`}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {claimableICX.toFixed(2)} ICX
+                {`${balances['ICX'].plus(claimableICX).toFixed(2)} ICX`}
               </Typography>
             </Box>
           </Flex>

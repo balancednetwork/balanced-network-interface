@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
+import BigNumber from 'bignumber.js';
 
 import Divider from 'app/components/Divider';
 
@@ -8,7 +9,12 @@ import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';
 import UnstakePanel from './UnstakePanel';
 
-export default function ICXWallet() {
+interface ICXWalletProps {
+  currencyKey: string;
+  claimableICX: BigNumber;
+}
+
+export default function ICXWallet({ claimableICX }: ICXWalletProps) {
   const [tabIndex, setTabIndex] = React.useState(0);
 
   const handleTabsChange = index => {
@@ -20,7 +26,7 @@ export default function ICXWallet() {
       <Tabs index={tabIndex} onChange={handleTabsChange}>
         <StyledTabList>
           <StyledTab>Send</StyledTab>
-          <StyledTab>Unstaking</StyledTab>
+          <StyledTab hasNotification={claimableICX.isGreaterThan(0)}>Unstaking</StyledTab>
         </StyledTabList>
         <Divider mb={3} />
         <TabPanels>
@@ -29,7 +35,7 @@ export default function ICXWallet() {
           </TabPanel>
 
           <TabPanel>
-            <UnstakePanel />
+            <UnstakePanel claimableICX={claimableICX} />
           </TabPanel>
         </TabPanels>
       </Tabs>

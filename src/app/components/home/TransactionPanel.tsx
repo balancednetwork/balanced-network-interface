@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
 import addresses, { NetworkId } from 'packages/BalancedJs/addresses';
@@ -57,7 +58,7 @@ const METHOD_CONTENT = {
   ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
   CollateralReceived: 'Deposited (amount) sICX as collateral ',
   UnstakeRequest: 'Unstaked (amount) sICX',
-  Deposit: 'Transferred (amount) (currency) to DEX pool',
+  Deposit: 'Transferred (amount) (currency) to the Balanced exchange',
   Withdraw1Value: 'Withdrew (amount) (currency)',
   VoteCast: '',
   Claimed: 'Claimed network fees',
@@ -87,7 +88,14 @@ const getContractName = (addr?: string) => {
   return CURRENCY.find(item => item.toLowerCase() === name?.toLocaleLowerCase());
 };
 
+const getContractAddr = (tx: Transaction) => tx.indexed?.find(item => item.startsWith('cx'));
+const isIUSDC = (addr: string) => addresses[NetworkId.MAINNET].iusdc === addr;
+
 const POOL_IDS = {
+  8: 'OMM USDS',
+  7: 'OMM sICX',
+  6: 'OMM IUSDC',
+  5: 'IUSDC bnUSD',
   4: 'BALN sICX',
   3: 'BALN bnUSD',
   2: 'sICX bnUSD',
@@ -112,12 +120,19 @@ const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: stri
 const convertValue = (value: string) =>
   BalancedJs.utils.toIcx(value).isGreaterThan(0.004) ? formatBigNumber(BalancedJs.utils.toIcx(value), 'currency') : '';
 
-const getValue = ({ indexed, data, value }: Transaction) => {
+const getValue = (tx: Transaction) => {
+  const { indexed, data, value } = tx;
   let _value =
     indexed?.find(item => item.startsWith('0x')) || (data?.find && data?.find(item => item.startsWith('0x'))) || value;
 
-  return _value ? convertValue(_value) : '';
+  if (!_value) return '';
+
+  return getContractAddr(tx) === addresses[NetworkId.MAINNET].iusdc
+    ? convertIUSDC(new BigNumber(_value))
+    : convertValue(_value);
 };
+
+const convertIUSDC = (value: BigNumber) => formatBigNumber(value.div(10e5), 'currency');
 
 const getMethod = (tx: Transaction) => {
   let method: keyof typeof METHOD_CONTENT | '' = tx.method as any;
@@ -164,9 +179,18 @@ const getValuesAndSymbols = (tx: Transaction) => {
     case 'Remove':
     case 'Add': {
       const poolId = parseInt(tx.indexed[1]);
-      const [symbol1, symbol2] = POOL_IDS[poolId].split(' ');
-      const amount1 = convertValue(tx.data[0]);
-      const amount2 = convertValue(tx.data[1]);
+      const [symbol1, symbol2] = (POOL_IDS[poolId] || '').split(' ');
+      let amount1 = convertValue(tx.data[0]);
+      let amount2 = convertValue(tx.data[1]);
+
+      if (poolId === 5) {
+        amount1 = convertIUSDC(new BigNumber(tx.data[0]));
+      }
+
+      if (symbol2?.toLowerCase() === 'iusdc') {
+        amount2 = convertIUSDC(new BigNumber(tx.data[1]));
+      }
+
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Swap': {
@@ -177,13 +201,13 @@ const getValuesAndSymbols = (tx: Transaction) => {
         symbol1 = 'sICX';
         symbol2 = 'ICX';
       }
-      const amount1 = convertValue(tx.data[4]);
-      const amount2 = convertValue(tx.data[5]);
+      const amount1 = isIUSDC(tx.data[0]) ? convertIUSDC(new BigNumber(tx.data[4])) : convertValue(tx.data[4]);
+      const amount2 = isIUSDC(tx.data[1]) ? convertIUSDC(new BigNumber(tx.data[5])) : convertValue(tx.data[5]);
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Withdraw1Value':
     case 'Deposit': {
-      const symbol1 = getContractName(tx.indexed.find(item => item.startsWith('cx'))) || '';
+      const symbol1 = getContractName(getContractAddr(tx)) || '';
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
@@ -329,6 +353,7 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
       case 'stakeICX':
       case 'Swap': {
         const { amount1, amount2, symbol1, symbol2 } = getValuesAndSymbols(tx);
+
         if (!amount1 || !amount2) {
           content = '';
         } else {
@@ -419,71 +444,74 @@ const checkAndParseICXTosICX = (tx: Transaction): Transaction => {
 
 const parseTransactions = (txs: Transaction[]) => {
   const transactions: Transaction[] = [];
+  try {
+    for (let i = 0; i < 10; i++) {
+      let tx: Transaction = txs[i] && { ...txs[i] };
+      if (tx && (tx.data || tx.indexed || tx.value) && !tx.ignore) {
+        const method = getMethod(tx);
 
-  for (let i = 0; i < 10; i++) {
-    let tx: Transaction = txs[i] && { ...txs[i] };
-    if (tx && (tx.data || tx.indexed || tx.value) && !tx.ignore) {
-      const method = getMethod(tx);
-
-      switch (method) {
-        case 'Withdraw': {
-          // check if this is merging withdraw (2 tx and 1 tx remove)
-          const mergeTxs = [tx];
-          for (let j = i + 1; j < txs.length; j++) {
-            const _tx = txs[j];
-            const _method = getMethod(_tx);
-            if (_tx.transaction_hash === tx.transaction_hash && ['Withdraw', 'Remove'].includes(_method)) {
-              // ignore Remove, no need to show on ui
-              if (_method === 'Withdraw') {
-                mergeTxs.push(_tx);
+        switch (method) {
+          case 'Withdraw': {
+            // check if this is merging withdraw (2 tx and 1 tx remove)
+            const mergeTxs = [tx];
+            for (let j = i + 1; j < txs.length; j++) {
+              const _tx = txs[j];
+              const _method = getMethod(_tx);
+              if (_tx.transaction_hash === tx.transaction_hash && ['Withdraw', 'Remove'].includes(_method)) {
+                // ignore Remove, no need to show on ui
+                if (_method === 'Withdraw') {
+                  mergeTxs.push(_tx);
+                }
+                // mark ignored field
+                _tx.ignore = true;
               }
-              // mark ignored field
-              _tx.ignore = true;
             }
-          }
 
-          if (mergeTxs.length === 2) {
-            const mergeData = {
-              from: mergeTxs[1].indexed.find(item => item.startsWith('cx')),
-              fromValue: mergeTxs[1].data[0],
-              to: mergeTxs[0].indexed.find(item => item.startsWith('cx')),
-              toValue: mergeTxs[0].data[0],
-            };
-            tx.data = mergeData;
-          } else {
-            tx.method = 'Withdraw1Value';
-          }
+            if (mergeTxs.length === 2) {
+              const mergeData = {
+                from: mergeTxs[1].indexed.find(item => item.startsWith('cx')),
+                fromValue: mergeTxs[1].data[0],
+                to: mergeTxs[0].indexed.find(item => item.startsWith('cx')),
+                toValue: mergeTxs[0].data[0],
+              };
+              tx.data = mergeData;
+            } else {
+              tx.method = 'Withdraw1Value';
+            }
 
-          transactions.push(tx);
-          break;
-        }
-
-        // don't show content for this method,
-        // because this transaction is combined with another transaction
-        case 'TokenTransfer': {
-          break;
-        }
-
-        case 'stakeICX': {
-          // search for tokentransfer
-          const secondTx = txs.find(item => getMethod(item) === 'TokenTransfer' && item.transaction_hash === tx?.hash);
-          if (secondTx) {
-            tx.to_value = secondTx.indexed?.find((item: string) => item.startsWith('0x')) || '';
             transactions.push(tx);
+            break;
           }
-          break;
-        }
 
-        default: {
-          tx = checkAndParseICXToDex(tx);
-          tx = checkAndParseICXTosICX(tx);
+          // don't show content for this method,
+          // because this transaction is combined with another transaction
+          case 'TokenTransfer': {
+            break;
+          }
 
-          transactions.push(tx);
-          break;
+          case 'stakeICX': {
+            // search for tokentransfer
+            const secondTx = txs.find(
+              item => getMethod(item) === 'TokenTransfer' && item.transaction_hash === tx?.hash,
+            );
+            if (secondTx) {
+              tx.to_value = secondTx.indexed?.find((item: string) => item.startsWith('0x')) || '';
+              transactions.push(tx);
+            }
+            break;
+          }
+
+          default: {
+            tx = checkAndParseICXToDex(tx);
+            tx = checkAndParseICXTosICX(tx);
+
+            transactions.push(tx);
+            break;
+          }
         }
       }
     }
-  }
+  } catch (ex) {}
 
   return transactions;
 };

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Typography } from 'app/theme';
 import { CurrencyKey } from 'types';
 import { getCurrencyKeyIcon } from 'utils';
 
@@ -15,5 +16,6 @@ export default function CurrencyLogo({
 }) {
   const Icon = getCurrencyKeyIcon(currencyKey);
 
-  return <Icon width={`${size}px`} height={`${size}px`} style={style} {...rest} />;
+  if (Icon) return <Icon width={`${size}px`} height={`${size}px`} style={style} {...rest} />;
+  else return <Typography>{currencyKey.charAt(0)}</Typography>;
 }

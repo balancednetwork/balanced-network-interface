@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -9,15 +10,18 @@ import styled from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
+import bnJs from 'bnJs';
 import { CURRENCY } from 'constants/currency';
 import '@reach/tabs/styles.css';
-import { useRatio } from 'store/ratio/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useRatesQuery } from 'queries/reward';
+import { useAllTransactions } from 'store/transactions/hooks';
+import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
 
 import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';
 import SendPanel from './wallets/SendPanel';
 import SICXWallet from './wallets/SICXWallet';
+import { notificationCSS } from './wallets/utils';
 
 const WalletUIs = {
   ICX: ICXWallet,
@@ -28,17 +32,24 @@ const WalletUIs = {
 const WalletPanel = () => {
   const balances = useWalletBalances();
   const { account } = useIconReact();
-  const ratio = useRatio();
+  const transactions = useAllTransactions();
+  const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
+  const details = useBALNDetails();
+  const stakedBALN: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
+  const unstakingBALN: BigNumber = React.useMemo(() => details['Unstaking balance'] || new BigNumber(0), [details]);
+  const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
+  const isAvailable = stakedBALN.isGreaterThan(new BigNumber(0)) || unstakingBALN.isGreaterThan(new BigNumber(0));
 
-  const rates = React.useMemo(
-    () => ({
-      ICX: ratio.ICXUSDratio,
-      sICX: ratio.sICXICXratio.times(ratio.ICXUSDratio),
-      bnUSD: new BigNumber(1),
-      BALN: ratio.BALNbnUSDratio,
-    }),
-    [ratio],
-  );
+  const { data: rates } = useRatesQuery();
+
+  useEffect(() => {
+    (async () => {
+      if (account) {
+        const result = await bnJs.Staking.getClaimableICX(account);
+        setClaimableICX(BalancedJs.utils.toIcx(result));
+      }
+    })();
+  }, [account, transactions]);
 
   return (
     <BoxPanel bg="bg2">
@@ -57,7 +68,7 @@ const WalletPanel = () => {
           <Accordion collapsible>
             {CURRENCY.filter(currency => {
               if (currency === 'BALN') {
-                return !balances['BALN'].plus(balances['BALNstaked']).plus(balances['BALNunstaking']).dp(2).isZero();
+                return !totalBALN.dp(2).isZero();
               }
               return !balances[currency].dp(2).isZero();
             }).map((currency, index, arr) => {
@@ -76,50 +87,44 @@ const WalletPanel = () => {
                         {!account
                           ? '-'
                           : currency.toLowerCase() === 'baln'
-                          ? balances['BALN']
-                              .plus(balances['BALNstaked'])
-                              .plus(balances['BALNunstaking'])
-                              .dp(2)
-                              .toFormat()
+                          ? totalBALN.dp(2).toFormat()
                           : balances[currency].dp(2).toFormat()}
-                        {currency.toLowerCase() === 'baln' &&
-                          (balances['BALNstaked'].isGreaterThan(new BigNumber(0)) ||
-                            balances['BALNunstaking'].isGreaterThan(new BigNumber(0))) && (
-                            <>
-                              <Typography color="rgba(255,255,255,0.75)">
-                                Available: {balances['BALN'].dp(2).toFormat()}
-                              </Typography>
-                            </>
-                          )}
+                        {currency.toLowerCase() === 'baln' && isAvailable && (
+                          <>
+                            <Typography color="rgba(255,255,255,0.75)">
+                              Available: {balances['BALN'].dp(2).toFormat()}
+                            </Typography>
+                          </>
+                        )}
                       </DataText>
 
-                      <DataText as="div">
-                        {!account
+                      <StyledDataText
+                        as="div"
+                        hasNotification={currency.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}
+                      >
+                        {!account || !rates || !rates[currency]
                           ? '-'
                           : currency.toLowerCase() === 'baln'
-                          ? `$${balances['BALN']
-                              .plus(balances['BALNstaked'])
-                              .plus(balances['BALNunstaking'])
-                              .multipliedBy(rates[currency])
-                              .dp(2)
-                              .toFormat()}`
+                          ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
                           : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
-                        {currency.toLowerCase() === 'baln' &&
-                          (balances['BALNstaked'].isGreaterThan(new BigNumber(0)) ||
-                            balances['BALNunstaking'].isGreaterThan(new BigNumber(0))) && (
-                            <>
-                              <Typography color="rgba(255,255,255,0.75)">
-                                ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
-                              </Typography>
-                            </>
-                          )}
-                      </DataText>
+                        {currency.toLowerCase() === 'baln' && isAvailable && rates && rates[currency] && (
+                          <>
+                            <Typography color="rgba(255,255,255,0.75)">
+                              ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                            </Typography>
+                          </>
+                        )}
+                      </StyledDataText>
                     </ListItem>
                   </StyledAccordionButton>
 
                   <StyledAccordionPanel hidden={false}>
                     <BoxPanel bg="bg3">
-                      <WalletUI currencyKey={currency} />
+                      {currency.toLocaleLowerCase() === 'icx' ? (
+                        <WalletUI currencyKey={currency} claimableICX={claimableICX} />
+                      ) : (
+                        <WalletUI currencyKey={currency} />
+                      )}
                     </BoxPanel>
                   </StyledAccordionPanel>
                 </AccordionItem>
@@ -162,10 +167,43 @@ const HeaderText = styled(Typography)`
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 3px;
+
+  &:last-of-type {
+    padding-right: 25px;
+  }
 `;
 
 const DataText = styled(Typography)`
   font-size: 16px;
+`;
+
+const StyledDataText = styled(DataText)<{ hasNotification?: boolean }>`
+  padding-right: 25px;
+  position: relative;
+
+  &:before,
+  &:after {
+    content: '';
+    width: 2px;
+    height: 10px;
+    background: #d5d7db;
+    display: inline-block;
+    position: absolute;
+    top: 7px;
+    transition: all ease 0.2s;
+  }
+
+  &:before {
+    transform: rotate(45deg);
+    right: 2px;
+  }
+
+  &:after {
+    transform: rotate(-45deg);
+    right: 8px;
+  }
+
+  ${({ hasNotification }) => hasNotification && notificationCSS}
 `;
 
 const ListItem = styled(DashGrid)<{ border?: boolean }>`
@@ -180,7 +218,12 @@ const ListItem = styled(DashGrid)<{ border?: boolean }>`
 
   :hover {
     & > div {
-      color: #2ca9b7;
+      color: ${({ theme }) => theme.colors.primary};
+
+      &:before,
+      &:after {
+        background: ${({ theme }) => theme.colors.primary};
+      }
     }
   }
 `;
@@ -239,7 +282,26 @@ const StyledAccordionButton = styled(AccordionButton)<{ currency?: string }>`
       border-bottom: 1px solid transparent;
 
       & > div {
-        color: #2ca9b7;
+        color: ${({ theme }) => theme.colors.primary};
+
+        &:before,
+        &:after {
+          background: ${({ theme }) => theme.colors.primary};
+          width: 2px;
+          height: 10px;
+          border-radius: 0;
+          animation: none;
+        }
+
+        &:before {
+          transform: rotate(135deg);
+          right: 2px;
+        }
+
+        &:after {
+          transform: rotate(-135deg);
+          right: 8px;
+        }
       }
     }
   }

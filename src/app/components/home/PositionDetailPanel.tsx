@@ -238,7 +238,7 @@ const PositionDetailPanel = () => {
                 Rebalancing{' '}
                 <MouseoverTooltip
                   text={
-                    'Traders can repay loans by selling bnUSD for $1 of ICX collateral. Your position will sometimes rebalance to accommodate.'
+                    'If bnUSD is 5% above or below $1, some of your collateral may be sold and a larger amount of debt repaid to rebalance the price.'
                   }
                   placement="top"
                 >

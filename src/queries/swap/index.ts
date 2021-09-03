@@ -13,6 +13,18 @@ import { API_ENDPOINT } from '../constants';
 
 const LAUNCH_DAY = 1619398800000000;
 
+// temporarily workaround solution. need to refactor asap
+
+const decimals = {
+  ICX: 18,
+  sICX: 18,
+  bnUSD: 18,
+  BALN: 18,
+  IUSDC: 6,
+  OMM: 18,
+  USDS: 18,
+};
+
 export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: CurrencyKey }, period: CHART_PERIODS) => {
   return useQuery<{ time: number; open: number; close: number; high: number; low: number; volume: number }[]>(
     QUERY_KEYS.Swap.PriceChart(currencyKeys, period),
@@ -30,24 +42,25 @@ export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: Curren
 
         let data1;
 
+        const decimal = decimals[pair.quoteCurrencyKey] - decimals[pair.baseCurrencyKey] + 18;
         if (!inverse) {
           data1 = result.map(item => ({
             time: item.time / 1_000_000,
-            value: BalancedJs.utils.toIcx(item.close).toNumber(),
-            open: BalancedJs.utils.toIcx(item.open).toNumber(),
-            close: BalancedJs.utils.toIcx(item.close).toNumber(),
-            high: BalancedJs.utils.toIcx(item.high).toNumber(),
-            low: BalancedJs.utils.toIcx(item.low).toNumber(),
+            value: BalancedJs.utils.toFormat(item.close, decimal).toNumber(),
+            open: BalancedJs.utils.toFormat(item.open, decimal).toNumber(),
+            close: BalancedJs.utils.toFormat(item.close, decimal).toNumber(),
+            high: BalancedJs.utils.toFormat(item.high, decimal).toNumber(),
+            low: BalancedJs.utils.toFormat(item.low, decimal).toNumber(),
             volume: BalancedJs.utils.toIcx(item.volume).toNumber(),
           }));
         } else {
           data1 = result.map(item => ({
             time: item.time / 1_000_000,
-            value: ONE.div(BalancedJs.utils.toIcx(item.close)).toNumber(),
-            open: ONE.div(BalancedJs.utils.toIcx(item.open)).toNumber(),
-            close: ONE.div(BalancedJs.utils.toIcx(item.close)).toNumber(),
-            high: ONE.div(BalancedJs.utils.toIcx(item.high)).toNumber(),
-            low: ONE.div(BalancedJs.utils.toIcx(item.low)).toNumber(),
+            value: ONE.div(BalancedJs.utils.toFormat(item.close, decimal)).toNumber(),
+            open: ONE.div(BalancedJs.utils.toFormat(item.open, decimal)).toNumber(),
+            close: ONE.div(BalancedJs.utils.toFormat(item.close, decimal)).toNumber(),
+            high: ONE.div(BalancedJs.utils.toFormat(item.high, decimal)).toNumber(),
+            low: ONE.div(BalancedJs.utils.toFormat(item.low, decimal)).toNumber(),
             volume: BalancedJs.utils.toIcx(item.volume).toNumber(),
           }));
         }

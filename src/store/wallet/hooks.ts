@@ -7,13 +7,13 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { CURRENCY } from 'constants/currency';
 import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
 import { changeBalances, resetBalances } from './actions';
 
-// #redux-step-5: define function get value of variable from store
 export function useWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);
 }
@@ -21,39 +21,30 @@ export function useWalletBalances(): AppState['wallet'] {
 export function useWalletFetchBalances(account?: string | null) {
   const dispatch = useDispatch();
   const details = useBALNDetails();
-  const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
-  const unstakingBalance: BigNumber = React.useMemo(() => details['Unstaking balance'] || new BigNumber(0), [details]);
+  const availableBALN: BigNumber = React.useMemo(() => details['Available balance'] || new BigNumber(0), [details]);
 
   const transactions = useAllTransactions();
 
   React.useEffect(() => {
-    const fetchBalances = () => {
+    const fetchBalances = async () => {
       if (account) {
-        Promise.all([
-          bnJs.ICX.balanceOf(account),
-          bnJs.sICX.balanceOf(account),
-          bnJs.bnUSD.balanceOf(account),
-          bnJs.BALN.balanceOf(account),
-        ]).then(result => {
-          const [ICX, sICX, bnUSD, BALN] = result.map(v => BalancedJs.utils.toIcx(v));
-          dispatch(
-            changeBalances({
-              ICX,
-              sICX,
-              bnUSD,
-              BALN: BALN.minus(stakedBalance).minus(unstakingBalance),
-              BALNstaked: stakedBalance,
-              BALNunstaking: unstakingBalance,
-            }),
-          );
-        });
+        const results = await Promise.all(CURRENCY.map(currencyKey => bnJs[currencyKey].balanceOf(account)));
+
+        const data = results.reduce((prev, result, index) => {
+          prev[CURRENCY[index]] = BalancedJs.utils.toIcx(result, CURRENCY[index]);
+          if (CURRENCY[index] === 'BALN') {
+            prev[CURRENCY[index]] = availableBALN;
+          }
+          return prev;
+        }, {});
+        dispatch(changeBalances(data));
       } else {
         dispatch(resetBalances());
       }
     };
 
     fetchBalances();
-  }, [transactions, account, stakedBalance, unstakingBalance, dispatch]);
+  }, [transactions, account, availableBALN, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {

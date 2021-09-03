@@ -109,7 +109,7 @@ export default function SwapDescription() {
       {chartOption.type === CHART_TYPES.AREA && (
         <ChartContainer ref={ref}>
           {loading ? (
-            <Spinner centered />
+            <Spinner size={'lg'} centered />
           ) : (
             <TradingViewChart
               data={pair && !isQueue(pair) ? data : data1}
@@ -124,7 +124,7 @@ export default function SwapDescription() {
       {chartOption.type === CHART_TYPES.CANDLE && (
         <ChartContainer ref={ref}>
           {loading ? (
-            <Spinner centered />
+            <Spinner size={'lg'} centered />
           ) : (
             <TradingViewChart
               data={pair && !isQueue(pair) ? data : data1}

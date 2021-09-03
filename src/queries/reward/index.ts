@@ -5,7 +5,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
-import { SUPPORTED_PAIRS } from 'constants/currency';
+import { SUPPORTED_PAIRS, addressToCurrencyKeyMap } from 'constants/currency';
 import QUERY_KEYS from 'queries/queryKeys';
 
 import { API_ENDPOINT } from '../constants';
@@ -13,7 +13,7 @@ import { API_ENDPOINT } from '../constants';
 export const BATCH_SIZE = 50;
 
 export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) => {
-  const { account } = useIconReact();
+  const { account, networkId } = useIconReact();
 
   return useQuery<({ [key in string]: BigNumber } | null)[]>(
     QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
@@ -30,7 +30,7 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
 
         const t = {};
         Object.keys(fees).forEach(key => {
-          t[key] = BalancedJs.utils.toIcx(fees[key]);
+          t[key] = BalancedJs.utils.toIcx(fees[key], addressToCurrencyKeyMap[networkId][key]);
         });
         return t;
       });
@@ -90,11 +90,8 @@ export const useAllPairsAPY = () => {
     const dailyDistribution = BalancedJs.utils.toIcx(dailyDistributionQuery.data);
     const t = {};
     SUPPORTED_PAIRS.forEach(pair => {
-      t[pair.poolId] = dailyDistribution
-        .times(pair.rewards || 0)
-        .times(365)
-        .times(rates['BALN'])
-        .div(tvls[pair.poolId]);
+      t[pair.poolId] =
+        pair.rewards && dailyDistribution.times(pair.rewards).times(365).times(rates['BALN']).div(tvls[pair.poolId]);
     });
     return t;
   }

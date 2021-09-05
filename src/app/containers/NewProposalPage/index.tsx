@@ -209,14 +209,18 @@ export function NewProposalPage() {
   const isStakeInvalid = stakedBalance.isLessThan(minimumStakeBalance);
 
   const { data: platformDay } = usePlatformDayQuery();
-
-  const totalRatio = Object.values(ratioInputValue).reduce(
-    (sum: number, currentValue: string) => sum + Number(currentValue),
-    0,
-  );
   const { submitParams, validate } = !isTextProposal && PROPOSAL_CONFIG[selectedProposalType];
 
-  const { isValid, message } = !!validate && validate(totalRatio);
+  const validateRatioInput = () => {
+    const arrayRatioValue = Object.values(ratioInputValue);
+    const isEmpty = arrayRatioValue.every(ratio => ratio === '');
+    if (isEmpty) return { isValid: false };
+    const totalRatio = arrayRatioValue.reduce((sum: number, currentValue: string) => sum + Number(currentValue), 0);
+
+    return !!validate && validate(totalRatio);
+  };
+
+  const { isValid, message } = validateRatioInput();
 
   // Will remove when forumLink is used in later sprints
   console.log(forumLink);
@@ -325,7 +329,7 @@ export function NewProposalPage() {
           {!isTextProposal && (
             <Ratio
               onRatioChange={onRatioInputChange}
-              showErrorMessage={touched.ratio && !isValid}
+              showErrorMessage={touched.ratio && message && !isValid}
               value={ratioInputValue}
               message={message}
             />

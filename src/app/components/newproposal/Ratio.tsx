@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { BalancedJs } from 'packages/BalancedJs';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -11,16 +10,22 @@ import { useProposalType } from 'store/proposal/hooks';
 import Tooltip from '../Tooltip';
 
 export interface Recipient {
-  recipient_name?: string;
-  dist_percent: string;
+  name?: string;
+  percent: string;
+}
+
+interface RatioValue {
+  name?: string;
+  percent: string;
 }
 interface RatioProps {
-  onRecipientChange: (value, recipient_name) => void;
+  onRatioChange: (value, name) => void;
   showErrorMessage?: boolean;
   value?: { [key: string]: string };
+  message?: string;
 }
-export default function Ratio({ onRecipientChange, showErrorMessage = false, value }: RatioProps) {
-  const [recipients, setRecipients] = React.useState<Array<Recipient> | undefined>();
+export default function Ratio({ onRatioChange, showErrorMessage = false, value, message }: RatioProps) {
+  const [ratioValues, setRatioValues] = React.useState<Array<RatioValue> | undefined>();
   const [tooltipPosition, setTooltipPosition] = React.useState('');
 
   const selectedProposalType = useProposalType();
@@ -29,49 +34,36 @@ export default function Ratio({ onRecipientChange, showErrorMessage = false, val
     if (selectedProposalType !== 'Text') {
       (async () => {
         const result = await PROPOSAL_CONFIG[selectedProposalType].fetchInputData();
-        if (selectedProposalType !== 'BALN allocation') {
-          setRecipients(result as Recipient[]);
-          return;
-        }
 
-        const newResult = Object.entries(result).map(item => ({
-          recipient_name: item[0] === 'Loans' ? 'Borrower' : item[0],
-          dist_percent: BalancedJs.utils
-            .toIcx(item[1] as string)
-            .times(100)
-            .toFixed(),
-        }));
-
-        setRecipients(newResult);
+        setRatioValues(result);
       })();
     } else {
-      setRecipients([]);
+      setRatioValues([]);
     }
   }, [selectedProposalType]);
 
-  const handleChange = recipient_name => e => {
-    let nextRecipientInput = e.target.value.replace(/,/g, '.');
-    console.log('nextRecipientInput', nextRecipientInput);
-    const isNumber = /^\d+(?:[.])?\d*$/.test(nextRecipientInput);
-    onRecipientChange(isNumber ? nextRecipientInput : nextRecipientInput.replace(/[^0-9.]/g, ''), recipient_name);
-    setTooltipPosition(recipient_name || '');
+  const handleChange = name => e => {
+    const ratioInput = e.target.value.replace(/,/g, '.');
+    const isNumberValid = /^\d+(?:[.])?\d*$/.test(ratioInput);
+    const nextRatioInput = isNumberValid ? ratioInput : ratioInput.replace(/[^0-9.]/g, '');
+    const formatDecimal = nextRatioInput.match(/^\d+(?:[.])?\d{0,2}/);
+    onRatioChange((formatDecimal && formatDecimal[0]) || nextRatioInput, name);
+    setTooltipPosition(name ?? '');
   };
 
   return (
     <Wrapper>
-      {recipients && (
+      {ratioValues && (
         <>
           <BoxPanel width={1 / 2}>
             <Typography variant="p" textAlign="center" marginBottom="9px">
               Current
             </Typography>
             <List>
-              {recipients.map(({ recipient_name, dist_percent }) => (
-                <ListItem key={recipient_name + dist_percent} hasTitle={!!recipient_name}>
-                  {recipient_name && (
-                    <Typography variant="p">{recipient_name === 'Loans' ? 'Borrower' : recipient_name}</Typography>
-                  )}
-                  <Typography variant="h2">{dist_percent}%</Typography>
+              {ratioValues.map(({ name, percent }) => (
+                <ListItem key={name + percent} hasTitle={!!name}>
+                  {name && <Typography variant="p">{name === 'Loans' ? 'Borrower' : name}</Typography>}
+                  <Typography variant="h2">{percent}%</Typography>
                 </ListItem>
               ))}
             </List>
@@ -81,25 +73,25 @@ export default function Ratio({ onRecipientChange, showErrorMessage = false, val
               New
             </Typography>
             <List>
-              {recipients.map(({ recipient_name, dist_percent }) => (
+              {ratioValues.map(({ name, percent }, index) => (
                 <Tooltip
-                  key={recipient_name + dist_percent}
+                  key={name + percent}
                   containerStyle={{ width: 'auto' }}
                   refStyle={{ display: 'block' }}
                   placement="right"
-                  text="Allocation must equal 100%"
-                  show={showErrorMessage && recipient_name === tooltipPosition}
+                  text={message}
+                  show={showErrorMessage && (name || index) === tooltipPosition}
                 >
-                  <ListItem hasTitle={!!recipient_name}>
-                    {recipient_name && <Typography variant="p">{recipient_name}</Typography>}
+                  <ListItem hasTitle={!!name}>
+                    {name && <Typography variant="p">{name}</Typography>}
                     <FieldInput
-                      value={(value && value[recipient_name || dist_percent]) || ''}
-                      hasTitle={!!recipient_name}
+                      value={(value && value[name || index]) || ''}
+                      hasTitle={!!name}
                       // universal input options
                       inputMode="decimal"
                       autoComplete="off"
                       autoCorrect="off"
-                      onChange={handleChange(recipient_name || dist_percent)}
+                      onChange={handleChange(name || index)}
                       // text-specific options
                       type="text"
                       pattern="^[0-9]*[.,]?[0-9]*$"

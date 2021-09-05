@@ -95,9 +95,15 @@ export const PROPOSAL_CONFIG = {
           .times(100)
           .toFixed(),
       })),
-    submitParams: recipientList => ({
-      updateDistPercent: { _recipient_list: recipientList },
-    }),
+    submitParams: ratioInputValue => {
+      const recipientList = Object.entries(ratioInputValue).map(item => ({
+        recipient_name: item[0] === 'Borrower' ? 'Loans' : item[0],
+        dist_percent: BalancedJs.utils.toLoop(Number(item[1]) / 100).toNumber(),
+      }));
+      return {
+        updateDistPercent: { _recipient_list: recipientList },
+      };
+    },
     validate: sum => ({ isValid: sum === 100, message: 'Allocation must equal 100%.' }),
   },
   'Network fee allocation': {
@@ -120,7 +126,10 @@ export const PROPOSAL_CONFIG = {
       const _percent = Number((parseInt(res['origination fee'], 16) / 100).toFixed(2));
       return [{ percent: _percent }];
     },
-    submitParams: origination_fee => ({ update_origination_fee: { _fee: origination_fee } }),
+    submitParams: ratioInputValue => {
+      const origination_fee = Number(Object.values(ratioInputValue)) * 100;
+      return { update_origination_fee: { _fee: origination_fee } };
+    },
     validate: sum => ({
       isValid: sum <= 10,
       message: 'Must be less than or equal to 10%.',
@@ -133,7 +142,10 @@ export const PROPOSAL_CONFIG = {
       const _percent = Number((1000000 / parseInt(res['locking ratio'], 16) / 10000).toFixed(2));
       return [{ percent: _percent }];
     },
-    submitParams: locking_ratio => ({ update_locking_ratio: { _ratio: locking_ratio } }),
+    submitParams: ratioInputValue => {
+      const locking_ratio = Math.round(1000000 / Number(Object.values(ratioInputValue)));
+      return { update_locking_ratio: { _ratio: locking_ratio } };
+    },
     validate: sum => ({
       isValid: sum <= 80,
       message: 'Must be less than or equal to the liquidation threshold (80%).',
@@ -236,12 +248,7 @@ export function NewProposalPage() {
       changeShouldLedgerSign(true);
     }
 
-    const recipientList = Object.entries(ratioInputValue).map(item => ({
-      recipient_name: item[0] === 'Borrower' ? 'Loans' : item[0],
-      dist_percent: BalancedJs.utils.toLoop(Number(item[1]) / 100).toNumber(),
-    }));
-
-    const actions = JSON.stringify(submitParams(recipientList));
+    const actions = isTextProposal ? '' : JSON.stringify(submitParams(ratioInputValue));
 
     platformDay &&
       bnJs

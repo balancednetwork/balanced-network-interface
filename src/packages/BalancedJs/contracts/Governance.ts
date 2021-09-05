@@ -78,4 +78,18 @@ export default class Governance extends Contract {
 
     return this.call(callParams);
   }
+
+  defineVote(name: string, description: string, vote_start: string, snapshot: string, actions: string) {
+    const callParams = this.transactionParamsBuilder({
+      method: 'defineVote',
+      params: {
+        name: name,
+        description: description,
+        vote_start: vote_start,
+        snapshot: snapshot,
+        actions: actions,
+      },
+    });
+    return this.callICONPlugins(callParams);
+  }
 }

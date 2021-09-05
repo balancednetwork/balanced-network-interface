@@ -165,3 +165,10 @@ export const useAdditionalInfoById = (id?: number) => {
 
   return items?.find(item => item.id === id);
 };
+
+export const usePlatformDayQuery = () => {
+  return useQuery<number>(QUERY_KEYS.Loans.PlatformDay, async () => {
+    const res = await bnJs.Loans.getDay();
+    return parseInt(res, 16);
+  });
+};

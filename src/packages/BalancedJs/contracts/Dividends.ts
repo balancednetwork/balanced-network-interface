@@ -42,4 +42,12 @@ export default class Dividends extends Contract {
 
     return this.callICONPlugins(payload);
   }
+
+  getDividendsPercentage() {
+    const payload = this.paramsBuilder({
+      method: 'getDividendsPercentage',
+    });
+
+    return this.call(payload);
+  }
 }

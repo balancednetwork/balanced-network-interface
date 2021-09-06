@@ -24,6 +24,7 @@ import {
   useCollateralDepositedAmount,
   useCollateralTotalICXAmount,
   useCollateralActionHandlers,
+  useCollateralType,
 } from 'store/collateral/hooks';
 import { useLockedICXAmount, useLoanActionHandlers } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -31,6 +32,7 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import CollateralTypeSwitcher from '../CollateralTypeSwitcher';
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const CollateralPanel = () => {
@@ -64,6 +66,8 @@ const CollateralPanel = () => {
   const totalICXAmount = useCollateralTotalICXAmount();
 
   const sICXAmount = useCollateralDepositedAmount();
+
+  const collateralType = useCollateralType();
 
   //  calculate dependentField value
   const parsedAmount = {
@@ -200,9 +204,9 @@ const CollateralPanel = () => {
     <>
       <BoxPanel bg="bg3">
         <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">Collateral</Typography>
-
-          <Box>
+          <Typography variant="h2">Collateral:</Typography>
+          <CollateralTypeSwitcher />
+          <Box sx={{ marginLeft: 'auto' }}>
             {isAdjusting ? (
               <>
                 <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
@@ -247,7 +251,7 @@ const CollateralPanel = () => {
               editable={isAdjusting}
               isActive
               label="Deposited"
-              tooltip={true}
+              tooltip={collateralType === 'sICX'}
               tooltipWider={true}
               tooltipText={
                 <>
@@ -257,7 +261,7 @@ const CollateralPanel = () => {
                 </>
               }
               value={formattedAmounts[Field.LEFT]}
-              currency={'ICX'}
+              currency={collateralType === 'sICX' ? 'ICX' : collateralType}
               maxValue={totalICXAmount}
               onUserInput={onFieldAInput}
             />
@@ -269,9 +273,9 @@ const CollateralPanel = () => {
               isActive={false}
               label="Wallet"
               tooltipText="The amount of ICX available to deposit from your wallet."
-              value={formattedAmounts[Field.RIGHT]}
-              currency={'ICX'}
-              maxValue={totalICXAmount}
+              value={formattedAmounts[Field.RIGHT]} //TODO update for other currencies
+              currency={collateralType === 'sICX' ? 'ICX' : collateralType}
+              maxValue={totalICXAmount} //TODO update for other currencies
               onUserInput={onFieldBInput}
             />
           </Box>

@@ -252,7 +252,7 @@ export function NewProposalPage() {
       changeShouldLedgerSign(true);
     }
 
-    const actions = isTextProposal ? '' : JSON.stringify(submitParams(ratioInputValue));
+    const actions = isTextProposal ? '{}' : JSON.stringify(submitParams(ratioInputValue));
 
     platformDay &&
       bnJs

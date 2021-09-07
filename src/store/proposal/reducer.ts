@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage';
+import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage/constant';
 
 import { setProposalType } from './actions';
 

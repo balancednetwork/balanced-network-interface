@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage';
+import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import { useProposalType } from 'store/proposal/hooks';
 

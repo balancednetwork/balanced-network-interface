@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { IconConverter } from 'icon-sdk-js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { Box, Flex } from 'rebass/styled-components';
@@ -18,6 +17,7 @@ import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect'
 import Ratio from 'app/components/newproposal/Ratio';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
+import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/vote';
@@ -83,87 +83,6 @@ const FieldTextArea = styled.textarea`
     transition: border 0.2s ease;
   }
 `;
-
-export const PROPOSAL_CONFIG = {
-  Text: undefined,
-  'BALN allocation': {
-    fetchInputData: async () =>
-      Object.entries(await bnJs.Rewards.getRecipientsSplit()).map(item => ({
-        name: item[0] === 'Loans' ? 'Borrower' : item[0],
-        percent: BalancedJs.utils
-          .toIcx(item[1] as string)
-          .times(100)
-          .toFixed(),
-      })),
-    submitParams: ratioInputValue => {
-      const recipientList = Object.entries(ratioInputValue).map(item => ({
-        recipient_name: item[0] === 'Borrower' ? 'Loans' : item[0],
-        dist_percent: BalancedJs.utils.toLoop(Number(item[1]) / 100).toNumber(),
-      }));
-      return {
-        updateDistPercent: { _recipient_list: recipientList },
-      };
-    },
-    validate: sum => ({ isValid: sum === 100, message: 'Allocation must equal 100%.' }),
-  },
-  'Network fee allocation': {
-    fetchInputData: async () => {
-      const res = await bnJs.Dividends.getDividendsPercentage();
-      return Object.entries(res).map(item => ({
-        name: item[0] === 'daofund' ? 'DAO fund' : 'BALN holders',
-        percent: BalancedJs.utils
-          .toIcx(item[1] as string)
-          .times(100)
-          .toFixed(),
-      }));
-    },
-    validate: sum => ({ isValid: sum === 100, message: 'Allocation must equal 100%.' }),
-  },
-
-  'Loan fee': {
-    fetchInputData: async () => {
-      const res = await bnJs.Loans.getParameters();
-      const _percent = Number((parseInt(res['origination fee'], 16) / 100).toFixed(2));
-      return [{ percent: _percent }];
-    },
-    submitParams: ratioInputValue => {
-      const origination_fee = Number(Object.values(ratioInputValue)) * 100;
-      return { update_origination_fee: { _fee: origination_fee } };
-    },
-    validate: sum => ({
-      isValid: sum <= 10,
-      message: 'Must be less than or equal to 10%.',
-    }),
-  },
-
-  'Loan to value ratio': {
-    fetchInputData: async () => {
-      const res = await bnJs.Loans.getParameters();
-      const _percent = Number((1000000 / parseInt(res['locking ratio'], 16) / 10000).toFixed(2));
-      return [{ percent: _percent }];
-    },
-    submitParams: ratioInputValue => {
-      const locking_ratio = Math.round(1000000 / Number(Object.values(ratioInputValue)));
-      return { update_locking_ratio: { _ratio: locking_ratio } };
-    },
-    validate: sum => ({
-      isValid: sum <= 80,
-      message: 'Must be less than or equal to the liquidation threshold (80%).',
-    }),
-  },
-
-  'Rebalancing threshold': {
-    fetchInputData: async () => {
-      const res = await bnJs.Rebalancing.getPriceChangeThreshold();
-      const _percent = BalancedJs.utils.toIcx(res).times(100).toFixed();
-      return [{ percent: _percent }];
-    },
-    validate: sum => ({
-      isValid: sum <= 7.5,
-      message: 'Must be less than or equal to 7.5%.',
-    }),
-  },
-};
 
 interface Touched {
   forumLink: boolean;

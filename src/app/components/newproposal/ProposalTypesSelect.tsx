@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { StyledArrowDownIcon, Wrapper } from 'app/components/DropdownText';
 import { DataText, List, ListItem } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
-import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage';
+import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import { useProposalType, useSetProposalType } from 'store/proposal/hooks';
 

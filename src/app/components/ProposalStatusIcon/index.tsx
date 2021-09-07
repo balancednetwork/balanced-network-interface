@@ -10,6 +10,7 @@ import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
 import { ReactComponent as FailureIcon } from 'assets/icons/failure.svg';
 import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
 import { usePlatformDayQuery } from 'queries/reward';
+import { formatTimeStr } from 'utils/timeformat';
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
@@ -19,10 +20,10 @@ const StatusMap = {
   Active: 'Active',
   Cancelled: 'Cancelled',
   Defeated: 'Rejected',
-  Succeeded: 'Approve',
+  Succeeded: 'Approved',
   'No Quorum': 'Quorum not reached',
-  Executed: 'Executed',
-  'Failed Execution': 'Execution Failed',
+  Executed: 'Enacted',
+  'Failed Execution': 'Failed to enact',
 };
 
 interface ProposalStatusProps {
@@ -36,25 +37,13 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   const platformDayQuery = usePlatformDayQuery();
   const platformDay = platformDayQuery.data;
 
-  let startTimeStr = platformDay
-    ? dayjs()
-        .utc()
-        .add(startDay - platformDay, 'day')
-        .hour(17)
-        .fromNow(true)
-    : '';
+  const startTimeStr = platformDay && startDay >= platformDay ? formatTimeStr(startDay, platformDay, true) : '';
 
-  let endTimeStr = platformDay
-    ? dayjs()
-        .utc()
-        .add(endDay - platformDay - 1, 'day')
-        .hour(17)
-        .fromNow(true)
-    : '';
+  const endTimeStr = platformDay ? formatTimeStr(endDay, platformDay) : '';
 
   const isActive = platformDay ? startDay <= platformDay && platformDay < endDay : false;
 
-  if (status === 'Defeated' || status === 'No Quorum' || status === 'Failed Executed' || status === 'Cancelled') {
+  if (status === 'Defeated' || status === 'No Quorum' || status === 'Failed Execution' || status === 'Cancelled') {
     return (
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <FailureIcon height="22" width="22" />
@@ -65,7 +54,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
     );
   }
 
-  if (status === 'Pending' || status === 'Confirmed') {
+  if ((status === 'Pending' || status === 'Confirmed') && !!startTimeStr) {
     return (
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <CalendarIcon height="22" width="22" />
@@ -77,7 +66,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   }
 
   if (status === 'Active') {
-    if (isActive) {
+    if (isActive && !!endTimeStr) {
       return (
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
@@ -86,7 +75,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
           </Typography>
         </Flex>
       );
-    } else {
+    } else if (!!startTimeStr) {
       return (
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />

@@ -2,7 +2,7 @@ import { NETWORK_ID } from '../constants/config';
 import { SUPPORTED_TOKENS} from '../constants/tokens';
 import { Token } from './balanced-sdk-core/entities';
 import { CurrencyAmount } from './balanced-sdk-core/entities/fractions';
-import { CurrencyAmount as LegacyCurrencyAmount, CurrencyKey } from './index';
+import { CurrencyAmount as LegacyCurrencyAmount, CurrencyKey, Pool } from './index';
 import { PairInfo } from '../constants/pairs';
 import { Pair } from './balanced-v1-sdk/entities';
 
@@ -22,6 +22,15 @@ export const convertCurrencyAmount = (value?: LegacyCurrencyAmount) => {
   }
 };
 
-export const convertPair = (pairInfo: PairInfo) => {
+export const convertPair = (pairInfo: PairInfo, pool?: Pool) => {
+  if (pool) {
+    const baseToken = getTokenFromCurrencyKey(pool.baseCurrencyKey);
+    const quoteToken = getTokenFromCurrencyKey(pool.quoteCurrencyKey);
 
+    if (baseToken && quoteToken)
+      return new Pair(
+        CurrencyAmount.fromRawAmount(baseToken, pool.baseDeposited.toString()),
+        CurrencyAmount.fromRawAmount(quoteToken, pool.quoteDeposited.toString())
+      );
+  }
 }

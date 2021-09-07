@@ -164,6 +164,17 @@ export function NewProposalPage() {
 
   useEffect(() => setRatioInputValue({}), [selectedProposalType]);
 
+  const resetForm = () => {
+    setTitle('');
+    setForumLink('');
+    setDescription('');
+    setRatioInputValue({});
+    setTouched({
+      forumLink: false,
+      ratio: false,
+    });
+  };
+
   const submit = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
@@ -199,6 +210,7 @@ export function NewProposalPage() {
         })
         .finally(() => {
           changeShouldLedgerSign(false);
+          resetForm();
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
   };
@@ -220,7 +232,7 @@ export function NewProposalPage() {
               {`${title.length}/100`}
             </Typography>
           </FieldContainer>
-          <FieldInput type="text" onChange={onTitleInputChange} />
+          <FieldInput type="text" onChange={onTitleInputChange} value={title} />
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
               Forum link
@@ -233,7 +245,7 @@ export function NewProposalPage() {
             text="Must link to a discussion on gov.balanced.network."
             show={touched.forumLink && !forumLink.includes('gov.balanced.network')}
           >
-            <FieldInput type="text" onChange={onForumInputChange} />
+            <FieldInput type="text" onChange={onForumInputChange} value={forumLink} />
           </Tooltip>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
@@ -244,7 +256,7 @@ export function NewProposalPage() {
             </Typography>
           </FieldContainer>
           {/* @ts-ignore */}
-          <FieldTextArea onChange={onTextAreaInputChange} />
+          <FieldTextArea onChange={onTextAreaInputChange} value={description} />
           {!isTextProposal && (
             <Ratio
               onRatioChange={onRatioInputChange}

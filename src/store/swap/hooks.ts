@@ -10,11 +10,14 @@ import { ZERO } from 'constants/index';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
 import { usePools } from 'store/pool/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { Pool, CurrencyAmount, Price, CurrencyKey, Trade } from 'types';
+import { Pool, CurrencyAmount, Price, CurrencyKey } from 'types';
+import { Trade } from 'types/balanced-v1-sdk';
 import { InsufficientInputAmountError, InsufficientReservesError } from 'types/index';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './actions';
+import {useTradeExactInNew, useTradeExactOutNew} from './adapter';
+
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -165,7 +168,7 @@ function getInputAmount1(outputAmount: CurrencyAmount, pool: Pool): CurrencyAmou
   return inputAmount;
 }
 
-export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: CurrencyKey) {
+export function useOutputExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?: CurrencyKey) {
   const pools = usePools();
   if (!currencyAmountIn || !currencyOut) return undefined;
 
@@ -193,10 +196,10 @@ export function useTradeExactIn(currencyAmountIn?: CurrencyAmount, currencyOut?:
     }
   }
 
-  return new Trade(currencyAmountIn, currencyAmountOut, pool);
+  return currencyAmountOut;
 }
 
-export function useTradeExactOut(currencyIn?: CurrencyKey, currencyAmountOut?: CurrencyAmount) {
+export function useInputExactOut(currencyIn?: CurrencyKey, currencyAmountOut?: CurrencyAmount) {
   const pools = usePools();
   if (!currencyIn || !currencyAmountOut) return undefined;
 
@@ -220,7 +223,7 @@ export function useTradeExactOut(currencyIn?: CurrencyKey, currencyAmountOut?: C
     }
   }
 
-  return new Trade(currencyAmountIn, currencyAmountOut, pool);
+  return currencyAmountIn;
 }
 
 export function usePrice(currencyIn?: CurrencyKey, currencyOut?: CurrencyKey): Price | undefined {
@@ -297,8 +300,8 @@ export function useDerivedSwapInfo(): {
   );
   const price = usePrice(inputCurrencyId, outputCurrencyId);
   //
-  const trade1 = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrencyId);
-  const trade2 = useTradeExactOut(inputCurrencyId, !isExactIn ? parsedAmount : undefined);
+  const trade1 = useTradeExactInNew(isExactIn ? parsedAmount : undefined, outputCurrencyId);
+  const trade2 = useTradeExactOutNew(inputCurrencyId, !isExactIn ? parsedAmount : undefined);
   const trade = isExactIn ? trade1 : trade2;
 
   let inputError: string | undefined;

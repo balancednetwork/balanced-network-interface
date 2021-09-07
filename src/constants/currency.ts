@@ -170,14 +170,16 @@ export const getPairableCurrencies = (currencyKey: CurrencyKey | undefined): Cur
   return [...leftPairableCurrencies, ...rightPairableCurrencies];
 };
 
-export const getTradePair = (baseKey: CurrencyKey, quoteKey: CurrencyKey): [Pair | undefined, boolean | undefined] => {
-  const pair1 = SUPPORTED_PAIRS.find(pair => pair.baseCurrencyKey === baseKey && pair.quoteCurrencyKey === quoteKey);
-  const pair2 = SUPPORTED_PAIRS.find(pair => pair.baseCurrencyKey === quoteKey && pair.quoteCurrencyKey === baseKey);
+export const getTradePair = (baseKey?: CurrencyKey, quoteKey?: CurrencyKey): [Pair | undefined, boolean | undefined] => {
+  if (baseKey && quoteKey) {
+    const pair1 = SUPPORTED_PAIRS.find(pair => pair.baseCurrencyKey === baseKey && pair.quoteCurrencyKey === quoteKey);
+    const pair2 = SUPPORTED_PAIRS.find(pair => pair.baseCurrencyKey === quoteKey && pair.quoteCurrencyKey === baseKey);
 
-  if (pair1) {
-    return [pair1, false];
-  } else if (pair2) {
-    return [pair2, true];
+    if (pair1) {
+      return [pair1, false];
+    } else if (pair2) {
+      return [pair2, true];
+    }
   }
   return [undefined, undefined];
 };

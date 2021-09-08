@@ -31,6 +31,7 @@ import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/s
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { CurrencyKey, Price } from 'types';
+import { convertCurrencyAmount } from 'types/adapter';
 import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -50,8 +51,8 @@ export default function SwapPanel() {
 
   const parsedAmounts = React.useMemo(
     () => ({
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      [Field.INPUT]: independentField === Field.INPUT ? convertCurrencyAmount(parsedAmount) : trade?.inputAmount,
+      [Field.OUTPUT]: independentField === Field.OUTPUT ? convertCurrencyAmount(parsedAmount) : trade?.outputAmount,
     }),
     [independentField, parsedAmount, trade],
   );

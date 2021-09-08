@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 import { NETWORK_ID } from '../constants/config';
 import { PairInfo } from '../constants/pairs';
 import { SUPPORTED_TOKENS } from '../constants/tokens';
@@ -16,7 +18,11 @@ export const convertCurrencyAmount = (value?: LegacyCurrencyAmount) => {
   if (value) {
     const token = getTokenFromCurrencyKey(value.currencyKey);
 
-    if (token) return CurrencyAmount.fromRawAmount(token, value.amount.toString());
+    if (token) {
+      const [numerator, denominator] = value.amount.toFraction();
+
+      return CurrencyAmount.fromFractionalAmount(token, numerator.toFixed(), denominator.toFixed());
+    }
   }
 };
 
@@ -25,10 +31,20 @@ export const convertPair = (pairInfo: PairInfo, pool?: Pool) => {
     const baseToken = getTokenFromCurrencyKey(pool.baseCurrencyKey);
     const quoteToken = getTokenFromCurrencyKey(pool.quoteCurrencyKey);
 
-    if (baseToken && quoteToken)
+    if (
+      baseToken &&
+      quoteToken &&
+      BigNumber.isBigNumber(pool.baseDeposited) &&
+      !pool.baseDeposited.isNaN() &&
+      BigNumber.isBigNumber(pool.quoteDeposited) &&
+      pool.quoteDeposited.isNaN()
+    ) {
+      const [baseNumerator, baseDenominator] = pool.baseDeposited.toFraction();
+      const [quoteNumerator, quoteDenominator] = pool.quoteDeposited.toFraction();
       return new Pair(
-        CurrencyAmount.fromRawAmount(baseToken, pool.baseDeposited.toString()),
-        CurrencyAmount.fromRawAmount(quoteToken, pool.quoteDeposited.toString()),
+        CurrencyAmount.fromFractionalAmount(baseToken, baseNumerator.toFixed(), baseDenominator.toFixed()),
+        CurrencyAmount.fromFractionalAmount(quoteToken, quoteNumerator.toFixed(), quoteDenominator.toFixed()),
       );
+    }
   }
 };

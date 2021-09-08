@@ -1,18 +1,16 @@
-import { CurrencyAmount as LegacyCurrencyAmount, CurrencyKey, Pool } from '../../types';
+import { useMemo } from 'react';
+
+import { getTradePair } from '../../constants/currency';
+import { PairInfo, SUPPORTED_TOKEN_PAIRS } from '../../constants/pairs';
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } from '../../constants/routing';
-import { Pair, Trade } from '../../types/balanced-v1-sdk/entities';
+import { CurrencyAmount as LegacyCurrencyAmount, CurrencyKey, Pool } from '../../types';
 import { convertCurrencyAmount, convertPair, getTokenFromCurrencyKey } from '../../types/adapter';
 import { Currency, CurrencyAmount, TradeType } from '../../types/balanced-sdk-core';
-import { PairInfo, SUPPORTED_TOKEN_PAIRS } from '../../constants/pairs';
-import { useMemo } from 'react';
+import { Pair, Trade } from '../../types/balanced-v1-sdk/entities';
 import { isTradeBetter } from '../../types/balanced-v1-sdk/utils/isTradeBetter';
 import { usePools } from '../pool/hooks';
-import { getTradePair } from '../../constants/currency';
 
-export function getPool(
-  pools: { [p: string]: Pool },
-  pairInfo: PairInfo
-) {
+export function getPool(pools: { [p: string]: Pool }, pairInfo: PairInfo) {
   const currencyIn = pairInfo.baseCurrencyKey;
   const currencyOut = pairInfo.quoteCurrencyKey;
 
@@ -38,71 +36,70 @@ function getPairs(pools: { [p: string]: Pool }) {
 export function useTradeExactIn(
   currencyAmountIn?: CurrencyAmount<Currency>,
   currencyOut?: Currency,
-  { maxHops = MAX_HOPS } = {}
-): Trade<Currency, Currency, TradeType.EXACT_INPUT> | null {
+  { maxHops = MAX_HOPS } = {},
+): Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined {
   const pools = usePools();
 
   const pairs = getPairs(pools);
 
   return useMemo(() => {
-    if (currencyAmountIn && currencyOut && pairs.length> 0) {
+    if (currencyAmountIn && currencyOut && pairs.length > 0) {
       if (maxHops === 1) {
         return (
-          Trade.bestTradeExactIn(pairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[0] ??
-          null
-        )
+          Trade.bestTradeExactIn(pairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[0] ?? undefined
+        );
       }
       // search through trades with varying hops, find best trade out of them
-      let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_INPUT> | null = null
+      let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined = undefined;
       for (let i = 1; i <= maxHops; i++) {
-        const currentTrade: Trade<Currency, Currency, TradeType.EXACT_INPUT> | null =
+        const currentTrade: Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined =
           Trade.bestTradeExactIn(pairs, currencyAmountIn, currencyOut, { maxHops: i, maxNumResults: 1 })[0] ??
-          null
+          undefined;
         // if current trade is best yet, save it
         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
-          bestTradeSoFar = currentTrade
+          bestTradeSoFar = currentTrade;
         }
       }
-      return bestTradeSoFar
+      return bestTradeSoFar;
     }
 
-    return null
-  }, [pairs, currencyAmountIn, currencyOut, maxHops])
+    return undefined;
+  }, [pairs, currencyAmountIn, currencyOut, maxHops]);
 }
 
 export function useTradeExactOut(
   currencyIn?: Currency,
   currencyAmountOut?: CurrencyAmount<Currency>,
-  { maxHops = MAX_HOPS } = {}
-): Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | null {
+  { maxHops = MAX_HOPS } = {},
+): Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | undefined {
   const pools = usePools();
 
   const pairs = getPairs(pools);
 
   return useMemo(() => {
-    if (currencyIn && currencyAmountOut && pairs.length> 0) {
+    if (currencyIn && currencyAmountOut && pairs.length > 0) {
       if (maxHops === 1) {
         return (
           Trade.bestTradeExactOut(pairs, currencyIn, currencyAmountOut, { maxHops: 1, maxNumResults: 1 })[0] ??
-          null
-        )
+          undefined
+        );
       }
       // search through trades with varying hops, find best trade out of them
-      let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | null = null
+      let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | undefined = undefined;
       for (let i = 1; i <= maxHops; i++) {
-        const currentTrade: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | null =
+        const currentTrade: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | undefined =
           Trade.bestTradeExactOut(pairs, currencyIn, currencyAmountOut, { maxHops: i, maxNumResults: 1 })[0] ??
-          null
+          undefined;
         // if current trade is best yet, save it
         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
-          bestTradeSoFar = currentTrade
+          bestTradeSoFar = currentTrade;
         }
       }
-      return bestTradeSoFar
+      return bestTradeSoFar;
     }
 
-    return null
-  }, [pairs, currencyIn, currencyAmountOut, maxHops])
+    return undefined;
+  }, [pairs, currencyIn, currencyAmountOut, maxHops]);
 }
 
 export function useTradeExactInNew(currencyAmountIn?: LegacyCurrencyAmount, currencyOut?: CurrencyKey) {

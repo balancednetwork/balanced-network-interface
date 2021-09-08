@@ -186,7 +186,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    */
   public minimumAmountOut(slippageTolerance: Percent): CurrencyAmount<TOutput> {
     invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE');
-    if (this.tradeType === TradeType.EXACT_OUTPUT) {
+    if (this.tradeType === TradeType.EXACT_OUTPUT || this.isQueue) {
       return this.outputAmount;
     } else {
       const slippageAdjustedAmountOut = new Fraction(ONE)
@@ -251,7 +251,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       let amountOut: CurrencyAmount<Token>;
       try {
         [amountOut] = pair.getOutputAmount(amountIn);
-      } catch (error) {
+      } catch (error: any) {
         // input too low
         if (error.isInsufficientInputAmountError) {
           continue;
@@ -345,7 +345,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       let amountIn: CurrencyAmount<Token>;
       try {
         [amountIn] = pair.getInputAmount(amountOut);
-      } catch (error) {
+      } catch (error: any) {
         // not enough liquidity in this pair
         if (error.isInsufficientReservesError) {
           continue;
@@ -384,5 +384,29 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     }
 
     return bestTrades;
+  }
+
+  get fee(): CurrencyAmount<Currency> {
+    if (this.inputAmount.currency.symbol === 'sICX' && this.outputAmount.currency.symbol === 'ICX') {
+      return this.inputAmount.multiply(0.01);
+    }
+
+    if (this.inputAmount.currency.symbol === 'ICX' && this.outputAmount.currency.symbol === 'sICX') {
+      return this.inputAmount.multiply(0);
+    }
+
+    return this.inputAmount.multiply(0.003);
+  }
+
+  get isQueue(): boolean {
+    if (this.inputAmount.currency.symbol === 'sICX' && this.outputAmount.currency.symbol === 'ICX') {
+      return true;
+    }
+
+    if (this.inputAmount.currency.symbol === 'ICX' && this.outputAmount.currency.symbol === 'sICX') {
+      return true;
+    }
+
+    return false;
   }
 }

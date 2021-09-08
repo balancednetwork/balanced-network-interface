@@ -14,10 +14,11 @@ import { Pool, CurrencyAmount, Price, CurrencyKey } from 'types';
 import { Trade } from 'types/balanced-v1-sdk';
 import { InsufficientInputAmountError, InsufficientReservesError } from 'types/index';
 
+import { TradeType } from '../../types/balanced-sdk-core';
+import { Currency } from '../../types/balanced-sdk-core/entities';
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './actions';
-import {useTradeExactInNew, useTradeExactOutNew} from './adapter';
-
+import { useTradeExactInNew, useTradeExactOutNew } from './adapter';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -254,7 +255,7 @@ export function tryParseAmount(value?: string, currencyKey?: CurrencyKey): Curre
 
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(): {
-  trade: Trade | undefined;
+  trade: Trade<Currency, Currency, TradeType> | undefined;
   currencyKeys: { [field in Field]?: CurrencyKey };
   percents: { [field in Field]?: number };
   currencyBalances: { [field in Field]?: CurrencyAmount | undefined };
@@ -322,8 +323,8 @@ export function useDerivedSwapInfo(): {
   // compare input balance to max input based on version
 
   const minimumToReceive: BigNumber | undefined = isExactIn
-    ? trade?.inputAmount.amount
-    : trade?.inputAmount.amount.times(10_000 - allowedSlippage).div(10_000);
+    ? new BigNumber(trade?.inputAmount.toExact() || 0)
+    : new BigNumber(trade?.inputAmount.toExact() || 0).times(10_000 - allowedSlippage).div(10_000);
 
   const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], minimumToReceive];
 

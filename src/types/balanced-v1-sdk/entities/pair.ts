@@ -3,9 +3,9 @@ import { pack, keccak256 } from '@ethersproject/solidity';
 import JSBI from 'jsbi';
 import invariant from 'tiny-invariant';
 
-import { BigintIsh, Price, sqrt, Token, CurrencyAmount } from 'types/balanced-sdk-core';
+import { Price, Token, CurrencyAmount } from 'types/balanced-sdk-core';
 
-import { FACTORY_ADDRESS, INIT_CODE_HASH, MINIMUM_LIQUIDITY, FIVE, _997, _1000, ONE, ZERO } from '../constants';
+import { FACTORY_ADDRESS, INIT_CODE_HASH, _997, _1000, ONE, ZERO } from '../constants';
 import { InsufficientReservesError, InsufficientInputAmountError } from '../errors';
 
 export const computePairAddress = ({

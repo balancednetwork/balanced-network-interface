@@ -1,5 +1,5 @@
-import { NetworkId } from './currency';
 import { NETWORK_ID } from './config';
+import { NetworkId } from './currency';
 
 export interface PairInfo {
   readonly chainId: number;
@@ -13,7 +13,7 @@ export interface PairInfo {
 // this information contains the pairs the balanced supports
 // eventually this information will saved in json file.
 
-export const SUPPORTED_TOKEN_PAIRS_INFO: { [networkId: number]: PairInfo[]}  = {
+export const SUPPORTED_TOKEN_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
   [NetworkId.MAINNET]: [
     {
       chainId: 1,
@@ -130,7 +130,7 @@ export const SUPPORTED_TOKEN_PAIRS_INFO: { [networkId: number]: PairInfo[]}  = {
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'USDS',
     },
-  ]
+  ],
 };
 
 export const SUPPORTED_TOKEN_PAIRS = SUPPORTED_TOKEN_PAIRS_INFO[NETWORK_ID];

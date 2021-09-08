@@ -115,8 +115,8 @@ export const useAllPairsTVLQuery = () => {
         const item = res[index];
         t[pair.poolId] = {
           ...item,
-          base: BalancedJs.utils.toIcx(item.base),
-          quote: BalancedJs.utils.toIcx(item.quote),
+          base: BalancedJs.utils.toIcx(item.base, pair.baseCurrencyKey),
+          quote: BalancedJs.utils.toIcx(item.quote, pair.quoteCurrencyKey),
           total_supply: BalancedJs.utils.toIcx(item.total_supply),
         };
       });

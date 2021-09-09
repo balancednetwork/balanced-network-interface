@@ -199,8 +199,8 @@ export function NewProposalPage() {
             addTransaction(
               { hash: res.result },
               {
-                pending: 'Voting BALN tokens...',
-                summary: `Voted BALN tokens.`,
+                pending: 'Submitting a proposal...',
+                summary: `Submitted the proposal.`,
               },
             );
             toggleOpen();

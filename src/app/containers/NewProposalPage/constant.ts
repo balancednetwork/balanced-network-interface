@@ -8,6 +8,52 @@ const ProposalMapping = {
   baln_holders: 'BALN holders',
   Loans: 'Borrower',
 };
+
+export const ActionsMapping = {
+  'BALN allocation': ['updateBalTokenDistPercentage', 'updateDistPercent'],
+  'Network fee allocation': ['setDividendsCategoryPercentage'],
+  'Loan fee': ['setOriginationFee', 'update_origination_fee'],
+  'Loan to value ratio': ['setLockingRatio', 'update_locking_ratio'],
+  'Rebalancing threshold': ['setRebalancingThreshold'],
+};
+
+export const RATIO_VALUE_FORMATTER = {
+  'BALN allocation': data => {
+    // debugger;
+    return data.map(({ recipient_name, dist_percent }) => ({
+      name: ProposalMapping[recipient_name] || recipient_name,
+      percent: BalancedJs.utils
+        .toIcx(dist_percent as string)
+        .times(100)
+        .toFixed(),
+    }));
+  },
+  'Network fee allocation': data => {
+    console.log('data', data);
+
+    return data.map((item: { [key: string]: number }) => {
+      const _item = Object.entries(item)[0];
+      return {
+        name: ProposalMapping[_item[0]] || _item[0],
+        percent: (Math.round(Number(BalancedJs.utils.toIcx(_item[1]).times(10000))) / 100).toFixed(2),
+      };
+    });
+  },
+  'Loan fee': (data: number) => {
+    const _percent = Number((data / 100).toFixed(2));
+    return [{ percent: _percent }];
+  },
+  'Loan to value ratio': (data: number) => {
+    console.log('data', data);
+    const _percent = Math.round(Number(1000000 / data));
+    return [{ percent: _percent }];
+  },
+  'Rebalancing threshold': data => {
+    const _percent = Number(BalancedJs.utils.toIcx(data).times(100).toFixed(2));
+    return [{ percent: _percent }];
+  },
+};
+
 const getKeyByValue = value => {
   return Object.keys(ProposalMapping).find(key => ProposalMapping[key] === value);
 };
@@ -79,7 +125,8 @@ export const PROPOSAL_CONFIG = {
   'Loan to value ratio': {
     fetchInputData: async () => {
       const res = await bnJs.Loans.getParameters();
-      const _percent = Number((1000000 / parseInt(res['locking ratio'], 16) / 10000).toFixed(2));
+      const _percent = Math.round(Number(1000000 / parseInt(res['locking ratio'], 16)));
+
       return [{ percent: _percent }];
     },
     submitParams: ratioInputValue => {
@@ -99,7 +146,10 @@ export const PROPOSAL_CONFIG = {
       return [{ percent: _percent }];
     },
     submitParams: ratioInputValue => {
-      const rebalance_ratio = Math.round(1000000 / Number(Object.values(ratioInputValue)));
+      const rebalance_ratio = BalancedJs.utils
+        .toLoop(Number(Object.values(ratioInputValue)))
+        .div(100)
+        .toFixed();
       return { setRebalancingThreshold: { _ratio: rebalance_ratio } };
     },
     validate: sum => ({

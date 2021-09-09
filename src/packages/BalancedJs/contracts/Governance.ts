@@ -60,9 +60,13 @@ export default class Governance extends Contract {
     return this.call(callParams);
   }
 
-  getProposals(offset: number, batch_size: number = 20) {
+  getProposals(offset: number, batch_size: number) {
     const callParams = this.paramsBuilder({
       method: 'getProposals',
+      params: {
+        batch_size: IconConverter.toHex(batch_size),
+        offset: IconConverter.toHex(offset),
+      },
     });
     return this.call(callParams);
   }

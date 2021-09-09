@@ -27,7 +27,7 @@ export const PROPOSAL_CONFIG = {
         dist_percent: BalancedJs.utils.toLoop(Number(item[1]) / 100).toNumber(),
       }));
       return {
-        updateDistPercent: { _recipient_list: recipientList },
+        updateBalTokenDistPercentage: { _recipient_list: recipientList },
       };
     },
     validate: sum => ({ isValid: sum === 100, message: 'Allocation must equal 100%.' }),
@@ -67,7 +67,7 @@ export const PROPOSAL_CONFIG = {
     },
     submitParams: ratioInputValue => {
       const origination_fee = Number(Object.values(ratioInputValue)) * 100;
-      return { update_origination_fee: { _fee: origination_fee } };
+      return { setOriginationFee: { _fee: origination_fee } };
     },
     validate: sum => ({
       isValid: sum <= 10,
@@ -83,7 +83,7 @@ export const PROPOSAL_CONFIG = {
     },
     submitParams: ratioInputValue => {
       const locking_ratio = Math.round(1000000 / Number(Object.values(ratioInputValue)));
-      return { update_locking_ratio: { _ratio: locking_ratio } };
+      return { setLockingRatio: { _ratio: locking_ratio } };
     },
     validate: sum => ({
       isValid: sum <= 80,
@@ -99,7 +99,7 @@ export const PROPOSAL_CONFIG = {
     },
     submitParams: ratioInputValue => {
       const rebalance_ratio = Math.round(1000000 / Number(Object.values(ratioInputValue)));
-      return { setRebalancingThreshold: { _value: rebalance_ratio } };
+      return { setRebalancingThreshold: { _ratio: rebalance_ratio } };
     },
     validate: sum => ({
       isValid: sum <= 7.5,

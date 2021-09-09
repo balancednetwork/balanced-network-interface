@@ -14,7 +14,7 @@ import { DefaultLayout } from 'app/components/Layout';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect';
-import Ratio from 'app/components/newproposal/Ratio';
+import RatioInput from 'app/components/newproposal/RatioInput';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage/constant';
@@ -258,7 +258,7 @@ export function NewProposalPage() {
           {/* @ts-ignore */}
           <FieldTextArea onChange={onTextAreaInputChange} value={description} />
           {!isTextProposal && (
-            <Ratio
+            <RatioInput
               onRatioChange={onRatioInputChange}
               showErrorMessage={touched.ratio && message && !isValid}
               value={ratioInputValue}

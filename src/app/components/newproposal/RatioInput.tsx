@@ -14,7 +14,7 @@ export interface Recipient {
   percent: string;
 }
 
-interface RatioValue {
+export interface RatioValue {
   name?: string;
   percent: string;
 }
@@ -24,7 +24,7 @@ interface RatioProps {
   value?: { [key: string]: string };
   message?: string;
 }
-export default function Ratio({ onRatioChange, showErrorMessage = false, value, message }: RatioProps) {
+export default function RatioInput({ onRatioChange, showErrorMessage = false, value, message }: RatioProps) {
   const [ratioValues, setRatioValues] = React.useState<Array<RatioValue> | undefined>();
   const [tooltipPosition, setTooltipPosition] = React.useState('');
 
@@ -110,26 +110,26 @@ export default function Ratio({ onRatioChange, showErrorMessage = false, value, 
   );
 }
 
-const Wrapper = styled(Flex)`
+export const Wrapper = styled(Flex)`
   align-items: flex-start;
   justify-content: center;
   max-width: 460px;
   margin: 50px auto;
 `;
-const BoxPanel = styled(Box)`
+export const BoxPanel = styled(Box)`
   &:first-child {
     border-right: 1px solid rgba(255, 255, 255, 0.15);
     margin-right: 25px;
   }
 `;
 
-const List = styled.ul`
+export const List = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
 `;
 
-const ListItem = styled.li<{ hasTitle?: boolean }>`
+export const ListItem = styled.li<{ hasTitle?: boolean }>`
   display: flex;
   align-items: center;
   margin-top: 25px;

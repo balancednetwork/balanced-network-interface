@@ -42,6 +42,9 @@ export enum Field {
   CURRENCY_B = 'CURRENCY_B',
 }
 
+// temporarily solution. need to refactor later
+const BALNRewardPairs = [1, 2, 3, 4];
+
 export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }: ModalProps) {
   const { account } = useIconReact();
 
@@ -79,7 +82,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
       const res: any = await bnJs
         .inject({ account: account })
-        [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]));
+        [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType], currencyKey));
       addTransaction(
         { hash: res.result },
         {
@@ -124,7 +127,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
       const res: any = await bnJs
         .inject({ account: account })
-        .Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(amountWithdraw));
+        .Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(amountWithdraw, currencyKey));
       addTransaction(
         { hash: res.result },
         {
@@ -189,8 +192,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
         .Dex.add(
           bnJs[selectedPair.baseCurrencyKey].address,
           bnJs[selectedPair.quoteCurrencyKey].address,
-          BalancedJs.utils.toLoop(pool?.baseDeposited || new BigNumber(0)),
-          BalancedJs.utils.toLoop(pool?.quoteDeposited || new BigNumber(0)),
+          BalancedJs.utils.toLoop(pool?.baseDeposited || new BigNumber(0), selectedPair.baseCurrencyKey),
+          BalancedJs.utils.toLoop(pool?.quoteDeposited || new BigNumber(0), selectedPair.quoteCurrencyKey),
         )
         .then((res: any) => {
           addTransaction(
@@ -271,7 +274,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
   };
 
   const isQueue = selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX;
-
+  const isBALNRewardPool = BALNRewardPairs.some(id => id === selectedPair.poolId);
   const isEnabled = isQueue
     ? true
     : (addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success) ||
@@ -453,7 +456,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
             </StyledDL>
           </Box>
         </Flex>
-        <Typography mt={2} textAlign="center" hidden={isQueue}>
+        <Typography mt={2} textAlign="center" hidden={isQueue || !isBALNRewardPool}>
           Your assets will be locked for 24 hours. <br />
           To receive BALN, they must be in the pool at 1pm Eastern each day.
         </Typography>

@@ -97,6 +97,10 @@ export const PROPOSAL_CONFIG = {
       const _percent = BalancedJs.utils.toIcx(res).times(100).toFixed();
       return [{ percent: _percent }];
     },
+    submitParams: ratioInputValue => {
+      const rebalance_ratio = Math.round(1000000 / Number(Object.values(ratioInputValue)));
+      return { setRebalancingThreshold: { _value: rebalance_ratio } };
+    },
     validate: sum => ({
       isValid: sum <= 7.5,
       message: 'Must be less than or equal to 7.5%.',

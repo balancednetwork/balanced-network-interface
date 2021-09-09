@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
@@ -24,7 +25,7 @@ export const PROPOSAL_CONFIG = {
     submitParams: ratioInputValue => {
       const recipientList = Object.entries(ratioInputValue).map(item => ({
         recipient_name: getKeyByValue(item[0]) || item[0],
-        dist_percent: BalancedJs.utils.toLoop(Number(item[1]) / 100).toNumber(),
+        dist_percent: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
       }));
       return {
         updateBalTokenDistPercentage: { _recipient_list: recipientList },
@@ -48,7 +49,7 @@ export const PROPOSAL_CONFIG = {
         const key = getKeyByValue(item[0]);
         return (
           key && {
-            [key]: BalancedJs.utils.toLoop(Number(item[1]) / 100).toNumber(),
+            [key]: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
           }
         );
       });

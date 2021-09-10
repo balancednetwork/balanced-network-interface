@@ -99,6 +99,7 @@ export default function RatioInput({ onRatioChange, showErrorMessage = false, va
                       maxLength={6}
                       spellCheck="false"
                     />
+                    &nbsp; %
                   </ListItem>
                 </Tooltip>
               ))}

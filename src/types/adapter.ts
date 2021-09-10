@@ -37,7 +37,7 @@ export const convertPair = (pairInfo: PairInfo, pool?: Pool) => {
       BigNumber.isBigNumber(pool.baseDeposited) &&
       !pool.baseDeposited.isNaN() &&
       BigNumber.isBigNumber(pool.quoteDeposited) &&
-      pool.quoteDeposited.isNaN()
+      !pool.quoteDeposited.isNaN()
     ) {
       const [baseNumerator, baseDenominator] = pool.baseDeposited.toFraction();
       const [quoteNumerator, quoteDenominator] = pool.quoteDeposited.toFraction();

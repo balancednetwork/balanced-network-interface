@@ -2,6 +2,7 @@ import { Token } from 'types/balanced-sdk-core/index';
 
 import { SupportedChainId } from './chains';
 
+export const ICX = new Token(SupportedChainId.MAINNET, 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX');
 export const sICX = new Token(
   SupportedChainId.MAINNET,
   'cx2609b924e33ef00b648a409245c7ea394c467824',
@@ -20,8 +21,8 @@ export const BALN = new Token(
   SupportedChainId.MAINNET,
   'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
   6,
-  'USDC',
-  'USD//C',
+  'BALN',
+  'Balance Token',
 );
 export const IUSDC = new Token(
   SupportedChainId.MAINNET, //
@@ -40,6 +41,13 @@ export const USDS = new Token(
 export const OMM = new Token(SupportedChainId.MAINNET, 'cx1a29259a59f463a67bb2ef84398b30ca56b5830a', 18, 'OMM', 'OMM');
 
 // yeouido
+export const ICX_YEOUIDO = new Token(
+  SupportedChainId.YEOUIDO,
+  'cx0000000000000000000000000000000000000000',
+  18,
+  'ICX',
+  'ICX',
+);
 export const sICX_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
   'cxae6334850f13dfd8b50f8544d5acb126bb8ef82d',
@@ -58,8 +66,8 @@ export const BALN_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
   'cx36169736b39f59bf19e8950f6c8fa4bfa18b710a',
   6,
-  'USDC',
-  'USD//C',
+  'BALN',
+  'Balance Token',
 );
 export const IUSDC_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO, //
@@ -78,8 +86,8 @@ export const USDS_YEOUIDO = new Token(
 
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
-  [SupportedChainId.MAINNET]: [sICX, bnUSD, BALN, IUSDC, OMM, USDS],
-  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, BALN_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
+  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS],
+  [SupportedChainId.YEOUIDO]: [ICX_YEOUIDO, sICX_YEOUIDO, bnUSD_YEOUIDO, BALN_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
 };
 
 export interface TokenInfo {

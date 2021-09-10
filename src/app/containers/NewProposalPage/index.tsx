@@ -200,7 +200,7 @@ export function NewProposalPage() {
               { hash: res.result },
               {
                 pending: 'Submitting a proposal...',
-                summary: `Submitted the proposal.`,
+                summary: `Proposal submitted.`,
               },
             );
             toggleOpen();
@@ -274,6 +274,9 @@ export function NewProposalPage() {
               disabled={
                 description.length > 500 ||
                 title.length > 100 ||
+                title.length === 0 ||
+                forumLink.length === 0 ||
+                !forumLink.includes('gov.balanced.network') ||
                 !account ||
                 isStakeInvalid ||
                 (!isTextProposal && !isValid)

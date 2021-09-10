@@ -19,7 +19,7 @@ export default function Ratio({ proposalType, proposedList }: RatioProps) {
 
       setRatioValues(result);
     })();
-  }, []);
+  }, [proposalType]);
 
   return (
     <Wrapper>
@@ -30,7 +30,7 @@ export default function Ratio({ proposalType, proposedList }: RatioProps) {
           </Typography>
           <List>
             {ratioValues.map(({ name, percent }) => (
-              <ListItem key={name + percent} hasTitle={!!name}>
+              <ListItem key={(name || '') + percent} hasTitle={!!name}>
                 {name && <Typography variant="p">{name}</Typography>}
                 <Typography variant="h2">{percent}%</Typography>
               </ListItem>

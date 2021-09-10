@@ -3,9 +3,8 @@ import React, { useEffect } from 'react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage/constant';
+import { PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
-import { useProposalType } from 'store/proposal/hooks';
 
 import Tooltip from '../Tooltip';
 
@@ -16,31 +15,37 @@ export interface Recipient {
 
 export interface RatioValue {
   name?: string;
-  percent: string;
+  percent: string | number;
 }
 interface RatioProps {
   onRatioChange: (value, name) => void;
   showErrorMessage?: boolean;
   value?: { [key: string]: string };
   message?: string;
+  proposalType: PROPOSAL_TYPE;
 }
-export default function RatioInput({ onRatioChange, showErrorMessage = false, value, message }: RatioProps) {
+
+export default function RatioInput({
+  onRatioChange,
+  showErrorMessage = false,
+  value,
+  message,
+  proposalType,
+}: RatioProps) {
   const [ratioValues, setRatioValues] = React.useState<Array<RatioValue> | undefined>();
   const [tooltipPosition, setTooltipPosition] = React.useState('');
 
-  const selectedProposalType = useProposalType();
-
   useEffect(() => {
-    if (selectedProposalType !== 'Text') {
+    if (proposalType !== PROPOSAL_TYPE.TEXT) {
       (async () => {
-        const result = await PROPOSAL_CONFIG[selectedProposalType].fetchInputData();
+        const result = await PROPOSAL_CONFIG[proposalType].fetchInputData();
 
         setRatioValues(result);
       })();
     } else {
       setRatioValues([]);
     }
-  }, [selectedProposalType]);
+  }, [proposalType]);
 
   const handleChange = name => e => {
     const ratioInput = e.target.value.replace(/,/g, '.');
@@ -61,7 +66,7 @@ export default function RatioInput({ onRatioChange, showErrorMessage = false, va
             </Typography>
             <List>
               {ratioValues.map(({ name, percent }) => (
-                <ListItem key={name + percent} hasTitle={!!name}>
+                <ListItem key={(name || '') + percent} hasTitle={!!name}>
                   {name && <Typography variant="p">{name === 'Loans' ? 'Borrower' : name}</Typography>}
                   <Typography variant="h2">{percent}%</Typography>
                 </ListItem>
@@ -75,7 +80,7 @@ export default function RatioInput({ onRatioChange, showErrorMessage = false, va
             <List>
               {ratioValues.map(({ name, percent }, index) => (
                 <Tooltip
-                  key={name + percent}
+                  key={(name || '') + percent}
                   containerStyle={{ width: 'auto' }}
                   refStyle={{ display: 'block' }}
                   placement="right"

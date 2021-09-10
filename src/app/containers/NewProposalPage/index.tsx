@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { Box, Flex } from 'rebass/styled-components';
@@ -17,12 +16,11 @@ import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect'
 import RatioInput from 'app/components/newproposal/RatioInput';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
-import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage/constant';
+import { PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useProposalType } from 'store/proposal/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -94,7 +92,7 @@ export function NewProposalPage() {
   const details = useBALNDetails();
   const { account } = useIconReact();
   useWalletFetchBalances(account);
-  const selectedProposalType = useProposalType();
+  const [selectedProposalType, setProposalType] = React.useState<PROPOSAL_TYPE>(PROPOSAL_TYPE.TEXT);
 
   //Form
   const [title, setTitle] = useState('');
@@ -121,14 +119,16 @@ export function NewProposalPage() {
   const addTransaction = useTransactionAdder();
 
   //Form
-  const isTextProposal = selectedProposalType === 'Text';
+  const isTextProposal = selectedProposalType === PROPOSAL_TYPE.TEXT;
   const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
   const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
   const minimumStakeBalance = totalBALN.times(0.1 / 100);
   const isStakeInvalid = stakedBalance.isLessThan(minimumStakeBalance);
 
   const { data: platformDay } = usePlatformDayQuery();
-  const { submitParams, validate } = !isTextProposal && PROPOSAL_CONFIG[selectedProposalType];
+
+  // @ts-ignore
+  const { submitParams, validate } = !isTextProposal ? PROPOSAL_CONFIG[selectedProposalType] : {};
 
   const validateRatioInput = () => {
     const arrayRatioValue = Object.values(ratioInputValue);
@@ -141,9 +141,6 @@ export function NewProposalPage() {
 
   const { isValid, message } = validateRatioInput();
 
-  // Will remove when forumLink is used in later sprints
-  console.log(forumLink);
-
   const onTitleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
     setTitle(event.currentTarget.value);
   };
@@ -153,7 +150,7 @@ export function NewProposalPage() {
     !touched.forumLink && setTouched({ ...touched, forumLink: true });
   };
 
-  const onTextAreaInputChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const onTextAreaInputChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
     setDescription(event.currentTarget.value);
   };
 
@@ -187,13 +184,7 @@ export function NewProposalPage() {
     platformDay &&
       bnJs
         .inject({ account })
-        .Governance.defineVote(
-          title,
-          description,
-          IconConverter.toHex(platformDay + 1),
-          IconConverter.toHex(platformDay),
-          actions,
-        )
+        .Governance.defineVote(title, description, platformDay + 1, platformDay, actions)
         .then(res => {
           if (res.result) {
             addTransaction(
@@ -215,6 +206,10 @@ export function NewProposalPage() {
         });
   };
 
+  const handleProposalTypeSelect = (type: PROPOSAL_TYPE) => {
+    setProposalType(type);
+  };
+
   return (
     <DefaultLayout title="Vote">
       <Helmet>
@@ -222,7 +217,7 @@ export function NewProposalPage() {
       </Helmet>
       <NewProposalContainer>
         <Breadcrumb title={'New proposal'} locationText={'Vote'} locationPath={'/vote'} />
-        <ProposalTypesSelect />
+        <ProposalTypesSelect onSelect={handleProposalTypeSelect} selected={selectedProposalType} />
         <ProposalDetailContainer>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
@@ -255,7 +250,6 @@ export function NewProposalPage() {
               {`${description.length}/500`}
             </Typography>
           </FieldContainer>
-          {/* @ts-ignore */}
           <FieldTextArea onChange={onTextAreaInputChange} value={description} />
           {!isTextProposal && (
             <RatioInput
@@ -263,6 +257,7 @@ export function NewProposalPage() {
               showErrorMessage={touched.ratio && message && !isValid}
               value={ratioInputValue}
               message={message}
+              proposalType={selectedProposalType}
             />
           )}
 

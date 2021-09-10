@@ -12,7 +12,6 @@ export const useProposalInfoQuery = (pId: number) => {
   return useQuery<ProposalInterface | undefined>(QUERY_KEYS.Vote.VoteInfo(pId), async () => {
     const res = await bnJs.Governance.checkVote(pId);
     if (!res.id) return;
-    console.log('useProposalInfoQuery', res);
     const _against = BalancedJs.utils.toIcx(res['against']);
     const _for = BalancedJs.utils.toIcx(res['for']);
 

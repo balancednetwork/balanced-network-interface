@@ -7,11 +7,16 @@ import styled from 'styled-components';
 import { StyledArrowDownIcon, Wrapper } from 'app/components/DropdownText';
 import { DataText, List, ListItem } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
-import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage/constant';
+import { PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
-import { useProposalType, useSetProposalType } from 'store/proposal/hooks';
 
-export default function ProposalTypesSelect() {
+export default function ProposalTypesSelect({
+  onSelect,
+  selected,
+}: {
+  onSelect: (type: PROPOSAL_TYPE) => void;
+  selected: PROPOSAL_TYPE;
+}) {
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
@@ -30,12 +35,9 @@ export default function ProposalTypesSelect() {
     return () => window.removeEventListener('resize', handleResize);
   }, [width]);
 
-  const setProposalType = useSetProposalType();
-  const selectedProposalType = useProposalType();
-
-  const handleSelectProposal = (type: string) => {
+  const handleSelectProposal = (type: PROPOSAL_TYPE) => {
     toggleOpen();
-    setProposalType(type);
+    onSelect(type);
   };
 
   return (
@@ -44,14 +46,14 @@ export default function ProposalTypesSelect() {
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <div ref={ref}>
           <StyledWrapper onClick={toggleOpen}>
-            <Text active={open}>{selectedProposalType}</Text>
+            <Text active={open}>{selected}</Text>
             <StyledArrowDownIcon />
           </StyledWrapper>
 
           <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom" offset={[0, 10]}>
             <List style={{ width: '210px', paddingTop: '10px', paddingBottom: '20px' }}>
-              {Object.keys(PROPOSAL_CONFIG).map(type => (
-                <ListItem key={type} small onClick={() => handleSelectProposal(type)}>
+              {Object.values(PROPOSAL_TYPE).map(type => (
+                <ListItem key={type} small onClick={() => handleSelectProposal(type as PROPOSAL_TYPE)}>
                   <DataText variant="p" fontWeight="bold" small>
                     {type}
                   </DataText>

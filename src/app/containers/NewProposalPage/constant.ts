@@ -9,16 +9,25 @@ const ProposalMapping = {
   Loans: 'Borrower',
 };
 
+export enum PROPOSAL_TYPE {
+  TEXT = 'Text',
+  BALN_ALLOCATION = 'BALN allocation',
+  NETWORK_FEE_ALLOCATION = 'Network fee allocation',
+  LOAN_FEE = 'Loan fee',
+  LOAN_TO_VALUE_RATIO = 'Loan to value ratio',
+  REBALANCING_THRESHOLD = 'Rebalancing threshold',
+}
+
 export const ActionsMapping = {
-  'BALN allocation': ['updateBalTokenDistPercentage', 'updateDistPercent'],
-  'Network fee allocation': ['setDividendsCategoryPercentage'],
-  'Loan fee': ['setOriginationFee', 'update_origination_fee'],
-  'Loan to value ratio': ['setLockingRatio', 'update_locking_ratio'],
-  'Rebalancing threshold': ['setRebalancingThreshold'],
+  [PROPOSAL_TYPE.BALN_ALLOCATION]: ['updateBalTokenDistPercentage', 'updateDistPercent'],
+  [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: ['setDividendsCategoryPercentage'],
+  [PROPOSAL_TYPE.LOAN_FEE]: ['setOriginationFee', 'update_origination_fee'],
+  [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: ['setLockingRatio', 'update_locking_ratio'],
+  [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: ['setRebalancingThreshold'],
 };
 
 export const RATIO_VALUE_FORMATTER = {
-  'BALN allocation': data => {
+  [PROPOSAL_TYPE.BALN_ALLOCATION]: data => {
     // debugger;
     return data.map(({ recipient_name, dist_percent }) => ({
       name: ProposalMapping[recipient_name] || recipient_name,
@@ -28,9 +37,7 @@ export const RATIO_VALUE_FORMATTER = {
         .toFixed(),
     }));
   },
-  'Network fee allocation': data => {
-    console.log('data', data);
-
+  [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: data => {
     return data.map((item: { [key: string]: number }) => {
       const _item = Object.entries(item)[0];
       return {
@@ -39,16 +46,15 @@ export const RATIO_VALUE_FORMATTER = {
       };
     });
   },
-  'Loan fee': (data: number) => {
+  [PROPOSAL_TYPE.LOAN_FEE]: (data: number) => {
     const _percent = Number((data / 100).toFixed(2));
     return [{ percent: _percent }];
   },
-  'Loan to value ratio': (data: number) => {
-    console.log('data', data);
+  [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: (data: number) => {
     const _percent = Math.round(Number(1000000 / data));
     return [{ percent: _percent }];
   },
-  'Rebalancing threshold': data => {
+  [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: data => {
     const _percent = Number(BalancedJs.utils.toIcx(data).times(100).toFixed(2));
     return [{ percent: _percent }];
   },
@@ -57,9 +63,9 @@ export const RATIO_VALUE_FORMATTER = {
 const getKeyByValue = value => {
   return Object.keys(ProposalMapping).find(key => ProposalMapping[key] === value);
 };
+
 export const PROPOSAL_CONFIG = {
-  Text: undefined,
-  'BALN allocation': {
+  [PROPOSAL_TYPE.BALN_ALLOCATION]: {
     fetchInputData: async () =>
       Object.entries(await bnJs.Rewards.getRecipientsSplit()).map(item => ({
         name: ProposalMapping[item[0]] || item[0],
@@ -79,7 +85,7 @@ export const PROPOSAL_CONFIG = {
     },
     validate: sum => ({ isValid: sum === 100, message: 'Allocation must equal 100%.' }),
   },
-  'Network fee allocation': {
+  [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: {
     fetchInputData: async () => {
       const res = await bnJs.Dividends.getDividendsPercentage();
       return Object.entries(res).map(item => ({
@@ -105,8 +111,7 @@ export const PROPOSAL_CONFIG = {
     },
     validate: sum => ({ isValid: sum === 100, message: 'Allocation must equal 100%.' }),
   },
-
-  'Loan fee': {
+  [PROPOSAL_TYPE.LOAN_FEE]: {
     fetchInputData: async () => {
       const res = await bnJs.Loans.getParameters();
       const _percent = Number((parseInt(res['origination fee'], 16) / 100).toFixed(2));
@@ -121,8 +126,7 @@ export const PROPOSAL_CONFIG = {
       message: 'Must be less than or equal to 10%.',
     }),
   },
-
-  'Loan to value ratio': {
+  [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: {
     fetchInputData: async () => {
       const res = await bnJs.Loans.getParameters();
       const _percent = Math.round(Number(1000000 / parseInt(res['locking ratio'], 16)));
@@ -138,8 +142,7 @@ export const PROPOSAL_CONFIG = {
       message: 'Must be less than the liquidation threshold (66.67%).',
     }),
   },
-
-  'Rebalancing threshold': {
+  [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: {
     fetchInputData: async () => {
       const res = await bnJs.Rebalancing.getPriceChangeThreshold();
       const _percent = BalancedJs.utils.toIcx(res).times(100).toFixed();

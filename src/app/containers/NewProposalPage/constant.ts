@@ -134,8 +134,8 @@ export const PROPOSAL_CONFIG = {
       return { setLockingRatio: { _ratio: locking_ratio } };
     },
     validate: sum => ({
-      isValid: sum <= 80,
-      message: 'Must be less than or equal to the liquidation threshold (80%).',
+      isValid: sum <= 66.67,
+      message: 'Must be less than or equal to the liquidation threshold (66.67%).',
     }),
   },
 

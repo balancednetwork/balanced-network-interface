@@ -6,7 +6,15 @@ import bnJs from 'bnJs';
 const ProposalMapping = {
   daofund: 'DAO fund',
   baln_holders: 'BALN holders',
-  Loans: 'Borrower',
+  Loans: 'Borrowers',
+  DAOfund: 'DAO fund',
+  'Reserve Fund': 'Reserve',
+  'Worker Tokens': 'Workers',
+  'sICX/ICX': 'sICX / ICX',
+  'sICX/bnUSD': 'sICX / bnUSD',
+  'BALN/bnUSD': 'BALN / bnUSD',
+  'BALN/sICX': 'BALN / sICX',
+  'IUSDC/bnUSD': 'IUSDC / bnUSD',
 };
 
 export enum PROPOSAL_TYPE {

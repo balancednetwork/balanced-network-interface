@@ -120,7 +120,7 @@ export default function RatioInput({
 export const Wrapper = styled(Flex)`
   align-items: flex-start;
   justify-content: center;
-  max-width: 460px;
+  max-width: 500px;
   margin: 50px auto;
 `;
 export const BoxPanel = styled(Box)`

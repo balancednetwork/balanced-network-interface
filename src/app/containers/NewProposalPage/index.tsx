@@ -158,7 +158,8 @@ export function NewProposalPage() {
   const canSubmit = account && isStakeValid && isFormValid;
 
   const { isValid, message } = validateRatioInput();
-  const isForumLinkValid = /^\S+(\.gov\.balanced\.network)$/.test(forumLink);
+  const isForumLinkValid =
+    forumLink.startsWith('https://gov.balanced.network') || forumLink.startsWith('gov.balanced.network');
 
   const onTitleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
     setTitle(event.currentTarget.value);

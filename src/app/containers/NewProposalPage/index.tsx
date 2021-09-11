@@ -19,7 +19,7 @@ import Tooltip from 'app/components/Tooltip';
 import { PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { usePlatformDayQuery } from 'queries/vote';
+import { usePlatformDayQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';

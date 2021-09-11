@@ -77,12 +77,4 @@ export default class Loans extends Contract {
 
     return this.call(callParams);
   }
-
-  getDay() {
-    const callParams = this.paramsBuilder({
-      method: 'getDay',
-    });
-
-    return this.call(callParams);
-  }
 }

@@ -67,7 +67,7 @@ export default function RatioInput({
             <List>
               {ratioValues.map(({ name, percent }) => (
                 <ListItem key={(name || '') + percent} hasTitle={!!name}>
-                  {name && <Typography variant="p">{name === 'Loans' ? 'Borrower' : name}</Typography>}
+                  {name && <Typography variant="p">{name}</Typography>}
                   <Typography variant="h2">{percent}%</Typography>
                 </ListItem>
               ))}

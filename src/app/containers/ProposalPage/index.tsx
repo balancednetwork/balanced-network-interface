@@ -30,6 +30,9 @@ import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { getTrackerLink } from 'utils';
 
+import { ActionsMapping, RATIO_VALUE_FORMATTER } from '../NewProposalPage/constant';
+import Ratio from './Ratio';
+
 dayjs.extend(duration);
 
 const ProposalContainer = styled(Box)`
@@ -92,6 +95,18 @@ export function ProposalPage() {
   const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
   const { data: userStatus } = voteStatusQuery;
   const { data: platformDay } = usePlatformDayQuery();
+
+  const actions = JSON.parse(proposal?.actions || '{}');
+  const actionKeys = Object.keys(actions);
+
+  const getKeyByValue = value => {
+    return Object.keys(ActionsMapping).find(key => ActionsMapping[key].includes(value));
+  };
+
+  const ratioAction = actionKeys.find(actionKey => getKeyByValue(actionKey));
+
+  const proposalType = actionKeys.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
+
   const isActive =
     proposal &&
     platformDay &&
@@ -317,6 +332,18 @@ export function ProposalPage() {
             weight={votingWeight}
           />
         </BoxPanel>
+
+        {proposalType && ratioAction && (
+          <BoxPanel bg="bg2" my={10}>
+            <Typography variant="h2" mb="20px">
+              {proposalType}
+            </Typography>
+            <Ratio
+              proposalType={proposalType}
+              proposedList={RATIO_VALUE_FORMATTER[proposalType](Object.values(actions[ratioAction])[0])}
+            />
+          </BoxPanel>
+        )}
 
         <BoxPanel bg="bg2" my={10}>
           <Typography variant="h2" mb="20px">

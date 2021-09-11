@@ -14,13 +14,14 @@ export const HeaderText = styled(Typography)`
   letter-spacing: 3px;
 `;
 
-export const DataText = styled(Typography)`
+export const DataText = styled(Typography)<{ small?: boolean }>`
   color: inherit;
-  font-size: 16px;
+  font-size: ${props => (props.small ? '14px' : '16px')};
 `;
 
-export const ListItem = styled(DashGrid)`
-  padding: 20px 0;
+export const ListItem = styled(DashGrid)<{ small?: boolean }>`
+  ${props => props.small && 'grid-template-columns: 1fr;'}
+  padding: ${props => (props.small ? '10px' : '20px')} 0;
   cursor: pointer;
   color: #ffffff;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);

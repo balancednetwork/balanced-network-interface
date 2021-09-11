@@ -273,4 +273,5 @@ export interface ProposalInterface {
   status: string;
   sum: number;
   voters: number;
+  actions: string;
 }

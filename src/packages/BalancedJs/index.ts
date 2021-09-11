@@ -14,6 +14,7 @@ import ICX from './contracts/ICX';
 import IUSDC from './contracts/IUSDC';
 import Loans from './contracts/Loans';
 import OMM from './contracts/OMM';
+import Rebalancing from './contracts/Rebalancing';
 import Rewards from './contracts/Rewards';
 import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
@@ -56,6 +57,7 @@ export class BalancedJs {
   Airdrip: Airdrip;
   Dividends: Dividends;
   Governance: Governance;
+  Rebalancing: Rebalancing;
 
   static utils = {
     toLoop(value: BigNumber | number | string, currencyKey?: string): BigNumber {
@@ -114,6 +116,7 @@ export class BalancedJs {
     this.Airdrip = new Airdrip(this.contractSettings);
     this.Dividends = new Dividends(this.contractSettings);
     this.Governance = new Governance(this.contractSettings);
+    this.Rebalancing = new Rebalancing(this.contractSettings);
   }
 
   inject({ account, legerSettings }: SettingInjection) {

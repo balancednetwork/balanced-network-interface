@@ -92,4 +92,12 @@ export default class BALN extends Contract {
 
     return this.call(callParams);
   }
+
+  totalSupply() {
+    const callParams = this.paramsBuilder({
+      method: 'totalSupply',
+    });
+
+    return this.call(callParams);
+  }
 }

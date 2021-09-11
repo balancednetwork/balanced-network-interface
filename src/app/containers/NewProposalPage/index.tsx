@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { Box, Flex } from 'rebass/styled-components';
@@ -121,10 +122,19 @@ export function NewProposalPage() {
 
   //Form
   const isTextProposal = selectedProposalType === PROPOSAL_TYPE.TEXT;
-  const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
-  const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
-  const minimumStakeBalance = totalBALN.times(0.1 / 100);
-  const isStakeValid = stakedBalance.isGreaterThanOrEqualTo(minimumStakeBalance);
+  const [{ isStakeValid, minimumStakeBalance }, setStakeItem] = useState<{
+    isStakeValid?: boolean;
+    minimumStakeBalance?: BigNumber;
+  }>({});
+
+  useEffect(() => {
+    (async () => {
+      const totalSupply = await bnJs.BALN.totalSupply();
+      const stakedBalance: BigNumber = details['Staked balance'] || new BigNumber(0);
+      const minimumStakeBalance = BalancedJs.utils.toIcx(totalSupply).times(0.1 / 100);
+      setStakeItem({ isStakeValid: stakedBalance.isGreaterThanOrEqualTo(minimumStakeBalance), minimumStakeBalance });
+    })();
+  }, [details]);
 
   const { data: platformDay } = usePlatformDayQuery();
 
@@ -302,7 +312,7 @@ export function NewProposalPage() {
               Submit
             </Button>
           </div>
-          {account && !isStakeValid && (
+          {account && !isStakeValid && minimumStakeBalance && (
             <Typography variant="content" mt="25px" mb="25px" textAlign="center" color={theme.colors.alert}>
               Stake at least {minimumStakeBalance.dp(2).toFormat()} BALN if you want to propose a change.
             </Typography>

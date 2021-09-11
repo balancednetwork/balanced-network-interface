@@ -237,7 +237,7 @@ const PositionDetailPanel = () => {
               <Typography variant="h3" mr={15}>
                 Rebalancing{' '}
                 <MouseoverTooltip
-                  containerStyle={{ width: 360 }}
+                  containerStyle={{ width: 330 }}
                   text={
                     <Box>
                       <Typography>

@@ -44,9 +44,6 @@ export const QUERY_KEYS = {
     Rebalancing: (account: string, period: string) => ['PositionDetails', 'Rebalancing', account, period],
   },
   BnJs: (contract: string, method: string, args: any[]) => ['bnjs', 'contract', contract, method, args],
-  Loans: {
-    PlatformDay: ['Loans', 'PlatformDay'],
-  },
 };
 
 export default QUERY_KEYS;

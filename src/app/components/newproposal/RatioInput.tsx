@@ -89,22 +89,23 @@ export default function RatioInput({
                 >
                   <ListItem hasTitle={!!name}>
                     {name && <Typography variant="p">{name}</Typography>}
-                    <FieldInput
-                      value={(value && value[name || index]) || ''}
-                      hasTitle={!!name}
-                      // universal input options
-                      inputMode="decimal"
-                      autoComplete="off"
-                      autoCorrect="off"
-                      onChange={handleChange(name || index)}
-                      // text-specific options
-                      type="text"
-                      pattern="^[0-9]*[.,]?[0-9]*$"
-                      minLength={1}
-                      maxLength={6}
-                      spellCheck="false"
-                    />
-                    &nbsp; %
+                    <InputWrapper>
+                      <FieldInput
+                        value={(value && value[name || index]) || ''}
+                        hasTitle={!!name}
+                        // universal input options
+                        inputMode="decimal"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        onChange={handleChange(name || index)}
+                        // text-specific options
+                        type="text"
+                        pattern="^[0-9]*[.,]?[0-9]*$"
+                        minLength={1}
+                        maxLength={6}
+                        spellCheck="false"
+                      />
+                    </InputWrapper>
                   </ListItem>
                 </Tooltip>
               ))}
@@ -151,16 +152,25 @@ export const ListItem = styled.li<{ hasTitle?: boolean }>`
     ${props => props.hasTitle && 'padding-left: 15px; width: 50%;'}
   }
 `;
-
+const InputWrapper = styled.div`
+  position: relative;
+  &:after {
+    content: '%';
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+  }
+`;
 const FieldInput = styled.input<{ hasTitle?: boolean }>`
   border-radius: 10px;
   width: 100%;
-  max-width: ${props => (props.hasTitle ? '70px' : '100px')};
+  max-width: ${props => (props.hasTitle ? '80px' : '100px')};
   height: 40px;
   border: none;
   caret-color: white;
   color: white;
-  padding: 3px 14px;
+  padding: 3px 20px 3px 10px;
   text-align: center;
   margin-left: ${props => (props.hasTitle ? '15px' : '0')};
   background-color: ${({ theme }) => theme.colors.bg5};

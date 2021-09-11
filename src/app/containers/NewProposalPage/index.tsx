@@ -201,7 +201,7 @@ export function NewProposalPage() {
               { hash: res.result },
               {
                 pending: 'Submitting a proposal...',
-                summary: `Proposal submitted.`,
+                summary: `${selectedProposalType} proposal submitted.`,
               },
             );
             toggleOpen();

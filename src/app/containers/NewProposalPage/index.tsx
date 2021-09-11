@@ -123,13 +123,14 @@ export function NewProposalPage() {
   const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
   const stakedBalance: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
   const minimumStakeBalance = totalBALN.times(0.1 / 100);
-  const isStakeInvalid = stakedBalance.isLessThan(minimumStakeBalance);
+  const isStakeValid = stakedBalance.isGreaterThanOrEqualTo(minimumStakeBalance);
 
   const { data: platformDay } = usePlatformDayQuery();
 
   // @ts-ignore
   const { submitParams, validate } = !isTextProposal ? PROPOSAL_CONFIG[selectedProposalType] : {};
 
+  //Validation
   const validateRatioInput = () => {
     const arrayRatioValue = Object.values(ratioInputValue);
     const isEmpty = arrayRatioValue.every(ratio => ratio === '');
@@ -139,7 +140,16 @@ export function NewProposalPage() {
     return !!validate && validate(totalRatio);
   };
 
+  const isTitleValid = title.trim() && title.length <= 100;
+  const isDescriptionValid = description.trim() && description.length <= 500;
+  const isForumLinkValid = forumLink.includes('gov.balanced.network');
+
   const { isValid, message } = validateRatioInput();
+
+  const isValidRatioInput = isTextProposal || isValid;
+
+  const isValidForm =
+    account && isStakeValid && isTitleValid && isDescriptionValid && isForumLinkValid && isValidRatioInput;
 
   const onTitleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
     setTitle(event.currentTarget.value);
@@ -265,23 +275,11 @@ export function NewProposalPage() {
             It costs 100 bnUSD to submit a proposal.
           </Typography>
           <div style={{ textAlign: 'center' }}>
-            <Button
-              disabled={
-                description.length > 500 ||
-                title.length > 100 ||
-                title.length === 0 ||
-                forumLink.length === 0 ||
-                !forumLink.includes('gov.balanced.network') ||
-                !account ||
-                isStakeInvalid ||
-                (!isTextProposal && !isValid)
-              }
-              onClick={toggleOpen}
-            >
+            <Button disabled={!isValidForm} onClick={toggleOpen}>
               Submit
             </Button>
           </div>
-          {account && isStakeInvalid && (
+          {account && !isStakeValid && (
             <Typography variant="content" mt="25px" mb="25px" textAlign="center" color={theme.colors.alert}>
               Stake at least {minimumStakeBalance.dp(2).toFormat()} BALN if you want to propose a change.
             </Typography>

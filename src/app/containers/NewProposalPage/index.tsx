@@ -82,7 +82,7 @@ const FieldTextArea = styled.textarea`
   }
 `;
 
-interface Touched {
+interface ErrorItem {
   forumLink: boolean;
   ratio: boolean;
 }
@@ -99,7 +99,8 @@ export function NewProposalPage() {
   const [forumLink, setForumLink] = useState('');
   const [description, setDescription] = useState('');
   const [ratioInputValue, setRatioInputValue] = useState<{ [key: string]: string }>({});
-  const [touched, setTouched] = useState<Touched>({
+
+  const [showError, setShowError] = useState<ErrorItem>({
     forumLink: false,
     ratio: false,
   });
@@ -139,17 +140,15 @@ export function NewProposalPage() {
 
     return !!validate && validate(totalRatio);
   };
-
-  const isTitleValid = title.trim() && title.length <= 100;
-  const isDescriptionValid = description.trim() && description.length <= 500;
-  const isForumLinkValid = forumLink.includes('gov.balanced.network');
+  const isFormValid =
+    title.trim() &&
+    description.trim() &&
+    forumLink.trim() &&
+    (isTextProposal || Object.values(ratioInputValue).every(ratio => !!ratio.trim()));
+  const canSubmit = account && isStakeValid && isFormValid;
 
   const { isValid, message } = validateRatioInput();
-
-  const isValidRatioInput = isTextProposal || isValid;
-
-  const isValidForm =
-    account && isStakeValid && isTitleValid && isDescriptionValid && isForumLinkValid && isValidRatioInput;
+  const isForumLinkValid = /^\S+(\.gov\.balanced\.network)$/.test(forumLink);
 
   const onTitleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
     setTitle(event.currentTarget.value);
@@ -157,7 +156,11 @@ export function NewProposalPage() {
 
   const onForumInputChange = (event: React.FormEvent<HTMLInputElement>) => {
     setForumLink(event.currentTarget.value);
-    !touched.forumLink && setTouched({ ...touched, forumLink: true });
+    showError.forumLink &&
+      setShowError({
+        ...showError,
+        forumLink: false,
+      });
   };
 
   const onTextAreaInputChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
@@ -166,7 +169,30 @@ export function NewProposalPage() {
 
   const onRatioInputChange = (value: string, recipent_name: string) => {
     setRatioInputValue({ ...ratioInputValue, [recipent_name]: value });
-    !touched.ratio && setTouched({ ...touched, ratio: true });
+    showError.ratio &&
+      setShowError({
+        ...showError,
+        ratio: false,
+      });
+  };
+
+  const scrollToTop = () => {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+  };
+
+  const formSubmit = () => {
+    scrollToTop();
+    const invalidInput = {
+      forumLink: !isForumLinkValid,
+      ratio: message && !isValid,
+    };
+    if (invalidInput.forumLink || invalidInput.ratio) {
+      scrollToTop();
+      setShowError(invalidInput);
+    } else {
+      toggleOpen();
+    }
   };
 
   useEffect(() => setRatioInputValue({}), [selectedProposalType]);
@@ -176,13 +202,9 @@ export function NewProposalPage() {
     setForumLink('');
     setDescription('');
     setRatioInputValue({});
-    setTouched({
-      forumLink: false,
-      ratio: false,
-    });
   };
 
-  const submit = () => {
+  const modalSubmit = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
@@ -237,7 +259,7 @@ export function NewProposalPage() {
               {`${title.length}/100`}
             </Typography>
           </FieldContainer>
-          <FieldInput type="text" onChange={onTitleInputChange} value={title} />
+          <FieldInput type="text" onChange={onTitleInputChange} value={title} maxLength={100} />
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
               Forum link
@@ -248,7 +270,7 @@ export function NewProposalPage() {
             refStyle={{ display: 'block' }}
             placement="bottom"
             text="Must link to a discussion on gov.balanced.network."
-            show={touched.forumLink && !forumLink.includes('gov.balanced.network')}
+            show={showError.forumLink}
           >
             <FieldInput type="text" onChange={onForumInputChange} value={forumLink} />
           </Tooltip>
@@ -260,14 +282,15 @@ export function NewProposalPage() {
               {`${description.length}/500`}
             </Typography>
           </FieldContainer>
-          <FieldTextArea onChange={onTextAreaInputChange} value={description} />
+          <FieldTextArea onChange={onTextAreaInputChange} value={description} maxLength={500} />
           {!isTextProposal && (
             <RatioInput
               onRatioChange={onRatioInputChange}
-              showErrorMessage={touched.ratio && message && !isValid}
+              showErrorMessage={showError.ratio}
               value={ratioInputValue}
               message={message}
               proposalType={selectedProposalType}
+              setInitialValue={setRatioInputValue}
             />
           )}
 
@@ -275,7 +298,7 @@ export function NewProposalPage() {
             It costs 100 bnUSD to submit a proposal.
           </Typography>
           <div style={{ textAlign: 'center' }}>
-            <Button disabled={!isValidForm} onClick={toggleOpen}>
+            <Button disabled={!canSubmit} onClick={formSubmit}>
               Submit
             </Button>
           </div>
@@ -309,7 +332,7 @@ export function NewProposalPage() {
                 <TextButton onClick={toggleOpen} fontSize={14}>
                   Go back
                 </TextButton>
-                <Button onClick={submit} fontSize={14} disabled={!hasEnoughICX}>
+                <Button onClick={modalSubmit} fontSize={14} disabled={!hasEnoughICX}>
                   Submit proposal
                 </Button>
               </>

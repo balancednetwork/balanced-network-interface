@@ -3,6 +3,8 @@ import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 
+export const MAX_RATIO_VALUE = 100;
+
 const ProposalMapping = {
   daofund: 'DAO fund',
   baln_holders: 'BALN holders',

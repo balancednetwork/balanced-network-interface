@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
+import { MAX_RATIO_VALUE, PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 
 import Tooltip from '../Tooltip';
@@ -23,6 +23,7 @@ interface RatioProps {
   value?: { [key: string]: string };
   message?: string;
   proposalType: PROPOSAL_TYPE;
+  setInitialValue: (initValue: { [key: string]: string }) => void;
 }
 
 export default function RatioInput({
@@ -31,29 +32,33 @@ export default function RatioInput({
   value,
   message,
   proposalType,
+  setInitialValue,
 }: RatioProps) {
   const [ratioValues, setRatioValues] = React.useState<Array<RatioValue> | undefined>();
-  const [tooltipPosition, setTooltipPosition] = React.useState('');
 
   useEffect(() => {
     if (proposalType !== PROPOSAL_TYPE.TEXT) {
       (async () => {
         const result = await PROPOSAL_CONFIG[proposalType].fetchInputData();
-
         setRatioValues(result);
+        const initValue = (result as Array<RatioValue>).reduce(
+          (acc, cur, idx) => ({ ...acc, [cur.name || idx]: '' }),
+          {},
+        );
+        initValue && setInitialValue(initValue);
       })();
     } else {
       setRatioValues([]);
     }
-  }, [proposalType]);
+  }, [proposalType, setInitialValue]);
 
   const handleChange = name => e => {
     const ratioInput = e.target.value.replace(/,/g, '.');
     const isNumberValid = /^\d+(?:[.])?\d*$/.test(ratioInput);
     const nextRatioInput = isNumberValid ? ratioInput : ratioInput.replace(/[^0-9.]/g, '');
+    if (nextRatioInput > MAX_RATIO_VALUE) return;
     const formatDecimal = nextRatioInput.match(/^\d+(?:[.])?\d{0,2}/);
     onRatioChange((formatDecimal && formatDecimal[0]) || nextRatioInput, name);
-    setTooltipPosition(name ?? '');
   };
 
   return (
@@ -78,16 +83,36 @@ export default function RatioInput({
               New
             </Typography>
             <List>
-              {ratioValues.map(({ name, percent }, index) => (
-                <Tooltip
-                  key={(name || '') + percent}
-                  containerStyle={{ width: 'auto' }}
-                  refStyle={{ display: 'block' }}
-                  placement="right"
-                  text={message}
-                  show={showErrorMessage && (name || index) === tooltipPosition}
-                >
-                  <ListItem hasTitle={!!name}>
+              {ratioValues.map(({ name, percent }, index) =>
+                index === ratioValues.length - 1 ? (
+                  <Tooltip
+                    key={(name || '') + percent}
+                    containerStyle={{ width: 'auto' }}
+                    refStyle={{ display: 'block' }}
+                    placement="right"
+                    text={message}
+                    show={showErrorMessage}
+                  >
+                    <ListItem hasTitle={!!name}>
+                      {name && <Typography variant="p">{name}</Typography>}
+                      <InputWrapper>
+                        <FieldInput
+                          value={(value && value[name || index]) || ''}
+                          hasTitle={!!name}
+                          // universal input options
+                          inputMode="decimal"
+                          autoComplete="off"
+                          autoCorrect="off"
+                          onChange={handleChange(name || index)}
+                          // text-specific options
+                          type="text"
+                          spellCheck="false"
+                        />
+                      </InputWrapper>
+                    </ListItem>
+                  </Tooltip>
+                ) : (
+                  <ListItem hasTitle={!!name} key={(name || '') + percent}>
                     {name && <Typography variant="p">{name}</Typography>}
                     <InputWrapper>
                       <FieldInput
@@ -100,15 +125,12 @@ export default function RatioInput({
                         onChange={handleChange(name || index)}
                         // text-specific options
                         type="text"
-                        pattern="^[0-9]*[.,]?[0-9]*$"
-                        minLength={1}
-                        maxLength={6}
                         spellCheck="false"
                       />
                     </InputWrapper>
                   </ListItem>
-                </Tooltip>
-              ))}
+                ),
+              )}
             </List>
           </BoxPanel>
         </>
@@ -160,6 +182,7 @@ const InputWrapper = styled.div`
     position: absolute;
     top: 50%;
     right: 10px;
+    transform: translateY(-50%);
   }
 `;
 const FieldInput = styled.input<{ hasTitle?: boolean }>`

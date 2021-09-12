@@ -18,8 +18,12 @@ const MAINNET_ADDRESSES = {
   sicx: 'cx2609b924e33ef00b648a409245c7ea394c467824',
   bnusd: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
   baln: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
+  omm: 'cx1a29259a59f463a67bb2ef84398b30ca56b5830a',
+  iusdc: 'cxae3034235540b924dfcc1b45836c293dcc82bfb7',
+  usds: 'cxbb2871f468a3008f80b08fdde5b8b951583acf06',
   bwt: 'cxcfe9d1f83fa871e903008471cca786662437e58d',
   airdrip: 'cxaf244cf3c7164fe6f996f398a9d99c4d4a85cf15',
+  rebalancing: 'cx40d59439571299bca40362db2a7d8cae5b0b30b0',
 };
 
 const YEOUIDO_ADDRESSES = {
@@ -35,8 +39,12 @@ const YEOUIDO_ADDRESSES = {
   sicx: 'cxae6334850f13dfd8b50f8544d5acb126bb8ef82d',
   bnusd: 'cxc48c9c81ceef04445c961c5cc8ff056d733dfe3a',
   baln: 'cx36169736b39f59bf19e8950f6c8fa4bfa18b710a',
+  omm: 'cx05515d126a47a98c682fa86992329e6c2ec70503',
+  iusdc: 'cx65f639254090820361da483df233f6d0e69af9b7',
+  usds: 'cxc0666df567a6e0b49342648e98ccbe5362b264ea',
   bwt: 'cx5d886977b7d24b9f73a460c9ca2d43847997c285',
   airdrip: 'cx8ed4fbee9d6497f91ea90933db288ff4b43e54ba',
+  rebalancing: 'cx2e3398dfce78a3c83de8a41d7c5f4aa40d3a4f30',
 };
 
 const addresses = {

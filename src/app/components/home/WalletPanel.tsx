@@ -13,7 +13,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { CURRENCY } from 'constants/currency';
 import '@reach/tabs/styles.css';
-import { useRatio } from 'store/ratio/hooks';
+import { useRatesQuery } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
 
@@ -32,7 +32,6 @@ const WalletUIs = {
 const WalletPanel = () => {
   const balances = useWalletBalances();
   const { account } = useIconReact();
-  const ratio = useRatio();
   const transactions = useAllTransactions();
   const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
   const details = useBALNDetails();
@@ -41,15 +40,7 @@ const WalletPanel = () => {
   const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
   const isAvailable = stakedBALN.isGreaterThan(new BigNumber(0)) || unstakingBALN.isGreaterThan(new BigNumber(0));
 
-  const rates = React.useMemo(
-    () => ({
-      ICX: ratio.ICXUSDratio,
-      sICX: ratio.sICXICXratio.times(ratio.ICXUSDratio),
-      bnUSD: new BigNumber(1),
-      BALN: ratio.BALNbnUSDratio,
-    }),
-    [ratio],
-  );
+  const { data: rates } = useRatesQuery();
 
   useEffect(() => {
     (async () => {
@@ -111,12 +102,12 @@ const WalletPanel = () => {
                         as="div"
                         hasNotification={currency.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}
                       >
-                        {!account
+                        {!account || !rates || !rates[currency]
                           ? '-'
                           : currency.toLowerCase() === 'baln'
                           ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
                           : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
-                        {currency.toLowerCase() === 'baln' && isAvailable && (
+                        {currency.toLowerCase() === 'baln' && isAvailable && rates && rates[currency] && (
                           <>
                             <Typography color="rgba(255,255,255,0.75)">
                               ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}

@@ -23,7 +23,7 @@ export function useMintActionHandlers(
 ): {
   onFieldAInput: (typedValue: string) => void;
   onFieldBInput: (typedValue: string) => void;
-  onSlide: (typedValue: string) => void;
+  onSlide: (field: Field, typedValue: string) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -46,10 +46,8 @@ export function useMintActionHandlers(
   );
 
   const onSlide = useCallback(
-    (typedValue: string) => {
-      dispatch(
-        typeInput({ field: Field.CURRENCY_A, typedValue, noLiquidity: noLiquidity === true, inputType: 'slider' }),
-      );
+    (field: Field, typedValue: string) => {
+      dispatch(typeInput({ field, typedValue, noLiquidity: noLiquidity === true, inputType: 'slider' }));
     },
     [dispatch, noLiquidity],
   );
@@ -60,16 +58,6 @@ export function useMintActionHandlers(
     onSlide,
   };
 }
-
-const useSelectedPairBalances = (): { [field in Field]: BigNumber } => {
-  const selectedPair = usePoolPair();
-  const balances = useWalletBalances();
-
-  return {
-    [Field.CURRENCY_A]: balances[selectedPair.baseCurrencyKey],
-    [Field.CURRENCY_B]: balances[selectedPair.quoteCurrencyKey],
-  };
-};
 
 const useSelectedPairRatio = () => {
   const selectedPair = usePoolPair();
@@ -97,7 +85,14 @@ export function useDerivedMintInfo(): {
   const noLiquidity = pool?.total.isZero() ? true : false;
 
   // balances
-  const currencyBalances = useSelectedPairBalances();
+  const balances = useWalletBalances();
+  const currencyBalances = React.useMemo(
+    () => ({
+      [Field.CURRENCY_A]: balances[pair.baseCurrencyKey],
+      [Field.CURRENCY_B]: balances[pair.quoteCurrencyKey],
+    }),
+    [pair, balances],
+  );
 
   // price
   const price = useSelectedPairRatio();

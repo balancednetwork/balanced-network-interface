@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
+import useInterval from 'hooks/useInterval';
 import { useRatio } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -71,6 +72,10 @@ export function useFetchPools() {
   const changePool = useChangePool();
   const { networkId } = useIconReact();
 
+  //call useEffect per 15000ms
+  const [last, setLast] = React.useState(0);
+  const increment = React.useCallback(() => setLast(last => last + 1), [setLast]);
+  useInterval(increment, 15000);
   // fetch pool stats
   const fetchPool = React.useCallback(
     async (pair: Pair) => {
@@ -83,22 +88,31 @@ export function useFetchPools() {
 
       let result;
 
+      let rate;
       if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        const [t, rate] = await Promise.all([bnJs.Dex.totalSupply(poolId), await bnJs.Staking.getTodayRate()]);
+        const [t, _rate] = await Promise.all([bnJs.Dex.totalSupply(poolId), await bnJs.Staking.getTodayRate()]);
 
-        result = [t, t, t, rate, 0, 0];
+        result = [t, t, t, 0, 0];
+        rate = BalancedJs.utils.toIcx(_rate);
       } else {
         result = await Promise.all([
           bnJs.Dex.totalSupply(poolId),
           bnJs.Dex.getPoolTotal(poolId, baseAddress),
           bnJs.Dex.getPoolTotal(poolId, quoteAddress),
-          bnJs.Dex.getPrice(poolId),
           account && bnJs.Dex.getDeposit(baseAddress, account),
           account && bnJs.Dex.getDeposit(quoteAddress, account),
         ]);
       }
 
-      const [total, base, quote, rate, baseDeposited, quoteDeposited] = result.map(v => BalancedJs.utils.toIcx(v));
+      const [total, base, quote, baseDeposited, quoteDeposited] = [
+        BalancedJs.utils.toIcx(result[0]),
+        BalancedJs.utils.toIcx(result[1], pair.baseCurrencyKey),
+        BalancedJs.utils.toIcx(result[2], pair.quoteCurrencyKey),
+        BalancedJs.utils.toIcx(result[3], pair.baseCurrencyKey),
+        BalancedJs.utils.toIcx(result[4], pair.quoteCurrencyKey),
+      ];
+
+      if (poolId !== BalancedJs.utils.POOL_IDS.sICXICX) rate = quote.div(base);
 
       changePool(poolId, {
         baseCurrencyKey: pair.baseCurrencyKey,
@@ -117,7 +131,7 @@ export function useFetchPools() {
 
   React.useEffect(() => {
     SUPPORTED_PAIRS.forEach(pair => fetchPool(pair));
-  }, [fetchPool, transactions, networkId]);
+  }, [fetchPool, transactions, networkId, last]);
 
   // fetch LP token balances
 

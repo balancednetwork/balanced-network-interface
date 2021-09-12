@@ -13,7 +13,6 @@ export const useProposalInfoQuery = (pId: number) => {
   return useQuery<ProposalInterface | undefined>(QUERY_KEYS.Vote.VoteInfo(pId), async () => {
     const res = await bnJs.Governance.checkVote(pId);
     if (!res.id) return;
-
     const _against = BalancedJs.utils.toIcx(res['against']);
     const _for = BalancedJs.utils.toIcx(res['for']);
 
@@ -37,6 +36,7 @@ export const useProposalInfoQuery = (pId: number) => {
       uniqueRejectVoters: parseInt(res['against_voter_count'], 16),
       voters: parseInt(res['for_voter_count'], 16) + parseInt(res['against_voter_count'], 16),
       status: res['status'],
+      actions: res['actions'],
     };
   });
 };
@@ -106,7 +106,7 @@ export const useTotalCollectedFeesQuery = () => {
   });
 };
 
-export const useTotalProposalQuery = (offset: number = 1, batchSize: number = 20) => {
+export const useTotalProposalQuery = (offset: number = 1, batchSize: number = 100) => {
   return useQuery<Array<ProposalInterface>>(QUERY_KEYS.Vote.TotalProposals, async () => {
     const res = await bnJs.Governance.getProposals(offset, batchSize);
     const data = res.map(r => {

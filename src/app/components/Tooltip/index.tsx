@@ -6,16 +6,20 @@ import styled from 'styled-components';
 import Popover, { PopoverProps, PopperWithoutArrowAndBorder } from '../Popover';
 
 const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean }>`
-  @media (max-width: 650px) {
-    ${props => props.small && ' width: 156px;  font-size: 12px; padding: 11px;'}
-  }
-
-  width: ${props => (props.wide ? '300px' : '244px')};
+  width: ${props => (props.wide ? '300px' : '260px')};
   padding: 10px 0.9375rem;
   line-height: 150%;
   font-weight: 400;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.white};
+
+  @media (max-width: 650px) {
+    ${props => props.small && ' width: 180px; padding: 11px;'}
+  }
+
+  @media (max-width: 410px) {
+    ${props => props.small && ' width: 120px; padding: 10px'}
+  }
 `;
 
 interface TooltipProps extends Omit<PopoverProps, 'content'> {
@@ -24,9 +28,18 @@ interface TooltipProps extends Omit<PopoverProps, 'content'> {
   small?: boolean;
   containerStyle?: React.CSSProperties;
   noArrowAndBorder?: boolean;
+  refStyle?: React.CSSProperties;
 }
 
-export default function Tooltip({ text, wide, small, containerStyle, noArrowAndBorder, ...rest }: TooltipProps) {
+export default function Tooltip({
+  text,
+  wide,
+  small,
+  containerStyle,
+  refStyle,
+  noArrowAndBorder,
+  ...rest
+}: TooltipProps) {
   return (
     <>
       {noArrowAndBorder ? (
@@ -42,6 +55,7 @@ export default function Tooltip({ text, wide, small, containerStyle, noArrowAndB
             </TooltipContainer>
           }
           {...rest}
+          refStyle={refStyle}
         />
       )}
     </>

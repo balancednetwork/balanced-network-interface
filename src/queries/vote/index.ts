@@ -167,30 +167,33 @@ export const useAdditionalInfoById = (id?: number) => {
   return items?.find(item => item.id === id);
 };
 
-export const useHasAccountActiveProposal = () => {
+export const useActiveProposals = () => {
   const { account } = useIconReact();
   const { data: platformDay } = usePlatformDayQuery();
 
-  return useQuery<boolean | undefined>(QUERY_KEYS.Vote.IsAnyProposalActive(account || ''), async () => {
+  return useQuery(QUERY_KEYS.Vote.ActiveProposals(account || ''), async () => {
     if (account) {
       const proposals = await bnJs.Governance.getProposals(1, 100);
-      return (
-        (await proposals
-          .filter(
-            proposal =>
-              platformDay &&
-              proposal.status === 'Active' &&
-              proposal.startDay <= platformDay &&
-              proposal.endDay > platformDay,
-          )
-          .filter(async proposal => {
+
+      return Promise.all(
+        proposals.map(async proposal => {
+          if (
+            platformDay &&
+            proposal.status === 'Active' &&
+            parseInt(proposal['start day'], 16) <= platformDay &&
+            parseInt(proposal['end day'], 16) > platformDay
+          ) {
             const res = await bnJs.Governance.getVotesOfUser(parseInt(proposal.id), account!);
             const approval = BalancedJs.utils.toIcx(res['for']);
             const reject = BalancedJs.utils.toIcx(res['against']);
             const hasVoted = !(approval.isZero() && reject.isZero());
+
             return !hasVoted;
-          }).length) > 0
-      );
+          } else {
+            return false;
+          }
+        }),
+      ).then(results => proposals.filter((_proposal, index) => results[index]));
     }
   });
 };

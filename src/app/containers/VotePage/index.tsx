@@ -8,10 +8,18 @@ import { DefaultLayout } from 'app/components/Layout';
 import { BoxPanel } from 'app/components/Panel';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
-import { useTotalProposalQuery } from 'queries/vote';
+import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
 
 export function VotePage() {
   const { data: proposals } = useTotalProposalQuery();
+  const useActiveProposalsQuery = useActiveProposals();
+  const { data: activeProposals } = useActiveProposalsQuery;
+
+  const shouldShowNotification = currentProposal => {
+    return (
+      activeProposals && activeProposals.filter(proposal => parseInt(proposal.id, 16) === currentProposal.id).length > 0
+    );
+  };
 
   return (
     <DefaultLayout title="Vote">
@@ -29,7 +37,7 @@ export function VotePage() {
             .sort((a, b) => b?.id - a?.id)
             .map(proposal => (
               <Link key={proposal.id} to={`/vote/proposal/${proposal?.id}`} style={{ textDecoration: 'none' }}>
-                <ProposalInfo proposal={proposal} />
+                <ProposalInfo proposal={proposal} showNotification={shouldShowNotification(proposal)} />
               </Link>
             ))
         ) : (

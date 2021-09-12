@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { ReactComponent as HomeIcon } from 'assets/icons/home.svg';
 import { ReactComponent as TradeIcon } from 'assets/icons/trade.svg';
 import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
-import { useHasAccountActiveProposal } from 'queries/vote';
+import { useActiveProposals } from 'queries/vote';
 
 import { notificationCSS } from '../home/wallets/utils';
 
@@ -60,7 +60,7 @@ const ListItem = styled.li`
 
 const activeClassName = 'ACTIVE';
 
-const StyledNavLink = styled(NavLink).attrs({ activeClassName })<{ hasNotification?: boolean }>`
+const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   display: block;
   margin-left: 50%;
   transform: translate(-50%);
@@ -99,7 +99,9 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })<{ hasNotificati
   > svg {
     margin-bottom: 5px;
   }
+`;
 
+const StyledNavLinkWithNotification = styled(StyledNavLink)<{ hasNotification?: boolean }>`
   ${({ theme, hasNotification }) =>
     hasNotification &&
     `
@@ -121,8 +123,8 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })<{ hasNotificati
 `;
 
 export default React.memo(function AppBar() {
-  const hasAccountActiveProposalQuery = useHasAccountActiveProposal();
-  const { data: hasActiveProposal } = hasAccountActiveProposalQuery;
+  const useActiveProposalsQuery = useActiveProposals();
+  const { data: activeProposals } = useActiveProposalsQuery;
 
   return (
     <Navigation>
@@ -140,10 +142,10 @@ export default React.memo(function AppBar() {
           </StyledNavLink>
         </ListItem>
         <ListItem>
-          <StyledNavLink to="/vote" hasNotification={hasActiveProposal}>
+          <StyledNavLinkWithNotification to="/vote" hasNotification={activeProposals && activeProposals.length}>
             <VoteIcon width="35" height="33" />
             <Text>Vote</Text>
-          </StyledNavLink>
+          </StyledNavLinkWithNotification>
         </ListItem>
       </List>
     </Navigation>

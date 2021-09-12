@@ -13,9 +13,11 @@ import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import { ProposalInterface } from 'types';
 import { normalizeContent } from 'utils';
 
+import { notificationCSS } from '../home/wallets/utils';
+
 dayjs.extend(duration);
 
-const ProposalWrapper = styled.div`
+const ProposalWrapper = styled.div<{ showNotification?: boolean }>`
   border-radius: 10px;
   flex: 1;
   width: 100%;
@@ -31,6 +33,14 @@ const ProposalWrapper = styled.div`
   :hover,
   :focus {
     border: 2px solid #2ca9b7;
+  }
+
+  ${({ showNotification }) => showNotification && `${notificationCSS}`}
+
+  &:before, &:after {
+    left: 10px;
+    top: 10px;
+    background-color: ${({ theme }) => theme.colors.primaryBright};
   }
 `;
 const ApprovalSwatch = styled(Box)`
@@ -59,7 +69,13 @@ export const StyledSkeleton = styled(Skeleton)`
   background-color: rgba(44, 169, 183, 0.2) !important;
 `;
 
-export default function ProposalInfo({ proposal }: { proposal?: ProposalInterface }) {
+export default function ProposalInfo({
+  proposal,
+  showNotification,
+}: {
+  proposal?: ProposalInterface;
+  showNotification?: boolean;
+}) {
   const {
     id,
     name: title,
@@ -74,7 +90,7 @@ export default function ProposalInfo({ proposal }: { proposal?: ProposalInterfac
   } = proposal || {};
 
   return (
-    <ProposalWrapper>
+    <ProposalWrapper showNotification={showNotification}>
       <Typography variant="h3" mb="10px">
         {title ? title : <StyledSkeleton animation="wave" height={30} />}
       </Typography>

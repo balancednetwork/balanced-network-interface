@@ -31,7 +31,7 @@ import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/s
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { CurrencyKey, Price } from 'types';
-import { convertCurrencyAmount } from 'types/adapter';
+import { convertCurrencyAmount, revertPrice } from 'types/adapter';
 import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -129,7 +129,7 @@ export default function SwapPanel() {
   };
 
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-  const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.multiply(10_000).toFixed() || 0));
+  const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
   const addTransaction = useTransactionAdder();
 
   const handleSwapConfirm = async () => {
@@ -325,7 +325,7 @@ export default function SwapPanel() {
 
                       {(trade?.executionPrice || price) && (
                         <TradePrice
-                          price={(trade ? trade.executionPrice : price) as Price}
+                          price={(trade ? revertPrice(trade.executionPrice) : price) as Price}
                           showInverted={showInverted}
                           setShowInverted={setShowInverted}
                         />

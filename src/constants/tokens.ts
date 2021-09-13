@@ -20,7 +20,7 @@ export const bnUSD = new Token(
 export const BALN = new Token(
   SupportedChainId.MAINNET,
   'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
-  6,
+  18,
   'BALN',
   'Balance Token',
 );
@@ -65,7 +65,7 @@ export const bnUSD_YEOUIDO = new Token(
 export const BALN_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
   'cx36169736b39f59bf19e8950f6c8fa4bfa18b710a',
-  6,
+  18,
   'BALN',
   'Balance Token',
 );

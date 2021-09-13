@@ -14,12 +14,14 @@ export const getTokenFromCurrencyKey = (key?: CurrencyKey) => {
   if (key) return tokens.find((token: Token) => token.symbol === key);
 };
 
+const TEN = new BigNumber(10);
+
 export const convertCurrencyAmount = (value?: LegacyCurrencyAmount) => {
   if (value) {
     const token = getTokenFromCurrencyKey(value.currencyKey);
 
     if (token) {
-      const [numerator, denominator] = value.amount.toFraction();
+      const [numerator, denominator] = value.amount.times(TEN.pow(token.decimals)).toFraction();
 
       return CurrencyAmount.fromFractionalAmount(token, numerator.toFixed(), denominator.toFixed());
     }
@@ -39,12 +41,8 @@ export const convertPair = (pairInfo: PairInfo, pool?: Pool) => {
       BigNumber.isBigNumber(pool.quote) &&
       !pool.quote.isNaN()
     ) {
-      const [baseNumerator, baseDenominator] = pool.base
-        .times(new BigNumber(10).exponentiatedBy(baseToken.decimals))
-        .toFraction();
-      const [quoteNumerator, quoteDenominator] = pool.quote
-        .times(new BigNumber(10).exponentiatedBy(quoteToken.decimals))
-        .toFraction();
+      const [baseNumerator, baseDenominator] = pool.base.times(TEN.pow(baseToken.decimals)).toFraction();
+      const [quoteNumerator, quoteDenominator] = pool.quote.times(TEN.pow(quoteToken.decimals)).toFraction();
       return new Pair(
         CurrencyAmount.fromFractionalAmount(baseToken, baseNumerator.toFixed(), baseDenominator.toFixed()),
         CurrencyAmount.fromFractionalAmount(quoteToken, quoteNumerator.toFixed(), quoteDenominator.toFixed()),

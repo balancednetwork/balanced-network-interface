@@ -129,7 +129,7 @@ export const SUPPORTED_TOKENS_INFO: TokenInfo[] = [
   },
   {
     name: 'Balance Token',
-    address: '0x4922a015c4407F87432B179bb209e125432E4a2A',
+    address: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
     symbol: 'BALN',
     decimals: 18,
     chainId: 1,

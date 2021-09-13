@@ -388,14 +388,14 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
 
   get fee(): CurrencyAmount<Currency> {
     if (this.inputAmount.currency.symbol === 'sICX' && this.outputAmount.currency.symbol === 'ICX') {
-      return this.inputAmount.multiply(0.01);
+      return this.inputAmount.multiply(new Fraction(1, 100));
     }
 
     if (this.inputAmount.currency.symbol === 'ICX' && this.outputAmount.currency.symbol === 'sICX') {
       return this.inputAmount.multiply(0);
     }
 
-    return this.inputAmount.multiply(0.003);
+    return this.inputAmount.multiply(new Fraction(3, 1000));
   }
 
   get isQueue(): boolean {

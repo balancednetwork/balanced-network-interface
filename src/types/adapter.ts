@@ -34,13 +34,13 @@ export const convertPair = (pairInfo: PairInfo, pool?: Pool) => {
     if (
       baseToken &&
       quoteToken &&
-      BigNumber.isBigNumber(pool.baseDeposited) &&
-      !pool.baseDeposited.isNaN() &&
-      BigNumber.isBigNumber(pool.quoteDeposited) &&
-      !pool.quoteDeposited.isNaN()
+      BigNumber.isBigNumber(pool.base) &&
+      !pool.base.isNaN() &&
+      BigNumber.isBigNumber(pool.quote) &&
+      !pool.quote.isNaN()
     ) {
-      const [baseNumerator, baseDenominator] = pool.baseDeposited.toFraction();
-      const [quoteNumerator, quoteDenominator] = pool.quoteDeposited.toFraction();
+      const [baseNumerator, baseDenominator] = pool.base.toFraction();
+      const [quoteNumerator, quoteDenominator] = pool.quote.toFraction();
       return new Pair(
         CurrencyAmount.fromFractionalAmount(baseToken, baseNumerator.toFixed(), baseDenominator.toFixed()),
         CurrencyAmount.fromFractionalAmount(quoteToken, quoteNumerator.toFixed(), quoteDenominator.toFixed()),

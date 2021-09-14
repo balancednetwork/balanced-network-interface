@@ -245,7 +245,7 @@ const PositionDetailPanel = () => {
                       </Typography>
                       <br />
                       <Typography>
-                        Above $1, collateral is sold and a larger amount of debt repaid. Below $1, debt is increased and
+                        Below $1, collateral is sold and a larger amount of debt repaid. Above $1, debt is increased and
                         used to buy more collateral.
                       </Typography>
                     </Box>
@@ -273,7 +273,7 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} ICX</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} sICX</Typography>
                 <Typography mt={1}>Collateral</Typography>
               </Box>
               <Box width={1 / 2}>

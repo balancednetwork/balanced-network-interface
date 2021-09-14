@@ -27,7 +27,6 @@ import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/c
 import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
-import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
 
@@ -273,7 +272,7 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} sICX</Typography>
+                <Typography variant="p">{data?.totalCollateralSold.dp(2).toNumber()} sICX</Typography>
                 <Typography mt={1}>Collateral</Typography>
               </Box>
               <Box width={1 / 2}>

@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { ChevronRight } from 'react-feather';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -36,8 +37,8 @@ import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { TradeType } from '../../../types/balanced-sdk-core';
-import { Currency, Percent } from '../../../types/balanced-sdk-core/entities';
-import { Trade } from '../../../types/balanced-v1-sdk/entities';
+import { Currency, Percent, Token } from '../../../types/balanced-sdk-core/entities';
+import { Trade, Route } from '../../../types/balanced-v1-sdk/entities';
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import Spinner from '../Spinner';
 import { BrightPanel, swapMessage } from './utils';
@@ -333,6 +334,12 @@ export default function SwapPanel() {
                     </Flex>
 
                     <Flex alignItems="center" justifyContent="space-between" mb={2}>
+                      <Typography>Route</Typography>
+
+                      <Typography textAlign="right">{trade ? <TradeRoute route={trade.route} /> : '-'}</Typography>
+                    </Flex>
+
+                    <Flex alignItems="center" justifyContent="space-between" mb={2}>
                       <Typography>Fee</Typography>
 
                       <Typography textAlign="right">
@@ -463,6 +470,18 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
         <Typography textAlign="right">{text}</Typography>
       </div>
     </StyledPriceContainer>
+  );
+}
+
+function TradeRoute({ route }: { route: Route<Currency, Currency> }) {
+  return (
+    <>
+      {route.path.map((token: Token, index: number) => (
+        <>
+          {index > 0 && <ChevronRight size={14} />} {token.symbol}
+        </>
+      ))}
+    </>
   );
 }
 

@@ -84,10 +84,26 @@ export const USDS_YEOUIDO = new Token(
   'USDS',
 );
 
+export const OMM_YEOUIDO = new Token(
+  SupportedChainId.YEOUIDO,
+  'cx1a29259a59f463a67bb2ef84398b30ca56b5830a',
+  18,
+  'OMM',
+  'OMM',
+);
+
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
   [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS],
-  [SupportedChainId.YEOUIDO]: [ICX_YEOUIDO, sICX_YEOUIDO, bnUSD_YEOUIDO, BALN_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
+  [SupportedChainId.YEOUIDO]: [
+    ICX_YEOUIDO,
+    sICX_YEOUIDO,
+    bnUSD_YEOUIDO,
+    BALN_YEOUIDO,
+    IUSDC_YEOUIDO,
+    USDS_YEOUIDO,
+    OMM_YEOUIDO,
+  ],
 };
 
 export interface TokenInfo {

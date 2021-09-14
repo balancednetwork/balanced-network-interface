@@ -273,7 +273,7 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} ICX</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} sICX</Typography>
                 <Typography mt={1}>Collateral</Typography>
               </Box>
               <Box width={1 / 2}>

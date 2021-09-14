@@ -277,7 +277,7 @@ const PositionDetailPanel = () => {
                 <Typography mt={1}>Collateral</Typography>
               </Box>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(data?.totalRepaid, 'currency')} bnUSD</Typography>
+                <Typography variant="p">{data?.totalRepaid.dp(2).toNumber()} bnUSD</Typography>
                 <Typography mt={1}>Loan</Typography>
               </Box>
             </Flex>

@@ -27,6 +27,7 @@ import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/c
 import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
+import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
 
@@ -244,7 +245,7 @@ const PositionDetailPanel = () => {
                       </Typography>
                       <br />
                       <Typography>
-                        Above $1, collateral is sold and a larger amount of debt repaid. Below $1, debt is increased and
+                        Below $1, collateral is sold and a larger amount of debt repaid. Above $1, debt is increased and
                         used to buy more collateral.
                       </Typography>
                     </Box>
@@ -272,11 +273,11 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">{data?.totalCollateralSold.dp(2).toNumber()} sICX</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} sICX</Typography>
                 <Typography mt={1}>Collateral</Typography>
               </Box>
               <Box width={1 / 2}>
-                <Typography variant="p">{data?.totalRepaid.dp(2).toNumber()} bnUSD</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalRepaid, 'currency')} bnUSD</Typography>
                 <Typography mt={1}>Loan</Typography>
               </Box>
             </Flex>

@@ -63,7 +63,7 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   } else {
     switch (type) {
       case 'currency': {
-        if (value.isLessThan(new BigNumber(1))) {
+        if (value.isLessThan(new BigNumber(1)) && value.isGreaterThanOrEqualTo(new BigNumber(0))) {
           return value.precision(2, BigNumber.ROUND_DOWN).toString();
         } else {
           return value.dp(2).toFormat();

@@ -153,12 +153,9 @@ const getValuesAndSymbols = (tx: Transaction) => {
         try {
           const data = JSON.parse(tx.data[tx.data.length - 1].replace(/'/g, '"'));
           Object.keys(data).forEach(key => {
-            if (isIUSDC(key)) {
+            if (data[key] !== 0) {
               symbols.push(getContractName(key) || '');
-              amounts.push(convertIUSDC(new BigNumber(data[key])));
-            } else if (data[key] !== 0) {
-              symbols.push(getContractName(key) || '');
-              amounts.push(convertValue(data[key]));
+              amounts.push(isIUSDC(key) ? convertIUSDC(new BigNumber(data[key])) : convertValue(data[key]));
             }
           });
         } catch (ex) {

@@ -16,8 +16,8 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { usePool, usePoolPair } from 'store/pool/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
-import { formatBigNumber } from 'utils';
+import { CurrencyAmount } from 'types';
+import { formatBigNumber, maxAmountSpend } from 'utils';
 
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
@@ -48,7 +48,6 @@ const Slider = styled(Box)`
 export default function LPPanel() {
   const { account } = useIconReact();
   const toggleWalletModal = useWalletModalToggle();
-  const balances = useWalletBalances();
 
   // modal
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
@@ -92,7 +91,13 @@ export default function LPPanel() {
   React.useEffect(() => {
     if (pool && !pool.total.isZero()) {
       if (pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        onSlide(Field.CURRENCY_B, currencyBalances[Field.CURRENCY_B].times(percent).div(100).toFixed());
+        onSlide(
+          Field.CURRENCY_B,
+          maxAmountSpend(new CurrencyAmount('ICX', currencyBalances[Field.CURRENCY_B]))!
+            .raw.times(percent)
+            .div(100)
+            .toFixed(),
+        );
       } else {
         const field = currencyBalances[Field.CURRENCY_A]
           .times(pool.quote)
@@ -136,13 +141,13 @@ export default function LPPanel() {
   const isValid = !error;
 
   const baseDisplay = `${formatBigNumber(
-    balances[pair.baseCurrencyKey].minus(formattedAmounts[Field.CURRENCY_A] || new BigNumber(0)),
+    currencyBalances[Field.CURRENCY_A].minus(formattedAmounts[Field.CURRENCY_A] || new BigNumber(0)),
     'currency',
   )} 
     ${pair.baseCurrencyKey}`;
 
   const quoteDisplay = `${formatBigNumber(
-    balances[pair.quoteCurrencyKey].minus(formattedAmounts[Field.CURRENCY_B] || new BigNumber(0)),
+    currencyBalances[Field.CURRENCY_B].minus(formattedAmounts[Field.CURRENCY_B] || new BigNumber(0)),
     'currency',
   )} 
   ${pair.quoteCurrencyKey}`;

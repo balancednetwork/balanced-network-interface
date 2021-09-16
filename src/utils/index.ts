@@ -5,7 +5,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { NetworkId, NETWORK_ID } from 'packages/icon-react';
 
 import { currencyKeyToIconMap } from 'constants/currency';
-import { MINIMUM_ICX_AMOUNT_IN_WALLET, ZERO, ONE } from 'constants/index';
+import { MINIMUM_ICX_FOR_ACTION, ZERO, ONE } from 'constants/index';
 import { Field } from 'store/swap/actions';
 import { CurrencyKey, CurrencyAmount } from 'types';
 
@@ -97,8 +97,8 @@ export const getCurrencyKeyIcon = (currencyKey: CurrencyKey) => currencyKeyToIco
 export function maxAmountSpend(currencyAmount?: CurrencyAmount): CurrencyAmount | undefined {
   if (!currencyAmount) return undefined;
   if (currencyAmount.currencyKey === 'ICX') {
-    if (currencyAmount.amount.isGreaterThan(MINIMUM_ICX_AMOUNT_IN_WALLET)) {
-      return new CurrencyAmount(currencyAmount.currencyKey, currencyAmount.amount.minus(MINIMUM_ICX_AMOUNT_IN_WALLET));
+    if (currencyAmount.amount.isGreaterThan(MINIMUM_ICX_FOR_ACTION)) {
+      return new CurrencyAmount(currencyAmount.currencyKey, currencyAmount.amount.minus(MINIMUM_ICX_FOR_ACTION));
     } else {
       return new CurrencyAmount(currencyAmount.currencyKey, ZERO);
     }

@@ -5,7 +5,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { MINIMUM_ICX_AMOUNT_IN_WALLET } from 'constants/index';
+import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -28,7 +28,7 @@ export function useCollateralAvailableAmount() {
   const ICXAmount = useWalletBalances()['ICX'];
 
   return React.useMemo(() => {
-    return BigNumber.max(ICXAmount.minus(MINIMUM_ICX_AMOUNT_IN_WALLET), new BigNumber(0));
+    return BigNumber.max(ICXAmount.minus(MINIMUM_ICX_FOR_ACTION), new BigNumber(0));
   }, [ICXAmount]);
 }
 

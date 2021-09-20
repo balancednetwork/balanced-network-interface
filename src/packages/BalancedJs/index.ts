@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { isEmpty } from 'lodash';
 
-import { NetworkId } from './addresses';
+import { SupportedChainId as NetworkId, SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from './chain';
 import Airdrip from './contracts/Airdrip';
 import BALN from './contracts/BALN';
 import Band from './contracts/Band';
@@ -20,6 +20,8 @@ import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
 import USDS from './contracts/USDS';
 import ContractSettings, { LedgerSettings } from './contractSettings';
+
+export { SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO };
 
 export type AccountType = string | undefined | null;
 export type ResponseJsonRPCPayload = {

@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
 import { BalancedJs } from 'packages/BalancedJs';
-import { NetworkId, NETWORK_ID } from 'packages/icon-react';
+import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
 
 import { currencyKeyToIconMap } from 'constants/currency';
 import { MINIMUM_ICX_FOR_ACTION, ZERO, ONE } from 'constants/index';
@@ -17,24 +17,12 @@ export function shortenAddress(address: string, chars = 7): string {
   return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
 }
 
-const API_ENDPOINTS = {
-  [NetworkId.MAINNET]: 'https://balnmainnet.techiast.com:8069',
-  [NetworkId.YEOUIDO]: 'https://balanced.techiast.com:8069',
-};
-
-export const getAPIEnpoint = () => API_ENDPOINTS[NETWORK_ID];
-
-const Trackers = {
-  [NetworkId.MAINNET]: 'https://tracker.icon.foundation',
-  [NetworkId.YEOUIDO]: 'https://bicon.tracker.solidwallet.io',
-};
-
 export function getTrackerLink(
   networkId: NetworkId,
   data: string,
   type: 'transaction' | 'token' | 'address' | 'block',
 ): string {
-  const prefix = Trackers[networkId];
+  const prefix = CHAIN_INFO[networkId].tracker;
 
   switch (type) {
     case 'transaction': {

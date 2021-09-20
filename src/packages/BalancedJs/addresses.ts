@@ -1,9 +1,4 @@
-export enum NetworkId {
-  MAINNET = 1,
-  YEOUIDO = 3,
-  EULJIRO = 2,
-  PAGODA = 80,
-}
+import { SupportedChainId as NetworkId } from './chain';
 
 const MAINNET_ADDRESSES = {
   loans: 'cx66d4d90f5f113eba575bf793570135f9b10cece1',

@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 
 import { AccountType, ResponseJsonRPCPayload, SettingInjection } from '..';
-import { NetworkId } from '../addresses';
+import { SupportedChainId as NetworkId } from '../chain';
 import ContractSettings from '../contractSettings';
 import { Ledger } from '../ledger';
 

@@ -40,7 +40,7 @@ export const CHAIN_INFO: { readonly [chainId: number]: ChainInfo } = {
     name: 'Sejong',
     node: 'https://sejong.net.solidwallet.io',
     APIEndpoint: 'https://sejong.net.solidwallet.io/api/v3',
-    debugAPIEndpoint: 'https://sejong.net.solidwallet.io/api/debug/v3',
+    debugAPIEndpoint: 'https://sejong.net.solidwallet.io/api/v3d',
     chainId: 83,
     tracker: 'https://sejong.tracker.solidwallet.io',
   },

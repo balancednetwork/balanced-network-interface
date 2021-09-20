@@ -1,10 +1,4 @@
-export enum NetworkId {
-  MAINNET = 1,
-  YEOUIDO = 3,
-  EULJIRO = 2,
-  PAGODA = 80,
-  SEJONG = 83,
-}
+import { SupportedChainId as NetworkId } from './chain';
 
 const MAINNET_ADDRESSES = {
   loans: 'cx66d4d90f5f113eba575bf793570135f9b10cece1',
@@ -56,13 +50,17 @@ const SEJONG_ADDRESSES = {
   daofund: 'cx11781737f47520e3bfad0e132c5accb4e4d6fe4f',
   rewards: 'cx026ca90fdcf4851fa6c4e00403b3abe636a9f88b',
   dex: 'cx4342802efce67d2441e69b062b1f0110b6a6f820',
-  rebalancing: 'cxd5df399205421930870e3b0798766aa31cffbe66',
   governance: 'cxdc519895ef110220db2442ff1b3223182304b68a',
   band: 'cxf96a2e83808058fb9159824e324f36d9e91cfafa',
   sicx: 'cx0e706eca3552a6e607095319f4ad8cea37e779d4',
-  bnUSD: 'cx041714d034919c8456d3606f8766f0169e35cb8e',
+  bnusd: 'cx041714d034919c8456d3606f8766f0169e35cb8e',
   baln: 'cxb45058d398614a7c8cdf7be6f556fa0b39399799',
+  omm: '',
+  iusdc: '',
+  usds: '',
   bwt: 'cxa2afb37647ae91ca6fbf35141b2ef2ac7105720a',
+  airdrip: '',
+  rebalancing: 'cxd5df399205421930870e3b0798766aa31cffbe66',
 };
 
 const addresses = {

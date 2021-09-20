@@ -1,4 +1,5 @@
 import keyBy from 'lodash/keyBy';
+import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
 import { ReactComponent as BALNIcon } from 'assets/tokens/BALN.svg';
 import { ReactComponent as bnUSDIcon } from 'assets/tokens/bnUSD.svg';
@@ -8,14 +9,6 @@ import { ReactComponent as OMMIcon } from 'assets/tokens/OMM.svg';
 import { ReactComponent as sICXIcon } from 'assets/tokens/sICX.svg';
 import { ReactComponent as USDSIcon } from 'assets/tokens/USDS.svg';
 import { CurrencyKey, Pool } from 'types';
-
-export enum NetworkId {
-  MAINNET = 1,
-  YEOUIDO = 3,
-  EULJIRO = 2,
-  PAGODA = 80,
-  SEJONG = 83,
-}
 
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
   [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS'],

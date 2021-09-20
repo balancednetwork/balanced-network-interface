@@ -1,7 +1,7 @@
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
-import { NetworkId, useIconReact } from 'packages/icon-react';
+import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
@@ -148,7 +148,7 @@ export const useTotalProposalCountQuery = () => {
 
 export const useAdditionalInfoQuery = (networkId: NetworkId) => {
   const fetch = async () => {
-    const fileName = networkId === NetworkId.MAINNET ? 'mainnet' : 'yeouido';
+    const fileName = CHAIN_INFO[networkId].name.toLowerCase();
     const { data } = await axios.get(
       `https://raw.githubusercontent.com/balancednetwork/BIP-info-list/main/proposals/${fileName}.json`,
     );

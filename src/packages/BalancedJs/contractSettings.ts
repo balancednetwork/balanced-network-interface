@@ -1,14 +1,7 @@
 import IconService from 'icon-sdk-js';
 
-import { AccountType } from '.';
-
-export enum NetworkId {
-  MAINNET = 1,
-  YEOUIDO = 3,
-  EULJIRO = 2,
-  PAGODA = 80,
-  SEJONG = 83,
-}
+import { AccountType, CHAIN_INFO } from '.';
+import { SupportedChainId as NetworkId } from './chain';
 
 export interface LedgerSettings {
   path?: string;
@@ -20,14 +13,8 @@ export const LEDGER_BASE_PATH = "44'/4801368'/0'/0'";
 
 export const getLedgerAddressPath = (point: number) => `${LEDGER_BASE_PATH}/${point}'`;
 
-const connections = {
-  [NetworkId.MAINNET]: 'https://ctz.solidwallet.io/api/v3',
-  [NetworkId.YEOUIDO]: 'https://bicon.net.solidwallet.io/api/v3',
-  [NetworkId.SEJONG]: 'https://sejong.net.solidwallet.io/api/v3',
-};
-
 const getDefaultProvider = (networkId: NetworkId = NetworkId.MAINNET) => {
-  return new IconService(new IconService.HttpProvider(connections[networkId]));
+  return new IconService(new IconService.HttpProvider(CHAIN_INFO[networkId].APIEndpoint));
 };
 
 class ContractSettings {

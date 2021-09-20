@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
-import { NetworkId } from 'packages/icon-react';
+import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
 export interface SerializableTransactionReceipt {
   to: string;

@@ -2,8 +2,8 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import { BalancedJs } from 'packages/BalancedJs';
-import addresses, { NetworkId } from 'packages/BalancedJs/addresses';
+import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex, Link } from 'rebass/styled-components';
 import styled from 'styled-components';

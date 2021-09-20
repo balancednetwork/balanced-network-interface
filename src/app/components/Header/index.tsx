@@ -62,6 +62,7 @@ export enum NetworkId {
   YEOUIDO = 3,
   EULJIRO = 2,
   PAGODA = 80,
+  SEJONG = 83,
 }
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
@@ -69,6 +70,7 @@ const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 const NETWORK_NAMES = {
   [NetworkId.MAINNET]: 'Mainet',
   [NetworkId.YEOUIDO]: 'YEOUDIO',
+  [NetworkId.SEJONG]: 'SEJONG',
 };
 
 export default React.memo(function Header(props: { title?: string; className?: string }) {

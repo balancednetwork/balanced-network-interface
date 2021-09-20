@@ -18,11 +18,13 @@ export enum NetworkId {
   YEOUIDO = 3,
   EULJIRO = 2,
   PAGODA = 80,
+  SEJONG = 83,
 }
 
 const API_ENDPOINTS = {
   [NetworkId.MAINNET]: 'https://ctz.solidwallet.io/api/v3',
   [NetworkId.YEOUIDO]: 'https://bicon.net.solidwallet.io/api/v3',
+  [NetworkId.SEJONG]: 'https://sejong.net.solidwallet.io/api/v3',
 };
 
 export const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');

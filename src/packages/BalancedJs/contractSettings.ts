@@ -7,6 +7,7 @@ export enum NetworkId {
   YEOUIDO = 3,
   EULJIRO = 2,
   PAGODA = 80,
+  SEJONG = 83,
 }
 
 export interface LedgerSettings {
@@ -22,6 +23,7 @@ export const getLedgerAddressPath = (point: number) => `${LEDGER_BASE_PATH}/${po
 const connections = {
   [NetworkId.MAINNET]: 'https://ctz.solidwallet.io/api/v3',
   [NetworkId.YEOUIDO]: 'https://bicon.net.solidwallet.io/api/v3',
+  [NetworkId.SEJONG]: 'https://sejong.net.solidwallet.io/api/v3',
 };
 
 const getDefaultProvider = (networkId: NetworkId = NetworkId.MAINNET) => {

@@ -3,6 +3,7 @@ export enum NetworkId {
   YEOUIDO = 3,
   EULJIRO = 2,
   PAGODA = 80,
+  SEJONG = 83,
 }
 
 const MAINNET_ADDRESSES = {
@@ -47,9 +48,27 @@ const YEOUIDO_ADDRESSES = {
   rebalancing: 'cx2e3398dfce78a3c83de8a41d7c5f4aa40d3a4f30',
 };
 
+const SEJONG_ADDRESSES = {
+  loans: 'cx3228124be7c85e3e57edebf870c4075c33c34c5f',
+  staking: 'cx1eb5b209e4c6f95a958bddb322d76a2168e576b2',
+  dividends: 'cx020042bb8742bfca138889e23817bee87ad8caa0',
+  reserve: 'cx76d98fc79f779308d2e872b00e7571bebef59031',
+  daofund: 'cx11781737f47520e3bfad0e132c5accb4e4d6fe4f',
+  rewards: 'cx026ca90fdcf4851fa6c4e00403b3abe636a9f88b',
+  dex: 'cx4342802efce67d2441e69b062b1f0110b6a6f820',
+  rebalancing: 'cxd5df399205421930870e3b0798766aa31cffbe66',
+  governance: 'cxdc519895ef110220db2442ff1b3223182304b68a',
+  band: 'cxf96a2e83808058fb9159824e324f36d9e91cfafa',
+  sicx: 'cx0e706eca3552a6e607095319f4ad8cea37e779d4',
+  bnUSD: 'cx041714d034919c8456d3606f8766f0169e35cb8e',
+  baln: 'cxb45058d398614a7c8cdf7be6f556fa0b39399799',
+  bwt: 'cxa2afb37647ae91ca6fbf35141b2ef2ac7105720a',
+};
+
 const addresses = {
   [NetworkId.MAINNET]: MAINNET_ADDRESSES,
   [NetworkId.YEOUIDO]: YEOUIDO_ADDRESSES,
+  [NetworkId.SEJONG]: SEJONG_ADDRESSES,
 };
 
 export default addresses;

@@ -16,7 +16,7 @@ export const formatTimeStr = (targetDay, platformDay, isStartTime?: boolean) => 
   if (daysLeft < 1) return targetDate.fromNow(true);
 
   const hoursLeftString = hoursLeft === 0 ? '' : hoursLeft === 1 ? 'an hour' : hoursLeft + ' hours';
-  const daysLeftString = daysLeft === 1 ? 'a day' : daysLeft + ' days';
+  const daysLeftString = daysLeft === 1 ? '1 day' : daysLeft + ' days';
 
   return daysLeftString + (hoursLeftString ? ', ' + hoursLeftString : hoursLeftString);
 };

@@ -6,6 +6,7 @@ import { isEmpty } from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
+import { useTheme } from 'styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button, TextButton } from 'app/components/Button';
@@ -111,6 +112,8 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
 
   const hasEnoughICX = useHasEnoughICX();
 
+  const theme = useTheme();
+
   return (
     <>
       <Grid>
@@ -150,7 +153,7 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
             Address
           </Typography>
 
-          <Typography variant="p" textAlign="center" mr="30px" ml="30px" fontSize={16}>
+          <Typography variant="p" textAlign="center" margin={'auto'} maxWidth={200} fontSize={16}>
             {address}
           </Typography>
 
@@ -169,7 +172,11 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
               </Typography>
             </Box>
           </Flex>
-
+          {currencyKey === 'sICX' && (
+            <Typography variant="content" textAlign="center" color={theme.colors.alert}>
+              Do not send sICX to an exchange.
+            </Typography>
+          )}
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (

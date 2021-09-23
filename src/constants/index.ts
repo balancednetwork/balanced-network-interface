@@ -15,6 +15,7 @@ export const LIQUIDATION_COLLATERAL_RATIO = 1.5;
 
 export const SLIDER_RANGE_MAX_BOTTOM_THRESHOLD = 0.001;
 
-export const MINIMUM_ICX_AMOUNT_IN_WALLET = 1;
+export const MINIMUM_ICX_FOR_ACTION = 2;
+export const MINIMUM_ICX_FOR_TX = 1;
 
 export const DEFAULT_SLIPPAGE = 100;

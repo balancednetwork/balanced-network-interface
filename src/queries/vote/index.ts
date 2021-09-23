@@ -1,18 +1,18 @@
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
-import { NetworkId, useIconReact } from 'packages/icon-react';
+import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
 import QUERY_KEYS from 'queries/queryKeys';
+import { usePlatformDayQuery } from 'queries/reward';
 import { ProposalInterface } from 'types';
 
 export const useProposalInfoQuery = (pId: number) => {
   return useQuery<ProposalInterface | undefined>(QUERY_KEYS.Vote.VoteInfo(pId), async () => {
     const res = await bnJs.Governance.checkVote(pId);
     if (!res.id) return;
-
     const _against = BalancedJs.utils.toIcx(res['against']);
     const _for = BalancedJs.utils.toIcx(res['for']);
 
@@ -36,6 +36,7 @@ export const useProposalInfoQuery = (pId: number) => {
       uniqueRejectVoters: parseInt(res['against_voter_count'], 16),
       voters: parseInt(res['for_voter_count'], 16) + parseInt(res['against_voter_count'], 16),
       status: res['status'],
+      actions: res['actions'],
     };
   });
 };
@@ -105,7 +106,7 @@ export const useTotalCollectedFeesQuery = () => {
   });
 };
 
-export const useTotalProposalQuery = (offset: number = 1, batchSize: number = 20) => {
+export const useTotalProposalQuery = (offset: number = 1, batchSize: number = 100) => {
   return useQuery<Array<ProposalInterface>>(QUERY_KEYS.Vote.TotalProposals, async () => {
     const res = await bnJs.Governance.getProposals(offset, batchSize);
     const data = res.map(r => {
@@ -147,7 +148,7 @@ export const useTotalProposalCountQuery = () => {
 
 export const useAdditionalInfoQuery = (networkId: NetworkId) => {
   const fetch = async () => {
-    const fileName = networkId === NetworkId.MAINNET ? 'mainnet' : 'yeouido';
+    const fileName = CHAIN_INFO[networkId].name.toLowerCase();
     const { data } = await axios.get(
       `https://raw.githubusercontent.com/balancednetwork/BIP-info-list/main/proposals/${fileName}.json`,
     );
@@ -164,4 +165,35 @@ export const useAdditionalInfoById = (id?: number) => {
   if (!id) return;
 
   return items?.find(item => item.id === id);
+};
+
+export const useActiveProposals = () => {
+  const { account } = useIconReact();
+  const { data: platformDay } = usePlatformDayQuery();
+
+  return useQuery(QUERY_KEYS.Vote.ActiveProposals(account || ''), async () => {
+    if (account) {
+      const proposals = await bnJs.Governance.getProposals(1, 100);
+
+      return Promise.all(
+        proposals.map(async proposal => {
+          if (
+            platformDay &&
+            proposal.status === 'Active' &&
+            parseInt(proposal['start day'], 16) <= platformDay &&
+            parseInt(proposal['end day'], 16) > platformDay
+          ) {
+            const res = await bnJs.Governance.getVotesOfUser(parseInt(proposal.id), account!);
+            const approval = BalancedJs.utils.toIcx(res['for']);
+            const reject = BalancedJs.utils.toIcx(res['against']);
+            const hasVoted = !(approval.isZero() && reject.isZero());
+
+            return !hasVoted;
+          } else {
+            return false;
+          }
+        }),
+      ).then(results => proposals.filter((_proposal, index) => results[index]));
+    }
+  });
 };

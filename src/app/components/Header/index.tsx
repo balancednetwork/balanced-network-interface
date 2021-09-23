@@ -1,6 +1,7 @@
 import React from 'react';
 
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
+import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -57,19 +58,8 @@ const StyledAddress = styled(Typography)`
     cursor: pointer;
   }
 `;
-export enum NetworkId {
-  MAINNET = 1,
-  YEOUIDO = 3,
-  EULJIRO = 2,
-  PAGODA = 80,
-}
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
-
-const NETWORK_NAMES = {
-  [NetworkId.MAINNET]: 'Mainet',
-  [NetworkId.YEOUIDO]: 'YEOUDIO',
-};
 
 export default React.memo(function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
@@ -125,7 +115,7 @@ export default React.memo(function Header(props: { title?: string; className?: s
           <Typography variant="h1">{title}</Typography>
           {NETWORK_ID !== NetworkId.MAINNET && (
             <Typography variant="h3" color="alert">
-              {NETWORK_NAMES[NETWORK_ID]}
+              {CHAIN_INFO[NETWORK_ID].name}
             </Typography>
           )}
         </Flex>

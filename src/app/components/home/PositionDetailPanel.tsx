@@ -237,8 +237,18 @@ const PositionDetailPanel = () => {
               <Typography variant="h3" mr={15}>
                 Rebalancing{' '}
                 <MouseoverTooltip
+                  containerStyle={{ width: 330 }}
                   text={
-                    'If bnUSD is 5% above or below $1, some of your collateral may be sold and a larger amount of debt repaid to rebalance the price.'
+                    <Box>
+                      <Typography>
+                        If bnUSD strays too far from $1, borrowers' positions are used to rebalance the price.
+                      </Typography>
+                      <br />
+                      <Typography>
+                        Below $1, collateral is sold and a larger amount of debt repaid. Above $1, debt is increased and
+                        used to buy more collateral.
+                      </Typography>
+                    </Box>
                   }
                   placement="top"
                 >
@@ -263,12 +273,12 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} ICX</Typography>
-                <Typography mt={1}>Collateral sold</Typography>
+                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} sICX</Typography>
+                <Typography mt={1}>Collateral</Typography>
               </Box>
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(data?.totalRepaid, 'currency')} bnUSD</Typography>
-                <Typography mt={1}>Loan repaid</Typography>
+                <Typography mt={1}>Loan</Typography>
               </Box>
             </Flex>
           </Box>

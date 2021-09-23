@@ -2,8 +2,8 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import { BalancedJs } from 'packages/BalancedJs';
-import addresses, { NetworkId } from 'packages/BalancedJs/addresses';
+import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex, Link } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -155,7 +155,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
           Object.keys(data).forEach(key => {
             if (data[key] !== 0) {
               symbols.push(getContractName(key) || '');
-              amounts.push(convertValue(data[key]));
+              amounts.push(isIUSDC(key) ? convertIUSDC(new BigNumber(data[key])) : convertValue(data[key]));
             }
           });
         } catch (ex) {
@@ -167,9 +167,15 @@ const getValuesAndSymbols = (tx: Transaction) => {
         amount1: amounts[0],
         amount2: amounts[1],
         amount3: amounts[2],
+        amount4: amounts[3],
+        amount5: amounts[4],
+        amount6: amounts[5],
         symbol1: symbols[0],
         symbol2: symbols[1],
         symbol3: symbols[2],
+        symbol4: symbols[3],
+        symbol5: symbols[4],
+        symbol6: symbols[5],
       };
     }
     case 'stake': {
@@ -312,12 +318,28 @@ const getAmountWithSign = (tx: Transaction) => {
     }
 
     case 'Claimed': {
-      const { amount1, amount2, amount3, symbol1, symbol2, symbol3 } = getValuesAndSymbols(tx);
+      const {
+        amount1,
+        amount2,
+        amount3,
+        amount4,
+        amount5,
+        amount6,
+        symbol1,
+        symbol2,
+        symbol3,
+        symbol4,
+        symbol5,
+        symbol6,
+      } = getValuesAndSymbols(tx);
       return (
         <>
           <AmountItem value={amount1} symbol={symbol1} positive={true} />
           <AmountItem value={amount2} symbol={symbol2} positive={true} />
           <AmountItem value={amount3} symbol={symbol3} positive={true} />
+          <AmountItem value={amount4} symbol={symbol4} positive={true} />
+          <AmountItem value={amount5} symbol={symbol5} positive={true} />
+          <AmountItem value={amount6} symbol={symbol6} positive={true} />
         </>
       );
     }

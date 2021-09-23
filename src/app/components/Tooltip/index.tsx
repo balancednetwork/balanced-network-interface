@@ -28,9 +28,18 @@ interface TooltipProps extends Omit<PopoverProps, 'content'> {
   small?: boolean;
   containerStyle?: React.CSSProperties;
   noArrowAndBorder?: boolean;
+  refStyle?: React.CSSProperties;
 }
 
-export default function Tooltip({ text, wide, small, containerStyle, noArrowAndBorder, ...rest }: TooltipProps) {
+export default function Tooltip({
+  text,
+  wide,
+  small,
+  containerStyle,
+  refStyle,
+  noArrowAndBorder,
+  ...rest
+}: TooltipProps) {
   return (
     <>
       {noArrowAndBorder ? (
@@ -46,6 +55,7 @@ export default function Tooltip({ text, wide, small, containerStyle, noArrowAndB
             </TooltipContainer>
           }
           {...rest}
+          refStyle={refStyle}
         />
       )}
     </>

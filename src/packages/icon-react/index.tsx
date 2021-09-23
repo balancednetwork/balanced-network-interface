@@ -1,6 +1,7 @@
 import React from 'react';
 
 import IconService, { IconBuilder, IconConverter } from 'icon-sdk-js';
+import { SupportedChainId as NetworkId, CHAIN_INFO } from 'packages/BalancedJs';
 import {
   request,
   ICONexResponseEvent,
@@ -13,21 +14,9 @@ export const GOVERNANCE_BASE_ADDRESS = 'cx00000000000000000000000000000000000000
 
 export const API_VERSION = IconConverter.toBigNumber(3);
 
-export enum NetworkId {
-  MAINNET = 1,
-  YEOUIDO = 3,
-  EULJIRO = 2,
-  PAGODA = 80,
-}
-
-const API_ENDPOINTS = {
-  [NetworkId.MAINNET]: 'https://ctz.solidwallet.io/api/v3',
-  [NetworkId.YEOUIDO]: 'https://bicon.net.solidwallet.io/api/v3',
-};
-
 export const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
-const iconService = new IconService(new IconService.HttpProvider(API_ENDPOINTS[NETWORK_ID]));
+const iconService = new IconService(new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint));
 
 export const getDefaultStepCost = async () => {
   const getStepCostsCall = new IconBuilder.CallBuilder().to(GOVERNANCE_BASE_ADDRESS).method('getStepCosts').build();

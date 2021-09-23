@@ -1,9 +1,4 @@
-export enum NetworkId {
-  MAINNET = 1,
-  YEOUIDO = 3,
-  EULJIRO = 2,
-  PAGODA = 80,
-}
+import { SupportedChainId as NetworkId } from './chain';
 
 const MAINNET_ADDRESSES = {
   loans: 'cx66d4d90f5f113eba575bf793570135f9b10cece1',
@@ -23,6 +18,7 @@ const MAINNET_ADDRESSES = {
   usds: 'cxbb2871f468a3008f80b08fdde5b8b951583acf06',
   bwt: 'cxcfe9d1f83fa871e903008471cca786662437e58d',
   airdrip: 'cxaf244cf3c7164fe6f996f398a9d99c4d4a85cf15',
+  rebalancing: 'cx40d59439571299bca40362db2a7d8cae5b0b30b0',
 };
 
 const YEOUIDO_ADDRESSES = {
@@ -43,6 +39,7 @@ const YEOUIDO_ADDRESSES = {
   usds: 'cxc0666df567a6e0b49342648e98ccbe5362b264ea',
   bwt: 'cx5d886977b7d24b9f73a460c9ca2d43847997c285',
   airdrip: 'cx8ed4fbee9d6497f91ea90933db288ff4b43e54ba',
+  rebalancing: 'cx2e3398dfce78a3c83de8a41d7c5f4aa40d3a4f30',
 };
 
 const addresses = {

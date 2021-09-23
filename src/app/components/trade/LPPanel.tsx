@@ -16,8 +16,9 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { usePool, usePoolPair } from 'store/pool/hooks';
-import { CurrencyAmount } from 'types';
-import { formatBigNumber, maxAmountSpend } from 'utils';
+import { getTokenFromCurrencyKey } from 'types/adapter';
+import { CurrencyAmount } from 'types/balanced-sdk-core';
+import { formatBigNumber, maxAmountSpend, parseUnits } from 'utils';
 
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
@@ -93,9 +94,14 @@ export default function LPPanel() {
       if (pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
         onSlide(
           Field.CURRENCY_B,
-          maxAmountSpend(new CurrencyAmount('ICX', currencyBalances[Field.CURRENCY_B]))!
-            .raw.times(percent)
-            .div(100)
+          maxAmountSpend(
+            CurrencyAmount.fromRawAmount(
+              getTokenFromCurrencyKey('ICX')!,
+              parseUnits(currencyBalances[Field.CURRENCY_B].toFixed(), getTokenFromCurrencyKey('ICX')!.decimals),
+            ),
+          )!
+            .multiply(percent)
+            .divide(100)
             .toFixed(),
         );
       } else {
@@ -169,7 +175,7 @@ export default function LPPanel() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
-              currency={pair.baseCurrencyKey}
+              currency={getTokenFromCurrencyKey(pair.baseCurrencyKey)!}
               onUserInput={onFieldAInput}
               id="supply-liquidity-input-token-a"
             />
@@ -184,7 +190,7 @@ export default function LPPanel() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               showMaxButton={false}
-              currency={pair.quoteCurrencyKey}
+              currency={getTokenFromCurrencyKey(pair.quoteCurrencyKey)!}
               onUserInput={onFieldBInput}
               id="supply-liquidity-input-token-b"
             />

@@ -1,6 +1,8 @@
+import { SupportedChainId } from 'packages/BalancedJs/chain';
+
 import { Token } from 'types/balanced-sdk-core/index';
 
-import { SupportedChainId } from './chains';
+import { NETWORK_ID } from './config';
 
 export const ICX = new Token(SupportedChainId.MAINNET, 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX');
 export const sICX = new Token(
@@ -106,6 +108,7 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
   ],
 };
 
+export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];
 export interface TokenInfo {
   readonly chainId: number;
   readonly address: string;

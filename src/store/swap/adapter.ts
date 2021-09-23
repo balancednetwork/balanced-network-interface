@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { getTradePair } from '../../constants/currency';
 import { PairInfo, SUPPORTED_TOKEN_PAIRS } from '../../constants/pairs';
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } from '../../constants/routing';
-import { CurrencyAmount as LegacyCurrencyAmount, CurrencyKey, Pool } from '../../types';
-import { convertCurrencyAmount, convertPair, getTokenFromCurrencyKey } from '../../types/adapter';
+import { Pool } from '../../types';
+import { convertPair } from '../../types/adapter';
 import { Currency, CurrencyAmount, TradeType } from '../../types/balanced-sdk-core';
 import { Pair, Trade } from '../../types/balanced-v1-sdk/entities';
 import { isTradeBetter } from '../../types/balanced-v1-sdk/utils/isTradeBetter';
@@ -100,12 +100,4 @@ export function useTradeExactOut(
 
     return undefined;
   }, [pairs, currencyIn, currencyAmountOut, maxHops]);
-}
-
-export function useTradeExactInNew(currencyAmountIn?: LegacyCurrencyAmount, currencyOut?: CurrencyKey) {
-  return useTradeExactIn(convertCurrencyAmount(currencyAmountIn), getTokenFromCurrencyKey(currencyOut));
-}
-
-export function useTradeExactOutNew(currencyIn?: CurrencyKey, currencyAmountOut?: LegacyCurrencyAmount) {
-  return useTradeExactOut(getTokenFromCurrencyKey(currencyIn), convertCurrencyAmount(currencyAmountOut));
 }

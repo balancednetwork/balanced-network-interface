@@ -3,10 +3,10 @@ import BigNumber from 'bignumber.js';
 import { NETWORK_ID } from '../constants/config';
 import { PairInfo } from '../constants/pairs';
 import { SUPPORTED_TOKENS } from '../constants/tokens';
-import { Token, Price, Currency } from './balanced-sdk-core/entities';
+import { Token } from './balanced-sdk-core/entities';
 import { CurrencyAmount } from './balanced-sdk-core/entities/fractions';
 import { Pair } from './balanced-v1-sdk/entities';
-import { CurrencyAmount as LegacyCurrencyAmount, CurrencyKey, Pool, Price as LegacyPrice } from './index';
+import { CurrencyAmount as LegacyCurrencyAmount, CurrencyKey, Pool } from './index';
 
 const tokens = SUPPORTED_TOKENS[NETWORK_ID];
 
@@ -49,12 +49,4 @@ export const convertPair = (pairInfo: PairInfo, pool?: Pool) => {
       );
     }
   }
-};
-
-export const revertPrice = (price: Price<Currency, Currency>): LegacyPrice => {
-  return new LegacyPrice(
-    price.baseCurrency.symbol || 'IN',
-    price.quoteCurrency.symbol || 'OUT',
-    new BigNumber(price.toFixed()),
-  );
 };

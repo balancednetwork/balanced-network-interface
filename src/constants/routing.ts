@@ -1,8 +1,8 @@
 import JSBI from 'jsbi';
+import { SupportedChainId } from 'packages/BalancedJs';
 
 import { Currency, Percent } from 'types/balanced-sdk-core';
 
-import { SupportedChainId } from './chains';
 import {
   sICX, //
   bnUSD,

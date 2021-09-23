@@ -5,9 +5,9 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
 
 import { currencyKeyToIconMap } from 'constants/currency';
-import { MINIMUM_ICX_FOR_ACTION, ZERO, ONE } from 'constants/index';
+import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
 import { Field } from 'store/swap/actions';
-import { CurrencyKey, CurrencyAmount } from 'types';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
@@ -80,15 +80,15 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   }
 }
 
-export const getCurrencyKeyIcon = (currencyKey: CurrencyKey) => currencyKeyToIconMap[currencyKey];
+export const getCurrencyIcon = (currency: Currency) => currencyKeyToIconMap[currency.symbol!];
 
-export function maxAmountSpend(currencyAmount?: CurrencyAmount): CurrencyAmount | undefined {
+export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): CurrencyAmount<Currency> | undefined {
   if (!currencyAmount) return undefined;
-  if (currencyAmount.currencyKey === 'ICX') {
-    if (currencyAmount.amount.isGreaterThan(MINIMUM_ICX_FOR_ACTION)) {
-      return new CurrencyAmount(currencyAmount.currencyKey, currencyAmount.amount.minus(MINIMUM_ICX_FOR_ACTION));
+  if (currencyAmount.currency.symbol === 'ICX') {
+    if (currencyAmount.greaterThan(MINIMUM_ICX_FOR_ACTION)) {
+      return currencyAmount.subtract(CurrencyAmount.fromRawAmount(currencyAmount.currency, MINIMUM_ICX_FOR_ACTION));
     } else {
-      return new CurrencyAmount(currencyAmount.currencyKey, ZERO);
+      return CurrencyAmount.fromRawAmount(currencyAmount.currency, 0);
     }
   }
   return currencyAmount;
@@ -107,7 +107,7 @@ export function sleep(ms: number) {
 const LAUNCH_DAY = 1619398800000000;
 const ONE_DAY_DURATION = 86400000;
 
-export const generateChartData = (rate: BigNumber, currencyKeys: { [field in Field]?: CurrencyKey }) => {
+export const generateChartData = (rate: BigNumber, currencies: { [field in Field]?: Currency }) => {
   const today = dayjs().startOf('day');
   const launchDay = dayjs(LAUNCH_DAY / 1000).startOf('day');
   const platformDays = (today.valueOf() - launchDay.valueOf()) / ONE_DAY_DURATION + 1;
@@ -117,7 +117,7 @@ export const generateChartData = (rate: BigNumber, currencyKeys: { [field in Fie
 
   let _data;
 
-  if (currencyKeys[Field.INPUT] === 'sICX' && currencyKeys[Field.OUTPUT] === 'ICX') {
+  if (currencies[Field.INPUT]?.symbol === 'sICX' && currencies[Field.OUTPUT]?.symbol === 'ICX') {
     _data = Array(platformDays)
       .fill(start)
       .map((x, index) => ({
@@ -141,3 +141,9 @@ export const normalizeContent = (text: string): string => {
   const t = text.replaceAll(regex, ' ');
   return t.substring(0, 248) + '...';
 };
+
+const TEN = new BigNumber(10);
+
+export function parseUnits(value: string, decimals: number): string {
+  return new BigNumber(value).times(TEN.pow(decimals)).toFixed();
+}

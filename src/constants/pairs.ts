@@ -1,5 +1,6 @@
+import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
+
 import { NETWORK_ID } from './config';
-import { NetworkId } from './currency';
 
 export interface PairInfo {
   readonly chainId: number;

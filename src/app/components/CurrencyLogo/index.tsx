@@ -1,21 +1,21 @@
 import React from 'react';
 
 import { Typography } from 'app/theme';
-import { CurrencyKey } from 'types';
-import { getCurrencyKeyIcon } from 'utils';
+import { Currency } from 'types/balanced-sdk-core';
+import { getCurrencyIcon } from 'utils';
 
 export default function CurrencyLogo({
-  currencyKey,
+  currency,
   size = 24,
   style,
   ...rest
 }: {
-  currencyKey: CurrencyKey;
+  currency: Currency;
   size?: number;
   style?: React.CSSProperties;
 }) {
-  const Icon = getCurrencyKeyIcon(currencyKey);
+  const Icon = getCurrencyIcon(currency);
 
   if (Icon) return <Icon width={`${size}px`} height={`${size}px`} style={style} {...rest} />;
-  else return <Typography>{currencyKey.charAt(0)}</Typography>;
+  else return <Typography>{currency?.symbol!.charAt(0)}</Typography>;
 }

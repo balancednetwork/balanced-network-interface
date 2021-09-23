@@ -17,12 +17,13 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { CurrencyAmount, CurrencyKey } from 'types';
-import { maxAmountSpend } from 'utils';
+import { CurrencyKey } from 'types';
+import { getTokenFromCurrencyKey } from 'types/adapter';
+import { CurrencyAmount } from 'types/balanced-sdk-core';
+import { maxAmountSpend, parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Grid, MaxButton } from './utils';
@@ -48,8 +49,11 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
 
   const wallet = useWalletBalances();
 
-  const walletAmount = new CurrencyAmount(currencyKey, wallet[currencyKey]);
-  const maxAmount = maxAmountSpend(walletAmount)?.raw || ZERO;
+  const walletAmount = CurrencyAmount.fromRawAmount(
+    getTokenFromCurrencyKey(currencyKey)!,
+    parseUnits(wallet[currencyKey].toFixed(), getTokenFromCurrencyKey(currencyKey)?.decimals!),
+  );
+  const maxAmount = new BigNumber(maxAmountSpend(walletAmount)?.toFixed() || '0');
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -125,7 +129,7 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
         <CurrencyInputPanel
           value={value}
           showMaxButton={false}
-          currency={currencyKey}
+          currency={getTokenFromCurrencyKey(currencyKey)}
           onUserInput={handleCurrencyInput}
           id={`${currencyKey}-currency-input-in-wallet-panel`}
         />

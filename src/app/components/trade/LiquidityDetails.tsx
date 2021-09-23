@@ -26,6 +26,7 @@ import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { getTokenFromCurrencyKey } from 'types/adapter';
 import { formatBigNumber } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -288,12 +289,12 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
         <Flex alignItems="center" justifyContent="space-between">
           <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2} mr={2}>
-            <CurrencyLogo currencyKey="sICX" size={35} />
+            <CurrencyLogo currency={getTokenFromCurrencyKey('sICX')!} size={35} />
             <Typography>{balance1?.balance1?.dp(2).toFormat()} sICX</Typography>
           </OptionButton>
 
           <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1}>
-            <CurrencyLogo currencyKey="ICX" size={35} />
+            <CurrencyLogo currency={getTokenFromCurrencyKey('ICX')!} size={35} />
             <Typography>{balance1?.balance.dp(2).toFormat()} ICX</Typography>
           </OptionButton>
         </Flex>
@@ -538,7 +539,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_A]}
             showMaxButton={false}
-            currency={pair.baseCurrencyKey}
+            currency={getTokenFromCurrencyKey(pair.baseCurrencyKey)}
             onUserInput={handleFieldAInput}
             id="withdraw-liquidity-input"
             bg="bg5"
@@ -548,7 +549,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_B]}
             showMaxButton={false}
-            currency={pair.quoteCurrencyKey}
+            currency={getTokenFromCurrencyKey(pair.quoteCurrencyKey)}
             onUserInput={handleFieldBInput}
             id="withdraw-liquidity-input"
             bg="bg5"

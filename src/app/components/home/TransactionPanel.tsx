@@ -57,7 +57,8 @@ const METHOD_CONTENT = {
   cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',
   ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
   CollateralReceived: 'Deposited (amount) sICX as collateral ',
-  UnstakeRequest: 'Unstaked (amount) sICX',
+  UnstakesICXRequest: 'Unstaked (amount) sICX',
+  UnstakeRequest: 'Claimed (amount) ICX',
   Deposit: 'Transferred (amount) (currency) to the Balanced exchange',
   Withdraw1Value: 'Withdrew (amount) (currency)',
   VoteCast: '',
@@ -219,6 +220,12 @@ const getValuesAndSymbols = (tx: Transaction) => {
     }
     case 'UnstakeRequest': {
       const amount1 = getValue(tx);
+
+      return { amount1, amount2: '', symbol1: 'ICX', symbol2: '' };
+    }
+    case 'UnstakesICXRequest': {
+      const amount1 = getValue(tx);
+
       return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
     }
     case 'RewardsClaimed': {
@@ -458,7 +465,7 @@ const checkAndParseICXTosICX = (tx: Transaction): Transaction => {
   const _tx = { ...tx };
 
   if (getMethod(_tx) === 'Transfer' && issICXContract(_tx)) {
-    _tx.method = 'UnstakeRequest';
+    _tx.method = 'UnstakesICXRequest';
   }
 
   return _tx;

@@ -31,11 +31,11 @@ const initialState: SwapState = {
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {
-    currency: SUPPORTED_TOKENS_LIST[4],
+    currency: SUPPORTED_TOKENS_LIST[3],
     percent: 0,
   },
   [Field.OUTPUT]: {
-    currency: SUPPORTED_TOKENS_LIST[3],
+    currency: SUPPORTED_TOKENS_LIST[2],
   },
   recipient: null,
 };

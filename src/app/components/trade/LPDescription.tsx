@@ -18,11 +18,9 @@ const descriptions = {
   20: (
     <>
       Requires an equal amount of OMM and sICX. To earn rewards from this pool, use&nbsp;
-      {
-        <Link href="https://omm.finance/" target="_blank">
-          Omm
-        </Link>
-      }
+      <Link href="https://omm.finance/" target="_blank">
+        Omm
+      </Link>
       &nbsp;with the same wallet.
     </>
   ),

@@ -16,6 +16,7 @@ import '@reach/tabs/styles.css';
 import { useRatesQuery } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
+import { getTokenFromCurrencyKey } from 'types/adapter';
 
 import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';
@@ -78,7 +79,7 @@ const WalletPanel = () => {
                   <StyledAccordionButton currency={currency}>
                     <ListItem border={index !== arr.length - 1}>
                       <AssetSymbol>
-                        <CurrencyLogo currencyKey={currency} />
+                        <CurrencyLogo currency={getTokenFromCurrencyKey(currency)!} />
                         <Typography fontSize={16} fontWeight="bold">
                           {currency}
                         </Typography>

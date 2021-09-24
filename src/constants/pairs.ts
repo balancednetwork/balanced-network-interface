@@ -22,7 +22,7 @@ export const SUPPORTED_TOKEN_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'sICX/ICX',
       baseCurrencyKey: 'sICX',
       quoteCurrencyKey: 'ICX',
-      rewards: 0.1,
+      rewards: 0.07,
     },
     {
       chainId: 1,
@@ -54,6 +54,7 @@ export const SUPPORTED_TOKEN_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'IUSDC/bnUSD',
       baseCurrencyKey: 'IUSDC',
       quoteCurrencyKey: 'bnUSD',
+      rewards: 0.005,
     },
     {
       chainId: 1,

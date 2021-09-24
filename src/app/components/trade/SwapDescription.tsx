@@ -8,6 +8,7 @@ import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import { getTradePair } from 'constants/currency';
+import useWidth from 'hooks/useWidth';
 import { usePriceChartDataQuery } from 'queries/swap';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
@@ -20,17 +21,7 @@ export default function SwapDescription() {
     period: CHART_PERIODS['1H'],
   });
 
-  // update the width on a window resize
-  const ref = React.useRef<HTMLDivElement>();
-  const [width, setWidth] = React.useState(ref?.current?.clientWidth);
-  React.useEffect(() => {
-    function handleResize() {
-      setWidth(ref?.current?.clientWidth ?? width);
-    }
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [width]);
+  const [ref, width] = useWidth();
 
   const priceChartQuery = usePriceChartDataQuery(currencies, chartOption.period);
   const data = priceChartQuery.data;

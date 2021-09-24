@@ -9,6 +9,7 @@ import { List, ListItem, DashGrid, HeaderText, DataText, HorizontalList, Option 
 import { PopperWithoutArrow, SelectorPopover } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import useWidth from 'hooks/useWidth';
 import { COMMON_PERCENTS } from 'store/swap/actions';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { Currency } from 'types/balanced-sdk-core';
@@ -128,18 +129,7 @@ export default function CurrencyInputPanel({
     setOpen(!open);
   };
 
-  // update the width on a window resize
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [width, setWidth] = React.useState(ref?.current?.clientWidth);
-  React.useEffect(() => {
-    function handleResize() {
-      setWidth(ref?.current?.clientWidth ?? width);
-    }
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [width]);
-
+  const [ref, width] = useWidth();
   //
   const handleCurrencySelect = (ccy: Currency) => (e: React.MouseEvent) => {
     onCurrencySelect && onCurrencySelect(ccy);

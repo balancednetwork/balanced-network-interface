@@ -11,6 +11,7 @@ import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/L
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
+import useWidth from 'hooks/useWidth';
 import { useAllPairsAPY } from 'queries/reward';
 import { resetMintState } from 'store/mint/actions';
 import { useSetPair, usePoolPair } from 'store/pool/hooks';
@@ -23,18 +24,6 @@ export default function LiquiditySelect() {
     setOpen(!open);
   };
 
-  // update the width on a window resize
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [width, setWidth] = React.useState(ref?.current?.clientWidth);
-  React.useEffect(() => {
-    function handleResize() {
-      setWidth(ref?.current?.clientWidth ?? width);
-    }
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [width]);
-
   const selectedPair = usePoolPair();
   const setPair = useSetPair();
   const dispatch = useDispatch();
@@ -46,6 +35,8 @@ export default function LiquiditySelect() {
   };
 
   const apys = useAllPairsAPY();
+
+  const [ref, width] = useWidth();
 
   return (
     <Flex alignItems="flex-end" ref={ref}>

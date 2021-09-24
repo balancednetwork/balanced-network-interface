@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import LiquiditySelect from 'app/components/trade/LiquiditySelect';
+import PairSelector from 'app/components/trade/PairSelector';
 import { Typography } from 'app/theme';
 import { ZERO } from 'constants/index';
 import { useWalletModalToggle } from 'store/application/hooks';
@@ -26,10 +26,10 @@ import { SectionPanel, BrightPanel } from './utils';
 
 const useCalculateLiquidity = (tokenAmountA: BigNumber, tokenAmountB: BigNumber): BigNumber => {
   const selectedPair = usePoolPair();
-  const pool = usePool(selectedPair.poolId);
+  const pool = usePool(selectedPair.id);
 
   if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
-    if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+    if (selectedPair.id === BalancedJs.utils.POOL_IDS.sICXICX) {
       return tokenAmountB;
     }
 
@@ -91,7 +91,7 @@ export default function LPPanel() {
 
   React.useEffect(() => {
     if (pool && !pool.total.isZero()) {
-      if (pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+      if (pair.id === BalancedJs.utils.POOL_IDS.sICXICX) {
         onSlide(
           Field.CURRENCY_B,
           maxAmountSpend(
@@ -113,7 +113,7 @@ export default function LPPanel() {
         onSlide(field, currencyBalances[field].times(percent).div(100).toFixed());
       }
     }
-  }, [percent, currencyBalances, onSlide, pool, pair.poolId]);
+  }, [percent, currencyBalances, onSlide, pool, pair.id]);
 
   React.useEffect(() => {
     setPercent(0);
@@ -163,13 +163,13 @@ export default function LPPanel() {
       ? `${quoteDisplay}`
       : `${baseDisplay} / ${quoteDisplay}`;
 
-  const isQueue = pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX;
+  const isQueue = pair.id === BalancedJs.utils.POOL_IDS.sICXICX;
 
   return (
     <>
       <SectionPanel bg="bg2">
         <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
-          <LiquiditySelect />
+          <PairSelector />
 
           <Flex mt={3} hidden={isQueue}>
             <CurrencyInputPanel

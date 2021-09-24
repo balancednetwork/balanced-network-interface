@@ -10,6 +10,8 @@ import { ReactComponent as sICXIcon } from 'assets/tokens/sICX.svg';
 import { ReactComponent as USDSIcon } from 'assets/tokens/USDS.svg';
 import { CurrencyKey, Pool } from 'types';
 
+import { PairInfo, SUPPORTED_PAIRS } from './pairs';
+
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
   [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS'],
   [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS'],
@@ -31,126 +33,6 @@ export const currencyKeyToIconMap = {
   USDS: USDSIcon,
 };
 
-export const toMarketPair = (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: string) =>
-  `${baseCurrencyKey} / ${quoteCurrencyKey}`;
-
-export interface Pair {
-  baseCurrencyKey: CurrencyKey;
-  quoteCurrencyKey: CurrencyKey;
-  pair: string;
-  poolId: number;
-  rewards?: number;
-}
-
-export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
-  [NetworkId.MAINNET]: [
-    {
-      baseCurrencyKey: CURRENCY_MAP['sICX'],
-      quoteCurrencyKey: CURRENCY_MAP['ICX'],
-      pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['ICX']),
-      poolId: 1,
-      rewards: 0.07,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['sICX'],
-      quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
-      pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['bnUSD']),
-      poolId: 2,
-      rewards: 0.175,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['BALN'],
-      quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
-      pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['bnUSD']),
-      poolId: 3,
-      rewards: 0.175,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['BALN'],
-      quoteCurrencyKey: CURRENCY_MAP['sICX'],
-      pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['sICX']),
-      poolId: 4,
-      rewards: 0.05,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['IUSDC'],
-      quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
-      pair: toMarketPair(CURRENCY_MAP['IUSDC'], CURRENCY_MAP['bnUSD']),
-      poolId: 5,
-      rewards: 0.005,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['OMM'],
-      quoteCurrencyKey: CURRENCY_MAP['sICX'],
-      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['sICX']),
-      poolId: 7,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['OMM'],
-      quoteCurrencyKey: CURRENCY_MAP['IUSDC'],
-      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['IUSDC']),
-      poolId: 6,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['OMM'],
-      quoteCurrencyKey: CURRENCY_MAP['USDS'],
-      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['USDS']),
-      poolId: 8,
-    },
-  ],
-
-  [NetworkId.YEOUIDO]: [
-    {
-      baseCurrencyKey: CURRENCY_MAP['sICX'],
-      quoteCurrencyKey: CURRENCY_MAP['ICX'],
-      pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['ICX']),
-      poolId: 1,
-      rewards: 0.1,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['sICX'],
-      quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
-      pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['bnUSD']),
-      poolId: 2,
-      rewards: 0.175,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['BALN'],
-      quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
-      pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['bnUSD']),
-      poolId: 3,
-      rewards: 0.175,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['BALN'],
-      quoteCurrencyKey: CURRENCY_MAP['sICX'],
-      pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['sICX']),
-      poolId: 4,
-      rewards: 0.05,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['OMM'],
-      quoteCurrencyKey: CURRENCY_MAP['IUSDC'],
-      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['IUSDC']),
-      poolId: 22,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['OMM'],
-      quoteCurrencyKey: CURRENCY_MAP['sICX'],
-      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['sICX']),
-      poolId: 20,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['OMM'],
-      quoteCurrencyKey: CURRENCY_MAP['USDS'],
-      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['USDS']),
-      poolId: 21,
-    },
-  ],
-};
-
-export const SUPPORTED_PAIRS: Array<Pair> = SUPPORTED_PAIRS_INFO[NETWORK_ID];
-
 export const getPairableCurrencies = (currencyKey: CurrencyKey | undefined): CurrencyKey[] => {
   if (!currencyKey) return CURRENCY;
 
@@ -168,7 +50,7 @@ export const getPairableCurrencies = (currencyKey: CurrencyKey | undefined): Cur
 export const getTradePair = (
   baseKey?: CurrencyKey,
   quoteKey?: CurrencyKey,
-): [Pair | undefined, boolean | undefined] => {
+): [PairInfo | undefined, boolean | undefined] => {
   if (baseKey && quoteKey) {
     const pair1 = SUPPORTED_PAIRS.find(pair => pair.baseCurrencyKey === baseKey && pair.quoteCurrencyKey === quoteKey);
     const pair2 = SUPPORTED_PAIRS.find(pair => pair.baseCurrencyKey === quoteKey && pair.quoteCurrencyKey === baseKey);
@@ -182,7 +64,7 @@ export const getTradePair = (
   return [undefined, undefined];
 };
 
-export const isQueue = (t: Pool | Pair) => {
+export const isQueue = (t: Pool | PairInfo) => {
   if (
     (t.baseCurrencyKey === 'sICX' && t.quoteCurrencyKey === 'ICX') ||
     (t.baseCurrencyKey === 'ICX' && t.quoteCurrencyKey === 'sICX')

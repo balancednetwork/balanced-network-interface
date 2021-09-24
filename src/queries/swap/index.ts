@@ -39,9 +39,7 @@ export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency
           data: result,
         }: {
           data: { time: number; open: number; close: number; high: number; low: number; volume: number }[];
-        } = await axios.get(
-          `${API_ENDPOINT}/dex/swap-chart/${pair?.poolId}/${period.toLowerCase()}/${LAUNCH_DAY}/${day}`,
-        );
+        } = await axios.get(`${API_ENDPOINT}/dex/swap-chart/${pair?.id}/${period.toLowerCase()}/${LAUNCH_DAY}/${day}`);
 
         let data1;
 

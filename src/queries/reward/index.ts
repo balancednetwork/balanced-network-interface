@@ -5,7 +5,8 @@ import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
-import { SUPPORTED_PAIRS, addressToCurrencyKeyMap } from 'constants/currency';
+import { addressToCurrencyKeyMap } from 'constants/currency';
+import { SUPPORTED_PAIRS } from 'constants/pairs';
 import QUERY_KEYS from 'queries/queryKeys';
 
 import { API_ENDPOINT } from '../constants';
@@ -90,8 +91,8 @@ export const useAllPairsAPY = () => {
     const dailyDistribution = BalancedJs.utils.toIcx(dailyDistributionQuery.data);
     const t = {};
     SUPPORTED_PAIRS.forEach(pair => {
-      t[pair.poolId] =
-        pair.rewards && dailyDistribution.times(pair.rewards).times(365).times(rates['BALN']).div(tvls[pair.poolId]);
+      t[pair.id] =
+        pair.rewards && dailyDistribution.times(pair.rewards).times(365).times(rates['BALN']).div(tvls[pair.id]);
     });
     return t;
   }
@@ -105,7 +106,7 @@ export const useAllPairsTVLQuery = () => {
     async () => {
       const res: Array<any> = await Promise.all(
         SUPPORTED_PAIRS.map(async pair => {
-          const { data } = await axios.get(`${API_ENDPOINT}/dex/stats/${pair.poolId}`);
+          const { data } = await axios.get(`${API_ENDPOINT}/dex/stats/${pair.id}`);
           return data;
         }),
       );
@@ -113,7 +114,7 @@ export const useAllPairsTVLQuery = () => {
       const t = {};
       SUPPORTED_PAIRS.forEach((pair, index) => {
         const item = res[index];
-        t[pair.poolId] = {
+        t[pair.id] = {
           ...item,
           base: BalancedJs.utils.toIcx(item.base, pair.baseCurrencyKey),
           quote: BalancedJs.utils.toIcx(item.quote, pair.quoteCurrencyKey),
@@ -136,9 +137,9 @@ export const useAllPairsTVL = () => {
 
     const t: { [key in string]: number } = {};
     SUPPORTED_PAIRS.forEach(pair => {
-      const baseTVL = tvls[pair.poolId].base.times(rates[pair.baseCurrencyKey]);
-      const quoteTVL = tvls[pair.poolId].quote.times(rates[pair.quoteCurrencyKey]);
-      t[pair.poolId] = baseTVL.plus(quoteTVL).integerValue().toNumber();
+      const baseTVL = tvls[pair.id].base.times(rates[pair.baseCurrencyKey]);
+      const quoteTVL = tvls[pair.id].quote.times(rates[pair.quoteCurrencyKey]);
+      t[pair.id] = baseTVL.plus(quoteTVL).integerValue().toNumber();
     });
 
     return t;

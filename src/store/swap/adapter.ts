@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { getTradePair } from '../../constants/currency';
-import { PairInfo, SUPPORTED_TOKEN_PAIRS } from '../../constants/pairs';
+import { PairInfo, SUPPORTED_PAIRS } from '../../constants/pairs';
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } from '../../constants/routing';
 import { Pool } from '../../types';
 import { convertPair } from '../../types/adapter';
@@ -21,7 +21,7 @@ export function getPool(pools: { [p: string]: Pool }, pairInfo: PairInfo) {
   if (!pair) return undefined;
 
   // possible to use `pairInfo.id` directly than pairInfo to get pool
-  const pool = pools[pair.poolId];
+  const pool = pools[pair.id];
 
   if (!pool) return undefined;
 
@@ -29,7 +29,7 @@ export function getPool(pools: { [p: string]: Pool }, pairInfo: PairInfo) {
 }
 
 function getPairs(pools: { [p: string]: Pool }) {
-  const pairs = SUPPORTED_TOKEN_PAIRS.map((pairInfo: PairInfo) => convertPair(pairInfo, getPool(pools, pairInfo)));
+  const pairs = SUPPORTED_PAIRS.map((pairInfo: PairInfo) => convertPair(pairInfo, getPool(pools, pairInfo)));
   return pairs.filter((pair?: Pair): pair is Pair => !!pair);
 }
 

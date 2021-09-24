@@ -10,13 +10,13 @@ import { Wrapper, UnderlineText, StyledArrowDownIcon } from 'app/components/Drop
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { Typography } from 'app/theme';
-import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
+import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 import useWidth from 'hooks/useWidth';
 import { useAllPairsAPY } from 'queries/reward';
 import { resetMintState } from 'store/mint/actions';
 import { useSetPair, usePoolPair } from 'store/pool/hooks';
 
-export default function LiquiditySelect() {
+export default function PairSelector() {
   const upSmall = useMedia('(min-width:768px)');
   const [open, setOpen] = React.useState(false);
 
@@ -28,9 +28,9 @@ export default function LiquiditySelect() {
   const setPair = useSetPair();
   const dispatch = useDispatch();
 
-  const handleSelectPool = (pl: Pair) => {
+  const handleSelectPair = (pair: PairInfo) => {
     toggleOpen();
-    setPair(pl);
+    setPair(pair);
     dispatch(resetMintState());
   };
 
@@ -44,7 +44,7 @@ export default function LiquiditySelect() {
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <div>
           <StyledWrapper onClick={toggleOpen}>
-            <Text active={open}>{selectedPair.pair}</Text>
+            <Text active={open}>{selectedPair.name}</Text>
             <StyledArrowDownIcon />
           </StyledWrapper>
 
@@ -54,13 +54,13 @@ export default function LiquiditySelect() {
                 <HeaderText>POOL</HeaderText>
                 <HeaderText textAlign="right">APY</HeaderText>
               </DashGrid>
-              {SUPPORTED_PAIRS.map(pool => (
-                <ListItem key={pool.pair} onClick={() => handleSelectPool(pool)}>
+              {SUPPORTED_PAIRS.map(pair => (
+                <ListItem key={pair.id} onClick={() => handleSelectPair(pair)}>
                   <DataText variant="p" fontWeight="bold">
-                    {pool.pair}
+                    {pair.name}
                   </DataText>
                   <DataText variant="p" textAlign="right">
-                    {apys && apys[pool.poolId] ? apys[pool.poolId].times(100).dp(2).toFormat() : '-'}%
+                    {apys && apys[pair.id] ? apys[pair.id].times(100).dp(2).toFormat() : '-'}%
                   </DataText>
                 </ListItem>
               ))}

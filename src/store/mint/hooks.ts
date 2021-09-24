@@ -5,8 +5,9 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { isQueue, Pair } from 'constants/currency';
+import { isQueue } from 'constants/currency';
 import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
+import { PairInfo } from 'constants/pairs';
 import { usePool, usePoolPair } from 'store/pool/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { Pool } from 'types';
@@ -61,13 +62,13 @@ export function useMintActionHandlers(
 
 const useSelectedPairRatio = () => {
   const selectedPair = usePoolPair();
-  const pool = usePool(selectedPair.poolId);
+  const pool = usePool(selectedPair.id);
   if (isQueue(selectedPair)) return ONE;
   return pool?.rate || ONE;
 };
 
 export function useDerivedMintInfo(): {
-  pair: Pair;
+  pair: PairInfo;
   pool?: Pool;
   dependentField: Field; //
   noLiquidity?: boolean;
@@ -81,7 +82,7 @@ export function useDerivedMintInfo(): {
 
   // check liquidity
   const pair = usePoolPair();
-  const pool = usePool(pair.poolId);
+  const pool = usePool(pair.id);
   const noLiquidity = pool?.total.isZero() ? true : false;
 
   // balances
@@ -129,7 +130,7 @@ export function useDerivedMintInfo(): {
 
   const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
 
-  if (pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+  if (pair.id === BalancedJs.utils.POOL_IDS.sICXICX) {
     if (currencyBalances?.[Field.CURRENCY_B].isZero()) {
       error = error ?? 'Insufficient balance';
     }

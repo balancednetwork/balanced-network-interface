@@ -49,7 +49,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
   const { account } = useIconReact();
 
   const selectedPair = usePoolPair();
-  const pool = usePool(selectedPair.poolId);
+  const pool = usePool(selectedPair.id);
 
   const addTransaction = useTransactionAdder();
 
@@ -86,8 +86,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
       addTransaction(
         { hash: res.result },
         {
-          pending: depositMessage(currencyKey, selectedPair.pair).pendingMessage,
-          summary: depositMessage(currencyKey, selectedPair.pair).successMessage,
+          pending: depositMessage(currencyKey, selectedPair.name).pendingMessage,
+          summary: depositMessage(currencyKey, selectedPair.name).successMessage,
         },
       );
 
@@ -169,8 +169,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
           addTransaction(
             { hash: res.result },
             {
-              pending: supplyMessage(selectedPair.pair).pendingMessage,
-              summary: supplyMessage(selectedPair.pair).successMessage,
+              pending: supplyMessage(selectedPair.name).pendingMessage,
+              summary: supplyMessage(selectedPair.name).successMessage,
             },
           );
           if (confirmTxStatus === TransactionStatus.failure) {
@@ -199,8 +199,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
           addTransaction(
             { hash: res.result },
             {
-              pending: supplyMessage(selectedPair.pair).pendingMessage,
-              summary: supplyMessage(selectedPair.pair).successMessage,
+              pending: supplyMessage(selectedPair.name).pendingMessage,
+              summary: supplyMessage(selectedPair.name).successMessage,
             },
           );
 
@@ -273,8 +273,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
     changeShouldLedgerSign(false);
   };
 
-  const isQueue = selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX;
-  const isBALNRewardPool = BALNRewardPairs.some(id => id === selectedPair.poolId);
+  const isQueue = selectedPair.id === BalancedJs.utils.POOL_IDS.sICXICX;
+  const isBALNRewardPool = BALNRewardPairs.some(id => id === selectedPair.id);
   const isEnabled = isQueue
     ? true
     : (addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success) ||

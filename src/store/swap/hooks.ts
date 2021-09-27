@@ -72,9 +72,9 @@ export function useSwapActionHandlers(): {
   };
 }
 
-function useCurrencyBalances(
+export function useCurrencyBalances(
   account: string | undefined,
-  currencies: [Currency | undefined, Currency | undefined],
+  currencies: (Currency | undefined)[],
 ): (CurrencyAmount<Currency> | undefined)[] {
   const balances = useWalletBalances();
 

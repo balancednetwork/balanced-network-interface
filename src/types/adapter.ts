@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
 
 import { NETWORK_ID } from '../constants/config';
-import { PairInfo } from '../constants/pairs';
 import { SUPPORTED_TOKENS } from '../constants/tokens';
 import { Token } from './balanced-sdk-core/entities';
 import { CurrencyAmount } from './balanced-sdk-core/entities/fractions';
@@ -28,7 +27,7 @@ export const convertCurrencyAmount = (value?: LegacyCurrencyAmount) => {
   }
 };
 
-export const convertPair = (pairInfo: PairInfo, pool?: Pool) => {
+export const convertPair = (pool?: Pool) => {
   if (pool) {
     const baseToken = getTokenFromCurrencyKey(pool.baseCurrencyKey);
     const quoteToken = getTokenFromCurrencyKey(pool.quoteCurrencyKey);

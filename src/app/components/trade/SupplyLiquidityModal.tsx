@@ -17,6 +17,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { usePool, usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
+import { CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 import { formatBigNumber } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -28,7 +29,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children?: React.ReactNode;
-  parsedAmounts: { [field in Field]: BigNumber };
+  parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
 }
 
 export enum SupplyModalStatus {
@@ -82,7 +83,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
       const res: any = await bnJs
         .inject({ account: account })
-        [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType], currencyKey));
+        [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]!.toFixed(), currencyKey));
       addTransaction(
         { hash: res.result },
         {
@@ -164,7 +165,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
       bnJs
         .inject({ account: account })
-        .Dex.transferICX(BalancedJs.utils.toLoop(t))
+        .Dex.transferICX(BalancedJs.utils.toLoop(t!.toFixed()))
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
@@ -334,7 +335,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
               {shouldShowSendBtnA ? (
                 <>
                   <Typography variant="p" fontWeight="bold" textAlign="center">
-                    {formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'ratio')} {selectedPair.baseCurrencyKey}
+                    {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {selectedPair.baseCurrencyKey}
                   </Typography>
                   {shouldSendAssetsA && (
                     <>
@@ -363,7 +364,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
               {shouldShowSendBtnB ? (
                 <>
                   <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
-                    {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
+                    {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {selectedPair.quoteCurrencyKey}
                   </Typography>
                   {shouldSendAssetsB && (
                     <>
@@ -463,7 +464,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
         <Flex alignItems="center" hidden={!isQueue}>
           <Box width={1}>
             <Typography variant="p" fontWeight="bold" textAlign={isQueue ? 'center' : 'right'}>
-              {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
+              {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {selectedPair.quoteCurrencyKey}
             </Typography>
             <Typography mt={2} textAlign="center">
               Your ICX will be locked for 24 hours. <br />

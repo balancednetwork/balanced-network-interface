@@ -29,7 +29,7 @@ export function getPool(pools: { [p: string]: Pool }, pairInfo: PairInfo) {
 }
 
 function getPairs(pools: { [p: string]: Pool }) {
-  const pairs = SUPPORTED_PAIRS.map((pairInfo: PairInfo) => convertPair(pairInfo, getPool(pools, pairInfo)));
+  const pairs = SUPPORTED_PAIRS.map((pairInfo: PairInfo) => convertPair(getPool(pools, pairInfo)));
   return pairs.filter((pair?: Pair): pair is Pair => !!pair);
 }
 

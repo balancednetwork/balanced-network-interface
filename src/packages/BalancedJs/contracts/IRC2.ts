@@ -11,7 +11,7 @@ export default class IRC2 extends Contract {
       params: {
         toToken: addresses[this.nid][outputSymbol.toLowerCase()],
         minimumReceive: minimumReceive.toFixed(),
-        path: JSON.stringify(path),
+        path: path,
       },
     };
 

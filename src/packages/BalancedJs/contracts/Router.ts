@@ -15,7 +15,7 @@ export default class Router extends Contract {
       method: 'route',
       value: value,
       params: {
-        _path: JSON.stringify(path),
+        _path: path,
       },
     });
 

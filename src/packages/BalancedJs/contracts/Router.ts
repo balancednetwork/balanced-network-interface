@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -16,7 +15,7 @@ export default class Router extends Contract {
       method: 'route',
       value: value,
       params: {
-        _path: IconConverter.toHex(JSON.stringify(path)),
+        _path: JSON.stringify(path),
       },
     });
 

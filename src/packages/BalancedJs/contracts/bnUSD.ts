@@ -3,9 +3,9 @@ import { IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
-import { Contract } from './contract';
+import TokenContract from './TokenContract';
 
-export default class bnUSD extends Contract {
+export default class bnUSD extends TokenContract {
   constructor(contractSettings: ContractSettings) {
     super(contractSettings);
     this.address = addresses[this.nid].bnusd;

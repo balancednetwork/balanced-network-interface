@@ -4,7 +4,7 @@ import { IconConverter } from 'icon-sdk-js';
 import addresses from '../addresses';
 import { Contract } from './contract';
 
-export default class TokenContract extends Contract {
+export default class IRC2 extends Contract {
   swapUsingRoute(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber, path: (string | null)[]) {
     const data = {
       method: '_swap',

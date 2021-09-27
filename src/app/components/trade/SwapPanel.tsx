@@ -144,67 +144,45 @@ export default function SwapPanel() {
       executionTrade.outputAmount.currency.symbol || 'OUT',
     );
 
-    if (executionTrade.isQueue) {
-      //handle queue
-      if (executionTrade.inputAmount.currency.symbol === 'sICX') {
-        bnJs
-          .inject({ account })
-          .sICX.swapToICX(BalancedJs.utils.toLoop(new BigNumber(executionTrade.inputAmount.toExact())))
-          .then((res: any) => {
-            setShowSwapConfirm(false);
-            addTransaction(
-              { hash: res.result },
-              {
-                pending: message.pendingMessage,
-                summary: message.successMessage,
-              },
-            );
-            handleTypeInput('');
-            handleTypeOutput('');
-          })
-          .catch(e => {
-            console.error('error', e);
-          })
-          .finally(() => {
-            window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-            changeShouldLedgerSign(false);
-          });
-      } else {
-        bnJs
-          .inject({ account })
-          .Staking.stakeICX(account, BalancedJs.utils.toLoop(new BigNumber(executionTrade.inputAmount.toExact())))
-          .then((res: any) => {
-            setShowSwapConfirm(false);
-            addTransaction(
-              { hash: res.result },
-              {
-                pending: message.pendingMessage,
-                summary: message.successMessage,
-              },
-            );
-            handleTypeInput('');
-            handleTypeOutput('');
-          })
-          .catch(e => {
-            console.error('error', e);
-          })
-          .finally(() => {
-            window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-            changeShouldLedgerSign(false);
-          });
-      }
+    if (executionTrade.inputAmount.currency.symbol === 'ICX') {
+      bnJs
+        .inject({ account })
+        .Router.swapICX(
+          BalancedJs.utils.toLoop(new BigNumber(executionTrade.inputAmount.toExact())),
+          executionTrade.route.pathForSwap,
+        )
+        .then((res: any) => {
+          setShowSwapConfirm(false);
+          addTransaction(
+            { hash: res.result },
+            {
+              pending: message.pendingMessage,
+              summary: message.successMessage,
+            },
+          );
+          handleTypeInput('');
+          handleTypeOutput('');
+        })
+        .catch(e => {
+          console.error('error', e);
+        })
+        .finally(() => {
+          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+          changeShouldLedgerSign(false);
+        });
     } else {
       const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
       const tokenContract = bnJs.inject({ account })[executionTrade.inputAmount.currency.symbol || 'IN'];
 
       tokenContract
-        .swap(
+        .swapUsingRoute(
           BalancedJs.utils.toLoop(
             new BigNumber(executionTrade.inputAmount.toExact()),
             currencies[Field.INPUT]?.symbol!,
           ),
           executionTrade.outputAmount.currency.symbol,
           BalancedJs.utils.toLoop(new BigNumber(minReceived.toExact()), currencies[Field.OUTPUT]?.symbol!),
+          executionTrade.route.pathForSwap,
         )
         .then((res: any) => {
           setShowSwapConfirm(false);

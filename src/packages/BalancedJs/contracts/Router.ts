@@ -11,7 +11,7 @@ export default class Router extends Contract {
     this.address = addresses[this.nid].router;
   }
 
-  swapICX(value: BigNumber, path: string[]) {
+  swapICX(value: BigNumber, path: (string | null)[]) {
     const payload = this.transactionParamsBuilder({
       method: 'route',
       value: value,

@@ -5,7 +5,7 @@ import addresses from '../addresses';
 import { Contract } from './contract';
 
 export default class TokenContract extends Contract {
-  swapRoute(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber, path: string[]) {
+  swapUsingRoute(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber, path: (string | null)[]) {
     const data = {
       method: '_swap',
       params: {

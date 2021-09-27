@@ -59,4 +59,8 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
   public get chainId(): number {
     return this.pairs[0].chainId;
   }
+
+  public get pathForSwap(): (string | null)[] {
+    return this.path.map((token: Token) => (token.symbol === 'ICX' ? null : token.address)).slice(1);
+  }
 }

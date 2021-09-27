@@ -16,6 +16,7 @@ import Loans from './contracts/Loans';
 import OMM from './contracts/OMM';
 import Rebalancing from './contracts/Rebalancing';
 import Rewards from './contracts/Rewards';
+import Router from './contracts/Router';
 import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
 import USDS from './contracts/USDS';
@@ -52,6 +53,7 @@ export class BalancedJs {
   USDS: USDS;
   //
   Loans: Loans;
+  Router: Router;
   Band: Band;
   Staking: Staking;
   Dex: Dex;
@@ -111,6 +113,7 @@ export class BalancedJs {
     this.USDS = new USDS(this.contractSettings);
 
     this.Loans = new Loans(this.contractSettings);
+    this.Router = new Router(this.contractSettings);
     this.Band = new Band(this.contractSettings);
     this.Staking = new Staking(this.contractSettings);
     this.Dex = new Dex(this.contractSettings);

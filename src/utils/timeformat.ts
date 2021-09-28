@@ -13,7 +13,7 @@ export const formatTimeStr = (targetDay, platformDay, isStartTime?: boolean) => 
   const hoursLeft = hoursDiff % 24;
   const daysLeft = Math.floor(hoursDiff / 24);
 
-  if (daysLeft < 1) return targetDate.fromNow(true);
+  if (daysLeft < 1) return targetDate.fromNow(true) === 'a day' ? '1 day' : targetDate.fromNow(true);
 
   const hoursLeftString = hoursLeft === 0 ? '' : hoursLeft === 1 ? 'an hour' : hoursLeft + ' hours';
   const daysLeftString = daysLeft === 1 ? '1 day' : daysLeft + ' days';

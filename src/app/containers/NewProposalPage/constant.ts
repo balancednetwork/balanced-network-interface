@@ -145,7 +145,7 @@ export const PROPOSAL_CONFIG = {
     },
     submitParams: ratioInputValue => {
       const locking_ratio = Math.round(1000000 / Number(Object.values(ratioInputValue)));
-      return { setLockingRatio: { _ratio: locking_ratio } };
+      return { setLockingRatio: { _value: locking_ratio } };
     },
     validate: sum => ({
       isValid: sum < 66.67,
@@ -163,7 +163,7 @@ export const PROPOSAL_CONFIG = {
         .toLoop(Number(Object.values(ratioInputValue)))
         .div(100)
         .toFixed();
-      return { setRebalancingThreshold: { _ratio: rebalance_ratio } };
+      return { setRebalancingThreshold: { _value: rebalance_ratio } };
     },
     validate: sum => ({
       isValid: sum <= 7.5,

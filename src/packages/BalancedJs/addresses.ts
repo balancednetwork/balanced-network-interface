@@ -23,7 +23,7 @@ const MAINNET_ADDRESSES = {
 
 const YEOUIDO_ADDRESSES = {
   loans: 'cx3259f3ff9a51ca3bf170d4ff9104cf4af126ca1c',
-  router: 'cxd440e80b77f46bdea5ea3ab1f90c62f9d3cf8821',
+  router: 'cx4c456f4a02d2576fe712ea10b311a5fe8d06d205',
   staking: 'cx9d829396d887f9292d8af488fab78ad24ab6b99a',
   dividends: 'cx5b996d251009340f7c312b9df5c44f0f39a20a91',
   reserve: 'cx1754666c6779dc5e495a462144dd15e4a68fe776',

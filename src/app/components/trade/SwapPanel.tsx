@@ -147,10 +147,7 @@ export default function SwapPanel() {
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
       bnJs
         .inject({ account })
-        .Router.swapICX(
-          BalancedJs.utils.toLoop(new BigNumber(executionTrade.inputAmount.toExact())),
-          executionTrade.route.pathForSwap,
-        )
+        .Router.swapICX(BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact()), executionTrade.route.pathForSwap)
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -176,12 +173,9 @@ export default function SwapPanel() {
 
       tokenContract
         .swapUsingRoute(
-          BalancedJs.utils.toLoop(
-            new BigNumber(executionTrade.inputAmount.toExact()),
-            currencies[Field.INPUT]?.symbol!,
-          ),
+          BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact(), currencies[Field.INPUT]?.symbol!),
           executionTrade.outputAmount.currency.symbol,
-          BalancedJs.utils.toLoop(new BigNumber(minReceived.toExact()), currencies[Field.OUTPUT]?.symbol!),
+          BalancedJs.utils.toLoop(minReceived.toExact(), currencies[Field.OUTPUT]?.symbol!),
           executionTrade.route.pathForSwap,
         )
         .then((res: any) => {

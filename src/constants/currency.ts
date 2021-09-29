@@ -1,4 +1,3 @@
-import keyBy from 'lodash/keyBy';
 import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
 import { ReactComponent as BALNIcon } from 'assets/tokens/BALN.svg';
@@ -21,8 +20,6 @@ const NETWORK_ID: NetworkId = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
 export const CURRENCY: CurrencyKey[] = CURRENCY_INFO[NETWORK_ID];
 
-export const CURRENCY_MAP = keyBy(CURRENCY);
-
 export const currencyKeyToIconMap = {
   ICX: ICXIcon,
   sICX: sICXIcon,
@@ -31,20 +28,6 @@ export const currencyKeyToIconMap = {
   OMM: OMMIcon,
   IUSDC: IUSDCIcon,
   USDS: USDSIcon,
-};
-
-export const getPairableCurrencies = (currencyKey: CurrencyKey | undefined): CurrencyKey[] => {
-  if (!currencyKey) return CURRENCY;
-
-  const leftPairableCurrencies = SUPPORTED_PAIRS.filter(pair => pair.quoteCurrencyKey === currencyKey).map(
-    pair => pair.baseCurrencyKey,
-  );
-
-  const rightPairableCurrencies = SUPPORTED_PAIRS.filter(pair => pair.baseCurrencyKey === currencyKey).map(
-    pair => pair.quoteCurrencyKey,
-  );
-
-  return [...leftPairableCurrencies, ...rightPairableCurrencies];
 };
 
 export const getTradePair = (

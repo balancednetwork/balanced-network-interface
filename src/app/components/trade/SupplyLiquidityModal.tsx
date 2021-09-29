@@ -32,12 +32,6 @@ interface ModalProps {
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
 }
 
-export enum SupplyModalStatus {
-  'Supply' = 'Supply',
-  'Cancel' = 'Cancel',
-  'Remove' = 'Remove',
-}
-
 export enum Field {
   CURRENCY_A = 'CURRENCY_A',
   CURRENCY_B = 'CURRENCY_B',

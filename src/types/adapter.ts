@@ -5,7 +5,7 @@ import { SUPPORTED_TOKENS } from '../constants/tokens';
 import { Token } from './balanced-sdk-core/entities';
 import { CurrencyAmount } from './balanced-sdk-core/entities/fractions';
 import { Pair } from './balanced-v1-sdk/entities';
-import { CurrencyAmount as LegacyCurrencyAmount, CurrencyKey, Pool } from './index';
+import { CurrencyKey, Pool } from './index';
 
 const tokens = SUPPORTED_TOKENS[NETWORK_ID];
 
@@ -14,18 +14,6 @@ export const getTokenFromCurrencyKey = (key?: CurrencyKey) => {
 };
 
 const TEN = new BigNumber(10);
-
-export const convertCurrencyAmount = (value?: LegacyCurrencyAmount) => {
-  if (value) {
-    const token = getTokenFromCurrencyKey(value.currencyKey);
-
-    if (token) {
-      const [numerator, denominator] = value.amount.times(TEN.pow(token.decimals)).toFraction();
-
-      return CurrencyAmount.fromFractionalAmount(token, numerator.toFixed(), denominator.toFixed());
-    }
-  }
-};
 
 export const convertPair = (pool?: Pool) => {
   if (pool) {

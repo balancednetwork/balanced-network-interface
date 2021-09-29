@@ -88,7 +88,7 @@ export const USDS_YEOUIDO = new Token(
 
 export const OMM_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
-  'cx05515d126a47a98c682fa86992329e6c2ec70503',
+  'cxc58f32a437c8e5a5fcb8129626662f2252ad2678',
   18,
   'OMM',
   'OMM',

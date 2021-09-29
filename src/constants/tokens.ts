@@ -109,6 +109,14 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
 };
 
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];
+
+/*
+ * this information contains the tokens the balanced supports
+ * eventually this information will saved in json file.
+ * the logo url are wrong. need to change
+ */
+
+/*
 export interface TokenInfo {
   readonly chainId: number;
   readonly address: string;
@@ -121,10 +129,6 @@ export interface TokenInfo {
     readonly [key: string]: string | number | boolean | null;
   };
 }
-
-// this information contains the tokens the balanced supports
-// eventually this information will saved in json file.
-// the logo url are wrong. need to change
 
 export const SUPPORTED_TOKENS_INFO: TokenInfo[] = [
   // Mainnet
@@ -231,7 +235,7 @@ export const SUPPORTED_TOKENS_INFO: TokenInfo[] = [
   },
   {
     name: 'Omm Token',
-    address: 'cx05515d126a47a98c682fa86992329e6c2ec70503',
+    address: 'cxc58f32a437c8e5a5fcb8129626662f2252ad2678',
     symbol: 'OMM',
     decimals: 18,
     chainId: 3,
@@ -239,3 +243,4 @@ export const SUPPORTED_TOKENS_INFO: TokenInfo[] = [
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x4922a015c4407F87432B179bb209e125432E4a2A/logo.png',
   },
 ];
+*/

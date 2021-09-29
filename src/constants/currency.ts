@@ -238,9 +238,9 @@ export const addressToCurrencyKeyMap = {
     cx05515d126a47a98c682fa86992329e6c2ec70503: 'OMM',
   },
   [NetworkId.SEJONG]: {
-    cx0e706eca3552a6e607095319f4ad8cea37e779d4: 'sICX',
-    cx041714d034919c8456d3606f8766f0169e35cb8e: 'bnUSD',
-    cxb45058d398614a7c8cdf7be6f556fa0b39399799: 'BALN',
+    cxc79530e0e4081e2e898bac7baa0075fcf71e55c1: 'sICX',
+    cx8c2cf0096636feb17bae2bb018b26dc87afb7bcf: 'bnUSD',
+    cxeed0ccc4ee5781abf65208178572e39fd6e49f53: 'BALN',
     cx0000000000000000000000000000000000000000: 'ICX',
   },
 };

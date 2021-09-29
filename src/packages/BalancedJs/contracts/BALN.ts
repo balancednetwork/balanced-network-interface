@@ -11,17 +11,6 @@ export default class BALN extends IRC2 {
     this.address = addresses[this.nid].baln;
   }
 
-  balanceOf(owner: string) {
-    const callParams = this.paramsBuilder({
-      method: 'balanceOf',
-      params: {
-        _owner: owner,
-      },
-    });
-
-    return this.call(callParams);
-  }
-
   swap(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
     const data = {
       method: '_swap',
@@ -55,10 +44,6 @@ export default class BALN extends IRC2 {
     return this.callICONPlugins(payload);
   }
 
-  deposit(value: BigNumber) {
-    return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
-  }
-
   detailsBalanceOf(owner: string) {
     const callParams = this.paramsBuilder({
       method: 'detailsBalanceOf',
@@ -88,14 +73,6 @@ export default class BALN extends IRC2 {
       params: {
         _day: IconConverter.toHex(_day),
       },
-    });
-
-    return this.call(callParams);
-  }
-
-  totalSupply() {
-    const callParams = this.paramsBuilder({
-      method: 'totalSupply',
     });
 
     return this.call(callParams);

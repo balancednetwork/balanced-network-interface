@@ -16,10 +16,6 @@ export default class sICX extends IRC2 {
     return this.transfer(addresses[this.nid].loans, value, JSON.stringify(data));
   }
 
-  deposit(value: BigNumber) {
-    return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
-  }
-
   swap(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
     const data = {
       method: '_swap',
@@ -33,17 +29,6 @@ export default class sICX extends IRC2 {
     const data = { method: '_swap_icx' };
 
     return this.transfer(addresses[this.nid].dex, value, JSON.stringify(data));
-  }
-
-  balanceOf(owner: string) {
-    const callParams = this.paramsBuilder({
-      method: 'balanceOf',
-      params: {
-        _owner: owner,
-      },
-    });
-
-    return this.call(callParams);
   }
 
   transfer(to: string, value: BigNumber, data?: string) {

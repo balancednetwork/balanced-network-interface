@@ -7,10 +7,10 @@ const InputContainer = styled.div`
   width: 100%;
 `;
 
-const AddressInputLabel = styled.button`
-  border: 2px solid #0b284c;
+const AddressInputLabel = styled.button<{ bg?: string }>`
+  border: 2px solid ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
   border-right: 1px solid rgba(255, 255, 255, 0.15);
-  background-color: #0b284c;
+  background-color: ${({ theme, bg = 'bg4' }) => `${theme.colors[bg]}`};
   display: flex;
   align-items: center;
   width: 120px;
@@ -24,14 +24,14 @@ const AddressInputLabel = styled.button`
   justify-content: center;
 `;
 
-const AddressInput = styled.input`
+const AddressInput = styled.input<{ bg?: string }>`
   flex: 1;
   width: 100%;
   height: 43px;
   text-align: right;
   border-radius: 0 10px 10px 0;
-  border: 2px solid #0c2a4d;
-  background-color: #0c2a4d;
+  border: 2px solid ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
+  background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
   color: #ffffff;
   padding: 7px 20px;
   outline: none;
@@ -52,14 +52,21 @@ const AddressInput = styled.input`
 interface AddressInputPanelProps {
   value: string;
   onUserInput: (value: string) => void;
+  bg?: string;
+  className?: string;
 }
 
-export default function AddressInputPanel({ value, onUserInput }: AddressInputPanelProps) {
+export default function AddressInputPanel({ value, onUserInput, bg, className }: AddressInputPanelProps) {
   return (
-    <InputContainer>
-      <AddressInputLabel>Address</AddressInputLabel>
+    <InputContainer className={className}>
+      <AddressInputLabel bg={bg}>Address</AddressInputLabel>
 
-      <AddressInput placeholder="hx00000..." value={value} onChange={event => onUserInput(event.target.value)} />
+      <AddressInput
+        placeholder="hx00000..."
+        value={value}
+        onChange={event => onUserInput(event.target.value)}
+        bg={bg}
+      />
     </InputContainer>
   );
 }

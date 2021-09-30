@@ -3,7 +3,6 @@ import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
 import { ReactComponent as BALNIcon } from 'assets/tokens/BALN.svg';
 import { ReactComponent as bnUSDIcon } from 'assets/tokens/bnUSD.svg';
-import { ReactComponent as CFTIcon } from 'assets/tokens/CFT.svg';
 import { ReactComponent as ICXIcon } from 'assets/tokens/ICX.svg';
 import { ReactComponent as IUSDCIcon } from 'assets/tokens/IUSDC.svg';
 import { ReactComponent as OMMIcon } from 'assets/tokens/OMM.svg';
@@ -12,8 +11,8 @@ import { ReactComponent as USDSIcon } from 'assets/tokens/USDS.svg';
 import { CurrencyKey, Pool } from 'types';
 
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
-  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT'],
-  [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS', 'CFT'],
+  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS'],
+  [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS'],
 };
 
 const NETWORK_ID: NetworkId = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
@@ -30,7 +29,6 @@ export const currencyKeyToIconMap = {
   OMM: OMMIcon,
   IUSDC: IUSDCIcon,
   USDS: USDSIcon,
-  CFT: CFTIcon,
 };
 
 export const toMarketPair = (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: string) =>
@@ -99,12 +97,6 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
       pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['USDS']),
       poolId: 8,
     },
-    {
-      baseCurrencyKey: CURRENCY_MAP['CFT'],
-      quoteCurrencyKey: CURRENCY_MAP['sICX'],
-      pair: toMarketPair(CURRENCY_MAP['CFT'], CURRENCY_MAP['sICX']),
-      poolId: 9,
-    },
   ],
 
   [NetworkId.YEOUIDO]: [
@@ -153,12 +145,6 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
       quoteCurrencyKey: CURRENCY_MAP['USDS'],
       pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['USDS']),
       poolId: 21,
-    },
-    {
-      baseCurrencyKey: CURRENCY_MAP['CFT'],
-      quoteCurrencyKey: CURRENCY_MAP['sICX'],
-      pair: toMarketPair(CURRENCY_MAP['CFT'], CURRENCY_MAP['sICX']),
-      poolId: 30,
     },
   ],
 };
@@ -209,7 +195,6 @@ export const addressToCurrencyKeyMap = {
     cxae3034235540b924dfcc1b45836c293dcc82bfb7: 'IUSDC',
     cxbb2871f468a3008f80b08fdde5b8b951583acf06: 'USDS',
     cx1a29259a59f463a67bb2ef84398b30ca56b5830a: 'OMM',
-    cx2e6d0fc0eca04965d06038c8406093337f085fcf: 'CFT',
   },
   [NetworkId.YEOUIDO]: {
     cxae6334850f13dfd8b50f8544d5acb126bb8ef82d: 'sICX',
@@ -219,6 +204,5 @@ export const addressToCurrencyKeyMap = {
     cx65f639254090820361da483df233f6d0e69af9b7: 'IUSDC',
     cxc0666df567a6e0b49342648e98ccbe5362b264ea: 'USDS',
     cx05515d126a47a98c682fa86992329e6c2ec70503: 'OMM',
-    cxf7313d7fd611c99b8db29e298699be4b1fd86661: 'CFT',
   },
 };

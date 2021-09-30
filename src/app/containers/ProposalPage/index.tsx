@@ -31,6 +31,7 @@ import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'st
 import { getTrackerLink } from 'utils';
 
 import { ActionsMapping, RATIO_VALUE_FORMATTER } from '../NewProposalPage/constant';
+import Funding from './Funding';
 import Ratio from './Ratio';
 
 dayjs.extend(duration);
@@ -97,15 +98,15 @@ export function ProposalPage() {
   const { data: platformDay } = usePlatformDayQuery();
 
   const actions = JSON.parse(proposal?.actions || '{}');
-  const actionKeys = Object.keys(actions);
+  const actionKeyList = Object.keys(actions);
 
   const getKeyByValue = value => {
     return Object.keys(ActionsMapping).find(key => ActionsMapping[key].includes(value));
   };
 
-  const ratioAction = actionKeys.find(actionKey => getKeyByValue(actionKey));
+  const actionKey = actionKeyList.find(actionKey => getKeyByValue(actionKey));
 
-  const proposalType = actionKeys.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
+  const proposalType = actionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
 
   const isActive =
     proposal &&
@@ -333,15 +334,19 @@ export function ProposalPage() {
           />
         </BoxPanel>
 
-        {proposalType && ratioAction && (
+        {proposalType && actionKey && (
           <BoxPanel bg="bg2" my={10}>
             <Typography variant="h2" mb="20px">
               {proposalType}
             </Typography>
-            <Ratio
-              proposalType={proposalType}
-              proposedList={RATIO_VALUE_FORMATTER[proposalType](Object.values(actions[ratioAction])[0])}
-            />
+            {actionKey === ActionsMapping.Funding[0] ? (
+              <Funding amounts={actions[actionKey]._amounts} />
+            ) : (
+              <Ratio
+                proposalType={proposalType}
+                proposedList={RATIO_VALUE_FORMATTER[proposalType](Object.values(actions[actionKey])[0])}
+              />
+            )}
           </BoxPanel>
         )}
 

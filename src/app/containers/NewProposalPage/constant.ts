@@ -1,9 +1,14 @@
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
+import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
+import { addressToCurrencyKeyMap } from 'constants/currency';
+
+import { CurrencyValue } from '../../components/newproposal/FundingInput';
 
 export const MAX_RATIO_VALUE = 100;
+
+export const CURRENCY_LIST = ['BALN', 'bnUSD', 'sICX'];
 
 const ProposalMapping = {
   daofund: 'DAO fund',
@@ -26,6 +31,7 @@ export enum PROPOSAL_TYPE {
   LOAN_FEE = 'Loan fee',
   LOAN_TO_VALUE_RATIO = 'Loan to value ratio',
   REBALANCING_THRESHOLD = 'Rebalancing threshold',
+  FUNDING = 'Funding',
 }
 
 export const ActionsMapping = {
@@ -34,6 +40,7 @@ export const ActionsMapping = {
   [PROPOSAL_TYPE.LOAN_FEE]: ['setOriginationFee', 'update_origination_fee'],
   [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: ['setLockingRatio', 'update_locking_ratio'],
   [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: ['setRebalancingThreshold'],
+  [PROPOSAL_TYPE.FUNDING]: ['daoDisburse'],
 };
 
 export const PercentMapping = {
@@ -169,5 +176,26 @@ export const PROPOSAL_CONFIG = {
       isValid: sum <= 7.5,
       message: 'Must be less than or equal to 7.5%.',
     }),
+  },
+  [PROPOSAL_TYPE.FUNDING]: {
+    fetchInputData: async () => {
+      const res = await bnJs.DAOFund.getBalances();
+      return Object.entries(res).map(item => {
+        return {
+          symbol:
+            addressToCurrencyKeyMap[NetworkId.YEOUIDO][item[0]] ||
+            addressToCurrencyKeyMap[NetworkId.MAINNET][item[0]] ||
+            item[0],
+          amount: BalancedJs.utils.toIcx(item[1] as string),
+        };
+      });
+    },
+    submitParams: (account: string, currencyValue: { [key: string]: CurrencyValue }) => {
+      const amounts = Object.values(currencyValue).map((value: CurrencyValue) => ({
+        ...value,
+        amount: BalancedJs.utils.toLoop(value.amount).toNumber(),
+      }));
+      return { daoDisburse: { _recipient: account, _amounts: amounts } };
+    },
   },
 };

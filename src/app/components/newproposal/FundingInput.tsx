@@ -6,9 +6,8 @@ import styled from 'styled-components';
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
+import { PROPOSAL_CONFIG, CURRENCY_LIST } from 'app/containers/NewProposalPage/constant';
 import { CurrencyKey } from 'types';
-
-import { PROPOSAL_CONFIG, CURRENCY_LIST } from '../NewProposalPage/constant';
 
 export interface CurrencyValue {
   amount: string;
@@ -36,10 +35,6 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  console.log('currencyValue.symbol', CURRENCY_LIST);
-
-  console.log('balanceList', balanceList);
 
   const handleInput = (itemId: string, key: keyof CurrencyValue) => (value: string | CurrencyValue) => {
     if (key === 'amount') {

@@ -6,7 +6,6 @@ import Airdrip from './contracts/Airdrip';
 import BALN from './contracts/BALN';
 import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
-import CFT from './contracts/CFT';
 import { Contract } from './contracts/contract';
 import Dex from './contracts/Dex';
 import Dividends from './contracts/Dividends';
@@ -51,7 +50,6 @@ export class BalancedJs {
   OMM: OMM;
   IUSDC: IUSDC;
   USDS: USDS;
-  CFT: CFT;
   //
   Loans: Loans;
   Band: Band;
@@ -111,7 +109,6 @@ export class BalancedJs {
     this.OMM = new OMM(this.contractSettings);
     this.IUSDC = new IUSDC(this.contractSettings);
     this.USDS = new USDS(this.contractSettings);
-    this.CFT = new CFT(this.contractSettings);
 
     this.Loans = new Loans(this.contractSettings);
     this.Band = new Band(this.contractSettings);

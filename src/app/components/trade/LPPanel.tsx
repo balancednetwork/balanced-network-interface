@@ -122,12 +122,12 @@ export default function LPPanel() {
       const p = new Percent(Math.floor(percent * 100), 10_000);
 
       if (pairInfo.id === BalancedJs.utils.POOL_IDS.sICXICX) {
-        onSlide(Field.CURRENCY_B, balanceB.multiply(p).toFixed());
+        onSlide(Field.CURRENCY_B, percent !== 0 ? balanceB.multiply(p).toFixed() : '');
       } else {
         const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
           ? Field.CURRENCY_A
           : Field.CURRENCY_B;
-        onSlide(field, currencyBalances[field]!.multiply(p).toFixed());
+        onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
       }
     }
   }, [percent, currencyBalances, onSlide, pair, pairInfo.id]);

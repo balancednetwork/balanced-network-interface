@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
 
@@ -81,13 +82,21 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
 
 export const getCurrencyIcon = (currency: Currency) => currencyKeyToIconMap[currency.symbol!];
 
+const MIN_NATIVE_CURRENCY_FOR_GAS: JSBI = JSBI.multiply(
+  JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)),
+  JSBI.BigInt(MINIMUM_ICX_FOR_ACTION),
+); // 2 ICX
+
 export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): CurrencyAmount<Currency> | undefined {
   if (!currencyAmount) return undefined;
   if (currencyAmount.currency.symbol === 'ICX') {
-    if (currencyAmount.greaterThan(MINIMUM_ICX_FOR_ACTION)) {
-      return currencyAmount.subtract(CurrencyAmount.fromRawAmount(currencyAmount.currency, MINIMUM_ICX_FOR_ACTION));
+    if (JSBI.greaterThan(currencyAmount.quotient, MIN_NATIVE_CURRENCY_FOR_GAS)) {
+      return CurrencyAmount.fromRawAmount(
+        currencyAmount.currency,
+        JSBI.subtract(currencyAmount.quotient, MIN_NATIVE_CURRENCY_FOR_GAS),
+      );
     } else {
-      return CurrencyAmount.fromRawAmount(currencyAmount.currency, 0);
+      return CurrencyAmount.fromRawAmount(currencyAmount.currency, JSBI.BigInt(0));
     }
   }
   return currencyAmount;

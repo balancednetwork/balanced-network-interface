@@ -177,7 +177,9 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       this.inputAmount.quotient,
       this.outputAmount.quotient,
     );
-    this.priceImpact = computePriceImpact(route.midPrice, this.inputAmount, this.outputAmount);
+    this.priceImpact = this.isQueue
+      ? new Percent(0)
+      : computePriceImpact(route.midPrice, this.inputAmount, this.outputAmount);
   }
 
   /**

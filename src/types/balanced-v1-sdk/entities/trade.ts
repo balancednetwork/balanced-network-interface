@@ -387,15 +387,21 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
   }
 
   get fee(): CurrencyAmount<Currency> {
-    if (this.inputAmount.currency.symbol === 'sICX' && this.outputAmount.currency.symbol === 'ICX') {
-      return this.inputAmount.multiply(new Fraction(1, 100));
+    let result = new Fraction(ONE);
+    for (let i = 0; i < this.route.path.length - 1; i++) {
+      const inputCurrencySymbol = this.route.path[i].symbol;
+      const outputCurrencySymbol = this.route.path[i + 1].symbol;
+
+      if (inputCurrencySymbol === 'sICX' && outputCurrencySymbol === 'ICX') {
+        result = result.multiply(new Fraction(99, 100));
+      } else if (inputCurrencySymbol === 'ICX' && outputCurrencySymbol === 'sICX') {
+        // result = result.multiply(new Fraction(ONE));
+      } else {
+        result = result.multiply(new Fraction(997, 1000));
+      }
     }
 
-    if (this.inputAmount.currency.symbol === 'ICX' && this.outputAmount.currency.symbol === 'sICX') {
-      return this.inputAmount.multiply(0);
-    }
-
-    return this.inputAmount.multiply(new Fraction(3, 1000));
+    return this.inputAmount.multiply(new Fraction(ONE).subtract(result));
   }
 
   get isQueue(): boolean {

@@ -105,6 +105,12 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
       pair: toMarketPair(CURRENCY_MAP['CFT'], CURRENCY_MAP['sICX']),
       poolId: 9,
     },
+    {
+      baseCurrencyKey: CURRENCY_MAP['USDS'],
+      quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
+      pair: toMarketPair(CURRENCY_MAP['USDS'], CURRENCY_MAP['bnUSD']),
+      poolId: 10,
+    },
   ],
 
   [NetworkId.YEOUIDO]: [

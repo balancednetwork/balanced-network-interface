@@ -1,55 +1,43 @@
 import React from 'react';
 
-import { BalancedJs } from 'packages/BalancedJs';
+import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { CurrencyValue } from 'app/components/newproposal/FundingInput';
 import { Typography } from 'app/theme';
+import { addressToCurrencyKeyMap } from 'constants/currency';
 
-interface Props {
-  amounts: CurrencyValue[];
+interface AmountItem {
+  amount: string;
+  address: string;
 }
 
-export default function Funding({ amounts }: Props) {
-  const _amounts: { [key: string]: string[] } = amounts.reduce((acc, { amount, symbol, address }) => {
-    return {
-      ...acc,
-      [address]: [...(acc[address] || []), `${Number(BalancedJs.utils.toIcx(amount).toFixed(2))} ${symbol || ''}`],
-    };
-  }, {});
+interface Props {
+  recipient: string;
+  amounts: AmountItem[];
+}
 
+export default function Funding({ recipient, amounts }: Props) {
   return (
-    <>
-      <Wrapper>
-        <BoxPanel width={'40%'}>
-          <Heading variant="p">Send</Heading>
-        </BoxPanel>
-        <BoxPanel width={'60%'}>
-          <Heading variant="p">To</Heading>
-        </BoxPanel>
-      </Wrapper>
-      <List>
-        {Object.entries(_amounts).map(values => (
-          <Wrapper key={values[0]}>
-            <BoxPanel width={'40%'}>
-              {values[1].map(currency => (
-                <ListItem>
-                  <Typography variant="h3">{currency}</Typography>
-                </ListItem>
-              ))}
-            </BoxPanel>
-            <BoxPanel width={'60%'}>
-              <List>
-                <ListItem>
-                  <Typography variant="p">{values[0]}</Typography>
-                </ListItem>
-              </List>
-            </BoxPanel>
-          </Wrapper>
-        ))}
-      </List>
-    </>
+    <Wrapper>
+      <BoxPanel width={'40%'}>
+        <Heading variant="p">Send</Heading>
+        <List>
+          {amounts.map(({ amount, address }) => (
+            <ListItem>
+              <Typography variant="h3">{`${BalancedJs.utils.toIcx(amount)}  ${
+                addressToCurrencyKeyMap[NetworkId.YEOUIDO][address] ||
+                addressToCurrencyKeyMap[NetworkId.MAINNET][address]
+              }`}</Typography>
+            </ListItem>
+          ))}
+        </List>
+      </BoxPanel>
+      <BoxPanel width={'60%'}>
+        <Heading variant="p">To</Heading>
+        <Typography variant="p">{recipient}</Typography>
+      </BoxPanel>
+    </Wrapper>
   );
 }
 

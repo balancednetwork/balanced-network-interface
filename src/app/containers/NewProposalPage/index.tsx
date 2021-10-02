@@ -102,11 +102,13 @@ export function NewProposalPage() {
   const [forumLink, setForumLink] = useState('');
   const [description, setDescription] = useState('');
   const [ratioInputValue, setRatioInputValue] = useState<{ [key: string]: string }>({});
-  const [currencyInputValue, setCurrencyInputValue] = React.useState<{ [key: number]: CurrencyValue }>({
-    0: {
-      amount: '',
-      symbol: CURRENCY_LIST[0],
-      address: '',
+  const [currencyInputValue, setCurrencyInputValue] = React.useState<CurrencyValue>({
+    recipient: '',
+    amounts: {
+      '0': {
+        amount: '',
+        symbol: CURRENCY_LIST[0],
+      },
     },
   });
 
@@ -169,9 +171,10 @@ export function NewProposalPage() {
     (isTextProposal ||
       (Object.values(ratioInputValue).length > 0 && Object.values(ratioInputValue).every(ratio => !!ratio.trim())) ||
       (isFundingProposal &&
-        Object.values(currencyInputValue).every(
-          currency => !!currency.address.trim() && !!currency.amount.trim() && !!currency.symbol.trim(),
-        )));
+        !!currencyInputValue.recipient.trim() &&
+        !Object.values(currencyInputValue.amounts)
+          .map(({ amount }) => amount)
+          .includes('')));
 
   const canSubmit = account && isStakeValid && isFormValid;
 
@@ -243,7 +246,7 @@ export function NewProposalPage() {
     const actions = isTextProposal
       ? '{}'
       : isFundingProposal
-      ? JSON.stringify(submitParams(account, currencyInputValue))
+      ? JSON.stringify(submitParams(currencyInputValue))
       : JSON.stringify(submitParams(ratioInputValue));
 
     platformDay &&

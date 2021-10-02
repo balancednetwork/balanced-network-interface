@@ -340,7 +340,7 @@ export function ProposalPage() {
               {proposalType}
             </Typography>
             {actionKey === ActionsMapping.Funding[0] ? (
-              <Funding amounts={actions[actionKey]._amounts} />
+              <Funding recipient={actions[actionKey]._recipient} amounts={actions[actionKey]._amounts} />
             ) : (
               <Ratio
                 proposalType={proposalType}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
@@ -7,26 +7,30 @@ import AddressInputPanel from 'app/components/AddressInputPanel';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
 import { PROPOSAL_CONFIG, CURRENCY_LIST } from 'app/containers/NewProposalPage/constant';
-import { CurrencyKey } from 'types';
 
 export interface CurrencyValue {
-  amount: string;
-  symbol: CurrencyKey;
-  address: string;
+  recipient: string;
+  amounts: Amount;
 }
-
+export interface Amount {
+  [key: string]: {
+    amount: string;
+    symbol: string;
+  };
+}
 export interface Balance {
   symbol: string;
   amount: BigNumber;
 }
 
 interface Props {
-  currencyValue: { [key: number]: CurrencyValue };
-  setCurrencyValue: (value: { [key: number]: CurrencyValue }) => void;
+  currencyValue: CurrencyValue;
+  setCurrencyValue: (value: CurrencyValue) => void;
 }
 
 export default function FundingInput({ currencyValue, setCurrencyValue }: Props) {
   const [balanceList, setBalanceList] = useState<Array<Balance>>([{ symbol: '', amount: new BigNumber(0) }]);
+  const [currencyList, setCurrencyList] = useState(CURRENCY_LIST);
 
   useEffect(() => {
     (async () => {
@@ -36,48 +40,68 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleInput = (itemId: string, key: keyof CurrencyValue) => (value: string | CurrencyValue) => {
+  useEffect(() => {
+    updateCurrencyList(currencyValue.amounts);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Object.keys(currencyValue.amounts).length]);
+
+  const updateCurrencyList = useCallback(
+    (amounts: Amount) => {
+      const symbolSelectedList = Object.values(amounts).map(({ symbol }) => symbol);
+      const newCurrencyList = CURRENCY_LIST.filter(value => !symbolSelectedList.includes(value));
+      setCurrencyList(newCurrencyList);
+    },
+    [setCurrencyList],
+  );
+
+  const handleInput = (itemId: number, key: 'amount' | 'symbol') => (value: string) => {
     if (key === 'amount') {
-      const maxValue = balanceList.find(item => item.symbol === currencyValue[itemId].symbol)?.amount;
+      const maxValue = balanceList.find(item => item.symbol === currencyValue.amounts[itemId].symbol)?.amount;
       if (Number(value) > Number(maxValue)) return;
     }
-
+    const newAmount: Amount = {
+      ...currencyValue.amounts,
+      [itemId]: { ...currencyValue.amounts[itemId], [key]: value },
+    };
     setCurrencyValue({
       ...currencyValue,
-      [itemId]: {
-        ...currencyValue[itemId],
-        [key]: value,
-      },
+      amounts: newAmount,
     });
+    if (key === 'symbol') {
+      updateCurrencyList(newAmount);
+    }
   };
+
+  const handleAddressInput = (value: string) => setCurrencyValue({ ...currencyValue, recipient: value });
 
   return (
     <BoxPanel>
-      {Object.entries(currencyValue).map(item => (
-        <>
-          <StyledAddressInputPanel value={item[1].address} onUserInput={handleInput(item[0], 'address')} bg="bg5" />
-          <StyledCurrencyInputPanel
-            currencyList={CURRENCY_LIST}
-            balanceList={balanceList}
-            value={item[1].amount}
-            currency={item[1].symbol}
-            id="funding-currency"
-            showMaxButton={false}
-            onCurrencySelect={handleInput(item[0], 'symbol')}
-            onUserInput={handleInput(item[0], 'amount')}
-            bg="bg5"
-          />
-        </>
+      <StyledAddressInputPanel value={currencyValue.recipient} onUserInput={handleAddressInput} bg="bg5" />
+      {Object.values(currencyValue.amounts).map((item, id) => (
+        <StyledCurrencyInputPanel
+          key={id}
+          currencyList={[item.symbol, ...currencyList]}
+          balanceList={balanceList}
+          value={item.amount}
+          currency={item.symbol}
+          id="funding-currency"
+          showMaxButton={false}
+          onCurrencySelect={handleInput(id, 'symbol')}
+          onUserInput={handleInput(id, 'amount')}
+          bg="bg5"
+        />
       ))}
       <ButtonWrapper>
         <Button
           onClick={() => {
             setCurrencyValue({
               ...currencyValue,
-              [Object.keys(currencyValue).length]: {
-                amount: '',
-                symbol: CURRENCY_LIST[0],
-                address: '',
+              amounts: {
+                ...currencyValue.amounts,
+                [Object.keys(currencyValue.amounts).length]: {
+                  amount: '',
+                  symbol: currencyList[0],
+                },
               },
             });
           }}

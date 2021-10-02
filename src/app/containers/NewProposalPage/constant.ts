@@ -83,8 +83,8 @@ export const RATIO_VALUE_FORMATTER = {
   },
 };
 
-const getKeyByValue = value => {
-  return Object.keys(ProposalMapping).find(key => ProposalMapping[key] === value);
+const getKeyByValue = (value, mapping) => {
+  return Object.keys(mapping).find(key => mapping[key] === value);
 };
 
 export const PROPOSAL_CONFIG = {
@@ -96,7 +96,7 @@ export const PROPOSAL_CONFIG = {
       })),
     submitParams: ratioInputValue => {
       const recipientList = Object.entries(ratioInputValue).map(item => ({
-        recipient_name: getKeyByValue(item[0]) || item[0],
+        recipient_name: getKeyByValue(item[0], ProposalMapping) || item[0],
         dist_percent: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
       }));
       return {
@@ -115,7 +115,7 @@ export const PROPOSAL_CONFIG = {
     },
     submitParams: ratioInputValue => {
       const dist_list = Object.entries(ratioInputValue).map(item => {
-        const key = getKeyByValue(item[0]);
+        const key = getKeyByValue(item[0], ProposalMapping);
         return (
           key && {
             [key]: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
@@ -190,12 +190,14 @@ export const PROPOSAL_CONFIG = {
         };
       });
     },
-    submitParams: (account: string, currencyValue: { [key: string]: CurrencyValue }) => {
-      const amounts = Object.values(currencyValue).map((value: CurrencyValue) => ({
-        ...value,
-        amount: BalancedJs.utils.toLoop(value.amount).toNumber(),
+    submitParams: (currencyValue: CurrencyValue) => {
+      const amounts = Object.values(currencyValue.amounts).map(({ amount, symbol }) => ({
+        amount: BalancedJs.utils.toLoop(amount).toNumber(),
+        address:
+          getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.YEOUIDO]) ||
+          getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.MAINNET]),
       }));
-      return { daoDisburse: { _recipient: account, _amounts: amounts } };
+      return { daoDisburse: { _recipient: currencyValue.recipient, _amounts: amounts } };
     },
   },
 };

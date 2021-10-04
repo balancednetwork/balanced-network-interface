@@ -234,6 +234,15 @@ export function NewProposalPage() {
     setForumLink('');
     setDescription('');
     setRatioInputValue({});
+    setCurrencyInputValue({
+      recipient: '',
+      amounts: {
+        '0': {
+          amount: '',
+          symbol: CURRENCY_LIST[0],
+        },
+      },
+    });
   };
 
   const modalSubmit = () => {

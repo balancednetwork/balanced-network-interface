@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 
-import { getTradePair } from '../../constants/currency';
 import { PairInfo, SUPPORTED_PAIRS } from '../../constants/pairs';
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } from '../../constants/routing';
 import { Pool } from '../../types';
@@ -11,17 +10,9 @@ import { isTradeBetter } from '../../types/balanced-v1-sdk/utils/isTradeBetter';
 import { usePools } from '../pool/hooks';
 
 export function getPool(pools: { [p: string]: Pool }, pairInfo: PairInfo) {
-  const currencyIn = pairInfo.baseCurrencyKey;
-  const currencyOut = pairInfo.quoteCurrencyKey;
+  if (pairInfo.id === undefined) return undefined;
 
-  if (!currencyIn || !currencyOut) return undefined;
-
-  const [pair] = getTradePair(currencyIn, currencyOut);
-
-  if (!pair) return undefined;
-
-  // possible to use `pairInfo.id` directly than pairInfo to get pool
-  const pool = pools[pair.id];
+  const pool = pools[pairInfo.id];
 
   if (!pool) return undefined;
 

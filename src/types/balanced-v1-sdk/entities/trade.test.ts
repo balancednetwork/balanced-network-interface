@@ -102,15 +102,15 @@ describe('Trade', () => {
         CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(100)),
         token2,
       );
-      expect(result).toHaveLength(2);
-      expect(result[0].route.pairs).toHaveLength(1); // 0 -> 2 at 10:11
-      expect(result[0].route.path).toEqual([token0, token2]);
-      expect(result[0].inputAmount).toEqual(CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(100)));
-      expect(result[0].outputAmount).toEqual(CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(99)));
-      expect(result[1].route.pairs).toHaveLength(2); // 0 -> 1 -> 2 at 12:12:10
-      expect(result[1].route.path).toEqual([token0, token1, token2]);
-      expect(result[1].inputAmount).toEqual(CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(100)));
-      expect(result[1].outputAmount).toEqual(CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(69)));
+      expect(result).toHaveLength(3);
+      expect(result[1][0].route.pairs).toHaveLength(1); // 0 -> 2 at 10:11
+      expect(result[1][0].route.path).toEqual([token0, token2]);
+      expect(result[1][0].inputAmount).toEqual(CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(100)));
+      expect(result[1][0].outputAmount).toEqual(CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(99)));
+      expect(result[2][0].route.pairs).toHaveLength(2); // 0 -> 1 -> 2 at 12:12:10
+      expect(result[2][0].route.path).toEqual([token0, token1, token2]);
+      expect(result[2][0].inputAmount).toEqual(CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(100)));
+      expect(result[2][0].outputAmount).toEqual(CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(69)));
     });
 
     it('doesnt throw for zero liquidity pairs', () => {
@@ -126,9 +126,9 @@ describe('Trade', () => {
         token2,
         { maxHops: 1 },
       );
-      expect(result).toHaveLength(1);
-      expect(result[0].route.pairs).toHaveLength(1); // 0 -> 2 at 10:11
-      expect(result[0].route.path).toEqual([token0, token2]);
+      expect(result).toHaveLength(2);
+      expect(result[1][0].route.pairs).toHaveLength(1); // 0 -> 2 at 10:11
+      expect(result[1][0].route.path).toEqual([token0, token2]);
     });
 
     it('insufficient input for one pair', () => {
@@ -137,10 +137,10 @@ describe('Trade', () => {
         CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(1)),
         token2,
       );
-      expect(result).toHaveLength(1);
-      expect(result[0].route.pairs).toHaveLength(1); // 0 -> 2 at 10:11
-      expect(result[0].route.path).toEqual([token0, token2]);
-      expect(result[0].outputAmount).toEqual(CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(1)));
+      expect(result).toHaveLength(2);
+      expect(result[1][0].route.pairs).toHaveLength(1); // 0 -> 2 at 10:11
+      expect(result[1][0].route.path).toEqual([token0, token2]);
+      expect(result[1][0].outputAmount).toEqual(CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(1)));
     });
 
     it('respects n', () => {
@@ -151,7 +151,7 @@ describe('Trade', () => {
         { maxNumResults: 1 },
       );
 
-      expect(result).toHaveLength(1);
+      expect(result).toHaveLength(3);
     });
 
     it('no path', () => {
@@ -169,13 +169,13 @@ describe('Trade', () => {
         CurrencyAmount.fromRawAmount(Ether.onChain(1), JSBI.BigInt(100)),
         token3,
       );
-      expect(result).toHaveLength(2);
-      expect(result[0].inputAmount.currency).toEqual(ETHER);
-      expect(result[0].route.path).toEqual([WETH9[1], token0, token1, token3]);
-      expect(result[0].outputAmount.currency).toEqual(token3);
-      expect(result[1].inputAmount.currency).toEqual(ETHER);
-      expect(result[1].route.path).toEqual([WETH9[1], token0, token3]);
-      expect(result[1].outputAmount.currency).toEqual(token3);
+      expect(result).toHaveLength(4);
+      expect(result[3][0].inputAmount.currency).toEqual(ETHER);
+      expect(result[3][0].route.path).toEqual([WETH9[1], token0, token1, token3]);
+      expect(result[3][0].outputAmount.currency).toEqual(token3);
+      expect(result[2][0].inputAmount.currency).toEqual(ETHER);
+      expect(result[2][0].route.path).toEqual([WETH9[1], token0, token3]);
+      expect(result[2][0].outputAmount.currency).toEqual(token3);
     });
     it('works for ETHER currency output', () => {
       const result = Trade.bestTradeExactIn(
@@ -183,13 +183,13 @@ describe('Trade', () => {
         CurrencyAmount.fromRawAmount(token3, JSBI.BigInt(100)),
         ETHER,
       );
-      expect(result).toHaveLength(2);
-      expect(result[0].inputAmount.currency).toEqual(token3);
-      expect(result[0].route.path).toEqual([token3, token0, WETH9[1]]);
-      expect(result[0].outputAmount.currency).toEqual(ETHER);
-      expect(result[1].inputAmount.currency).toEqual(token3);
-      expect(result[1].route.path).toEqual([token3, token1, token0, WETH9[1]]);
-      expect(result[1].outputAmount.currency).toEqual(ETHER);
+      expect(result).toHaveLength(4);
+      expect(result[2][0].inputAmount.currency).toEqual(token3);
+      expect(result[2][0].route.path).toEqual([token3, token0, WETH9[1]]);
+      expect(result[2][0].outputAmount.currency).toEqual(ETHER);
+      expect(result[3][0].inputAmount.currency).toEqual(token3);
+      expect(result[3][0].route.path).toEqual([token3, token1, token0, WETH9[1]]);
+      expect(result[3][0].outputAmount.currency).toEqual(ETHER);
     });
   });
 
@@ -365,15 +365,15 @@ describe('Trade', () => {
         token0,
         CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(100)),
       );
-      expect(result).toHaveLength(2);
-      expect(result[0].route.pairs).toHaveLength(1); // 0 -> 2 at 10:11
-      expect(result[0].route.path).toEqual([token0, token2]);
-      expect(result[0].inputAmount).toEqual(CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(101)));
-      expect(result[0].outputAmount).toEqual(CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(100)));
-      expect(result[1].route.pairs).toHaveLength(2); // 0 -> 1 -> 2 at 12:12:10
-      expect(result[1].route.path).toEqual([token0, token1, token2]);
-      expect(result[1].inputAmount).toEqual(CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(156)));
-      expect(result[1].outputAmount).toEqual(CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(100)));
+      expect(result).toHaveLength(3);
+      expect(result[1][0].route.pairs).toHaveLength(1); // 0 -> 2 at 10:11
+      expect(result[1][0].route.path).toEqual([token0, token2]);
+      expect(result[1][0].inputAmount).toEqual(CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(101)));
+      expect(result[1][0].outputAmount).toEqual(CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(100)));
+      expect(result[2][0].route.pairs).toHaveLength(2); // 0 -> 1 -> 2 at 12:12:10
+      expect(result[2][0].route.path).toEqual([token0, token1, token2]);
+      expect(result[2][0].inputAmount).toEqual(CurrencyAmount.fromRawAmount(token0, JSBI.BigInt(156)));
+      expect(result[2][0].outputAmount).toEqual(CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(100)));
     });
 
     it('doesnt throw for zero liquidity pairs', () => {
@@ -389,9 +389,9 @@ describe('Trade', () => {
         CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(10)),
         { maxHops: 1 },
       );
-      expect(result).toHaveLength(1);
-      expect(result[0].route.pairs).toHaveLength(1); // 0 -> 2 at 10:11
-      expect(result[0].route.path).toEqual([token0, token2]);
+      expect(result).toHaveLength(2);
+      expect(result[1][0].route.pairs).toHaveLength(1); // 0 -> 2 at 10:11
+      expect(result[1][0].route.path).toEqual([token0, token2]);
     });
 
     it('insufficient liquidity', () => {
@@ -409,7 +409,7 @@ describe('Trade', () => {
         token0,
         CurrencyAmount.fromRawAmount(token2, JSBI.BigInt(1050)),
       );
-      expect(result).toHaveLength(1);
+      expect(result).toHaveLength(2);
     });
 
     it('respects n', () => {
@@ -420,7 +420,7 @@ describe('Trade', () => {
         { maxNumResults: 1 },
       );
 
-      expect(result).toHaveLength(1);
+      expect(result).toHaveLength(3);
     });
 
     it('no path', () => {
@@ -438,13 +438,13 @@ describe('Trade', () => {
         ETHER,
         CurrencyAmount.fromRawAmount(token3, JSBI.BigInt(100)),
       );
-      expect(result).toHaveLength(2);
-      expect(result[0].inputAmount.currency).toEqual(ETHER);
-      expect(result[0].route.path).toEqual([WETH9[1], token0, token1, token3]);
-      expect(result[0].outputAmount.currency).toEqual(token3);
-      expect(result[1].inputAmount.currency).toEqual(ETHER);
-      expect(result[1].route.path).toEqual([WETH9[1], token0, token3]);
-      expect(result[1].outputAmount.currency).toEqual(token3);
+      expect(result).toHaveLength(4);
+      expect(result[3][0].inputAmount.currency).toEqual(ETHER);
+      expect(result[3][0].route.path).toEqual([WETH9[1], token0, token1, token3]);
+      expect(result[3][0].outputAmount.currency).toEqual(token3);
+      expect(result[2][0].inputAmount.currency).toEqual(ETHER);
+      expect(result[2][0].route.path).toEqual([WETH9[1], token0, token3]);
+      expect(result[2][0].outputAmount.currency).toEqual(token3);
     });
     it('works for ETHER currency output', () => {
       const result = Trade.bestTradeExactOut(
@@ -452,13 +452,13 @@ describe('Trade', () => {
         token3,
         CurrencyAmount.fromRawAmount(Ether.onChain(1), JSBI.BigInt(100)),
       );
-      expect(result).toHaveLength(2);
-      expect(result[0].inputAmount.currency).toEqual(token3);
-      expect(result[0].route.path).toEqual([token3, token0, WETH9[1]]);
-      expect(result[0].outputAmount.currency).toEqual(ETHER);
-      expect(result[1].inputAmount.currency).toEqual(token3);
-      expect(result[1].route.path).toEqual([token3, token1, token0, WETH9[1]]);
-      expect(result[1].outputAmount.currency).toEqual(ETHER);
+      expect(result).toHaveLength(4);
+      expect(result[2][0].inputAmount.currency).toEqual(token3);
+      expect(result[2][0].route.path).toEqual([token3, token0, WETH9[1]]);
+      expect(result[2][0].outputAmount.currency).toEqual(ETHER);
+      expect(result[3][0].inputAmount.currency).toEqual(token3);
+      expect(result[3][0].route.path).toEqual([token3, token1, token0, WETH9[1]]);
+      expect(result[3][0].outputAmount.currency).toEqual(ETHER);
     });
   });
 });

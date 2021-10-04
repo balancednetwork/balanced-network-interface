@@ -236,8 +236,8 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     // used in recursion.
     currentPairs: Pair[] = [],
     nextAmountIn: CurrencyAmount<Currency> = currencyAmountIn,
-    bestTrades: Trade<TInput, TOutput, TradeType.EXACT_INPUT>[] = [],
-  ): Trade<TInput, TOutput, TradeType.EXACT_INPUT>[] {
+    bestTrades: Trade<TInput, TOutput, TradeType.EXACT_INPUT>[][] = [],
+  ): Trade<TInput, TOutput, TradeType.EXACT_INPUT>[][] {
     invariant(pairs.length > 0, 'PAIRS');
     invariant(maxHops > 0, 'MAX_HOPS');
     invariant(currencyAmountIn === nextAmountIn || currentPairs.length > 0, 'INVALID_RECURSION');
@@ -262,8 +262,12 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       }
       // we have arrived at the output token, so this is the final trade of one of the paths
       if (amountOut.currency.equals(tokenOut)) {
+        const hop = currentPairs.length + 1;
+        if (bestTrades[hop] === undefined) {
+          bestTrades[hop] = [];
+        }
         sortedInsert(
-          bestTrades,
+          bestTrades[hop],
           new Trade(
             new Route([...currentPairs, pair], currencyAmountIn.currency, currencyOut),
             currencyAmountIn,
@@ -330,8 +334,8 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     // used in recursion.
     currentPairs: Pair[] = [],
     nextAmountOut: CurrencyAmount<Currency> = currencyAmountOut,
-    bestTrades: Trade<TInput, TOutput, TradeType.EXACT_OUTPUT>[] = [],
-  ): Trade<TInput, TOutput, TradeType.EXACT_OUTPUT>[] {
+    bestTrades: Trade<TInput, TOutput, TradeType.EXACT_OUTPUT>[][] = [],
+  ): Trade<TInput, TOutput, TradeType.EXACT_OUTPUT>[][] {
     invariant(pairs.length > 0, 'PAIRS');
     invariant(maxHops > 0, 'MAX_HOPS');
     invariant(currencyAmountOut === nextAmountOut || currentPairs.length > 0, 'INVALID_RECURSION');
@@ -356,8 +360,12 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       }
       // we have arrived at the input token, so this is the first trade of one of the paths
       if (amountIn.currency.equals(tokenIn)) {
+        const hop = currentPairs.length + 1;
+        if (bestTrades[hop] === undefined) {
+          bestTrades[hop] = [];
+        }
         sortedInsert(
-          bestTrades,
+          bestTrades[hop],
           new Trade(
             new Route([pair, ...currentPairs], currencyIn, currencyAmountOut.currency),
             currencyAmountOut,

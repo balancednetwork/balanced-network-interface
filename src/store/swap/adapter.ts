@@ -37,15 +37,18 @@ export function useTradeExactIn(
     if (currencyAmountIn && currencyOut && pairs.length > 0) {
       if (maxHops === 1) {
         return (
-          Trade.bestTradeExactIn(pairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[0] ?? undefined
+          Trade.bestTradeExactIn(pairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[1]?.[0] ??
+          undefined
         );
       }
       // search through trades with varying hops, find best trade out of them
       let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined = undefined;
+      const trades = Trade.bestTradeExactIn(pairs, currencyAmountIn, currencyOut, {
+        maxHops: maxHops,
+        maxNumResults: 1,
+      });
       for (let i = 1; i <= maxHops; i++) {
-        const currentTrade: Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined =
-          Trade.bestTradeExactIn(pairs, currencyAmountIn, currencyOut, { maxHops: i, maxNumResults: 1 })[0] ??
-          undefined;
+        const currentTrade: Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined = trades[i]?.[0] ?? undefined;
         // if current trade is best yet, save it
         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
           bestTradeSoFar = currentTrade;
@@ -71,16 +74,18 @@ export function useTradeExactOut(
     if (currencyIn && currencyAmountOut && pairs.length > 0) {
       if (maxHops === 1) {
         return (
-          Trade.bestTradeExactOut(pairs, currencyIn, currencyAmountOut, { maxHops: 1, maxNumResults: 1 })[0] ??
+          Trade.bestTradeExactOut(pairs, currencyIn, currencyAmountOut, { maxHops: 1, maxNumResults: 1 })[1]?.[0] ??
           undefined
         );
       }
       // search through trades with varying hops, find best trade out of them
       let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | undefined = undefined;
+      const trades = Trade.bestTradeExactOut(pairs, currencyIn, currencyAmountOut, {
+        maxHops: maxHops,
+        maxNumResults: 1,
+      });
       for (let i = 1; i <= maxHops; i++) {
-        const currentTrade: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | undefined =
-          Trade.bestTradeExactOut(pairs, currencyIn, currencyAmountOut, { maxHops: i, maxNumResults: 1 })[0] ??
-          undefined;
+        const currentTrade: Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | undefined = trades[i]?.[0] ?? undefined;
         // if current trade is best yet, save it
         if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
           bestTradeSoFar = currentTrade;

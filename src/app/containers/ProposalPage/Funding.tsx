@@ -20,12 +20,12 @@ interface Props {
 export default function Funding({ recipient, amounts }: Props) {
   return (
     <Wrapper>
-      <BoxPanel width={'40%'}>
+      <BoxPanel width={'50%'}>
         <Heading variant="p">Send</Heading>
         <List>
           {amounts.map(({ amount, address }) => (
             <ListItem>
-              <Typography variant="h3">{`${BalancedJs.utils.toIcx(amount)}  ${
+              <Typography variant="h3">{`${Number(BalancedJs.utils.toIcx(amount).toFixed(2))}  ${
                 addressToCurrencyKeyMap[NetworkId.YEOUIDO][address] ||
                 addressToCurrencyKeyMap[NetworkId.MAINNET][address]
               }`}</Typography>
@@ -33,9 +33,11 @@ export default function Funding({ recipient, amounts }: Props) {
           ))}
         </List>
       </BoxPanel>
-      <BoxPanel width={'60%'}>
+      <BoxPanel width={'50%'}>
         <Heading variant="p">To</Heading>
-        <Typography variant="p">{recipient}</Typography>
+        <Typography variant="p" textAlign="center">
+          {recipient}
+        </Typography>
       </BoxPanel>
     </Wrapper>
   );

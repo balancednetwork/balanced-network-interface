@@ -91,24 +91,26 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
           bg="bg5"
         />
       ))}
-      <ButtonWrapper>
-        <Button
-          onClick={() => {
-            setCurrencyValue({
-              ...currencyValue,
-              amounts: {
-                ...currencyValue.amounts,
-                [Object.keys(currencyValue.amounts).length]: {
-                  amount: '',
-                  symbol: currencyList[0],
+      {Object.values(currencyValue.amounts).length < 3 && (
+        <ButtonWrapper>
+          <Button
+            onClick={() => {
+              setCurrencyValue({
+                ...currencyValue,
+                amounts: {
+                  ...currencyValue.amounts,
+                  [Object.keys(currencyValue.amounts).length]: {
+                    amount: '',
+                    symbol: currencyList[0],
+                  },
                 },
-              },
-            });
-          }}
-        >
-          Add another asset
-        </Button>
-      </ButtonWrapper>
+              });
+            }}
+          >
+            Add another asset
+          </Button>
+        </ButtonWrapper>
+      )}
     </BoxPanel>
   );
 }

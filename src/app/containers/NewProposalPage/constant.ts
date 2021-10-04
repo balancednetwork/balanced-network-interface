@@ -191,12 +191,17 @@ export const PROPOSAL_CONFIG = {
       });
     },
     submitParams: (currencyValue: CurrencyValue) => {
-      const amounts = Object.values(currencyValue.amounts).map(({ amount, symbol }) => ({
-        amount: BalancedJs.utils.toLoop(amount).toNumber(),
-        address:
-          getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.YEOUIDO]) ||
-          getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.MAINNET]),
-      }));
+      const amounts = Object.values(currencyValue.amounts)
+        .map(
+          ({ amount, symbol }) =>
+            amount && {
+              amount: BalancedJs.utils.toLoop(amount).toNumber(),
+              address:
+                getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.YEOUIDO]) ||
+                getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.MAINNET]),
+            },
+        )
+        .filter(value => value);
       return { daoDisburse: { _recipient: currencyValue.recipient, _amounts: amounts } };
     },
   },

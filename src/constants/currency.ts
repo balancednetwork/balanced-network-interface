@@ -8,6 +8,7 @@ import { ReactComponent as OMMIcon } from 'assets/tokens/OMM.svg';
 import { ReactComponent as sICXIcon } from 'assets/tokens/sICX.svg';
 import { ReactComponent as USDSIcon } from 'assets/tokens/USDS.svg';
 import { CurrencyKey, Pool } from 'types';
+import { Currency } from 'types/balanced-sdk-core';
 
 import { PairInfo, SUPPORTED_PAIRS } from './pairs';
 
@@ -51,6 +52,15 @@ export const isQueue = (t: Pool | PairInfo) => {
   if (
     (t.baseCurrencyKey === 'sICX' && t.quoteCurrencyKey === 'ICX') ||
     (t.baseCurrencyKey === 'ICX' && t.quoteCurrencyKey === 'sICX')
+  )
+    return true;
+  return false;
+};
+
+export const canBeQueue = (inputCurrency?: Currency, outputCurrency?: Currency) => {
+  if (
+    (inputCurrency?.symbol === 'sICX' && outputCurrency?.symbol === 'ICX') ||
+    (inputCurrency?.symbol === 'ICX' && outputCurrency?.symbol === 'sICX')
   )
     return true;
   return false;

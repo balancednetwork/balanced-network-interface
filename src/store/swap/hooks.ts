@@ -4,6 +4,7 @@ import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { canBeQueue } from 'constants/currency';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { Trade } from 'types/balanced-v1-sdk';
@@ -153,9 +154,14 @@ export function useDerivedSwapInfo(): {
     [inputPercent],
   );
 
-  //
-  const trade1 = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency);
-  const trade2 = useTradeExactOut(inputCurrency, !isExactIn ? parsedAmount : undefined);
+  // cannot call `useTradeExactIn` or `useTradeExactOut` conditionally because they are hooks
+  const queue = canBeQueue(inputCurrency, outputCurrency);
+  const trade1 = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency, {
+    maxHops: queue ? 1 : undefined,
+  });
+  const trade2 = useTradeExactOut(inputCurrency, !isExactIn ? parsedAmount : undefined, {
+    maxHops: queue ? 1 : undefined,
+  });
   const trade = isExactIn ? trade1 : trade2;
 
   let inputError: string | undefined;

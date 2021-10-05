@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
 import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
@@ -160,9 +159,10 @@ export const PROPOSAL_CONFIG = {
       return [{ percent: _percent }];
     },
     submitParams: ratioInputValue => {
-      const rebalance_ratio = IconConverter.toHex(
-        BalancedJs.utils.toLoop(Number(Object.values(ratioInputValue))).div(100),
-      );
+      const rebalance_ratio = BalancedJs.utils
+        .toLoop(Number(Object.values(ratioInputValue)))
+        .div(100)
+        .toNumber();
       return { setRebalancingThreshold: { _value: rebalance_ratio } };
     },
     validate: sum => ({

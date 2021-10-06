@@ -1,9 +1,14 @@
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
+import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
+import { addressToCurrencyKeyMap } from 'constants/currency';
+
+import { CurrencyValue } from '../../components/newproposal/FundingInput';
 
 export const MAX_RATIO_VALUE = 100;
+
+export const CURRENCY_LIST = ['BALN', 'bnUSD', 'sICX'];
 
 const ProposalMapping = {
   daofund: 'DAO fund',
@@ -26,6 +31,7 @@ export enum PROPOSAL_TYPE {
   LOAN_FEE = 'Loan fee',
   LOAN_TO_VALUE_RATIO = 'Loan to value ratio',
   REBALANCING_THRESHOLD = 'Rebalancing threshold',
+  FUNDING = 'Funding',
 }
 
 export const ActionsMapping = {
@@ -34,6 +40,7 @@ export const ActionsMapping = {
   [PROPOSAL_TYPE.LOAN_FEE]: ['setOriginationFee', 'update_origination_fee'],
   [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: ['setLockingRatio', 'update_locking_ratio'],
   [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: ['setRebalancingThreshold'],
+  [PROPOSAL_TYPE.FUNDING]: ['daoDisburse'],
 };
 
 export const PercentMapping = {
@@ -76,8 +83,8 @@ export const RATIO_VALUE_FORMATTER = {
   },
 };
 
-const getKeyByValue = value => {
-  return Object.keys(ProposalMapping).find(key => ProposalMapping[key] === value);
+const getKeyByValue = (value, mapping) => {
+  return Object.keys(mapping).find(key => mapping[key] === value);
 };
 
 export const PROPOSAL_CONFIG = {
@@ -89,7 +96,7 @@ export const PROPOSAL_CONFIG = {
       })),
     submitParams: ratioInputValue => {
       const recipientList = Object.entries(ratioInputValue).map(item => ({
-        recipient_name: getKeyByValue(item[0]) || item[0],
+        recipient_name: getKeyByValue(item[0], ProposalMapping) || item[0],
         dist_percent: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
       }));
       return {
@@ -108,7 +115,7 @@ export const PROPOSAL_CONFIG = {
     },
     submitParams: ratioInputValue => {
       const dist_list = Object.entries(ratioInputValue).map(item => {
-        const key = getKeyByValue(item[0]);
+        const key = getKeyByValue(item[0], ProposalMapping);
         return (
           key && {
             [key]: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
@@ -169,5 +176,33 @@ export const PROPOSAL_CONFIG = {
       isValid: sum <= 7.5,
       message: 'Must be less than or equal to 7.5%.',
     }),
+  },
+  [PROPOSAL_TYPE.FUNDING]: {
+    fetchInputData: async () => {
+      const res = await bnJs.DAOFund.getBalances();
+      return Object.entries(res).map(item => {
+        return {
+          symbol:
+            addressToCurrencyKeyMap[NetworkId.YEOUIDO][item[0]] ||
+            addressToCurrencyKeyMap[NetworkId.MAINNET][item[0]] ||
+            item[0],
+          amount: BalancedJs.utils.toIcx(item[1] as string),
+        };
+      });
+    },
+    submitParams: (currencyValue: CurrencyValue) => {
+      const amounts = Object.values(currencyValue.amounts)
+        .map(
+          ({ amount, symbol }) =>
+            amount && {
+              amount: BalancedJs.utils.toLoop(amount).toNumber(),
+              address:
+                getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.YEOUIDO]) ||
+                getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.MAINNET]),
+            },
+        )
+        .filter(value => value);
+      return { daoDisburse: { _recipient: currencyValue.recipient, _amounts: amounts } };
+    },
   },
 };

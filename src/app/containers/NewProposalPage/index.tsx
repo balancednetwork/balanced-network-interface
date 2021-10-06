@@ -17,7 +17,7 @@ import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect'
 import RatioInput from 'app/components/newproposal/RatioInput';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
-import { PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
+import { CURRENCY_LIST, PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
@@ -25,6 +25,8 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
+
+import FundingInput, { CurrencyValue } from '../../components/newproposal/FundingInput';
 
 const NewProposalContainer = styled(Box)`
   flex: 1;
@@ -100,6 +102,15 @@ export function NewProposalPage() {
   const [forumLink, setForumLink] = useState('');
   const [description, setDescription] = useState('');
   const [ratioInputValue, setRatioInputValue] = useState<{ [key: string]: string }>({});
+  const [currencyInputValue, setCurrencyInputValue] = React.useState<CurrencyValue>({
+    recipient: '',
+    amounts: {
+      '0': {
+        amount: '',
+        symbol: CURRENCY_LIST[0],
+      },
+    },
+  });
 
   const [showError, setShowError] = useState<ErrorItem>({
     forumLink: false,
@@ -122,6 +133,8 @@ export function NewProposalPage() {
 
   //Form
   const isTextProposal = selectedProposalType === PROPOSAL_TYPE.TEXT;
+  const isFundingProposal = selectedProposalType === PROPOSAL_TYPE.FUNDING;
+
   const [{ isStakeValid, minimumStakeBalance }, setStakeItem] = useState<{
     isStakeValid?: boolean;
     minimumStakeBalance?: BigNumber;
@@ -139,7 +152,7 @@ export function NewProposalPage() {
   const { data: platformDay } = usePlatformDayQuery();
 
   // @ts-ignore
-  const { submitParams, validate } = !isTextProposal ? PROPOSAL_CONFIG[selectedProposalType] : {};
+  const { submitParams, validate } = isTextProposal ? {} : PROPOSAL_CONFIG[selectedProposalType];
 
   //Validation
   const validateRatioInput = () => {
@@ -150,11 +163,19 @@ export function NewProposalPage() {
 
     return !!validate && validate(totalRatio);
   };
+
   const isFormValid =
     title.trim() &&
     description.trim() &&
     forumLink.trim() &&
-    (isTextProposal || Object.values(ratioInputValue).every(ratio => !!ratio.trim()));
+    (isTextProposal ||
+      (Object.values(ratioInputValue).length > 0 && Object.values(ratioInputValue).every(ratio => !!ratio.trim())) ||
+      (isFundingProposal &&
+        !!currencyInputValue.recipient.trim() &&
+        Object.values(currencyInputValue.amounts)
+          .map(({ amount }) => amount)
+          .some(amount => amount)));
+
   const canSubmit = account && isStakeValid && isFormValid;
 
   const { isValid, message } = validateRatioInput();
@@ -213,6 +234,15 @@ export function NewProposalPage() {
     setForumLink('');
     setDescription('');
     setRatioInputValue({});
+    setCurrencyInputValue({
+      recipient: '',
+      amounts: {
+        '0': {
+          amount: '',
+          symbol: CURRENCY_LIST[0],
+        },
+      },
+    });
   };
 
   const modalSubmit = () => {
@@ -222,7 +252,11 @@ export function NewProposalPage() {
       changeShouldLedgerSign(true);
     }
 
-    const actions = isTextProposal ? '{}' : JSON.stringify(submitParams(ratioInputValue));
+    const actions = isTextProposal
+      ? '{}'
+      : isFundingProposal
+      ? JSON.stringify(submitParams(currencyInputValue))
+      : JSON.stringify(submitParams(ratioInputValue));
 
     platformDay &&
       bnJs
@@ -294,7 +328,7 @@ export function NewProposalPage() {
             </Typography>
           </FieldContainer>
           <FieldTextArea onChange={onTextAreaInputChange} value={description} maxLength={500} />
-          {!isTextProposal && (
+          {!(isTextProposal || isFundingProposal) && (
             <RatioInput
               onRatioChange={onRatioInputChange}
               showErrorMessage={showError.ratio}
@@ -304,7 +338,9 @@ export function NewProposalPage() {
               setInitialValue={setRatioInputValue}
             />
           )}
-
+          {isFundingProposal && (
+            <FundingInput currencyValue={currencyInputValue} setCurrencyValue={setCurrencyInputValue} />
+          )}
           <Typography variant="content" mt="25px" mb="25px" textAlign="center">
             It costs 100 bnUSD to submit a proposal.
           </Typography>

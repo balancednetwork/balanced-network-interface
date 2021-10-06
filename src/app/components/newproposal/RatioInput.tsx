@@ -139,18 +139,6 @@ export default function RatioInput({
   );
 }
 
-function compare(a, b) {
-  var nameA = a.name?.toUpperCase(); // ignore upper and lowercase
-  var nameB = b.name?.toUpperCase(); // ignore upper and lowercase
-  if (nameA < nameB) {
-    return -1;
-  }
-  if (nameA > nameB) {
-    return 1;
-  }
-  return 0;
-}
-
 export function ListBox({ title, list }: { title: string; list: any[] }) {
   return (
     <BoxPanel width={1 / 2}>
@@ -158,7 +146,7 @@ export function ListBox({ title, list }: { title: string; list: any[] }) {
         {title}
       </Typography>
       <List>
-        {list.sort(compare).map(({ name, percent }) => (
+        {list.map(({ name, percent }) => (
           <ListItem key={name + percent}>
             {name && (
               <Typography variant="p" textAlign="right">

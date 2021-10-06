@@ -6,12 +6,14 @@ import bnJs from 'bnJs';
 export const MAX_RATIO_VALUE = 100;
 
 const ProposalMapping = {
+  // network fee allocation
   daofund: 'DAO fund',
   baln_holders: 'BALN holders',
-  Loans: 'Borrowers',
+  // baln allocation
   DAOfund: 'DAO fund',
   'Reserve Fund': 'Reserve',
   'Worker Tokens': 'Workers',
+  Loans: 'Borrowers',
   'sICX/ICX': 'sICX / ICX',
   'sICX/bnUSD': 'sICX / bnUSD',
   'BALN/bnUSD': 'BALN / bnUSD',
@@ -48,10 +50,17 @@ export const PercentMapping = {
 
 export const RATIO_VALUE_FORMATTER = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: data => {
-    return data.map(({ recipient_name, dist_percent }) => ({
-      name: ProposalMapping[recipient_name] || recipient_name,
-      percent: PercentMapping[PROPOSAL_TYPE.BALN_ALLOCATION](dist_percent),
-    }));
+    const t: any[] = [];
+    Object.keys(ProposalMapping).forEach(key => {
+      const p = data.find(item => item.recipient_name === key);
+      if (p) {
+        t.push({
+          name: ProposalMapping[p.recipient_name] || p.recipient_name,
+          percent: PercentMapping[PROPOSAL_TYPE.BALN_ALLOCATION](p.dist_percent),
+        });
+      }
+    });
+    return t;
   },
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: data => {
     return data.map((item: { [key: string]: number }) => {
@@ -82,11 +91,15 @@ const getKeyByValue = value => {
 
 export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: {
-    fetchInputData: async () =>
-      Object.entries(await bnJs.Rewards.getRecipientsSplit()).map(item => ({
-        name: ProposalMapping[item[0]] || item[0],
-        percent: PercentMapping[PROPOSAL_TYPE.BALN_ALLOCATION](item[1]),
-      })),
+    fetchInputData: async () => {
+      const res = await bnJs.Rewards.getRecipientsSplit();
+      return Object.keys(ProposalMapping)
+        .filter(key => res[key])
+        .map(key => ({
+          name: ProposalMapping[key] || key,
+          percent: PercentMapping[PROPOSAL_TYPE.BALN_ALLOCATION](res[key]),
+        }));
+    },
     submitParams: ratioInputValue => {
       const recipientList = Object.entries(ratioInputValue).map(item => ({
         recipient_name: getKeyByValue(item[0]) || item[0],
@@ -101,9 +114,9 @@ export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: {
     fetchInputData: async () => {
       const res = await bnJs.Dividends.getDividendsPercentage();
-      return Object.entries(res).map(item => ({
-        name: ProposalMapping[item[0]] || item[0],
-        percent: PercentMapping[PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION](item[1]),
+      return Object.entries(res).map(([key, value]) => ({
+        name: ProposalMapping[key] || key,
+        percent: PercentMapping[PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION](value),
       }));
     },
     submitParams: ratioInputValue => {

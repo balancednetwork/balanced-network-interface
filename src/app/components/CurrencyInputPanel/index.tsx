@@ -1,12 +1,12 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { List, ListItem, DashGrid, HeaderText, DataText, HorizontalList, Option } from 'app/components/List';
-import { Balance } from 'app/components/newproposal/FundingInput';
 import { PopperWithoutArrow, SelectorPopover } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import { CURRENCY } from 'constants/currency';
@@ -101,7 +101,7 @@ interface CurrencyInputPanelProps {
   bg?: string;
   placeholder?: string;
   className?: string;
-  balanceList?: Balance[];
+  balanceList?: { [key: string]: BigNumber };
 }
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -170,6 +170,7 @@ export default function CurrencyInputPanel({
   };
 
   const balances = useWalletBalances();
+  const balanceList1 = balanceList || balances;
 
   return (
     <InputContainer ref={ref} className={className}>
@@ -195,12 +196,7 @@ export default function CurrencyInputPanel({
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      {balanceList
-                        ? balanceList
-                            .find(item => item.symbol === ccy)
-                            ?.amount?.dp(2)
-                            .toFormat()
-                        : balances[ccy]?.dp(2).toFormat()}
+                      {balanceList1[ccy]?.dp(2).toFormat()}
                     </DataText>
                   </ListItem>
                 ))}

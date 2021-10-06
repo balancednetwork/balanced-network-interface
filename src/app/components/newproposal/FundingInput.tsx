@@ -74,6 +74,9 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
 
   const handleAddressInput = (value: string) => setCurrencyValue({ ...currencyValue, recipient: value });
 
+  const balancesMap = {};
+  balanceList.forEach(balance => (balancesMap[balance.symbol] = balance.amount));
+
   return (
     <BoxPanel>
       <StyledAddressInputPanel value={currencyValue.recipient} onUserInput={handleAddressInput} bg="bg5" />
@@ -81,7 +84,7 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
         <StyledCurrencyInputPanel
           key={id}
           currencyList={[item.symbol, ...currencyList]}
-          balanceList={balanceList}
+          balanceList={balancesMap}
           value={item.amount}
           currency={item.symbol}
           id="funding-currency"

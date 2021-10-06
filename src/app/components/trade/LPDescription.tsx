@@ -15,7 +15,7 @@ const descriptions = {
   2: 'Supply an equal amount of sICX and bnUSD to earn BALN. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards.',
   3: 'Supply an equal amount of BALN and bnUSD to earn Balance Tokens. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. All BALN in the pool accrues network fees.',
   4: 'Supply an equal amount of BALN and sICX to earn Balance Tokens. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. All BALN in the pool accrues network fees.',
-  20: (
+  7: (
     <>
       Requires an equal amount of OMM and sICX. To earn rewards from this pool, use&nbsp;
       <Link href="https://omm.finance/" target="_blank">
@@ -24,7 +24,7 @@ const descriptions = {
       &nbsp;with the same wallet.
     </>
   ),
-  21: (
+  8: (
     <>
       Requires an equal amount of OMM and USDS. To earn rewards from this pool, use&nbsp;
       <Link href="https://omm.finance/" target="_blank">
@@ -33,7 +33,7 @@ const descriptions = {
       &nbsp;with the same wallet.
     </>
   ),
-  22: (
+  6: (
     <>
       Requires an equal amount of OMM and IUSDC. To earn rewards from this pool, use&nbsp;
       <Link href="https://omm.finance/" target="_blank">

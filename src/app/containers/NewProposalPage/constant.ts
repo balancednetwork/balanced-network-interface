@@ -169,7 +169,7 @@ export const PROPOSAL_CONFIG = {
       const rebalance_ratio = BalancedJs.utils
         .toLoop(Number(Object.values(ratioInputValue)))
         .div(100)
-        .toFixed();
+        .toNumber();
       return { setRebalancingThreshold: { _value: rebalance_ratio } };
     },
     validate: sum => ({

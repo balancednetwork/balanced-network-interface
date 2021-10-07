@@ -37,7 +37,7 @@ export default function RatioInput({
   const [ratioValues, setRatioValues] = React.useState<Array<RatioValue> | undefined>();
 
   useEffect(() => {
-    if (proposalType !== PROPOSAL_TYPE.TEXT) {
+    if (proposalType !== PROPOSAL_TYPE.TEXT && proposalType !== PROPOSAL_TYPE.FUNDING) {
       (async () => {
         const result = await PROPOSAL_CONFIG[proposalType].fetchInputData();
         setRatioValues(result);

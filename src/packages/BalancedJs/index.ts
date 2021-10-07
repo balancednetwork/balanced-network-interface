@@ -6,7 +6,9 @@ import Airdrip from './contracts/Airdrip';
 import BALN from './contracts/BALN';
 import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
+import CFT from './contracts/CFT';
 import { Contract } from './contracts/contract';
+import DAOFund from './contracts/DAOFund';
 import Dex from './contracts/Dex';
 import Dividends from './contracts/Dividends';
 import Governance from './contracts/Governance';
@@ -50,6 +52,7 @@ export class BalancedJs {
   OMM: OMM;
   IUSDC: IUSDC;
   USDS: USDS;
+  CFT: CFT;
   //
   Loans: Loans;
   Band: Band;
@@ -60,6 +63,7 @@ export class BalancedJs {
   Dividends: Dividends;
   Governance: Governance;
   Rebalancing: Rebalancing;
+  DAOFund: DAOFund;
 
   static utils = {
     toLoop(value: BigNumber | number | string, currencyKey?: string): BigNumber {
@@ -109,6 +113,7 @@ export class BalancedJs {
     this.OMM = new OMM(this.contractSettings);
     this.IUSDC = new IUSDC(this.contractSettings);
     this.USDS = new USDS(this.contractSettings);
+    this.CFT = new CFT(this.contractSettings);
 
     this.Loans = new Loans(this.contractSettings);
     this.Band = new Band(this.contractSettings);
@@ -119,6 +124,7 @@ export class BalancedJs {
     this.Dividends = new Dividends(this.contractSettings);
     this.Governance = new Governance(this.contractSettings);
     this.Rebalancing = new Rebalancing(this.contractSettings);
+    this.DAOFund = new DAOFund(this.contractSettings);
   }
 
   inject({ account, legerSettings }: SettingInjection) {

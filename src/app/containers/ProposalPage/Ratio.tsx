@@ -5,12 +5,14 @@ import { Wrapper, RatioValue, ListBox } from 'app/components/newproposal/RatioIn
 import { PROPOSAL_CONFIG } from '../NewProposalPage/constant';
 
 interface RatioProps {
+  proposalStatus?: string;
   proposalType: string;
   proposedList: [];
 }
 
-export default function Ratio({ proposalType, proposedList }: RatioProps) {
+export default function Ratio({ proposalStatus, proposalType, proposedList }: RatioProps) {
   const [ratioValues, setRatioValues] = React.useState<Array<RatioValue> | undefined>();
+  const isExecuted = proposalStatus === 'Executed';
 
   useEffect(() => {
     (async () => {
@@ -22,7 +24,7 @@ export default function Ratio({ proposalType, proposedList }: RatioProps) {
 
   return (
     <Wrapper>
-      {ratioValues && <ListBox title="Current" list={ratioValues} />}
+      {ratioValues && <ListBox title="Current" list={ratioValues} hidden={isExecuted} />}
       {proposedList && <ListBox title="Proposed" list={proposedList} />}
     </Wrapper>
   );

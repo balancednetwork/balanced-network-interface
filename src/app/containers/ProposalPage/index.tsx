@@ -339,6 +339,7 @@ export function ProposalPage() {
               {proposalType}
             </Typography>
             <Ratio
+              proposalStatus={proposal?.status}
               proposalType={proposalType}
               proposedList={RATIO_VALUE_FORMATTER[proposalType](Object.values(actions[ratioAction])[0])}
             />

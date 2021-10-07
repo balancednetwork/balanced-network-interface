@@ -139,9 +139,9 @@ export default function RatioInput({
   );
 }
 
-export function ListBox({ title, list }: { title: string; list: any[] }) {
+export function ListBox({ title, list, hidden }: { title: string; list: any[]; hidden?: boolean }) {
   return (
-    <BoxPanel width={1 / 2}>
+    <BoxPanel width={1 / 2} hidden={hidden}>
       <Typography variant="p" textAlign="center" marginBottom="9px">
         {title}
       </Typography>

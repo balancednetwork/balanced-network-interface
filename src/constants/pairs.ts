@@ -77,6 +77,48 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'USDS',
     },
+    {
+      chainId: 1,
+      id: 9,
+      name: 'CFT/sICX',
+      baseCurrencyKey: 'CFT',
+      quoteCurrencyKey: 'sICX',
+    },
+    {
+      chainId: 1,
+      id: 10,
+      name: 'USDS/bnUSD',
+      baseCurrencyKey: 'USDS',
+      quoteCurrencyKey: 'bnUSD',
+    },
+    {
+      chainId: 1,
+      id: 11,
+      name: 'METX/bnUSD',
+      baseCurrencyKey: 'METX',
+      quoteCurrencyKey: 'bnUSD',
+    },
+    {
+      chainId: 1,
+      id: 12,
+      name: 'METX/sICX',
+      baseCurrencyKey: 'METX',
+      quoteCurrencyKey: 'sICX',
+    },
+    {
+      chainId: 1,
+      id: 13,
+      name: 'METX/IUSDC',
+      baseCurrencyKey: 'METX',
+      quoteCurrencyKey: 'IUSDC',
+    },
+    {
+      chainId: 1,
+      id: 14,
+      name: 'METX/USDS',
+      baseCurrencyKey: 'METX',
+      quoteCurrencyKey: 'USDS',
+    },
   ],
   [NetworkId.YEOUIDO]: [
     {

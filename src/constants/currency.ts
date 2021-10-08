@@ -1,12 +1,5 @@
 import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
-import { ReactComponent as BALNIcon } from 'assets/tokens/BALN.svg';
-import { ReactComponent as bnUSDIcon } from 'assets/tokens/bnUSD.svg';
-import { ReactComponent as ICXIcon } from 'assets/tokens/ICX.svg';
-import { ReactComponent as IUSDCIcon } from 'assets/tokens/IUSDC.svg';
-import { ReactComponent as OMMIcon } from 'assets/tokens/OMM.svg';
-import { ReactComponent as sICXIcon } from 'assets/tokens/sICX.svg';
-import { ReactComponent as USDSIcon } from 'assets/tokens/USDS.svg';
 import { CurrencyKey, Pool } from 'types';
 import { Currency } from 'types/balanced-sdk-core';
 
@@ -20,16 +13,6 @@ export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
 const NETWORK_ID: NetworkId = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
 export const CURRENCY: CurrencyKey[] = CURRENCY_INFO[NETWORK_ID];
-
-export const currencyKeyToIconMap = {
-  ICX: ICXIcon,
-  sICX: sICXIcon,
-  bnUSD: bnUSDIcon,
-  BALN: BALNIcon,
-  OMM: OMMIcon,
-  IUSDC: IUSDCIcon,
-  USDS: USDSIcon,
-};
 
 export const getTradePair = (
   baseKey?: CurrencyKey,

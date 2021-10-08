@@ -4,7 +4,6 @@ import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
 
-import { currencyKeyToIconMap } from 'constants/currency';
 import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
 import { Field } from 'store/swap/actions';
 import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
@@ -79,8 +78,6 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
     }
   }
 }
-
-export const getCurrencyIcon = (currency: Currency) => currencyKeyToIconMap[currency.symbol!];
 
 const MIN_NATIVE_CURRENCY_FOR_GAS: JSBI = JSBI.multiply(
   JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)),

@@ -289,12 +289,12 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
 
         <Flex alignItems="center" justifyContent="space-between">
           <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2} mr={2}>
-            <CurrencyLogo currency={getTokenFromCurrencyKey('sICX')!} size={35} />
+            <CurrencyLogo currency={getTokenFromCurrencyKey('sICX')!} size={'35px'} />
             <Typography>{balance1?.balance1?.dp(2).toFormat()} sICX</Typography>
           </OptionButton>
 
           <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1}>
-            <CurrencyLogo currency={getTokenFromCurrencyKey('ICX')!} size={35} />
+            <CurrencyLogo currency={getTokenFromCurrencyKey('ICX')!} size={'35px'} />
             <Typography>{balance1?.balance.dp(2).toFormat()} ICX</Typography>
           </OptionButton>
         </Flex>

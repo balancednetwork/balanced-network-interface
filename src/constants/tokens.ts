@@ -31,17 +31,36 @@ export const IUSDC = new Token(
   'cxae3034235540b924dfcc1b45836c293dcc82bfb7',
   6,
   'IUSDC',
-  'IUSDC',
+  'ICON USD Coin',
 );
 export const USDS = new Token(
   SupportedChainId.MAINNET, //
   'cxbb2871f468a3008f80b08fdde5b8b951583acf06',
   18,
   'USDS',
-  'USDS',
+  'Stably USD',
 );
-export const OMM = new Token(SupportedChainId.MAINNET, 'cx1a29259a59f463a67bb2ef84398b30ca56b5830a', 18, 'OMM', 'OMM');
-
+export const OMM = new Token(
+  SupportedChainId.MAINNET, //
+  'cx1a29259a59f463a67bb2ef84398b30ca56b5830a',
+  18,
+  'OMM',
+  'Omm Token',
+);
+export const CFT = new Token(
+  SupportedChainId.MAINNET, //
+  'cx2e6d0fc0eca04965d06038c8406093337f085fcf',
+  18,
+  'CFT',
+  'Craft',
+);
+export const METX = new Token(
+  SupportedChainId.MAINNET, //
+  'cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2',
+  18,
+  'METX',
+  'Metanyx',
+);
 // yeouido
 export const ICX_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
@@ -76,14 +95,14 @@ export const IUSDC_YEOUIDO = new Token(
   'cx65f639254090820361da483df233f6d0e69af9b7',
   6,
   'IUSDC',
-  'IUSDC',
+  'ICON USD Coin',
 );
 export const USDS_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO, //
   'cxc0666df567a6e0b49342648e98ccbe5362b264ea',
   18,
   'USDS',
-  'USDS',
+  'Stably USD',
 );
 
 export const OMM_YEOUIDO = new Token(
@@ -91,12 +110,12 @@ export const OMM_YEOUIDO = new Token(
   'cxc58f32a437c8e5a5fcb8129626662f2252ad2678',
   18,
   'OMM',
-  'OMM',
+  'Omm Token',
 );
 
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
-  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS],
+  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX],
   [SupportedChainId.YEOUIDO]: [
     ICX_YEOUIDO,
     sICX_YEOUIDO,

@@ -92,6 +92,10 @@ const getContractAddr = (tx: Transaction) => tx.indexed?.find(item => item.start
 const isIUSDC = (addr: string) => addresses[NetworkId.MAINNET].iusdc === addr;
 
 const POOL_IDS = {
+  14: 'METX USDS',
+  13: 'METX IUSDC',
+  12: 'METX sICX',
+  11: 'METX bnUSD',
   10: 'USDS bnUSD',
   9: 'CFT sICX',
   8: 'OMM USDS',

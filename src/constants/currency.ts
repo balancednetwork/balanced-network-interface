@@ -6,13 +6,14 @@ import { ReactComponent as bnUSDIcon } from 'assets/tokens/bnUSD.svg';
 import { ReactComponent as CFTIcon } from 'assets/tokens/CFT.svg';
 import { ReactComponent as ICXIcon } from 'assets/tokens/ICX.svg';
 import { ReactComponent as IUSDCIcon } from 'assets/tokens/IUSDC.svg';
+import { ReactComponent as METXIcon } from 'assets/tokens/METX.svg';
 import { ReactComponent as OMMIcon } from 'assets/tokens/OMM.svg';
 import { ReactComponent as sICXIcon } from 'assets/tokens/sICX.svg';
 import { ReactComponent as USDSIcon } from 'assets/tokens/USDS.svg';
 import { CurrencyKey, Pool } from 'types';
 
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
-  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT'],
+  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT', 'METX'],
   [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS', 'CFT'],
 };
 
@@ -31,6 +32,7 @@ export const currencyKeyToIconMap = {
   IUSDC: IUSDCIcon,
   USDS: USDSIcon,
   CFT: CFTIcon,
+  METX: METXIcon,
 };
 
 export const toMarketPair = (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: string) =>
@@ -110,6 +112,30 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
       quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
       pair: toMarketPair(CURRENCY_MAP['USDS'], CURRENCY_MAP['bnUSD']),
       poolId: 10,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['METX'],
+      quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
+      pair: toMarketPair(CURRENCY_MAP['METX'], CURRENCY_MAP['bnUSD']),
+      poolId: 11,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['METX'],
+      quoteCurrencyKey: CURRENCY_MAP['sICX'],
+      pair: toMarketPair(CURRENCY_MAP['METX'], CURRENCY_MAP['sICX']),
+      poolId: 12,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['METX'],
+      quoteCurrencyKey: CURRENCY_MAP['IUSDC'],
+      pair: toMarketPair(CURRENCY_MAP['METX'], CURRENCY_MAP['IUSDC']),
+      poolId: 13,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['METX'],
+      quoteCurrencyKey: CURRENCY_MAP['USDS'],
+      pair: toMarketPair(CURRENCY_MAP['METX'], CURRENCY_MAP['USDS']),
+      poolId: 14,
     },
   ],
 
@@ -216,6 +242,7 @@ export const addressToCurrencyKeyMap = {
     cxbb2871f468a3008f80b08fdde5b8b951583acf06: 'USDS',
     cx1a29259a59f463a67bb2ef84398b30ca56b5830a: 'OMM',
     cx2e6d0fc0eca04965d06038c8406093337f085fcf: 'CFT',
+    cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2: 'METX',
   },
   [NetworkId.YEOUIDO]: {
     cxae6334850f13dfd8b50f8544d5acb126bb8ef82d: 'sICX',

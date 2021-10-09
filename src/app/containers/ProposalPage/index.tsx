@@ -343,6 +343,7 @@ export function ProposalPage() {
               <Funding recipient={actions[actionKey]._recipient} amounts={actions[actionKey]._amounts} />
             ) : (
               <Ratio
+                proposalStatus={proposal?.status}
                 proposalType={proposalType}
                 proposedList={RATIO_VALUE_FORMATTER[proposalType](Object.values(actions[actionKey])[0])}
               />

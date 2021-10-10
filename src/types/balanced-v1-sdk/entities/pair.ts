@@ -3,9 +3,20 @@ import { pack, keccak256 } from '@ethersproject/solidity';
 import JSBI from 'jsbi';
 import invariant from 'tiny-invariant';
 
-import { BigintIsh, Price, sqrt, Token, CurrencyAmount } from 'types/balanced-sdk-core';
+import { BigintIsh, Price, sqrt, Token, CurrencyAmount, Fraction } from 'types/balanced-sdk-core';
 
-import { FACTORY_ADDRESS, INIT_CODE_HASH, MINIMUM_LIQUIDITY, FIVE, _997, _1000, ONE, ZERO } from '../constants';
+import {
+  FACTORY_ADDRESS,
+  INIT_CODE_HASH,
+  MINIMUM_LIQUIDITY,
+  FIVE,
+  _997,
+  _1000,
+  ONE,
+  ZERO,
+  _99,
+  _100,
+} from '../constants';
 import { InsufficientReservesError, InsufficientInputAmountError } from '../errors';
 
 export const computePairAddress = ({
@@ -27,12 +38,17 @@ export const computePairAddress = ({
 export class Pair {
   public readonly liquidityToken: Token;
   private readonly tokenAmounts: [CurrencyAmount<Token>, CurrencyAmount<Token>];
+  public readonly queueRate?: Fraction;
 
   public static getAddress(tokenA: Token, tokenB: Token): string {
     return computePairAddress({ factoryAddress: FACTORY_ADDRESS, tokenA, tokenB });
   }
 
-  public constructor(currencyAmountA: CurrencyAmount<Token>, tokenAmountB: CurrencyAmount<Token>) {
+  public constructor(
+    currencyAmountA: CurrencyAmount<Token>,
+    tokenAmountB: CurrencyAmount<Token>,
+    queueRate?: Fraction,
+  ) {
     const tokenAmounts = currencyAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks
       ? [currencyAmountA, tokenAmountB]
       : [tokenAmountB, currencyAmountA];
@@ -45,6 +61,8 @@ export class Pair {
       'Balanced V2',
     );
     this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
+
+    if (queueRate) this.queueRate = queueRate;
   }
 
   /**
@@ -113,8 +131,30 @@ export class Pair {
     if (JSBI.equal(this.reserve0.quotient, ZERO) || JSBI.equal(this.reserve1.quotient, ZERO)) {
       throw new InsufficientReservesError();
     }
+
     const inputReserve = this.reserveOf(inputAmount.currency);
     const outputReserve = this.reserveOf(inputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
+
+    if (this.queueRate) {
+      if (inputAmount.currency.symbol === 'sICX') {
+        const numerator = JSBI.multiply(JSBI.multiply(inputAmount.numerator, _99), this.queueRate.numerator);
+        const denominator = JSBI.multiply(JSBI.multiply(inputAmount.denominator, _100), this.queueRate.denominator);
+        const outputAmount = CurrencyAmount.fromRawAmount(
+          inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+          JSBI.divide(numerator, denominator),
+        );
+        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+      } else {
+        const numerator = JSBI.multiply(inputAmount.numerator, this.queueRate.denominator);
+        const denominator = JSBI.multiply(inputAmount.denominator, this.queueRate.numerator);
+        const outputAmount = CurrencyAmount.fromRawAmount(
+          inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+          JSBI.divide(numerator, denominator),
+        );
+        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+      }
+    }
+
     const inputAmountWithFee = JSBI.multiply(inputAmount.quotient, _997);
     const numerator = JSBI.multiply(inputAmountWithFee, outputReserve.quotient);
     const denominator = JSBI.add(JSBI.multiply(inputReserve.quotient, _1000), inputAmountWithFee);
@@ -140,6 +180,27 @@ export class Pair {
 
     const outputReserve = this.reserveOf(outputAmount.currency);
     const inputReserve = this.reserveOf(outputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
+
+    if (this.queueRate) {
+      if (outputAmount.currency.symbol === 'ICX') {
+        const numerator = JSBI.multiply(JSBI.multiply(outputAmount.numerator, _100), this.queueRate.denominator);
+        const denominator = JSBI.multiply(JSBI.multiply(outputAmount.denominator, _99), this.queueRate.numerator);
+        const inputAmount = CurrencyAmount.fromRawAmount(
+          outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+          JSBI.divide(numerator, denominator),
+        );
+        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+      } else {
+        const numerator = JSBI.multiply(outputAmount.numerator, this.queueRate.numerator);
+        const denominator = JSBI.multiply(outputAmount.denominator, this.queueRate.denominator);
+        const inputAmount = CurrencyAmount.fromRawAmount(
+          outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+          JSBI.divide(numerator, denominator),
+        );
+        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+      }
+    }
+
     const numerator = JSBI.multiply(JSBI.multiply(inputReserve.quotient, outputAmount.quotient), _1000);
     const denominator = JSBI.multiply(JSBI.subtract(outputReserve.quotient, outputAmount.quotient), _997);
     const inputAmount = CurrencyAmount.fromRawAmount(

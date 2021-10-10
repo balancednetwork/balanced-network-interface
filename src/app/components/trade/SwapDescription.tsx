@@ -7,11 +7,13 @@ import { Button } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
-import { getTradePair } from 'constants/currency';
+import { getTradePair, isQueue } from 'constants/currency';
 import useWidth from 'hooks/useWidth';
 import { usePriceChartDataQuery } from 'queries/swap';
+import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
+import { generateChartData } from 'utils';
 
 export default function SwapDescription() {
   const { currencies } = useDerivedSwapInfo();
@@ -26,6 +28,12 @@ export default function SwapDescription() {
   const priceChartQuery = usePriceChartDataQuery(currencies, chartOption.period);
   const data = priceChartQuery.data;
   const loading = priceChartQuery.isLoading;
+
+  const ratio = useRatio();
+  const queueData: any = React.useMemo(
+    () => generateChartData(ratio.sICXICXratio, { INPUT: currencies.INPUT, OUTPUT: currencies.OUTPUT }),
+    [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
+  );
 
   const [pair] = getTradePair(currencies[Field.INPUT]?.symbol as string, currencies[Field.OUTPUT]?.symbol as string);
 
@@ -51,7 +59,7 @@ export default function SwapDescription() {
             {currencies[Field.INPUT]?.symbol} / {currencies[Field.OUTPUT]?.symbol}
           </Typography>
         </Box>
-        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair}>
+        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair || isQueue(pair)}>
           <ChartControlGroup mb={2}>
             {Object.keys(CHART_PERIODS).map(key => (
               <ChartControlButton
@@ -90,7 +98,12 @@ export default function SwapDescription() {
             ) : (
               <>
                 {chartOption.type === CHART_TYPES.AREA && (
-                  <TradingViewChart data={data} volumeData={data} width={width} type={CHART_TYPES.AREA} />
+                  <TradingViewChart
+                    data={isQueue(pair) ? queueData : data}
+                    volumeData={isQueue(pair) ? queueData : data}
+                    width={width}
+                    type={CHART_TYPES.AREA}
+                  />
                 )}
 
                 {chartOption.type === CHART_TYPES.CANDLE && (

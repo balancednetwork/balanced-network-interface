@@ -12,3 +12,5 @@ export const ONE = JSBI.BigInt(1);
 export const FIVE = JSBI.BigInt(5);
 export const _997 = JSBI.BigInt(997);
 export const _1000 = JSBI.BigInt(1000);
+export const _99 = JSBI.BigInt(99);
+export const _100 = JSBI.BigInt(100);

@@ -25,6 +25,7 @@ const decimals = {
   USDS: 18,
   CFT: 18,
   METX: 18,
+  IUSDT: 18,
 };
 
 export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: CurrencyKey }, period: CHART_PERIODS) => {

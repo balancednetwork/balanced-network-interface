@@ -71,12 +71,12 @@ export class BalancedJs {
 
   static utils = {
     toLoop(value: BigNumber | number | string, currencyKey?: string): BigNumber {
-      if (currencyKey === 'IUSDC')
+      if (currencyKey === 'IUSDC' || currencyKey === 'IUSDT')
         return new BigNumber(value).times(new BigNumber(10).pow(6)).integerValue(BigNumber.ROUND_DOWN);
       else return new BigNumber(value).times(LOOP).integerValue(BigNumber.ROUND_DOWN);
     },
     toIcx(value: BigNumber | number | string, currencyKey?: string): BigNumber {
-      if (currencyKey === 'IUSDC') return new BigNumber(value).div(new BigNumber(10).pow(6));
+      if (currencyKey === 'IUSDC' || currencyKey === 'IUSDT') return new BigNumber(value).div(new BigNumber(10).pow(6));
       else return new BigNumber(value).div(LOOP);
     },
     toFormat(value: BigNumber | number | string, decimals: number = 18) {

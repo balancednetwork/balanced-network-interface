@@ -251,6 +251,7 @@ export const addressToCurrencyKeyMap = {
     cx1a29259a59f463a67bb2ef84398b30ca56b5830a: 'OMM',
     cx2e6d0fc0eca04965d06038c8406093337f085fcf: 'CFT',
     cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2: 'METX',
+    cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88: 'IUSDT',
   },
   [NetworkId.YEOUIDO]: {
     cxae6334850f13dfd8b50f8544d5acb126bb8ef82d: 'sICX',

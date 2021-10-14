@@ -44,6 +44,12 @@ export default function SwapDescription() {
     currencyKeys,
   ]);
 
+  const iCXprice =
+    price &&
+    (currencyKeys[Field.OUTPUT] === 'sICX'
+      ? price.value.div(ratio.sICXICXratio)
+      : ratio.sICXICXratio.multipliedBy(price.value));
+
   const [pair] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -60,6 +66,9 @@ export default function SwapDescription() {
     });
   };
 
+  const hasSicx = [currencyKeys[Field.INPUT], currencyKeys[Field.OUTPUT]].includes('sICX');
+  const hasICX = [currencyKeys[Field.INPUT], currencyKeys[Field.OUTPUT]].includes('ICX');
+
   return (
     <Box bg="bg2" flex={1} p={[5, 7]}>
       <Flex mb={5} flexWrap="wrap">
@@ -74,6 +83,17 @@ export default function SwapDescription() {
               -1.21%
             </span>
           </Typography>
+          {hasSicx && !hasICX && (
+            <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
+              {`${formatBigNumber(iCXprice, 'price')} ${
+                currencyKeys[Field.OUTPUT] === 'sICX' ? 'ICX' : currencyKeys[Field.OUTPUT]
+              } 
+               per ${currencyKeys[Field.INPUT] === 'sICX' ? 'ICX' : currencyKeys[Field.INPUT]} `}
+              <span className="alert" style={{ display: 'none' }}>
+                -1.21%
+              </span>
+            </Typography>
+          )}
         </Box>
         <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={pair && isQueue(pair)}>
           <ChartControlGroup mb={2}>

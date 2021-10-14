@@ -47,8 +47,8 @@ export default function SwapDescription() {
   const iCXprice =
     price &&
     (currencyKeys[Field.OUTPUT] === 'sICX'
-      ? price.value.div(ratio.sICXICXratio)
-      : ratio.sICXICXratio.multipliedBy(price.value));
+      ? ratio.sICXICXratio.multipliedBy(price.value)
+      : price.value.div(ratio.sICXICXratio));
 
   const [pair] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
 

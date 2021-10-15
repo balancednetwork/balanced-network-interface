@@ -15,6 +15,7 @@ import Governance from './contracts/Governance';
 import ICX from './contracts/ICX';
 import IUSDC from './contracts/IUSDC';
 import Loans from './contracts/Loans';
+import METX from './contracts/METX';
 import OMM from './contracts/OMM';
 import Rebalancing from './contracts/Rebalancing';
 import Rewards from './contracts/Rewards';
@@ -54,6 +55,7 @@ export class BalancedJs {
   IUSDC: IUSDC;
   USDS: USDS;
   CFT: CFT;
+  METX: METX;
   //
   Loans: Loans;
   Router: Router;
@@ -116,6 +118,7 @@ export class BalancedJs {
     this.IUSDC = new IUSDC(this.contractSettings);
     this.USDS = new USDS(this.contractSettings);
     this.CFT = new CFT(this.contractSettings);
+    this.METX = new METX(this.contractSettings);
 
     this.Loans = new Loans(this.contractSettings);
     this.Router = new Router(this.contractSettings);

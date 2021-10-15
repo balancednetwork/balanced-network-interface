@@ -6,7 +6,7 @@ import { Currency } from 'types/balanced-sdk-core';
 import { PairInfo, SUPPORTED_PAIRS } from './pairs';
 
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
-  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT'],
+  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT', 'METX'],
   [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS', 'CFT'],
 };
 
@@ -59,6 +59,7 @@ export const addressToCurrencyKeyMap = {
     cxbb2871f468a3008f80b08fdde5b8b951583acf06: 'USDS',
     cx1a29259a59f463a67bb2ef84398b30ca56b5830a: 'OMM',
     cx2e6d0fc0eca04965d06038c8406093337f085fcf: 'CFT',
+    cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2: 'METX',
   },
   [NetworkId.YEOUIDO]: {
     cxae6334850f13dfd8b50f8544d5acb126bb8ef82d: 'sICX',

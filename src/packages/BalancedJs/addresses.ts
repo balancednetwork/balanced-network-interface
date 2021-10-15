@@ -17,6 +17,7 @@ const MAINNET_ADDRESSES = {
   iusdc: 'cxae3034235540b924dfcc1b45836c293dcc82bfb7',
   usds: 'cxbb2871f468a3008f80b08fdde5b8b951583acf06',
   cft: 'cx2e6d0fc0eca04965d06038c8406093337f085fcf',
+  metx: 'cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2',
   bwt: 'cxcfe9d1f83fa871e903008471cca786662437e58d',
   airdrip: 'cxaf244cf3c7164fe6f996f398a9d99c4d4a85cf15',
   rebalancing: 'cx40d59439571299bca40362db2a7d8cae5b0b30b0',

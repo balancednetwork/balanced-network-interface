@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -99,6 +100,8 @@ interface CurrencyInputPanelProps {
   customBalanceText?: string;
   bg?: string;
   placeholder?: string;
+  className?: string;
+  balanceList?: { [key: string]: BigNumber };
 }
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -122,6 +125,8 @@ export default function CurrencyInputPanel({
   customBalanceText,
   bg = 'bg2',
   placeholder = '0',
+  className,
+  balanceList,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -153,9 +158,10 @@ export default function CurrencyInputPanel({
   };
 
   const balances = useWalletBalances();
+  const balanceList1 = balanceList || balances;
 
   return (
-    <InputContainer ref={ref}>
+    <InputContainer ref={ref} className={className}>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
           {currency && <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />}
@@ -167,7 +173,7 @@ export default function CurrencyInputPanel({
               <List style={{ width: width }}>
                 <DashGrid>
                   <HeaderText>Asset</HeaderText>
-                  <HeaderText textAlign="right">Wallet</HeaderText>
+                  <HeaderText textAlign="right">{balanceList ? 'Balance' : 'Wallet'}</HeaderText>
                 </DashGrid>
                 {SUPPORTED_TOKENS_LIST.map(ccy => (
                   <ListItem key={ccy.symbol} onClick={handleCurrencySelect(ccy)}>
@@ -178,7 +184,7 @@ export default function CurrencyInputPanel({
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      {balances[ccy?.symbol!]?.dp(2).toFormat()}
+                      {balanceList1[ccy?.symbol!]?.dp(2).toFormat()}
                     </DataText>
                   </ListItem>
                 ))}

@@ -155,24 +155,31 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
     {
       chainId: 3,
-      id: 24,
+      id: 24, // 22?
       name: 'OMM/IUSDC',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'IUSDC',
     },
     {
       chainId: 3,
-      id: 25,
+      id: 25, // 20?
       name: 'OMM/sICX',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'sICX',
     },
     {
       chainId: 3,
-      id: 23,
+      id: 23, // 21?
       name: 'OMM/USDS',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'USDS',
+    },
+    {
+      chainId: 3,
+      id: 30,
+      name: 'CFT/sICX',
+      baseCurrencyKey: 'CFT',
+      quoteCurrencyKey: 'sICX',
     },
   ],
 };

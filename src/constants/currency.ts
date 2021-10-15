@@ -6,8 +6,8 @@ import { Currency } from 'types/balanced-sdk-core';
 import { PairInfo, SUPPORTED_PAIRS } from './pairs';
 
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
-  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS'],
-  [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS'],
+  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT'],
+  [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS', 'CFT'],
 };
 
 const NETWORK_ID: NetworkId = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
@@ -58,6 +58,7 @@ export const addressToCurrencyKeyMap = {
     cxae3034235540b924dfcc1b45836c293dcc82bfb7: 'IUSDC',
     cxbb2871f468a3008f80b08fdde5b8b951583acf06: 'USDS',
     cx1a29259a59f463a67bb2ef84398b30ca56b5830a: 'OMM',
+    cx2e6d0fc0eca04965d06038c8406093337f085fcf: 'CFT',
   },
   [NetworkId.YEOUIDO]: {
     cxae6334850f13dfd8b50f8544d5acb126bb8ef82d: 'sICX',
@@ -67,5 +68,6 @@ export const addressToCurrencyKeyMap = {
     cx65f639254090820361da483df233f6d0e69af9b7: 'IUSDC',
     cxc0666df567a6e0b49342648e98ccbe5362b264ea: 'USDS',
     cxc58f32a437c8e5a5fcb8129626662f2252ad2678: 'OMM',
+    cxf7313d7fd611c99b8db29e298699be4b1fd86661: 'CFT',
   },
 };

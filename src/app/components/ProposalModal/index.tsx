@@ -12,6 +12,9 @@ import { Typography } from 'app/theme';
 import { ReactComponent as CrossIcon } from 'assets/icons/failure.svg';
 import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
 
+import LedgerConfirmMessage from '../LedgerConfirmMessage';
+import Spinner from '../Spinner';
+
 const CancelButton = styled(Button)`
   flex-grow: 1;
   max-height: 33px;
@@ -44,6 +47,7 @@ interface ProposalProps {
   onCancel: () => void;
   onSubmit: () => void;
   weight: BigNumber | undefined;
+  shouldLedgerSign: boolean;
 }
 
 export function ProposalModal(props: ProposalProps) {
@@ -89,9 +93,15 @@ export function ProposalModal(props: ProposalProps) {
         </Typography>
         <Divider mb={5} />
         <Flex flexDirection="row" width="100%" justifyContent="center">
-          <CancelButton onClick={onCancel}>Cancel</CancelButton>
-          <SubmitButton onClick={onSubmit}>Submit vote</SubmitButton>
+          {props.shouldLedgerSign && <Spinner />}
+          {!props.shouldLedgerSign && (
+            <>
+              <CancelButton onClick={onCancel}>Cancel</CancelButton>
+              <SubmitButton onClick={onSubmit}>Submit vote</SubmitButton>
+            </>
+          )}
         </Flex>
+        <LedgerConfirmMessage />
       </Flex>
     </Modal>
   );

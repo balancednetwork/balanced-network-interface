@@ -26,7 +26,7 @@ import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { getTrackerLink } from 'utils';
 
@@ -117,6 +117,7 @@ export function ProposalPage() {
   const hasUserVoted = isActive && userStatus?.hasVoted;
 
   const { account } = useIconReact();
+  const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const [txHash, setTxHash] = useState('');
@@ -331,6 +332,7 @@ export function ProposalPage() {
             onCancel={() => setModalStatus(ModalStatus.None)}
             onSubmit={handleSubmit}
             weight={votingWeight}
+            shouldLedgerSign={shouldLedgerSign}
           />
         </BoxPanel>
 

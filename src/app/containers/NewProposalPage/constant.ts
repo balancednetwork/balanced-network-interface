@@ -24,6 +24,8 @@ const ProposalMapping = {
   'BALN/bnUSD': 'BALN / bnUSD',
   'BALN/sICX': 'BALN / sICX',
   'IUSDC/bnUSD': 'IUSDC / bnUSD',
+  'IUSDT/bnUSD': 'IUSDT / bnUSD',
+  'USDS/bnUSD': 'USDS / bnUSD',
 };
 
 export enum PROPOSAL_TYPE {

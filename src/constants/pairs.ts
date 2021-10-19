@@ -182,6 +182,48 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'sICX',
     },
   ],
+  [NetworkId.SEJONG]: [
+    {
+      chainId: 3,
+      id: 1,
+      name: 'sICX/ICX',
+      baseCurrencyKey: 'sICX',
+      quoteCurrencyKey: 'ICX',
+      rewards: 0.07,
+    },
+    {
+      chainId: 3,
+      id: 2,
+      name: 'sICX/bnUSD',
+      baseCurrencyKey: 'sICX',
+      quoteCurrencyKey: 'bnUSD',
+      rewards: 0.175,
+    },
+    {
+      chainId: 3,
+      id: 3,
+      name: 'BALN/bnUSD',
+      baseCurrencyKey: 'BALN',
+      quoteCurrencyKey: 'bnUSD',
+      rewards: 0.175,
+    },
+    {
+      chainId: 3,
+      id: 4,
+      name: 'BALN/sICX',
+      baseCurrencyKey: 'BALN',
+      quoteCurrencyKey: 'sICX',
+      rewards: 0.05,
+    },
+    {
+      chainId: 3, //
+      id: 5,
+      name: 'IUSDC/bnUSD',
+      baseCurrencyKey: 'IUSDC',
+      quoteCurrencyKey: 'bnUSD',
+      rewards: 0.005,
+    },
+  ],
 };
 
 export const SUPPORTED_PAIRS = SUPPORTED_PAIRS_INFO[NETWORK_ID];

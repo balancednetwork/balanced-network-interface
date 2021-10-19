@@ -113,6 +113,37 @@ export const OMM_YEOUIDO = new Token(
   'Omm Token',
 );
 
+// sejong
+// yeouido
+export const ICX_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cx0000000000000000000000000000000000000000',
+  18,
+  'ICX',
+  'ICX',
+);
+export const sICX_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cxc79530e0e4081e2e898bac7baa0075fcf71e55c1',
+  18,
+  'sICX',
+  'Staked ICX',
+);
+export const bnUSD_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cx8c2cf0096636feb17bae2bb018b26dc87afb7bcf',
+  18,
+  'bnUSD',
+  'Balanced Dollar',
+);
+export const BALN_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cxeed0ccc4ee5781abf65208178572e39fd6e49f53',
+  18,
+  'BALN',
+  'Balance Token',
+);
+
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
   [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX],
@@ -125,6 +156,7 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
     USDS_YEOUIDO,
     OMM_YEOUIDO,
   ],
+  [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG],
 };
 
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];

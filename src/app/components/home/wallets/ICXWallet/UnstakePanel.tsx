@@ -42,7 +42,6 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
 
     try {
       const res = await bnJs.inject({ account }).Staking.claimICX();
-      console.log(res);
       toggleOpen();
       addTransaction(
         { hash: res.result },

@@ -1,22 +1,31 @@
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
+import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
+import { addressToCurrencyKeyMap } from 'constants/currency';
+
+import { CurrencyValue } from '../../components/newproposal/FundingInput';
 
 export const MAX_RATIO_VALUE = 100;
 
+export const CURRENCY_LIST = ['BALN', 'bnUSD', 'sICX'];
+
 const ProposalMapping = {
+  // network fee allocation
   daofund: 'DAO fund',
   baln_holders: 'BALN holders',
-  Loans: 'Borrowers',
+  // baln allocation
   DAOfund: 'DAO fund',
   'Reserve Fund': 'Reserve',
   'Worker Tokens': 'Workers',
+  Loans: 'Borrowers',
   'sICX/ICX': 'sICX / ICX',
   'sICX/bnUSD': 'sICX / bnUSD',
   'BALN/bnUSD': 'BALN / bnUSD',
   'BALN/sICX': 'BALN / sICX',
   'IUSDC/bnUSD': 'IUSDC / bnUSD',
+  'IUSDT/bnUSD': 'IUSDT / bnUSD',
+  'USDS/bnUSD': 'USDS / bnUSD',
 };
 
 export enum PROPOSAL_TYPE {
@@ -26,6 +35,7 @@ export enum PROPOSAL_TYPE {
   LOAN_FEE = 'Loan fee',
   LOAN_TO_VALUE_RATIO = 'Loan to value ratio',
   REBALANCING_THRESHOLD = 'Rebalancing threshold',
+  FUNDING = 'Funding',
 }
 
 export const ActionsMapping = {
@@ -34,6 +44,7 @@ export const ActionsMapping = {
   [PROPOSAL_TYPE.LOAN_FEE]: ['setOriginationFee', 'update_origination_fee'],
   [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: ['setLockingRatio', 'update_locking_ratio'],
   [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: ['setRebalancingThreshold'],
+  [PROPOSAL_TYPE.FUNDING]: ['daoDisburse'],
 };
 
 export const PercentMapping = {
@@ -48,10 +59,17 @@ export const PercentMapping = {
 
 export const RATIO_VALUE_FORMATTER = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: data => {
-    return data.map(({ recipient_name, dist_percent }) => ({
-      name: ProposalMapping[recipient_name] || recipient_name,
-      percent: PercentMapping[PROPOSAL_TYPE.BALN_ALLOCATION](dist_percent),
-    }));
+    const t: any[] = [];
+    Object.keys(ProposalMapping).forEach(key => {
+      const p = data.find(item => item.recipient_name === key);
+      if (p) {
+        t.push({
+          name: ProposalMapping[p.recipient_name] || p.recipient_name,
+          percent: PercentMapping[PROPOSAL_TYPE.BALN_ALLOCATION](p.dist_percent),
+        });
+      }
+    });
+    return t;
   },
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: data => {
     return data.map((item: { [key: string]: number }) => {
@@ -76,20 +94,24 @@ export const RATIO_VALUE_FORMATTER = {
   },
 };
 
-const getKeyByValue = value => {
-  return Object.keys(ProposalMapping).find(key => ProposalMapping[key] === value);
+const getKeyByValue = (value, mapping) => {
+  return Object.keys(mapping).find(key => mapping[key] === value);
 };
 
 export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: {
-    fetchInputData: async () =>
-      Object.entries(await bnJs.Rewards.getRecipientsSplit()).map(item => ({
-        name: ProposalMapping[item[0]] || item[0],
-        percent: PercentMapping[PROPOSAL_TYPE.BALN_ALLOCATION](item[1]),
-      })),
+    fetchInputData: async () => {
+      const res = await bnJs.Rewards.getRecipientsSplit();
+      return Object.keys(ProposalMapping)
+        .filter(key => res[key])
+        .map(key => ({
+          name: ProposalMapping[key] || key,
+          percent: PercentMapping[PROPOSAL_TYPE.BALN_ALLOCATION](res[key]),
+        }));
+    },
     submitParams: ratioInputValue => {
       const recipientList = Object.entries(ratioInputValue).map(item => ({
-        recipient_name: getKeyByValue(item[0]) || item[0],
+        recipient_name: getKeyByValue(item[0], ProposalMapping) || item[0],
         dist_percent: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
       }));
       return {
@@ -101,14 +123,14 @@ export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: {
     fetchInputData: async () => {
       const res = await bnJs.Dividends.getDividendsPercentage();
-      return Object.entries(res).map(item => ({
-        name: ProposalMapping[item[0]] || item[0],
-        percent: PercentMapping[PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION](item[1]),
+      return Object.entries(res).map(([key, value]) => ({
+        name: ProposalMapping[key] || key,
+        percent: PercentMapping[PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION](value),
       }));
     },
     submitParams: ratioInputValue => {
       const dist_list = Object.entries(ratioInputValue).map(item => {
-        const key = getKeyByValue(item[0]);
+        const key = getKeyByValue(item[0], ProposalMapping);
         return (
           key && {
             [key]: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
@@ -145,7 +167,7 @@ export const PROPOSAL_CONFIG = {
     },
     submitParams: ratioInputValue => {
       const locking_ratio = Math.round(1000000 / Number(Object.values(ratioInputValue)));
-      return { setLockingRatio: { _ratio: locking_ratio } };
+      return { setLockingRatio: { _value: locking_ratio } };
     },
     validate: sum => ({
       isValid: sum < 66.67,
@@ -162,12 +184,40 @@ export const PROPOSAL_CONFIG = {
       const rebalance_ratio = BalancedJs.utils
         .toLoop(Number(Object.values(ratioInputValue)))
         .div(100)
-        .toFixed();
-      return { setRebalancingThreshold: { _ratio: rebalance_ratio } };
+        .toNumber();
+      return { setRebalancingThreshold: { _value: rebalance_ratio } };
     },
     validate: sum => ({
       isValid: sum <= 7.5,
       message: 'Must be less than or equal to 7.5%.',
     }),
+  },
+  [PROPOSAL_TYPE.FUNDING]: {
+    fetchInputData: async () => {
+      const res = await bnJs.DAOFund.getBalances();
+      return Object.entries(res).map(item => {
+        return {
+          symbol:
+            addressToCurrencyKeyMap[NetworkId.YEOUIDO][item[0]] ||
+            addressToCurrencyKeyMap[NetworkId.MAINNET][item[0]] ||
+            item[0],
+          amount: BalancedJs.utils.toIcx(item[1] as string),
+        };
+      });
+    },
+    submitParams: (currencyValue: CurrencyValue) => {
+      const amounts = Object.values(currencyValue.amounts)
+        .map(
+          ({ amount, symbol }) =>
+            amount && {
+              amount: BalancedJs.utils.toLoop(amount).toNumber(),
+              address:
+                getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.YEOUIDO]) ||
+                getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.MAINNET]),
+            },
+        )
+        .filter(value => value);
+      return { daoDisburse: { _recipient: currencyValue.recipient, _amounts: amounts } };
+    },
   },
 };

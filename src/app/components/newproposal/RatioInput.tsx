@@ -37,7 +37,7 @@ export default function RatioInput({
   const [ratioValues, setRatioValues] = React.useState<Array<RatioValue> | undefined>();
 
   useEffect(() => {
-    if (proposalType !== PROPOSAL_TYPE.TEXT) {
+    if (proposalType !== PROPOSAL_TYPE.TEXT && proposalType !== PROPOSAL_TYPE.FUNDING) {
       (async () => {
         const result = await PROPOSAL_CONFIG[proposalType].fetchInputData();
         setRatioValues(result);
@@ -65,19 +65,7 @@ export default function RatioInput({
     <Wrapper>
       {ratioValues && (
         <>
-          <BoxPanel width={1 / 2}>
-            <Typography variant="p" textAlign="center" marginBottom="9px">
-              Current
-            </Typography>
-            <List>
-              {ratioValues.map(({ name, percent }) => (
-                <ListItem key={(name || '') + percent} hasTitle={!!name}>
-                  {name && <Typography variant="p">{name}</Typography>}
-                  <Typography variant="h2">{percent}%</Typography>
-                </ListItem>
-              ))}
-            </List>
-          </BoxPanel>
+          <ListBox title="Current" list={ratioValues} />
           <BoxPanel width={1 / 2}>
             <Typography variant="p" textAlign="center" marginBottom="9px">
               New
@@ -93,8 +81,38 @@ export default function RatioInput({
                     text={message}
                     show={showErrorMessage}
                   >
-                    <ListItem hasTitle={!!name}>
-                      {name && <Typography variant="p">{name}</Typography>}
+                    <ListItem>
+                      {name && (
+                        <Typography variant="p" textAlign="right">
+                          {name}
+                        </Typography>
+                      )}
+                      <Flex justifyContent={name ? 'flex-start' : 'center'}>
+                        <InputWrapper>
+                          <FieldInput
+                            value={(value && value[name || index]) || ''}
+                            hasTitle={!!name}
+                            // universal input options
+                            inputMode="decimal"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            onChange={handleChange(name || index)}
+                            // text-specific options
+                            type="text"
+                            spellCheck="false"
+                          />
+                        </InputWrapper>
+                      </Flex>
+                    </ListItem>
+                  </Tooltip>
+                ) : (
+                  <ListItem key={(name || '') + percent}>
+                    {name && (
+                      <Typography variant="p" textAlign="right">
+                        {name}
+                      </Typography>
+                    )}
+                    <Flex justifyContent={name ? 'flex-start' : 'center'}>
                       <InputWrapper>
                         <FieldInput
                           value={(value && value[name || index]) || ''}
@@ -109,25 +127,7 @@ export default function RatioInput({
                           spellCheck="false"
                         />
                       </InputWrapper>
-                    </ListItem>
-                  </Tooltip>
-                ) : (
-                  <ListItem hasTitle={!!name} key={(name || '') + percent}>
-                    {name && <Typography variant="p">{name}</Typography>}
-                    <InputWrapper>
-                      <FieldInput
-                        value={(value && value[name || index]) || ''}
-                        hasTitle={!!name}
-                        // universal input options
-                        inputMode="decimal"
-                        autoComplete="off"
-                        autoCorrect="off"
-                        onChange={handleChange(name || index)}
-                        // text-specific options
-                        type="text"
-                        spellCheck="false"
-                      />
-                    </InputWrapper>
+                    </Flex>
                   </ListItem>
                 ),
               )}
@@ -136,6 +136,32 @@ export default function RatioInput({
         </>
       )}
     </Wrapper>
+  );
+}
+
+export function ListBox({ title, list, hidden }: { title: string; list: any[]; hidden?: boolean }) {
+  return (
+    <BoxPanel width={1 / 2} hidden={hidden}>
+      <Typography variant="p" textAlign="center" marginBottom="9px">
+        {title}
+      </Typography>
+      <List>
+        {list.map(({ name, percent }) => (
+          <ListItem key={name + percent}>
+            {name && (
+              <Typography variant="p" textAlign="right">
+                {name}
+              </Typography>
+            )}
+            <Box>
+              <Typography variant="h2" pl={[0, 3]} textAlign={name ? 'left' : 'center'}>
+                {percent}%
+              </Typography>
+            </Box>
+          </ListItem>
+        ))}
+      </List>
+    </BoxPanel>
   );
 }
 
@@ -152,29 +178,29 @@ export const BoxPanel = styled(Box)`
   }
 `;
 
-export const List = styled.ul`
-  list-style: none;
-  margin: 0;
-  padding: 0;
+export const List = styled(Flex)`
+  flex-direction: column;
 `;
 
-export const ListItem = styled.li<{ hasTitle?: boolean }>`
+export const ListItem = styled(Flex)`
   display: flex;
   align-items: center;
   margin-top: 25px;
   margin-bottom: 5px;
-  height: 40px;
-  ${props => !props.hasTitle && 'justify-content: center;'}
+  line-height: 1.4;
 
-  & > p {
-    text-align: right;
-    width: 50%;
+  > * {
+    flex: 1;
   }
-  & > h2 {
-    ${props => props.hasTitle && 'padding-left: 15px; width: 50%;'}
-  }
+
+  flex-direction: column;
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    flex-direction: row;
+  `}
 `;
-const InputWrapper = styled.div`
+
+const InputWrapper = styled(Box)`
+  display: inline-block;
   position: relative;
   &:after {
     content: '%';
@@ -185,11 +211,12 @@ const InputWrapper = styled.div`
     transform: translateY(-50%);
   }
 `;
+
 const FieldInput = styled.input<{ hasTitle?: boolean }>`
   border-radius: 10px;
   width: 100%;
   max-width: ${props => (props.hasTitle ? '80px' : '100px')};
-  height: 40px;
+  height: 35px;
   border: none;
   caret-color: white;
   color: white;

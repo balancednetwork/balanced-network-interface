@@ -23,6 +23,8 @@ const decimals = {
   IUSDC: 6,
   OMM: 18,
   USDS: 18,
+  CFT: 18,
+  METX: 18,
 };
 
 export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: CurrencyKey }, period: CHART_PERIODS) => {

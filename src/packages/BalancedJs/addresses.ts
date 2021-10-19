@@ -40,14 +40,39 @@ const YEOUIDO_ADDRESSES = {
   iusdc: 'cx65f639254090820361da483df233f6d0e69af9b7',
   usds: 'cxc0666df567a6e0b49342648e98ccbe5362b264ea',
   cft: 'cxf7313d7fd611c99b8db29e298699be4b1fd86661',
+  metx: '',
   bwt: 'cx5d886977b7d24b9f73a460c9ca2d43847997c285',
   airdrip: 'cx8ed4fbee9d6497f91ea90933db288ff4b43e54ba',
   rebalancing: 'cx2e3398dfce78a3c83de8a41d7c5f4aa40d3a4f30',
 };
 
+const SEJONG_ADDRESSES = {
+  loans: 'cxa8e5f6263b8403b24c935ee255e06be84cb45195',
+  staking: 'cx5ce1ed484edbf4332001ca40e5760acb64444a46',
+  dividends: 'cxbde2a33bfadfad5703f076ec554453fcf21abc78',
+  reserve: 'cxb843d3a4935ca27911d3c1a2112095f512ff9d56',
+  daofund: 'cxea58bbaabbad19f2f75a3aebcb97b088e3cbc9e9',
+  rewards: 'cx9f782c71811566bff738263931b01bf6844ab8e3',
+  dex: 'cx9604fc2b833969260aea27373700e1547b69d34a',
+  governance: 'cxdbe2036fd326eb04d9f1f336326eefb6ea558289',
+  band: 'cx386d9c545dfb74a0ee3441b05f011b75dbc9b7a9',
+  sicx: 'cxc79530e0e4081e2e898bac7baa0075fcf71e55c1',
+  bnusd: 'cx8c2cf0096636feb17bae2bb018b26dc87afb7bcf',
+  baln: 'cxeed0ccc4ee5781abf65208178572e39fd6e49f53',
+  omm: '',
+  iusdc: '',
+  usds: '',
+  cft: '',
+  metx: '',
+  bwt: 'cxa2afb37647ae91ca6fbf35141b2ef2ac7105720a',
+  airdrip: '',
+  rebalancing: 'cxb5e84abcd8ab014ca0a695fa5b3f23f7ff3ac138',
+};
+
 const addresses = {
   [NetworkId.MAINNET]: MAINNET_ADDRESSES,
   [NetworkId.YEOUIDO]: YEOUIDO_ADDRESSES,
+  [NetworkId.SEJONG]: SEJONG_ADDRESSES,
 };
 
 export default addresses;

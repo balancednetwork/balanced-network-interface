@@ -15,6 +15,7 @@ import { CurrencyKey, Pool } from 'types';
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
   [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT', 'METX'],
   [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS', 'CFT'],
+  [NetworkId.SEJONG]: ['ICX', 'sICX', 'bnUSD', 'BALN'],
 };
 
 const NETWORK_ID: NetworkId = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
@@ -193,6 +194,37 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
       poolId: 30,
     },
   ],
+
+  [NetworkId.SEJONG]: [
+    {
+      baseCurrencyKey: CURRENCY_MAP['sICX'],
+      quoteCurrencyKey: CURRENCY_MAP['ICX'],
+      pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['ICX']),
+      poolId: 1,
+      rewards: 0.1,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['sICX'],
+      quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
+      pair: toMarketPair(CURRENCY_MAP['sICX'], CURRENCY_MAP['bnUSD']),
+      poolId: 2,
+      rewards: 0.175,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['BALN'],
+      quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
+      pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['bnUSD']),
+      poolId: 3,
+      rewards: 0.175,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['BALN'],
+      quoteCurrencyKey: CURRENCY_MAP['sICX'],
+      pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['sICX']),
+      poolId: 4,
+      rewards: 0.05,
+    },
+  ],
 };
 
 export const SUPPORTED_PAIRS: Array<Pair> = SUPPORTED_PAIRS_INFO[NETWORK_ID];
@@ -253,5 +285,11 @@ export const addressToCurrencyKeyMap = {
     cxc0666df567a6e0b49342648e98ccbe5362b264ea: 'USDS',
     cx05515d126a47a98c682fa86992329e6c2ec70503: 'OMM',
     cxf7313d7fd611c99b8db29e298699be4b1fd86661: 'CFT',
+  },
+  [NetworkId.SEJONG]: {
+    cxc79530e0e4081e2e898bac7baa0075fcf71e55c1: 'sICX',
+    cx8c2cf0096636feb17bae2bb018b26dc87afb7bcf: 'bnUSD',
+    cxeed0ccc4ee5781abf65208178572e39fd6e49f53: 'BALN',
+    cx0000000000000000000000000000000000000000: 'ICX',
   },
 };

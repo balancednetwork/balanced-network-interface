@@ -37,11 +37,15 @@ Please run the lint task before commit.
 Create an .env file
 
 ```
+## For Sejong Testnet
+REACT_APP_NETWORK_ID=83
+
 ## For Yeouido Testnet
 REACT_APP_NETWORK_ID=3
 
 ## For Mainnet
 REACT_APP_NETWORK_ID=1
+
 ```
 
 ## Contribution

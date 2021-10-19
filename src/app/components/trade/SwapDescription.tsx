@@ -44,10 +44,10 @@ export default function SwapDescription() {
     currencyKeys,
   ]);
 
-  const iCXprice =
+  const priceInICX =
     price &&
     (currencyKeys[Field.OUTPUT] === 'sICX'
-      ? ratio.sICXICXratio.multipliedBy(price.value)
+      ? price.value.times(ratio.sICXICXratio)
       : price.value.div(ratio.sICXICXratio));
 
   const [pair] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
@@ -66,7 +66,7 @@ export default function SwapDescription() {
     });
   };
 
-  const hasSicx = [currencyKeys[Field.INPUT], currencyKeys[Field.OUTPUT]].includes('sICX');
+  const hasSICX = [currencyKeys[Field.INPUT], currencyKeys[Field.OUTPUT]].includes('sICX');
   const hasICX = [currencyKeys[Field.INPUT], currencyKeys[Field.OUTPUT]].includes('ICX');
 
   return (
@@ -77,21 +77,14 @@ export default function SwapDescription() {
             {currencyKeys[Field.INPUT]} / {currencyKeys[Field.OUTPUT]}
           </Typography>
           <Typography variant="p">
-            {`${formatBigNumber(price?.value, 'price')} ${currencyKeys[Field.OUTPUT]} 
-                per ${currencyKeys[Field.INPUT]} `}
-            <span className="alert" style={{ display: 'none' }}>
-              -1.21%
-            </span>
+            {`${formatBigNumber(price?.value, 'price')} 
+              ${currencyKeys[Field.OUTPUT]} per ${currencyKeys[Field.INPUT]} `}
           </Typography>
-          {hasSicx && !hasICX && (
+          {hasSICX && !hasICX && (
             <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
-              {`${formatBigNumber(iCXprice, 'price')} ${
-                currencyKeys[Field.OUTPUT] === 'sICX' ? 'ICX' : currencyKeys[Field.OUTPUT]
-              } 
-               per ${currencyKeys[Field.INPUT] === 'sICX' ? 'ICX' : currencyKeys[Field.INPUT]} `}
-              <span className="alert" style={{ display: 'none' }}>
-                -1.21%
-              </span>
+              {`${formatBigNumber(priceInICX, 'price')} 
+                ${currencyKeys[Field.OUTPUT] === 'sICX' ? 'ICX' : currencyKeys[Field.OUTPUT]} 
+                per ${currencyKeys[Field.INPUT] === 'sICX' ? 'ICX' : currencyKeys[Field.INPUT]} `}
             </Typography>
           )}
         </Box>

@@ -11,28 +11,6 @@ export default class BALN extends IRC2 {
     this.address = addresses[this.nid].baln;
   }
 
-  swap(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
-    const data = {
-      method: '_swap',
-      params: { toToken: addresses[this.nid][outputSymbol.toLowerCase()], minimumReceive: minimumReceive.toFixed() },
-    };
-
-    return this.transfer(addresses[this.nid].dex, value, JSON.stringify(data));
-  }
-
-  transfer(to: string, value: BigNumber, data?: string) {
-    const callParams = this.transactionParamsBuilder({
-      method: 'transfer',
-      params: {
-        _to: to,
-        _value: IconConverter.toHex(value),
-        _data: data && IconConverter.toHex(data),
-      },
-    });
-
-    return this.callICONPlugins(callParams);
-  }
-
   stake(value: BigNumber) {
     const payload = this.transactionParamsBuilder({
       method: 'stake',

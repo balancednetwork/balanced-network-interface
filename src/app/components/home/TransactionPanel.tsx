@@ -64,6 +64,7 @@ const METHOD_CONTENT = {
   Claimed: 'Claimed network fees',
   TokenTransfer: '',
   Transfer: '',
+  Rebalance: '',
 
   //  2 symbols
   stakeICX: 'Swapped (amount1) ICX for (amount2) sICX',
@@ -498,6 +499,7 @@ const checkAndParseICXTosICX = (tx: Transaction): Transaction => {
 
 const parseTransactions = (txs: Transaction[]) => {
   const transactions: Transaction[] = [];
+  const rebalanceTransactions = txs.filter(tx => tx.method === 'Rebalance').map(tx => tx.transaction_hash);
   try {
     for (let i = 0; i < 10; i++) {
       let tx: Transaction = txs[i] && { ...txs[i] };
@@ -552,6 +554,15 @@ const parseTransactions = (txs: Transaction[]) => {
               tx.to_value = secondTx.indexed?.find((item: string) => item.startsWith('0x')) || '';
               transactions.push(tx);
             }
+            break;
+          }
+          //NOTE: https://github.com/balancednetwork/balanced-network-interface/issues/721
+          case 'Rebalance': {
+            break;
+          }
+          //NOTE: https://github.com/balancednetwork/balanced-network-interface/issues/721
+          case 'Swap': {
+            if (!rebalanceTransactions.includes(tx.transaction_hash)) transactions.push(tx);
             break;
           }
 

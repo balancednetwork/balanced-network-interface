@@ -184,7 +184,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
   ],
   [NetworkId.SEJONG]: [
     {
-      chainId: 3,
+      chainId: 83,
       id: 1,
       name: 'sICX/ICX',
       baseCurrencyKey: 'sICX',
@@ -192,7 +192,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       rewards: 0.07,
     },
     {
-      chainId: 3,
+      chainId: 83,
       id: 2,
       name: 'sICX/bnUSD',
       baseCurrencyKey: 'sICX',
@@ -200,7 +200,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       rewards: 0.175,
     },
     {
-      chainId: 3,
+      chainId: 83,
       id: 3,
       name: 'BALN/bnUSD',
       baseCurrencyKey: 'BALN',
@@ -208,7 +208,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       rewards: 0.175,
     },
     {
-      chainId: 3,
+      chainId: 83,
       id: 4,
       name: 'BALN/sICX',
       baseCurrencyKey: 'BALN',
@@ -216,7 +216,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       rewards: 0.05,
     },
     {
-      chainId: 3, //
+      chainId: 83, //
       id: 5,
       name: 'IUSDC/bnUSD',
       baseCurrencyKey: 'IUSDC',

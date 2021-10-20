@@ -6,6 +6,7 @@ import { ReactComponent as bnUSDIcon } from 'assets/tokens/bnUSD.svg';
 import { ReactComponent as CFTIcon } from 'assets/tokens/CFT.svg';
 import { ReactComponent as ICXIcon } from 'assets/tokens/ICX.svg';
 import { ReactComponent as IUSDCIcon } from 'assets/tokens/IUSDC.svg';
+import { ReactComponent as IUSDTIcon } from 'assets/tokens/IUSDT.svg';
 import { ReactComponent as METXIcon } from 'assets/tokens/METX.svg';
 import { ReactComponent as OMMIcon } from 'assets/tokens/OMM.svg';
 import { ReactComponent as sICXIcon } from 'assets/tokens/sICX.svg';
@@ -13,7 +14,7 @@ import { ReactComponent as USDSIcon } from 'assets/tokens/USDS.svg';
 import { CurrencyKey, Pool } from 'types';
 
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
-  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT', 'METX'],
+  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT', 'METX', 'IUSDT'],
   [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS', 'CFT'],
   [NetworkId.SEJONG]: ['ICX', 'sICX', 'bnUSD', 'BALN'],
 };
@@ -34,6 +35,7 @@ export const currencyKeyToIconMap = {
   USDS: USDSIcon,
   CFT: CFTIcon,
   METX: METXIcon,
+  IUSDT: IUSDTIcon,
 };
 
 export const toMarketPair = (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: string) =>
@@ -137,6 +139,12 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
       quoteCurrencyKey: CURRENCY_MAP['USDS'],
       pair: toMarketPair(CURRENCY_MAP['METX'], CURRENCY_MAP['USDS']),
       poolId: 14,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['IUSDT'],
+      quoteCurrencyKey: CURRENCY_MAP['bnUSD'],
+      pair: toMarketPair(CURRENCY_MAP['IUSDT'], CURRENCY_MAP['bnUSD']),
+      poolId: 15,
     },
   ],
 
@@ -275,6 +283,7 @@ export const addressToCurrencyKeyMap = {
     cx1a29259a59f463a67bb2ef84398b30ca56b5830a: 'OMM',
     cx2e6d0fc0eca04965d06038c8406093337f085fcf: 'CFT',
     cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2: 'METX',
+    cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88: 'IUSDT',
   },
   [NetworkId.YEOUIDO]: {
     cxae6334850f13dfd8b50f8544d5acb126bb8ef82d: 'sICX',

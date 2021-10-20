@@ -90,8 +90,10 @@ const getContractName = (addr?: string) => {
 
 const getContractAddr = (tx: Transaction) => tx.indexed?.find(item => item.startsWith('cx'));
 const isIUSDC = (addr: string) => addresses[NetworkId.MAINNET].iusdc === addr;
+const isIUSDT = (addr: string) => addresses[NetworkId.MAINNET].iusdt === addr;
 
 const POOL_IDS = {
+  15: 'IUSDT bnUSD',
   14: 'METX USDS',
   13: 'METX IUSDC',
   12: 'METX sICX',
@@ -135,6 +137,8 @@ const getValue = (tx: Transaction) => {
 
   return getContractAddr(tx) === addresses[NetworkId.MAINNET].iusdc
     ? convertIUSDC(new BigNumber(_value))
+    : getContractAddr(tx) === addresses[NetworkId.MAINNET].iusdt
+    ? convertIUSDC(new BigNumber(_value))
     : convertValue(_value);
 };
 
@@ -161,7 +165,13 @@ const getValuesAndSymbols = (tx: Transaction) => {
           Object.keys(data).forEach(key => {
             if (data[key] !== 0) {
               symbols.push(getContractName(key) || '');
-              amounts.push(isIUSDC(key) ? convertIUSDC(new BigNumber(data[key])) : convertValue(data[key]));
+              amounts.push(
+                isIUSDC(key)
+                  ? convertIUSDC(new BigNumber(data[key]))
+                  : isIUSDT(key)
+                  ? convertIUSDC(new BigNumber(data[key]))
+                  : convertValue(data[key]),
+              );
             }
           });
         } catch (ex) {
@@ -199,7 +209,15 @@ const getValuesAndSymbols = (tx: Transaction) => {
         amount1 = convertIUSDC(new BigNumber(tx.data[0]));
       }
 
+      if (poolId === 15) {
+        amount1 = convertIUSDC(new BigNumber(tx.data[0]));
+      }
+
       if (symbol2?.toLowerCase() === 'iusdc') {
+        amount2 = convertIUSDC(new BigNumber(tx.data[1]));
+      }
+
+      if (symbol2?.toLowerCase() === 'iusdt') {
         amount2 = convertIUSDC(new BigNumber(tx.data[1]));
       }
 
@@ -213,8 +231,16 @@ const getValuesAndSymbols = (tx: Transaction) => {
         symbol1 = 'sICX';
         symbol2 = 'ICX';
       }
-      const amount1 = isIUSDC(tx.data[0]) ? convertIUSDC(new BigNumber(tx.data[4])) : convertValue(tx.data[4]);
-      const amount2 = isIUSDC(tx.data[1]) ? convertIUSDC(new BigNumber(tx.data[5])) : convertValue(tx.data[5]);
+      const amount1 = isIUSDC(tx.data[0])
+        ? convertIUSDC(new BigNumber(tx.data[4]))
+        : isIUSDT(tx.data[0])
+        ? convertIUSDC(new BigNumber(tx.data[4]))
+        : convertValue(tx.data[4]);
+      const amount2 = isIUSDC(tx.data[1])
+        ? convertIUSDC(new BigNumber(tx.data[5]))
+        : isIUSDT(tx.data[1])
+        ? convertIUSDC(new BigNumber(tx.data[5]))
+        : convertValue(tx.data[5]);
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Withdraw1Value':

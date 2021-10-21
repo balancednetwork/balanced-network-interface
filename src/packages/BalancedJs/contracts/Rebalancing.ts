@@ -15,5 +15,21 @@ export default class Rebalancing extends Contract {
 
     return this.call(payload);
   }
-  s;
+
+  getRebalancingStatus() {
+    const payload = this.paramsBuilder({
+      method: 'getRebalancingStatus',
+    });
+
+    return this.call(payload);
+  }
+
+  rebalance() {
+    console.log('hey');
+    const payload = this.transactionParamsBuilder({
+      method: 'rebalance',
+    });
+
+    return this.callICONPlugins(payload);
+  }
 }

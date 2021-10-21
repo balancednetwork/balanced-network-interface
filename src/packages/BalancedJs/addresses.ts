@@ -57,7 +57,7 @@ const SEJONG_ADDRESSES = {
   rewards: 'cx9f782c71811566bff738263931b01bf6844ab8e3',
   dex: 'cx9604fc2b833969260aea27373700e1547b69d34a',
   governance: 'cxdbe2036fd326eb04d9f1f336326eefb6ea558289',
-  band: 'cx386d9c545dfb74a0ee3441b05f011b75dbc9b7a9',
+  band: 'cx0999df3af49a227fc8799f0d78d19cd8fe4bb76d',
   sicx: 'cxc79530e0e4081e2e898bac7baa0075fcf71e55c1',
   bnusd: 'cx8c2cf0096636feb17bae2bb018b26dc87afb7bcf',
   baln: 'cxeed0ccc4ee5781abf65208178572e39fd6e49f53',

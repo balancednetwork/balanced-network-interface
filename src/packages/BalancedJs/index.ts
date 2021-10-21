@@ -6,24 +6,18 @@ import Airdrip from './contracts/Airdrip';
 import BALN from './contracts/BALN';
 import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
-import CFT from './contracts/CFT';
 import { Contract } from './contracts/contract';
 import DAOFund from './contracts/DAOFund';
 import Dex from './contracts/Dex';
 import Dividends from './contracts/Dividends';
 import Governance from './contracts/Governance';
 import ICX from './contracts/ICX';
-import IUSDC from './contracts/IUSDC';
-import IUSDT from './contracts/IUSDT';
 import Loans from './contracts/Loans';
-import METX from './contracts/METX';
-import OMM from './contracts/OMM';
 import Rebalancing from './contracts/Rebalancing';
 import Rewards from './contracts/Rewards';
 import Router from './contracts/Router';
 import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
-import USDS from './contracts/USDS';
 import ContractSettings, { LedgerSettings } from './contractSettings';
 
 export { SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO };
@@ -50,14 +44,8 @@ export class BalancedJs {
   // token contracts
   BALN: BALN;
   sICX: sICX;
-  bnUSD: bnUSD;
   ICX: ICX;
-  OMM: OMM;
-  IUSDC: IUSDC;
-  USDS: USDS;
-  CFT: CFT;
-  METX: METX;
-  IUSDT: IUSDT;
+  bnUSD: bnUSD;
   //
   Loans: Loans;
   Router: Router;
@@ -114,14 +102,8 @@ export class BalancedJs {
     // token
     this.BALN = new BALN(this.contractSettings);
     this.ICX = new ICX(this.contractSettings);
-    this.bnUSD = new bnUSD(this.contractSettings);
     this.sICX = new sICX(this.contractSettings);
-    this.OMM = new OMM(this.contractSettings);
-    this.IUSDC = new IUSDC(this.contractSettings);
-    this.USDS = new USDS(this.contractSettings);
-    this.CFT = new CFT(this.contractSettings);
-    this.METX = new METX(this.contractSettings);
-    this.IUSDT = new IUSDT(this.contractSettings);
+    this.bnUSD = new bnUSD(this.contractSettings);
 
     this.Loans = new Loans(this.contractSettings);
     this.Router = new Router(this.contractSettings);

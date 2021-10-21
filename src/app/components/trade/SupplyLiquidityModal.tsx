@@ -17,7 +17,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { usePool, usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { CurrencyAmount, Currency } from 'types/balanced-sdk-core';
+import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
 import { formatBigNumber } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -30,6 +30,7 @@ interface ModalProps {
   onClose: () => void;
   children?: React.ReactNode;
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
+  currencies: { [field in Field]?: Currency };
 }
 
 export enum Field {
@@ -40,7 +41,7 @@ export enum Field {
 // temporarily solution. need to refactor later
 const BALNRewardPairs = [1, 2, 3, 4];
 
-export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }: ModalProps) {
+export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies }: ModalProps) {
   const { account } = useIconReact();
 
   const selectedPair = usePoolPair();
@@ -108,8 +109,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
     if (!account) return;
 
-    const currencyKey =
-      currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
+    const token = currencies[currencyType] as Token;
 
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
@@ -122,12 +122,12 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
 
       const res: any = await bnJs
         .inject({ account: account })
-        .Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(amountWithdraw, currencyKey));
+        .Dex.withdraw(token.address, BalancedJs.utils.toLoop(amountWithdraw, token.symbol));
       addTransaction(
         { hash: res.result },
         {
-          pending: `Withdrawing ${currencyKey}`,
-          summary: `${formatBigNumber(amountWithdraw, 'currency')} ${currencyKey} added to your wallet`,
+          pending: `Withdrawing ${token.symbol}`,
+          summary: `${formatBigNumber(amountWithdraw, 'currency')} ${token.symbol} added to your wallet`,
         },
       );
 
@@ -182,11 +182,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     } else {
+      const baseToken = currencies[Field.CURRENCY_A] as Token;
+      const quoteToken = currencies[Field.CURRENCY_B] as Token;
       bnJs
         .inject({ account: account })
         .Dex.add(
-          bnJs[selectedPair.baseCurrencyKey].address,
-          bnJs[selectedPair.quoteCurrencyKey].address,
+          baseToken.address,
+          quoteToken.address,
           BalancedJs.utils.toLoop(pool?.baseDeposited || new BigNumber(0), selectedPair.baseCurrencyKey),
           BalancedJs.utils.toLoop(pool?.quoteDeposited || new BigNumber(0), selectedPair.quoteCurrencyKey),
         )

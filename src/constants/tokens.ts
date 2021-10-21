@@ -61,6 +61,13 @@ export const METX = new Token(
   'METX',
   'Metanyx',
 );
+export const IUSDT = new Token(
+  SupportedChainId.MAINNET, //
+  'cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88',
+  18,
+  'IUSDT',
+  'ICON Tether',
+);
 // yeouido
 export const ICX_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
@@ -113,6 +120,14 @@ export const OMM_YEOUIDO = new Token(
   'Omm Token',
 );
 
+export const CFT_YEOUIDO = new Token(
+  SupportedChainId.YEOUIDO,
+  'cxf7313d7fd611c99b8db29e298699be4b1fd86661',
+  18,
+  'CFT',
+  'Craft',
+);
+
 // sejong
 // yeouido
 export const ICX_SEJONG = new Token(
@@ -146,7 +161,7 @@ export const BALN_SEJONG = new Token(
 
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
-  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX],
+  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT],
   [SupportedChainId.YEOUIDO]: [
     ICX_YEOUIDO,
     sICX_YEOUIDO,
@@ -155,6 +170,7 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
     IUSDC_YEOUIDO,
     USDS_YEOUIDO,
     OMM_YEOUIDO,
+    CFT_YEOUIDO,
   ],
   [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG],
 };

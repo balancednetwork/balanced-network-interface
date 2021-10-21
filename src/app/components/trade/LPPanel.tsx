@@ -241,7 +241,12 @@ export default function LPPanel() {
         />
       </SectionPanel>
 
-      <SupplyLiquidityModal isOpen={showSupplyConfirm} onClose={handleSupplyConfirmDismiss} parsedAmounts={amounts} />
+      <SupplyLiquidityModal
+        isOpen={showSupplyConfirm}
+        onClose={handleSupplyConfirmDismiss}
+        parsedAmounts={amounts}
+        currencies={currencies}
+      />
     </>
   );
 }

@@ -489,7 +489,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
     const quoteT = t.times(rate2);
 
     bnJs
-      .inject({ account: account })
+      .inject({ account })
       .Dex.remove(pair.id, BalancedJs.utils.toLoop(t))
       .then(result => {
         addTransaction(

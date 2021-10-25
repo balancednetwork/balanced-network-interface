@@ -77,7 +77,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
 
       const res: any = await bnJs
-        .inject({ account: account })
+        .inject({ account })
         [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]!.toFixed(), currencyKey));
       addTransaction(
         { hash: res.result },
@@ -121,7 +121,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       }
 
       const res: any = await bnJs
-        .inject({ account: account })
+        .inject({ account })
         .Dex.withdraw(token.address, BalancedJs.utils.toLoop(amountWithdraw, token.symbol));
       addTransaction(
         { hash: res.result },
@@ -158,7 +158,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       const t = parsedAmounts[Field.CURRENCY_B];
 
       bnJs
-        .inject({ account: account })
+        .inject({ account })
         .Dex.transferICX(BalancedJs.utils.toLoop(t!.toFixed()))
         .then((res: any) => {
           addTransaction(
@@ -185,7 +185,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       const baseToken = currencies[Field.CURRENCY_A] as Token;
       const quoteToken = currencies[Field.CURRENCY_B] as Token;
       bnJs
-        .inject({ account: account })
+        .inject({ account })
         .Dex.add(
           baseToken.address,
           quoteToken.address,

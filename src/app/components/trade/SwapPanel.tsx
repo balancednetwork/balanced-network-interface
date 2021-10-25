@@ -2,6 +2,8 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
+import IRC2 from 'packages/BalancedJs/contracts/IRC2';
+import ContractSettings from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { ChevronRight } from 'react-feather';
@@ -19,6 +21,8 @@ import SlippageSetting from 'app/components/SlippageSetting';
 import { Typography } from 'app/theme';
 import { ReactComponent as FlipIcon } from 'assets/icons/flip.svg';
 import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import {
   useSwapSlippageTolerance,
   useWalletModalToggle,
@@ -169,12 +173,15 @@ export default function SwapPanel() {
         });
     } else {
       const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const tokenContract = bnJs.inject({ account })[executionTrade.inputAmount.currency.symbol || 'IN'];
+
+      const contractSettings = new ContractSettings({ networkId: NETWORK_ID });
+      const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === executionTrade.inputAmount.currency.symbol);
+      const tokenContract = new IRC2(contractSettings, token?.address);
 
       tokenContract
         .swapUsingRoute(
           BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact(), currencies[Field.INPUT]?.symbol!),
-          executionTrade.outputAmount.currency.symbol,
+          executionTrade.outputAmount.currency.symbol!,
           BalancedJs.utils.toLoop(minReceived.toExact(), currencies[Field.OUTPUT]?.symbol!),
           executionTrade.route.pathForSwap,
         )

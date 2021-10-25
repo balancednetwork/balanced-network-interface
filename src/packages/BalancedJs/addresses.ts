@@ -52,7 +52,7 @@ const YEOUIDO_ADDRESSES = {
 
 const SEJONG_ADDRESSES = {
   loans: 'cx3228124be7c85e3e57edebf870c4075c33c34c5f',
-  router: 'cx0000000000000000000000000000000000000000',
+  router: 'cx19d18e18c50bd9da5353d71117960492e3ab2fed',
   staking: 'cx1eb5b209e4c6f95a958bddb322d76a2168e576b2',
   dividends: 'cx020042bb8742bfca138889e23817bee87ad8caa0',
   reserve: 'cx76d98fc79f779308d2e872b00e7571bebef59031',

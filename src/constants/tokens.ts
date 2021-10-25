@@ -139,21 +139,21 @@ export const ICX_SEJONG = new Token(
 );
 export const sICX_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cxc79530e0e4081e2e898bac7baa0075fcf71e55c1',
+  'cx0e706eca3552a6e607095319f4ad8cea37e779d4',
   18,
   'sICX',
   'Staked ICX',
 );
 export const bnUSD_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cx8c2cf0096636feb17bae2bb018b26dc87afb7bcf',
+  'cx041714d034919c8456d3606f8766f0169e35cb8e',
   18,
   'bnUSD',
   'Balanced Dollar',
 );
 export const BALN_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cxeed0ccc4ee5781abf65208178572e39fd6e49f53',
+  'cxb45058d398614a7c8cdf7be6f556fa0b39399799',
   18,
   'BALN',
   'Balance Token',

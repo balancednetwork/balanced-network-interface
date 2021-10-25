@@ -11,6 +11,7 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import { ReactComponent as CrossIcon } from 'assets/icons/failure.svg';
 import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
+import { useShouldLedgerSign } from 'store/application/hooks';
 
 import LedgerConfirmMessage from '../LedgerConfirmMessage';
 import Spinner from '../Spinner';
@@ -47,12 +48,13 @@ interface ProposalProps {
   onCancel: () => void;
   onSubmit: () => void;
   weight: BigNumber | undefined;
-  shouldLedgerSign: boolean;
 }
 
 export function ProposalModal(props: ProposalProps) {
   const { status, onCancel, onSubmit, weight } = props;
   const isOpen = status !== ModalStatus.None;
+
+  const shouldLedgerSign = useShouldLedgerSign();
 
   // the code prevents flicking while this modal is closing.
   const prevStatus = usePrevious(status);
@@ -93,8 +95,8 @@ export function ProposalModal(props: ProposalProps) {
         </Typography>
         <Divider mb={5} />
         <Flex flexDirection="row" width="100%" justifyContent="center">
-          {props.shouldLedgerSign && <Spinner />}
-          {!props.shouldLedgerSign && (
+          {shouldLedgerSign && <Spinner />}
+          {!shouldLedgerSign && (
             <>
               <CancelButton onClick={onCancel}>Cancel</CancelButton>
               <SubmitButton onClick={onSubmit}>Submit vote</SubmitButton>

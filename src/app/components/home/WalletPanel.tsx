@@ -122,9 +122,9 @@ const WalletPanel = () => {
                   <StyledAccordionPanel hidden={false}>
                     <BoxPanel bg="bg3">
                       {currency.toLocaleLowerCase() === 'icx' ? (
-                        <WalletUI currencyKey={currency} claimableICX={claimableICX} />
+                        <WalletUI currency={getTokenFromCurrencyKey(currency)!} claimableICX={claimableICX} />
                       ) : (
-                        <WalletUI currencyKey={currency} />
+                        <WalletUI currency={getTokenFromCurrencyKey(currency)!} />
                       )}
                     </BoxPanel>
                   </StyledAccordionPanel>

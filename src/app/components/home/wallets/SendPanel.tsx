@@ -20,15 +20,13 @@ import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { CurrencyKey } from 'types';
-import { getTokenFromCurrencyKey } from 'types/adapter';
-import { CurrencyAmount } from 'types/balanced-sdk-core';
+import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
 import { maxAmountSpend, parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Grid, MaxButton } from './utils';
 
-export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey }) {
+export default function SendPanel({ currency }: { currency: Currency }) {
   const [value, setValue] = React.useState('');
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -50,8 +48,8 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
   const wallet = useWalletBalances();
 
   const walletAmount = CurrencyAmount.fromRawAmount(
-    getTokenFromCurrencyKey(currencyKey)!,
-    parseUnits(wallet[currencyKey].toFixed(), getTokenFromCurrencyKey(currencyKey)?.decimals!),
+    currency,
+    parseUnits(wallet[currency.symbol!].toFixed(), currency.decimals!),
   );
   const maxAmount = new BigNumber(maxAmountSpend(walletAmount)?.toFixed() || '0');
 
@@ -68,7 +66,7 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
     setOpen(!open);
   };
 
-  const beforeAmount = wallet[currencyKey];
+  const beforeAmount = wallet[currency.symbol!];
 
   const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
@@ -83,16 +81,19 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
       changeShouldLedgerSign(true);
     }
 
-    const contract = currencyKey === 'ICX' ? bnJs.inject({ account }) : bnJs.inject({ account })[currencyKey];
+    let contract = currency.symbol
+      ? bnJs.inject({ account })
+      : bnJs.inject({ account }).getContract((currency as Token).address);
+
     contract
-      .transfer(address, BalancedJs.utils.toLoop(differenceAmount, currencyKey))
+      .transfer(address, BalancedJs.utils.toLoop(differenceAmount, currency.symbol))
       .then((res: any) => {
         if (!isEmpty(res.result)) {
           addTransaction(
             { hash: res.result },
             {
-              pending: `Sending ${currencyKey}...`,
-              summary: `Sent ${differenceAmount.dp(2).toFormat()} ${currencyKey} to ${address}.`,
+              pending: `Sending ${currency.symbol}...`,
+              summary: `Sent ${differenceAmount.dp(2).toFormat()} ${currency.symbol} to ${address}.`,
             },
           );
           toggleOpen();
@@ -122,16 +123,16 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
     <>
       <Grid>
         <Flex alignItems="center" justifyContent="space-between">
-          <Typography variant="h3">Send {currencyKey}</Typography>
+          <Typography variant="h3">Send {currency.symbol}</Typography>
           <MaxButton onClick={handleMax}>Send max</MaxButton>
         </Flex>
 
         <CurrencyInputPanel
           value={value}
           showMaxButton={false}
-          currency={getTokenFromCurrencyKey(currencyKey)}
+          currency={currency}
           onUserInput={handleCurrencyInput}
-          id={`${currencyKey}-currency-input-in-wallet-panel`}
+          id={`${currency.symbol}-currency-input-in-wallet-panel`}
         />
 
         <AddressInputPanel value={address} onUserInput={handleAddressInput} />
@@ -150,7 +151,7 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${differenceAmount.dp(2).toFormat()} ${currencyKey}`}
+            {`${differenceAmount.dp(2).toFormat()} ${currency?.symbol}`}
           </Typography>
 
           <Typography textAlign="center" mb="2px" mt="20px">
@@ -165,18 +166,18 @@ export default function SendPanel({ currencyKey }: { currencyKey: CurrencyKey })
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {`${beforeAmount.dp(2).toFormat()} ${currencyKey}`}
+                {`${beforeAmount.dp(2).toFormat()} ${currency?.symbol}`}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {`${afterAmount.dp(2).toFormat()} ${currencyKey}`}
+                {`${afterAmount.dp(2).toFormat()} ${currency?.symbol}`}
               </Typography>
             </Box>
           </Flex>
-          {currencyKey === 'sICX' && (
+          {currency?.symbol === 'sICX' && (
             <Typography variant="content" textAlign="center" color={theme.colors.alert}>
               Do not send sICX to an exchange.
             </Typography>

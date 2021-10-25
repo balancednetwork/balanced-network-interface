@@ -151,3 +151,7 @@ const TEN = new BigNumber(10);
 export function parseUnits(value: string, decimals: number): string {
   return new BigNumber(value).times(TEN.pow(decimals)).toFixed();
 }
+
+export function formatUnits(value: string, decimals: number): string {
+  return new BigNumber(value).div(TEN.pow(decimals)).toFixed();
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -13,7 +14,7 @@ import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { generateChartData } from 'utils';
+import { generateChartData, formatBigNumber } from 'utils';
 
 export default function SwapDescription() {
   const { currencies } = useDerivedSwapInfo();
@@ -35,7 +36,13 @@ export default function SwapDescription() {
     [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
   );
 
-  const [pair] = getTradePair(currencies[Field.INPUT]?.symbol as string, currencies[Field.OUTPUT]?.symbol as string);
+  /* const priceInICX =
+    price &&
+    (currencies[Field.OUTPUT]?.symbol === 'sICX'
+      ? price.value.times(ratio.sICXICXratio)
+      : price.value.div(ratio.sICXICXratio)); */
+
+  const [pair] = getTradePair(currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol);
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
@@ -51,6 +58,9 @@ export default function SwapDescription() {
     });
   };
 
+  const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
+  const hasICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX');
+
   return (
     <Box bg="bg2" flex={1} p={[5, 7]}>
       <Flex mb={5} flexWrap="wrap">
@@ -58,6 +68,17 @@ export default function SwapDescription() {
           <Typography variant="h3" mb={2}>
             {currencies[Field.INPUT]?.symbol} / {currencies[Field.OUTPUT]?.symbol}
           </Typography>
+          <Typography variant="p">
+            {`${formatBigNumber(/*price?.value*/ new BigNumber(0), 'price')} 
+              ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+          </Typography>
+          {hasSICX && !hasICX && (
+            <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
+              {`${formatBigNumber(/*priceInICX*/ new BigNumber(0), 'price')} 
+                ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
+                per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+            </Typography>
+          )}
         </Box>
         <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair || isQueue(pair)}>
           <ChartControlGroup mb={2}>

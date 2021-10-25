@@ -119,6 +119,13 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       baseCurrencyKey: 'METX',
       quoteCurrencyKey: 'USDS',
     },
+    {
+      chainId: 1,
+      id: 15,
+      name: 'IUSDT/bnUSD',
+      baseCurrencyKey: 'IUSDT',
+      quoteCurrencyKey: 'bnUSD',
+    },
   ],
   [NetworkId.YEOUIDO]: [
     {

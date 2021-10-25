@@ -51,19 +51,19 @@ const YEOUIDO_ADDRESSES = {
 };
 
 const SEJONG_ADDRESSES = {
-  loans: 'cxa8e5f6263b8403b24c935ee255e06be84cb45195',
-  router: 'cx4c456f4a02d2576fe712ea10b311a5fe8d06d205',
-  staking: 'cx5ce1ed484edbf4332001ca40e5760acb64444a46',
-  dividends: 'cxbde2a33bfadfad5703f076ec554453fcf21abc78',
-  reserve: 'cxb843d3a4935ca27911d3c1a2112095f512ff9d56',
-  daofund: 'cxea58bbaabbad19f2f75a3aebcb97b088e3cbc9e9',
-  rewards: 'cx9f782c71811566bff738263931b01bf6844ab8e3',
-  dex: 'cx9604fc2b833969260aea27373700e1547b69d34a',
-  governance: 'cxdbe2036fd326eb04d9f1f336326eefb6ea558289',
-  band: 'cx386d9c545dfb74a0ee3441b05f011b75dbc9b7a9',
-  sicx: 'cxc79530e0e4081e2e898bac7baa0075fcf71e55c1',
-  bnusd: 'cx8c2cf0096636feb17bae2bb018b26dc87afb7bcf',
-  baln: 'cxeed0ccc4ee5781abf65208178572e39fd6e49f53',
+  loans: 'cx3228124be7c85e3e57edebf870c4075c33c34c5f',
+  router: 'cx0000000000000000000000000000000000000000',
+  staking: 'cx1eb5b209e4c6f95a958bddb322d76a2168e576b2',
+  dividends: 'cx020042bb8742bfca138889e23817bee87ad8caa0',
+  reserve: 'cx76d98fc79f779308d2e872b00e7571bebef59031',
+  daofund: 'cx11781737f47520e3bfad0e132c5accb4e4d6fe4f',
+  rewards: 'cx026ca90fdcf4851fa6c4e00403b3abe636a9f88b',
+  dex: 'cx4342802efce67d2441e69b062b1f0110b6a6f820',
+  governance: 'cxdc519895ef110220db2442ff1b3223182304b68a',
+  band: 'cxf96a2e83808058fb9159824e324f36d9e91cfafa',
+  sicx: 'cx0e706eca3552a6e607095319f4ad8cea37e779d4',
+  bnusd: 'cx041714d034919c8456d3606f8766f0169e35cb8e',
+  baln: 'cxb45058d398614a7c8cdf7be6f556fa0b39399799',
   omm: '',
   iusdc: '',
   iusdt: '',
@@ -72,7 +72,7 @@ const SEJONG_ADDRESSES = {
   metx: '',
   bwt: 'cxa2afb37647ae91ca6fbf35141b2ef2ac7105720a',
   airdrip: '',
-  rebalancing: 'cxb5e84abcd8ab014ca0a695fa5b3f23f7ff3ac138',
+  rebalancing: 'cxd5df399205421930870e3b0798766aa31cffbe66',
 };
 
 const addresses = {

@@ -3,7 +3,12 @@ import React, { useEffect } from 'react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { MAX_RATIO_VALUE, PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
+import {
+  MAX_RATIO_VALUE,
+  PROPOSAL_CONFIG,
+  PROPOSAL_MAPPING,
+  PROPOSAL_TYPE,
+} from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 
 import Tooltip from '../Tooltip';
@@ -72,6 +77,7 @@ export default function RatioInput({
             </Typography>
             <List>
               {ratioValues.map(({ name, percent }, index) =>
+                //render last item with tooltip
                 index === ratioValues.length - 1 ? (
                   <Tooltip
                     key={(name || '') + percent}
@@ -84,7 +90,7 @@ export default function RatioInput({
                     <ListItem>
                       {name && (
                         <Typography variant="p" textAlign="right">
-                          {name}
+                          {PROPOSAL_MAPPING[name] || name}
                         </Typography>
                       )}
                       <Flex justifyContent={name ? 'flex-start' : 'center'}>
@@ -109,7 +115,7 @@ export default function RatioInput({
                   <ListItem key={(name || '') + percent}>
                     {name && (
                       <Typography variant="p" textAlign="right">
-                        {name}
+                        {PROPOSAL_MAPPING[name] || name}
                       </Typography>
                     )}
                     <Flex justifyContent={name ? 'flex-start' : 'center'}>
@@ -150,7 +156,7 @@ export function ListBox({ title, list, hidden }: { title: string; list: any[]; h
           <ListItem key={name + percent}>
             {name && (
               <Typography variant="p" textAlign="right">
-                {name}
+                {PROPOSAL_MAPPING[name] || name}
               </Typography>
             )}
             <Box>

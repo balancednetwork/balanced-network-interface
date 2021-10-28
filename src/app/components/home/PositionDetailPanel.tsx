@@ -16,12 +16,7 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import {
-  SAFETY_COLLATERAL_RATIO,
-  MANDATORY_COLLATERAL_RATIO,
-  LIQUIDATION_COLLATERAL_RATIO,
-  ZERO,
-} from 'constants/index';
+import { MANDATORY_COLLATERAL_RATIO, LIQUIDATION_COLLATERAL_RATIO, ZERO } from 'constants/index';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
 import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY } from 'store/loan/hooks';
@@ -31,15 +26,14 @@ import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
 
-const useThresholdPrices = (): [BigNumber, BigNumber, BigNumber] => {
+const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmount();
   const loanInputAmount = useLoanInputAmount();
 
   return React.useMemo(() => {
-    if (collateralInputAmount.isZero()) return [new BigNumber(0), new BigNumber(0), new BigNumber(0)];
+    if (collateralInputAmount.isZero()) return [new BigNumber(0), new BigNumber(0)];
 
     return [
-      loanInputAmount.div(collateralInputAmount).times(SAFETY_COLLATERAL_RATIO),
       loanInputAmount.div(collateralInputAmount).times(MANDATORY_COLLATERAL_RATIO),
       loanInputAmount.div(collateralInputAmount).times(LIQUIDATION_COLLATERAL_RATIO),
     ];
@@ -91,7 +85,7 @@ const PositionDetailPanel = () => {
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
-  const [, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
+  const [lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
 
   const currentRatio = useCurrentCollateralRatio();
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();

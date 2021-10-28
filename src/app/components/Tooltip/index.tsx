@@ -22,7 +22,7 @@ const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean }>`
   }
 `;
 
-interface TooltipProps extends Omit<PopoverProps, 'content'> {
+export interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: React.ReactNode;
   wide?: boolean;
   small?: boolean;

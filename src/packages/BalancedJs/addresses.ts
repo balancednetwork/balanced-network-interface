@@ -15,6 +15,7 @@ const MAINNET_ADDRESSES = {
   baln: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
   omm: 'cx1a29259a59f463a67bb2ef84398b30ca56b5830a',
   iusdc: 'cxae3034235540b924dfcc1b45836c293dcc82bfb7',
+  iusdt: 'cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88',
   usds: 'cxbb2871f468a3008f80b08fdde5b8b951583acf06',
   cft: 'cx2e6d0fc0eca04965d06038c8406093337f085fcf',
   metx: 'cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2',
@@ -38,16 +39,43 @@ const YEOUIDO_ADDRESSES = {
   baln: 'cx36169736b39f59bf19e8950f6c8fa4bfa18b710a',
   omm: 'cx05515d126a47a98c682fa86992329e6c2ec70503',
   iusdc: 'cx65f639254090820361da483df233f6d0e69af9b7',
+  iusdt: '',
   usds: 'cxc0666df567a6e0b49342648e98ccbe5362b264ea',
   cft: 'cxf7313d7fd611c99b8db29e298699be4b1fd86661',
+  metx: '',
   bwt: 'cx5d886977b7d24b9f73a460c9ca2d43847997c285',
   airdrip: 'cx8ed4fbee9d6497f91ea90933db288ff4b43e54ba',
   rebalancing: 'cx2e3398dfce78a3c83de8a41d7c5f4aa40d3a4f30',
 };
 
+const SEJONG_ADDRESSES = {
+  loans: 'cx3228124be7c85e3e57edebf870c4075c33c34c5f',
+  staking: 'cx1eb5b209e4c6f95a958bddb322d76a2168e576b2',
+  dividends: 'cx020042bb8742bfca138889e23817bee87ad8caa0',
+  reserve: 'cx76d98fc79f779308d2e872b00e7571bebef59031',
+  daofund: 'cx11781737f47520e3bfad0e132c5accb4e4d6fe4f',
+  rewards: 'cx026ca90fdcf4851fa6c4e00403b3abe636a9f88b',
+  dex: 'cx4342802efce67d2441e69b062b1f0110b6a6f820',
+  governance: 'cxdc519895ef110220db2442ff1b3223182304b68a',
+  band: 'cx0999df3af49a227fc8799f0d78d19cd8fe4bb76d',
+  sicx: 'cx0e706eca3552a6e607095319f4ad8cea37e779d4',
+  bnusd: 'cx041714d034919c8456d3606f8766f0169e35cb8e',
+  baln: 'cxb45058d398614a7c8cdf7be6f556fa0b39399799',
+  omm: '',
+  iusdc: '',
+  iusdt: '',
+  usds: '',
+  cft: '',
+  metx: '',
+  bwt: 'cxa2afb37647ae91ca6fbf35141b2ef2ac7105720a',
+  airdrip: '',
+  rebalancing: 'cxd5df399205421930870e3b0798766aa31cffbe66',
+};
+
 const addresses = {
   [NetworkId.MAINNET]: MAINNET_ADDRESSES,
   [NetworkId.YEOUIDO]: YEOUIDO_ADDRESSES,
+  [NetworkId.SEJONG]: SEJONG_ADDRESSES,
 };
 
 export default addresses;

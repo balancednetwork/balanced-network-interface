@@ -100,7 +100,7 @@ const LoanPanel = () => {
   //whether if repay or borrow
   const shouldBorrow = differenceAmount.isPositive();
   //borrow fee
-  const fee = differenceAmount.multipliedBy(1.15 / 100);
+  const fee = differenceAmount.multipliedBy(0.75 / 100);
   const addTransaction = useTransactionAdder();
 
   const handleLoanConfirm = () => {

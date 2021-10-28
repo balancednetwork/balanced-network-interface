@@ -30,7 +30,7 @@ import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { getTrackerLink } from 'utils';
 
-import { ActionsMapping, RATIO_VALUE_FORMATTER } from '../NewProposalPage/constant';
+import { ACTIONS_MAPPING, RATIO_VALUE_FORMATTER } from '../NewProposalPage/constant';
 import Funding from './Funding';
 import Ratio from './Ratio';
 
@@ -101,7 +101,7 @@ export function ProposalPage() {
   const actionKeyList = Object.keys(actions);
 
   const getKeyByValue = value => {
-    return Object.keys(ActionsMapping).find(key => ActionsMapping[key].includes(value));
+    return Object.keys(ACTIONS_MAPPING).find(key => ACTIONS_MAPPING[key].includes(value));
   };
 
   const actionKey = actionKeyList.find(actionKey => getKeyByValue(actionKey));
@@ -339,7 +339,7 @@ export function ProposalPage() {
             <Typography variant="h2" mb="20px">
               {proposalType}
             </Typography>
-            {actionKey === ActionsMapping.Funding[0] ? (
+            {actionKey === ACTIONS_MAPPING.Funding[0] ? (
               <Funding recipient={actions[actionKey]._recipient} amounts={actions[actionKey]._amounts} />
             ) : (
               <Ratio

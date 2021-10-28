@@ -135,19 +135,17 @@ export function NewProposalPage() {
   const isTextProposal = selectedProposalType === PROPOSAL_TYPE.TEXT;
   const isFundingProposal = selectedProposalType === PROPOSAL_TYPE.FUNDING;
 
-  const [{ isStakeValid, minimumStakeBalance }, setStakeItem] = useState<{
-    isStakeValid?: boolean;
-    minimumStakeBalance?: BigNumber;
-  }>({});
+  const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
+  const stakedBalance: BigNumber = details['Staked balance'] || new BigNumber(0);
+  const minimumStakeBalance = BalancedJs.utils.toIcx(totalSupply).times(0.1 / 100);
+  const isStakeValid = stakedBalance.isGreaterThanOrEqualTo(minimumStakeBalance);
 
   useEffect(() => {
     (async () => {
       const totalSupply = await bnJs.BALN.totalSupply();
-      const stakedBalance: BigNumber = details['Staked balance'] || new BigNumber(0);
-      const minimumStakeBalance = BalancedJs.utils.toIcx(totalSupply).times(0.1 / 100);
-      setStakeItem({ isStakeValid: stakedBalance.isGreaterThanOrEqualTo(minimumStakeBalance), minimumStakeBalance });
+      setTotalSupply(totalSupply);
     })();
-  }, [details]);
+  }, []);
 
   const { data: platformDay } = usePlatformDayQuery();
 

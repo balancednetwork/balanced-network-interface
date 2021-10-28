@@ -10,7 +10,7 @@ export const MAX_RATIO_VALUE = 100;
 
 export const CURRENCY_LIST = ['BALN', 'bnUSD', 'sICX'];
 
-const ProposalMapping = {
+export const PROPOSAL_MAPPING = {
   // network fee allocation
   daofund: 'DAO fund',
   baln_holders: 'BALN holders',
@@ -24,6 +24,8 @@ const ProposalMapping = {
   'BALN/bnUSD': 'BALN / bnUSD',
   'BALN/sICX': 'BALN / sICX',
   'IUSDC/bnUSD': 'IUSDC / bnUSD',
+  'IUSDT/bnUSD': 'IUSDT / bnUSD',
+  'USDS/bnUSD': 'USDS / bnUSD',
 };
 
 export enum PROPOSAL_TYPE {
@@ -36,7 +38,7 @@ export enum PROPOSAL_TYPE {
   FUNDING = 'Funding',
 }
 
-export const ActionsMapping = {
+export const ACTIONS_MAPPING = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: ['updateBalTokenDistPercentage', 'updateDistPercent'],
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: ['setDividendsCategoryPercentage'],
   [PROPOSAL_TYPE.LOAN_FEE]: ['setOriginationFee', 'update_origination_fee'],
@@ -45,7 +47,7 @@ export const ActionsMapping = {
   [PROPOSAL_TYPE.FUNDING]: ['daoDisburse'],
 };
 
-export const PercentMapping = {
+export const PERCENT_MAPPING = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: percent =>
     Number((Math.round(Number(BalancedJs.utils.toIcx(percent).times(10000))) / 100).toFixed(2)),
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: percent =>
@@ -58,12 +60,12 @@ export const PercentMapping = {
 export const RATIO_VALUE_FORMATTER = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: data => {
     const t: any[] = [];
-    Object.keys(ProposalMapping).forEach(key => {
+    Object.keys(PROPOSAL_MAPPING).forEach(key => {
       const p = data.find(item => item.recipient_name === key);
       if (p) {
         t.push({
-          name: ProposalMapping[p.recipient_name] || p.recipient_name,
-          percent: PercentMapping[PROPOSAL_TYPE.BALN_ALLOCATION](p.dist_percent),
+          name: p.recipient_name,
+          percent: PERCENT_MAPPING[PROPOSAL_TYPE.BALN_ALLOCATION](p.dist_percent),
         });
       }
     });
@@ -73,21 +75,21 @@ export const RATIO_VALUE_FORMATTER = {
     return data.map((item: { [key: string]: number }) => {
       const _item = Object.entries(item)[0];
       return {
-        name: ProposalMapping[_item[0]] || _item[0],
-        percent: PercentMapping[PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION](_item[1]),
+        name: _item[0],
+        percent: PERCENT_MAPPING[PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION](_item[1]),
       };
     });
   },
   [PROPOSAL_TYPE.LOAN_FEE]: (data: number) => {
-    const _percent = PercentMapping[PROPOSAL_TYPE.LOAN_FEE](data);
+    const _percent = PERCENT_MAPPING[PROPOSAL_TYPE.LOAN_FEE](data);
     return [{ percent: _percent }];
   },
   [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: (data: number) => {
-    const _percent = PercentMapping[PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO](data);
+    const _percent = PERCENT_MAPPING[PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO](data);
     return [{ percent: _percent }];
   },
   [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: data => {
-    const _percent = PercentMapping[PROPOSAL_TYPE.REBALANCING_THRESHOLD](data);
+    const _percent = PERCENT_MAPPING[PROPOSAL_TYPE.REBALANCING_THRESHOLD](data);
     return [{ percent: _percent }];
   },
 };
@@ -100,16 +102,16 @@ export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: {
     fetchInputData: async () => {
       const res = await bnJs.Rewards.getRecipientsSplit();
-      return Object.keys(ProposalMapping)
+      return Object.keys(PROPOSAL_MAPPING)
         .filter(key => res[key])
         .map(key => ({
-          name: ProposalMapping[key] || key,
-          percent: PercentMapping[PROPOSAL_TYPE.BALN_ALLOCATION](res[key]),
+          name: key,
+          percent: PERCENT_MAPPING[PROPOSAL_TYPE.BALN_ALLOCATION](res[key]),
         }));
     },
     submitParams: ratioInputValue => {
       const recipientList = Object.entries(ratioInputValue).map(item => ({
-        recipient_name: getKeyByValue(item[0], ProposalMapping) || item[0],
+        recipient_name: item[0],
         dist_percent: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
       }));
       return {
@@ -122,16 +124,15 @@ export const PROPOSAL_CONFIG = {
     fetchInputData: async () => {
       const res = await bnJs.Dividends.getDividendsPercentage();
       return Object.entries(res).map(([key, value]) => ({
-        name: ProposalMapping[key] || key,
-        percent: PercentMapping[PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION](value),
+        name: key,
+        percent: PERCENT_MAPPING[PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION](value),
       }));
     },
     submitParams: ratioInputValue => {
       const dist_list = Object.entries(ratioInputValue).map(item => {
-        const key = getKeyByValue(item[0], ProposalMapping);
         return (
-          key && {
-            [key]: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
+          item[0] && {
+            [item[0]]: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
           }
         );
       });
@@ -144,7 +145,7 @@ export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.LOAN_FEE]: {
     fetchInputData: async () => {
       const res = await bnJs.Loans.getParameters();
-      const _percent = PercentMapping[PROPOSAL_TYPE.LOAN_FEE](parseInt(res['origination fee'], 16));
+      const _percent = PERCENT_MAPPING[PROPOSAL_TYPE.LOAN_FEE](parseInt(res['origination fee'], 16));
       return [{ percent: _percent }];
     },
     submitParams: ratioInputValue => {
@@ -159,7 +160,7 @@ export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: {
     fetchInputData: async () => {
       const res = await bnJs.Loans.getParameters();
-      const _percent = PercentMapping[PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO](parseInt(res['locking ratio'], 16));
+      const _percent = PERCENT_MAPPING[PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO](parseInt(res['locking ratio'], 16));
 
       return [{ percent: _percent }];
     },
@@ -175,7 +176,7 @@ export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: {
     fetchInputData: async () => {
       const res = await bnJs.Rebalancing.getPriceChangeThreshold();
-      const _percent = PercentMapping[PROPOSAL_TYPE.REBALANCING_THRESHOLD](res);
+      const _percent = PERCENT_MAPPING[PROPOSAL_TYPE.REBALANCING_THRESHOLD](res);
       return [{ percent: _percent }];
     },
     submitParams: ratioInputValue => {

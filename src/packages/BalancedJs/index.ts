@@ -14,6 +14,7 @@ import Dividends from './contracts/Dividends';
 import Governance from './contracts/Governance';
 import ICX from './contracts/ICX';
 import IUSDC from './contracts/IUSDC';
+import IUSDT from './contracts/IUSDT';
 import Loans from './contracts/Loans';
 import METX from './contracts/METX';
 import OMM from './contracts/OMM';
@@ -55,6 +56,7 @@ export class BalancedJs {
   USDS: USDS;
   CFT: CFT;
   METX: METX;
+  IUSDT: IUSDT;
   //
   Loans: Loans;
   Band: Band;
@@ -69,12 +71,12 @@ export class BalancedJs {
 
   static utils = {
     toLoop(value: BigNumber | number | string, currencyKey?: string): BigNumber {
-      if (currencyKey === 'IUSDC')
+      if (currencyKey === 'IUSDC' || currencyKey === 'IUSDT')
         return new BigNumber(value).times(new BigNumber(10).pow(6)).integerValue(BigNumber.ROUND_DOWN);
       else return new BigNumber(value).times(LOOP).integerValue(BigNumber.ROUND_DOWN);
     },
     toIcx(value: BigNumber | number | string, currencyKey?: string): BigNumber {
-      if (currencyKey === 'IUSDC') return new BigNumber(value).div(new BigNumber(10).pow(6));
+      if (currencyKey === 'IUSDC' || currencyKey === 'IUSDT') return new BigNumber(value).div(new BigNumber(10).pow(6));
       else return new BigNumber(value).div(LOOP);
     },
     toFormat(value: BigNumber | number | string, decimals: number = 18) {
@@ -117,6 +119,7 @@ export class BalancedJs {
     this.USDS = new USDS(this.contractSettings);
     this.CFT = new CFT(this.contractSettings);
     this.METX = new METX(this.contractSettings);
+    this.IUSDT = new IUSDT(this.contractSettings);
 
     this.Loans = new Loans(this.contractSettings);
     this.Band = new Band(this.contractSettings);

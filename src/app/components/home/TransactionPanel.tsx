@@ -14,7 +14,7 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { CURRENCY } from 'constants/currency';
-import { Transaction, useAllTransactionsQuery } from 'queries/history';
+import { Transaction, useAllTransactionsQuery, useInternalTransactionQuery } from 'queries/history';
 import { formatBigNumber, getTrackerLink } from 'utils';
 
 const Row = styled(Box)`
@@ -57,8 +57,9 @@ const METHOD_CONTENT = {
   cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',
   ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
   CollateralReceived: 'Deposited (amount) sICX as collateral ',
-  UnstakeSicxRequest: 'Unstaked (amount) sICX',
+  UnstakeSICXRequest: 'Unstaked (amount) sICX',
   UnstakeRequest: '',
+  claimUnstakedICX: 'Claimed (amount) ICX',
   Deposit: 'Transferred (amount) (currency) to the Balanced exchange',
   Withdraw1Value: 'Withdrew (amount) (currency)',
   VoteCast: '',
@@ -251,10 +252,13 @@ const getValuesAndSymbols = (tx: Transaction) => {
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
-    case 'UnstakeSicxRequest': {
+    case 'UnstakeSICXRequest': {
       const amount1 = getValue(tx);
-
       return { amount1, amount2: '', symbol1: 'sICX', symbol2: '' };
+    }
+    case 'claimUnstakedICX': {
+      const amount1 = getValue(tx);
+      return { amount1, amount2: '', symbol1: 'ICX', symbol2: '' };
     }
     case 'RewardsClaimed': {
       const amount1 = getValue(tx);
@@ -395,7 +399,11 @@ const getAmountWithSign = (tx: Transaction) => {
 
   // handle merge 2 transaction
 };
-
+const ClaimRowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
+  const { data } = useInternalTransactionQuery(tx.hash);
+  if (data) return <RowItem tx={{ ...data[0], method: 'claimUnstakedICX' }} />;
+  return null;
+};
 const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
   const { networkId } = useIconReact();
 
@@ -493,7 +501,7 @@ const checkAndParseICXTosICX = (tx: Transaction): Transaction => {
   const _tx = { ...tx };
 
   if (getMethod(_tx) === 'Transfer' && issICXContract(_tx)) {
-    _tx.method = 'UnstakeSicxRequest';
+    _tx.method = 'UnstakeSICXRequest';
   }
 
   return _tx;
@@ -620,9 +628,13 @@ const TransactionTable = () => {
             AMOUNT
           </Typography>
         </Row>
-        {txs.map(tx => (
-          <RowItem tx={tx} key={tx.item_id} />
-        ))}
+        {txs.map(tx =>
+          tx.method === 'claimUnstakedICX' ? (
+            <ClaimRowItem tx={tx} key={tx.item_id} />
+          ) : (
+            <RowItem tx={tx} key={tx.item_id} />
+          ),
+        )}
       </Table>
       <Pagination
         sx={{ mt: 2 }}

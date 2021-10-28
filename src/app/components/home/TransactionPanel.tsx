@@ -65,6 +65,7 @@ const METHOD_CONTENT = {
   Claimed: 'Claimed network fees',
   TokenTransfer: '',
   Transfer: '',
+  Rebalance: '',
 
   //  2 symbols
   stakeICX: 'Swapped (amount1) ICX for (amount2) sICX',
@@ -91,8 +92,16 @@ const getContractName = (addr?: string) => {
 
 const getContractAddr = (tx: Transaction) => tx.indexed?.find(item => item.startsWith('cx'));
 const isIUSDC = (addr: string) => addresses[NetworkId.MAINNET].iusdc === addr;
+const isIUSDT = (addr: string) => addresses[NetworkId.MAINNET].iusdt === addr;
 
 const POOL_IDS = {
+  15: 'IUSDT bnUSD',
+  14: 'METX USDS',
+  13: 'METX IUSDC',
+  12: 'METX sICX',
+  11: 'METX bnUSD',
+  10: 'USDS bnUSD',
+  9: 'CFT sICX',
   8: 'OMM USDS',
   7: 'OMM sICX',
   6: 'OMM IUSDC',
@@ -130,6 +139,8 @@ const getValue = (tx: Transaction) => {
 
   return getContractAddr(tx) === addresses[NetworkId.MAINNET].iusdc
     ? convertIUSDC(new BigNumber(_value))
+    : getContractAddr(tx) === addresses[NetworkId.MAINNET].iusdt
+    ? convertIUSDC(new BigNumber(_value))
     : convertValue(_value);
 };
 
@@ -156,7 +167,13 @@ const getValuesAndSymbols = (tx: Transaction) => {
           Object.keys(data).forEach(key => {
             if (data[key] !== 0) {
               symbols.push(getContractName(key) || '');
-              amounts.push(isIUSDC(key) ? convertIUSDC(new BigNumber(data[key])) : convertValue(data[key]));
+              amounts.push(
+                isIUSDC(key)
+                  ? convertIUSDC(new BigNumber(data[key]))
+                  : isIUSDT(key)
+                  ? convertIUSDC(new BigNumber(data[key]))
+                  : convertValue(data[key]),
+              );
             }
           });
         } catch (ex) {
@@ -194,7 +211,15 @@ const getValuesAndSymbols = (tx: Transaction) => {
         amount1 = convertIUSDC(new BigNumber(tx.data[0]));
       }
 
+      if (poolId === 15) {
+        amount1 = convertIUSDC(new BigNumber(tx.data[0]));
+      }
+
       if (symbol2?.toLowerCase() === 'iusdc') {
+        amount2 = convertIUSDC(new BigNumber(tx.data[1]));
+      }
+
+      if (symbol2?.toLowerCase() === 'iusdt') {
         amount2 = convertIUSDC(new BigNumber(tx.data[1]));
       }
 
@@ -208,8 +233,16 @@ const getValuesAndSymbols = (tx: Transaction) => {
         symbol1 = 'sICX';
         symbol2 = 'ICX';
       }
-      const amount1 = isIUSDC(tx.data[0]) ? convertIUSDC(new BigNumber(tx.data[4])) : convertValue(tx.data[4]);
-      const amount2 = isIUSDC(tx.data[1]) ? convertIUSDC(new BigNumber(tx.data[5])) : convertValue(tx.data[5]);
+      const amount1 = isIUSDC(tx.data[0])
+        ? convertIUSDC(new BigNumber(tx.data[4]))
+        : isIUSDT(tx.data[0])
+        ? convertIUSDC(new BigNumber(tx.data[4]))
+        : convertValue(tx.data[4]);
+      const amount2 = isIUSDC(tx.data[1])
+        ? convertIUSDC(new BigNumber(tx.data[5]))
+        : isIUSDT(tx.data[1])
+        ? convertIUSDC(new BigNumber(tx.data[5]))
+        : convertValue(tx.data[5]);
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Withdraw1Value':
@@ -468,6 +501,7 @@ const checkAndParseICXTosICX = (tx: Transaction): Transaction => {
 
 const parseTransactions = (txs: Transaction[]) => {
   const transactions: Transaction[] = [];
+  const rebalanceTransactions = txs.filter(tx => tx.method === 'Rebalance').map(tx => tx.transaction_hash);
   try {
     for (let i = 0; i < 10; i++) {
       let tx: Transaction = txs[i] && { ...txs[i] };
@@ -524,9 +558,21 @@ const parseTransactions = (txs: Transaction[]) => {
             }
             break;
           }
+
           // don't show content for this method,
           // because this transaction is combined with another transaction
           case 'UnstakeRequest': {
+            break;
+          }
+
+          //NOTE: https://github.com/balancednetwork/balanced-network-interface/issues/721
+          case 'Rebalance': {
+            break;
+          }
+
+          //NOTE: https://github.com/balancednetwork/balanced-network-interface/issues/721
+          case 'Swap': {
+            if (!rebalanceTransactions.includes(tx.transaction_hash)) transactions.push(tx);
             break;
           }
 

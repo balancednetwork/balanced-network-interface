@@ -76,6 +76,10 @@ const Arrow = styled.div`
   }
 `;
 
+const skidding = {
+  'top-end': 8,
+};
+
 export interface PopoverProps {
   content: React.ReactNode;
   show: boolean;
@@ -100,7 +104,7 @@ export default function Popover({
     placement,
     strategy: 'fixed',
     modifiers: [
-      { name: 'offset', options: { offset: [0, 12] } },
+      { name: 'offset', options: { offset: [skidding[placement] || 0, 12] } },
       { name: 'arrow', options: { element: arrowElement } },
     ],
   });

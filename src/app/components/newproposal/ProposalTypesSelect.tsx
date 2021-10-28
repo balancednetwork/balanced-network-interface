@@ -51,7 +51,7 @@ export default function ProposalTypesSelect({
           </StyledWrapper>
 
           <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom" offset={[0, 10]}>
-            <List style={{ width: '210px', paddingTop: '10px', paddingBottom: '20px' }}>
+            <List style={{ width: '210px', maxHeight: '320px', paddingTop: '10px', paddingBottom: '20px' }}>
               {Object.values(PROPOSAL_TYPE).map(type => (
                 <ListItem key={type} small onClick={() => handleSelectProposal(type as PROPOSAL_TYPE)}>
                   <DataText variant="p" fontWeight="bold" small>

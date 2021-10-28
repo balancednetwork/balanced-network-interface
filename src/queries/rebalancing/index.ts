@@ -6,6 +6,7 @@ import { useIconReact } from 'packages/icon-react';
 import { stringify } from 'querystring';
 import { useQuery } from 'react-query';
 
+import bnJs from 'bnJs';
 import QUERY_KEYS from 'queries/queryKeys';
 
 import { API_ENDPOINT } from '../constants';
@@ -57,6 +58,24 @@ export function useRebalancingDataQuery(period: Period) {
     },
     {
       enabled: !!account,
+    },
+  );
+}
+
+const intervalMs = 3000;
+
+export function useRebalancingStatusQuery() {
+  return useQuery<boolean>(
+    'getRebalancingStatus',
+    async () => {
+      const res = await bnJs.Rebalancing.getRebalancingStatus();
+      if (res[0] === '0x0' && res[2] === '0x0') {
+        return false;
+      }
+      return true;
+    },
+    {
+      refetchInterval: intervalMs,
     },
   );
 }

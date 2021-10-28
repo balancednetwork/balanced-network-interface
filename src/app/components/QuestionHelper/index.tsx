@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
+import { Placement } from '@popperjs/core';
 import { useMedia } from 'react-use';
 import styled from 'styled-components';
 
@@ -17,7 +18,15 @@ export const QuestionWrapper = styled.div`
   color: ${({ theme }) => theme.colors.text1};
 `;
 
-export default function QuestionHelper({ text }: { text: string }) {
+export default function QuestionHelper({
+  text,
+  placement = 'top',
+  containerStyle,
+}: {
+  text: React.ReactNode;
+  placement?: Placement;
+  containerStyle?: React.CSSProperties;
+}) {
   const [show, setShow] = useState<boolean>(false);
 
   const open = useCallback(() => setShow(true), [setShow]);
@@ -27,7 +36,7 @@ export default function QuestionHelper({ text }: { text: string }) {
 
   return (
     <span style={{ marginLeft: 4, verticalAlign: 'top' }}>
-      <Tooltip text={text} show={show} placement="top">
+      <Tooltip text={text} show={show} placement={placement} containerStyle={containerStyle}>
         {!smallSp && (
           <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
             <QuestionIcon width={14} />

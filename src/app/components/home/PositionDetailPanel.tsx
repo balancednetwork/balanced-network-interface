@@ -16,10 +16,10 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import { MANDATORY_COLLATERAL_RATIO, LIQUIDATION_COLLATERAL_RATIO, ZERO } from 'constants/index';
+import { ZERO } from 'constants/index';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
-import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY } from 'store/loan/hooks';
+import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY, useLoanParameters } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
@@ -29,15 +29,19 @@ import { DropdownPopper } from '../Popover';
 const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmount();
   const loanInputAmount = useLoanInputAmount();
+  const loanParameters = useLoanParameters();
+  const { miningRatio, liquidationRatio } = loanParameters || {};
 
   return React.useMemo(() => {
-    if (collateralInputAmount.isZero()) return [new BigNumber(0), new BigNumber(0)];
+    if (!collateralInputAmount.isZero() && miningRatio && liquidationRatio) {
+      return [
+        loanInputAmount.div(collateralInputAmount).times(miningRatio),
+        loanInputAmount.div(collateralInputAmount).times(liquidationRatio),
+      ];
+    }
 
-    return [
-      loanInputAmount.div(collateralInputAmount).times(MANDATORY_COLLATERAL_RATIO),
-      loanInputAmount.div(collateralInputAmount).times(LIQUIDATION_COLLATERAL_RATIO),
-    ];
-  }, [collateralInputAmount, loanInputAmount]);
+    return [new BigNumber(0), new BigNumber(0)];
+  }, [collateralInputAmount, loanInputAmount, miningRatio, liquidationRatio]);
 };
 
 const useOwnDailyRewards = (): BigNumber => {

@@ -9,6 +9,7 @@ import { SUPPORTED_PAIRS, addressToCurrencyKeyMap } from 'constants/currency';
 import QUERY_KEYS from 'queries/queryKeys';
 
 import { API_ENDPOINT } from '../constants';
+import { useBnJsContractQuery } from '../utils';
 
 export const BATCH_SIZE = 50;
 
@@ -73,12 +74,6 @@ export const useRatesQuery = () => {
   };
 
   return useQuery<{ [key in string]: BigNumber }>('useRatesQuery', fetch);
-};
-
-export const useBnJsContractQuery = <T>(bnJs: BalancedJs, contract: string, method: string, args: any[]) => {
-  return useQuery<T, string>(QUERY_KEYS.BnJs(contract, method, args), async () => {
-    return bnJs[contract][method](...args);
-  });
 };
 
 export const useAllPairsAPY = () => {

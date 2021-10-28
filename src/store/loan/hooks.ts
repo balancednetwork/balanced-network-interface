@@ -5,7 +5,8 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { MANDATORY_COLLATERAL_RATIO, ZERO } from 'constants/index';
+import { ZERO } from 'constants/index';
+import { useBnJsContractQuery } from 'queries/utils';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useRewards } from 'store/reward/hooks';
@@ -149,8 +150,11 @@ export function useLoanTotalBorrowableAmount() {
   const ratio = useRatio();
 
   const stakedICXAmount = useCollateralInputAmount();
+  const loanParameters = useLoanParameters();
+  const { miningRatio } = loanParameters || {};
 
-  return stakedICXAmount.multipliedBy(ratio.ICXUSDratio).div(MANDATORY_COLLATERAL_RATIO);
+  if (miningRatio) return stakedICXAmount.multipliedBy(ratio.ICXUSDratio).div(miningRatio);
+  else return ZERO;
 }
 
 export function useLoanInputAmount() {
@@ -172,11 +176,13 @@ export function useLockedICXAmount() {
   const ratio = useRatio();
 
   const bnUSDLoanAmount = useLoanInputAmount();
+  const loanParameters = useLoanParameters();
+  const { miningRatio } = loanParameters || {};
 
   return React.useMemo(() => {
     const price = ratio.ICXUSDratio.isZero() ? new BigNumber(1) : ratio.ICXUSDratio;
-    return bnUSDLoanAmount.multipliedBy(MANDATORY_COLLATERAL_RATIO).div(price);
-  }, [bnUSDLoanAmount, ratio.ICXUSDratio]);
+    return bnUSDLoanAmount.multipliedBy(miningRatio || 0).div(price);
+  }, [bnUSDLoanAmount, ratio.ICXUSDratio, miningRatio]);
 }
 
 export function useLoanDebtHoldingShare() {
@@ -220,4 +226,20 @@ export function useLoanAPY(): BigNumber | undefined {
       return totalLoanDailyRewards.times(365).times(ratio.BALNbnUSDratio).div(totalbnUSDDebt);
     else return;
   }, [totalLoanDailyRewards, ratio.BALNbnUSDratio, totalbnUSDDebt]);
+}
+
+export function useLoanParameters() {
+  const query = useBnJsContractQuery<any>(bnJs, 'Loans', 'getParameters', []);
+
+  if (query.isSuccess) {
+    const data = query.data;
+
+    return {
+      miningRatio: parseInt(data['mining ratio'], 16) / 10_000,
+      lockingRatio: parseInt(data['locking ratio'], 16) / 10_000,
+      liquidationRatio: parseInt(data['liquidation ratio'], 16) / 10_000,
+      originationFee: parseInt(data['origination fee'], 16) / 10_000,
+      redemptionFee: parseInt(data['redemption fee'], 16) / 10_000,
+    };
+  }
 }

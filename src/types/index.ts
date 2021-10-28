@@ -275,3 +275,5 @@ export interface ProposalInterface {
   voters: number;
   actions: string;
 }
+
+export type IcxDisplayType = 'ICX' | 'sICX';

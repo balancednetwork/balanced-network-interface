@@ -1,10 +1,13 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { changeDepositedAmount, adjust, cancel, type, Field } from './actions';
+import { IcxDisplayType } from 'types';
+
+import { changeDepositedAmount, changeIcxDisplayType, adjust, cancel, type, Field } from './actions';
 
 export interface CollateralState {
   depositedAmount: BigNumber;
+  icxDisplayType: IcxDisplayType;
 
   // collateral panel UI state
   state: {
@@ -17,6 +20,7 @@ export interface CollateralState {
 
 const initialState: CollateralState = {
   depositedAmount: new BigNumber(0),
+  icxDisplayType: 'sICX',
 
   // collateral panel UI state
   state: {
@@ -43,5 +47,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(changeDepositedAmount, (state, { payload: { depositedAmount } }) => {
       state.depositedAmount = depositedAmount;
+    })
+    .addCase(changeIcxDisplayType, (state, { payload: { icxDisplayType } }) => {
+      state.icxDisplayType = icxDisplayType;
     }),
 );

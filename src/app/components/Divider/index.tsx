@@ -35,3 +35,10 @@ export const VerticalDivider = ({ text, ...rest }: { text: string }) => {
     </StyledWrapper>
   );
 };
+
+export const LineBreak = () => (
+  <>
+    <br />
+    <br />
+  </>
+);

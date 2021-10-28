@@ -23,7 +23,7 @@ import {
   ZERO,
 } from 'constants/index';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
-import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
+import { useCollateralInputAmount, useCollateralInputAmountInUSD, useIcxDisplayType } from 'store/collateral/hooks';
 import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
@@ -73,6 +73,7 @@ const PositionDetailPanel = () => {
   const smallSp = useMedia('(max-width: 360px)');
   const [show, setShow] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
+  const icxDisplayType = useIcxDisplayType();
 
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
@@ -273,7 +274,15 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} sICX</Typography>
+                <Typography variant="p">
+                  {formatBigNumber(
+                    icxDisplayType === 'ICX'
+                      ? data?.totalCollateralSold.times(ratio.sICXICXratio)
+                      : data?.totalCollateralSold,
+                    'currency',
+                  )}
+                  {` ${icxDisplayType}`}
+                </Typography>
                 <Typography mt={1}>Collateral</Typography>
               </Box>
               <Box width={1 / 2}>

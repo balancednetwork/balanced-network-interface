@@ -179,6 +179,19 @@ export function useLockedICXAmount() {
   }, [bnUSDLoanAmount, ratio.ICXUSDratio]);
 }
 
+export function useLockedSICXAmount() {
+  const ratio = useRatio();
+
+  const bnUSDLoanAmount = useLoanInputAmount();
+
+  return React.useMemo(() => {
+    const price = ratio.ICXUSDratio.isZero() ? new BigNumber(1) : ratio.ICXUSDratio;
+    const sicxIcxRatio = ratio.sICXICXratio.isZero() ? new BigNumber(1) : ratio.sICXICXratio;
+    const icxLockedAmount = bnUSDLoanAmount.multipliedBy(MANDATORY_COLLATERAL_RATIO).div(price);
+    return icxLockedAmount.div(sicxIcxRatio);
+  }, [bnUSDLoanAmount, ratio.ICXUSDratio, ratio.sICXICXratio]);
+}
+
 export function useLoanDebtHoldingShare() {
   const loanInputAmount = useLoanInputAmount();
   const loanBadDebt = useLoanBadDebt();

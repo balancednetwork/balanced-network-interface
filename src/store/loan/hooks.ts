@@ -151,9 +151,9 @@ export function useLoanTotalBorrowableAmount() {
 
   const stakedICXAmount = useCollateralInputAmount();
   const loanParameters = useLoanParameters();
-  const { miningRatio } = loanParameters || {};
+  const { lockingRatio } = loanParameters || {};
 
-  if (miningRatio) return stakedICXAmount.multipliedBy(ratio.ICXUSDratio).div(miningRatio);
+  if (lockingRatio) return stakedICXAmount.multipliedBy(ratio.ICXUSDratio).div(lockingRatio);
   else return ZERO;
 }
 
@@ -177,12 +177,12 @@ export function useLockedICXAmount() {
 
   const bnUSDLoanAmount = useLoanInputAmount();
   const loanParameters = useLoanParameters();
-  const { miningRatio } = loanParameters || {};
+  const { lockingRatio } = loanParameters || {};
 
   return React.useMemo(() => {
     const price = ratio.ICXUSDratio.isZero() ? new BigNumber(1) : ratio.ICXUSDratio;
-    return bnUSDLoanAmount.multipliedBy(miningRatio || 0).div(price);
-  }, [bnUSDLoanAmount, ratio.ICXUSDratio, miningRatio]);
+    return bnUSDLoanAmount.multipliedBy(lockingRatio || 0).div(price);
+  }, [bnUSDLoanAmount, ratio.ICXUSDratio, lockingRatio]);
 }
 
 export function useLoanDebtHoldingShare() {
@@ -235,7 +235,6 @@ export function useLoanParameters() {
     const data = query.data;
 
     return {
-      miningRatio: parseInt(data['mining ratio'], 16) / 10_000,
       lockingRatio: parseInt(data['locking ratio'], 16) / 10_000,
       liquidationRatio: parseInt(data['liquidation ratio'], 16) / 10_000,
       originationFee: parseInt(data['origination fee'], 16) / 10_000,

@@ -87,12 +87,12 @@ export const useHasRewardableLoan = () => {
   const loanInputAmount = useLoanInputAmount();
   const collateralRatio = useCurrentCollateralRatio();
   const loanParameters = useLoanParameters();
-  const { miningRatio } = loanParameters || {};
+  const { lockingRatio } = loanParameters || {};
 
   if (
     loanInputAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
-    miningRatio &&
-    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(miningRatio * 100))
+    lockingRatio &&
+    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(lockingRatio * 100))
   ) {
     return true;
   }

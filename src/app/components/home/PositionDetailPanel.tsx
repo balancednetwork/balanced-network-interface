@@ -30,18 +30,18 @@ const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmount();
   const loanInputAmount = useLoanInputAmount();
   const loanParameters = useLoanParameters();
-  const { miningRatio, liquidationRatio } = loanParameters || {};
-
+  const { lockingRatio, liquidationRatio } = loanParameters || {};
+  console.log(lockingRatio);
   return React.useMemo(() => {
-    if (!collateralInputAmount.isZero() && miningRatio && liquidationRatio) {
+    if (!collateralInputAmount.isZero() && lockingRatio && liquidationRatio) {
       return [
-        loanInputAmount.div(collateralInputAmount).times(miningRatio),
+        loanInputAmount.div(collateralInputAmount).times(lockingRatio),
         loanInputAmount.div(collateralInputAmount).times(liquidationRatio),
       ];
     }
 
     return [new BigNumber(0), new BigNumber(0)];
-  }, [collateralInputAmount, loanInputAmount, miningRatio, liquidationRatio]);
+  }, [collateralInputAmount, loanInputAmount, lockingRatio, liquidationRatio]);
 };
 
 const useOwnDailyRewards = (): BigNumber => {
@@ -390,8 +390,9 @@ const MetaData = styled(Box)`
   }
 `;
 
+// todo: need to change the position according LTV
 const Locked = styled(Threshold)`
-  left: 81.905%;
+  left: 66.5%;
 
   ${MetaData} {
     width: 150px;

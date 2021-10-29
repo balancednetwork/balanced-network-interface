@@ -16,7 +16,7 @@ import { CurrencyKey, Pool } from 'types';
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
   [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT', 'METX', 'IUSDT'],
   [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS', 'CFT'],
-  [NetworkId.SEJONG]: ['ICX', 'sICX', 'bnUSD', 'BALN'],
+  [NetworkId.SEJONG]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'USDS', 'IUSDC'],
 };
 
 const NETWORK_ID: NetworkId = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
@@ -228,11 +228,22 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
       rewards: 0.175,
     },
     {
-      baseCurrencyKey: CURRENCY_MAP['BALN'],
+      baseCurrencyKey: CURRENCY_MAP['OMM'],
       quoteCurrencyKey: CURRENCY_MAP['sICX'],
-      pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['sICX']),
+      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['sICX']),
       poolId: 4,
-      rewards: 0.05,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['OMM'],
+      quoteCurrencyKey: CURRENCY_MAP['USDS'],
+      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['USDS']),
+      poolId: 5,
+    },
+    {
+      baseCurrencyKey: CURRENCY_MAP['OMM'],
+      quoteCurrencyKey: CURRENCY_MAP['IUSDC'],
+      pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['IUSDC']),
+      poolId: 6,
     },
   ],
 };

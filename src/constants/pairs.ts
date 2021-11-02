@@ -22,7 +22,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'sICX/ICX',
       baseCurrencyKey: 'sICX',
       quoteCurrencyKey: 'ICX',
-      rewards: 0.07,
+      rewards: 0.05,
     },
     {
       chainId: 1,
@@ -30,7 +30,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'sICX/bnUSD',
       baseCurrencyKey: 'sICX',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.175,
+      rewards: 0.145,
     },
     {
       chainId: 1,
@@ -38,7 +38,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'BALN/bnUSD',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.175,
+      rewards: 0.145,
     },
     {
       chainId: 1,
@@ -46,13 +46,29 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'BALN/sICX',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'sICX',
-      rewards: 0.05,
+      rewards: 0.1,
     },
     {
       chainId: 1, //
       id: 5,
       name: 'IUSDC/bnUSD',
       baseCurrencyKey: 'IUSDC',
+      quoteCurrencyKey: 'bnUSD',
+      rewards: 0.015,
+    },
+    {
+      chainId: 1,
+      id: 15,
+      name: 'IUSDT/bnUSD',
+      baseCurrencyKey: 'IUSDT',
+      quoteCurrencyKey: 'bnUSD',
+      rewards: 0.03,
+    },
+    {
+      chainId: 1,
+      id: 10,
+      name: 'USDS/bnUSD',
+      baseCurrencyKey: 'USDS',
       quoteCurrencyKey: 'bnUSD',
       rewards: 0.005,
     },
@@ -86,13 +102,6 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
     {
       chainId: 1,
-      id: 10,
-      name: 'USDS/bnUSD',
-      baseCurrencyKey: 'USDS',
-      quoteCurrencyKey: 'bnUSD',
-    },
-    {
-      chainId: 1,
       id: 11,
       name: 'METX/bnUSD',
       baseCurrencyKey: 'METX',
@@ -118,13 +127,6 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'METX/USDS',
       baseCurrencyKey: 'METX',
       quoteCurrencyKey: 'USDS',
-    },
-    {
-      chainId: 1,
-      id: 15,
-      name: 'IUSDT/bnUSD',
-      baseCurrencyKey: 'IUSDT',
-      quoteCurrencyKey: 'bnUSD',
     },
   ],
   [NetworkId.YEOUIDO]: [

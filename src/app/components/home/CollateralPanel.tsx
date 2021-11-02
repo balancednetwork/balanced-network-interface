@@ -14,7 +14,7 @@ import { CurrencyField } from 'app/components/Form';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
-import { BoxPanel } from 'app/components/Panel';
+import { BoxPanel, BoxPanelWrap } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
@@ -44,15 +44,20 @@ import { MouseoverTooltip } from '../Tooltip';
 
 // Move to other file
 const CollateralTypeUI = styled.div`
-  position: absolute;
-  transform: translateY(100%);
-  bottom: 0;
+  position: static;
   display: flex;
-  padding-top: 5px;
+  padding: 35px 25px 15px;
+  margin-top: -20px;
+  background-color: ${({ theme }) => theme.colors.bg2};
+  border-radius: 0 0 10px 10px;
 
   svg {
     margin-top: 10px;
   }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 35px 35px 15px;
+  `}
 `;
 
 const CollateralTypeButton = styled.div`
@@ -294,92 +299,86 @@ const CollateralPanel = () => {
 
   return (
     <>
-      <BoxPanel bg="bg3" sx={{ position: 'relative' }}>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">Collateral</Typography>
+      <BoxPanelWrap>
+        <BoxPanel bg="bg3" sx={{ position: 'relative' }}>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Typography variant="h2">Collateral</Typography>
 
-          <Box>
-            {isAdjusting ? (
-              <>
-                <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
-                <Button onClick={toggleOpen} fontSize={14}>
-                  Confirm
-                </Button>
-              </>
-            ) : (
-              <Button onClick={handleEnableAdjusting} fontSize={14}>
-                {buttonText}
-              </Button>
-            )}
-          </Box>
-        </Flex>
-        {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} />}
-        <Box marginY={6}>
-          <Nouislider
-            id="slider-collateral"
-            disabled={!isAdjusting}
-            start={[icxDisplayType === 'ICX' ? stakedICXAmount.dp(2).toNumber() : sICXAmount.dp(2).toNumber()]}
-            padding={
-              icxDisplayType === 'ICX'
-                ? [Math.max(tLockedICXAmount.dp(2).toNumber(), 0), 0]
-                : [Math.max(tLockedSICXAmount.dp(2).toNumber(), 0), 0]
-            }
-            connect={[true, false]}
-            range={{
-              min: [0],
-              max: [
-                icxDisplayType === 'ICX'
-                  ? totalICXAmount.isZero()
-                    ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                    : totalICXAmount.dp(2).toNumber()
-                  : totalSICXAmount.isZero()
-                  ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                  : totalSICXAmount.dp(2).toNumber(),
-              ],
-            }}
-            instanceRef={instance => {
-              if (instance) {
-                sliderInstance.current = instance;
-              }
-            }}
-            onSlide={onSlide}
-          />
-        </Box>
-        <Flex justifyContent="space-between">
-          <Box width={[1, 1 / 2]} mr={4}>
-            <CurrencyField
-              editable={isAdjusting}
-              isActive
-              label="Deposited"
-              tooltip={icxDisplayType === 'ICX'}
-              tooltipWider={true}
-              tooltipText={
+            <Box>
+              {isAdjusting ? (
                 <>
-                  Your collateral balance is <b>{sICXAmount.dp(2).toFormat()} sICX</b> (staked ICX). The ICX value of
-                  your sICX is displayed, and will increase over time from staking rewards. You can't use it unless you
-                  withdraw it.
+                  <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
+                  <Button onClick={toggleOpen} fontSize={14}>
+                    Confirm
+                  </Button>
                 </>
+              ) : (
+                <Button onClick={handleEnableAdjusting} fontSize={14}>
+                  {buttonText}
+                </Button>
+              )}
+            </Box>
+          </Flex>
+          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} />}
+          <Box marginY={6}>
+            <Nouislider
+              id="slider-collateral"
+              disabled={!isAdjusting}
+              start={[icxDisplayType === 'ICX' ? stakedICXAmount.dp(2).toNumber() : sICXAmount.dp(2).toNumber()]}
+              padding={
+                icxDisplayType === 'ICX'
+                  ? [Math.max(tLockedICXAmount.dp(2).toNumber(), 0), 0]
+                  : [Math.max(tLockedSICXAmount.dp(2).toNumber(), 0), 0]
               }
-              value={formattedAmounts[Field.LEFT]}
-              currency={icxDisplayType}
-              maxValue={icxDisplayType === 'ICX' ? totalICXAmount : totalSICXAmount}
-              onUserInput={onFieldAInput}
+              connect={[true, false]}
+              range={{
+                min: [0],
+                max: [
+                  icxDisplayType === 'ICX'
+                    ? totalICXAmount.isZero()
+                      ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
+                      : totalICXAmount.dp(2).toNumber()
+                    : totalSICXAmount.isZero()
+                    ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
+                    : totalSICXAmount.dp(2).toNumber(),
+                ],
+              }}
+              instanceRef={instance => {
+                if (instance) {
+                  sliderInstance.current = instance;
+                }
+              }}
+              onSlide={onSlide}
             />
           </Box>
+          <Flex justifyContent="space-between">
+            <Box width={[1, 1 / 2]} mr={4}>
+              <CurrencyField
+                editable={isAdjusting}
+                isActive
+                label="Deposited"
+                tooltip={false}
+                value={formattedAmounts[Field.LEFT]}
+                currency={icxDisplayType}
+                maxValue={icxDisplayType === 'ICX' ? totalICXAmount : totalSICXAmount}
+                onUserInput={onFieldAInput}
+              />
+            </Box>
 
-          <Box width={[1, 1 / 2]} ml={4}>
-            <CurrencyField
-              editable={isAdjusting}
-              isActive={false}
-              label="Wallet"
-              tooltipText="The amount of ICX available to deposit from your wallet."
-              value={formattedAmounts[Field.RIGHT]}
-              currency={icxDisplayType}
-              maxValue={icxDisplayType === 'ICX' ? totalICXAmount : totalSICXAmount}
-              onUserInput={onFieldBInput}
-            />
-          </Box>
-        </Flex>
+            <Box width={[1, 1 / 2]} ml={4}>
+              <CurrencyField
+                editable={isAdjusting}
+                isActive={false}
+                label="Wallet"
+                tooltipText="The amount of ICX available to deposit from your wallet."
+                value={formattedAmounts[Field.RIGHT]}
+                currency={icxDisplayType}
+                maxValue={icxDisplayType === 'ICX' ? totalICXAmount : totalSICXAmount}
+                onUserInput={onFieldBInput}
+              />
+            </Box>
+          </Flex>
+        </BoxPanel>
         <CollateralTypeUI>
           <CollateralTypeButton
             className={icxDisplayType === 'ICX' ? `active` : ''}
@@ -405,7 +404,7 @@ const CollateralPanel = () => {
             {!smallSp && <QuestionIcon width={14} color="text1" style={{ marginTop: 4, color: '#D5D7DB' }} />}
           </MouseoverTooltip>
         </CollateralTypeUI>
-      </BoxPanel>
+      </BoxPanelWrap>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">

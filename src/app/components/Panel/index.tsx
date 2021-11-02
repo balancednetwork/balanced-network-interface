@@ -30,3 +30,5 @@ export const BoxPanel = styled(Box)<{
     padding: 35px;
   `}
 `;
+
+export const BoxPanelWrap = styled.div``;

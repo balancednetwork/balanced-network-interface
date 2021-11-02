@@ -93,10 +93,10 @@ export function useCollateralActionHandlers() {
 
   const onFieldBInput = React.useCallback(
     (value: string) => {
-      // value = icxDisplayType === 'ICX' ? value : new BigNumber(value).div(ratio.sICXICXratio).toString();
+      value = icxDisplayType === 'sICX' ? new BigNumber(value).times(ratio.sICXICXratio).toString() : value;
       dispatch(type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' }));
     },
-    [dispatch],
+    [dispatch, icxDisplayType, ratio.sICXICXratio],
   );
 
   const onSlide = React.useCallback(

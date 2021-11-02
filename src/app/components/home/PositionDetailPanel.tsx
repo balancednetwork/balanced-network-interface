@@ -16,34 +16,32 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import {
-  SAFETY_COLLATERAL_RATIO,
-  MANDATORY_COLLATERAL_RATIO,
-  LIQUIDATION_COLLATERAL_RATIO,
-  ZERO,
-} from 'constants/index';
+import { ZERO } from 'constants/index';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
-import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY } from 'store/loan/hooks';
+import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY, useLoanParameters } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
 
-const useThresholdPrices = (): [BigNumber, BigNumber, BigNumber] => {
+const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmount();
   const loanInputAmount = useLoanInputAmount();
-
+  const loanParameters = useLoanParameters();
+  const { lockingRatio, liquidationRatio } = loanParameters || {};
+  console.log(lockingRatio);
   return React.useMemo(() => {
-    if (collateralInputAmount.isZero()) return [new BigNumber(0), new BigNumber(0), new BigNumber(0)];
+    if (!collateralInputAmount.isZero() && lockingRatio && liquidationRatio) {
+      return [
+        loanInputAmount.div(collateralInputAmount).times(lockingRatio),
+        loanInputAmount.div(collateralInputAmount).times(liquidationRatio),
+      ];
+    }
 
-    return [
-      loanInputAmount.div(collateralInputAmount).times(SAFETY_COLLATERAL_RATIO),
-      loanInputAmount.div(collateralInputAmount).times(MANDATORY_COLLATERAL_RATIO),
-      loanInputAmount.div(collateralInputAmount).times(LIQUIDATION_COLLATERAL_RATIO),
-    ];
-  }, [collateralInputAmount, loanInputAmount]);
+    return [new BigNumber(0), new BigNumber(0)];
+  }, [collateralInputAmount, loanInputAmount, lockingRatio, liquidationRatio]);
 };
 
 const useOwnDailyRewards = (): BigNumber => {
@@ -91,7 +89,7 @@ const PositionDetailPanel = () => {
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
-  const [, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
+  const [lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
 
   const currentRatio = useCurrentCollateralRatio();
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
@@ -392,8 +390,9 @@ const MetaData = styled(Box)`
   }
 `;
 
+// todo: need to change the position according LTV
 const Locked = styled(Threshold)`
-  left: 81.905%;
+  left: 66.5%;
 
   ${MetaData} {
     width: 150px;

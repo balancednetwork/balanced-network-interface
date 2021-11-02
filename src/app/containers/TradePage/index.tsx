@@ -8,7 +8,6 @@ import { DefaultLayout } from 'app/components/Layout';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import LiquidityDetails from 'app/components/trade/LiquidityDetails';
 import LPPanel from 'app/components/trade/LPPanel';
-import RebalanceButton from 'app/components/trade/RebalanceButton';
 import SwapDescription from 'app/components/trade/SwapDescription';
 import SwapPanel from 'app/components/trade/SwapPanel';
 import { SectionPanel } from 'app/components/trade/utils';
@@ -44,8 +43,6 @@ export function TradePage() {
               <Tab>Swap</Tab>
               <Tab>Supply liquidity</Tab>
             </Tabs>
-
-            <RebalanceButton />
           </Flex>
 
           <TabPanel value={value} index={0}>

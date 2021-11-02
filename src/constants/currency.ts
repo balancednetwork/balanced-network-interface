@@ -8,7 +8,7 @@ import { PairInfo, SUPPORTED_PAIRS } from './pairs';
 export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
   [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT', 'METX', 'IUSDT'],
   [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS', 'CFT'],
-  [NetworkId.SEJONG]: ['ICX', 'sICX', 'bnUSD', 'BALN'],
+  [NetworkId.SEJONG]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'USDS', 'IUSDC'],
 };
 
 const NETWORK_ID: NetworkId = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
@@ -74,9 +74,9 @@ export const addressToCurrencyKeyMap = {
     cxf7313d7fd611c99b8db29e298699be4b1fd86661: 'CFT',
   },
   [NetworkId.SEJONG]: {
-    cxc79530e0e4081e2e898bac7baa0075fcf71e55c1: 'sICX',
-    cx8c2cf0096636feb17bae2bb018b26dc87afb7bcf: 'bnUSD',
-    cxeed0ccc4ee5781abf65208178572e39fd6e49f53: 'BALN',
+    cx0e706eca3552a6e607095319f4ad8cea37e779d4: 'sICX',
+    cx041714d034919c8456d3606f8766f0169e35cb8e: 'bnUSD',
+    cxb45058d398614a7c8cdf7be6f556fa0b39399799: 'BALN',
     cx0000000000000000000000000000000000000000: 'ICX',
   },
 };

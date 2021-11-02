@@ -13,7 +13,9 @@ import { BoxPanel } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
-import { CURRENCY } from 'constants/currency';
+import { NETWORK_ID } from 'constants/config';
+import { PairInfo, SUPPORTED_PAIRS_INFO } from 'constants/pairs';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { Transaction, useAllTransactionsQuery, useInternalTransactionQuery } from 'queries/history';
 import { formatBigNumber, getTrackerLink } from 'utils';
 
@@ -86,32 +88,14 @@ const METHOD_POSITIVE_SIGN = [
   'Withdraw1Value',
 ];
 
-const getContractName = (addr?: string) => {
-  const name = Object.keys(addresses[NetworkId.MAINNET]).find(key => addresses[NetworkId.MAINNET][key] === addr);
-  return CURRENCY.find(item => item.toLowerCase() === name?.toLocaleLowerCase());
-};
+const getTokenSymbol = (address?: string) =>
+  SUPPORTED_TOKENS_LIST.find(token => token.address === address)?.symbol || '';
+
+const getTokenAddrByName = (name: string) => SUPPORTED_TOKENS_LIST.find(token => token.symbol === name)?.address || '';
 
 const getContractAddr = (tx: Transaction) => tx.indexed?.find(item => item.startsWith('cx'));
-const isIUSDC = (addr: string) => addresses[NetworkId.MAINNET].iusdc === addr;
-const isIUSDT = (addr: string) => addresses[NetworkId.MAINNET].iusdt === addr;
-
-const POOL_IDS = {
-  15: 'IUSDT bnUSD',
-  14: 'METX USDS',
-  13: 'METX IUSDC',
-  12: 'METX sICX',
-  11: 'METX bnUSD',
-  10: 'USDS bnUSD',
-  9: 'CFT sICX',
-  8: 'OMM USDS',
-  7: 'OMM sICX',
-  6: 'OMM IUSDC',
-  5: 'IUSDC bnUSD',
-  4: 'BALN sICX',
-  3: 'BALN bnUSD',
-  2: 'sICX bnUSD',
-  1: 'sICX ICX',
-};
+const isIUSDC = (addr: string) => getTokenAddrByName('IUSDC') === addr;
+const isIUSDT = (addr: string) => getTokenAddrByName('IUSDT') === addr;
 
 const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: string; positive?: boolean }) => (
   <Typography variant="p" textAlign="right">
@@ -138,9 +122,9 @@ const getValue = (tx: Transaction) => {
 
   if (!_value) return '';
 
-  return getContractAddr(tx) === addresses[NetworkId.MAINNET].iusdc
+  return getContractAddr(tx) === getTokenAddrByName('IUSDC')
     ? convertIUSDC(new BigNumber(_value))
-    : getContractAddr(tx) === addresses[NetworkId.MAINNET].iusdt
+    : getContractAddr(tx) === getTokenAddrByName('IUSDT')
     ? convertIUSDC(new BigNumber(_value))
     : convertValue(_value);
 };
@@ -155,6 +139,11 @@ const getMethod = (tx: Transaction) => {
   return method || '';
 };
 
+const getSymbol = (poolId: number) => {
+  const pool: PairInfo | undefined = SUPPORTED_PAIRS_INFO[NETWORK_ID].find(pool => pool.id === poolId);
+  return { symbol1: pool?.baseCurrencyKey || '', symbol2: pool?.quoteCurrencyKey || '' };
+};
+
 const getValuesAndSymbols = (tx: Transaction) => {
   const method = getMethod(tx);
   switch (method) {
@@ -167,7 +156,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
           const data = JSON.parse(tx.data[tx.data.length - 1].replace(/'/g, '"'));
           Object.keys(data).forEach(key => {
             if (data[key] !== 0) {
-              symbols.push(getContractName(key) || '');
+              symbols.push(getTokenSymbol(key));
               amounts.push(
                 isIUSDC(key)
                   ? convertIUSDC(new BigNumber(data[key]))
@@ -204,7 +193,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
     case 'Remove':
     case 'Add': {
       const poolId = parseInt(tx.indexed[1]);
-      const [symbol1, symbol2] = (POOL_IDS[poolId] || '').split(' ');
+      const { symbol1, symbol2 } = getSymbol(poolId);
       let amount1 = convertValue(tx.data[0]);
       let amount2 = convertValue(tx.data[1]);
 
@@ -216,19 +205,19 @@ const getValuesAndSymbols = (tx: Transaction) => {
         amount1 = convertIUSDC(new BigNumber(tx.data[0]));
       }
 
-      if (symbol2?.toLowerCase() === 'iusdc') {
+      if (symbol2.toLowerCase() === 'iusdc') {
         amount2 = convertIUSDC(new BigNumber(tx.data[1]));
       }
 
-      if (symbol2?.toLowerCase() === 'iusdt') {
+      if (symbol2.toLowerCase() === 'iusdt') {
         amount2 = convertIUSDC(new BigNumber(tx.data[1]));
       }
 
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Swap': {
-      let symbol1 = getContractName(tx.data[0]);
-      let symbol2 = getContractName(tx.data[1]);
+      let symbol1 = getTokenSymbol(tx.data[0]);
+      let symbol2 = getTokenSymbol(tx.data[1]);
 
       if (!symbol2) {
         symbol1 = 'sICX';
@@ -248,7 +237,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
     }
     case 'Withdraw1Value':
     case 'Deposit': {
-      const symbol1 = getContractName(getContractAddr(tx)) || '';
+      const symbol1 = getTokenSymbol(getContractAddr(tx));
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
@@ -290,14 +279,16 @@ const getValuesAndSymbols = (tx: Transaction) => {
     }
     case 'Withdraw': {
       const amount1 = convertValue(tx.data.fromValue);
-      const symbol1 = getContractName(tx.data.from);
+      const symbol1 = getTokenSymbol(tx.data.from);
       const amount2 = convertValue(tx.data.toValue);
-      const symbol2 = getContractName(tx.data.to);
+      const symbol2 = getTokenSymbol(tx.data.to);
       return { amount1, amount2, symbol1, symbol2 };
     }
     default: {
       const amount1 = getValue(tx);
-      const symbol1 = tx.indexed?.find(item => CURRENCY.includes(item)) || '';
+      const symbol1 =
+        tx.indexed?.find(item => SUPPORTED_TOKENS_LIST.find(token => token.symbol === item)?.symbol) || '';
+
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
   }

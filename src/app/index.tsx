@@ -12,6 +12,7 @@ import TransactionUpdater from 'store/transactions/updater';
 
 import { Airdrip } from './containers/Airdrip/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
+import { MaintenancePage } from './containers/MaintenancePage';
 import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 import { ProposalPage } from './containers/ProposalPage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
@@ -47,6 +48,7 @@ export function App() {
             />
 
             <Switch>
+              <Route path="*" component={MaintenancePage} />
               <Route exact path="/" component={HomePage} />
               <Route exact path="/vote" component={VotePage} />
               <Route exact path="/trade" component={TradePage} />

@@ -472,6 +472,11 @@ const CollateralTypeButton = styled.div`
   font-size: 14px;
   background-color: #144a68;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:not(.active):hover {
+    background-color: #087083;
+  }
 
   &.active {
     cursor: default;

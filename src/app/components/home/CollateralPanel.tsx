@@ -42,39 +42,6 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import { MouseoverTooltip } from '../Tooltip';
 
-// Move to other file
-const CollateralTypeUI = styled.div`
-  position: static;
-  display: flex;
-  padding: 35px 25px 15px;
-  margin-top: -20px;
-  background-color: ${({ theme }) => theme.colors.bg2};
-  border-radius: 0 0 10px 10px;
-
-  svg {
-    margin-top: 10px;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 35px 35px 15px;
-  `}
-`;
-
-const CollateralTypeButton = styled.div`
-  border-radius: 100px;
-  padding: 1px 12px;
-  margin-right: 5px;
-  color: #ffffff;
-  font-size: 14px;
-  background-color: #144a68;
-  cursor: pointer;
-
-  &.active {
-    cursor: default;
-    background-color: #2ca9b7;
-  }
-`;
-
 const CollateralPanel = () => {
   const { account } = useIconReact();
   const icxDisplayType = useIcxDisplayType();
@@ -397,10 +364,13 @@ const CollateralPanel = () => {
             {`sICX`}
           </CollateralTypeButton>
           <MouseoverTooltip
-            containerStyle={{ width: 330 }}
             text={
               <Box>
-                <Typography>Explaining collateral switcher</Typography>
+                <Typography>
+                  View and manage your collateral as ICX or sICX (staked ICX).
+                  <LineBreak />
+                  The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset.
+                </Typography>
               </Box>
             }
             placement="top"
@@ -476,5 +446,37 @@ const CollateralPanel = () => {
     </>
   );
 };
+
+const CollateralTypeUI = styled.div`
+  position: static;
+  display: flex;
+  padding: 35px 25px 15px;
+  margin-top: -20px;
+  background-color: ${({ theme }) => theme.colors.bg2};
+  border-radius: 0 0 10px 10px;
+
+  svg {
+    margin-top: 10px;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 35px 35px 15px;
+  `}
+`;
+
+const CollateralTypeButton = styled.div`
+  border-radius: 100px;
+  padding: 1px 12px;
+  margin-right: 5px;
+  color: #ffffff;
+  font-size: 14px;
+  background-color: #144a68;
+  cursor: pointer;
+
+  &.active {
+    cursor: default;
+    background-color: #2ca9b7;
+  }
+`;
 
 export default CollateralPanel;

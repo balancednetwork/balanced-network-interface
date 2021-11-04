@@ -92,6 +92,8 @@ const CollateralPanel = () => {
   const { independentField, typedValue, isAdjusting, inputType } = useCollateralState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
+  // const typedValueIcxDisplayDypeDependent = icxDisplayType === 'ICX' ?
+
   const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
 
@@ -246,9 +248,11 @@ const CollateralPanel = () => {
   // change typedValue if sICX and ratio changes
   React.useEffect(() => {
     if (!isAdjusting) {
-      onFieldAInput(stakedICXAmount.isZero() ? '0' : stakedICXAmount.toFixed(2));
+      onFieldAInput(
+        stakedICXAmount.isZero() ? '0' : icxDisplayType === 'ICX' ? stakedICXAmount.toFixed(2) : sICXAmount.toFixed(2),
+      );
     }
-  }, [onFieldAInput, stakedICXAmount, isAdjusting]);
+  }, [onFieldAInput, stakedICXAmount, isAdjusting, sICXAmount, icxDisplayType]);
 
   // optimize slider performance
   // change slider value if only a user types

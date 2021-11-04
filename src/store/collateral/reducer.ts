@@ -20,7 +20,7 @@ export interface CollateralState {
 
 const initialState: CollateralState = {
   depositedAmount: new BigNumber(0),
-  icxDisplayType: 'sICX',
+  icxDisplayType: 'ICX',
 
   // collateral panel UI state
   state: {

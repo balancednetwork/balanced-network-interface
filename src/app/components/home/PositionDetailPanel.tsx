@@ -95,6 +95,7 @@ const PositionDetailPanel = () => {
   const [, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
 
   const currentRatio = useCurrentCollateralRatio();
+
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
 
   const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);

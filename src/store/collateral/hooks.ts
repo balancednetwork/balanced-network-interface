@@ -85,15 +85,16 @@ export function useCollateralActionHandlers() {
 
   const onFieldAInput = React.useCallback(
     (value: string) => {
-      // value = icxDisplayType === 'ICX' ? value : new BigNumber(value).div(ratio.sICXICXratio).toString();
+      value = icxDisplayType === 'ICX' ? value : new BigNumber(value).times(ratio.sICXICXratio).toString();
       dispatch(type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' }));
     },
-    [dispatch],
+    [dispatch, icxDisplayType, ratio.sICXICXratio],
   );
 
   const onFieldBInput = React.useCallback(
     (value: string) => {
-      value = icxDisplayType === 'sICX' ? new BigNumber(value).times(ratio.sICXICXratio).toString() : value;
+      value = icxDisplayType === 'ICX' ? value : new BigNumber(value).times(ratio.sICXICXratio).toString();
+
       dispatch(type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' }));
     },
     [dispatch, icxDisplayType, ratio.sICXICXratio],
@@ -167,13 +168,21 @@ export function useCollateralTotalSICXAmount() {
 export function useCollateralInputAmount() {
   const { independentField, typedValue } = useCollateralState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
+  const icxDisplayType = useIcxDisplayType();
+  const ratio = useRatio();
 
   const totalICXAmount = useCollateralTotalICXAmount();
+  const totalSICXAmount = useCollateralTotalSICXAmount();
+
+  const currentAmount =
+    icxDisplayType === 'ICX'
+      ? totalICXAmount.minus(new BigNumber(typedValue || '0'))
+      : totalSICXAmount.minus(new BigNumber(typedValue || '0').div(ratio.sICXICXratio)).times(ratio.sICXICXratio);
 
   //  calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: totalICXAmount.minus(new BigNumber(typedValue || '0')),
+    [dependentField]: currentAmount,
   };
 
   return parsedAmount[Field.LEFT];

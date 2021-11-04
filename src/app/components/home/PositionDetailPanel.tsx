@@ -278,8 +278,8 @@ const PositionDetailPanel = () => {
                 <Typography variant="p">
                   {formatBigNumber(
                     icxDisplayType === 'ICX'
-                      ? data?.totalCollateralSold.times(ratio.sICXICXratio)
-                      : data?.totalCollateralSold,
+                      ? data?.totalCollateralSold
+                      : data?.totalCollateralSold.div(ratio.sICXICXratio),
                     'currency',
                   )}
                   {` ${icxDisplayType}`}

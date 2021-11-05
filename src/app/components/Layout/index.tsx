@@ -17,7 +17,7 @@ const StyledHeader = styled(Header)`
   `}
 `;
 
-const Container = styled(Box)`
+export const Container = styled(Box)`
   /* disable margin collapse */
   display: flex;
   flex-direction: column;

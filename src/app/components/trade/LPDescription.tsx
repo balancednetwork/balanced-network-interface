@@ -94,10 +94,6 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
         {selectedPair.pair} liquidity pool
       </Typography>
 
-      <Typography mb={5} lineHeight={'25px'}>
-        {descriptions[selectedPair.poolId]}
-      </Typography>
-
       <Flex flexWrap="wrap">
         <Box
           width={[1, 1 / 2]} //

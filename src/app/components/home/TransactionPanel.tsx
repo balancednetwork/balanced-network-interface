@@ -134,7 +134,7 @@ const getMethod = (tx: Transaction) => {
   return method || '';
 };
 
-const getSymbol = (poolId: number) => {
+const getSymbolByPoolId = (poolId: number) => {
   const pool: PairInfo | undefined = SUPPORTED_PAIRS_INFO[NETWORK_ID].find(pool => pool.id === poolId);
   return { symbol1: pool?.baseCurrencyKey || '', symbol2: pool?.quoteCurrencyKey || '' };
 };
@@ -175,7 +175,7 @@ const getValuesAndSymbols = (tx: Transaction) => {
     case 'Remove':
     case 'Add': {
       const poolId = parseInt(tx.indexed[1]);
-      const { symbol1, symbol2 } = getSymbol(poolId);
+      const { symbol1, symbol2 } = getSymbolByPoolId(poolId);
       const amount1 = convertValue(tx.data[0], symbol1);
       const amount2 = convertValue(tx.data[1], symbol2);
 

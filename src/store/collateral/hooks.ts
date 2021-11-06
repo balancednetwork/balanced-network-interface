@@ -185,7 +185,7 @@ export function useCollateralInputAmount() {
     [dependentField]: currentAmount,
   };
 
-  return parsedAmount[Field.LEFT];
+  return parsedAmount[Field.LEFT].decimalPlaces(2);
 }
 
 export function useCollateralInputAmountInSICX() {

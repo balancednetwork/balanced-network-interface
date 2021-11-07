@@ -367,7 +367,7 @@ const CollateralPanel = () => {
             text={
               <Box>
                 <Typography>
-                  View and manage your collateral as ICX or sICX (staked ICX).
+                  View and manage your collateral as ICX or sICX (Staked ICX).
                   <LineBreak />
                   The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset.
                 </Typography>
@@ -419,7 +419,7 @@ const CollateralPanel = () => {
                   {`You’ll receive sICX when you withdraw, which you can unstake or swap for ICX on the Trade page.`}
                 </>
               ) : (
-                "You'll receive sICX (staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."
+                "You'll receive sICX (Staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."
               )}
             </Typography>
           )}

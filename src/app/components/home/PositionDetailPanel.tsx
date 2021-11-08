@@ -31,7 +31,7 @@ const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const loanInputAmount = useLoanInputAmount();
   const loanParameters = useLoanParameters();
   const { lockingRatio, liquidationRatio } = loanParameters || {};
-  console.log(lockingRatio);
+
   return React.useMemo(() => {
     if (!collateralInputAmount.isZero() && lockingRatio && liquidationRatio) {
       return [

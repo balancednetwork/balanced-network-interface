@@ -1,6 +1,6 @@
 import { SupportedChainId } from 'packages/BalancedJs/chain';
 
-import { Token } from 'types/balanced-sdk-core/index';
+import { Token, Currency } from 'types/balanced-sdk-core/index';
 
 import { NETWORK_ID } from './config';
 
@@ -64,7 +64,7 @@ export const METX = new Token(
 export const IUSDT = new Token(
   SupportedChainId.MAINNET, //
   'cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88',
-  18,
+  6,
   'IUSDT',
   'ICON Tether',
 );
@@ -176,6 +176,13 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
 };
 
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];
+
+export const SUPPORTED_TOKENS_MAP_BY_ADDRESS: {
+  [key in string]: Currency;
+} = SUPPORTED_TOKENS_LIST.reduce((prev, cur) => {
+  prev[cur.address] = cur;
+  return prev;
+}, {});
 
 /*
  * this information contains the tokens the balanced supports

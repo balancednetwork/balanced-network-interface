@@ -5,9 +5,10 @@ import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
-import { addressToCurrencyKeyMap } from 'constants/currency';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import QUERY_KEYS from 'queries/queryKeys';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
 import { API_ENDPOINT } from '../constants';
 import { useBnJsContractQuery } from '../utils';
@@ -15,9 +16,9 @@ import { useBnJsContractQuery } from '../utils';
 export const BATCH_SIZE = 50;
 
 export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) => {
-  const { account, networkId } = useIconReact();
+  const { account } = useIconReact();
 
-  return useQuery<({ [key in string]: BigNumber } | null)[]>(
+  return useQuery<({ [address in string]: CurrencyAmount<Currency> } | null)[]>(
     QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
     async () => {
       const promises: Promise<any>[] = [];
@@ -30,10 +31,12 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
       feesArr = feesArr.map(fees => {
         if (!Object.values(fees).find(value => !BalancedJs.utils.toIcx(value as string).isZero())) return null;
 
-        const t = {};
-        Object.keys(fees).forEach(key => {
-          t[key] = BalancedJs.utils.toIcx(fees[key], addressToCurrencyKeyMap[networkId][key]);
-        });
+        const t = Object.keys(fees).reduce((prev, address) => {
+          const currency = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
+          prev[address] = CurrencyAmount.fromFractionalAmount(currency, fees[address], 1);
+          return prev;
+        }, {});
+
         return t;
       });
 

@@ -1,7 +1,8 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
 import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex, Link } from 'rebass/styled-components';
@@ -16,7 +17,7 @@ import { NETWORK_ID } from 'constants/config';
 import { PairInfo, SUPPORTED_PAIRS_INFO } from 'constants/pairs';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { Transaction, useAllTransactionsQuery, useInternalTransactionQuery } from 'queries/history';
-import { formatBigNumber, getTrackerLink } from 'utils';
+import { formatBigNumber, formatUnits, getTrackerLink } from 'utils';
 
 const Row = styled(Box)`
   display: grid;
@@ -108,7 +109,8 @@ const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: stri
 );
 
 const convertValue = (value: string, currencyKey?: string) => {
-  const currency = BalancedJs.utils.toIcx(value, currencyKey);
+  const decimals = SUPPORTED_TOKENS_LIST.find(token => token.symbol === currencyKey)?.decimals;
+  const currency = new BigNumber(formatUnits(value, decimals || 18));
   const exceptionList = ['IUSDT', 'IUSDC'];
 
   return currency.isGreaterThan(0.004) || (currencyKey && exceptionList.includes(currencyKey))
@@ -123,7 +125,9 @@ const getValue = (tx: Transaction) => {
 
   if (!_value) return '';
 
-  return convertValue(_value, getContractAddr(tx));
+  const tokenSymbol = getTokenSymbol(getContractAddr(tx));
+
+  return convertValue(_value, tokenSymbol);
 };
 
 const getMethod = (tx: Transaction) => {

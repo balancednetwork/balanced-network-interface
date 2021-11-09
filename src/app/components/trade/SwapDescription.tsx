@@ -1,6 +1,5 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -17,7 +16,7 @@ import { useDerivedSwapInfo } from 'store/swap/hooks';
 import { generateChartData, formatBigNumber } from 'utils';
 
 export default function SwapDescription() {
-  const { currencies } = useDerivedSwapInfo();
+  const { currencies, price } = useDerivedSwapInfo();
 
   const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({
     type: CHART_TYPES.AREA,
@@ -36,11 +35,9 @@ export default function SwapDescription() {
     [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
   );
 
-  /* const priceInICX =
+  const priceInICX =
     price &&
-    (currencies[Field.OUTPUT]?.symbol === 'sICX'
-      ? price.value.times(ratio.sICXICXratio)
-      : price.value.div(ratio.sICXICXratio)); */
+    (currencies[Field.OUTPUT]?.symbol === 'sICX' ? price.times(ratio.sICXICXratio) : price.div(ratio.sICXICXratio));
 
   const [pair] = getTradePair(currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol);
 
@@ -68,16 +65,21 @@ export default function SwapDescription() {
           <Typography variant="h3" mb={2}>
             {currencies[Field.INPUT]?.symbol} / {currencies[Field.OUTPUT]?.symbol}
           </Typography>
-          <Typography variant="p">
-            {`${formatBigNumber(/*price?.value*/ new BigNumber(0), 'price')} 
-              ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
-          </Typography>
-          {hasSICX && !hasICX && (
-            <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
-              {`${formatBigNumber(/*priceInICX*/ new BigNumber(0), 'price')} 
-                ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
-                per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
-            </Typography>
+
+          {pair && (
+            <>
+              <Typography variant="p">
+                {`${formatBigNumber(price, 'price')} 
+                ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+              </Typography>
+              {hasSICX && !hasICX && (
+                <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
+                  {`${formatBigNumber(priceInICX, 'price')} 
+                  ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
+                  per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                </Typography>
+              )}
+            </>
           )}
         </Box>
         <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair || isQueue(pair)}>

@@ -1,11 +1,13 @@
 import React, { useCallback } from 'react';
 
+import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { canBeQueue } from 'constants/currency';
+import { canBeQueue, getTradePair } from 'constants/currency';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
+import { usePools } from 'store/pool/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { Trade } from 'types/balanced-v1-sdk';
 import { parseUnits } from 'utils';
@@ -92,6 +94,22 @@ export function useCurrencyBalances(
   );
 }
 
+export function usePrice(currencyIn?: string, currencyOut?: string): BigNumber | undefined {
+  const pools = usePools();
+
+  if (!currencyIn || !currencyOut) return undefined;
+
+  const [pair, inverse] = getTradePair(currencyIn, currencyOut);
+
+  if (!pair) return undefined;
+
+  const pool = pools[pair.id];
+
+  if (!pool) return undefined;
+
+  return !inverse ? pool.rate : pool.inverseRate;
+}
+
 // try to parse a user entered amount for a given token
 export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmount<Currency> | undefined {
   if (!value || !currency) {
@@ -119,6 +137,8 @@ export function useDerivedSwapInfo(): {
   parsedAmount: CurrencyAmount<Currency> | undefined;
   inputError?: string;
   allowedSlippage: number;
+  // FIXME: need to refactor this later. it is temporarily solution.
+  price: BigNumber | undefined;
 } {
   const { account } = useIconReact();
 
@@ -197,6 +217,8 @@ export function useDerivedSwapInfo(): {
 
   if (userHasSpecifiedInputOutput && !trade) inputError = 'Insufficient liquidity';
 
+  const price = usePrice(currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol);
+
   return {
     trade,
     currencies,
@@ -205,5 +227,6 @@ export function useDerivedSwapInfo(): {
     inputError,
     allowedSlippage,
     percents,
+    price,
   };
 }

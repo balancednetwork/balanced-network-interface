@@ -11,8 +11,8 @@ import CurrencyLogo from 'app/components/CurrencyLogo';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { CURRENCY } from 'constants/currency';
 import '@reach/tabs/styles.css';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useRatesQuery } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
@@ -29,6 +29,8 @@ const WalletUIs = {
   sICX: SICXWallet,
   BALN: BALNWallet,
 };
+
+const CURRENCY = SUPPORTED_TOKENS_LIST.map(currency => currency.symbol!);
 
 const WalletPanel = () => {
   const balances = useWalletBalances();

@@ -5,16 +5,6 @@ import { Currency } from 'types/balanced-sdk-core';
 
 import { PairInfo, SUPPORTED_PAIRS } from './pairs';
 
-export const CURRENCY_INFO: { [networkId: number]: CurrencyKey[] } = {
-  [NetworkId.MAINNET]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'IUSDC', 'OMM', 'USDS', 'CFT', 'METX', 'IUSDT'],
-  [NetworkId.YEOUIDO]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'IUSDC', 'USDS', 'CFT'],
-  [NetworkId.SEJONG]: ['ICX', 'sICX', 'bnUSD', 'BALN', 'OMM', 'USDS', 'IUSDC'],
-};
-
-const NETWORK_ID: NetworkId = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
-
-export const CURRENCY: CurrencyKey[] = CURRENCY_INFO[NETWORK_ID];
-
 export const getTradePair = (
   baseKey?: CurrencyKey,
   quoteKey?: CurrencyKey,

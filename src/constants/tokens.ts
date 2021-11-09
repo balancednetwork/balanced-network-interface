@@ -158,7 +158,13 @@ export const BALN_SEJONG = new Token(
   'BALN',
   'Balance Token',
 );
-
+export const IUSDC_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cxb2c075e9130440dd64e6bfd3fe09e5c629f6e183',
+  6,
+  'IUSDC',
+  'ICON USD Coin',
+);
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
   [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT],
@@ -172,7 +178,7 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
     OMM_YEOUIDO,
     CFT_YEOUIDO,
   ],
-  [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG],
+  [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, IUSDC_SEJONG],
 };
 
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];

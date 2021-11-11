@@ -52,7 +52,7 @@ interface ILPDescriptionProps {
 export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescriptionProps) {
   const selectedPair = usePoolPair();
 
-  const data = usePoolData(selectedPair.poolId) || {
+  const data = usePoolData(selectedPair.id) || {
     totalBase: new BigNumber(0),
     totalQuote: new BigNumber(0),
     totalReward: new BigNumber(0),
@@ -91,11 +91,11 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
   return (
     <Box bg="bg2" flex={1} padding={[5, 7]}>
       <Typography variant="h3" mb={2}>
-        {selectedPair.pair} liquidity pool
+        {selectedPair.name} liquidity pool
       </Typography>
 
       <Typography mb={5} lineHeight={'25px'}>
-        {descriptions[selectedPair.poolId]}
+        {descriptions[selectedPair.id]}
       </Typography>
 
       <Flex flexWrap="wrap">
@@ -111,7 +111,7 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
               Your supply
             </Typography>
             <Typography textAlign="center" variant="p">
-              {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+              {selectedPair.id !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                 <>
                   {formatBigNumber(supplyBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
                   {formatBigNumber(supplyQuote, 'currency')} {selectedPair.quoteCurrencyKey}
@@ -139,7 +139,7 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
               Total supply
             </Typography>
             <Typography textAlign="center" variant="p">
-              {selectedPair.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+              {selectedPair.id !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                 <>
                   {formatBigNumber(data?.totalBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
                   {formatBigNumber(data?.totalQuote, 'currency')} {selectedPair.quoteCurrencyKey}

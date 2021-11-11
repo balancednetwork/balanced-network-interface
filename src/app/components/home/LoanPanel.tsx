@@ -25,6 +25,7 @@ import {
   useLoanTotalBorrowableAmount,
   useLoanActionHandlers,
   useLoanUsedAmount,
+  useLoanParameters,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -97,10 +98,11 @@ const LoanPanel = () => {
   const differenceAmount = afterAmount.minus(beforeAmount);
   const roundedDisplayDiffAmount = afterAmount.minus(beforeAmount.dp(2));
 
+  const { originationFee = 0 } = useLoanParameters() || {};
   //whether if repay or borrow
   const shouldBorrow = differenceAmount.isPositive();
   //borrow fee
-  const fee = differenceAmount.multipliedBy(0.75 / 100);
+  const fee = differenceAmount.times(originationFee);
   const addTransaction = useTransactionAdder();
 
   const handleLoanConfirm = () => {

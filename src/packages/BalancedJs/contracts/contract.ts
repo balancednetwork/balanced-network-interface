@@ -21,11 +21,12 @@ export class Contract {
   public address: string = '';
   public ledger: Ledger;
 
-  constructor(protected contractSettings: ContractSettings) {
+  constructor(protected contractSettings: ContractSettings, address?: string) {
     this.provider = contractSettings.provider;
     this.nid = contractSettings.networkId;
     this.ledger = new Ledger(contractSettings);
     this.contractSettings.ledgerSettings.actived = !isEmpty(this.ledger.viewSetting().transport);
+    this.address = address || '';
   }
 
   protected get account(): AccountType {

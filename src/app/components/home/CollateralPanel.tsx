@@ -180,7 +180,7 @@ const CollateralPanel = () => {
           icxDisplayType === 'ICX' ? collateralAmount.div(ratio.sICXICXratio) : collateralAmount;
 
         const { result: hash } = await bnJs
-          .inject({ account: account })
+          .inject({ account })
           .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX));
 
         addTransaction(

@@ -85,11 +85,13 @@ const CollateralPanel = () => {
     [independentField]:
       icxDisplayType === 'ICX'
         ? new BigNumber(typedValue || '0')
-        : new BigNumber(typedValue || '0').div(ratio.sICXICXratio || 1),
+        : new BigNumber(typedValue || '0').div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio),
     [dependentField]:
       icxDisplayType === 'ICX'
         ? totalICXAmount.minus(new BigNumber(typedValue || '0'))
-        : totalSICXAmount.minus(new BigNumber(typedValue || '0').div(ratio.sICXICXratio || 1)),
+        : totalSICXAmount.minus(
+            new BigNumber(typedValue || '0').div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio),
+          ),
   };
 
   const formattedAmounts = {
@@ -97,7 +99,7 @@ const CollateralPanel = () => {
       icxDisplayType === 'ICX'
         ? typedValue
         : new BigNumber(typedValue || '0')
-            .div(ratio.sICXICXratio || 1)
+            .div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio)
             .toFixed(2)
             .toString(),
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
@@ -122,7 +124,7 @@ const CollateralPanel = () => {
   const afterAmount = parsedAmount[Field.LEFT];
   //difference = after-before
   const differenceAmount = afterAmount.minus(beforeAmount);
-  const differenceAmountInSICX = differenceAmount.div(ratio.sICXICXratio);
+  const differenceAmountInSICX = differenceAmount.div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio);
   //collateral amount
   const collateralAmount = differenceAmount.abs();
   //whether if deposit or withdraw
@@ -180,7 +182,9 @@ const CollateralPanel = () => {
     } else {
       try {
         const collateralAmountInSICX =
-          icxDisplayType === 'ICX' ? collateralAmount.div(ratio.sICXICXratio) : collateralAmount;
+          icxDisplayType === 'ICX'
+            ? collateralAmount.div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio)
+            : collateralAmount;
 
         const { result: hash } = await bnJs
           .inject({ account })

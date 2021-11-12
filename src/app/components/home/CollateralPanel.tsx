@@ -85,18 +85,21 @@ const CollateralPanel = () => {
     [independentField]:
       icxDisplayType === 'ICX'
         ? new BigNumber(typedValue || '0')
-        : new BigNumber(typedValue || '0').div(ratio.sICXICXratio),
+        : new BigNumber(typedValue || '0').div(ratio.sICXICXratio || 1),
     [dependentField]:
       icxDisplayType === 'ICX'
         ? totalICXAmount.minus(new BigNumber(typedValue || '0'))
-        : totalSICXAmount.minus(new BigNumber(typedValue || '0').div(ratio.sICXICXratio)),
+        : totalSICXAmount.minus(new BigNumber(typedValue || '0').div(ratio.sICXICXratio || 1)),
   };
 
   const formattedAmounts = {
     [independentField]:
       icxDisplayType === 'ICX'
         ? typedValue
-        : new BigNumber(typedValue || '0').div(ratio.sICXICXratio).toFixed(2).toString(),
+        : new BigNumber(typedValue || '0')
+            .div(ratio.sICXICXratio || 1)
+            .toFixed(2)
+            .toString(),
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 

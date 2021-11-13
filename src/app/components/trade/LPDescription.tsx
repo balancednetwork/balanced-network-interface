@@ -2,47 +2,12 @@ import React, { useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
 import { usePoolPair, usePoolData } from 'store/pool/hooks';
 import { formatBigNumber } from 'utils';
-
-import { Link } from '../Link';
-
-const descriptions = {
-  1: 'Supply ICX to earn Balance Tokens. Your ICX will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. This pool works like a queue, so you can withdraw your sICX from the liquidity details section as your order is filled.',
-  2: 'Supply an equal amount of sICX and bnUSD to earn BALN. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards.',
-  3: 'Supply an equal amount of BALN and bnUSD to earn Balance Tokens. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. All BALN in the pool accrues network fees.',
-  4: 'Supply an equal amount of BALN and sICX to earn Balance Tokens. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. All BALN in the pool accrues network fees.',
-  7: (
-    <>
-      Requires an equal amount of OMM and sICX. To earn rewards from this pool, use&nbsp;
-      <Link href="https://omm.finance/" target="_blank">
-        Omm
-      </Link>
-      &nbsp;with the same wallet.
-    </>
-  ),
-  8: (
-    <>
-      Requires an equal amount of OMM and USDS. To earn rewards from this pool, use&nbsp;
-      <Link href="https://omm.finance/" target="_blank">
-        Omm
-      </Link>
-      &nbsp;with the same wallet.
-    </>
-  ),
-  6: (
-    <>
-      Requires an equal amount of OMM and IUSDC. To earn rewards from this pool, use&nbsp;
-      <Link href="https://omm.finance/" target="_blank">
-        Omm
-      </Link>
-      &nbsp;with the same wallet.
-    </>
-  ),
-};
 
 interface ILPDescriptionProps {
   baseSuplying: BigNumber;
@@ -88,17 +53,15 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
     }
   }, [data.totalReward, supplyBase, totalBase]);
 
+  const upSmall = useMedia('(min-width: 800px)');
+
   return (
     <Box bg="bg2" flex={1} padding={[5, 7]}>
       <Typography variant="h3" mb={2}>
         {selectedPair.pair} liquidity pool
       </Typography>
 
-      <Typography mb={5} lineHeight={'25px'}>
-        {descriptions[selectedPair.poolId]}
-      </Typography>
-
-      <Flex flexWrap="wrap">
+      <Flex flexWrap="wrap" padding={upSmall ? '50px 0' : 0}>
         <Box
           width={[1, 1 / 2]} //
           sx={{

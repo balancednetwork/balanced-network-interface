@@ -22,21 +22,22 @@ const MAINNET_ADDRESSES = {
   bwt: 'cxcfe9d1f83fa871e903008471cca786662437e58d',
   airdrip: 'cxaf244cf3c7164fe6f996f398a9d99c4d4a85cf15',
   rebalancing: 'cx40d59439571299bca40362db2a7d8cae5b0b30b0',
+  stakedLp: '',
 };
 
 const YEOUIDO_ADDRESSES = {
-  loans: 'cx3259f3ff9a51ca3bf170d4ff9104cf4af126ca1c',
-  staking: 'cx9d829396d887f9292d8af488fab78ad24ab6b99a',
-  dividends: 'cx5b996d251009340f7c312b9df5c44f0f39a20a91',
-  reserve: 'cx1754666c6779dc5e495a462144dd15e4a68fe776',
-  daofund: 'cx430955c5a5e2a6e48c1f2aaa7258dc4c84222247',
-  rewards: 'cx893fccdd0881d8e2bd2625f711b38e06848ecb89',
-  dex: 'cx399dea56cf199b1c9e43bead0f6a284bdecfbf62',
-  governance: 'cx483630769b61b76387d6ed90c911c16da546784f',
+  loans: 'cx1bee00161ff2a7b8051d3af4330d3b3196e0155a',
+  staking: 'cx80fe83142f263248803be77c6f3c981d6f971a4e',
+  dividends: 'cxab5c7f5775bdac0cc1087235b153853078129697',
+  reserve: 'cx7bac19c01f9180060e586a90c808864bde88c880',
+  daofund: 'cx5b22a1569d34349471338a32c9f3f6d80252da2f',
+  rewards: 'cx62f5dba4224f9ffd1eaa6eb84350ef6798c22bbd',
+  dex: 'cx09784c24c6db96511f98da6a97b104197f80ede0',
+  governance: 'cxa45ba3ea213288a8d2157a92e47dd885f5be8c51',
   band: 'cx61a36e5d10412e03c907a507d1e8c6c3856d9964',
-  sicx: 'cxae6334850f13dfd8b50f8544d5acb126bb8ef82d',
-  bnusd: 'cxc48c9c81ceef04445c961c5cc8ff056d733dfe3a',
-  baln: 'cx36169736b39f59bf19e8950f6c8fa4bfa18b710a',
+  sicx: 'cx863a4ef770a79fe3a75cf299002d352f0a0c1482',
+  bnusd: 'cx6653cab449dca2903d7767af74cda7d16214d893',
+  baln: 'cx8830709b971cbacacbf8f9ea6cb86417a31544aa',
   omm: 'cx05515d126a47a98c682fa86992329e6c2ec70503',
   iusdc: 'cx65f639254090820361da483df233f6d0e69af9b7',
   iusdt: '',
@@ -46,6 +47,7 @@ const YEOUIDO_ADDRESSES = {
   bwt: 'cx5d886977b7d24b9f73a460c9ca2d43847997c285',
   airdrip: 'cx8ed4fbee9d6497f91ea90933db288ff4b43e54ba',
   rebalancing: 'cx2e3398dfce78a3c83de8a41d7c5f4aa40d3a4f30',
+  stakedLp: 'cx947792d1f9d18e7a03788cfcdedd327e3a15935c',
 };
 
 const SEJONG_ADDRESSES = {
@@ -70,6 +72,7 @@ const SEJONG_ADDRESSES = {
   bwt: 'cxa2afb37647ae91ca6fbf35141b2ef2ac7105720a',
   airdrip: '',
   rebalancing: 'cxd5df399205421930870e3b0798766aa31cffbe66',
+  stakedLp: '',
 };
 
 const addresses = {

@@ -203,7 +203,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
               </Typography>
 
               <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-                {afterAmount.dp(2).toFormat()}
+                {differenceAmount.abs().dp(2).toFormat()}
               </Typography>
 
               <Flex my={5}>

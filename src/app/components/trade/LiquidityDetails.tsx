@@ -1,10 +1,10 @@
 import React from 'react';
 
+import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
-import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -12,12 +12,11 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
-import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
+import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
 import { SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
@@ -31,6 +30,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import Spinner from '../Spinner';
+import StakeLPPanel from './StakeLPPanel';
 import { withdrawMessage } from './utils';
 
 export default function LiquidityDetails() {
@@ -57,12 +57,34 @@ export default function LiquidityDetails() {
           {upSmall && <HeaderText>Daily rewards</HeaderText>}
           <HeaderText></HeaderText>
         </DashGrid>
+        <Accordion collapsible>
+          {!isHidden && (
+            <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={Object.keys(balances).length !== 0}>
+              <StyledAccordionButton>
+                <PoolRecord1 />
+              </StyledAccordionButton>
+              <StyledAccordionPanel hidden={false}>
+                <BoxPanel bg="bg3" marginBottom="20px">
+                  <Withdraw1 />
+                </BoxPanel>
+              </StyledAccordionPanel>
+            </StyledAccordionItem>
+          )}
 
-        {!isHidden && <PoolRecord1 border={Object.keys(balances).length !== 0} />}
-
-        {Object.keys(balances).map((poolId, index, arr) => (
-          <PoolRecord key={poolId} poolId={parseInt(poolId)} border={index !== arr.length - 1} />
-        ))}
+          {Object.keys(balances).map((poolId, index, arr) => (
+            <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
+              <StyledAccordionButton>
+                <PoolRecord poolId={parseInt(poolId)} />
+              </StyledAccordionButton>
+              <StyledAccordionPanel hidden={false}>
+                <StyledBoxPanel bg="bg3">
+                  <StakeLPPanel poolId={parseInt(poolId)} />
+                  <Withdraw poolId={parseInt(poolId)} />
+                </StyledBoxPanel>
+              </StyledAccordionPanel>
+            </StyledAccordionItem>
+          ))}
+        </Accordion>
       </TableWrapper>
     </BoxPanel>
   );
@@ -72,7 +94,7 @@ const TableWrapper = styled.div``;
 
 const DashGrid = styled.div`
   display: grid;
-  grid-template-columns: 4fr 5fr 3fr;
+  grid-template-columns: 4fr 5fr;
   gap: 10px;
   grid-template-areas: 'name supply action';
   align-items: center;
@@ -88,7 +110,7 @@ const DashGrid = styled.div`
   }
 
   ${({ theme }) => theme.mediaWidth.upSmall`
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-areas: 'name supply share rewards action';
   `}
 `;
@@ -102,73 +124,171 @@ const HeaderText = styled(Typography)`
 const DataText = styled(Box)`
   font-size: 16px;
 `;
+const StyledArrowDownIcon = styled(ArrowDownIcon)`
+  width: 10px;
+  margin-left: 10px;
+  margin-top: 10px;
+  transition: transform 0.3s ease;
+`;
+const StyledDataText = styled(Flex)``;
 
-const ListItem = styled(DashGrid)<{ border?: boolean }>`
-  padding: 20px 0;
-  color: #ffffff;
-  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
+const StyledBoxPanel = styled(BoxPanel)`
+  display: flex;
+  margin-bottom: 20px;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+     flex-direction: row;
+  `}
 `;
 
-const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => {
+const StyledAccordionItem = styled(AccordionItem)<{ border?: boolean }>`
+  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
+  transition: border-bottom ease-in-out 50ms 480ms;
+`;
+const ListItem = styled(DashGrid)`
+  padding: 20px 0;
+  color: #ffffff;
+`;
+
+const OptionButton = styled(Box)`
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+  text-decoration: none;
+  color: white;
+  user-select: none;
+  text-align: center;
+  background-color: ${({ theme }) => theme.colors.bg4};
+  border: 2px solid #144a68;
+  transition: border 0.3s ease;
+  padding: 10px;
+
+  &[disabled] {
+    background: rgba(255, 255, 255, 0.15);
+    cursor: default;
+    pointer-events: none;
+  }
+
+  :hover {
+    border: 2px solid ${({ theme }) => theme.colors.primary};
+    transition: border 0.2s ease;
+  }
+
+  > svg {
+    margin-bottom: 10px;
+  }
+`;
+
+const StyledAccordionButton = styled(AccordionButton)`
+  background-color: transparent;
+  width: 100%;
+  border: none;
+  position: relative;
+
+  &:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 12px solid #144a68;
+    position: absolute;
+    transition: all ease-in-out 200ms;
+    transform: translate3d(0, 20px, 0);
+    opacity: 0;
+    pointer-events: none;
+    bottom: 0;
+    left: 30px;
+  }
+  &:hover {
+    & > ${ListItem} {
+      p,
+      & > div {
+        color: ${({ theme }) => theme.colors.primary};
+        path {
+          stroke: ${({ theme }) => theme.colors.primary} !important;
+        }
+      }
+    }
+  }
+  &[aria-expanded='true'] {
+    &:before {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+    & > ${ListItem} {
+      p,
+      & > div {
+        color: ${({ theme }) => theme.colors.primary};
+        & > svg {
+          transform: rotateX(180deg);
+
+          path {
+            stroke: ${({ theme }) => theme.colors.primary} !important;
+          }
+        }
+      }
+    }
+  }
+`;
+
+const StyledAccordionPanel = styled(AccordionPanel)`
+  overflow: hidden;
+  max-height: 0;
+  transition: all ease-in-out 0.5s;
+  &[data-state='open'] {
+    max-height: 100%;
+    ${({ theme }) => theme.mediaWidth.upSmall`
+      max-height: 400px;
+    `}
+  }
+`;
+
+const PoolRecord = ({ poolId }: { poolId: number }) => {
   const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
   const upSmall = useMedia('(min-width: 800px)');
 
+  console.log(poolData?.suppliedReward.toFixed());
+
   return (
-    <ListItem border={border}>
-      <DataText>{pair.pair}</DataText>
+    <ListItem>
+      <StyledDataText>
+        <DataText>{pair.pair}</DataText>
+        <StyledArrowDownIcon />
+      </StyledDataText>
       <DataText>
         {`${formatBigNumber(poolData?.suppliedBase, 'currency')} ${pair.baseCurrencyKey}`}
         <br />
         {`${formatBigNumber(poolData?.suppliedQuote, 'currency')} ${pair.quoteCurrencyKey}`}
       </DataText>
       {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
-      <DataText>
-        <WithdrawText poolId={pair.poolId} />
-      </DataText>
+      {upSmall && (
+        <DataText>
+          {formatBigNumber(poolData?.suppliedReward, 'currency') === '0'
+            ? 'ー'
+            : `~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}
+        </DataText>
+      )}
     </ListItem>
   );
 };
 
-const WithdrawText = ({ poolId }: { poolId: number }) => {
-  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
-  const arrowRef = React.useRef(null);
-
-  const toggle = () => {
-    setAnchor(anchor ? null : arrowRef.current);
-  };
-
-  const close = () => {
-    setAnchor(null);
-  };
-
-  return (
-    <ClickAwayListener onClickAway={close}>
-      <div>
-        <UnderlineTextWithArrow onClick={toggle} text="Withdraw" arrowRef={arrowRef} />
-        <DropdownPopper show={Boolean(anchor)} anchorEl={anchor}>
-          {poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
-            <WithdrawModal1 onClose={close} />
-          ) : (
-            <WithdrawModal poolId={poolId} onClose={close} />
-          )}
-        </DropdownPopper>
-      </div>
-    </ClickAwayListener>
-  );
-};
-
-const PoolRecord1 = ({ border }: { border: boolean }) => {
+const PoolRecord1 = () => {
   const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.poolId);
   const upSmall = useMedia('(min-width: 800px)');
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
   return (
-    <ListItem border={border}>
-      <DataText>{pair.pair}</DataText>
+    <ListItem>
+      <StyledDataText>
+        <DataText>{pair.pair}</DataText>
+        <StyledArrowDownIcon />
+      </StyledDataText>
       <DataText>
         <Typography fontSize={16}>
           {`${formatBigNumber(balance1?.balance, 'currency')} ${pair.quoteCurrencyKey}`}
@@ -179,14 +299,11 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
       </DataText>
       {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
       {upSmall && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
-      <DataText>
-        <WithdrawText poolId={pair.poolId} />
-      </DataText>
     </ListItem>
   );
 };
 
-const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
+const Withdraw1 = () => {
   const { account } = useIconReact();
   const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
   const addTransaction = useTransactionAdder();
@@ -262,7 +379,6 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   };
   const handleOption1 = () => {
     toggleOpen1();
-    onClose();
   };
 
   const [open2, setOpen2] = React.useState(false);
@@ -273,28 +389,33 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   };
   const handleOption2 = () => {
     toggleOpen2();
-    onClose();
   };
 
   const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
-      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
+      <Flex flexDirection="column" alignItems="center">
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
-          <Typography as="span">{pair.pair}</Typography>
+          <Typography as="span" fontSize="16px">
+            {pair.pair}
+          </Typography>
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between">
           <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2} mr={2}>
             <CurrencyLogo currencyKey="sICX" size={35} />
-            <Typography>{balance1?.balance1?.dp(2).toFormat()} sICX</Typography>
+            <Typography fontSize="16px" fontWeight="bold">
+              {balance1?.balance1?.dp(2).toFormat()} sICX
+            </Typography>
           </OptionButton>
 
           <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1}>
             <CurrencyLogo currencyKey="ICX" size={35} />
-            <Typography>{balance1?.balance.dp(2).toFormat()} ICX</Typography>
+            <Typography fontSize="16px" fontWeight="bold">
+              {balance1?.balance.dp(2).toFormat()} ICX
+            </Typography>
           </OptionButton>
         </Flex>
       </Flex>
@@ -358,40 +479,22 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-const OptionButton = styled(Box)`
-  width: 96px;
-  display: flex;
+const Wrapper = styled(Flex)`
+  padding-left: 0;
+  margin-left: 0;
+  margin-top: 40px;
   flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  border-radius: 10px;
-  text-decoration: none;
-  color: white;
-  user-select: none;
-  text-align: center;
-  background-color: ${({ theme }) => theme.colors.bg3};
-  border: 2px solid #144a68;
-  transition: border 0.3s ease;
-  padding: 10px;
-  transition: border 0.3s ease;
+  border-left: none;
 
-  &[disabled] {
-    background: rgba(255, 255, 255, 0.15);
-    cursor: default;
-    pointer-events: none;
-  }
-
-  :hover {
-    border: 2px solid ${({ theme }) => theme.colors.primary};
-    transition: border 0.2s ease;
-  }
-
-  > svg {
-    margin-bottom: 10px;
-  }
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    padding-left: 35px;
+    margin-left: 35px;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    margin-top: 0;
+  `}
 `;
 
-const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => void }) => {
+const Withdraw = ({ poolId }: { poolId: number }) => {
   const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || SUPPORTED_PAIRS[0];
   const balances = useWalletBalances();
   const lpBalance = useBalance(poolId);
@@ -522,14 +625,13 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
 
   const handleShowConfirm = () => {
     toggleOpen();
-    onClose();
   };
 
   const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
-      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
+      <Wrapper>
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
           <Typography as="span">{pair.pair}</Typography>
@@ -581,7 +683,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
             Withdraw liquidity
           </Button>
         </Flex>
-      </Flex>
+      </Wrapper>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">

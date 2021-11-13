@@ -21,6 +21,7 @@ import OMM from './contracts/OMM';
 import Rebalancing from './contracts/Rebalancing';
 import Rewards from './contracts/Rewards';
 import sICX from './contracts/sICX';
+import StakedLP from './contracts/StakedLP';
 import Staking from './contracts/Staking';
 import USDS from './contracts/USDS';
 import ContractSettings, { LedgerSettings } from './contractSettings';
@@ -68,6 +69,7 @@ export class BalancedJs {
   Governance: Governance;
   Rebalancing: Rebalancing;
   DAOFund: DAOFund;
+  StakedLP: StakedLP;
 
   static utils = {
     toLoop(value: BigNumber | number | string, currencyKey?: string): BigNumber {
@@ -131,6 +133,7 @@ export class BalancedJs {
     this.Governance = new Governance(this.contractSettings);
     this.Rebalancing = new Rebalancing(this.contractSettings);
     this.DAOFund = new DAOFund(this.contractSettings);
+    this.StakedLP = new StakedLP(this.contractSettings);
   }
 
   inject({ account, legerSettings }: SettingInjection) {

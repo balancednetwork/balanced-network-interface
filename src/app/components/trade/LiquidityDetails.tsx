@@ -252,8 +252,6 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
   const poolData = usePoolData(pair.poolId);
   const upSmall = useMedia('(min-width: 800px)');
 
-  console.log(poolData?.suppliedReward.toFixed());
-
   return (
     <ListItem>
       <StyledDataText>

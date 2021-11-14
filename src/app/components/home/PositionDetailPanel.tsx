@@ -402,7 +402,7 @@ const MetaData = styled(Box)`
 
 // todo: need to change the position according LTV
 const Locked = styled(Threshold)`
-  left: 66.5%;
+  left: 81.5%;
 
   ${MetaData} {
     width: 150px;

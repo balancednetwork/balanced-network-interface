@@ -187,9 +187,6 @@ export function useCollateralInputAmount() {
     [dependentField]: currentAmount,
   };
 
-  console.log('pa');
-  console.log(parsedAmount[Field.LEFT].toNumber());
-
   return parsedAmount[Field.LEFT];
 }
 
@@ -211,10 +208,6 @@ export function useCollateralInputAmountInSICX() {
 export function useCollateralInputAmountInUSD() {
   const collateralInputAmount = useCollateralInputAmount();
   const ratio = useRatio();
-
-  console.log('dlrs');
-
-  console.log(collateralInputAmount.toNumber());
 
   return React.useMemo(() => {
     return collateralInputAmount.multipliedBy(ratio.ICXUSDratio);

@@ -174,18 +174,23 @@ export function useCollateralInputAmount() {
   const totalICXAmount = useCollateralTotalICXAmount();
   const totalSICXAmount = useCollateralTotalSICXAmount();
 
+  const roundedTypedValue = Math.round(new BigNumber(typedValue || '0').times(100).toNumber()) / 100;
+
   const currentAmount =
     icxDisplayType === 'ICX'
-      ? totalICXAmount.minus(new BigNumber(typedValue || '0'))
-      : totalSICXAmount.minus(new BigNumber(typedValue || '0').div(ratio.sICXICXratio)).times(ratio.sICXICXratio);
+      ? totalICXAmount.minus(new BigNumber(roundedTypedValue))
+      : totalSICXAmount.minus(new BigNumber(roundedTypedValue).div(ratio.sICXICXratio)).times(ratio.sICXICXratio);
 
   //  calculate dependentField value
   const parsedAmount = {
-    [independentField]: new BigNumber(typedValue || '0'),
+    [independentField]: new BigNumber(roundedTypedValue),
     [dependentField]: currentAmount,
   };
 
-  return parsedAmount[Field.LEFT].decimalPlaces(2);
+  console.log('pa');
+  console.log(parsedAmount[Field.LEFT].toNumber());
+
+  return parsedAmount[Field.LEFT];
 }
 
 export function useCollateralInputAmountInSICX() {
@@ -206,6 +211,10 @@ export function useCollateralInputAmountInSICX() {
 export function useCollateralInputAmountInUSD() {
   const collateralInputAmount = useCollateralInputAmount();
   const ratio = useRatio();
+
+  console.log('dlrs');
+
+  console.log(collateralInputAmount.toNumber());
 
   return React.useMemo(() => {
     return collateralInputAmount.multipliedBy(ratio.ICXUSDratio);

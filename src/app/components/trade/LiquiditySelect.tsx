@@ -69,7 +69,7 @@ export default function LiquiditySelect() {
                     {pool.pair}
                   </DataText>
                   <DataText variant="p" textAlign="right">
-                    {apys && apys[pool.poolId] ? apys[pool.poolId].times(100).dp(2).toFormat() : '-'}%
+                    {apys && apys[pool.poolId] ? `${apys[pool.poolId].times(100).dp(2).toFormat()}%` : '-'}
                   </DataText>
                 </ListItem>
               ))}

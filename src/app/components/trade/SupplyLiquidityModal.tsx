@@ -64,6 +64,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   const handleAdd = (currencyType: Field) => async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
+    const token = currencies[currencyType] as Token;
+
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
         if (currencyType === Field.CURRENCY_A) {
@@ -73,17 +75,16 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         }
       }
 
-      const currencyKey =
-        currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
-
       const res: any = await bnJs
         .inject({ account })
-        [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]!.toFixed(), currencyKey));
+        .getContract(token.address)
+        .deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]!.toFixed(), token.symbol));
+
       addTransaction(
         { hash: res.result },
         {
-          pending: depositMessage(currencyKey, selectedPair.name).pendingMessage,
-          summary: depositMessage(currencyKey, selectedPair.name).successMessage,
+          pending: depositMessage(token.symbol!, selectedPair.name).pendingMessage,
+          summary: depositMessage(token.symbol!, selectedPair.name).successMessage,
         },
       );
 
@@ -106,8 +107,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   const handleRemove = (currencyType: Field, amountWithdraw: BigNumber) => async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (!account) return;
 
     const token = currencies[currencyType] as Token;
 

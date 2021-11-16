@@ -2,7 +2,7 @@ import { SupportedChainId as NetworkId } from './chain';
 
 const MAINNET_ADDRESSES = {
   loans: 'cx66d4d90f5f113eba575bf793570135f9b10cece1',
-  router: 'cx4c456f4a02d2576fe712ea10b311a5fe8d06d205',
+  router: 'cx21e94c08c03daee80c25d8ee3ea22a20786ec231',
   staking: 'cx43e2eec79eb76293c298f2b17aec06097be606e0',
   dividends: 'cx203d9cd2a669be67177e997b8948ce2c35caffae',
   reserve: 'cxf58b9a1898998a31be7f1d99276204a3333ac9b3',

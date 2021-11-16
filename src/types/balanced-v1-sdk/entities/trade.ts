@@ -93,6 +93,10 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
    */
   public readonly tradeType: TTradeType;
   /**
+   * The fee amount.
+   */
+  private _fee: CurrencyAmount<TInput> | null = null;
+  /**
    * The input amount for the trade assuming no slippage.
    */
   public readonly inputAmount: CurrencyAmount<TInput>;
@@ -179,7 +183,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     );
     this.priceImpact = this.isQueue
       ? new Percent(0)
-      : computePriceImpact(route.midPrice, this.inputAmount, this.outputAmount);
+      : computePriceImpact(route.midPrice, this.inputAmount.subtract(this.fee), this.outputAmount);
   }
 
   /**
@@ -396,7 +400,9 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     return bestTrades;
   }
 
-  get fee(): CurrencyAmount<Currency> {
+  get fee(): CurrencyAmount<TInput> {
+    if (this._fee !== null) return this._fee;
+
     let result = new Fraction(ONE);
     for (let i = 0; i < this.route.path.length - 1; i++) {
       const inputCurrencySymbol = this.route.path[i].symbol;
@@ -411,7 +417,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       }
     }
 
-    return this.inputAmount.multiply(new Fraction(ONE).subtract(result));
+    return (this._fee = this.inputAmount.multiply(new Fraction(ONE).subtract(result)));
   }
 
   get isQueue(): boolean {

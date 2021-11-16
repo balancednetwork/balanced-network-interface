@@ -27,7 +27,7 @@ import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/po
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
-import { formatBigNumber } from 'utils';
+import { formatBigNumber, getPairName } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -117,7 +117,7 @@ const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => 
 
   return (
     <ListItem border={border}>
-      <DataText>{pair.name}</DataText>
+      <DataText>{getPairName(pair)}</DataText>
       <DataText>
         {`${formatBigNumber(poolData?.suppliedBase, 'currency')} ${pair.baseCurrencyKey}`}
         <br />
@@ -169,7 +169,7 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
 
   return (
     <ListItem border={border}>
-      <DataText>{pair.name}</DataText>
+      <DataText>{getPairName(pair)}</DataText>
       <DataText>
         <Typography fontSize={16}>
           {`${formatBigNumber(balance1?.balance, 'currency')} ${pair.quoteCurrencyKey}`}
@@ -284,7 +284,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
       <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
-          <Typography as="span">{pair.name}</Typography>
+          <Typography as="span">{getPairName(pair)}</Typography>
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between">
@@ -533,7 +533,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
       <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
-          <Typography as="span">{pair.name}</Typography>
+          <Typography as="span">{getPairName(pair)}</Typography>
         </Typography>
         <Box mb={3}>
           <CurrencyInputPanel

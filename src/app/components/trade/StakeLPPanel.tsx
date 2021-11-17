@@ -39,18 +39,16 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
         setStakedBalance(BalancedJs.utils.toIcx(result));
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions]);
+  }, [account, poolId, transactions]);
 
   useEffect(() => {
     (async () => {
       if (account) {
         const result = await bnJs.Dex.balanceOf(account, poolId);
-        setTotalStaked(BalancedJs.utils.toIcx(result));
+        setTotalStaked(BalancedJs.utils.toIcx(result).plus(stakedBalance));
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions]);
+  }, [transactions, stakedBalance, account, poolId]);
 
   const [isAdjusting, setAdjusting] = React.useState(false);
   const handleAdjust = () => {

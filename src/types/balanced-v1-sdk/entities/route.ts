@@ -44,11 +44,47 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     const prices: Price<Currency, Currency>[] = [];
     /* @ts-ignore */
     for (const [i, pair] of this.pairs.entries()) {
-      prices.push(
-        this.path[i].equals(pair.token0)
-          ? new Price(pair.reserve0.currency, pair.reserve1.currency, pair.reserve0.quotient, pair.reserve1.quotient)
-          : new Price(pair.reserve1.currency, pair.reserve0.currency, pair.reserve1.quotient, pair.reserve0.quotient),
-      );
+      if (pair.queueRate) {
+        if (this.path[i].symbol === 'sICX') {
+          prices.push(
+            this.path[i].equals(pair.token0)
+              ? new Price(
+                  pair.reserve0.currency,
+                  pair.reserve1.currency,
+                  pair.queueRate.denominator,
+                  pair.queueRate.numerator,
+                )
+              : new Price(
+                  pair.reserve1.currency,
+                  pair.reserve0.currency,
+                  pair.queueRate.denominator,
+                  pair.queueRate.numerator,
+                ),
+          );
+        } else {
+          prices.push(
+            this.path[i].equals(pair.token0)
+              ? new Price(
+                  pair.reserve0.currency,
+                  pair.reserve1.currency,
+                  pair.queueRate.numerator,
+                  pair.queueRate.denominator,
+                )
+              : new Price(
+                  pair.reserve1.currency,
+                  pair.reserve0.currency,
+                  pair.queueRate.numerator,
+                  pair.queueRate.denominator,
+                ),
+          );
+        }
+      } else {
+        prices.push(
+          this.path[i].equals(pair.token0)
+            ? new Price(pair.reserve0.currency, pair.reserve1.currency, pair.reserve0.quotient, pair.reserve1.quotient)
+            : new Price(pair.reserve1.currency, pair.reserve0.currency, pair.reserve1.quotient, pair.reserve0.quotient),
+        );
+      }
     }
     const reduced = prices
       .slice(1)

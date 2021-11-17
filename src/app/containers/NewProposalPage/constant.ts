@@ -1,10 +1,12 @@
 import BigNumber from 'bignumber.js';
-import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { addressToCurrencyKeyMap } from 'constants/currency';
 
 import { CurrencyValue } from '../../components/newproposal/FundingInput';
+
+const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
 export const MAX_RATIO_VALUE = 100;
 
@@ -196,10 +198,7 @@ export const PROPOSAL_CONFIG = {
       const res = await bnJs.DAOFund.getBalances();
       return Object.entries(res).map(item => {
         return {
-          symbol:
-            addressToCurrencyKeyMap[NetworkId.YEOUIDO][item[0]] ||
-            addressToCurrencyKeyMap[NetworkId.MAINNET][item[0]] ||
-            item[0],
+          symbol: addressToCurrencyKeyMap[NETWORK_ID][item[0]] || item[0],
           amount: BalancedJs.utils.toIcx(item[1] as string),
         };
       });
@@ -210,9 +209,7 @@ export const PROPOSAL_CONFIG = {
           ({ amount, symbol }) =>
             amount && {
               amount: BalancedJs.utils.toLoop(amount).toNumber(),
-              address:
-                getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.YEOUIDO]) ||
-                getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.MAINNET]),
+              address: getKeyByValue(symbol, addressToCurrencyKeyMap[NETWORK_ID]),
             },
         )
         .filter(value => value);

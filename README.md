@@ -54,7 +54,6 @@ REACT_APP_NETWORK_ID=1
 CI checks will run against all PRs.
 
 ### Code Style/Convention
+
 The Balanced frontend repo uses the Airbnb Code style.
 https://github.com/airbnb/javascript#naming-conventions
-
-

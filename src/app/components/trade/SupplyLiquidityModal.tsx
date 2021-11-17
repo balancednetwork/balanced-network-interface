@@ -17,6 +17,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { usePool, usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
+import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
 import { formatBigNumber } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -28,13 +29,8 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children?: React.ReactNode;
-  parsedAmounts: { [field in Field]: BigNumber };
-}
-
-export enum SupplyModalStatus {
-  'Supply' = 'Supply',
-  'Cancel' = 'Cancel',
-  'Remove' = 'Remove',
+  parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
+  currencies: { [field in Field]?: Currency };
 }
 
 export enum Field {
@@ -45,11 +41,11 @@ export enum Field {
 // temporarily solution. need to refactor later
 const BALNRewardPairs = [1, 2, 3, 4];
 
-export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }: ModalProps) {
+export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies }: ModalProps) {
   const { account } = useIconReact();
 
   const selectedPair = usePoolPair();
-  const pool = usePool(selectedPair.poolId);
+  const pool = usePool(selectedPair.id);
 
   const addTransaction = useTransactionAdder();
 
@@ -68,6 +64,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
   const handleAdd = (currencyType: Field) => async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
+    const token = currencies[currencyType] as Token;
+
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
         if (currencyType === Field.CURRENCY_A) {
@@ -77,17 +75,16 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
         }
       }
 
-      const currencyKey =
-        currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
-
       const res: any = await bnJs
-        .inject({ account: account })
-        [currencyKey].deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType], currencyKey));
+        .inject({ account })
+        .getContract(token.address)
+        .deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]!.toFixed(), token.symbol));
+
       addTransaction(
         { hash: res.result },
         {
-          pending: depositMessage(currencyKey, selectedPair.pair).pendingMessage,
-          summary: depositMessage(currencyKey, selectedPair.pair).successMessage,
+          pending: depositMessage(token.symbol!, selectedPair.name).pendingMessage,
+          summary: depositMessage(token.symbol!, selectedPair.name).successMessage,
         },
       );
 
@@ -111,10 +108,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
   const handleRemove = (currencyType: Field, amountWithdraw: BigNumber) => async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    if (!account) return;
-
-    const currencyKey =
-      currencyType === Field.CURRENCY_A ? selectedPair.baseCurrencyKey : selectedPair.quoteCurrencyKey;
+    const token = currencies[currencyType] as Token;
 
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
@@ -126,13 +120,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
       }
 
       const res: any = await bnJs
-        .inject({ account: account })
-        .Dex.withdraw(bnJs[currencyKey].address, BalancedJs.utils.toLoop(amountWithdraw, currencyKey));
+        .inject({ account })
+        .Dex.withdraw(token.address, BalancedJs.utils.toLoop(amountWithdraw, token.symbol));
       addTransaction(
         { hash: res.result },
         {
-          pending: `Withdrawing ${currencyKey}`,
-          summary: `${formatBigNumber(amountWithdraw, 'currency')} ${currencyKey} added to your wallet`,
+          pending: `Withdrawing ${token.symbol}`,
+          summary: `${formatBigNumber(amountWithdraw, 'currency')} ${token.symbol} added to your wallet`,
         },
       );
 
@@ -163,14 +157,14 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
       const t = parsedAmounts[Field.CURRENCY_B];
 
       bnJs
-        .inject({ account: account })
-        .Dex.transferICX(BalancedJs.utils.toLoop(t))
+        .inject({ account })
+        .Dex.transferICX(BalancedJs.utils.toLoop(t!.toFixed()))
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
             {
-              pending: supplyMessage(selectedPair.pair).pendingMessage,
-              summary: supplyMessage(selectedPair.pair).successMessage,
+              pending: supplyMessage(selectedPair.name).pendingMessage,
+              summary: supplyMessage(selectedPair.name).successMessage,
             },
           );
           if (confirmTxStatus === TransactionStatus.failure) {
@@ -187,11 +181,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     } else {
+      const baseToken = currencies[Field.CURRENCY_A] as Token;
+      const quoteToken = currencies[Field.CURRENCY_B] as Token;
       bnJs
-        .inject({ account: account })
+        .inject({ account })
         .Dex.add(
-          bnJs[selectedPair.baseCurrencyKey].address,
-          bnJs[selectedPair.quoteCurrencyKey].address,
+          baseToken.address,
+          quoteToken.address,
           BalancedJs.utils.toLoop(pool?.baseDeposited || new BigNumber(0), selectedPair.baseCurrencyKey),
           BalancedJs.utils.toLoop(pool?.quoteDeposited || new BigNumber(0), selectedPair.quoteCurrencyKey),
         )
@@ -199,8 +195,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
           addTransaction(
             { hash: res.result },
             {
-              pending: supplyMessage(selectedPair.pair).pendingMessage,
-              summary: supplyMessage(selectedPair.pair).successMessage,
+              pending: supplyMessage(selectedPair.name).pendingMessage,
+              summary: supplyMessage(selectedPair.name).successMessage,
             },
           );
 
@@ -273,8 +269,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
     changeShouldLedgerSign(false);
   };
 
-  const isQueue = selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX;
-  const isBALNRewardPool = BALNRewardPairs.some(id => id === selectedPair.poolId);
+  const isQueue = selectedPair.id === BalancedJs.utils.POOL_IDS.sICXICX;
+  const isBALNRewardPool = BALNRewardPairs.some(id => id === selectedPair.id);
   const isEnabled = isQueue
     ? true
     : (addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success) ||
@@ -334,7 +330,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
               {shouldShowSendBtnA ? (
                 <>
                   <Typography variant="p" fontWeight="bold" textAlign="center">
-                    {formatBigNumber(parsedAmounts[Field.CURRENCY_A], 'ratio')} {selectedPair.baseCurrencyKey}
+                    {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {selectedPair.baseCurrencyKey}
                   </Typography>
                   {shouldSendAssetsA && (
                     <>
@@ -363,7 +359,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
               {shouldShowSendBtnB ? (
                 <>
                   <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
-                    {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
+                    {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {selectedPair.quoteCurrencyKey}
                   </Typography>
                   {shouldSendAssetsB && (
                     <>
@@ -463,7 +459,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts }:
         <Flex alignItems="center" hidden={!isQueue}>
           <Box width={1}>
             <Typography variant="p" fontWeight="bold" textAlign={isQueue ? 'center' : 'right'}>
-              {formatBigNumber(parsedAmounts[Field.CURRENCY_B], 'ratio')} {selectedPair.quoteCurrencyKey}
+              {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {selectedPair.quoteCurrencyKey}
             </Typography>
             <Typography mt={2} textAlign="center">
               Your ICX will be locked for 24 hours. <br />

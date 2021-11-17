@@ -5,6 +5,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
 
 import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
+import { PairInfo } from 'constants/pairs';
 import { Field } from 'store/swap/actions';
 import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
@@ -154,4 +155,8 @@ export function parseUnits(value: string, decimals: number): string {
 
 export function formatUnits(value: string, decimals: number): string {
   return new BigNumber(value).div(TEN.pow(decimals)).toFixed();
+}
+
+export function getPairName(pair: PairInfo) {
+  return `${pair.baseCurrencyKey} / ${pair.quoteCurrencyKey}`;
 }

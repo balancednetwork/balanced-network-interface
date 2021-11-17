@@ -15,6 +15,7 @@ import useWidth from 'hooks/useWidth';
 import { useAllPairsAPY } from 'queries/reward';
 import { resetMintState } from 'store/mint/actions';
 import { useSetPair, usePoolPair } from 'store/pool/hooks';
+import { getPairName } from 'utils';
 
 export default function PairSelector() {
   const upSmall = useMedia('(min-width:768px)');
@@ -44,7 +45,7 @@ export default function PairSelector() {
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <div>
           <StyledWrapper onClick={toggleOpen}>
-            <Text active={open}>{selectedPair.name}</Text>
+            <Text active={open}>{getPairName(selectedPair)}</Text>
             <StyledArrowDownIcon />
           </StyledWrapper>
 
@@ -57,7 +58,7 @@ export default function PairSelector() {
               {SUPPORTED_PAIRS.map(pair => (
                 <ListItem key={pair.id} onClick={() => handleSelectPair(pair)}>
                   <DataText variant="p" fontWeight="bold">
-                    {pair.name}
+                    {getPairName(pair)}
                   </DataText>
                   <DataText variant="p" textAlign="right">
                     {apys && apys[pair.id] ? apys[pair.id].times(100).dp(2).toFormat() : '-'}%

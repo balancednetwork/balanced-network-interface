@@ -1,7 +1,6 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
@@ -149,12 +148,14 @@ export default function LPPanel() {
   const sliderValue =
     liquidityMinted && availableLiquidity
       ? Math.min(
-          JSBI.toNumber(
-            JSBI.multiply(JSBI.divide(liquidityMinted.quotient, availableLiquidity.quotient), JSBI.BigInt(100)),
-          ),
+          new BigNumber(liquidityMinted.quotient.toString())
+            .div(availableLiquidity.quotient.toString())
+            .multipliedBy(100)
+            .toNumber(),
           100,
         )
       : 0;
+
   const sliderInstance = React.useRef<any>(null);
 
   React.useEffect(() => {

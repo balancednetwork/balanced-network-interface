@@ -6,7 +6,7 @@ import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
 import { usePoolPair, usePoolData } from 'store/pool/hooks';
-import { formatBigNumber } from 'utils';
+import { formatBigNumber, getPairName } from 'utils';
 
 import { Link } from '../Link';
 
@@ -91,7 +91,7 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
   return (
     <Box bg="bg2" flex={1} padding={[5, 7]}>
       <Typography variant="h3" mb={2}>
-        {selectedPair.name} liquidity pool
+        {getPairName(selectedPair)} liquidity pool
       </Typography>
 
       <Typography mb={5} lineHeight={'25px'}>

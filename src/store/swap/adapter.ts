@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { PairInfo, SUPPORTED_PAIRS } from '../../constants/pairs';
-import { BETTER_TRADE_LESS_HOPS_THRESHOLD, DEFAULT_MAX_HOPS, LIMIT_MAX_HOPS } from '../../constants/routing';
+import { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } from '../../constants/routing';
 import { Pool } from '../../types';
 import { convertPair } from '../../types/adapter';
 import { Currency, CurrencyAmount, TradeType } from '../../types/balanced-sdk-core';
@@ -27,10 +27,8 @@ function getPairs(pools: { [p: string]: Pool }) {
 export function useTradeExactIn(
   currencyAmountIn?: CurrencyAmount<Currency>,
   currencyOut?: Currency,
-  { maxHops = DEFAULT_MAX_HOPS } = {},
+  { maxHops = MAX_HOPS } = {},
 ): Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined {
-  if (maxHops > LIMIT_MAX_HOPS) maxHops = LIMIT_MAX_HOPS;
-
   const pools = usePools();
 
   const pairs = getPairs(pools);
@@ -66,10 +64,8 @@ export function useTradeExactIn(
 export function useTradeExactOut(
   currencyIn?: Currency,
   currencyAmountOut?: CurrencyAmount<Currency>,
-  { maxHops = DEFAULT_MAX_HOPS } = {},
+  { maxHops = MAX_HOPS } = {},
 ): Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | undefined {
-  if (maxHops > LIMIT_MAX_HOPS) maxHops = LIMIT_MAX_HOPS;
-
   const pools = usePools();
 
   const pairs = getPairs(pools);

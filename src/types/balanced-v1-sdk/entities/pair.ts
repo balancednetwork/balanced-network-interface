@@ -222,6 +222,12 @@ export class Pair {
     invariant(tokenAmounts[0].currency.equals(this.token0) && tokenAmounts[1].currency.equals(this.token1), 'TOKEN');
 
     let liquidity: JSBI;
+
+    // when the pair is sICX/ICX queue
+    if (this.queueRate) {
+      return CurrencyAmount.fromRawAmount(this.liquidityToken, tokenAmountB.quotient);
+    }
+
     if (JSBI.equal(totalSupply.quotient, ZERO)) {
       liquidity = JSBI.subtract(
         sqrt(JSBI.multiply(tokenAmounts[0].quotient, tokenAmounts[1].quotient)),

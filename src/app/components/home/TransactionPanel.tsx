@@ -2,7 +2,7 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
 import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex, Link } from 'rebass/styled-components';
@@ -13,9 +13,11 @@ import { BoxPanel } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
-import { CURRENCY } from 'constants/currency';
+import { NETWORK_ID } from 'constants/config';
+import { PairInfo, SUPPORTED_PAIRS_INFO } from 'constants/pairs';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { Transaction, useAllTransactionsQuery, useInternalTransactionQuery } from 'queries/history';
-import { formatBigNumber, getTrackerLink } from 'utils';
+import { formatBigNumber, formatUnits, getTrackerLink } from 'utils';
 
 const Row = styled(Box)`
   display: grid;
@@ -86,32 +88,10 @@ const METHOD_POSITIVE_SIGN = [
   'Withdraw1Value',
 ];
 
-const getContractName = (addr?: string) => {
-  const name = Object.keys(addresses[NetworkId.MAINNET]).find(key => addresses[NetworkId.MAINNET][key] === addr);
-  return CURRENCY.find(item => item.toLowerCase() === name?.toLocaleLowerCase());
-};
+const getTokenSymbol = (address?: string) =>
+  SUPPORTED_TOKENS_LIST.find(token => token.address === address)?.symbol || '';
 
 const getContractAddr = (tx: Transaction) => tx.indexed?.find(item => item.startsWith('cx'));
-const isIUSDC = (addr: string) => addresses[NetworkId.MAINNET].iusdc === addr;
-const isIUSDT = (addr: string) => addresses[NetworkId.MAINNET].iusdt === addr;
-
-const POOL_IDS = {
-  15: 'IUSDT bnUSD',
-  14: 'METX USDS',
-  13: 'METX IUSDC',
-  12: 'METX sICX',
-  11: 'METX bnUSD',
-  10: 'USDS bnUSD',
-  9: 'CFT sICX',
-  8: 'OMM USDS',
-  7: 'OMM sICX',
-  6: 'OMM IUSDC',
-  5: 'IUSDC bnUSD',
-  4: 'BALN sICX',
-  3: 'BALN bnUSD',
-  2: 'sICX bnUSD',
-  1: 'sICX ICX',
-};
 
 const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: string; positive?: boolean }) => (
   <Typography variant="p" textAlign="right">
@@ -128,8 +108,15 @@ const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: stri
   </Typography>
 );
 
-const convertValue = (value: string) =>
-  BalancedJs.utils.toIcx(value).isGreaterThan(0.004) ? formatBigNumber(BalancedJs.utils.toIcx(value), 'currency') : '';
+const convertValue = (value: string, currencyKey?: string) => {
+  const decimals = SUPPORTED_TOKENS_LIST.find(token => token.symbol === currencyKey)?.decimals;
+  const currency = new BigNumber(formatUnits(value, decimals || 18));
+  const exceptionList = ['IUSDT', 'IUSDC'];
+
+  return currency.isGreaterThan(0.004) || (currencyKey && exceptionList.includes(currencyKey))
+    ? formatBigNumber(currency, 'currency')
+    : '';
+};
 
 const getValue = (tx: Transaction) => {
   const { indexed, data, value } = tx;
@@ -138,14 +125,10 @@ const getValue = (tx: Transaction) => {
 
   if (!_value) return '';
 
-  return getContractAddr(tx) === addresses[NetworkId.MAINNET].iusdc
-    ? convertIUSDC(new BigNumber(_value))
-    : getContractAddr(tx) === addresses[NetworkId.MAINNET].iusdt
-    ? convertIUSDC(new BigNumber(_value))
-    : convertValue(_value);
-};
+  const tokenSymbol = getTokenSymbol(getContractAddr(tx));
 
-const convertIUSDC = (value: BigNumber) => formatBigNumber(value.div(10e5), 'currency');
+  return convertValue(_value, tokenSymbol);
+};
 
 const getMethod = (tx: Transaction) => {
   let method: keyof typeof METHOD_CONTENT | '' = tx.method as any;
@@ -155,47 +138,39 @@ const getMethod = (tx: Transaction) => {
   return method || '';
 };
 
+const getSymbolByPoolId = (poolId: number) => {
+  const pool: PairInfo | undefined = SUPPORTED_PAIRS_INFO[NETWORK_ID].find(pool => pool.id === poolId);
+  return { symbol1: pool?.baseCurrencyKey || '', symbol2: pool?.quoteCurrencyKey || '' };
+};
+
 const getValuesAndSymbols = (tx: Transaction) => {
   const method = getMethod(tx);
+
   switch (method) {
     case 'Claimed': {
-      const amounts: string[] = [];
-      const symbols: string[] = [];
+      let result;
 
       if (Array.isArray(tx.data)) {
         try {
           const data = JSON.parse(tx.data[tx.data.length - 1].replace(/'/g, '"'));
-          Object.keys(data).forEach(key => {
-            if (data[key] !== 0) {
-              symbols.push(getContractName(key) || '');
-              amounts.push(
-                isIUSDC(key)
-                  ? convertIUSDC(new BigNumber(data[key]))
-                  : isIUSDT(key)
-                  ? convertIUSDC(new BigNumber(data[key]))
-                  : convertValue(data[key]),
-              );
+          result = Object.keys(data).reduce((acc: { symbol: string; amount: string }[], current) => {
+            if (data[current] !== 0) {
+              return [
+                ...acc,
+                {
+                  symbol: getTokenSymbol(current),
+                  amount: convertValue(data[current], getTokenSymbol(current)),
+                },
+              ];
             }
-          });
+            return acc;
+          }, []);
         } catch (ex) {
           console.log(ex);
         }
       }
 
-      return {
-        amount1: amounts[0],
-        amount2: amounts[1],
-        amount3: amounts[2],
-        amount4: amounts[3],
-        amount5: amounts[4],
-        amount6: amounts[5],
-        symbol1: symbols[0],
-        symbol2: symbols[1],
-        symbol3: symbols[2],
-        symbol4: symbols[3],
-        symbol5: symbols[4],
-        symbol6: symbols[5],
-      };
+      return result;
     }
     case 'stake': {
       const amount1 = convertValue((tx.data as any)?.params?._value || 0);
@@ -204,51 +179,28 @@ const getValuesAndSymbols = (tx: Transaction) => {
     case 'Remove':
     case 'Add': {
       const poolId = parseInt(tx.indexed[1]);
-      const [symbol1, symbol2] = (POOL_IDS[poolId] || '').split(' ');
-      let amount1 = convertValue(tx.data[0]);
-      let amount2 = convertValue(tx.data[1]);
-
-      if (poolId === 5) {
-        amount1 = convertIUSDC(new BigNumber(tx.data[0]));
-      }
-
-      if (poolId === 15) {
-        amount1 = convertIUSDC(new BigNumber(tx.data[0]));
-      }
-
-      if (symbol2?.toLowerCase() === 'iusdc') {
-        amount2 = convertIUSDC(new BigNumber(tx.data[1]));
-      }
-
-      if (symbol2?.toLowerCase() === 'iusdt') {
-        amount2 = convertIUSDC(new BigNumber(tx.data[1]));
-      }
+      const { symbol1, symbol2 } = getSymbolByPoolId(poolId);
+      const amount1 = convertValue(tx.data[0], symbol1);
+      const amount2 = convertValue(tx.data[1], symbol2);
 
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Swap': {
-      let symbol1 = getContractName(tx.data[0]);
-      let symbol2 = getContractName(tx.data[1]);
+      let symbol1 = getTokenSymbol(tx.data[0]);
+      let symbol2 = getTokenSymbol(tx.data[1]);
 
       if (!symbol2) {
         symbol1 = 'sICX';
         symbol2 = 'ICX';
       }
-      const amount1 = isIUSDC(tx.data[0])
-        ? convertIUSDC(new BigNumber(tx.data[4]))
-        : isIUSDT(tx.data[0])
-        ? convertIUSDC(new BigNumber(tx.data[4]))
-        : convertValue(tx.data[4]);
-      const amount2 = isIUSDC(tx.data[1])
-        ? convertIUSDC(new BigNumber(tx.data[5]))
-        : isIUSDT(tx.data[1])
-        ? convertIUSDC(new BigNumber(tx.data[5]))
-        : convertValue(tx.data[5]);
+      const amount1 = convertValue(tx.data[4], symbol1);
+      const amount2 = convertValue(tx.data[5], symbol2);
+
       return { amount1, amount2, symbol1, symbol2 };
     }
     case 'Withdraw1Value':
     case 'Deposit': {
-      const symbol1 = getContractName(getContractAddr(tx)) || '';
+      const symbol1 = getTokenSymbol(getContractAddr(tx));
       const amount1 = getValue(tx);
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
@@ -290,14 +242,16 @@ const getValuesAndSymbols = (tx: Transaction) => {
     }
     case 'Withdraw': {
       const amount1 = convertValue(tx.data.fromValue);
-      const symbol1 = getContractName(tx.data.from);
+      const symbol1 = getTokenSymbol(tx.data.from);
       const amount2 = convertValue(tx.data.toValue);
-      const symbol2 = getContractName(tx.data.to);
+      const symbol2 = getTokenSymbol(tx.data.to);
       return { amount1, amount2, symbol1, symbol2 };
     }
     default: {
       const amount1 = getValue(tx);
-      const symbol1 = tx.indexed?.find(item => CURRENCY.includes(item)) || '';
+      const symbol1 =
+        tx.indexed?.find(item => SUPPORTED_TOKENS_LIST.find(token => token.symbol === item)?.symbol) || '';
+
       return { amount1, amount2: '', symbol1, symbol2: '' };
     }
   }
@@ -357,30 +311,11 @@ const getAmountWithSign = (tx: Transaction) => {
     }
 
     case 'Claimed': {
-      const {
-        amount1,
-        amount2,
-        amount3,
-        amount4,
-        amount5,
-        amount6,
-        symbol1,
-        symbol2,
-        symbol3,
-        symbol4,
-        symbol5,
-        symbol6,
-      } = getValuesAndSymbols(tx);
-      return (
-        <>
-          <AmountItem value={amount1} symbol={symbol1} positive={true} />
-          <AmountItem value={amount2} symbol={symbol2} positive={true} />
-          <AmountItem value={amount3} symbol={symbol3} positive={true} />
-          <AmountItem value={amount4} symbol={symbol4} positive={true} />
-          <AmountItem value={amount5} symbol={symbol5} positive={true} />
-          <AmountItem value={amount6} symbol={symbol6} positive={true} />
-        </>
-      );
+      const amountItemList = getValuesAndSymbols(tx);
+
+      return amountItemList.map(({ symbol, amount }) => (
+        <AmountItem key={symbol + amount} value={amount} symbol={symbol} positive={true} />
+      ));
     }
 
     case 'VoteCast':
@@ -436,6 +371,14 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
         break;
       }
 
+      case 'Claimed': {
+        const claimedList = getValuesAndSymbols(tx);
+        if (claimedList.length === 0) {
+          content = '';
+        }
+        break;
+      }
+
       default:
         const { amount1, symbol1 } = getValuesAndSymbols(tx);
         if (!amount1) {
@@ -446,7 +389,6 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
         }
         break;
     }
-
     return content;
   };
 

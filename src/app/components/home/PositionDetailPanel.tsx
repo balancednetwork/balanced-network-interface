@@ -26,12 +26,21 @@ import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
 
+const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
+
+const PERIOD_LABELS: { [key: string]: string } = {
+  [Period.day]: 'Past day',
+  [Period.week]: 'Past week',
+  [Period.month]: 'Past month',
+  [Period.all]: 'All time',
+};
+
 const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmount();
   const loanInputAmount = useLoanInputAmount();
   const loanParameters = useLoanParameters();
   const { lockingRatio, liquidationRatio } = loanParameters || {};
-  console.log(lockingRatio);
+
   return React.useMemo(() => {
     if (!collateralInputAmount.isZero() && lockingRatio && liquidationRatio) {
       return [
@@ -54,14 +63,18 @@ const useOwnDailyRewards = (): BigNumber => {
   return totalDailyRewards.times(debtHoldShare).div(100);
 };
 
-const displayPeriod: { [key: string]: string } = {
-  day: 'Past day',
-  week: 'Past week',
-  month: 'Past month',
-  all: 'All time',
-};
+const useCollateralLockedSliderPos = () => {
+  const loanParameters = useLoanParameters();
+  const { lockingRatio, liquidationRatio } = loanParameters || {};
 
-const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
+  return React.useMemo(() => {
+    if (lockingRatio && liquidationRatio) {
+      return (lockingRatio - liquidationRatio) / (9 - liquidationRatio);
+    }
+
+    return 0;
+  }, [lockingRatio, liquidationRatio]);
+};
 
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
@@ -115,6 +128,8 @@ const PositionDetailPanel = () => {
     closeMenu();
     setPeriod(p);
   };
+
+  const pos = useCollateralLockedSliderPos();
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
     return null;
@@ -183,7 +198,7 @@ const PositionDetailPanel = () => {
           </Tooltip>
 
           <Box flex={1} style={{ position: 'relative' }}>
-            <Locked warned={isLockWarning}>
+            <Locked warned={isLockWarning} pos={pos}>
               <MetaData as="dl" style={{ textAlign: 'right' }}>
                 <Tooltip
                   text="You can’t withdraw any collateral if you go beyond this threshold."
@@ -256,12 +271,12 @@ const PositionDetailPanel = () => {
 
               <ClickAwayListener onClickAway={closeMenu}>
                 <div>
-                  <UnderlineTextWithArrow onClick={handleToggle} text={displayPeriod[period]} arrowRef={arrowRef} />
+                  <UnderlineTextWithArrow onClick={handleToggle} text={PERIOD_LABELS[period]} arrowRef={arrowRef} />
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (
                         <MenuItem className={p === 'all' ? 'border-top' : ''} key={p} onClick={() => handlePeriod(p)}>
-                          {displayPeriod[p]}
+                          {PERIOD_LABELS[p]}
                         </MenuItem>
                       ))}
                     </MenuList>
@@ -390,9 +405,8 @@ const MetaData = styled(Box)`
   }
 `;
 
-// todo: need to change the position according LTV
-const Locked = styled(Threshold)`
-  left: 66.5%;
+const Locked = styled(Threshold)<{ pos: number }>`
+  left: ${({ pos }) => (1 - pos) * 100}%;
 
   ${MetaData} {
     width: 150px;

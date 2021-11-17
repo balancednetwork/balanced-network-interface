@@ -2,6 +2,7 @@ import { SupportedChainId as NetworkId } from './chain';
 
 const MAINNET_ADDRESSES = {
   loans: 'cx66d4d90f5f113eba575bf793570135f9b10cece1',
+  router: 'cx21e94c08c03daee80c25d8ee3ea22a20786ec231',
   staking: 'cx43e2eec79eb76293c298f2b17aec06097be606e0',
   dividends: 'cx203d9cd2a669be67177e997b8948ce2c35caffae',
   reserve: 'cxf58b9a1898998a31be7f1d99276204a3333ac9b3',
@@ -26,6 +27,7 @@ const MAINNET_ADDRESSES = {
 
 const YEOUIDO_ADDRESSES = {
   loans: 'cx3259f3ff9a51ca3bf170d4ff9104cf4af126ca1c',
+  router: 'cx4c456f4a02d2576fe712ea10b311a5fe8d06d205',
   staking: 'cx9d829396d887f9292d8af488fab78ad24ab6b99a',
   dividends: 'cx5b996d251009340f7c312b9df5c44f0f39a20a91',
   reserve: 'cx1754666c6779dc5e495a462144dd15e4a68fe776',
@@ -37,7 +39,7 @@ const YEOUIDO_ADDRESSES = {
   sicx: 'cxae6334850f13dfd8b50f8544d5acb126bb8ef82d',
   bnusd: 'cxc48c9c81ceef04445c961c5cc8ff056d733dfe3a',
   baln: 'cx36169736b39f59bf19e8950f6c8fa4bfa18b710a',
-  omm: 'cx05515d126a47a98c682fa86992329e6c2ec70503',
+  omm: 'cxc58f32a437c8e5a5fcb8129626662f2252ad2678',
   iusdc: 'cx65f639254090820361da483df233f6d0e69af9b7',
   iusdt: '',
   usds: 'cxc0666df567a6e0b49342648e98ccbe5362b264ea',
@@ -50,6 +52,7 @@ const YEOUIDO_ADDRESSES = {
 
 const SEJONG_ADDRESSES = {
   loans: 'cx3228124be7c85e3e57edebf870c4075c33c34c5f',
+  router: 'cx19d18e18c50bd9da5353d71117960492e3ab2fed',
   staking: 'cx1eb5b209e4c6f95a958bddb322d76a2168e576b2',
   dividends: 'cx020042bb8742bfca138889e23817bee87ad8caa0',
   reserve: 'cx76d98fc79f779308d2e872b00e7571bebef59031',

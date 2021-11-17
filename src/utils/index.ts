@@ -1,13 +1,12 @@
 import BigNumber from 'bignumber.js';
 import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
-import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
 
-import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
-import { PairInfo } from 'constants/pairs';
+import { currencyKeyToIconMap } from 'constants/currency';
+import { MINIMUM_ICX_FOR_ACTION, ZERO, ONE } from 'constants/index';
 import { Field } from 'store/swap/actions';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
+import { CurrencyKey, CurrencyAmount } from 'types';
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
@@ -80,21 +79,15 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   }
 }
 
-const MIN_NATIVE_CURRENCY_FOR_GAS: JSBI = JSBI.multiply(
-  JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)),
-  JSBI.BigInt(MINIMUM_ICX_FOR_ACTION),
-); // 2 ICX
+export const getCurrencyKeyIcon = (currencyKey: CurrencyKey) => currencyKeyToIconMap[currencyKey];
 
-export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): CurrencyAmount<Currency> | undefined {
+export function maxAmountSpend(currencyAmount?: CurrencyAmount): CurrencyAmount | undefined {
   if (!currencyAmount) return undefined;
-  if (currencyAmount.currency.symbol === 'ICX') {
-    if (JSBI.greaterThan(currencyAmount.quotient, MIN_NATIVE_CURRENCY_FOR_GAS)) {
-      return CurrencyAmount.fromRawAmount(
-        currencyAmount.currency,
-        JSBI.subtract(currencyAmount.quotient, MIN_NATIVE_CURRENCY_FOR_GAS),
-      );
+  if (currencyAmount.currencyKey === 'ICX') {
+    if (currencyAmount.amount.isGreaterThan(MINIMUM_ICX_FOR_ACTION)) {
+      return new CurrencyAmount(currencyAmount.currencyKey, currencyAmount.amount.minus(MINIMUM_ICX_FOR_ACTION));
     } else {
-      return CurrencyAmount.fromRawAmount(currencyAmount.currency, JSBI.BigInt(0));
+      return new CurrencyAmount(currencyAmount.currencyKey, ZERO);
     }
   }
   return currencyAmount;
@@ -103,7 +96,7 @@ export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): Curre
 export function formatPercent(percent: BigNumber | undefined) {
   if (!percent) return '0%';
   if (percent.isZero()) return '0%';
-  else return percent.isLessThan(0.01) ? '<0.01%' : `${percent.dp(2).toFixed()}%`;
+  else return percent.times(100).isLessThan(0.01) ? '<0.01%' : `${percent.times(100).dp(2).toFixed()}%`;
 }
 
 export function sleep(ms: number) {
@@ -113,7 +106,7 @@ export function sleep(ms: number) {
 const LAUNCH_DAY = 1619366400000;
 const ONE_DAY_DURATION = 86400000;
 
-export const generateChartData = (rate: BigNumber, currencies: { [field in Field]?: Currency }) => {
+export const generateChartData = (rate: BigNumber, currencyKeys: { [field in Field]?: CurrencyKey }) => {
   const today = new Date().valueOf();
   const platformDays = Math.floor((today - LAUNCH_DAY) / ONE_DAY_DURATION) + 1;
   const stop = BalancedJs.utils.toLoop(rate);
@@ -122,7 +115,7 @@ export const generateChartData = (rate: BigNumber, currencies: { [field in Field
 
   let _data;
 
-  if (currencies[Field.INPUT]?.symbol === 'sICX' && currencies[Field.OUTPUT]?.symbol === 'ICX') {
+  if (currencyKeys[Field.INPUT] === 'sICX' && currencyKeys[Field.OUTPUT] === 'ICX') {
     _data = Array(platformDays)
       .fill(start)
       .map((x, index) => ({
@@ -146,17 +139,3 @@ export const normalizeContent = (text: string): string => {
   const t = text.replaceAll(regex, ' ');
   return t.substring(0, 248) + '...';
 };
-
-const TEN = new BigNumber(10);
-
-export function parseUnits(value: string, decimals: number): string {
-  return new BigNumber(value).times(TEN.pow(decimals)).toFixed();
-}
-
-export function formatUnits(value: string, decimals: number): string {
-  return new BigNumber(value).div(TEN.pow(decimals)).toFixed();
-}
-
-export function getPairName(pair: PairInfo) {
-  return `${pair.baseCurrencyKey} / ${pair.quoteCurrencyKey}`;
-}

@@ -113,7 +113,7 @@ const CollateralPanel = () => {
     if (shouldDeposit) {
       try {
         const { result: hash } = await bnJs
-          .inject({ account })
+          .inject({ account: account })
           .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount));
 
         addTransaction(
@@ -140,7 +140,7 @@ const CollateralPanel = () => {
         const collateralAmountInSICX = collateralAmount.div(ratio.sICXICXratio);
 
         const { result: hash } = await bnJs
-          .inject({ account })
+          .inject({ account: account })
           .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX));
 
         addTransaction(

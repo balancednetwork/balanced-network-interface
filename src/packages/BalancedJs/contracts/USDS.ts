@@ -5,10 +5,10 @@ import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
 
-export default class bnUSD extends Contract {
+export default class USDS extends Contract {
   constructor(contractSettings: ContractSettings) {
     super(contractSettings);
-    this.address = addresses[this.nid].bnusd;
+    this.address = addresses[this.nid].usds;
   }
 
   balanceOf(owner: string) {

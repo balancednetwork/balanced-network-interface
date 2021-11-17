@@ -3,14 +3,13 @@ import React from 'react';
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 
 import Divider from 'app/components/Divider';
-import { Currency } from 'types/balanced-sdk-core';
 
 import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';
 import StakePanel from './StakePanel';
 import UnstakePanel from './UnstakePanel';
 
-export default function BALNWallet({ currency }: { currency: Currency }) {
+export default function BALNWallet() {
   return (
     <>
       <Tabs>
@@ -26,7 +25,7 @@ export default function BALNWallet({ currency }: { currency: Currency }) {
           </TabPanel>
 
           <TabPanel>
-            <SendPanel currency={currency} />
+            <SendPanel currencyKey="BALN" />
           </TabPanel>
 
           <TabPanel>

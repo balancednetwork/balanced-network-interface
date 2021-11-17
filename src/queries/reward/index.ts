@@ -5,10 +5,8 @@ import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
-import { SUPPORTED_PAIRS } from 'constants/pairs';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { SUPPORTED_PAIRS, addressToCurrencyKeyMap } from 'constants/currency';
 import QUERY_KEYS from 'queries/queryKeys';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
 import { API_ENDPOINT } from '../constants';
 import { useBnJsContractQuery } from '../utils';
@@ -16,9 +14,9 @@ import { useBnJsContractQuery } from '../utils';
 export const BATCH_SIZE = 50;
 
 export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) => {
-  const { account } = useIconReact();
+  const { account, networkId } = useIconReact();
 
-  return useQuery<({ [address in string]: CurrencyAmount<Currency> } | null)[]>(
+  return useQuery<({ [key in string]: BigNumber } | null)[]>(
     QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
     async () => {
       const promises: Promise<any>[] = [];
@@ -31,12 +29,10 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
       feesArr = feesArr.map(fees => {
         if (!Object.values(fees).find(value => !BalancedJs.utils.toIcx(value as string).isZero())) return null;
 
-        const t = Object.keys(fees).reduce((prev, address) => {
-          const currency = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
-          prev[address] = CurrencyAmount.fromFractionalAmount(currency, fees[address], 1);
-          return prev;
-        }, {});
-
+        const t = {};
+        Object.keys(fees).forEach(key => {
+          t[key] = BalancedJs.utils.toIcx(fees[key], addressToCurrencyKeyMap[networkId][key]);
+        });
         return t;
       });
 
@@ -89,8 +85,8 @@ export const useAllPairsAPY = () => {
     const dailyDistribution = BalancedJs.utils.toIcx(dailyDistributionQuery.data);
     const t = {};
     SUPPORTED_PAIRS.forEach(pair => {
-      t[pair.id] =
-        pair.rewards && dailyDistribution.times(pair.rewards).times(365).times(rates['BALN']).div(tvls[pair.id]);
+      t[pair.poolId] =
+        pair.rewards && dailyDistribution.times(pair.rewards).times(365).times(rates['BALN']).div(tvls[pair.poolId]);
     });
     return t;
   }
@@ -104,7 +100,7 @@ export const useAllPairsTVLQuery = () => {
     async () => {
       const res: Array<any> = await Promise.all(
         SUPPORTED_PAIRS.map(async pair => {
-          const { data } = await axios.get(`${API_ENDPOINT}/dex/stats/${pair.id}`);
+          const { data } = await axios.get(`${API_ENDPOINT}/dex/stats/${pair.poolId}`);
           return data;
         }),
       );
@@ -112,7 +108,7 @@ export const useAllPairsTVLQuery = () => {
       const t = {};
       SUPPORTED_PAIRS.forEach((pair, index) => {
         const item = res[index];
-        t[pair.id] = {
+        t[pair.poolId] = {
           ...item,
           base: BalancedJs.utils.toIcx(item.base, pair.baseCurrencyKey),
           quote: BalancedJs.utils.toIcx(item.quote, pair.quoteCurrencyKey),
@@ -135,9 +131,9 @@ export const useAllPairsTVL = () => {
 
     const t: { [key in string]: number } = {};
     SUPPORTED_PAIRS.forEach(pair => {
-      const baseTVL = tvls[pair.id].base.times(rates[pair.baseCurrencyKey]);
-      const quoteTVL = tvls[pair.id].quote.times(rates[pair.quoteCurrencyKey]);
-      t[pair.id] = baseTVL.plus(quoteTVL).integerValue().toNumber();
+      const baseTVL = tvls[pair.poolId].base.times(rates[pair.baseCurrencyKey]);
+      const quoteTVL = tvls[pair.poolId].quote.times(rates[pair.quoteCurrencyKey]);
+      t[pair.poolId] = baseTVL.plus(quoteTVL).integerValue().toNumber();
     });
 
     return t;

@@ -1,4 +1,5 @@
 import { CHART_PERIODS } from 'app/components/TradingViewChart';
+import { Field } from 'store/swap/actions';
 
 export const QUERY_KEYS = {
   Vote: {
@@ -24,7 +25,12 @@ export const QUERY_KEYS = {
     UserReward: (account: string) => ['Reward', 'UserReward', account],
   },
   Swap: {
-    PriceChart: (currencies, period: CHART_PERIODS) => ['Swap', 'PriceChart', currencies, period],
+    PriceChart: (currencyKeys: { [field in Field]?: string }, period: CHART_PERIODS) => [
+      'Swap',
+      'PriceChart',
+      currencyKeys,
+      period,
+    ],
   },
   History: {
     AllTransactions: (page: number, limit: number, account: string | undefined) => [

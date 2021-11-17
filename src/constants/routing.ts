@@ -35,7 +35,8 @@ export const COMMON_BASES: ChainCurrencyList = {
   ],
 };
 
-export const MAX_HOPS = 3;
+export const DEFAULT_MAX_HOPS = 3;
+export const LIMIT_MAX_HOPS = 4;
 
 // one basis JSBI.BigInt
 const BIPS_BASE = JSBI.BigInt(10000);

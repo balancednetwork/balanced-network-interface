@@ -206,9 +206,9 @@ export const PROPOSAL_CONFIG = {
     submitParams: (currencyValue: CurrencyValue) => {
       const amounts = Object.values(currencyValue.amounts)
         .map(
-          ({ amount, symbol }) =>
+          ({ amount, symbol }, idx) =>
             amount && {
-              amount: BalancedJs.utils.toLoop(amount).toNumber(),
+              amount: `[amount${idx}]`,
               address: getKeyByValue(symbol, addressToCurrencyKeyMap[NETWORK_ID]),
             },
         )

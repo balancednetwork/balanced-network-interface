@@ -250,10 +250,17 @@ export function NewProposalPage() {
       changeShouldLedgerSign(true);
     }
 
+    let fundingAction = JSON.stringify(submitParams(currencyInputValue));
+
+    Object.values(currencyInputValue.amounts).map(({ amount }, idx) => {
+      if (amount) fundingAction = fundingAction.replace(`"[amount${idx}]"`, BalancedJs.utils.toLoop(amount).toFixed());
+      return null;
+    });
+
     const actions = isTextProposal
       ? '{}'
       : isFundingProposal
-      ? JSON.stringify(submitParams(currencyInputValue))
+      ? fundingAction
       : JSON.stringify(submitParams(ratioInputValue));
 
     platformDay &&

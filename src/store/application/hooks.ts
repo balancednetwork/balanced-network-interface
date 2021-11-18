@@ -3,7 +3,13 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, AppState } from '../index';
-import { changeShouldLedgedSignMessage, ApplicationModal, setOpenModal, updateSlippageTolerance } from './actions';
+import {
+  changeShouldLedgedSignMessage,
+  ApplicationModal,
+  setOpenModal,
+  updateSlippageTolerance,
+  changeLedgerPageNumber,
+} from './actions';
 
 export function useModalOpen(modal: ApplicationModal): boolean {
   const openModal = useSelector((state: AppState) => state.application.openModal);
@@ -44,6 +50,20 @@ export function useSetSlippageTolerance() {
   return useCallback(
     (slippageTolerance: number) => {
       dispatch(updateSlippageTolerance({ slippageTolerance }));
+    },
+    [dispatch],
+  );
+}
+
+export function useLedgerPageNumber() {
+  return useSelector((state: AppState) => state.application.ledgerPageNumber);
+}
+
+export function useSetLedgerPageNumber() {
+  const dispatch = useDispatch();
+  return useCallback(
+    (pageNumber: number) => {
+      dispatch(changeLedgerPageNumber(pageNumber));
     },
     [dispatch],
   );

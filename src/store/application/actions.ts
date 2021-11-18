@@ -34,3 +34,5 @@ export const changeShouldLedgedSignMessage = createAction<{ shouldLedgerSign: bo
 export const updateSlippageTolerance = createAction<{ slippageTolerance: number }>(
   'application/updateSlippageTolerance',
 );
+
+export const changeLedgerPageNumber = createAction<number>('application/changeLedgerPageNumber');

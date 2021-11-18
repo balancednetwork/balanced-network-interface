@@ -19,7 +19,12 @@ import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
 import { ApplicationModal } from 'store/application/actions';
-import { useWalletModalToggle, useModalOpen } from 'store/application/hooks';
+import {
+  useWalletModalToggle,
+  useModalOpen,
+  useLedgerPageNumber,
+  useSetLedgerPageNumber,
+} from 'store/application/hooks';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -108,6 +113,8 @@ const StyledModal = styled(Modal).attrs({
 
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
+  const currentLedgerAddressPage = useLedgerPageNumber();
+  const changeCurrentLedgerAddressPage = useSetLedgerPageNumber();
   const toggleWalletModal = useWalletModalToggle();
   const [showLedgerAddress, updateShowledgerAddress] = useState(false);
   const [addressList, updateAddressList] = useState<any>([]);
@@ -119,7 +126,6 @@ export default function WalletModal() {
     offset: 0,
     limit: LIMIT_PAGING_LEDGER,
   });
-  const [currentLedgerAddressPage, changeCurrentLedgerAddressPage] = useState(1);
 
   const { requestAddress, hasExtension } = useIconReact();
 

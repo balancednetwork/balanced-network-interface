@@ -10,6 +10,7 @@ import {
   setOpenModal,
   changeShouldLedgedSignMessage,
   updateSlippageTolerance,
+  changeLedgerPageNumber,
 } from './actions';
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>;
@@ -19,6 +20,7 @@ export interface ApplicationState {
   readonly openModal: ApplicationModal | null;
   account: string;
   shouldLedgerSign: boolean;
+  ledgerPageNumber: number;
   slippageTolerance: number;
 }
 
@@ -27,6 +29,7 @@ const initialState: ApplicationState = {
   openModal: null,
   account: '',
   shouldLedgerSign: false,
+  ledgerPageNumber: 1,
   slippageTolerance: DEFAULT_SLIPPAGE,
 };
 
@@ -57,5 +60,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(updateSlippageTolerance, (state, action) => {
       state.slippageTolerance = action.payload.slippageTolerance;
+    })
+    .addCase(changeLedgerPageNumber, (state, { payload: ledgerPageNumber }) => {
+      state.ledgerPageNumber = ledgerPageNumber;
     }),
 );

@@ -55,13 +55,14 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   );
 
   const handleInput = (itemId: number, key: 'amount' | 'symbol') => (value: string) => {
+    const currentAmount = currencyValue.amounts[itemId];
     if (key === 'amount') {
-      const maxValue = balanceList.find(item => item.symbol === currencyValue.amounts[itemId].symbol)?.amount;
+      const maxValue = balanceList.find(item => item.symbol === currentAmount.symbol)?.amount;
       if (Number(value) > Number(maxValue)) return;
     }
     const newAmount: Amount = {
       ...currencyValue.amounts,
-      [itemId]: { ...currencyValue.amounts[itemId], [key]: value },
+      [itemId]: { ...currentAmount, [key]: value },
     };
     setCurrencyValue({
       ...currencyValue,
@@ -69,6 +70,19 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
     });
     if (key === 'symbol') {
       updateCurrencyList(newAmount);
+
+      //Reset amount value when symbol change
+      setCurrencyValue({
+        ...currencyValue,
+        amounts: {
+          ...currencyValue.amounts,
+          [itemId]: {
+            ...currentAmount,
+            symbol: value,
+            amount: currentAmount.symbol === value ? currentAmount.amount : '',
+          },
+        },
+      });
     }
   };
 

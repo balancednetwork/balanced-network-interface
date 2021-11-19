@@ -13,6 +13,7 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import TickSrc from 'assets/icons/tick.svg';
 import bnJs from 'bnJs';
+import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { usePool, usePoolPair } from 'store/pool/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
@@ -37,9 +38,6 @@ export enum Field {
   CURRENCY_A = 'CURRENCY_A',
   CURRENCY_B = 'CURRENCY_B',
 }
-
-// temporarily solution. need to refactor later
-const BALNRewardPairs = [1, 2, 3, 4];
 
 export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies }: ModalProps) {
   const { account } = useIconReact();
@@ -270,7 +268,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   };
 
   const isQueue = selectedPair.id === BalancedJs.utils.POOL_IDS.sICXICX;
-  const isBALNRewardPool = BALNRewardPairs.some(id => id === selectedPair.id);
+  const pair = SUPPORTED_PAIRS.find(p => p.id === selectedPair.id);
+
+  const isBALNRewardPool = pair && pair.rewards && pair.rewards > 0;
   const isEnabled = isQueue
     ? true
     : (addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success) ||
@@ -308,12 +308,10 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
           Supply liquidity?
         </Typography>
-
         <Typography variant="p" textAlign="center" mb={4} hidden={isQueue}>
           Send each asset to the contract, <br />
           then click Supply
         </Typography>
-
         <Flex alignItems="center" mb={1} hidden={isQueue}>
           <Box
             width={1 / 2}
@@ -467,13 +465,11 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
             </Typography>
           </Box>
         </Flex>
-
         {hasErrorMessage && (
           <Typography textAlign="center" color="alert">
             Remove your assets to cancel this transaction.
           </Typography>
         )}
-
         <Flex justifyContent="center" mt={4} pt={4} className="border-top">
           {shouldLedgerSign && <Spinner></Spinner>}
           {!shouldLedgerSign && (
@@ -485,9 +481,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
             </>
           )}
         </Flex>
-
         <LedgerConfirmMessage />
-
         {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
       </Flex>
     </Modal>

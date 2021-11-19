@@ -3,14 +3,13 @@ import React from 'react';
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 
 import Divider from 'app/components/Divider';
-import { Currency } from 'types/balanced-sdk-core';
 
 import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';
 import DepositPanel from './DepositPanel';
 import UnstakePanel from './UnstakePanel';
 
-export default function SICXWallet({ currency }: { currency: Currency }) {
+export default function SICXWallet() {
   return (
     <>
       <Tabs>
@@ -22,7 +21,7 @@ export default function SICXWallet({ currency }: { currency: Currency }) {
         <Divider mb={3} />
         <TabPanels>
           <TabPanel>
-            <SendPanel currency={currency} />
+            <SendPanel currencyKey="sICX" />
           </TabPanel>
 
           <TabPanel>

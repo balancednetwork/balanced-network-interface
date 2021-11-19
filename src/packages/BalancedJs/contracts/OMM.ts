@@ -2,9 +2,15 @@ import BigNumber from 'bignumber.js';
 import { IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
+import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
 
-export default class IRC2 extends Contract {
+export default class OMM extends Contract {
+  constructor(contractSettings: ContractSettings) {
+    super(contractSettings);
+    this.address = addresses[this.nid].omm;
+  }
+
   balanceOf(owner: string) {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',
@@ -28,28 +34,6 @@ export default class IRC2 extends Contract {
     return this.call(callParams);
   }
 
-  swapUsingRoute(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber, path: (string | null)[]) {
-    const data = {
-      method: '_swap',
-      params: {
-        toToken: addresses[this.nid][outputSymbol.toLowerCase()],
-        minimumReceive: minimumReceive.toFixed(),
-        path: path,
-      },
-    };
-
-    return this.transfer(addresses[this.nid].router, value, JSON.stringify(data));
-  }
-
-  swap(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
-    const data = {
-      method: '_swap',
-      params: { toToken: addresses[this.nid][outputSymbol.toLowerCase()], minimumReceive: minimumReceive.toFixed() },
-    };
-
-    return this.transfer(addresses[this.nid].dex, value, JSON.stringify(data));
-  }
-
   transfer(to: string, value: BigNumber, data?: string) {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
@@ -61,5 +45,17 @@ export default class IRC2 extends Contract {
     });
 
     return this.callICONPlugins(callParams);
+  }
+
+  swap(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
+    const data = {
+      method: '_swap',
+      params: {
+        toToken: addresses[this.nid][outputSymbol.toLowerCase()],
+        minimumReceive: minimumReceive.toFixed(),
+      },
+    };
+
+    return this.transfer(addresses[this.nid].dex, value, JSON.stringify(data));
   }
 }

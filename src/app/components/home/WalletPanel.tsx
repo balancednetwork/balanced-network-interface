@@ -11,12 +11,11 @@ import CurrencyLogo from 'app/components/CurrencyLogo';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { CURRENCY } from 'constants/currency';
 import '@reach/tabs/styles.css';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useRatesQuery } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
-import { getTokenFromCurrencyKey } from 'types/adapter';
 
 import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';
@@ -29,8 +28,6 @@ const WalletUIs = {
   sICX: SICXWallet,
   BALN: BALNWallet,
 };
-
-const CURRENCY = SUPPORTED_TOKENS_LIST.map(currency => currency.symbol!);
 
 const WalletPanel = () => {
   const balances = useWalletBalances();
@@ -81,7 +78,7 @@ const WalletPanel = () => {
                   <StyledAccordionButton currency={currency}>
                     <ListItem border={index !== arr.length - 1}>
                       <AssetSymbol>
-                        <CurrencyLogo currency={getTokenFromCurrencyKey(currency)!} />
+                        <CurrencyLogo currencyKey={currency} />
                         <Typography fontSize={16} fontWeight="bold">
                           {currency}
                         </Typography>
@@ -124,9 +121,9 @@ const WalletPanel = () => {
                   <StyledAccordionPanel hidden={false}>
                     <BoxPanel bg="bg3">
                       {currency.toLocaleLowerCase() === 'icx' ? (
-                        <WalletUI currency={getTokenFromCurrencyKey(currency)!} claimableICX={claimableICX} />
+                        <WalletUI currencyKey={currency} claimableICX={claimableICX} />
                       ) : (
-                        <WalletUI currency={getTokenFromCurrencyKey(currency)!} />
+                        <WalletUI currencyKey={currency} />
                       )}
                     </BoxPanel>
                   </StyledAccordionPanel>

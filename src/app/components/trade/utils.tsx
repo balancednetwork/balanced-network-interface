@@ -58,3 +58,10 @@ export function withdrawMessage(
   const failureMessage = `Couldn't withdraw ${inputCurrency} / ${outputCurrency} liquidity. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
+
+export function retireMessage(amount: string, currency: string) {
+  const pendingMessage = `Retiring bnUSD...`;
+  const successMessage = `${amount} ${currency} added to your wallet.`;
+  const failureMessage = `Couldn't retire bnUSD. Try again.`;
+  return { pendingMessage, successMessage, failureMessage };
+}

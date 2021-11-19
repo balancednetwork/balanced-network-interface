@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
+import { SUPPORTED_PAIRS, Pair } from 'constants/currency';
 import { Pool } from 'types';
 
 import { setPair, setPoolData, setBalance, clearBalances } from './actions';
@@ -14,7 +14,7 @@ export interface Balance {
 }
 
 export interface PoolState {
-  selectedPair: PairInfo;
+  selectedPair: Pair;
 
   pools: {
     [poolId: string]: Pool;

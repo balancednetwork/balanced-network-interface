@@ -23,7 +23,17 @@ export default function ProposalTypesSelect({
     setOpen(!open);
   };
 
+  // update the width on a window resize
   const ref = React.useRef<HTMLDivElement>(null);
+  const [width, setWidth] = React.useState(ref?.current?.clientWidth);
+  React.useEffect(() => {
+    function handleResize() {
+      setWidth(ref?.current?.clientWidth ?? width);
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [width]);
 
   const handleSelectProposal = (type: PROPOSAL_TYPE) => {
     toggleOpen();

@@ -1,11 +1,11 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { PairInfo } from 'constants/pairs';
+import { Pair } from 'constants/currency';
 import { Pool } from 'types';
 
 import { Balance } from './reducer';
 
-export const setPair = createAction<PairInfo>('pool/setPair');
+export const setPair = createAction<Pair>('pool/setPair');
 
 export const setPoolData = createAction<{ poolId: number; poolData: Partial<Pool> }>('pool/setPoolData');
 

@@ -7,8 +7,8 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
-import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 import useInterval from 'hooks/useInterval';
 import { useRatio } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
@@ -19,11 +19,11 @@ import { AppDispatch, AppState } from '../index';
 import { setBalance, setPair, setPoolData, clearBalances as clearBalancesCreator } from './actions';
 import { Balance } from './reducer';
 
-export function usePoolPair(): PairInfo {
+export function usePoolPair(): Pair {
   return useSelector((state: AppState) => state.pool.selectedPair);
 }
 
-export function useSetPair(): (pair: PairInfo) => void {
+export function useSetPair(): (pair: Pair) => void {
   const dispatch = useDispatch<AppDispatch>();
 
   return React.useCallback(
@@ -78,8 +78,8 @@ export function useFetchPools() {
   useInterval(increment, 15000);
   // fetch pool stats
   const fetchPool = React.useCallback(
-    async (pair: PairInfo) => {
-      const poolId = pair.id;
+    async (pair: Pair) => {
+      const poolId = pair.poolId;
 
       if (!pair) return;
 
@@ -140,7 +140,7 @@ export function useFetchPools() {
   React.useEffect(() => {
     if (account) {
       SUPPORTED_PAIRS.forEach(pair => {
-        const poolId = pair.id;
+        const poolId = pair.poolId;
         if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
           Promise.all([bnJs.Dex.getICXBalance(account), bnJs.Dex.getSicxEarnings(account)]).then(([res1, res2]) => {
             changeBalance(poolId, {

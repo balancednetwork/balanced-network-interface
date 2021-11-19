@@ -9,17 +9,34 @@ import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import PairSelector from 'app/components/trade/PairSelector';
+import LiquiditySelect from 'app/components/trade/LiquiditySelect';
 import { Typography } from 'app/theme';
+import { ZERO } from 'constants/index';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
-import { CurrencyAmount, Currency, Percent } from 'types/balanced-sdk-core';
-import { maxAmountSpend } from 'utils';
+import { usePool, usePoolPair } from 'store/pool/hooks';
+import { CurrencyAmount } from 'types';
+import { formatBigNumber, maxAmountSpend } from 'utils';
 
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
+
+const useCalculateLiquidity = (tokenAmountA: BigNumber, tokenAmountB: BigNumber): BigNumber => {
+  const selectedPair = usePoolPair();
+  const pool = usePool(selectedPair.poolId);
+
+  if (pool && !pool.base.isZero() && !pool.quote.isZero()) {
+    if (selectedPair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+      return tokenAmountB;
+    }
+
+    return BigNumber.min(tokenAmountA.times(pool.total).div(pool.base), tokenAmountB.times(pool.total).div(pool.quote));
+  } else {
+    return ZERO;
+  }
+};
 
 const Slider = styled(Box)`
   margin-top: 40px;
@@ -27,46 +44,6 @@ const Slider = styled(Box)`
      margin-top: 25px;
   `}
 `;
-
-function WalletSection() {
-  const { account } = useIconReact();
-  const { currencies, currencyBalances, parsedAmounts } = useDerivedMintInfo();
-
-  if (account) {
-    let baseValStr = '-';
-    if (currencyBalances[Field.CURRENCY_A]) {
-      baseValStr = parsedAmounts[Field.CURRENCY_A]
-        ? `${currencyBalances[Field.CURRENCY_A]!.subtract(parsedAmounts[Field.CURRENCY_A]!).toSignificant(4)}`
-        : `${currencyBalances[Field.CURRENCY_A]?.toSignificant(4)}`;
-    }
-
-    let quoteValStr = '-';
-    if (currencyBalances[Field.CURRENCY_B]) {
-      quoteValStr = parsedAmounts[Field.CURRENCY_B]
-        ? `${currencyBalances[Field.CURRENCY_B]!.subtract(parsedAmounts[Field.CURRENCY_B]!).toSignificant(4)}`
-        : `${currencyBalances[Field.CURRENCY_B]?.toSignificant(4)}`;
-    }
-
-    if (currencies[Field.CURRENCY_A]?.symbol === 'sICX' && currencies[Field.CURRENCY_B]?.symbol === 'ICX') {
-      return (
-        <Flex flexDirection="row" justifyContent="center" alignItems="center">
-          <Typography>{`Wallet: ${quoteValStr} ${currencies[Field.CURRENCY_B]?.symbol}`}</Typography>
-        </Flex>
-      );
-    } else {
-      return (
-        <Flex flexDirection="row" justifyContent="center" alignItems="center">
-          <Typography>
-            {`Wallet: ${baseValStr} ${currencies[Field.CURRENCY_A]?.symbol} / 
-                      ${quoteValStr} ${currencies[Field.CURRENCY_B]?.symbol}`}
-          </Typography>
-        </Flex>
-      );
-    }
-  } else {
-    return null;
-  }
-}
 
 export default function LPPanel() {
   const { account } = useIconReact();
@@ -79,9 +56,9 @@ export default function LPPanel() {
     setShowSupplyConfirm(false);
   };
 
-  const [amounts, setAmounts] = React.useState<{ [field in Field]?: CurrencyAmount<Currency> }>({
-    [Field.CURRENCY_A]: undefined,
-    [Field.CURRENCY_B]: undefined,
+  const [amounts, setAmounts] = React.useState<{ [field in Field]: BigNumber }>({
+    [Field.CURRENCY_A]: ZERO,
+    [Field.CURRENCY_B]: ZERO,
   });
 
   const handleConnectToWallet = () => {
@@ -97,14 +74,12 @@ export default function LPPanel() {
   const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
   const {
     dependentField,
-    pairInfo,
     pair,
+    pool,
     parsedAmounts,
     noLiquidity,
     currencyBalances,
-    currencies,
-    liquidityMinted,
-    availableLiquidity,
+    // liquidityMinted,
     // poolTokenPercentage,
     error,
   } = useDerivedMintInfo();
@@ -114,26 +89,29 @@ export default function LPPanel() {
   const [percent, setPercent] = React.useState(0);
 
   React.useEffect(() => {
-    const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
-    const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
-
-    if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
-      const p = new Percent(Math.floor(percent * 100), 10_000);
-
-      if (pairInfo.id === BalancedJs.utils.POOL_IDS.sICXICX) {
-        onSlide(Field.CURRENCY_B, percent !== 0 ? balanceB.multiply(p).toFixed() : '');
+    if (pool && !pool.total.isZero()) {
+      if (pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        onSlide(
+          Field.CURRENCY_B,
+          maxAmountSpend(new CurrencyAmount('ICX', currencyBalances[Field.CURRENCY_B]))!
+            .raw.times(percent)
+            .div(100)
+            .toFixed(),
+        );
       } else {
-        const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
+        const field = currencyBalances[Field.CURRENCY_A]
+          .times(pool.quote)
+          .isLessThan(currencyBalances[Field.CURRENCY_B].times(pool.base))
           ? Field.CURRENCY_A
           : Field.CURRENCY_B;
-        onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
+        onSlide(field, currencyBalances[field].times(percent).div(100).toFixed());
       }
     }
-  }, [percent, currencyBalances, onSlide, pair, pairInfo.id]);
+  }, [percent, currencyBalances, onSlide, pool, pair.poolId]);
 
   React.useEffect(() => {
     setPercent(0);
-  }, [pairInfo]);
+  }, [pair]);
 
   const handleSlider = (values: string[], handle: number) => {
     setPercent(parseFloat(values[handle]));
@@ -142,20 +120,16 @@ export default function LPPanel() {
   // get formatted amounts
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: noLiquidity ? otherTypedValue : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+    [dependentField]: noLiquidity
+      ? otherTypedValue
+      : parsedAmounts[dependentField].isZero()
+      ? ''
+      : parsedAmounts[dependentField].toFixed(6),
   };
 
-  const sliderValue =
-    liquidityMinted && availableLiquidity
-      ? Math.min(
-          new BigNumber(liquidityMinted.quotient.toString())
-            .div(availableLiquidity.quotient.toString())
-            .multipliedBy(100)
-            .toNumber(),
-          100,
-        )
-      : 0;
-
+  const totalLiquidity = useCalculateLiquidity(currencyBalances[Field.CURRENCY_A], currencyBalances[Field.CURRENCY_B]);
+  const liquidity = useCalculateLiquidity(parsedAmounts[Field.CURRENCY_A], parsedAmounts[Field.CURRENCY_B]);
+  const sliderValue = Math.min(liquidity.div(totalLiquidity).times(100).toNumber(), 100);
   const sliderInstance = React.useRef<any>(null);
 
   React.useEffect(() => {
@@ -166,19 +140,36 @@ export default function LPPanel() {
 
   const isValid = !error;
 
-  const isQueue = pairInfo.id === BalancedJs.utils.POOL_IDS.sICXICX;
+  const baseDisplay = `${formatBigNumber(
+    currencyBalances[Field.CURRENCY_A].minus(formattedAmounts[Field.CURRENCY_A] || new BigNumber(0)),
+    'currency',
+  )} 
+    ${pair.baseCurrencyKey}`;
+
+  const quoteDisplay = `${formatBigNumber(
+    currencyBalances[Field.CURRENCY_B].minus(formattedAmounts[Field.CURRENCY_B] || new BigNumber(0)),
+    'currency',
+  )} 
+  ${pair.quoteCurrencyKey}`;
+
+  const walletDisplayString =
+    pair.baseCurrencyKey === 'sICX' && pair.quoteCurrencyKey === 'ICX'
+      ? `${quoteDisplay}`
+      : `${baseDisplay} / ${quoteDisplay}`;
+
+  const isQueue = pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX;
 
   return (
     <>
       <SectionPanel bg="bg2">
         <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
-          <PairSelector />
+          <LiquiditySelect />
 
           <Flex mt={3} hidden={isQueue}>
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_A]}
               showMaxButton={false}
-              currency={currencies[Field.CURRENCY_A]}
+              currency={pair.baseCurrencyKey}
               onUserInput={onFieldAInput}
               id="supply-liquidity-input-token-a"
             />
@@ -193,17 +184,18 @@ export default function LPPanel() {
             <CurrencyInputPanel
               value={formattedAmounts[Field.CURRENCY_B]}
               showMaxButton={false}
-              currency={currencies[Field.CURRENCY_B]}
+              currency={pair.quoteCurrencyKey}
               onUserInput={onFieldBInput}
               id="supply-liquidity-input-token-b"
             />
           </Flex>
 
-          <Flex mt={3} justifyContent="flex-end">
-            <WalletSection />
-          </Flex>
+          <Typography mt={3} textAlign="right">
+            Wallet:&nbsp;
+            {walletDisplayString}
+          </Typography>
 
-          {account && availableLiquidity && (
+          {account && !totalLiquidity.isZero() && (
             <Slider mt={5}>
               <Nouislider
                 start={[0]}
@@ -225,7 +217,12 @@ export default function LPPanel() {
           )}
           <Flex justifyContent="center">
             {isValid ? (
-              <Button color="primary" marginTop={5} onClick={handleSupply}>
+              <Button
+                // disabled={showMinimumTooltip}
+                color="primary"
+                marginTop={5}
+                onClick={handleSupply}
+              >
                 Supply
               </Button>
             ) : (
@@ -242,12 +239,7 @@ export default function LPPanel() {
         />
       </SectionPanel>
 
-      <SupplyLiquidityModal
-        isOpen={showSupplyConfirm}
-        onClose={handleSupplyConfirmDismiss}
-        parsedAmounts={amounts}
-        currencies={currencies}
-      />
+      <SupplyLiquidityModal isOpen={showSupplyConfirm} onClose={handleSupplyConfirmDismiss} parsedAmounts={amounts} />
     </>
   );
 }

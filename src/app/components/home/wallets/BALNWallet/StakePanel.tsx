@@ -79,7 +79,7 @@ export default React.memo(function StakePanel() {
     }
 
     bnJs
-      .inject({ account })
+      .inject({ account: account })
       .BALN.stake(BalancedJs.utils.toLoop(afterAmount))
       .then(res => {
         if (res.result) {

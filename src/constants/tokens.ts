@@ -27,47 +27,48 @@ export const BALN = new Token(
   'Balance Token',
 );
 export const IUSDC = new Token(
-  SupportedChainId.MAINNET, //
+  SupportedChainId.MAINNET,
   'cxae3034235540b924dfcc1b45836c293dcc82bfb7',
   6,
   'IUSDC',
   'ICON USD Coin',
 );
 export const USDS = new Token(
-  SupportedChainId.MAINNET, //
+  SupportedChainId.MAINNET,
   'cxbb2871f468a3008f80b08fdde5b8b951583acf06',
   18,
   'USDS',
   'Stably USD',
 );
 export const OMM = new Token(
-  SupportedChainId.MAINNET, //
+  SupportedChainId.MAINNET,
   'cx1a29259a59f463a67bb2ef84398b30ca56b5830a',
   18,
   'OMM',
   'Omm Token',
 );
 export const CFT = new Token(
-  SupportedChainId.MAINNET, //
+  SupportedChainId.MAINNET,
   'cx2e6d0fc0eca04965d06038c8406093337f085fcf',
   18,
   'CFT',
   'Craft',
 );
 export const METX = new Token(
-  SupportedChainId.MAINNET, //
+  SupportedChainId.MAINNET,
   'cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2',
   18,
   'METX',
   'Metanyx',
 );
 export const IUSDT = new Token(
-  SupportedChainId.MAINNET, //
+  SupportedChainId.MAINNET,
   'cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88',
   6,
   'IUSDT',
   'ICON Tether',
 );
+
 // yeouido
 export const ICX_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
@@ -98,14 +99,14 @@ export const BALN_YEOUIDO = new Token(
   'Balance Token',
 );
 export const IUSDC_YEOUIDO = new Token(
-  SupportedChainId.YEOUIDO, //
+  SupportedChainId.YEOUIDO,
   'cx65f639254090820361da483df233f6d0e69af9b7',
   6,
   'IUSDC',
   'ICON USD Coin',
 );
 export const USDS_YEOUIDO = new Token(
-  SupportedChainId.YEOUIDO, //
+  SupportedChainId.YEOUIDO,
   'cxc0666df567a6e0b49342648e98ccbe5362b264ea',
   18,
   'USDS',
@@ -129,7 +130,6 @@ export const CFT_YEOUIDO = new Token(
 );
 
 // sejong
-// yeouido
 export const ICX_SEJONG = new Token(
   SupportedChainId.SEJONG,
   'cx0000000000000000000000000000000000000000',
@@ -165,6 +165,7 @@ export const IUSDC_SEJONG = new Token(
   'IUSDC',
   'ICON USD Coin',
 );
+
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
   [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT],

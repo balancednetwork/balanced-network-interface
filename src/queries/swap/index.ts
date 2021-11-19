@@ -7,26 +7,12 @@ import { getTradePair, isQueue } from 'constants/currency';
 import { ONE } from 'constants/index';
 import QUERY_KEYS from 'queries/queryKeys';
 import { Field } from 'store/swap/actions';
+import { getTokenFromCurrencyKey } from 'types/adapter';
 import { Currency } from 'types/balanced-sdk-core';
 
 import { API_ENDPOINT } from '../constants';
 
 const LAUNCH_DAY = 1619398800000000;
-
-// temporarily workaround solution. need to refactor asap
-
-const decimals = {
-  ICX: 18,
-  sICX: 18,
-  bnUSD: 18,
-  BALN: 18,
-  IUSDC: 6,
-  OMM: 18,
-  USDS: 18,
-  CFT: 18,
-  METX: 18,
-  IUSDT: 6,
-};
 
 export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency }, period: CHART_PERIODS) => {
   return useQuery<{ time: number; open: number; close: number; high: number; low: number; volume: number }[]>(
@@ -46,7 +32,10 @@ export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency
 
         let data1;
 
-        const decimal = decimals[pair.quoteCurrencyKey] - decimals[pair.baseCurrencyKey] + 18;
+        const quoteToken = getTokenFromCurrencyKey(pair.quoteCurrencyKey);
+        const baseToken = getTokenFromCurrencyKey(pair.baseCurrencyKey);
+
+        const decimal = (quoteToken?.decimals ?? 0) - (baseToken?.decimals ?? 0) + 18;
         if (!inverse) {
           data1 = result.map(item => ({
             time: item.time / 1_000_000,

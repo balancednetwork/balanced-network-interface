@@ -49,7 +49,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       rewards: 0.1,
     },
     {
-      chainId: 1, //
+      chainId: 1,
       id: 5,
       name: 'IUSDC/bnUSD',
       baseCurrencyKey: 'IUSDC',
@@ -164,21 +164,21 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
     {
       chainId: 3,
-      id: 24, // 22?
+      id: 24,
       name: 'OMM/IUSDC',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'IUSDC',
     },
     {
       chainId: 3,
-      id: 25, // 20?
+      id: 25,
       name: 'OMM/sICX',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'sICX',
     },
     {
       chainId: 3,
-      id: 23, // 21?
+      id: 23,
       name: 'OMM/USDS',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'USDS',
@@ -225,7 +225,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       rewards: 0.05,
     },
     {
-      chainId: 83, //
+      chainId: 83,
       id: 5,
       name: 'IUSDC/bnUSD',
       baseCurrencyKey: 'IUSDC',

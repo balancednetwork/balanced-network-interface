@@ -7,7 +7,7 @@ import { getTradePair, isQueue } from 'constants/currency';
 import { ONE } from 'constants/index';
 import QUERY_KEYS from 'queries/queryKeys';
 import { Field } from 'store/swap/actions';
-import { CurrencyKey } from 'types';
+import { Currency } from 'types/balanced-sdk-core';
 
 import { API_ENDPOINT } from '../constants';
 
@@ -28,20 +28,21 @@ const decimals = {
   IUSDT: 6,
 };
 
-export const usePriceChartDataQuery = (currencyKeys: { [field in Field]?: CurrencyKey }, period: CHART_PERIODS) => {
+export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency }, period: CHART_PERIODS) => {
   return useQuery<{ time: number; open: number; close: number; high: number; low: number; volume: number }[]>(
-    QUERY_KEYS.Swap.PriceChart(currencyKeys, period),
+    QUERY_KEYS.Swap.PriceChart(currencies, period),
     async () => {
-      const [pair, inverse] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
+      const [pair, inverse] = getTradePair(
+        currencies[Field.INPUT]?.symbol as string,
+        currencies[Field.OUTPUT]?.symbol as string,
+      );
       if (pair && !isQueue(pair)) {
         const day = new Date().valueOf() * 1_000;
         const {
           data: result,
         }: {
           data: { time: number; open: number; close: number; high: number; low: number; volume: number }[];
-        } = await axios.get(
-          `${API_ENDPOINT}/dex/swap-chart/${pair?.poolId}/${period.toLowerCase()}/${LAUNCH_DAY}/${day}`,
-        );
+        } = await axios.get(`${API_ENDPOINT}/dex/swap-chart/${pair?.id}/${period.toLowerCase()}/${LAUNCH_DAY}/${day}`);
 
         let data1;
 

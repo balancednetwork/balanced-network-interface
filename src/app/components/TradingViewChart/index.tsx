@@ -120,6 +120,7 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
     if (data !== dataPrev && chartCreated) {
       // remove the tooltip element
       chartCreated.resize(0, 0);
+      chartCreated.remove();
       setChartCreated(null);
     }
   }, [chartCreated, data, dataPrev, type]);

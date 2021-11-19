@@ -3,16 +3,20 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
+import IRC2 from 'packages/BalancedJs/contracts/IRC2';
+import ContractSettings from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { CURRENCY } from 'constants/currency';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
 import { changeBalances, resetBalances } from './actions';
+
+const contractSettings = new ContractSettings({ networkId: parseInt(process.env.REACT_APP_NETWORK_ID ?? '1') });
 
 export function useWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);
@@ -28,12 +32,24 @@ export function useWalletFetchBalances(account?: string | null) {
   React.useEffect(() => {
     const fetchBalances = async () => {
       if (account) {
-        const results = await Promise.all(CURRENCY.map(currencyKey => bnJs[currencyKey].balanceOf(account)));
+        const list = SUPPORTED_TOKENS_LIST;
+
+        const results = await Promise.all(
+          SUPPORTED_TOKENS_LIST.map(token => {
+            if (token.symbol === 'ICX') {
+              return bnJs.ICX.balanceOf(account);
+            } else {
+              return new IRC2(contractSettings, token.address).balanceOf(account);
+            }
+          }),
+        );
 
         const data = results.reduce((prev, result, index) => {
-          prev[CURRENCY[index]] = BalancedJs.utils.toIcx(result, CURRENCY[index]);
-          if (CURRENCY[index] === 'BALN') {
-            prev[CURRENCY[index]] = availableBALN;
+          const symbol = list[index].symbol;
+
+          prev[symbol] = BalancedJs.utils.toIcx(result, symbol);
+          if (symbol === 'BALN') {
+            prev[symbol] = availableBALN;
           }
           return prev;
         }, {});

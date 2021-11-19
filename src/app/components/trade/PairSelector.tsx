@@ -10,12 +10,14 @@ import { Wrapper, UnderlineText, StyledArrowDownIcon } from 'app/components/Drop
 import { List, ListItem, DashGrid, HeaderText, DataText } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
 import { Typography } from 'app/theme';
-import { Pair, SUPPORTED_PAIRS } from 'constants/currency';
+import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
+import useWidth from 'hooks/useWidth';
 import { useAllPairsAPY } from 'queries/reward';
 import { resetMintState } from 'store/mint/actions';
 import { useSetPair, usePoolPair } from 'store/pool/hooks';
+import { getPairName } from 'utils';
 
-export default function LiquiditySelect() {
+export default function PairSelector() {
   const upSmall = useMedia('(min-width:768px)');
   const [open, setOpen] = React.useState(false);
 
@@ -23,29 +25,19 @@ export default function LiquiditySelect() {
     setOpen(!open);
   };
 
-  // update the width on a window resize
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [width, setWidth] = React.useState(ref?.current?.clientWidth);
-  React.useEffect(() => {
-    function handleResize() {
-      setWidth(ref?.current?.clientWidth ?? width);
-    }
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [width]);
-
   const selectedPair = usePoolPair();
   const setPair = useSetPair();
   const dispatch = useDispatch();
 
-  const handleSelectPool = (pl: Pair) => {
+  const handleSelectPair = (pair: PairInfo) => {
     toggleOpen();
-    setPair(pl);
+    setPair(pair);
     dispatch(resetMintState());
   };
 
   const apys = useAllPairsAPY();
+
+  const [ref, width] = useWidth();
 
   return (
     <Flex alignItems="flex-end" ref={ref}>
@@ -53,7 +45,7 @@ export default function LiquiditySelect() {
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <div>
           <StyledWrapper onClick={toggleOpen}>
-            <Text active={open}>{selectedPair.pair}</Text>
+            <Text active={open}>{getPairName(selectedPair)}</Text>
             <StyledArrowDownIcon />
           </StyledWrapper>
 
@@ -63,13 +55,13 @@ export default function LiquiditySelect() {
                 <HeaderText>POOL</HeaderText>
                 <HeaderText textAlign="right">APY</HeaderText>
               </DashGrid>
-              {SUPPORTED_PAIRS.map(pool => (
-                <ListItem key={pool.pair} onClick={() => handleSelectPool(pool)}>
+              {SUPPORTED_PAIRS.map(pair => (
+                <ListItem key={pair.id} onClick={() => handleSelectPair(pair)}>
                   <DataText variant="p" fontWeight="bold">
-                    {pool.pair}
+                    {getPairName(pair)}
                   </DataText>
                   <DataText variant="p" textAlign="right">
-                    {apys && apys[pool.poolId] ? apys[pool.poolId].times(100).dp(2).toFormat() : '-'}%
+                    {apys && apys[pair.id] ? apys[pair.id].times(100).dp(2).toFormat() : '-'}%
                   </DataText>
                 </ListItem>
               ))}

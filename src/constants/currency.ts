@@ -176,7 +176,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
       baseCurrencyKey: CURRENCY_MAP['BALN'],
       quoteCurrencyKey: CURRENCY_MAP['sICX'],
       pair: toMarketPair(CURRENCY_MAP['BALN'], CURRENCY_MAP['sICX']),
-      poolId: 4,
+      //doNotMerge poolId: 4,
+      poolId: 20,
       rewards: 0.05,
     },
     {
@@ -189,7 +190,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: Pair[] } = {
       baseCurrencyKey: CURRENCY_MAP['OMM'],
       quoteCurrencyKey: CURRENCY_MAP['sICX'],
       pair: toMarketPair(CURRENCY_MAP['OMM'], CURRENCY_MAP['sICX']),
-      poolId: 20,
+      //doNotMerge poolId: 20,
+      poolId: 4,
     },
     {
       baseCurrencyKey: CURRENCY_MAP['OMM'],

@@ -81,9 +81,10 @@ export default function SendPanel({ currency }: { currency: Currency }) {
       changeShouldLedgerSign(true);
     }
 
-    let contract = currency.symbol
-      ? bnJs.inject({ account })
-      : bnJs.inject({ account }).getContract((currency as Token).address);
+    let contract =
+      currency.symbol === 'ICX'
+        ? bnJs.inject({ account })
+        : bnJs.inject({ account }).getContract((currency as Token).address);
 
     contract
       .transfer(address, BalancedJs.utils.toLoop(differenceAmount, currency.symbol))

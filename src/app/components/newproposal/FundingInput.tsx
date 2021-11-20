@@ -7,20 +7,17 @@ import AddressInputPanel from 'app/components/AddressInputPanel';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
 import { PROPOSAL_CONFIG, CURRENCY_LIST } from 'app/containers/NewProposalPage/constant';
+import { CurrencyAmount } from 'types';
 
 export interface CurrencyValue {
   recipient: string;
-  amounts: Amount;
+  amounts: Amounts;
 }
-export interface Amount {
+interface Amounts {
   [key: string]: {
     amount: string;
-    symbol: string;
+    currencyKey: string;
   };
-}
-export interface Balance {
-  symbol: string;
-  amount: BigNumber;
 }
 
 interface Props {
@@ -29,7 +26,7 @@ interface Props {
 }
 
 export default function FundingInput({ currencyValue, setCurrencyValue }: Props) {
-  const [balanceList, setBalanceList] = useState<Array<Balance>>([{ symbol: '', amount: new BigNumber(0) }]);
+  const [balanceList, setBalanceList] = useState<Array<CurrencyAmount>>([new CurrencyAmount('', new BigNumber(0))]);
   const [currencyList, setCurrencyList] = useState(CURRENCY_LIST);
 
   useEffect(() => {
@@ -46,21 +43,21 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   }, [Object.keys(currencyValue.amounts).length]);
 
   const updateCurrencyList = useCallback(
-    (amounts: Amount) => {
-      const symbolSelectedList = Object.values(amounts).map(({ symbol }) => symbol);
+    (amounts: Amounts) => {
+      const symbolSelectedList = Object.values(amounts).map(({ currencyKey }) => currencyKey);
       const newCurrencyList = CURRENCY_LIST.filter(value => !symbolSelectedList.includes(value));
       setCurrencyList(newCurrencyList);
     },
     [setCurrencyList],
   );
 
-  const handleInput = (itemId: number, key: 'amount' | 'symbol') => (value: string) => {
+  const handleInput = (itemId: number, key: 'amount' | 'currencyKey') => (value: string) => {
     const currentAmount = currencyValue.amounts[itemId];
     if (key === 'amount') {
-      const maxValue = balanceList.find(item => item.symbol === currentAmount.symbol)?.amount;
+      const maxValue = balanceList.find(item => item.currencyKey === currentAmount.currencyKey)?.amount;
       if (Number(value) > Number(maxValue)) return;
     }
-    const newAmount: Amount = {
+    const newAmount: Amounts = {
       ...currencyValue.amounts,
       [itemId]: { ...currentAmount, [key]: value },
     };
@@ -68,18 +65,18 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
       ...currencyValue,
       amounts: newAmount,
     });
-    if (key === 'symbol') {
+    if (key === 'currencyKey') {
       updateCurrencyList(newAmount);
 
-      //Reset amount value when symbol change
+      //Reset amount value when currencyKey change
       setCurrencyValue({
         ...currencyValue,
         amounts: {
           ...currencyValue.amounts,
           [itemId]: {
             ...currentAmount,
-            symbol: value,
-            amount: currentAmount.symbol === value ? currentAmount.amount : '',
+            currencyKey: value,
+            amount: currentAmount.currencyKey === value ? currentAmount.amount : '',
           },
         },
       });
@@ -89,7 +86,7 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   const handleAddressInput = (value: string) => setCurrencyValue({ ...currencyValue, recipient: value });
 
   const balancesMap = {};
-  balanceList.forEach(balance => (balancesMap[balance.symbol] = balance.amount));
+  balanceList.forEach(balance => (balancesMap[balance.currencyKey] = balance.amount));
 
   return (
     <BoxPanel>
@@ -97,13 +94,13 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
       {Object.values(currencyValue.amounts).map((item, id) => (
         <StyledCurrencyInputPanel
           key={id}
-          currencyList={[item.symbol, ...currencyList]}
+          currencyList={[item.currencyKey, ...currencyList]}
           balanceList={balancesMap}
           value={item.amount}
-          currency={item.symbol}
+          currency={item.currencyKey}
           id="funding-currency"
           showMaxButton={false}
-          onCurrencySelect={handleInput(id, 'symbol')}
+          onCurrencySelect={handleInput(id, 'currencyKey')}
           onUserInput={handleInput(id, 'amount')}
           bg="bg5"
         />
@@ -118,7 +115,7 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
                   ...currencyValue.amounts,
                   [Object.keys(currencyValue.amounts).length]: {
                     amount: '',
-                    symbol: currencyList[0],
+                    currencyKey: currencyList[0],
                   },
                 },
               });

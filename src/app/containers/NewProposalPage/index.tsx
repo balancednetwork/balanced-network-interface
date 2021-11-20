@@ -107,7 +107,7 @@ export function NewProposalPage() {
     amounts: {
       '0': {
         amount: '',
-        symbol: CURRENCY_LIST[0],
+        currencyKey: CURRENCY_LIST[0],
       },
     },
   });
@@ -237,7 +237,7 @@ export function NewProposalPage() {
       amounts: {
         '0': {
           amount: '',
-          symbol: CURRENCY_LIST[0],
+          currencyKey: CURRENCY_LIST[0],
         },
       },
     });

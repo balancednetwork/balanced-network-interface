@@ -3,6 +3,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { addressToCurrencyKeyMap } from 'constants/currency';
+import { CurrencyAmount } from 'types';
 
 import { CurrencyValue } from '../../components/newproposal/FundingInput';
 
@@ -197,19 +198,19 @@ export const PROPOSAL_CONFIG = {
     fetchInputData: async () => {
       const res = await bnJs.DAOFund.getBalances();
       return Object.entries(res).map(item => {
-        return {
-          symbol: addressToCurrencyKeyMap[NETWORK_ID][item[0]] || item[0],
-          amount: BalancedJs.utils.toIcx(item[1] as string),
-        };
+        return new CurrencyAmount(
+          addressToCurrencyKeyMap[NETWORK_ID][item[0]] || item[0],
+          BalancedJs.utils.toIcx(item[1] as string),
+        );
       });
     },
     submitParams: (currencyValue: CurrencyValue) => {
       const amounts = Object.values(currencyValue.amounts)
         .map(
-          ({ amount, symbol }, idx) =>
+          ({ amount, currencyKey }, idx) =>
             amount && {
               amount: `[amount${idx}]`,
-              address: getKeyByValue(symbol, addressToCurrencyKeyMap[NETWORK_ID]),
+              address: getKeyByValue(currencyKey, addressToCurrencyKeyMap[NETWORK_ID]),
             },
         )
         .filter(value => value);

@@ -7,19 +7,22 @@ import AddressInputPanel from 'app/components/AddressInputPanel';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
 import { PROPOSAL_CONFIG, CURRENCY_LIST } from 'app/containers/NewProposalPage/constant';
-import { CurrencyAmount } from 'types';
 import { getTokenFromCurrencyKey } from 'types/adapter';
 import { Currency } from 'types/balanced-sdk-core';
 
 export interface CurrencyValue {
   recipient: string;
-  amounts: Amounts;
+  amounts: Amount;
 }
-interface Amounts {
+export interface Amount {
   [key: string]: {
     amount: string;
-    currencyKey: string;
+    symbol: string;
   };
+}
+export interface Balance {
+  symbol: string;
+  amount: BigNumber;
 }
 
 interface Props {
@@ -28,7 +31,7 @@ interface Props {
 }
 
 export default function FundingInput({ currencyValue, setCurrencyValue }: Props) {
-  const [balanceList, setBalanceList] = useState<Array<CurrencyAmount>>([new CurrencyAmount('', new BigNumber(0))]);
+  const [balanceList, setBalanceList] = useState<Array<Balance>>([{ symbol: '', amount: new BigNumber(0) }]);
   const [currencyList, setCurrencyList] = useState(CURRENCY_LIST);
 
   useEffect(() => {
@@ -45,8 +48,8 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   }, [Object.keys(currencyValue.amounts).length]);
 
   const updateCurrencyList = useCallback(
-    (amounts: Amounts) => {
-      const symbolSelectedList = Object.values(amounts).map(({ currencyKey }) => currencyKey);
+    (amounts: Amount) => {
+      const symbolSelectedList = Object.values(amounts).map(({ symbol }) => symbol);
       const newCurrencyList = CURRENCY_LIST.filter(value => !symbolSelectedList.includes(value));
       setCurrencyList(newCurrencyList);
     },
@@ -57,7 +60,7 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
     const maxValue = balanceList.find(item => item.symbol === currencyValue.amounts[itemId].symbol)?.amount;
     if (Number(value) > Number(maxValue)) return;
 
-    const newAmount: Amounts = {
+    const newAmount: Amount = {
       ...currencyValue.amounts,
       [itemId]: { ...currencyValue.amounts[itemId], amount: value },
     };
@@ -66,12 +69,13 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
       amounts: newAmount,
     });
   };
-  
+
   const handleSymbolInput = (itemId: number) => (currency: Currency) => {
-    const newAmount: Amounts = {
+    const newAmount: Amount = {
       ...currencyValue.amounts,
       [itemId]: { ...currencyValue.amounts[itemId], symbol: currency.symbol },
     };
+    const currentAmount = currencyValue.amounts[itemId];
     setCurrencyValue({
       ...currencyValue,
       amounts: newAmount,
@@ -86,8 +90,8 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
         ...currencyValue.amounts,
         [itemId]: {
           ...currentAmount,
-          currencyKey: value,
-          amount: currentAmount.currencyKey === value ? currentAmount.amount : '',
+          symbol: currency.symbol,
+          amount: currentAmount.symbol === currency.symbol ? currentAmount.amount : '',
         },
       },
     });
@@ -96,7 +100,7 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   const handleAddressInput = (value: string) => setCurrencyValue({ ...currencyValue, recipient: value });
 
   const balancesMap = {};
-  balanceList.forEach(balance => (balancesMap[balance.currencyKey] = balance.amount));
+  balanceList.forEach(balance => (balancesMap[balance.symbol] = balance.amount));
 
   return (
     <BoxPanel>
@@ -125,7 +129,7 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
                   ...currencyValue.amounts,
                   [Object.keys(currencyValue.amounts).length]: {
                     amount: '',
-                    currencyKey: currencyList[0],
+                    symbol: currencyList[0],
                   },
                 },
               });

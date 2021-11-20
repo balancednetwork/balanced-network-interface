@@ -89,6 +89,8 @@ export default function ProposalInfo({
     voters,
   } = proposal || {};
 
+  if (status === 'Cancelled') return null;
+
   return (
     <ProposalWrapper showNotification={showNotification}>
       <Typography variant="h3" mb="10px">

@@ -14,8 +14,8 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { SUPPORTED_PAIRS } from 'constants/currency';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
+import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -148,7 +148,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
 
   const hasEnoughICX = useHasEnoughICX();
 
-  const hasReward = !!SUPPORTED_PAIRS.find(pair => pair.poolId === poolId)?.rewards?.toString();
+  const hasReward = !!SUPPORTED_PAIRS.find(pair => pair.id === poolId)?.rewards?.toString();
 
   const upSmall = useMedia('(min-width: 800px)');
 

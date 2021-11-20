@@ -4,17 +4,18 @@ import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 import BigNumber from 'bignumber.js';
 
 import Divider from 'app/components/Divider';
+import { Currency } from 'types/balanced-sdk-core';
 
 import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';
 import UnstakePanel from './UnstakePanel';
 
 interface ICXWalletProps {
-  currencyKey: string;
+  currency: Currency;
   claimableICX: BigNumber;
 }
 
-export default function ICXWallet({ claimableICX }: ICXWalletProps) {
+export default function ICXWallet({ currency, claimableICX }: ICXWalletProps) {
   const [tabIndex, setTabIndex] = React.useState(0);
 
   const handleTabsChange = index => {
@@ -31,7 +32,7 @@ export default function ICXWallet({ claimableICX }: ICXWalletProps) {
         <Divider mb={3} />
         <TabPanels>
           <TabPanel>
-            <SendPanel currencyKey="ICX" />
+            <SendPanel currency={currency} />
           </TabPanel>
 
           <TabPanel>

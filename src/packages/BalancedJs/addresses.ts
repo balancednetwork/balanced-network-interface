@@ -36,6 +36,7 @@ const YEOUIDO_ADDRESSES = {
   dex: 'cx759f611f9fee49f4ba163070a6b157b863f5fbc3',
   governance: 'cxcf64d3520d5d9224d2fe57ba5ac8b88a94f395e4',
   band: 'cx61a36e5d10412e03c907a507d1e8c6c3856d9964',
+  router: 'cx4c456f4a02d2576fe712ea10b311a5fe8d06d205',
   sicx: 'cx81730290ed56a72539c531ceb8346a4f15b19d0a',
   bnusd: 'cx7bd90c91db9b0be9f688442dce7569aebb1ff7fe',
   baln: 'cx40b768f5834a124ea242f9741b853af804fb497f',

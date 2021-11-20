@@ -18,14 +18,15 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
-import { SUPPORTED_PAIRS } from 'constants/currency';
 import { ONE, ZERO } from 'constants/index';
+import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { formatBigNumber } from 'utils';
+import { getTokenFromCurrencyKey } from 'types/adapter';
+import { formatBigNumber, getPairName } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -248,14 +249,14 @@ const StyledAccordionPanel = styled(AccordionPanel)`
 `;
 
 const PoolRecord = ({ poolId }: { poolId: number }) => {
-  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || SUPPORTED_PAIRS[0];
-  const poolData = usePoolData(pair.poolId);
+  const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
+  const poolData = usePoolData(pair.id);
   const upSmall = useMedia('(min-width: 800px)');
 
   return (
     <ListItem>
       <StyledDataText>
-        <DataText>{pair.pair}</DataText>
+        <DataText>{getPairName(pair)}</DataText>
         <StyledArrowDownIcon />
       </StyledDataText>
       <DataText>
@@ -276,15 +277,15 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
 };
 
 const PoolRecord1 = () => {
-  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
-  const poolData = usePoolData(pair.poolId);
+  const pair = SUPPORTED_PAIRS.find(pair => pair.id === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
+  const poolData = usePoolData(pair.id);
   const upSmall = useMedia('(min-width: 800px)');
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
   return (
     <ListItem>
       <StyledDataText>
-        <DataText>{pair.pair}</DataText>
+        <DataText>{getPairName(pair)}</DataText>
         <StyledArrowDownIcon />
       </StyledDataText>
       <DataText>
@@ -303,7 +304,7 @@ const PoolRecord1 = () => {
 
 const Withdraw1 = () => {
   const { account } = useIconReact();
-  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
+  const pair = SUPPORTED_PAIRS.find(pair => pair.id === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
   const addTransaction = useTransactionAdder();
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
@@ -397,20 +398,20 @@ const Withdraw1 = () => {
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
           <Typography as="span" fontSize="16px">
-            {pair.pair}
+            {getPairName(pair)}
           </Typography>
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between">
           <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2} mr={2}>
-            <CurrencyLogo currencyKey="sICX" size={35} />
+            <CurrencyLogo currency={getTokenFromCurrencyKey('sICX')!} size={35} />
             <Typography fontSize="16px" fontWeight="bold">
               {balance1?.balance1?.dp(2).toFormat()} sICX
             </Typography>
           </OptionButton>
 
           <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1}>
-            <CurrencyLogo currencyKey="ICX" size={35} />
+            <CurrencyLogo currency={getTokenFromCurrencyKey('ICX')!} size={35} />
             <Typography fontSize="16px" fontWeight="bold">
               {balance1?.balance.dp(2).toFormat()} ICX
             </Typography>
@@ -493,10 +494,10 @@ const Wrapper = styled(Flex)`
 `;
 
 const Withdraw = ({ poolId }: { poolId: number }) => {
-  const pair = SUPPORTED_PAIRS.find(pair => pair.poolId === poolId) || SUPPORTED_PAIRS[0];
+  const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
   const balances = useWalletBalances();
   const lpBalance = useBalance(poolId);
-  const pool = usePool(pair.poolId);
+  const pool = usePool(pair.id);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -589,8 +590,8 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
     const quoteT = t.times(rate2);
 
     bnJs
-      .inject({ account: account })
-      .Dex.remove(pair.poolId, BalancedJs.utils.toLoop(t))
+      .inject({ account })
+      .Dex.remove(pair.id, BalancedJs.utils.toLoop(t))
       .then(result => {
         addTransaction(
           { hash: result.result },
@@ -632,13 +633,13 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
       <Wrapper>
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
-          <Typography as="span">{pair.pair}</Typography>
+          <Typography as="span">{getPairName(pair)}</Typography>
         </Typography>
         <Box mb={3}>
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_A]}
             showMaxButton={false}
-            currency={pair.baseCurrencyKey}
+            currency={getTokenFromCurrencyKey(pair.baseCurrencyKey)}
             onUserInput={handleFieldAInput}
             id="withdraw-liquidity-input"
             bg="bg5"
@@ -648,7 +649,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_B]}
             showMaxButton={false}
-            currency={pair.quoteCurrencyKey}
+            currency={getTokenFromCurrencyKey(pair.quoteCurrencyKey)}
             onUserInput={handleFieldBInput}
             id="withdraw-liquidity-input"
             bg="bg5"

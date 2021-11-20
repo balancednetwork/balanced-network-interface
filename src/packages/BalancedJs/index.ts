@@ -1,29 +1,28 @@
 import BigNumber from 'bignumber.js';
 import { isEmpty } from 'lodash';
 
+import { NETWORK_ID } from 'constants/config';
+
+import addresses from './addresses';
 import { SupportedChainId as NetworkId, SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from './chain';
 import Airdrip from './contracts/Airdrip';
 import BALN from './contracts/BALN';
 import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
-import CFT from './contracts/CFT';
 import { Contract } from './contracts/contract';
 import DAOFund from './contracts/DAOFund';
 import Dex from './contracts/Dex';
 import Dividends from './contracts/Dividends';
 import Governance from './contracts/Governance';
 import ICX from './contracts/ICX';
-import IUSDC from './contracts/IUSDC';
-import IUSDT from './contracts/IUSDT';
+import IRC2 from './contracts/IRC2';
 import Loans from './contracts/Loans';
-import METX from './contracts/METX';
-import OMM from './contracts/OMM';
 import Rebalancing from './contracts/Rebalancing';
 import Rewards from './contracts/Rewards';
+import Router from './contracts/Router';
 import sICX from './contracts/sICX';
 import StakedLP from './contracts/StakedLP';
 import Staking from './contracts/Staking';
-import USDS from './contracts/USDS';
 import ContractSettings, { LedgerSettings } from './contractSettings';
 
 export { SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO };
@@ -50,16 +49,11 @@ export class BalancedJs {
   // token contracts
   BALN: BALN;
   sICX: sICX;
-  bnUSD: bnUSD;
   ICX: ICX;
-  OMM: OMM;
-  IUSDC: IUSDC;
-  USDS: USDS;
-  CFT: CFT;
-  METX: METX;
-  IUSDT: IUSDT;
+  bnUSD: bnUSD;
   //
   Loans: Loans;
+  Router: Router;
   Band: Band;
   Staking: Staking;
   Dex: Dex;
@@ -114,16 +108,11 @@ export class BalancedJs {
     // token
     this.BALN = new BALN(this.contractSettings);
     this.ICX = new ICX(this.contractSettings);
-    this.bnUSD = new bnUSD(this.contractSettings);
     this.sICX = new sICX(this.contractSettings);
-    this.OMM = new OMM(this.contractSettings);
-    this.IUSDC = new IUSDC(this.contractSettings);
-    this.USDS = new USDS(this.contractSettings);
-    this.CFT = new CFT(this.contractSettings);
-    this.METX = new METX(this.contractSettings);
-    this.IUSDT = new IUSDT(this.contractSettings);
+    this.bnUSD = new bnUSD(this.contractSettings);
 
     this.Loans = new Loans(this.contractSettings);
+    this.Router = new Router(this.contractSettings);
     this.Band = new Band(this.contractSettings);
     this.Staking = new Staking(this.contractSettings);
     this.Dex = new Dex(this.contractSettings);
@@ -153,5 +142,14 @@ export class BalancedJs {
     });
 
     return contract.callICONPlugins(payload);
+  }
+
+  getContract(address: string): IRC2 {
+    return new IRC2(this.contractSettings, address);
+  }
+
+  getContractFromSymbol(symbol: string): IRC2 {
+    const address = addresses[NETWORK_ID][symbol.toLowerCase()];
+    return new IRC2(this.contractSettings, address);
   }
 }

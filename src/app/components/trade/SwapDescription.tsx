@@ -8,49 +8,38 @@ import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import { getTradePair, isQueue } from 'constants/currency';
+import useWidth from 'hooks/useWidth';
 import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { formatBigNumber, generateChartData } from 'utils';
+import { generateChartData, formatBigNumber } from 'utils';
 
 export default function SwapDescription() {
-  const { currencyKeys, price } = useDerivedSwapInfo();
+  const { currencies, price } = useDerivedSwapInfo();
 
   const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({
     type: CHART_TYPES.AREA,
     period: CHART_PERIODS['1H'],
   });
 
-  // update the width on a window resize
-  const ref = React.useRef<HTMLDivElement>();
-  const [width, setWidth] = React.useState(ref?.current?.clientWidth);
-  React.useEffect(() => {
-    function handleResize() {
-      setWidth(ref?.current?.clientWidth ?? width);
-    }
+  const [ref, width] = useWidth();
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [width]);
-
-  const priceChartQuery = usePriceChartDataQuery(currencyKeys, chartOption.period);
+  const priceChartQuery = usePriceChartDataQuery(currencies, chartOption.period);
   const data = priceChartQuery.data;
   const loading = priceChartQuery.isLoading;
 
   const ratio = useRatio();
-  const data1: any = React.useMemo(() => generateChartData(ratio.sICXICXratio, currencyKeys), [
-    ratio.sICXICXratio,
-    currencyKeys,
-  ]);
+  const queueData: any = React.useMemo(
+    () => generateChartData(ratio.sICXICXratio, { INPUT: currencies.INPUT, OUTPUT: currencies.OUTPUT }),
+    [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
+  );
 
   const priceInICX =
     price &&
-    (currencyKeys[Field.OUTPUT] === 'sICX'
-      ? price.value.times(ratio.sICXICXratio)
-      : price.value.div(ratio.sICXICXratio));
+    (currencies[Field.OUTPUT]?.symbol === 'sICX' ? price.times(ratio.sICXICXratio) : price.div(ratio.sICXICXratio));
 
-  const [pair] = getTradePair(currencyKeys[Field.INPUT] as string, currencyKeys[Field.OUTPUT] as string);
+  const [pair] = getTradePair(currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol);
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
@@ -66,29 +55,34 @@ export default function SwapDescription() {
     });
   };
 
-  const hasSICX = [currencyKeys[Field.INPUT], currencyKeys[Field.OUTPUT]].includes('sICX');
-  const hasICX = [currencyKeys[Field.INPUT], currencyKeys[Field.OUTPUT]].includes('ICX');
+  const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
+  const hasICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX');
 
   return (
     <Box bg="bg2" flex={1} p={[5, 7]}>
       <Flex mb={5} flexWrap="wrap">
         <Box width={[1, 1 / 2]}>
           <Typography variant="h3" mb={2}>
-            {currencyKeys[Field.INPUT]} / {currencyKeys[Field.OUTPUT]}
+            {currencies[Field.INPUT]?.symbol} / {currencies[Field.OUTPUT]?.symbol}
           </Typography>
-          <Typography variant="p">
-            {`${formatBigNumber(price?.value, 'price')} 
-              ${currencyKeys[Field.OUTPUT]} per ${currencyKeys[Field.INPUT]} `}
-          </Typography>
-          {hasSICX && !hasICX && (
-            <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
-              {`${formatBigNumber(priceInICX, 'price')} 
-                ${currencyKeys[Field.OUTPUT] === 'sICX' ? 'ICX' : currencyKeys[Field.OUTPUT]} 
-                per ${currencyKeys[Field.INPUT] === 'sICX' ? 'ICX' : currencyKeys[Field.INPUT]} `}
-            </Typography>
+
+          {pair && (
+            <>
+              <Typography variant="p">
+                {`${formatBigNumber(price, 'price')} 
+                ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+              </Typography>
+              {hasSICX && !hasICX && (
+                <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
+                  {`${formatBigNumber(priceInICX, 'price')} 
+                  ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
+                  per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                </Typography>
+              )}
+            </>
           )}
         </Box>
-        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={pair && isQueue(pair)}>
+        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair || isQueue(pair)}>
           <ChartControlGroup mb={2}>
             {Object.keys(CHART_PERIODS).map(key => (
               <ChartControlButton
@@ -119,35 +113,34 @@ export default function SwapDescription() {
         </Box>
       </Flex>
 
-      {chartOption.type === CHART_TYPES.AREA && (
-        <ChartContainer ref={ref}>
-          {loading ? (
-            <Spinner size={'lg'} centered />
-          ) : (
-            <TradingViewChart
-              data={pair && !isQueue(pair) ? data : data1}
-              volumeData={pair && !isQueue(pair) ? data : data1}
-              width={width}
-              type={CHART_TYPES.AREA}
-            />
-          )}
-        </ChartContainer>
-      )}
+      <ChartContainer ref={ref}>
+        {pair ? (
+          <>
+            {loading ? (
+              <Spinner size={'lg'} centered />
+            ) : (
+              <>
+                {chartOption.type === CHART_TYPES.AREA && (
+                  <TradingViewChart
+                    data={isQueue(pair) ? queueData : data}
+                    volumeData={isQueue(pair) ? queueData : data}
+                    width={width}
+                    type={CHART_TYPES.AREA}
+                  />
+                )}
 
-      {chartOption.type === CHART_TYPES.CANDLE && (
-        <ChartContainer ref={ref}>
-          {loading ? (
-            <Spinner size={'lg'} centered />
-          ) : (
-            <TradingViewChart
-              data={pair && !isQueue(pair) ? data : data1}
-              volumeData={pair && !isQueue(pair) ? data : data1}
-              width={width}
-              type={CHART_TYPES.CANDLE}
-            />
-          )}
-        </ChartContainer>
-      )}
+                {chartOption.type === CHART_TYPES.CANDLE && (
+                  <TradingViewChart data={data} volumeData={data} width={width} type={CHART_TYPES.CANDLE} />
+                )}
+              </>
+            )}
+          </>
+        ) : (
+          <Flex justifyContent="center" alignItems="center" height="100%">
+            <Typography>No price chart available for this pair.</Typography>
+          </Flex>
+        )}
+      </ChartContainer>
     </Box>
   );
 }

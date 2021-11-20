@@ -36,3 +36,22 @@ export const useAllTransactionsQuery = (page: number, limit: number, account: st
     },
   );
 };
+
+export const useInternalTransactionQuery = (transactionHash: string) => {
+  return useQuery<{ transaction: Transaction }>(
+    ['transaction'],
+    async () => {
+      const endpoint = `${API_ENDPOINT}/staking/logs/ICXTransfer?${querystring.stringify({
+        skip: 0,
+        limit: 1,
+        transaction_hash: transactionHash,
+      })}`;
+
+      const { data } = await axios.get(endpoint);
+      return data;
+    },
+    {
+      enabled: !!transactionHash,
+    },
+  );
+};

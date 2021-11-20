@@ -16,34 +16,41 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import {
-  SAFETY_COLLATERAL_RATIO,
-  MANDATORY_COLLATERAL_RATIO,
-  LIQUIDATION_COLLATERAL_RATIO,
-  ZERO,
-} from 'constants/index';
+import { ZERO } from 'constants/index';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
-import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY } from 'store/loan/hooks';
+import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY, useLoanParameters } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
 
-const useThresholdPrices = (): [BigNumber, BigNumber, BigNumber] => {
+const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
+
+const PERIOD_LABELS: { [key: string]: string } = {
+  [Period.day]: 'Past day',
+  [Period.week]: 'Past week',
+  [Period.month]: 'Past month',
+  [Period.all]: 'All time',
+};
+
+const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmount();
   const loanInputAmount = useLoanInputAmount();
+  const loanParameters = useLoanParameters();
+  const { lockingRatio, liquidationRatio } = loanParameters || {};
 
   return React.useMemo(() => {
-    if (collateralInputAmount.isZero()) return [new BigNumber(0), new BigNumber(0), new BigNumber(0)];
+    if (!collateralInputAmount.isZero() && lockingRatio && liquidationRatio) {
+      return [
+        loanInputAmount.div(collateralInputAmount).times(lockingRatio),
+        loanInputAmount.div(collateralInputAmount).times(liquidationRatio),
+      ];
+    }
 
-    return [
-      loanInputAmount.div(collateralInputAmount).times(SAFETY_COLLATERAL_RATIO),
-      loanInputAmount.div(collateralInputAmount).times(MANDATORY_COLLATERAL_RATIO),
-      loanInputAmount.div(collateralInputAmount).times(LIQUIDATION_COLLATERAL_RATIO),
-    ];
-  }, [collateralInputAmount, loanInputAmount]);
+    return [new BigNumber(0), new BigNumber(0)];
+  }, [collateralInputAmount, loanInputAmount, lockingRatio, liquidationRatio]);
 };
 
 const useOwnDailyRewards = (): BigNumber => {
@@ -56,14 +63,18 @@ const useOwnDailyRewards = (): BigNumber => {
   return totalDailyRewards.times(debtHoldShare).div(100);
 };
 
-const displayPeriod: { [key: string]: string } = {
-  day: 'Past day',
-  week: 'Past week',
-  month: 'Past month',
-  all: 'All time',
-};
+const useCollateralLockedSliderPos = () => {
+  const loanParameters = useLoanParameters();
+  const { lockingRatio, liquidationRatio } = loanParameters || {};
 
-const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
+  return React.useMemo(() => {
+    if (lockingRatio && liquidationRatio) {
+      return (lockingRatio - liquidationRatio) / (9 - liquidationRatio);
+    }
+
+    return 0;
+  }, [lockingRatio, liquidationRatio]);
+};
 
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
@@ -91,7 +102,7 @@ const PositionDetailPanel = () => {
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
-  const [, lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
+  const [lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
 
   const currentRatio = useCurrentCollateralRatio();
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
@@ -117,6 +128,8 @@ const PositionDetailPanel = () => {
     closeMenu();
     setPeriod(p);
   };
+
+  const pos = useCollateralLockedSliderPos();
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
     return null;
@@ -185,7 +198,7 @@ const PositionDetailPanel = () => {
           </Tooltip>
 
           <Box flex={1} style={{ position: 'relative' }}>
-            <Locked warned={isLockWarning}>
+            <Locked warned={isLockWarning} pos={pos}>
               <MetaData as="dl" style={{ textAlign: 'right' }}>
                 <Tooltip
                   text="You can’t withdraw any collateral if you go beyond this threshold."
@@ -258,12 +271,12 @@ const PositionDetailPanel = () => {
 
               <ClickAwayListener onClickAway={closeMenu}>
                 <div>
-                  <UnderlineTextWithArrow onClick={handleToggle} text={displayPeriod[period]} arrowRef={arrowRef} />
+                  <UnderlineTextWithArrow onClick={handleToggle} text={PERIOD_LABELS[period]} arrowRef={arrowRef} />
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (
                         <MenuItem className={p === 'all' ? 'border-top' : ''} key={p} onClick={() => handlePeriod(p)}>
-                          {displayPeriod[p]}
+                          {PERIOD_LABELS[p]}
                         </MenuItem>
                       ))}
                     </MenuList>
@@ -392,8 +405,8 @@ const MetaData = styled(Box)`
   }
 `;
 
-const Locked = styled(Threshold)`
-  left: 81.905%;
+const Locked = styled(Threshold)<{ pos: number }>`
+  left: ${({ pos }) => (1 - pos) * 100}%;
 
   ${MetaData} {
     width: 150px;

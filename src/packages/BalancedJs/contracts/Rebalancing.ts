@@ -25,7 +25,6 @@ export default class Rebalancing extends Contract {
   }
 
   rebalance() {
-    console.log('hey');
     const payload = this.transactionParamsBuilder({
       method: 'rebalance',
     });

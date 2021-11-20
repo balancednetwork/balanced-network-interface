@@ -7,10 +7,10 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { SUPPORTED_PAIRS } from 'constants/currency';
-import { PLUS_INFINITY, MANDATORY_COLLATERAL_RATIO } from 'constants/index';
+import { PLUS_INFINITY } from 'constants/index';
+import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useCollateralInputAmount } from 'store/collateral/hooks';
-import { useLoanInputAmount } from 'store/loan/hooks';
+import { useLoanInputAmount, useLoanParameters } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
@@ -62,7 +62,7 @@ export function useFetchRewardsInfo() {
     // calculate rewards per pool
     SUPPORTED_PAIRS.forEach(pair => {
       const rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
-      changeReward(pair.poolId.toString(), emission.times(rewardShare));
+      changeReward(pair.id.toString(), emission.times(rewardShare));
     });
 
     //calculate loan rewards
@@ -86,10 +86,13 @@ export const useCurrentCollateralRatio = (): BigNumber => {
 export const useHasRewardableLoan = () => {
   const loanInputAmount = useLoanInputAmount();
   const collateralRatio = useCurrentCollateralRatio();
+  const loanParameters = useLoanParameters();
+  const { lockingRatio } = loanParameters || {};
 
   if (
     loanInputAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
-    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(MANDATORY_COLLATERAL_RATIO * 100))
+    lockingRatio &&
+    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(lockingRatio * 100))
   ) {
     return true;
   }

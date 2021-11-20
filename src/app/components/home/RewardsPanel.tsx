@@ -10,7 +10,6 @@ import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { addressToCurrencyKeyMap } from 'constants/currency';
 import { ZERO } from 'constants/index';
 import { useUserCollectedFeesQuery, useRewardQuery, BATCH_SIZE, usePlatformDayQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -202,7 +201,7 @@ const RewardSection = () => {
 };
 
 const NetworkFeeSection = () => {
-  const { account, networkId } = useIconReact();
+  const { account } = useIconReact();
   const [feeTx, setFeeTx] = React.useState('');
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -277,12 +276,12 @@ const NetworkFeeSection = () => {
         <>
           {fees &&
             Object.keys(fees)
-              .filter(key => !fees[key].isZero())
+              .filter(key => fees[key].greaterThan(0))
               .map(key => (
                 <Typography key={key} variant="p">
-                  {`${fees[key].dp(2).toFormat()}`}{' '}
+                  {`${fees[key].toSignificant(2)}`}{' '}
                   <Typography key={key} as="span" color="text1">
-                    {addressToCurrencyKeyMap[networkId][key]}
+                    {fees[key].currency.symbol}
                   </Typography>
                 </Typography>
               ))}
@@ -318,12 +317,12 @@ const NetworkFeeSection = () => {
           <Flex flexDirection="column" alignItems="center" mt={2}>
             {fees &&
               Object.keys(fees)
-                .filter(key => !fees[key].isZero())
+                .filter(key => fees[key].greaterThan(0))
                 .map(key => (
                   <Typography key={key} variant="p">
-                    {`${fees[key].dp(2).toFormat()}`}{' '}
+                    {`${fees[key].toSignificant()}`}{' '}
                     <Typography key={key} as="span" color="text1">
-                      {addressToCurrencyKeyMap[networkId][key]}
+                      {fees[key].currency.symbol}
                     </Typography>
                   </Typography>
                 ))}

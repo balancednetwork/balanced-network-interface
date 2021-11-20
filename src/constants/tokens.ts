@@ -79,21 +79,21 @@ export const ICX_YEOUIDO = new Token(
 );
 export const sICX_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
-  'cxae6334850f13dfd8b50f8544d5acb126bb8ef82d',
+  'cx81730290ed56a72539c531ceb8346a4f15b19d0a',
   18,
   'sICX',
   'Staked ICX',
 );
 export const bnUSD_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
-  'cxc48c9c81ceef04445c961c5cc8ff056d733dfe3a',
+  'cx7bd90c91db9b0be9f688442dce7569aebb1ff7fe',
   18,
   'bnUSD',
   'Balanced Dollar',
 );
 export const BALN_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
-  'cx36169736b39f59bf19e8950f6c8fa4bfa18b710a',
+  'cx40b768f5834a124ea242f9741b853af804fb497f',
   18,
   'BALN',
   'Balance Token',

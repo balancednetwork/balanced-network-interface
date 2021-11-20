@@ -54,9 +54,9 @@ export const addressToCurrencyKeyMap = {
     cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88: 'IUSDT',
   },
   [NetworkId.YEOUIDO]: {
-    cx863a4ef770a79fe3a75cf299002d352f0a0c1482: 'sICX',
-    cx6653cab449dca2903d7767af74cda7d16214d893: 'bnUSD',
-    cx4dd1270d9e6297787a70c9f052a17dddad46c1fc: 'BALN',
+    cx81730290ed56a72539c531ceb8346a4f15b19d0a: 'sICX',
+    cx7bd90c91db9b0be9f688442dce7569aebb1ff7fe: 'bnUSD',
+    cx40b768f5834a124ea242f9741b853af804fb497f: 'BALN',
     cx0000000000000000000000000000000000000000: 'ICX',
     cx65f639254090820361da483df233f6d0e69af9b7: 'IUSDC',
     cxc0666df567a6e0b49342648e98ccbe5362b264ea: 'USDS',

@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 
 import { Placement } from '@popperjs/core';
 import Portal from '@reach/portal';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { usePopper } from 'react-popper';
 import styled from 'styled-components';
 
@@ -146,9 +147,19 @@ export interface PopperProps {
   children: React.ReactNode;
   placement?: Placement;
   offset?: OffsetModifier;
+  customScrollBar?: boolean;
+  customScrollBarContainerWidth?: number;
 }
 
-export function PopperWithoutArrow({ show, children, placement = 'auto', anchorEl, offset }: PopperProps) {
+export function PopperWithoutArrow({
+  show,
+  children,
+  placement = 'auto',
+  anchorEl,
+  offset,
+  customScrollBar = false,
+  customScrollBarContainerWidth = 300,
+}: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
@@ -165,7 +176,13 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
   return (
     <Portal>
       <PopoverContainer show={show} ref={setPopperElement as any} style={{ ...styles.popper }} {...attributes.popper}>
-        <ContentWrapper>{children}</ContentWrapper>
+        <ContentWrapper>
+          {customScrollBar ? (
+            <Scrollbars style={{ width: customScrollBarContainerWidth, height: 300 }}>{children}</Scrollbars>
+          ) : (
+            children
+          )}
+        </ContentWrapper>
       </PopoverContainer>
     </Portal>
   );

@@ -3,10 +3,10 @@ import React, { useCallback, useState } from 'react';
 import { isIOS } from 'react-device-detect';
 import styled from 'styled-components';
 
-import Popover, { PopoverProps, PopperWithoutArrowAndBorder } from '../Popover';
+import Popover, { PopoverProps, PopperWithoutArrowAndBorder, PopperNoArrow } from '../Popover';
 
-const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean }>`
-  width: ${props => (props.wide ? '300px' : '260px')};
+const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; ultra?: boolean }>`
+  width: ${props => (props.wide ? '300px' : props.ultra ? '435px' : '260px')};
   padding: 10px 0.9375rem;
   line-height: 150%;
   font-weight: 400;
@@ -26,8 +26,10 @@ export interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: React.ReactNode;
   wide?: boolean;
   small?: boolean;
+  ultra?: boolean;
   containerStyle?: React.CSSProperties;
   noArrowAndBorder?: boolean;
+  noArrow?: boolean;
   refStyle?: React.CSSProperties;
 }
 
@@ -35,9 +37,11 @@ export default function Tooltip({
   text,
   wide,
   small,
+  ultra,
   containerStyle,
   refStyle,
   noArrowAndBorder,
+  noArrow,
   ...rest
 }: TooltipProps) {
   return (
@@ -47,10 +51,12 @@ export default function Tooltip({
           content={<TooltipContainer style={{ width: '100%' }}>{text}</TooltipContainer>}
           {...rest}
         />
+      ) : noArrow ? (
+        <PopperNoArrow content={<TooltipContainer style={{ width: '100%' }}>{text}</TooltipContainer>} {...rest} />
       ) : (
         <Popover
           content={
-            <TooltipContainer style={containerStyle} wide={wide} small={small}>
+            <TooltipContainer style={containerStyle} wide={wide} small={small} ultra={ultra}>
               {text}
             </TooltipContainer>
           }

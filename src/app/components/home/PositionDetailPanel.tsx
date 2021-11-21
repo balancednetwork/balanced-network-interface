@@ -13,7 +13,7 @@ import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { MenuList, MenuItem } from 'app/components/Menu';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { QuestionWrapper } from 'app/components/QuestionHelper';
-import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
+import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { ZERO } from 'constants/index';
@@ -25,6 +25,7 @@ import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'sto
 import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
+import { RebalancingInfo } from './LoanPanel';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
@@ -83,6 +84,7 @@ const PositionDetailPanel = () => {
   const upLarge = useMedia('(min-width: 1200px)');
   const smallSp = useMedia('(max-width: 360px)');
   const [show, setShow] = React.useState<boolean>(false);
+  const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
 
   const open = React.useCallback(() => setShow(true), [setShow]);
@@ -93,6 +95,9 @@ const PositionDetailPanel = () => {
 
   // Rebalancing section
   const { data } = useRebalancingDataQuery(period);
+  const totalCollateralSold = React.useMemo(() => {
+    return data?.totalCollateralSold || new BigNumber(0);
+  }, [data]);
 
   // loan
   const loanInputAmount = useLoanInputAmount();
@@ -130,6 +135,28 @@ const PositionDetailPanel = () => {
   };
 
   const pos = useCollateralLockedSliderPos();
+
+  const openRebalancing = React.useCallback(() => setShowRebalancing(true), [setShowRebalancing]);
+  const closeRebalancing = React.useCallback(() => setShowRebalancing(false), [setShowRebalancing]);
+  const [shouldShowRebalancingAvaragePrice, setShouldShowRebalancingAvaragePrice] = React.useState(false);
+  const shouldShowSeperateTooltip = useMedia('(min-width: 1000px)');
+  const rebalancingTotal = data?.totalRepaid || new BigNumber(0);
+  const averageSoldICXPrice =
+    totalCollateralSold && totalCollateralSold.isZero() ? new BigNumber(0) : rebalancingTotal.div(totalCollateralSold);
+  const avarageRebalancingPriceText = (
+    <>
+      Your average rebalancing price was{' '}
+      <strong>
+        {formatBigNumber(averageSoldICXPrice, 'currency')}
+        {' bnUSD'}
+      </strong>
+      .
+    </>
+  );
+
+  React.useEffect(() => {
+    setShouldShowRebalancingAvaragePrice(totalCollateralSold ? !totalCollateralSold.isZero() : false);
+  }, [totalCollateralSold, setShouldShowRebalancingAvaragePrice]);
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
     return null;
@@ -211,6 +238,12 @@ const PositionDetailPanel = () => {
                 <dd>${lockThresholdPrice.toFixed(3)}</dd>
               </MetaData>
             </Locked>
+            <Liquidated>
+              <MetaData as="dl">
+                <dt>Liquidated</dt>
+                <dd>${liquidationThresholdPrice.dp(3).toFormat()}</dd>
+              </MetaData>
+            </Liquidated>
 
             <Nouislider
               disabled={true}
@@ -238,7 +271,7 @@ const PositionDetailPanel = () => {
             placement="bottom"
             small
           >
-            <RightChip bg="#fb6a6a">Liquidated</RightChip>
+            <RightChip bg="#fb6a6a" />
           </Tooltip>
         </Flex>
 
@@ -249,24 +282,30 @@ const PositionDetailPanel = () => {
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
                 Rebalancing{' '}
-                <MouseoverTooltip
-                  containerStyle={{ width: 330 }}
+                <Tooltip
                   text={
-                    <Box>
-                      <Typography>
-                        If bnUSD strays too far from $1, borrowers' positions are used to rebalance the price.
-                      </Typography>
-                      <br />
-                      <Typography>
-                        Below $1, collateral is sold and a larger amount of debt repaid. Above $1, debt is increased and
-                        used to buy more collateral.
-                      </Typography>
-                    </Box>
+                    <>
+                      <RebalancingInfo />
+                      {shouldShowSeperateTooltip ? null : shouldShowRebalancingAvaragePrice ? (
+                        <>
+                          <br />
+                          {avarageRebalancingPriceText}
+                        </>
+                      ) : null}
+                    </>
                   }
+                  show={showRebalancing}
                   placement="top"
+                  ultra
                 >
-                  {!smallSp && <QuestionIcon width={14} color="text1" style={{ marginTop: -5, color: '#D5D7DB' }} />}
-                </MouseoverTooltip>
+                  <QuestionWrapper
+                    onClick={openRebalancing}
+                    {...(!isIOS ? { onMouseEnter: openRebalancing } : null)}
+                    onMouseLeave={closeRebalancing}
+                  >
+                    <QuestionIcon width={14} style={{ marginTop: -5 }} />
+                  </QuestionWrapper>
+                </Tooltip>
               </Typography>
 
               <ClickAwayListener onClickAway={closeMenu}>
@@ -286,12 +325,34 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(data?.totalCollateralSold, 'currency')} sICX</Typography>
-                <Typography mt={1}>Collateral</Typography>
+                <Typography variant="p">{formatBigNumber(totalCollateralSold, 'currency')} sICX</Typography>
+                <Typography mt={1} sx={{ position: 'relative' }}>
+                  {'Collateral'}
+                  <RebalancingTooltipArrow
+                    left={25}
+                    show={shouldShowSeperateTooltip && shouldShowRebalancingAvaragePrice && showRebalancing}
+                  />
+                </Typography>
               </Box>
+              <Tooltip
+                text={avarageRebalancingPriceText}
+                show={shouldShowSeperateTooltip && shouldShowRebalancingAvaragePrice && showRebalancing}
+                placement="bottom"
+                wide
+                noArrow
+              >
+                <CustomTooltipAnchor></CustomTooltipAnchor>
+              </Tooltip>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(data?.totalRepaid, 'currency')} bnUSD</Typography>
-                <Typography mt={1}>Loan</Typography>
+                {/* <Typography variant="p">{formatBigNumber(data?.totalRepaid, 'currency')} bnUSD</Typography> */}
+                <Typography variant="p">{formatBigNumber(rebalancingTotal, 'currency')} bnUSD</Typography>
+                <Typography mt={1} sx={{ position: 'relative' }}>
+                  {'Loan'}
+                  <RebalancingTooltipArrow
+                    left={7}
+                    show={shouldShowSeperateTooltip && shouldShowRebalancingAvaragePrice && showRebalancing}
+                  />
+                </Typography>
               </Box>
             </Flex>
           </Box>
@@ -301,7 +362,7 @@ const PositionDetailPanel = () => {
           <Box flex={1} my={2}>
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
-                Expected return
+                Loan rewards
               </Typography>
             </Flex>
             <Flex>
@@ -365,7 +426,7 @@ const LeftChip = styled(Chip)`
 const RightChip = styled(Chip)`
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
-  border-left: 3px solid #0d2a4d;
+  border-left: 1px solid #0d2a4d;
 `;
 
 const Threshold = styled(Box)<{ warned?: boolean }>`
@@ -414,8 +475,47 @@ const Locked = styled(Threshold)<{ pos: number }>`
   }
 `;
 
+const Liquidated = styled(Threshold)`
+  left: 100%;
+
+  ::after {
+    margin-left: 0;
+  }
+
+  ${MetaData} {
+    width: 90px;
+    padding-left: 15px;
+  }
+`;
+
 const VerticalDivider = styled(Box)`
   width: 1px;
   height: initial;
   background-color: ${({ theme }) => theme.colors.divider};
+`;
+
+const CustomTooltipAnchor = styled.div`
+  position: absolute;
+`;
+
+const RebalancingTooltipArrow = styled.span<{ left: number; show: boolean }>`
+  position: absolute;
+  display: inline-block;
+  transition: all ease 0.25s;
+  transform: translateY(3px);
+  left: 0;
+  bottom: 0;
+  opacity: ${({ show }) => (show ? 1 : 0)};
+
+  &:before {
+    content: '';
+    left: ${({ left }) => `${left}px`};
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 9px solid ${({ theme }) => theme.colors.primary};
+    display: inline-block;
+  }
 `;

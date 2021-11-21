@@ -309,7 +309,7 @@ const PositionDetailPanel = () => {
                       {...(!isIOS ? { onMouseEnter: openRebalancing } : null)}
                       onMouseLeave={closeRebalancing}
                     >
-                      <QuestionIcon width={14} style={{ marginTop: -5 }} />
+                      <QuestionIcon width={14} style={{ transform: 'translate3d(1px, 1px, 0)' }} />
                     </QuestionWrapper>
                   )}
                 </Tooltip>

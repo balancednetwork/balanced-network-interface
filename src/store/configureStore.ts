@@ -15,6 +15,7 @@ import pool from './pool/reducer';
 import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
 import reward from './reward/reducer';
+import stakedLP from './stakedLP/reducer';
 import swap from './swap/reducer';
 import transactions from './transactions/reducer';
 import wallet from './wallet/reducer';
@@ -49,6 +50,7 @@ export function configureAppStore() {
       transactions,
       mint,
       swap,
+      stakedLP,
     }),
     middleware: [
       ...getDefaultMiddleware({

@@ -97,7 +97,7 @@ const LoanPanel = () => {
   const toggleRebalancingModalOpen = (shouldUpdateLoan: boolean = false) => {
     setRebalancingModalOpen(!rebalancingModalOpen);
     if (shouldUpdateLoan) {
-      handleLoanConfirm();
+      toggleOpen();
     }
   };
 
@@ -117,7 +117,7 @@ const LoanPanel = () => {
   const addTransaction = useTransactionAdder();
 
   const handleLoanUpdate = () => {
-    borrowedAmount.isLessThanOrEqualTo(0) ? toggleRebalancingModalOpen() : handleLoanConfirm();
+    !borrowedAmount.isLessThanOrEqualTo(0) ? toggleRebalancingModalOpen() : toggleOpen();
   };
 
   const handleLoanConfirm = () => {
@@ -245,7 +245,7 @@ const LoanPanel = () => {
                   disabled={
                     borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
                   }
-                  onClick={toggleOpen}
+                  onClick={handleLoanUpdate}
                   fontSize={14}
                 >
                   Confirm
@@ -367,7 +367,7 @@ const LoanPanel = () => {
                 <TextButton onClick={toggleOpen} fontSize={14}>
                   Cancel
                 </TextButton>
-                <Button disabled={!hasEnoughICX} onClick={handleLoanUpdate} fontSize={14}>
+                <Button disabled={!hasEnoughICX} onClick={handleLoanConfirm} fontSize={14}>
                   {shouldBorrow ? 'Borrow' : 'Repay'}
                 </Button>
               </>

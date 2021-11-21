@@ -406,7 +406,7 @@ const ActivityPanel = styled(FlexPanel)`
 
 const Chip = styled(Box)`
   display: inline-block;
-  min-width: 82px;
+  min-width: 90px;
   text-align: center;
   border-radius: 100px;
   padding: 1px 10px;

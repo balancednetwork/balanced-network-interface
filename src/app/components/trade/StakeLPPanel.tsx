@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { throttle } from 'lodash';

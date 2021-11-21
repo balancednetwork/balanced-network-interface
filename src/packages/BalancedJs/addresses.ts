@@ -36,7 +36,7 @@ const YEOUIDO_ADDRESSES = {
   dex: 'cx759f611f9fee49f4ba163070a6b157b863f5fbc3',
   governance: 'cxcf64d3520d5d9224d2fe57ba5ac8b88a94f395e4',
   band: 'cx61a36e5d10412e03c907a507d1e8c6c3856d9964',
-  router: 'cx4c456f4a02d2576fe712ea10b311a5fe8d06d205',
+  router: 'cx607ed2dc0576a3ed916eb344f6f035033a9e4c50',
   sicx: 'cx81730290ed56a72539c531ceb8346a4f15b19d0a',
   bnusd: 'cx7bd90c91db9b0be9f688442dce7569aebb1ff7fe',
   baln: 'cx40b768f5834a124ea242f9741b853af804fb497f',
@@ -49,7 +49,7 @@ const YEOUIDO_ADDRESSES = {
   bwt: 'cx81214e6f8efdac9843e25a4a9b8322126a755218',
   airdrip: 'cx8ed4fbee9d6497f91ea90933db288ff4b43e54ba',
   rebalancing: 'cx03ebfe239c69aee14df2e3435cd0824fd3e75904',
-  stakedLp: 'cxe974cafa693ca3a14292a35e4593347799d7de17',
+  stakedLp: 'cxc8840892de6a5bc5c69bfca7346967943aa51a69',
 };
 
 const SEJONG_ADDRESSES = {

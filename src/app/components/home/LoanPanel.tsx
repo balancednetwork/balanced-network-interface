@@ -117,7 +117,7 @@ const LoanPanel = () => {
   const addTransaction = useTransactionAdder();
 
   const handleLoanUpdate = () => {
-    !borrowedAmount.isLessThanOrEqualTo(0) ? toggleRebalancingModalOpen() : toggleOpen();
+    borrowedAmount.isLessThanOrEqualTo(0) ? toggleRebalancingModalOpen() : toggleOpen();
   };
 
   const handleLoanConfirm = () => {

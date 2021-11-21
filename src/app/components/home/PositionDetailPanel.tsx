@@ -83,6 +83,7 @@ const PositionDetailPanel = () => {
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
   const smallSp = useMedia('(max-width: 360px)');
+  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 440px)');
   const [show, setShow] = React.useState<boolean>(false);
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
@@ -298,13 +299,15 @@ const PositionDetailPanel = () => {
                   placement="top"
                   ultra
                 >
-                  <QuestionWrapper
-                    onClick={openRebalancing}
-                    {...(!isIOS ? { onMouseEnter: openRebalancing } : null)}
-                    onMouseLeave={closeRebalancing}
-                  >
-                    <QuestionIcon width={14} style={{ marginTop: -5 }} />
-                  </QuestionWrapper>
+                  {shouldShowRebalancingTooltipAnchor && (
+                    <QuestionWrapper
+                      onClick={openRebalancing}
+                      {...(!isIOS ? { onMouseEnter: openRebalancing } : null)}
+                      onMouseLeave={closeRebalancing}
+                    >
+                      <QuestionIcon width={14} style={{ marginTop: -5 }} />
+                    </QuestionWrapper>
+                  )}
                 </Tooltip>
               </Typography>
 

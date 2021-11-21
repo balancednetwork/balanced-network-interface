@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { throttle } from 'lodash';
 import Nouislider from 'nouislider-react';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -17,38 +18,23 @@ import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
+import { useChangeStakedLPPercent, useStakedBalance, useStakedLPPercent, useTotalStaked } from 'store/stakedLP/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) {
   const { account } = useIconReact();
-  const transactions = useAllTransactions();
 
   const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const [totalStaked, setTotalStaked] = useState(ZERO);
-  const [stakedBalance, setStakedBalance] = useState(ZERO);
+  const totalStaked = useTotalStaked(poolId);
+  const stakedBalance = useStakedBalance(poolId);
 
-  useEffect(() => {
-    (async () => {
-      if (account) {
-        const result = await bnJs.StakedLP.balanceOf(account, poolId);
-        setStakedBalance(BalancedJs.utils.toIcx(result));
-      }
-    })();
-  }, [account, poolId, transactions]);
-
-  useEffect(() => {
-    (async () => {
-      if (account) {
-        const result = await bnJs.Dex.balanceOf(account, poolId);
-        setTotalStaked(BalancedJs.utils.toIcx(result).plus(stakedBalance));
-      }
-    })();
-  }, [transactions, stakedBalance, account, poolId]);
+  const onStakedLPPercentSelected = useChangeStakedLPPercent();
+  const stakedPercent = useStakedLPPercent(poolId);
 
   const [isAdjusting, setAdjusting] = React.useState(false);
   const handleAdjust = () => {
@@ -57,21 +43,27 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
   const handleCancel = () => {
     setAdjusting(false);
   };
-  const [stakedPercent, setStakedPercent] = React.useState(
-    totalStaked.isZero() ? ZERO : stakedBalance.dividedBy(totalStaked).times(100),
-  );
-  const handleSlide = React.useCallback(
-    (values: string[], handle: number) => {
-      setStakedPercent(new BigNumber(values[handle]));
-    },
-    [setStakedPercent],
+
+  useEffect(() => {
+    onStakedLPPercentSelected(poolId, totalStaked.isZero() ? ZERO : stakedBalance.dividedBy(totalStaked).times(100));
+  }, [onStakedLPPercentSelected, poolId, stakedBalance, totalStaked]);
+
+  const handleSlide = useMemo(
+    () =>
+      throttle((values: string[], handle: number) => {
+        onStakedLPPercentSelected(poolId, new BigNumber(values[handle]));
+      }, 200),
+    [onStakedLPPercentSelected, poolId],
   );
 
   useEffect(() => {
     if (!isAdjusting) {
-      setStakedPercent(!totalStaked.isZero() ? stakedBalance.dividedBy(totalStaked).multipliedBy(100) : ZERO);
+      onStakedLPPercentSelected(
+        poolId,
+        !totalStaked.isZero() ? stakedBalance.dividedBy(totalStaked).multipliedBy(100) : ZERO,
+      );
     }
-  }, [stakedBalance, isAdjusting, totalStaked]);
+  }, [onStakedLPPercentSelected, isAdjusting, totalStaked, poolId, stakedBalance]);
 
   // modal
   const [open, setOpen] = React.useState(false);
@@ -96,7 +88,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
     if (shouldStake) {
       bnJs
         .inject({ account: account })
-        .Dex.stake(poolId, BalancedJs.utils.toLoop(afterAmount))
+        .Dex.stake(poolId, BalancedJs.utils.toLoop(differenceAmount.abs()))
         .then(res => {
           if (res.result) {
             addTransaction(
@@ -120,7 +112,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
     } else {
       bnJs
         .inject({ account: account })
-        .StakedLP.unstake(poolId, BalancedJs.utils.toLoop(afterAmount))
+        .StakedLP.unstake(poolId, BalancedJs.utils.toLoop(differenceAmount.abs()))
         .then(res => {
           if (res.result) {
             addTransaction(
@@ -246,7 +238,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
         <Typography my={1}>
           You have
           <Typography as="span" fontWeight="bold">
-            {` ${totalStaked}  LP tokens`}
+            {` ${totalStaked.dp(2).toFormat()} LP tokens`}
           </Typography>
           . You may be able to stake them on another platform to earn more rewards.
         </Typography>

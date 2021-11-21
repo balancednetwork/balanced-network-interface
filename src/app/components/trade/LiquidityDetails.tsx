@@ -23,6 +23,7 @@ import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
+import { useStakedLPPercent } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
@@ -252,7 +253,9 @@ const StyledAccordionPanel = styled(AccordionPanel)`
 const PoolRecord = ({ poolId }: { poolId: number }) => {
   const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.id);
+
   const upSmall = useMedia('(min-width: 800px)');
+  const stakedLPPercent = useStakedLPPercent(poolId);
 
   return (
     <ListItem>
@@ -270,7 +273,7 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
         <DataText>
           {formatBigNumber(poolData?.suppliedReward, 'currency') === '0'
             ? 'ー'
-            : `~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}
+            : `~ ${formatBigNumber(poolData?.suppliedReward.times(stakedLPPercent).div(100), 'currency')} BALN`}
         </DataText>
       )}
     </ListItem>

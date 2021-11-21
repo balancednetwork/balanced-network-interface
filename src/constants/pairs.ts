@@ -148,7 +148,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
     {
       chainId: 3,
-      id: 3,
+      id: 0,
       name: 'BALN/bnUSD',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'bnUSD',
@@ -157,8 +157,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     {
       chainId: 3,
       //id: 4,
-      id: 25,
-
+      id: 5,
       name: 'BALN/sICX',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'sICX',

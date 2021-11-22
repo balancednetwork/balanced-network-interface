@@ -32,6 +32,7 @@ export function useWalletFetchBalances(account?: string | null) {
   React.useEffect(() => {
     const fetchBalances = async () => {
       if (account) {
+        console.log('vao day ko nhi?', BalancedJs.utils.toIcx(await bnJs.ICX.balanceOf(account)).toNumber());
         const list = SUPPORTED_TOKENS_LIST;
 
         const results = await Promise.all(
@@ -44,6 +45,7 @@ export function useWalletFetchBalances(account?: string | null) {
           }),
         );
 
+        console.log(results);
         const data = results.reduce((prev, result, index) => {
           const symbol = list[index].symbol;
 

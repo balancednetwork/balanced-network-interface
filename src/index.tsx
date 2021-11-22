@@ -22,7 +22,13 @@ import './locales/i18n';
 
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 // Set the global formatting options
 const fmt = {
   prefix: '',

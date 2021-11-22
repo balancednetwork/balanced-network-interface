@@ -41,7 +41,6 @@ export const useStakedBalance = (poolId: number) => {
 
 export const useTotalStaked = (poolId: number) => {
   const { account } = useIconReact();
-  const transactions = useAllTransactions();
   const [totalStaked, setTotalStaked] = useState(ZERO);
   const stakedBalance = useStakedBalance(poolId);
 
@@ -52,7 +51,7 @@ export const useTotalStaked = (poolId: number) => {
         setTotalStaked(BalancedJs.utils.toIcx(result).plus(stakedBalance));
       }
     })();
-  }, [transactions, stakedBalance, account, poolId]);
+  }, [stakedBalance, account, poolId]);
 
   return totalStaked;
 };

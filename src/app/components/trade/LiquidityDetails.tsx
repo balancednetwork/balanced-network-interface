@@ -23,9 +23,9 @@ import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
-import { useStakedLPPercent } from 'store/stakedLP/hooks';
+import { useStakedBalance, useStakedLPPercent } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
 import { formatBigNumber, getPairName } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -253,9 +253,17 @@ const StyledAccordionPanel = styled(AccordionPanel)`
 const PoolRecord = ({ poolId }: { poolId: number }) => {
   const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
   const poolData = usePoolData(pair.id);
-
+  const hasReward = !!pair?.rewards?.toString();
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
+  const stakedBalance = useStakedBalance(poolId);
+  const exchangeRateMapping = {
+    sICX: 2,
+    bnUSD: 3,
+    BALN: 4,
+  };
+  const totalSupply = (stakedBalance, exchangeRate, availableValue) =>
+    formatBigNumber(hasReward ? availableValue.plus(stakedBalance.div(exchangeRate)) : availableValue, 'currency');
 
   return (
     <ListItem>
@@ -264,9 +272,13 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
         <StyledArrowDownIcon />
       </StyledDataText>
       <DataText>
-        {`${formatBigNumber(poolData?.suppliedBase, 'currency')} ${pair.baseCurrencyKey}`}
+        {`${totalSupply(stakedBalance, exchangeRateMapping[pair.baseCurrencyKey], poolData?.suppliedBase)} ${
+          pair.baseCurrencyKey
+        }`}
         <br />
-        {`${formatBigNumber(poolData?.suppliedQuote, 'currency')} ${pair.quoteCurrencyKey}`}
+        {`${totalSupply(stakedBalance, exchangeRateMapping[pair.quoteCurrencyKey], poolData?.suppliedQuote)} ${
+          pair.quoteCurrencyKey
+        }`}
       </DataText>
       {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
       {upSmall && (

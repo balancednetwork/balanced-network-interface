@@ -499,9 +499,9 @@ const Wrapper = styled(Flex)`
 
 const Withdraw = ({ poolId }: { poolId: number }) => {
   const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
-  const balances = useWalletBalances();
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.id);
+  const poolData = usePoolData(pair.id);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -517,6 +517,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
     inputType: 'text',
     portion: ZERO,
   });
+
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
   const price = independentField === Field.CURRENCY_A ? pool?.rate || ONE : pool?.inverseRate || ONE;
 
@@ -529,8 +530,12 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
     };
 
     formattedAmounts = {
-      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A].toFixed(2),
-      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B].toFixed(2),
+      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A].isZero()
+        ? ''
+        : formatBigNumber(parsedAmount[Field.CURRENCY_A], 'input'),
+      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B].isZero()
+        ? ''
+        : formatBigNumber(parsedAmount[Field.CURRENCY_B], 'input'),
     };
   } else {
     parsedAmount = {
@@ -632,6 +637,9 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
 
   const hasEnoughICX = useHasEnoughICX();
 
+  const availableCurrency = (stakedValue, suppliedValue) =>
+    formatBigNumber(!!stakedValue ? suppliedValue.minus(new BigNumber(stakedValue)) : suppliedValue, 'input');
+
   return (
     <>
       <Wrapper>
@@ -661,8 +669,8 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
         </Box>
         <Typography mb={5} textAlign="right">
           {`Available: 
-            ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} ${pair.baseCurrencyKey} /
-            ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} ${pair.quoteCurrencyKey}`}
+            ${availableCurrency(parsedAmount[Field.CURRENCY_A], poolData?.suppliedBase)} ${pair.baseCurrencyKey} /
+            ${availableCurrency(parsedAmount[Field.CURRENCY_B], poolData?.suppliedQuote)} ${pair.quoteCurrencyKey}`}
         </Typography>
         <Box mb={5}>
           <Nouislider
@@ -682,7 +690,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
           />
         </Box>
         <Flex alignItems="center" justifyContent="center">
-          <Button disabled={portion.isGreaterThan(ONE)} onClick={handleShowConfirm}>
+          <Button disabled={parsedAmount[Field.CURRENCY_A].isZero()} onClick={handleShowConfirm}>
             Withdraw liquidity
           </Button>
         </Flex>

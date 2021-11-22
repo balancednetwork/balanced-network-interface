@@ -646,7 +646,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
             currency={getTokenFromCurrencyKey(pair.baseCurrencyKey)}
             onUserInput={handleFieldAInput}
             id="withdraw-liquidity-input"
-            bg="bg5"
+            bg="bg2"
           />
         </Box>
         <Box mb={3}>
@@ -656,11 +656,11 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
             currency={getTokenFromCurrencyKey(pair.quoteCurrencyKey)}
             onUserInput={handleFieldBInput}
             id="withdraw-liquidity-input"
-            bg="bg5"
+            bg="bg2"
           />
         </Box>
         <Typography mb={5} textAlign="right">
-          {`Wallet: 
+          {`Available: 
             ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} ${pair.baseCurrencyKey} /
             ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} ${pair.quoteCurrencyKey}`}
         </Typography>

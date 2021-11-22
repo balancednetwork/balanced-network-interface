@@ -189,7 +189,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
           <Modal isOpen={open} onDismiss={toggleOpen}>
             <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
               <Typography textAlign="center" mb="5px">
-                {shouldStake ? 'Stake LP Tokens?' : 'Unstake LP Tokens?'}
+                {shouldStake ? 'Stake LP tokens?' : 'Unstake LP tokens?'}
               </Typography>
 
               <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -237,7 +237,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
       ) : (
         <Typography my={1}>
           You have
-          <Typography as="span" fontWeight="bold">
+          <Typography as="span" fontWeight="bold" color="white">
             {` ${totalStaked.dp(2).toFormat()} LP tokens`}
           </Typography>
           . You may be able to stake them on another platform to earn more rewards.

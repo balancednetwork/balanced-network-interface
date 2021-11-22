@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useCallback } from 'react';
 
 import BigNumber from 'bignumber.js';
-import { throttle } from 'lodash';
 import Nouislider from 'nouislider-react';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -48,11 +47,10 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
     onStakedLPPercentSelected(poolId, totalStaked.isZero() ? ZERO : stakedBalance.dividedBy(totalStaked).times(100));
   }, [onStakedLPPercentSelected, poolId, stakedBalance, totalStaked]);
 
-  const handleSlide = useMemo(
-    () =>
-      throttle((values: string[], handle: number) => {
-        onStakedLPPercentSelected(poolId, new BigNumber(values[handle]));
-      }, 200),
+  const handleSlide = useCallback(
+    (values: string[], handle: number) => {
+      onStakedLPPercentSelected(poolId, new BigNumber(values[handle]));
+    },
     [onStakedLPPercentSelected, poolId],
   );
 

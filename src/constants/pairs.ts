@@ -54,7 +54,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'IUSDC/bnUSD',
       baseCurrencyKey: 'IUSDC',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.015,
+      rewards: 0.025,
     },
     {
       chainId: 1,
@@ -62,7 +62,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'IUSDT/bnUSD',
       baseCurrencyKey: 'IUSDT',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.03,
+      rewards: 0.005,
     },
     {
       chainId: 1,
@@ -70,7 +70,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'USDS/bnUSD',
       baseCurrencyKey: 'USDS',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.005,
+      rewards: 0.02,
     },
     {
       chainId: 1,

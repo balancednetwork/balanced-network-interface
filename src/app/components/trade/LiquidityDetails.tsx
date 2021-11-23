@@ -24,8 +24,9 @@ import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
+import { useCurrencyBalances } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
 import { formatBigNumber, getPairName } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -393,8 +394,11 @@ const OptionButton = styled(Box)`
 `;
 
 const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => void }) => {
+  const { account } = useIconReact();
   const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
-  const balances = useWalletBalances();
+  const baseCurrency = getTokenFromCurrencyKey(pair.baseCurrencyKey);
+  const quoteCurrency = getTokenFromCurrencyKey(pair.quoteCurrencyKey);
+  const balances = useCurrencyBalances(account ?? undefined, [baseCurrency, quoteCurrency]);
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.id);
 
@@ -473,7 +477,6 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
     setOpen(!open);
   };
 
-  const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
 
   const handleWithdraw = () => {
@@ -497,15 +500,15 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           {
             pending: withdrawMessage(
               formatBigNumber(baseT, 'currency'),
-              pair.baseCurrencyKey,
+              baseCurrency?.symbol ?? '',
               formatBigNumber(quoteT, 'currency'),
-              pair.quoteCurrencyKey,
+              quoteCurrency?.symbol ?? '',
             ).pendingMessage,
             summary: withdrawMessage(
               formatBigNumber(baseT, 'currency'),
-              pair.baseCurrencyKey,
+              baseCurrency?.symbol ?? '',
               formatBigNumber(quoteT, 'currency'),
-              pair.quoteCurrencyKey,
+              quoteCurrency?.symbol ?? '',
             ).successMessage,
           },
         );
@@ -539,7 +542,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_A]}
             showMaxButton={false}
-            currency={getTokenFromCurrencyKey(pair.baseCurrencyKey)}
+            currency={baseCurrency}
             onUserInput={handleFieldAInput}
             id="withdraw-liquidity-input"
             bg="bg5"
@@ -549,7 +552,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_B]}
             showMaxButton={false}
-            currency={getTokenFromCurrencyKey(pair.quoteCurrencyKey)}
+            currency={quoteCurrency}
             onUserInput={handleFieldBInput}
             id="withdraw-liquidity-input"
             bg="bg5"
@@ -557,8 +560,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
         </Box>
         <Typography mb={5} textAlign="right">
           {`Wallet: 
-            ${formatBigNumber(balances[pair.baseCurrencyKey], 'currency')} ${pair.baseCurrencyKey} /
-            ${formatBigNumber(balances[pair.quoteCurrencyKey], 'currency')} ${pair.quoteCurrencyKey}`}
+            ${balances[0]?.toFixed(2)} ${baseCurrency?.symbol} /
+            ${balances[1]?.toFixed(2)} ${quoteCurrency?.symbol}`}
         </Typography>
         <Box mb={5}>
           <Nouislider
@@ -591,11 +594,11 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(parsedAmount[Field.CURRENCY_A], 'currency')} {pair.baseCurrencyKey}
+            {formatBigNumber(parsedAmount[Field.CURRENCY_A], 'currency')} {baseCurrency?.symbol}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(parsedAmount[Field.CURRENCY_B], 'currency')} {pair.quoteCurrencyKey}
+            {formatBigNumber(parsedAmount[Field.CURRENCY_B], 'currency')} {quoteCurrency?.symbol}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

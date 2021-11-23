@@ -18,7 +18,6 @@ import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { ZERO } from 'constants/index';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
-import { useRatesQuery } from 'queries/reward';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
 import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY, useLoanParameters } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -88,7 +87,6 @@ const PositionDetailPanel = () => {
   const [show, setShow] = React.useState<boolean>(false);
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
-  const { data: rates } = useRatesQuery();
 
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
@@ -145,9 +143,7 @@ const PositionDetailPanel = () => {
   const shouldShowSeperateTooltip = useMedia('(min-width: 1000px)');
   const rebalancingTotal = data?.totalRepaid || new BigNumber(0);
   const averageSoldICXPrice =
-    totalCollateralSold && totalCollateralSold.isZero()
-      ? new BigNumber(0)
-      : rebalancingTotal.div(totalCollateralSold.times((rates && rates['bnUSD']) || 1));
+    totalCollateralSold && totalCollateralSold.isZero() ? new BigNumber(0) : rebalancingTotal.div(totalCollateralSold);
   const avarageRebalancingPriceText = (
     <>
       Your average rebalancing price was{' '}

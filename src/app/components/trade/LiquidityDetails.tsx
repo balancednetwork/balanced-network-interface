@@ -257,13 +257,12 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
   const stakedBalance = useStakedBalance(poolId);
-  const exchangeRateMapping = {
-    sICX: 2,
-    bnUSD: 3,
-    BALN: 4,
-  };
-  const totalSupply = (stakedBalance, exchangeRate, availableValue) =>
-    formatBigNumber(hasReward ? availableValue.plus(stakedBalance.div(exchangeRate)) : availableValue, 'currency');
+
+  const totalSupply = (stakedBalance, availableValue, totalAmount, totalLP, suppliedLP) =>
+    formatBigNumber(
+      hasReward ? totalLP.plus(stakedBalance).times(totalAmount).div(suppliedLP) : availableValue,
+      'currency',
+    );
 
   return (
     <ListItem>
@@ -272,13 +271,21 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
         <StyledArrowDownIcon />
       </StyledDataText>
       <DataText>
-        {`${totalSupply(stakedBalance, exchangeRateMapping[pair.baseCurrencyKey], poolData?.suppliedBase)} ${
-          pair.baseCurrencyKey
-        }`}
+        {`${totalSupply(
+          stakedBalance,
+          poolData?.suppliedBase,
+          poolData?.totalBase,
+          poolData?.totalLP,
+          poolData?.suppliedLP,
+        )} ${pair.baseCurrencyKey}`}
         <br />
-        {`${totalSupply(stakedBalance, exchangeRateMapping[pair.quoteCurrencyKey], poolData?.suppliedQuote)} ${
-          pair.quoteCurrencyKey
-        }`}
+        {`${totalSupply(
+          stakedBalance,
+          poolData?.suppliedQuote,
+          poolData?.totalQuote,
+          poolData?.totalLP,
+          poolData?.suppliedLP,
+        )} ${pair.quoteCurrencyKey}`}
       </DataText>
       {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
       {upSmall && (

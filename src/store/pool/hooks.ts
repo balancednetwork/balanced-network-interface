@@ -148,14 +148,16 @@ export function useFetchPools() {
               quoteCurrencyKey: pair.quoteCurrencyKey,
               balance: BalancedJs.utils.toIcx(res1),
               balance1: BalancedJs.utils.toIcx(res2),
+              suppliedLP: new BigNumber(0),
             });
           });
         } else {
-          bnJs.Dex.balanceOf(account, poolId).then(res => {
+          Promise.all([bnJs.Dex.balanceOf(account, poolId), bnJs.Dex.totalSupply(poolId)]).then(([res1, res2]) => {
             changeBalance(poolId, {
               baseCurrencyKey: pair.baseCurrencyKey,
               quoteCurrencyKey: pair.quoteCurrencyKey,
-              balance: BalancedJs.utils.toIcx(res),
+              balance: BalancedJs.utils.toIcx(res1),
+              suppliedLP: BalancedJs.utils.toIcx(res2),
             });
           });
         }
@@ -247,6 +249,8 @@ export function usePoolData(poolId: number) {
         totalBase: pool.base,
         totalQuote: pool.quote,
         totalReward: reward,
+        totalLP: balance?.balance,
+        suppliedLP: balance?.suppliedLP,
         suppliedBase: balance?.base,
         suppliedQuote: balance?.quote,
         suppliedReward: reward.times(poolShare),

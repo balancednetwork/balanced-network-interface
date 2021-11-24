@@ -66,12 +66,12 @@ const SEJONG_ADDRESSES = {
   sicx: 'cxbfff6422301908a638a498efcaa9eed5394abd11',
   bnusd: 'cxe05ac60a7ab3bde875287b70ea3b0a52ff26ec3c',
   baln: 'cxf6ee84c2fdfb1c5f5684d71a53074e7844098c00',
-  omm: '',
-  iusdc: '',
-  iusdt: '',
-  usds: '',
-  cft: '',
-  metx: '',
+  // omm: '',
+  // iusdc: '',
+  // iusdt: '',
+  // usds: '',
+  // cft: '',
+  // metx: '',
   bwt: 'cxa2db8865fa670c6c8aee5d24bd8f279cb04a5510',
 };
 

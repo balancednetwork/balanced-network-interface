@@ -64,9 +64,9 @@ export const addressToCurrencyKeyMap = {
     cxf7313d7fd611c99b8db29e298699be4b1fd86661: 'CFT',
   },
   [NetworkId.SEJONG]: {
-    cx0e706eca3552a6e607095319f4ad8cea37e779d4: 'sICX',
-    cx041714d034919c8456d3606f8766f0169e35cb8e: 'bnUSD',
-    cxb45058d398614a7c8cdf7be6f556fa0b39399799: 'BALN',
+    cxbfff6422301908a638a498efcaa9eed5394abd11: 'sICX',
+    cxe05ac60a7ab3bde875287b70ea3b0a52ff26ec3c: 'bnUSD',
+    cxf6ee84c2fdfb1c5f5684d71a53074e7844098c00: 'BALN',
     cx0000000000000000000000000000000000000000: 'ICX',
   },
 };

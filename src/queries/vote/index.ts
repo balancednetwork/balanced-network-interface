@@ -109,32 +109,35 @@ export const useTotalCollectedFeesQuery = () => {
 export const useTotalProposalQuery = (offset: number = 1, batchSize: number = 200) => {
   return useQuery<Array<ProposalInterface>>(QUERY_KEYS.Vote.TotalProposals, async () => {
     const res = await bnJs.Governance.getProposals(offset, batchSize);
-    const data = res.map(r => {
-      const _against = BalancedJs.utils.toIcx(r['against']);
-      const _for = BalancedJs.utils.toIcx(r['for']);
+    const data = res
+      .map(r => {
+        const _against = BalancedJs.utils.toIcx(r['against']);
+        const _for = BalancedJs.utils.toIcx(r['for']);
 
-      const _against1 = _against.isZero() ? 0 : _against.div(_against.plus(_for)).times(100).dp(2).toNumber();
-      const _for1 = _for.isZero() ? 0 : _for.div(_against.plus(_for)).times(100).dp(2).toNumber();
+        const _against1 = _against.isZero() ? 0 : _against.div(_against.plus(_for)).times(100).dp(2).toNumber();
+        const _for1 = _for.isZero() ? 0 : _for.div(_against.plus(_for)).times(100).dp(2).toNumber();
 
-      return {
-        id: parseInt(r.id, 16),
-        name: r['name'],
-        proposer: r['proposer'],
-        description: r['description'],
-        majority: BalancedJs.utils.toIcx(r['majority']).toNumber(),
-        snapshotDay: parseInt(r['vote snapshot'], 16),
-        startDay: parseInt(r['start day'], 16),
-        endDay: parseInt(r['end day'], 16),
-        quorum: BalancedJs.utils.toIcx(r['quorum']).times(100).dp(2).toNumber(),
-        for: _for1,
-        against: _against1,
-        sum: _against.plus(_for).times(100).dp(2).toNumber(),
-        uniqueApproveVoters: parseInt(r['for_voter_count'], 16),
-        uniqueRejectVoters: parseInt(r['against_voter_count'], 16),
-        voters: parseInt(r['for_voter_count'], 16) + parseInt(r['against_voter_count'], 16),
-        status: r['status'],
-      };
-    });
+        return {
+          id: parseInt(r.id, 16),
+          name: r['name'],
+          proposer: r['proposer'],
+          description: r['description'],
+          majority: BalancedJs.utils.toIcx(r['majority']).toNumber(),
+          snapshotDay: parseInt(r['vote snapshot'], 16),
+          startDay: parseInt(r['start day'], 16),
+          endDay: parseInt(r['end day'], 16),
+          quorum: BalancedJs.utils.toIcx(r['quorum']).times(100).dp(2).toNumber(),
+          for: _for1,
+          against: _against1,
+          sum: _against.plus(_for).times(100).dp(2).toNumber(),
+          uniqueApproveVoters: parseInt(r['for_voter_count'], 16),
+          uniqueRejectVoters: parseInt(r['against_voter_count'], 16),
+          voters: parseInt(r['for_voter_count'], 16) + parseInt(r['against_voter_count'], 16),
+          status: r['status'],
+        };
+      })
+      .filter(r => r.status !== 'Cancelled');
+    console.log('data', data);
     return data;
   });
 };

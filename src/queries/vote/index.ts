@@ -137,7 +137,6 @@ export const useTotalProposalQuery = (offset: number = 1, batchSize: number = 20
         };
       })
       .filter(r => r.status !== 'Cancelled');
-    console.log('data', data);
     return data;
   });
 };

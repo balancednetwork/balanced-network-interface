@@ -1,9 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { isEmpty } from 'lodash';
 
-import { NETWORK_ID } from 'constants/config';
-
-import addresses from './addresses';
 import { SupportedChainId as NetworkId, SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from './chain';
 import Airdrip from './contracts/Airdrip';
 import BALN from './contracts/BALN';
@@ -142,11 +139,6 @@ export class BalancedJs {
   }
 
   getContract(address: string): IRC2 {
-    return new IRC2(this.contractSettings, address);
-  }
-
-  getContractFromSymbol(symbol: string): IRC2 {
-    const address = addresses[NETWORK_ID][symbol.toLowerCase()];
     return new IRC2(this.contractSettings, address);
   }
 }

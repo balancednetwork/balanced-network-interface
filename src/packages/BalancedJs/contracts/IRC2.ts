@@ -28,26 +28,17 @@ export default class IRC2 extends Contract {
     return this.call(callParams);
   }
 
-  swapUsingRoute(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber, path: (string | null)[]) {
+  swapUsingRoute(value: BigNumber, outputAddress: string, minimumReceive: BigNumber, path: (string | null)[]) {
     const data = {
       method: '_swap',
       params: {
-        toToken: addresses[this.nid][outputSymbol.toLowerCase()],
+        toToken: outputAddress,
         minimumReceive: minimumReceive.toFixed(),
         path: path,
       },
     };
 
     return this.transfer(addresses[this.nid].router, value, JSON.stringify(data));
-  }
-
-  swap(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
-    const data = {
-      method: '_swap',
-      params: { toToken: addresses[this.nid][outputSymbol.toLowerCase()], minimumReceive: minimumReceive.toFixed() },
-    };
-
-    return this.transfer(addresses[this.nid].dex, value, JSON.stringify(data));
   }
 
   transfer(to: string, value: BigNumber, data?: string) {

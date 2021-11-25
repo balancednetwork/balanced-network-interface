@@ -171,13 +171,14 @@ export default function SwapPanel() {
       const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
       const token = executionTrade.inputAmount.currency as Token;
+      const outputToken = executionTrade.outputAmount.currency as Token;
 
       bnJs
         .inject({ account })
         .getContract(token.address)
         .swapUsingRoute(
           BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact(), currencies[Field.INPUT]?.symbol!),
-          executionTrade.outputAmount.currency.symbol!,
+          outputToken.address,
           BalancedJs.utils.toLoop(minReceived.toExact(), currencies[Field.OUTPUT]?.symbol!),
           executionTrade.route.pathForSwap,
         )

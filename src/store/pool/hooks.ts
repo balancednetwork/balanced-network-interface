@@ -2,7 +2,6 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
-import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -83,8 +82,8 @@ export function useFetchPools() {
 
       if (!pair) return;
 
-      const baseAddress = addresses[networkId][pair.baseCurrencyKey.toLowerCase()];
-      const quoteAddress = addresses[networkId][pair.quoteCurrencyKey.toLowerCase()];
+      const baseAddress = pair.baseToken.address;
+      const quoteAddress = pair.quoteToken.address;
 
       let result;
 
@@ -126,7 +125,7 @@ export function useFetchPools() {
         inverseRate: ONE.div(rate),
       });
     },
-    [changePool, networkId, account],
+    [changePool, account],
   );
 
   React.useEffect(() => {

@@ -63,6 +63,7 @@ const SEJONG_ADDRESSES = {
   bnusd: 'cx5838cb516d6156a060f90e9a3de92381331ff024',
   baln: 'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b',
   bwt: 'cx68b822ae2acc76e9ec6143a8afbeb79e50a26e8f',
+  stakedLp: 'cx0c3848f0fbb714fcb104e909e3fc1250b8cf9e7f',
 };
 
 const addresses = {

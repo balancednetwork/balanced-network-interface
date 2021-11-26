@@ -23,7 +23,7 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
     async () => {
       const promises: Promise<any>[] = [];
       for (let i = 0; i < end; i += BATCH_SIZE) {
-        promises.push(bnJs.Dividends.getUserDividends(account!, i, i + BATCH_SIZE < end ? i + BATCH_SIZE : 0));
+        // promises.push(bnJs.Dividends.getUserDividends(account!, i, i + BATCH_SIZE < end ? i + BATCH_SIZE : 0));
       }
 
       let feesArr = await Promise.all(promises);

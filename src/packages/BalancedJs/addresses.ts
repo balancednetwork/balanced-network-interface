@@ -39,22 +39,28 @@ const YEOUIDO_ADDRESSES = {
 };
 
 const SEJONG_ADDRESSES = {
-  loans: 'cxc5e1eae2f3560f266ea35fe34b1a39db9c99cc69',
-  staking: 'cxfbf525229307669cbf8be7faddbe48c96fb52209',
-  dividends: 'cx5f123b9a221882d92c508a7eaf0c66bb11e1c216',
-  reserve: 'cxf07d3baf2eecdad496468b1047f68bb90036136c',
-  daofund: 'cxb67b8445b679c32fa0f95278f9263674a2bdcc1f',
-  rewards: 'cxdbbd4deb3e46d3dff280406d2c795cdfcd1ebcfd',
-  dex: 'cx648a6d9c5f231f6b86c0caa9cc9eff8bd6040999',
-  rebalancing: 'cxaa6f520b655d5fb2d43feae45e83d093c88f58f6',
-  governance: 'cx541e2e8b9673e736b727e3f6313ada687539f50f',
-  band: 'cx900e2d17c38903a340a0181523fa2f720af9a798',
-  router: 'cxf9e996d3ab20b83ed6bacb28ebf157c484c4b695',
+  loans: 'cx297c9f15654816605f4ad7edc17947bfae896999',
+  staking: 'cxbdeacd9f258e327f555ba8f073f759832c624b1a',
+  dividends: 'cx243877e80c35ca315f3fcbbbb7925d4c6053410a',
+  reserve: 'cx79887a2f158d8f90f3bbb6bf9fc20ae962c16831',
+  daofund: 'cx5f3b764090cf2d325cf94d8eb8b45ed90b8f7f4d',
+  rewards: 'cxe6c1c771c28225bfcb26c689027039bcc3660eac',
+  dex: 'cxce63668233c02ccd8b294891665ecd536a69ef35',
+  rebalancing: 'cx73b0a8abf77fb76380e15834ec1d26b1497139ef',
+  governance: 'cx11261d403bea34e8f603d905bd20932eed620b51',
+  // oracle: 'cx8f87a4ce573a2e1377545feabac48a960e8092bb',
+  router: 'cxdd28bd21ea1befdf5196080ff04965dabf502788',
+  feehandler: 'cx0d1edac2a5e3461dab4dd415c042a906af33d638',
+  stakedLp: 'cx13e84e462c4176727729ac8e8b0746aff5419e9d',
+  sicx: 'cxbfff6422301908a638a498efcaa9eed5394abd11',
+  bnXLM: 'cx51a850439f414d47532b987849313eee4b485296',
+  bnDOGE: 'cxf1c8cd6213a6dedea450f053702ecea68a99ade1',
+  baln: 'cxf6ee84c2fdfb1c5f5684d71a53074e7844098c00',
+  bwt: 'cxa2db8865fa670c6c8aee5d24bd8f279cb04a5510',
+
+  band: 'cx8f87a4ce573a2e1377545feabac48a960e8092bb', // oracle
   airdrip: '',
-  sicx: 'cx70806fdfa274fe12ab61f1f98c5a7a1409a0c108',
-  bnusd: 'cx5838cb516d6156a060f90e9a3de92381331ff024',
-  baln: 'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b',
-  bwt: 'cx68b822ae2acc76e9ec6143a8afbeb79e50a26e8f',
+  bnusd: 'cxe05ac60a7ab3bde875287b70ea3b0a52ff26ec3c',
 };
 
 const addresses = {

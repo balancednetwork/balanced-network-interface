@@ -396,9 +396,7 @@ const OptionButton = styled(Box)`
 const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => void }) => {
   const { account } = useIconReact();
   const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
-  const baseCurrency = getTokenFromCurrencyKey(pair.baseCurrencyKey);
-  const quoteCurrency = getTokenFromCurrencyKey(pair.quoteCurrencyKey);
-  const balances = useCurrencyBalances(account ?? undefined, [baseCurrency, quoteCurrency]);
+  const balances = useCurrencyBalances(account ?? undefined, [pair.baseToken, pair.quoteToken]);
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.id);
 
@@ -500,15 +498,15 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           {
             pending: withdrawMessage(
               formatBigNumber(baseT, 'currency'),
-              baseCurrency?.symbol ?? '',
+              pair.baseToken?.symbol ?? '',
               formatBigNumber(quoteT, 'currency'),
-              quoteCurrency?.symbol ?? '',
+              pair.quoteToken?.symbol ?? '',
             ).pendingMessage,
             summary: withdrawMessage(
               formatBigNumber(baseT, 'currency'),
-              baseCurrency?.symbol ?? '',
+              pair.baseToken?.symbol ?? '',
               formatBigNumber(quoteT, 'currency'),
-              quoteCurrency?.symbol ?? '',
+              pair.quoteToken?.symbol ?? '',
             ).successMessage,
           },
         );
@@ -542,7 +540,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_A]}
             showMaxButton={false}
-            currency={baseCurrency}
+            currency={pair.baseToken}
             onUserInput={handleFieldAInput}
             id="withdraw-liquidity-input"
             bg="bg5"
@@ -552,7 +550,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_B]}
             showMaxButton={false}
-            currency={quoteCurrency}
+            currency={pair.quoteToken}
             onUserInput={handleFieldBInput}
             id="withdraw-liquidity-input"
             bg="bg5"
@@ -560,8 +558,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
         </Box>
         <Typography mb={5} textAlign="right">
           {`Wallet: 
-            ${balances[0]?.toFixed(2)} ${baseCurrency?.symbol} /
-            ${balances[1]?.toFixed(2)} ${quoteCurrency?.symbol}`}
+            ${balances[0]?.toFixed(2)} ${pair.baseToken?.symbol} /
+            ${balances[1]?.toFixed(2)} ${pair.quoteToken?.symbol}`}
         </Typography>
         <Box mb={5}>
           <Nouislider
@@ -594,11 +592,11 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(parsedAmount[Field.CURRENCY_A], 'currency')} {baseCurrency?.symbol}
+            {formatBigNumber(parsedAmount[Field.CURRENCY_A], 'currency')} {pair.baseToken?.symbol}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(parsedAmount[Field.CURRENCY_B], 'currency')} {quoteCurrency?.symbol}
+            {formatBigNumber(parsedAmount[Field.CURRENCY_B], 'currency')} {pair.quoteToken?.symbol}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

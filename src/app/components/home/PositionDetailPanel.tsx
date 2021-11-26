@@ -18,6 +18,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { ZERO } from 'constants/index';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
+import { useRatesQuery } from 'queries/reward';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
 import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY, useLoanParameters } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -85,6 +86,7 @@ const PositionDetailPanel = () => {
   const smallSp = useMedia('(max-width: 360px)');
   const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 440px)');
   const [show, setShow] = React.useState<boolean>(false);
+  const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
 
@@ -149,7 +151,7 @@ const PositionDetailPanel = () => {
       Your average rebalancing price was{' '}
       <strong>
         {'$'}
-        {formatBigNumber(averageSoldICXPrice, 'currency')}
+        {averageSoldICXPrice.toFixed(2)}
       </strong>
       .
     </>
@@ -192,7 +194,7 @@ const PositionDetailPanel = () => {
           The current ICX price is <span className="white">${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
         </Typography>
         <Typography mb={2}>
-          You will be liquidated at <span className="white">${liquidationThresholdPrice.dp(3).toFormat()}</span>.
+          The current bnUSD price is <span className="white">{rates && `$${rates['bnUSD']?.dp(4).toFormat()}`}</span>.
         </Typography>
       </BoxPanel>
 
@@ -507,7 +509,7 @@ const RebalancingTooltipArrow = styled.span<{ left: number; show: boolean }>`
   transition: all ease 0.25s;
   transform: translateY(3px);
   left: 0;
-  bottom: 0;
+  bottom: 0px;
   opacity: ${({ show }) => (show ? 1 : 0)};
 
   &:before {
@@ -516,9 +518,9 @@ const RebalancingTooltipArrow = styled.span<{ left: number; show: boolean }>`
     position: absolute;
     width: 0;
     height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 9px solid ${({ theme }) => theme.colors.primary};
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-bottom: 10px solid ${({ theme }) => theme.colors.primary};
     display: inline-block;
   }
 `;

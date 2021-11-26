@@ -24,6 +24,7 @@ import {
   bnUSD_SEJONG,
   BALN_SEJONG,
   IUSDC_SEJONG,
+  OMM_SEJONG,
 } from 'constants/tokens';
 import { Token } from 'types/balanced-sdk-core';
 
@@ -312,6 +313,15 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     {
       chainId: 83,
       id: 5,
+      name: 'OMM/sICX',
+      baseCurrencyKey: 'OMM',
+      quoteCurrencyKey: 'sICX',
+      baseToken: OMM_SEJONG,
+      quoteToken: sICX_SEJONG,
+    },
+    {
+      chainId: 83,
+      id: 6,
       name: 'IUSDC/bnUSD',
       baseCurrencyKey: 'IUSDC',
       quoteCurrencyKey: 'bnUSD',

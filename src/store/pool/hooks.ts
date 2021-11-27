@@ -151,12 +151,17 @@ export function useFetchPools() {
             });
           });
         } else {
-          Promise.all([bnJs.Dex.balanceOf(account, poolId), bnJs.Dex.totalSupply(poolId)]).then(([res1, res2]) => {
+          Promise.all([
+            bnJs.Dex.balanceOf(account, poolId),
+            bnJs.Dex.totalSupply(poolId),
+            bnJs.StakedLP.balanceOf(account, poolId),
+          ]).then(([res1, res2, res3]) => {
             changeBalance(poolId, {
               baseCurrencyKey: pair.baseCurrencyKey,
               quoteCurrencyKey: pair.quoteCurrencyKey,
               balance: BalancedJs.utils.toIcx(res1),
               suppliedLP: BalancedJs.utils.toIcx(res2),
+              stakedLPBalance: BalancedJs.utils.toIcx(res3),
             });
           });
         }
@@ -187,7 +192,7 @@ export function useAvailableBalances() {
     let t = {};
 
     Object.keys(balances)
-      .filter(poolId => !balances[poolId].balance.isZero())
+      .filter(poolId => !(balances[poolId].balance.isZero() && balances[poolId].stakedLPBalance?.isZero()))
       .filter(poolId => parseInt(poolId) !== BalancedJs.utils.POOL_IDS.sICXICX)
       .forEach(poolId => {
         t[poolId] = balances[poolId];

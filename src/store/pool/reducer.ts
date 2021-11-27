@@ -12,6 +12,7 @@ export interface Balance {
   balance: BigNumber;
   balance1?: BigNumber;
   suppliedLP: BigNumber;
+  stakedLPBalance?: BigNumber;
 }
 
 export interface PoolState {

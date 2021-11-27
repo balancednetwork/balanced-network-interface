@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { AppState } from 'store';
-import { useAllTransactions } from 'store/transactions/hooks';
+import { useBalance, usePool } from 'store/pool/hooks';
 
 import { setStakedLPPercent } from './actions';
 
@@ -22,33 +22,37 @@ export function useChangeStakedLPPercent(): (poolId: number, percent: BigNumber)
   );
 }
 
-export const useStakedBalance = (poolId: number) => {
-  const { account } = useIconReact();
-  const transactions = useAllTransactions();
-  const [stakedBalance, setStakedBalance] = useState(ZERO);
+export function useLPData(poolId: number) {
+  const pool = usePool(poolId);
+  const balance = useBalance(poolId);
 
-  useEffect(() => {
-    (async () => {
-      if (account) {
-        const result = await bnJs.StakedLP.balanceOf(account, poolId);
-        setStakedBalance(BalancedJs.utils.toIcx(result));
-      }
-    })();
-  }, [account, poolId, transactions]);
-
-  return stakedBalance;
-};
+  return React.useMemo(() => {
+    if (pool && balance) {
+      return {
+        totalBase: pool.base,
+        totalQuote: pool.quote,
+        totalLP: balance?.balance,
+        suppliedLP: balance?.suppliedLP,
+        suppliedBase: balance?.base,
+        suppliedQuote: balance?.quote,
+        stakedLPBalance: balance?.stakedLPBalance,
+      };
+    }
+  }, [pool, balance]);
+}
 
 export const useTotalStaked = (poolId: number) => {
   const { account } = useIconReact();
+  const balance = useBalance(poolId);
   const [totalStaked, setTotalStaked] = useState(ZERO);
-  const stakedBalance = useStakedBalance(poolId);
+
+  const stakedBalance = balance?.stakedLPBalance || ZERO;
 
   useEffect(() => {
     (async () => {
       if (account) {
-        const result = await bnJs.Dex.balanceOf(account, poolId);
-        setTotalStaked(BalancedJs.utils.toIcx(result).plus(stakedBalance));
+        const availableStake = await bnJs.Dex.balanceOf(account, poolId);
+        setTotalStaked(BalancedJs.utils.toIcx(availableStake).plus(stakedBalance));
       }
     })();
   }, [stakedBalance, account, poolId]);

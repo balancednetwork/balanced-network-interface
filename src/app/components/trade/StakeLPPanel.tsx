@@ -17,7 +17,8 @@ import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useChangeStakedLPPercent, useStakedBalance, useStakedLPPercent, useTotalStaked } from 'store/stakedLP/hooks';
+import { useBalance } from 'store/pool/hooks';
+import { useChangeStakedLPPercent, useStakedLPPercent, useTotalStaked } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -29,8 +30,10 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
+  const balance = useBalance(poolId);
+  const stakedBalance = balance?.stakedLPBalance || ZERO;
+
   const totalStaked = useTotalStaked(poolId);
-  const stakedBalance = useStakedBalance(poolId);
 
   const onStakedLPPercentSelected = useChangeStakedLPPercent();
   const stakedPercent = useStakedLPPercent(poolId);

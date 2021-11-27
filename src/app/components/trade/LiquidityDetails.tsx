@@ -22,8 +22,8 @@ import { ONE, ZERO } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
-import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
-import { useStakedBalance, useStakedLPPercent } from 'store/stakedLP/hooks';
+import { useBalance, usePool, usePoolData, useAvailableBalances, useBalances } from 'store/pool/hooks';
+import { useLPData, useStakedLPPercent } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
@@ -256,13 +256,16 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
   const hasReward = !!pair?.rewards?.toString();
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
-  const stakedBalance = useStakedBalance(poolId);
-
-  const totalSupply = (stakedBalance, availableValue, totalAmount, totalLP, suppliedLP) =>
+  const { suppliedBase, totalBase, totalLP, suppliedQuote, totalQuote, suppliedLP, stakedLPBalance } =
+    useLPData(pair.id) || {};
+  const totalSupply = (stakedLPBalance, availableValue, totalAmount, totalLP, suppliedLP) =>
     formatBigNumber(
-      hasReward ? totalLP.plus(stakedBalance).times(totalAmount).div(suppliedLP) : availableValue,
+      hasReward ? totalLP.plus(stakedLPBalance).times(totalAmount).div(suppliedLP) : availableValue,
       'currency',
     );
+
+  const baseCurrencyTotalSupply = totalSupply(stakedLPBalance, suppliedBase, totalBase, totalLP, suppliedLP);
+  const quoteCurrencyTotalSupply = totalSupply(stakedLPBalance, suppliedQuote, totalQuote, totalLP, suppliedLP);
 
   return (
     <ListItem>
@@ -271,21 +274,9 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
         <StyledArrowDownIcon />
       </StyledDataText>
       <DataText>
-        {`${totalSupply(
-          stakedBalance,
-          poolData?.suppliedBase,
-          poolData?.totalBase,
-          poolData?.totalLP,
-          poolData?.suppliedLP,
-        )} ${pair.baseCurrencyKey}`}
+        {`${baseCurrencyTotalSupply} ${pair.baseCurrencyKey}`}
         <br />
-        {`${totalSupply(
-          stakedBalance,
-          poolData?.suppliedQuote,
-          poolData?.totalQuote,
-          poolData?.totalLP,
-          poolData?.suppliedLP,
-        )} ${pair.quoteCurrencyKey}`}
+        {`${quoteCurrencyTotalSupply} ${pair.quoteCurrencyKey}`}
       </DataText>
       {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
       {upSmall && (

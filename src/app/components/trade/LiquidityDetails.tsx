@@ -22,7 +22,7 @@ import { ONE, ZERO } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
-import { useBalance, usePool, usePoolData, useAvailableBalances, useBalances } from 'store/pool/hooks';
+import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
 import { useLPData, useStakedLPPercent } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -278,11 +278,27 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
         <br />
         {`${quoteCurrencyTotalSupply} ${pair.quoteCurrencyKey}`}
       </DataText>
-      {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
+      {upSmall && (
+        <DataText>{`${
+          poolData?.poolShare.isEqualTo(new BigNumber(0))
+            ? formatBigNumber(
+                (stakedLPBalance || new BigNumber(0)).div(poolData?.suppliedLP || new BigNumber(0)).times(100),
+                'currency',
+              )
+            : formatBigNumber(poolData?.poolShare.times(100), 'currency')
+        }%`}</DataText>
+      )}
       {upSmall && (
         <DataText>
           {formatBigNumber(poolData?.suppliedReward, 'currency') === '0'
-            ? 'ー'
+            ? stakedLPPercent.isGreaterThanOrEqualTo(new BigNumber(100))
+              ? `~ ${formatBigNumber(
+                  (stakedLPBalance || new BigNumber(0))
+                    .div(poolData?.suppliedLP || new BigNumber(0))
+                    .times(poolData?.totalReward || new BigNumber(0)),
+                  'currency',
+                )} BALN`
+              : 'ー'
             : `~ ${formatBigNumber(poolData?.suppliedReward.times(stakedLPPercent).div(100), 'currency')} BALN`}
         </DataText>
       )}

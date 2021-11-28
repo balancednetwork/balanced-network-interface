@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
+import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
@@ -17,13 +18,15 @@ import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect'
 import RatioInput from 'app/components/newproposal/RatioInput';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
-import { CURRENCY_LIST, PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
+import { PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { usePlatformDayQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
+import { CurrencyAmount } from 'types/balanced-sdk-core';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import FundingInput, { CurrencyValue } from '../../components/newproposal/FundingInput';
@@ -104,12 +107,7 @@ export function NewProposalPage() {
   const [ratioInputValue, setRatioInputValue] = useState<{ [key: string]: string }>({});
   const [currencyInputValue, setCurrencyInputValue] = React.useState<CurrencyValue>({
     recipient: '',
-    amounts: {
-      '0': {
-        amount: '',
-        symbol: CURRENCY_LIST[0],
-      },
-    },
+    amounts: [{ item: CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_LIST[0], 0) }],
   });
 
   const [showError, setShowError] = useState<ErrorItem>({
@@ -170,9 +168,7 @@ export function NewProposalPage() {
       (Object.values(ratioInputValue).length > 0 && Object.values(ratioInputValue).every(ratio => !!ratio.trim())) ||
       (isFundingProposal &&
         !!currencyInputValue.recipient.trim() &&
-        Object.values(currencyInputValue.amounts)
-          .map(({ amount }) => amount)
-          .some(amount => amount)));
+        currencyInputValue.amounts.some(amount => amount)));
 
   const canSubmit = account && isStakeValid && isFormValid;
 
@@ -234,12 +230,7 @@ export function NewProposalPage() {
     setRatioInputValue({});
     setCurrencyInputValue({
       recipient: '',
-      amounts: {
-        '0': {
-          amount: '',
-          symbol: CURRENCY_LIST[0],
-        },
-      },
+      amounts: [{ item: CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_LIST[0], 0) }],
     });
   };
 
@@ -252,8 +243,12 @@ export function NewProposalPage() {
 
     let fundingAction = JSON.stringify(submitParams(currencyInputValue));
 
-    Object.values(currencyInputValue.amounts).map(({ amount }, idx) => {
-      if (amount) fundingAction = fundingAction.replace(`"[amount${idx}]"`, BalancedJs.utils.toLoop(amount).toFixed());
+    currencyInputValue.amounts.map((amount, idx) => {
+      if (amount.inputDisplayValue)
+        fundingAction = fundingAction.replace(
+          `"[amount${idx}]"`,
+          BalancedJs.utils.toLoop(JSBI.toNumber(amount.item.numerator)).toFixed(),
+        );
       return null;
     });
 

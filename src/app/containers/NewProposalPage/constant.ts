@@ -2,15 +2,14 @@ import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
 import { addressToCurrencyKeyMap } from 'constants/currency';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { CurrencyAmount, Token } from 'types/balanced-sdk-core';
 
 import { CurrencyValue } from '../../components/newproposal/FundingInput';
 
-const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
-
 export const MAX_RATIO_VALUE = 100;
-
-export const CURRENCY_LIST = ['BALN', 'bnUSD', 'sICX'];
 
 export const PROPOSAL_MAPPING = {
   // network fee allocation
@@ -196,20 +195,21 @@ export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.FUNDING]: {
     fetchInputData: async () => {
       const res = await bnJs.DAOFund.getBalances();
-      return Object.entries(res).map(item => {
-        return {
-          symbol: addressToCurrencyKeyMap[NETWORK_ID][item[0]] || item[0],
-          amount: BalancedJs.utils.toIcx(item[1] as string),
-        };
-      });
+      const balanceList = Object.entries(res)
+        .map(item => {
+          const token = SUPPORTED_TOKENS_LIST.find(token => token.address === item[0] || token.symbol === item[0]);
+          return token && CurrencyAmount.fromRawAmount(token, Number(item[1]));
+        })
+        .filter(balance => balance);
+      return balanceList as CurrencyAmount<Token>[];
     },
     submitParams: (currencyValue: CurrencyValue) => {
-      const amounts = Object.values(currencyValue.amounts)
+      const amounts = currencyValue.amounts
         .map(
-          ({ amount, symbol }, idx) =>
-            amount && {
+          (amount, idx) =>
+            amount.inputDisplayValue && {
               amount: `[amount${idx}]`,
-              address: getKeyByValue(symbol, addressToCurrencyKeyMap[NETWORK_ID]),
+              address: getKeyByValue(amount.item.currency.symbol, addressToCurrencyKeyMap[NETWORK_ID]),
             },
         )
         .filter(value => value);

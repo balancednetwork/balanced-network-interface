@@ -1,6 +1,6 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
+import JSBI from 'jsbi';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -13,7 +13,7 @@ import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import useWidth from 'hooks/useWidth';
 import { COMMON_PERCENTS } from 'store/swap/actions';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { Currency } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { escapeRegExp } from 'utils';
 
 const InputContainer = styled.div`
@@ -101,7 +101,8 @@ interface CurrencyInputPanelProps {
   bg?: string;
   placeholder?: string;
   className?: string;
-  balanceList?: { [key: string]: BigNumber };
+  balanceList?: CurrencyAmount<Currency>[];
+  currencyList?: Currency[];
 }
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -127,6 +128,7 @@ export default function CurrencyInputPanel({
   placeholder = '0',
   className,
   balanceList,
+  currencyList = SUPPORTED_TOKENS_LIST,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -145,12 +147,6 @@ export default function CurrencyInputPanel({
     onPercentSelect && onPercentSelect(instant);
   };
 
-  // React.useEffect(() => {
-  //   if (currency && currencyList.indexOf(currency) === -1) {
-  //     onCurrencySelect && onCurrencySelect(currencyList[0]);
-  //   }
-  // }, [currency, onCurrencySelect, currencyList]);
-
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
       onUserInput(nextUserInput);
@@ -158,7 +154,6 @@ export default function CurrencyInputPanel({
   };
 
   const balances = useWalletBalances();
-  const balanceList1 = balanceList || balances;
 
   return (
     <InputContainer ref={ref} className={className}>
@@ -175,7 +170,7 @@ export default function CurrencyInputPanel({
                   <HeaderText>Asset</HeaderText>
                   <HeaderText textAlign="right">{balanceList ? 'Balance' : 'Wallet'}</HeaderText>
                 </DashGrid>
-                {SUPPORTED_TOKENS_LIST.map(ccy => (
+                {currencyList.map(ccy => (
                   <ListItem key={ccy.symbol} onClick={handleCurrencySelect(ccy)}>
                     <Flex>
                       <CurrencyLogo currency={ccy} style={{ marginRight: '8px' }} />
@@ -184,7 +179,12 @@ export default function CurrencyInputPanel({
                       </DataText>
                     </Flex>
                     <DataText variant="p" textAlign="right">
-                      {balanceList1[ccy?.symbol!]?.dp(2).toFormat()}
+                      {balanceList
+                        ? JSBI.toNumber(
+                            balanceList.find(item => item.currency.symbol === ccy?.symbol!)?.numerator ||
+                              JSBI.BigInt(0),
+                          )
+                        : balances[ccy?.symbol!]?.dp(2).toFormat()}
                     </DataText>
                   </ListItem>
                 ))}

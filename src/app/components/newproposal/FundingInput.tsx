@@ -1,28 +1,23 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import BigNumber from 'bignumber.js';
+import JSBI from 'jsbi';
 import styled from 'styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
-import { PROPOSAL_CONFIG, CURRENCY_LIST } from 'app/containers/NewProposalPage/constant';
+import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage/constant';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { getTokenFromCurrencyKey } from 'types/adapter';
-import { Currency } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
+type Amount = {
+  item: CurrencyAmount<Currency>;
+  inputDisplayValue?: string;
+};
 export interface CurrencyValue {
   recipient: string;
-  amounts: Amount;
-}
-export interface Amount {
-  [key: string]: {
-    amount: string;
-    symbol: string;
-  };
-}
-export interface Balance {
-  symbol: string;
-  amount: BigNumber;
+  amounts: Amount[];
 }
 
 interface Props {
@@ -31,8 +26,8 @@ interface Props {
 }
 
 export default function FundingInput({ currencyValue, setCurrencyValue }: Props) {
-  const [balanceList, setBalanceList] = useState<Array<Balance>>([{ symbol: '', amount: new BigNumber(0) }]);
-  const [currencyList, setCurrencyList] = useState(CURRENCY_LIST);
+  const [balanceList, setBalanceList] = useState<CurrencyAmount<Currency>[]>([]);
+  const [currencyList, setCurrencyList] = useState(SUPPORTED_TOKENS_LIST);
 
   useEffect(() => {
     (async () => {
@@ -48,22 +43,24 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   }, [Object.keys(currencyValue.amounts).length]);
 
   const updateCurrencyList = useCallback(
-    (amounts: Amount) => {
-      const symbolSelectedList = Object.values(amounts).map(({ symbol }) => symbol);
-      const newCurrencyList = CURRENCY_LIST.filter(value => !symbolSelectedList.includes(value));
+    (amounts: Amount[]) => {
+      const symbolSelectedList = amounts.map(amount => amount.item.currency.symbol);
+      const newCurrencyList = SUPPORTED_TOKENS_LIST.filter(value => !symbolSelectedList.includes(value.symbol));
       setCurrencyList(newCurrencyList);
     },
     [setCurrencyList],
   );
 
   const handleAmountInput = (itemId: number) => (value: string) => {
-    const maxValue = balanceList.find(item => item.symbol === currencyValue.amounts[itemId].symbol)?.amount;
-    if (Number(value) > Number(maxValue)) return;
+    const maxValue = balanceList.find(
+      item => item?.currency.symbol === currencyValue.amounts[itemId].item.currency.symbol,
+    )?.numerator;
+    if (maxValue && Number(value) > JSBI.toNumber(maxValue)) return;
 
-    const newAmount: Amount = {
-      ...currencyValue.amounts,
-      [itemId]: { ...currencyValue.amounts[itemId], amount: value },
-    };
+    const newAmount = currencyValue.amounts;
+    newAmount[itemId].item = CurrencyAmount.fromRawAmount(newAmount[itemId].item.currency, value || 0);
+    newAmount[itemId].inputDisplayValue = value;
+
     setCurrencyValue({
       ...currencyValue,
       amounts: newAmount,
@@ -71,47 +68,29 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   };
 
   const handleSymbolInput = (itemId: number) => (currency: Currency) => {
-    const newAmount: Amount = {
-      ...currencyValue.amounts,
-      [itemId]: { ...currencyValue.amounts[itemId], symbol: currency.symbol },
-    };
-    const currentAmount = currencyValue.amounts[itemId];
+    const newAmount = currencyValue.amounts;
+    currencyValue.amounts[itemId].item = CurrencyAmount.fromRawAmount(currency, 0);
+    newAmount[itemId].inputDisplayValue = '';
     setCurrencyValue({
       ...currencyValue,
       amounts: newAmount,
     });
 
     updateCurrencyList(newAmount);
-
-    //Reset amount value when currencyKey change
-    setCurrencyValue({
-      ...currencyValue,
-      amounts: {
-        ...currencyValue.amounts,
-        [itemId]: {
-          ...currentAmount,
-          symbol: currency.symbol,
-          amount: currentAmount.symbol === currency.symbol ? currentAmount.amount : '',
-        },
-      },
-    });
   };
 
   const handleAddressInput = (value: string) => setCurrencyValue({ ...currencyValue, recipient: value });
 
-  const balancesMap = {};
-  balanceList.forEach(balance => (balancesMap[balance.symbol] = balance.amount));
-
   return (
     <BoxPanel>
       <StyledAddressInputPanel value={currencyValue.recipient} onUserInput={handleAddressInput} bg="bg5" />
-      {Object.values(currencyValue.amounts).map((item, id) => (
+      {currencyValue.amounts.map((amount, id) => (
         <StyledCurrencyInputPanel
           key={id}
-          // currencyList={[item.symbol, ...currencyList]}
-          balanceList={balancesMap}
-          value={item.amount}
-          currency={getTokenFromCurrencyKey(item.symbol)!}
+          currencyList={[amount.item.currency].concat(currencyList)}
+          balanceList={balanceList}
+          value={amount.inputDisplayValue || ''}
+          currency={getTokenFromCurrencyKey(amount.item.currency.symbol)!}
           id="funding-currency"
           showMaxButton={false}
           onCurrencySelect={handleSymbolInput(id)}
@@ -119,19 +98,13 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
           bg="bg5"
         />
       ))}
-      {Object.values(currencyValue.amounts).length < 3 && (
+      {Object.values(currencyValue.amounts).length < SUPPORTED_TOKENS_LIST.length && (
         <ButtonWrapper>
           <Button
             onClick={() => {
               setCurrencyValue({
                 ...currencyValue,
-                amounts: {
-                  ...currencyValue.amounts,
-                  [Object.keys(currencyValue.amounts).length]: {
-                    amount: '',
-                    symbol: currencyList[0],
-                  },
-                },
+                amounts: [...currencyValue.amounts, { item: CurrencyAmount.fromRawAmount(currencyList[0], 0) }],
               });
             }}
           >

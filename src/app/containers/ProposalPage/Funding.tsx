@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import { BalancedJs } from 'packages/BalancedJs';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
+import { NETWORK_ID } from 'constants/config';
 import { addressToCurrencyKeyMap } from 'constants/currency';
 
 interface AmountItem {
@@ -26,8 +27,7 @@ export default function Funding({ recipient, amounts }: Props) {
           {amounts.map(({ amount, address }) => (
             <ListItem>
               <Typography variant="h3">{`${Number(BalancedJs.utils.toIcx(amount).toFixed(2))}  ${
-                addressToCurrencyKeyMap[NetworkId.YEOUIDO][address] ||
-                addressToCurrencyKeyMap[NetworkId.MAINNET][address]
+                addressToCurrencyKeyMap[NETWORK_ID][address]
               }`}</Typography>
             </ListItem>
           ))}

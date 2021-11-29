@@ -9,6 +9,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -16,7 +17,7 @@ import { useAllTransactions } from 'store/transactions/hooks';
 import { AppState } from '..';
 import { changeBalances, resetBalances } from './actions';
 
-const contractSettings = new ContractSettings({ networkId: parseInt(process.env.REACT_APP_NETWORK_ID ?? '1') });
+const contractSettings = new ContractSettings({ networkId: NETWORK_ID });
 
 export function useWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);

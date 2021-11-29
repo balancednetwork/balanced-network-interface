@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { isIOS } from 'react-device-detect';
 import styled from 'styled-components';
 
-import Popover, { PopoverProps, PopperWithoutArrowAndBorder, PopperNoArrow } from '../Popover';
+import Popover, { PopoverProps, PopperWithoutArrowAndBorder } from '../Popover';
 
 export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; customWidth?: number }>`
   width: ${props => (props.customWidth ? `${props.customWidth}px` : props.wide ? '300px' : '260px')};
@@ -41,7 +41,6 @@ export default function Tooltip({
   containerStyle,
   refStyle,
   noArrowAndBorder,
-  noArrow,
   ...rest
 }: TooltipProps) {
   return (
@@ -51,8 +50,6 @@ export default function Tooltip({
           content={<TooltipContainer style={{ width: '100%' }}>{text}</TooltipContainer>}
           {...rest}
         />
-      ) : noArrow ? (
-        <PopperNoArrow content={<TooltipContainer style={{ width: '100%' }}>{text}</TooltipContainer>} {...rest} />
       ) : (
         <Popover
           content={

@@ -13,7 +13,7 @@ import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { MenuList, MenuItem } from 'app/components/Menu';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { QuestionWrapper } from 'app/components/QuestionHelper';
-import Tooltip from 'app/components/Tooltip';
+import Tooltip, { TooltipContainer } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { ZERO } from 'constants/index';
@@ -283,34 +283,28 @@ const PositionDetailPanel = () => {
         <Flex flexWrap="wrap" mt={-1} flexDirection={['column', 'column', 'column', 'row', 'row']}>
           <Box flex={1} my={2}>
             <Flex alignItems="center" mb={3}>
-              <Typography variant="h3" mr={15}>
+              <Typography variant="h3" mr={15} sx={{ position: 'relative' }}>
                 Rebalancing{' '}
-                <Tooltip
-                  text={
-                    <>
-                      <RebalancingInfo />
-                      {shouldShowSeperateTooltip ? null : shouldShowRebalancingAvaragePrice ? (
-                        <>
-                          <br />
-                          {avarageRebalancingPriceText}
-                        </>
-                      ) : null}
-                    </>
-                  }
-                  show={showRebalancing}
-                  placement="top"
-                  ultra
-                >
-                  {shouldShowRebalancingTooltipAnchor && (
-                    <QuestionWrapper
-                      onClick={openRebalancing}
-                      {...(!isIOS ? { onMouseEnter: openRebalancing } : null)}
-                      onMouseLeave={closeRebalancing}
-                    >
-                      <QuestionIcon width={14} style={{ transform: 'translate3d(1px, 1px, 0)' }} />
-                    </QuestionWrapper>
-                  )}
-                </Tooltip>
+                {shouldShowRebalancingTooltipAnchor && (
+                  <QuestionWrapper
+                    onClick={openRebalancing}
+                    {...(!isIOS ? { onMouseEnter: openRebalancing } : null)}
+                    onMouseLeave={closeRebalancing}
+                  >
+                    <QuestionIcon width={14} style={{ transform: 'translate3d(1px, 1px, 0)' }} />
+                  </QuestionWrapper>
+                )}
+                <RebalancingTooltip show={showRebalancing} bottom={false}>
+                  <TooltipContainer customWidth={435}>
+                    <RebalancingInfo />
+                    {shouldShowSeperateTooltip ? null : shouldShowRebalancingAvaragePrice ? (
+                      <>
+                        <br />
+                        {avarageRebalancingPriceText}
+                      </>
+                    ) : null}
+                  </TooltipContainer>
+                </RebalancingTooltip>
               </Typography>
 
               <ClickAwayListener onClickAway={closeMenu}>
@@ -328,7 +322,7 @@ const PositionDetailPanel = () => {
                 </div>
               </ClickAwayListener>
             </Flex>
-            <Flex>
+            <Flex sx={{ position: 'relative' }}>
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(totalCollateralSold, 'currency')} sICX</Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
@@ -339,15 +333,14 @@ const PositionDetailPanel = () => {
                   />
                 </Typography>
               </Box>
-              <Tooltip
-                text={avarageRebalancingPriceText}
+
+              <RebalancingTooltip
                 show={shouldShowSeperateTooltip && shouldShowRebalancingAvaragePrice && showRebalancing}
-                placement="bottom"
-                wide
-                noArrow
+                bottom={true}
               >
-                <CustomTooltipAnchor></CustomTooltipAnchor>
-              </Tooltip>
+                <TooltipContainer customWidth={321}>{avarageRebalancingPriceText}</TooltipContainer>
+              </RebalancingTooltip>
+
               <Box width={1 / 2}>
                 {/* <Typography variant="p">{formatBigNumber(data?.totalRepaid, 'currency')} bnUSD</Typography> */}
                 <Typography variant="p">{formatBigNumber(rebalancingTotal, 'currency')} bnUSD</Typography>
@@ -499,17 +492,13 @@ const VerticalDivider = styled(Box)`
   background-color: ${({ theme }) => theme.colors.divider};
 `;
 
-const CustomTooltipAnchor = styled.div`
-  position: absolute;
-`;
-
 const RebalancingTooltipArrow = styled.span<{ left: number; show: boolean }>`
   position: absolute;
   display: inline-block;
   transition: all ease 0.25s;
   transform: translateY(3px);
   left: 0;
-  bottom: 0px;
+  bottom: 0;
   opacity: ${({ show }) => (show ? 1 : 0)};
 
   &:before {
@@ -522,5 +511,52 @@ const RebalancingTooltipArrow = styled.span<{ left: number; show: boolean }>`
     border-right: 9px solid transparent;
     border-bottom: 10px solid ${({ theme }) => theme.colors.primary};
     display: inline-block;
+  }
+`;
+
+const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
+  background: ${({ theme }) => theme.colors.bg4};
+  border: 2px solid ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.text1};
+  border-radius: 8px;
+  position: absolute;
+  ${({ bottom }) => (bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
+  left: ${({ bottom }) => (bottom ? `50%` : `100%`)};
+  margin-left: ${({ bottom }) => (bottom ? `-160px` : `-225px`)};
+  z-index: 10;
+  transition: all ease 0.25s;
+  opacity: ${({ show }) => (show ? 1 : 0)};
+  pointer-events: ${({ show }) => (show ? 'all' : 'none')};
+
+  &:before {
+    ${({ bottom }) => (bottom ? null : `content: ''`)};
+    left: 50%;
+    top: calc(100% + 1px);
+    margin-left: -10px;
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 10px solid ${({ theme }) => theme.colors.primary};
+    display: inline-block;
+  }
+
+  @media screen and (max-width: 999px) {
+    margin-left: -193px;
+
+    &:before {
+      margin-left: -42px;
+    }
+  }
+  @media screen and (max-width: 599px) {
+    margin-left: -183px;
+
+    &:before {
+      margin-left: -52px;
+    }
+  }
+  @media screen and (max-width: 439px) {
+    display: none;
   }
 `;

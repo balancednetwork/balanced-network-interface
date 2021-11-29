@@ -29,7 +29,6 @@ export interface TooltipProps extends Omit<PopoverProps, 'content'> {
   customWidth?: number;
   containerStyle?: React.CSSProperties;
   noArrowAndBorder?: boolean;
-  noArrow?: boolean;
   refStyle?: React.CSSProperties;
 }
 

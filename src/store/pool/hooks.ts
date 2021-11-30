@@ -208,7 +208,8 @@ export function usePoolShare(poolId: number) {
   const pool = usePool(poolId);
 
   return React.useMemo(() => {
-    if (balance && pool && !pool.total.isZero()) return balance.balance.div(pool.total);
+    if (balance && pool && !pool.total.isZero())
+      return balance.balance.plus(balance.stakedLPBalance || new BigNumber(0)).div(pool.total);
     else return new BigNumber(0);
   }, [balance, pool]);
 }

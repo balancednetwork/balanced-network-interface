@@ -279,14 +279,9 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
         {`${quoteCurrencyTotalSupply} ${pair.quoteCurrencyKey}`}
       </DataText>
       {upSmall && (
-        <DataText>{`${
-          poolData?.poolShare.isEqualTo(new BigNumber(0))
-            ? formatBigNumber(
-                (stakedLPBalance || new BigNumber(0)).div(poolData?.suppliedLP || new BigNumber(0)).times(100),
-                'currency',
-              )
-            : formatBigNumber(poolData?.poolShare.times(100), 'currency')
-        }%`}</DataText>
+        <DataText>
+          {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
+        </DataText>
       )}
       {upSmall && (
         <DataText>

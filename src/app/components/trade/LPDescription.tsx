@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
-import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
@@ -53,15 +52,13 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
     }
   }, [data.totalReward, supplyBase, totalBase]);
 
-  const upSmall = useMedia('(min-width: 800px)');
-
   return (
     <Box bg="bg2" flex={1} padding={[5, 7]}>
       <Typography variant="h3" mb={2}>
         {getPairName(selectedPair)} liquidity pool
       </Typography>
 
-      <Flex flexWrap="wrap" padding={upSmall ? '50px 0' : 0}>
+      <Flex flexWrap="wrap" marginTop="40px">
         <Box
           width={[1, 1 / 2]} //
           sx={{

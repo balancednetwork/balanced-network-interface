@@ -422,7 +422,7 @@ const Withdraw1 = () => {
       <Flex flexDirection="column" alignItems="center">
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
-          <Typography as="span" fontSize="16px">
+          <Typography as="span" fontSize="16px" fontWeight="normal">
             {getPairName(pair)}
           </Typography>
         </Typography>
@@ -666,7 +666,9 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
       <Wrapper>
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
-          <Typography as="span">{getPairName(pair)}</Typography>
+          <Typography as="span" fontSize="16px" fontWeight="normal">
+            {getPairName(pair)}
+          </Typography>
         </Typography>
         <Box mb={3}>
           <CurrencyInputPanel

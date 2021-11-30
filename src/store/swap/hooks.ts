@@ -104,6 +104,7 @@ export function useTokenBalances(
       const balance = balances[idx];
 
       if (balance) agg[token.address] = CurrencyAmount.fromRawAmount(token, String(balance));
+      else agg[token.address] = CurrencyAmount.fromRawAmount(token, 0);
 
       return agg;
     }, {});
@@ -147,6 +148,7 @@ export function useICXBalances(
       const balance = balances[idx];
 
       if (balance) agg[address] = CurrencyAmount.fromRawAmount(ICX, String(balance));
+      else agg[address] = CurrencyAmount.fromRawAmount(ICX, 0);
 
       return agg;
     }, {});

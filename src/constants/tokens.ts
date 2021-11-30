@@ -4,6 +4,20 @@ import { Token, Currency } from 'types/balanced-sdk-core/index';
 
 import { NETWORK_ID } from './config';
 
+export const isNativeCurrency = (token?: Currency): boolean => {
+  return (
+    token instanceof Token &&
+    (token.address === ICX.address || token.address === ICX_YEOUIDO.address || token.address === ICX_SEJONG.address)
+  );
+};
+
+export const isBALN = (token?: Currency): boolean => {
+  return (
+    token instanceof Token &&
+    (token.address === BALN.address || token.address === BALN_YEOUIDO.address || token.address === BALN_SEJONG.address)
+  );
+};
+
 export const ICX = new Token(SupportedChainId.MAINNET, 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX');
 export const sICX = new Token(
   SupportedChainId.MAINNET,

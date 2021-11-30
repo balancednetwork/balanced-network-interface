@@ -1,18 +1,20 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import bnJs from 'bnJs';
 import { canBeQueue, getTradePair } from 'constants/currency';
+import { isBALN, isNativeCurrency, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
 import { usePools } from 'store/pool/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
 import { Trade } from 'types/balanced-v1-sdk';
 import { parseUnits } from 'utils';
 
-import { TradeType, Currency, CurrencyAmount, Percent } from '../../types/balanced-sdk-core';
+import { TradeType, Currency, CurrencyAmount, Percent, Token, NativeCurrency } from '../../types/balanced-sdk-core';
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './actions';
 import { useTradeExactIn, useTradeExactOut } from './adapter';
@@ -75,22 +77,122 @@ export function useSwapActionHandlers(): {
   };
 }
 
+export function useTokenBalances(
+  account: string | undefined,
+  tokens: Token[],
+): { [address: string]: CurrencyAmount<Currency> | undefined } {
+  const [balances, setBalances] = useState<(string | number | BigNumber)[]>([]);
+
+  useEffect(() => {
+    const fetchBalances = async () => {
+      const result = await Promise.all(
+        tokens.map(async token => {
+          if (!account) return undefined;
+          if (isBALN(token)) return bnJs.BALN.availableBalanceOf(account);
+          return bnJs.getContract(token.address).balanceOf(account);
+        }),
+      );
+
+      setBalances(result);
+    };
+
+    fetchBalances();
+  }, [tokens, account]);
+
+  return useMemo(() => {
+    return tokens.reduce((agg, token, idx) => {
+      const balance = balances[idx];
+
+      if (balance) agg[token.address] = CurrencyAmount.fromRawAmount(token, String(balance));
+
+      return agg;
+    }, {});
+  }, [balances, tokens]);
+}
+
+export function useICXBalances(
+  uncheckedAddresses: (string | undefined)[],
+): { [address: string]: CurrencyAmount<Currency> | undefined } {
+  const [balances, setBalances] = useState<(string | number | BigNumber)[]>([]);
+
+  const addresses: string[] = useMemo(
+    () =>
+      uncheckedAddresses
+        ? uncheckedAddresses
+            .filter(isAddress)
+            .filter((a): a is string => a !== undefined)
+            .sort()
+        : [],
+    [uncheckedAddresses],
+  );
+
+  useEffect(() => {
+    const fetchBalances = async () => {
+      const result = await Promise.all(
+        addresses.map(async address => {
+          return bnJs.ICX.balanceOf(address);
+        }),
+      );
+
+      setBalances(result);
+    };
+
+    fetchBalances();
+  }, [addresses]);
+
+  const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address];
+
+  return useMemo(() => {
+    return addresses.reduce((agg, address, idx) => {
+      const balance = balances[idx];
+
+      if (balance) agg[address] = CurrencyAmount.fromRawAmount(ICX, String(balance));
+
+      return agg;
+    }, {});
+  }, [balances, addresses, ICX]);
+}
+
 export function useCurrencyBalances(
   account: string | undefined,
   currencies: (Currency | undefined)[],
 ): (CurrencyAmount<Currency> | undefined)[] {
-  const balances = useWalletBalances();
+  const literal = useMemo(
+    () =>
+      currencies.reduce((agg: string, cur: Currency | undefined) => {
+        if (cur instanceof Token) return `${agg}-${cur.address}`;
+        if (cur instanceof NativeCurrency) return `${agg}-BASE`;
+        return agg;
+      }, ''),
+    [currencies],
+  );
+  const tokens = useMemo(
+    () =>
+      (currencies?.filter((currency): currency is Token => currency?.isToken ?? false) ?? []).filter(
+        (token: Token) => !isNativeCurrency(token),
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [literal],
+  );
+
+  const tokenBalances = useTokenBalances(account, tokens);
+
+  const containsICX: boolean = useMemo(() => currencies?.some(currency => isNativeCurrency(currency)) ?? false, [
+    currencies,
+  ]);
+  const accounts = useMemo(() => (containsICX ? [account] : []), [containsICX, account]);
+  const icxBalance = useICXBalances(accounts);
 
   return React.useMemo(
     () =>
       currencies.map(currency => {
         if (!account || !currency) return undefined;
-        return CurrencyAmount.fromRawAmount(
-          currency,
-          parseUnits(balances[currency.symbol!].toFixed(), currency.decimals),
-        );
+        if (isNativeCurrency(currency)) return icxBalance[account];
+        if (currency.isToken) return tokenBalances[currency.address];
+        return undefined;
       }),
-    [balances, account, currencies],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [tokenBalances, icxBalance, account, literal],
   );
 }
 

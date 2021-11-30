@@ -208,7 +208,7 @@ const PositionDetailPanel = () => {
           )}
         </Typography>
 
-        <Flex alignItems="center" justifyContent="space-between" mt={[10, 10, 10, 10, 5]} mb={4}>
+        <Flex alignItems="center" justifyContent="space-between" mt={[10, 4, 4, 4, 4]} mb={4}>
           <Tooltip
             text="If the bar only fills this section, you have a low risk of liquidation."
             show={show}

@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { isEoaAddress, isScoreAddress } from 'icon-sdk-js/lib/data/Validator.js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
@@ -159,4 +159,9 @@ export function formatUnits(value: string, decimals: number): string {
 
 export function getPairName(pair: PairInfo) {
   return `${pair.baseCurrencyKey} / ${pair.quoteCurrencyKey}`;
+}
+
+// returns the checksummed address if the address is valid, otherwise returns false
+export function isAddress(value: any): string | false {
+  return isScoreAddress(value) ? value : false;
 }

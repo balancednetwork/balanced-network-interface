@@ -13,6 +13,7 @@ import { RatioState } from 'store/ratio/reducer';
 import { RewardState } from 'store/reward/reducer';
 import { SwapState } from 'store/swap/reducer';
 import { TransactionState } from 'store/transactions/reducer';
+import { UserState } from 'store/user/reducer';
 import { WalletState } from 'store/wallet/reducer';
 
 // #redux-step-3: define interface for RootState (the root tree view on Redux Devtool chrome extension)
@@ -28,4 +29,5 @@ export interface RootState {
   transactions: TransactionState;
   mint: MintState;
   swap: SwapState;
+  user: UserState;
 }

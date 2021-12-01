@@ -200,7 +200,7 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];
 
 export const SUPPORTED_TOKENS_MAP_BY_ADDRESS: {
-  [key in string]: Currency;
+  [key: string]: Currency;
 } = SUPPORTED_TOKENS_LIST.reduce((prev, cur) => {
   prev[cur.address] = cur;
   return prev;
@@ -212,7 +212,6 @@ export const SUPPORTED_TOKENS_MAP_BY_ADDRESS: {
  * the logo url are wrong. need to change
  */
 
-/*
 export interface TokenInfo {
   readonly chainId: number;
   readonly address: string;
@@ -226,6 +225,7 @@ export interface TokenInfo {
   };
 }
 
+/*
 export const SUPPORTED_TOKENS_INFO: TokenInfo[] = [
   // Mainnet
   {

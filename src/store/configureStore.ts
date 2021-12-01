@@ -17,9 +17,10 @@ import { createReducer } from './reducers';
 import reward from './reward/reducer';
 import swap from './swap/reducer';
 import transactions from './transactions/reducer';
+import user from './user/reducer';
 import wallet from './wallet/reducer';
 
-const PERSISTED_KEYS: string[] = ['transactions'];
+const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists'];
 
 export function configureAppStore() {
   const reduxSagaMonitorOptions = {};
@@ -38,7 +39,6 @@ export function configureAppStore() {
 
   const store = configureStore({
     reducer: createReducer({
-      // #redux-step-8: add more reducer from 'store/**/reducer.ts'
       application,
       pool,
       reward,
@@ -49,6 +49,7 @@ export function configureAppStore() {
       transactions,
       mint,
       swap,
+      user,
     }),
     middleware: [
       ...getDefaultMiddleware({

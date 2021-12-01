@@ -1,20 +1,18 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import ClickAwayListener from 'react-click-away-listener';
-import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { List, ListItem, DashGrid, HeaderText, DataText, HorizontalList, Option } from 'app/components/List';
-import { PopperWithoutArrow, SelectorPopover } from 'app/components/Popover';
+import { SelectorPopover } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import useWidth from 'hooks/useWidth';
 import { COMMON_PERCENTS } from 'store/swap/actions';
-import { useWalletBalances } from 'store/wallet/hooks';
 import { Currency } from 'types/balanced-sdk-core';
 import { escapeRegExp } from 'utils';
+
+import { HorizontalList, Option } from '../List';
+import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -134,22 +132,11 @@ export default function CurrencyInputPanel({
     setOpen(!open);
   };
 
-  const [ref, width] = useWidth();
-  //
-  const handleCurrencySelect = (ccy: Currency) => (e: React.MouseEvent) => {
-    onCurrencySelect && onCurrencySelect(ccy);
-    setOpen(false);
-  };
+  const [ref] = useWidth();
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
     onPercentSelect && onPercentSelect(instant);
   };
-
-  // React.useEffect(() => {
-  //   if (currency && currencyList.indexOf(currency) === -1) {
-  //     onCurrencySelect && onCurrencySelect(currencyList[0]);
-  //   }
-  // }, [currency, onCurrencySelect, currencyList]);
 
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
@@ -157,42 +144,31 @@ export default function CurrencyInputPanel({
     }
   };
 
-  const balances = useWalletBalances();
-  const balanceList1 = balanceList || balances;
+  const handleDismiss = () => {
+    setOpen(false);
+  };
 
   return (
     <InputContainer ref={ref} className={className}>
-      <ClickAwayListener onClickAway={() => setOpen(false)}>
+      {/* <ClickAwayListener onClickAway={() => setOpen(false)}> */}
+      <div>
         <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
           {currency && <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />}
           {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
           {onCurrencySelect && <StyledDropDown selected={!!currency} />}
-
-          {onCurrencySelect && (
-            <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom" offset={[0, 2]}>
-              <List style={{ width: width }}>
-                <DashGrid>
-                  <HeaderText>Asset</HeaderText>
-                  <HeaderText textAlign="right">{balanceList ? 'Balance' : 'Wallet'}</HeaderText>
-                </DashGrid>
-                {SUPPORTED_TOKENS_LIST.map(ccy => (
-                  <ListItem key={ccy.symbol} onClick={handleCurrencySelect(ccy)}>
-                    <Flex>
-                      <CurrencyLogo currency={ccy} style={{ marginRight: '8px' }} />
-                      <DataText variant="p" fontWeight="bold">
-                        {ccy?.symbol}
-                      </DataText>
-                    </Flex>
-                    <DataText variant="p" textAlign="right">
-                      {balanceList1[ccy?.symbol!]?.dp(2).toFormat()}
-                    </DataText>
-                  </ListItem>
-                ))}
-              </List>
-            </PopperWithoutArrow>
-          )}
         </CurrencySelect>
-      </ClickAwayListener>
+
+        {onCurrencySelect && (
+          <CurrencySearchModal
+            isOpen={open}
+            onDismiss={handleDismiss}
+            onCurrencySelect={onCurrencySelect}
+            showCommonBases={false}
+            showCurrencyAmount={false}
+          />
+        )}
+      </div>
+      {/* </ClickAwayListener> */}
 
       <NumberInput
         placeholder={placeholder}

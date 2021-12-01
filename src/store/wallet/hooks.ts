@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
@@ -12,9 +12,12 @@ import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { useCurrencyBalances } from 'store/swap/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { Token, CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 
 import { AppState } from '..';
+import { useAllTokens } from '../../hooks/Tokens';
 import { changeBalances, resetBalances } from './actions';
 
 const contractSettings = new ContractSettings({ networkId: NETWORK_ID });
@@ -95,3 +98,28 @@ export const useHasEnoughICX = () => {
   const balances = useWalletBalances();
   return balances['ICX'].isGreaterThan(MINIMUM_ICX_FOR_TX);
 };
+
+export function useTokenBalances(
+  address?: string,
+  tokens?: (Token | undefined)[],
+): { [tokenAddress: string]: CurrencyAmount<Token> | undefined } {
+  const balances = useCurrencyBalances(address, tokens as (Currency | undefined)[]) as (
+    | CurrencyAmount<Token>
+    | undefined
+  )[];
+
+  return useMemo(() => {
+    return balances.reduce((p, c) => {
+      if (c) p[c?.currency.address] = c;
+      return p;
+    }, {});
+  }, [balances]);
+}
+
+export function useAllTokenBalances(): { [tokenAddress: string]: CurrencyAmount<Token> | undefined } {
+  const { account } = useIconReact();
+  const allTokens = useAllTokens();
+  const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens]);
+  const balances = useTokenBalances(account ?? undefined, allTokensArray);
+  return balances ?? {};
+}

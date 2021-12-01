@@ -5,8 +5,8 @@ import styled from 'styled-components';
 
 import Popover, { PopoverProps, PopperWithoutArrowAndBorder } from '../Popover';
 
-export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; customWidth?: number }>`
-  width: ${props => (props.customWidth ? `${props.customWidth}px` : props.wide ? '300px' : '260px')};
+export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; width?: number }>`
+  width: ${props => (props.width ? `${props.width}px` : props.wide ? '300px' : '260px')};
   padding: 10px 0.9375rem;
   line-height: 150%;
   font-weight: 400;
@@ -26,7 +26,7 @@ export interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: React.ReactNode;
   wide?: boolean;
   small?: boolean;
-  customWidth?: number;
+  width?: number;
   containerStyle?: React.CSSProperties;
   noArrowAndBorder?: boolean;
   refStyle?: React.CSSProperties;
@@ -36,7 +36,7 @@ export default function Tooltip({
   text,
   wide,
   small,
-  customWidth,
+  width,
   containerStyle,
   refStyle,
   noArrowAndBorder,
@@ -52,7 +52,7 @@ export default function Tooltip({
       ) : (
         <Popover
           content={
-            <TooltipContainer style={containerStyle} wide={wide} small={small} customWidth={customWidth}>
+            <TooltipContainer style={containerStyle} wide={wide} small={small} width={width}>
               {text}
             </TooltipContainer>
           }

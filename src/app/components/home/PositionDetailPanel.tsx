@@ -141,12 +141,12 @@ const PositionDetailPanel = () => {
 
   const openRebalancing = React.useCallback(() => setShowRebalancing(true), [setShowRebalancing]);
   const closeRebalancing = React.useCallback(() => setShowRebalancing(false), [setShowRebalancing]);
-  const [shouldShowRebalancingAvaragePrice, setShouldShowRebalancingAvaragePrice] = React.useState(false);
-  const shouldShowSeperateTooltip = useMedia('(min-width: 1000px)');
+  const [shouldShowRebalancingAveragePrice, setShouldShowRebalancingAveragePrice] = React.useState(false);
+  const shouldShowSeparateTooltip = useMedia('(min-width: 1000px)');
   const rebalancingTotal = data?.totalRepaid || new BigNumber(0);
   const averageSoldICXPrice =
     totalCollateralSold && totalCollateralSold.isZero() ? new BigNumber(0) : rebalancingTotal.div(totalCollateralSold);
-  const avarageRebalancingPriceText = (
+  const averageRebalancingPriceText = (
     <>
       Your average rebalancing price was{' '}
       <strong>
@@ -158,8 +158,8 @@ const PositionDetailPanel = () => {
   );
 
   React.useEffect(() => {
-    setShouldShowRebalancingAvaragePrice(totalCollateralSold ? !totalCollateralSold.isZero() : false);
-  }, [totalCollateralSold, setShouldShowRebalancingAvaragePrice]);
+    setShouldShowRebalancingAveragePrice(totalCollateralSold ? !totalCollateralSold.isZero() : false);
+  }, [totalCollateralSold, setShouldShowRebalancingAveragePrice]);
 
   if (loanInputAmount.isNegative() || loanInputAmount.isZero()) {
     return null;
@@ -295,12 +295,12 @@ const PositionDetailPanel = () => {
                   </QuestionWrapper>
                 )}
                 <RebalancingTooltip show={showRebalancing} bottom={false}>
-                  <TooltipContainer customWidth={435}>
+                  <TooltipContainer width={435}>
                     <RebalancingInfo />
-                    {shouldShowSeperateTooltip ? null : shouldShowRebalancingAvaragePrice ? (
+                    {shouldShowSeparateTooltip ? null : shouldShowRebalancingAveragePrice ? (
                       <>
                         <br />
-                        {avarageRebalancingPriceText}
+                        {averageRebalancingPriceText}
                       </>
                     ) : null}
                   </TooltipContainer>
@@ -329,26 +329,25 @@ const PositionDetailPanel = () => {
                   {'Collateral'}
                   <RebalancingTooltipArrow
                     left={25}
-                    show={shouldShowSeperateTooltip && shouldShowRebalancingAvaragePrice && showRebalancing}
+                    show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
                   />
                 </Typography>
               </Box>
 
               <RebalancingTooltip
-                show={shouldShowSeperateTooltip && shouldShowRebalancingAvaragePrice && showRebalancing}
+                show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
                 bottom={true}
               >
-                <TooltipContainer customWidth={321}>{avarageRebalancingPriceText}</TooltipContainer>
+                <TooltipContainer width={321}>{averageRebalancingPriceText}</TooltipContainer>
               </RebalancingTooltip>
 
               <Box width={1 / 2}>
-                {/* <Typography variant="p">{formatBigNumber(data?.totalRepaid, 'currency')} bnUSD</Typography> */}
                 <Typography variant="p">{formatBigNumber(rebalancingTotal, 'currency')} bnUSD</Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
                   {'Loan'}
                   <RebalancingTooltipArrow
                     left={7}
-                    show={shouldShowSeperateTooltip && shouldShowRebalancingAvaragePrice && showRebalancing}
+                    show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
                   />
                 </Typography>
               </Box>

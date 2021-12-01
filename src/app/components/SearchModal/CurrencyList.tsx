@@ -1,10 +1,50 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
+import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass/styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { ListItem, DashGrid, HeaderText, DataText, List1 } from 'app/components/List';
+import { useCurrencyBalance } from 'store/swap/hooks';
 import { Currency, Token } from 'types/balanced-sdk-core';
+
+function currencyKey(currency: Currency): string {
+  return currency.isToken ? currency.address : 'ICX';
+}
+
+function CurrencyRow({
+  currency,
+  onSelect,
+  isSelected,
+  otherSelected,
+  style,
+  showCurrencyAmount,
+}: {
+  currency: Currency;
+  onSelect: () => void;
+  isSelected?: boolean;
+  otherSelected?: boolean;
+  style?: CSSProperties;
+  showCurrencyAmount?: boolean;
+}) {
+  const { account } = useIconReact();
+  const balance = useCurrencyBalance(account ?? undefined, currency);
+
+  // only show add or remove buttons if not on selected list
+  return (
+    <ListItem onClick={onSelect}>
+      <Flex>
+        <CurrencyLogo currency={currency} style={{ marginRight: '8px' }} />
+        <DataText variant="p" fontWeight="bold">
+          {currency?.symbol}
+        </DataText>
+      </Flex>
+      <DataText variant="p" textAlign="right">
+        {balance?.toSignificant(4)}
+      </DataText>
+    </ListItem>
+  );
+}
 
 export default function CurrencyList({
   currencies,
@@ -30,18 +70,8 @@ export default function CurrencyList({
         <HeaderText textAlign="right">Balance</HeaderText>
       </DashGrid>
 
-      {currencies.map(ccy => (
-        <ListItem key={(ccy as Token).address} onClick={() => onCurrencySelect(ccy)}>
-          <Flex>
-            <CurrencyLogo currency={ccy} style={{ marginRight: '8px' }} />
-            <DataText variant="p" fontWeight="bold">
-              {ccy?.symbol}
-            </DataText>
-          </Flex>
-          <DataText variant="p" textAlign="right">
-            {/* {balanceList1[ccy?.symbol!]?.dp(2).toFormat()} */}
-          </DataText>
-        </ListItem>
+      {currencies.map(currency => (
+        <CurrencyRow key={currencyKey(currency)} currency={currency} onSelect={() => onCurrencySelect(currency)} />
       ))}
     </List1>
   );

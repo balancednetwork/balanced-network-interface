@@ -198,6 +198,10 @@ export function useCurrencyBalances(
   );
 }
 
+export function useCurrencyBalance(account?: string, currency?: Currency): CurrencyAmount<Currency> | undefined {
+  return useCurrencyBalances(account, [currency])[0];
+}
+
 export function usePrice(currencyIn?: string, currencyOut?: string): BigNumber | undefined {
   const pools = usePools();
 

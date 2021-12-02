@@ -1,6 +1,5 @@
 import React from 'react';
 
-import JSBI from 'jsbi';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -180,10 +179,7 @@ export default function CurrencyInputPanel({
                     </Flex>
                     <DataText variant="p" textAlign="right">
                       {balanceList
-                        ? JSBI.toNumber(
-                            balanceList.find(item => item.currency.symbol === ccy?.symbol!)?.numerator ||
-                              JSBI.BigInt(0),
-                          )
+                        ? Number(balanceList.find(item => item.currency.symbol === ccy?.symbol!)?.toFixed(2)) || 0
                         : balances[ccy?.symbol!]?.dp(2).toFormat()}
                     </DataText>
                   </ListItem>

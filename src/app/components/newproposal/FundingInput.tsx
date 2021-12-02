@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import JSBI from 'jsbi';
 import styled from 'styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
@@ -52,10 +51,10 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   );
 
   const handleAmountInput = (itemId: number) => (value: string) => {
-    const maxValue = balanceList.find(
-      item => item?.currency.symbol === currencyValue.amounts[itemId].item.currency.symbol,
-    )?.numerator;
-    if (maxValue && Number(value) > JSBI.toNumber(maxValue)) return;
+    const maxValue = balanceList
+      .find(item => item?.currency.symbol === currencyValue.amounts[itemId].item.currency.symbol)
+      ?.toFixed(2);
+    if (maxValue && Number(value) > Number(maxValue)) return;
 
     const newAmount = currencyValue.amounts;
     newAmount[itemId].item = CurrencyAmount.fromRawAmount(newAmount[itemId].item.currency, value || 0);

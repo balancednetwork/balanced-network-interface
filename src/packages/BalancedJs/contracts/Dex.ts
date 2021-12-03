@@ -93,6 +93,17 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
+  getPoolStats(id: number) {
+    const callParams = this.paramsBuilder({
+      method: 'getPoolStats',
+      params: {
+        _id: IconConverter.toHex(id),
+      },
+    });
+
+    return this.call(callParams);
+  }
+
   getDeposit(tokenAddress: string, user: string) {
     const callParams = this.paramsBuilder({
       method: 'getDeposit',

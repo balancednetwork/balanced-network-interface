@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import BigNumber from 'bignumber.js';
+
 import bnJs from 'bnJs';
 import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
@@ -26,9 +28,13 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
         tokens.map(async ([tokenA, tokenB]) => {
           if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
             const poolId = await bnJs.Dex.getPoolId(tokenA.address, tokenB.address);
-            const reserveA = await bnJs.Dex.getPoolTotal(poolId, tokenA.address);
-            const reserveB = await bnJs.Dex.getPoolTotal(poolId, tokenB.address);
-            return { reserve0: reserveA, reserve1: reserveB };
+            const stats = await bnJs.Dex.getPoolStats(poolId);
+
+            const baseReserve = new BigNumber(stats['base'], 16).toFixed();
+            const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();
+
+            if (stats['base_token'] === tokenA.address) return { reserve0: baseReserve, reserve1: quoteReserve };
+            else return { reserve0: quoteReserve, reserve1: baseReserve };
           } else return undefined;
         }),
       );

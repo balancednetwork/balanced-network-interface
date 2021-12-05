@@ -168,7 +168,7 @@ export function NewProposalPage() {
       (Object.values(ratioInputValue).length > 0 && Object.values(ratioInputValue).every(ratio => !!ratio.trim())) ||
       (isFundingProposal &&
         !!currencyInputValue.recipient.trim() &&
-        currencyInputValue.amounts.some(amount => amount)));
+        currencyInputValue.amounts.some(amount => amount.inputDisplayValue)));
 
   const canSubmit = account && isStakeValid && isFormValid;
 

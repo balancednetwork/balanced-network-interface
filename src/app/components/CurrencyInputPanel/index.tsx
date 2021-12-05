@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -179,7 +180,11 @@ export default function CurrencyInputPanel({
                     </Flex>
                     <DataText variant="p" textAlign="right">
                       {balanceList
-                        ? Number(balanceList.find(item => item.currency.symbol === ccy?.symbol!)?.toFixed(2)) || 0
+                        ? new BigNumber(
+                            balanceList.find(item => item.currency.symbol === ccy?.symbol!)?.toFixed() as string,
+                          )
+                            .dp(2)
+                            .toFormat() || 0
                         : balances[ccy?.symbol!]?.dp(2).toFormat()}
                     </DataText>
                   </ListItem>

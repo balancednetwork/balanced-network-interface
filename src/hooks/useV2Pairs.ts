@@ -14,7 +14,9 @@ export enum PairState {
 }
 
 export function useV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
-  const [reserves, setReserves] = useState<({ reserve0: string; reserve1: string } | number | undefined)[]>([]);
+  const [reserves, setReserves] = useState<
+    ({ reserve0: string; reserve1: string; poolId: string; totalSupply: string } | number | undefined)[]
+  >([]);
 
   const tokens = useMemo(() => {
     return currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
@@ -40,9 +42,11 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
 
               const baseReserve = new BigNumber(stats['base'], 16).toFixed();
               const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();
+              const totalSupply = new BigNumber(stats['total_supply'], 16).toFixed();
 
-              if (stats['base_token'] === tokenA.address) return { reserve0: baseReserve, reserve1: quoteReserve };
-              else return { reserve0: quoteReserve, reserve1: baseReserve };
+              if (stats['base_token'] === tokenA.address)
+                return { reserve0: baseReserve, reserve1: quoteReserve, totalSupply, poolId };
+              else return { reserve0: quoteReserve, reserve1: baseReserve, totalSupply, poolId };
             } else return undefined;
           }),
         );
@@ -66,11 +70,14 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
       if (!result) return [PairState.NOT_EXISTS, null];
 
       if (typeof result === 'number') return [PairState.INVALID, null];
-      const { reserve0, reserve1 } = result;
+      const { reserve0, reserve1, poolId, totalSupply } = result;
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
       return [
         PairState.EXISTS,
-        new Pair(CurrencyAmount.fromRawAmount(token0, reserve0), CurrencyAmount.fromRawAmount(token1, reserve1)),
+        new Pair(CurrencyAmount.fromRawAmount(token0, reserve0), CurrencyAmount.fromRawAmount(token1, reserve1), {
+          poolId,
+          totalSupply,
+        }),
       ];
     });
   }, [reserves, tokens]);

@@ -40,6 +40,9 @@ export class Pair {
   private readonly tokenAmounts: [CurrencyAmount<Token>, CurrencyAmount<Token>];
   public readonly queueRate?: Fraction;
 
+  public readonly poolId?: string;
+  public readonly totalSupply?: CurrencyAmount<Token>;
+
   public static getAddress(tokenA: Token, tokenB: Token): string {
     return computePairAddress({ factoryAddress: FACTORY_ADDRESS, tokenA, tokenB });
   }
@@ -47,7 +50,11 @@ export class Pair {
   public constructor(
     currencyAmountA: CurrencyAmount<Token>,
     tokenAmountB: CurrencyAmount<Token>,
-    queueRate?: Fraction,
+    additionalArgs?: {
+      queueRate?: Fraction;
+      poolId?: string;
+      totalSupply?: string;
+    },
   ) {
     const tokenAmounts = currencyAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks
       ? [currencyAmountA, tokenAmountB]
@@ -62,7 +69,11 @@ export class Pair {
     );
     this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
-    if (queueRate) this.queueRate = queueRate;
+    if (additionalArgs) {
+      this.queueRate = additionalArgs.queueRate;
+      this.poolId = additionalArgs.poolId;
+      this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
+    }
   }
 
   /**
@@ -143,7 +154,7 @@ export class Pair {
           inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
           JSBI.divide(numerator, denominator),
         );
-        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
       } else {
         const numerator = JSBI.multiply(inputAmount.numerator, this.queueRate.denominator);
         const denominator = JSBI.multiply(inputAmount.denominator, this.queueRate.numerator);
@@ -151,7 +162,7 @@ export class Pair {
           inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
           JSBI.divide(numerator, denominator),
         );
-        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
       }
     }
 
@@ -165,7 +176,7 @@ export class Pair {
     if (JSBI.equal(outputAmount.quotient, ZERO)) {
       throw new InsufficientInputAmountError();
     }
-    return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+    return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
   }
 
   public getInputAmount(outputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
@@ -189,7 +200,7 @@ export class Pair {
           outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
           JSBI.divide(numerator, denominator),
         );
-        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
       } else {
         const numerator = JSBI.multiply(outputAmount.numerator, this.queueRate.numerator);
         const denominator = JSBI.multiply(outputAmount.denominator, this.queueRate.denominator);
@@ -197,7 +208,7 @@ export class Pair {
           outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
           JSBI.divide(numerator, denominator),
         );
-        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
       }
     }
 
@@ -207,7 +218,7 @@ export class Pair {
       outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
       JSBI.add(JSBI.divide(numerator, denominator), ONE),
     );
-    return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+    return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
   }
 
   public getLiquidityMinted(

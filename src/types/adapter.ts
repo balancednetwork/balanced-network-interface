@@ -37,12 +37,13 @@ export const convertPair = (pool?: Pool) => {
         return new Pair(
           CurrencyAmount.fromFractionalAmount(baseToken, baseNumerator.toFixed(), baseDenominator.toFixed()),
           CurrencyAmount.fromFractionalAmount(quoteToken, quoteNumerator.toFixed(), quoteDenominator.toFixed()),
-          new Fraction(rateNumerator.toFixed(), rateDenominator.toFixed()),
+          { queueRate: new Fraction(rateNumerator.toFixed(), rateDenominator.toFixed()) },
         );
       } else {
         return new Pair(
           CurrencyAmount.fromFractionalAmount(baseToken, baseNumerator.toFixed(), baseDenominator.toFixed()),
           CurrencyAmount.fromFractionalAmount(quoteToken, quoteNumerator.toFixed(), quoteDenominator.toFixed()),
+          {},
         );
       }
     }

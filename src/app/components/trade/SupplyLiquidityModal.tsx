@@ -316,7 +316,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
           <Box
             width={1 / 2}
             sx={{
-              borderBottom: ['1px solid rgba(255, 255, 255, 0.15)', 0], //
+              borderBottom: ['0px solid rgba(255, 255, 255, 0.15)', 0],
               borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
             }}
           >

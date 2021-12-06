@@ -68,6 +68,13 @@ export const IUSDT = new Token(
   'IUSDT',
   'ICON Tether',
 );
+export const GBET = new Token(
+  SupportedChainId.MAINNET,
+  'cx6139a27c15f1653471ffba0b4b88dc15de7e3267',
+  18,
+  'GBET',
+  'GangstaBet Token',
+);
 
 // yeouido
 export const ICX_YEOUIDO = new Token(
@@ -168,7 +175,7 @@ export const IUSDC_SEJONG = new Token(
 
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
-  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT],
+  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT, GBET],
   [SupportedChainId.YEOUIDO]: [
     ICX_YEOUIDO,
     sICX_YEOUIDO,

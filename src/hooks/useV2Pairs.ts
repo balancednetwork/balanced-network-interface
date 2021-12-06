@@ -24,22 +24,33 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
     setReserves(Array(tokens.length).fill(PairState.LOADING));
 
     const fetchReserves = async () => {
-      const result = await Promise.all(
-        tokens.map(async ([tokenA, tokenB]) => {
-          if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
-            const poolId = await bnJs.Dex.getPoolId(tokenA.address, tokenB.address);
-            const stats = await bnJs.Dex.getPoolStats(poolId);
+      try {
+        const result = await Promise.all(
+          tokens.map(async ([tokenA, tokenB]) => {
+            if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
+              let stats;
+              let poolId;
 
-            const baseReserve = new BigNumber(stats['base'], 16).toFixed();
-            const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();
+              try {
+                poolId = await bnJs.Dex.getPoolId(tokenA.address, tokenB.address);
+                stats = await bnJs.Dex.getPoolStats(poolId);
+              } catch (err) {
+                return undefined;
+              }
 
-            if (stats['base_token'] === tokenA.address) return { reserve0: baseReserve, reserve1: quoteReserve };
-            else return { reserve0: quoteReserve, reserve1: baseReserve };
-          } else return undefined;
-        }),
-      );
+              const baseReserve = new BigNumber(stats['base'], 16).toFixed();
+              const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();
 
-      setReserves(result);
+              if (stats['base_token'] === tokenA.address) return { reserve0: baseReserve, reserve1: quoteReserve };
+              else return { reserve0: quoteReserve, reserve1: baseReserve };
+            } else return undefined;
+          }),
+        );
+
+        setReserves(result);
+      } catch (err) {
+        setReserves(Array(tokens.length).fill(PairState.INVALID));
+      }
     };
     fetchReserves();
   }, [tokens]);

@@ -1,5 +1,8 @@
 import { useMemo } from 'react';
 
+import { useAllCurrencyCombinations } from 'hooks/useAllCurrencyCombinations';
+import { PairState, useV2Pairs } from 'hooks/useV2Pairs';
+
 import { PairInfo, SUPPORTED_PAIRS } from '../../constants/pairs';
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } from '../../constants/routing';
 import { Pool } from '../../types';
@@ -24,14 +27,34 @@ function getPairs(pools: { [p: string]: Pool }) {
   return pairs.filter((pair?: Pair): pair is Pair => !!pair);
 }
 
+function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
+  const allCurrencyCombinations = useAllCurrencyCombinations(currencyA, currencyB);
+
+  const allPairs = useV2Pairs(allCurrencyCombinations);
+
+  return useMemo(
+    () =>
+      Object.values(
+        allPairs
+          // filter out invalid pairs
+          .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
+          .map(([, pair]) => pair),
+      ),
+    [allPairs],
+  );
+}
+
 export function useTradeExactIn(
   currencyAmountIn?: CurrencyAmount<Currency>,
   currencyOut?: Currency,
   { maxHops = MAX_HOPS } = {},
 ): Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined {
-  const pools = usePools();
+  const [currencyA, currencyB] = useMemo(() => [currencyAmountIn?.currency, currencyOut], [
+    currencyAmountIn,
+    currencyOut,
+  ]);
 
-  const pairs = getPairs(pools);
+  const pairs = useAllCommonPairs(currencyA, currencyB);
 
   return useMemo(() => {
     if (currencyAmountIn && currencyOut && pairs.length > 0) {

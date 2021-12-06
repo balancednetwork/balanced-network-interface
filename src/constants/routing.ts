@@ -1,7 +1,7 @@
 import JSBI from 'jsbi';
 import { SupportedChainId } from 'packages/BalancedJs';
 
-import { Currency, Percent } from 'types/balanced-sdk-core';
+import { Currency, Percent, Token } from 'types/balanced-sdk-core';
 
 import {
   sICX, //
@@ -12,6 +12,8 @@ import {
   bnUSD_YEOUIDO,
   IUSDC_YEOUIDO,
   USDS_YEOUIDO,
+  BALN,
+  BALN_YEOUIDO,
 } from './tokens';
 
 type ChainCurrencyList = {
@@ -45,3 +47,19 @@ export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), BIP
 
 export const ZERO_PERCENT = new Percent('0');
 export const ONE_HUNDRED_PERCENT = new Percent('1');
+
+// used to construct intermediary pairs for trading
+export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
+  [SupportedChainId.MAINNET]: [sICX, BALN, bnUSD, USDS],
+  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, BALN_YEOUIDO, bnUSD_YEOUIDO, USDS_YEOUIDO],
+};
+export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
+  [SupportedChainId.MAINNET]: {},
+};
+/**
+ * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these
+ * tokens.
+ */
+export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
+  [SupportedChainId.MAINNET]: {},
+};

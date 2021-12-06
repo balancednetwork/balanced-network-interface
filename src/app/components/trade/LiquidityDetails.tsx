@@ -542,12 +542,19 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
   const price = independentField === Field.CURRENCY_A ? pool?.rate || ONE : pool?.inverseRate || ONE;
 
+  const stakedLPPercent = useStakedLPPercent(poolId);
+  const availablePercent = new BigNumber(100).minus(stakedLPPercent);
+
+  const availableBase = lpBalance?.base?.times(availablePercent).div(100);
+
+  const availableQuote = lpBalance?.quote.times(availablePercent).div(100);
+
   let parsedAmount, formattedAmounts;
 
   if (inputType === 'slider') {
     parsedAmount = {
-      [Field.CURRENCY_A]: lpBalance?.base.times(portion) || ZERO,
-      [Field.CURRENCY_B]: lpBalance?.quote.times(portion) || ZERO,
+      [Field.CURRENCY_A]: availableBase?.times(portion) || ZERO,
+      [Field.CURRENCY_B]: availableQuote?.times(portion) || ZERO,
     };
 
     formattedAmounts = {
@@ -659,7 +666,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
   const hasEnoughICX = useHasEnoughICX();
 
   const availableCurrency = (stakedValue, suppliedValue) =>
-    formatBigNumber(!!stakedValue ? suppliedValue.minus(new BigNumber(stakedValue)) : suppliedValue, 'input');
+    formatBigNumber(!!stakedValue ? suppliedValue?.minus(stakedValue) : suppliedValue, 'input');
 
   return (
     <>
@@ -692,8 +699,8 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
         </Box>
         <Typography mb={5} textAlign="right">
           {`Available: 
-            ${availableCurrency(parsedAmount[Field.CURRENCY_A], poolData?.suppliedBase)} ${pair.baseCurrencyKey} /
-            ${availableCurrency(parsedAmount[Field.CURRENCY_B], poolData?.suppliedQuote)} ${pair.quoteCurrencyKey}`}
+            ${availableCurrency(parsedAmount[Field.CURRENCY_A], availableBase)} ${pair.baseCurrencyKey} /
+            ${availableCurrency(parsedAmount[Field.CURRENCY_B], availableQuote)} ${pair.quoteCurrencyKey}`}
         </Typography>
         <Box mb={5}>
           <Nouislider

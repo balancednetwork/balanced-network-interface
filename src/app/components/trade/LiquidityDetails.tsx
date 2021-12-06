@@ -288,9 +288,7 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
           {formatBigNumber(poolData?.suppliedReward, 'currency') === '0'
             ? stakedLPPercent.isGreaterThanOrEqualTo(new BigNumber(100))
               ? `~ ${formatBigNumber(
-                  (stakedLPBalance || new BigNumber(0))
-                    .div(poolData?.suppliedLP || new BigNumber(0))
-                    .times(poolData?.totalReward || new BigNumber(0)),
+                  (stakedLPBalance || ZERO).div(poolData?.suppliedLP || ZERO).times(poolData?.totalReward || ZERO),
                   'currency',
                 )} BALN`
               : 'ー'

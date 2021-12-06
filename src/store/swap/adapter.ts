@@ -3,29 +3,10 @@ import { useMemo } from 'react';
 import { useAllCurrencyCombinations } from 'hooks/useAllCurrencyCombinations';
 import { PairState, useV2Pairs } from 'hooks/useV2Pairs';
 
-import { PairInfo, SUPPORTED_PAIRS } from '../../constants/pairs';
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } from '../../constants/routing';
-import { Pool } from '../../types';
-import { convertPair } from '../../types/adapter';
 import { Currency, CurrencyAmount, TradeType } from '../../types/balanced-sdk-core';
 import { Pair, Trade } from '../../types/balanced-v1-sdk/entities';
 import { isTradeBetter } from '../../types/balanced-v1-sdk/utils/isTradeBetter';
-import { usePools } from '../pool/hooks';
-
-export function getPool(pools: { [p: string]: Pool }, pairInfo: PairInfo) {
-  if (pairInfo.id === undefined) return undefined;
-
-  const pool = pools[pairInfo.id];
-
-  if (!pool) return undefined;
-
-  return pool;
-}
-
-function getPairs(pools: { [p: string]: Pool }) {
-  const pairs = SUPPORTED_PAIRS.map((pairInfo: PairInfo) => convertPair(getPool(pools, pairInfo)));
-  return pairs.filter((pair?: Pair): pair is Pair => !!pair);
-}
 
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
   const allCurrencyCombinations = useAllCurrencyCombinations(currencyA, currencyB);
@@ -89,9 +70,12 @@ export function useTradeExactOut(
   currencyAmountOut?: CurrencyAmount<Currency>,
   { maxHops = MAX_HOPS } = {},
 ): Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | undefined {
-  const pools = usePools();
+  const [currencyA, currencyB] = useMemo(() => [currencyIn, currencyAmountOut?.currency], [
+    currencyIn,
+    currencyAmountOut,
+  ]);
 
-  const pairs = getPairs(pools);
+  const pairs = useAllCommonPairs(currencyA, currencyB);
 
   return useMemo(() => {
     if (currencyIn && currencyAmountOut && pairs.length > 0) {

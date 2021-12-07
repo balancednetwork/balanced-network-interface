@@ -89,12 +89,12 @@ export default function LPDescription() {
             <Typography textAlign="center" variant="p">
               {!pair?.queueRate ? (
                 <>
-                  {token0Deposited?.toSignificant()} {pair?.reserve0.currency?.symbol}
+                  {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
                   <br />
-                  {token1Deposited?.toSignificant()} {pair?.reserve1.currency?.symbol}
+                  {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
                 </>
               ) : (
-                `${token0Deposited?.toSignificant()} ${pair?.reserve0.currency?.symbol}`
+                `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
               )}
             </Typography>
           </Box>
@@ -118,12 +118,12 @@ export default function LPDescription() {
             <Typography textAlign="center" variant="p">
               {!pair?.queueRate ? (
                 <>
-                  {pair?.reserve0.toSignificant()} {pair?.reserve0.currency?.symbol}
+                  {pair?.reserve0.toFixed(0, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
                   <br />
-                  {pair?.reserve1.toSignificant()} {pair?.reserve1.currency?.symbol}
+                  {pair?.reserve1.toFixed(0, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
                 </>
               ) : (
-                `${pair?.reserve0.toSignificant()} ${pair?.reserve0.currency?.symbol}`
+                `${pair?.reserve0.toFixed(0, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
               )}
             </Typography>
           </Box>

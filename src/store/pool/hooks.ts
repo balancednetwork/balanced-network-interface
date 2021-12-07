@@ -15,23 +15,8 @@ import { useAllTransactions } from 'store/transactions/hooks';
 import { Pool } from 'types';
 
 import { AppDispatch, AppState } from '../index';
-import { setBalance, setPair, setPoolData, clearBalances as clearBalancesCreator } from './actions';
+import { setBalance, setPoolData, clearBalances as clearBalancesCreator } from './actions';
 import { Balance } from './reducer';
-
-export function usePoolPair(): PairInfo {
-  return useSelector((state: AppState) => state.pool.selectedPair);
-}
-
-export function useSetPair(): (pair: PairInfo) => void {
-  const dispatch = useDispatch<AppDispatch>();
-
-  return React.useCallback(
-    pair => {
-      dispatch(setPair(pair));
-    },
-    [dispatch],
-  );
-}
 
 export function useChangePool(): (poolId: number, poolData: Partial<Pool>) => void {
   const dispatch = useDispatch<AppDispatch>();

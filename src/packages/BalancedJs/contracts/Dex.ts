@@ -33,7 +33,7 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  add(baseToken: string, quoteToken: string, baseValue: BigNumber, quoteValue: BigNumber) {
+  add(baseToken: string, quoteToken: string, baseValue: string, quoteValue: string) {
     const payload = this.transactionParamsBuilder({
       method: 'add',
       params: {

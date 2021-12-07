@@ -5,7 +5,7 @@ import { Flex } from 'rebass/styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { ListItem, DashGrid, HeaderText, DataText, List1 } from 'app/components/List';
-import { useCurrencyBalance } from 'store/swap/hooks';
+import { useCurrencyBalance } from 'store/wallet/hooks';
 import { Currency, Token } from 'types/balanced-sdk-core';
 
 function currencyKey(currency: Currency): string {

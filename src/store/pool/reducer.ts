@@ -1,10 +1,9 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 import { Pool } from 'types';
 
-import { setPair, setPoolData, setBalance, clearBalances } from './actions';
+import { setPoolData, setBalance, clearBalances } from './actions';
 
 export interface Balance {
   baseCurrencyKey: string;
@@ -14,8 +13,6 @@ export interface Balance {
 }
 
 export interface PoolState {
-  selectedPair: PairInfo;
-
   pools: {
     [poolId: string]: Pool;
   };
@@ -26,16 +23,12 @@ export interface PoolState {
 }
 
 const initialState: PoolState = {
-  selectedPair: SUPPORTED_PAIRS[0],
   pools: {},
   balances: {},
 };
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(setPair, (state, { payload }) => {
-      state.selectedPair = payload;
-    })
     .addCase(setPoolData, (state, { payload }) => {
       const { poolId, poolData } = payload;
       state.pools = {

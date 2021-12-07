@@ -2,13 +2,20 @@ import React from 'react';
 
 import { createPortal } from 'react-dom';
 import { ToastContainer } from 'react-toastify';
+import { useMedia } from 'react-use';
 import styled from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 
 const NotificationContainer = () => {
+  const isSmallDevice = useMedia('(max-width: 999px)');
+
   return typeof document !== 'undefined'
     ? createPortal(
-        <StyledToastContainer autoClose={false} position="bottom-right" closeOnClick={false} />,
+        <StyledToastContainer
+          autoClose={false}
+          position={isSmallDevice ? 'top-center' : 'bottom-right'}
+          closeOnClick={false}
+        />,
         document.body,
       )
     : null;

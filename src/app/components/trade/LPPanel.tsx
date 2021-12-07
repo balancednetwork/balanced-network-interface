@@ -123,7 +123,7 @@ export default function LPPanel() {
             <AutoColumn gap="md" hidden={isQueue}>
               <Flex alignItems="center" justifyContent="space-between">
                 <Typography variant="h2">Supply B</Typography>
-                <Typography as="div" hidden={!account}>
+                <Typography as="div" hidden={!(account && currencyBalances[Field.CURRENCY_B])}>
                   {'Wallet: '}
                   {`${currencyBalances[Field.CURRENCY_B]?.toSignificant()} ${currencies[Field.CURRENCY_B]?.symbol}`}
                 </Typography>

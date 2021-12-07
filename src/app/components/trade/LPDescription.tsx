@@ -1,6 +1,7 @@
 import React from 'react';
 
 import JSBI from 'jsbi';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
@@ -62,84 +63,92 @@ export default function LPDescription() {
         ]
       : [undefined, undefined];
 
-  return (
-    <Box bg="bg2" flex={1} padding={[5, 7]}>
-      <Typography variant="h3" mb={2}>
-        {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool
-      </Typography>
-
-      {pair?.poolId && (
-        <Typography mb={5} lineHeight={'25px'}>
-          {descriptions[pair?.poolId]}
+  if (currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]) {
+    return (
+      <Box bg="bg2" flex={1} padding={[5, 7]}>
+        <Typography variant="h3" mb={2}>
+          {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool
         </Typography>
-      )}
 
-      <Flex flexWrap="wrap">
-        <Box
-          width={[1, 1 / 2]} //
-          sx={{
-            borderBottom: ['1px solid rgba(255, 255, 255, 0.15)', 0], //
-            borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
-          }}
-        >
-          <Box sx={{ margin: '15px 0 25px 0' }}>
-            <Typography textAlign="center" marginBottom="5px" color="text1">
-              Your supply
-            </Typography>
-            <Typography textAlign="center" variant="p">
-              {!pair?.queueRate ? (
-                <>
-                  {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
-                  <br />
-                  {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
-                </>
-              ) : (
-                `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
-              )}
-            </Typography>
-          </Box>
+        {pair?.poolId && (
+          <Typography mb={5} lineHeight={'25px'}>
+            {descriptions[pair?.poolId]}
+          </Typography>
+        )}
 
-          {/* {selectedPair.rewards && (
+        <Flex flexWrap="wrap">
+          <Box
+            width={[1, 1 / 2]} //
+            sx={{
+              borderBottom: ['1px solid rgba(255, 255, 255, 0.15)', 0], //
+              borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
+            }}
+          >
             <Box sx={{ margin: '15px 0 25px 0' }}>
               <Typography textAlign="center" marginBottom="5px" color="text1">
-                Your daily rewards
+                Your supply
               </Typography>
-              <Typography textAlign="center" variant="p">
-                ~ {formatBigNumber(dailyReward, 'currency')} BALN
-              </Typography>
-            </Box>
-          )} */}
-        </Box>
-        <Box width={[1, 1 / 2]}>
-          <Box sx={{ margin: '15px 0 25px 0' }}>
-            <Typography textAlign="center" marginBottom="5px" color="text1">
-              Total supply
-            </Typography>
-            <Typography textAlign="center" variant="p">
-              {!pair?.queueRate ? (
-                <>
-                  {pair?.reserve0.toFixed(0, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
-                  <br />
-                  {pair?.reserve1.toFixed(0, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
-                </>
-              ) : (
-                `${pair?.reserve0.toFixed(0, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
+              {pair && (
+                <Typography textAlign="center" variant="p">
+                  {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+                    <>
+                      {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
+                      <br />
+                      {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
+                    </>
+                  ) : (
+                    `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
+                  )}
+                </Typography>
               )}
-            </Typography>
-          </Box>
+            </Box>
 
-          {/* {selectedPair.rewards && (
+            {/* {selectedPair.rewards && (
+                  <Box sx={{ margin: '15px 0 25px 0' }}>
+                    <Typography textAlign="center" marginBottom="5px" color="text1">
+                      Your daily rewards
+                    </Typography>
+                    <Typography textAlign="center" variant="p">
+                      ~ {formatBigNumber(dailyReward, 'currency')} BALN
+                    </Typography>
+                  </Box>
+                )} */}
+          </Box>
+          <Box width={[1, 1 / 2]}>
             <Box sx={{ margin: '15px 0 25px 0' }}>
               <Typography textAlign="center" marginBottom="5px" color="text1">
-                Total daily rewards
+                Total supply
               </Typography>
-              <Typography textAlign="center" variant="p">
-                {formatBigNumber(data?.totalReward, 'currency')} BALN
-              </Typography>
+              {pair && (
+                <Typography textAlign="center" variant="p">
+                  {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+                    <>
+                      {pair?.reserve0.toFixed(0, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
+                      <br />
+                      {pair?.reserve1.toFixed(0, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
+                    </>
+                  ) : (
+                    `${pair?.reserve0.toFixed(0, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
+                  )}
+                </Typography>
+              )}
             </Box>
-          )} */}
-        </Box>
-      </Flex>
-    </Box>
-  );
+
+            {/* {selectedPair.rewards && (
+                  <Box sx={{ margin: '15px 0 25px 0' }}>
+                    <Typography textAlign="center" marginBottom="5px" color="text1">
+                      Total daily rewards
+                    </Typography>
+                    <Typography textAlign="center" variant="p">
+                      {formatBigNumber(data?.totalReward, 'currency')} BALN
+                    </Typography>
+                  </Box>
+                )} */}
+          </Box>
+        </Flex>
+      </Box>
+    );
+  } else {
+    return null;
+  }
 }

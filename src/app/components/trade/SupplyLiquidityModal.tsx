@@ -263,7 +263,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     changeShouldLedgerSign(false);
   };
 
-  const isQueue = !!pair?.queueRate;
+  const isQueue = !!(pair && pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX);
 
   const isBALNRewardPool = true;
   const isEnabled = isQueue

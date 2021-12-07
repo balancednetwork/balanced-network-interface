@@ -6,6 +6,8 @@ import bnJs from 'bnJs';
 import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
+import { useQueuePair } from './useQueuePair';
+
 export enum PairState {
   LOADING,
   NOT_EXISTS,
@@ -15,7 +17,7 @@ export enum PairState {
 
 export function useV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
   const [reserves, setReserves] = useState<
-    ({ reserve0: string; reserve1: string; poolId: string; totalSupply: string } | number | undefined)[]
+    ({ reserve0: string; reserve1: string; poolId: number; totalSupply: string } | number | undefined)[]
   >([]);
 
   const tokens = useMemo(() => {
@@ -34,7 +36,8 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
               let poolId;
 
               try {
-                poolId = await bnJs.Dex.getPoolId(tokenA.address, tokenB.address);
+                poolId = parseInt(await bnJs.Dex.getPoolId(tokenA.address, tokenB.address), 16);
+                if (poolId === 0) return undefined;
                 stats = await bnJs.Dex.getPoolStats(poolId);
               } catch (err) {
                 return undefined;
@@ -59,8 +62,10 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
     fetchReserves();
   }, [tokens]);
 
+  const queuePair = useQueuePair();
+
   return useMemo(() => {
-    return tokens.map((tokenArr, i) => {
+    const pairs: [PairState, Pair | null][] = tokens.map((tokenArr, i) => {
       const result = reserves[i];
       const tokenA = tokenArr[0];
       const tokenB = tokenArr[1];
@@ -80,7 +85,8 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
         }),
       ];
     });
-  }, [reserves, tokens]);
+    return pairs.concat([queuePair]);
+  }, [queuePair, reserves, tokens]);
 }
 
 export function useV2Pair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null] {

@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
 import _ from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import IRC2 from 'packages/BalancedJs/contracts/IRC2';
@@ -11,10 +12,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
-import { useCurrencyBalances } from 'store/swap/hooks';
+import { SUPPORTED_TOKENS_LIST, isNativeCurrency, SUPPORTED_TOKENS_MAP_BY_ADDRESS, isBALN } from 'constants/tokens';
+import { useBnJsContractQuery } from 'queries/utils';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { Token, CurrencyAmount, Currency } from 'types/balanced-sdk-core';
+import { Token, CurrencyAmount, Currency, NativeCurrency } from 'types/balanced-sdk-core';
+import { Pair } from 'types/balanced-v1-sdk';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
@@ -100,20 +102,37 @@ export const useHasEnoughICX = () => {
 };
 
 export function useTokenBalances(
-  address?: string,
-  tokens?: (Token | undefined)[],
-): { [tokenAddress: string]: CurrencyAmount<Token> | undefined } {
-  const balances = useCurrencyBalances(address, tokens as (Currency | undefined)[]) as (
-    | CurrencyAmount<Token>
-    | undefined
-  )[];
+  account: string | undefined,
+  tokens: Token[],
+): { [address: string]: CurrencyAmount<Token> | undefined } {
+  const [balances, setBalances] = useState<(string | number | BigNumber)[]>([]);
+
+  useEffect(() => {
+    const fetchBalances = async () => {
+      const result = await Promise.all(
+        tokens.map(async token => {
+          if (!account) return undefined;
+          if (isBALN(token)) return bnJs.BALN.availableBalanceOf(account);
+          return bnJs.getContract(token.address).balanceOf(account);
+        }),
+      );
+
+      setBalances(result);
+    };
+
+    fetchBalances();
+  }, [tokens, account]);
 
   return useMemo(() => {
-    return balances.reduce((p, c) => {
-      if (c) p[c?.currency.address] = c;
-      return p;
+    return tokens.reduce((agg, token, idx) => {
+      const balance = balances[idx];
+
+      if (balance) agg[token.address] = CurrencyAmount.fromRawAmount(token, String(balance));
+      else agg[token.address] = CurrencyAmount.fromRawAmount(token, 0);
+
+      return agg;
     }, {});
-  }, [balances]);
+  }, [balances, tokens]);
 }
 
 export function useAllTokenBalances(): { [tokenAddress: string]: CurrencyAmount<Token> | undefined } {
@@ -122,4 +141,101 @@ export function useAllTokenBalances(): { [tokenAddress: string]: CurrencyAmount<
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens]);
   const balances = useTokenBalances(account ?? undefined, allTokensArray);
   return balances ?? {};
+}
+
+export function useCurrencyBalances(
+  account: string | undefined,
+  currencies: (Currency | undefined)[],
+): (CurrencyAmount<Currency> | undefined)[] {
+  const literal = useMemo(
+    () =>
+      currencies.reduce((agg: string, cur: Currency | undefined) => {
+        if (cur instanceof Token) return `${agg}-${cur.address}`;
+        if (cur instanceof NativeCurrency) return `${agg}-BASE`;
+        return agg;
+      }, ''),
+    [currencies],
+  );
+  const tokens = useMemo(
+    () =>
+      (currencies?.filter((currency): currency is Token => currency?.isToken ?? false) ?? []).filter(
+        (token: Token) => !isNativeCurrency(token),
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [literal],
+  );
+
+  const tokenBalances = useTokenBalances(account, tokens);
+
+  const containsICX: boolean = useMemo(() => currencies?.some(currency => isNativeCurrency(currency)) ?? false, [
+    currencies,
+  ]);
+  const accounts = useMemo(() => (containsICX ? [account] : []), [containsICX, account]);
+  const icxBalance = useICXBalances(accounts);
+
+  return React.useMemo(
+    () =>
+      currencies.map(currency => {
+        if (!account || !currency) return undefined;
+        if (isNativeCurrency(currency)) return icxBalance[account];
+        if (currency.isToken) return tokenBalances[currency.address];
+        return undefined;
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [tokenBalances, icxBalance, account, literal],
+  );
+}
+
+export function useCurrencyBalance(account?: string, currency?: Currency): CurrencyAmount<Currency> | undefined {
+  return useCurrencyBalances(account, [currency])[0];
+}
+
+export function useICXBalances(
+  uncheckedAddresses: (string | undefined)[],
+): { [address: string]: CurrencyAmount<Currency> | undefined } {
+  const [balances, setBalances] = useState<(string | number | BigNumber)[]>([]);
+
+  const addresses: string[] = useMemo(
+    () =>
+      uncheckedAddresses
+        ? uncheckedAddresses
+            .filter(isAddress)
+            .filter((a): a is string => a !== undefined)
+            .sort()
+        : [],
+    [uncheckedAddresses],
+  );
+
+  useEffect(() => {
+    const fetchBalances = async () => {
+      const result = await Promise.all(
+        addresses.map(async address => {
+          return bnJs.ICX.balanceOf(address);
+        }),
+      );
+
+      setBalances(result);
+    };
+
+    fetchBalances();
+  }, [addresses]);
+
+  const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address];
+
+  return useMemo(() => {
+    return addresses.reduce((agg, address, idx) => {
+      const balance = balances[idx];
+
+      if (balance) agg[address] = CurrencyAmount.fromRawAmount(ICX, String(balance));
+      else agg[address] = CurrencyAmount.fromRawAmount(ICX, 0);
+
+      return agg;
+    }, {});
+  }, [balances, addresses, ICX]);
+}
+
+export function useLiquidityTokenBalance(account: string | undefined | null, pair: Pair | undefined | null) {
+  const query = useBnJsContractQuery<string>(bnJs, 'Dex', 'balanceOf', [account, pair?.poolId]);
+  const { data } = query;
+  return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
 }

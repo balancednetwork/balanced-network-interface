@@ -1,6 +1,5 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
 import { isEmpty } from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -13,13 +12,12 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import TickSrc from 'assets/icons/tick.svg';
 import bnJs from 'bnJs';
-import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { usePool, usePoolPair } from 'store/pool/hooks';
+import { Field } from 'store/mint/actions';
+import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
-import { formatBigNumber } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -34,17 +32,15 @@ interface ModalProps {
   currencies: { [field in Field]?: Currency };
 }
 
-export enum Field {
-  CURRENCY_A = 'CURRENCY_A',
-  CURRENCY_B = 'CURRENCY_B',
-}
+const getPairName = (currencies: { [field in Field]?: Currency }) => {
+  return `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`;
+};
 
 export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies }: ModalProps) {
   const { account } = useIconReact();
 
-  const selectedPair = usePoolPair();
-  const pool = usePool(selectedPair.id);
-
+  const { currencyDeposits, pair } = useDerivedMintInfo();
+  const { [Field.CURRENCY_A]: baseDeposit, [Field.CURRENCY_B]: quoteDeposit } = currencyDeposits;
   const addTransaction = useTransactionAdder();
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -59,16 +55,16 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
 
-  const handleAdd = (currencyType: Field) => async () => {
+  const handleAdd = (field: Field) => async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    const token = currencies[currencyType] as Token;
+    const token = currencies[field] as Token;
 
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
-        if (currencyType === Field.CURRENCY_A) {
+        if (field === Field.CURRENCY_A) {
           updateShouldSendAssetsA(true);
-        } else if (currencyType === Field.CURRENCY_B) {
+        } else if (field === Field.CURRENCY_B) {
           updateShouldSendAssetsB(true);
         }
       }
@@ -76,24 +72,24 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       const res: any = await bnJs
         .inject({ account })
         .getContract(token.address)
-        .deposit(BalancedJs.utils.toLoop(parsedAmounts[currencyType]!.toFixed(), token.symbol));
+        .deposit(BalancedJs.utils.toLoop(parsedAmounts[field]!.toFixed(), token.symbol));
 
       addTransaction(
         { hash: res.result },
         {
-          pending: depositMessage(token.symbol!, selectedPair.name).pendingMessage,
-          summary: depositMessage(token.symbol!, selectedPair.name).successMessage,
+          pending: depositMessage(token.symbol!, getPairName(currencies)).pendingMessage,
+          summary: depositMessage(token.symbol!, getPairName(currencies)).successMessage,
         },
       );
 
-      setAddingTxs(state => ({ ...state, [currencyType]: res.result }));
+      setAddingTxs(state => ({ ...state, [field]: res.result }));
     } catch (error) {
       console.error('error', error);
       setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
     } finally {
-      if (currencyType === Field.CURRENCY_A) {
+      if (field === Field.CURRENCY_A) {
         updateShouldSendAssetsA(false);
-      } else if (currencyType === Field.CURRENCY_B) {
+      } else if (field === Field.CURRENCY_B) {
         updateShouldSendAssetsB(false);
       }
 
@@ -103,40 +99,40 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   const [removingTxs, setRemovingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
 
-  const handleRemove = (currencyType: Field, amountWithdraw: BigNumber) => async () => {
+  const handleRemove = (field: Field, amountWithdraw?: CurrencyAmount<Currency>) => async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    const token = currencies[currencyType] as Token;
+    const token = currencies[field] as Token;
 
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
-        if (currencyType === Field.CURRENCY_A) {
+        if (field === Field.CURRENCY_A) {
           updateShouldRemoveAssetsA(true);
-        } else if (currencyType === Field.CURRENCY_B) {
+        } else if (field === Field.CURRENCY_B) {
           updateShouldRemoveAssetsB(true);
         }
       }
 
       const res: any = await bnJs
         .inject({ account })
-        .Dex.withdraw(token.address, BalancedJs.utils.toLoop(amountWithdraw, token.symbol));
+        .Dex.withdraw(token.address, BalancedJs.utils.toLoop(amountWithdraw!.toFixed(), token.symbol));
       addTransaction(
         { hash: res.result },
         {
           pending: `Withdrawing ${token.symbol}`,
-          summary: `${formatBigNumber(amountWithdraw, 'currency')} ${token.symbol} added to your wallet`,
+          summary: `${amountWithdraw?.toSignificant(6)} ${token.symbol} added to your wallet`,
         },
       );
 
-      setRemovingTxs(state => ({ ...state, [currencyType]: res.result }));
+      setRemovingTxs(state => ({ ...state, [field]: res.result }));
     } catch (error) {
       console.error('error', error);
       //setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
     } finally {
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-      if (currencyType === Field.CURRENCY_A) {
+      if (field === Field.CURRENCY_A) {
         updateShouldRemoveAssetsA(false);
-      } else if (currencyType === Field.CURRENCY_B) {
+      } else if (field === Field.CURRENCY_B) {
         updateShouldRemoveAssetsB(false);
       }
     }
@@ -161,8 +157,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
           addTransaction(
             { hash: res.result },
             {
-              pending: supplyMessage(selectedPair.name).pendingMessage,
-              summary: supplyMessage(selectedPair.name).successMessage,
+              pending: supplyMessage(getPairName(currencies)).pendingMessage,
+              summary: supplyMessage(getPairName(currencies)).successMessage,
             },
           );
           if (confirmTxStatus === TransactionStatus.failure) {
@@ -186,15 +182,15 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         .Dex.add(
           baseToken.address,
           quoteToken.address,
-          BalancedJs.utils.toLoop(pool?.baseDeposited || new BigNumber(0), selectedPair.baseCurrencyKey),
-          BalancedJs.utils.toLoop(pool?.quoteDeposited || new BigNumber(0), selectedPair.quoteCurrencyKey),
+          baseDeposit?.quotient?.toString() ?? '0',
+          quoteDeposit?.toFixed() ?? '0',
         )
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
             {
-              pending: supplyMessage(selectedPair.name).pendingMessage,
-              summary: supplyMessage(selectedPair.name).successMessage,
+              pending: supplyMessage(getPairName(currencies)).pendingMessage,
+              summary: supplyMessage(getPairName(currencies)).successMessage,
             },
           );
 
@@ -225,7 +221,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       setConfirmTx('');
       setHasErrorMessage(false);
     }
-  }, [isOpen, pool]);
+  }, [isOpen, pair]);
 
   const addingATxStatus: TransactionStatus = useTransactionStatus(addingTxs[Field.CURRENCY_A]);
   const addingBTxStatus: TransactionStatus = useTransactionStatus(addingTxs[Field.CURRENCY_B]);
@@ -267,20 +263,17 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     changeShouldLedgerSign(false);
   };
 
-  const isQueue = selectedPair.id === BalancedJs.utils.POOL_IDS.sICXICX;
-  const pair = SUPPORTED_PAIRS.find(p => p.id === selectedPair.id);
+  const isQueue = !!pair?.queueRate;
 
-  const isBALNRewardPool = pair && pair.rewards && pair.rewards > 0;
+  const isBALNRewardPool = true;
   const isEnabled = isQueue
     ? true
     : (addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success) ||
-      (pool?.baseDeposited.isGreaterThan(new BigNumber(0)) && pool?.quoteDeposited.isGreaterThan(new BigNumber(0)));
+      (baseDeposit?.greaterThan(0) && quoteDeposit?.greaterThan(0));
 
   const isInitialValueA = addingTxs[Field.CURRENCY_A] === '' && removingTxs[Field.CURRENCY_A] === '';
   const isInitialWithdrawA =
-    addingTxs[Field.CURRENCY_A] === '' &&
-    removingTxs[Field.CURRENCY_A] !== '' &&
-    pool?.baseDeposited.isGreaterThan(new BigNumber(0));
+    addingTxs[Field.CURRENCY_A] === '' && removingTxs[Field.CURRENCY_A] !== '' && baseDeposit?.greaterThan(0);
   const isPendingA = addingATxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_A] === '';
   const isFailureA = addingATxStatus === TransactionStatus.failure && removingTxs[Field.CURRENCY_A] === '';
   const isRemoveSuccessA = removingATxStatus === TransactionStatus.success;
@@ -290,9 +283,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   const isInitialValueB = addingTxs[Field.CURRENCY_B] === '' && removingTxs[Field.CURRENCY_B] === '';
   const isInitialWithdrawB =
-    addingTxs[Field.CURRENCY_B] === '' &&
-    removingTxs[Field.CURRENCY_B] !== '' &&
-    pool?.quoteDeposited.isGreaterThan(new BigNumber(0));
+    addingTxs[Field.CURRENCY_B] === '' && removingTxs[Field.CURRENCY_B] !== '' && quoteDeposit?.greaterThan(0);
   const isPendingB = addingBTxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_B] === '';
   const isFailureB = addingBTxStatus === TransactionStatus.failure && removingTxs[Field.CURRENCY_B] === '';
   const isRemoveSuccessB = removingBTxStatus === TransactionStatus.success;
@@ -328,7 +319,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               {shouldShowSendBtnA ? (
                 <>
                   <Typography variant="p" fontWeight="bold" textAlign="center">
-                    {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {selectedPair.baseCurrencyKey}
+                    {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {currencies[Field.CURRENCY_A]?.symbol}
                   </Typography>
                   {shouldSendAssetsA && (
                     <>
@@ -357,7 +348,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               {shouldShowSendBtnB ? (
                 <>
                   <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
-                    {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {selectedPair.quoteCurrencyKey}
+                    {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {currencies[Field.CURRENCY_B]?.symbol}
                   </Typography>
                   {shouldSendAssetsB && (
                     <>
@@ -390,14 +381,14 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                 In contract
               </Typography>
 
-              {pool?.baseDeposited.isZero() ? (
+              {baseDeposit?.equalTo(0) ? (
                 <>
                   <StyledEmpty>-</StyledEmpty>
                 </>
               ) : (
                 <>
                   <Typography variant="p" fontWeight="bold" textAlign="center">
-                    {formatBigNumber(pool?.baseDeposited, 'ratio')} {selectedPair.baseCurrencyKey}
+                    {baseDeposit?.toSignificant(6)} {currencies[Field.CURRENCY_A]?.symbol}
                   </Typography>
                   {shouldRemoveAssetsA && (
                     <>
@@ -411,7 +402,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                     <RemoveButton
                       disabled={!shouldShowRemoveA || shouldRemoveAssetsB}
                       mt={2}
-                      onClick={handleRemove(Field.CURRENCY_A, pool?.baseDeposited || new BigNumber(0))}
+                      onClick={handleRemove(Field.CURRENCY_A, baseDeposit)}
                     >
                       {shouldShowRemoveA ? 'Remove' : 'Removing'}
                     </RemoveButton>
@@ -419,14 +410,14 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                 </>
               )}
 
-              {pool?.quoteDeposited.isZero() ? (
+              {quoteDeposit?.equalTo(0) ? (
                 <>
                   <StyledEmpty style={{ marginTop: '10px' }}>-</StyledEmpty>
                 </>
               ) : (
                 <>
                   <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
-                    {formatBigNumber(pool?.quoteDeposited, 'ratio')} {selectedPair.quoteCurrencyKey}
+                    {quoteDeposit?.toSignificant(6)} {currencies[Field.CURRENCY_B]?.symbol}
                   </Typography>
                   {shouldRemoveAssetsB && (
                     <>
@@ -440,7 +431,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                     <RemoveButton
                       disabled={!shouldShowRemoveB || shouldRemoveAssetsA}
                       mt={2}
-                      onClick={handleRemove(Field.CURRENCY_B, pool?.quoteDeposited || new BigNumber(0))}
+                      onClick={handleRemove(Field.CURRENCY_B, quoteDeposit)}
                     >
                       {shouldShowRemoveB ? 'Remove' : 'Removing'}
                     </RemoveButton>
@@ -457,7 +448,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         <Flex alignItems="center" hidden={!isQueue}>
           <Box width={1}>
             <Typography variant="p" fontWeight="bold" textAlign={isQueue ? 'center' : 'right'}>
-              {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {selectedPair.quoteCurrencyKey}
+              {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {currencies[Field.CURRENCY_B]?.symbol}
             </Typography>
             <Typography mt={2} textAlign="center">
               Your ICX will be locked for 24 hours. <br />

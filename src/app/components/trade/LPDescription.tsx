@@ -1,12 +1,13 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
-import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
+import JSBI from 'jsbi';
+import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
-import { usePoolPair, usePoolData } from 'store/pool/hooks';
-import { formatBigNumber, getPairName } from 'utils';
+import { Field } from 'store/mint/actions';
+import { useDerivedMintInfo } from 'store/mint/hooks';
+import { useLiquidityTokenBalance } from 'store/wallet/hooks';
 
 import { Link } from '../Link';
 
@@ -44,59 +45,34 @@ const descriptions = {
   ),
 };
 
-interface ILPDescriptionProps {
-  baseSuplying: BigNumber;
-  quoteSupplying: BigNumber;
-}
-
-export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescriptionProps) {
-  const selectedPair = usePoolPair();
-
-  const data = usePoolData(selectedPair.id) || {
-    totalBase: new BigNumber(0),
-    totalQuote: new BigNumber(0),
-    totalReward: new BigNumber(0),
-    suppliedBase: new BigNumber(0),
-    suppliedQuote: new BigNumber(0),
-    suppliedReward: new BigNumber(0),
-    poolShare: new BigNumber(0),
-  };
-
-  const supplyBase = useMemo(
-    () =>
-      data.suppliedBase?.isZero() || baseSuplying.isGreaterThan(0)
-        ? data?.suppliedBase?.plus(baseSuplying)
-        : data?.suppliedBase,
-    [baseSuplying, data.suppliedBase],
-  );
-  const supplyQuote = useMemo(
-    () =>
-      data.suppliedQuote?.isZero() || quoteSupplying.isGreaterThan(0)
-        ? data?.suppliedQuote?.plus(quoteSupplying)
-        : data?.suppliedQuote,
-    [data.suppliedQuote, quoteSupplying],
-  );
-
-  const totalBase = baseSuplying.isGreaterThan(0) ? baseSuplying?.plus(data.totalBase) : data.totalBase;
-
-  const dailyReward = useMemo(() => {
-    if (totalBase) {
-      const percentageSupplyBase = supplyBase?.dividedBy(totalBase);
-      return percentageSupplyBase?.isGreaterThanOrEqualTo(1)
-        ? data?.totalReward
-        : percentageSupplyBase?.multipliedBy(data?.totalReward);
-    }
-  }, [data.totalReward, supplyBase, totalBase]);
+export default function LPDescription() {
+  const { currencies, pair } = useDerivedMintInfo();
+  const { account } = useIconReact();
+  const userPoolBalance = useLiquidityTokenBalance(account, pair);
+  const totalPoolTokens = pair?.totalSupply;
+  const [token0Deposited, token1Deposited] =
+    !!pair &&
+    !!totalPoolTokens &&
+    !!userPoolBalance &&
+    // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
+    JSBI.greaterThanOrEqual(totalPoolTokens.quotient, userPoolBalance.quotient)
+      ? [
+          pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false),
+          pair.getLiquidityValue(pair.token1, totalPoolTokens, userPoolBalance, false),
+        ]
+      : [undefined, undefined];
 
   return (
     <Box bg="bg2" flex={1} padding={[5, 7]}>
       <Typography variant="h3" mb={2}>
-        {getPairName(selectedPair)} liquidity pool
+        {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool
       </Typography>
 
-      <Typography mb={5} lineHeight={'25px'}>
-        {descriptions[selectedPair.id]}
-      </Typography>
+      {pair?.poolId && (
+        <Typography mb={5} lineHeight={'25px'}>
+          {descriptions[pair?.poolId]}
+        </Typography>
+      )}
 
       <Flex flexWrap="wrap">
         <Box
@@ -111,18 +87,19 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
               Your supply
             </Typography>
             <Typography textAlign="center" variant="p">
-              {selectedPair.id !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+              {!pair?.queueRate ? (
                 <>
-                  {formatBigNumber(supplyBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
-                  {formatBigNumber(supplyQuote, 'currency')} {selectedPair.quoteCurrencyKey}
+                  {token0Deposited?.toSignificant()} {pair?.reserve0.currency?.symbol}
+                  <br />
+                  {token1Deposited?.toSignificant()} {pair?.reserve1.currency?.symbol}
                 </>
               ) : (
-                `${formatBigNumber(supplyQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
+                `${token0Deposited?.toSignificant()} ${pair?.reserve0.currency?.symbol}`
               )}
             </Typography>
           </Box>
 
-          {selectedPair.rewards && (
+          {/* {selectedPair.rewards && (
             <Box sx={{ margin: '15px 0 25px 0' }}>
               <Typography textAlign="center" marginBottom="5px" color="text1">
                 Your daily rewards
@@ -131,7 +108,7 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
                 ~ {formatBigNumber(dailyReward, 'currency')} BALN
               </Typography>
             </Box>
-          )}
+          )} */}
         </Box>
         <Box width={[1, 1 / 2]}>
           <Box sx={{ margin: '15px 0 25px 0' }}>
@@ -139,18 +116,19 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
               Total supply
             </Typography>
             <Typography textAlign="center" variant="p">
-              {selectedPair.id !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+              {!pair?.queueRate ? (
                 <>
-                  {formatBigNumber(data?.totalBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
-                  {formatBigNumber(data?.totalQuote, 'currency')} {selectedPair.quoteCurrencyKey}
+                  {pair?.reserve0.toSignificant()} {pair?.reserve0.currency?.symbol}
+                  <br />
+                  {pair?.reserve1.toSignificant()} {pair?.reserve1.currency?.symbol}
                 </>
               ) : (
-                `${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
+                `${pair?.reserve0.toSignificant()} ${pair?.reserve0.currency?.symbol}`
               )}
             </Typography>
           </Box>
 
-          {selectedPair.rewards && (
+          {/* {selectedPair.rewards && (
             <Box sx={{ margin: '15px 0 25px 0' }}>
               <Typography textAlign="center" marginBottom="5px" color="text1">
                 Total daily rewards
@@ -159,7 +137,7 @@ export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescr
                 {formatBigNumber(data?.totalReward, 'currency')} BALN
               </Typography>
             </Box>
-          )}
+          )} */}
         </Box>
       </Flex>
     </Box>

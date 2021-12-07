@@ -149,7 +149,7 @@ export const normalizeContent = (text: string): string => {
 
 const TEN = new BigNumber(10);
 
-export function parseUnits(value: string, decimals: number): string {
+export function parseUnits(value: string, decimals: number = 18): string {
   return new BigNumber(value).times(TEN.pow(decimals)).toFixed();
 }
 

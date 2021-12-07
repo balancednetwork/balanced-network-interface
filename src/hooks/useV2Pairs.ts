@@ -75,7 +75,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
       return [
         PairState.EXISTS,
         new Pair(CurrencyAmount.fromRawAmount(token0, reserve0), CurrencyAmount.fromRawAmount(token1, reserve1), {
-          poolId,
+          poolId: parseInt(poolId, 16),
           totalSupply,
         }),
       ];

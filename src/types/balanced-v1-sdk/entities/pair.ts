@@ -40,7 +40,7 @@ export class Pair {
   private readonly tokenAmounts: [CurrencyAmount<Token>, CurrencyAmount<Token>];
   public readonly queueRate?: Fraction;
 
-  public readonly poolId?: string;
+  public readonly poolId?: number;
   public readonly totalSupply?: CurrencyAmount<Token>;
 
   public static getAddress(tokenA: Token, tokenB: Token): string {
@@ -52,7 +52,7 @@ export class Pair {
     tokenAmountB: CurrencyAmount<Token>,
     additionalArgs?: {
       queueRate?: Fraction;
-      poolId?: string;
+      poolId?: number;
       totalSupply?: string;
     },
   ) {

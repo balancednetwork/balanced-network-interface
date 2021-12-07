@@ -23,11 +23,11 @@ const initialState: MintState = {
   typedValue: '',
   otherTypedValue: '',
   [Field.CURRENCY_A]: {
-    currency: SUPPORTED_TOKENS_LIST[3],
+    currency: SUPPORTED_TOKENS_LIST[0],
     percent: 0,
   },
   [Field.CURRENCY_B]: {
-    currency: SUPPORTED_TOKENS_LIST[2],
+    currency: undefined,
   },
 };
 

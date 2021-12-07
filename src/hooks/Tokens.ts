@@ -3,6 +3,7 @@ import { useMemo, useEffect, useState } from 'react';
 import { useIconReact } from 'packages/icon-react';
 
 import bnJs from 'bnJs';
+import { BASES_TO_CHECK_TRADES_AGAINST } from 'constants/routing';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useUserAddedTokens } from 'store/user/hooks';
 import { Token, Currency } from 'types/balanced-sdk-core';
@@ -41,6 +42,23 @@ function useTokensFromMap(
 
 export function useAllTokens(): { [address: string]: Token } {
   return useTokensFromMap(SUPPORTED_TOKENS_MAP_BY_ADDRESS as { [address: string]: Token }, true);
+}
+
+export function useCommonBases(): { [address: string]: Token } {
+  const { networkId } = useIconReact();
+
+  const bases = useMemo(() => {
+    return typeof networkId !== 'undefined' ? BASES_TO_CHECK_TRADES_AGAINST[networkId] ?? [] : [];
+  }, [networkId]);
+
+  const basesMap = useMemo(() => {
+    return bases.reduce((prev, cur) => {
+      prev[cur.address] = cur;
+      return prev;
+    }, {});
+  }, [bases]);
+
+  return basesMap;
 }
 
 export function useToken(tokenAddress?: string | null): Token | undefined | null {

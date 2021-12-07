@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Typography } from 'app/theme';
+import { isNativeCurrency } from 'constants/tokens';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
@@ -84,54 +85,63 @@ export default function LPPanel() {
       : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(percent).divide(100)?.toExact() ?? '');
   };
 
+  //
+  const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
+
   return (
     <>
       <SectionPanel bg="bg2">
         <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <AutoColumn gap="md">
-            <Flex alignItems="center" justifyContent="space-between">
-              <Typography variant="h2">Supply A</Typography>
-              <Typography as="div" hidden={!account}>
-                {'Wallet: '}
-                {`${currencyBalances[Field.CURRENCY_A]?.toSignificant()} ${currencies[Field.CURRENCY_A]?.symbol}`}
-              </Typography>
-            </Flex>
+            <AutoColumn gap="md">
+              <Flex alignItems="center" justifyContent="space-between">
+                <Typography variant="h2">Supply A</Typography>
+                <Typography as="div" hidden={!account}>
+                  {'Wallet: '}
+                  {`${currencyBalances[Field.CURRENCY_A]?.toSignificant()} ${currencies[Field.CURRENCY_A]?.symbol}`}
+                </Typography>
+              </Flex>
 
-            <Flex>
-              <CurrencyInputPanel
-                id="supply-liquidity-input-token-a"
-                value={formattedAmounts[Field.CURRENCY_A]}
-                showMaxButton={false}
-                currency={currencies[Field.CURRENCY_A]}
-                onUserInput={onFieldAInput}
-                onCurrencySelect={handleCurrencyASelect}
-                onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
-              />
-            </Flex>
+              <Flex>
+                <CurrencyInputPanel
+                  id="supply-liquidity-input-token-a"
+                  value={formattedAmounts[Field.CURRENCY_A]}
+                  showMaxButton={false}
+                  showCommonBases={false}
+                  currency={currencies[Field.CURRENCY_A]}
+                  onUserInput={onFieldAInput}
+                  onCurrencySelect={handleCurrencyASelect}
+                  onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
+                />
+              </Flex>
+            </AutoColumn>
 
-            <Flex alignItems="center" justifyContent="center" my={-1}>
+            <Flex alignItems="center" justifyContent="center" my={-1} hidden={isQueue}>
               <Plus />
             </Flex>
 
-            <Flex alignItems="center" justifyContent="space-between">
-              <Typography variant="h2">Supply B</Typography>
-              <Typography as="div" hidden={!account}>
-                {'Wallet: '}
-                {`${currencyBalances[Field.CURRENCY_B]?.toSignificant()} ${currencies[Field.CURRENCY_B]?.symbol}`}
-              </Typography>
-            </Flex>
+            <AutoColumn gap="md" hidden={isQueue}>
+              <Flex alignItems="center" justifyContent="space-between">
+                <Typography variant="h2">Supply B</Typography>
+                <Typography as="div" hidden={!account}>
+                  {'Wallet: '}
+                  {`${currencyBalances[Field.CURRENCY_B]?.toSignificant()} ${currencies[Field.CURRENCY_B]?.symbol}`}
+                </Typography>
+              </Flex>
 
-            <Flex>
-              <CurrencyInputPanel
-                id="supply-liquidity-input-token-b"
-                value={formattedAmounts[Field.CURRENCY_B]}
-                showMaxButton={false}
-                currency={currencies[Field.CURRENCY_B]}
-                onUserInput={onFieldBInput}
-                onCurrencySelect={handleCurrencyBSelect}
-                onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
-              />
-            </Flex>
+              <Flex>
+                <CurrencyInputPanel
+                  id="supply-liquidity-input-token-b"
+                  value={formattedAmounts[Field.CURRENCY_B]}
+                  showMaxButton={false}
+                  showCommonBases={true}
+                  currency={currencies[Field.CURRENCY_B]}
+                  onUserInput={onFieldBInput}
+                  onCurrencySelect={handleCurrencyBSelect}
+                  onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
+                />
+              </Flex>
+            </AutoColumn>
           </AutoColumn>
 
           <AutoColumn gap="5px" mt={5}>

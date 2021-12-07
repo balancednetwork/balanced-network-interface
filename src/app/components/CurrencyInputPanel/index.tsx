@@ -25,7 +25,7 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
   border-right: ${({ theme }) => `1px solid ${theme.colors.divider}`};
   display: flex;
   align-items: center;
-  width: 128px;
+  min-width: 128px;
   height: 43px;
   padding: 4px 15px;
   color: #ffffff;
@@ -153,8 +153,14 @@ export default function CurrencyInputPanel({
       {/* <ClickAwayListener onClickAway={() => setOpen(false)}> */}
       <div>
         <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
-          {currency && <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />}
-          {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
+          {currency ? (
+            <>
+              <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
+              <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
+            </>
+          ) : (
+            <StyledTokenName>Select a token</StyledTokenName>
+          )}
           {onCurrencySelect && <StyledDropDown selected={!!currency} />}
         </CurrencySelect>
 
@@ -163,7 +169,7 @@ export default function CurrencyInputPanel({
             isOpen={open}
             onDismiss={handleDismiss}
             onCurrencySelect={onCurrencySelect}
-            showCommonBases={false}
+            showCommonBases={showCommonBases}
             showCurrencyAmount={false}
           />
         )}

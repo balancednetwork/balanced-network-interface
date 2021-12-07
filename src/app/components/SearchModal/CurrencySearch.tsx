@@ -5,7 +5,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
-import { useAllTokens, useIsUserAddedToken, useToken } from 'hooks/Tokens';
+import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
 import useDebounce from 'hooks/useDebounce';
 import { useOnClickOutside } from 'hooks/useOnClickOutside';
 import useToggle from 'hooks/useToggle';
@@ -54,8 +54,9 @@ export function CurrencySearch({
 
   const [invertSearchOrder] = useState<boolean>(false);
 
-  const allTokens = useAllTokens();
-
+  const tokens = useAllTokens();
+  const bases = useCommonBases();
+  const allTokens = showCommonBases ? bases : tokens;
   // if they input an address, use it
 
   const searchToken = useToken(debouncedQuery);

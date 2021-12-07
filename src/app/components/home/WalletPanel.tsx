@@ -60,82 +60,88 @@ const WalletPanel = () => {
         Wallet
       </Typography>
 
-      <Wrapper>
-        <DashGrid>
-          <HeaderText>Asset</HeaderText>
-          <HeaderText>Balance</HeaderText>
-          <HeaderText>Value</HeaderText>
-        </DashGrid>
+      {balances && Object.keys(balances).filter(token => !balances[token].dp(2).isZero()).length ? (
+        <Wrapper>
+          <DashGrid>
+            <HeaderText>Asset</HeaderText>
+            <HeaderText>Balance</HeaderText>
+            <HeaderText>Value</HeaderText>
+          </DashGrid>
 
-        <List>
-          <Accordion collapsible>
-            {CURRENCY.filter(currency => {
-              if (currency === 'BALN') {
-                return !totalBALN.dp(2).isZero();
-              }
-              return !balances[currency].dp(2).isZero();
-            }).map((currency, index, arr) => {
-              const WalletUI = WalletUIs[currency] || SendPanel;
-              return (
-                <AccordionItem key={currency}>
-                  <StyledAccordionButton currency={currency}>
-                    <ListItem border={index !== arr.length - 1}>
-                      <AssetSymbol>
-                        <CurrencyLogo currency={getTokenFromCurrencyKey(currency)!} />
-                        <Typography fontSize={16} fontWeight="bold">
-                          {currency}
-                        </Typography>
-                      </AssetSymbol>
-                      <DataText as="div">
-                        {!account
-                          ? '-'
-                          : currency.toLowerCase() === 'baln'
-                          ? totalBALN.dp(2).toFormat()
-                          : balances[currency].dp(2).toFormat()}
-                        {currency.toLowerCase() === 'baln' && isAvailable && (
-                          <>
-                            <Typography color="rgba(255,255,255,0.75)">
-                              Available: {balances['BALN'].dp(2).toFormat()}
-                            </Typography>
-                          </>
+          <List>
+            <Accordion collapsible>
+              {CURRENCY.filter(currency => {
+                if (currency === 'BALN') {
+                  return !totalBALN.dp(2).isZero();
+                }
+                return !balances[currency].dp(2).isZero();
+              }).map((currency, index, arr) => {
+                const WalletUI = WalletUIs[currency] || SendPanel;
+                return (
+                  <AccordionItem key={currency}>
+                    <StyledAccordionButton currency={currency}>
+                      <ListItem border={index !== arr.length - 1}>
+                        <AssetSymbol>
+                          <CurrencyLogo currency={getTokenFromCurrencyKey(currency)!} />
+                          <Typography fontSize={16} fontWeight="bold">
+                            {currency}
+                          </Typography>
+                        </AssetSymbol>
+                        <DataText as="div">
+                          {!account
+                            ? '-'
+                            : currency.toLowerCase() === 'baln'
+                            ? totalBALN.dp(2).toFormat()
+                            : balances[currency].dp(2).toFormat()}
+                          {currency.toLowerCase() === 'baln' && isAvailable && (
+                            <>
+                              <Typography color="rgba(255,255,255,0.75)">
+                                Available: {balances['BALN'].dp(2).toFormat()}
+                              </Typography>
+                            </>
+                          )}
+                        </DataText>
+
+                        <StyledDataText
+                          as="div"
+                          hasNotification={currency.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}
+                        >
+                          {!account || !rates || !rates[currency]
+                            ? '-'
+                            : currency.toLowerCase() === 'baln'
+                            ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
+                            : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
+                          {currency.toLowerCase() === 'baln' && isAvailable && rates && rates[currency] && (
+                            <>
+                              <Typography color="rgba(255,255,255,0.75)">
+                                ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                              </Typography>
+                            </>
+                          )}
+                        </StyledDataText>
+                      </ListItem>
+                    </StyledAccordionButton>
+
+                    <StyledAccordionPanel hidden={false}>
+                      <BoxPanel bg="bg3">
+                        {currency.toLocaleLowerCase() === 'icx' ? (
+                          <WalletUI currency={getTokenFromCurrencyKey(currency)!} claimableICX={claimableICX} />
+                        ) : (
+                          <WalletUI currency={getTokenFromCurrencyKey(currency)!} />
                         )}
-                      </DataText>
-
-                      <StyledDataText
-                        as="div"
-                        hasNotification={currency.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}
-                      >
-                        {!account || !rates || !rates[currency]
-                          ? '-'
-                          : currency.toLowerCase() === 'baln'
-                          ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
-                          : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
-                        {currency.toLowerCase() === 'baln' && isAvailable && rates && rates[currency] && (
-                          <>
-                            <Typography color="rgba(255,255,255,0.75)">
-                              ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
-                            </Typography>
-                          </>
-                        )}
-                      </StyledDataText>
-                    </ListItem>
-                  </StyledAccordionButton>
-
-                  <StyledAccordionPanel hidden={false}>
-                    <BoxPanel bg="bg3">
-                      {currency.toLocaleLowerCase() === 'icx' ? (
-                        <WalletUI currency={getTokenFromCurrencyKey(currency)!} claimableICX={claimableICX} />
-                      ) : (
-                        <WalletUI currency={getTokenFromCurrencyKey(currency)!} />
-                      )}
-                    </BoxPanel>
-                  </StyledAccordionPanel>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
-        </List>
-      </Wrapper>
+                      </BoxPanel>
+                    </StyledAccordionPanel>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
+          </List>
+        </Wrapper>
+      ) : (
+        <Wrapper>
+          <Typography textAlign="center">No assets available.</Typography>
+        </Wrapper>
+      )}
     </BoxPanel>
   );
 };

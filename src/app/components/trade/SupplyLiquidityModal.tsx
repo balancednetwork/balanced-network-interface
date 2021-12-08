@@ -148,7 +148,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     }
 
     if (isQueue) {
-      const t = parsedAmounts[Field.CURRENCY_B];
+      const t = parsedAmounts[Field.CURRENCY_A];
 
       bnJs
         .inject({ account })
@@ -157,8 +157,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
           addTransaction(
             { hash: res.result },
             {
-              pending: supplyMessage(getPairName(currencies)).pendingMessage,
-              summary: supplyMessage(getPairName(currencies)).successMessage,
+              pending: supplyMessage(currencies[Field.CURRENCY_A]?.symbol!).pendingMessage,
+              summary: supplyMessage(currencies[Field.CURRENCY_A]?.symbol!).successMessage,
             },
           );
           if (confirmTxStatus === TransactionStatus.failure) {
@@ -448,7 +448,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         <Flex alignItems="center" hidden={!isQueue}>
           <Box width={1}>
             <Typography variant="p" fontWeight="bold" textAlign={isQueue ? 'center' : 'right'}>
-              {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {currencies[Field.CURRENCY_B]?.symbol}
+              {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {currencies[Field.CURRENCY_A]?.symbol}
             </Typography>
             <Typography mt={2} textAlign="center">
               Your ICX will be locked for 24 hours. <br />

@@ -5,6 +5,8 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { isNativeCurrency } from 'constants/tokens';
+import { useQueuePair } from 'hooks/useQueuePair';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { useBnJsContractQuery } from 'queries/utils';
 import { tryParseAmount } from 'store/swap/hooks';
@@ -120,7 +122,12 @@ export function useDerivedMintInfo(): {
   );
 
   // pair
-  const [pairState, pair] = useV2Pair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
+  const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
+
+  const [pairState1, pair1] = useV2Pair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
+  const [pairState2, pair2] = useQueuePair();
+  const [pairState, pair] = isQueue ? [pairState2, pair2] : [pairState1, pair1];
+
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =
     pairState === PairState.NOT_EXISTS ||
@@ -239,18 +246,30 @@ export function useDerivedMintInfo(): {
     error = error ?? <>Invalid pair</>;
   }
 
-  if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
-    error = error ?? <>Enter an amount</>;
-  }
+  if (isQueue) {
+    if (!parsedAmounts[Field.CURRENCY_A]) {
+      error = error ?? <>Enter an amount</>;
+    }
 
-  const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
+    const { [Field.CURRENCY_A]: currencyAAmount } = parsedAmounts;
 
-  if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-    error = <>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</>;
-  }
+    if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
+      error = <>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</>;
+    }
+  } else {
+    if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
+      error = error ?? <>Enter an amount</>;
+    }
 
-  if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
-    error = <>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</>;
+    const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
+
+    if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
+      error = <>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</>;
+    }
+
+    if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
+      error = <>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</>;
+    }
   }
 
   return {

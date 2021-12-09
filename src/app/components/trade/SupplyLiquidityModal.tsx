@@ -448,7 +448,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         </Flex>
         <Flex alignItems="center" hidden={!isQueue}>
           <Box width={1}>
-            <Typography fontWeight="bold" textAlign={isQueue ? 'center' : 'right'} as="h3">
+            <Typography fontWeight="bold" textAlign={isQueue ? 'center' : 'right'} fontSize="20px" as="h3">
               {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {selectedPair.quoteCurrencyKey}
             </Typography>
             <Typography mt={2} textAlign="center">

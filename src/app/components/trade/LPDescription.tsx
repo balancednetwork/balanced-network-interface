@@ -6,48 +6,13 @@ import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
+import { PairState } from 'hooks/useV2Pairs';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useLiquidityTokenBalance } from 'store/wallet/hooks';
 
-import { Link } from '../Link';
-
-const descriptions = {
-  1: 'Supply ICX to earn Balance Tokens. Your ICX will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. This pool works like a queue, so you can withdraw your sICX from the liquidity details section as your order is filled.',
-  2: 'Supply an equal amount of sICX and bnUSD to earn BALN. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards.',
-  3: 'Supply an equal amount of BALN and bnUSD to earn Balance Tokens. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. All BALN in the pool accrues network fees.',
-  4: 'Supply an equal amount of BALN and sICX to earn Balance Tokens. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. All BALN in the pool accrues network fees.',
-  7: (
-    <>
-      Requires an equal amount of OMM and sICX. To earn rewards from this pool, use&nbsp;
-      <Link href="https://omm.finance/" target="_blank">
-        Omm
-      </Link>
-      &nbsp;with the same wallet.
-    </>
-  ),
-  8: (
-    <>
-      Requires an equal amount of OMM and USDS. To earn rewards from this pool, use&nbsp;
-      <Link href="https://omm.finance/" target="_blank">
-        Omm
-      </Link>
-      &nbsp;with the same wallet.
-    </>
-  ),
-  6: (
-    <>
-      Requires an equal amount of OMM and IUSDC. To earn rewards from this pool, use&nbsp;
-      <Link href="https://omm.finance/" target="_blank">
-        Omm
-      </Link>
-      &nbsp;with the same wallet.
-    </>
-  ),
-};
-
 export default function LPDescription() {
-  const { currencies, pair } = useDerivedMintInfo();
+  const { currencies, pair, pairState } = useDerivedMintInfo();
   const { account } = useIconReact();
   const userPoolBalance = useLiquidityTokenBalance(account, pair);
   const totalPoolTokens = pair?.totalSupply;
@@ -63,47 +28,59 @@ export default function LPDescription() {
         ]
       : [undefined, undefined];
 
-  if (currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]) {
-    return (
-      <Box bg="bg2" flex={1} padding={[5, 7]}>
-        <Typography variant="h3" mb={2}>
-          {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool
-        </Typography>
-
-        {pair?.poolId && (
-          <Typography mb={5} lineHeight={'25px'}>
-            {descriptions[pair?.poolId]}
+  return (
+    <>
+      {pairState === PairState.NOT_EXISTS && (
+        <Flex bg="bg2" flex={1} padding={[5, 7]} flexDirection="column">
+          <Typography variant="h3" mb={2}>
+            {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool
           </Typography>
-        )}
 
-        <Flex flexWrap="wrap">
-          <Box
-            width={[1, 1 / 2]} //
-            sx={{
-              borderBottom: ['1px solid rgba(255, 255, 255, 0.15)', 0], //
-              borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
-            }}
-          >
-            <Box sx={{ margin: '15px 0 25px 0' }}>
-              <Typography textAlign="center" marginBottom="5px" color="text1">
-                Your supply
-              </Typography>
-              {pair && (
-                <Typography textAlign="center" variant="p">
-                  {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
-                    <>
-                      {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
-                      <br />
-                      {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
-                    </>
-                  ) : (
-                    `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
-                  )}
+          <Flex flex={1} alignItems="center" justifyContent="center">
+            <Typography textAlign="center">
+              There's no liquidity pool for this pair yet. <br />
+              Supply liquidity for these assets in any quantity to create a new pool.
+            </Typography>
+          </Flex>
+        </Flex>
+      )}
+
+      {pairState === PairState.EXISTS && (
+        <Box bg="bg2" flex={1} padding={[5, 7]}>
+          <Typography variant="h3" mb={2}>
+            {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
+              ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
+              : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}
+          </Typography>
+
+          <Flex flexWrap="wrap">
+            <Box
+              width={[1, 1 / 2]} //
+              sx={{
+                borderBottom: ['1px solid rgba(255, 255, 255, 0.15)', 0], //
+                borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
+              }}
+            >
+              <Box sx={{ margin: '15px 0 25px 0' }}>
+                <Typography textAlign="center" marginBottom="5px" color="text1">
+                  Your supply
                 </Typography>
-              )}
-            </Box>
+                {pair && (
+                  <Typography textAlign="center" variant="p">
+                    {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+                      <>
+                        {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
+                        <br />
+                        {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
+                      </>
+                    ) : (
+                      `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
+                    )}
+                  </Typography>
+                )}
+              </Box>
 
-            {/* {selectedPair.rewards && (
+              {/* {selectedPair.rewards && (
                   <Box sx={{ margin: '15px 0 25px 0' }}>
                     <Typography textAlign="center" marginBottom="5px" color="text1">
                       Your daily rewards
@@ -113,28 +90,28 @@ export default function LPDescription() {
                     </Typography>
                   </Box>
                 )} */}
-          </Box>
-          <Box width={[1, 1 / 2]}>
-            <Box sx={{ margin: '15px 0 25px 0' }}>
-              <Typography textAlign="center" marginBottom="5px" color="text1">
-                Total supply
-              </Typography>
-              {pair && (
-                <Typography textAlign="center" variant="p">
-                  {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
-                    <>
-                      {pair?.reserve0.toFixed(0, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
-                      <br />
-                      {pair?.reserve1.toFixed(0, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
-                    </>
-                  ) : (
-                    `${pair?.reserve0.toFixed(0, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
-                  )}
-                </Typography>
-              )}
             </Box>
+            <Box width={[1, 1 / 2]}>
+              <Box sx={{ margin: '15px 0 25px 0' }}>
+                <Typography textAlign="center" marginBottom="5px" color="text1">
+                  Total supply
+                </Typography>
+                {pair && (
+                  <Typography textAlign="center" variant="p">
+                    {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+                      <>
+                        {pair?.reserve0.toFixed(0, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
+                        <br />
+                        {pair?.reserve1.toFixed(0, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
+                      </>
+                    ) : (
+                      `${pair?.reserve0.toFixed(0, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
+                    )}
+                  </Typography>
+                )}
+              </Box>
 
-            {/* {selectedPair.rewards && (
+              {/* {selectedPair.rewards && (
                   <Box sx={{ margin: '15px 0 25px 0' }}>
                     <Typography textAlign="center" marginBottom="5px" color="text1">
                       Total daily rewards
@@ -144,11 +121,10 @@ export default function LPDescription() {
                     </Typography>
                   </Box>
                 )} */}
-          </Box>
-        </Flex>
-      </Box>
-    );
-  } else {
-    return null;
-  }
+            </Box>
+          </Flex>
+        </Box>
+      )}
+    </>
+  );
 }

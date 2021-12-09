@@ -9,12 +9,14 @@ import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Typography } from 'app/theme';
 import { isNativeCurrency } from 'constants/tokens';
+import { PairState } from 'hooks/useV2Pairs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 import { maxAmountSpend } from 'utils';
 
+import { AutoRow } from '../Row';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
@@ -47,7 +49,16 @@ export default function LPPanel() {
   };
 
   const { independentField, typedValue, otherTypedValue } = useMintState();
-  const { dependentField, parsedAmounts, noLiquidity, currencies, currencyBalances, error } = useDerivedMintInfo();
+  const {
+    dependentField,
+    parsedAmounts,
+    noLiquidity,
+    currencies,
+    currencyBalances,
+    error,
+    price,
+    pairState,
+  } = useDerivedMintInfo();
 
   const { onFieldAInput, onFieldBInput, onCurrencySelection } = useMintActionHandlers(noLiquidity);
 
@@ -144,14 +155,35 @@ export default function LPPanel() {
             </AutoColumn>
           </AutoColumn>
 
+          {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && !isQueue && pairState !== PairState.INVALID && (
+            <PoolPriceBar>
+              <AutoColumn gap="md" my={3}>
+                <AutoRow justify="space-around" gap="4px">
+                  <AutoColumn justify="center">
+                    <Typography>{price?.toSignificant(6) ?? '-'}</Typography>
+                    <Typography fontWeight={500} fontSize={14} color="white" pt={1}>
+                      {currencies[Field.CURRENCY_B]?.symbol} per {currencies[Field.CURRENCY_A]?.symbol}
+                    </Typography>
+                  </AutoColumn>
+                  <AutoColumn justify="center">
+                    <Typography>{price?.invert()?.toSignificant(6) ?? '-'}</Typography>
+                    <Typography fontWeight={500} fontSize={14} color="white" pt={1}>
+                      {currencies[Field.CURRENCY_A]?.symbol} per {currencies[Field.CURRENCY_B]?.symbol}
+                    </Typography>
+                  </AutoColumn>
+                </AutoRow>
+              </AutoColumn>
+            </PoolPriceBar>
+          )}
+
           <AutoColumn gap="5px" mt={5}>
             <Flex justifyContent="center">
               {isValid ? (
-                <Button color="primary" marginTop={5} onClick={handleSupply}>
+                <Button color="primary" onClick={handleSupply}>
                   Supply
                 </Button>
               ) : (
-                <Button disabled={!!account} color="primary" marginTop={5} onClick={handleConnectToWallet}>
+                <Button disabled={!!account} color="primary" onClick={handleConnectToWallet}>
                   {account ? error : 'Supply'}
                 </Button>
               )}
@@ -180,4 +212,10 @@ const AutoColumn = styled(Box)<{
   grid-auto-rows: auto;
   grid-row-gap: ${({ gap }) => (gap === 'sm' && '10px') || (gap === 'md' && '15px') || (gap === 'lg' && '25px') || gap};
   justify-items: ${({ justify }) => justify && justify};
+`;
+
+const PoolPriceBar = styled(Box)`
+  background-color: #32627d;
+  margin-top: 25px;
+  border-radius: 10px;
 `;

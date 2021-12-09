@@ -4,7 +4,7 @@ import { useIconReact } from 'packages/icon-react';
 
 import bnJs from 'bnJs';
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'constants/routing';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { isNativeCurrency, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useUserAddedTokens } from 'store/user/hooks';
 import { Token, Currency } from 'types/balanced-sdk-core';
 import { isAddress } from 'utils';
@@ -41,7 +41,15 @@ function useTokensFromMap(
 }
 
 export function useAllTokens(): { [address: string]: Token } {
-  return useTokensFromMap(SUPPORTED_TOKENS_MAP_BY_ADDRESS as { [address: string]: Token }, true);
+  const allTokens = useMemo(
+    () =>
+      SUPPORTED_TOKENS_LIST.filter(token => !isNativeCurrency(token)).reduce((res, token) => {
+        res[token.address] = token;
+        return res;
+      }, {}),
+    [],
+  );
+  return useTokensFromMap(allTokens as { [address: string]: Token }, true);
 }
 
 export function useCommonBases(): { [address: string]: Token } {

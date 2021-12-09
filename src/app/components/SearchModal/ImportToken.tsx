@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { AlertCircle, ArrowLeft } from 'react-feather';
-import { useTheme } from 'styled-components';
+import { ArrowLeft } from 'react-feather';
 import styled from 'styled-components/macro';
 
 import { Button } from 'app/components/Button';
@@ -30,7 +29,6 @@ interface ImportProps {
 
 export function ImportToken(props: ImportProps) {
   const { tokens, onBack, onDismiss, handleCurrencySelect } = props;
-  const theme = useTheme();
 
   const addToken = useAddUserToken();
 
@@ -39,22 +37,20 @@ export function ImportToken(props: ImportProps) {
       <PaddedColumn gap="14px" style={{ width: '100%', flex: '1 1' }}>
         <RowBetween>
           {onBack ? <ArrowLeft style={{ cursor: 'pointer' }} onClick={onBack} /> : <div />}
-          <Typography>Import token</Typography>
+          <Typography>Import asset?</Typography>
           {onDismiss ? <CloseIcon onClick={onDismiss} /> : <div />}
         </RowBetween>
       </PaddedColumn>
-      {/* <SectionBreak /> */}
+
       <AutoColumn gap="md" style={{ marginBottom: '32px', padding: '1rem' }}>
-        <AutoColumn justify="center" style={{ textAlign: 'center', gap: '16px', padding: '1rem' }}>
-          <AlertCircle size={48} stroke={theme.colors.text2} strokeWidth={1} />
-          <Typography fontWeight={400} fontSize={16}>
-            This token doesn&apos;t appear on the active token list(s). Make sure this is the token that you want to
-            trade.
-          </Typography>
-        </AutoColumn>
         {tokens.map(token => (
           <TokenImportCard token={token} key={'import' + token.address} />
         ))}
+        <AutoColumn justify="center" style={{ textAlign: 'center', gap: '16px', padding: '1rem' }}>
+          <Typography color="alert">
+            Make sure these details are correct before you add it to Balanced on this device.{' '}
+          </Typography>
+        </AutoColumn>
         <Button
           padding="10px 1rem"
           onClick={() => {

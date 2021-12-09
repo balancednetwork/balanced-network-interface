@@ -1,13 +1,12 @@
 import React, { CSSProperties } from 'react';
 
 import { CheckCircle } from 'react-feather';
+import { Flex } from 'rebass';
 import { useTheme } from 'styled-components';
 import styled from 'styled-components/macro';
 
 import { Button } from 'app/components/Button';
-import { AutoColumn } from 'app/components/Column';
-import CurrencyLogo from 'app/components/CurrencyLogo';
-import { AutoRow, RowFixed } from 'app/components/Row';
+import { RowFixed } from 'app/components/Row';
 import { Typography } from 'app/theme';
 import { useIsTokenActive, useIsUserAddedToken } from 'hooks/Tokens';
 import { Token } from 'types/balanced-sdk-core';
@@ -15,12 +14,9 @@ import { Token } from 'types/balanced-sdk-core';
 const TokenSection = styled.div<{ dim?: boolean }>`
   padding: 4px 20px;
   height: 56px;
-  display: grid;
-  grid-template-columns: auto minmax(auto, 1fr) auto;
-  grid-gap: 16px;
+  display: flex;
   align-items: center;
-
-  opacity: ${({ dim }) => (dim ? '0.4' : '1')};
+  justify-content: space-between;
 `;
 
 const CheckIcon = styled(CheckCircle)`
@@ -35,8 +31,7 @@ const NameOverflow = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 140px;
-  font-size: 12px;
+  max-width: 200px;
 `;
 
 export default function ImportRow({
@@ -60,17 +55,12 @@ export default function ImportRow({
 
   return (
     <TokenSection style={style}>
-      <CurrencyLogo currency={token} size={'24px'} style={{ opacity: dim ? '0.6' : '1' }} />
-      <AutoColumn gap="4px" style={{ opacity: dim ? '0.6' : '1' }}>
-        <AutoRow>
-          <Typography variant="body" fontWeight={500}>
-            {token.symbol}
-          </Typography>
-          <Typography ml="8px" fontWeight={300}>
-            <NameOverflow title={token.name}>{token.name}</NameOverflow>
-          </Typography>
-        </AutoRow>
-      </AutoColumn>
+      <Flex flexDirection="column" alignItems="flex-start">
+        <Typography variant="body" fontWeight="bold" color="white">
+          <NameOverflow title={token.name}>{token.name}</NameOverflow>
+        </Typography>
+        <Typography variant="body">{token.symbol}</Typography>
+      </Flex>
 
       {!isActive && !isAdded ? (
         <Button

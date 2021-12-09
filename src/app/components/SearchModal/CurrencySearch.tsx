@@ -5,6 +5,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
+import { ICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
 import useDebounce from 'hooks/useDebounce';
 import { useOnClickOutside } from 'hooks/useOnClickOutside';
@@ -75,6 +76,16 @@ export function CurrencySearch({
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery);
 
+  const icx = ICX;
+
+  const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
+    const s = debouncedQuery.toLowerCase().trim();
+    if (s === '' || s === 'i' || s === 'ic' || s === 'icx') {
+      return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
+    }
+    return filteredSortedTokens;
+  }, [debouncedQuery, icx, filteredSortedTokens]);
+
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
       onCurrencySelect(currency);
@@ -124,9 +135,9 @@ export function CurrencySearch({
         <Column style={{ padding: '20px 0', height: '100%' }}>
           <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
         </Column>
-      ) : filteredSortedTokens?.length > 0 ? (
+      ) : filteredSortedTokensWithICX?.length > 0 ? (
         <CurrencyList
-          currencies={filteredSortedTokens}
+          currencies={showCommonBases ? filteredSortedTokens : filteredSortedTokensWithICX}
           onCurrencySelect={handleCurrencySelect}
           showImportView={showImportView}
           setImportToken={setImportToken}

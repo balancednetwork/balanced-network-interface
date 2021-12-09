@@ -520,7 +520,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
   const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.id);
-  const poolData = usePoolData(pair.id);
+  // const poolData = usePoolData(pair.id);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();

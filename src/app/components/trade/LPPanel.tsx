@@ -16,7 +16,6 @@ import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/m
 import { CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 import { maxAmountSpend } from 'utils';
 
-import { AutoRow } from '../Row';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
@@ -157,22 +156,25 @@ export default function LPPanel() {
 
           {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && !isQueue && pairState !== PairState.INVALID && (
             <PoolPriceBar>
-              <AutoColumn gap="md" my={3}>
-                <AutoRow justify="space-around" gap="4px">
-                  <AutoColumn justify="center">
-                    <Typography>{price?.toSignificant(6) ?? '-'}</Typography>
-                    <Typography fontWeight={500} fontSize={14} color="white" pt={1}>
-                      {currencies[Field.CURRENCY_B]?.symbol} per {currencies[Field.CURRENCY_A]?.symbol}
-                    </Typography>
-                  </AutoColumn>
-                  <AutoColumn justify="center">
-                    <Typography>{price?.invert()?.toSignificant(6) ?? '-'}</Typography>
-                    <Typography fontWeight={500} fontSize={14} color="white" pt={1}>
-                      {currencies[Field.CURRENCY_A]?.symbol} per {currencies[Field.CURRENCY_B]?.symbol}
-                    </Typography>
-                  </AutoColumn>
-                </AutoRow>
-              </AutoColumn>
+              <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
+                <Typography>
+                  <Typography color="white" as="span">
+                    {price?.toSignificant(6) ?? '-'}
+                  </Typography>{' '}
+                  {currencies[Field.CURRENCY_B]?.symbol}
+                </Typography>
+                <Typography pt={1}>per {currencies[Field.CURRENCY_A]?.symbol}</Typography>
+              </Flex>
+              <VerticalDivider />
+              <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
+                <Typography>
+                  <Typography color="white" as="span">
+                    {price?.invert()?.toSignificant(6) ?? '-'}
+                  </Typography>{' '}
+                  {currencies[Field.CURRENCY_A]?.symbol}
+                </Typography>
+                <Typography pt={1}>per {currencies[Field.CURRENCY_B]?.symbol}</Typography>
+              </Flex>
             </PoolPriceBar>
           )}
 
@@ -214,8 +216,17 @@ const AutoColumn = styled(Box)<{
   justify-items: ${({ justify }) => justify && justify};
 `;
 
-const PoolPriceBar = styled(Box)`
+const PoolPriceBar = styled(Flex)`
   background-color: #32627d;
   margin-top: 25px;
   border-radius: 10px;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+`;
+
+const VerticalDivider = styled.div`
+  width: 1px;
+  height: initial;
+  background-color: ${({ theme }) => theme.colors.divider};
 `;

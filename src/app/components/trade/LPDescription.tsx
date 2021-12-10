@@ -65,7 +65,7 @@ export default function LPDescription() {
                 <Typography textAlign="center" marginBottom="5px" color="text1">
                   Your supply
                 </Typography>
-                {pair && (
+                {pair && account && (
                   <Typography textAlign="center" variant="p">
                     {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                       <>

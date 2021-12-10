@@ -381,7 +381,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                 In contract
               </Typography>
 
-              {baseDeposit?.equalTo(0) ? (
+              {!baseDeposit || (baseDeposit && baseDeposit?.equalTo(0)) ? (
                 <>
                   <StyledEmpty>-</StyledEmpty>
                 </>
@@ -410,7 +410,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                 </>
               )}
 
-              {quoteDeposit?.equalTo(0) ? (
+              {!quoteDeposit || (quoteDeposit && quoteDeposit?.equalTo(0)) ? (
                 <>
                   <StyledEmpty style={{ marginTop: '10px' }}>-</StyledEmpty>
                 </>

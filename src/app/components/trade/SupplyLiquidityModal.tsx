@@ -265,7 +265,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   const isQueue = !!(pair && pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX);
 
-  const isBALNRewardPool = true;
   const isEnabled = isQueue
     ? true
     : (addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success) ||
@@ -297,11 +296,11 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     <Modal isOpen={isOpen} onDismiss={() => undefined}>
       <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
         <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-          Supply liquidity?
+          {pair ? 'Supply liquidity?' : 'Create liquidity pool?'}
         </Typography>
         <Typography variant="p" textAlign="center" mb={4} hidden={isQueue}>
           Send each asset to the contract, <br />
-          then click Supply
+          {pair ? 'then click Supply.' : 'then create the pool.'}
         </Typography>
         <Flex alignItems="center" mb={1} hidden={isQueue}>
           <Box
@@ -441,10 +440,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
             </StyledDL>
           </Box>
         </Flex>
-        <Typography mt={2} textAlign="center" hidden={isQueue || !isBALNRewardPool}>
-          Your assets will be locked for 24 hours. <br />
-          To receive BALN, they must be in the pool at 1pm Eastern each day.
-        </Typography>
         <Flex alignItems="center" hidden={!isQueue}>
           <Box width={1}>
             <Typography variant="p" fontWeight="bold" textAlign={isQueue ? 'center' : 'right'}>
@@ -466,9 +461,16 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
           {!shouldLedgerSign && (
             <>
               <TextButton onClick={handleCancelSupply}>Cancel</TextButton>
-              <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                {confirmTx ? 'Supplying' : 'Supply'}
-              </Button>
+
+              {pair ? (
+                <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
+                  {confirmTx ? 'Supplying' : 'Supply'}
+                </Button>
+              ) : (
+                <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
+                  {confirmTx ? 'Creating pool' : 'Create pool'}
+                </Button>
+              )}
             </>
           )}
         </Flex>

@@ -1,4 +1,5 @@
 import { SupportedChainId } from 'packages/BalancedJs/chain';
+import { useIconReact } from 'packages/icon-react';
 
 import { Token, Currency } from 'types/balanced-sdk-core/index';
 
@@ -16,6 +17,19 @@ export const isBALN = (token?: Currency): boolean => {
     token instanceof Token &&
     (token.address === BALN.address || token.address === BALN_YEOUIDO.address || token.address === BALN_SEJONG.address)
   );
+};
+
+export const useICX = () => {
+  const { networkId: chainId } = useIconReact();
+  if (chainId === SupportedChainId.MAINNET) {
+    return ICX;
+  } else if (chainId === SupportedChainId.YEOUIDO) {
+    return ICX_YEOUIDO;
+  } else if (chainId === SupportedChainId.SEJONG) {
+    return ICX_SEJONG;
+  } else {
+    return sICX_SEJONG;
+  }
 };
 
 export const ICX = new Token(SupportedChainId.MAINNET, 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX');

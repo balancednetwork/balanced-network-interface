@@ -154,29 +154,32 @@ export default function LPPanel() {
             </AutoColumn>
           </AutoColumn>
 
-          {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && !isQueue && pairState !== PairState.INVALID && (
-            <PoolPriceBar>
-              <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
-                <Typography>
-                  <Typography color="white" as="span">
-                    {price?.toSignificant(6) ?? '-'}
-                  </Typography>{' '}
-                  {currencies[Field.CURRENCY_B]?.symbol}
-                </Typography>
-                <Typography pt={1}>per {currencies[Field.CURRENCY_A]?.symbol}</Typography>
-              </Flex>
-              <VerticalDivider />
-              <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
-                <Typography>
-                  <Typography color="white" as="span">
-                    {price?.invert()?.toSignificant(6) ?? '-'}
-                  </Typography>{' '}
-                  {currencies[Field.CURRENCY_A]?.symbol}
-                </Typography>
-                <Typography pt={1}>per {currencies[Field.CURRENCY_B]?.symbol}</Typography>
-              </Flex>
-            </PoolPriceBar>
-          )}
+          {currencies[Field.CURRENCY_A] &&
+            currencies[Field.CURRENCY_B] &&
+            !isQueue &&
+            pairState === PairState.NOT_EXISTS && (
+              <PoolPriceBar>
+                <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
+                  <Typography>
+                    <Typography color="white" as="span">
+                      {price?.toSignificant(6) ?? '-'}
+                    </Typography>{' '}
+                    {currencies[Field.CURRENCY_B]?.symbol}
+                  </Typography>
+                  <Typography pt={1}>per {currencies[Field.CURRENCY_A]?.symbol}</Typography>
+                </Flex>
+                <VerticalDivider />
+                <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
+                  <Typography>
+                    <Typography color="white" as="span">
+                      {price?.invert()?.toSignificant(6) ?? '-'}
+                    </Typography>{' '}
+                    {currencies[Field.CURRENCY_A]?.symbol}
+                  </Typography>
+                  <Typography pt={1}>per {currencies[Field.CURRENCY_B]?.symbol}</Typography>
+                </Flex>
+              </PoolPriceBar>
+            )}
 
           <AutoColumn gap="5px" mt={5}>
             <Flex justifyContent="center">

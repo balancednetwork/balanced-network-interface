@@ -10,13 +10,28 @@ import { ZERO } from 'constants/index';
 import { AppState } from 'store';
 import { useBalance, usePool } from 'store/pool/hooks';
 
-import { setStakedLPPercent } from './actions';
+import { setStakedLPPercent, setWithdrawnValue } from './actions';
 
 export function useChangeStakedLPPercent(): (poolId: number, percent: BigNumber) => void {
   const dispatch = useDispatch();
   return React.useCallback(
     (poolId, percent) => {
       dispatch(setStakedLPPercent({ poolId, percent }));
+    },
+    [dispatch],
+  );
+}
+
+export function useChangeWithdrawnValue(): (
+  poolId: number,
+  percent: BigNumber,
+  baseValue: BigNumber,
+  quoteValue: BigNumber,
+) => void {
+  const dispatch = useDispatch();
+  return React.useCallback(
+    (poolId, percent, baseValue, quoteValue) => {
+      dispatch(setWithdrawnValue({ poolId, percent, baseValue, quoteValue }));
     },
     [dispatch],
   );
@@ -61,5 +76,9 @@ export const useTotalStaked = (poolId: number) => {
 };
 
 export function useStakedLPPercent(poolId: number): BigNumber {
-  return useSelector((state: AppState) => state.stakedLP[poolId] ?? ZERO);
+  return useSelector((state: AppState) => state.stakedLP.stakedLp[poolId] ?? ZERO);
+}
+
+export function useWithdrawnPercent(poolId: number) {
+  return useSelector((state: AppState) => state.stakedLP.withdrawn[poolId]);
 }

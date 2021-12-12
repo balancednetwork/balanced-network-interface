@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
@@ -23,7 +23,7 @@ import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
-import { useLPData, useStakedLPPercent } from 'store/stakedLP/hooks';
+import { useChangeWithdrawnValue, useLPData, useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
@@ -256,16 +256,27 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
   const hasReward = !!pair?.rewards?.toString();
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
+
+  const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
+  const availableWithdrawnPercent = new BigNumber(1).minus(percent || ZERO);
+
   const { suppliedBase, totalBase, totalLP, suppliedQuote, totalQuote, suppliedLP, stakedLPBalance } =
     useLPData(pair.id) || {};
-  const totalSupply = (stakedLPBalance, availableValue, totalAmount, totalLP, suppliedLP) =>
-    formatBigNumber(
-      hasReward ? totalLP.plus(stakedLPBalance).times(totalAmount).div(suppliedLP) : availableValue,
-      'currency',
-    );
 
-  const baseCurrencyTotalSupply = totalSupply(stakedLPBalance, suppliedBase, totalBase, totalLP, suppliedLP);
-  const quoteCurrencyTotalSupply = totalSupply(stakedLPBalance, suppliedQuote, totalQuote, totalLP, suppliedLP);
+  const totalSupply = (stakedLPBalance, availableValue, totalAmount, totalLP, suppliedLP, value) => {
+    const total = totalLP.plus(stakedLPBalance).times(totalAmount).div(suppliedLP);
+    return formatBigNumber(hasReward ? total.minus(value || ZERO) : availableValue, 'currency');
+  };
+
+  const baseCurrencyTotalSupply = totalSupply(stakedLPBalance, suppliedBase, totalBase, totalLP, suppliedLP, baseValue);
+  const quoteCurrencyTotalSupply = totalSupply(
+    stakedLPBalance,
+    suppliedQuote,
+    totalQuote,
+    totalLP,
+    suppliedLP,
+    quoteValue,
+  );
 
   return (
     <ListItem>
@@ -280,7 +291,15 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
       </DataText>
       {upSmall && (
         <DataText>
-          {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
+          {upSmall && (
+            <DataText>{`${formatBigNumber(
+              (baseValue?.isZero() || quoteValue?.isZero()) && percent?.isGreaterThan(0)
+                ? poolData?.poolShare.times(100)
+                : poolData?.poolShare.times(100).times(availableWithdrawnPercent),
+
+              'currency',
+            )}%`}</DataText>
+          )}
         </DataText>
       )}
       {upSmall && (
@@ -520,10 +539,10 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
   const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.id);
-  // const poolData = usePoolData(pair.id);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
+  const onChangeWithdrawnValue = useChangeWithdrawnValue();
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
     typedValue: string;
@@ -581,18 +600,27 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
   const rate2 = pool ? pool.quote.div(pool.total) : ONE;
 
   const handleFieldAInput = (value: string) => {
-    const p = new BigNumber(value || '0').div(lpBalance?.base || ONE);
+    const p = new BigNumber(value || '0').div(availableBase || ONE);
     setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
   };
 
   const handleFieldBInput = (value: string) => {
-    const p = new BigNumber(value || '0').div(lpBalance?.quote || ONE);
+    const p = new BigNumber(value || '0').div(availableQuote || ONE);
     setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
   };
 
   const handleSlide = (values: string[], handle: number) => {
     setState({ typedValue, independentField, inputType: 'slider', portion: new BigNumber(values[handle]).div(100) });
   };
+
+  useEffect(() => {
+    onChangeWithdrawnValue(
+      poolId,
+      portion,
+      availableBase?.times(portion) || ZERO,
+      availableQuote?.times(portion) || ZERO,
+    );
+  }, [portion, availableQuote, availableBase, poolId]);
 
   const sliderInstance = React.useRef<any>(null);
 
@@ -611,6 +639,11 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
 
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
+
+  const resetValue = () => {
+    sliderInstance.current.noUiSlider.set(0);
+    setState({ typedValue, independentField, inputType: 'slider', portion: new BigNumber(0) });
+  };
 
   const handleWithdraw = () => {
     if (!account) return;
@@ -652,8 +685,8 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
       })
       .finally(() => {
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-
         changeShouldLedgerSign(false);
+        resetValue();
       });
   };
 
@@ -664,7 +697,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
   const hasEnoughICX = useHasEnoughICX();
 
   const availableCurrency = (stakedValue, suppliedValue) =>
-    formatBigNumber(!!stakedValue ? suppliedValue?.minus(stakedValue) : suppliedValue, 'input');
+    formatBigNumber(!!stakedValue ? suppliedValue?.minus(stakedValue) : suppliedValue, 'currency');
 
   return (
     <>

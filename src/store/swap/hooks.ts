@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
@@ -130,10 +130,10 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currency: outputCurrency },
   } = useSwapState();
 
-  const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
-    inputCurrency ?? undefined,
-    outputCurrency ?? undefined,
-  ]);
+  const relevantTokenBalances = useCurrencyBalances(
+    account ?? undefined,
+    useMemo(() => [inputCurrency ?? undefined, outputCurrency ?? undefined], [inputCurrency, outputCurrency]),
+  );
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);

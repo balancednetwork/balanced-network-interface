@@ -104,8 +104,7 @@ export default function LPPanel() {
         <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <AutoColumn gap="md">
             <AutoColumn gap="md">
-              <Flex alignItems="center" justifyContent="space-between">
-                <Typography variant="h2">Supply A</Typography>
+              <Flex alignItems="center" justifyContent="flex-end" mr={1}>
                 <Typography as="div" hidden={!account}>
                   {'Wallet: '}
                   {`${currencyBalances[Field.CURRENCY_A]?.toSignificant()} ${currencies[Field.CURRENCY_A]?.symbol}`}
@@ -131,8 +130,7 @@ export default function LPPanel() {
             </Flex>
 
             <AutoColumn gap="md" hidden={isQueue}>
-              <Flex alignItems="center" justifyContent="space-between">
-                <Typography variant="h2">Supply B</Typography>
+              <Flex alignItems="center" justifyContent="flex-end" mr={1}>
                 <Typography as="div" hidden={!(account && currencyBalances[Field.CURRENCY_B])}>
                   {'Wallet: '}
                   {`${currencyBalances[Field.CURRENCY_B]?.toSignificant()} ${currencies[Field.CURRENCY_B]?.symbol}`}

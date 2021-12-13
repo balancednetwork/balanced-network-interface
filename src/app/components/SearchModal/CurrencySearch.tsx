@@ -71,7 +71,7 @@ export function CurrencySearch({
   }, [allTokens, debouncedQuery]);
 
   const sortedTokens: Token[] = useMemo(() => {
-    return filteredTokens.sort(tokenComparator);
+    return [...filteredTokens].sort(tokenComparator);
   }, [filteredTokens, tokenComparator]);
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery);

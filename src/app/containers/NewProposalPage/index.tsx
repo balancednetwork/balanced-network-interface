@@ -9,10 +9,9 @@ import styled, { useTheme } from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, TextButton } from 'app/components/Button';
-import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
 import { DefaultLayout } from 'app/components/Layout';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import ModalContent from 'app/components/ModalContent';
 import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect';
 import RatioInput from 'app/components/newproposal/RatioInput';
 import Spinner from 'app/components/Spinner';
@@ -355,7 +354,7 @@ export function NewProposalPage() {
         </ProposalDetailContainer>
       </NewProposalContainer>
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
             Submit proposal?
           </Typography>
@@ -383,11 +382,7 @@ export function NewProposalPage() {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </DefaultLayout>
   );

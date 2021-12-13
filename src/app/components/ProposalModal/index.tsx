@@ -13,7 +13,7 @@ import { ReactComponent as CrossIcon } from 'assets/icons/failure.svg';
 import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
 import { useShouldLedgerSign } from 'store/application/hooks';
 
-import LedgerConfirmMessage from '../LedgerConfirmMessage';
+import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 
 const CancelButton = styled(Button)`
@@ -62,7 +62,7 @@ export function ProposalModal(props: ProposalProps) {
 
   return (
     <Modal isOpen={isOpen} onDismiss={onCancel}>
-      <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+      <ModalContent noCurrencyBalanceErrorMessage>
         <Typography variant="content" textAlign="center" mb={1}>
           Submit vote?
         </Typography>
@@ -103,8 +103,7 @@ export function ProposalModal(props: ProposalProps) {
             </>
           )}
         </Flex>
-        <LedgerConfirmMessage />
-      </Flex>
+      </ModalContent>
     </Modal>
   );
 }

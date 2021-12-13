@@ -6,8 +6,8 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import ModalContent from 'app/components/ModalContent';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
@@ -101,7 +101,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
       )}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">
             Claim ICX?
           </Typography>
@@ -134,9 +134,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
               Claim ICX
             </Button>
           </Flex>
-          {/* ledger */}
-          <LedgerConfirmMessage />
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

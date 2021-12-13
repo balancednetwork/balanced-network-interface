@@ -293,7 +293,7 @@ const NetworkFeeSection = () => {
       return (
         <Typography variant="p" as="div">
           Ineligible
-          <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
+          <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
         </Typography>
       );
     }

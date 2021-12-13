@@ -31,6 +31,7 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import CollateralTypeSwitcher from '../CollateralTypeSwitcher';
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const CollateralPanel = () => {
@@ -200,9 +201,10 @@ const CollateralPanel = () => {
     <>
       <BoxPanel bg="bg3">
         <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">Collateral</Typography>
+          <Typography variant="h2">Collateral:</Typography>
+          <CollateralTypeSwitcher />
 
-          <Box>
+          <Box sx={{ marginLeft: 'auto' }}>
             {isAdjusting ? (
               <>
                 <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>

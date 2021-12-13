@@ -9,9 +9,10 @@ import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
+import { CurrencyKey } from 'types';
 
 import { AppState } from '../index';
-import { adjust, cancel, changeDepositedAmount, type, Field } from './actions';
+import { adjust, cancel, changeDepositedAmount, changeCollateralType, type, Field } from './actions';
 
 export function useCollateralChangeDepositedAmount(): (depositedAmount: BigNumber) => void {
   const dispatch = useDispatch();
@@ -22,6 +23,21 @@ export function useCollateralChangeDepositedAmount(): (depositedAmount: BigNumbe
     },
     [dispatch],
   );
+}
+
+export function useCollateralChangeCollateralType(): (collateralType: CurrencyKey) => void {
+  const dispatch = useDispatch();
+
+  return React.useCallback(
+    (collateralType: CurrencyKey) => {
+      dispatch(changeCollateralType({ collateralType }));
+    },
+    [dispatch],
+  );
+}
+
+export function useCollateralType() {
+  return useSelector((state: AppState) => state.collateral.collateralType);
 }
 
 export function useCollateralAvailableAmount() {
@@ -148,4 +164,44 @@ export function useCollateralInputAmountInUSD() {
   return React.useMemo(() => {
     return collateralInputAmount.multipliedBy(ratio.ICXUSDratio);
   }, [collateralInputAmount, ratio.ICXUSDratio]);
+}
+
+interface CollateralType {
+  symbol: string;
+  name: string;
+  collateralUsed: BigNumber;
+  collateralAvailable: BigNumber;
+  loanTaken: BigNumber;
+  loanAvailable: BigNumber;
+}
+
+export function useAllCollateralData(): Array<CollateralType> {
+  const dummyData: Array<CollateralType> = [
+    {
+      symbol: 'ICX',
+      name: 'Icon',
+      collateralUsed: new BigNumber(11133),
+      collateralAvailable: new BigNumber(3867),
+      loanTaken: new BigNumber(9472),
+      loanAvailable: new BigNumber(1397),
+    },
+    {
+      symbol: 'bnUSD',
+      name: 'Balanced Dollar',
+      collateralUsed: new BigNumber(0),
+      collateralAvailable: new BigNumber(4567),
+      loanTaken: new BigNumber(0),
+      loanAvailable: new BigNumber(1054),
+    },
+    {
+      symbol: 'BALN',
+      name: 'Balanced',
+      collateralUsed: new BigNumber(0),
+      collateralAvailable: new BigNumber(3057),
+      loanTaken: new BigNumber(0),
+      loanAvailable: new BigNumber(876),
+    },
+  ];
+
+  return dummyData;
 }

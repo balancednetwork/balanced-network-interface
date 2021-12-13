@@ -159,6 +159,9 @@ export default function CurrencyInputPanel({
 
   const balances = useWalletBalances();
   const balanceList1 = balanceList || balances;
+  const sortedTokenList = SUPPORTED_TOKENS_LIST.sort(
+    (ccy1, ccy2) => balanceList1[ccy2?.symbol!]?.dp(2).toNumber() - balanceList1[ccy1?.symbol!]?.dp(2).toNumber(),
+  );
 
   return (
     <InputContainer ref={ref} className={className}>
@@ -175,7 +178,7 @@ export default function CurrencyInputPanel({
                   <HeaderText>Asset</HeaderText>
                   <HeaderText textAlign="right">{balanceList ? 'Balance' : 'Wallet'}</HeaderText>
                 </DashGrid>
-                {SUPPORTED_TOKENS_LIST.map(ccy => (
+                {sortedTokenList.map(ccy => (
                   <ListItem key={ccy.symbol} onClick={handleCurrencySelect(ccy)}>
                     <Flex>
                       <CurrencyLogo currency={ccy} style={{ marginRight: '8px' }} />

@@ -201,6 +201,22 @@ export function useAllCollateralData(): Array<CollateralType> {
       loanTaken: new BigNumber(0),
       loanAvailable: new BigNumber(876),
     },
+    {
+      symbol: 'IUSDC',
+      name: 'IUSDC dollar',
+      collateralUsed: new BigNumber(0),
+      collateralAvailable: new BigNumber(3057),
+      loanTaken: new BigNumber(0),
+      loanAvailable: new BigNumber(876),
+    },
+    {
+      symbol: 'OMM',
+      name: 'OMM',
+      collateralUsed: new BigNumber(0),
+      collateralAvailable: new BigNumber(3057),
+      loanTaken: new BigNumber(0),
+      loanAvailable: new BigNumber(276),
+    },
   ];
 
   return dummyData;

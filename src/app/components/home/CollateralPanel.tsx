@@ -16,6 +16,7 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import useWidth from 'hooks/useWidth';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
 import {
@@ -31,7 +32,7 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import CollateralTypeSwitcher from '../CollateralTypeSwitcher';
+import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from '../CollateralTypeSwitcher';
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const CollateralPanel = () => {
@@ -197,12 +198,18 @@ const CollateralPanel = () => {
 
   const hasEnoughICX = useHasEnoughICX();
 
+  const [ref, width] = useWidth();
+
   return (
     <>
       <BoxPanel bg="bg3">
-        <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">Collateral:</Typography>
-          <CollateralTypeSwitcher />
+        <Flex justifyContent="space-between" alignItems="center" ref={ref}>
+          <CollateralTypeSwitcherWrap>
+            <Typography variant="h2" paddingRight={'7px'}>
+              Collateral:
+            </Typography>
+            <CollateralTypeSwitcher width={width} containerRef={ref.current} />
+          </CollateralTypeSwitcherWrap>
 
           <Box sx={{ marginLeft: 'auto' }}>
             {isAdjusting ? (

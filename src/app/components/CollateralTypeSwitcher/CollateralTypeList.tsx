@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { useMedia } from 'react-use';
 import { Box } from 'rebass';
 import styled from 'styled-components';
 
@@ -32,10 +33,10 @@ const SearchField = styled.input`
   }
 `;
 
-const SearchWrap = styled.div`
+const SearchWrap = styled.div<{ width?: number }>`
   position: relative;
   margin-bottom: 15px;
-  min-width: 415px;
+  width: 100%;
   padding: 0 25px;
 
   svg {
@@ -44,9 +45,13 @@ const SearchWrap = styled.div`
   }
 `;
 
-const CollateralTypesGrid = styled.div<{ border?: boolean; negativeMargin?: boolean }>`
+const CollateralTypesGrid = styled.div<{
+  border?: boolean;
+  negativeMargin?: boolean;
+  hideCollateralInfoColumn?: boolean;
+}>`
   display: grid;
-  grid-template-columns: 5fr 5fr 4fr;
+  grid-template-columns: ${({ hideCollateralInfoColumn }) => (hideCollateralInfoColumn ? '1fr 1fr' : '5fr 5fr 4fr')};
   width: 100%;
   ${({ border }) => (border ? 'border-bottom: 1px solid #304a68;' : '')}
   ${({ negativeMargin }) => (negativeMargin ? 'margin-top: -10px;' : '')}
@@ -101,10 +106,18 @@ const AssetInfo = styled.div`
   display: flex;
   position: relative;
   align-items: center;
+  padding-left: 40px;
 
   img {
     position: absolute;
     left: 0;
+  }
+
+  @media screen and (max-width: 350px) {
+    padding-left: 0;
+    img {
+      display: none;
+    }
   }
 `;
 
@@ -114,10 +127,11 @@ const GridWrap = styled.div`
   padding: 0 25px;
 `;
 
-const CollateralTypeList = () => {
+const CollateralTypeList = ({ width }) => {
   const changeCollateralType = useCollateralChangeCollateralType();
   const [searchQuery, setSearchQuery] = useState('');
   const allCollateralData = useAllCollateralData();
+  const hideCollateralInfoColumn = useMedia('(max-width: 500px)');
 
   const filteredCollateralTypes = allCollateralData?.filter(
     collateralType =>
@@ -126,7 +140,7 @@ const CollateralTypeList = () => {
   );
 
   return (
-    <Box p={'25px 0 5px'}>
+    <Box p={'25px 0 5px'} width={width}>
       <SearchWrap>
         <SearchIcon width="18px" />
         <SearchField
@@ -140,9 +154,9 @@ const CollateralTypeList = () => {
 
       {filteredCollateralTypes?.length ? (
         <GridWrap>
-          <CollateralTypesGrid>
+          <CollateralTypesGrid hideCollateralInfoColumn={hideCollateralInfoColumn}>
             <CollateralTypesGridHeader>Asset</CollateralTypesGridHeader>
-            <CollateralTypesGridHeader>Collateral</CollateralTypesGridHeader>
+            {!hideCollateralInfoColumn && <CollateralTypesGridHeader>Collateral</CollateralTypesGridHeader>}
             <CollateralTypesGridHeader>Loan</CollateralTypesGridHeader>
           </CollateralTypesGrid>
         </GridWrap>
@@ -158,12 +172,13 @@ const CollateralTypeList = () => {
               key={i}
               border={!isLast}
               negativeMargin={isFirst}
+              hideCollateralInfoColumn={hideCollateralInfoColumn}
               onClick={() => changeCollateralType(collateralType.symbol)}
             >
               <CollateralTypesGridItem>
                 <AssetInfo>
                   <CurrencyLogo size={'26px'} currency={getTokenFromCurrencyKey(collateralType.symbol)!} />
-                  <Box paddingLeft={'40px'}>
+                  <Box>
                     <Typography className="white" fontWeight={700}>
                       {collateralType.symbol}
                     </Typography>
@@ -171,14 +186,18 @@ const CollateralTypeList = () => {
                   </Box>
                 </AssetInfo>
               </CollateralTypesGridItem>
-              <CollateralTypesGridItem>
-                <Typography className="white">
-                  {`${collateralType.collateralUsed.dp(2).toFormat()} ${collateralType.symbol}`}
-                </Typography>
-                <Typography className="grey">{`${collateralType.collateralAvailable.dp(2).toFormat()} ${
-                  collateralType.symbol
-                }`}</Typography>
-              </CollateralTypesGridItem>
+
+              {!hideCollateralInfoColumn && (
+                <CollateralTypesGridItem>
+                  <Typography className="white">
+                    {`${collateralType.collateralUsed.dp(2).toFormat()} ${collateralType.symbol}`}
+                  </Typography>
+                  <Typography className="grey">{`${collateralType.collateralAvailable.dp(2).toFormat()} ${
+                    collateralType.symbol
+                  }`}</Typography>
+                </CollateralTypesGridItem>
+              )}
+
               <CollateralTypesGridItem>
                 <Typography className="white">{`${collateralType.loanTaken.dp(2).toFormat()} bnUSD`}</Typography>
                 <Typography className="grey">{`${collateralType.loanAvailable.dp(2).toFormat()} bnUSD`}</Typography>

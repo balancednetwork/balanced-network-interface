@@ -23,7 +23,7 @@ import { ONE, ZERO } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
-import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
+import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/newHooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';

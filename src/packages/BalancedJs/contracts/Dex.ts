@@ -69,6 +69,15 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
+  getNonce() {
+    const callParams = this.paramsBuilder({
+      method: 'getNonce',
+      params: {},
+    });
+
+    return this.call(callParams);
+  }
+
   getPoolId(tokenAAddress: string, tokenBAddress: string) {
     const callParams = this.paramsBuilder({
       method: 'getPoolId',

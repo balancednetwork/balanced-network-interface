@@ -5,7 +5,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
-import { ICX } from 'constants/tokens';
+import { useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
 import useDebounce from 'hooks/useDebounce';
 import { useOnClickOutside } from 'hooks/useOnClickOutside';
@@ -71,12 +71,12 @@ export function CurrencySearch({
   }, [allTokens, debouncedQuery]);
 
   const sortedTokens: Token[] = useMemo(() => {
-    return filteredTokens.sort(tokenComparator);
+    return [...filteredTokens].sort(tokenComparator);
   }, [filteredTokens, tokenComparator]);
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery);
 
-  const icx = ICX;
+  const icx = useICX();
 
   const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim();

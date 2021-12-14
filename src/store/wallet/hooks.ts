@@ -15,7 +15,7 @@ import { MINIMUM_ICX_FOR_TX } from 'constants/index';
 import { SUPPORTED_TOKENS_LIST, isNativeCurrency, SUPPORTED_TOKENS_MAP_BY_ADDRESS, isBALN } from 'constants/tokens';
 import { useBnJsContractQuery } from 'queries/utils';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { Token, CurrencyAmount, Currency, NativeCurrency } from 'types/balanced-sdk-core';
+import { Token, CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
 import { AppState } from '..';
@@ -149,22 +149,12 @@ export function useCurrencyBalances(
   account: string | undefined,
   currencies: (Currency | undefined)[],
 ): (CurrencyAmount<Currency> | undefined)[] {
-  const literal = useMemo(
-    () =>
-      currencies.reduce((agg: string, cur: Currency | undefined) => {
-        if (cur instanceof Token) return `${agg}-${cur.address}`;
-        if (cur instanceof NativeCurrency) return `${agg}-BASE`;
-        return agg;
-      }, ''),
-    [currencies],
-  );
   const tokens = useMemo(
     () =>
       (currencies?.filter((currency): currency is Token => currency?.isToken ?? false) ?? []).filter(
         (token: Token) => !isNativeCurrency(token),
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [literal],
+    [currencies],
   );
 
   const tokenBalances = useTokenBalances(account, tokens);
@@ -183,13 +173,15 @@ export function useCurrencyBalances(
         if (currency.isToken) return tokenBalances[currency.address];
         return undefined;
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [tokenBalances, icxBalance, account, literal],
+    [currencies, tokenBalances, icxBalance, account],
   );
 }
 
 export function useCurrencyBalance(account?: string, currency?: Currency): CurrencyAmount<Currency> | undefined {
-  return useCurrencyBalances(account, [currency])[0];
+  return useCurrencyBalances(
+    account,
+    useMemo(() => [currency], [currency]),
+  )[0];
 }
 
 export function useICXBalances(

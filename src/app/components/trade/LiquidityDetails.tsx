@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
@@ -395,7 +395,10 @@ const OptionButton = styled(Box)`
 const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => void }) => {
   const { account } = useIconReact();
   const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
-  const balances = useCurrencyBalances(account ?? undefined, [pair.baseToken, pair.quoteToken]);
+  const balances = useCurrencyBalances(
+    account ?? undefined,
+    useMemo(() => [pair.baseToken, pair.quoteToken], [pair]),
+  );
   const lpBalance = useBalance(poolId);
   const pool = usePool(pair.id);
 

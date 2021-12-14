@@ -104,8 +104,7 @@ export default function LPPanel() {
         <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <AutoColumn gap="md">
             <AutoColumn gap="md">
-              <Flex alignItems="center" justifyContent="space-between">
-                <Typography variant="h2">Supply A</Typography>
+              <Flex alignItems="center" justifyContent="flex-end" mr={1}>
                 <Typography as="div" hidden={!account}>
                   {'Wallet: '}
                   {`${currencyBalances[Field.CURRENCY_A]?.toSignificant()} ${currencies[Field.CURRENCY_A]?.symbol}`}
@@ -131,8 +130,7 @@ export default function LPPanel() {
             </Flex>
 
             <AutoColumn gap="md" hidden={isQueue}>
-              <Flex alignItems="center" justifyContent="space-between">
-                <Typography variant="h2">Supply B</Typography>
+              <Flex alignItems="center" justifyContent="flex-end" mr={1}>
                 <Typography as="div" hidden={!(account && currencyBalances[Field.CURRENCY_B])}>
                   {'Wallet: '}
                   {`${currencyBalances[Field.CURRENCY_B]?.toSignificant()} ${currencies[Field.CURRENCY_B]?.symbol}`}
@@ -154,29 +152,32 @@ export default function LPPanel() {
             </AutoColumn>
           </AutoColumn>
 
-          {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && !isQueue && pairState !== PairState.INVALID && (
-            <PoolPriceBar>
-              <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
-                <Typography>
-                  <Typography color="white" as="span">
-                    {price?.toSignificant(6) ?? '-'}
-                  </Typography>{' '}
-                  {currencies[Field.CURRENCY_B]?.symbol}
-                </Typography>
-                <Typography pt={1}>per {currencies[Field.CURRENCY_A]?.symbol}</Typography>
-              </Flex>
-              <VerticalDivider />
-              <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
-                <Typography>
-                  <Typography color="white" as="span">
-                    {price?.invert()?.toSignificant(6) ?? '-'}
-                  </Typography>{' '}
-                  {currencies[Field.CURRENCY_A]?.symbol}
-                </Typography>
-                <Typography pt={1}>per {currencies[Field.CURRENCY_B]?.symbol}</Typography>
-              </Flex>
-            </PoolPriceBar>
-          )}
+          {currencies[Field.CURRENCY_A] &&
+            currencies[Field.CURRENCY_B] &&
+            !isQueue &&
+            pairState === PairState.NOT_EXISTS && (
+              <PoolPriceBar>
+                <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
+                  <Typography>
+                    <Typography color="white" as="span">
+                      {price?.toSignificant(6) ?? '-'}
+                    </Typography>{' '}
+                    {currencies[Field.CURRENCY_B]?.symbol}
+                  </Typography>
+                  <Typography pt={1}>per {currencies[Field.CURRENCY_A]?.symbol}</Typography>
+                </Flex>
+                <VerticalDivider />
+                <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
+                  <Typography>
+                    <Typography color="white" as="span">
+                      {price?.invert()?.toSignificant(6) ?? '-'}
+                    </Typography>{' '}
+                    {currencies[Field.CURRENCY_A]?.symbol}
+                  </Typography>
+                  <Typography pt={1}>per {currencies[Field.CURRENCY_B]?.symbol}</Typography>
+                </Flex>
+              </PoolPriceBar>
+            )}
 
           <AutoColumn gap="5px" mt={5}>
             <Flex justifyContent="center">

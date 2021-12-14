@@ -193,17 +193,13 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
   public minimumAmountOut(slippageTolerance: Percent): CurrencyAmount<TOutput> {
     invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE');
     //FIXME: For now, the router contract doesn't support the exactout function.
-    // After the exactout function implementation, please revert this code.
+    // After the exactout function implementation, this needs to be changed.
 
-    if (this.isQueue) {
-      return this.outputAmount;
-    } else {
-      const slippageAdjustedAmountOut = new Fraction(ONE)
-        .add(slippageTolerance)
-        .invert()
-        .multiply(this.outputAmount.quotient).quotient;
-      return CurrencyAmount.fromRawAmount(this.outputAmount.currency, slippageAdjustedAmountOut);
-    }
+    const slippageAdjustedAmountOut = new Fraction(ONE)
+      .add(slippageTolerance)
+      .invert()
+      .multiply(this.outputAmount.quotient).quotient;
+    return CurrencyAmount.fromRawAmount(this.outputAmount.currency, slippageAdjustedAmountOut);
   }
 
   /**

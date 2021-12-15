@@ -7,7 +7,7 @@ import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/c
 import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
 import { PairInfo } from 'constants/pairs';
 import { Field } from 'store/swap/actions';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount, Token } from 'types/balanced-sdk-core';
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
@@ -164,4 +164,8 @@ export function getPairName(pair: PairInfo) {
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
   return isScoreAddress(value) ? value : false;
+}
+
+export function toHex(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>): string {
+  return value ? `0x${value.quotient.toString(16)}` : '0x0';
 }

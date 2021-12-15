@@ -18,6 +18,7 @@ import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
+import { toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -113,9 +114,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         }
       }
 
-      const res: any = await bnJs
-        .inject({ account })
-        .Dex.withdraw(token.address, BalancedJs.utils.toLoop(amountWithdraw!.toFixed(), token.symbol));
+      const res: any = await bnJs.inject({ account }).Dex.withdraw(token.address, toHex(amountWithdraw));
       addTransaction(
         { hash: res.result },
         {
@@ -179,12 +178,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       const quoteToken = currencies[Field.CURRENCY_B] as Token;
       bnJs
         .inject({ account })
-        .Dex.add(
-          baseToken.address,
-          quoteToken.address,
-          baseDeposit?.quotient?.toString() ?? '0',
-          quoteDeposit?.toFixed() ?? '0',
-        )
+        .Dex.add(baseToken.address, quoteToken.address, toHex(baseDeposit), toHex(quoteDeposit))
         .then((res: any) => {
           addTransaction(
             { hash: res.result },

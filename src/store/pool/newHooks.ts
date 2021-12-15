@@ -1,35 +1,37 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
+import JSBI from 'jsbi';
 import { parseInt, range } from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 
 import bnJs from 'bnJs';
-import { ONE, ZERO } from 'constants/index';
+import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { useRatio } from 'store/ratio/hooks';
 import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { Pool } from 'types';
-import { Currency } from 'types/balanced-sdk-core';
-
-import { Balance } from './reducer';
+import { Currency, CurrencyAmount, Fraction, Price, Token } from 'types/balanced-sdk-core';
 
 interface PoolState {
-  total: BigNumber;
-  base: BigNumber;
-  quote: BigNumber;
-  baseDeposited: BigNumber;
-  quoteDeposited: BigNumber;
-  rate: BigNumber;
-  inverseRate: BigNumber;
-  baseCurrency: Currency;
-  quoteCurrency: Currency;
+  total: CurrencyAmount<Currency>;
+  base: CurrencyAmount<Currency>;
+  quote: CurrencyAmount<Currency>;
+  price: Price<Currency, Currency>;
+  inversePrice: Price<Currency, Currency>;
+  baseToken: Token;
+  quoteToken: Token;
+  liquidityToken: Token;
 }
 
-export function usePools() {
-  const [pools, setPools] = useState<PoolState[]>([]);
+function tokenForPair(base: Token, quote: Token): Token | undefined {
+  if (base.chainId !== quote.chainId) return;
+
+  return new Token(base.chainId, 'cx0000000000000000000000000000000000000002', 18, 'BALN-V2', 'Balanced V2');
+}
+
+export function usePools(): { [poolId: number]: PoolState } {
+  const [pools, setPools] = useState<(PoolState | undefined)[]>([]);
 
   const transactions = useAllTransactions();
 
@@ -47,41 +49,51 @@ export function usePools() {
 
           const totalSupply = new BigNumber(stats['total_supply'], 16);
 
+          const baseToken = SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['base_token']].wrapped;
+          const quoteToken =
+            SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['quote_token'] || 'cx0000000000000000000000000000000000000000']
+              .wrapped;
+
+          const liquidityToken = tokenForPair(baseToken, quoteToken);
+
+          if (!liquidityToken) return;
+
           if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
             const rate = new BigNumber(await bnJs.Staking.getTodayRate(), 16);
             const baseReserve = totalSupply;
             const quoteReserve = totalSupply.times(rate);
 
-            const inverseRate = ONE.div(rate);
+            const price = new Price(baseToken, quoteToken, baseReserve.toFixed(), quoteReserve.toFixed());
+
+            const inversePrice = price.invert();
 
             return {
-              total: totalSupply,
-              base: baseReserve,
-              quote: quoteReserve,
-              baseDeposited: ZERO,
-              quoteDeposited: ZERO,
-              rate: rate,
-              inverseRate: inverseRate,
-              baseCurrency: SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['base_token']],
-              quoteCurrency: SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['quote_token']],
+              total: CurrencyAmount.fromRawAmount(tokenForPair(baseToken, quoteToken)!, totalSupply.toFixed()),
+              base: CurrencyAmount.fromRawAmount(baseToken, baseReserve.toFixed()),
+              quote: CurrencyAmount.fromRawAmount(quoteToken, quoteReserve.toFixed()),
+              price,
+              inversePrice,
+              baseToken,
+              quoteToken,
+              liquidityToken,
             };
           } else {
             const baseReserve = new BigNumber(stats['base'], 16);
             const quoteReserve = new BigNumber(stats['quote'], 16);
 
-            const rate = quoteReserve.div(baseReserve);
-            const inverseRate = baseReserve.div(quoteReserve);
+            const price = new Price(baseToken, quoteToken, baseReserve.toFixed(), quoteReserve.toFixed());
+
+            const inversePrice = price.invert();
 
             return {
-              total: totalSupply,
-              base: baseReserve,
-              quote: quoteReserve,
-              baseDeposited: ZERO,
-              quoteDeposited: ZERO,
-              rate: rate,
-              inverseRate: inverseRate,
-              baseCurrency: SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['base_token']],
-              quoteCurrency: SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['quote_token']],
+              total: CurrencyAmount.fromRawAmount(tokenForPair(baseToken, quoteToken)!, totalSupply.toFixed()),
+              base: CurrencyAmount.fromRawAmount(baseToken, baseReserve.toFixed()),
+              quote: CurrencyAmount.fromRawAmount(quoteToken, quoteReserve.toFixed()),
+              price,
+              inversePrice,
+              baseToken,
+              quoteToken,
+              liquidityToken,
             };
           }
         }),
@@ -102,13 +114,14 @@ export function usePools() {
 }
 
 interface BalanceState {
-  balance: BigNumber;
-  balance1?: BigNumber;
+  balance: CurrencyAmount<Currency>;
+  balance1?: CurrencyAmount<Currency>;
 }
 
-export function useBalances() {
+export function useBalances(): { [poolId: number]: BalanceState } {
   const { account } = useIconReact();
   const transactions = useAllTransactions();
+  const pools = usePools();
 
   const [balances, setBalances] = useState<BalanceState[]>([]);
 
@@ -116,29 +129,23 @@ export function useBalances() {
     async function fetchBalances() {
       if (!account) return;
 
-      const nonce = await bnJs.Dex.getNonce();
-
-      const limit = parseInt(nonce, 16);
-
-      const poolIds = range(1, limit);
-
       const balances = await Promise.all(
-        poolIds.map(async poolId => {
-          if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        Object.keys(pools).map(async poolId => {
+          if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
             const [balance, balance1] = await Promise.all([
               bnJs.Dex.getICXBalance(account),
               bnJs.Dex.getSicxEarnings(account),
             ]);
 
             return {
-              balance: new BigNumber(balance, 16),
-              balance1: new BigNumber(balance1, 16),
+              balance: CurrencyAmount.fromRawAmount(pools[poolId].quoteToken, new BigNumber(balance, 16).toFixed()),
+              balance1: CurrencyAmount.fromRawAmount(pools[poolId].baseToken, new BigNumber(balance1, 16).toFixed()),
             };
           } else {
-            const balance = await bnJs.Dex.balanceOf(account, poolId);
+            const balance = await bnJs.Dex.balanceOf(account, +poolId);
 
             return {
-              balance: new BigNumber(balance, 16),
+              balance: CurrencyAmount.fromRawAmount(pools[poolId].liquidityToken, new BigNumber(balance, 16).toFixed()),
             };
           }
         }),
@@ -148,7 +155,7 @@ export function useBalances() {
     }
 
     fetchBalances();
-  }, [account, transactions]);
+  }, [account, pools, transactions]);
 
   return useMemo(() => {
     return balances.reduce((acc, curr, idx) => {
@@ -165,29 +172,30 @@ export function useAvailableBalances() {
     let t = {};
 
     Object.keys(balances)
-      .filter(poolId => !balances[poolId].balance.isZero())
-      .filter(poolId => parseInt(poolId) !== BalancedJs.utils.POOL_IDS.sICXICX)
+      .filter(poolId => JSBI.greaterThan(balances[+poolId].balance.quotient, BIGINT_ZERO))
+      .filter(poolId => +poolId !== BalancedJs.utils.POOL_IDS.sICXICX)
       .forEach(poolId => {
-        t[poolId] = balances[poolId];
+        t[poolId] = balances[+poolId];
       });
 
     return t;
   }, [balances]);
 }
 
-export function usePool(poolId: number): Pool {
+export function usePool(poolId: number): PoolState | undefined {
   const pools = usePools();
   return pools[poolId];
 }
 
-export function usePoolShare(poolId: number) {
+export function usePoolShare(poolId: number): Fraction {
   const balances = useBalances();
-  const balance: Balance | undefined = balances[poolId];
+  const balance: BalanceState | undefined = balances[poolId];
   const pool = usePool(poolId);
 
   return React.useMemo(() => {
-    if (balance && pool && !pool.total.isZero()) return balance.balance.div(pool.total);
-    else return new BigNumber(0);
+    if (balance && pool && JSBI.greaterThan(pool.total.quotient, BIGINT_ZERO))
+      return balance.balance.divide(pool.total);
+    else return FRACTION_ZERO;
   }, [balance, pool]);
 }
 
@@ -199,15 +207,15 @@ export function useBalance(poolId: number) {
 
   return React.useMemo(() => {
     if (pool && balance) {
-      let suppliedBaseTokens: BigNumber;
-      let suppliedQuoteTokens: BigNumber;
+      let suppliedBaseTokens: CurrencyAmount<Currency>;
+      let suppliedQuoteTokens: CurrencyAmount<Currency>;
 
       if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
         suppliedBaseTokens = balance.balance;
         suppliedQuoteTokens = balance.balance;
       } else {
-        suppliedBaseTokens = pool.base.times(poolShare);
-        suppliedQuoteTokens = pool.quote.times(poolShare);
+        suppliedBaseTokens = pool.base.multiply(poolShare);
+        suppliedQuoteTokens = pool.quote.multiply(poolShare);
       }
 
       return {
@@ -227,116 +235,17 @@ export function usePoolData(poolId: number) {
 
   return React.useMemo(() => {
     if (pool && reward) {
+      const [rewardNumerator, rewardDenominator] = reward.toFraction();
+      const rewardFraction = new Fraction(rewardNumerator.toFixed(), rewardDenominator.toFixed());
       return {
         totalBase: pool.base,
         totalQuote: pool.quote,
-        totalReward: reward,
+        totalReward: rewardFraction,
         suppliedBase: balance?.base,
         suppliedQuote: balance?.quote,
-        suppliedReward: reward.times(poolShare),
+        suppliedReward: poolShare.multiply(rewardFraction),
         poolShare,
       };
     }
   }, [pool, balance, reward, poolShare]);
-}
-
-export function useRates() {
-  const [rates, setRates] = React.useState({});
-
-  React.useEffect(() => {
-    const fetchRates = async () => {
-      const [sicx, res] = await Promise.all([
-        bnJs.Dex.getPrice(BalancedJs.utils.POOL_IDS.sICXbnUSD),
-        bnJs.Band.getReferenceData({ _base: 'ICX', _quote: 'USD' }),
-      ]);
-
-      setRates({
-        sICX: BalancedJs.utils.toIcx(sicx),
-        ICX: BalancedJs.utils.toIcx(res['rate']),
-        bnUSD: new BigNumber(1),
-      });
-    };
-
-    fetchRates();
-  }, []);
-
-  return rates;
-}
-
-export function useAPYs() {
-  const [apys, setAPYs] = React.useState<{ [key: string]: BigNumber }>({});
-
-  // calculate sICX/ICX APY
-  const totalDailyReward = useReward(BalancedJs.utils.POOL_IDS.sICXICX);
-  const totalICXLiquidity = usePool(BalancedJs.utils.POOL_IDS.sICXICX);
-  const ratio = useRatio();
-  const rewards = React.useMemo(
-    () =>
-      totalDailyReward
-        ?.times(365)
-        .times(ratio.BALNbnUSDratio)
-        .div(totalICXLiquidity?.total || ZERO)
-        .div(ratio.ICXUSDratio),
-    [totalDailyReward, ratio.BALNbnUSDratio, totalICXLiquidity, ratio.ICXUSDratio],
-  );
-
-  React.useEffect(() => {
-    if (rewards && !rewards.isNaN() && !rewards.isZero() && rewards.isFinite()) {
-      setAPYs(state => ({ ...state, [BalancedJs.utils.POOL_IDS.sICXICX]: rewards }));
-    }
-  }, [rewards, setAPYs]);
-
-  // calculate BALN/sICX APY
-  const totalDailyReward1 = useReward(BalancedJs.utils.POOL_IDS.BALNsICX);
-  const totalLiquidity1 = usePool(BalancedJs.utils.POOL_IDS.BALNsICX);
-  const rewards1 = React.useMemo(
-    () =>
-      totalDailyReward1
-        ?.times(365)
-        .div(totalLiquidity1?.base || ZERO)
-        .div(2),
-    [totalDailyReward1, totalLiquidity1],
-  );
-
-  React.useEffect(() => {
-    if (rewards1 && !rewards1.isNaN() && !rewards1.isZero() && rewards1.isFinite()) {
-      setAPYs(state => ({ ...state, [BalancedJs.utils.POOL_IDS.BALNsICX]: rewards1 }));
-    }
-  }, [rewards1, setAPYs]);
-
-  //
-  React.useEffect(() => {
-    const fetchAPYs = async () => {
-      const t = {
-        'sICX/bnUSD': 2,
-        'BALN/bnUSD': 3,
-      };
-
-      Object.entries(t).forEach(async ([poolName, poolId]) => {
-        try {
-          const res = await bnJs.Rewards.getAPY(poolName);
-          setAPYs(state => ({ ...state, [poolId]: BalancedJs.utils.toIcx(res) }));
-        } catch (e) {
-          console.error(e);
-        }
-      });
-
-      const [res3, res4, res5] = await Promise.all([
-        bnJs.Rewards.getAPY('Loans'),
-        bnJs.Dex.getQuotePriceInBase(BalancedJs.utils.POOL_IDS.sICXbnUSD),
-        bnJs.Band.getReferenceData({ _base: 'USD', _quote: 'ICX' }),
-      ]);
-
-      setAPYs(state => ({
-        ...state,
-        Loans: BalancedJs.utils
-          .toIcx(res3)
-          .multipliedBy(BalancedJs.utils.toIcx(res4).dividedBy(BalancedJs.utils.toIcx(res5['rate']))),
-      }));
-    };
-
-    fetchAPYs();
-  }, []);
-
-  return apys;
 }

@@ -49,7 +49,6 @@ export function usePools(): { [poolId: number]: PoolState } {
 
           const totalSupply = new BigNumber(stats['total_supply'], 16);
 
-          console.log(poolId, stats);
           const baseToken = (SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['base_token']] || SUPPORTED_TOKENS_LIST[0]).wrapped;
           const quoteToken =
             SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['quote_token'] || 'cx0000000000000000000000000000000000000000']

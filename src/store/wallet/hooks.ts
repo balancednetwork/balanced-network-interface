@@ -187,7 +187,7 @@ export function useCurrencyBalance(account?: string, currency?: Currency): Curre
 export function useICXBalances(
   uncheckedAddresses: (string | undefined)[],
 ): { [address: string]: CurrencyAmount<Currency> | undefined } {
-  const [balances, setBalances] = useState<(string | number | BigNumber)[]>([]);
+  const [balances, setBalances] = useState<BigNumber[]>([]);
 
   const transactions = useAllTransactions();
 
@@ -222,7 +222,7 @@ export function useICXBalances(
     return addresses.reduce((agg, address, idx) => {
       const balance = balances[idx];
 
-      if (balance) agg[address] = CurrencyAmount.fromRawAmount(ICX, String(balance));
+      if (balance) agg[address] = CurrencyAmount.fromRawAmount(ICX, balance.toFixed(0));
       else agg[address] = CurrencyAmount.fromRawAmount(ICX, 0);
 
       return agg;

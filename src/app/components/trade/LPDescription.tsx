@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
+import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -9,7 +10,9 @@ import { Typography } from 'app/theme';
 import { PairState } from 'hooks/useV2Pairs';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
+import { useReward } from 'store/reward/hooks';
 import { useLiquidityTokenBalance } from 'store/wallet/hooks';
+import { formatBigNumber } from 'utils';
 
 export default function LPDescription() {
   const { currencies, pair, pairState } = useDerivedMintInfo();
@@ -28,6 +31,12 @@ export default function LPDescription() {
         ]
       : [undefined, undefined];
 
+  const poolRewards = useReward(pair?.poolId ?? -1);
+  const userRewards = useMemo(() => {
+    return !!pair && !!totalPoolTokens && !!userPoolBalance && !!poolRewards
+      ? poolRewards.times(new BigNumber(userPoolBalance.toFixed()).div(new BigNumber(totalPoolTokens.toFixed())))
+      : undefined;
+  }, [pair, totalPoolTokens, userPoolBalance, poolRewards]);
   return (
     <>
       {pairState === PairState.NOT_EXISTS && (
@@ -80,16 +89,16 @@ export default function LPDescription() {
                 )}
               </Box>
 
-              {/* {selectedPair.rewards && (
-                  <Box sx={{ margin: '15px 0 25px 0' }}>
-                    <Typography textAlign="center" marginBottom="5px" color="text1">
-                      Your daily rewards
-                    </Typography>
-                    <Typography textAlign="center" variant="p">
-                      ~ {formatBigNumber(dailyReward, 'currency')} BALN
-                    </Typography>
-                  </Box>
-                )} */}
+              {userRewards && (
+                <Box sx={{ margin: '15px 0 25px 0' }}>
+                  <Typography textAlign="center" marginBottom="5px" color="text1">
+                    Your daily rewards
+                  </Typography>
+                  <Typography textAlign="center" variant="p">
+                    ~ {formatBigNumber(userRewards, 'currency')} BALN
+                  </Typography>
+                </Box>
+              )}
             </Box>
             <Box width={[1, 1 / 2]}>
               <Box sx={{ margin: '15px 0 25px 0' }}>
@@ -111,16 +120,16 @@ export default function LPDescription() {
                 )}
               </Box>
 
-              {/* {selectedPair.rewards && (
-                  <Box sx={{ margin: '15px 0 25px 0' }}>
-                    <Typography textAlign="center" marginBottom="5px" color="text1">
-                      Total daily rewards
-                    </Typography>
-                    <Typography textAlign="center" variant="p">
-                      {formatBigNumber(data?.totalReward, 'currency')} BALN
-                    </Typography>
-                  </Box>
-                )} */}
+              {poolRewards && (
+                <Box sx={{ margin: '15px 0 25px 0' }}>
+                  <Typography textAlign="center" marginBottom="5px" color="text1">
+                    Total daily rewards
+                  </Typography>
+                  <Typography textAlign="center" variant="p">
+                    {formatBigNumber(poolRewards, 'currency')} BALN
+                  </Typography>
+                </Box>
+              )}
             </Box>
           </Flex>
         </Box>

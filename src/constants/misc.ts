@@ -1,6 +1,6 @@
 import JSBI from 'jsbi';
 
-import { Percent } from 'types/balanced-sdk-core';
+import { Fraction, Percent } from 'types/balanced-sdk-core';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
@@ -19,7 +19,10 @@ export const L2_TXN_DISMISS_MS = 5000;
 // used for rewards deadlines
 export const BIG_INT_SECONDS_IN_WEEK = JSBI.BigInt(60 * 60 * 24 * 7);
 
-export const BIG_INT_ZERO = JSBI.BigInt(0);
+export const BIGINT_ZERO = JSBI.BigInt(0);
+export const BIGINT_ONE = JSBI.BigInt(1);
+export const FRACTION_ZERO = new Fraction(0);
+export const FRACTION_ONE = new Fraction(1);
 
 // one basis JSBI.BigInt
 const BIPS_BASE = JSBI.BigInt(10000);

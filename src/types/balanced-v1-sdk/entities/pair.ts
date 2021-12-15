@@ -62,7 +62,7 @@ export class Pair {
     this.liquidityToken = new Token(
       tokenAmounts[0].currency.chainId,
       // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
-      'cx0000000000000000000000000000000000000001',
+      'cx0000000000000000000000000000000000000002',
       18,
       'BALN-V2',
       'Balanced V2',

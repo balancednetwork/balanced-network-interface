@@ -69,6 +69,15 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
+  getNonce() {
+    const callParams = this.paramsBuilder({
+      method: 'getNonce',
+      params: {},
+    });
+
+    return this.call(callParams);
+  }
+
   getPoolId(tokenAAddress: string, tokenBAddress: string) {
     const callParams = this.paramsBuilder({
       method: 'getPoolId',
@@ -142,7 +151,7 @@ export default class Dex extends Contract {
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
-  remove(id: number, value: BigNumber, withdraw: number = 1) {
+  remove(id: number, value: string, withdraw: number = 1) {
     const payload = this.transactionParamsBuilder({
       method: 'remove',
       params: {

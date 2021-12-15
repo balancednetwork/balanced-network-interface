@@ -51,7 +51,7 @@ export function useWalletFetchBalances(account?: string | null) {
         );
 
         const data = results.reduce((prev, result, index) => {
-          const symbol = list[index].symbol;
+          const symbol = list[index].symbol || 'ERR';
 
           prev[symbol] = BalancedJs.utils.toIcx(result, symbol);
           if (symbol === 'BALN') {
@@ -107,6 +107,8 @@ export function useTokenBalances(
 ): { [address: string]: CurrencyAmount<Token> | undefined } {
   const [balances, setBalances] = useState<(string | number | BigNumber)[]>([]);
 
+  const transactions = useAllTransactions();
+
   useEffect(() => {
     const fetchBalances = async () => {
       const result = await Promise.all(
@@ -121,7 +123,7 @@ export function useTokenBalances(
     };
 
     fetchBalances();
-  }, [tokens, account]);
+  }, [transactions, tokens, account]);
 
   return useMemo(() => {
     return tokens.reduce((agg, token, idx) => {
@@ -187,6 +189,8 @@ export function useICXBalances(
 ): { [address: string]: CurrencyAmount<Currency> | undefined } {
   const [balances, setBalances] = useState<(string | number | BigNumber)[]>([]);
 
+  const transactions = useAllTransactions();
+
   const addresses: string[] = useMemo(
     () =>
       uncheckedAddresses
@@ -210,7 +214,7 @@ export function useICXBalances(
     };
 
     fetchBalances();
-  }, [addresses]);
+  }, [transactions, addresses]);
 
   const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address];
 

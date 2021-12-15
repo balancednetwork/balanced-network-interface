@@ -141,7 +141,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run checkTs && lint-staged"
+      "pre-commit": "yarn run checkTs && lint-staged",
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true"
     }
   },
   "jest": {
@@ -163,5 +164,13 @@
       }
     }
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "commitizen": "4.2.4",
+    "cz-conventional-changelog": "3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }

@@ -8,7 +8,7 @@ import { useIconReact } from 'packages/icon-react';
 
 import bnJs from 'bnJs';
 import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { Currency, CurrencyAmount, Fraction, Price, Token } from 'types/balanced-sdk-core';
@@ -49,7 +49,8 @@ export function usePools(): { [poolId: number]: PoolState } {
 
           const totalSupply = new BigNumber(stats['total_supply'], 16);
 
-          const baseToken = SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['base_token']].wrapped;
+          console.log(poolId, stats);
+          const baseToken = (SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['base_token']] || SUPPORTED_TOKENS_LIST[0]).wrapped;
           const quoteToken =
             SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['quote_token'] || 'cx0000000000000000000000000000000000000000']
               .wrapped;

@@ -5,9 +5,9 @@ import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { canBeQueue, getTradePair } from 'constants/currency';
+import { canBeQueue } from 'constants/currency';
+import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
-import { usePools } from 'store/pool/hooks';
 import { useCurrencyBalances } from 'store/wallet/hooks';
 import { Trade } from 'types/balanced-v1-sdk';
 import { parseUnits } from 'utils';
@@ -73,22 +73,6 @@ export function useSwapActionHandlers(): {
     onChangeRecipient,
     onPercentSelection,
   };
-}
-
-export function usePrice(currencyIn?: string, currencyOut?: string): BigNumber | undefined {
-  const pools = usePools();
-
-  if (!currencyIn || !currencyOut) return undefined;
-
-  const [pair, inverse] = getTradePair(currencyIn, currencyOut);
-
-  if (!pair) return undefined;
-
-  const pool = pools[pair.id];
-
-  if (!pool) return undefined;
-
-  return !inverse ? pool.rate : pool.inverseRate;
 }
 
 // try to parse a user entered amount for a given token
@@ -198,7 +182,12 @@ export function useDerivedSwapInfo(): {
 
   if (userHasSpecifiedInputOutput && !trade) inputError = 'Insufficient liquidity';
 
-  const price = usePrice(currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol);
+  const [pairState, pair] = useV2Pair(inputCurrency, outputCurrency);
+
+  let price: BigNumber;
+  if (pair && pairState === PairState.EXISTS && outputCurrency)
+    price = new BigNumber(pair.priceOf(outputCurrency.wrapped).toFixed(6));
+  else price = new BigNumber(0);
 
   return {
     trade,

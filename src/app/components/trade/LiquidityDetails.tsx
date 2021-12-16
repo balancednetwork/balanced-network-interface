@@ -25,7 +25,7 @@ import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
-import { useBalance, usePool, usePoolData, useAvailableBalances, pairToken } from 'store/pool/newHooks';
+import { useBalance, usePool, usePoolData, useAvailableBalances, pairToken } from 'store/pool/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';

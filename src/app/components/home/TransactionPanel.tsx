@@ -13,8 +13,7 @@ import { BoxPanel } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
-import { NETWORK_ID } from 'constants/config';
-import { PairInfo, SUPPORTED_PAIRS_INFO } from 'constants/pairs';
+import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { Transaction, useAllTransactionsQuery, useInternalTransactionQuery } from 'queries/history';
 import { formatBigNumber, formatUnits, getTrackerLink } from 'utils';
@@ -139,7 +138,7 @@ const getMethod = (tx: Transaction) => {
 };
 
 const getSymbolByPoolId = (poolId: number) => {
-  const pool: PairInfo | undefined = SUPPORTED_PAIRS_INFO[NETWORK_ID].find(pool => pool.id === poolId);
+  const pool: PairInfo | undefined = SUPPORTED_PAIRS.find(pool => pool.id === poolId);
   return { symbol1: pool?.baseCurrencyKey || '', symbol2: pool?.quoteCurrencyKey || '' };
 };
 

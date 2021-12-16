@@ -156,7 +156,7 @@ export default class Dex extends Contract {
       method: 'remove',
       params: {
         _id: IconConverter.toHex(id),
-        _value: IconConverter.toHex(value),
+        _value: value,
         _withdraw: IconConverter.toHex(withdraw),
       },
     });

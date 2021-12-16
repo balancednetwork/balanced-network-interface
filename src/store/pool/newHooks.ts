@@ -24,10 +24,14 @@ interface PoolState {
   liquidityToken: Token;
 }
 
+export function pairToken(chainId: number): Token {
+  return new Token(chainId, 'cx0000000000000000000000000000000000000002', 18, 'BALN-V2', 'Balanced V2');
+}
+
 function tokenForPair(base: Token, quote: Token): Token | undefined {
   if (base.chainId !== quote.chainId) return;
 
-  return new Token(base.chainId, 'cx0000000000000000000000000000000000000002', 18, 'BALN-V2', 'Balanced V2');
+  return pairToken(base.chainId);
 }
 
 export function usePools(): { [poolId: number]: PoolState } {

@@ -20,15 +20,17 @@ import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
-import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/newHooks';
+import { useBalance, usePool, usePoolData, useAvailableBalances, pairToken } from 'store/pool/newHooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
 import { CurrencyAmount, Fraction } from 'types/balanced-sdk-core';
+import { toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -514,13 +516,13 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
       changeShouldLedgerSign(true);
     }
 
-    const t = lpBalance?.balance.multiply(portion) || FRACTION_ZERO;
+    const t = lpBalance?.balance.multiply(portion) || CurrencyAmount.fromRawAmount(pairToken(NETWORK_ID), 0);
     const baseT = t.multiply(rate1);
     const quoteT = t.multiply(rate2);
 
     bnJs
       .inject({ account })
-      .Dex.remove(poolId, t.quotient.toString())
+      .Dex.remove(poolId, toHex(t))
       .then(result => {
         addTransaction(
           { hash: result.result },

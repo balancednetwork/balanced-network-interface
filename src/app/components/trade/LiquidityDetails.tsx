@@ -129,8 +129,8 @@ const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => 
         <br />
         {`${poolData?.suppliedQuote?.toFixed(2) || '...'} ${pool?.quoteToken.symbol || '...'}`}
       </DataText>
-      {upSmall && <DataText>{`${poolData?.poolShare.multiply(100).toFixed(2) || '...'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${poolData?.suppliedReward.toFixed(2) || '...'} BALN`}</DataText>}
+      {upSmall && <DataText>{`${poolData?.poolShare.multiply(100).toFixed(4) || '...'}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${poolData?.suppliedReward.toFixed(4) || '...'} BALN`}</DataText>}
       <DataText>
         <WithdrawText poolId={poolId} />
       </DataText>
@@ -184,8 +184,8 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
           pool?.baseToken.symbol || '...'
         }`}</Typography>
       </DataText>
-      {upSmall && <DataText>{`${poolData?.poolShare.multiply(100) || '...'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${poolData?.suppliedReward || '...'} BALN`}</DataText>}
+      {upSmall && <DataText>{`${poolData?.poolShare.multiply(100).toFixed(4) || '...'}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${poolData?.suppliedReward.toFixed(4) || '...'} BALN`}</DataText>}
       <DataText>
         <WithdrawText poolId={BalancedJs.utils.POOL_IDS.sICXICX} />
       </DataText>

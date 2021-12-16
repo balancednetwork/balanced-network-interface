@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
@@ -65,7 +66,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
   const queuePair = useQueuePair();
 
   return useMemo(() => {
-    const pairs: [PairState, Pair | null][] = tokens.map((tokenArr, i) => {
+    return tokens.map((tokenArr, i) => {
       const result = reserves[i];
       const tokenA = tokenArr[0];
       const tokenB = tokenArr[1];
@@ -76,6 +77,9 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
 
       if (typeof result === 'number') return [PairState.INVALID, null];
       const { reserve0, reserve1, poolId, totalSupply } = result;
+
+      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) return queuePair;
+
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
       return [
         PairState.EXISTS,
@@ -85,7 +89,6 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
         }),
       ];
     });
-    return pairs.concat([queuePair]);
   }, [queuePair, reserves, tokens]);
 }
 

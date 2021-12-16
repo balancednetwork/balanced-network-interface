@@ -257,8 +257,8 @@ export function usePoolData(poolId: number) {
   const poolShare = usePoolShare(poolId);
 
   return React.useMemo(() => {
-    if (pool && reward) {
-      const [rewardNumerator, rewardDenominator] = reward.toFraction();
+    if (pool) {
+      const [rewardNumerator, rewardDenominator] = reward ? reward.toFraction() : [0, 1];
       const rewardFraction = new Fraction(rewardNumerator.toFixed(), rewardDenominator.toFixed());
       return {
         totalBase: pool.base,

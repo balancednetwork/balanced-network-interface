@@ -284,7 +284,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'ICX',
       baseToken: sICX_SEJONG,
       quoteToken: ICX_SEJONG,
-      rewards: 0.07,
+      rewards: 0.1,
     },
     {
       chainId: 83,
@@ -294,7 +294,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: sICX_SEJONG,
       quoteToken: bnUSD_SEJONG,
-      rewards: 0.175,
+      rewards: 0.15,
     },
     {
       chainId: 83,
@@ -304,7 +304,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: BALN_SEJONG,
       quoteToken: bnUSD_SEJONG,
-      rewards: 0.175,
+      rewards: 0.15,
     },
     {
       chainId: 83,
@@ -314,7 +314,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'sICX',
       baseToken: BALN_SEJONG,
       quoteToken: sICX_SEJONG,
-      rewards: 0.05,
+      rewards: 0.1,
     },
   ],
 };

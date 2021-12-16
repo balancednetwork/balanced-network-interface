@@ -8,9 +8,10 @@ import { useIconReact } from 'packages/icon-react';
 
 import bnJs from 'bnJs';
 import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
-import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { useUserAddedTokens } from 'store/user/hooks';
 import { Currency, CurrencyAmount, Fraction, Price, Token } from 'types/balanced-sdk-core';
 
 interface PoolState {
@@ -38,6 +39,17 @@ export function usePools(): { [poolId: number]: PoolState } {
   const [pools, setPools] = useState<(PoolState | undefined)[]>([]);
 
   const transactions = useAllTransactions();
+  const userAddedTokens = useUserAddedTokens();
+
+  const tokensByAddress = useMemo(() => {
+    const tokens = [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
+
+    return tokens.reduce<{ [key: string]: Token }>((acc, token) => {
+      acc[token.address] = token;
+
+      return acc;
+    }, {});
+  }, [userAddedTokens]);
 
   useEffect(() => {
     async function fetchPools() {
@@ -53,10 +65,10 @@ export function usePools(): { [poolId: number]: PoolState } {
 
           const totalSupply = new BigNumber(stats['total_supply'], 16);
 
-          const baseToken = (SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['base_token']] || SUPPORTED_TOKENS_LIST[0]).wrapped;
-          const quoteToken =
-            SUPPORTED_TOKENS_MAP_BY_ADDRESS[stats['quote_token'] || 'cx0000000000000000000000000000000000000000']
-              .wrapped;
+          const baseToken = tokensByAddress[stats['base_token'] || 'cx0000000000000000000000000000000000000000'];
+          const quoteToken = tokensByAddress[stats['quote_token'] || 'cx0000000000000000000000000000000000000000'];
+
+          if (!baseToken || !quoteToken) return;
 
           const liquidityToken = tokenForPair(baseToken, quoteToken);
 
@@ -107,7 +119,7 @@ export function usePools(): { [poolId: number]: PoolState } {
     }
 
     fetchPools();
-  }, [transactions]);
+  }, [tokensByAddress, transactions]);
 
   return useMemo(() => {
     return pools.reduce((acc, curr, idx) => {
@@ -127,7 +139,7 @@ export function useBalances(): { [poolId: number]: BalanceState } {
   const transactions = useAllTransactions();
   const pools = usePools();
 
-  const [balances, setBalances] = useState<BalanceState[]>([]);
+  const [balances, setBalances] = useState<(BalanceState | undefined)[]>([]);
 
   useEffect(() => {
     async function fetchBalances() {
@@ -135,6 +147,10 @@ export function useBalances(): { [poolId: number]: BalanceState } {
 
       const balances = await Promise.all(
         Object.keys(pools).map(async poolId => {
+          const pool = pools[poolId];
+
+          if (!pool) return;
+
           if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
             const [balance, balance1] = await Promise.all([
               bnJs.Dex.getICXBalance(account),
@@ -142,14 +158,14 @@ export function useBalances(): { [poolId: number]: BalanceState } {
             ]);
 
             return {
-              balance: CurrencyAmount.fromRawAmount(pools[poolId].quoteToken, new BigNumber(balance, 16).toFixed()),
-              balance1: CurrencyAmount.fromRawAmount(pools[poolId].baseToken, new BigNumber(balance1, 16).toFixed()),
+              balance: CurrencyAmount.fromRawAmount(pool.quoteToken, new BigNumber(balance, 16).toFixed()),
+              balance1: CurrencyAmount.fromRawAmount(pool.baseToken, new BigNumber(balance1, 16).toFixed()),
             };
           } else {
             const balance = await bnJs.Dex.balanceOf(account, +poolId);
 
             return {
-              balance: CurrencyAmount.fromRawAmount(pools[poolId].liquidityToken, new BigNumber(balance, 16).toFixed()),
+              balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance, 16).toFixed()),
             };
           }
         }),
@@ -176,7 +192,7 @@ export function useAvailableBalances() {
     let t = {};
 
     Object.keys(balances)
-      .filter(poolId => JSBI.greaterThan(balances[+poolId].balance.quotient, BIGINT_ZERO))
+      .filter(poolId => balances[+poolId] && JSBI.greaterThan(balances[+poolId].balance.quotient, BIGINT_ZERO))
       .filter(poolId => +poolId !== BalancedJs.utils.POOL_IDS.sICXICX)
       .forEach(poolId => {
         t[poolId] = balances[+poolId];

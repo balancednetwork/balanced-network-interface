@@ -5,7 +5,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { Token } from 'types/balanced-sdk-core';
 
-import { addSerializedToken, SerializedToken } from './actions';
+import { addSerializedToken, SerializedToken, removeSerializedToken } from './actions';
 
 function serializeToken(token: Token): SerializedToken {
   return {
@@ -45,4 +45,20 @@ export function useAddUserToken(): (token: Token) => void {
     },
     [dispatch],
   );
+}
+
+export function useRemoveUserAddedToken(): (chainId: number, address: string) => void {
+  const dispatch = useAppDispatch();
+  return useCallback(
+    (chainId: number, address: string) => {
+      dispatch(removeSerializedToken({ chainId, address }));
+    },
+    [dispatch],
+  );
+}
+
+export function useIsUserAddedToken(token: Token): boolean {
+  const userAddedTokens = useUserAddedTokens();
+
+  return !!userAddedTokens.find(t => t.address === token.address);
 }

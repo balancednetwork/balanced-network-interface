@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
@@ -132,7 +133,7 @@ export default function CurrencyInputPanel({
     setOpen(!open);
   };
 
-  const [ref] = useWidth();
+  const [ref, width] = useWidth();
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
     onPercentSelect && onPercentSelect(instant);
@@ -150,31 +151,33 @@ export default function CurrencyInputPanel({
 
   return (
     <InputContainer ref={ref} className={className}>
-      {/* <ClickAwayListener onClickAway={() => setOpen(false)}> */}
-      <div>
-        <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
-          {currency ? (
-            <>
-              <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
-              <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
-            </>
-          ) : (
-            <StyledTokenName>Select a token</StyledTokenName>
-          )}
-          {onCurrencySelect && <StyledDropDown selected={!!currency} />}
-        </CurrencySelect>
+      <ClickAwayListener onClickAway={() => setOpen(false)}>
+        <div>
+          <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
+            {currency ? (
+              <>
+                <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
+                <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
+              </>
+            ) : (
+              <StyledTokenName>Select a token</StyledTokenName>
+            )}
+            {onCurrencySelect && <StyledDropDown selected={!!currency} />}
+          </CurrencySelect>
 
-        {onCurrencySelect && (
-          <CurrencySearchModal
-            isOpen={open}
-            onDismiss={handleDismiss}
-            onCurrencySelect={onCurrencySelect}
-            showCommonBases={showCommonBases}
-            showCurrencyAmount={false}
-          />
-        )}
-      </div>
-      {/* </ClickAwayListener> */}
+          {onCurrencySelect && (
+            <CurrencySearchModal
+              isOpen={open}
+              onDismiss={handleDismiss}
+              onCurrencySelect={onCurrencySelect}
+              showCommonBases={showCommonBases}
+              showCurrencyAmount={false}
+              anchorEl={ref.current}
+              width={width}
+            />
+          )}
+        </div>
+      </ClickAwayListener>
 
       <NumberInput
         placeholder={placeholder}

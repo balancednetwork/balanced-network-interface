@@ -1,16 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-// import { TokenList } from '@uniswap/token-lists';
-
 import useLast from 'hooks/useLast';
-import usePrevious from 'hooks/usePrevious';
 import { Currency, Token } from 'types/balanced-sdk-core';
 
 import Modal from '../Modal';
+import { PopperWithoutArrow } from '../Popover';
 import { CurrencySearch } from './CurrencySearch';
-// import { ImportList } from './ImportList';
 import { ImportToken } from './ImportToken';
-// import Manage from './Manage';
+import { RemoveToken } from './RemoveToken';
 
 interface CurrencySearchModalProps {
   isOpen: boolean;
@@ -21,12 +18,15 @@ interface CurrencySearchModalProps {
   showCommonBases?: boolean;
   showCurrencyAmount?: boolean;
   disableNonToken?: boolean;
+  width?: number;
+  anchorEl?: any;
 }
 
 export enum CurrencyModalView {
   search,
   manage,
   importToken,
+  removeToken,
   importList,
 }
 
@@ -39,6 +39,8 @@ export default function CurrencySearchModal({
   showCommonBases = false,
   showCurrencyAmount = true,
   disableNonToken = false,
+  width,
+  anchorEl,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
   const lastOpen = useLast(isOpen);
@@ -49,37 +51,48 @@ export default function CurrencySearchModal({
     }
   }, [isOpen, lastOpen]);
 
+  // used for import token flow
+  const [importToken, setImportToken] = useState<Token | undefined>();
+
+  // used for remove token flow
+  const [removeToken, setRemoveToken] = useState<Token | undefined>();
+
+  const showImportView = useCallback(() => {
+    setModalView(CurrencyModalView.importToken);
+    onDismiss();
+  }, [setModalView, onDismiss]);
+  const closeImportView = useCallback(() => {
+    setModalView(CurrencyModalView.search);
+  }, []);
+  const showRemoveView = useCallback(() => {
+    setModalView(CurrencyModalView.removeToken);
+    onDismiss();
+  }, [setModalView, onDismiss]);
+  const closeRemoveView = useCallback(() => {
+    setModalView(CurrencyModalView.search);
+  }, []);
+  const showManageView = useCallback(() => setModalView(CurrencyModalView.manage), [setModalView]);
+
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
       onCurrencySelect(currency);
       onDismiss();
+      closeImportView();
     },
-    [onDismiss, onCurrencySelect],
+    [onDismiss, onCurrencySelect, closeImportView],
   );
 
-  // for token import view
-  const prevView = usePrevious(modalView);
-
-  // used for import token flow
-  const [importToken, setImportToken] = useState<Token | undefined>();
-
-  // used for import list
-  // const [importList, setImportList] = useState<TokenList | undefined>();
-  // const [listURL, setListUrl] = useState<string | undefined>();
-
-  const showImportView = useCallback(() => setModalView(CurrencyModalView.importToken), [setModalView]);
-  const showManageView = useCallback(() => setModalView(CurrencyModalView.manage), [setModalView]);
-  const handleBackImport = useCallback(
-    () => setModalView(prevView && prevView !== CurrencyModalView.importToken ? prevView : CurrencyModalView.search),
-    [setModalView, prevView],
-  );
-
-  // change min height if not searching
-  const minHeight = modalView === CurrencyModalView.importToken || modalView === CurrencyModalView.importList ? 40 : 80;
-  let content: any = null;
-  switch (modalView) {
-    case CurrencyModalView.search:
-      content = (
+  return (
+    <>
+      <PopperWithoutArrow
+        show={isOpen}
+        anchorEl={anchorEl}
+        placement="bottom"
+        // onDismiss={onDismiss}
+        // maxHeight={80}
+        // minHeight={minHeight}
+        offset={[0, 2]}
+      >
         <CurrencySearch
           isOpen={isOpen}
           onDismiss={onDismiss}
@@ -91,42 +104,24 @@ export default function CurrencySearchModal({
           disableNonToken={disableNonToken}
           showImportView={showImportView}
           setImportToken={setImportToken}
+          showRemoveView={showRemoveView}
+          setRemoveToken={setRemoveToken}
           showManageView={showManageView}
+          width={width}
         />
-      );
-      break;
-    case CurrencyModalView.importToken:
-      if (importToken) {
-        content = (
-          <ImportToken
-            tokens={[importToken]}
-            onDismiss={onDismiss}
-            onBack={handleBackImport}
-            handleCurrencySelect={handleCurrencySelect}
-          />
-        );
-      }
-      break;
-    // case CurrencyModalView.importList:
-    //   if (importList && listURL) {
-    //     content = <ImportList list={importList} listURL={listURL} onDismiss={onDismiss} setModalView={setModalView} />;
-    //   }
-    //   break;
-    // case CurrencyModalView.manage:
-    //   content = (
-    //     <Manage
-    //       onDismiss={onDismiss}
-    //       setModalView={setModalView}
-    //       setImportToken={setImportToken}
-    //       setImportList={setImportList}
-    //       setListUrl={setListUrl}
-    //     />
-    //   );
-    //   break;
-  }
-  return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={80} minHeight={minHeight}>
-      {content}
-    </Modal>
+      </PopperWithoutArrow>
+
+      <Modal isOpen={modalView === CurrencyModalView.importToken} onDismiss={closeImportView}>
+        <ImportToken
+          tokens={importToken ? [importToken] : []}
+          onDismiss={closeImportView}
+          handleCurrencySelect={handleCurrencySelect}
+        />
+      </Modal>
+
+      <Modal isOpen={modalView === CurrencyModalView.removeToken} onDismiss={closeRemoveView}>
+        <RemoveToken tokens={removeToken ? [removeToken] : []} onDismiss={closeRemoveView} />
+      </Modal>
+    </>
   );
 }

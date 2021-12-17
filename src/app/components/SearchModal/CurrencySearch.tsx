@@ -31,6 +31,8 @@ interface CurrencySearchProps {
   showManageView: () => void;
   showImportView: () => void;
   setImportToken: (token: Token) => void;
+  showRemoveView: () => void;
+  setRemoveToken: (token: Token) => void;
   width?: number;
   balanceList?: { [key: string]: BigNumber };
 }
@@ -47,6 +49,8 @@ export function CurrencySearch({
   showManageView,
   showImportView,
   setImportToken,
+  showRemoveView,
+  setRemoveToken,
   width,
   balanceList,
 }: CurrencySearchProps) {
@@ -113,11 +117,7 @@ export function CurrencySearch({
   useOnClickOutside(node, open ? toggle : undefined);
 
   return (
-    <Wrapper>
-      <Typography variant="h3" mb={4}>
-        Select a Token
-      </Typography>
-
+    <Wrapper width={width}>
       <Flex>
         <SearchInput
           type="text"
@@ -141,6 +141,8 @@ export function CurrencySearch({
           onCurrencySelect={handleCurrencySelect}
           showImportView={showImportView}
           setImportToken={setImportToken}
+          showRemoveView={showRemoveView}
+          setRemoveToken={setRemoveToken}
           showCurrencyAmount={showCurrencyAmount}
         />
       ) : (
@@ -191,6 +193,5 @@ export const SearchInput = styled.input`
 
 const Wrapper = styled(Flex)`
   flex-direction: column;
-  width: 100%;
   padding: 25px;
 `;

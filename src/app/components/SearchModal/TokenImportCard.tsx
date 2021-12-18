@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useIconReact } from 'packages/icon-react';
 import { Card } from 'rebass';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import { AutoColumn } from 'app/components/Column';
 import { Typography } from 'app/theme';
@@ -19,10 +19,9 @@ interface TokenImportCardProps {
 }
 
 const TokenImportCard = ({ token }: TokenImportCardProps) => {
-  const theme = useTheme();
   const { networkId: chainId } = useIconReact();
   return (
-    <Card backgroundColor={theme.colors.bg2} padding="1rem">
+    <Card>
       <AutoColumn gap="10px" justify="center">
         <AutoColumn gap="4px" justify="center">
           <Typography ml="8px" mr="8px" fontWeight="bold" fontSize={24}>

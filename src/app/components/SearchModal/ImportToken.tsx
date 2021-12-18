@@ -32,11 +32,9 @@ export function ImportToken(props: ImportProps) {
         {tokens.map(token => (
           <TokenImportCard token={token} key={'import' + token.address} />
         ))}
-        <AutoColumn justify="center" style={{ textAlign: 'center', gap: '16px', padding: '1rem' }}>
-          <Typography color="alert">
-            Make sure these details are correct before you add it to Balanced on this device.{' '}
-          </Typography>
-        </AutoColumn>
+        <Typography color="alert" textAlign="center" mb={1}>
+          Make sure these details are correct before you add it to Balanced on this device.{' '}
+        </Typography>
 
         <Flex justifyContent="center" pt={3} className="border-top">
           <TextButton onClick={onDismiss}>Cancel</TextButton>

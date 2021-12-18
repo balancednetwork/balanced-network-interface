@@ -5,6 +5,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
+import SearchIcon from 'assets/icons/search.svg';
 import { useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
 import useDebounce from 'hooks/useDebounce';
@@ -122,7 +123,7 @@ export function CurrencySearch({
         <SearchInput
           type="text"
           id="token-search-input"
-          placeholder={`Search name or paste address`}
+          placeholder={`Search name or contract`}
           autoComplete="off"
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
@@ -157,14 +158,19 @@ export function CurrencySearch({
 }
 
 export const SearchInput = styled.input`
+  background-image: url(${SearchIcon});
+  background-repeat: no-repeat;
+  background-size: 18px;
+  background-position: 15px 10px;
+
   position: relative;
   display: flex;
-  padding: 3px 20px;
+  padding: 3px 20px 3px 45px;
   height: 40px;
   align-items: center;
   width: 100%;
   white-space: nowrap;
-  background: ${({ theme }) => theme.colors.bg5};
+  background-color: ${({ theme }) => theme.colors.bg5};
   border: none;
   outline: none;
   border-radius: 10px;

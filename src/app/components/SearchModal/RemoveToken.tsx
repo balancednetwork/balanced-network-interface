@@ -29,7 +29,7 @@ export function RemoveToken(props: RemoveProps) {
         Remove asset?
       </Typography>
 
-      <AutoColumn gap="md" style={{ padding: '1rem' }}>
+      <AutoColumn gap="md">
         {tokens.map(token => (
           <TokenImportCard token={token} key={'import' + token.address} />
         ))}

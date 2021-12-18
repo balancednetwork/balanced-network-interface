@@ -3,6 +3,7 @@ import React, { CSSProperties } from 'react';
 import { useIconReact } from 'packages/icon-react';
 import { MinusCircle } from 'react-feather';
 import { Flex } from 'rebass/styled-components';
+import { useTheme } from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { ListItem, DashGrid, HeaderText, DataText, List1 } from 'app/components/List';
@@ -34,6 +35,7 @@ function CurrencyRow({
   const { account } = useIconReact();
   const balance = useCurrencyBalance(account ?? undefined, currency);
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
+  const theme = useTheme();
   // only show add or remove buttons if not on selected list
   return (
     <ListItem onClick={onSelect}>
@@ -43,12 +45,15 @@ function CurrencyRow({
           {currency?.symbol}
         </DataText>
       </Flex>
-      <Flex justifyContent="flex-end">
+      <Flex justifyContent="flex-end" alignItems="center">
         <DataText variant="p" textAlign="right">
           {balance?.toSignificant(4)}
         </DataText>
         {isUserAddedToken && (
           <MinusCircle
+            color={theme.colors.alert}
+            size={18}
+            style={{ marginLeft: '12px' }}
             onClick={e => {
               e.stopPropagation();
               onRemove();

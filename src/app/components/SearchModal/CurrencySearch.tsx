@@ -5,6 +5,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
+import { i18nStrings } from 'constants/i18n';
 import { useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
 import useDebounce from 'hooks/useDebounce';
@@ -36,6 +37,10 @@ interface CurrencySearchProps {
   width?: number;
   balanceList?: { [key: string]: BigNumber };
 }
+
+const {
+  currencySearch: { searchPlaceholder },
+} = i18nStrings;
 
 export function CurrencySearch({
   selectedCurrency,
@@ -122,7 +127,7 @@ export function CurrencySearch({
         <SearchInput
           type="text"
           id="token-search-input"
-          placeholder={`Search name or paste address`}
+          placeholder={searchPlaceholder}
           autoComplete="off"
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}

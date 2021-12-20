@@ -66,7 +66,7 @@ export function useQueuePair(): [PairState, Pair | null] {
 
     return [
       PairState.EXISTS,
-      new Pair(CurrencyAmount.fromRawAmount(sICX, reserve0), CurrencyAmount.fromRawAmount(ICX, reserve1), {
+      new Pair(CurrencyAmount.fromRawAmount(ICX, reserve1), CurrencyAmount.fromRawAmount(sICX, reserve0), {
         queueRate,
         poolId,
         totalSupply,

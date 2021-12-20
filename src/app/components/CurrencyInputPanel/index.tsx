@@ -173,7 +173,7 @@ export default function CurrencyInputPanel({
               showCommonBases={showCommonBases}
               showCurrencyAmount={false}
               anchorEl={ref.current}
-              width={width}
+              width={width ? width + 40 : undefined}
             />
           )}
         </div>

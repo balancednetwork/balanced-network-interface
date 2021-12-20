@@ -90,7 +90,7 @@ export default function CurrencyList({
     <List1 mt={4}>
       <DashGrid>
         <HeaderText>Asset</HeaderText>
-        <HeaderText textAlign="right">Balance</HeaderText>
+        <HeaderText textAlign="right">Wallet</HeaderText>
       </DashGrid>
 
       {currencies.map(currency => (

@@ -91,7 +91,7 @@ export default function CurrencySearchModal({
         // onDismiss={onDismiss}
         // maxHeight={80}
         // minHeight={minHeight}
-        offset={[0, 2]}
+        offset={[0, 10]}
       >
         <CurrencySearch
           isOpen={isOpen}

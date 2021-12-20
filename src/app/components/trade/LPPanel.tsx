@@ -1,7 +1,8 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { Plus } from 'react-feather';
+import Nouislider from 'packages/nouislider-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -13,12 +14,70 @@ import { PairState } from 'hooks/useV2Pairs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
-import { CurrencyAmount, Currency } from 'types/balanced-sdk-core';
+import { CurrencyAmount, Currency, Percent } from 'types/balanced-sdk-core';
 import { maxAmountSpend } from 'utils';
 
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
+
+const Slider = styled(Box)`
+  margin-top: 40px;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+     margin-top: 25px;
+  `}
+`;
+
+export function subtract(
+  amountA: CurrencyAmount<Currency> | undefined,
+  amountB: CurrencyAmount<Currency> | undefined,
+): CurrencyAmount<Currency> | undefined {
+  return amountA ? (amountB ? amountA.subtract(amountB) : amountA) : undefined;
+}
+
+function WalletSection() {
+  const { account } = useIconReact();
+  const { currencies, currencyBalances, parsedAmounts } = useDerivedMintInfo();
+
+  const remains: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
+    () => ({
+      [Field.CURRENCY_A]: subtract(currencyBalances[Field.CURRENCY_A], parsedAmounts[Field.CURRENCY_A]),
+      [Field.CURRENCY_B]: subtract(currencyBalances[Field.CURRENCY_B], parsedAmounts[Field.CURRENCY_B]),
+    }),
+    [currencyBalances, parsedAmounts],
+  );
+
+  const formattedRemains: { [field in Field]?: string } = React.useMemo(
+    () => ({
+      [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.toSignificant(4) ?? '-',
+      [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.toSignificant(4) ?? '-',
+    }),
+    [remains],
+  );
+
+  if (!account) {
+    return null;
+  }
+
+  if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
+    return (
+      <Flex flexDirection="row" justifyContent="center" alignItems="center">
+        <Typography>
+          {`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol}`}
+        </Typography>
+      </Flex>
+    );
+  } else {
+    return (
+      <Flex flexDirection="row" justifyContent="center" alignItems="center">
+        <Typography>
+          {`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol} /
+                      ${formattedRemains[Field.CURRENCY_B]} ${currencies[Field.CURRENCY_B]?.symbol}`}
+        </Typography>
+      </Flex>
+    );
+  }
+}
 
 export default function LPPanel() {
   const { account } = useIconReact();
@@ -47,7 +106,7 @@ export default function LPPanel() {
     onFieldBInput('');
   };
 
-  const { independentField, typedValue, otherTypedValue } = useMintState();
+  const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
   const {
     dependentField,
     parsedAmounts,
@@ -56,10 +115,59 @@ export default function LPPanel() {
     currencyBalances,
     error,
     price,
+    pair,
     pairState,
+    liquidityMinted,
+    mintableLiquidity,
   } = useDerivedMintInfo();
+  const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection } = useMintActionHandlers(noLiquidity);
 
-  const { onFieldAInput, onFieldBInput, onCurrencySelection } = useMintActionHandlers(noLiquidity);
+  const [percent, setPercent] = React.useState(0);
+
+  React.useEffect(() => {
+    const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
+    const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
+
+    if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
+      const p = new Percent(Math.floor(percent * 100), 10_000);
+
+      if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
+        onSlide(Field.CURRENCY_A, percent !== 0 ? balanceA.multiply(p).toFixed() : '');
+      } else {
+        const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
+          ? Field.CURRENCY_A
+          : Field.CURRENCY_B;
+        onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
+      }
+    }
+  }, [percent, currencyBalances, onSlide, pair, currencies]);
+
+  React.useEffect(() => {
+    setPercent(0);
+  }, [currencies]);
+
+  const handleSlider = (values: string[], handle: number) => {
+    setPercent(parseFloat(values[handle]));
+  };
+
+  const sliderValue =
+    liquidityMinted && mintableLiquidity
+      ? Math.min(
+          new BigNumber(liquidityMinted.quotient.toString())
+            .div(mintableLiquidity.quotient.toString())
+            .multipliedBy(100)
+            .toNumber(),
+          100,
+        )
+      : 0;
+
+  const sliderInstance = React.useRef<any>(null);
+
+  React.useEffect(() => {
+    if (inputType === 'text') {
+      sliderInstance.current?.noUiSlider.set(sliderValue);
+    }
+  }, [inputType, sliderValue]);
 
   // get formatted amounts
   const formattedAmounts = {
@@ -95,7 +203,6 @@ export default function LPPanel() {
       : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(percent).divide(100)?.toExact() ?? '');
   };
 
-  //
   const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
 
   return (
@@ -104,13 +211,6 @@ export default function LPPanel() {
         <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <AutoColumn gap="md">
             <AutoColumn gap="md">
-              <Flex alignItems="center" justifyContent="flex-end" mr={1}>
-                <Typography as="div" hidden={!account}>
-                  {'Wallet: '}
-                  {`${currencyBalances[Field.CURRENCY_A]?.toSignificant()} ${currencies[Field.CURRENCY_A]?.symbol}`}
-                </Typography>
-              </Flex>
-
               <Flex>
                 <CurrencyInputPanel
                   id="supply-liquidity-input-token-a"
@@ -125,18 +225,7 @@ export default function LPPanel() {
               </Flex>
             </AutoColumn>
 
-            <Flex alignItems="center" justifyContent="center" my={-1} hidden={isQueue}>
-              <Plus />
-            </Flex>
-
             <AutoColumn gap="md" hidden={isQueue}>
-              <Flex alignItems="center" justifyContent="flex-end" mr={1}>
-                <Typography as="div" hidden={!(account && currencyBalances[Field.CURRENCY_B])}>
-                  {'Wallet: '}
-                  {`${currencyBalances[Field.CURRENCY_B]?.toSignificant()} ${currencies[Field.CURRENCY_B]?.symbol}`}
-                </Typography>
-              </Flex>
-
               <Flex>
                 <CurrencyInputPanel
                   id="supply-liquidity-input-token-b"
@@ -151,6 +240,10 @@ export default function LPPanel() {
               </Flex>
             </AutoColumn>
           </AutoColumn>
+
+          <Flex mt={3} justifyContent="flex-end">
+            <WalletSection />
+          </Flex>
 
           {currencies[Field.CURRENCY_A] &&
             currencies[Field.CURRENCY_B] &&
@@ -178,6 +271,27 @@ export default function LPPanel() {
                 </Flex>
               </PoolPriceBar>
             )}
+
+          {pairState === PairState.EXISTS && account && mintableLiquidity && (
+            <Slider mt={5}>
+              <Nouislider
+                start={[0]}
+                padding={[0, 0]}
+                connect={[true, false]}
+                range={{
+                  min: [0],
+                  max: [100],
+                }}
+                onSlide={handleSlider}
+                step={0.01}
+                instanceRef={instance => {
+                  if (instance) {
+                    sliderInstance.current = instance;
+                  }
+                }}
+              />
+            </Slider>
+          )}
 
           <AutoColumn gap="5px" mt={5}>
             <Flex justifyContent="center">

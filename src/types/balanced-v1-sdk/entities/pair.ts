@@ -236,7 +236,7 @@ export class Pair {
 
     // when the pair is sICX/ICX queue
     if (this.queueRate) {
-      return CurrencyAmount.fromRawAmount(this.liquidityToken, tokenAmountB.quotient);
+      return CurrencyAmount.fromRawAmount(this.liquidityToken, tokenAmountA.quotient);
     }
 
     if (JSBI.equal(totalSupply.quotient, ZERO)) {

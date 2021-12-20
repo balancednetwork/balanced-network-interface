@@ -11,6 +11,7 @@ import {
   CFT,
   METX,
   IUSDT,
+  GBET,
   sICX_YEOUIDO,
   ICX_YEOUIDO,
   bnUSD_YEOUIDO,
@@ -186,6 +187,15 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'USDS',
       baseToken: METX,
       quoteToken: USDS,
+    },
+    {
+      chainId: 1,
+      id: 17,
+      name: 'GBET/bnUSD',
+      baseCurrencyKey: 'GBET',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: GBET,
+      quoteToken: bnUSD,
     },
   ],
   [NetworkId.YEOUIDO]: [

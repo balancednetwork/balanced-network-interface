@@ -211,6 +211,10 @@ export default function LPPanel() {
         <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <AutoColumn gap="md">
             <AutoColumn gap="md">
+              <Typography variant="h2">Supply liquidity</Typography>
+            </AutoColumn>
+
+            <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
                   id="supply-liquidity-input-token-a"

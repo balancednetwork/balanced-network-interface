@@ -1,6 +1,5 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
@@ -84,8 +83,6 @@ interface CurrencyInputPanelProps {
   value: string;
   onUserInput: (value: string) => void;
   onMax?: () => void;
-  showMaxButton: boolean;
-  label?: string;
   onCurrencySelect?: (currency: Currency) => void;
   currency?: Currency | null;
   onPercentSelect?: (percent: number) => void;
@@ -100,7 +97,7 @@ interface CurrencyInputPanelProps {
   bg?: string;
   placeholder?: string;
   className?: string;
-  balanceList?: { [key: string]: BigNumber };
+  account?: string | null;
 }
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -109,8 +106,6 @@ export default function CurrencyInputPanel({
   value,
   onUserInput,
   onMax,
-  showMaxButton,
-  label = 'Input',
   onCurrencySelect,
   currency,
   onPercentSelect,
@@ -125,7 +120,7 @@ export default function CurrencyInputPanel({
   bg = 'bg2',
   placeholder = '0',
   className,
-  balanceList,
+  account,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -167,6 +162,7 @@ export default function CurrencyInputPanel({
 
           {onCurrencySelect && (
             <CurrencySearchModal
+              account={account}
               isOpen={open}
               onDismiss={handleDismiss}
               onCurrencySelect={onCurrencySelect}

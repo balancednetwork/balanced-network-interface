@@ -569,7 +569,6 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
         <Box mb={3}>
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_A]}
-            showMaxButton={false}
             currency={pool?.baseToken}
             onUserInput={handleFieldAInput}
             id="withdraw-liquidity-input"
@@ -579,7 +578,6 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
         <Box mb={3}>
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_B]}
-            showMaxButton={false}
             currency={pool?.quoteToken}
             onUserInput={handleFieldBInput}
             id="withdraw-liquidity-input"

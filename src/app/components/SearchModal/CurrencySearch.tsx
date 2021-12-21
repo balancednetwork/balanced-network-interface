@@ -21,6 +21,7 @@ import ImportRow from './ImportRow';
 import { useTokenComparator } from './sorting';
 
 interface CurrencySearchProps {
+  account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
@@ -39,6 +40,7 @@ interface CurrencySearchProps {
 }
 
 export function CurrencySearch({
+  account,
   selectedCurrency,
   onCurrencySelect,
   otherSelectedCurrency,
@@ -69,7 +71,7 @@ export function CurrencySearch({
 
   const searchTokenIsAdded = useIsUserAddedToken(searchToken);
 
-  const tokenComparator = useTokenComparator(invertSearchOrder);
+  const tokenComparator = useTokenComparator(account, invertSearchOrder);
 
   const filteredTokens: Token[] = useMemo(() => {
     return filterTokens(Object.values(allTokens), debouncedQuery);
@@ -138,6 +140,7 @@ export function CurrencySearch({
         </Column>
       ) : filteredSortedTokensWithICX?.length > 0 ? (
         <CurrencyList
+          account={account}
           currencies={showCommonBases ? filteredSortedTokens : filteredSortedTokensWithICX}
           onCurrencySelect={handleCurrencySelect}
           showImportView={showImportView}

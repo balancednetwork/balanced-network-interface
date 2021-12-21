@@ -217,9 +217,9 @@ export default function LPPanel() {
             <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
+                  account={account}
                   id="supply-liquidity-input-token-a"
                   value={formattedAmounts[Field.CURRENCY_A]}
-                  showMaxButton={false}
                   showCommonBases={false}
                   currency={currencies[Field.CURRENCY_A]}
                   onUserInput={onFieldAInput}
@@ -232,9 +232,9 @@ export default function LPPanel() {
             <AutoColumn gap="md" hidden={isQueue}>
               <Flex>
                 <CurrencyInputPanel
+                  account={account}
                   id="supply-liquidity-input-token-b"
                   value={formattedAmounts[Field.CURRENCY_B]}
-                  showMaxButton={false}
                   showCommonBases={true}
                   currency={currencies[Field.CURRENCY_B]}
                   onUserInput={onFieldBInput}

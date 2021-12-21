@@ -5,16 +5,14 @@ import { BalancedJs, LOOP } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { CurrencyAmount, Fraction } from 'types/balanced-sdk-core';
+import { CurrencyAmount } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
 import { PairState } from './useV2Pairs';
 
 export function useQueuePair(): [PairState, Pair | null] {
   const [reserves, setReserves] = useState<
-    | { reserve0: string; reserve1: string; poolId: number; totalSupply: string; queueRate: Fraction }
-    | number
-    | undefined
+    { reserve0: string; reserve1: string; poolId: number; totalSupply: string } | number | undefined
   >(PairState.LOADING);
 
   useEffect(() => {
@@ -34,16 +32,17 @@ export function useQueuePair(): [PairState, Pair | null] {
         // irrelevant for queue
         // const baseReserve = new BigNumber(stats['base'], 16).toFixed();
         // const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();
-        const totalSupply = new BigNumber(stats['total_supply'], 16).toFixed();
+        const totalSupply = new BigNumber(stats['total_supply'], 16);
+        const totalSupplyStr = totalSupply.toFixed();
 
-        const [rateNumerator, rateDenominator] = new BigNumber(stats['price'], 16).div(LOOP).toFraction();
+        const rate = new BigNumber(stats['price'], 16).div(LOOP);
 
+        // sICX/ICX
         setReserves({
-          reserve0: totalSupply,
-          reserve1: totalSupply,
-          totalSupply,
+          reserve0: totalSupplyStr,
+          reserve1: totalSupply.times(rate).toFixed(),
+          totalSupply: totalSupplyStr,
           poolId: poolId,
-          queueRate: new Fraction(rateNumerator.toFixed(), rateDenominator.toFixed()),
         });
       } catch (err) {
         setReserves(PairState.INVALID);
@@ -62,12 +61,14 @@ export function useQueuePair(): [PairState, Pair | null] {
     if (!result) return [PairState.NOT_EXISTS, null];
 
     if (typeof result === 'number') return [PairState.INVALID, null];
-    const { reserve0, reserve1, poolId, totalSupply, queueRate } = result;
 
+    // sICX/ICX
+    const { reserve0, reserve1, poolId, totalSupply } = result;
+
+    // return `ICX/sICX`
     return [
       PairState.EXISTS,
       new Pair(CurrencyAmount.fromRawAmount(ICX, reserve1), CurrencyAmount.fromRawAmount(sICX, reserve0), {
-        queueRate,
         poolId,
         totalSupply,
       }),

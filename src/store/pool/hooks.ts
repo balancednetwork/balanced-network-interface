@@ -8,7 +8,7 @@ import { useIconReact } from 'packages/icon-react';
 
 import bnJs from 'bnJs';
 import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useUserAddedTokens } from 'store/user/hooks';
@@ -65,8 +65,8 @@ export function usePools(): { [poolId: number]: PoolState } {
 
           const totalSupply = new BigNumber(stats['total_supply'], 16);
 
-          const baseToken = tokensByAddress[stats['base_token'] || 'cx0000000000000000000000000000000000000000'];
-          const quoteToken = tokensByAddress[stats['quote_token'] || 'cx0000000000000000000000000000000000000000'];
+          const baseToken = tokensByAddress[stats['base_token'] || NULL_CONTRACT_ADDRESS];
+          const quoteToken = tokensByAddress[stats['quote_token'] || NULL_CONTRACT_ADDRESS];
 
           if (!baseToken || !quoteToken) return;
 

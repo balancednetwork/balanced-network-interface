@@ -40,7 +40,7 @@ export function useQueuePair(): [PairState, Pair | null] {
         // sICX/ICX
         setReserves({
           reserve0: totalSupplyStr,
-          reserve1: totalSupply.times(rate).toFixed(),
+          reserve1: totalSupply.times(rate).toFixed(0),
           totalSupply: totalSupplyStr,
           poolId: poolId,
         });
@@ -65,7 +65,7 @@ export function useQueuePair(): [PairState, Pair | null] {
     // sICX/ICX
     const { reserve0, reserve1, poolId, totalSupply } = result;
 
-    // return `ICX/sICX`
+    // returning `ICX/sICX`
     return [
       PairState.EXISTS,
       new Pair(CurrencyAmount.fromRawAmount(ICX, reserve1), CurrencyAmount.fromRawAmount(sICX, reserve0), {

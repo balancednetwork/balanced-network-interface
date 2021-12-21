@@ -185,8 +185,8 @@ export function useDerivedSwapInfo(): {
   const [pairState, pair] = useV2Pair(inputCurrency, outputCurrency);
 
   let price: BigNumber;
-  if (pair && pairState === PairState.EXISTS && outputCurrency)
-    price = new BigNumber(pair.priceOf(outputCurrency.wrapped).toFixed(6));
+  if (pair && pairState === PairState.EXISTS && inputCurrency)
+    price = new BigNumber(pair.priceOf(inputCurrency.wrapped).toFixed(6));
   else price = new BigNumber(0);
 
   return {

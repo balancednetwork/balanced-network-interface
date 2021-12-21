@@ -11,6 +11,7 @@ export const typeInput = createAction<{
   field: Field;
   typedValue: string;
   noLiquidity: boolean;
+  inputType: 'slider' | 'text';
 }>('mint/typeInputMint');
 export const resetMintState = createAction<void>('mint/resetMintState');
 export const selectCurrency = createAction<{ field: Field; currency: Currency }>('mint/selectCurrency');

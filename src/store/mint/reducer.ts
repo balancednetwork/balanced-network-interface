@@ -9,6 +9,7 @@ export interface MintState {
   readonly independentField: Field;
   readonly typedValue: string;
   readonly otherTypedValue: string; // for the case when there's no liquidity
+  readonly inputType: string; // for the case when there's no liquidity
   readonly [Field.CURRENCY_A]: {
     readonly currency: Currency | undefined;
     readonly percent: number;
@@ -22,6 +23,7 @@ const initialState: MintState = {
   independentField: Field.CURRENCY_A,
   typedValue: '',
   otherTypedValue: '',
+  inputType: 'text',
   [Field.CURRENCY_A]: {
     currency: SUPPORTED_TOKENS_LIST[3],
     percent: 0,
@@ -34,7 +36,7 @@ const initialState: MintState = {
 export default createReducer<MintState>(initialState, builder =>
   builder
     .addCase(resetMintState, () => initialState)
-    .addCase(typeInput, (state, { payload: { field, typedValue, noLiquidity } }) => {
+    .addCase(typeInput, (state, { payload: { field, typedValue, noLiquidity, inputType } }) => {
       if (noLiquidity) {
         // they're typing into the field they've last typed in
         if (field === state.independentField) {
@@ -42,6 +44,7 @@ export default createReducer<MintState>(initialState, builder =>
             ...state,
             independentField: field,
             typedValue,
+            inputType,
           };
         }
         // they're typing into a new field, store the other value
@@ -51,6 +54,7 @@ export default createReducer<MintState>(initialState, builder =>
             independentField: field,
             typedValue,
             otherTypedValue: state.typedValue,
+            inputType,
           };
         }
       } else {
@@ -59,6 +63,7 @@ export default createReducer<MintState>(initialState, builder =>
           independentField: field,
           typedValue,
           otherTypedValue: '',
+          inputType,
         };
       }
     })

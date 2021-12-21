@@ -1,6 +1,5 @@
 import React, { CSSProperties } from 'react';
 
-import { useIconReact } from 'packages/icon-react';
 import { MinusCircle } from 'react-feather';
 import { Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
@@ -23,6 +22,7 @@ function CurrencyRow({
   style,
   showCurrencyAmount,
   onRemove,
+  account,
 }: {
   currency: Currency;
   onSelect: () => void;
@@ -31,8 +31,8 @@ function CurrencyRow({
   style?: CSSProperties;
   showCurrencyAmount?: boolean;
   onRemove: () => void;
+  account?: string | null;
 }) {
-  const { account } = useIconReact();
   const balance = useCurrencyBalance(account ?? undefined, currency);
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
   const theme = useTheme();
@@ -75,6 +75,7 @@ export default function CurrencyList({
   showRemoveView,
   setRemoveToken,
   showCurrencyAmount,
+  account,
 }: {
   currencies: Currency[];
   selectedCurrency?: Currency | null;
@@ -85,16 +86,18 @@ export default function CurrencyList({
   showRemoveView: () => void;
   setRemoveToken: (token: Token) => void;
   showCurrencyAmount?: boolean;
+  account?: string | null;
 }) {
   return (
     <List1 mt={4}>
       <DashGrid>
         <HeaderText>Asset</HeaderText>
-        <HeaderText textAlign="right">Balance</HeaderText>
+        <HeaderText textAlign="right">Wallet</HeaderText>
       </DashGrid>
 
       {currencies.map(currency => (
         <CurrencyRow
+          account={account}
           key={currencyKey(currency)}
           currency={currency}
           onSelect={() => onCurrencySelect(currency)}

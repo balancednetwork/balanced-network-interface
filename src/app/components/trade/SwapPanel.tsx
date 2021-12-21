@@ -233,8 +233,8 @@ export default function SwapPanel() {
 
           <Flex>
             <CurrencyInputPanel
+              account={account}
               value={formattedAmounts[Field.INPUT]}
-              showMaxButton={false}
               currency={currencies[Field.INPUT]}
               onUserInput={handleTypeInput}
               onCurrencySelect={handleInputSelect}
@@ -260,8 +260,8 @@ export default function SwapPanel() {
 
           <Flex>
             <CurrencyInputPanel
+              account={account}
               value={formattedAmounts[Field.OUTPUT]}
-              showMaxButton={false}
               currency={currencies[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}

@@ -28,6 +28,7 @@ export function useMintActionHandlers(
   onCurrencySelection: (field: Field, currency: Currency) => void;
   onFieldAInput: (typedValue: string) => void;
   onFieldBInput: (typedValue: string) => void;
+  onSlide: (field: Field, typedValue: string) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -45,14 +46,25 @@ export function useMintActionHandlers(
 
   const onFieldAInput = useCallback(
     (typedValue: string) => {
-      dispatch(typeInput({ field: Field.CURRENCY_A, typedValue, noLiquidity: noLiquidity === true }));
+      dispatch(
+        typeInput({ field: Field.CURRENCY_A, typedValue, noLiquidity: noLiquidity === true, inputType: 'text' }),
+      );
     },
     [dispatch, noLiquidity],
   );
 
   const onFieldBInput = useCallback(
     (typedValue: string) => {
-      dispatch(typeInput({ field: Field.CURRENCY_B, typedValue, noLiquidity: noLiquidity === true }));
+      dispatch(
+        typeInput({ field: Field.CURRENCY_B, typedValue, noLiquidity: noLiquidity === true, inputType: 'text' }),
+      );
+    },
+    [dispatch, noLiquidity],
+  );
+
+  const onSlide = useCallback(
+    (field: Field, typedValue: string) => {
+      dispatch(typeInput({ field, typedValue, noLiquidity: noLiquidity === true, inputType: 'slider' }));
     },
     [dispatch, noLiquidity],
   );
@@ -61,6 +73,7 @@ export function useMintActionHandlers(
     onCurrencySelection,
     onFieldAInput,
     onFieldBInput,
+    onSlide,
   };
 }
 
@@ -98,6 +111,7 @@ export function useDerivedMintInfo(): {
   price?: Price<Currency, Currency>;
   noLiquidity?: boolean;
   liquidityMinted?: CurrencyAmount<Token>;
+  mintableLiquidity?: CurrencyAmount<Token>;
   poolTokenPercentage?: Percent;
   error?: ReactNode;
 } {
@@ -231,6 +245,22 @@ export function useDerivedMintInfo(): {
     }
   }, [parsedAmounts, pair, totalSupply]);
 
+  // mintable liquidity by using balances
+  const mintableLiquidity = React.useMemo(() => {
+    const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = currencyBalances;
+    const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
+    if (pair && totalSupply && tokenAmountA && tokenAmountB) {
+      try {
+        return pair.getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB);
+      } catch (error) {
+        console.error(error);
+        return undefined;
+      }
+    } else {
+      return undefined;
+    }
+  }, [currencyBalances, pair, totalSupply]);
+
   const poolTokenPercentage = React.useMemo(() => {
     if (liquidityMinted && totalSupply) {
       return new Percent(liquidityMinted.quotient, totalSupply.add(liquidityMinted).quotient);
@@ -285,6 +315,7 @@ export function useDerivedMintInfo(): {
     price,
     noLiquidity,
     liquidityMinted,
+    mintableLiquidity,
     poolTokenPercentage,
     error,
   };

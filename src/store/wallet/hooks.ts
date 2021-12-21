@@ -137,8 +137,9 @@ export function useTokenBalances(
   }, [balances, tokens]);
 }
 
-export function useAllTokenBalances(): { [tokenAddress: string]: CurrencyAmount<Token> | undefined } {
-  const { account } = useIconReact();
+export function useAllTokenBalances(
+  account: string | undefined | null,
+): { [tokenAddress: string]: CurrencyAmount<Token> | undefined } {
   const allTokens = useAllTokens();
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens]);
   const balances = useTokenBalances(account ?? undefined, allTokensArray);

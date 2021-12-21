@@ -10,6 +10,7 @@ import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
 
 interface CurrencySearchModalProps {
+  account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
@@ -31,6 +32,7 @@ export enum CurrencyModalView {
 }
 
 export default function CurrencySearchModal({
+  account,
   isOpen,
   onDismiss,
   onCurrencySelect,
@@ -91,9 +93,10 @@ export default function CurrencySearchModal({
         // onDismiss={onDismiss}
         // maxHeight={80}
         // minHeight={minHeight}
-        offset={[0, 2]}
+        offset={[0, 10]}
       >
         <CurrencySearch
+          account={account}
           isOpen={isOpen}
           onDismiss={onDismiss}
           onCurrencySelect={handleCurrencySelect}

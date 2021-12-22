@@ -65,36 +65,50 @@ export default function LPDescription() {
                 borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
               }}
             >
-              <Box sx={{ margin: '15px 0 25px 0' }}>
-                <Typography textAlign="center" marginBottom="5px" color="text1">
-                  Your supply
-                </Typography>
-                {pair && account && (
-                  <Typography textAlign="center" variant="p">
-                    {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
-                      <>
-                        {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
-                        <br />
-                        {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
-                      </>
-                    ) : (
-                      `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
-                    )}
-                  </Typography>
-                )}
-              </Box>
-
-              {userRewards && (
-                <Box sx={{ margin: '15px 0 25px 0' }}>
+              {pair && !account && (
+                <Flex alignItems="center" justifyContent="center" height="100%">
                   <Typography textAlign="center" marginBottom="5px" color="text1">
-                    Your daily rewards
+                    Sign in to view your liquidity details.
                   </Typography>
-                  <Typography textAlign="center" variant="p">
-                    ~ {userRewards.toFixed(2, { groupSeparator: ',' })} BALN
-                  </Typography>
-                </Box>
+                </Flex>
+              )}
+
+              {pair && account && (
+                <>
+                  <Box sx={{ margin: '15px 0 25px 0' }}>
+                    <Typography textAlign="center" marginBottom="5px" color="text1">
+                      Your supply
+                    </Typography>
+
+                    <Typography textAlign="center" variant="p">
+                      {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+                        <>
+                          {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
+                          <br />
+                          {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
+                        </>
+                      ) : (
+                        `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${
+                          pair?.reserve0.currency?.symbol
+                        }`
+                      )}
+                    </Typography>
+                  </Box>
+
+                  {userRewards && (
+                    <Box sx={{ margin: '15px 0 25px 0' }}>
+                      <Typography textAlign="center" marginBottom="5px" color="text1">
+                        Your daily rewards
+                      </Typography>
+                      <Typography textAlign="center" variant="p">
+                        ~ {userRewards.toFixed(2, { groupSeparator: ',' })} BALN
+                      </Typography>
+                    </Box>
+                  )}
+                </>
               )}
             </Box>
+
             <Box width={[1, 1 / 2]}>
               <Box sx={{ margin: '15px 0 25px 0' }}>
                 <Typography textAlign="center" marginBottom="5px" color="text1">

@@ -49,8 +49,8 @@ function WalletSection() {
 
   const formattedRemains: { [field in Field]?: string } = React.useMemo(
     () => ({
-      [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.toSignificant(4) ?? '-',
-      [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.toSignificant(4) ?? '-',
+      [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
+      [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
     }),
     [remains],
   );

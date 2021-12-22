@@ -229,7 +229,7 @@ export class Pair {
 
     let liquidity: JSBI;
 
-    // when the pair is queue
+    // when the pair is queue, return ICX amount
     if (this.isQueue) {
       return CurrencyAmount.fromRawAmount(
         this.liquidityToken,

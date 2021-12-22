@@ -125,12 +125,14 @@ const PoolRecord = ({ poolId, border }: { poolId: number; border: boolean }) => 
     <ListItem border={border}>
       <DataText>{`${pool?.baseToken.symbol || '...'} / ${pool?.quoteToken.symbol || '...'}`}</DataText>
       <DataText>
-        {`${poolData?.suppliedBase?.toFixed(2) || '...'} ${pool?.baseToken.symbol || '...'}`}
+        {`${poolData?.suppliedBase?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pool?.baseToken.symbol || '...'}`}
         <br />
-        {`${poolData?.suppliedQuote?.toFixed(2) || '...'} ${pool?.quoteToken.symbol || '...'}`}
+        {`${poolData?.suppliedQuote?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pool?.quoteToken.symbol || '...'}`}
       </DataText>
       {upSmall && <DataText>{`${poolData?.poolShare.multiply(100).toFixed(4) || '...'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${poolData?.suppliedReward.toFixed(4) || '...'} BALN`}</DataText>}
+      {upSmall && (
+        <DataText>{`~ ${poolData?.suppliedReward.toFixed(4, { groupSeparator: ',' }) || '...'} BALN`}</DataText>
+      )}
       <DataText>
         <WithdrawText poolId={poolId} />
       </DataText>
@@ -177,7 +179,7 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
     <ListItem border={border}>
       <DataText>{`${pool?.baseToken.symbol || '...'} / ${pool?.quoteToken.symbol || '...'}`}</DataText>
       <DataText>
-        <Typography fontSize={16}>{`${balance1?.balance.toFixed(2) || '...'} ${
+        <Typography fontSize={16}>{`${balance1?.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ${
           pool?.quoteToken.symbol || '...'
         }`}</Typography>
       </DataText>
@@ -215,7 +217,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           { hash: res.result },
           {
             pending: 'Withdrawing ICX',
-            summary: `${balance1?.balance?.toFixed(2) || '...'} ICX added to your wallet.`,
+            summary: `${balance1?.balance?.toFixed(2, { groupSeparator: ',' }) || '...'} ICX added to your wallet.`,
           },
         );
         toggleOpen1();
@@ -244,7 +246,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           { hash: res.result },
           {
             pending: 'Withdrawing sICX',
-            summary: `${balance1?.balance1?.toFixed(2) || '...'} sICX added to your wallet.`,
+            summary: `${balance1?.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX added to your wallet.`,
           },
         );
         toggleOpen2();
@@ -299,7 +301,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
             mr={2}
           >
             <CurrencyLogo currency={getTokenFromCurrencyKey('sICX')!} size={'35px'} />
-            <Typography>{balance1?.balance1?.toFixed(2) || '...'} sICX</Typography>
+            <Typography>{balance1?.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX</Typography>
           </OptionButton>
 
           <OptionButton
@@ -307,7 +309,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
             onClick={handleOption1}
           >
             <CurrencyLogo currency={getTokenFromCurrencyKey('ICX')!} size={'35px'} />
-            <Typography>{balance1?.balance.toFixed(2) || '...'} ICX</Typography>
+            <Typography>{balance1?.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ICX</Typography>
           </OptionButton>
         </Flex>
       </Flex>
@@ -319,7 +321,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {balance1?.balance.toFixed(2) || '...'} {pool?.quoteToken.symbol || '...'}
+            {balance1?.balance.toFixed(2, { groupSeparator: ',' }) || '...'} {pool?.quoteToken.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -347,7 +349,7 @@ const WithdrawModal1 = ({ onClose }: { onClose: () => void }) => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {balance1?.balance1?.toFixed(2) || '...'} {pool?.baseToken.symbol || '...'}
+            {balance1?.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} {pool?.baseToken.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -440,8 +442,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
     };
 
     formattedAmounts = {
-      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A].toFixed(2),
-      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B].toFixed(2),
+      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A].toFixed(6),
+      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B].toFixed(6),
     };
   } else {
     parsedAmount = {
@@ -459,7 +461,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
       [independentField]: typedValue,
       [dependentField]: JSBI.equal(parsedAmount[dependentField].quotient, BIGINT_ZERO)
         ? ''
-        : parsedAmount[dependentField].toFixed(2),
+        : parsedAmount[dependentField].toFixed(6),
     };
   }
 
@@ -492,7 +494,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
 
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(+portion.multiply(100).toFixed(2));
+      sliderInstance.current.noUiSlider.set(+portion.multiply(100).toFixed(6));
     }
   }, [sliderInstance, inputType, portion]);
 
@@ -525,15 +527,15 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           { hash: result.result },
           {
             pending: withdrawMessage(
-              baseT.toFixed(2),
+              baseT.toFixed(2, { groupSeparator: ',' }),
               pool?.baseToken?.symbol ?? '',
-              quoteT.toFixed(2),
+              quoteT.toFixed(2, { groupSeparator: ',' }),
               pool?.quoteToken?.symbol ?? '',
             ).pendingMessage,
             summary: withdrawMessage(
-              baseT.toFixed(2),
+              baseT.toFixed(2, { groupSeparator: ',' }),
               pool?.baseToken?.symbol ?? '',
-              quoteT.toFixed(2),
+              quoteT.toFixed(2, { groupSeparator: ',' }),
               pool?.quoteToken?.symbol ?? '',
             ).successMessage,
           },
@@ -586,8 +588,8 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
         </Box>
         <Typography mb={5} textAlign="right">
           {`Wallet: 
-            ${balances[0]?.toFixed(2) || '...'} ${pool?.baseToken?.symbol || '...'} /
-            ${balances[1]?.toFixed(2) || '...'} ${pool?.quoteToken?.symbol || '...'}`}
+            ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pool?.baseToken?.symbol || '...'} /
+            ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pool?.quoteToken?.symbol || '...'}`}
         </Typography>
         <Box mb={5}>
           <Nouislider
@@ -620,11 +622,11 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_A].toFixed(2)} {pool?.baseToken?.symbol || '...'}
+            {parsedAmount[Field.CURRENCY_A].toFixed(2, { groupSeparator: ',' })} {pool?.baseToken?.symbol || '...'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_B].toFixed(2)} {pool?.quoteToken?.symbol || '...'}
+            {parsedAmount[Field.CURRENCY_B].toFixed(2, { groupSeparator: ',' })} {pool?.quoteToken?.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

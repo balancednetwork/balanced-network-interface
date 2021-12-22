@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
-import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -10,14 +9,14 @@ import { Typography } from 'app/theme';
 import { PairState } from 'hooks/useV2Pairs';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
-import { useReward } from 'store/reward/hooks';
-import { useLiquidityTokenBalance } from 'store/wallet/hooks';
-import { formatBigNumber } from 'utils';
+import { useBalance, usePoolData } from 'store/pool/hooks';
 
 export default function LPDescription() {
   const { currencies, pair, pairState } = useDerivedMintInfo();
   const { account } = useIconReact();
-  const userPoolBalance = useLiquidityTokenBalance(account, pair);
+  const balance = useBalance(pair?.poolId ?? -1);
+  const poolData = usePoolData(pair?.poolId ?? -1);
+  const userPoolBalance = balance?.balance;
   const totalPoolTokens = pair?.totalSupply;
   const [token0Deposited, token1Deposited] =
     !!pair &&
@@ -31,12 +30,8 @@ export default function LPDescription() {
         ]
       : [undefined, undefined];
 
-  const poolRewards = useReward(pair?.poolId ?? -1);
-  const userRewards = useMemo(() => {
-    return !!pair && !!totalPoolTokens && !!userPoolBalance && !!poolRewards
-      ? poolRewards.times(new BigNumber(userPoolBalance.toFixed()).div(new BigNumber(totalPoolTokens.toFixed())))
-      : undefined;
-  }, [pair, totalPoolTokens, userPoolBalance, poolRewards]);
+  const poolRewards = poolData?.totalReward;
+  const userRewards = poolData?.suppliedReward;
   return (
     <>
       {pairState === PairState.NOT_EXISTS && (
@@ -95,7 +90,7 @@ export default function LPDescription() {
                     Your daily rewards
                   </Typography>
                   <Typography textAlign="center" variant="p">
-                    ~ {formatBigNumber(userRewards, 'currency')} BALN
+                    ~ {userRewards.toFixed(2, { groupSeparator: ',' })} BALN
                   </Typography>
                 </Box>
               )}
@@ -126,7 +121,7 @@ export default function LPDescription() {
                     Total daily rewards
                   </Typography>
                   <Typography textAlign="center" variant="p">
-                    {formatBigNumber(poolRewards, 'currency')} BALN
+                    {poolRewards.toFixed(2, { groupSeparator: ',' })} BALN
                   </Typography>
                 </Box>
               )}

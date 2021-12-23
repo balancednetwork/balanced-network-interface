@@ -7,9 +7,11 @@ import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
 import { PairState } from 'hooks/useV2Pairs';
+import { useAllPairsAPY } from 'queries/reward';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useBalance, usePoolData } from 'store/pool/hooks';
+import { formatBigNumber } from 'utils';
 
 export default function LPDescription() {
   const { currencies, pair, pairState } = useDerivedMintInfo();
@@ -32,12 +34,16 @@ export default function LPDescription() {
 
   const poolRewards = poolData?.totalReward;
   const userRewards = poolData?.suppliedReward;
+
+  const apys = useAllPairsAPY();
+  const apy = apys && apys[pair?.poolId ?? -1];
+
   return (
     <>
       {pairState === PairState.NOT_EXISTS && (
         <Flex bg="bg2" flex={1} padding={[5, 7]} flexDirection="column">
           <Typography variant="h3" mb={2}>
-            {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool
+            {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool{' '}
           </Typography>
 
           <Flex flex={1} alignItems="center" justifyContent="center">
@@ -54,7 +60,8 @@ export default function LPDescription() {
           <Typography variant="h3" mb={2}>
             {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
               ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
-              : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}
+              : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}{' '}
+            <span>{formatBigNumber(apy?.times(100), 'ratio')}%</span>
           </Typography>
 
           <Flex flexWrap="wrap">

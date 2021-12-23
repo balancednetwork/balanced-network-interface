@@ -11,7 +11,6 @@ import application from './application/reducer';
 import collateral from './collateral/reducer';
 import loan from './loan/reducer';
 import mint from './mint/reducer';
-import pool from './pool/reducer';
 import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
 import reward from './reward/reducer';
@@ -40,7 +39,6 @@ export function configureAppStore() {
   const store = configureStore({
     reducer: createReducer({
       application,
-      pool,
       reward,
       collateral,
       loan,

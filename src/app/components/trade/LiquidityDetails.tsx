@@ -21,15 +21,15 @@ import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
-import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { BIGINT_ZERO, FRACTION_ONE } from 'constants/misc';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useBalance, usePool, usePoolData, useAvailableBalances, pairToken } from 'store/pool/hooks';
+import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
-import { CurrencyAmount, Fraction } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount, Percent } from 'types/balanced-sdk-core';
 import { toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -422,46 +422,43 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
     typedValue: string;
     independentField: Field;
     inputType: 'slider' | 'text';
-    portion: Fraction;
+    portion: number;
   }>({
     typedValue: '',
     independentField: Field.CURRENCY_A,
     inputType: 'text',
-    portion: FRACTION_ZERO,
+    portion: 0,
   });
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
   const price =
     independentField === Field.CURRENCY_A ? pool?.price || FRACTION_ONE : pool?.inversePrice || FRACTION_ONE;
 
-  let parsedAmount, formattedAmounts;
+  let parsedAmount: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
+
+  const percent = new Percent(Math.floor(portion * 100), 10_000);
 
   if (inputType === 'slider') {
     parsedAmount = {
-      [Field.CURRENCY_A]: lpBalance?.base.multiply(portion) || FRACTION_ZERO,
-      [Field.CURRENCY_B]: lpBalance?.quote.multiply(portion) || FRACTION_ZERO,
+      [Field.CURRENCY_A]: lpBalance?.base.multiply(percent),
+      [Field.CURRENCY_B]: lpBalance?.quote.multiply(percent),
     };
 
     formattedAmounts = {
-      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A].toFixed(6),
-      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B].toFixed(6),
+      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A]?.toSignificant(6) ?? '',
+      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B]?.toSignificant(6) ?? '',
     };
   } else {
+    const [independentToken, dependentToken] =
+      independentField === Field.CURRENCY_A ? [pool?.baseToken, pool?.quoteToken] : [pool?.quoteToken, pool?.baseToken];
+
     parsedAmount = {
-      [independentField]: CurrencyAmount.fromRawAmount(
-        (independentField === Field.CURRENCY_A ? pool?.baseToken : pool?.quoteToken) || SUPPORTED_TOKENS_LIST[0],
-        typedValue || '0',
-      ),
-      [dependentField]: CurrencyAmount.fromRawAmount(
-        (independentField === Field.CURRENCY_A ? pool?.quoteToken : pool?.baseToken) || SUPPORTED_TOKENS_LIST[1],
-        typedValue || '0',
-      ).multiply(price),
+      [independentField]: tryParseAmount(typedValue, independentToken),
+      [dependentField]: tryParseAmount(typedValue, dependentToken)?.multiply(price),
     };
 
     formattedAmounts = {
       [independentField]: typedValue,
-      [dependentField]: JSBI.equal(parsedAmount[dependentField].quotient, BIGINT_ZERO)
-        ? ''
-        : parsedAmount[dependentField].toFixed(6),
+      [dependentField]: parsedAmount[dependentField]?.toFixed(6) ?? '',
     };
   }
 
@@ -469,24 +466,25 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
   const rate2 = pool ? pool.quote.divide(pool.total) : FRACTION_ONE;
 
   const handleFieldAInput = (value: string) => {
-    const [numerator, denominator] = new BigNumber(value || '0').toFraction();
-    const p = new Fraction(numerator.toFixed(), denominator.toFixed()).divide(lpBalance?.base || FRACTION_ONE);
-    setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
+    if (lpBalance?.base) {
+      const p = Math.min(new BigNumber(value || '0').div(lpBalance.base.toFixed()).multipliedBy(100).toNumber(), 100);
+      setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
+    }
   };
 
   const handleFieldBInput = (value: string) => {
-    const [numerator, denominator] = new BigNumber(value || '0').toFraction();
-    const p = new Fraction(numerator.toFixed(), denominator.toFixed()).divide(lpBalance?.quote || FRACTION_ONE);
-    setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
+    if (lpBalance?.quote) {
+      const p = Math.min(new BigNumber(value || '0').div(lpBalance.quote.toFixed()).multipliedBy(100).toNumber(), 100);
+      setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
+    }
   };
 
   const handleSlide = (values: string[], handle: number) => {
-    const [numerator, denominator] = new BigNumber(values[handle]).div(100).toFraction();
     setState({
       typedValue,
       independentField,
       inputType: 'slider',
-      portion: new Fraction(numerator.toFixed(), denominator.toFixed()),
+      portion: parseFloat(values[handle]),
     });
   };
 
@@ -494,7 +492,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
 
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(+portion.multiply(100).toFixed(6));
+      sliderInstance.current.noUiSlider.set(portion);
     }
   }, [sliderInstance, inputType, portion]);
 
@@ -609,9 +607,7 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           />
         </Box>
         <Flex alignItems="center" justifyContent="center">
-          <Button disabled={portion.greaterThan(FRACTION_ONE)} onClick={handleShowConfirm}>
-            Withdraw liquidity
-          </Button>
+          <Button onClick={handleShowConfirm}>Withdraw liquidity</Button>
         </Flex>
       </Flex>
 
@@ -622,11 +618,11 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_A].toFixed(2, { groupSeparator: ',' })} {pool?.baseToken?.symbol || '...'}
+            {parsedAmount[Field.CURRENCY_A]?.toFixed(2, { groupSeparator: ',' })} {pool?.baseToken?.symbol || '...'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_B].toFixed(2, { groupSeparator: ',' })} {pool?.quoteToken?.symbol || '...'}
+            {parsedAmount[Field.CURRENCY_B]?.toFixed(2, { groupSeparator: ',' })} {pool?.quoteToken?.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

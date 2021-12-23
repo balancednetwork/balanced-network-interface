@@ -2,71 +2,60 @@ import React, { useState, useEffect, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import JSBI from 'jsbi';
 import _ from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
-import IRC2 from 'packages/BalancedJs/contracts/IRC2';
-import ContractSettings from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
+import { BIGINT_ZERO } from 'constants/misc';
 import { SUPPORTED_TOKENS_LIST, isNativeCurrency, SUPPORTED_TOKENS_MAP_BY_ADDRESS, isBALN } from 'constants/tokens';
 import { useBnJsContractQuery } from 'queries/utils';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { useUserAddedTokens } from 'store/user/hooks';
 import { Token, CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-import { changeBalances, resetBalances } from './actions';
-
-const contractSettings = new ContractSettings({ networkId: NETWORK_ID });
+// import { changeBalances, resetBalances } from './actions';
 
 export function useWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);
 }
 
+export function useAvailableBalances(account: string | undefined, tokens: Token[]) {
+  const balances = useCurrencyBalances(account || undefined, tokens);
+
+  return React.useMemo(() => {
+    balances.reduce((acc, balance) => {
+      if (!balance) return acc;
+      if (!JSBI.greaterThan(balance.quotient, BIGINT_ZERO)) return acc;
+
+      acc[balance.currency.wrapped.address] = balance;
+
+      return acc;
+    }, {});
+  }, [balances]);
+}
+
 export function useWalletFetchBalances(account?: string | null) {
   const dispatch = useDispatch();
-  const details = useBALNDetails();
-  const availableBALN: BigNumber = React.useMemo(() => details['Available balance'] || new BigNumber(0), [details]);
 
-  const transactions = useAllTransactions();
+  const userAddedTokens = useUserAddedTokens();
+
+  const tokens = useMemo(() => {
+    return [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
+  }, [userAddedTokens]);
+
+  const balances = useAvailableBalances(account || undefined, tokens);
 
   React.useEffect(() => {
-    const fetchBalances = async () => {
-      if (account) {
-        const list = SUPPORTED_TOKENS_LIST;
-
-        const results = await Promise.all(
-          SUPPORTED_TOKENS_LIST.map(token => {
-            if (token.symbol === 'ICX') {
-              return bnJs.ICX.balanceOf(account);
-            } else {
-              return new IRC2(contractSettings, token.address).balanceOf(account);
-            }
-          }),
-        );
-
-        const data = results.reduce((prev, result, index) => {
-          const symbol = list[index].symbol || 'ERR';
-
-          prev[symbol] = BalancedJs.utils.toIcx(result, symbol);
-          if (symbol === 'BALN') {
-            prev[symbol] = availableBALN;
-          }
-          return prev;
-        }, {});
-        dispatch(changeBalances(data));
-      } else {
-        dispatch(resetBalances());
-      }
-    };
-
-    fetchBalances();
-  }, [transactions, account, availableBALN, dispatch]);
+    // dispatch(changeBalances(balances));
+    // dispatch(resetBalances());
+  }, [balances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {

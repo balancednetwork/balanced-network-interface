@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
+import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -10,14 +11,14 @@ import { PairState } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
-import { useBalance, usePoolData } from 'store/pool/hooks';
+import { useReward } from 'store/reward/hooks';
+import { useLiquidityTokenBalance } from 'store/wallet/hooks';
+import { formatBigNumber } from 'utils';
 
 export default function LPDescription() {
   const { currencies, pair, pairState } = useDerivedMintInfo();
   const { account } = useIconReact();
-  const balance = useBalance(pair?.poolId ?? -1);
-  const poolData = usePoolData(pair?.poolId ?? -1);
-  const userPoolBalance = balance?.balance;
+  const userPoolBalance = useLiquidityTokenBalance(account, pair);
   const totalPoolTokens = pair?.totalSupply;
   const [token0Deposited, token1Deposited] =
     !!pair &&
@@ -31,8 +32,12 @@ export default function LPDescription() {
         ]
       : [undefined, undefined];
 
-  const poolRewards = poolData?.totalReward;
-  const userRewards = poolData?.suppliedReward;
+  const poolRewards = useReward(pair?.poolId ?? -1);
+  const userRewards = useMemo(() => {
+    return !!pair && !!totalPoolTokens && !!userPoolBalance && !!poolRewards
+      ? poolRewards.times(new BigNumber(userPoolBalance.toFixed()).div(new BigNumber(totalPoolTokens.toFixed())))
+      : undefined;
+  }, [pair, totalPoolTokens, userPoolBalance, poolRewards]);
 
   const apys = useAllPairsAPY();
   const apy = apys && apys[pair?.poolId ?? -1];
@@ -56,12 +61,22 @@ export default function LPDescription() {
 
       {pairState === PairState.EXISTS && (
         <Box bg="bg2" flex={1} padding={[5, 7]}>
-          <Typography variant="h3" mb={2}>
-            {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-              ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
-              : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}{' '}
-            <span>{apy?.times(100).dp(2).toFixed() ?? '-'}%</span>
-          </Typography>
+          {poolRewards ? (
+            <Typography variant="h3" mb={2}>
+              {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
+                ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool:`
+                : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool:`}{' '}
+              <Typography fontWeight="normal" fontSize={16} as="span">
+                {apy?.times(100).dp(2).toFixed() ?? '-'}% APY
+              </Typography>
+            </Typography>
+          ) : (
+            <Typography variant="h3" mb={2}>
+              {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
+                ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
+                : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}{' '}
+            </Typography>
+          )}
 
           <Flex flexWrap="wrap">
             <Box
@@ -107,7 +122,7 @@ export default function LPDescription() {
                         Your daily rewards
                       </Typography>
                       <Typography textAlign="center" variant="p">
-                        ~ {userRewards.toFixed(2, { groupSeparator: ',' })} BALN
+                        ~ {formatBigNumber(userRewards, 'currency')} BALN
                       </Typography>
                     </Box>
                   )}
@@ -141,7 +156,7 @@ export default function LPDescription() {
                     Total daily rewards
                   </Typography>
                   <Typography textAlign="center" variant="p">
-                    {poolRewards.toFixed(2, { groupSeparator: ',' })} BALN
+                    {formatBigNumber(poolRewards, 'currency')} BALN
                   </Typography>
                 </Box>
               )}

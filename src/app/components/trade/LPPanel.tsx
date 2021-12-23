@@ -301,7 +301,8 @@ export default function LPPanel() {
             <Flex justifyContent="center">
               {isValid ? (
                 <Button color="primary" onClick={handleSupply}>
-                  Supply
+                  {pairState === PairState.EXISTS && 'Supply'}
+                  {pairState === PairState.NOT_EXISTS && 'Create pool'}
                 </Button>
               ) : (
                 <Button disabled={!!account} color="primary" onClick={handleConnectToWallet}>

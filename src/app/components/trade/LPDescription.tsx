@@ -11,7 +11,6 @@ import { useAllPairsAPY } from 'queries/reward';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useBalance, usePoolData } from 'store/pool/hooks';
-import { formatBigNumber } from 'utils';
 
 export default function LPDescription() {
   const { currencies, pair, pairState } = useDerivedMintInfo();
@@ -61,7 +60,7 @@ export default function LPDescription() {
             {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
               ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
               : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}{' '}
-            <span>{formatBigNumber(apy?.times(100), 'ratio')}%</span>
+            <span>{apy?.times(100).dp(2).toFixed() ?? '-'}%</span>
           </Typography>
 
           <Flex flexWrap="wrap">

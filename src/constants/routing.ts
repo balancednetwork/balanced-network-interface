@@ -12,8 +12,6 @@ import {
   bnUSD_YEOUIDO,
   IUSDC_YEOUIDO,
   USDS_YEOUIDO,
-  BALN,
-  BALN_YEOUIDO,
   sICX_SEJONG,
   bnUSD_SEJONG,
 } from './tokens';
@@ -52,8 +50,8 @@ export const ONE_HUNDRED_PERCENT = new Percent('1');
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
-  [SupportedChainId.MAINNET]: [sICX, BALN, bnUSD, USDS],
-  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, BALN_YEOUIDO, bnUSD_YEOUIDO, USDS_YEOUIDO],
+  [SupportedChainId.MAINNET]: [sICX, bnUSD, IUSDC, USDS],
+  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
   [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
 };
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {

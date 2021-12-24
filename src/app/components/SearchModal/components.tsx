@@ -1,11 +1,6 @@
 import React, { HTMLProps } from 'react';
 
-import { X } from 'react-feather';
 import styled from 'styled-components/macro';
-
-export const CloseIcon = styled(X)<{ onClick: () => void }>`
-  cursor: pointer;
-`;
 
 const StyledLink = styled.a`
   text-decoration: none;

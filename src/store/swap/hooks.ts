@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +11,7 @@ import { useCurrencyBalances } from 'store/wallet/hooks';
 import { Trade } from 'types/balanced-v1-sdk';
 import { parseUnits } from 'utils';
 
-import { TradeType, Currency, CurrencyAmount, Percent } from '../../types/balanced-sdk-core';
+import { TradeType, Currency, CurrencyAmount, Percent, Token, Price } from '../../types/balanced-sdk-core';
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './actions';
 import { useTradeExactIn, useTradeExactOut } from './adapter';
@@ -102,8 +101,7 @@ export function useDerivedSwapInfo(): {
   parsedAmount: CurrencyAmount<Currency> | undefined;
   inputError?: string;
   allowedSlippage: number;
-  // FIXME: need to refactor this later. it is temporarily solution.
-  price: BigNumber | undefined;
+  price: Price<Token, Token> | undefined;
 } {
   const { account } = useIconReact();
 
@@ -184,10 +182,8 @@ export function useDerivedSwapInfo(): {
 
   const [pairState, pair] = useV2Pair(inputCurrency, outputCurrency);
 
-  let price: BigNumber;
-  if (pair && pairState === PairState.EXISTS && inputCurrency)
-    price = new BigNumber(pair.priceOf(inputCurrency.wrapped).toFixed(6));
-  else price = new BigNumber(0);
+  let price: Price<Token, Token> | undefined;
+  if (pair && pairState === PairState.EXISTS && inputCurrency) price = pair.priceOf(inputCurrency.wrapped);
 
   return {
     trade,

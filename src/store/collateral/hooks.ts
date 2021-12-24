@@ -26,7 +26,9 @@ export function useCollateralChangeDepositedAmount(): (depositedAmount: BigNumbe
 }
 
 export function useCollateralAvailableAmount() {
-  const ICXAmountCA = useWalletBalances()['ICX'];
+  const icxAddress = bnJs.ICX.address;
+  const balances = useWalletBalances();
+  const ICXAmountCA = balances[icxAddress];
   const ICXAmount = toBigNumber(ICXAmountCA);
 
   return React.useMemo(() => {

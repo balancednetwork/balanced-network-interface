@@ -20,7 +20,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
-import { maxAmountSpend, parseUnits, toHex } from 'utils';
+import { maxAmountSpend, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Grid, MaxButton } from './utils';
@@ -46,10 +46,8 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const wallet = useWalletBalances();
 
-  const walletAmount = CurrencyAmount.fromRawAmount(
-    currency,
-    parseUnits(wallet[currency.symbol!].toFixed(), currency.decimals!),
-  );
+  const walletAmount = wallet[currency.wrapped.address];
+
   const maxAmount = new BigNumber(maxAmountSpend(walletAmount)?.toFixed() || '0');
 
   const handleMax = () => {
@@ -65,7 +63,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet[currency.symbol!];
+  const beforeAmount = wallet[currency.wrapped.address];
 
   const differenceAmountBN = useMemo(() => (isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value)), [
     value,
@@ -89,7 +87,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
     }
 
     const contractCall =
-      currency.symbol === 'ICX'
+      currency.wrapped.address === bnJs.ICX.address
         ? bnJs.inject({ account }).transfer(address, differenceAmountBN)
         : bnJs
             .inject({ account })
@@ -186,7 +184,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
               </Typography>
             </Box>
           </Flex>
-          {currency?.symbol === 'sICX' && (
+          {currency?.wrapped.address === bnJs.sICX.address && (
             <Typography variant="content" textAlign="center" color={theme.colors.alert}>
               Do not send sICX to an exchange.
             </Typography>

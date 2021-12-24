@@ -39,7 +39,9 @@ export default function DepositPanel() {
 
   const ratio = useRatio();
 
-  const maxAmount = wallet['sICX'];
+  const sicxAddress = bnJs.sICX.address;
+
+  const maxAmount = wallet[sicxAddress];
 
   // modal logic
   const [open, setOpen] = React.useState(false);
@@ -49,7 +51,7 @@ export default function DepositPanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet['sICX'];
+  const beforeAmount = wallet[sicxAddress];
 
   const differenceAmount = multiplyCABN(maxAmount, portion);
 

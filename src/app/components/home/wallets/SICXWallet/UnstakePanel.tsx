@@ -37,9 +37,11 @@ export default function UnstakePanel() {
 
   const wallet = useWalletBalances();
 
+  const sicxAddress = bnJs.sICX.address;
+
   const ratio = useRatio();
 
-  const maxAmount = wallet['sICX'];
+  const maxAmount = wallet[sicxAddress];
 
   // modal logic
   const [open, setOpen] = React.useState(false);
@@ -50,7 +52,7 @@ export default function UnstakePanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet['sICX'];
+  const beforeAmount = wallet[sicxAddress];
 
   const differenceAmount = multiplyCABN(beforeAmount, portion);
 

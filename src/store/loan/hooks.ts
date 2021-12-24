@@ -197,7 +197,9 @@ export function useLoanDebtHoldingShare() {
 }
 
 export function useLoanUsedAmount(): BigNumber {
-  const remainingAmountCA = useWalletBalances()['bnUSD'];
+  const bnusdAddress = bnJs.bnUSD.address;
+  const balances = useWalletBalances();
+  const remainingAmountCA = balances[bnusdAddress];
   const remainingAmount = toBigNumber(remainingAmountCA);
   const borrowedAmount = useLoanBorrowedAmount();
 

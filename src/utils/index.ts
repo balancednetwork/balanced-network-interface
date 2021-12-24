@@ -197,3 +197,8 @@ export function isZeroCA(ca: CurrencyAmount<Currency>): boolean {
 export function toBigNumber(ca: CurrencyAmount<Currency>): BigNumber {
   return new BigNumber(ca.toExact());
 }
+
+export function isDPZeroCA(ca: CurrencyAmount<Currency>, decimalPlaces: number): boolean {
+  if (decimalPlaces === 0) return isZeroCA(ca);
+  return ca.toFixed(decimalPlaces) === `0.${'0'.repeat(decimalPlaces)}`;
+}

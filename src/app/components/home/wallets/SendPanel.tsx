@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
 import { isEmpty } from 'lodash';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
@@ -21,7 +20,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
 import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
-import { maxAmountSpend, parseUnits } from 'utils';
+import { maxAmountSpend, parseUnits, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Grid, MaxButton } from './utils';
@@ -68,9 +67,17 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const beforeAmount = wallet[currency.symbol!];
 
-  const differenceAmount = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
+  const differenceAmountBN = useMemo(() => (isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value)), [
+    value,
+  ]);
 
-  const afterAmount = beforeAmount.minus(differenceAmount);
+  const differenceAmount = useMemo(() => {
+    if (differenceAmountBN.isZero()) return CurrencyAmount.fromRawAmount(beforeAmount.currency, 0);
+    const [num, deno] = differenceAmountBN.toFraction();
+    return CurrencyAmount.fromFractionalAmount(beforeAmount.currency, num.toFixed(), deno.toFixed());
+  }, [differenceAmountBN, beforeAmount.currency]);
+
+  const afterAmount = beforeAmount.subtract(differenceAmount);
 
   const addTransaction = useTransactionAdder();
 
@@ -81,20 +88,22 @@ export default function SendPanel({ currency }: { currency: Currency }) {
       changeShouldLedgerSign(true);
     }
 
-    let contract =
+    const contractCall =
       currency.symbol === 'ICX'
-        ? bnJs.inject({ account })
-        : bnJs.inject({ account }).getContract((currency as Token).address);
+        ? bnJs.inject({ account }).transfer(address, differenceAmountBN)
+        : bnJs
+            .inject({ account })
+            .getContract((currency as Token).address)
+            .transfer(address, toHex(differenceAmount));
 
-    contract
-      .transfer(address, BalancedJs.utils.toLoop(differenceAmount, currency.symbol))
+    contractCall
       .then((res: any) => {
         if (!isEmpty(res.result)) {
           addTransaction(
             { hash: res.result },
             {
               pending: `Sending ${currency.symbol}...`,
-              summary: `Sent ${differenceAmount.dp(2).toFormat()} ${currency.symbol} to ${address}.`,
+              summary: `Sent ${differenceAmountBN.dp(2).toFormat()} ${currency.symbol} to ${address}.`,
             },
           );
           toggleOpen();
@@ -112,9 +121,9 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const isDisabled =
     !isAddress(address) ||
-    differenceAmount.isNegative() ||
-    differenceAmount.isZero() ||
-    differenceAmount.isGreaterThan(maxAmount);
+    differenceAmountBN.isNegative() ||
+    differenceAmountBN.isZero() ||
+    differenceAmountBN.isGreaterThan(maxAmount);
 
   const hasEnoughICX = useHasEnoughICX();
 
@@ -151,7 +160,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${differenceAmount.dp(2).toFormat()} ${currency?.symbol}`}
+            {`${differenceAmountBN.dp(2).toFormat()} ${currency?.symbol}`}
           </Typography>
 
           <Typography textAlign="center" mb="2px" mt="20px">
@@ -166,14 +175,14 @@ export default function SendPanel({ currency }: { currency: Currency }) {
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {`${beforeAmount.dp(2).toFormat()} ${currency?.symbol}`}
+                {`${beforeAmount.toFixed(2, { groupSeparator: ',' })} ${currency?.symbol}`}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {`${afterAmount.dp(2).toFormat()} ${currency?.symbol}`}
+                {`${afterAmount.toFixed(2, { groupSeparator: ',' })} ${currency?.symbol}`}
               </Typography>
             </Box>
           </Flex>

@@ -65,6 +65,8 @@ export function usePools(): { [poolId: number]: PoolState } {
 
           const totalSupply = new BigNumber(stats['total_supply'], 16);
 
+          // which is better? for code readability or best practices
+          // NULL_CONTRACT_ADDRESS or bnJs.ICX.address?
           const baseToken = tokensByAddress[stats['base_token'] || NULL_CONTRACT_ADDRESS];
           const quoteToken = tokensByAddress[stats['quote_token'] || NULL_CONTRACT_ADDRESS];
 

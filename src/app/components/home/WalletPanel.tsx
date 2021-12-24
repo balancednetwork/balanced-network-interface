@@ -17,6 +17,7 @@ import { useRatesQuery } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
+import { Fraction } from 'types/balanced-sdk-core';
 
 import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';
@@ -44,6 +45,17 @@ const WalletPanel = () => {
   const isAvailable = stakedBALN.isGreaterThan(new BigNumber(0)) || unstakingBALN.isGreaterThan(new BigNumber(0));
 
   const { data: rates } = useRatesQuery();
+  const rateFracs = React.useMemo(() => {
+    if (rates) {
+      return Object.keys(rates).reduce((acc, key) => {
+        const rate = rates[key];
+        const [rateNum, rateDeno] = rate.toFraction();
+
+        acc[key] = new Fraction(rateNum.toFixed(), rateDeno.toFixed());
+        return acc;
+      }, {});
+    }
+  }, [rates]);
 
   useEffect(() => {
     (async () => {
@@ -60,7 +72,7 @@ const WalletPanel = () => {
         Wallet
       </Typography>
 
-      {balances && Object.keys(balances).filter(token => !balances[token].dp(2).isZero()).length ? (
+      {balances && Object.keys(balances).filter(token => balances[token].toFixed(2) !== '0.00').length ? (
         <Wrapper>
           <DashGrid>
             <HeaderText>Asset</HeaderText>
@@ -74,7 +86,7 @@ const WalletPanel = () => {
                 if (currency === 'BALN') {
                   return !totalBALN.dp(2).isZero();
                 }
-                return !balances[currency].dp(2).isZero();
+                return balances[currency].toFixed(2) !== '0.00';
               }).map((currency, index, arr) => {
                 const WalletUI = WalletUIs[currency] || SendPanel;
                 return (
@@ -92,11 +104,11 @@ const WalletPanel = () => {
                             ? '-'
                             : currency.toLowerCase() === 'baln'
                             ? totalBALN.dp(2).toFormat()
-                            : balances[currency].dp(2).toFormat()}
+                            : balances[currency].toFixed(2, { groupSeparator: ',' })}
                           {currency.toLowerCase() === 'baln' && isAvailable && (
                             <>
                               <Typography color="rgba(255,255,255,0.75)">
-                                Available: {balances['BALN'].dp(2).toFormat()}
+                                Available: {balances['BALN'].toFixed(2, { groupSeparator: ',' })}
                               </Typography>
                             </>
                           )}
@@ -106,15 +118,17 @@ const WalletPanel = () => {
                           as="div"
                           hasNotification={currency.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}
                         >
-                          {!account || !rates || !rates[currency]
+                          {!account || !rates || !rates[currency] || !rateFracs
                             ? '-'
                             : currency.toLowerCase() === 'baln'
                             ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
-                            : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
-                          {currency.toLowerCase() === 'baln' && isAvailable && rates && rates[currency] && (
+                            : `$${balances[currency]
+                                .multiply(rateFracs[currency])
+                                .toFixed(2, { groupSeparator: ',' })}`}
+                          {currency.toLowerCase() === 'baln' && isAvailable && rateFracs && (
                             <>
                               <Typography color="rgba(255,255,255,0.75)">
-                                ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                                ${balances['BALN'].multiply(rateFracs[currency]).toFixed(2, { groupSeparator: ',' })}
                               </Typography>
                             </>
                           )}

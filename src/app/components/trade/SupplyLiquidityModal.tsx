@@ -70,10 +70,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         }
       }
 
-      const res: any = await bnJs
-        .inject({ account })
-        .getContract(token.address)
-        .deposit(BalancedJs.utils.toLoop(parsedAmounts[field]!.toFixed(), token.symbol));
+      const res: any = await bnJs.inject({ account }).getContract(token.address).deposit(toHex(parsedAmounts[field]));
 
       addTransaction(
         { hash: res.result },

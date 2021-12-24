@@ -2,7 +2,6 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -18,6 +17,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { isZeroCA, multiplyCABN, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default function DepositPanel() {
@@ -51,9 +51,9 @@ export default function DepositPanel() {
 
   const beforeAmount = wallet['sICX'];
 
-  const differenceAmount = maxAmount.times(portion);
+  const differenceAmount = multiplyCABN(maxAmount, portion);
 
-  const afterAmount = beforeAmount.minus(differenceAmount);
+  const afterAmount = beforeAmount.subtract(differenceAmount);
 
   const addTransaction = useTransactionAdder();
 
@@ -66,14 +66,14 @@ export default function DepositPanel() {
 
     bnJs
       .inject({ account })
-      .sICX.depositAndBorrow(BalancedJs.utils.toLoop(differenceAmount))
+      .sICX.depositAndBorrow(toHex(differenceAmount))
       .then((res: any) => {
         if (res.result) {
           addTransaction(
             { hash: res.result },
             {
               pending: `Depositing collateral...`,
-              summary: `Deposited ${differenceAmount.dp(2).toFormat()} sICX as collateral.`,
+              summary: `Deposited ${differenceAmount.toFixed(2, { groupSeparator: ',' })} sICX as collateral.`,
             },
           );
           toggleOpen();
@@ -89,7 +89,7 @@ export default function DepositPanel() {
       });
   };
 
-  const differenceAmountByICX = differenceAmount.multipliedBy(ratio.sICXICXratio);
+  const differenceAmountByICX = multiplyCABN(differenceAmount, ratio.sICXICXratio);
 
   const hasEnoughICX = useHasEnoughICX();
 
@@ -101,13 +101,13 @@ export default function DepositPanel() {
 
       <Box my={3}>
         <Nouislider
-          disabled={maxAmount.isZero()}
+          disabled={isZeroCA(maxAmount)}
           start={[0]}
           padding={[0]}
           connect={[true, false]}
           range={{
             min: [0],
-            max: [maxAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
+            max: [isZeroCA(maxAmount) ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
           }}
           onSlide={handleSlider}
           instanceRef={instance => {
@@ -120,9 +120,9 @@ export default function DepositPanel() {
 
       <Flex my={1} alignItems="center" justifyContent="space-between">
         <Typography>
-          {differenceAmount.dp(2).toFormat()} / {maxAmount.dp(2).toFormat()} sICX
+          {differenceAmount.toFixed(2, { groupSeparator: ',' })} / {maxAmount.toFixed(2, { groupSeparator: ',' })} sICX
         </Typography>
-        <Typography>~ {differenceAmountByICX.dp(2).toFormat()} ICX</Typography>
+        <Typography>~ {differenceAmountByICX.toFixed(2, { groupSeparator: ',' })} ICX</Typography>
       </Flex>
 
       <Flex alignItems="center" justifyContent="center" mt={5}>
@@ -136,25 +136,25 @@ export default function DepositPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.dp(2).toFormat() + ' sICX'}
+            {differenceAmount.toFixed(2, { groupSeparator: ',' }) + ' sICX'}
           </Typography>
 
           <Typography textAlign="center" mb="5px">
-            {differenceAmountByICX.dp(2).toFormat()} ICX
+            {differenceAmountByICX.toFixed(2, { groupSeparator: ',' })} ICX
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(2).toFormat() + ' sICX'}
+                {beforeAmount.toFixed(2, { groupSeparator: ',' }) + ' sICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(2).toFormat() + ' sICX'}
+                {afterAmount.toFixed(2, { groupSeparator: ',' }) + ' sICX'}
               </Typography>
             </Box>
           </Flex>

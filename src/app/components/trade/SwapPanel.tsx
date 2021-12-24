@@ -33,7 +33,7 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { Price, TradeType } from 'types/balanced-sdk-core';
 import { Currency, Percent, Token } from 'types/balanced-sdk-core/entities';
 import { Trade, Route } from 'types/balanced-v1-sdk/entities';
-import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
+import { formatBigNumber, formatPercent, maxAmountSpend, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -177,7 +177,7 @@ export default function SwapPanel() {
         .inject({ account })
         .getContract(token.address)
         .swapUsingRoute(
-          BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact(), currencies[Field.INPUT]?.symbol!),
+          toHex(executionTrade.inputAmount),
           outputToken.address,
           BalancedJs.utils.toLoop(minReceived.toExact(), currencies[Field.OUTPUT]?.symbol!),
           executionTrade.route.pathForSwap,

@@ -12,6 +12,7 @@ import { useRatio } from 'store/ratio/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
+import { toBigNumber } from 'utils';
 
 import { AppState } from '..';
 import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, Field, adjust, cancel, type } from './actions';
@@ -196,7 +197,8 @@ export function useLoanDebtHoldingShare() {
 }
 
 export function useLoanUsedAmount(): BigNumber {
-  const remainingAmount = useWalletBalances()['bnUSD'];
+  const remainingAmountCA = useWalletBalances()['bnUSD'];
+  const remainingAmount = toBigNumber(remainingAmountCA);
   const borrowedAmount = useLoanBorrowedAmount();
 
   return React.useMemo(() => {

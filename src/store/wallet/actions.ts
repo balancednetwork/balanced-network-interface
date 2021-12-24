@@ -1,8 +1,9 @@
 import { createAction } from '@reduxjs/toolkit';
-import BigNumber from 'bignumber.js';
+
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
 export const changeBalances = createAction<{
-  [key: string]: BigNumber;
+  [key: string]: CurrencyAmount<Currency>;
 }>('wallet/changeBalances');
 
 export const resetBalances = createAction('wallet/resetBalances');

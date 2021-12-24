@@ -20,17 +20,22 @@ import { Pair } from 'types/balanced-v1-sdk';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-// import { changeBalances, resetBalances } from './actions';
+import { changeBalances } from './actions';
 
 export function useWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);
 }
 
-export function useAvailableBalances(account: string | undefined, tokens: Token[]) {
+export function useAvailableBalances(
+  account: string | undefined,
+  tokens: Token[],
+): {
+  [key: string]: CurrencyAmount<Currency>;
+} {
   const balances = useCurrencyBalances(account || undefined, tokens);
 
   return React.useMemo(() => {
-    balances.reduce((acc, balance) => {
+    return balances.reduce((acc, balance) => {
       if (!balance) return acc;
       if (!JSBI.greaterThan(balance.quotient, BIGINT_ZERO)) return acc;
 
@@ -53,8 +58,7 @@ export function useWalletFetchBalances(account?: string | null) {
   const balances = useAvailableBalances(account || undefined, tokens);
 
   React.useEffect(() => {
-    // dispatch(changeBalances(balances));
-    // dispatch(resetBalances());
+    dispatch(changeBalances(balances));
   }, [balances, dispatch]);
 }
 
@@ -87,7 +91,7 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
 
 export const useHasEnoughICX = () => {
   const balances = useWalletBalances();
-  return balances['ICX'].isGreaterThan(MINIMUM_ICX_FOR_TX);
+  return balances['ICX'].greaterThan(MINIMUM_ICX_FOR_TX);
 };
 
 export function useTokenBalances(

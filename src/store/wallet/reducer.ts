@@ -1,13 +1,13 @@
 import { createReducer } from '@reduxjs/toolkit';
-import BigNumber from 'bignumber.js';
 
 import { ZERO } from 'constants/index';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
 import { changeBalances, resetBalances } from './actions';
 
 export interface WalletState {
-  [key: string]: BigNumber;
+  [key: string]: CurrencyAmount<Currency>;
 }
 
 const initialState: WalletState = SUPPORTED_TOKENS_LIST.reduce((p, t) => {

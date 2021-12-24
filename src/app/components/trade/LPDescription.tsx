@@ -4,8 +4,10 @@ import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
+import { isMobile } from 'react-device-detect';
 import { Flex, Box } from 'rebass/styled-components';
 
+import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { PairState } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
@@ -41,9 +43,13 @@ export default function LPDescription() {
 
   const apys = useAllPairsAPY();
   const apy = apys && apys[pair?.poolId ?? -1];
-
   return (
     <>
+      {pairState === PairState.LOADING && (
+        <Flex justifyContent="center" alignItems="center" flex="1" padding={isMobile ? '25px' : '0px'}>
+          <Spinner size={'lg'} />
+        </Flex>
+      )}
       {pairState === PairState.NOT_EXISTS && (
         <Flex bg="bg2" flex={1} padding={[5, 7]} flexDirection="column">
           <Typography variant="h3" mb={2}>
@@ -94,7 +100,12 @@ export default function LPDescription() {
                 </Flex>
               )}
 
-              {pair && account && (
+              {pair && account && !userPoolBalance && (
+                <Flex justifyContent="center" alignItems="center" height="100%" padding={isMobile ? '25px' : '0px'}>
+                  <Spinner size={'lg'} />
+                </Flex>
+              )}
+              {pair && account && userPoolBalance && (
                 <>
                   <Box sx={{ margin: '15px 0 25px 0' }}>
                     <Typography textAlign="center" marginBottom="5px" color="text1">

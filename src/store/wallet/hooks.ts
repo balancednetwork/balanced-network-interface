@@ -91,7 +91,8 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
 
 export const useHasEnoughICX = () => {
   const balances = useWalletBalances();
-  return balances['ICX'].greaterThan(MINIMUM_ICX_FOR_TX);
+  const icxAddress = bnJs.ICX.address;
+  return balances[icxAddress] && balances[icxAddress].greaterThan(MINIMUM_ICX_FOR_TX);
 };
 
 export function useTokenBalances(

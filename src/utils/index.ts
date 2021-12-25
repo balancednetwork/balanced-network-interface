@@ -173,6 +173,15 @@ export function toHex(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>):
 
 export function toCurrencyAmount(token: Token, amount: BigNumber): CurrencyAmount<Token> {
   const [amountNum, amountDeno] = amount.toFraction();
+  return CurrencyAmount.fromFractionalAmount(
+    token,
+    amountNum.times(TEN.pow(token.decimals)).toFixed(),
+    amountDeno.toFixed(),
+  );
+}
+
+export function toCurrencyAmountFromRawBN(token: Token, amount: BigNumber): CurrencyAmount<Token> {
+  const [amountNum, amountDeno] = amount.toFraction();
   return CurrencyAmount.fromFractionalAmount(token, amountNum.toFixed(), amountDeno.toFixed());
 }
 

@@ -30,7 +30,7 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
 import { Currency, CurrencyAmount, Percent } from 'types/balanced-sdk-core';
-import { toHex } from 'utils';
+import { multiplyCABN, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -513,7 +513,9 @@ const WithdrawModal = ({ poolId, onClose }: { poolId: number; onClose: () => voi
       changeShouldLedgerSign(true);
     }
 
-    const t = lpBalance?.balance.multiply(portion) || CurrencyAmount.fromRawAmount(pairToken(NETWORK_ID), 0);
+    const t = lpBalance
+      ? multiplyCABN(lpBalance.balance, new BigNumber(portion / 100))
+      : CurrencyAmount.fromRawAmount(pairToken(NETWORK_ID), 0);
     const baseT = t.multiply(rate1);
     const quoteT = t.multiply(rate2);
 

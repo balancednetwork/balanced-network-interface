@@ -182,6 +182,9 @@ const PoolRecord1 = ({ border }: { border: boolean }) => {
         <Typography fontSize={16}>{`${balance1?.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ${
           pool?.quoteToken.symbol || '...'
         }`}</Typography>
+        <Typography color="text1">{`${balance1?.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} ${
+          pool?.baseToken.symbol || '...'
+        }`}</Typography>
       </DataText>
       {upSmall && <DataText>{`${poolData?.poolShare.multiply(100).toFixed(4) || '...'}%`}</DataText>}
       {upSmall && <DataText>{`~ ${poolData?.suppliedReward.toFixed(4) || '...'} BALN`}</DataText>}

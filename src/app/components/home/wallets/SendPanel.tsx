@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
@@ -19,8 +19,8 @@ import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
-import { maxAmountSpend, toHex } from 'utils';
+import { Currency, Token } from 'types/balanced-sdk-core';
+import { maxAmountSpend, toCurrencyAmount, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Grid, MaxButton } from './utils';
@@ -65,15 +65,9 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const beforeAmount = wallet[currency.wrapped.address];
 
-  const differenceAmountBN = useMemo(() => (isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value)), [
-    value,
-  ]);
+  const differenceAmountBN = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
 
-  const differenceAmount = useMemo(() => {
-    if (differenceAmountBN.isZero()) return CurrencyAmount.fromRawAmount(beforeAmount.currency, 0);
-    const [num, deno] = differenceAmountBN.toFraction();
-    return CurrencyAmount.fromFractionalAmount(beforeAmount.currency, num.toFixed(), deno.toFixed());
-  }, [differenceAmountBN, beforeAmount.currency]);
+  const differenceAmount = toCurrencyAmount(beforeAmount.currency.wrapped, differenceAmountBN);
 
   const afterAmount = beforeAmount.subtract(differenceAmount);
 

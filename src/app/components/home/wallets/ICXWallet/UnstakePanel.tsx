@@ -14,7 +14,7 @@ import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { CurrencyAmount } from 'types/balanced-sdk-core';
+import { toCurrencyAmount } from 'utils';
 
 interface UnstakePanelProps {
   claimableICX: BigNumber;
@@ -28,8 +28,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
   const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[icxContractAddress];
   const icxBalance = balances[icxContractAddress];
 
-  const [claimNum, claimDeno] = claimableICX.toFraction();
-  const claimableICXCA = CurrencyAmount.fromFractionalAmount(ICX, claimNum.toFixed(), claimDeno.toFixed());
+  const claimableICXCA = toCurrencyAmount(ICX.wrapped, claimableICX);
 
   // to detect if transaction change and reload cliamableICX
   const transactions = useAllTransactions();

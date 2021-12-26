@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
+import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
@@ -18,16 +19,20 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
-import { ONE, ZERO } from 'constants/index';
+import { NETWORK_ID } from 'constants/config';
+import { ZERO } from 'constants/index';
+import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
-import { useBalance, usePool, usePoolData, useAvailableBalances } from 'store/pool/hooks';
+import { useBalance, usePool, usePoolData, useAvailableBalances, pairToken } from 'store/pool/hooks';
 import { useChangeWithdrawnValue, useLPData, useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
+import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
+import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
-import { formatBigNumber, getPairName } from 'utils';
+import { Currency, CurrencyAmount, Percent } from 'types/balanced-sdk-core';
+import { formatBigNumber, multiplyCABN, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -41,7 +46,10 @@ export default function LiquidityDetails() {
 
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
-  const isHidden = !balance1 || (balance1.balance.isZero() && (balance1.balance1 || ZERO).isZero());
+  const isHidden =
+    !balance1 ||
+    (JSBI.equal(balance1.balance.quotient, BIGINT_ZERO) &&
+      (!balance1.balance1 || JSBI.equal(balance1.balance1.quotient, BIGINT_ZERO)));
 
   if (isHidden && Object.keys(balances).length === 0) return null;
 
@@ -76,12 +84,12 @@ export default function LiquidityDetails() {
           {Object.keys(balances).map((poolId, index, arr) => (
             <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
               <StyledAccordionButton>
-                <PoolRecord poolId={parseInt(poolId)} />
+                <PoolRecord poolId={+poolId} />
               </StyledAccordionButton>
               <StyledAccordionPanel hidden={false}>
                 <StyledBoxPanel bg="bg3">
-                  <StakeLPPanel poolId={parseInt(poolId)} />
-                  <Withdraw poolId={parseInt(poolId)} />
+                  <StakeLPPanel poolId={+poolId} />
+                  <Withdraw poolId={+poolId} />
                 </StyledBoxPanel>
               </StyledAccordionPanel>
             </StyledAccordionItem>
@@ -249,16 +257,16 @@ const StyledAccordionPanel = styled(AccordionPanel)`
     `}
   }
 `;
-
 const PoolRecord = ({ poolId }: { poolId: number }) => {
   const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
-  const poolData = usePoolData(pair.id);
   const hasReward = !!pair?.rewards?.toString();
+  const poolData = usePoolData(poolId);
+  const pool = usePool(poolId);
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
 
   const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
-  const availableWithdrawnPercent = new BigNumber(1).minus(percent || ZERO);
+  const availableWithdrawnPercent = JSBI.subtract(JSBI.BigInt(1), percent || BIGINT_ZERO);
 
   const { suppliedBase, totalBase, totalLP, suppliedQuote, totalQuote, suppliedLP, stakedLPBalance } =
     useLPData(pair.id) || {};
@@ -281,72 +289,82 @@ const PoolRecord = ({ poolId }: { poolId: number }) => {
   return (
     <ListItem>
       <StyledDataText>
-        <DataText>{getPairName(pair)}</DataText>
+        <DataText>{`${pool?.baseToken.symbol || '...'} / ${pool?.quoteToken.symbol || '...'}`}</DataText>
         <StyledArrowDownIcon />
       </StyledDataText>
       <DataText>
-        {`${baseCurrencyTotalSupply} ${pair.baseCurrencyKey}`}
+        {/* {`${baseCurrencyTotalSupply} ${pair.baseCurrencyKey}`}
         <br />
-        {`${quoteCurrencyTotalSupply} ${pair.quoteCurrencyKey}`}
+        {`${quoteCurrencyTotalSupply} ${pair.quoteCurrencyKey}`} */}
+        {`${poolData?.suppliedBase?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pool?.baseToken.symbol || '...'}`}
+        <br />
+        {`${poolData?.suppliedQuote?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pool?.quoteToken.symbol || '...'}`}
       </DataText>
-      {upSmall && (
+      {/* {upSmall && (
         <DataText>
           {upSmall && (
-            <DataText>{`${formatBigNumber(
-              (baseValue?.isZero() || quoteValue?.isZero()) && percent?.isGreaterThan(0)
-                ? poolData?.poolShare.times(100)
-                : poolData?.poolShare.times(100).times(availableWithdrawnPercent),
-
-              'currency',
-            )}%`}</DataText>
+            <DataText>{`${
+              ((JSBI.equal(baseValue, BIGINT_ZERO) || JSBI.equal(quoteValue, BIGINT_ZERO)) &&
+              JSBI.greaterThan(percent, BIGINT_ZERO)
+                ? poolData?.poolShare.multiply(100)
+                : poolData?.poolShare.multiply(100).multiply(availableWithdrawnPercent)
+              )?.toFixed(2, { groupSeparator: ',' }) || '...'
+            }%`}</DataText>
           )}
         </DataText>
       )}
       {upSmall && (
         <DataText>
-          {formatBigNumber(poolData?.suppliedReward, 'currency') === '0'
+          {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
             ? stakedLPPercent.isGreaterThanOrEqualTo(new BigNumber(100))
               ? `~ ${formatBigNumber(
                   (stakedLPBalance || ZERO).div(poolData?.suppliedLP || ZERO).times(poolData?.totalReward || ZERO),
                   'currency',
                 )} BALN`
               : 'ー'
-            : `~ ${formatBigNumber(poolData?.suppliedReward.times(stakedLPPercent).div(100), 'currency')} BALN`}
+            : `~ ${
+                poolData?.suppliedReward?.multiply(stakedLPPercent.toNumber()).divide(100).toFixed(2, { groupSeparator: ',' })  || '...'
+              } BALN`}
         </DataText>
+      )} */}
+
+      {upSmall && <DataText>{`${poolData?.poolShare.multiply(100).toFixed(4) || '...'}%`}</DataText>}
+      {upSmall && (
+        <DataText>{`~ ${poolData?.suppliedReward.toFixed(4, { groupSeparator: ',' }) || '...'} BALN`}</DataText>
       )}
     </ListItem>
   );
 };
 
 const PoolRecord1 = () => {
-  const pair = SUPPORTED_PAIRS.find(pair => pair.id === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
-  const poolData = usePoolData(pair.id);
+  const poolData = usePoolData(BalancedJs.utils.POOL_IDS.sICXICX);
+  const pool = usePool(BalancedJs.utils.POOL_IDS.sICXICX);
   const upSmall = useMedia('(min-width: 800px)');
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
   return (
     <ListItem>
       <StyledDataText>
-        <DataText>{getPairName(pair)}</DataText>
+        <DataText>{`${pool?.baseToken.symbol || '...'} / ${pool?.quoteToken.symbol || '...'}`}</DataText>
         <StyledArrowDownIcon />
       </StyledDataText>
       <DataText>
-        <Typography fontSize={16}>
-          {`${formatBigNumber(balance1?.balance, 'currency')} ${pair.quoteCurrencyKey}`}
-        </Typography>
-        <Typography color="text1">
-          {`${formatBigNumber(balance1?.balance1, 'currency')} ${pair.baseCurrencyKey}`}
-        </Typography>
+        <Typography fontSize={16}>{`${balance1?.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ${
+          pool?.quoteToken.symbol || '...'
+        }`}</Typography>
+        <Typography color="text1">{`${balance1?.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} ${
+          pool?.baseToken.symbol || '...'
+        }`}</Typography>
       </DataText>
-      {upSmall && <DataText>{`${formatBigNumber(poolData?.poolShare.times(100), 'currency')}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${formatBigNumber(poolData?.suppliedReward, 'currency')} BALN`}</DataText>}
+      {upSmall && <DataText>{`${poolData?.poolShare.multiply(100).toFixed(4) || '...'}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${poolData?.suppliedReward.toFixed(4) || '...'} BALN`}</DataText>}
     </ListItem>
   );
 };
 
 const Withdraw1 = () => {
   const { account } = useIconReact();
-  const pair = SUPPORTED_PAIRS.find(pair => pair.id === BalancedJs.utils.POOL_IDS.sICXICX) || SUPPORTED_PAIRS[0];
+  const pool = usePool(BalancedJs.utils.POOL_IDS.sICXICX);
   const addTransaction = useTransactionAdder();
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
@@ -369,7 +387,7 @@ const Withdraw1 = () => {
           { hash: res.result },
           {
             pending: 'Withdrawing ICX',
-            summary: `${balance1?.balance?.dp(2).toFormat()} ICX added to your wallet.`,
+            summary: `${balance1?.balance?.toFixed(2, { groupSeparator: ',' }) || '...'} ICX added to your wallet.`,
           },
         );
         toggleOpen1();
@@ -398,7 +416,7 @@ const Withdraw1 = () => {
           { hash: res.result },
           {
             pending: 'Withdrawing sICX',
-            summary: `${balance1?.balance1?.dp(2).toFormat()} sICX added to your wallet.`,
+            summary: `${balance1?.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX added to your wallet.`,
           },
         );
         toggleOpen2();
@@ -440,22 +458,29 @@ const Withdraw1 = () => {
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
           <Typography as="span" fontSize="16px" fontWeight="normal">
-            {getPairName(pair)}
+            {`${pool?.baseToken.symbol || '...'} / ${pool?.quoteToken.symbol || '...'}`}
           </Typography>
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between">
-          <OptionButton disabled={balance1?.balance1?.isZero()} onClick={handleOption2} mr={2}>
+          <OptionButton
+            disabled={JSBI.equal(balance1?.balance1?.quotient || BIGINT_ZERO, BIGINT_ZERO)}
+            onClick={handleOption2}
+            mr={2}
+          >
             <CurrencyLogo currency={getTokenFromCurrencyKey('sICX')!} size={'35px'} />
             <Typography fontSize="16px" fontWeight="bold">
-              {balance1?.balance1?.dp(2).toFormat()} sICX
+              {balance1?.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX
             </Typography>
           </OptionButton>
 
-          <OptionButton disabled={balance1?.balance.isZero()} onClick={handleOption1}>
+          <OptionButton
+            disabled={JSBI.equal(balance1?.balance.quotient || BIGINT_ZERO, BIGINT_ZERO)}
+            onClick={handleOption1}
+          >
             <CurrencyLogo currency={getTokenFromCurrencyKey('ICX')!} size={'35px'} />
             <Typography fontSize="16px" fontWeight="bold">
-              {balance1?.balance.dp(2).toFormat()} ICX
+              {balance1?.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ICX
             </Typography>
           </OptionButton>
         </Flex>
@@ -468,7 +493,7 @@ const Withdraw1 = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(balance1?.balance, 'currency')} {pair.quoteCurrencyKey}
+            {balance1?.balance.toFixed(2, { groupSeparator: ',' }) || '...'} {pool?.quoteToken.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -496,7 +521,7 @@ const Withdraw1 = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(balance1?.balance1, 'currency')} {pair.baseCurrencyKey}
+            {balance1?.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} {pool?.baseToken.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -536,9 +561,13 @@ const Wrapper = styled(Flex)`
 `;
 
 const Withdraw = ({ poolId }: { poolId: number }) => {
-  const pair = SUPPORTED_PAIRS.find(pair => pair.id === poolId) || SUPPORTED_PAIRS[0];
+  const { account } = useIconReact();
+  const pool = usePool(poolId);
+  const balances = useCurrencyBalances(
+    account ?? undefined,
+    useMemo(() => [pool?.baseToken, pool?.quoteToken], [pool]),
+  );
   const lpBalance = useBalance(poolId);
-  const pool = usePool(pair.id);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -548,77 +577,85 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
     typedValue: string;
     independentField: Field;
     inputType: 'slider' | 'text';
-    portion: BigNumber;
+    portion: number;
   }>({
     typedValue: '',
     independentField: Field.CURRENCY_A,
     inputType: 'text',
-    portion: ZERO,
+    portion: 0,
   });
 
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
-  const price = independentField === Field.CURRENCY_A ? pool?.rate || ONE : pool?.inverseRate || ONE;
+  const price =
+    independentField === Field.CURRENCY_A ? pool?.price || FRACTION_ONE : pool?.inversePrice || FRACTION_ONE;
 
+  let parsedAmount: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
+
+  const percent = new Percent(Math.floor(portion * 100), 10_000);
   const stakedLPPercent = useStakedLPPercent(poolId);
-  const availablePercent = new BigNumber(100).minus(stakedLPPercent);
+  const availablePercent = JSBI.subtract(JSBI.BigInt(100), JSBI.BigInt(stakedLPPercent.toNumber()));
 
-  const availableBase = lpBalance?.base?.times(availablePercent).div(100);
+  const availableBase = lpBalance?.base?.multiply(availablePercent).divide(100);
 
-  const availableQuote = lpBalance?.quote.times(availablePercent).div(100);
-
-  let parsedAmount, formattedAmounts;
+  const availableQuote = lpBalance?.quote.multiply(availablePercent).divide(100);
 
   if (inputType === 'slider') {
     parsedAmount = {
-      [Field.CURRENCY_A]: availableBase?.times(portion) || ZERO,
-      [Field.CURRENCY_B]: availableQuote?.times(portion) || ZERO,
+      [Field.CURRENCY_A]: availableBase?.multiply(percent),
+      [Field.CURRENCY_B]: availableQuote?.multiply(percent),
     };
 
     formattedAmounts = {
-      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A].isZero()
-        ? ''
-        : formatBigNumber(parsedAmount[Field.CURRENCY_A], 'input'),
-      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B].isZero()
-        ? ''
-        : formatBigNumber(parsedAmount[Field.CURRENCY_B], 'input'),
+      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A]?.toSignificant(6) ?? '',
+      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B]?.toSignificant(6) ?? '',
     };
   } else {
+    const [independentToken, dependentToken] =
+      independentField === Field.CURRENCY_A ? [pool?.baseToken, pool?.quoteToken] : [pool?.quoteToken, pool?.baseToken];
+
     parsedAmount = {
-      [independentField]: new BigNumber(typedValue || '0'),
-      [dependentField]: new BigNumber(typedValue || '0').times(price),
+      [independentField]: tryParseAmount(typedValue, independentToken),
+      [dependentField]: tryParseAmount(typedValue, dependentToken)?.multiply(price),
     };
 
     formattedAmounts = {
       [independentField]: typedValue,
-      [dependentField]: parsedAmount[dependentField].isZero()
-        ? ''
-        : formatBigNumber(parsedAmount[dependentField], 'input').toString(),
+      [dependentField]: parsedAmount[dependentField]?.toFixed(6) ?? '',
     };
   }
 
-  const rate1 = pool ? pool.base.div(pool.total) : ONE;
-  const rate2 = pool ? pool.quote.div(pool.total) : ONE;
+  const rate1 = pool ? pool.base.divide(pool.total) : FRACTION_ONE;
+  const rate2 = pool ? pool.quote.divide(pool.total) : FRACTION_ONE;
 
   const handleFieldAInput = (value: string) => {
-    const p = new BigNumber(value || '0').div(availableBase || ONE);
-    setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
+    if (availableBase) {
+      const p = Math.min(new BigNumber(value || '0').div(availableBase.toFixed()).multipliedBy(100).toNumber(), 100);
+      setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
+    }
   };
 
   const handleFieldBInput = (value: string) => {
-    const p = new BigNumber(value || '0').div(availableQuote || ONE);
-    setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
+    if (availableQuote) {
+      const p = Math.min(new BigNumber(value || '0').div(availableQuote.toFixed()).multipliedBy(100).toNumber(), 100);
+      setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
+    }
   };
 
   const handleSlide = (values: string[], handle: number) => {
-    setState({ typedValue, independentField, inputType: 'slider', portion: new BigNumber(values[handle]).div(100) });
+    setState({
+      typedValue,
+      independentField,
+      inputType: 'slider',
+      portion: parseFloat(values[handle]),
+    });
   };
 
   useEffect(() => {
     onChangeWithdrawnValue(
       poolId,
-      portion,
-      availableBase?.times(portion) || ZERO,
-      availableQuote?.times(portion) || ZERO,
+      JSBI.BigInt(portion),
+      availableBase?.multiply(portion).numerator || BIGINT_ZERO,
+      availableQuote?.multiply(portion).numerator || BIGINT_ZERO,
     );
   }, [portion, availableQuote, availableBase, poolId]);
 
@@ -626,7 +663,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
 
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(portion.times(100).dp(2).toNumber());
+      sliderInstance.current.noUiSlider.set(portion);
     }
   }, [sliderInstance, inputType, portion]);
 
@@ -637,12 +674,11 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
     setOpen(!open);
   };
 
-  const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
 
   const resetValue = () => {
     sliderInstance.current.noUiSlider.set(0);
-    setState({ typedValue, independentField, inputType: 'slider', portion: new BigNumber(0) });
+    setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
   };
 
   const handleWithdraw = () => {
@@ -653,28 +689,30 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
       changeShouldLedgerSign(true);
     }
 
-    const t = lpBalance?.balance.times(portion) || ZERO;
-    const baseT = t.times(rate1);
-    const quoteT = t.times(rate2);
+    const t = lpBalance
+      ? multiplyCABN(lpBalance.balance, new BigNumber(portion / 100))
+      : CurrencyAmount.fromRawAmount(pairToken(NETWORK_ID), 0);
+    const baseT = t.multiply(rate1);
+    const quoteT = t.multiply(rate2);
 
     bnJs
       .inject({ account })
-      .Dex.remove(pair.id, BalancedJs.utils.toLoop(t))
+      .Dex.remove(poolId, toHex(t))
       .then(result => {
         addTransaction(
           { hash: result.result },
           {
             pending: withdrawMessage(
-              formatBigNumber(baseT, 'currency'),
-              pair.baseCurrencyKey,
-              formatBigNumber(quoteT, 'currency'),
-              pair.quoteCurrencyKey,
+              baseT.toFixed(2, { groupSeparator: ',' }),
+              pool?.baseToken?.symbol ?? '',
+              quoteT.toFixed(2, { groupSeparator: ',' }),
+              pool?.quoteToken?.symbol ?? '',
             ).pendingMessage,
             summary: withdrawMessage(
-              formatBigNumber(baseT, 'currency'),
-              pair.baseCurrencyKey,
-              formatBigNumber(quoteT, 'currency'),
-              pair.quoteCurrencyKey,
+              baseT.toFixed(2, { groupSeparator: ',' }),
+              pool?.baseToken?.symbol ?? '',
+              quoteT.toFixed(2, { groupSeparator: ',' }),
+              pool?.quoteToken?.symbol ?? '',
             ).successMessage,
           },
         );
@@ -705,14 +743,13 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
           <Typography as="span" fontSize="16px" fontWeight="normal">
-            {getPairName(pair)}
+            {`${pool?.baseToken.symbol || '...'} / ${pool?.quoteToken.symbol || '...'}`}
           </Typography>
         </Typography>
         <Box mb={3}>
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_A]}
-            showMaxButton={false}
-            currency={getTokenFromCurrencyKey(pair.baseCurrencyKey)}
+            currency={pool?.baseToken}
             onUserInput={handleFieldAInput}
             id="withdraw-liquidity-input"
             bg="bg2"
@@ -721,17 +758,19 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
         <Box mb={3}>
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_B]}
-            showMaxButton={false}
-            currency={getTokenFromCurrencyKey(pair.quoteCurrencyKey)}
+            currency={pool?.quoteToken}
             onUserInput={handleFieldBInput}
             id="withdraw-liquidity-input"
             bg="bg2"
           />
         </Box>
         <Typography mb={5} textAlign="right">
-          {`Available: 
+          {/* {`Available: 
             ${availableCurrency(parsedAmount[Field.CURRENCY_A], availableBase)} ${pair.baseCurrencyKey} /
-            ${availableCurrency(parsedAmount[Field.CURRENCY_B], availableQuote)} ${pair.quoteCurrencyKey}`}
+            ${availableCurrency(parsedAmount[Field.CURRENCY_B], availableQuote)} ${pair.quoteCurrencyKey}`} */}
+          {`Wallet: 
+            ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pool?.baseToken?.symbol || '...'} /
+            ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pool?.quoteToken?.symbol || '...'}`}
         </Typography>
         <Box mb={5}>
           <Nouislider
@@ -751,7 +790,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
           />
         </Box>
         <Flex alignItems="center" justifyContent="center">
-          <Button disabled={parsedAmount[Field.CURRENCY_A].isZero()} onClick={handleShowConfirm}>
+          <Button disabled={parsedAmount[Field.CURRENCY_A]?.equalTo(0)} onClick={handleShowConfirm}>
             Withdraw liquidity
           </Button>
         </Flex>
@@ -764,11 +803,11 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(parsedAmount[Field.CURRENCY_A], 'currency')} {pair.baseCurrencyKey}
+            {parsedAmount[Field.CURRENCY_A]?.toFixed(2, { groupSeparator: ',' })} {pool?.baseToken?.symbol || '...'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(parsedAmount[Field.CURRENCY_B], 'currency')} {pair.quoteCurrencyKey}
+            {parsedAmount[Field.CURRENCY_B]?.toFixed(2, { groupSeparator: ',' })} {pool?.quoteToken?.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

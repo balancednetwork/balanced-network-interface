@@ -36,7 +36,7 @@ export type SettingInjection = {
   legerSettings?: LedgerSettings;
 };
 
-const LOOP = new BigNumber('1000000000000000000');
+export const LOOP = new BigNumber('1000000000000000000');
 const TEN = new BigNumber('10');
 export class BalancedJs {
   contractSettings: ContractSettings;

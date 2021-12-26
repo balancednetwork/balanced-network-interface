@@ -1,10 +1,40 @@
 import { SupportedChainId } from 'packages/BalancedJs/chain';
+import { useIconReact } from 'packages/icon-react';
 
 import { Token, Currency } from 'types/balanced-sdk-core/index';
 
 import { NETWORK_ID } from './config';
 
-export const ICX = new Token(SupportedChainId.MAINNET, 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX');
+export const NULL_CONTRACT_ADDRESS = 'cx0000000000000000000000000000000000000000';
+
+export const isNativeCurrency = (token?: Currency): boolean => {
+  return (
+    token instanceof Token &&
+    (token.address === ICX.address || token.address === ICX_YEOUIDO.address || token.address === ICX_SEJONG.address)
+  );
+};
+
+export const isBALN = (token?: Currency): boolean => {
+  return (
+    token instanceof Token &&
+    (token.address === BALN.address || token.address === BALN_YEOUIDO.address || token.address === BALN_SEJONG.address)
+  );
+};
+
+export const useICX = () => {
+  const { networkId: chainId } = useIconReact();
+  if (chainId === SupportedChainId.MAINNET) {
+    return ICX;
+  } else if (chainId === SupportedChainId.YEOUIDO) {
+    return ICX_YEOUIDO;
+  } else if (chainId === SupportedChainId.SEJONG) {
+    return ICX_SEJONG;
+  } else {
+    return sICX_SEJONG;
+  }
+};
+
+export const ICX = new Token(SupportedChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 export const sICX = new Token(
   SupportedChainId.MAINNET,
   'cx2609b924e33ef00b648a409245c7ea394c467824',
@@ -68,15 +98,16 @@ export const IUSDT = new Token(
   'IUSDT',
   'ICON Tether',
 );
+export const GBET = new Token(
+  SupportedChainId.MAINNET,
+  'cx6139a27c15f1653471ffba0b4b88dc15de7e3267',
+  18,
+  'GBET',
+  'GangstaBet Token',
+);
 
 // yeouido
-export const ICX_YEOUIDO = new Token(
-  SupportedChainId.YEOUIDO,
-  'cx0000000000000000000000000000000000000000',
-  18,
-  'ICX',
-  'ICX',
-);
+export const ICX_YEOUIDO = new Token(SupportedChainId.YEOUIDO, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 export const sICX_YEOUIDO = new Token(
   SupportedChainId.YEOUIDO,
   'cx81730290ed56a72539c531ceb8346a4f15b19d0a',
@@ -130,13 +161,7 @@ export const CFT_YEOUIDO = new Token(
 );
 
 // sejong
-export const ICX_SEJONG = new Token(
-  SupportedChainId.SEJONG,
-  'cx0000000000000000000000000000000000000000',
-  18,
-  'ICX',
-  'ICX',
-);
+export const ICX_SEJONG = new Token(SupportedChainId.SEJONG, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 export const sICX_SEJONG = new Token(
   SupportedChainId.SEJONG,
   'cx70806fdfa274fe12ab61f1f98c5a7a1409a0c108',
@@ -175,7 +200,7 @@ export const OMM_SEJONG = new Token(
 
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
-  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT],
+  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT, GBET],
   [SupportedChainId.YEOUIDO]: [
     ICX_YEOUIDO,
     sICX_YEOUIDO,
@@ -193,7 +218,7 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];
 
 export const SUPPORTED_TOKENS_MAP_BY_ADDRESS: {
-  [key in string]: Currency;
+  [key: string]: Currency;
 } = SUPPORTED_TOKENS_LIST.reduce((prev, cur) => {
   prev[cur.address] = cur;
   return prev;
@@ -205,7 +230,6 @@ export const SUPPORTED_TOKENS_MAP_BY_ADDRESS: {
  * the logo url are wrong. need to change
  */
 
-/*
 export interface TokenInfo {
   readonly chainId: number;
   readonly address: string;
@@ -219,6 +243,7 @@ export interface TokenInfo {
   };
 }
 
+/*
 export const SUPPORTED_TOKENS_INFO: TokenInfo[] = [
   // Mainnet
   {

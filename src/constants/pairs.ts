@@ -11,6 +11,7 @@ import {
   CFT,
   METX,
   IUSDT,
+  GBET,
   sICX_YEOUIDO,
   ICX_YEOUIDO,
   bnUSD_YEOUIDO,
@@ -23,8 +24,6 @@ import {
   ICX_SEJONG,
   bnUSD_SEJONG,
   BALN_SEJONG,
-  IUSDC_SEJONG,
-  OMM_SEJONG,
 } from 'constants/tokens';
 import { Token } from 'types/balanced-sdk-core';
 
@@ -188,6 +187,15 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       baseToken: METX,
       quoteToken: USDS,
     },
+    {
+      chainId: 1,
+      id: 17,
+      name: 'GBET/bnUSD',
+      baseCurrencyKey: 'GBET',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: GBET,
+      quoteToken: bnUSD,
+    },
   ],
   [NetworkId.YEOUIDO]: [
     {
@@ -278,7 +286,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'ICX',
       baseToken: sICX_SEJONG,
       quoteToken: ICX_SEJONG,
-      rewards: 0.07,
+      rewards: 0.1,
     },
     {
       chainId: 83,
@@ -288,7 +296,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: sICX_SEJONG,
       quoteToken: bnUSD_SEJONG,
-      rewards: 0.175,
+      rewards: 0.15,
     },
     {
       chainId: 83,
@@ -298,7 +306,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: BALN_SEJONG,
       quoteToken: bnUSD_SEJONG,
-      rewards: 0.175,
+      rewards: 0.15,
     },
     {
       chainId: 83,
@@ -308,26 +316,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'sICX',
       baseToken: BALN_SEJONG,
       quoteToken: sICX_SEJONG,
-      rewards: 0.05,
-    },
-    {
-      chainId: 83,
-      id: 5,
-      name: 'OMM/sICX',
-      baseCurrencyKey: 'OMM',
-      quoteCurrencyKey: 'sICX',
-      baseToken: OMM_SEJONG,
-      quoteToken: sICX_SEJONG,
-    },
-    {
-      chainId: 83,
-      id: 6,
-      name: 'IUSDC/bnUSD',
-      baseCurrencyKey: 'IUSDC',
-      quoteCurrencyKey: 'bnUSD',
-      baseToken: IUSDC_SEJONG,
-      quoteToken: bnUSD_SEJONG,
-      rewards: 0.005,
+      rewards: 0.1,
     },
   ],
 };

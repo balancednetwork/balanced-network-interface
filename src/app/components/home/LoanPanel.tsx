@@ -5,6 +5,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
+import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
@@ -14,6 +15,8 @@ import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
+import { ReactComponent as InfoAbove } from 'assets/images/rebalancing-above.svg';
+import { ReactComponent as InfoBelow } from 'assets/images/rebalancing-below.svg';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -84,10 +87,18 @@ const LoanPanel = () => {
 
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
+  const [rebalancingModalOpen, setRebalancingModalOpen] = React.useState(false);
 
   const toggleOpen = () => {
     if (shouldLedgerSign) return;
     setOpen(!open);
+  };
+
+  const toggleRebalancingModalOpen = (shouldUpdateLoan: boolean = false) => {
+    setRebalancingModalOpen(!rebalancingModalOpen);
+    if (shouldUpdateLoan) {
+      toggleOpen();
+    }
   };
 
   //before
@@ -104,6 +115,10 @@ const LoanPanel = () => {
   //borrow fee
   const fee = differenceAmount.times(originationFee);
   const addTransaction = useTransactionAdder();
+
+  const handleLoanUpdate = () => {
+    borrowedAmount.isLessThanOrEqualTo(0) ? toggleRebalancingModalOpen() : toggleOpen();
+  };
 
   const handleLoanConfirm = () => {
     if (!account) return;
@@ -230,7 +245,7 @@ const LoanPanel = () => {
                   disabled={
                     borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
                   }
-                  onClick={toggleOpen}
+                  onClick={handleLoanUpdate}
                   fontSize={14}
                 >
                   Confirm
@@ -364,8 +379,75 @@ const LoanPanel = () => {
           {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
         </Flex>
       </Modal>
+
+      <Modal isOpen={rebalancingModalOpen} onDismiss={() => toggleRebalancingModalOpen(false)} maxWidth={450}>
+        <Flex flexDirection="column" alignItems="center" width="100%" padding="25px">
+          <Typography>Rebalancing</Typography>
+          <RebalancingInfo />
+          <BoxWithBorderTop>
+            <Button onClick={() => toggleRebalancingModalOpen(true)}>Understood</Button>
+          </BoxWithBorderTop>
+        </Flex>
+      </Modal>
     </>
   );
 };
+
+export const RebalancingInfo = () => {
+  return (
+    <RebalancingInfoWrap flexDirection="row" flexWrap="wrap" alignItems="stretch" width="100%">
+      <Typography
+        textAlign="center"
+        mb="5px"
+        width="100%"
+        maxWidth="320px"
+        margin="10px auto 35px"
+        fontSize="16"
+        fontWeight="bold"
+        color="#FFF"
+      >
+        While you borrow bnUSD, your collateral is used to keep its value stable
+      </Typography>
+      <BoxWithBorderRight width="50%" paddingRight="25px">
+        <InfoBelow />
+        <Typography fontWeight="bold" color="#FFF">
+          If bnUSD is below $1
+        </Typography>
+        <Typography>Balanced sells collateral at a premium to repay some of your loan.</Typography>
+      </BoxWithBorderRight>
+      <Box width="50%" paddingLeft="25px" margin="-19px 0 0">
+        <InfoAbove />
+        <Typography fontWeight="bold" color="#FFF" marginTop="19px">
+          If bnUSD is above $1
+        </Typography>
+        <Typography>Balanced increases your loan to buy more collateral at a discount.</Typography>
+      </Box>
+      <Typography marginTop="25px">
+        You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD
+        pool. The smaller your loan, the less rebalancing affects you.
+      </Typography>
+    </RebalancingInfoWrap>
+  );
+};
+
+const BoxWithBorderTop = styled(Box)`
+  padding-top: 25px;
+  margin-top: 25px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  width: 100%;
+  text-align: center;
+`;
+
+const RebalancingInfoWrap = styled(Flex)`
+  color: '#D5D7DB';
+  svg {
+    height: auto;
+    margin-bottom: 10px;
+  }
+`;
+
+const BoxWithBorderRight = styled(Box)`
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+`;
 
 export default LoanPanel;

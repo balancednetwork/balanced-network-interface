@@ -33,6 +33,17 @@ export default class BALN extends IRC2 {
     return this.call(callParams);
   }
 
+  availableBalanceOf(owner: string) {
+    const callParams = this.paramsBuilder({
+      method: 'availableBalanceOf',
+      params: {
+        _owner: owner,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
   stakedBalanceOfAt(_account: string, _day: number) {
     const callParams = this.paramsBuilder({
       method: 'stakedBalanceOfAt',

@@ -13,8 +13,7 @@ import { BoxPanel } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
-import { NETWORK_ID } from 'constants/config';
-import { PairInfo, SUPPORTED_PAIRS_INFO } from 'constants/pairs';
+import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { Transaction, useAllTransactionsQuery, useInternalTransactionQuery } from 'queries/history';
 import { formatBigNumber, formatUnits, getTrackerLink } from 'utils';
@@ -139,7 +138,7 @@ const getMethod = (tx: Transaction) => {
 };
 
 const getSymbolByPoolId = (poolId: number) => {
-  const pool: PairInfo | undefined = SUPPORTED_PAIRS_INFO[NETWORK_ID].find(pool => pool.id === poolId);
+  const pool: PairInfo | undefined = SUPPORTED_PAIRS.find(pool => pool.id === poolId);
   return { symbol1: pool?.baseCurrencyKey || '', symbol2: pool?.quoteCurrencyKey || '' };
 };
 
@@ -554,41 +553,50 @@ const TransactionTable = () => {
 
   return (
     <BoxPanel bg="bg2">
-      <Flex mb={2} alignItems="center">
-        <Typography mr={2} variant="h2">
+      <Flex mb={2} alignItems="center" flexWrap="wrap">
+        <Typography mr={2} mb={2} variant="h2" width="100%">
           Activity history
         </Typography>
         {isLoading && <Spinner />}
-      </Flex>
-      <Table>
-        <Row>
-          <Typography letterSpacing="3px">DATE</Typography>
-          <Typography letterSpacing="3px" sx={{ flex: 1 }}>
-            ACTIVITY
-          </Typography>
-          <Typography letterSpacing="3px" textAlign="right">
-            AMOUNT
-          </Typography>
-        </Row>
-        {txs.map(tx =>
-          tx.method === 'claimUnstakedICX' ? (
-            <ClaimRowItem tx={tx} key={tx.item_id} />
-          ) : (
-            <RowItem tx={tx} key={tx.item_id} />
-          ),
+
+        {!isLoading && data?.count ? (
+          <>
+            <Table width="100%">
+              <Row>
+                <Typography letterSpacing="3px">DATE</Typography>
+                <Typography letterSpacing="3px" sx={{ flex: 1 }}>
+                  ACTIVITY
+                </Typography>
+                <Typography letterSpacing="3px" textAlign="right">
+                  AMOUNT
+                </Typography>
+              </Row>
+              {txs.map(tx =>
+                tx.method === 'claimUnstakedICX' ? (
+                  <ClaimRowItem tx={tx} key={tx.item_id} />
+                ) : (
+                  <RowItem tx={tx} key={tx.item_id} />
+                ),
+              )}
+            </Table>
+            <Pagination
+              sx={{ mt: 2, width: '100%' }}
+              onChangePage={page => {
+                if (!isLoading) {
+                  setPage(page);
+                }
+              }}
+              currentPage={page}
+              totalPages={totalPages}
+              displayPages={7}
+            />{' '}
+          </>
+        ) : (
+          <Box width="100%">
+            <Typography textAlign="center">No activity yet.</Typography>
+          </Box>
         )}
-      </Table>
-      <Pagination
-        sx={{ mt: 2 }}
-        onChangePage={page => {
-          if (!isLoading) {
-            setPage(page);
-          }
-        }}
-        currentPage={page}
-        totalPages={totalPages}
-        displayPages={7}
-      />
+      </Flex>
     </BoxPanel>
   );
 };

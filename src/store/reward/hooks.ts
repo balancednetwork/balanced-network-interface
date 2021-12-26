@@ -61,8 +61,10 @@ export function useFetchRewardsInfo() {
   React.useEffect(() => {
     // calculate rewards per pool
     SUPPORTED_PAIRS.forEach(pair => {
-      const rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
-      changeReward(pair.id.toString(), emission.times(rewardShare));
+      if (pair.rewards) {
+        const rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
+        changeReward(pair.id.toString(), emission.times(rewardShare));
+      }
     });
 
     //calculate loan rewards

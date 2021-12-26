@@ -34,10 +34,11 @@ export function RemoveToken(props: RemoveProps) {
           <TokenImportCard token={token} key={'import' + token.address} />
         ))}
 
-        <Flex justifyContent="center" pt={3} className="border-top">
+        <Flex justifyContent="center" mt={2} pt={3} className="border-top">
           <TextButton onClick={onDismiss}>Cancel</TextButton>
           <AlertButton
             color="alert"
+            fontSize={14}
             onClick={() => {
               tokens.map(token => removeToken(networkId, token.address));
               onDismiss && onDismiss();

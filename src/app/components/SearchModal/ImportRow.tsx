@@ -31,7 +31,7 @@ const NameOverflow = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  max-width: 140px;
 `;
 
 export default function ImportRow({
@@ -56,7 +56,7 @@ export default function ImportRow({
   return (
     <TokenSection style={style}>
       <Flex flexDirection="column" alignItems="flex-start">
-        <Typography variant="body" fontWeight="bold" color="white">
+        <Typography variant="body" fontWeight="bold" color="white" as="div">
           <NameOverflow title={token.name}>{token.name}</NameOverflow>
         </Typography>
         <Typography variant="body">{token.symbol}</Typography>

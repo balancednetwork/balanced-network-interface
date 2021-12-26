@@ -1,7 +1,6 @@
-import JSBI from 'jsbi';
 import { SupportedChainId } from 'packages/BalancedJs';
 
-import { Currency, Percent, Token } from 'types/balanced-sdk-core';
+import { Currency, Token } from 'types/balanced-sdk-core';
 
 import {
   sICX, //
@@ -12,8 +11,6 @@ import {
   bnUSD_YEOUIDO,
   IUSDC_YEOUIDO,
   USDS_YEOUIDO,
-  BALN,
-  BALN_YEOUIDO,
   sICX_SEJONG,
   bnUSD_SEJONG,
 } from './tokens';
@@ -41,19 +38,10 @@ export const COMMON_BASES: ChainCurrencyList = {
 
 export const MAX_HOPS = 4;
 
-// one basis JSBI.BigInt
-const BIPS_BASE = JSBI.BigInt(10000);
-export const ONE_BIPS = new Percent(JSBI.BigInt(1), BIPS_BASE);
-
-export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), BIPS_BASE);
-
-export const ZERO_PERCENT = new Percent('0');
-export const ONE_HUNDRED_PERCENT = new Percent('1');
-
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
-  [SupportedChainId.MAINNET]: [sICX, BALN, bnUSD, USDS],
-  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, BALN_YEOUIDO, bnUSD_YEOUIDO, USDS_YEOUIDO],
+  [SupportedChainId.MAINNET]: [sICX, bnUSD, IUSDC, USDS],
+  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
   [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
 };
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {

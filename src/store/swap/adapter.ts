@@ -3,7 +3,8 @@ import { useMemo } from 'react';
 import { useAllCurrencyCombinations } from 'hooks/useAllCurrencyCombinations';
 import { PairState, useV2Pairs } from 'hooks/useV2Pairs';
 
-import { BETTER_TRADE_LESS_HOPS_THRESHOLD, MAX_HOPS } from '../../constants/routing';
+import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from '../../constants/misc';
+import { MAX_HOPS } from '../../constants/routing';
 import { Currency, CurrencyAmount, TradeType } from '../../types/balanced-sdk-core';
 import { Pair, Trade } from '../../types/balanced-v1-sdk/entities';
 import { isTradeBetter } from '../../types/balanced-v1-sdk/utils/isTradeBetter';

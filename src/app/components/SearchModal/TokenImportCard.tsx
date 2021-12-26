@@ -24,14 +24,16 @@ const TokenImportCard = ({ token }: TokenImportCardProps) => {
     <Card>
       <AutoColumn gap="10px" justify="center">
         <AutoColumn gap="4px" justify="center">
-          <Typography ml="8px" mr="8px" fontWeight="bold" fontSize={24}>
+          <Typography ml="8px" mr="8px" fontWeight="bold" fontSize={20} color="white">
             {token.symbol}
           </Typography>
-          <Typography fontSize={20}>{token.name}</Typography>
+          <Typography fontSize={16} color="white">
+            {token.name}
+          </Typography>
         </AutoColumn>
         {chainId && (
-          <ExternalLink href={getTrackerLink(chainId, token.address, 'address')}>
-            <AddressText fontSize={14} textAlign="center">
+          <ExternalLink href={getTrackerLink(chainId, token.address, 'token')}>
+            <AddressText fontSize={14} width={180} textAlign="center">
               {token.address}
             </AddressText>
           </ExternalLink>

@@ -32,13 +32,14 @@ export function ImportToken(props: ImportProps) {
         {tokens.map(token => (
           <TokenImportCard token={token} key={'import' + token.address} />
         ))}
-        <Typography color="alert" textAlign="center" mb={1}>
+        <Typography color="alert" textAlign="center" mb={1} mx={4}>
           Make sure these details are correct before you add it to Balanced on this device.{' '}
         </Typography>
 
         <Flex justifyContent="center" pt={3} className="border-top">
           <TextButton onClick={onDismiss}>Cancel</TextButton>
           <Button
+            fontSize={14}
             onClick={() => {
               tokens.map(token => addToken(token));
               handleCurrencySelect && handleCurrencySelect(tokens[0]);

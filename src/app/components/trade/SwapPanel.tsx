@@ -227,7 +227,8 @@ export default function SwapPanel() {
             <Typography variant="h2">Swap</Typography>
             <Typography as="div" hidden={!account}>
               {'Wallet: '}
-              {`${currencyBalances[Field.INPUT]?.toFixed(4)} ${currencies[Field.INPUT]?.symbol}`}
+              {`${currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' })} 
+                ${currencies[Field.INPUT]?.symbol}`}
             </Typography>
           </Flex>
 
@@ -254,7 +255,8 @@ export default function SwapPanel() {
             <Typography variant="h2">For</Typography>
             <Typography as="div" hidden={!account}>
               {'Wallet: '}
-              {`${currencyBalances[Field.OUTPUT]?.toFixed(4)} ${currencies[Field.OUTPUT]?.symbol}`}
+              {`${currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })}
+                ${currencies[Field.OUTPUT]?.symbol}`}
             </Typography>
           </Flex>
 

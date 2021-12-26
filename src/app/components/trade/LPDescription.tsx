@@ -8,6 +8,7 @@ import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
 import { PairState } from 'hooks/useV2Pairs';
+import { useAllPairsAPY } from 'queries/reward';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useReward } from 'store/reward/hooks';
@@ -37,12 +38,16 @@ export default function LPDescription() {
       ? poolRewards.times(new BigNumber(userPoolBalance.toFixed()).div(new BigNumber(totalPoolTokens.toFixed())))
       : undefined;
   }, [pair, totalPoolTokens, userPoolBalance, poolRewards]);
+
+  const apys = useAllPairsAPY();
+  const apy = apys && apys[pair?.poolId ?? -1];
+
   return (
     <>
       {pairState === PairState.NOT_EXISTS && (
         <Flex bg="bg2" flex={1} padding={[5, 7]} flexDirection="column">
           <Typography variant="h3" mb={2}>
-            {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool
+            {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool{' '}
           </Typography>
 
           <Flex flex={1} alignItems="center" justifyContent="center">
@@ -56,11 +61,22 @@ export default function LPDescription() {
 
       {pairState === PairState.EXISTS && (
         <Box bg="bg2" flex={1} padding={[5, 7]}>
-          <Typography variant="h3" mb={2}>
-            {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-              ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
-              : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}
-          </Typography>
+          {poolRewards ? (
+            <Typography variant="h3" mb={2}>
+              {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
+                ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool:`
+                : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool:`}{' '}
+              <Typography fontWeight="normal" fontSize={16} as="span">
+                {apy?.times(100).dp(2).toFixed() ?? '-'}% APY
+              </Typography>
+            </Typography>
+          ) : (
+            <Typography variant="h3" mb={2}>
+              {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
+                ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
+                : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}{' '}
+            </Typography>
+          )}
 
           <Flex flexWrap="wrap">
             <Box
@@ -70,36 +86,50 @@ export default function LPDescription() {
                 borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
               }}
             >
-              <Box sx={{ margin: '15px 0 25px 0' }}>
-                <Typography textAlign="center" marginBottom="5px" color="text1">
-                  Your supply
-                </Typography>
-                {pair && account && (
-                  <Typography textAlign="center" variant="p">
-                    {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
-                      <>
-                        {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
-                        <br />
-                        {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
-                      </>
-                    ) : (
-                      `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
-                    )}
-                  </Typography>
-                )}
-              </Box>
-
-              {userRewards && (
-                <Box sx={{ margin: '15px 0 25px 0' }}>
+              {pair && !account && (
+                <Flex alignItems="center" justifyContent="center" height="100%">
                   <Typography textAlign="center" marginBottom="5px" color="text1">
-                    Your daily rewards
+                    Sign in to view your liquidity details.
                   </Typography>
-                  <Typography textAlign="center" variant="p">
-                    ~ {formatBigNumber(userRewards, 'currency')} BALN
-                  </Typography>
-                </Box>
+                </Flex>
+              )}
+
+              {pair && account && (
+                <>
+                  <Box sx={{ margin: '15px 0 25px 0' }}>
+                    <Typography textAlign="center" marginBottom="5px" color="text1">
+                      Your supply
+                    </Typography>
+
+                    <Typography textAlign="center" variant="p">
+                      {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+                        <>
+                          {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
+                          <br />
+                          {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
+                        </>
+                      ) : (
+                        `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${
+                          pair?.reserve0.currency?.symbol
+                        }`
+                      )}
+                    </Typography>
+                  </Box>
+
+                  {userRewards && (
+                    <Box sx={{ margin: '15px 0 25px 0' }}>
+                      <Typography textAlign="center" marginBottom="5px" color="text1">
+                        Your daily rewards
+                      </Typography>
+                      <Typography textAlign="center" variant="p">
+                        ~ {formatBigNumber(userRewards, 'currency')} BALN
+                      </Typography>
+                    </Box>
+                  )}
+                </>
               )}
             </Box>
+
             <Box width={[1, 1 / 2]}>
               <Box sx={{ margin: '15px 0 25px 0' }}>
                 <Typography textAlign="center" marginBottom="5px" color="text1">

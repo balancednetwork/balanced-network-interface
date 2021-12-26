@@ -8,7 +8,6 @@ import { ApplicationState } from 'store/application/reducer';
 import { CollateralState } from 'store/collateral/reducer';
 import { LoanState } from 'store/loan/reducer';
 import { MintState } from 'store/mint/reducer';
-import { PoolState } from 'store/pool/reducer';
 import { RatioState } from 'store/ratio/reducer';
 import { RewardState } from 'store/reward/reducer';
 import { SwapState } from 'store/swap/reducer';
@@ -20,7 +19,6 @@ import { WalletState } from 'store/wallet/reducer';
 export interface RootState {
   // [INSERT NEW REDUCER KEY ABOVE] < Needed for generating containers seamlessly
   application: ApplicationState;
-  pool: PoolState;
   collateral: CollateralState;
   loan: LoanState;
   reward: RewardState;

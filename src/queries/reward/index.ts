@@ -80,7 +80,7 @@ export const useRatesQuery = () => {
   return useQuery<{ [key in string]: BigNumber }>('useRatesQuery', fetch);
 };
 
-export const useAllPairsAPY = () => {
+export const useAllPairsAPY = (): { [key: number]: BigNumber } | undefined => {
   const tvls = useAllPairsTVL();
   const { data: rates } = useRatesQuery();
   const dailyDistributionQuery = useBnJsContractQuery<string>(bnJs, 'Rewards', 'getEmission', []);

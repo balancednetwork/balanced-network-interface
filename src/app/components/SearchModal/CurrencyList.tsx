@@ -1,5 +1,6 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useState, useCallback } from 'react';
 
+import { isIOS, isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
 import { Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
@@ -36,9 +37,14 @@ function CurrencyRow({
   const balance = useCurrencyBalance(account ?? undefined, currency);
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
   const theme = useTheme();
+
   // only show add or remove buttons if not on selected list
+  const [show, setShow] = useState(false);
+  const open = useCallback(() => setShow(true), [setShow]);
+  const close = useCallback(() => setShow(false), [setShow]);
+
   return (
-    <ListItem onClick={onSelect}>
+    <ListItem onClick={onSelect} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
       <Flex>
         <CurrencyLogo currency={currency} style={{ marginRight: '8px' }} />
         <DataText variant="p" fontWeight="bold">
@@ -49,7 +55,7 @@ function CurrencyRow({
         <DataText variant="p" textAlign="right">
           {balance?.toSignificant(4)}
         </DataText>
-        {isUserAddedToken && (
+        {isUserAddedToken && (isMobile || show) && (
           <MinusCircle
             color={theme.colors.alert}
             size={18}

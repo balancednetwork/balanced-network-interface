@@ -132,8 +132,8 @@ export function usePools(): { [poolId: number]: PoolState } {
 }
 
 interface BalanceState {
-  balance: CurrencyAmount<Currency>;
-  balance1?: CurrencyAmount<Currency>;
+  balance: CurrencyAmount<Token>;
+  balance1?: CurrencyAmount<Token>;
 }
 
 export function useBalances(): { [poolId: number]: BalanceState } {
@@ -261,6 +261,7 @@ export function usePoolData(poolId: number) {
   return React.useMemo(() => {
     if (pool) {
       const [rewardNumerator, rewardDenominator] = reward ? reward.toFraction() : [0, 1];
+      // it's a fraction, yet represents BALN amount
       const rewardFraction = new Fraction(rewardNumerator.toFixed(), rewardDenominator.toFixed());
       return {
         totalBase: pool.base,

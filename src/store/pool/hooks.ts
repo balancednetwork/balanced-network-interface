@@ -13,6 +13,7 @@ import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useUserAddedTokens } from 'store/user/hooks';
 import { Currency, CurrencyAmount, Fraction, Price, Token } from 'types/balanced-sdk-core';
+import { toFraction } from 'utils';
 
 interface PoolState {
   total: CurrencyAmount<Currency>;
@@ -260,16 +261,15 @@ export function usePoolData(poolId: number) {
 
   return React.useMemo(() => {
     if (pool) {
-      const [rewardNumerator, rewardDenominator] = reward ? reward.toFraction() : [0, 1];
       // it's a fraction, yet represents BALN amount
-      const rewardFraction = new Fraction(rewardNumerator.toFixed(), rewardDenominator.toFixed());
+      const rewardFrac = toFraction(reward);
       return {
         totalBase: pool.base,
         totalQuote: pool.quote,
-        totalReward: rewardFraction,
+        totalReward: rewardFrac,
         suppliedBase: balance?.base,
         suppliedQuote: balance?.quote,
-        suppliedReward: poolShare.multiply(rewardFraction),
+        suppliedReward: poolShare.multiply(rewardFrac),
         poolShare,
       };
     }

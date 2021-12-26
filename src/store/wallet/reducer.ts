@@ -7,7 +7,7 @@ import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { changeBalances, resetBalances } from './actions';
 
 export interface WalletState {
-  [key: string]: CurrencyAmount<Currency>;
+  [address: string]: CurrencyAmount<Currency>;
 }
 
 const initialState: WalletState = SUPPORTED_TOKENS_LIST.reduce((p, t) => {

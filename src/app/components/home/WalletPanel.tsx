@@ -16,8 +16,7 @@ import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useRatesQuery } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
-import { Fraction } from 'types/balanced-sdk-core';
-import { isDPZeroCA } from 'utils';
+import { isDPZeroCA, toFraction } from 'utils';
 
 import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';
@@ -51,10 +50,7 @@ const WalletPanel = () => {
   const rateFracs = React.useMemo(() => {
     if (rates) {
       return Object.keys(rates).reduce((acc, key) => {
-        const rate = rates[key];
-        const [rateNum, rateDeno] = rate.toFraction();
-
-        acc[key] = new Fraction(rateNum.toFixed(), rateDeno.toFixed());
+        acc[key] = toFraction(rates[key]);
         return acc;
       }, {});
     }

@@ -185,8 +185,8 @@ export function toCurrencyAmountFromRawBN(token: Token, amount: BigNumber): Curr
   return CurrencyAmount.fromFractionalAmount(token, amountNum.toFixed(), amountDeno.toFixed());
 }
 
-export function toFraction(amount: BigNumber): Fraction {
-  const [amountNum, amountDeno] = amount.toFraction();
+export function toFraction(amount: BigNumber | undefined): Fraction {
+  const [amountNum, amountDeno] = amount ? amount.toFraction() : [0, 1];
   return new Fraction(amountNum.toFixed(), amountDeno.toFixed());
 }
 

@@ -10,7 +10,7 @@ import { Button, TextButton } from 'app/components/Button';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import TickSrc from 'assets/icons/tick.svg';
+import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
@@ -335,7 +335,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                   )}
                 </>
               ) : (
-                <TickImg src={TickSrc} />
+                <CheckIconWrapper>
+                  <CheckIcon />
+                </CheckIconWrapper>
               )}
 
               {shouldShowSendBtnB ? (
@@ -364,7 +366,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                   )}
                 </>
               ) : (
-                <TickImg src={TickSrc} style={{ marginTop: '15px' }} />
+                <CheckIconWrapper style={{ marginTop: '15px' }}>
+                  <CheckIcon />
+                </CheckIconWrapper>
               )}
             </StyledDL>
           </Box>
@@ -509,7 +513,7 @@ const StyledEmpty = styled.dl`
   text-align: center;
 `;
 
-const TickImg = styled.img`
+const CheckIconWrapper = styled.div`
   padding-top: 16px;
   padding-bottom: 16px;
   display: block;

@@ -1,6 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
+import { CurrencyAmount, Currency } from 'types/balanced-sdk-core';
+
 import { setStakedLPPercent, setWithdrawnValue } from './actions';
 
 export interface StakedLPState {
@@ -8,8 +10,8 @@ export interface StakedLPState {
   withdrawn: {
     [poolId: number]: {
       percent: BigNumber;
-      baseValue: BigNumber;
-      quoteValue: BigNumber;
+      baseValue: CurrencyAmount<Currency>;
+      quoteValue: CurrencyAmount<Currency>;
     };
   };
 }

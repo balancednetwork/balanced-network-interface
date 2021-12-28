@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
@@ -31,9 +31,11 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const balance = useBalance(poolId);
-  const stakedBalance =
-    //  balance?.stakedLPBalance ||
-    ZERO;
+  const stakedBalance = useMemo(
+    () => new BigNumber(balance?.stakedLPBalance?.toFixed() || 0),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [balance?.stakedLPBalance],
+  );
 
   const totalStaked = useTotalStaked(poolId);
 
@@ -49,7 +51,11 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
   };
 
   useEffect(() => {
-    onStakedLPPercentSelected(poolId, totalStaked.isZero() ? ZERO : stakedBalance.dividedBy(totalStaked).times(100));
+    onStakedLPPercentSelected(
+      poolId,
+      totalStaked.isZero() ? ZERO : stakedBalance.dividedBy(totalStaked).multipliedBy(100),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onStakedLPPercentSelected, poolId, stakedBalance, totalStaked]);
 
   const handleSlide = useCallback(
@@ -66,6 +72,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
         !totalStaked.isZero() ? stakedBalance.dividedBy(totalStaked).multipliedBy(100) : ZERO,
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onStakedLPPercentSelected, isAdjusting, totalStaked, poolId, stakedBalance]);
 
   // modal
@@ -77,7 +84,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
 
   const beforeAmount = stakedBalance;
   const afterAmount = stakedPercent.multipliedBy(totalStaked).div(100);
-  const differenceAmount = afterAmount.minus(beforeAmount);
+  const differenceAmount = afterAmount.minus(beforeAmount?.toFixed() || ZERO);
   const shouldStake = differenceAmount.isPositive();
 
   const addTransaction = useTransactionAdder();

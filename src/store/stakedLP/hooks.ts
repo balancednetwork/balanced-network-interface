@@ -8,7 +8,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { AppState } from 'store';
-import { useBalance, usePool } from 'store/pool/hooks';
+import { useBalance } from 'store/pool/hooks';
+import { CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 
 import { setStakedLPPercent, setWithdrawnValue } from './actions';
 
@@ -25,8 +26,8 @@ export function useChangeStakedLPPercent(): (poolId: number, percent: BigNumber)
 export function useChangeWithdrawnValue(): (
   poolId: number,
   percent: BigNumber,
-  baseValue: BigNumber,
-  quoteValue: BigNumber,
+  baseValue: CurrencyAmount<Currency>,
+  quoteValue: CurrencyAmount<Currency>,
 ) => void {
   const dispatch = useDispatch();
   return React.useCallback(
@@ -35,25 +36,6 @@ export function useChangeWithdrawnValue(): (
     },
     [dispatch],
   );
-}
-
-export function useLPData(poolId: number) {
-  const pool = usePool(poolId);
-  const balance = useBalance(poolId);
-
-  return React.useMemo(() => {
-    if (pool && balance) {
-      return {
-        totalBase: pool.base,
-        totalQuote: pool.quote,
-        totalLP: balance?.balance,
-        suppliedLP: balance?.suppliedLP,
-        suppliedBase: balance?.base,
-        suppliedQuote: balance?.quote,
-        stakedLPBalance: balance?.stakedLPBalance,
-      };
-    }
-  }, [pool, balance]);
 }
 
 export const useTotalStaked = (poolId: number) => {
@@ -67,7 +49,7 @@ export const useTotalStaked = (poolId: number) => {
     (async () => {
       if (account) {
         const availableStake = await bnJs.Dex.balanceOf(account, poolId);
-        setTotalStaked(BalancedJs.utils.toIcx(availableStake).plus(stakedBalance));
+        setTotalStaked(BalancedJs.utils.toIcx(availableStake).plus(stakedBalance.toFixed()));
       }
     })();
   }, [stakedBalance, account, poolId]);

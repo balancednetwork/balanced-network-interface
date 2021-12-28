@@ -43,8 +43,6 @@ export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
   const balances = useAvailableBalances();
 
-  console.log('balances', balances);
-
   const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
 
   const isHidden =

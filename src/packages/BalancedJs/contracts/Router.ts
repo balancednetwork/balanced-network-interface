@@ -10,12 +10,13 @@ export default class Router extends Contract {
     this.address = addresses[this.nid].router;
   }
 
-  swapICX(value: BigNumber, path: (string | null)[]) {
+  swapICX(value: BigNumber, path: (string | null)[], minimumReceive: string) {
     const payload = this.transactionParamsBuilder({
       method: 'route',
       value: value,
       params: {
         _path: path,
+        _minReceive: minimumReceive,
       },
     });
 

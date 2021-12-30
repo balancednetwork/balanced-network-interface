@@ -5,10 +5,8 @@ import styled from 'styled-components';
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
-import { PROPOSAL_CONFIG } from 'app/containers/NewProposalPage/constant';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { getTokenFromCurrencyKey } from 'types/adapter';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount, Token } from 'types/balanced-sdk-core';
 
 type Amount = {
   item: CurrencyAmount<Currency>;
@@ -22,19 +20,15 @@ export interface CurrencyValue {
 interface Props {
   currencyValue: CurrencyValue;
   setCurrencyValue: (value: CurrencyValue) => void;
+  balanceList: CurrencyAmount<Currency>[];
 }
 
-export default function FundingInput({ currencyValue, setCurrencyValue }: Props) {
-  const [balanceList, setBalanceList] = useState<CurrencyAmount<Currency>[]>([]);
-  const [currencyList, setCurrencyList] = useState(SUPPORTED_TOKENS_LIST);
+export default function FundingInput({ currencyValue, setCurrencyValue, balanceList }: Props) {
+  const [currencyList, setCurrencyList] = useState<Currency[]>([]);
 
   useEffect(() => {
-    (async () => {
-      const result = await PROPOSAL_CONFIG.Funding.fetchInputData();
-      setBalanceList(result);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setCurrencyList(balanceList.map(balance => balance.currency));
+  }, [balanceList]);
 
   useEffect(() => {
     updateCurrencyList(currencyValue.amounts);
@@ -44,10 +38,12 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   const updateCurrencyList = useCallback(
     (amounts: Amount[]) => {
       const symbolSelectedList = amounts.map(amount => amount.item.currency.symbol);
-      const newCurrencyList = SUPPORTED_TOKENS_LIST.filter(value => !symbolSelectedList.includes(value.symbol));
+      const newCurrencyList = balanceList
+        .filter(({ currency }) => !symbolSelectedList.includes(currency.symbol))
+        .map(balance => balance.currency);
       setCurrencyList(newCurrencyList);
     },
-    [setCurrencyList],
+    [balanceList],
   );
 
   const handleAmountInput = (itemId: number) => (value: string) => {
@@ -85,7 +81,7 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
       <StyledAddressInputPanel value={currencyValue.recipient} onUserInput={handleAddressInput} bg="bg5" />
       {currencyValue.amounts.map((amount, id) => (
         <StyledCurrencyInputPanel
-          key={id}
+          key={(amount.item.currency as Token).address}
           currencyList={[amount.item.currency].concat(currencyList)}
           balanceList={balanceList}
           value={amount.inputDisplayValue || ''}
@@ -97,7 +93,7 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
           bg="bg5"
         />
       ))}
-      {Object.values(currencyValue.amounts).length < SUPPORTED_TOKENS_LIST.length && (
+      {Object.values(currencyValue.amounts).length < balanceList.length && (
         <ButtonWrapper>
           <Button
             onClick={() => {

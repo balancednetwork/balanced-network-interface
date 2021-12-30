@@ -209,7 +209,7 @@ export const PROPOSAL_CONFIG = {
           (amount, idx) =>
             amount.inputDisplayValue && {
               amount: `[amount${idx}]`,
-              address: getKeyByValue(amount.item.currency.symbol, addressToCurrencyKeyMap[NETWORK_ID]),
+              address: (amount.item.currency as Token).address,
             },
         )
         .filter(value => value);

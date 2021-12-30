@@ -21,12 +21,11 @@ import Tooltip from 'app/components/Tooltip';
 import { PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { usePlatformDayQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
-import { CurrencyAmount } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import FundingInput, { CurrencyValue } from '../../components/newproposal/FundingInput';
@@ -105,9 +104,10 @@ export function NewProposalPage() {
   const [forumLink, setForumLink] = useState('');
   const [description, setDescription] = useState('');
   const [ratioInputValue, setRatioInputValue] = useState<{ [key: string]: string }>({});
+  const [balanceList, setBalanceList] = useState<CurrencyAmount<Currency>[]>([]);
   const [currencyInputValue, setCurrencyInputValue] = React.useState<CurrencyValue>({
     recipient: '',
-    amounts: [{ item: CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_LIST[0], 0) }],
+    amounts: [],
   });
 
   const [showError, setShowError] = useState<ErrorItem>({
@@ -141,8 +141,16 @@ export function NewProposalPage() {
   useEffect(() => {
     (async () => {
       const totalSupply = await bnJs.BALN.totalSupply();
+      const fundingRes = await PROPOSAL_CONFIG.Funding.fetchInputData();
+      setBalanceList(fundingRes);
       setTotalSupply(totalSupply);
+      if (fundingRes)
+        setCurrencyInputValue({
+          recipient: '',
+          amounts: [{ item: CurrencyAmount.fromRawAmount(fundingRes[0].currency, 0) }],
+        });
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { data: platformDay } = usePlatformDayQuery();
@@ -230,7 +238,7 @@ export function NewProposalPage() {
     setRatioInputValue({});
     setCurrencyInputValue({
       recipient: '',
-      amounts: [{ item: CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_LIST[0], 0) }],
+      amounts: [{ item: CurrencyAmount.fromRawAmount(balanceList[0].currency, 0) }],
     });
   };
 
@@ -339,7 +347,11 @@ export function NewProposalPage() {
             />
           )}
           {isFundingProposal && (
-            <FundingInput currencyValue={currencyInputValue} setCurrencyValue={setCurrencyInputValue} />
+            <FundingInput
+              currencyValue={currencyInputValue}
+              setCurrencyValue={setCurrencyInputValue}
+              balanceList={balanceList}
+            />
           )}
           <Typography variant="content" mt="25px" mb="25px" textAlign="center">
             It costs 100 bnUSD to submit a proposal.

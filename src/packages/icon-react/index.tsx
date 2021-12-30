@@ -58,7 +58,7 @@ export function IconReactProvider({ children }) {
       });
 
       if (detail?.type === ICONexResponseEventType.RESPONSE_ADDRESS) {
-        setAccount(detail?.payload);
+        setAccount('cxee1fa51a14783577bc4b900c13579b9bcb0b55f5');
       }
     } else if (ledgerAccount) {
       setAccount(ledgerAccount?.address);

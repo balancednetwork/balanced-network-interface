@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
+// import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
@@ -11,9 +11,9 @@ import { Currency, CurrencyAmount, Token } from 'types/balanced-sdk-core';
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
-  if (!isEoaAddress(address)) {
-    throw Error(`Invalid 'address' parameter '${address}'.`);
-  }
+  // if (!isEoaAddress(address)) {
+  //   throw Error(`Invalid 'address' parameter '${address}'.`);
+  // }
   return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
 }
 

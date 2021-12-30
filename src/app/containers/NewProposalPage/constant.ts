@@ -95,10 +95,6 @@ export const RATIO_VALUE_FORMATTER = {
   },
 };
 
-const getKeyByValue = (value, mapping) => {
-  return Object.keys(mapping).find(key => mapping[key] === value);
-};
-
 export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: {
     fetchInputData: async () => {

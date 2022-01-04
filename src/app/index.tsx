@@ -10,7 +10,6 @@ import WalletModal from 'app/components/WalletModal';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import TransactionUpdater from 'store/transactions/updater';
 
-import { Airdrip } from './containers/Airdrip/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
 import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 import { ProposalPage } from './containers/ProposalPage/Loadable';
@@ -50,7 +49,6 @@ export function App() {
               <Route exact path="/" component={HomePage} />
               <Route exact path="/vote" component={VotePage} />
               <Route exact path="/trade" component={TradePage} />
-              <Route exact path="/airdrip" component={Airdrip} />
               <Route path="/vote/new-proposal" component={NewProposalPage} />
               <Route path="/vote/proposal/:id" component={ProposalPage} />
               <Route

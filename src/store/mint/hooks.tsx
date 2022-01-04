@@ -8,13 +8,11 @@ import bnJs from 'bnJs';
 import { isNativeCurrency } from 'constants/tokens';
 import { useQueuePair } from 'hooks/useQueuePair';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
-import { useBnJsContractQuery } from 'queries/utils';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useCurrencyBalances } from 'store/wallet/hooks';
 import { Currency, CurrencyAmount, Token, Percent, Price } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
-import { parseUnits } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, typeInput, selectCurrency } from './actions';
@@ -76,12 +74,6 @@ export function useMintActionHandlers(
     onFieldBInput,
     onSlide,
   };
-}
-
-export function useTotalSupply(token: Currency | undefined, pairId: number): CurrencyAmount<Token> | undefined {
-  const query = useBnJsContractQuery<string>(bnJs, 'Dex', 'totalSupply', [pairId]);
-  const { data } = query;
-  return token && data ? CurrencyAmount.fromRawAmount<Token>(token as Token, parseUnits(data)) : undefined;
 }
 
 const ZERO = JSBI.BigInt(0);

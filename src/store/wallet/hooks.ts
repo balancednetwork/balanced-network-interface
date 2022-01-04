@@ -232,7 +232,7 @@ export function useICXBalances(
 }
 
 export function useLiquidityTokenBalance(account: string | undefined | null, pair: Pair | undefined | null) {
-  const query = useBnJsContractQuery<string>(bnJs, 'Dex', 'balanceOf', [account, pair?.poolId]);
+  const query = useBnJsContractQuery<string>('Dex', 'balanceOf', [account, pair?.poolId]);
   const { data } = query;
   return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
 }

@@ -10,7 +10,7 @@ import styled, { useTheme, keyframes } from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
-import { ColumnCenter as Column } from 'app/components/Column';
+import Column from 'app/components/Column';
 import { DefaultLayout } from 'app/components/Layout';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';

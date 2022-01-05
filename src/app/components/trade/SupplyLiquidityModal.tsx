@@ -211,6 +211,30 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   const removingATxStatus: TransactionStatus | undefined = useTransactionStatus(removingTxs[Field.CURRENCY_A]);
   const removingBTxStatus: TransactionStatus | undefined = useTransactionStatus(removingTxs[Field.CURRENCY_B]);
 
+  React.useEffect(() => {
+    if (addingATxStatus === TransactionStatus.success) {
+      setRemovingTxs(state => ({ ...state, [Field.CURRENCY_A]: '' }));
+    }
+  }, [addingATxStatus]);
+
+  React.useEffect(() => {
+    if (removingATxStatus === TransactionStatus.success) {
+      setAddingTxs(state => ({ ...state, [Field.CURRENCY_A]: '' }));
+    }
+  }, [removingATxStatus]);
+
+  React.useEffect(() => {
+    if (addingBTxStatus === TransactionStatus.success) {
+      setRemovingTxs(state => ({ ...state, [Field.CURRENCY_B]: '' }));
+    }
+  }, [addingBTxStatus]);
+
+  React.useEffect(() => {
+    if (removingBTxStatus === TransactionStatus.success) {
+      setAddingTxs(state => ({ ...state, [Field.CURRENCY_B]: '' }));
+    }
+  }, [removingBTxStatus]);
+
   const [hasErrorMessage, setHasErrorMessage] = React.useState(false);
   const handleCancelSupply = () => {
     if (addingATxStatus === TransactionStatus.success || addingBTxStatus === TransactionStatus.success) {

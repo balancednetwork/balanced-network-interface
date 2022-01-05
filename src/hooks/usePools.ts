@@ -225,7 +225,9 @@ export function usePoolShare(poolId: number): Fraction {
 
   return React.useMemo(() => {
     if (balance && pool && JSBI.greaterThan(pool.total.quotient, BIGINT_ZERO)) {
-      const res = balance.balance.divide(pool.total);
+      const res = balance.stakedLPBalance
+        ? balance.balance.add(balance.stakedLPBalance).divide(pool.total)
+        : balance.balance.divide(pool.total);
       return new Fraction(res.numerator, res.denominator);
     }
 

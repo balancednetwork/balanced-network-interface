@@ -7,8 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
+import { useBalance } from 'hooks/usePools';
 import { AppState } from 'store';
-import { useBalance } from 'store/pool/hooks';
 import { CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 
 import { setStakedLPPercent, setWithdrawnValue } from './actions';

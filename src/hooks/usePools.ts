@@ -203,7 +203,14 @@ export function useAvailableBalances() {
     let t = {};
 
     Object.keys(balances)
-      .filter(poolId => balances[+poolId] && JSBI.greaterThan(balances[+poolId].balance.quotient, BIGINT_ZERO))
+      .filter(
+        poolId =>
+          balances[+poolId] &&
+          !(
+            JSBI.equal(balances[+poolId].balance.quotient, BIGINT_ZERO) &&
+            JSBI.equal(balances[+poolId].stakedLPBalance?.quotient || BIGINT_ZERO, BIGINT_ZERO)
+          ),
+      )
       .filter(poolId => +poolId !== BalancedJs.utils.POOL_IDS.sICXICX)
       .forEach(poolId => {
         t[poolId] = balances[+poolId];

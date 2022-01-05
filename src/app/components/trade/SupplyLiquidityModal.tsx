@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { isEmpty } from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
@@ -10,7 +9,7 @@ import { Button, TextButton } from 'app/components/Button';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import TickSrc from 'assets/icons/tick.svg';
+import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
@@ -41,20 +40,17 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   const { account } = useIconReact();
 
   const { currencyDeposits, pair } = useDerivedMintInfo();
-  const { [Field.CURRENCY_A]: baseDeposit, [Field.CURRENCY_B]: quoteDeposit } = currencyDeposits;
   const addTransaction = useTransactionAdder();
 
   const shouldLedgerSign = useShouldLedgerSign();
 
-  const [shouldSendAssetsA, updateShouldSendAssetsA] = React.useState(false);
-  const [shouldSendAssetsB, updateShouldSendAssetsB] = React.useState(false);
-
-  const [shouldRemoveAssetsA, updateShouldRemoveAssetsA] = React.useState(false);
-  const [shouldRemoveAssetsB, updateShouldRemoveAssetsB] = React.useState(false);
-
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
+  const [shouldAddAssets, setShouldAddAssets] = React.useState({
+    [Field.CURRENCY_A]: false,
+    [Field.CURRENCY_B]: false,
+  });
 
   const handleAdd = (field: Field) => async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -63,11 +59,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
-        if (field === Field.CURRENCY_A) {
-          updateShouldSendAssetsA(true);
-        } else if (field === Field.CURRENCY_B) {
-          updateShouldSendAssetsB(true);
-        }
+        setShouldAddAssets({ ...shouldAddAssets, [field]: true });
       }
 
       const res: any = await bnJs
@@ -86,19 +78,18 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       setAddingTxs(state => ({ ...state, [field]: res.result }));
     } catch (error) {
       console.error('error', error);
-      setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
+      setAddingTxs(state => ({ ...state, [field]: '' }));
     } finally {
-      if (field === Field.CURRENCY_A) {
-        updateShouldSendAssetsA(false);
-      } else if (field === Field.CURRENCY_B) {
-        updateShouldSendAssetsB(false);
-      }
-
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+      setShouldAddAssets({ ...shouldAddAssets, [field]: false });
     }
   };
 
   const [removingTxs, setRemovingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
+  const [shouldRemoveAssets, setShouldRemoveAssets] = React.useState({
+    [Field.CURRENCY_A]: false,
+    [Field.CURRENCY_B]: false,
+  });
 
   const handleRemove = (field: Field, amountWithdraw?: CurrencyAmount<Currency>) => async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -107,11 +98,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
     try {
       if (bnJs.contractSettings.ledgerSettings.actived) {
-        if (field === Field.CURRENCY_A) {
-          updateShouldRemoveAssetsA(true);
-        } else if (field === Field.CURRENCY_B) {
-          updateShouldRemoveAssetsB(true);
-        }
+        setShouldRemoveAssets({ ...shouldRemoveAssets, [field]: true });
       }
 
       const res: any = await bnJs.inject({ account }).Dex.withdraw(token.address, toHex(amountWithdraw));
@@ -126,14 +113,10 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       setRemovingTxs(state => ({ ...state, [field]: res.result }));
     } catch (error) {
       console.error('error', error);
-      //setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
+      setRemovingTxs(state => ({ ...state, [field]: '' }));
     } finally {
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-      if (field === Field.CURRENCY_A) {
-        updateShouldRemoveAssetsA(false);
-      } else if (field === Field.CURRENCY_B) {
-        updateShouldRemoveAssetsB(false);
-      }
+      setShouldRemoveAssets({ ...shouldRemoveAssets, [field]: false });
     }
   };
 
@@ -178,7 +161,12 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       const quoteToken = currencies[Field.CURRENCY_B] as Token;
       bnJs
         .inject({ account })
-        .Dex.add(baseToken.address, quoteToken.address, toHex(baseDeposit), toHex(quoteDeposit))
+        .Dex.add(
+          baseToken.address,
+          quoteToken.address,
+          toHex(currencyDeposits[Field.CURRENCY_A]),
+          toHex(currencyDeposits[Field.CURRENCY_B]),
+        )
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
@@ -217,72 +205,44 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     }
   }, [isOpen, pair]);
 
-  const addingATxStatus: TransactionStatus = useTransactionStatus(addingTxs[Field.CURRENCY_A]);
-  const addingBTxStatus: TransactionStatus = useTransactionStatus(addingTxs[Field.CURRENCY_B]);
+  const addingATxStatus: TransactionStatus | undefined = useTransactionStatus(addingTxs[Field.CURRENCY_A]);
+  const addingBTxStatus: TransactionStatus | undefined = useTransactionStatus(addingTxs[Field.CURRENCY_B]);
 
-  const removingATxStatus: TransactionStatus = useTransactionStatus(removingTxs[Field.CURRENCY_A]);
-  const removingBTxStatus: TransactionStatus = useTransactionStatus(removingTxs[Field.CURRENCY_B]);
-
-  React.useEffect(() => {
-    if (addingATxStatus === TransactionStatus.success) {
-      setRemovingTxs(state => ({ ...state, [Field.CURRENCY_A]: '' }));
-    }
-  }, [addingATxStatus]);
-
-  React.useEffect(() => {
-    if (removingATxStatus === TransactionStatus.success) {
-      setAddingTxs(state => ({ ...state, [Field.CURRENCY_A]: '' }));
-    }
-  }, [removingATxStatus]);
-
-  React.useEffect(() => {
-    if (addingBTxStatus === TransactionStatus.success) {
-      setRemovingTxs(state => ({ ...state, [Field.CURRENCY_B]: '' }));
-    }
-  }, [addingBTxStatus]);
-
-  React.useEffect(() => {
-    if (removingBTxStatus === TransactionStatus.success) {
-      setAddingTxs(state => ({ ...state, [Field.CURRENCY_B]: '' }));
-    }
-  }, [removingBTxStatus]);
-
-  const [hasErrorMessage, setHasErrorMessage] = React.useState(false);
-  const handleCancelSupply = () => {
-    if (addingATxStatus === TransactionStatus.success || addingBTxStatus === TransactionStatus.success) {
-      setHasErrorMessage(true);
-    } else {
-      onClose();
-    }
-    changeShouldLedgerSign(false);
-  };
+  const removingATxStatus: TransactionStatus | undefined = useTransactionStatus(removingTxs[Field.CURRENCY_A]);
+  const removingBTxStatus: TransactionStatus | undefined = useTransactionStatus(removingTxs[Field.CURRENCY_B]);
 
   const isQueue = !!(pair && pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX);
 
   const isEnabled = isQueue
     ? true
-    : (addingATxStatus === TransactionStatus.success && addingBTxStatus === TransactionStatus.success) ||
-      (baseDeposit?.greaterThan(0) && quoteDeposit?.greaterThan(0));
+    : !!currencyDeposits[Field.CURRENCY_A]?.greaterThan(0) && !!currencyDeposits[Field.CURRENCY_B]?.greaterThan(0);
 
-  const isInitialValueA = addingTxs[Field.CURRENCY_A] === '' && removingTxs[Field.CURRENCY_A] === '';
-  const isInitialWithdrawA =
-    addingTxs[Field.CURRENCY_A] === '' && removingTxs[Field.CURRENCY_A] !== '' && baseDeposit?.greaterThan(0);
-  const isPendingA = addingATxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_A] === '';
-  const isFailureA = addingATxStatus === TransactionStatus.failure && removingTxs[Field.CURRENCY_A] === '';
-  const isRemoveSuccessA = removingATxStatus === TransactionStatus.success;
-  const shouldShowSendBtnA = isInitialValueA || isPendingA || isFailureA || isRemoveSuccessA || isInitialWithdrawA;
-  const shouldShowSendA = isEmpty(addingTxs[Field.CURRENCY_A]) || isFailureA;
-  const shouldShowRemoveA = isEmpty(removingTxs[Field.CURRENCY_A]);
+  const UIStatus = {
+    [Field.CURRENCY_A]: {
+      shouldSend: !!!currencyDeposits[Field.CURRENCY_A]?.greaterThan(0),
+      // isAddPending: !!addingTxs[Field.CURRENCY_A],
+      isAddPending: addingATxStatus === TransactionStatus.pending,
+      // isRemovePending: !!removingTxs[Field.CURRENCY_A],
+      isRemovePending: removingATxStatus === TransactionStatus.pending,
+    },
+    [Field.CURRENCY_B]: {
+      shouldSend: !!!currencyDeposits[Field.CURRENCY_B]?.greaterThan(0),
+      // isAddPending: !!addingTxs[Field.CURRENCY_B],
+      isAddPending: addingBTxStatus === TransactionStatus.pending,
+      // isRemovePending: !!removingTxs[Field.CURRENCY_B],
+      isRemovePending: removingBTxStatus === TransactionStatus.pending,
+    },
+  };
 
-  const isInitialValueB = addingTxs[Field.CURRENCY_B] === '' && removingTxs[Field.CURRENCY_B] === '';
-  const isInitialWithdrawB =
-    addingTxs[Field.CURRENCY_B] === '' && removingTxs[Field.CURRENCY_B] !== '' && quoteDeposit?.greaterThan(0);
-  const isPendingB = addingBTxStatus === TransactionStatus.pending && removingTxs[Field.CURRENCY_B] === '';
-  const isFailureB = addingBTxStatus === TransactionStatus.failure && removingTxs[Field.CURRENCY_B] === '';
-  const isRemoveSuccessB = removingBTxStatus === TransactionStatus.success;
-  const shouldShowSendBtnB = isInitialValueB || isPendingB || isFailureB || isRemoveSuccessB || isInitialWithdrawB;
-  const shouldShowSendB = isEmpty(addingTxs[Field.CURRENCY_B]) || isFailureB;
-  const shouldShowRemoveB = isEmpty(removingTxs[Field.CURRENCY_B]);
+  const [hasErrorMessage, setHasErrorMessage] = React.useState(false);
+  const handleCancelSupply = () => {
+    if (UIStatus[Field.CURRENCY_A].shouldSend && UIStatus[Field.CURRENCY_B].shouldSend) {
+      onClose();
+    } else {
+      setHasErrorMessage(true);
+    }
+    changeShouldLedgerSign(false);
+  };
 
   const hasEnoughICX = useHasEnoughICX();
 
@@ -309,63 +269,43 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                 Assets to send
               </Typography>
 
-              {shouldShowSendBtnA ? (
-                <>
-                  <Typography variant="p" fontWeight="bold" textAlign="center">
-                    {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {currencies[Field.CURRENCY_A]?.symbol}
-                  </Typography>
-                  {shouldSendAssetsA && (
+              {[Field.CURRENCY_A, Field.CURRENCY_B].map((field: Field) => (
+                <Box key={field} my={1}>
+                  {UIStatus[field].shouldSend ? (
                     <>
-                      <Spinner></Spinner>
-                      <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                        Confirm the transaction on your Ledger.
+                      <Typography variant="p" fontWeight="bold" textAlign="center">
+                        {parsedAmounts[field]?.toSignificant(4)} {currencies[field]?.symbol}
                       </Typography>
+                      {shouldAddAssets[field] && (
+                        <>
+                          <Spinner></Spinner>
+                          <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                            Confirm the transaction on your Ledger.
+                          </Typography>
+                        </>
+                      )}
+                      {!shouldAddAssets[field] && (
+                        <>
+                          <SupplyButton
+                            disabled={
+                              UIStatus[field].isAddPending ||
+                              shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                            }
+                            mt={2}
+                            onClick={handleAdd(field)}
+                          >
+                            {!UIStatus[field].isAddPending ? 'Send' : 'Sending'}
+                          </SupplyButton>
+                        </>
+                      )}
                     </>
+                  ) : (
+                    <CheckIconWrapper>
+                      <CheckIcon />
+                    </CheckIconWrapper>
                   )}
-                  {!shouldSendAssetsA && (
-                    <>
-                      <SupplyButton
-                        disabled={!shouldShowSendA || shouldSendAssetsB}
-                        mt={2}
-                        onClick={handleAdd(Field.CURRENCY_A)}
-                      >
-                        {shouldShowSendA ? 'Send' : 'Sending'}
-                      </SupplyButton>
-                    </>
-                  )}
-                </>
-              ) : (
-                <TickImg src={TickSrc} />
-              )}
-
-              {shouldShowSendBtnB ? (
-                <>
-                  <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
-                    {parsedAmounts[Field.CURRENCY_B]?.toSignificant(4)} {currencies[Field.CURRENCY_B]?.symbol}
-                  </Typography>
-                  {shouldSendAssetsB && (
-                    <>
-                      <Spinner></Spinner>
-                      <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                        Confirm the transaction on your Ledger.
-                      </Typography>
-                    </>
-                  )}
-                  {!shouldSendAssetsB && (
-                    <>
-                      <SupplyButton
-                        disabled={!shouldShowSendB || shouldSendAssetsA}
-                        mt={2}
-                        onClick={handleAdd(Field.CURRENCY_B)}
-                      >
-                        {shouldShowSendB ? 'Send' : 'Sending'}
-                      </SupplyButton>
-                    </>
-                  )}
-                </>
-              ) : (
-                <TickImg src={TickSrc} style={{ marginTop: '15px' }} />
-              )}
+                </Box>
+              ))}
             </StyledDL>
           </Box>
           <Box width={1 / 2}>
@@ -374,69 +314,47 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                 In contract
               </Typography>
 
-              {!baseDeposit || (baseDeposit && baseDeposit?.equalTo(0)) ? (
-                <>
-                  <StyledEmpty>-</StyledEmpty>
-                </>
-              ) : (
-                <>
-                  <Typography variant="p" fontWeight="bold" textAlign="center">
-                    {baseDeposit?.toSignificant(6)} {currencies[Field.CURRENCY_A]?.symbol}
-                  </Typography>
-                  {shouldRemoveAssetsA && (
+              {[Field.CURRENCY_A, Field.CURRENCY_B].map((field: Field) => (
+                <Box key={field} my={1}>
+                  {UIStatus[field].shouldSend ? (
                     <>
-                      <Spinner></Spinner>
-                      <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                        Confirm the transaction on your Ledger.
+                      <StyledEmpty>-</StyledEmpty>
+                    </>
+                  ) : (
+                    <>
+                      <Typography variant="p" fontWeight="bold" textAlign="center">
+                        {currencyDeposits[field]?.toSignificant(6)} {currencies[field]?.symbol}
                       </Typography>
+                      {shouldRemoveAssets[field] && (
+                        <>
+                          <Spinner></Spinner>
+                          <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                            Confirm the transaction on your Ledger.
+                          </Typography>
+                        </>
+                      )}
+                      {!shouldRemoveAssets[field] && (
+                        <RemoveButton
+                          disabled={
+                            UIStatus[field].isRemovePending ||
+                            shouldRemoveAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                          }
+                          mt={2}
+                          onClick={handleRemove(field, currencyDeposits[field])}
+                        >
+                          {!UIStatus[field].isRemovePending ? 'Remove' : 'Removing'}
+                        </RemoveButton>
+                      )}
                     </>
                   )}
-                  {!shouldRemoveAssetsA && (
-                    <RemoveButton
-                      disabled={!shouldShowRemoveA || shouldRemoveAssetsB}
-                      mt={2}
-                      onClick={handleRemove(Field.CURRENCY_A, baseDeposit)}
-                    >
-                      {shouldShowRemoveA ? 'Remove' : 'Removing'}
-                    </RemoveButton>
-                  )}
-                </>
-              )}
-
-              {!quoteDeposit || (quoteDeposit && quoteDeposit?.equalTo(0)) ? (
-                <>
-                  <StyledEmpty style={{ marginTop: '10px' }}>-</StyledEmpty>
-                </>
-              ) : (
-                <>
-                  <Typography mt={2} variant="p" fontWeight="bold" textAlign="center">
-                    {quoteDeposit?.toSignificant(6)} {currencies[Field.CURRENCY_B]?.symbol}
-                  </Typography>
-                  {shouldRemoveAssetsB && (
-                    <>
-                      <Spinner></Spinner>
-                      <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                        Confirm the transaction on your Ledger.
-                      </Typography>
-                    </>
-                  )}
-                  {!shouldRemoveAssetsB && (
-                    <RemoveButton
-                      disabled={!shouldShowRemoveB || shouldRemoveAssetsA}
-                      mt={2}
-                      onClick={handleRemove(Field.CURRENCY_B, quoteDeposit)}
-                    >
-                      {shouldShowRemoveB ? 'Remove' : 'Removing'}
-                    </RemoveButton>
-                  )}
-                </>
-              )}
+                </Box>
+              ))}
             </StyledDL>
           </Box>
         </Flex>
         <Flex alignItems="center" hidden={!isQueue}>
           <Box width={1}>
-            <Typography fontWeight="bold" textAlign={isQueue ? 'center' : 'right'}  fontSize="20px" as="h3">
+            <Typography fontWeight="bold" textAlign={isQueue ? 'center' : 'right'} fontSize="20px" as="h3">
               {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {currencies[Field.CURRENCY_A]?.symbol}
             </Typography>
             <Typography mt={2} textAlign="center">
@@ -509,7 +427,7 @@ const StyledEmpty = styled.dl`
   text-align: center;
 `;
 
-const TickImg = styled.img`
+const CheckIconWrapper = styled.div`
   padding-top: 16px;
   padding-bottom: 16px;
   display: block;

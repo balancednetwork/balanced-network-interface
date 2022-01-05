@@ -132,8 +132,6 @@ export function usePools(): { [poolId: number]: PoolState } {
 interface BalanceState {
   balance: CurrencyAmount<Token>;
   balance1?: CurrencyAmount<Token>;
-  suppliedLP?: CurrencyAmount<Token>;
-  stakedLPBalance?: CurrencyAmount<Token>;
 }
 
 export function useBalances(): { [poolId: number]: BalanceState } {
@@ -164,19 +162,10 @@ export function useBalances(): { [poolId: number]: BalanceState } {
               balance1: CurrencyAmount.fromRawAmount(pool.baseToken, new BigNumber(balance1, 16).toFixed()),
             };
           } else {
-            const [balance, totalSupply, stakedLPBalance] = await Promise.all([
-              bnJs.Dex.balanceOf(account, +poolId),
-              bnJs.Dex.totalSupply(+poolId),
-              bnJs.StakedLP.balanceOf(account, +poolId),
-            ]);
+            const balance = await bnJs.Dex.balanceOf(account, +poolId);
 
             return {
               balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance, 16).toFixed()),
-              suppliedLP: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(totalSupply, 16).toFixed()),
-              stakedLPBalance: CurrencyAmount.fromRawAmount(
-                pool.liquidityToken,
-                new BigNumber(stakedLPBalance, 16).toFixed(),
-              ),
             };
           }
         }),
@@ -203,14 +192,7 @@ export function useAvailableBalances() {
     let t = {};
 
     Object.keys(balances)
-      .filter(
-        poolId =>
-          balances[+poolId] &&
-          !(
-            JSBI.equal(balances[+poolId].balance.quotient, BIGINT_ZERO) &&
-            JSBI.equal(balances[+poolId].stakedLPBalance?.quotient || BIGINT_ZERO, BIGINT_ZERO)
-          ),
-      )
+      .filter(poolId => balances[+poolId] && JSBI.greaterThan(balances[+poolId].balance.quotient, BIGINT_ZERO))
       .filter(poolId => +poolId !== BalancedJs.utils.POOL_IDS.sICXICX)
       .forEach(poolId => {
         t[poolId] = balances[+poolId];
@@ -232,9 +214,7 @@ export function usePoolShare(poolId: number): Fraction {
 
   return React.useMemo(() => {
     if (balance && pool && JSBI.greaterThan(pool.total.quotient, BIGINT_ZERO)) {
-      const res = balance.stakedLPBalance
-        ? balance.balance.add(balance.stakedLPBalance).divide(pool.total)
-        : balance.balance.divide(pool.total);
+      const res = balance.balance.divide(pool.total);
       return new Fraction(res.numerator, res.denominator);
     }
 
@@ -285,13 +265,10 @@ export function usePoolData(poolId: number) {
         totalBase: pool.base,
         totalQuote: pool.quote,
         totalReward: rewardFraction,
-        totalLP: balance?.balance,
-        suppliedLP: balance?.suppliedLP,
         suppliedBase: balance?.base,
         suppliedQuote: balance?.quote,
         suppliedReward: poolShare.multiply(rewardFraction),
         poolShare,
-        stakedLPBalance: balance?.stakedLPBalance,
       };
     }
   }, [pool, balance, reward, poolShare]);

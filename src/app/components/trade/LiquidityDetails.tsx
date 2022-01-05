@@ -21,10 +21,10 @@ import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { ZERO } from 'constants/index';
-import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
+import { BIGINT_ZERO, FRACTION_ZERO , FRACTION_ONE } from 'constants/misc';
+import { useBalance, usePool, usePoolData, useAvailableBalances, pairToken } from 'hooks/usePools';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
-import { useBalance, usePool, usePoolData, useAvailableBalances, pairToken } from 'store/pool/hooks';
 import { useChangeWithdrawnValue, useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -586,11 +586,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
   const percent = new Percent(Math.floor(portion * 100), 10_000);
   const stakedLPPercent = useStakedLPPercent(poolId);
   const availablePercent = new BigNumber(100).minus(stakedLPPercent).abs();
-  // new Percent(new BigNumber(100).minus(stakedLPPercent).toFixed(), 1);
-  // const availableBase = new BigNumber(lpBalance?.base.toFixed() || 0).multipliedBy(availablePercent).dividedBy(100);
   const availableBase = lpBalance?.base.multiply(availablePercent.toFixed(0)).divide(100);
-
-  // const availableQuote = new BigNumber(lpBalance?.quote.toFixed() || 0).multipliedBy(availablePercent).dividedBy(100);
   const availableQuote = lpBalance?.quote.multiply(availablePercent.toFixed(0)).divide(100);
 
   if (inputType === 'slider') {
@@ -765,9 +761,6 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
           {`Available: 
             ${availableCurrency(parsedAmount[Field.CURRENCY_A], availableBase)} ${pool?.baseToken?.symbol || '...'} /
             ${availableCurrency(parsedAmount[Field.CURRENCY_B], availableQuote)} ${pool?.quoteToken?.symbol || '...'}`}
-          {/* {`Wallet: 
-            ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pool?.baseToken?.symbol || '...'} /
-            ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pool?.quoteToken?.symbol || '...'}`} */}
         </Typography>
         <Box mb={5}>
           <Nouislider

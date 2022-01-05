@@ -142,13 +142,8 @@ export const useHasNetworkFees = () => {
   React.useEffect(() => {
     const checkIfHasNetworkFees = async () => {
       if (account) {
-        const [hasLP1, hasLP2, balnDetails] = await Promise.all([
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNsICX),
-          bnJs.BALN.detailsBalanceOf(account),
-        ]);
-
-        if (Number(hasLP1) || Number(hasLP2) || Number(balnDetails['Staked balance'])) setHasNetworkFees(true);
+        const balnDetails = await bnJs.BALN.detailsBalanceOf(account);
+        if (Number(balnDetails['Staked balance'])) setHasNetworkFees(true);
         else setHasNetworkFees(false);
       }
     };

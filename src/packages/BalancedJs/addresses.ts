@@ -55,6 +55,7 @@ const SEJONG_ADDRESSES = {
   baln: 'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b',
   bwt: 'cx68b822ae2acc76e9ec6143a8afbeb79e50a26e8f',
   stakedLp: 'cx0c3848f0fbb714fcb104e909e3fc1250b8cf9e7f',
+  fin: 'cx0d0c689da98fd4ca66a5695fd8581648def604eb',
 };
 
 const addresses = {

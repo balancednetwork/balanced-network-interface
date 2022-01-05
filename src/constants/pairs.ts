@@ -24,6 +24,7 @@ import {
   ICX_SEJONG,
   bnUSD_SEJONG,
   BALN_SEJONG,
+  FIN_SEJONG,
 } from 'constants/tokens';
 import { Token } from 'types/balanced-sdk-core';
 
@@ -317,6 +318,15 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       baseToken: BALN_SEJONG,
       quoteToken: sICX_SEJONG,
       rewards: 0.1,
+    },
+    {
+      chainId: 83,
+      id: 19,
+      name: 'FIN/BnUSD',
+      baseCurrencyKey: 'FIN',
+      quoteCurrencyKey: 'BnUSD',
+      baseToken: FIN_SEJONG,
+      quoteToken: bnUSD_SEJONG,
     },
   ],
 };

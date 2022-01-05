@@ -183,6 +183,13 @@ export const BALN_SEJONG = new Token(
   'BALN',
   'Balance Token',
 );
+export const FIN_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cx0d0c689da98fd4ca66a5695fd8581648def604eb',
+  18,
+  'FIN',
+  'Fin Token',
+);
 export const IUSDC_SEJONG = new Token(
   SupportedChainId.SEJONG,
   'cxb2c075e9130440dd64e6bfd3fe09e5c629f6e183',
@@ -212,7 +219,7 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
     CFT_YEOUIDO,
   ],
   //[SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, IUSDC_SEJONG],
-  [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, OMM_SEJONG],
+  [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, OMM_SEJONG, FIN_SEJONG],
 };
 
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];

@@ -69,5 +69,6 @@ export const addressToCurrencyKeyMap = {
     cx303470dbc10e5b4ab8831a61dbe00f75db10c38b: 'BALN',
     cxb94c0da9a8e650cc09b2f6b1bbfaa957ab47ec4c: 'OMM',
     cx0000000000000000000000000000000000000000: 'ICX',
+    cx0d0c689da98fd4ca66a5695fd8581648def604eb: 'FIN',
   },
 };

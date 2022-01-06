@@ -21,14 +21,14 @@ import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { ZERO } from 'constants/index';
-import { BIGINT_ZERO, FRACTION_ZERO , FRACTION_ONE } from 'constants/misc';
+import { BIGINT_ZERO, FRACTION_ZERO, FRACTION_ONE } from 'constants/misc';
 import { useBalance, usePool, usePoolData, useAvailableBalances, pairToken } from 'hooks/usePools';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useChangeWithdrawnValue, useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
+import { useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
 import { Currency, CurrencyAmount, Fraction, Percent } from 'types/balanced-sdk-core';
 import { multiplyCABN, toHex } from 'utils';
@@ -555,10 +555,10 @@ const Wrapper = styled(Flex)`
 const Withdraw = ({ poolId }: { poolId: number }) => {
   const { account } = useIconReact();
   const pool = usePool(poolId);
-  const balances = useCurrencyBalances(
-    account ?? undefined,
-    useMemo(() => [pool?.baseToken, pool?.quoteToken], [pool]),
-  );
+  // const balances = useCurrencyBalances(
+  //   account ?? undefined,
+  //   useMemo(() => [pool?.baseToken, pool?.quoteToken], [pool]),
+  // );
   const lpBalance = useBalance(poolId);
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -583,7 +583,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
 
   let parsedAmount: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
 
-  const percent = new Percent(Math.floor(portion * 100), 10_000);
+  const percent = useMemo(() => new Percent(Math.floor(portion * 100), 10_000), [portion]);
   const stakedLPPercent = useStakedLPPercent(poolId);
   const availablePercent = new BigNumber(100).minus(stakedLPPercent).abs();
   const availableBase = lpBalance?.base.multiply(availablePercent.toFixed(0)).divide(100);
@@ -649,7 +649,7 @@ const Withdraw = ({ poolId }: { poolId: number }) => {
         availableBase.multiply(percent),
         availableQuote.multiply(percent),
       );
-  }, [portion, availableQuote, availableBase, poolId]);
+  }, [onChangeWithdrawnValue, percent, portion, availableQuote, availableBase, poolId]);
 
   const sliderInstance = React.useRef<any>(null);
 

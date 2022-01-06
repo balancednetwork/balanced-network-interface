@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
+import addresses from 'packages/BalancedJs/addresses';
+import { useIconReact } from 'packages/icon-react';
 import styled from 'styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
@@ -88,18 +90,17 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   const balancesMap = {};
   balanceList.forEach(balance => (balancesMap[balance.symbol] = balance.amount));
 
+  const { networkId } = useIconReact();
   return (
     <BoxPanel>
       <StyledAddressInputPanel value={currencyValue.recipient} onUserInput={handleAddressInput} bg="bg5" />
       {Object.values(currencyValue.amounts).map((item, id) => (
         <StyledCurrencyInputPanel
+          account={addresses[networkId].daofund}
           key={id}
-          // currencyList={[item.symbol, ...currencyList]}
-          balanceList={balancesMap}
           value={item.amount}
           currency={getTokenFromCurrencyKey(item.symbol)!}
           id="funding-currency"
-          showMaxButton={false}
           onCurrencySelect={handleSymbolInput(id)}
           onUserInput={handleAmountInput(id)}
           bg="bg5"

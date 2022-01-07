@@ -21,7 +21,7 @@ export const Button = styled(RebassButton)`
 
   &:disabled {
     background: rgba(255, 255, 255, 0.15);
-    cursor: not-allowed;
+    cursor: default;
     pointer-events: none;
   }
 

@@ -1,22 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
-import { Currency } from 'types/balanced-sdk-core';
-
-import { Field, resetMintState, typeInput, selectCurrency } from './actions';
+import { Field, resetMintState, typeInput } from './actions';
 
 export interface MintState {
   readonly independentField: Field;
   readonly typedValue: string;
   readonly otherTypedValue: string; // for the case when there's no liquidity
   readonly inputType: string; // for the case when there's no liquidity
-  readonly [Field.CURRENCY_A]: {
-    readonly currency: Currency | undefined;
-    readonly percent: number;
-  };
-  readonly [Field.CURRENCY_B]: {
-    readonly currency: Currency | undefined;
-  };
 }
 
 const initialState: MintState = {
@@ -24,13 +14,6 @@ const initialState: MintState = {
   typedValue: '',
   otherTypedValue: '',
   inputType: 'text',
-  [Field.CURRENCY_A]: {
-    currency: SUPPORTED_TOKENS_LIST[3],
-    percent: 0,
-  },
-  [Field.CURRENCY_B]: {
-    currency: SUPPORTED_TOKENS_LIST[1],
-  },
 };
 
 export default createReducer<MintState>(initialState, builder =>
@@ -44,7 +27,7 @@ export default createReducer<MintState>(initialState, builder =>
             ...state,
             independentField: field,
             typedValue,
-            inputType,
+            inputType: inputType,
           };
         }
         // they're typing into a new field, store the other value
@@ -54,7 +37,7 @@ export default createReducer<MintState>(initialState, builder =>
             independentField: field,
             typedValue,
             otherTypedValue: state.typedValue,
-            inputType,
+            inputType: inputType,
           };
         }
       } else {
@@ -63,26 +46,7 @@ export default createReducer<MintState>(initialState, builder =>
           independentField: field,
           typedValue,
           otherTypedValue: '',
-          inputType,
-        };
-      }
-    })
-    .addCase(selectCurrency, (state, { payload: { currency, field } }) => {
-      const otherField = field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
-
-      if (currency === state[otherField].currency) {
-        // the case where we have to swap the order
-        return {
-          ...state,
-          independentField: state.independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A,
-          [field]: { ...state[field], currency: currency, percent: 0 },
-          [otherField]: { ...state[otherField], currency: state[field].currency, percent: 0 },
-        };
-      } else {
-        // the normal case
-        return {
-          ...state,
-          [field]: { ...state[field], currency: currency, percent: 0 },
+          inputType: inputType,
         };
       }
     }),

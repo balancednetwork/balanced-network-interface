@@ -5,30 +5,6 @@ import addresses from '../addresses';
 import { Contract } from './contract';
 
 export default class IRC2 extends Contract {
-  name() {
-    const callParams = this.paramsBuilder({
-      method: 'name',
-    });
-
-    return this.call(callParams);
-  }
-
-  symbol() {
-    const callParams = this.paramsBuilder({
-      method: 'symbol',
-    });
-
-    return this.call(callParams);
-  }
-
-  decimals() {
-    const callParams = this.paramsBuilder({
-      method: 'decimals',
-    });
-
-    return this.call(callParams);
-  }
-
   balanceOf(owner: string) {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',

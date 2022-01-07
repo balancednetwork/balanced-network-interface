@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 
+import { Slash } from 'react-feather';
 import { ImageProps } from 'rebass';
 import { useTheme } from 'styled-components';
-
-import DefaultImg from 'assets/images/default.png';
 
 const BAD_SRCS: { [tokenAddress: string]: true } = {};
 
@@ -36,5 +35,5 @@ export default function Logo({ srcs, alt, style, ...rest }: LogoProps) {
     );
   }
 
-  return <img src={DefaultImg} alt="" {...rest} style={{ ...style, color: theme.colors.white }} />;
+  return <Slash {...rest} style={{ ...style, color: theme.colors.bg4 }} />;
 }

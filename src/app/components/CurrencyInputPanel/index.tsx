@@ -1,18 +1,20 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
+import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { SelectorPopover } from 'app/components/Popover';
+import { List, ListItem, DashGrid, HeaderText, DataText, HorizontalList, Option } from 'app/components/List';
+import { PopperWithoutArrow, SelectorPopover } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import useWidth from 'hooks/useWidth';
 import { COMMON_PERCENTS } from 'store/swap/actions';
+import { useWalletBalances } from 'store/wallet/hooks';
 import { Currency } from 'types/balanced-sdk-core';
 import { escapeRegExp } from 'utils';
-
-import { HorizontalList, Option } from '../List';
-import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -25,7 +27,7 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
   border-right: ${({ theme }) => `1px solid ${theme.colors.divider}`};
   display: flex;
   align-items: center;
-  min-width: 128px;
+  width: 128px;
   height: 43px;
   padding: 4px 15px;
   color: #ffffff;
@@ -83,6 +85,8 @@ interface CurrencyInputPanelProps {
   value: string;
   onUserInput: (value: string) => void;
   onMax?: () => void;
+  showMaxButton: boolean;
+  label?: string;
   onCurrencySelect?: (currency: Currency) => void;
   currency?: Currency | null;
   onPercentSelect?: (percent: number) => void;
@@ -97,7 +101,7 @@ interface CurrencyInputPanelProps {
   bg?: string;
   placeholder?: string;
   className?: string;
-  account?: string | null;
+  balanceList?: { [key: string]: BigNumber };
 }
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -106,6 +110,8 @@ export default function CurrencyInputPanel({
   value,
   onUserInput,
   onMax,
+  showMaxButton,
+  label = 'Input',
   onCurrencySelect,
   currency,
   onPercentSelect,
@@ -120,7 +126,7 @@ export default function CurrencyInputPanel({
   bg = 'bg2',
   placeholder = '0',
   className,
-  account,
+  balanceList,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -129,10 +135,21 @@ export default function CurrencyInputPanel({
   };
 
   const [ref, width] = useWidth();
+  //
+  const handleCurrencySelect = (ccy: Currency) => (e: React.MouseEvent) => {
+    onCurrencySelect && onCurrencySelect(ccy);
+    setOpen(false);
+  };
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
     onPercentSelect && onPercentSelect(instant);
   };
+
+  // React.useEffect(() => {
+  //   if (currency && currencyList.indexOf(currency) === -1) {
+  //     onCurrencySelect && onCurrencySelect(currencyList[0]);
+  //   }
+  // }, [currency, onCurrencySelect, currencyList]);
 
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
@@ -140,39 +157,41 @@ export default function CurrencyInputPanel({
     }
   };
 
-  const handleDismiss = () => {
-    setOpen(false);
-  };
+  const balances = useWalletBalances();
+  const balanceList1 = balanceList || balances;
 
   return (
     <InputContainer ref={ref} className={className}>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
-        <div>
-          <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
-            {currency ? (
-              <>
-                <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
-                <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
-              </>
-            ) : (
-              <StyledTokenName>Select a token</StyledTokenName>
-            )}
-            {onCurrencySelect && <StyledDropDown selected={!!currency} />}
-          </CurrencySelect>
+        <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
+          {currency && <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />}
+          {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
+          {onCurrencySelect && <StyledDropDown selected={!!currency} />}
 
           {onCurrencySelect && (
-            <CurrencySearchModal
-              account={account}
-              isOpen={open}
-              onDismiss={handleDismiss}
-              onCurrencySelect={onCurrencySelect}
-              showCommonBases={showCommonBases}
-              showCurrencyAmount={false}
-              anchorEl={ref.current}
-              width={width ? width + 40 : undefined}
-            />
+            <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom" offset={[0, 2]}>
+              <List style={{ width: width }}>
+                <DashGrid>
+                  <HeaderText>Asset</HeaderText>
+                  <HeaderText textAlign="right">{balanceList ? 'Balance' : 'Wallet'}</HeaderText>
+                </DashGrid>
+                {SUPPORTED_TOKENS_LIST.map(ccy => (
+                  <ListItem key={ccy.symbol} onClick={handleCurrencySelect(ccy)}>
+                    <Flex>
+                      <CurrencyLogo currency={ccy} style={{ marginRight: '8px' }} />
+                      <DataText variant="p" fontWeight="bold">
+                        {ccy?.symbol}
+                      </DataText>
+                    </Flex>
+                    <DataText variant="p" textAlign="right">
+                      {balanceList1[ccy?.symbol!]?.dp(2).toFormat()}
+                    </DataText>
+                  </ListItem>
+                ))}
+              </List>
+            </PopperWithoutArrow>
           )}
-        </div>
+        </CurrencySelect>
       </ClickAwayListener>
 
       <NumberInput

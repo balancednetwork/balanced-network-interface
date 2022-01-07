@@ -1,169 +1,167 @@
 import React, { useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
-import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
-import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
-import { PairState } from 'hooks/useV2Pairs';
-import { useAllPairsAPY } from 'queries/reward';
-import { Field } from 'store/mint/actions';
-import { useDerivedMintInfo } from 'store/mint/hooks';
-import { useReward } from 'store/reward/hooks';
-import { useLiquidityTokenBalance } from 'store/wallet/hooks';
-import { formatBigNumber } from 'utils';
+import { usePoolPair, usePoolData } from 'store/pool/hooks';
+import { formatBigNumber, getPairName } from 'utils';
 
-export default function LPDescription() {
-  const { currencies, pair, pairState } = useDerivedMintInfo();
-  const { account } = useIconReact();
-  const userPoolBalance = useLiquidityTokenBalance(account, pair);
-  const totalPoolTokens = pair?.totalSupply;
-  const [token0Deposited, token1Deposited] =
-    !!pair &&
-    !!totalPoolTokens &&
-    !!userPoolBalance &&
-    // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
-    JSBI.greaterThanOrEqual(totalPoolTokens.quotient, userPoolBalance.quotient)
-      ? [
-          pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false),
-          pair.getLiquidityValue(pair.token1, totalPoolTokens, userPoolBalance, false),
-        ]
-      : [undefined, undefined];
+import { Link } from '../Link';
 
-  const poolRewards = useReward(pair?.poolId ?? -1);
-  const userRewards = useMemo(() => {
-    return !!pair && !!totalPoolTokens && !!userPoolBalance && !!poolRewards
-      ? poolRewards.times(new BigNumber(userPoolBalance.toFixed()).div(new BigNumber(totalPoolTokens.toFixed())))
-      : undefined;
-  }, [pair, totalPoolTokens, userPoolBalance, poolRewards]);
+const descriptions = {
+  1: 'Supply ICX to earn Balance Tokens. Your ICX will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. This pool works like a queue, so you can withdraw your sICX from the liquidity details section as your order is filled.',
+  2: 'Supply an equal amount of sICX and bnUSD to earn BALN. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards.',
+  3: 'Supply an equal amount of BALN and bnUSD to earn Balance Tokens. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. All BALN in the pool accrues network fees.',
+  4: 'Supply an equal amount of BALN and sICX to earn Balance Tokens. Your assets will be locked for 24 hours, and you must be in the pool at 1pm Eastern each day to receive rewards. All BALN in the pool accrues network fees.',
+  7: (
+    <>
+      Requires an equal amount of OMM and sICX. To earn rewards from this pool, use&nbsp;
+      <Link href="https://omm.finance/" target="_blank">
+        Omm
+      </Link>
+      &nbsp;with the same wallet.
+    </>
+  ),
+  8: (
+    <>
+      Requires an equal amount of OMM and USDS. To earn rewards from this pool, use&nbsp;
+      <Link href="https://omm.finance/" target="_blank">
+        Omm
+      </Link>
+      &nbsp;with the same wallet.
+    </>
+  ),
+  6: (
+    <>
+      Requires an equal amount of OMM and IUSDC. To earn rewards from this pool, use&nbsp;
+      <Link href="https://omm.finance/" target="_blank">
+        Omm
+      </Link>
+      &nbsp;with the same wallet.
+    </>
+  ),
+};
 
-  const apys = useAllPairsAPY();
-  const apy = apys && apys[pair?.poolId ?? -1];
+interface ILPDescriptionProps {
+  baseSuplying: BigNumber;
+  quoteSupplying: BigNumber;
+}
+
+export default function LPDescription({ baseSuplying, quoteSupplying }: ILPDescriptionProps) {
+  const selectedPair = usePoolPair();
+
+  const data = usePoolData(selectedPair.id) || {
+    totalBase: new BigNumber(0),
+    totalQuote: new BigNumber(0),
+    totalReward: new BigNumber(0),
+    suppliedBase: new BigNumber(0),
+    suppliedQuote: new BigNumber(0),
+    suppliedReward: new BigNumber(0),
+    poolShare: new BigNumber(0),
+  };
+
+  const supplyBase = useMemo(
+    () =>
+      data.suppliedBase?.isZero() || baseSuplying.isGreaterThan(0)
+        ? data?.suppliedBase?.plus(baseSuplying)
+        : data?.suppliedBase,
+    [baseSuplying, data.suppliedBase],
+  );
+  const supplyQuote = useMemo(
+    () =>
+      data.suppliedQuote?.isZero() || quoteSupplying.isGreaterThan(0)
+        ? data?.suppliedQuote?.plus(quoteSupplying)
+        : data?.suppliedQuote,
+    [data.suppliedQuote, quoteSupplying],
+  );
+
+  const totalBase = baseSuplying.isGreaterThan(0) ? baseSuplying?.plus(data.totalBase) : data.totalBase;
+
+  const dailyReward = useMemo(() => {
+    if (totalBase) {
+      const percentageSupplyBase = supplyBase?.dividedBy(totalBase);
+      return percentageSupplyBase?.isGreaterThanOrEqualTo(1)
+        ? data?.totalReward
+        : percentageSupplyBase?.multipliedBy(data?.totalReward);
+    }
+  }, [data.totalReward, supplyBase, totalBase]);
 
   return (
-    <>
-      {pairState === PairState.NOT_EXISTS && (
-        <Flex bg="bg2" flex={1} padding={[5, 7]} flexDirection="column">
-          <Typography variant="h3" mb={2}>
-            {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool{' '}
-          </Typography>
+    <Box bg="bg2" flex={1} padding={[5, 7]}>
+      <Typography variant="h3" mb={2}>
+        {getPairName(selectedPair)} liquidity pool
+      </Typography>
 
-          <Flex flex={1} alignItems="center" justifyContent="center">
-            <Typography textAlign="center">
-              There's no liquidity pool for this pair yet. <br />
-              Supply liquidity for these assets in any quantity to create a new pool.
+      <Typography mb={5} lineHeight={'25px'}>
+        {descriptions[selectedPair.id]}
+      </Typography>
+
+      <Flex flexWrap="wrap">
+        <Box
+          width={[1, 1 / 2]} //
+          sx={{
+            borderBottom: ['1px solid rgba(255, 255, 255, 0.15)', 0], //
+            borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
+          }}
+        >
+          <Box sx={{ margin: '15px 0 25px 0' }}>
+            <Typography textAlign="center" marginBottom="5px" color="text1">
+              Your supply
             </Typography>
-          </Flex>
-        </Flex>
-      )}
-
-      {pairState === PairState.EXISTS && (
-        <Box bg="bg2" flex={1} padding={[5, 7]}>
-          {poolRewards ? (
-            <Typography variant="h3" mb={2}>
-              {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool:`
-                : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool:`}{' '}
-              <Typography fontWeight="normal" fontSize={16} as="span">
-                {apy?.times(100).dp(2).toFixed() ?? '-'}% APY
-              </Typography>
-            </Typography>
-          ) : (
-            <Typography variant="h3" mb={2}>
-              {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
-                : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}{' '}
-            </Typography>
-          )}
-
-          <Flex flexWrap="wrap">
-            <Box
-              width={[1, 1 / 2]} //
-              sx={{
-                borderBottom: ['1px solid rgba(255, 255, 255, 0.15)', 0], //
-                borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
-              }}
-            >
-              {pair && !account && (
-                <Flex alignItems="center" justifyContent="center" height="100%">
-                  <Typography textAlign="center" marginBottom="5px" color="text1">
-                    Sign in to view your liquidity details.
-                  </Typography>
-                </Flex>
-              )}
-
-              {pair && account && (
+            <Typography textAlign="center" variant="p">
+              {selectedPair.id !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                 <>
-                  <Box sx={{ margin: '15px 0 25px 0' }}>
-                    <Typography textAlign="center" marginBottom="5px" color="text1">
-                      Your supply
-                    </Typography>
-
-                    <Typography textAlign="center" variant="p">
-                      {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
-                        <>
-                          {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
-                          <br />
-                          {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
-                        </>
-                      ) : (
-                        `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${
-                          pair?.reserve0.currency?.symbol
-                        }`
-                      )}
-                    </Typography>
-                  </Box>
-
-                  {userRewards && (
-                    <Box sx={{ margin: '15px 0 25px 0' }}>
-                      <Typography textAlign="center" marginBottom="5px" color="text1">
-                        Your daily rewards
-                      </Typography>
-                      <Typography textAlign="center" variant="p">
-                        ~ {formatBigNumber(userRewards, 'currency')} BALN
-                      </Typography>
-                    </Box>
-                  )}
+                  {formatBigNumber(supplyBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
+                  {formatBigNumber(supplyQuote, 'currency')} {selectedPair.quoteCurrencyKey}
                 </>
+              ) : (
+                `${formatBigNumber(supplyQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
               )}
-            </Box>
+            </Typography>
+          </Box>
 
-            <Box width={[1, 1 / 2]}>
-              <Box sx={{ margin: '15px 0 25px 0' }}>
-                <Typography textAlign="center" marginBottom="5px" color="text1">
-                  Total supply
-                </Typography>
-                {pair && (
-                  <Typography textAlign="center" variant="p">
-                    {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
-                      <>
-                        {pair?.reserve0.toFixed(0, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
-                        <br />
-                        {pair?.reserve1.toFixed(0, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
-                      </>
-                    ) : (
-                      `${pair?.reserve0.toFixed(0, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
-                    )}
-                  </Typography>
-                )}
-              </Box>
-
-              {poolRewards && (
-                <Box sx={{ margin: '15px 0 25px 0' }}>
-                  <Typography textAlign="center" marginBottom="5px" color="text1">
-                    Total daily rewards
-                  </Typography>
-                  <Typography textAlign="center" variant="p">
-                    {formatBigNumber(poolRewards, 'currency')} BALN
-                  </Typography>
-                </Box>
-              )}
+          {selectedPair.rewards && (
+            <Box sx={{ margin: '15px 0 25px 0' }}>
+              <Typography textAlign="center" marginBottom="5px" color="text1">
+                Your daily rewards
+              </Typography>
+              <Typography textAlign="center" variant="p">
+                ~ {formatBigNumber(dailyReward, 'currency')} BALN
+              </Typography>
             </Box>
-          </Flex>
+          )}
         </Box>
-      )}
-    </>
+        <Box width={[1, 1 / 2]}>
+          <Box sx={{ margin: '15px 0 25px 0' }}>
+            <Typography textAlign="center" marginBottom="5px" color="text1">
+              Total supply
+            </Typography>
+            <Typography textAlign="center" variant="p">
+              {selectedPair.id !== BalancedJs.utils.POOL_IDS.sICXICX ? (
+                <>
+                  {formatBigNumber(data?.totalBase, 'currency')} {selectedPair.baseCurrencyKey} <br />
+                  {formatBigNumber(data?.totalQuote, 'currency')} {selectedPair.quoteCurrencyKey}
+                </>
+              ) : (
+                `${formatBigNumber(data?.totalQuote, 'currency')} ${selectedPair.quoteCurrencyKey}`
+              )}
+            </Typography>
+          </Box>
+
+          {selectedPair.rewards && (
+            <Box sx={{ margin: '15px 0 25px 0' }}>
+              <Typography textAlign="center" marginBottom="5px" color="text1">
+                Total daily rewards
+              </Typography>
+              <Typography textAlign="center" variant="p">
+                {formatBigNumber(data?.totalReward, 'currency')} BALN
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      </Flex>
+    </Box>
   );
 }

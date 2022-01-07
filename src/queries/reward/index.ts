@@ -80,10 +80,10 @@ export const useRatesQuery = () => {
   return useQuery<{ [key in string]: BigNumber }>('useRatesQuery', fetch);
 };
 
-export const useAllPairsAPY = (): { [key: number]: BigNumber } | undefined => {
+export const useAllPairsAPY = () => {
   const tvls = useAllPairsTVL();
   const { data: rates } = useRatesQuery();
-  const dailyDistributionQuery = useBnJsContractQuery<string>('Rewards', 'getEmission', [], false);
+  const dailyDistributionQuery = useBnJsContractQuery<string>(bnJs, 'Rewards', 'getEmission', []);
 
   if (tvls && rates && dailyDistributionQuery.isSuccess) {
     const dailyDistribution = BalancedJs.utils.toIcx(dailyDistributionQuery.data);

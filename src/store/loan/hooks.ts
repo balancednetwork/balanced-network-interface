@@ -229,7 +229,7 @@ export function useLoanAPY(): BigNumber | undefined {
 }
 
 export function useLoanParameters() {
-  const query = useBnJsContractQuery<any>('Loans', 'getParameters', [], false);
+  const query = useBnJsContractQuery<any>(bnJs, 'Loans', 'getParameters', []);
 
   if (query.isSuccess) {
     const data = query.data;

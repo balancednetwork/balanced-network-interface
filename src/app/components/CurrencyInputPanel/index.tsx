@@ -44,7 +44,7 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
 
 const StyledTokenName = styled.span`
   line-height: 1.5;
-  margin-right: 8px;
+  margin-right: auto;
   font-size: 14px;
   font-weight: bold;
 `;

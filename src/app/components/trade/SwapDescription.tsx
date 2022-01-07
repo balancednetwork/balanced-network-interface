@@ -1,6 +1,5 @@
 import React from 'react';
 
-import JSBI from 'jsbi';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -8,16 +7,13 @@ import { Button } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
 import { getTradePair, isQueue } from 'constants/currency';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import useWidth from 'hooks/useWidth';
 import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { Fraction, Price, Currency } from 'types/balanced-sdk-core';
-import { generateChartData } from 'utils';
+import { generateChartData, formatBigNumber } from 'utils';
 
 export default function SwapDescription() {
   const { currencies, price } = useDerivedSwapInfo();
@@ -39,27 +35,9 @@ export default function SwapDescription() {
     [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
   );
 
-  const [qratioNumerator, qratioDenominator] = ratio.sICXICXratio.toFraction();
-  const qratioFrac = new Fraction(qratioNumerator.toFixed(), qratioDenominator.toFixed());
-
-  let priceInICX: Price<Currency, Currency> | undefined;
-
-  if (price && currencies.INPUT && currencies.OUTPUT) {
-    priceInICX =
-      currencies[Field.OUTPUT]?.wrapped.address === bnJs.sICX.address
-        ? new Price(
-            currencies.INPUT,
-            SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address],
-            JSBI.multiply(price.denominator, qratioFrac.denominator),
-            JSBI.multiply(price.numerator, qratioFrac.numerator),
-          )
-        : new Price(
-            SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address],
-            currencies.OUTPUT,
-            JSBI.multiply(price.denominator, qratioFrac.numerator),
-            JSBI.multiply(price.numerator, qratioFrac.denominator),
-          );
-  }
+  const priceInICX =
+    price &&
+    (currencies[Field.OUTPUT]?.symbol === 'sICX' ? price.times(ratio.sICXICXratio) : price.div(ratio.sICXICXratio));
 
   const [pair] = getTradePair(currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol);
 
@@ -91,12 +69,12 @@ export default function SwapDescription() {
           {pair && (
             <>
               <Typography variant="p">
-                {`${price?.toFixed(4) || '...'} 
+                {`${formatBigNumber(price, 'price')} 
                 ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
               </Typography>
               {hasSICX && !hasICX && (
                 <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
-                  {`${priceInICX?.toFixed(4) || '...'} 
+                  {`${formatBigNumber(priceInICX, 'price')} 
                   ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
                   per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
                 </Typography>

@@ -68,17 +68,15 @@ export enum TransactionStatus {
   'failure' = 'failure',
 }
 
-export function useTransactionStatus(transactionHash?: string): TransactionStatus | undefined {
+export function useTransactionStatus(transactionHash?: string): TransactionStatus {
   const transactions = useAllTransactions();
 
-  if (transactions && transactionHash && transactions[transactionHash]) {
-    if (transactions[transactionHash].receipt) {
-      if (transactions[transactionHash].receipt?.status === 1) return TransactionStatus.success;
-      else return TransactionStatus.failure;
-    } else {
-      return TransactionStatus.pending;
-    }
+  if (!transactionHash || !transactions || !transactions[transactionHash]) return TransactionStatus.pending;
+
+  if (transactions[transactionHash].receipt) {
+    if (transactions[transactionHash].receipt?.status) return TransactionStatus.success;
+    else return TransactionStatus.failure;
   } else {
-    return undefined;
+    return TransactionStatus.pending;
   }
 }

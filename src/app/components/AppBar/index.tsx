@@ -101,9 +101,7 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   }
 `;
 
-const StyledNavLinkWithNotification = styled(({ hasNotification, ...rest }) => <StyledNavLink {...rest} />)<{
-  hasNotification?: boolean;
-}>`
+const StyledNavLinkWithNotification = styled(StyledNavLink)<{ hasNotification?: boolean }>`
   ${({ theme, hasNotification }) =>
     hasNotification &&
     `

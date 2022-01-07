@@ -1,6 +1,7 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Flex, Box } from 'rebass/styled-components';
@@ -8,9 +9,8 @@ import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
+import PairSelector from 'app/components/trade/PairSelector';
 import { Typography } from 'app/theme';
-import { isNativeCurrency } from 'constants/tokens';
-import { PairState } from 'hooks/useV2Pairs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
@@ -28,54 +28,43 @@ const Slider = styled(Box)`
   `}
 `;
 
-export function subtract(
-  amountA: CurrencyAmount<Currency> | undefined,
-  amountB: CurrencyAmount<Currency> | undefined,
-): CurrencyAmount<Currency> | undefined {
-  return amountA ? (amountB ? amountA.subtract(amountB) : amountA) : undefined;
-}
-
 function WalletSection() {
   const { account } = useIconReact();
   const { currencies, currencyBalances, parsedAmounts } = useDerivedMintInfo();
 
-  const remains: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
-    () => ({
-      [Field.CURRENCY_A]: subtract(currencyBalances[Field.CURRENCY_A], parsedAmounts[Field.CURRENCY_A]),
-      [Field.CURRENCY_B]: subtract(currencyBalances[Field.CURRENCY_B], parsedAmounts[Field.CURRENCY_B]),
-    }),
-    [currencyBalances, parsedAmounts],
-  );
+  if (account) {
+    let baseValStr = '-';
+    if (currencyBalances[Field.CURRENCY_A]) {
+      baseValStr = parsedAmounts[Field.CURRENCY_A]
+        ? `${currencyBalances[Field.CURRENCY_A]!.subtract(parsedAmounts[Field.CURRENCY_A]!).toSignificant(4)}`
+        : `${currencyBalances[Field.CURRENCY_A]?.toSignificant(4)}`;
+    }
 
-  const formattedRemains: { [field in Field]?: string } = React.useMemo(
-    () => ({
-      [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
-      [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
-    }),
-    [remains],
-  );
+    let quoteValStr = '-';
+    if (currencyBalances[Field.CURRENCY_B]) {
+      quoteValStr = parsedAmounts[Field.CURRENCY_B]
+        ? `${currencyBalances[Field.CURRENCY_B]!.subtract(parsedAmounts[Field.CURRENCY_B]!).toSignificant(4)}`
+        : `${currencyBalances[Field.CURRENCY_B]?.toSignificant(4)}`;
+    }
 
-  if (!account) {
-    return null;
-  }
-
-  if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
-    return (
-      <Flex flexDirection="row" justifyContent="center" alignItems="center">
-        <Typography>
-          {`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol}`}
-        </Typography>
-      </Flex>
-    );
+    if (currencies[Field.CURRENCY_A]?.symbol === 'sICX' && currencies[Field.CURRENCY_B]?.symbol === 'ICX') {
+      return (
+        <Flex flexDirection="row" justifyContent="center" alignItems="center">
+          <Typography>{`Wallet: ${quoteValStr} ${currencies[Field.CURRENCY_B]?.symbol}`}</Typography>
+        </Flex>
+      );
+    } else {
+      return (
+        <Flex flexDirection="row" justifyContent="center" alignItems="center">
+          <Typography>
+            {`Wallet: ${baseValStr} ${currencies[Field.CURRENCY_A]?.symbol} / 
+                      ${quoteValStr} ${currencies[Field.CURRENCY_B]?.symbol}`}
+          </Typography>
+        </Flex>
+      );
+    }
   } else {
-    return (
-      <Flex flexDirection="row" justifyContent="center" alignItems="center">
-        <Typography>
-          {`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol} /
-                      ${formattedRemains[Field.CURRENCY_B]} ${currencies[Field.CURRENCY_B]?.symbol}`}
-        </Typography>
-      </Flex>
-    );
+    return null;
   }
 }
 
@@ -103,24 +92,24 @@ export default function LPPanel() {
     setShowSupplyConfirm(true);
     setAmounts(parsedAmounts);
     onFieldAInput('');
-    onFieldBInput('');
   };
 
   const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
   const {
     dependentField,
+    pairInfo,
+    pair,
     parsedAmounts,
     noLiquidity,
-    currencies,
     currencyBalances,
-    error,
-    price,
-    pair,
-    pairState,
+    currencies,
     liquidityMinted,
-    mintableLiquidity,
+    availableLiquidity,
+    // poolTokenPercentage,
+    error,
   } = useDerivedMintInfo();
-  const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection } = useMintActionHandlers(noLiquidity);
+
+  const { onFieldAInput, onFieldBInput, onSlide } = useMintActionHandlers(noLiquidity);
 
   const [percent, setPercent] = React.useState(0);
 
@@ -131,8 +120,8 @@ export default function LPPanel() {
     if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
       const p = new Percent(Math.floor(percent * 100), 10_000);
 
-      if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
-        onSlide(Field.CURRENCY_A, percent !== 0 ? balanceA.multiply(p).toFixed() : '');
+      if (pairInfo.id === BalancedJs.utils.POOL_IDS.sICXICX) {
+        onSlide(Field.CURRENCY_B, percent !== 0 ? balanceB.multiply(p).toFixed() : '');
       } else {
         const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
           ? Field.CURRENCY_A
@@ -140,21 +129,27 @@ export default function LPPanel() {
         onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
       }
     }
-  }, [percent, currencyBalances, onSlide, pair, currencies]);
+  }, [percent, currencyBalances, onSlide, pair, pairInfo.id]);
 
   React.useEffect(() => {
     setPercent(0);
-  }, [currencies]);
+  }, [pairInfo]);
 
   const handleSlider = (values: string[], handle: number) => {
     setPercent(parseFloat(values[handle]));
   };
 
+  // get formatted amounts
+  const formattedAmounts = {
+    [independentField]: typedValue,
+    [dependentField]: noLiquidity ? otherTypedValue : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+  };
+
   const sliderValue =
-    liquidityMinted && mintableLiquidity
+    liquidityMinted && availableLiquidity
       ? Math.min(
           new BigNumber(liquidityMinted.quotient.toString())
-            .div(mintableLiquidity.quotient.toString())
+            .div(availableLiquidity.quotient.toString())
             .multipliedBy(100)
             .toNumber(),
           100,
@@ -169,114 +164,46 @@ export default function LPPanel() {
     }
   }, [inputType, sliderValue]);
 
-  // get formatted amounts
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: noLiquidity ? otherTypedValue : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
-  };
-
   const isValid = !error;
 
-  const handleCurrencyASelect = React.useCallback(
-    (currencyA: Currency) => onCurrencySelection(Field.CURRENCY_A, currencyA),
-    [onCurrencySelection],
-  );
-
-  const handleCurrencyBSelect = React.useCallback(
-    (currencyB: Currency) => onCurrencySelection(Field.CURRENCY_B, currencyB),
-    [onCurrencySelection],
-  );
-
-  const maxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field]),
-      };
-    },
-    {},
-  );
-
-  const handlePercentSelect = (field: Field) => (percent: number) => {
-    field === Field.CURRENCY_A
-      ? onFieldAInput(maxAmounts[Field.CURRENCY_A]?.multiply(percent).divide(100)?.toExact() ?? '')
-      : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(percent).divide(100)?.toExact() ?? '');
-  };
-
-  const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
+  const isQueue = pairInfo.id === BalancedJs.utils.POOL_IDS.sICXICX;
 
   return (
     <>
       <SectionPanel bg="bg2">
         <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
-          <AutoColumn gap="md">
-            <AutoColumn gap="md">
-              <Typography variant="h2">Supply liquidity</Typography>
-            </AutoColumn>
+          <PairSelector />
 
-            <AutoColumn gap="md">
-              <Flex>
-                <CurrencyInputPanel
-                  account={account}
-                  id="supply-liquidity-input-token-a"
-                  value={formattedAmounts[Field.CURRENCY_A]}
-                  showCommonBases={false}
-                  currency={currencies[Field.CURRENCY_A]}
-                  onUserInput={onFieldAInput}
-                  onCurrencySelect={handleCurrencyASelect}
-                  onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
-                />
-              </Flex>
-            </AutoColumn>
+          <Flex mt={3} hidden={isQueue}>
+            <CurrencyInputPanel
+              value={formattedAmounts[Field.CURRENCY_A]}
+              showMaxButton={false}
+              currency={currencies[Field.CURRENCY_A]}
+              onUserInput={onFieldAInput}
+              id="supply-liquidity-input-token-a"
+            />
+          </Flex>
 
-            <AutoColumn gap="md" hidden={isQueue}>
-              <Flex>
-                <CurrencyInputPanel
-                  account={account}
-                  id="supply-liquidity-input-token-b"
-                  value={formattedAmounts[Field.CURRENCY_B]}
-                  showCommonBases={true}
-                  currency={currencies[Field.CURRENCY_B]}
-                  onUserInput={onFieldBInput}
-                  onCurrencySelect={handleCurrencyBSelect}
-                  onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
-                />
-              </Flex>
-            </AutoColumn>
-          </AutoColumn>
+          <Flex
+            mt={3}
+            sx={{
+              position: 'relative',
+            }}
+          >
+            <CurrencyInputPanel
+              value={formattedAmounts[Field.CURRENCY_B]}
+              showMaxButton={false}
+              currency={currencies[Field.CURRENCY_B]}
+              onUserInput={onFieldBInput}
+              id="supply-liquidity-input-token-b"
+            />
+          </Flex>
 
           <Flex mt={3} justifyContent="flex-end">
             <WalletSection />
           </Flex>
 
-          {currencies[Field.CURRENCY_A] &&
-            currencies[Field.CURRENCY_B] &&
-            !isQueue &&
-            pairState === PairState.NOT_EXISTS && (
-              <PoolPriceBar>
-                <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
-                  <Typography>
-                    <Typography color="white" as="span">
-                      {price?.toSignificant(6) ?? '-'}
-                    </Typography>{' '}
-                    {currencies[Field.CURRENCY_B]?.symbol}
-                  </Typography>
-                  <Typography pt={1}>per {currencies[Field.CURRENCY_A]?.symbol}</Typography>
-                </Flex>
-                <VerticalDivider />
-                <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
-                  <Typography>
-                    <Typography color="white" as="span">
-                      {price?.invert()?.toSignificant(6) ?? '-'}
-                    </Typography>{' '}
-                    {currencies[Field.CURRENCY_A]?.symbol}
-                  </Typography>
-                  <Typography pt={1}>per {currencies[Field.CURRENCY_B]?.symbol}</Typography>
-                </Flex>
-              </PoolPriceBar>
-            )}
-
-          {pairState === PairState.EXISTS && account && mintableLiquidity && (
+          {account && availableLiquidity && (
             <Slider mt={5}>
               <Nouislider
                 start={[0]}
@@ -296,24 +223,23 @@ export default function LPPanel() {
               />
             </Slider>
           )}
-
-          <AutoColumn gap="5px" mt={5}>
-            <Flex justifyContent="center">
-              {isValid ? (
-                <Button color="primary" onClick={handleSupply}>
-                  {pairState === PairState.EXISTS && 'Supply'}
-                  {pairState === PairState.NOT_EXISTS && 'Create pool'}
-                </Button>
-              ) : (
-                <Button disabled={!!account} color="primary" onClick={handleConnectToWallet}>
-                  {account ? error : 'Supply'}
-                </Button>
-              )}
-            </Flex>
-          </AutoColumn>
+          <Flex justifyContent="center">
+            {isValid ? (
+              <Button color="primary" marginTop={5} onClick={handleSupply}>
+                Supply
+              </Button>
+            ) : (
+              <Button disabled={!!account} color="primary" marginTop={5} onClick={handleConnectToWallet}>
+                {account ? error : 'Supply'}
+              </Button>
+            )}
+          </Flex>
         </BrightPanel>
 
-        <LPDescription />
+        <LPDescription
+          baseSuplying={new BigNumber(formattedAmounts[Field.CURRENCY_A])}
+          quoteSupplying={new BigNumber(formattedAmounts[Field.CURRENCY_B])}
+        />
       </SectionPanel>
 
       <SupplyLiquidityModal
@@ -325,28 +251,3 @@ export default function LPPanel() {
     </>
   );
 }
-
-const AutoColumn = styled(Box)<{
-  gap?: 'sm' | 'md' | 'lg' | string;
-  justify?: 'stretch' | 'center' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'space-between';
-}>`
-  display: grid;
-  grid-auto-rows: auto;
-  grid-row-gap: ${({ gap }) => (gap === 'sm' && '10px') || (gap === 'md' && '15px') || (gap === 'lg' && '25px') || gap};
-  justify-items: ${({ justify }) => justify && justify};
-`;
-
-const PoolPriceBar = styled(Flex)`
-  background-color: #32627d;
-  margin-top: 25px;
-  border-radius: 10px;
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-`;
-
-const VerticalDivider = styled.div`
-  width: 1px;
-  height: initial;
-  background-color: ${({ theme }) => theme.colors.divider};
-`;

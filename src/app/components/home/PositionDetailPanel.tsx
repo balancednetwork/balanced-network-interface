@@ -84,7 +84,9 @@ const PositionDetailPanel = () => {
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
   const smallSp = useMedia('(max-width: 360px)');
-  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 440px)');
+  const isMediumSize = !useMedia('(min-width: 600px)');
+  const modalResizingBreakpoint = useMedia('(max-width: 440px');
+  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 340px)');
   const [show, setShow] = React.useState<boolean>(false);
   const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
@@ -295,7 +297,7 @@ const PositionDetailPanel = () => {
                   </QuestionWrapper>
                 )}
                 <RebalancingTooltip show={showRebalancing} bottom={false}>
-                  <TooltipContainer width={435}>
+                  <TooltipContainer width={modalResizingBreakpoint ? 335 : 435}>
                     <RebalancingInfo />
                     {shouldShowSeparateTooltip ? null : shouldShowRebalancingAveragePrice ? (
                       <>
@@ -341,7 +343,7 @@ const PositionDetailPanel = () => {
                 <TooltipContainer width={321}>{averageRebalancingPriceText}</TooltipContainer>
               </RebalancingTooltip>
 
-              <Box width={1 / 2}>
+              <Box width={1 / 2} style={isMediumSize ? { textAlign: 'right' } : {}}>
                 <Typography variant="p">{formatBigNumber(rebalancingTotal, 'currency')} bnUSD</Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
                   {'Loan'}
@@ -369,7 +371,7 @@ const PositionDetailPanel = () => {
                 </Typography>
                 <Typography mt={1}>Daily rewards</Typography>
               </Box>
-              <Box width={1 / 2}>
+              <Box width={1 / 2} style={isMediumSize ? { textAlign: 'right' } : {}}>
                 <Typography variant="p" color={hasRewardableCollateral ? 'white' : 'alert'}>
                   {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
                 </Typography>
@@ -549,13 +551,19 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
     }
   }
   @media screen and (max-width: 599px) {
-    margin-left: -183px;
+    margin-left: -173px;
 
     &:before {
-      margin-left: -52px;
+      margin-left: -62px;
     }
   }
-  @media screen and (max-width: 439px) {
+
+  @media screen and (max-width: 440px) {
+    &:before {
+      margin-left: -12px;
+    }
+  }
+  @media screen and (max-width: 339px) {
     display: none;
   }
 `;

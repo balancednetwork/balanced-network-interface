@@ -17,8 +17,8 @@ export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; wi
     ${props => props.small && ' width: 180px; padding: 11px;'}
   }
 
-  @media (max-width: 410px) {
-    ${props => props.small && ' width: 120px; padding: 10px'}
+  @media (max-width: 370px) {
+    ${props => props.small && ' width: 170px;'}
   }
 `;
 

@@ -48,6 +48,16 @@ const Table = styled(Box)`
   }
 `;
 
+const ScrollHelper = styled.div`
+  overflow-x: auto;
+  width: 100%;
+
+  ${Table} {
+    min-width: 560px;
+    width: 100%;
+  }
+`;
+
 const METHOD_CONTENT = {
   SupplyICX: 'Supplied (amount) ICX to the ICX / sICX pool',
   RewardsClaimed: 'Claimed (amount) BALN',
@@ -398,7 +408,7 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
 
   return (
     <RowContent>
-      <Typography>{dayjs(tx.item_timestamp).format('D MMMM, HH:mm')}</Typography>
+      <Typography minWidth="150px">{dayjs(tx.item_timestamp).format('D MMMM, HH:mm')}</Typography>
       <Flex>
         <Typography fontSize={16} sx={{ mr: '8px' }}>
           {content}
@@ -561,24 +571,26 @@ const TransactionTable = () => {
 
         {!isLoading && data?.count ? (
           <>
-            <Table width="100%">
-              <Row>
-                <Typography letterSpacing="3px">DATE</Typography>
-                <Typography letterSpacing="3px" sx={{ flex: 1 }}>
-                  ACTIVITY
-                </Typography>
-                <Typography letterSpacing="3px" textAlign="right">
-                  AMOUNT
-                </Typography>
-              </Row>
-              {txs.map(tx =>
-                tx.method === 'claimUnstakedICX' ? (
-                  <ClaimRowItem tx={tx} key={tx.item_id} />
-                ) : (
-                  <RowItem tx={tx} key={tx.item_id} />
-                ),
-              )}
-            </Table>
+            <ScrollHelper>
+              <Table>
+                <Row>
+                  <Typography letterSpacing="3px">DATE</Typography>
+                  <Typography letterSpacing="3px" sx={{ flex: 1 }}>
+                    ACTIVITY
+                  </Typography>
+                  <Typography letterSpacing="3px" textAlign="right">
+                    AMOUNT
+                  </Typography>
+                </Row>
+                {txs.map(tx =>
+                  tx.method === 'claimUnstakedICX' ? (
+                    <ClaimRowItem tx={tx} key={tx.item_id} />
+                  ) : (
+                    <RowItem tx={tx} key={tx.item_id} />
+                  ),
+                )}
+              </Table>
+            </ScrollHelper>
             <Pagination
               sx={{ mt: 2, width: '100%' }}
               onChangePage={page => {

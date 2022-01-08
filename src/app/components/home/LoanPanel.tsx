@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -36,9 +37,13 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import Tooltip from '../Tooltip';
+import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
+
+const superSmallScreenSize = '420px';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
+  const isSuperSmall = useMedia(`(max-width: ${superSmallScreenSize})`);
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -231,10 +236,15 @@ const LoanPanel = () => {
       <BoxPanel bg="bg3">
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="h2">
-            Loan:{' '}
-            <Typography as="span" fontSize={18} fontWeight="normal">
-              US Dollars
-            </Typography>
+            Loan
+            {!isSuperSmall && (
+              <>
+                :{' '}
+                <Typography as="span" fontSize={18} fontWeight="normal">
+                  US Dollars
+                </Typography>
+              </>
+            )}
           </Typography>
 
           <Box>
@@ -286,8 +296,8 @@ const LoanPanel = () => {
           />
         </Box>
 
-        <Flex justifyContent="space-between">
-          <Box width={[1, 1 / 2]} mr={4}>
+        <PanelInfoWrap>
+          <PanelInfoItem>
             {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
               <Tooltip
                 containerStyle={{ width: 'auto' }}
@@ -316,9 +326,9 @@ const LoanPanel = () => {
                 onUserInput={onFieldAInput}
               />
             )}
-          </Box>
+          </PanelInfoItem>
 
-          <Box width={[1, 1 / 2]} ml={4}>
+          <PanelInfoItem>
             <CurrencyField
               editable={isAdjusting}
               isActive={false}
@@ -328,8 +338,8 @@ const LoanPanel = () => {
               currency={'bnUSD'}
               onUserInput={onFieldBInput}
             />
-          </Box>
-        </Flex>
+          </PanelInfoItem>
+        </PanelInfoWrap>
       </BoxPanel>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
@@ -394,6 +404,8 @@ const LoanPanel = () => {
 };
 
 export const RebalancingInfo = () => {
+  const isSmall = useMedia('(max-width: 440px');
+
   return (
     <RebalancingInfoWrap flexDirection="row" flexWrap="wrap" alignItems="stretch" width="100%">
       <Typography
@@ -408,14 +420,14 @@ export const RebalancingInfo = () => {
       >
         While you borrow bnUSD, your collateral is used to keep its value stable
       </Typography>
-      <BoxWithBorderRight width="50%" paddingRight="25px">
+      <BoxWithBorderRight width="50%" paddingRight={isSmall ? '15px' : '25px'}>
         <InfoBelow />
         <Typography fontWeight="bold" color="#FFF">
           If bnUSD is below $1
         </Typography>
         <Typography>Balanced sells collateral at a premium to repay some of your loan.</Typography>
       </BoxWithBorderRight>
-      <Box width="50%" paddingLeft="25px" margin="-19px 0 0">
+      <Box width="50%" paddingLeft={isSmall ? '15px' : '25px'} margin="-19px 0 0">
         <InfoAbove />
         <Typography fontWeight="bold" color="#FFF" marginTop="19px">
           If bnUSD is above $1

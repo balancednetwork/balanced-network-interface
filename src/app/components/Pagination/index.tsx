@@ -28,6 +28,10 @@ const NumberButton = styled(Button)`
   &.active {
     background: ${({ theme }) => theme.colors.primary};
   }
+
+  @media screen and (max-width: 340px) {
+    padding: 3px 8px !important;
+  }
 `;
 
 const Pagination: React.FC<Props> = ({ totalPages, currentPage, onChangePage, sx }) => {

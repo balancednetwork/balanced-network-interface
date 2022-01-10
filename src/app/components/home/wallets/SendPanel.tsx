@@ -130,7 +130,6 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
         <CurrencyInputPanel
           value={value}
-          showMaxButton={false}
           currency={currency}
           onUserInput={handleCurrencyInput}
           id={`${currency.symbol}-currency-input-in-wallet-panel`}

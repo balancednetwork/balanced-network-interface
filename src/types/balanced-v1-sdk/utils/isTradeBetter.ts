@@ -1,4 +1,4 @@
-import { ZERO_PERCENT, ONE_HUNDRED_PERCENT } from '../../../constants/routing';
+import { ZERO_PERCENT, ONE_HUNDRED_PERCENT } from '../../../constants/misc';
 import { TradeType } from '../../balanced-sdk-core';
 import { Currency } from '../../balanced-sdk-core/entities';
 import { Percent } from '../../balanced-sdk-core/entities/fractions';

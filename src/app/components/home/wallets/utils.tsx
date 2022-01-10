@@ -22,6 +22,10 @@ export const StyledTab = styled(Tab)<{ hasNotification?: boolean }>`
     transition: border-bottom 0.3s ease, color 0.3s ease;
     position: relative;
 
+    @media screen and (max-width: 345px) {
+      padding: 10px;
+    }
+
     &[data-selected] {
       border-bottom: 3px solid #2ca9b7;
       color: #ffffff;

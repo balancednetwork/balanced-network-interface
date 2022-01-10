@@ -73,6 +73,14 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 14px;
 
+  @media screen and (max-width: 340px) {
+    width: 80px;
+
+    svg {
+      display: none;
+    }
+  }
+
   &.${activeClassName} {
     color: ${({ theme }) => theme.colors.bg1};
     background-color: ${({ theme }) => theme.colors.primary};

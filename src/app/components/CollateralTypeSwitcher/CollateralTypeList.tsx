@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useMedia } from 'react-use';
 import { Box } from 'rebass';
@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { Typography } from 'app/theme';
 import { ReactComponent as SearchIcon } from 'assets/icons/search.svg';
+import useKeyPress from 'hooks/useKeyPress';
 import { useCollateralChangeCollateralType, useAllCollateralData } from 'store/collateral/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
 
@@ -55,9 +56,11 @@ const CollateralTypesGrid = styled.div<{
   width: 100%;
   ${({ border }) => (border ? 'border-bottom: 1px solid #304a68;' : '')}
   ${({ negativeMargin }) => (negativeMargin ? 'margin-top: -10px;' : '')}
+  transition: transform ease .3s;
 
-  .white, .grey {
-    transition: all ease 0.2s;
+  .white,
+  .grey {
+    transition: all ease-out 0.2s;
   }
 
   .white {
@@ -68,8 +71,8 @@ const CollateralTypesGrid = styled.div<{
     color: #d5d7db;
   }
 
-  &:hover,
   &.active {
+    transform: translate3d(4px, 0, 0);
     .white,
     .grey {
       color: ${({ theme }) => theme.colors.primaryBright};
@@ -127,7 +130,7 @@ const GridWrap = styled.div`
   padding: 0 25px;
 `;
 
-const CollateralTypeList = ({ width }) => {
+const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   const changeCollateralType = useCollateralChangeCollateralType();
   const [searchQuery, setSearchQuery] = useState('');
   const allCollateralData = useAllCollateralData();
@@ -139,14 +142,72 @@ const CollateralTypeList = ({ width }) => {
       collateralType.name.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0,
   );
 
+  const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
+  const [hoveredIndex, setHoveredIndex] = useState<number | undefined>(undefined);
+  const arrowDown = useKeyPress('ArrowDown', true);
+  const arrowUp = useKeyPress('ArrowUp', true);
+  const enter = useKeyPress('Enter');
+  const escape = useKeyPress('Escape');
+
+  useEffect(() => {
+    if (anchor && filteredCollateralTypes.length && arrowDown) {
+      setActiveIndex(prevState =>
+        prevState !== undefined && prevState < filteredCollateralTypes.length - 1 ? prevState + 1 : prevState,
+      );
+    }
+  }, [anchor, arrowDown, filteredCollateralTypes.length]);
+
+  useEffect(() => {
+    if (anchor && filteredCollateralTypes.length && arrowUp) {
+      setActiveIndex(prevState => (prevState !== undefined && prevState > 0 ? prevState - 1 : prevState));
+    }
+  }, [anchor, arrowUp, filteredCollateralTypes.length]);
+
+  useEffect(() => {
+    if (anchor && filteredCollateralTypes.length && enter && activeIndex !== undefined) {
+      setAnchor(null);
+      changeCollateralType(filteredCollateralTypes[activeIndex].symbol);
+    }
+  }, [
+    anchor,
+    activeIndex,
+    enter,
+    filteredCollateralTypes,
+    filteredCollateralTypes.length,
+    changeCollateralType,
+    setAnchor,
+  ]);
+
+  useEffect(() => {
+    if (anchor && escape) {
+      setAnchor(null);
+    }
+  }, [anchor, escape, setAnchor]);
+
+  useEffect(() => {
+    if (anchor && filteredCollateralTypes.length && hoveredIndex !== undefined) {
+      setActiveIndex(hoveredIndex);
+    }
+  }, [anchor, hoveredIndex, filteredCollateralTypes.length]);
+
+  useEffect(() => {
+    if (anchor && activeIndex !== undefined && activeIndex >= filteredCollateralTypes.length) {
+      setActiveIndex(Math.max(filteredCollateralTypes.length - 1, 0));
+    }
+  }, [anchor, activeIndex, filteredCollateralTypes.length]);
+
   return (
     <Box p={'25px 0 5px'} width={width}>
       <SearchWrap>
         <SearchIcon width="18px" />
         <SearchField
           type="text"
+          autoFocus
           className="search-field"
-          onChange={e => setSearchQuery(e.target.value)}
+          onChange={e => {
+            setSearchQuery(e.target.value);
+            activeIndex === undefined && setActiveIndex(0);
+          }}
           placeholder="Search assets"
           value={searchQuery}
         />
@@ -174,6 +235,9 @@ const CollateralTypeList = ({ width }) => {
               negativeMargin={isFirst}
               hideCollateralInfoColumn={hideCollateralInfoColumn}
               onClick={() => changeCollateralType(collateralType.symbol)}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(undefined)}
+              className={i === activeIndex ? 'active' : ''}
             >
               <CollateralTypesGridItem>
                 <AssetInfo>

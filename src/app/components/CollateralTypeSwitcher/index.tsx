@@ -60,7 +60,7 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
           placement="bottom"
           offset={[0, 8]}
         >
-          <CollateralTypeList width={width} />
+          <CollateralTypeList width={width} anchor={anchor} setAnchor={setAnchor} />
         </DropdownPopper>
       </ClickAwayListener>
     </>

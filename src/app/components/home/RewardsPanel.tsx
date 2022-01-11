@@ -212,8 +212,8 @@ const NetworkFeeSection = () => {
       changeShouldLedgerSign(true);
     }
 
-    const start = feesIndex * BATCH_SIZE;
-    const end = start + BATCH_SIZE < platformDay ? start + BATCH_SIZE : 0;
+    const start = platformDay - feesIndex * BATCH_SIZE;
+    const end = start - BATCH_SIZE > 0 ? start - BATCH_SIZE : 0;
 
     bnJs
       .inject({ account })
@@ -245,7 +245,7 @@ const NetworkFeeSection = () => {
 
   const hasNetworkFees = useHasNetworkFees();
   const { data: platformDay = 0 } = usePlatformDayQuery();
-  const feesQuery = useUserCollectedFeesQuery(1, platformDay);
+  const feesQuery = useUserCollectedFeesQuery(platformDay, 1);
   const feesArr = feesQuery.data;
   const fees = feesArr?.find(fees => fees);
   const feesIndex = feesArr?.findIndex(fees => fees) || 0;

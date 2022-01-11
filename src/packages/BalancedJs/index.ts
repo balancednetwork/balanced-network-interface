@@ -141,4 +141,8 @@ export class BalancedJs {
   getContract(address: string): IRC2 {
     return new IRC2(this.contractSettings, address);
   }
+
+  resetContractLedgerSettings() {
+    this.contractSettings.resetLedgerSettings();
+  }
 }

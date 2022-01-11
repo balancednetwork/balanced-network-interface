@@ -205,15 +205,17 @@ const NetworkFeeSection = () => {
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
+
+  const DAY_LIMIT = 49;
+
   const handleFeeClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
-
-    const start = platformDay - feesIndex * BATCH_SIZE;
-    const end = start - BATCH_SIZE > 0 ? start - BATCH_SIZE : 0;
+    const start = platformDay - feesIndex * DAY_LIMIT;
+    const end = start - DAY_LIMIT > 0 ? start - DAY_LIMIT : 0;
 
     bnJs
       .inject({ account })

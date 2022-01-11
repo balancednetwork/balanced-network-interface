@@ -142,7 +142,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
       collateralType.name.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0,
   );
 
-  const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | undefined>(undefined);
   const arrowDown = useKeyPress('ArrowDown', true);
   const arrowUp = useKeyPress('ArrowUp', true);
@@ -151,20 +151,18 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
 
   useEffect(() => {
     if (anchor && filteredCollateralTypes.length && arrowDown) {
-      setActiveIndex(prevState =>
-        prevState !== undefined && prevState < filteredCollateralTypes.length - 1 ? prevState + 1 : prevState,
-      );
+      setActiveIndex(prevState => (prevState < filteredCollateralTypes.length - 1 ? prevState + 1 : prevState));
     }
   }, [anchor, arrowDown, filteredCollateralTypes.length]);
 
   useEffect(() => {
     if (anchor && filteredCollateralTypes.length && arrowUp) {
-      setActiveIndex(prevState => (prevState !== undefined && prevState > 0 ? prevState - 1 : prevState));
+      setActiveIndex(prevState => (prevState > 0 ? prevState - 1 : prevState));
     }
   }, [anchor, arrowUp, filteredCollateralTypes.length]);
 
   useEffect(() => {
-    if (anchor && filteredCollateralTypes.length && enter && activeIndex !== undefined) {
+    if (anchor && filteredCollateralTypes.length && enter) {
       setAnchor(null);
       changeCollateralType(filteredCollateralTypes[activeIndex].symbol);
     }
@@ -191,7 +189,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   }, [anchor, hoveredIndex, filteredCollateralTypes.length]);
 
   useEffect(() => {
-    if (anchor && activeIndex !== undefined && activeIndex >= filteredCollateralTypes.length) {
+    if (anchor && activeIndex >= filteredCollateralTypes.length) {
       setActiveIndex(Math.max(filteredCollateralTypes.length - 1, 0));
     }
   }, [anchor, activeIndex, filteredCollateralTypes.length]);

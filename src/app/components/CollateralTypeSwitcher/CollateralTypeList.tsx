@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { Typography } from 'app/theme';
 import { ReactComponent as SearchIcon } from 'assets/icons/search.svg';
+import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useCollateralChangeCollateralType, useAllCollateralData } from 'store/collateral/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
@@ -135,6 +136,8 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const allCollateralData = useAllCollateralData();
   const hideCollateralInfoColumn = useMedia('(max-width: 500px)');
+  const enter = useKeyPress('Enter');
+  const escape = useKeyPress('Escape');
 
   const filteredCollateralTypes = allCollateralData?.filter(
     collateralType =>
@@ -142,25 +145,9 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
       collateralType.name.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0,
   );
 
-  const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [hoveredIndex, setHoveredIndex] = useState<number | undefined>(undefined);
-  const arrowDown = useKeyPress('ArrowDown', true);
-  const arrowUp = useKeyPress('ArrowUp', true);
-  const enter = useKeyPress('Enter');
-  const escape = useKeyPress('Escape');
+  const { activeIndex, setActiveIndex } = useArrowControl(!!anchor, filteredCollateralTypes?.length || 0);
 
-  useEffect(() => {
-    if (anchor && filteredCollateralTypes.length && arrowDown) {
-      setActiveIndex(prevState => (prevState < filteredCollateralTypes.length - 1 ? prevState + 1 : prevState));
-    }
-  }, [anchor, arrowDown, filteredCollateralTypes.length]);
-
-  useEffect(() => {
-    if (anchor && filteredCollateralTypes.length && arrowUp) {
-      setActiveIndex(prevState => (prevState > 0 ? prevState - 1 : prevState));
-    }
-  }, [anchor, arrowUp, filteredCollateralTypes.length]);
-
+  //on enter press
   useEffect(() => {
     if (anchor && filteredCollateralTypes.length && enter) {
       setAnchor(null);
@@ -181,18 +168,6 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
       setAnchor(null);
     }
   }, [anchor, escape, setAnchor]);
-
-  useEffect(() => {
-    if (anchor && filteredCollateralTypes.length && hoveredIndex !== undefined) {
-      setActiveIndex(hoveredIndex);
-    }
-  }, [anchor, hoveredIndex, filteredCollateralTypes.length]);
-
-  useEffect(() => {
-    if (anchor && activeIndex >= filteredCollateralTypes.length) {
-      setActiveIndex(Math.max(filteredCollateralTypes.length - 1, 0));
-    }
-  }, [anchor, activeIndex, filteredCollateralTypes.length]);
 
   return (
     <Box p={'25px 0 5px'} width={width}>
@@ -233,8 +208,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
               negativeMargin={isFirst}
               hideCollateralInfoColumn={hideCollateralInfoColumn}
               onClick={() => changeCollateralType(collateralType.symbol)}
-              onMouseEnter={() => setHoveredIndex(i)}
-              onMouseLeave={() => setHoveredIndex(undefined)}
+              onMouseEnter={() => setActiveIndex(i)}
               className={i === activeIndex ? 'active' : ''}
             >
               <CollateralTypesGridItem>

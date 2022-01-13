@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import { Contract } from './contract';
@@ -40,7 +39,7 @@ export default class IRC2 extends Contract {
     return this.call(callParams);
   }
 
-  deposit(value: BigNumber) {
+  deposit(value: string) {
     return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
   }
 
@@ -52,12 +51,12 @@ export default class IRC2 extends Contract {
     return this.call(callParams);
   }
 
-  swapUsingRoute(value: BigNumber, outputAddress: string, minimumReceive: BigNumber, path: (string | null)[]) {
+  swapUsingRoute(value: string, outputAddress: string, minimumReceive: string, path: (string | null)[]) {
     const data = {
       method: '_swap',
       params: {
         toToken: outputAddress,
-        minimumReceive: minimumReceive.toFixed(),
+        minimumReceive: minimumReceive,
         path: path,
       },
     };
@@ -65,12 +64,12 @@ export default class IRC2 extends Contract {
     return this.transfer(addresses[this.nid].router, value, JSON.stringify(data));
   }
 
-  transfer(to: string, value: BigNumber, data?: string) {
+  transfer(to: string, value: string, data?: string) {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
       params: {
         _to: to,
-        _value: IconConverter.toHex(value),
+        _value: IconConverter.toHexNumber(value),
         _data: data && IconConverter.toHex(data),
       },
     });

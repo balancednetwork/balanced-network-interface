@@ -1,7 +1,6 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { ChevronRight } from 'react-feather';
@@ -150,7 +149,7 @@ export default function SwapPanel() {
       bnJs
         .inject({ account })
         .Router.swapICX(
-          BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact()),
+          executionTrade.inputAmount.quotient.toString(),
           executionTrade.route.pathForSwap,
           toHex(minReceived),
         )
@@ -181,9 +180,9 @@ export default function SwapPanel() {
         .inject({ account })
         .getContract(token.address)
         .swapUsingRoute(
-          BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact(), currencies[Field.INPUT]?.symbol!),
+          executionTrade.inputAmount.quotient.toString(),
           outputToken.address,
-          BalancedJs.utils.toLoop(minReceived.toExact(), currencies[Field.OUTPUT]?.symbol!),
+          minReceived.quotient.toString(),
           executionTrade.route.pathForSwap,
         )
         .then((res: any) => {

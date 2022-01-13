@@ -63,7 +63,7 @@ const WalletPanel = () => {
   );
 
   return (
-    <BoxPanel bg="bg2">
+    <BoxPanel bg="bg2" minHeight={195}>
       <Typography variant="h2" mb={5}>
         Wallet
       </Typography>
@@ -146,7 +146,9 @@ const WalletPanel = () => {
         </Wrapper>
       ) : (
         <Wrapper>
-          <Typography textAlign="center">No assets available.</Typography>
+          <Typography textAlign="center" paddingTop={'20px'}>
+            No assets available.
+          </Typography>
         </Wrapper>
       )}
     </BoxPanel>

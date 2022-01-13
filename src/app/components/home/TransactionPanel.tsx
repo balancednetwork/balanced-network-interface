@@ -562,7 +562,7 @@ const TransactionTable = () => {
   const txs = parseTransactions(data?.transactions || []);
 
   return (
-    <BoxPanel bg="bg2">
+    <BoxPanel bg="bg2" minHeight={190}>
       <Flex mb={2} alignItems="center" flexWrap="wrap">
         <Typography mr={2} mb={2} variant="h2" width="100%">
           Activity history
@@ -605,7 +605,9 @@ const TransactionTable = () => {
           </>
         ) : (
           <Box width="100%">
-            <Typography textAlign="center">No activity yet.</Typography>
+            <Typography textAlign="center" paddingTop={'35px'}>
+              No activity yet.
+            </Typography>
           </Box>
         )}
       </Flex>

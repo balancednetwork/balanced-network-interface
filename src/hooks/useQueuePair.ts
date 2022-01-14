@@ -37,10 +37,10 @@ export function useQueuePair(): [PairState, Pair | null] {
 
         const rate = new BigNumber(stats['price'], 16).div(LOOP);
 
-        // sICX/ICX
+        // ICX/sICX
         setReserves({
           reserve0: totalSupplyStr,
-          reserve1: totalSupply.times(rate).toFixed(0),
+          reserve1: totalSupply.div(rate).toFixed(0),
           totalSupply: totalSupplyStr,
           poolId: poolId,
         });
@@ -68,7 +68,7 @@ export function useQueuePair(): [PairState, Pair | null] {
     // returning `ICX/sICX`
     return [
       PairState.EXISTS,
-      new Pair(CurrencyAmount.fromRawAmount(ICX, reserve1), CurrencyAmount.fromRawAmount(sICX, reserve0), {
+      new Pair(CurrencyAmount.fromRawAmount(ICX, reserve0), CurrencyAmount.fromRawAmount(sICX, reserve1), {
         poolId,
         totalSupply,
       }),

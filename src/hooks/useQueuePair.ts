@@ -36,7 +36,7 @@ export function useQueuePair(): [PairState, Pair | null] {
         // ICX/sICX
         setReserves({
           reserve0: totalSupplyStr,
-          reserve1: totalSupply.times(rate).toFixed(0),
+          reserve1: totalSupply.div(rate).toFixed(0),
           totalSupply: totalSupplyStr,
           poolId: poolId,
         });
@@ -58,7 +58,7 @@ export function useQueuePair(): [PairState, Pair | null] {
 
     if (typeof result === 'number') return [PairState.INVALID, null];
 
-    // sICX/ICX
+    // ICX/sICX
     const { reserve0, reserve1, poolId, totalSupply } = result;
 
     // returning `ICX/sICX`

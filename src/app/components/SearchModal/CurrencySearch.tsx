@@ -20,6 +20,15 @@ import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';
 import { useTokenComparator } from './sorting';
 
+const removebnUSD = (tokens: { [address: string]: Token }) => {
+  return Object.values(tokens)
+    .filter(token => token.symbol !== 'bnUSD')
+    .reduce((tokenMap, token) => {
+      tokenMap[token.address] = token;
+      return tokenMap;
+    }, {});
+};
+
 interface CurrencySearchProps {
   account?: string | null;
   isOpen: boolean;
@@ -28,6 +37,7 @@ interface CurrencySearchProps {
   onCurrencySelect: (currency: Currency) => void;
   otherSelectedCurrency?: Currency | null;
   showCommonBases?: boolean;
+  hidebnUSD?: boolean;
   showCurrencyAmount?: boolean;
   disableNonToken?: boolean;
   showManageView: () => void;
@@ -45,6 +55,7 @@ export function CurrencySearch({
   onCurrencySelect,
   otherSelectedCurrency,
   showCommonBases,
+  hidebnUSD,
   showCurrencyAmount,
   disableNonToken,
   onDismiss,
@@ -64,7 +75,12 @@ export function CurrencySearch({
 
   const tokens = useAllTokens();
   const bases = useCommonBases();
-  const allTokens = showCommonBases ? bases : tokens;
+  const allTokens = useMemo(() => (showCommonBases ? bases : hidebnUSD ? removebnUSD(tokens) : tokens), [
+    showCommonBases,
+    hidebnUSD,
+    bases,
+    tokens,
+  ]);
   // if they input an address, use it
 
   const searchToken = useToken(debouncedQuery);

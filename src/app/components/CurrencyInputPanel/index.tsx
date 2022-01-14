@@ -93,6 +93,7 @@ interface CurrencyInputPanelProps {
   otherCurrency?: Currency | null;
   id: string;
   showCommonBases?: boolean;
+  hidebnUSD?: boolean;
   customBalanceText?: string;
   bg?: string;
   placeholder?: string;
@@ -116,6 +117,7 @@ export default function CurrencyInputPanel({
   otherCurrency,
   id,
   showCommonBases,
+  hidebnUSD = false,
   customBalanceText,
   bg = 'bg2',
   placeholder = '0',
@@ -167,6 +169,7 @@ export default function CurrencyInputPanel({
               onDismiss={handleDismiss}
               onCurrencySelect={onCurrencySelect}
               showCommonBases={showCommonBases}
+              hidebnUSD={hidebnUSD}
               showCurrencyAmount={false}
               anchorEl={ref.current}
               width={width ? width + 40 : undefined}

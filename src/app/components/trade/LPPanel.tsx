@@ -221,6 +221,7 @@ export default function LPPanel() {
                   id="supply-liquidity-input-token-a"
                   value={formattedAmounts[Field.CURRENCY_A]}
                   showCommonBases={false}
+                  hidebnUSD={true}
                   currency={currencies[Field.CURRENCY_A]}
                   onUserInput={onFieldAInput}
                   onCurrencySelect={handleCurrencyASelect}

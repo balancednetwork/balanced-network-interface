@@ -68,22 +68,22 @@ export default createReducer<MintState>(initialState, builder =>
       }
     })
     .addCase(selectCurrency, (state, { payload: { currency, field } }) => {
-      const otherField = field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
+      // const otherField = field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
 
-      if (currency === state[otherField].currency) {
-        // the case where we have to swap the order
-        return {
-          ...state,
-          independentField: state.independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A,
-          [field]: { ...state[field], currency: currency, percent: 0 },
-          [otherField]: { ...state[otherField], currency: state[field].currency, percent: 0 },
-        };
-      } else {
-        // the normal case
-        return {
-          ...state,
-          [field]: { ...state[field], currency: currency, percent: 0 },
-        };
-      }
+      // if (currency === state[otherField].currency) {
+      //   // the case where we have to swap the order
+      //   return {
+      //     ...state,
+      //     independentField: state.independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A,
+      //     [field]: { ...state[field], currency: currency, percent: 0 },
+      //     [otherField]: { ...state[otherField], currency: state[field].currency, percent: 0 },
+      //   };
+      // } else {
+      // the normal case
+      return {
+        ...state,
+        [field]: { ...state[field], currency: currency, percent: 0 },
+      };
+      // }
     }),
 );

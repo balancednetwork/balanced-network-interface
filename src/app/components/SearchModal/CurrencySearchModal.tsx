@@ -17,6 +17,7 @@ interface CurrencySearchModalProps {
   onCurrencySelect: (currency: Currency) => void;
   otherSelectedCurrency?: Currency | null;
   showCommonBases?: boolean;
+  hidebnUSD?: boolean;
   showCurrencyAmount?: boolean;
   disableNonToken?: boolean;
   width?: number;
@@ -39,6 +40,7 @@ export default function CurrencySearchModal({
   selectedCurrency,
   otherSelectedCurrency,
   showCommonBases = false,
+  hidebnUSD = false,
   showCurrencyAmount = true,
   disableNonToken = false,
   width,
@@ -103,6 +105,7 @@ export default function CurrencySearchModal({
           selectedCurrency={selectedCurrency}
           otherSelectedCurrency={otherSelectedCurrency}
           showCommonBases={showCommonBases}
+          hidebnUSD={hidebnUSD}
           showCurrencyAmount={showCurrencyAmount}
           disableNonToken={disableNonToken}
           showImportView={showImportView}

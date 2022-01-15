@@ -105,6 +105,13 @@ export const GBET = new Token(
   'GBET',
   'GangstaBet Token',
 );
+export const FIN = new Token(
+  SupportedChainId.MAINNET,
+  'cx785d504f44b5d2c8dac04c5a1ecd75f18ee57d16',
+  18,
+  'FIN',
+  'Fin Token',
+);
 
 // yeouido
 export const ICX_YEOUIDO = new Token(SupportedChainId.YEOUIDO, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
@@ -190,10 +197,17 @@ export const IUSDC_SEJONG = new Token(
   'IUSDC',
   'ICON USD Coin',
 );
+export const FIN_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cx0d0c689da98fd4ca66a5695fd8581648def604eb',
+  18,
+  'FIN',
+  'Fin Token',
+);
 
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
-  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT, GBET],
+  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT, GBET, FIN],
   [SupportedChainId.YEOUIDO]: [
     ICX_YEOUIDO,
     sICX_YEOUIDO,
@@ -205,7 +219,7 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
     CFT_YEOUIDO,
   ],
   //[SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, IUSDC_SEJONG],
-  [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG],
+  [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, FIN_SEJONG],
 };
 
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];

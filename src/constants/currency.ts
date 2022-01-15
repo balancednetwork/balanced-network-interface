@@ -52,6 +52,7 @@ export const addressToCurrencyKeyMap = {
     cx2e6d0fc0eca04965d06038c8406093337f085fcf: 'CFT',
     cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2: 'METX',
     cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88: 'IUSDT',
+    cx785d504f44b5d2c8dac04c5a1ecd75f18ee57d16: 'FIN',
   },
   [NetworkId.YEOUIDO]: {
     cxae6334850f13dfd8b50f8544d5acb126bb8ef82d: 'sICX',
@@ -68,5 +69,6 @@ export const addressToCurrencyKeyMap = {
     cx5838cb516d6156a060f90e9a3de92381331ff024: 'bnUSD',
     cx303470dbc10e5b4ab8831a61dbe00f75db10c38b: 'BALN',
     cx0000000000000000000000000000000000000000: 'ICX',
+    cx0d0c689da98fd4ca66a5695fd8581648def604eb: 'FIN',
   },
 };

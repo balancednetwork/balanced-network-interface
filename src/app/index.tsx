@@ -52,6 +52,14 @@ export function App() {
               <Route path="/vote/new-proposal" component={NewProposalPage} />
               <Route path="/vote/proposal/:id" component={ProposalPage} />
               <Route
+                exact
+                path="/airdrip"
+                component={() => {
+                  window.location.href = 'https://balanced.network/';
+                  return null;
+                }}
+              />
+              <Route
                 component={() => {
                   window.location.href = 'https://balanced.network/404';
                   return null;

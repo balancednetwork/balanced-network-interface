@@ -13,7 +13,7 @@ import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import { ProposalInterface } from 'types';
 import { normalizeContent } from 'utils';
 
-import { notificationCSS } from '../home/wallets/utils';
+import { notificationCSS } from '../Wallet/wallets/utils';
 
 dayjs.extend(duration);
 

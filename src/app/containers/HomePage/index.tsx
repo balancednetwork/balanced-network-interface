@@ -10,7 +10,6 @@ import LoanPanel from 'app/components/home/LoanPanel';
 import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
 import RewardsPanel from 'app/components/home/RewardsPanel';
 import TransactionPanel from 'app/components/home/TransactionPanel';
-import WalletPanel from 'app/components/home/WalletPanel';
 import { DefaultLayout } from 'app/components/Layout';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useLoanFetchInfo } from 'store/loan/hooks';
@@ -60,7 +59,7 @@ export function HomePage() {
           <CollateralPanel />
           <LoanPanel />
           <PositionDetailPanel />
-          <WalletPanel />
+          {/* <WalletPanel /> */}
           <RewardsPanel />
           <TransactionPanel />
         </Grid>

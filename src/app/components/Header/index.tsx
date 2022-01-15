@@ -19,6 +19,8 @@ import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
+import Wallet from '../Wallet';
+
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
 
@@ -35,20 +37,7 @@ const WalletInfo = styled(Box)`
 
 const WalletButtonWrapper = styled.div``;
 
-const WalletMenu = styled.div`
-  max-width: 160px;
-  font-size: 14px;
-  padding: 25px;
-  display: grid;
-  grid-template-rows: auto;
-  grid-gap: 20px;
-`;
-
-const WalletMenuButton = styled(Button)`
-  padding: 7px 25px;
-`;
-
-const ChangeWalletButton = styled(Link)`
+const WalletButton = styled(Link)`
   cursor: pointer;
 `;
 
@@ -59,11 +48,27 @@ const StyledAddress = styled(Typography)`
   }
 `;
 
+const WalletWrap = styled(Box)`
+  width: 400px;
+  max-width: calc(100vw - 4px);
+`;
+const WalletMenu = styled.div`
+  font-size: 14px;
+  padding: 25px 25px 15px 25px;
+  display: flex;
+`;
+
+const WalletButtons = styled(Flex)`
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+`;
+
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
-export default React.memo(function Header(props: { title?: string; className?: string }) {
+export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
-
+  const upSmall = useMedia('(min-width: 600px)');
   const { account, disconnect } = useIconReact();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -105,8 +110,6 @@ export default React.memo(function Header(props: { title?: string; className?: s
     updateCopyState(true);
   }, []);
 
-  const upSmall = useMedia('(min-width: 800px)');
-
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
@@ -114,7 +117,7 @@ export default React.memo(function Header(props: { title?: string; className?: s
           <StyledLogo />
           <Typography variant="h1">{title}</Typography>
           {NETWORK_ID !== NetworkId.MAINNET && (
-            <Typography variant="h3" color="alert">
+            <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
               {CHAIN_INFO[NETWORK_ID].name}
             </Typography>
           )}
@@ -126,13 +129,15 @@ export default React.memo(function Header(props: { title?: string; className?: s
           </Flex>
         )}
 
-        {account && upSmall && (
+        {account && (
           <Flex alignItems="center">
             <WalletInfo>
-              <Typography variant="p" textAlign="right">
-                Wallet
-              </Typography>
-              {account && (
+              {upSmall && (
+                <Typography variant="p" textAlign="right">
+                  ICON wallet
+                </Typography>
+              )}
+              {account && upSmall && (
                 <MouseoverTooltip text={isCopied ? 'Copied' : 'Copy address'} placement="left" noArrowAndBorder>
                   <StyledAddress
                     onMouseLeave={() => {
@@ -153,11 +158,18 @@ export default React.memo(function Header(props: { title?: string; className?: s
                     <WalletIcon />
                   </IconButton>
 
-                  <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
-                    <WalletMenu>
-                      <ChangeWalletButton onClick={handleChangeWallet}>Change wallet</ChangeWalletButton>
-                      <WalletMenuButton onClick={handleDisconnectWallet}>Sign out</WalletMenuButton>
-                    </WalletMenu>
+                  <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" offset={[0, 15]}>
+                    <WalletWrap>
+                      <WalletMenu>
+                        <Typography variant="h2">Wallet</Typography>
+                        <WalletButtons>
+                          <WalletButton onClick={handleChangeWallet}>Change wallet</WalletButton>
+                          <Typography padding={'0px 5px'}>{' | '}</Typography>
+                          <WalletButton onClick={handleDisconnectWallet}>Sign out</WalletButton>
+                        </WalletButtons>
+                      </WalletMenu>
+                      <Wallet anchor={anchor} setAnchor={setAnchor} />
+                    </WalletWrap>
                   </DropdownPopper>
                 </div>
               </ClickAwayListener>
@@ -167,4 +179,4 @@ export default React.memo(function Header(props: { title?: string; className?: s
       </Flex>
     </header>
   );
-});
+}

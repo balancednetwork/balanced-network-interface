@@ -34,7 +34,7 @@ export const useICX = () => {
   }
 };
 
-export const ICX = new Token(SupportedChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
+export const ICX = new Token(SupportedChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICON');
 export const sICX = new Token(
   SupportedChainId.MAINNET,
   'cx2609b924e33ef00b648a409245c7ea394c467824',
@@ -161,7 +161,7 @@ export const CFT_YEOUIDO = new Token(
 );
 
 // sejong
-export const ICX_SEJONG = new Token(SupportedChainId.SEJONG, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
+export const ICX_SEJONG = new Token(SupportedChainId.SEJONG, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICON');
 export const sICX_SEJONG = new Token(
   SupportedChainId.SEJONG,
   'cx70806fdfa274fe12ab61f1f98c5a7a1409a0c108',

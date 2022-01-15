@@ -171,13 +171,13 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
   );
 }
 
-export function DropdownPopper({ show, children, placement = 'auto', anchorEl }: PopperProps) {
+export function DropdownPopper({ show, children, placement = 'auto', anchorEl, offset }: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
   const customModifier = React.useMemo(
     () => [
-      { name: 'offset', options: { offset: [20, 12] } },
+      { name: 'offset', options: { offset: offset ? offset : [20, 12] } },
       {
         name: 'arrow',
         options: {
@@ -185,7 +185,7 @@ export function DropdownPopper({ show, children, placement = 'auto', anchorEl }:
         },
       },
     ],
-    [arrowElement],
+    [arrowElement, offset],
   );
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {

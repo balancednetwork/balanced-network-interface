@@ -42,6 +42,7 @@ export const StyledTab = styled(Tab)<{ hasNotification?: boolean }>`
     
     &:after, &:before {
       right: -4px;
+      top: 5px;
     }
   }
 `;

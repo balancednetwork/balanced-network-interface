@@ -385,7 +385,7 @@ const PositionDetailPanel = () => {
 
 export default PositionDetailPanel;
 
-const ActivityPanel = styled(FlexPanel)`
+export const ActivityPanel = styled(FlexPanel)`
   padding: 0;
   grid-area: initial;
   flex-direction: column;

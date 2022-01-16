@@ -59,7 +59,6 @@ export function HomePage() {
           <CollateralPanel />
           <LoanPanel />
           <PositionDetailPanel />
-          {/* <WalletPanel /> */}
           <RewardsPanel />
           <TransactionPanel />
         </Grid>

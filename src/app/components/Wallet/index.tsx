@@ -348,6 +348,7 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
             </ListItem>
             <BoxPanelWithArrow bg="bg3">
               {activeIndex >= 0 &&
+                isOpen &&
                 (filteredTokens[activeIndex].symbol!.toLocaleLowerCase() === 'icx' ? (
                   <WalletUI currency={filteredTokens[activeIndex]} claimableICX={claimableICX} />
                 ) : (

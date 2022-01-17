@@ -2,8 +2,6 @@ import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
-import { addressToCurrencyKeyMap } from 'constants/currency';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { CurrencyAmount, Token } from 'types/balanced-sdk-core';
 

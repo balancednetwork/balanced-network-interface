@@ -33,10 +33,10 @@ export default function Updater(): null {
     [chainId, setState],
   );
 
-  //call useEffect per 2000ms
+  //call useEffect per 4000ms
   const [last, setLast] = useState(0);
   const increment = useCallback(() => setLast(last => last + 1), [setLast]);
-  useInterval(increment, 2000);
+  useInterval(increment, 4000);
 
   // attach/detach listeners
   useEffect(() => {

@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
+import { useBlockNumber } from 'store/application/hooks';
 import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
@@ -24,6 +25,8 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
   const tokens = useMemo(() => {
     return currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
   }, [currencies]);
+
+  const lastBlockNumber = useBlockNumber();
 
   useEffect(() => {
     setReserves(Array(tokens.length).fill(PairState.LOADING));
@@ -61,7 +64,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
       }
     };
     fetchReserves();
-  }, [tokens]);
+  }, [tokens, lastBlockNumber]);
 
   const queuePair = useQueuePair();
 

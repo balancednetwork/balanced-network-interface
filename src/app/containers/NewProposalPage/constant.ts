@@ -189,7 +189,9 @@ export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.FUNDING]: {
     fetchInputData: async () => {
       const res = await bnJs.DAOFund.getBalances();
-      return FUNDING_TOKENS_LIST.map(token => CurrencyAmount.fromRawAmount(token, res[token.address]));
+      return FUNDING_TOKENS_LIST.filter(token => res[token.address]).map(token =>
+        CurrencyAmount.fromRawAmount(token, res[token.address]),
+      );
     },
     submitParams: (currencyValue: CurrencyValue) => {
       const amounts = currencyValue.amounts

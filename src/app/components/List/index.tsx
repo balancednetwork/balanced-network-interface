@@ -45,6 +45,18 @@ export const List = styled(Box)`
   }
 `;
 
+export const List1 = styled(Box)`
+  max-height: 210px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0px 10px 0px 10px;
+
+  & > ${ListItem}:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+`;
+
 export const Option = styled(Box)`
   background-color: #144a68;
   border-radius: 12px;

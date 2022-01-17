@@ -33,7 +33,7 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { Price, TradeType } from 'types/balanced-sdk-core';
 import { Currency, Percent, Token } from 'types/balanced-sdk-core/entities';
 import { Trade, Route } from 'types/balanced-v1-sdk/entities';
-import { formatBigNumber, formatPercent, maxAmountSpend } from 'utils';
+import { formatBigNumber, formatPercent, maxAmountSpend, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -144,10 +144,16 @@ export default function SwapPanel() {
       executionTrade.outputAmount.currency.symbol || 'OUT',
     );
 
+    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
       bnJs
         .inject({ account })
-        .Router.swapICX(BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact()), executionTrade.route.pathForSwap)
+        .Router.swapICX(
+          BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact()),
+          executionTrade.route.pathForSwap,
+          toHex(minReceived),
+        )
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -168,8 +174,6 @@ export default function SwapPanel() {
           changeShouldLedgerSign(false);
         });
     } else {
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-
       const token = executionTrade.inputAmount.currency as Token;
       const outputToken = executionTrade.outputAmount.currency as Token;
 
@@ -227,14 +231,15 @@ export default function SwapPanel() {
             <Typography variant="h2">Swap</Typography>
             <Typography as="div" hidden={!account}>
               {'Wallet: '}
-              {`${currencyBalances[Field.INPUT]?.toFixed(4)} ${currencies[Field.INPUT]?.symbol}`}
+              {`${currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' })} 
+                ${currencies[Field.INPUT]?.symbol}`}
             </Typography>
           </Flex>
 
           <Flex>
             <CurrencyInputPanel
+              account={account}
               value={formattedAmounts[Field.INPUT]}
-              showMaxButton={false}
               currency={currencies[Field.INPUT]}
               onUserInput={handleTypeInput}
               onCurrencySelect={handleInputSelect}
@@ -254,14 +259,15 @@ export default function SwapPanel() {
             <Typography variant="h2">For</Typography>
             <Typography as="div" hidden={!account}>
               {'Wallet: '}
-              {`${currencyBalances[Field.OUTPUT]?.toFixed(4)} ${currencies[Field.OUTPUT]?.symbol}`}
+              {`${currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })}
+                ${currencies[Field.OUTPUT]?.symbol}`}
             </Typography>
           </Flex>
 
           <Flex>
             <CurrencyInputPanel
+              account={account}
               value={formattedAmounts[Field.OUTPUT]}
-              showMaxButton={false}
               currency={currencies[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}

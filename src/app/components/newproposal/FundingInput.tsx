@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+import addresses from 'packages/BalancedJs/addresses';
+import { useIconReact } from 'packages/icon-react';
 import styled from 'styled-components';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
-import { getTokenFromCurrencyKey } from 'types/adapter';
-import { Currency, CurrencyAmount, Token } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
 type Amount = {
   item: CurrencyAmount<Currency>;
@@ -76,18 +77,17 @@ export default function FundingInput({ currencyValue, setCurrencyValue, balanceL
 
   const handleAddressInput = (value: string) => setCurrencyValue({ ...currencyValue, recipient: value });
 
+  const { networkId } = useIconReact();
   return (
     <BoxPanel>
       <StyledAddressInputPanel value={currencyValue.recipient} onUserInput={handleAddressInput} bg="bg5" />
-      {currencyValue.amounts.map((amount, id) => (
+      {currencyValue.amounts.map((item, id) => (
         <StyledCurrencyInputPanel
-          key={(amount.item.currency as Token).address}
-          currencyList={[amount.item.currency].concat(currencyList)}
-          balanceList={balanceList}
-          value={amount.inputDisplayValue || ''}
-          currency={getTokenFromCurrencyKey(amount.item.currency.symbol)!}
+          account={addresses[networkId].daofund}
+          key={id}
+          value={item.inputDisplayValue || ''}
+          currency={item.item.currency}
           id="funding-currency"
-          showMaxButton={false}
           onCurrencySelect={handleSymbolInput(id)}
           onUserInput={handleAmountInput(id)}
           bg="bg5"

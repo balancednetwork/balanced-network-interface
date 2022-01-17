@@ -1,20 +1,18 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
-import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { List, ListItem, DashGrid, HeaderText, DataText, HorizontalList, Option } from 'app/components/List';
-import { PopperWithoutArrow, SelectorPopover } from 'app/components/Popover';
+import { SelectorPopover } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import useWidth from 'hooks/useWidth';
 import { COMMON_PERCENTS } from 'store/swap/actions';
-import { useWalletBalances } from 'store/wallet/hooks';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
+import { Currency } from 'types/balanced-sdk-core';
 import { escapeRegExp } from 'utils';
+
+import { HorizontalList, Option } from '../List';
+import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -27,7 +25,7 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
   border-right: ${({ theme }) => `1px solid ${theme.colors.divider}`};
   display: flex;
   align-items: center;
-  width: 128px;
+  min-width: 128px;
   height: 43px;
   padding: 4px 15px;
   color: #ffffff;
@@ -44,7 +42,7 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
 
 const StyledTokenName = styled.span`
   line-height: 1.5;
-  margin-right: 8px;
+  margin-right: auto;
   font-size: 14px;
   font-weight: bold;
 `;
@@ -85,8 +83,6 @@ interface CurrencyInputPanelProps {
   value: string;
   onUserInput: (value: string) => void;
   onMax?: () => void;
-  showMaxButton: boolean;
-  label?: string;
   onCurrencySelect?: (currency: Currency) => void;
   currency?: Currency | null;
   onPercentSelect?: (percent: number) => void;
@@ -97,12 +93,12 @@ interface CurrencyInputPanelProps {
   otherCurrency?: Currency | null;
   id: string;
   showCommonBases?: boolean;
+  hidebnUSD?: boolean;
   customBalanceText?: string;
   bg?: string;
   placeholder?: string;
   className?: string;
-  balanceList?: CurrencyAmount<Currency>[];
-  currencyList?: Currency[];
+  account?: string | null;
 }
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -111,8 +107,6 @@ export default function CurrencyInputPanel({
   value,
   onUserInput,
   onMax,
-  showMaxButton,
-  label = 'Input',
   onCurrencySelect,
   currency,
   onPercentSelect,
@@ -123,12 +117,12 @@ export default function CurrencyInputPanel({
   otherCurrency,
   id,
   showCommonBases,
+  hidebnUSD = false,
   customBalanceText,
   bg = 'bg2',
   placeholder = '0',
   className,
-  balanceList,
-  currencyList = SUPPORTED_TOKENS_LIST,
+  account,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -137,11 +131,6 @@ export default function CurrencyInputPanel({
   };
 
   const [ref, width] = useWidth();
-  //
-  const handleCurrencySelect = (ccy: Currency) => (e: React.MouseEvent) => {
-    onCurrencySelect && onCurrencySelect(ccy);
-    setOpen(false);
-  };
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
     onPercentSelect && onPercentSelect(instant);
@@ -153,46 +142,40 @@ export default function CurrencyInputPanel({
     }
   };
 
-  const balances = useWalletBalances();
+  const handleDismiss = () => {
+    setOpen(false);
+  };
 
   return (
     <InputContainer ref={ref} className={className}>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
-        <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
-          {currency && <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />}
-          {currency ? <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> : null}
-          {onCurrencySelect && <StyledDropDown selected={!!currency} />}
+        <div>
+          <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
+            {currency ? (
+              <>
+                <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
+                <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
+              </>
+            ) : (
+              <StyledTokenName>Select a token</StyledTokenName>
+            )}
+            {onCurrencySelect && <StyledDropDown selected={!!currency} />}
+          </CurrencySelect>
 
           {onCurrencySelect && (
-            <PopperWithoutArrow show={open} anchorEl={ref.current} placement="bottom" offset={[0, 2]}>
-              <List style={{ width: width }}>
-                <DashGrid>
-                  <HeaderText>Asset</HeaderText>
-                  <HeaderText textAlign="right">{balanceList ? 'Balance' : 'Wallet'}</HeaderText>
-                </DashGrid>
-                {currencyList.map(ccy => (
-                  <ListItem key={ccy.symbol} onClick={handleCurrencySelect(ccy)}>
-                    <Flex>
-                      <CurrencyLogo currency={ccy} style={{ marginRight: '8px' }} />
-                      <DataText variant="p" fontWeight="bold">
-                        {ccy?.symbol}
-                      </DataText>
-                    </Flex>
-                    <DataText variant="p" textAlign="right">
-                      {balanceList
-                        ? new BigNumber(
-                            balanceList.find(item => item.currency.symbol === ccy?.symbol!)?.toFixed() as string,
-                          )
-                            .dp(2)
-                            .toFormat() || 0
-                        : balances[ccy?.symbol!]?.dp(2).toFormat()}
-                    </DataText>
-                  </ListItem>
-                ))}
-              </List>
-            </PopperWithoutArrow>
+            <CurrencySearchModal
+              account={account}
+              isOpen={open}
+              onDismiss={handleDismiss}
+              onCurrencySelect={onCurrencySelect}
+              showCommonBases={showCommonBases}
+              hidebnUSD={hidebnUSD}
+              showCurrencyAmount={false}
+              anchorEl={ref.current}
+              width={width ? width + 40 : undefined}
+            />
           )}
-        </CurrencySelect>
+        </div>
       </ClickAwayListener>
 
       <NumberInput

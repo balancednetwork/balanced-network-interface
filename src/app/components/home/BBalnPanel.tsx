@@ -7,8 +7,10 @@ import styled from 'styled-components';
 import { Button } from 'app/components/Button';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
+import useWidth from 'hooks/useWidth';
 
 import { BoxPanel } from '../Panel';
+import { DropdownPopper } from '../Popover';
 import QuestionHelper from '../QuestionHelper';
 
 const ButtonsWrap = styled(Box)`
@@ -37,7 +39,7 @@ const BoostedBox = styled(Flex)`
   justify-content: center;
   align-items: center;
   padding: 0 10px;
-  flex-grow: 1;
+  width: 33.333%;
 
   &:last-of-type {
     border-right: 0;
@@ -57,8 +59,41 @@ const StyledTypography = styled(Typography)`
   }
 `;
 
+const PoolItem = styled(Flex)`
+  min-width: 110px;
+  width: 100%;
+  max-width: 25%;
+  padding: 15px 15px 0 15px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  @media screen and (max-width: 600px) {
+    max-width: 33.333%;
+  }
+
+  @media screen and (max-width: 500px) {
+    max-width: 50%;
+  }
+
+  @media screen and (max-width: 360px) {
+    max-width: 100%;
+  }
+`;
+
 export default function BBalnPanel() {
   const sliderInstance = React.useRef<any>(null);
+  const [containerRef, width] = useWidth();
+  const [tooltipAnchor, setTooltipAnchor] = React.useState<HTMLElement | null>(null);
+  const arrowRef = React.useRef(null);
+
+  const handleTooltipToggle = () => {
+    setTooltipAnchor(tooltipAnchor ? null : containerRef.current);
+  };
+
+  const handleBoostAdjust = () => {
+    handleTooltipToggle();
+  };
 
   return (
     <BoxPanel bg="bg2" flex={1}>
@@ -67,7 +102,9 @@ export default function BBalnPanel() {
         <Typography padding="0 3px 2px 10px">2,700** bBaln</Typography>
         <QuestionHelper text="Lock BALN to boost your earning potential. The longer you lock it, the more bBALN (boosted BALN) you'll receive, which determines your earning and voting power." />
         <ButtonsWrap>
-          <Button fontSize={14}>Adjust</Button>
+          <Button fontSize={14} onClick={handleBoostAdjust}>
+            Adjust
+          </Button>
         </ButtonsWrap>
       </Flex>
       <SliderWrap>
@@ -98,7 +135,7 @@ export default function BBalnPanel() {
           <Typography>Locked until 20 Aug 2022</Typography>
         </Flex>
       </SliderWrap>
-      <BoostedInfo>
+      <BoostedInfo ref={containerRef}>
         <BoostedBox>
           <Typography fontSize={16} color="#FFF">
             0.03 %
@@ -115,8 +152,58 @@ export default function BBalnPanel() {
           <Typography fontSize={16} color="#FFF">
             1.72 x 0 1.85 x
           </Typography>
-          <StyledTypography>
+          <StyledTypography ref={arrowRef}>
             Liquidity rewards <QuestionIcon width={14} />
+            <DropdownPopper
+              show={Boolean(tooltipAnchor)}
+              anchorEl={tooltipAnchor}
+              placement="bottom-end"
+              offset={[0, 15]}
+              customArrowStyle={{
+                right: (width ? width : 0) / 6 - 15 + 'px',
+                left: 'initial',
+                transform: 'translate3d(0,0,0)',
+              }}
+            >
+              <Flex flexWrap="wrap" maxWidth={width} padding="0 15px 15px 15px">
+                <PoolItem>
+                  <Typography fontSize={16} color="#FFF">
+                    1.73 x
+                  </Typography>
+                  <Typography fontSize={14}>bnUSD / sICX</Typography>
+                </PoolItem>
+                <PoolItem>
+                  <Typography fontSize={16} color="#FFF">
+                    1.73 x
+                  </Typography>
+                  <Typography fontSize={14}>bnUSD / sICX</Typography>
+                </PoolItem>
+                <PoolItem>
+                  <Typography fontSize={16} color="#FFF">
+                    1.73 x
+                  </Typography>
+                  <Typography fontSize={14}>bnUSD / sICX</Typography>
+                </PoolItem>
+                <PoolItem>
+                  <Typography fontSize={16} color="#FFF">
+                    1.73 x
+                  </Typography>
+                  <Typography fontSize={14}>bnUSD / sICX</Typography>
+                </PoolItem>
+                <PoolItem>
+                  <Typography fontSize={16} color="#FFF">
+                    1.73 x
+                  </Typography>
+                  <Typography fontSize={14}>bnUSD / sICX</Typography>
+                </PoolItem>
+                <PoolItem>
+                  <Typography fontSize={16} color="#FFF">
+                    1.73 x
+                  </Typography>
+                  <Typography fontSize={14}>bnUSD / sICX</Typography>
+                </PoolItem>
+              </Flex>
+            </DropdownPopper>
           </StyledTypography>
         </BoostedBox>
       </BoostedInfo>

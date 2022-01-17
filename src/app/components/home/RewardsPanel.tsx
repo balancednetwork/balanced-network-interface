@@ -97,7 +97,7 @@ const RewardSection = () => {
     if (!hasRewardable && reward?.isZero()) {
       return (
         <>
-          <Typography variant="p" as="div" fontSize={14}>
+          <Typography variant="p" as="div" fontSize={16}>
             Ineligible
             <QuestionHelper text="To earn Balanced rewards, take out a loan or supply liquidity on the Trade page." />
           </Typography>
@@ -106,7 +106,7 @@ const RewardSection = () => {
     } else if (reward?.isZero()) {
       return (
         <>
-          <Typography variant="p" as="div" fontSize={14}>
+          <Typography variant="p" as="div" fontSize={16}>
             Pending
             <QuestionHelper text="To earn Balanced rewards, take out a loan or supply liquidity on the Trade page." />
           </Typography>
@@ -261,7 +261,7 @@ const NetworkFeeSection = () => {
   const getNetworkFeesUI = () => {
     if (hasNetworkFees && !hasFee) {
       return (
-        <Typography variant="p" as="div" fontSize={14} opacity={0.75}>
+        <Typography variant="p" as="div" fontSize={16}>
           Pending
           <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
         </Typography>
@@ -288,7 +288,7 @@ const NetworkFeeSection = () => {
       );
     } else {
       return (
-        <Typography variant="p" as="div" fontSize={14}>
+        <Typography variant="p" as="div" fontSize={16}>
           Ineligible
           <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
         </Typography>

@@ -142,6 +142,9 @@ type OffsetModifier = [number, number];
 
 export interface PopperProps {
   anchorEl: HTMLElement | null;
+  arrowEl?: HTMLElement | null;
+  customArrowStyle?: React.CSSProperties;
+  containerOffset?: number;
   show: boolean;
   children: React.ReactNode;
   placement?: Placement;
@@ -171,7 +174,16 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
   );
 }
 
-export function DropdownPopper({ show, children, placement = 'auto', anchorEl, offset }: PopperProps) {
+export function DropdownPopper({
+  show,
+  children,
+  placement = 'auto',
+  anchorEl,
+  arrowEl,
+  customArrowStyle,
+  containerOffset,
+  offset,
+}: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
@@ -198,6 +210,15 @@ export function DropdownPopper({ show, children, placement = 'auto', anchorEl, o
     update && update();
   }, [update]);
   useInterval(updateCallback, show ? 100 : null);
+
+  if (containerOffset && styles.arrow) {
+    const arrowX = arrowEl?.getBoundingClientRect().x || 0;
+    styles.arrow.transform = `translate3d(${arrowX - containerOffset + 6}px,0,0)`;
+  }
+
+  if (customArrowStyle && styles.arrow) {
+    styles.arrow = { ...styles.arrow, ...customArrowStyle };
+  }
 
   return (
     <Portal>

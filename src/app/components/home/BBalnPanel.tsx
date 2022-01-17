@@ -87,8 +87,20 @@ export default function BBalnPanel() {
   const [tooltipAnchor, setTooltipAnchor] = React.useState<HTMLElement | null>(null);
   const arrowRef = React.useRef(null);
 
-  const handleTooltipToggle = () => {
-    setTooltipAnchor(tooltipAnchor ? null : containerRef.current);
+  const showLPTooltip = () => {
+    setTooltipAnchor(containerRef.current);
+  };
+
+  const hideLPTooltip = () => {
+    setTooltipAnchor(null);
+  };
+
+  const handleTooltipToggle = (value?: boolean) => {
+    if (value === undefined) {
+      tooltipAnchor ? hideLPTooltip() : showLPTooltip();
+    } else {
+      setTooltipAnchor(value ? containerRef.current : null);
+    }
   };
 
   const handleBoostAdjust = () => {
@@ -153,7 +165,7 @@ export default function BBalnPanel() {
             1.72 x 0 1.85 x
           </Typography>
           <StyledTypography ref={arrowRef}>
-            Liquidity rewards <QuestionIcon width={14} />
+            Liquidity rewards <QuestionIcon width={14} onMouseEnter={showLPTooltip} onMouseLeave={hideLPTooltip} />
             <DropdownPopper
               show={Boolean(tooltipAnchor)}
               anchorEl={tooltipAnchor}

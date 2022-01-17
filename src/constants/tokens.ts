@@ -204,7 +204,6 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
     OMM_YEOUIDO,
     CFT_YEOUIDO,
   ],
-  //[SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, IUSDC_SEJONG],
   [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG],
 };
 
@@ -216,6 +215,14 @@ export const SUPPORTED_TOKENS_MAP_BY_ADDRESS: {
   prev[cur.address] = cur;
   return prev;
 }, {});
+
+export const FUNDING_TOKENS: { [chainId: number]: Token[] } = {
+  [SupportedChainId.MAINNET]: [sICX, bnUSD, BALN],
+  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, BALN_YEOUIDO],
+  [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG],
+};
+
+export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 
 /*
  * this information contains the tokens the balanced supports

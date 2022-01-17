@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { FUNDING_TOKENS_LIST } from 'constants/tokens';
 import { CurrencyAmount, Token } from 'types/balanced-sdk-core';
 
 import { CurrencyValue } from '../../components/newproposal/FundingInput';
@@ -189,13 +189,7 @@ export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.FUNDING]: {
     fetchInputData: async () => {
       const res = await bnJs.DAOFund.getBalances();
-      const balanceList = Object.entries(res)
-        .map(item => {
-          const token = SUPPORTED_TOKENS_LIST.find(token => token.address === item[0] || token.symbol === item[0]);
-          return token && CurrencyAmount.fromRawAmount(token, Number(item[1]));
-        })
-        .filter(balance => balance);
-      return balanceList as CurrencyAmount<Token>[];
+      return FUNDING_TOKENS_LIST.map(token => CurrencyAmount.fromRawAmount(token, res[token.address]));
     },
     submitParams: (currencyValue: CurrencyValue) => {
       const amounts = currencyValue.amounts

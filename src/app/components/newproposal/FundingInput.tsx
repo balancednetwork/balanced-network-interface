@@ -9,6 +9,8 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
 import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
+import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
+
 type Amount = {
   item: CurrencyAmount<Currency>;
   inputDisplayValue?: string;
@@ -87,10 +89,10 @@ export default function FundingInput({ currencyValue, setCurrencyValue, balanceL
           key={id}
           value={item.inputDisplayValue || ''}
           currency={item.item.currency}
-          id="funding-currency"
           onCurrencySelect={handleSymbolInput(id)}
           onUserInput={handleAmountInput(id)}
           bg="bg5"
+          currencySelectionType={CurrencySelectionType.VOTE_FUNDING}
         />
       ))}
       {Object.values(currencyValue.amounts).length < balanceList.length && (

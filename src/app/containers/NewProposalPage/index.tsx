@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
-import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
@@ -250,15 +249,6 @@ export function NewProposalPage() {
     }
 
     let fundingAction = JSON.stringify(submitParams(currencyInputValue));
-
-    currencyInputValue.amounts.map((amount, idx) => {
-      if (amount.inputDisplayValue)
-        fundingAction = fundingAction.replace(
-          `"[amount${idx}]"`,
-          BalancedJs.utils.toLoop(JSBI.toNumber(amount.item.numerator)).toFixed(),
-        );
-      return null;
-    });
 
     const actions = isTextProposal
       ? '{}'

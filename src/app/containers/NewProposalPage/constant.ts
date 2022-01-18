@@ -198,7 +198,7 @@ export const PROPOSAL_CONFIG = {
         .map(
           (amount, idx) =>
             amount.inputDisplayValue && {
-              amount: `[amount${idx}]`,
+              amount: amount.item.quotient.toString(),
               address: (amount.item.currency as Token).address,
             },
         )

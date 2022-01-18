@@ -8,6 +8,7 @@ import AddressInputPanel from 'app/components/AddressInputPanel';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
 import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
+import { parseUnits } from 'utils';
 
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 
@@ -56,7 +57,10 @@ export default function FundingInput({ currencyValue, setCurrencyValue, balanceL
     if (maxValue && Number(value) > Number(maxValue)) return;
 
     const newAmount = currencyValue.amounts;
-    newAmount[itemId].item = CurrencyAmount.fromRawAmount(newAmount[itemId].item.currency, value || 0);
+    newAmount[itemId].item = CurrencyAmount.fromRawAmount(
+      newAmount[itemId].item.currency,
+      parseUnits(value || '0', newAmount[itemId].item.currency.decimals),
+    );
     newAmount[itemId].inputDisplayValue = value;
 
     setCurrencyValue({

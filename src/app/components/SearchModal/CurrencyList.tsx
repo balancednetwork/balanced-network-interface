@@ -1,5 +1,6 @@
 import React, { CSSProperties, useState, useCallback } from 'react';
 
+import BigNumber from 'bignumber.js';
 import { isIOS, isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
 import { Flex } from 'rebass/styled-components';
@@ -53,7 +54,7 @@ function CurrencyRow({
       </Flex>
       <Flex justifyContent="flex-end" alignItems="center">
         <DataText variant="p" textAlign="right">
-          {balance?.toSignificant(4)}
+          {new BigNumber(balance?.toSignificant(4) || 0).toFormat()}
         </DataText>
         {isUserAddedToken && (isMobile || show) && (
           <MinusCircle

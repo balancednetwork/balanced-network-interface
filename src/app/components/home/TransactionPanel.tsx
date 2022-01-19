@@ -24,17 +24,11 @@ const Row = styled(Box)`
   grid-template-columns: 25% 1fr;
   align-items: center;
   grid-column-gap: 20px;
-  > div:last-child,
-  > p:last-child {
-    display: none;
-  }
+
+  grid-template-columns: 22% 1fr 15%;
 
   ${({ theme }) => theme.mediaWidth.upLarge`
     grid-template-columns: 17% 1fr 15%;
-    > div:last-child,
-    > p:last-child {
-      display: block;
-    }
   `}
 `;
 
@@ -53,7 +47,7 @@ const ScrollHelper = styled.div`
   width: 100%;
 
   ${Table} {
-    min-width: 560px;
+    min-width: 660px;
     width: 100%;
   }
 `;
@@ -418,8 +412,9 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
           target="_blank"
           rel="noreferrer noopener"
           sx={{
-            display: 'inline-flex',
-            paddingBottom: 2,
+            display: 'flex',
+            paddingBottom: '5px',
+            alignItems: 'flex-end',
           }}
         >
           <ExternalIcon width="11px" height="11px" />

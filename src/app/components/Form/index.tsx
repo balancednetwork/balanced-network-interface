@@ -93,7 +93,7 @@ export const CurrencyField: React.FC<{
     maxValue = PLUS_INFINITY,
     onUserInput,
   } = props;
-  const smallSp = useMedia('(max-width: 360px)');
+  const smallSp = useMedia('(max-width: 359px)');
   const isSmall = !useMedia(`(min-width: ${smallScreenSize})`);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

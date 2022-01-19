@@ -36,7 +36,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
 const smallScreenSize = '500px';
-const superSmallScreenSize = '374px';
+const superSmallScreenSize = '359px';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -248,11 +248,7 @@ const CollateralPanel = () => {
           <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
             {isAdjusting ? (
               <>
-                <TextButton
-                  onClick={handleCancelAdjusting}
-                  order={isSuperSmall ? '1' : ''}
-                  marginTop={isSuperSmall ? '10px' : '0'}
-                >
+                <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
                   Cancel
                 </TextButton>
                 <Button onClick={toggleOpen} fontSize={14}>

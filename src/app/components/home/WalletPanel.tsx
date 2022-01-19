@@ -117,13 +117,17 @@ const WalletPanel = () => {
                               ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
                               : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
                             {currency.toLowerCase() === 'baln' && isAvailable && isSmallScreen && <>{availableBALN}</>}
-                            {currency.toLowerCase() === 'baln' && isAvailable && rates && rates[currency] && (
-                              <>
-                                <Typography color="rgba(255,255,255,0.75)">
-                                  ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
-                                </Typography>
-                              </>
-                            )}
+                            {currency.toLowerCase() === 'baln' &&
+                              isAvailable &&
+                              !isSmallScreen &&
+                              rates &&
+                              rates[currency] && (
+                                <>
+                                  <Typography color="rgba(255,255,255,0.75)">
+                                    ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                                  </Typography>
+                                </>
+                              )}
                           </StyledDataText>
                         </BalanceAndValueWrap>
                       </ListItem>

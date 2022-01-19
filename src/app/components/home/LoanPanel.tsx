@@ -208,8 +208,6 @@ const LoanPanel = () => {
   const shouldShowLock = !usedAmount.isZero();
 
   const hasEnoughICX = useHasEnoughICX();
-  console.log(totalBorrowableAmount);
-  console.log('dddd');
 
   if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative()) {
     return (

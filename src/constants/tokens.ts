@@ -21,6 +21,10 @@ export const isBALN = (token?: Currency): boolean => {
   );
 };
 
+export const isFIN = (token?: Currency): boolean => {
+  return token instanceof Token && (token.address === FIN.address || token.address === FIN_SEJONG.address);
+};
+
 export const useICX = () => {
   const { networkId: chainId } = useIconReact();
   if (chainId === SupportedChainId.MAINNET) {

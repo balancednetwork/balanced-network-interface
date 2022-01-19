@@ -201,7 +201,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     {
       chainId: 1,
       id: 31,
-      name: 'FIN/BnUSD',
+      name: 'FIN/bnUSD',
       baseCurrencyKey: 'FIN',
       quoteCurrencyKey: 'BnUSD',
       baseToken: FIN,
@@ -330,7 +330,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     {
       chainId: 83,
       id: 19,
-      name: 'FIN/BnUSD',
+      name: 'FIN/bnUSD',
       baseCurrencyKey: 'FIN',
       quoteCurrencyKey: 'BnUSD',
       baseToken: FIN_SEJONG,

@@ -11,7 +11,7 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
-import { useUserCollectedFeesQuery, useRewardQuery, BATCH_SIZE, usePlatformDayQuery } from 'queries/reward';
+import { useUserCollectedFeesQuery, useRewardQuery, usePlatformDayQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useHasNetworkFees, useHasRewardable } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';

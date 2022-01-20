@@ -12,7 +12,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
-import { SUPPORTED_TOKENS_LIST, isNativeCurrency, SUPPORTED_TOKENS_MAP_BY_ADDRESS, isBALN } from 'constants/tokens';
+import {
+  SUPPORTED_TOKENS_LIST,
+  isNativeCurrency,
+  SUPPORTED_TOKENS_MAP_BY_ADDRESS,
+  isBALN,
+  isFIN,
+} from 'constants/tokens';
 import { useBnJsContractQuery } from 'queries/utils';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { Token, CurrencyAmount, Currency } from 'types/balanced-sdk-core';
@@ -115,6 +121,7 @@ export function useTokenBalances(
         tokens.map(async token => {
           if (!account) return undefined;
           if (isBALN(token)) return bnJs.BALN.availableBalanceOf(account);
+          if (isFIN(token)) return bnJs.getContract(token.address).availableBalanceOf(account);
           return bnJs.getContract(token.address).balanceOf(account);
         }),
       );

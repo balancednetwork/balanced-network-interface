@@ -16,7 +16,6 @@ const MAINNET_ADDRESSES = {
   bnusd: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
   baln: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
   bwt: 'cxcfe9d1f83fa871e903008471cca786662437e58d',
-  fin: 'cx785d504f44b5d2c8dac04c5a1ecd75f18ee57d16',
 };
 
 const YEOUIDO_ADDRESSES = {
@@ -53,7 +52,6 @@ const SEJONG_ADDRESSES = {
   bnusd: 'cx5838cb516d6156a060f90e9a3de92381331ff024',
   baln: 'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b',
   bwt: 'cx68b822ae2acc76e9ec6143a8afbeb79e50a26e8f',
-  fin: 'cx0d0c689da98fd4ca66a5695fd8581648def604eb',
 };
 
 const addresses = {

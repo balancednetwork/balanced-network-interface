@@ -128,11 +128,10 @@ export default function SendPanel({ currency }: { currency: Currency }) {
           <MaxButton onClick={handleMax}>Send max</MaxButton>
         </Flex>
 
-        <CurrencyInputPanel
+        <CurrencyInputPanel //
           value={value}
           currency={currency}
           onUserInput={handleCurrencyInput}
-          id={`${currency.symbol}-currency-input-in-wallet-panel`}
         />
 
         <AddressInputPanel value={address} onUserInput={handleAddressInput} />

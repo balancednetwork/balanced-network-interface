@@ -235,6 +235,14 @@ export const SUPPORTED_TOKENS_MAP_BY_ADDRESS: {
   return prev;
 }, {});
 
+export const FUNDING_TOKENS: { [chainId: number]: Token[] } = {
+  [SupportedChainId.MAINNET]: [sICX, bnUSD, BALN],
+  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, BALN_YEOUIDO],
+  [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG],
+};
+
+export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
+
 /*
  * this information contains the tokens the balanced supports
  * eventually this information will saved in json file.

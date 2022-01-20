@@ -54,3 +54,17 @@ export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: To
 export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
   [SupportedChainId.MAINNET]: {},
 };
+
+type ChainTokenList = {
+  readonly [chainId: number]: Token[];
+};
+
+// used to construct the list of all pairs we consider by default in the frontend
+export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
+  [SupportedChainId.MAINNET]: [sICX, bnUSD, IUSDC, USDS],
+  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
+  [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
+};
+export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
+  [SupportedChainId.MAINNET]: [],
+};

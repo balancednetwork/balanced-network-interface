@@ -22,14 +22,17 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { BIGINT_ZERO, FRACTION_ONE } from 'constants/misc';
-import { useBalance, usePool, usePoolData, useAvailableBalances, pairToken } from 'hooks/usePools';
+import { useBalance, usePool, usePoolData, pairToken } from 'hooks/usePools';
+import { PairState, useAvailablePairs } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import { useTrackedTokenPairs } from 'store/user/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
 import { Currency, CurrencyAmount, Percent } from 'types/balanced-sdk-core';
+import { Pair } from 'types/balanced-v1-sdk';
 import { multiplyCABN, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -39,16 +42,35 @@ import { withdrawMessage } from './utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
-  const balances = useAvailableBalances();
 
-  const balance1 = useBalance(BalancedJs.utils.POOL_IDS.sICXICX);
+  // fetch the user's balances of all tracked V2 LP tokens
+  const trackedTokenPairs = useTrackedTokenPairs();
 
-  const isHidden =
-    !balance1 ||
-    (JSBI.equal(balance1.balance.quotient, BIGINT_ZERO) &&
-      (!balance1.balance1 || JSBI.equal(balance1.balance1.quotient, BIGINT_ZERO)));
+  // fetch the reserves for all V2 pools in which the user has a balance
+  const pairs = useAvailablePairs(trackedTokenPairs);
 
-  if (isHidden && Object.keys(balances).length === 0) return null;
+  const pairsMap = useMemo<{ [poolId: number]: Pair }>(() => {
+    return pairs.reduce((acc, ps) => {
+      const pairState = ps[0];
+      const pair = ps[1];
+      const poolId = pair?.poolId;
+
+      if (pairState === PairState.EXISTS && pair && poolId && poolId > 0) {
+        acc[poolId] = pair;
+      }
+
+      return acc;
+    }, {});
+  }, [pairs]);
+
+  if (pairs.length === 0) return null;
+
+  const queuePair = pairsMap[BalancedJs.utils.POOL_IDS.sICXICX];
+
+  const isHidden: boolean = queuePair && false;
+
+  // todo:
+  // pairsMap is used below for now, but it should be balanceMap
 
   return (
     <BoxPanel bg="bg2" mb={10}>
@@ -65,9 +87,9 @@ export default function LiquidityDetails() {
           <HeaderText></HeaderText>
         </DashGrid>
 
-        {!isHidden && <PoolRecord1 border={Object.keys(balances).length !== 0} />}
+        {!isHidden && <PoolRecord1 border={Object.keys(pairsMap).length !== 0} />}
 
-        {Object.keys(balances).map((poolId, index, arr) => (
+        {Object.keys(pairsMap).map((poolId, index, arr) => (
           <PoolRecord key={poolId} poolId={parseInt(poolId)} border={index !== arr.length - 1} />
         ))}
       </TableWrapper>

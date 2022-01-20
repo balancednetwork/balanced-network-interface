@@ -4,11 +4,14 @@ import BigNumber from 'bignumber.js';
 
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
-import { useBlockNumber } from 'store/application/hooks';
+import { NULL_CONTRACT_ADDRESS } from 'constants/tokens';
+// import { useBlockNumber } from 'store/application/hooks';
 import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
 import { useQueuePair } from './useQueuePair';
+
+const NON_EXISTENT_POOL_ID = 0;
 
 export enum PairState {
   LOADING,
@@ -26,7 +29,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
     return currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
   }, [currencies]);
 
-  const lastBlockNumber = useBlockNumber();
+  // const lastBlockNumber = useBlockNumber();
 
   useEffect(() => {
     setReserves(Array(tokens.length).fill(PairState.LOADING));
@@ -64,7 +67,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
       }
     };
     fetchReserves();
-  }, [tokens, lastBlockNumber]);
+  }, [tokens]);
 
   const queuePair = useQueuePair();
 
@@ -99,4 +102,153 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
 export function useV2Pair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null] {
   const inputs: [[Currency | undefined, Currency | undefined]] = useMemo(() => [[tokenA, tokenB]], [tokenA, tokenB]);
   return useV2Pairs(inputs)[0];
+}
+
+export function usePoolIds(currencies: [Currency | undefined, Currency | undefined][]): (number | null)[] {
+  const [ids, setIds] = useState<(number | null)[]>([]);
+
+  const tokens = useMemo(() => {
+    return currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
+  }, [currencies]);
+
+  useEffect(() => {
+    setIds(Array(tokens.length).fill(null));
+
+    const fetchIds = async () => {
+      try {
+        const result = await Promise.all(
+          tokens.map(async ([tokenA, tokenB]) => {
+            if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
+              try {
+                return parseInt(await bnJs.Dex.getPoolId(tokenA.address, tokenB.address), 16);
+              } catch (err) {
+                return NON_EXISTENT_POOL_ID;
+              }
+            } else return NON_EXISTENT_POOL_ID;
+          }),
+        );
+
+        setIds(result);
+      } catch (err) {
+        setIds(Array(tokens.length).fill(NON_EXISTENT_POOL_ID));
+      }
+    };
+    fetchIds();
+  }, [tokens]);
+
+  return ids;
+}
+
+interface ReserveState {
+  reserve0: string;
+  reserve1: string;
+  poolId: number;
+  totalSupply: string;
+  address0: string;
+  address1: string;
+}
+
+export function useReserves(poolIds: number[]): (PairState | ReserveState | null)[] {
+  const [reserves, setReserves] = useState<(ReserveState | number | null)[]>([]);
+
+  // const lastBlockNumber = useBlockNumber();
+
+  useEffect(() => {
+    setReserves(Array(poolIds.length).fill(PairState.LOADING));
+
+    const fetchReserves = async () => {
+      try {
+        const result = await Promise.all(
+          poolIds.map(async poolId => {
+            let stats;
+
+            try {
+              stats = await bnJs.Dex.getPoolStats(poolId);
+            } catch (err) {
+              return null;
+            }
+
+            const baseReserve = new BigNumber(stats['base'], 16).toFixed();
+            const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();
+            const totalSupply = new BigNumber(stats['total_supply'], 16).toFixed();
+
+            const baseAddress = stats['base_token'] || NULL_CONTRACT_ADDRESS;
+            const quoteAddress = stats['quote_token'] || NULL_CONTRACT_ADDRESS;
+
+            return {
+              address0: baseAddress,
+              address1: quoteAddress,
+              reserve0: baseReserve,
+              reserve1: quoteReserve,
+              totalSupply,
+              poolId,
+            };
+          }),
+        );
+
+        setReserves(result);
+      } catch (err) {
+        setReserves(Array(poolIds.length).fill(PairState.INVALID));
+      }
+    };
+    fetchReserves();
+  }, [poolIds]);
+
+  return reserves;
+}
+
+export function useAvailablePairs(
+  currencies: [Currency | undefined, Currency | undefined][],
+): [PairState, Pair | null][] {
+  const poolIds = usePoolIds(currencies);
+
+  const tokenPairs = useMemo(() => {
+    return currencies.reduce((acc, cur, i) => {
+      const [currencyA, currencyB] = cur;
+      const poolId = poolIds[i];
+      if (poolId !== null && poolId > 0) acc[poolId] = [currencyA?.wrapped, currencyB?.wrapped];
+      return acc;
+    }, {});
+  }, [poolIds, currencies]);
+
+  const availablePoolIds = useMemo(() => poolIds.filter((poolId): poolId is number => poolId !== null && poolId > 0), [
+    poolIds,
+  ]);
+
+  const reserves = useReserves(availablePoolIds);
+
+  const queuePair = useQueuePair();
+
+  return useMemo(() => {
+    return reserves.map((result, i) => {
+      if (result === null) return [PairState.NOT_EXISTS, null];
+
+      if (typeof result === 'number') {
+        if (result === PairState.LOADING) return [PairState.LOADING, null];
+        return [PairState.INVALID, null];
+      }
+
+      const poolId = result.poolId;
+
+      const tokenA = tokenPairs[poolId][0];
+      const tokenB = tokenPairs[poolId][1];
+
+      if (!tokenA || !tokenB || tokenA.equals(tokenB)) return [PairState.INVALID, null];
+
+      if (canBeQueue(tokenA, tokenB)) return queuePair;
+
+      if (!result) return [PairState.NOT_EXISTS, null];
+
+      const { reserve0, reserve1, totalSupply } = result;
+
+      const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
+      return [
+        PairState.EXISTS,
+        new Pair(CurrencyAmount.fromRawAmount(token0, reserve0), CurrencyAmount.fromRawAmount(token1, reserve1), {
+          poolId,
+          totalSupply,
+        }),
+      ];
+    });
+  }, [queuePair, reserves, tokenPairs]);
 }

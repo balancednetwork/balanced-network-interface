@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
 import { NULL_CONTRACT_ADDRESS } from 'constants/tokens';
 // import { useBlockNumber } from 'store/application/hooks';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount, Token } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
 import { useQueuePair } from './useQueuePair';
@@ -199,7 +200,7 @@ export function useReserves(poolIds: number[]): (PairState | ReserveState | null
 
 export function useAvailablePairs(
   currencies: [Currency | undefined, Currency | undefined][],
-): [PairState, Pair | null][] {
+): { [poolId: number]: Pair } {
   const poolIds = usePoolIds(currencies);
 
   const tokenPairs = useMemo(() => {
@@ -219,7 +220,7 @@ export function useAvailablePairs(
 
   const queuePair = useQueuePair();
 
-  return useMemo(() => {
+  const pairs = useMemo<[PairState, Pair | null][]>(() => {
     return reserves.map((result, i) => {
       if (result === null) return [PairState.NOT_EXISTS, null];
 
@@ -251,4 +252,76 @@ export function useAvailablePairs(
       ];
     });
   }, [queuePair, reserves, tokenPairs]);
+
+  return useMemo<{ [poolId: number]: Pair }>(() => {
+    return pairs.reduce((acc, ps) => {
+      const pairState = ps[0];
+      const pair = ps[1];
+      const poolId = pair?.poolId;
+
+      if (pairState === PairState.EXISTS && pair && poolId && poolId > 0) {
+        acc[poolId] = pair;
+      }
+
+      return acc;
+    }, {});
+  }, [pairs]);
+}
+
+interface BalanceState {
+  poolId: number;
+  balance: CurrencyAmount<Token>;
+  balance1?: CurrencyAmount<Token>;
+}
+
+export function useBalances(
+  account: string | null | undefined,
+  pools: { [poolId: number]: Pair },
+): { [poolId: number]: BalanceState } {
+  const [balances, setBalances] = useState<(BalanceState | undefined)[]>([]);
+
+  useEffect(() => {
+    async function fetchBalances() {
+      if (!account) return;
+
+      const balances = await Promise.all(
+        Object.keys(pools).map(async poolId => {
+          const pool = pools[+poolId];
+
+          if (!pool) return;
+
+          if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+            const [balance, balance1] = await Promise.all([
+              bnJs.Dex.getICXBalance(account),
+              bnJs.Dex.getSicxEarnings(account),
+            ]);
+
+            return {
+              poolId: +poolId,
+              balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(balance, 16).toFixed()),
+              balance1: CurrencyAmount.fromRawAmount(pool.token1, new BigNumber(balance1, 16).toFixed()),
+            };
+          } else {
+            const balance = await bnJs.Dex.balanceOf(account, +poolId);
+
+            return {
+              poolId: +poolId,
+              balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance, 16).toFixed()),
+            };
+          }
+        }),
+      );
+
+      setBalances(balances);
+    }
+
+    fetchBalances();
+  }, [account, pools]);
+
+  return useMemo(() => {
+    return balances.reduce((acc, curr) => {
+      if (curr && curr.poolId > 0) acc[curr.poolId] = curr;
+      return acc;
+    }, {});
+  }, [balances]);
 }

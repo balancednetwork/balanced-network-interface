@@ -268,7 +268,7 @@ export function useAvailablePairs(
   }, [pairs]);
 }
 
-interface BalanceState {
+export interface BalanceState {
   poolId: number;
   balance: CurrencyAmount<Token>;
   balance1?: CurrencyAmount<Token>;

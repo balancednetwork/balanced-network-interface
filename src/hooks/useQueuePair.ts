@@ -33,6 +33,7 @@ export function useQueuePair(): [PairState, Pair | null] {
         const totalSupplyStr = totalSupply.toFixed();
 
         const rate = new BigNumber(stats['price'], 16).div(LOOP);
+
         // ICX/sICX
         setReserves({
           reserve0: totalSupplyStr,

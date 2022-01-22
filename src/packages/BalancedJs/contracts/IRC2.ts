@@ -39,6 +39,17 @@ export default class IRC2 extends Contract {
     return this.call(callParams);
   }
 
+  availableBalanceOf(owner: string) {
+    const callParams = this.paramsBuilder({
+      method: 'availableBalanceOf',
+      params: {
+        _owner: owner,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
   deposit(value: string) {
     return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
   }

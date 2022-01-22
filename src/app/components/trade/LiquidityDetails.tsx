@@ -640,7 +640,6 @@ const WithdrawModal = ({
             value={formattedAmounts[Field.CURRENCY_A]}
             currency={pair.token0}
             onUserInput={handleFieldAInput}
-            id="withdraw-liquidity-input"
             bg="bg5"
           />
         </Box>
@@ -649,7 +648,6 @@ const WithdrawModal = ({
             value={formattedAmounts[Field.CURRENCY_B]}
             currency={pair.token1}
             onUserInput={handleFieldBInput}
-            id="withdraw-liquidity-input"
             bg="bg5"
           />
         </Box>

@@ -120,6 +120,7 @@ export function usePoolIds(currencies: [Currency | undefined, Currency | undefin
         const result = await Promise.all(
           tokens.map(async ([tokenA, tokenB]) => {
             if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
+              if (canBeQueue(tokenA, tokenB)) return BalancedJs.utils.POOL_IDS.sICXICX;
               try {
                 return parseInt(await bnJs.Dex.getPoolId(tokenA.address, tokenB.address), 16);
               } catch (err) {

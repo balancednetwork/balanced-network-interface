@@ -243,25 +243,15 @@ export function useAvailablePairs(
 
       const { reserve0, reserve1, totalSupply, address0 } = result;
 
-      const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
+      const [token0, token1] = tokenA.address === address0 ? [tokenA, tokenB] : [tokenB, tokenA];
 
-      if (token0.address === address0) {
-        return [
-          PairState.EXISTS,
-          new Pair(CurrencyAmount.fromRawAmount(token0, reserve0), CurrencyAmount.fromRawAmount(token1, reserve1), {
-            poolId,
-            totalSupply,
-          }),
-        ];
-      } else {
-        return [
-          PairState.EXISTS,
-          new Pair(CurrencyAmount.fromRawAmount(token1, reserve0), CurrencyAmount.fromRawAmount(token0, reserve1), {
-            poolId,
-            totalSupply,
-          }),
-        ];
-      }
+      return [
+        PairState.EXISTS,
+        new Pair(CurrencyAmount.fromRawAmount(token0, reserve0), CurrencyAmount.fromRawAmount(token1, reserve1), {
+          poolId,
+          totalSupply,
+        }),
+      ];
     });
   }, [queuePair, reserves, tokenPairs]);
 

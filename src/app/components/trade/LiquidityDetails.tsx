@@ -270,10 +270,10 @@ const PoolRecordQ = ({
       <DataText>{`${pair.token0.symbol || '...'} / ${pair.token1.symbol || '...'}`}</DataText>
       <DataText>
         <Typography fontSize={16}>{`${balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ${
-          pair.token1.symbol || '...'
+          pair.token0.symbol || '...'
         }`}</Typography>
         <Typography color="text1">{`${balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} ${
-          pair.token0.symbol || '...'
+          pair.token1.symbol || '...'
         }`}</Typography>
       </DataText>
       {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}

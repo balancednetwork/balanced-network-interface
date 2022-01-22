@@ -561,9 +561,6 @@ const WithdrawModal = ({
     };
   }
 
-  const rate1 = pair.totalSupply ? pair.reserve0.divide(pair.totalSupply) : FRACTION_ONE;
-  const rate2 = pair.totalSupply ? pair.reserve1.divide(pair.totalSupply) : FRACTION_ONE;
-
   const handleFieldAInput = (value: string) => {
     if (baseBalance) {
       const p = Math.min(new BigNumber(value || '0').div(baseBalance.toFixed()).multipliedBy(100).toNumber(), 100);
@@ -612,9 +609,12 @@ const WithdrawModal = ({
       changeShouldLedgerSign(true);
     }
 
-    const t = multiplyCABN(balance.balance, new BigNumber(portion / 100));
-    const baseT = t.multiply(rate1);
-    const quoteT = t.multiply(rate2);
+    const numPortion = new BigNumber(portion / 100);
+
+    const t = multiplyCABN(balance.balance, numPortion);
+
+    const baseT = multiplyCABN(baseBalance, numPortion);
+    const quoteT = multiplyCABN(quoteBalance, numPortion);
 
     bnJs
       .inject({ account })

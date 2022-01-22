@@ -66,22 +66,14 @@ export default function LiquidityDetails() {
 
   const trackedTokenPairs = useTrackedTokenPairs();
 
-  console.log(trackedTokenPairs);
-
   // fetch the reserves for all V2 pools in which the user has a balance
   const pairs = useAvailablePairs(trackedTokenPairs);
-
-  console.log(pairs);
 
   // fetch the user's balances of all tracked V2 LP tokens
   const balances = useBalances(account, pairs);
 
-  console.log(balances);
-
   const queuePair = pairs[BalancedJs.utils.POOL_IDS.sICXICX];
   const queueBalance = balances[BalancedJs.utils.POOL_IDS.sICXICX];
-
-  console.log(queuePair, queueBalance);
 
   const shouldShowQueue =
     queuePair &&

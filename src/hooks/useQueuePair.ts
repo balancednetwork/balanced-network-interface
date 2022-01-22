@@ -29,9 +29,6 @@ export function useQueuePair(): [PairState, Pair | null] {
           return undefined;
         }
 
-        // irrelevant for queue
-        // const baseReserve = new BigNumber(stats['base'], 16).toFixed();
-        // const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();
         const totalSupply = new BigNumber(stats['total_supply'], 16);
         const totalSupplyStr = totalSupply.toFixed();
 
@@ -62,7 +59,7 @@ export function useQueuePair(): [PairState, Pair | null] {
 
     if (typeof result === 'number') return [PairState.INVALID, null];
 
-    // sICX/ICX
+    // ICX/sICX
     const { reserve0, reserve1, poolId, totalSupply } = result;
 
     // returning `ICX/sICX`

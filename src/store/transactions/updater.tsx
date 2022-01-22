@@ -1,11 +1,12 @@
 import React from 'react';
 
+import { Converter } from 'icon-sdk-js';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import { NotificationError, NotificationSuccess } from 'app/components/Notification/TransactionNotification';
-import useInterval from 'hooks/useInterval';
+import { useBlockNumber } from 'store/application/hooks';
 import { getTrackerLink } from 'utils';
 
 import { AppDispatch } from '../index';
@@ -20,12 +21,9 @@ export function shouldCheck(tx: { addedTime: number; receipt?: {}; lastCheckedBl
 export default function Updater(): null {
   const { networkId, iconService } = useIconReact();
 
-  const dispatch = useDispatch<AppDispatch>();
+  const lastBlockNumber = useBlockNumber();
 
-  //call useEffect per 5000ms
-  const [last, setLast] = React.useState(0);
-  const increment = React.useCallback(() => setLast(last => last + 1), [setLast]);
-  useInterval(increment, 5000);
+  const dispatch = useDispatch<AppDispatch>();
 
   const transactions = useAllTransactions();
 
@@ -48,8 +46,8 @@ export default function Updater(): null {
                     blockHash: receipt.blockHash,
                     blockHeight: receipt.blockHeight,
                     scoreAddress: receipt.scoreAddress,
-                    from: receipt.from,
-                    status: receipt.status,
+                    // from: receipt.from,
+                    status: Converter.toNumber(receipt.status),
                     to: receipt.to,
                     txHash: receipt.txHash,
                     txIndex: receipt.txIndex,
@@ -75,7 +73,7 @@ export default function Updater(): null {
               if (receipt.status === 0) {
                 toast.update(receipt.txHash, {
                   ...toastProps,
-                  render: <NotificationError failureReason={receipt.failure.message} />,
+                  render: <NotificationError failureReason={(receipt?.failure as any)?.message} />,
                   autoClose: 5000,
                 });
               }
@@ -85,7 +83,7 @@ export default function Updater(): null {
             console.error(`failed to check transaction hash: ${hash}`, error);
           });
       });
-  }, [networkId, iconService, transactions, dispatch, last]);
+  }, [networkId, iconService, transactions, dispatch, lastBlockNumber]);
 
   return null;
 }

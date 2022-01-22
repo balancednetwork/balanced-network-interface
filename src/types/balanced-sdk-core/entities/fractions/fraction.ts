@@ -4,7 +4,7 @@ import JSBI from 'jsbi';
 import invariant from 'tiny-invariant';
 import toFormat from 'toformat';
 
-import { BigintIsh, Rounding } from '../../constants';
+import { BigintIsh, Rounding, Zero, One } from '../../constants';
 
 const Decimal = toFormat(_Decimal);
 const Big = toFormat(_Big);
@@ -28,6 +28,11 @@ export class Fraction {
   public constructor(numerator: BigintIsh, denominator: BigintIsh = JSBI.BigInt(1)) {
     this.numerator = JSBI.BigInt(numerator);
     this.denominator = JSBI.BigInt(denominator);
+
+    if (JSBI.equal(this.denominator, Zero)) {
+      this.numerator = Zero;
+      this.denominator = One;
+    }
   }
 
   private static tryParseFraction(fractionish: BigintIsh | Fraction): Fraction {

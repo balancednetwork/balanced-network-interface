@@ -114,15 +114,19 @@ export default function LiquidityDetails() {
         )}
 
         {balancesWithoutQ &&
-          Object.keys(pairsWithoutQ).map((poolId, index, arr) => (
-            <PoolRecord
-              key={poolId}
-              poolId={parseInt(poolId)}
-              balance={balances[poolId]}
-              pair={pairs[poolId]}
-              border={index !== arr.length - 1}
-            />
-          ))}
+          Object.keys(pairsWithoutQ).map((poolId, index, arr) =>
+            balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO) ? (
+              <PoolRecord
+                key={poolId}
+                poolId={parseInt(poolId)}
+                balance={balances[poolId]}
+                pair={pairs[poolId]}
+                border={index !== arr.length - 1}
+              />
+            ) : (
+              <></>
+            ),
+          )}
       </TableWrapper>
     </BoxPanel>
   );

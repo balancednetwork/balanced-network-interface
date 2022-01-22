@@ -40,7 +40,12 @@ import Spinner from '../Spinner';
 import { withdrawMessage } from './utils';
 
 function getBaseQuoteBalance(pair: Pair, balance: BalanceState) {
-  if (pair.totalSupply && JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO)) {
+  if (
+    pair.totalSupply &&
+    JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO) &&
+    balance &&
+    JSBI.greaterThan(balance.balance.quotient, BIGINT_ZERO)
+  ) {
     const rate = balance.balance.divide(pair.totalSupply);
 
     return {
@@ -108,7 +113,7 @@ export default function LiquidityDetails() {
           <PoolRecordQ balance={queueBalance} pair={queuePair} border={Object.keys(pairsWithoutQ).length !== 0} />
         )}
 
-        {/*balancesWithoutQ &&
+        {balancesWithoutQ &&
           Object.keys(pairsWithoutQ).map((poolId, index, arr) => (
             <PoolRecord
               key={poolId}
@@ -117,7 +122,7 @@ export default function LiquidityDetails() {
               pair={pairs[poolId]}
               border={index !== arr.length - 1}
             />
-          ))*/}
+          ))}
       </TableWrapper>
     </BoxPanel>
   );

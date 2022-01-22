@@ -21,41 +21,55 @@ import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { BIGINT_ZERO, FRACTION_ONE } from 'constants/misc';
+import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { BalanceState, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
+import { useRewards } from 'store/reward/hooks';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useTrackedTokenPairs } from 'store/user/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
-import { Currency, CurrencyAmount, Percent } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount, Fraction, Percent } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
-import { multiplyCABN, toHex } from 'utils';
+import { multiplyCABN, toFraction, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import Spinner from '../Spinner';
 import { withdrawMessage } from './utils';
 
-function getBaseQuoteBalance(pair: Pair, balance: BalanceState) {
+function getRate(pair: Pair, balance: BalanceState): Fraction {
   if (
     pair.totalSupply &&
     JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO) &&
     balance &&
     JSBI.greaterThan(balance.balance.quotient, BIGINT_ZERO)
   ) {
-    const rate = balance.balance.divide(pair.totalSupply);
-
-    return {
-      base: pair.reserve0.multiply(rate),
-      quote: pair.reserve1.multiply(rate),
-    };
+    const amount = balance.balance.divide(pair.totalSupply);
+    return new Fraction(amount.numerator, amount.denominator);
   }
+  return FRACTION_ZERO;
+}
+
+function getBaseQuoteBalance(pair: Pair, balance: BalanceState) {
+  const rate = getRate(pair, balance);
+
   return {
-    base: CurrencyAmount.fromRawAmount(pair.token0, 0),
-    quote: CurrencyAmount.fromRawAmount(pair.token1, 0),
+    base: pair.reserve0.multiply(rate),
+    quote: pair.reserve1.multiply(rate),
+  };
+}
+
+function getShareReward(pair: Pair, balance: BalanceState, totalReward: BigNumber) {
+  const rate = getRate(pair, balance);
+
+  const totalRewardFrac = totalReward ? toFraction(totalReward) : FRACTION_ZERO;
+
+  return {
+    share: rate,
+    reward: totalRewardFrac.multiply(rate),
   };
 }
 
@@ -72,8 +86,11 @@ export default function LiquidityDetails() {
   // fetch the user's balances of all tracked V2 LP tokens
   const balances = useBalances(account, pairs);
 
+  const rewards = useRewards();
+
   const queuePair = pairs[BalancedJs.utils.POOL_IDS.sICXICX];
   const queueBalance = balances[BalancedJs.utils.POOL_IDS.sICXICX];
+  const queueReward = rewards[BalancedJs.utils.POOL_IDS.sICXICX];
 
   const shouldShowQueue =
     queuePair &&
@@ -102,7 +119,12 @@ export default function LiquidityDetails() {
         </DashGrid>
 
         {shouldShowQueue && (
-          <PoolRecordQ balance={queueBalance} pair={queuePair} border={Object.keys(pairsWithoutQ).length !== 0} />
+          <PoolRecordQ
+            balance={queueBalance}
+            pair={queuePair}
+            totalReward={queueReward}
+            border={Object.keys(pairsWithoutQ).length !== 0}
+          />
         )}
 
         {balancesWithoutQ &&
@@ -113,6 +135,7 @@ export default function LiquidityDetails() {
                 poolId={parseInt(poolId)}
                 balance={balances[poolId]}
                 pair={pairs[poolId]}
+                totalReward={rewards[poolId]}
                 border={index !== arr.length - 1}
               />
             ) : (
@@ -170,15 +193,18 @@ const PoolRecord = ({
   border,
   pair,
   balance,
+  totalReward,
 }: {
   pair: Pair;
   balance: BalanceState;
   poolId: number;
   border: boolean;
+  totalReward: BigNumber;
 }) => {
   const upSmall = useMedia('(min-width: 800px)');
 
   const { base: baseBalance, quote: quoteBalance } = getBaseQuoteBalance(pair, balance);
+  const { share, reward } = getShareReward(pair, balance, totalReward);
 
   return (
     <ListItem border={border}>
@@ -188,8 +214,8 @@ const PoolRecord = ({
         <br />
         {`${quoteBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${pair.token1.symbol || '...'}`}
       </DataText>
-      {upSmall && <DataText>{`${'---'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${'---'} BALN`}</DataText>}
+      {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
       <DataText>
         <WithdrawText pair={pair} balance={balance} poolId={poolId} />
       </DataText>
@@ -226,8 +252,20 @@ const WithdrawText = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceS
   );
 };
 
-const PoolRecordQ = ({ border, balance, pair }: { border: boolean; balance: BalanceState; pair: Pair }) => {
+const PoolRecordQ = ({
+  border,
+  balance,
+  pair,
+  totalReward,
+}: {
+  border: boolean;
+  balance: BalanceState;
+  pair: Pair;
+  totalReward: BigNumber;
+}) => {
   const upSmall = useMedia('(min-width: 800px)');
+
+  const { share, reward } = getShareReward(pair, balance, totalReward);
 
   return (
     <ListItem border={border}>
@@ -240,8 +278,8 @@ const PoolRecordQ = ({ border, balance, pair }: { border: boolean; balance: Bala
           pair.token0.symbol || '...'
         }`}</Typography>
       </DataText>
-      {upSmall && <DataText>{`${'---'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${'---'} BALN`}</DataText>}
+      {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
       <DataText>
         <WithdrawText pair={pair} balance={balance} poolId={BalancedJs.utils.POOL_IDS.sICXICX} />
       </DataText>

@@ -106,8 +106,9 @@ export default function LiquidityDetails() {
         )}
 
         {balancesWithoutQ &&
-          Object.keys(pairsWithoutQ).map((poolId, index, arr) =>
-            balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO) ? (
+          Object.keys(pairsWithoutQ)
+            .filter(poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO))
+            .map((poolId, index, arr) => (
               <PoolRecord
                 key={poolId}
                 poolId={parseInt(poolId)}
@@ -115,10 +116,7 @@ export default function LiquidityDetails() {
                 pair={pairs[poolId]}
                 border={index !== arr.length - 1}
               />
-            ) : (
-              <></>
-            ),
-          )}
+            ))}
       </TableWrapper>
     </BoxPanel>
   );
@@ -184,9 +182,9 @@ const PoolRecord = ({
     <ListItem border={border}>
       <DataText>{`${pair.token0.symbol || '...'} / ${pair.token1.symbol || '...'}`}</DataText>
       <DataText>
-        {`${baseBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${pair.token0.symbol || '...'}`}
+        {`${baseBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${baseBalance?.currency.symbol || '...'}`}
         <br />
-        {`${quoteBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${pair.token1.symbol || '...'}`}
+        {`${quoteBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${quoteBalance?.currency.symbol || '...'}`}
       </DataText>
       {upSmall && <DataText>{`${'---'}%`}</DataText>}
       {upSmall && <DataText>{`~ ${'---'} BALN`}</DataText>}

@@ -6,7 +6,7 @@ import { BalancedJs } from 'packages/BalancedJs';
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
 import { NULL_CONTRACT_ADDRESS } from 'constants/tokens';
-// import { useBlockNumber } from 'store/application/hooks';
+import { useBlockNumber } from 'store/application/hooks';
 import { Currency, CurrencyAmount, Token } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
@@ -30,7 +30,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
     return currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
   }, [currencies]);
 
-  // const lastBlockNumber = useBlockNumber();
+  const lastBlockNumber = useBlockNumber();
 
   useEffect(() => {
     setReserves(Array(tokens.length).fill(PairState.LOADING));
@@ -68,7 +68,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
       }
     };
     fetchReserves();
-  }, [tokens]);
+  }, [tokens, lastBlockNumber]);
 
   const queuePair = useQueuePair();
 

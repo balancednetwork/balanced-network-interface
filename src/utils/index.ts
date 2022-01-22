@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { isEoaAddress, isScoreAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
@@ -9,6 +9,8 @@ import { BIGINT_ZERO } from 'constants/misc';
 import { PairInfo } from 'constants/pairs';
 import { Field } from 'store/swap/actions';
 import { Currency, CurrencyAmount, Fraction, Token } from 'types/balanced-sdk-core';
+
+const { isEoaAddress, isScoreAddress } = Validator;
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
@@ -151,11 +153,11 @@ export const normalizeContent = (text: string): string => {
 const TEN = new BigNumber(10);
 
 export function parseUnits(value: string, decimals: number = 18): string {
-  return new BigNumber(value).times(TEN.pow(decimals)).toFixed();
+  return new BigNumber(value).times(TEN.pow(decimals)).toFixed(0);
 }
 
 export function formatUnits(value: string, decimals: number): string {
-  return new BigNumber(value).div(TEN.pow(decimals)).toFixed();
+  return new BigNumber(value).div(TEN.pow(decimals)).toFixed(0);
 }
 
 export function getPairName(pair: PairInfo) {

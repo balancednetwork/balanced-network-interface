@@ -8,6 +8,7 @@ import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import NotificationContainer from 'app/components/Notification/NotificationContainer';
 import WalletModal from 'app/components/WalletModal';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
+import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
 import { HomePage } from './containers/HomePage/Loadable';
@@ -20,6 +21,7 @@ function Updaters() {
   return (
     <>
       <TransactionUpdater />
+      <ApplicationUpdater />
     </>
   );
 }

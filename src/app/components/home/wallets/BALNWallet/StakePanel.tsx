@@ -3,7 +3,6 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import Nouislider from 'nouislider-react';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -18,6 +17,7 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default React.memo(function StakePanel() {
@@ -71,6 +71,7 @@ export default React.memo(function StakePanel() {
   const addTransaction = useTransactionAdder();
 
   const { account } = useIconReact();
+
   const handleConfirm = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
@@ -80,7 +81,7 @@ export default React.memo(function StakePanel() {
 
     bnJs
       .inject({ account })
-      .BALN.stake(BalancedJs.utils.toLoop(afterAmount))
+      .BALN.stake(parseUnits(afterAmount.toString()))
       .then(res => {
         if (res.result) {
           if (shouldStake) {

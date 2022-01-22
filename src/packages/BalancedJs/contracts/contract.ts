@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import IconService, { IconBuilder, IconConverter } from 'icon-sdk-js';
+import IconService, { Builder as IconBuilder, Converter as IconConverter } from 'icon-sdk-js';
 import { isEmpty } from 'lodash';
 import { ICONEX_RELAY_RESPONSE } from 'packages/iconex';
 
@@ -72,20 +71,19 @@ export class Contract {
   public transactionParamsBuilder({
     method,
     params,
-    value = new BigNumber(0),
+    value = '0',
   }: {
     method: string;
-    value?: BigNumber;
+    value?: string;
     params?: {
       [key: string]: any;
     };
   }): TransactionParams {
-    const callTransactionBuilder = new IconBuilder.CallTransactionBuilder();
-    const payload = callTransactionBuilder
-      .from(this.account)
-      .to(this.address)
+    const payload = new IconBuilder.CallTransactionBuilder()
       .method(method)
       .params(params)
+      .from(this.account!)
+      .to(this.address)
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)
       .stepLimit(IconConverter.toBigNumber(50000000))
@@ -104,9 +102,9 @@ export class Contract {
   /**
    * @returns transaction transfer ICX to call ICONex
    */
-  public transferICXParamsBuilder({ value }: { value: BigNumber }): TransactionParams {
+  public transferICXParamsBuilder({ value }: { value: string }): TransactionParams {
     const payload = new IconBuilder.IcxTransactionBuilder()
-      .from(this.account)
+      .from(this.account!)
       .to(this.address)
       .nid(IconConverter.toBigNumber(this.nid))
       .timestamp(new Date().getTime() * 1000)

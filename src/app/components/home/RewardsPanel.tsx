@@ -21,7 +21,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import Spinner from '../Spinner';
-import BBalnPanel from './BBalnPanel';
+import BBalnPanel from './BBaln/BBalnPanel';
 
 const RewardsPanelLayout = styled(FlexPanel)`
   padding: 0;

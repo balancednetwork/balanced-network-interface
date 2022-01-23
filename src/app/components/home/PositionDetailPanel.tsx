@@ -449,7 +449,7 @@ const Threshold = styled(Box)<{ warned?: boolean }>`
   }
 `;
 
-const MetaData = styled(Box)`
+export const MetaData = styled(Box)`
   font-size: 14px;
   margin-top: -10px;
 

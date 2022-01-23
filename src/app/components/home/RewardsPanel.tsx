@@ -274,7 +274,7 @@ const NetworkFeeSection = () => {
               .filter(key => fees[key].greaterThan(0))
               .map(key => (
                 <Typography key={key} variant="p">
-                  {`${fees[key].toSignificant(2)}`}{' '}
+                  {`${fees[key].toFixed(2)}`}{' '}
                   <Typography key={key} as="span" color="text1">
                     {fees[key].currency.symbol}
                   </Typography>
@@ -315,7 +315,7 @@ const NetworkFeeSection = () => {
                 .filter(key => fees[key].greaterThan(0))
                 .map(key => (
                   <Typography key={key} variant="p">
-                    {`${fees[key].toSignificant()}`}{' '}
+                    {`${fees[key].toFixed(2)}`}{' '}
                     <Typography key={key} as="span" color="text1">
                       {fees[key].currency.symbol}
                     </Typography>

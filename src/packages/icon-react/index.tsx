@@ -1,6 +1,6 @@
 import React from 'react';
 
-import IconService, { IconBuilder, IconConverter } from 'icon-sdk-js';
+import IconService, { Builder as IconBuilder, Converter as IconConverter } from 'icon-sdk-js';
 import { SupportedChainId as NetworkId, CHAIN_INFO } from 'packages/BalancedJs';
 import {
   request,
@@ -29,7 +29,7 @@ interface ICONReactContextInterface {
   ledgerAddressPoint: number;
   request: (event: ICONexRequestEvent) => Promise<ICONexResponseEvent>;
   requestAddress: (ledgerAccount?: { address: string; point: number }) => void;
-  iconService: any;
+  iconService: IconService;
   hasExtension: boolean;
   disconnect: () => void;
   networkId: NetworkId;

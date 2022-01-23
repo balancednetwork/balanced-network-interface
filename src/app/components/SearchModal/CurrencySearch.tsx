@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
 import SearchIcon from 'assets/icons/search.svg';
-import { useICX } from 'constants/tokens';
+import { FUNDING_TOKENS_LIST, useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
 import useDebounce from 'hooks/useDebounce';
 import { useOnClickOutside } from 'hooks/useOnClickOutside';
@@ -20,6 +20,22 @@ import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';
 import { useTokenComparator } from './sorting';
 
+export enum CurrencySelectionType {
+  NORMAL,
+  TRADE_MINT_BASE,
+  TRADE_MINT_QUOTE,
+  VOTE_FUNDING,
+}
+
+const removebnUSD = (tokens: { [address: string]: Token }) => {
+  return Object.values(tokens)
+    .filter(token => token.symbol !== 'bnUSD')
+    .reduce((tokenMap, token) => {
+      tokenMap[token.address] = token;
+      return tokenMap;
+    }, {});
+};
+
 interface CurrencySearchProps {
   account?: string | null;
   isOpen: boolean;
@@ -27,7 +43,7 @@ interface CurrencySearchProps {
   selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency) => void;
   otherSelectedCurrency?: Currency | null;
-  showCommonBases?: boolean;
+  currencySelectionType: CurrencySelectionType;
   showCurrencyAmount?: boolean;
   disableNonToken?: boolean;
   showManageView: () => void;
@@ -44,7 +60,7 @@ export function CurrencySearch({
   selectedCurrency,
   onCurrencySelect,
   otherSelectedCurrency,
-  showCommonBases,
+  currencySelectionType,
   showCurrencyAmount,
   disableNonToken,
   onDismiss,
@@ -64,7 +80,20 @@ export function CurrencySearch({
 
   const tokens = useAllTokens();
   const bases = useCommonBases();
-  const allTokens = showCommonBases ? bases : tokens;
+
+  const allTokens = useMemo(() => {
+    switch (currencySelectionType) {
+      case CurrencySelectionType.NORMAL:
+        return tokens;
+      case CurrencySelectionType.TRADE_MINT_BASE:
+        return removebnUSD(tokens);
+      case CurrencySelectionType.TRADE_MINT_QUOTE:
+        return bases;
+      case CurrencySelectionType.VOTE_FUNDING:
+        return FUNDING_TOKENS_LIST;
+    }
+  }, [tokens, bases, currencySelectionType]);
+
   // if they input an address, use it
 
   const searchToken = useToken(debouncedQuery);
@@ -141,7 +170,12 @@ export function CurrencySearch({
       ) : filteredSortedTokensWithICX?.length > 0 ? (
         <CurrencyList
           account={account}
-          currencies={showCommonBases ? filteredSortedTokens : filteredSortedTokensWithICX}
+          currencies={
+            currencySelectionType === CurrencySelectionType.NORMAL ||
+            currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
+              ? filteredSortedTokensWithICX
+              : filteredSortedTokens
+          }
           onCurrencySelect={handleCurrencySelect}
           showImportView={showImportView}
           setImportToken={setImportToken}

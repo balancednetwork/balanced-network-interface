@@ -18,8 +18,8 @@ import { Typography } from 'app/theme';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
-import { ApplicationModal } from 'store/application/actions';
 import { useWalletModalToggle, useModalOpen } from 'store/application/hooks';
+import { ApplicationModal } from 'store/application/reducer';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -157,7 +157,7 @@ export default function WalletModal() {
             .then(balance => {
               resolve({
                 ...address,
-                balance: BalancedJs.utils.toIcx(balance).toFixed(2),
+                balance: BalancedJs.utils.toIcx(balance.toFixed()).toFixed(2),
               });
             })
             .catch(reject);

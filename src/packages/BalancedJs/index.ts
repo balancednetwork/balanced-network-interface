@@ -125,7 +125,7 @@ export class BalancedJs {
     return this;
   }
 
-  transfer(to: string, value: BigNumber): Promise<any> {
+  transfer(to: string, value: string): Promise<any> {
     const contract = new Contract(this.contractSettings);
     contract.address = to;
     const payload = contract.transferICXParamsBuilder({

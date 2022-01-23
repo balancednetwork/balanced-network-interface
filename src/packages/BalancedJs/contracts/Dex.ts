@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -125,7 +124,7 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  transferICX(value: BigNumber) {
+  transferICX(value: string) {
     const payload = this.transferICXParamsBuilder({
       value: value,
     });

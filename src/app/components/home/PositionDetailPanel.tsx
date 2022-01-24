@@ -268,8 +268,15 @@ const PositionDetailPanel = () => {
           </Box>
 
           <Tooltip
-            text={`If the ICX price reaches $${liquidationThresholdPrice.toFixed(3)}, 
-                    your collateral will be liquidated.`}
+            text={
+              <Typography variant="body">
+                If the ICX price reaches ${liquidationThresholdPrice.toFixed(3)}, your collateral will be liquidated.{' '}
+                <br />
+                <Typography as="small" fontSize={12} color="text1">
+                  Keep a close eye on the price, as rebalancing may cause it to fluctuate.
+                </Typography>
+              </Typography>
+            }
             show={show}
             placement="bottom"
             small

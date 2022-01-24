@@ -1,7 +1,6 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { ChevronRight } from 'react-feather';
@@ -150,7 +149,7 @@ export default function SwapPanel() {
       bnJs
         .inject({ account })
         .Router.swapICX(
-          BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact()),
+          executionTrade.inputAmount.quotient.toString(),
           executionTrade.route.pathForSwap,
           toHex(minReceived),
         )
@@ -181,9 +180,9 @@ export default function SwapPanel() {
         .inject({ account })
         .getContract(token.address)
         .swapUsingRoute(
-          BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact(), currencies[Field.INPUT]?.symbol!),
+          executionTrade.inputAmount.quotient.toString(),
           outputToken.address,
-          BalancedJs.utils.toLoop(minReceived.toExact(), currencies[Field.OUTPUT]?.symbol!),
+          minReceived.quotient.toString(),
           executionTrade.route.pathForSwap,
         )
         .then((res: any) => {
@@ -231,18 +230,18 @@ export default function SwapPanel() {
             <Typography variant="h2">Swap</Typography>
             <Typography as="div" hidden={!account}>
               {'Wallet: '}
-              {`${currencyBalances[Field.INPUT]?.toFixed(4)} ${currencies[Field.INPUT]?.symbol}`}
+              {`${currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' })} 
+                ${currencies[Field.INPUT]?.symbol}`}
             </Typography>
           </Flex>
 
           <Flex>
             <CurrencyInputPanel
+              account={account}
               value={formattedAmounts[Field.INPUT]}
-              showMaxButton={false}
               currency={currencies[Field.INPUT]}
               onUserInput={handleTypeInput}
               onCurrencySelect={handleInputSelect}
-              id="swap-currency-input"
               onPercentSelect={!!account ? handleInputPercentSelect : undefined}
               percent={percents[Field.INPUT]}
             />
@@ -258,18 +257,18 @@ export default function SwapPanel() {
             <Typography variant="h2">For</Typography>
             <Typography as="div" hidden={!account}>
               {'Wallet: '}
-              {`${currencyBalances[Field.OUTPUT]?.toFixed(4)} ${currencies[Field.OUTPUT]?.symbol}`}
+              {`${currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })}
+                ${currencies[Field.OUTPUT]?.symbol}`}
             </Typography>
           </Flex>
 
           <Flex>
             <CurrencyInputPanel
+              account={account}
               value={formattedAmounts[Field.OUTPUT]}
-              showMaxButton={false}
               currency={currencies[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
-              id="swap-currency-output"
             />
           </Flex>
         </AutoColumn>

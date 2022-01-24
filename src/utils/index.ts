@@ -1,13 +1,17 @@
 import BigNumber from 'bignumber.js';
 // import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
 
 import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
+import { BIGINT_ZERO } from 'constants/misc';
 import { PairInfo } from 'constants/pairs';
 import { Field } from 'store/swap/actions';
-import { Currency, CurrencyAmount, Token } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token } from 'types/balanced-sdk-core';
+
+const { isScoreAddress } = Validator;
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
@@ -149,18 +153,64 @@ export const normalizeContent = (text: string): string => {
 
 const TEN = new BigNumber(10);
 
-export function parseUnits(value: string, decimals: number): string {
-  return new BigNumber(value).times(TEN.pow(decimals)).toFixed();
+export function parseUnits(value: string, decimals: number = 18): string {
+  return new BigNumber(value).times(TEN.pow(decimals)).toFixed(0);
 }
 
 export function formatUnits(value: string, decimals: number): string {
-  return new BigNumber(value).div(TEN.pow(decimals)).toFixed();
+  return new BigNumber(value).div(TEN.pow(decimals)).toFixed(0);
 }
 
 export function getPairName(pair: PairInfo) {
   return `${pair.baseCurrencyKey} / ${pair.quoteCurrencyKey}`;
 }
 
+// returns the checksummed address if the address is valid, otherwise returns false
+export function isAddress(value: any): string | false {
+  return isScoreAddress(value) ? value : false;
+}
+
 export function toHex(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>): string {
   return value ? `0x${value.quotient.toString(16)}` : '0x0';
+}
+
+export function toCurrencyAmount(token: Token, amount: BigNumber): CurrencyAmount<Token> {
+  const [amountNum, amountDeno] = amount.toFraction();
+  return CurrencyAmount.fromFractionalAmount(
+    token,
+    amountNum.times(TEN.pow(token.decimals)).toFixed(),
+    amountDeno.toFixed(),
+  );
+}
+
+export function toCurrencyAmountFromRawBN(token: Token, amount: BigNumber): CurrencyAmount<Token> {
+  const [amountNum, amountDeno] = amount.toFraction();
+  return CurrencyAmount.fromFractionalAmount(token, amountNum.toFixed(), amountDeno.toFixed());
+}
+
+export function toFraction(amount: BigNumber): Fraction {
+  const [amountNum, amountDeno] = amount.toFraction();
+  return new Fraction(amountNum.toFixed(), amountDeno.toFixed());
+}
+
+export function multiplyCABN(ca: CurrencyAmount<Currency>, bn: BigNumber): CurrencyAmount<Currency> {
+  const bnFrac = toFraction(bn);
+  return CurrencyAmount.fromFractionalAmount(
+    ca.currency,
+    JSBI.multiply(ca.numerator, bnFrac.numerator),
+    JSBI.multiply(ca.denominator, bnFrac.denominator),
+  );
+}
+
+export function isZeroCA(ca: CurrencyAmount<Currency>): boolean {
+  return JSBI.equal(ca.quotient, BIGINT_ZERO);
+}
+
+export function toBigNumber(ca: CurrencyAmount<Currency>): BigNumber {
+  return new BigNumber(ca.toExact());
+}
+
+export function isDPZeroCA(ca: CurrencyAmount<Currency>, decimalPlaces: number): boolean {
+  if (decimalPlaces === 0) return isZeroCA(ca);
+  return ca.toFixed(decimalPlaces) === `0.${'0'.repeat(decimalPlaces)}`;
 }

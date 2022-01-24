@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js';
 import { isEmpty } from 'lodash';
 
 import { SupportedChainId as NetworkId, SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from './chain';
-import Airdrip from './contracts/Airdrip';
 import BALN from './contracts/BALN';
 import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
@@ -35,7 +34,7 @@ export type SettingInjection = {
   legerSettings?: LedgerSettings;
 };
 
-const LOOP = new BigNumber('1000000000000000000');
+export const LOOP = new BigNumber('1000000000000000000');
 const TEN = new BigNumber('10');
 export class BalancedJs {
   contractSettings: ContractSettings;
@@ -54,7 +53,6 @@ export class BalancedJs {
   Staking: Staking;
   Dex: Dex;
   Rewards: Rewards;
-  Airdrip: Airdrip;
   Dividends: Dividends;
   Governance: Governance;
   Rebalancing: Rebalancing;
@@ -112,7 +110,6 @@ export class BalancedJs {
     this.Staking = new Staking(this.contractSettings);
     this.Dex = new Dex(this.contractSettings);
     this.Rewards = new Rewards(this.contractSettings);
-    this.Airdrip = new Airdrip(this.contractSettings);
     this.Dividends = new Dividends(this.contractSettings);
     this.Governance = new Governance(this.contractSettings);
     this.Rebalancing = new Rebalancing(this.contractSettings);
@@ -128,7 +125,7 @@ export class BalancedJs {
     return this;
   }
 
-  transfer(to: string, value: BigNumber): Promise<any> {
+  transfer(to: string, value: string): Promise<any> {
     const contract = new Contract(this.contractSettings);
     contract.address = to;
     const payload = contract.transferICXParamsBuilder({

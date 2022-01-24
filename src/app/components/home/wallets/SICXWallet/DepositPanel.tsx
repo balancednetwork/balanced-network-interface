@@ -2,7 +2,6 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -18,6 +17,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default function DepositPanel() {
@@ -66,7 +66,7 @@ export default function DepositPanel() {
 
     bnJs
       .inject({ account })
-      .sICX.depositAndBorrow(BalancedJs.utils.toLoop(differenceAmount))
+      .sICX.depositAndBorrow(parseUnits(differenceAmount.toFixed()))
       .then((res: any) => {
         if (res.result) {
           addTransaction(

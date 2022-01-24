@@ -1,17 +1,21 @@
-import JSBI from 'jsbi';
 import { SupportedChainId } from 'packages/BalancedJs';
 
-import { Currency, Percent } from 'types/balanced-sdk-core';
+import { Currency, Token } from 'types/balanced-sdk-core';
 
 import {
+  ICX,
   sICX, //
   bnUSD,
   IUSDC,
   USDS,
+  ICX_YEOUIDO,
   sICX_YEOUIDO,
   bnUSD_YEOUIDO,
   IUSDC_YEOUIDO,
   USDS_YEOUIDO,
+  ICX_SEJONG,
+  sICX_SEJONG,
+  bnUSD_SEJONG,
 } from './tokens';
 
 type ChainCurrencyList = {
@@ -37,11 +41,35 @@ export const COMMON_BASES: ChainCurrencyList = {
 
 export const MAX_HOPS = 4;
 
-// one basis JSBI.BigInt
-const BIPS_BASE = JSBI.BigInt(10000);
-export const ONE_BIPS = new Percent(JSBI.BigInt(1), BIPS_BASE);
+// used to construct intermediary pairs for trading
+export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
+  [SupportedChainId.MAINNET]: [sICX, bnUSD, IUSDC, USDS],
+  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
+  [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
+};
+export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
+  [SupportedChainId.MAINNET]: {},
+};
+/**
+ * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these
+ * tokens.
+ */
+export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
+  [SupportedChainId.MAINNET]: {},
+};
 
-export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(JSBI.BigInt(50), BIPS_BASE);
+type ChainTokenList = {
+  readonly [chainId: number]: Token[];
+};
 
-export const ZERO_PERCENT = new Percent('0');
-export const ONE_HUNDRED_PERCENT = new Percent('1');
+// used to construct the list of all pairs we consider by default in the frontend
+export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
+  [SupportedChainId.MAINNET]: [sICX, bnUSD, IUSDC, USDS],
+  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
+  [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
+};
+export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
+  [SupportedChainId.MAINNET]: [[ICX, sICX]],
+  [SupportedChainId.YEOUIDO]: [[ICX_YEOUIDO, sICX_YEOUIDO]],
+  [SupportedChainId.SEJONG]: [[ICX_SEJONG, sICX_SEJONG]],
+};

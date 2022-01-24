@@ -1,38 +1,67 @@
-import { createReducer, nanoid } from '@reduxjs/toolkit';
+import { createSlice, nanoid } from '@reduxjs/toolkit';
 
 import { DEFAULT_SLIPPAGE } from 'constants/index';
+import { DEFAULT_TXN_DISMISS_MS } from 'constants/misc';
 
-import {
-  addPopup,
-  PopupContent,
-  removePopup,
-  ApplicationModal,
-  setOpenModal,
-  changeShouldLedgedSignMessage,
-  updateSlippageTolerance,
-} from './actions';
+export type PopupContent = {
+  txn: {
+    hash: string;
+    success: boolean;
+    summary?: string;
+  };
+};
+
+export enum ApplicationModal {
+  WALLET,
+  SETTINGS,
+  SELF_CLAIM,
+  ADDRESS_CLAIM,
+  CLAIM_POPUP,
+  MENU,
+  DELEGATE,
+  VOTE,
+}
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>;
 
 export interface ApplicationState {
+  readonly blockNumber: { readonly [chainId: number]: number };
+  readonly chainId: number | null;
   readonly popupList: PopupList;
   readonly openModal: ApplicationModal | null;
-  account: string;
   shouldLedgerSign: boolean;
   slippageTolerance: number;
 }
 
 const initialState: ApplicationState = {
-  popupList: [],
+  blockNumber: {},
+  chainId: null,
   openModal: null,
-  account: '',
+  popupList: [],
   shouldLedgerSign: false,
   slippageTolerance: DEFAULT_SLIPPAGE,
 };
 
-export default createReducer(initialState, builder =>
-  builder
-    .addCase(addPopup, (state, { payload: { content, key, removeAfterMs = 15000 } }) => {
+const applicationSlice = createSlice({
+  name: 'application',
+  initialState,
+  reducers: {
+    updateChainId(state, action) {
+      const { chainId } = action.payload;
+      state.chainId = chainId;
+    },
+    updateBlockNumber(state, action) {
+      const { chainId, blockNumber } = action.payload;
+      if (typeof state.blockNumber[chainId] !== 'number') {
+        state.blockNumber[chainId] = blockNumber;
+      } else {
+        state.blockNumber[chainId] = Math.max(blockNumber, state.blockNumber[chainId]);
+      }
+    },
+    setOpenModal(state, action) {
+      state.openModal = action.payload;
+    },
+    addPopup(state, { payload: { content, key, removeAfterMs = DEFAULT_TXN_DISMISS_MS } }) {
       state.popupList = (key ? state.popupList.filter(popup => popup.key !== key) : state.popupList).concat([
         {
           key: key || nanoid(),
@@ -41,21 +70,30 @@ export default createReducer(initialState, builder =>
           removeAfterMs,
         },
       ]);
-    })
-    .addCase(removePopup, (state, { payload: { key } }) => {
+    },
+    removePopup(state, { payload: { key } }) {
       state.popupList.forEach(p => {
         if (p.key === key) {
           p.show = false;
         }
       });
-    })
-    .addCase(setOpenModal, (state, action) => {
-      state.openModal = action.payload;
-    })
-    .addCase(changeShouldLedgedSignMessage, (state, action) => {
+    },
+    changeShouldLedgedSignMessage(state, action) {
       state.shouldLedgerSign = action.payload.shouldLedgerSign;
-    })
-    .addCase(updateSlippageTolerance, (state, action) => {
+    },
+    updateSlippageTolerance(state, action) {
       state.slippageTolerance = action.payload.slippageTolerance;
-    }),
-);
+    },
+  },
+});
+
+export const {
+  updateChainId,
+  updateBlockNumber,
+  setOpenModal,
+  addPopup,
+  removePopup,
+  changeShouldLedgedSignMessage,
+  updateSlippageTolerance,
+} = applicationSlice.actions;
+export default applicationSlice.reducer;

@@ -8,9 +8,9 @@ import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import NotificationContainer from 'app/components/Notification/NotificationContainer';
 import WalletModal from 'app/components/WalletModal';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
+import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
-import { Airdrip } from './containers/Airdrip/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
 import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 import { ProposalPage } from './containers/ProposalPage/Loadable';
@@ -21,6 +21,7 @@ function Updaters() {
   return (
     <>
       <TransactionUpdater />
+      <ApplicationUpdater />
     </>
   );
 }
@@ -50,9 +51,16 @@ export function App() {
               <Route exact path="/" component={HomePage} />
               <Route exact path="/vote" component={VotePage} />
               <Route exact path="/trade" component={TradePage} />
-              <Route exact path="/airdrip" component={Airdrip} />
               <Route path="/vote/new-proposal" component={NewProposalPage} />
               <Route path="/vote/proposal/:id" component={ProposalPage} />
+              <Route
+                exact
+                path="/airdrip"
+                component={() => {
+                  window.location.href = 'https://balanced.network/';
+                  return null;
+                }}
+              />
               <Route
                 component={() => {
                   window.location.href = 'https://balanced.network/404';

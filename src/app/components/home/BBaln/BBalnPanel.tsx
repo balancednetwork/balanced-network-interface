@@ -420,7 +420,7 @@ export default function BBalnPanel() {
                 Boost rewards{' '}
               </Typography>
               <Typography padding="0 3px 2px 0">
-                {parsedBBalnAmount[Field.LEFT].toFormat()} bBaln
+                {parsedBBalnAmount[Field.LEFT].toFormat()} bBALN
                 <QuestionHelper text="Lock BALN to boost your earning potential. The longer you lock it, the more bBALN (boosted BALN) you'll receive, which determines your earning and voting power." />
               </Typography>
             </Flex>
@@ -553,69 +553,72 @@ export default function BBalnPanel() {
               )}
             </Flex>
           </SliderWrap>
-          <BoostedInfo>
-            <BoostedBox>
-              <Typography fontSize={16} color="#FFF">
-                0.03 %
-              </Typography>
-              <Typography>Network fees</Typography>
-            </BoostedBox>
-            <BoostedBox>
-              <MaxRewardsReachedNotice show={isAdjusting && isMaxRewardsReached}>Max Rewards</MaxRewardsReachedNotice>
-              <Typography fontSize={16} color="#FFF">
-                1.88 x
-              </Typography>
-              <Typography>Loan rewards</Typography>
-            </BoostedBox>
-            <BoostedBox className="no-border">
-              <Typography fontSize={16} color="#FFF">
-                1.72 x 0 1.85 x
-              </Typography>
-              <StyledTypography ref={arrowRef}>
-                Liquidity rewards <QuestionIcon width={14} onMouseEnter={showLPTooltip} onMouseLeave={hideLPTooltip} />
-              </StyledTypography>
-            </BoostedBox>
-            <LiquidityDetailsWrap show={showLiquidityTooltip || isAdjusting}>
-              <LiquidityDetails>
-                <PoolItem>
-                  <Typography fontSize={16} color="#FFF">
-                    1.73 x
-                  </Typography>
-                  <Typography fontSize={14}>bnUSD / sICX</Typography>
-                </PoolItem>
-                <PoolItem>
-                  <Typography fontSize={16} color="#FFF">
-                    1.73 x
-                  </Typography>
-                  <Typography fontSize={14}>bnUSD / sICX</Typography>
-                </PoolItem>
-                <PoolItem>
-                  <Typography fontSize={16} color="#FFF">
-                    1.73 x
-                  </Typography>
-                  <Typography fontSize={14}>bnUSD / sICX</Typography>
-                </PoolItem>
-                <PoolItem>
-                  <Typography fontSize={16} color="#FFF">
-                    1.73 x
-                  </Typography>
-                  <Typography fontSize={14}>bnUSD / sICX</Typography>
-                </PoolItem>
-                <PoolItem>
-                  <Typography fontSize={16} color="#FFF">
-                    1.73 x
-                  </Typography>
-                  <Typography fontSize={14}>bnUSD / sICX</Typography>
-                </PoolItem>
-                <PoolItem>
-                  <Typography fontSize={16} color="#FFF">
-                    1.73 x
-                  </Typography>
-                  <Typography fontSize={14}>bnUSD / sICX</Typography>
-                </PoolItem>
-              </LiquidityDetails>
-            </LiquidityDetailsWrap>
-          </BoostedInfo>
+          {parsedBBalnAmount[Field.LEFT].isGreaterThan(0) && (
+            <BoostedInfo>
+              <BoostedBox>
+                <Typography fontSize={16} color="#FFF">
+                  0.03 %
+                </Typography>
+                <Typography>Network fees</Typography>
+              </BoostedBox>
+              <BoostedBox>
+                <MaxRewardsReachedNotice show={isAdjusting && isMaxRewardsReached}>Max rewards</MaxRewardsReachedNotice>
+                <Typography fontSize={16} color="#FFF">
+                  1.88 x
+                </Typography>
+                <Typography>Loan rewards</Typography>
+              </BoostedBox>
+              <BoostedBox className="no-border">
+                <Typography fontSize={16} color="#FFF">
+                  1.72 x 0 1.85 x
+                </Typography>
+                <StyledTypography ref={arrowRef}>
+                  Liquidity rewards{' '}
+                  <QuestionIcon width={14} onMouseEnter={showLPTooltip} onMouseLeave={hideLPTooltip} />
+                </StyledTypography>
+              </BoostedBox>
+              <LiquidityDetailsWrap show={showLiquidityTooltip || isAdjusting}>
+                <LiquidityDetails>
+                  <PoolItem>
+                    <Typography fontSize={16} color="#FFF">
+                      1.73 x
+                    </Typography>
+                    <Typography fontSize={14}>bnUSD / sICX</Typography>
+                  </PoolItem>
+                  <PoolItem>
+                    <Typography fontSize={16} color="#FFF">
+                      1.73 x
+                    </Typography>
+                    <Typography fontSize={14}>bnUSD / sICX</Typography>
+                  </PoolItem>
+                  <PoolItem>
+                    <Typography fontSize={16} color="#FFF">
+                      1.73 x
+                    </Typography>
+                    <Typography fontSize={14}>bnUSD / sICX</Typography>
+                  </PoolItem>
+                  <PoolItem>
+                    <Typography fontSize={16} color="#FFF">
+                      1.73 x
+                    </Typography>
+                    <Typography fontSize={14}>bnUSD / sICX</Typography>
+                  </PoolItem>
+                  <PoolItem>
+                    <Typography fontSize={16} color="#FFF">
+                      1.73 x
+                    </Typography>
+                    <Typography fontSize={14}>bnUSD / sICX</Typography>
+                  </PoolItem>
+                  <PoolItem>
+                    <Typography fontSize={16} color="#FFF">
+                      1.73 x
+                    </Typography>
+                    <Typography fontSize={14}>bnUSD / sICX</Typography>
+                  </PoolItem>
+                </LiquidityDetails>
+              </LiquidityDetailsWrap>
+            </BoostedInfo>
+          )}
         </>
       ) : (
         <>

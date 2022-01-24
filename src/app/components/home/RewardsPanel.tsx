@@ -34,7 +34,7 @@ const RewardsPanelLayout = styled(FlexPanel)`
 
   ${({ theme }) => theme.mediaWidth.upMedium`
     padding: 0;
-    grid-area: 3 / 1 / 3 / 3;
+    grid-column: 1 / span 2;
     flex-direction: row;
   `}
 `;
@@ -170,8 +170,6 @@ const RewardSection = () => {
             </Box>
           </Flex>
 
-          <Typography textAlign="center">To earn network fees, stake BALN from your wallet.</Typography>
-
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
@@ -263,7 +261,6 @@ const NetworkFeeSection = () => {
       return (
         <Typography variant="p" as="div" fontSize={16}>
           Pending
-          <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
         </Typography>
       );
     } else if (hasFee) {
@@ -290,7 +287,6 @@ const NetworkFeeSection = () => {
       return (
         <Typography variant="p" as="div" fontSize={16}>
           Ineligible
-          <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
         </Typography>
       );
     }

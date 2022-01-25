@@ -209,21 +209,14 @@ const PositionDetailPanel = () => {
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between" mt={[10, 5, 5, 5, 5]} mb={4}>
-          <Tooltip
-            text="If the bar only fills this section, you have a low risk of liquidation."
-            show={show}
-            placement="bottom"
-            small
-          >
-            <LeftChip
-              bg="primary"
-              style={{
-                background: isPassAllCollateralLocked
-                  ? '#fb6a6a'
-                  : 'linear-gradient(to right, #2ca9b7 ' + lowRisk1 + '%, #144a68 ' + lowRisk1 + '%)',
-              }}
-            />
-          </Tooltip>
+          <LeftChip
+            bg="primary"
+            style={{
+              background: isPassAllCollateralLocked
+                ? '#fb6a6a'
+                : 'linear-gradient(to right, #2ca9b7 ' + lowRisk1 + '%, #144a68 ' + lowRisk1 + '%)',
+            }}
+          />
 
           <Box flex={1} style={{ position: 'relative' }}>
             <Locked warned={isLockWarning} pos={pos}>

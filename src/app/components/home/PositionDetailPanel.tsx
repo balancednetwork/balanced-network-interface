@@ -222,9 +222,7 @@ const PositionDetailPanel = () => {
                   ? '#fb6a6a'
                   : 'linear-gradient(to right, #2ca9b7 ' + lowRisk1 + '%, #144a68 ' + lowRisk1 + '%)',
               }}
-            >
-              Low risk
-            </LeftChip>
+            />
           </Tooltip>
 
           <Box flex={1} style={{ position: 'relative' }}>
@@ -417,7 +415,6 @@ const Chip = styled(Box)`
 const LeftChip = styled(Chip)`
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  border-right: 3px solid #0d2a4d;
 `;
 
 const RightChip = styled(Chip)`

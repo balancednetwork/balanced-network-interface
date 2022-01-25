@@ -6,7 +6,6 @@ import { BalancedJs } from 'packages/BalancedJs';
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
 import { NULL_CONTRACT_ADDRESS } from 'constants/tokens';
-// import { useBlockNumber } from 'store/application/hooks';
 import { useBlockNumber } from 'store/application/hooks';
 import { Currency, CurrencyAmount, Token } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
@@ -57,31 +56,20 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
                 const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();
                 const totalSupply = new BigNumber(stats['total_supply'], 16).toFixed();
 
-                if (stats['base_token'] === tokenA.address) {
-                  return [
-                    PairState.EXISTS,
-                    new Pair(
-                      CurrencyAmount.fromRawAmount(tokenA, baseReserve),
-                      CurrencyAmount.fromRawAmount(tokenB, quoteReserve),
-                      {
-                        poolId,
-                        totalSupply,
-                      },
-                    ),
-                  ];
-                } else {
-                  return [
-                    PairState.EXISTS,
-                    new Pair(
-                      CurrencyAmount.fromRawAmount(tokenA, quoteReserve),
-                      CurrencyAmount.fromRawAmount(tokenB, baseReserve),
-                      {
-                        poolId,
-                        totalSupply,
-                      },
-                    ),
-                  ];
-                }
+                const [reserveA, reserveB] =
+                  stats['base_token'] === tokenA.address ? [baseReserve, quoteReserve] : [quoteReserve, baseReserve];
+
+                return [
+                  PairState.EXISTS,
+                  new Pair(
+                    CurrencyAmount.fromRawAmount(tokenA, reserveA),
+                    CurrencyAmount.fromRawAmount(tokenB, reserveB),
+                    {
+                      poolId,
+                      totalSupply,
+                    },
+                  ),
+                ];
               } else {
                 return [PairState.INVALID, null];
               }

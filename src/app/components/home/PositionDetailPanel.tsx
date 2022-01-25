@@ -255,7 +255,7 @@ const PositionDetailPanel = () => {
               start={[Math.min(currentRatio.toNumber(), 900)]}
               connect={[true, false]}
               range={{
-                min: [150],
+                min: [117.7],
                 max: [900],
               }}
               instanceRef={instance => {

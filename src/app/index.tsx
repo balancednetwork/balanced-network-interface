@@ -12,10 +12,6 @@ import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
 import { HomePage } from './containers/HomePage/Loadable';
-import { NewProposalPage } from './containers/NewProposalPage/Loadable';
-import { ProposalPage } from './containers/ProposalPage/Loadable';
-import { TradePage } from './containers/TradePage/Loadable';
-import { VotePage } from './containers/VotePage/Loadable';
 
 function Updaters() {
   return (
@@ -41,26 +37,10 @@ export function App() {
           <WalletModal />
 
           <BrowserRouter>
-            <Helmet
-              titleTemplate="%s | Balanced"
-              defaultTitle="Balanced Network"
-              htmlAttributes={{ lang: i18n.language }}
-            />
+            <Helmet titleTemplate="%s | EDEN" defaultTitle="EDEN" htmlAttributes={{ lang: i18n.language }} />
 
             <Switch>
               <Route exact path="/" component={HomePage} />
-              <Route exact path="/vote" component={VotePage} />
-              <Route exact path="/trade" component={TradePage} />
-              <Route path="/vote/new-proposal" component={NewProposalPage} />
-              <Route path="/vote/proposal/:id" component={ProposalPage} />
-              <Route
-                exact
-                path="/airdrip"
-                component={() => {
-                  window.location.href = 'https://balanced.network/';
-                  return null;
-                }}
-              />
               <Route
                 component={() => {
                   window.location.href = 'https://balanced.network/404';

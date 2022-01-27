@@ -5,10 +5,6 @@ import { Helmet } from 'react-helmet-async';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import CollateralPanel from 'app/components/home/CollateralPanel';
-import LoanPanel from 'app/components/home/LoanPanel';
-import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
-import RewardsPanel from 'app/components/home/RewardsPanel';
 import TransactionPanel from 'app/components/home/TransactionPanel';
 import WalletPanel from 'app/components/home/WalletPanel';
 import { DefaultLayout } from 'app/components/Layout';
@@ -57,11 +53,7 @@ export function HomePage() {
 
       {account ? (
         <Grid>
-          <CollateralPanel />
-          <LoanPanel />
-          <PositionDetailPanel />
           <WalletPanel />
-          <RewardsPanel />
           <TransactionPanel />
         </Grid>
       ) : (

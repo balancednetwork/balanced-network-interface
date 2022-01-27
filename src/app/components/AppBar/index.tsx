@@ -5,11 +5,6 @@ import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { ReactComponent as HomeIcon } from 'assets/icons/home.svg';
-import { ReactComponent as TradeIcon } from 'assets/icons/trade.svg';
-import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
-import { useActiveProposals } from 'queries/vote';
-
-import { notificationCSS } from '../home/wallets/utils';
 
 const Navigation = styled.nav`
   display: inline-block;
@@ -101,33 +96,7 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   }
 `;
 
-const StyledNavLinkWithNotification = styled(({ hasNotification, ...rest }) => <StyledNavLink {...rest} />)<{
-  hasNotification?: boolean;
-}>`
-  ${({ theme, hasNotification }) =>
-    hasNotification &&
-    `
-    ${notificationCSS}
-    &:before, &:after {
-      pointer-events: none;
-      z-index: 10;
-      background-color: ${theme.colors.primary};
-      right: 25px;
-      top: 10px;
-    }
-
-    &:hover, &.${activeClassName} {
-      &:before, &:after {
-        background-color: ${theme.colors.bg1}
-      }
-    }
-  `}
-`;
-
 export default React.memo(function AppBar() {
-  const useActiveProposalsQuery = useActiveProposals();
-  const { data: activeProposals } = useActiveProposalsQuery;
-
   return (
     <Navigation>
       <List>
@@ -136,18 +105,6 @@ export default React.memo(function AppBar() {
             <HomeIcon width="35" height="33" />
             <Text>Home</Text>
           </StyledNavLink>
-        </ListItem>
-        <ListItem>
-          <StyledNavLink exact to="/trade">
-            <TradeIcon width="35" height="33" />
-            <Text>Trade</Text>
-          </StyledNavLink>
-        </ListItem>
-        <ListItem>
-          <StyledNavLinkWithNotification to="/vote" hasNotification={activeProposals && activeProposals.length}>
-            <VoteIcon width="35" height="33" />
-            <Text>Vote</Text>
-          </StyledNavLinkWithNotification>
         </ListItem>
       </List>
     </Navigation>

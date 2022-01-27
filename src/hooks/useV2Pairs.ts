@@ -34,6 +34,8 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
     setPairs(Array(tokens.length).fill([PairState.LOADING, null]));
   }, [tokens]);
 
+  const queuePair = useQueuePair();
+
   useEffect(() => {
     const fetchReserves = async () => {
       try {
@@ -41,6 +43,14 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
           tokens.map(
             async ([tokenA, tokenB]): Promise<[PairState, Pair | null]> => {
               if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
+                if (canBeQueue(tokenA, tokenB))
+                  return [
+                    PairState.EXISTS,
+                    new Pair(CurrencyAmount.fromRawAmount(tokenA, 0), CurrencyAmount.fromRawAmount(tokenB, 0), {
+                      poolId: BalancedJs.utils.POOL_IDS.sICXICX,
+                    }),
+                  ];
+
                 let stats;
                 let poolId;
 
@@ -85,11 +95,9 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
     fetchReserves();
   }, [tokens, lastBlockNumber]);
 
-  const queuePair = useQueuePair();
-
   return useMemo(() => {
     return pairs.map(pair => {
-      if (pair[0] === PairState.EXISTS && pair[1] && canBeQueue(pair[1].reserve0.currency, pair[1].reserve1.currency)) {
+      if (pair[1] && pair[1].poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
         return queuePair;
       } else {
         return pair;

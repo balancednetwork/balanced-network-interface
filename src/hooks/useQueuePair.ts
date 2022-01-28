@@ -54,6 +54,5 @@ export function useQueuePair(): [PairState, Pair | null] {
     fetchReserves();
   }, [lastBlockNumber, ICX, sICX]);
 
-  console.log(pair);
   return pair;
 }

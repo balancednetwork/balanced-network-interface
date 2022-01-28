@@ -102,8 +102,11 @@ export default function LiquidityDetails() {
 
   const pairsWithoutQ = lodash.omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = lodash.omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
+  const userPools = Object.keys(pairsWithoutQ).filter(
+    poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO),
+  );
 
-  return (
+  return shouldShowQueue || userPools.length ? (
     <BoxPanel bg="bg2" mb={10}>
       <Typography variant="h2" mb={5}>
         Liquidity details
@@ -128,21 +131,19 @@ export default function LiquidityDetails() {
         )}
 
         {balancesWithoutQ &&
-          Object.keys(pairsWithoutQ)
-            .filter(poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO))
-            .map((poolId, index, arr) => (
-              <PoolRecord
-                key={poolId}
-                poolId={parseInt(poolId)}
-                balance={balances[poolId]}
-                pair={pairs[poolId]}
-                totalReward={rewards[poolId]}
-                border={index !== arr.length - 1}
-              />
-            ))}
+          userPools.map((poolId, index, arr) => (
+            <PoolRecord
+              key={poolId}
+              poolId={parseInt(poolId)}
+              balance={balances[poolId]}
+              pair={pairs[poolId]}
+              totalReward={rewards[poolId]}
+              border={index !== arr.length - 1}
+            />
+          ))}
       </TableWrapper>
     </BoxPanel>
-  );
+  ) : null;
 }
 
 const TableWrapper = styled.div``;

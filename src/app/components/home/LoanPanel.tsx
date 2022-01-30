@@ -39,11 +39,9 @@ import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import Tooltip from '../Tooltip';
 import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
 
-const superSmallScreenSize = '420px';
-
 const LoanPanel = () => {
   const { account } = useIconReact();
-  const isSuperSmall = useMedia(`(max-width: ${superSmallScreenSize})`);
+  const isSuperSmall = useMedia(`(max-width: 420px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
 

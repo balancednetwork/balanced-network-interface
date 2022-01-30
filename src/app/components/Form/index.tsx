@@ -13,8 +13,6 @@ import { MINUS_INFINITY, PLUS_INFINITY, ZERO } from 'constants/index';
 import { CurrencyKey } from 'types';
 import { escapeRegExp } from 'utils'; // match escaped "." characters via in a non-capturing group
 
-const smallScreenSize = '500px';
-
 export const CheckBox = styled(Box)<{ isActive: boolean }>`
   width: 20px;
   height: 5px;
@@ -23,12 +21,12 @@ export const CheckBox = styled(Box)<{ isActive: boolean }>`
   position: absolute;
   margin-top: -35px;
 
-  @media screen and (min-width: 500px) {
+  ${({ theme }) => theme.mediaWidth.up500`
     width: 20px;
     height: 20px;
     position: static;
     margin-top: 0;
-  }
+  `}
 `;
 
 const CurrencyInput = styled(Box)`
@@ -47,9 +45,9 @@ const CurrencyInput = styled(Box)`
   transition: border 0.3s ease;
   overflow: visible;
 
-  @media screen and (min-width: ${smallScreenSize}) {
+  ${({ theme }) => theme.mediaWidth.up500`
     padding: 3px 20px;
-  }
+  `}
 `;
 
 const NumberInput = styled.input`
@@ -94,7 +92,7 @@ export const CurrencyField: React.FC<{
     onUserInput,
   } = props;
   const smallSp = useMedia('(max-width: 359px)');
-  const isSmall = !useMedia(`(min-width: ${smallScreenSize})`);
+  const isSmall = !useMedia('(min-width: 500px})');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextUserInput = event.target.value.replace(/,/g, '.');

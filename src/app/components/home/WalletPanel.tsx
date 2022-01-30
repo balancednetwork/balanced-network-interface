@@ -33,8 +33,6 @@ const WalletUIs = {
 
 const CURRENCY = SUPPORTED_TOKENS_LIST.map(currency => currency.symbol!);
 
-const walletBreakpoint = '499px';
-
 const WalletPanel = () => {
   const balances = useWalletBalances();
   const { account } = useIconReact();
@@ -45,7 +43,7 @@ const WalletPanel = () => {
   const unstakingBALN: BigNumber = React.useMemo(() => details['Unstaking balance'] || new BigNumber(0), [details]);
   const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
   const isAvailable = stakedBALN.isGreaterThan(new BigNumber(0)) || unstakingBALN.isGreaterThan(new BigNumber(0));
-  const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
+  const isSmallScreen = useMedia(`(max-width: 499px)`);
 
   const { data: rates } = useRatesQuery();
 
@@ -170,13 +168,13 @@ const AssetSymbol = styled.div`
 
 const DashGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 3fr 5fr;
   grid-template-areas: 'asset balance&value';
   align-items: center;
 
-  @media screen and (max-width: ${walletBreakpoint}) {
-    grid-template-columns: 3fr 5fr;
-  }
+  ${({ theme }) => theme.mediaWidth.up500`
+    grid-template-columns: 1fr 3fr;
+  `}
 
   & > * {
     justify-content: flex-end;
@@ -196,10 +194,6 @@ const HeaderText = styled(Typography)`
 
   &:last-of-type {
     padding-right: 25px;
-
-    /* @media screen and (max-width: ${walletBreakpoint}) {
-      padding-right: 0;
-    } */
   }
 `;
 
@@ -219,12 +213,12 @@ const StyledDataText = styled(DataText)<{ hasNotification?: boolean }>`
     background: #d5d7db;
     display: inline-block;
     position: absolute;
-    top: 7px;
+    top: -4px;
     transition: all ease 0.2s;
 
-    @media screen and (max-width: ${walletBreakpoint}) {
-      top: -4px;
-    }
+    ${({ theme }) => theme.mediaWidth.up500`
+      top: 7px;
+    `}
   }
 
   &:before {
@@ -241,7 +235,7 @@ const StyledDataText = styled(DataText)<{ hasNotification?: boolean }>`
   ${({ hasNotification }) =>
     hasNotification &&
     css`
-      @media screen and (max-width: ${walletBreakpoint}) {
+      @media screen and (max-width: 499px) {
         &:before {
           top: -4px;
         }
@@ -272,36 +266,42 @@ const BalanceAndValueWrap = styled.div`
   width: 100%;
 
   ${DataText}, ${StyledDataText}, ${HeaderText} {
-    width: 50%;
+    width: 100%;
 
-    @media screen and (max-width: ${walletBreakpoint}) {
-      width: 100%;
-    }
+    ${({ theme }) => theme.mediaWidth.up500`
+      width: 50%;
+    `}
   }
 
   ${DataText} {
-    @media screen and (max-width: ${walletBreakpoint}) {
-      padding-right: 25px;
-    }
+    padding-right: 25px;
+
+    ${({ theme }) => theme.mediaWidth.up500`
+      padding-right: 0;
+    `}
   }
 
   ${StyledDataText} {
-    @media screen and (max-width: ${walletBreakpoint}) {
-      color: #d5d7db;
-      font-size: 14px;
-    }
+    color: #d5d7db;
+    font-size: 14px;
+    padding-right: 25px;
+
+    ${({ theme }) => theme.mediaWidth.up500`
+      font-size: 16px;
+      color: ${theme.colors.text};
+    `}
   }
 `;
 
 const ListItem = styled(DashGrid)<{ border?: boolean }>`
-  padding: 20px 0;
+  padding: 15px 0;
   cursor: pointer;
   color: #ffffff;
   border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
 
-  @media screen and (max-width: ${walletBreakpoint}) {
-    padding: 15px 0;
-  }
+  ${({ theme }) => theme.mediaWidth.up500`
+    padding: 20px 0;
+  `}
 
   & > div,
   ${BalanceAndValueWrap} > div {

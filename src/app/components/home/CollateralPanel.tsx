@@ -35,49 +35,49 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
-const smallScreenSize = '500px';
-const superSmallScreenSize = '359px';
-
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
+  flex-wrap: wrap;
 
-  @media screen and (max-width: ${superSmallScreenSize}) {
-    flex-wrap: wrap;
-  }
+  ${({ theme }) => theme.mediaWidth.up360`
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  `}
 `;
 
 export const PanelInfoItem = styled(Box)`
-  width: 50%;
-  margin-left: 5px;
+  width: 100%;
+  margin-left: 0;
   padding-top: 10px;
 
-  @media screen and (min-width: ${smallScreenSize}) {
+  ${({ theme }) => theme.mediaWidth.up360`
+    width: 50%;
+    margin-left: 5px;
+  `}
+
+  ${({ theme }) => theme.mediaWidth.up500`
     margin-left: 20px;
     padding-top: 0;
-  }
-
-  @media screen and (max-width: ${superSmallScreenSize}) {
-    width: 100%;
-    margin-left: 0;
-  }
+  `}
 
   &:first-of-type {
     margin-right: 5px;
     margin-left: 0;
+    margin-bottom: 20px;
 
-    @media screen and (min-width: ${smallScreenSize}) {
+    ${({ theme }) => theme.mediaWidth.up360`
+      margin-bottom: 0;
+    `}
+
+    ${({ theme }) => theme.mediaWidth.up500`
       margin-right: 20px;
-    }
-
-    @media screen and (max-width: ${superSmallScreenSize}) {
-      margin-bottom: 20px;
-    }
+    `}
   }
 `;
 
 const CollateralPanel = () => {
   const { account } = useIconReact();
-  const isSuperSmall = useMedia(`(max-width: ${superSmallScreenSize})`);
+  const isSuperSmall = useMedia(`(max-width: 359px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();

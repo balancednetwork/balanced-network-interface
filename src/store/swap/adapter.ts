@@ -10,12 +10,9 @@ import { Pair, Trade } from '../../types/balanced-v1-sdk/entities';
 import { isTradeBetter } from '../../types/balanced-v1-sdk/utils/isTradeBetter';
 
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
-  console.log(currencyA, currencyB);
   const allCurrencyCombinations = useAllCurrencyCombinations(currencyA, currencyB);
-  console.log(allCurrencyCombinations);
 
   const allPairs = useV2Pairs(allCurrencyCombinations);
-  console.log(allPairs);
 
   return useMemo(
     () =>
@@ -40,8 +37,6 @@ export function useTradeExactIn(
   ]);
 
   const pairs = useAllCommonPairs(currencyA, currencyB);
-
-  console.log(pairs);
 
   return useMemo(() => {
     if (currencyAmountIn && currencyOut && pairs.length > 0) {

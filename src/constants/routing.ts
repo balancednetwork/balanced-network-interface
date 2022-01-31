@@ -16,6 +16,8 @@ import {
   ICX_SEJONG,
   sICX_SEJONG,
   bnUSD_SEJONG,
+  IUSDT,
+  OMM,
 } from './tokens';
 
 type ChainCurrencyList = {
@@ -48,7 +50,10 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
   [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
 };
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
-  [SupportedChainId.MAINNET]: {},
+  [SupportedChainId.MAINNET]: {
+    [IUSDC.address]: [OMM, IUSDT],
+    [sICX.address]: [OMM, IUSDT],
+  },
 };
 /**
  * Some tokens can only be swapped via certain pairs, so we override the list of bases that are considered for these

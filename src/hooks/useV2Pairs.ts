@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
@@ -263,6 +263,17 @@ export function useBalances(
 ): { [poolId: number]: BalanceData } {
   const [balances, setBalances] = useState<(BalanceData | undefined)[]>([]);
 
+  const [last, setLast] = useState<number>(0);
+  const intervalId = useRef<number>(-1);
+
+  useEffect(() => {
+    intervalId.current = setInterval(() => setLast(last => last + 1), 20000);
+
+    return () => {
+      clearInterval(intervalId.current);
+    };
+  }, []);
+
   useEffect(() => {
     async function fetchBalances() {
       if (!account) return;
@@ -299,7 +310,7 @@ export function useBalances(
     }
 
     fetchBalances();
-  }, [account, pools]);
+  }, [account, pools, last]);
 
   return useMemo(() => {
     return balances.reduce((acc, curr) => {

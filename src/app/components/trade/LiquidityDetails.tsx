@@ -80,7 +80,7 @@ export default function LiquidityDetails() {
 
   const trackedTokenPairs = useTrackedTokenPairs();
 
-  // fetch the reserves for all V2 pools in which the user has a balance
+  // fetch the reserves for all V2 pools
   const pairs = useAvailablePairs(trackedTokenPairs);
 
   // fetch the user's balances of all tracked V2 LP tokens

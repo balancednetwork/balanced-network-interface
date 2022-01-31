@@ -22,7 +22,7 @@ import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
-import { BalanceState, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
+import { BalanceData, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useRewards } from 'store/reward/hooks';
@@ -40,7 +40,7 @@ import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import Spinner from '../Spinner';
 import { withdrawMessage } from './utils';
 
-function getRate(pair: Pair, balance: BalanceState): Fraction {
+function getRate(pair: Pair, balance: BalanceData): Fraction {
   if (
     pair.totalSupply &&
     JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO) &&
@@ -53,7 +53,7 @@ function getRate(pair: Pair, balance: BalanceState): Fraction {
   return FRACTION_ZERO;
 }
 
-function getBaseQuoteBalance(pair: Pair, balance: BalanceState) {
+function getBaseQuoteBalance(pair: Pair, balance: BalanceData) {
   const rate = getRate(pair, balance);
 
   return {
@@ -62,7 +62,7 @@ function getBaseQuoteBalance(pair: Pair, balance: BalanceState) {
   };
 }
 
-function getShareReward(pair: Pair, balance: BalanceState, totalReward: BigNumber) {
+function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber) {
   const rate = getRate(pair, balance);
 
   const totalRewardFrac = totalReward ? toFraction(totalReward) : FRACTION_ZERO;
@@ -194,7 +194,7 @@ const PoolRecord = ({
   totalReward,
 }: {
   pair: Pair;
-  balance: BalanceState;
+  balance: BalanceData;
   poolId: number;
   border: boolean;
   totalReward: BigNumber;
@@ -221,7 +221,7 @@ const PoolRecord = ({
   );
 };
 
-const WithdrawText = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceState; poolId: number }) => {
+const WithdrawText = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
@@ -257,7 +257,7 @@ const PoolRecordQ = ({
   totalReward,
 }: {
   border: boolean;
-  balance: BalanceState;
+  balance: BalanceData;
   pair: Pair;
   totalReward: BigNumber;
 }) => {
@@ -285,7 +285,7 @@ const PoolRecordQ = ({
   );
 };
 
-const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: BalanceState; onClose: () => void }) => {
+const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: BalanceData; onClose: () => void }) => {
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
 
@@ -502,7 +502,7 @@ const WithdrawModal = ({
   onClose,
 }: {
   pair: Pair;
-  balance: BalanceState;
+  balance: BalanceData;
   poolId: number;
   onClose: () => void;
 }) => {

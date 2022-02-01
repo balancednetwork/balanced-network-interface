@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
-import { useBlockNumber } from 'store/application/hooks';
 import { Currency, CurrencyAmount, Token } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
+import useLastCount from './useLastCount';
 import { useQueuePair } from './useQueuePair';
 
 const NON_EXISTENT_POOL_ID = 0;
@@ -27,7 +27,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
 
   const [pairs, setPairs] = useState<[PairState, Pair | null][]>(Array(tokens.length).fill([PairState.LOADING, null]));
 
-  const lastBlockNumber = useBlockNumber();
+  const last = useLastCount(20000);
 
   useEffect(() => {
     setPairs(Array(tokens.length).fill([PairState.LOADING, null]));
@@ -89,7 +89,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
       }
     };
     fetchReserves();
-  }, [tokens, lastBlockNumber]);
+  }, [tokens, last]);
 
   return useMemo(() => {
     return pairs.map(pair => {
@@ -113,6 +113,9 @@ interface PoolIdData {
   token1: Token;
 }
 
+/**
+ * not used
+ */
 export function usePoolIds(currencies: [Currency | undefined, Currency | undefined][]): (PoolIdData | null)[] {
   const [ids, setIds] = useState<(PoolIdData | null)[]>([]);
 
@@ -150,6 +153,9 @@ export function usePoolIds(currencies: [Currency | undefined, Currency | undefin
   return ids;
 }
 
+/**
+ * not used
+ */
 export function useReserves(poolIds: PoolIdData[]): [PairState, Pair | null][] {
   const [reserves, setReserves] = useState<[PairState, Pair | null][]>([]);
 
@@ -227,14 +233,7 @@ export function useReserves(poolIds: PoolIdData[]): [PairState, Pair | null][] {
 export function useAvailablePairs(
   currencies: [Currency | undefined, Currency | undefined][],
 ): { [poolId: number]: Pair } {
-  const poolIds = usePoolIds(currencies);
-
-  const availablePoolIds = useMemo(
-    () => poolIds.filter((poolId): poolId is PoolIdData => poolId !== null && poolId.poolId > NON_EXISTENT_POOL_ID),
-    [poolIds],
-  );
-
-  const reserves = useReserves(availablePoolIds);
+  const reserves = useV2Pairs(currencies);
 
   return useMemo<{ [poolId: number]: Pair }>(() => {
     return reserves.reduce((acc, ps) => {
@@ -263,16 +262,7 @@ export function useBalances(
 ): { [poolId: number]: BalanceData } {
   const [balances, setBalances] = useState<(BalanceData | undefined)[]>([]);
 
-  const [last, setLast] = useState<number>(0);
-  const intervalId = useRef<number>(-1);
-
-  useEffect(() => {
-    intervalId.current = setInterval(() => setLast(last => last + 1), 20000);
-
-    return () => {
-      clearInterval(intervalId.current);
-    };
-  }, []);
+  const last = useLastCount(20000);
 
   useEffect(() => {
     async function fetchBalances() {

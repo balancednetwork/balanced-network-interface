@@ -5,10 +5,10 @@ import { BalancedJs, LOOP } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { useBlockNumber } from 'store/application/hooks';
 import { CurrencyAmount } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
+import useLastCount from './useLastCount';
 import { PairState } from './useV2Pairs';
 
 export function useQueuePair(): [PairState, Pair | null] {
@@ -17,7 +17,7 @@ export function useQueuePair(): [PairState, Pair | null] {
   const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address].wrapped;
   const sICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.sICX.address].wrapped;
 
-  const lastBlockNumber = useBlockNumber();
+  const last = useLastCount(10000);
 
   useEffect(() => {
     const fetchReserves = async () => {
@@ -52,7 +52,7 @@ export function useQueuePair(): [PairState, Pair | null] {
       }
     };
     fetchReserves();
-  }, [lastBlockNumber, ICX, sICX]);
+  }, [last, ICX, sICX]);
 
   return pair;
 }

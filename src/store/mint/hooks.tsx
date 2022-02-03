@@ -8,12 +8,11 @@ import bnJs from 'bnJs';
 import { isNativeCurrency } from 'constants/tokens';
 import { useQueuePair } from 'hooks/useQueuePair';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
-import { useBnJsContractQuery } from 'queries/utils';
 import { tryParseAmount } from 'store/swap/hooks';
+import { useAllTransactions } from 'store/transactions/hooks';
 import { useCurrencyBalances } from 'store/wallet/hooks';
 import { Currency, CurrencyAmount, Token, Percent, Price } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
-import { parseUnits } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, typeInput, selectCurrency } from './actions';
@@ -77,12 +76,6 @@ export function useMintActionHandlers(
   };
 }
 
-export function useTotalSupply(token: Currency | undefined, pairId: number): CurrencyAmount<Token> | undefined {
-  const query = useBnJsContractQuery<string>(bnJs, 'Dex', 'totalSupply', [pairId]);
-  const { data } = query;
-  return token && data ? CurrencyAmount.fromRawAmount<Token>(token as Token, parseUnits(data)) : undefined;
-}
-
 const ZERO = JSBI.BigInt(0);
 
 const useCurrencyDeposit = (
@@ -90,14 +83,19 @@ const useCurrencyDeposit = (
   currency: Currency | undefined,
 ): CurrencyAmount<Currency> | undefined => {
   const token = currency?.wrapped;
-  const query = useBnJsContractQuery<string>(bnJs, 'Dex', 'getDeposit', [token?.address || '', account || '']);
+  const transactions = useAllTransactions();
+  const [result, setResult] = React.useState<string | undefined>();
 
-  return React.useMemo(() => {
-    if (token && query.data) {
-      return CurrencyAmount.fromRawAmount<Currency>(token, JSBI.BigInt(query.data));
-    }
-    return undefined;
-  }, [token, query]);
+  React.useEffect(() => {
+    (async () => {
+      if (token?.address && account) {
+        const res = await bnJs.Dex.getDeposit(token?.address || '', account || '');
+        setResult(res);
+      }
+    })();
+  }, [transactions, token, account]);
+
+  return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, JSBI.BigInt(result)) : undefined;
 };
 
 export function useDerivedMintInfo(): {

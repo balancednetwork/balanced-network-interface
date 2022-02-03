@@ -1,7 +1,6 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -32,6 +31,7 @@ import {
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -131,7 +131,7 @@ const LoanPanel = () => {
     if (shouldBorrow) {
       bnJs
         .inject({ account })
-        .Loans.depositAndBorrow(ZERO, { asset: 'bnUSD', amount: BalancedJs.utils.toLoop(differenceAmount) })
+        .Loans.depositAndBorrow(ZERO.toFixed(), { asset: 'bnUSD', amount: parseUnits(differenceAmount.toFixed()) })
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
@@ -155,7 +155,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .inject({ account })
-        .Loans.returnAsset('bnUSD', BalancedJs.utils.toLoop(differenceAmount).abs(), 1)
+        .Loans.returnAsset('bnUSD', parseUnits(differenceAmount.abs().toFixed()), 1)
         .then(res => {
           addTransaction(
             { hash: res.result },

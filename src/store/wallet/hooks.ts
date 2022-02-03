@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
-import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 import _ from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
@@ -11,7 +11,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
-import { SUPPORTED_TOKENS_LIST, isNativeCurrency, SUPPORTED_TOKENS_MAP_BY_ADDRESS, isBALN } from 'constants/tokens';
+import {
+  SUPPORTED_TOKENS_LIST,
+  isNativeCurrency,
+  SUPPORTED_TOKENS_MAP_BY_ADDRESS,
+  isBALN,
+  isFIN,
+} from 'constants/tokens';
 import { useBnJsContractQuery } from 'queries/utils';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useUserAddedTokens } from 'store/user/hooks';
@@ -109,6 +115,7 @@ export function useTokenBalances(
         tokens.map(async token => {
           if (!account) return undefined;
           if (isBALN(token)) return bnJs.BALN.availableBalanceOf(account);
+          if (isFIN(token)) return bnJs.getContract(token.address).availableBalanceOf(account);
           return bnJs.getContract(token.address).balanceOf(account);
         }),
       );
@@ -182,7 +189,7 @@ export function useCurrencyBalance(account?: string, currency?: Currency): Curre
 export function useICXBalances(
   uncheckedAddresses: (string | undefined)[],
 ): { [address: string]: CurrencyAmount<Currency> | undefined } {
-  const [balances, setBalances] = useState<BigNumber[]>([]);
+  const [balances, setBalances] = useState<string[]>([]);
 
   const transactions = useAllTransactions();
 
@@ -190,7 +197,7 @@ export function useICXBalances(
     () =>
       uncheckedAddresses
         ? uncheckedAddresses
-            .filter(isAddress)
+            .filter(Validator.isAddress)
             .filter((a): a is string => a !== undefined)
             .sort()
         : [],
@@ -201,7 +208,7 @@ export function useICXBalances(
     const fetchBalances = async () => {
       const result = await Promise.all(
         addresses.map(async address => {
-          return bnJs.ICX.balanceOf(address);
+          return bnJs.ICX.balanceOf(address).then(res => res.toFixed());
         }),
       );
 
@@ -217,7 +224,7 @@ export function useICXBalances(
     return addresses.reduce((agg, address, idx) => {
       const balance = balances[idx];
 
-      if (balance) agg[address] = CurrencyAmount.fromRawAmount(ICX, balance.toFixed(0));
+      if (balance) agg[address] = CurrencyAmount.fromRawAmount(ICX, balance);
       else agg[address] = CurrencyAmount.fromRawAmount(ICX, 0);
 
       return agg;
@@ -226,7 +233,7 @@ export function useICXBalances(
 }
 
 export function useLiquidityTokenBalance(account: string | undefined | null, pair: Pair | undefined | null) {
-  const query = useBnJsContractQuery<string>(bnJs, 'Dex', 'balanceOf', [account, pair?.poolId]);
+  const query = useBnJsContractQuery<string>('Dex', 'balanceOf', [account, pair?.poolId]);
   const { data } = query;
   return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
 }

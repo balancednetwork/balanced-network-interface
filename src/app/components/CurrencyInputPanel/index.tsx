@@ -12,6 +12,7 @@ import { Currency } from 'types/balanced-sdk-core';
 import { escapeRegExp } from 'utils';
 
 import { HorizontalList, Option } from '../List';
+import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 
 const InputContainer = styled.div`
@@ -42,7 +43,7 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
 
 const StyledTokenName = styled.span`
   line-height: 1.5;
-  margin-right: 8px;
+  margin-right: auto;
   font-size: 14px;
   font-weight: bold;
 `;
@@ -82,18 +83,11 @@ const ItemList = styled(Option)<{ selected: boolean }>`
 interface CurrencyInputPanelProps {
   value: string;
   onUserInput: (value: string) => void;
-  onMax?: () => void;
   onCurrencySelect?: (currency: Currency) => void;
   currency?: Currency | null;
   onPercentSelect?: (percent: number) => void;
   percent?: number;
-  hideBalance?: boolean;
-  // pair?: Pair | null;
-  hideInput?: boolean;
-  otherCurrency?: Currency | null;
-  id: string;
-  showCommonBases?: boolean;
-  customBalanceText?: string;
+  currencySelectionType?: CurrencySelectionType;
   bg?: string;
   placeholder?: string;
   className?: string;
@@ -105,18 +99,11 @@ const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." charac
 export default function CurrencyInputPanel({
   value,
   onUserInput,
-  onMax,
   onCurrencySelect,
   currency,
   onPercentSelect,
   percent,
-  hideBalance = false,
-  // pair = null, // used for double token logo
-  hideInput = false,
-  otherCurrency,
-  id,
-  showCommonBases,
-  customBalanceText,
+  currencySelectionType,
   bg = 'bg2',
   placeholder = '0',
   className,
@@ -166,7 +153,7 @@ export default function CurrencyInputPanel({
               isOpen={open}
               onDismiss={handleDismiss}
               onCurrencySelect={onCurrencySelect}
-              showCommonBases={showCommonBases}
+              currencySelectionType={currencySelectionType}
               showCurrencyAmount={false}
               anchorEl={ref.current}
               width={width ? width + 40 : undefined}

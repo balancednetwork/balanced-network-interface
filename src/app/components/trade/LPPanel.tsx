@@ -17,6 +17,7 @@ import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/m
 import { CurrencyAmount, Currency, Percent } from 'types/balanced-sdk-core';
 import { maxAmountSpend } from 'utils';
 
+import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
@@ -218,9 +219,8 @@ export default function LPPanel() {
               <Flex>
                 <CurrencyInputPanel
                   account={account}
-                  id="supply-liquidity-input-token-a"
                   value={formattedAmounts[Field.CURRENCY_A]}
-                  showCommonBases={false}
+                  currencySelectionType={CurrencySelectionType.TRADE_MINT_BASE}
                   currency={currencies[Field.CURRENCY_A]}
                   onUserInput={onFieldAInput}
                   onCurrencySelect={handleCurrencyASelect}
@@ -233,9 +233,8 @@ export default function LPPanel() {
               <Flex>
                 <CurrencyInputPanel
                   account={account}
-                  id="supply-liquidity-input-token-b"
                   value={formattedAmounts[Field.CURRENCY_B]}
-                  showCommonBases={true}
+                  currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
                   currency={currencies[Field.CURRENCY_B]}
                   onUserInput={onFieldBInput}
                   onCurrencySelect={handleCurrencyBSelect}

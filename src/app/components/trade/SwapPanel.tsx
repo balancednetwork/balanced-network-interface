@@ -1,7 +1,6 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { ChevronRight } from 'react-feather';
@@ -144,10 +143,16 @@ export default function SwapPanel() {
       executionTrade.outputAmount.currency.symbol || 'OUT',
     );
 
+    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
       bnJs
         .inject({ account })
-        .Router.swapICX(BalancedJs.utils.toLoop(executionTrade.inputAmount.toExact()), executionTrade.route.pathForSwap)
+        .Router.swapICX(
+          executionTrade.inputAmount.quotient.toString(),
+          executionTrade.route.pathForSwap,
+          toHex(minReceived),
+        )
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -168,8 +173,6 @@ export default function SwapPanel() {
           changeShouldLedgerSign(false);
         });
     } else {
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-
       const token = executionTrade.inputAmount.currency as Token;
       const outputToken = executionTrade.outputAmount.currency as Token;
 
@@ -179,7 +182,7 @@ export default function SwapPanel() {
         .swapUsingRoute(
           toHex(executionTrade.inputAmount),
           outputToken.address,
-          BalancedJs.utils.toLoop(minReceived.toExact(), currencies[Field.OUTPUT]?.symbol!),
+          minReceived.quotient.toString(),
           executionTrade.route.pathForSwap,
         )
         .then((res: any) => {
@@ -239,7 +242,6 @@ export default function SwapPanel() {
               currency={currencies[Field.INPUT]}
               onUserInput={handleTypeInput}
               onCurrencySelect={handleInputSelect}
-              id="swap-currency-input"
               onPercentSelect={!!account ? handleInputPercentSelect : undefined}
               percent={percents[Field.INPUT]}
             />
@@ -267,7 +269,6 @@ export default function SwapPanel() {
               currency={currencies[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
-              id="swap-currency-output"
             />
           </Flex>
         </AutoColumn>

@@ -43,7 +43,7 @@ export const QUERY_KEYS = {
     'contract',
     contract,
     method,
-    args,
+    ...args,
     transactions,
   ],
 };

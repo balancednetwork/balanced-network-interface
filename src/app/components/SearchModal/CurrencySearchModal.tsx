@@ -5,7 +5,7 @@ import { Currency, Token } from 'types/balanced-sdk-core';
 
 import Modal from '../Modal';
 import { PopperWithoutArrow } from '../Popover';
-import { CurrencySearch } from './CurrencySearch';
+import { CurrencySearch, CurrencySelectionType } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
 
@@ -16,8 +16,8 @@ interface CurrencySearchModalProps {
   selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency) => void;
   otherSelectedCurrency?: Currency | null;
-  showCommonBases?: boolean;
   showCurrencyAmount?: boolean;
+  currencySelectionType?: CurrencySelectionType;
   disableNonToken?: boolean;
   width?: number;
   anchorEl?: any;
@@ -38,7 +38,7 @@ export default function CurrencySearchModal({
   onCurrencySelect,
   selectedCurrency,
   otherSelectedCurrency,
-  showCommonBases = false,
+  currencySelectionType = CurrencySelectionType.NORMAL,
   showCurrencyAmount = true,
   disableNonToken = false,
   width,
@@ -102,7 +102,7 @@ export default function CurrencySearchModal({
           onCurrencySelect={handleCurrencySelect}
           selectedCurrency={selectedCurrency}
           otherSelectedCurrency={otherSelectedCurrency}
-          showCommonBases={showCommonBases}
+          currencySelectionType={currencySelectionType}
           showCurrencyAmount={showCurrencyAmount}
           disableNonToken={disableNonToken}
           showImportView={showImportView}

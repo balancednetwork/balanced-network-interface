@@ -17,7 +17,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { isZeroCA, multiplyCABN, toHex } from 'utils';
+import { isZeroCA, multiplyCABN, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default function UnstakePanel() {
@@ -69,7 +69,7 @@ export default function UnstakePanel() {
 
     bnJs
       .inject({ account })
-      .sICX.unstake(toHex(differenceAmount))
+      .sICX.unstake(toDec(differenceAmount))
       .then(res => {
         if (res.result) {
           addTransaction(

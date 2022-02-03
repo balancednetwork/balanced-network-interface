@@ -169,6 +169,10 @@ export function isAddress(value: any): string | false {
   return isScoreAddress(value) ? value : false;
 }
 
+export function toDec(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>): string {
+  return value ? value.quotient.toString() : '0';
+}
+
 export function toHex(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>): string {
   return value ? `0x${value.quotient.toString(16)}` : '0x0';
 }

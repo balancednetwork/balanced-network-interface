@@ -17,7 +17,7 @@ import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
-import { toHex } from 'utils';
+import { toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -62,7 +62,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         setShouldAddAssets({ ...shouldAddAssets, [field]: true });
       }
 
-      const res: any = await bnJs.inject({ account }).getContract(token.address).deposit(toHex(parsedAmounts[field]));
+      const res: any = await bnJs.inject({ account }).getContract(token.address).deposit(toDec(parsedAmounts[field]));
 
       addTransaction(
         { hash: res.result },
@@ -98,7 +98,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         setShouldRemoveAssets({ ...shouldRemoveAssets, [field]: true });
       }
 
-      const res: any = await bnJs.inject({ account }).Dex.withdraw(token.address, toHex(amountWithdraw));
+      const res: any = await bnJs.inject({ account }).Dex.withdraw(token.address, toDec(amountWithdraw));
       addTransaction(
         { hash: res.result },
         {
@@ -131,7 +131,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
       bnJs
         .inject({ account })
-        .Dex.transferICX(t!.quotient.toString())
+        .Dex.transferICX(toDec(t))
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
@@ -161,8 +161,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         .Dex.add(
           baseToken.address,
           quoteToken.address,
-          toHex(currencyDeposits[Field.CURRENCY_A]),
-          toHex(currencyDeposits[Field.CURRENCY_B]),
+          toDec(currencyDeposits[Field.CURRENCY_A]),
+          toDec(currencyDeposits[Field.CURRENCY_B]),
         )
         .then((res: any) => {
           addTransaction(

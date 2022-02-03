@@ -17,7 +17,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { isZeroCA, multiplyCABN, toHex } from 'utils';
+import { isZeroCA, multiplyCABN, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default function DepositPanel() {
@@ -68,7 +68,7 @@ export default function DepositPanel() {
 
     bnJs
       .inject({ account })
-      .sICX.depositAndBorrow(toHex(differenceAmount))
+      .sICX.depositAndBorrow(toDec(differenceAmount))
       .then((res: any) => {
         if (res.result) {
           addTransaction(

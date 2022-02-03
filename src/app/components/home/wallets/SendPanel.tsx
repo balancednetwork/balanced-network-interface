@@ -19,8 +19,8 @@ import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { Currency, Token } from 'types/balanced-sdk-core';
-import { maxAmountSpend, toCurrencyAmount, toHex } from 'utils';
+import { Currency } from 'types/balanced-sdk-core';
+import { maxAmountSpend, toCurrencyAmount, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Grid, MaxButton } from './utils';
@@ -80,15 +80,13 @@ export default function SendPanel({ currency }: { currency: Currency }) {
       changeShouldLedgerSign(true);
     }
 
-    const contractCall =
+    const contract =
       currency.wrapped.address === bnJs.ICX.address
-        ? bnJs.inject({ account }).transfer(address, toHex(differenceAmount))
-        : bnJs
-            .inject({ account })
-            .getContract((currency as Token).address)
-            .transfer(address, toHex(differenceAmount));
+        ? bnJs.inject({ account })
+        : bnJs.inject({ account }).getContract(currency.wrapped.address);
 
-    contractCall
+    contract
+      .transfer(address, toDec(differenceAmount))
       .then((res: any) => {
         if (!isEmpty(res.result)) {
           addTransaction(

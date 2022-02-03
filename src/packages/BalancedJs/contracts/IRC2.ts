@@ -67,6 +67,7 @@ export default class IRC2 extends Contract {
       method: '_swap',
       params: {
         toToken: outputAddress,
+        // this should be decimal
         minimumReceive: minimumReceive,
         path: path,
       },
@@ -80,7 +81,7 @@ export default class IRC2 extends Contract {
       method: 'transfer',
       params: {
         _to: to,
-        _value: value,
+        _value: IconConverter.toHexNumber(value),
         _data: data && IconConverter.toHex(data),
       },
     });

@@ -33,7 +33,7 @@ import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
 import { getTokenFromCurrencyKey } from 'types/adapter';
 import { Currency, CurrencyAmount, Fraction, Percent } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
-import { multiplyCABN, toFraction, toHex } from 'utils';
+import { multiplyCABN, toFraction, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -619,7 +619,7 @@ const WithdrawModal = ({
 
     bnJs
       .inject({ account })
-      .Dex.remove(poolId, toHex(t))
+      .Dex.remove(poolId, toDec(t))
       .then(result => {
         addTransaction(
           { hash: result.result },

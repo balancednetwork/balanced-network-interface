@@ -67,7 +67,7 @@ export function ProposalModal(props: ProposalProps) {
       <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
         <Typography variant="content" textAlign="center" mb={1}>
           {UIStatus === ModalStatus.ChangeToApprove || UIStatus === ModalStatus.ChangeToReject
-            ? 'Change Vote?'
+            ? 'Change vote?'
             : 'Submit vote?'}
         </Typography>
         {(UIStatus === ModalStatus.Reject || UIStatus === ModalStatus.ChangeToReject) && (
@@ -105,8 +105,8 @@ export function ProposalModal(props: ProposalProps) {
               <CancelButton onClick={onCancel}>Cancel</CancelButton>
               <SubmitButton onClick={onSubmit}>
                 {UIStatus === ModalStatus.ChangeToApprove || UIStatus === ModalStatus.ChangeToReject
-                  ? 'Change Vote'
-                  : 'Submit Vote'}
+                  ? 'Change vote'
+                  : 'Submit vote'}
               </SubmitButton>
             </>
           )}

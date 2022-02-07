@@ -245,6 +245,7 @@ const PositionDetailPanel = () => {
               direction="rtl"
               start={[Math.min(currentRatio.toNumber(), 900)]}
               connect={[true, false]}
+              animate={false}
               range={{
                 min: [117.7],
                 max: [900],

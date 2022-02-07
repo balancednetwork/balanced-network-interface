@@ -248,12 +248,10 @@ export function NewProposalPage() {
       changeShouldLedgerSign(true);
     }
 
-    let fundingAction = JSON.stringify(submitParams(currencyInputValue));
-
     const actions = isTextProposal
       ? '{}'
       : isFundingProposal
-      ? fundingAction
+      ? JSON.stringify(submitParams(currencyInputValue))
       : JSON.stringify(submitParams(ratioInputValue));
 
     platformDay &&

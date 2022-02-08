@@ -75,17 +75,27 @@ const ResultPanel = styled(Flex)`
   align-items: center;
   gap: 20px;
   padding: 15px 25px;
-  height: 90px;
+  min-height: 90px;
   max-width: 'initial';
 
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 15px 40px;
+    padding: 15px 30px;
   `}
 
   ${({ theme }) => theme.mediaWidth.upSmall`
-    padding: 15px 40px;
+    padding: 15px 30px;
     max-width: 360px;
   `}
+`;
+const ChangeVoteButton = styled(Typography)`
+  color: ${({ theme }) => theme.colors.primaryBright};
+  cursor: pointer;
+  transition: color ease 0.2s;
+  font-size: 14px;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
 `;
 
 export function ProposalPage() {
@@ -127,7 +137,7 @@ export function ProposalPage() {
       changeShouldLedgerSign(true);
     }
 
-    const hasApproved = modalStatus === ModalStatus.Approve;
+    const hasApproved = modalStatus === ModalStatus.Approve || modalStatus === ModalStatus.ChangeToApprove;
 
     bnJs
       .inject({ account })
@@ -165,6 +175,14 @@ export function ProposalPage() {
 
   const { networkId } = useIconReact();
   const additionalInfo = useAdditionalInfoById(proposal?.id);
+
+  const handleChangeVote = () => {
+    if (!userStatus?.reject.isZero()) {
+      setModalStatus(ModalStatus.ChangeToApprove);
+    } else if (!userStatus?.approval.isZero()) {
+      setModalStatus(ModalStatus.ChangeToReject);
+    }
+  };
 
   return (
     <DefaultLayout title="Vote">
@@ -256,9 +274,14 @@ export function ProposalPage() {
                 <ResultPanel bg="bg3">
                   <CheckCircleIcon width="30px" height="30px" color={theme.colors.primary} />
                   <Flex flexDirection="column">
-                    <Typography variant="h3" mb={1}>
-                      You approved
-                    </Typography>
+                    <Flex alignItems="flex-end" flexWrap="wrap" mb={1}>
+                      <Typography variant="h3" marginRight={2}>
+                        You approved
+                      </Typography>
+                      {isActive && account && (
+                        <ChangeVoteButton onClick={handleChangeVote}>Change vote</ChangeVoteButton>
+                      )}
+                    </Flex>
                     <Typography>{`Voting weight: ${userStatus?.approval.dp(2).toFormat()} BALN`}</Typography>
                   </Flex>
                 </ResultPanel>
@@ -268,81 +291,89 @@ export function ProposalPage() {
                 <ResultPanel bg="bg3">
                   <CancelIcon width="30px" height="30px" color={theme.colors.alert} />
                   <Flex flexDirection="column">
-                    <Typography variant="h3" mb={1}>
-                      You rejected
-                    </Typography>
+                    <Flex alignItems="flex-end" flexWrap="wrap" mb={1}>
+                      <Typography variant="h3" marginRight={2}>
+                        You rejected
+                      </Typography>
+                      {isActive && account && (
+                        <ChangeVoteButton onClick={handleChangeVote}>Change vote</ChangeVoteButton>
+                      )}
+                    </Flex>
+
                     <Typography>{`Voting weight: ${userStatus?.reject.dp(2).toFormat()} BALN`}</Typography>
                   </Flex>
                 </ResultPanel>
               )}
             </Flex>
           ) : (
-            <Flex flexDirection="column">
-              <Flex alignItems="center">
-                <Typography fontWeight="bold" variant="p" mr="5px">
-                  Approve
-                </Typography>
-                <Typography opacity="0.85" mr="5px" fontWeight="bold">
-                  {proposal?.for}%
-                </Typography>
-                <Typography opacity="0.85" fontWeight="bold">
-                  {`(${proposal?.majority}% required)`}
-                </Typography>
-              </Flex>
-              <Flex>
-                <Column flexGrow={1}>
-                  <Progress my={3}>
-                    <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
-                  </Progress>
-                </Column>
-                {isActive && account && !isSmallScreen && (
-                  <Column>
-                    <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
-                      Approve
-                    </Button>
-                  </Column>
-                )}
-              </Flex>
-              <Flex alignItems="center">
-                <Typography fontWeight="bold" variant="p" mr="5px">
-                  Reject
-                </Typography>
-                <Typography opacity="0.85" mr="5px" fontWeight="bold">
-                  {proposal?.against}%
-                </Typography>
-              </Flex>
-              <Flex>
-                <Column flexGrow={1}>
-                  <Progress my={3}>
-                    <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
-                  </Progress>
-                </Column>
-                {isActive && account && !isSmallScreen && (
-                  <Column>
-                    <AlertButton ml="20px" width="150px" color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
-                      Reject
-                    </AlertButton>
-                  </Column>
-                )}
-              </Flex>
-
-              {isActive && account && isSmallScreen ? (
-                <Flex marginTop={2}>
-                  <Button width="50%" marginRight={2} onClick={() => setModalStatus(ModalStatus.Approve)}>
+            userStatus !== undefined && (
+              <Flex flexDirection="column">
+                <Flex alignItems="center">
+                  <Typography fontWeight="bold" variant="p" mr="5px">
                     Approve
-                  </Button>
-                  <AlertButton
-                    width="50%"
-                    marginLeft={2}
-                    color="red"
-                    onClick={() => setModalStatus(ModalStatus.Reject)}
-                  >
-                    Reject
-                  </AlertButton>
+                  </Typography>
+                  <Typography opacity="0.85" mr="5px" fontWeight="bold">
+                    {proposal?.for}%
+                  </Typography>
+                  <Typography opacity="0.85" fontWeight="bold">
+                    {`(${proposal?.majority}% required)`}
+                  </Typography>
                 </Flex>
-              ) : null}
-            </Flex>
+                <Flex>
+                  <Column flexGrow={1}>
+                    <Progress my={3}>
+                      <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
+                    </Progress>
+                  </Column>
+                  {isActive && account && !isSmallScreen && (
+                    <Column>
+                      <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
+                        Approve
+                      </Button>
+                    </Column>
+                  )}
+                </Flex>
+                <Flex alignItems="center">
+                  <Typography fontWeight="bold" variant="p" mr="5px">
+                    Reject
+                  </Typography>
+                  <Typography opacity="0.85" mr="5px" fontWeight="bold">
+                    {proposal?.against}%
+                  </Typography>
+                </Flex>
+                <Flex>
+                  <Column flexGrow={1}>
+                    <Progress my={3}>
+                      <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
+                    </Progress>
+                  </Column>
+                  {isActive && account && !isSmallScreen && (
+                    <Column>
+                      <AlertButton
+                        ml="20px"
+                        width="150px"
+                        color="red"
+                        onClick={() => setModalStatus(ModalStatus.Reject)}
+                      >
+                        Reject
+                      </AlertButton>
+                    </Column>
+                  )}
+                </Flex>
+              </Flex>
+            )
           )}
+
+          {isActive && account && isSmallScreen ? (
+            <Flex marginTop={2}>
+              <Button width="50%" marginRight={2} onClick={() => setModalStatus(ModalStatus.Approve)}>
+                Approve
+              </Button>
+              <AlertButton width="50%" marginLeft={2} color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
+                Reject
+              </AlertButton>
+            </Flex>
+          ) : null}
 
           <ProposalModal
             status={modalStatus}

@@ -19,7 +19,7 @@ import Spinner from '../Spinner';
 const CancelButton = styled(Button)`
   flex-grow: 1;
   max-height: 33px;
-  max-width: 130px;
+  max-width: 145px;
   font-size: 14px;
   background-color: inherit;
   color: ${({ theme }) => theme.colors.text1};
@@ -33,7 +33,7 @@ const CancelButton = styled(Button)`
 const SubmitButton = styled(Button)`
   flex-grow: 1;
   max-height: 33px;
-  max-width: 130px;
+  max-width: 145px;
   font-size: 14px;
 `;
 
@@ -41,6 +41,8 @@ export enum ModalStatus {
   'None' = 'None',
   'Approve' = 'Approve',
   'Reject' = 'Reject',
+  'ChangeToApprove' = 'ChangeToApprove',
+  'ChangeToReject' = 'ChangeToReject',
 }
 
 interface ProposalProps {
@@ -64,9 +66,11 @@ export function ProposalModal(props: ProposalProps) {
     <Modal isOpen={isOpen} onDismiss={onCancel}>
       <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
         <Typography variant="content" textAlign="center" mb={1}>
-          Submit vote?
+          {UIStatus === ModalStatus.ChangeToApprove || UIStatus === ModalStatus.ChangeToReject
+            ? 'Change vote?'
+            : 'Submit vote?'}
         </Typography>
-        {UIStatus === ModalStatus.Reject && (
+        {(UIStatus === ModalStatus.Reject || UIStatus === ModalStatus.ChangeToReject) && (
           <>
             <CrossIcon
               width="35px"
@@ -78,7 +82,7 @@ export function ProposalModal(props: ProposalProps) {
             </Typography>
           </>
         )}
-        {UIStatus === ModalStatus.Approve && (
+        {(UIStatus === ModalStatus.Approve || UIStatus === ModalStatus.ChangeToApprove) && (
           <>
             <TickIcon
               width="35px"
@@ -99,7 +103,11 @@ export function ProposalModal(props: ProposalProps) {
           {!shouldLedgerSign && (
             <>
               <CancelButton onClick={onCancel}>Cancel</CancelButton>
-              <SubmitButton onClick={onSubmit}>Submit vote</SubmitButton>
+              <SubmitButton onClick={onSubmit}>
+                {UIStatus === ModalStatus.ChangeToApprove || UIStatus === ModalStatus.ChangeToReject
+                  ? 'Change vote'
+                  : 'Submit vote'}
+              </SubmitButton>
             </>
           )}
         </Flex>

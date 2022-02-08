@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import BigNumber from 'bignumber.js';
 import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import styled from 'styled-components';
@@ -8,41 +7,32 @@ import styled from 'styled-components';
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
-import { PROPOSAL_CONFIG, CURRENCY_LIST } from 'app/containers/NewProposalPage/constant';
-import { getTokenFromCurrencyKey } from 'types/adapter';
-import { Currency } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
+import { parseUnits } from 'utils';
 
+import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
+
+type Amount = {
+  item: CurrencyAmount<Currency>;
+  inputDisplayValue?: string;
+};
 export interface CurrencyValue {
   recipient: string;
-  amounts: Amount;
-}
-export interface Amount {
-  [key: string]: {
-    amount: string;
-    symbol: string;
-  };
-}
-export interface Balance {
-  symbol: string;
-  amount: BigNumber;
+  amounts: Amount[];
 }
 
 interface Props {
   currencyValue: CurrencyValue;
   setCurrencyValue: (value: CurrencyValue) => void;
+  balanceList: CurrencyAmount<Currency>[];
 }
 
-export default function FundingInput({ currencyValue, setCurrencyValue }: Props) {
-  const [balanceList, setBalanceList] = useState<Array<Balance>>([{ symbol: '', amount: new BigNumber(0) }]);
-  const [currencyList, setCurrencyList] = useState(CURRENCY_LIST);
+export default function FundingInput({ currencyValue, setCurrencyValue, balanceList }: Props) {
+  const [currencyList, setCurrencyList] = useState<Currency[]>([]);
 
   useEffect(() => {
-    (async () => {
-      const result = await PROPOSAL_CONFIG.Funding.fetchInputData();
-      setBalanceList(result);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setCurrencyList(balanceList.map(balance => balance.currency));
+  }, [balanceList]);
 
   useEffect(() => {
     updateCurrencyList(currencyValue.amounts);
@@ -50,22 +40,29 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   }, [Object.keys(currencyValue.amounts).length]);
 
   const updateCurrencyList = useCallback(
-    (amounts: Amount) => {
-      const symbolSelectedList = Object.values(amounts).map(({ symbol }) => symbol);
-      const newCurrencyList = CURRENCY_LIST.filter(value => !symbolSelectedList.includes(value));
+    (amounts: Amount[]) => {
+      const symbolSelectedList = amounts.map(amount => amount.item.currency.symbol);
+      const newCurrencyList = balanceList
+        .filter(({ currency }) => !symbolSelectedList.includes(currency.symbol))
+        .map(balance => balance.currency);
       setCurrencyList(newCurrencyList);
     },
-    [setCurrencyList],
+    [balanceList],
   );
 
   const handleAmountInput = (itemId: number) => (value: string) => {
-    const maxValue = balanceList.find(item => item.symbol === currencyValue.amounts[itemId].symbol)?.amount;
-    if (Number(value) > Number(maxValue)) return;
+    const maxValue = balanceList
+      .find(item => item?.currency.symbol === currencyValue.amounts[itemId].item.currency.symbol)
+      ?.toFixed(2);
+    if (maxValue && Number(value) > Number(maxValue)) return;
 
-    const newAmount: Amount = {
-      ...currencyValue.amounts,
-      [itemId]: { ...currencyValue.amounts[itemId], amount: value },
-    };
+    const newAmount = currencyValue.amounts;
+    newAmount[itemId].item = CurrencyAmount.fromRawAmount(
+      newAmount[itemId].item.currency,
+      parseUnits(value || '0', newAmount[itemId].item.currency.decimals),
+    );
+    newAmount[itemId].inputDisplayValue = value;
+
     setCurrencyValue({
       ...currencyValue,
       amounts: newAmount,
@@ -73,10 +70,9 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
   };
 
   const handleSymbolInput = (itemId: number) => (currency: Currency) => {
-    const newAmount: Amount = {
-      ...currencyValue.amounts,
-      [itemId]: { ...currencyValue.amounts[itemId], symbol: currency.symbol },
-    };
+    const newAmount = currencyValue.amounts;
+    currencyValue.amounts[itemId].item = CurrencyAmount.fromRawAmount(currency, 0);
+    newAmount[itemId].inputDisplayValue = '';
     setCurrencyValue({
       ...currencyValue,
       amounts: newAmount,
@@ -87,38 +83,29 @@ export default function FundingInput({ currencyValue, setCurrencyValue }: Props)
 
   const handleAddressInput = (value: string) => setCurrencyValue({ ...currencyValue, recipient: value });
 
-  const balancesMap = {};
-  balanceList.forEach(balance => (balancesMap[balance.symbol] = balance.amount));
-
   const { networkId } = useIconReact();
   return (
     <BoxPanel>
       <StyledAddressInputPanel value={currencyValue.recipient} onUserInput={handleAddressInput} bg="bg5" />
-      {Object.values(currencyValue.amounts).map((item, id) => (
+      {currencyValue.amounts.map((item, id) => (
         <StyledCurrencyInputPanel
           account={addresses[networkId].daofund}
           key={id}
-          value={item.amount}
-          currency={getTokenFromCurrencyKey(item.symbol)!}
-          id="funding-currency"
+          value={item.inputDisplayValue || ''}
+          currency={item.item.currency}
           onCurrencySelect={handleSymbolInput(id)}
           onUserInput={handleAmountInput(id)}
           bg="bg5"
+          currencySelectionType={CurrencySelectionType.VOTE_FUNDING}
         />
       ))}
-      {Object.values(currencyValue.amounts).length < 3 && (
+      {Object.values(currencyValue.amounts).length < balanceList.length && (
         <ButtonWrapper>
           <Button
             onClick={() => {
               setCurrencyValue({
                 ...currencyValue,
-                amounts: {
-                  ...currencyValue.amounts,
-                  [Object.keys(currencyValue.amounts).length]: {
-                    amount: '',
-                    symbol: currencyList[0],
-                  },
-                },
+                amounts: [...currencyValue.amounts, { item: CurrencyAmount.fromRawAmount(currencyList[0], 0) }],
               });
             }}
           >

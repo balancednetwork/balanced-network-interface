@@ -65,7 +65,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       const res: any = await bnJs
         .inject({ account })
         .getContract(token.address)
-        .deposit(BalancedJs.utils.toLoop(parsedAmounts[field]!.toFixed(), token.symbol));
+        .deposit(parsedAmounts[field]!.quotient.toString());
 
       addTransaction(
         { hash: res.result },
@@ -134,7 +134,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
       bnJs
         .inject({ account })
-        .Dex.transferICX(BalancedJs.utils.toLoop(t!.toFixed()))
+        .Dex.transferICX(t!.quotient.toString())
         .then((res: any) => {
           addTransaction(
             { hash: res.result },

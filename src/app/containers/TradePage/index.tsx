@@ -55,7 +55,7 @@ export function TradePage() {
           </TabPanel>
         </Flex>
 
-        <LiquidityDetails />
+        {account && <LiquidityDetails />}
       </Box>
     </DefaultLayout>
   );

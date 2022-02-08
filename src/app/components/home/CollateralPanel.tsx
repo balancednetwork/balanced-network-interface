@@ -1,7 +1,6 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { useMedia } from 'react-use';
@@ -31,6 +30,7 @@ import { useLockedICXAmount, useLoanActionHandlers } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
@@ -157,7 +157,7 @@ const CollateralPanel = () => {
       try {
         const { result: hash } = await bnJs
           .inject({ account })
-          .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount));
+          .Loans.depositAndBorrow(parseUnits(collateralAmount.toFixed()));
 
         addTransaction(
           { hash },
@@ -184,7 +184,7 @@ const CollateralPanel = () => {
 
         const { result: hash } = await bnJs
           .inject({ account })
-          .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX));
+          .Loans.withdrawCollateral(parseUnits(collateralAmountInSICX.toFixed()));
 
         addTransaction(
           { hash }, //

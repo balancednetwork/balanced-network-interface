@@ -1,5 +1,3 @@
-import BigNumber from 'bignumber.js';
-
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
@@ -18,7 +16,7 @@ export default class Staking extends Contract {
     return this.call(callParams);
   }
 
-  stakeICX(to: string, value: BigNumber) {
+  stakeICX(to: string, value: string) {
     const payload = this.transactionParamsBuilder({
       method: 'stakeICX',
       value: value,

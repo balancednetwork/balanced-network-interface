@@ -31,7 +31,7 @@ export default function ProposalTypesSelect({
   };
 
   return (
-    <Flex alignItems="flex-end" marginTop="50px" flexWrap="wrap">
+    <Flex alignItems="flex-end" marginTop="50px">
       <Typography variant="h2">Proposal type:&nbsp;</Typography>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <div ref={ref}>

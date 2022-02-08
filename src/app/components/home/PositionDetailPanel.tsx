@@ -84,9 +84,7 @@ const PositionDetailPanel = () => {
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
   const smallSp = useMedia('(max-width: 360px)');
-  const isMediumSize = !useMedia('(min-width: 600px)');
-  const modalResizingBreakpoint = useMedia('(max-width: 499px');
-  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 360px)');
+  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 440px)');
   const [show, setShow] = React.useState<boolean>(false);
   const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
@@ -296,7 +294,7 @@ const PositionDetailPanel = () => {
                   </QuestionWrapper>
                 )}
                 <RebalancingTooltip show={showRebalancing} bottom={false}>
-                  <TooltipContainer width={modalResizingBreakpoint ? 335 : 435}>
+                  <TooltipContainer width={435}>
                     <RebalancingInfo />
                     {shouldShowSeparateTooltip ? null : shouldShowRebalancingAveragePrice ? (
                       <>
@@ -342,7 +340,7 @@ const PositionDetailPanel = () => {
                 <TooltipContainer width={321}>{averageRebalancingPriceText}</TooltipContainer>
               </RebalancingTooltip>
 
-              <Box width={1 / 2} style={isMediumSize ? { textAlign: 'right' } : {}}>
+              <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(rebalancingTotal, 'currency')} bnUSD</Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
                   {'Loan'}
@@ -370,7 +368,7 @@ const PositionDetailPanel = () => {
                 </Typography>
                 <Typography mt={1}>Daily rewards</Typography>
               </Box>
-              <Box width={1 / 2} style={isMediumSize ? { textAlign: 'right' } : {}}>
+              <Box width={1 / 2}>
                 <Typography variant="p" color={hasRewardableCollateral ? 'white' : 'alert'}>
                   {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
                 </Typography>
@@ -526,7 +524,6 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
   transition: all ease 0.25s;
   opacity: ${({ show }) => (show ? 1 : 0)};
   pointer-events: ${({ show }) => (show ? 'all' : 'none')};
-  display: none;
 
   &:before {
     ${({ bottom }) => (bottom ? null : `content: ''`)};
@@ -542,38 +539,21 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
     display: inline-block;
   }
 
-  ${({ theme }) => theme.mediaWidth.up360`
-    display: block;
-     margin-left: -153px;
-
-    &:before {
-      margin-left: -32px;
-    }
-  `};
-
-  ${({ theme }) => theme.mediaWidth.up500`
-    margin-left: -173px;
-    
-    &:before {
-      margin-left: -62px;
-    }
-  `};
-
-  ${({ theme }) => theme.mediaWidth.upMedium`
+  @media screen and (max-width: 999px) {
     margin-left: -193px;
 
     &:before {
       margin-left: -42px;
     }
-  `};
-
-  ${({ theme }) => theme.mediaWidth.upLarge`
-    ${({ bottom }) => (bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
-    left: ${({ bottom }) => (bottom ? `50%` : `100%`)};
-    margin-left: ${({ bottom }) => (bottom ? `-160px` : `-225px`)};
+  }
+  @media screen and (max-width: 599px) {
+    margin-left: -183px;
 
     &:before {
-      margin-left: -10px;
+      margin-left: -52px;
     }
-  `};
+  }
+  @media screen and (max-width: 439px) {
+    display: none;
+  }
 `;

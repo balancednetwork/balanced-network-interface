@@ -3,9 +3,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
-import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
@@ -35,49 +33,8 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 
-export const PanelInfoWrap = styled(Flex)`
-  justify-content: space-between;
-  flex-wrap: wrap;
-
-  ${({ theme }) => theme.mediaWidth.up360`
-    flex-wrap: nowrap;
-    justify-content: space-between;
-  `}
-`;
-
-export const PanelInfoItem = styled(Box)`
-  width: 100%;
-  margin-left: 0;
-  padding-top: 10px;
-
-  ${({ theme }) => theme.mediaWidth.up360`
-    width: 50%;
-    margin-left: 5px;
-  `}
-
-  ${({ theme }) => theme.mediaWidth.up500`
-    margin-left: 20px;
-    padding-top: 0;
-  `}
-
-  &:first-of-type {
-    margin-right: 5px;
-    margin-left: 0;
-    margin-bottom: 20px;
-
-    ${({ theme }) => theme.mediaWidth.up360`
-      margin-bottom: 0;
-    `}
-
-    ${({ theme }) => theme.mediaWidth.up500`
-      margin-right: 20px;
-    `}
-  }
-`;
-
 const CollateralPanel = () => {
   const { account } = useIconReact();
-  const isSuperSmall = useMedia(`(max-width: 359px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -242,15 +199,13 @@ const CollateralPanel = () => {
   return (
     <>
       <BoxPanel bg="bg3">
-        <Flex justifyContent="space-between" alignItems={isSuperSmall ? 'flex-start' : 'center'}>
+        <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="h2">Collateral</Typography>
 
-          <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
+          <Box>
             {isAdjusting ? (
               <>
-                <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
-                  Cancel
-                </TextButton>
+                <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
                 <Button onClick={toggleOpen} fontSize={14}>
                   Confirm
                 </Button>
@@ -260,7 +215,7 @@ const CollateralPanel = () => {
                 {buttonText}
               </Button>
             )}
-          </Flex>
+          </Box>
         </Flex>
 
         {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} />}
@@ -286,8 +241,8 @@ const CollateralPanel = () => {
           />
         </Box>
 
-        <PanelInfoWrap>
-          <PanelInfoItem>
+        <Flex justifyContent="space-between">
+          <Box width={[1, 1 / 2]} mr={4}>
             <CurrencyField
               editable={isAdjusting}
               isActive
@@ -306,9 +261,9 @@ const CollateralPanel = () => {
               maxValue={totalICXAmount}
               onUserInput={onFieldAInput}
             />
-          </PanelInfoItem>
+          </Box>
 
-          <PanelInfoItem>
+          <Box width={[1, 1 / 2]} ml={4}>
             <CurrencyField
               editable={isAdjusting}
               isActive={false}
@@ -319,8 +274,8 @@ const CollateralPanel = () => {
               maxValue={totalICXAmount}
               onUserInput={onFieldBInput}
             />
-          </PanelInfoItem>
-        </PanelInfoWrap>
+          </Box>
+        </Flex>
       </BoxPanel>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>

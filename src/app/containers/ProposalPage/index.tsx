@@ -5,7 +5,6 @@ import duration from 'dayjs/plugin/duration';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
-import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme, keyframes } from 'styled-components';
 
@@ -107,7 +106,6 @@ export function ProposalPage() {
   const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
   const { data: userStatus } = voteStatusQuery;
   const { data: platformDay } = usePlatformDayQuery();
-  const isSmallScreen = useMedia('(max-width: 600px)');
 
   const actions = JSON.parse(proposal?.actions || '{}');
   const actionKeyList = Object.keys(actions);
@@ -325,7 +323,7 @@ export function ProposalPage() {
                       <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
                     </Progress>
                   </Column>
-                  {isActive && account && !isSmallScreen && (
+                  {isActive && account && (
                     <Column>
                       <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
                         Approve
@@ -347,7 +345,7 @@ export function ProposalPage() {
                       <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
                     </Progress>
                   </Column>
-                  {isActive && account && !isSmallScreen && (
+                  {isActive && account && (
                     <Column>
                       <AlertButton
                         ml="20px"
@@ -363,17 +361,6 @@ export function ProposalPage() {
               </Flex>
             )
           )}
-
-          {isActive && account && isSmallScreen ? (
-            <Flex marginTop={2}>
-              <Button width="50%" marginRight={2} onClick={() => setModalStatus(ModalStatus.Approve)}>
-                Approve
-              </Button>
-              <AlertButton width="50%" marginLeft={2} color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
-                Reject
-              </AlertButton>
-            </Flex>
-          ) : null}
 
           <ProposalModal
             status={modalStatus}

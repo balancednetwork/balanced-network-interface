@@ -15,18 +15,9 @@ import { escapeRegExp } from 'utils'; // match escaped "." characters via in a n
 
 export const CheckBox = styled(Box)<{ isActive: boolean }>`
   width: 20px;
-  height: 5px;
+  height: 20px;
   border-radius: 5px;
   background-color: ${props => (props.isActive ? props.theme.colors.primary : '#03334f')};
-  position: absolute;
-  margin-top: -35px;
-
-  ${({ theme }) => theme.mediaWidth.up500`
-    width: 20px;
-    height: 20px;
-    position: static;
-    margin-top: 0;
-  `}
 `;
 
 const CurrencyInput = styled(Box)`
@@ -36,7 +27,7 @@ const CurrencyInput = styled(Box)`
   border: 2px solid #0c2a4d;
   background-color: #0c2a4d;
   color: #ffffff;
-  padding: 3px 7px;
+  padding: 3px 20px;
   height: 40px;
   border-radius: 10px;
   outline: none;
@@ -44,10 +35,6 @@ const CurrencyInput = styled(Box)`
   -webkit-appearance: none;
   transition: border 0.3s ease;
   overflow: visible;
-
-  ${({ theme }) => theme.mediaWidth.up500`
-    padding: 3px 20px;
-  `}
 `;
 
 const NumberInput = styled.input`
@@ -91,8 +78,7 @@ export const CurrencyField: React.FC<{
     maxValue = PLUS_INFINITY,
     onUserInput,
   } = props;
-  const smallSp = useMedia('(max-width: 359px)');
-  const isSmall = !useMedia('(min-width: 500px})');
+  const smallSp = useMedia('(max-width: 360px)');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextUserInput = event.target.value.replace(/,/g, '.');
@@ -132,7 +118,7 @@ export const CurrencyField: React.FC<{
       </Flex>
 
       {!editable && (
-        <Typography variant="p" ml={isSmall ? 0 : 6} mt={1} fontSize={[16, 16, 16, 18]}>
+        <Typography variant="p" ml={6} mt={1} fontSize={[16, 16, 16, 18]}>
           {`${BigNumber.max(new BigNumber(value), ZERO).dp(2).toFormat()} ${currency}`}
         </Typography>
       )}

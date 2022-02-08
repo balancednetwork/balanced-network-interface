@@ -12,14 +12,12 @@ export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; wi
   font-weight: 400;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.white};
+  ${props => props.small && ' width: 170px; padding: 11px;'}
 
-  @media (max-width: 650px) {
-    ${props => props.small && ' width: 180px; padding: 11px;'}
-  }
-
-  @media (max-width: 410px) {
-    ${props => props.small && ' width: 120px; padding: 10px'}
-  }
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 10px 0.9375rem;
+    width: 260px;
+  `};
 `;
 
 export interface TooltipProps extends Omit<PopoverProps, 'content'> {

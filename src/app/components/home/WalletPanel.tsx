@@ -4,8 +4,9 @@ import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reac
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
+import { useMedia } from 'react-use';
 import { Box } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { BoxPanel } from 'app/components/Panel';
@@ -42,6 +43,7 @@ const WalletPanel = () => {
   const unstakingBALN: BigNumber = React.useMemo(() => details['Unstaking balance'] || new BigNumber(0), [details]);
   const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
   const isAvailable = stakedBALN.isGreaterThan(new BigNumber(0)) || unstakingBALN.isGreaterThan(new BigNumber(0));
+  const isSmallScreen = useMedia(`(max-width: 499px)`);
 
   const { data: rates } = useRatesQuery();
 
@@ -54,8 +56,12 @@ const WalletPanel = () => {
     })();
   }, [account, transactions]);
 
+  const availableBALN = balances && (
+    <Typography color="rgba(255,255,255,0.75)">Available: {balances['BALN']?.dp(2).toFormat()}</Typography>
+  );
+
   return (
-    <BoxPanel bg="bg2">
+    <BoxPanel bg="bg2" minHeight={195}>
       <Typography variant="h2" mb={5}>
         Wallet
       </Typography>
@@ -64,8 +70,10 @@ const WalletPanel = () => {
         <Wrapper>
           <DashGrid>
             <HeaderText>Asset</HeaderText>
-            <HeaderText>Balance</HeaderText>
-            <HeaderText>Value</HeaderText>
+            <BalanceAndValueWrap>
+              <HeaderText>Balance</HeaderText>
+              {isSmallScreen ? null : <HeaderText>Value</HeaderText>}
+            </BalanceAndValueWrap>
           </DashGrid>
 
           <List>
@@ -87,38 +95,39 @@ const WalletPanel = () => {
                             {currency}
                           </Typography>
                         </AssetSymbol>
-                        <DataText as="div">
-                          {!account
-                            ? '-'
-                            : currency.toLowerCase() === 'baln'
-                            ? totalBALN.dp(2).toFormat()
-                            : balances[currency].dp(2).toFormat()}
-                          {currency.toLowerCase() === 'baln' && isAvailable && (
-                            <>
-                              <Typography color="rgba(255,255,255,0.75)">
-                                Available: {balances['BALN'].dp(2).toFormat()}
-                              </Typography>
-                            </>
-                          )}
-                        </DataText>
+                        <BalanceAndValueWrap>
+                          <DataText as="div">
+                            {!account
+                              ? '-'
+                              : currency.toLowerCase() === 'baln'
+                              ? totalBALN.dp(2).toFormat()
+                              : balances[currency].dp(2).toFormat()}
+                            {currency.toLowerCase() === 'baln' && isAvailable && !isSmallScreen && <>{availableBALN}</>}
+                          </DataText>
 
-                        <StyledDataText
-                          as="div"
-                          hasNotification={currency.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}
-                        >
-                          {!account || !rates || !rates[currency]
-                            ? '-'
-                            : currency.toLowerCase() === 'baln'
-                            ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
-                            : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
-                          {currency.toLowerCase() === 'baln' && isAvailable && rates && rates[currency] && (
-                            <>
-                              <Typography color="rgba(255,255,255,0.75)">
-                                ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
-                              </Typography>
-                            </>
-                          )}
-                        </StyledDataText>
+                          <StyledDataText
+                            as="div"
+                            hasNotification={currency.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}
+                          >
+                            {!account || !rates || !rates[currency]
+                              ? '-'
+                              : currency.toLowerCase() === 'baln'
+                              ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
+                              : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
+                            {currency.toLowerCase() === 'baln' && isAvailable && isSmallScreen && <>{availableBALN}</>}
+                            {currency.toLowerCase() === 'baln' &&
+                              isAvailable &&
+                              !isSmallScreen &&
+                              rates &&
+                              rates[currency] && (
+                                <>
+                                  <Typography color="rgba(255,255,255,0.75)">
+                                    ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                                  </Typography>
+                                </>
+                              )}
+                          </StyledDataText>
+                        </BalanceAndValueWrap>
                       </ListItem>
                     </StyledAccordionButton>
 
@@ -139,7 +148,9 @@ const WalletPanel = () => {
         </Wrapper>
       ) : (
         <Wrapper>
-          <Typography textAlign="center">No assets available.</Typography>
+          <Typography textAlign="center" paddingTop={'20px'}>
+            No assets available.
+          </Typography>
         </Wrapper>
       )}
     </BoxPanel>
@@ -157,9 +168,13 @@ const AssetSymbol = styled.div`
 
 const DashGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-areas: 'asset balance value';
+  grid-template-columns: 3fr 5fr;
+  grid-template-areas: 'asset balance&value';
   align-items: center;
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    grid-template-columns: 1fr 3fr;
+  `}
 
   & > * {
     justify-content: flex-end;
@@ -198,8 +213,12 @@ const StyledDataText = styled(DataText)<{ hasNotification?: boolean }>`
     background: #d5d7db;
     display: inline-block;
     position: absolute;
-    top: 7px;
+    top: -4px;
     transition: all ease 0.2s;
+
+    ${({ theme }) => theme.mediaWidth.up500`
+      top: 7px;
+    `}
   }
 
   &:before {
@@ -213,20 +232,83 @@ const StyledDataText = styled(DataText)<{ hasNotification?: boolean }>`
   }
 
   ${({ hasNotification }) => hasNotification && notificationCSS}
+  ${({ hasNotification }) =>
+    hasNotification &&
+    css`
+      &:before,
+      &:after {
+        top: -4px;
+        ${({ theme }) => theme.mediaWidth.up500`
+          top: 7px;
+        `}
+      }
+    `}
+`;
+
+const List = styled(Box)`
+  -webkit-overflow-scrolling: touch;
+`;
+
+const StyledAccordionPanel = styled(AccordionPanel)`
+  overflow: hidden;
+  max-height: 0;
+  transition: all ease-in-out 0.5s;
+  &[data-state='open'] {
+    max-height: 400px;
+  }
+`;
+
+const BalanceAndValueWrap = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+
+  ${DataText}, ${StyledDataText}, ${HeaderText} {
+    width: 100%;
+
+    ${({ theme }) => theme.mediaWidth.up500`
+      width: 50%;
+    `}
+  }
+
+  ${DataText} {
+    padding-right: 25px;
+
+    ${({ theme }) => theme.mediaWidth.up500`
+      padding-right: 0;
+    `}
+  }
+
+  ${StyledDataText} {
+    color: #d5d7db;
+    font-size: 14px;
+    padding-right: 25px;
+
+    ${({ theme }) => theme.mediaWidth.up500`
+      font-size: 16px;
+      color: ${theme.colors.text};
+    `}
+  }
 `;
 
 const ListItem = styled(DashGrid)<{ border?: boolean }>`
-  padding: 20px 0;
+  padding: 15px 0;
   cursor: pointer;
   color: #ffffff;
   border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
 
-  & > div {
+  ${({ theme }) => theme.mediaWidth.up500`
+    padding: 20px 0;
+  `}
+
+  & > div,
+  ${BalanceAndValueWrap} > div {
     transition: color 0.2s ease;
   }
 
   :hover {
-    & > div {
+    & > div,
+    ${BalanceAndValueWrap} > div {
       color: ${({ theme }) => theme.colors.primary};
 
       &:before,
@@ -235,10 +317,6 @@ const ListItem = styled(DashGrid)<{ border?: boolean }>`
       }
     }
   }
-`;
-
-const List = styled(Box)`
-  -webkit-overflow-scrolling: touch;
 `;
 
 const StyledAccordionButton = styled(AccordionButton)<{ currency?: string }>`
@@ -290,7 +368,8 @@ const StyledAccordionButton = styled(AccordionButton)<{ currency?: string }>`
     & > ${ListItem} {
       border-bottom: 1px solid transparent;
 
-      & > div {
+      & > div,
+      ${BalanceAndValueWrap} > div {
         color: ${({ theme }) => theme.colors.primary};
 
         &:before,
@@ -313,15 +392,6 @@ const StyledAccordionButton = styled(AccordionButton)<{ currency?: string }>`
         }
       }
     }
-  }
-`;
-
-const StyledAccordionPanel = styled(AccordionPanel)`
-  overflow: hidden;
-  max-height: 0;
-  transition: all ease-in-out 0.5s;
-  &[data-state='open'] {
-    max-height: 400px;
   }
 `;
 

@@ -551,9 +551,16 @@ const WithdrawModal = ({
     const [independentToken, dependentToken] =
       independentField === Field.CURRENCY_A ? [pair.token0, pair.token1] : [pair.token1, pair.token0];
 
+    const independentAmount = tryParseAmount(typedValue, independentToken);
+    const dependentAmountFrac = independentAmount?.multiply(price) ?? FRACTION_ZERO;
+
     parsedAmount = {
-      [independentField]: tryParseAmount(typedValue, independentToken),
-      [dependentField]: tryParseAmount(typedValue, dependentToken)?.multiply(price),
+      [independentField]: independentAmount,
+      [dependentField]: CurrencyAmount.fromFractionalAmount(
+        dependentToken,
+        dependentAmountFrac.numerator,
+        dependentAmountFrac.denominator,
+      ),
     };
 
     formattedAmounts = {
@@ -564,14 +571,16 @@ const WithdrawModal = ({
 
   const handleFieldAInput = (value: string) => {
     if (baseBalance) {
-      const p = Math.min(new BigNumber(value || '0').div(baseBalance.toFixed()).multipliedBy(100).toNumber(), 100);
+      const valueBN = new BigNumber(value || '0');
+      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(baseBalance.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
     }
   };
 
   const handleFieldBInput = (value: string) => {
     if (quoteBalance) {
-      const p = Math.min(new BigNumber(value || '0').div(quoteBalance.toFixed()).multipliedBy(100).toNumber(), 100);
+      const valueBN = new BigNumber(value || '0');
+      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(quoteBalance.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
     }
   };

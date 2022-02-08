@@ -403,7 +403,7 @@ const LoanPanel = () => {
 };
 
 export const RebalancingInfo = () => {
-  const isSmall = useMedia('(max-width: 440px');
+  const isSmall = useMedia('(max-width: 499px');
 
   return (
     <RebalancingInfoWrap flexDirection="row" flexWrap="wrap" alignItems="stretch" width="100%">

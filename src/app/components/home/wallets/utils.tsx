@@ -13,8 +13,7 @@ export const StyledTabList = styled(TabList)`
 export const StyledTab = styled(Tab)<{ hasNotification?: boolean }>`
   &[data-reach-tab] {
     box-sizing: border-box;
-    padding: 10px 15px;
-    padding-top: 0;
+    padding: 0 10px 10px;
     margin-right: 0px;
     border-bottom: 3px solid #144a68;
     color: rgba(255, 255, 255, 0.75);
@@ -22,9 +21,9 @@ export const StyledTab = styled(Tab)<{ hasNotification?: boolean }>`
     transition: border-bottom 0.3s ease, color 0.3s ease;
     position: relative;
 
-    @media screen and (max-width: 345px) {
-      padding: 10px;
-    }
+    ${({ theme }) => theme.mediaWidth.up360`
+      padding: 0 15px 10px 15px;
+    `};
 
     &[data-selected] {
       border-bottom: 3px solid #2ca9b7;

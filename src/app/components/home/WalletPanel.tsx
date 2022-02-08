@@ -235,14 +235,12 @@ const StyledDataText = styled(DataText)<{ hasNotification?: boolean }>`
   ${({ hasNotification }) =>
     hasNotification &&
     css`
-      @media screen and (max-width: 499px) {
-        &:before {
-          top: -4px;
-        }
-
-        &:after {
-          top: -4px;
-        }
+      &:before,
+      &:after {
+        top: -4px;
+        ${({ theme }) => theme.mediaWidth.up500`
+          top: 7px;
+        `}
       }
     `}
 `;

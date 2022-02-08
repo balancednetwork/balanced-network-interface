@@ -26,9 +26,9 @@ export const BoxPanel = styled(Box)<{
   padding: ${({ padding }) => padding};
   border-radius: ${({ borderRadius }) => borderRadius};
 
-  @media screen and (min-width: 500px) {
+  ${({ theme }) => theme.mediaWidth.up500`
     padding: 20px;
-  }
+  `};
 
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
     padding: 35px;

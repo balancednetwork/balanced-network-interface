@@ -17,7 +17,7 @@ interface Props {
 
 const NumberButton = styled(Button)`
   background: ${({ theme }) => theme.colors.paginationButtonBG};
-  padding: 5px 10px !important;
+  padding: 3px 8px !important;
   border-radius: 4px;
   :hover:not(.active) {
     background: ${({ theme }) => theme.colors.primary};
@@ -29,9 +29,9 @@ const NumberButton = styled(Button)`
     background: ${({ theme }) => theme.colors.primary};
   }
 
-  @media screen and (max-width: 340px) {
-    padding: 3px 8px !important;
-  }
+  ${({ theme }) => theme.mediaWidth.up360`
+    padding: 5px 10px !important;
+  `};
 `;
 
 const Pagination: React.FC<Props> = ({ totalPages, currentPage, onChangePage, sx }) => {

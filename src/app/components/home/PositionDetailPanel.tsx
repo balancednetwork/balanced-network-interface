@@ -85,8 +85,8 @@ const PositionDetailPanel = () => {
   const upLarge = useMedia('(min-width: 1200px)');
   const smallSp = useMedia('(max-width: 360px)');
   const isMediumSize = !useMedia('(min-width: 600px)');
-  const modalResizingBreakpoint = useMedia('(max-width: 440px');
-  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 340px)');
+  const modalResizingBreakpoint = useMedia('(max-width: 499px');
+  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 360px)');
   const [show, setShow] = React.useState<boolean>(false);
   const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
@@ -526,6 +526,7 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
   transition: all ease 0.25s;
   opacity: ${({ show }) => (show ? 1 : 0)};
   pointer-events: ${({ show }) => (show ? 'all' : 'none')};
+  display: none;
 
   &:before {
     ${({ bottom }) => (bottom ? null : `content: ''`)};
@@ -541,27 +542,38 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
     display: inline-block;
   }
 
-  @media screen and (max-width: 999px) {
+  ${({ theme }) => theme.mediaWidth.up360`
+    display: block;
+     margin-left: -153px;
+
+    &:before {
+      margin-left: -32px;
+    }
+  `};
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    margin-left: -173px;
+    
+    &:before {
+      margin-left: -62px;
+    }
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upMedium`
     margin-left: -193px;
 
     &:before {
       margin-left: -42px;
     }
-  }
-  @media screen and (max-width: 599px) {
-    margin-left: -173px;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upLarge`
+    ${({ bottom }) => (bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
+    left: ${({ bottom }) => (bottom ? `50%` : `100%`)};
+    margin-left: ${({ bottom }) => (bottom ? `-160px` : `-225px`)};
 
     &:before {
-      margin-left: -62px;
+      margin-left: -10px;
     }
-  }
-
-  @media screen and (max-width: 440px) {
-    &:before {
-      margin-left: -12px;
-    }
-  }
-  @media screen and (max-width: 339px) {
-    display: none;
-  }
+  `};
 `;

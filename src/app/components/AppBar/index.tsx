@@ -65,7 +65,7 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   margin-left: 50%;
   transform: translate(-50%);
   padding: 10px 10px;
-  width: 100px;
+  width: 80px;
   border-radius: 25px;
   color: #8695a6;
   text-decoration: none;
@@ -73,13 +73,16 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 14px;
 
-  @media screen and (max-width: 340px) {
-    width: 80px;
-
-    svg {
-      display: none;
-    }
+  svg {
+    display: none;
   }
+
+  ${({ theme }) => theme.mediaWidth.up360`
+    width: 100px;
+    svg {
+      display: inline-block;
+    }
+  `};
 
   &.${activeClassName} {
     color: ${({ theme }) => theme.colors.bg1};

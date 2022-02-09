@@ -552,15 +552,17 @@ const WithdrawModal = ({
       independentField === Field.CURRENCY_A ? [pair.token0, pair.token1] : [pair.token1, pair.token0];
 
     const independentAmount = tryParseAmount(typedValue, independentToken);
-    const dependentAmountFrac = independentAmount?.multiply(price) ?? FRACTION_ZERO;
+    const dependentAmountFrac = independentAmount?.multiply(price);
 
     parsedAmount = {
       [independentField]: independentAmount,
-      [dependentField]: CurrencyAmount.fromFractionalAmount(
-        dependentToken,
-        dependentAmountFrac.numerator,
-        dependentAmountFrac.denominator,
-      ),
+      [dependentField]:
+        dependentAmountFrac &&
+        CurrencyAmount.fromFractionalAmount(
+          dependentToken,
+          dependentAmountFrac.numerator,
+          dependentAmountFrac.denominator,
+        ),
     };
 
     formattedAmounts = {

@@ -5,7 +5,7 @@ import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
@@ -403,8 +403,6 @@ const LoanPanel = () => {
 };
 
 export const RebalancingInfo = () => {
-  const isSmall = useMedia('(max-width: 499px');
-
   return (
     <RebalancingInfoWrap flexDirection="row" flexWrap="wrap" alignItems="stretch" width="100%">
       <Typography
@@ -419,20 +417,20 @@ export const RebalancingInfo = () => {
       >
         While you borrow bnUSD, your collateral is used to keep its value stable
       </Typography>
-      <BoxWithBorderRight width="50%" paddingRight={isSmall ? '15px' : '25px'}>
+      <RebalancingColumn borderRight={true}>
         <InfoBelow />
         <Typography fontWeight="bold" color="#FFF">
           If bnUSD is below $1
         </Typography>
         <Typography>Balanced sells collateral at a premium to repay some of your loan.</Typography>
-      </BoxWithBorderRight>
-      <Box width="50%" paddingLeft={isSmall ? '15px' : '25px'} margin="-19px 0 0">
+      </RebalancingColumn>
+      <RebalancingColumn>
         <InfoAbove />
         <Typography fontWeight="bold" color="#FFF" marginTop="19px">
           If bnUSD is above $1
         </Typography>
         <Typography>Balanced increases your loan to buy more collateral at a discount.</Typography>
-      </Box>
+      </RebalancingColumn>
       <Typography marginTop="25px">
         You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD
         pool. The smaller your loan, the less rebalancing affects you.
@@ -449,16 +447,35 @@ const BoxWithBorderTop = styled(Box)`
   text-align: center;
 `;
 
+const RebalancingColumn = styled(Box)<{ borderRight?: boolean }>`
+  width: 50%;
+  padding-left: 10px;
+  margin-top: -19px;
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    padding-left: 25px;
+  `};
+
+  ${props =>
+    props.borderRight &&
+    css`
+      padding-left: 0;
+      padding-right: 10px;
+      margin-top: 0;
+      ${props.theme.mediaWidth.up500`
+      padding-left: 0;
+      padding-right: 25px;
+      border-right: 1px solid rgba(255, 255, 255, 0.15);
+    `}
+    `};
+`;
+
 const RebalancingInfoWrap = styled(Flex)`
   color: '#D5D7DB';
   svg {
     height: auto;
     margin-bottom: 10px;
   }
-`;
-
-const BoxWithBorderRight = styled(Box)`
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
 `;
 
 export default LoanPanel;

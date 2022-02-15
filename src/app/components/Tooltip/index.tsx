@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react';
 
 import { isIOS } from 'react-device-detect';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import Popover, { PopoverProps, PopperWithoutArrowAndBorder } from '../Popover';
 
-export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; width?: number }>`
+export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; width?: number; className?: string }>`
   width: ${props => (props.width ? `${props.width}px` : props.wide ? '300px' : '260px')};
   padding: 10px 0.9375rem;
   line-height: 150%;
@@ -14,9 +14,21 @@ export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; wi
   color: ${({ theme }) => theme.colors.white};
   ${props => props.small && ' width: 170px; padding: 11px;'}
 
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+  ${({ theme, small }) =>
+    small &&
+    theme.mediaWidth.upExtraSmall`
     padding: 10px 0.9375rem;
     width: 260px;
+  `};
+
+  ${({ className }) =>
+    className === 'rebalancing-modal' &&
+    css`
+      max-width: 335px;
+    `};
+
+  ${({ theme }) => theme.mediaWidth.up500`
+      max-width: 435px !important;
   `};
 `;
 

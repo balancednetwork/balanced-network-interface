@@ -85,7 +85,6 @@ const PositionDetailPanel = () => {
   const upLarge = useMedia('(min-width: 1200px)');
   const smallSp = useMedia('(max-width: 360px)');
   const isMediumSize = !useMedia('(min-width: 600px)');
-  // const modalResizingBreakpoint = useMedia('(max-width: 499px');
   const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 360px)');
   const [show, setShow] = React.useState<boolean>(false);
   const { data: rates } = useRatesQuery();
@@ -296,8 +295,7 @@ const PositionDetailPanel = () => {
                   </QuestionWrapper>
                 )}
                 <RebalancingTooltip show={showRebalancing} bottom={false}>
-                  {/* <TooltipContainer width={modalResizingBreakpoint ? 335 : 435}> */}
-                  <TooltipContainer width={335}>
+                  <TooltipContainer width={435} className="rebalancing-modal">
                     <RebalancingInfo />
                     {shouldShowSeparateTooltip ? null : shouldShowRebalancingAveragePrice ? (
                       <>
@@ -545,10 +543,10 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
 
   ${({ theme }) => theme.mediaWidth.up360`
     display: block;
-     margin-left: -153px;
+     margin-left: -170px;
 
     &:before {
-      margin-left: -32px;
+      margin-left: -14px;
     }
   `};
 

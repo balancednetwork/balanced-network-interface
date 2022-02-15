@@ -51,9 +51,9 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
                   ];
 
                 try {
-                  const poolId = parseInt(await bnJs.Dex.getPoolId(tokenA.address, tokenB.address), 16);
+                  const stats = await bnJs.Multicall.getPoolStatsForPair(tokenA.address, tokenB.address);
+                  const poolId = parseInt(stats['id'], 16);
                   if (poolId === 0) return [PairState.NOT_EXISTS, null];
-                  const stats = await bnJs.Dex.getPoolStats(poolId);
 
                   const baseReserve = new BigNumber(stats['base'], 16).toFixed();
                   const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();

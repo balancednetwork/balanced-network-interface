@@ -12,7 +12,7 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -21,7 +21,7 @@ import { isZeroCA, multiplyCABN, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default function DepositPanel() {
-  const [portion, setPortion] = React.useState<BigNumber>(ZERO);
+  const [portion, setPortion] = React.useState<number>(0);
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -30,7 +30,7 @@ export default function DepositPanel() {
   const sliderInstance = React.useRef<any>(null);
 
   const handleSlider = (values: string[], handle: number) => {
-    setPortion(new BigNumber(values[handle]).div(100));
+    setPortion(parseFloat(values[handle]) / 100);
   };
 
   const { account } = useIconReact();
@@ -53,7 +53,7 @@ export default function DepositPanel() {
 
   const beforeAmount = wallet[sicxAddress];
 
-  const differenceAmount = multiplyCABN(maxAmount, portion);
+  const differenceAmount = multiplyCABN(maxAmount, new BigNumber(portion));
 
   const afterAmount = beforeAmount.subtract(differenceAmount);
 
@@ -79,7 +79,7 @@ export default function DepositPanel() {
             },
           );
           toggleOpen();
-          setPortion(ZERO);
+          setPortion(0);
           sliderInstance?.current?.noUiSlider.set(0);
         } else {
           console.error(res);

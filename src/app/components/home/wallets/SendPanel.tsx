@@ -16,10 +16,11 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { BIGINT_ZERO } from 'constants/misc';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { Currency } from 'types/balanced-sdk-core';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { maxAmountSpend, toCurrencyAmount, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -48,7 +49,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const walletAmount = wallet[currency.wrapped.address];
 
-  const maxAmount = new BigNumber(maxAmountSpend(walletAmount)?.toFixed() || '0');
+  const maxAmount = maxAmountSpend(walletAmount) ?? CurrencyAmount.fromRawAmount(currency.wrapped, BIGINT_ZERO);
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -65,9 +66,10 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const beforeAmount = wallet[currency.wrapped.address];
 
-  const differenceAmountBN = isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value);
-
-  const differenceAmount = toCurrencyAmount(beforeAmount.currency.wrapped, differenceAmountBN);
+  const differenceAmount = toCurrencyAmount(
+    beforeAmount.currency.wrapped,
+    isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value),
+  );
 
   const afterAmount = beforeAmount.subtract(differenceAmount);
 
@@ -93,7 +95,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
             { hash: res.result },
             {
               pending: `Sending ${currency.symbol}...`,
-              summary: `Sent ${differenceAmountBN.dp(2).toFormat()} ${currency.symbol} to ${address}.`,
+              summary: `Sent ${differenceAmount.toFixed(2, { groupSeparator: ',' })} ${currency.symbol} to ${address}.`,
             },
           );
           toggleOpen();
@@ -111,9 +113,9 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const isDisabled =
     !Validator.isAddress(address) ||
-    differenceAmountBN.isNegative() ||
-    differenceAmountBN.isZero() ||
-    differenceAmountBN.isGreaterThan(maxAmount);
+    differenceAmount.lessThan(BIGINT_ZERO) ||
+    differenceAmount.equalTo(BIGINT_ZERO) ||
+    differenceAmount.greaterThan(maxAmount);
 
   const hasEnoughICX = useHasEnoughICX();
 
@@ -149,7 +151,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${differenceAmountBN.dp(2).toFormat()} ${currency?.symbol}`}
+            {`${differenceAmount.toFixed(2, { groupSeparator: ',' })} ${currency?.symbol}`}
           </Typography>
 
           <Typography textAlign="center" mb="2px" mt="20px">

@@ -53,13 +53,10 @@ function getRate(pair: Pair, balance: BalanceData): Fraction {
   return FRACTION_ZERO;
 }
 
-function getBaseQuoteBalance(pair: Pair, balance: BalanceData) {
+function getABBalance(pair: Pair, balance: BalanceData) {
   const rate = getRate(pair, balance);
 
-  return {
-    base: pair.reserve0.multiply(rate),
-    quote: pair.reserve1.multiply(rate),
-  };
+  return [pair.reserve0.multiply(rate), pair.reserve1.multiply(rate)];
 }
 
 function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber) {
@@ -202,16 +199,16 @@ const PoolRecord = ({
 }) => {
   const upSmall = useMedia('(min-width: 800px)');
 
-  const { base: baseBalance, quote: quoteBalance } = getBaseQuoteBalance(pair, balance);
+  const [aBalance, bBalance] = getABBalance(pair, balance);
   const { share, reward } = getShareReward(pair, balance, totalReward);
 
   return (
     <ListItem border={border}>
-      <DataText>{`${pair.token0.symbol || '...'} / ${pair.token1.symbol || '...'}`}</DataText>
+      <DataText>{`${aBalance?.currency.symbol || '...'} / ${bBalance?.currency.symbol || '...'}`}</DataText>
       <DataText>
-        {`${baseBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${baseBalance?.currency.symbol || '...'}`}
+        {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance?.currency.symbol || '...'}`}
         <br />
-        {`${quoteBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${quoteBalance?.currency.symbol || '...'}`}
+        {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance?.currency.symbol || '...'}`}
       </DataText>
       {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
       {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
@@ -535,12 +532,12 @@ const WithdrawModal = ({
 
   const percent = new Percent(Math.floor(portion * 100), 10_000);
 
-  const { base: baseBalance, quote: quoteBalance } = getBaseQuoteBalance(pair, balance);
+  const [aBalance, bBalance] = getABBalance(pair, balance);
 
   if (inputType === 'slider') {
     parsedAmount = {
-      [Field.CURRENCY_A]: baseBalance.multiply(percent),
-      [Field.CURRENCY_B]: quoteBalance.multiply(percent),
+      [Field.CURRENCY_A]: aBalance.multiply(percent),
+      [Field.CURRENCY_B]: bBalance.multiply(percent),
     };
 
     formattedAmounts = {
@@ -572,17 +569,17 @@ const WithdrawModal = ({
   }
 
   const handleFieldAInput = (value: string) => {
-    if (baseBalance) {
+    if (aBalance) {
       const valueBN = new BigNumber(value || '0');
-      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(baseBalance.toFixed()).multipliedBy(100).toNumber(), 100);
+      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(aBalance.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
     }
   };
 
   const handleFieldBInput = (value: string) => {
-    if (quoteBalance) {
+    if (bBalance) {
       const valueBN = new BigNumber(value || '0');
-      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(quoteBalance.toFixed()).multipliedBy(100).toNumber(), 100);
+      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(bBalance.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
     }
   };
@@ -625,8 +622,8 @@ const WithdrawModal = ({
 
     const t = multiplyCABN(balance.balance, numPortion);
 
-    const baseT = multiplyCABN(baseBalance, numPortion);
-    const quoteT = multiplyCABN(quoteBalance, numPortion);
+    const aT = multiplyCABN(aBalance, numPortion);
+    const bT = multiplyCABN(bBalance, numPortion);
 
     bnJs
       .inject({ account })
@@ -636,16 +633,16 @@ const WithdrawModal = ({
           { hash: result.result },
           {
             pending: withdrawMessage(
-              baseT.toFixed(2, { groupSeparator: ',' }),
-              pair.token0.symbol ?? '',
-              quoteT.toFixed(2, { groupSeparator: ',' }),
-              pair.token1.symbol ?? '',
+              aT.toFixed(2, { groupSeparator: ',' }),
+              aT.currency.symbol ?? '',
+              bT.toFixed(2, { groupSeparator: ',' }),
+              bT.currency.symbol ?? '',
             ).pendingMessage,
             summary: withdrawMessage(
-              baseT.toFixed(2, { groupSeparator: ',' }),
-              pair.token0.symbol ?? '',
-              quoteT.toFixed(2, { groupSeparator: ',' }),
-              pair.token1.symbol ?? '',
+              aT.toFixed(2, { groupSeparator: ',' }),
+              aT.currency.symbol ?? '',
+              bT.toFixed(2, { groupSeparator: ',' }),
+              bT.currency.symbol ?? '',
             ).successMessage,
           },
         );
@@ -673,12 +670,14 @@ const WithdrawModal = ({
       <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
         <Typography variant="h3" mb={3}>
           Withdraw:&nbsp;
-          <Typography as="span">{`${pair.token0.symbol || '...'} / ${pair.token1.symbol || '...'}`}</Typography>
+          <Typography as="span">{`${aBalance.currency.symbol || '...'} / ${
+            bBalance.currency.symbol || '...'
+          }`}</Typography>
         </Typography>
         <Box mb={3}>
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_A]}
-            currency={pair.token0}
+            currency={aBalance.currency}
             onUserInput={handleFieldAInput}
             bg="bg5"
           />
@@ -686,15 +685,15 @@ const WithdrawModal = ({
         <Box mb={3}>
           <CurrencyInputPanel
             value={formattedAmounts[Field.CURRENCY_B]}
-            currency={pair.token1}
+            currency={bBalance.currency}
             onUserInput={handleFieldBInput}
             bg="bg5"
           />
         </Box>
         <Typography mb={5} textAlign="right">
           {`Wallet: 
-            ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pair.token0.symbol || '...'} /
-            ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${pair.token1.symbol || '...'}`}
+            ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[0]?.currency.symbol || '...'} /
+            ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[1]?.currency.symbol || '...'}`}
         </Typography>
         <Box mb={5}>
           <Nouislider
@@ -725,11 +724,13 @@ const WithdrawModal = ({
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_A]?.toFixed(2, { groupSeparator: ',' })} {pair.token0.symbol || '...'}
+            {parsedAmount[Field.CURRENCY_A]?.toFixed(2, { groupSeparator: ',' })}{' '}
+            {parsedAmount[Field.CURRENCY_A]?.currency.symbol || '...'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_B]?.toFixed(2, { groupSeparator: ',' })} {pair.token1.symbol || '...'}
+            {parsedAmount[Field.CURRENCY_B]?.toFixed(2, { groupSeparator: ',' })}{' '}
+            {parsedAmount[Field.CURRENCY_B]?.currency.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

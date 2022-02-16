@@ -185,7 +185,7 @@ export function useDerivedSwapInfo(): {
   let price: Price<Token, Token> | undefined;
   if (pair && pairState === PairState.EXISTS && inputCurrency) {
     if (pair.involvesToken(inputCurrency.wrapped)) price = pair.priceOf(inputCurrency.wrapped);
-    else price = pair.token0Price;
+    else price = pair.token0Price; // pair not ready, just set dummy price
   }
 
   return {

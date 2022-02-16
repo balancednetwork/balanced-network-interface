@@ -102,8 +102,11 @@ export default function LiquidityDetails() {
 
   const pairsWithoutQ = lodash.omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = lodash.omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
+  const userPools = Object.keys(pairsWithoutQ).filter(
+    poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO),
+  );
 
-  return (
+  return shouldShowQueue || userPools.length ? (
     <BoxPanel bg="bg2" mb={10}>
       <Typography variant="h2" mb={5}>
         Liquidity details
@@ -128,21 +131,19 @@ export default function LiquidityDetails() {
         )}
 
         {balancesWithoutQ &&
-          Object.keys(pairsWithoutQ)
-            .filter(poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO))
-            .map((poolId, index, arr) => (
-              <PoolRecord
-                key={poolId}
-                poolId={parseInt(poolId)}
-                balance={balances[poolId]}
-                pair={pairs[poolId]}
-                totalReward={rewards[poolId]}
-                border={index !== arr.length - 1}
-              />
-            ))}
+          userPools.map((poolId, index, arr) => (
+            <PoolRecord
+              key={poolId}
+              poolId={parseInt(poolId)}
+              balance={balances[poolId]}
+              pair={pairs[poolId]}
+              totalReward={rewards[poolId]}
+              border={index !== arr.length - 1}
+            />
+          ))}
       </TableWrapper>
     </BoxPanel>
-  );
+  ) : null;
 }
 
 const TableWrapper = styled.div``;
@@ -550,9 +551,18 @@ const WithdrawModal = ({
     const [independentToken, dependentToken] =
       independentField === Field.CURRENCY_A ? [pair.token0, pair.token1] : [pair.token1, pair.token0];
 
+    const independentAmount = tryParseAmount(typedValue, independentToken);
+    const dependentAmountFrac = independentAmount?.multiply(price);
+
     parsedAmount = {
-      [independentField]: tryParseAmount(typedValue, independentToken),
-      [dependentField]: tryParseAmount(typedValue, dependentToken)?.multiply(price),
+      [independentField]: independentAmount,
+      [dependentField]:
+        dependentAmountFrac &&
+        CurrencyAmount.fromFractionalAmount(
+          dependentToken,
+          dependentAmountFrac.numerator,
+          dependentAmountFrac.denominator,
+        ),
     };
 
     formattedAmounts = {
@@ -563,14 +573,16 @@ const WithdrawModal = ({
 
   const handleFieldAInput = (value: string) => {
     if (baseBalance) {
-      const p = Math.min(new BigNumber(value || '0').div(baseBalance.toFixed()).multipliedBy(100).toNumber(), 100);
+      const valueBN = new BigNumber(value || '0');
+      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(baseBalance.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
     }
   };
 
   const handleFieldBInput = (value: string) => {
     if (quoteBalance) {
-      const p = Math.min(new BigNumber(value || '0').div(quoteBalance.toFixed()).multipliedBy(100).toNumber(), 100);
+      const valueBN = new BigNumber(value || '0');
+      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(quoteBalance.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
     }
   };

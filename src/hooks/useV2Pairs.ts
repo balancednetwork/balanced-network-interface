@@ -27,7 +27,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
 
   const [pairs, setPairs] = useState<[PairState, Pair | null][]>(Array(tokens.length).fill([PairState.LOADING, null]));
 
-  const last = useLastCount(20000);
+  const last = useLastCount(10000);
 
   useEffect(() => {
     setPairs(Array(tokens.length).fill([PairState.LOADING, null]));
@@ -262,7 +262,7 @@ export function useBalances(
 ): { [poolId: number]: BalanceData } {
   const [balances, setBalances] = useState<(BalanceData | undefined)[]>([]);
 
-  const last = useLastCount(20000);
+  const last = useLastCount(10000);
 
   useEffect(() => {
     async function fetchBalances() {

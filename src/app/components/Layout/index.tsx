@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import AppBar from 'app/components/AppBar';
 import Header from 'app/components/Header';
 
+import { Banner } from '../Banner';
+
 const StyledHeader = styled(Header)`
   margin-top: 25px;
   margin-bottom: 25px;
@@ -55,13 +57,16 @@ const MobileAppBarWrapper = styled(Box)`
   }
 `;
 
-export const DefaultLayout: React.FC<{ title?: string }> = props => {
+export const DefaultLayout: React.FC<{ title?: string; banners?: Array<React.ReactNode> }> = props => {
   const { children, title = 'Home' } = props;
   const upLarge = useMedia('(min-width: 1200px)');
 
   return (
     <>
       <Container>
+        {props.banners?.map(el => (
+          <Banner>{el}</Banner>
+        ))}
         <StyledHeader title={title} />
 
         <Flex flex={[1, 1, 1, 1, 'initial']}>

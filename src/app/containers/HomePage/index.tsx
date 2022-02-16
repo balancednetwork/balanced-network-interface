@@ -12,6 +12,8 @@ import RewardsPanel from 'app/components/home/RewardsPanel';
 import TransactionPanel from 'app/components/home/TransactionPanel';
 import WalletPanel from 'app/components/home/WalletPanel';
 import { DefaultLayout } from 'app/components/Layout';
+import { Link } from 'app/components/Link';
+import { Typography } from 'app/theme';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useLoanFetchInfo } from 'store/loan/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
@@ -50,7 +52,27 @@ export function HomePage() {
   useFetchRewardsInfo();
 
   return (
-    <DefaultLayout>
+    <DefaultLayout
+      banners={[
+        <>
+          <Typography as="span">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur a tellus viverra, maximus nibh et,
+            scelerisque ligula. Cras venenatis lorem odio, non luctus metus convallis ornare. Donec metus massa,
+            porttitor vel magna et, faucibus eleifend magna. {''}
+          </Typography>
+          <Link href="#" noBorder>
+            Learn more about these changes.
+          </Link>
+        </>,
+        <>
+          <Typography>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur a tellus viverra, maximus nibh et,
+            scelerisque ligula. Cras venenatis lorem odio, non luctus metus convallis ornare. Donec metus massa,
+            porttitor vel magna et, faucibus eleifend magna.
+          </Typography>
+        </>,
+      ]}
+    >
       <Helmet>
         <title>Home</title>
       </Helmet>

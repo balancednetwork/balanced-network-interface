@@ -21,6 +21,7 @@ export enum CHART_PERIODS {
   '1H' = '1H',
   '4H' = '4H',
   '1D' = '1D',
+  '1W' = '1W',
 }
 
 export enum CHART_TYPES {

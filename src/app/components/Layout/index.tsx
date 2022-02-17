@@ -6,8 +6,10 @@ import styled from 'styled-components';
 
 import AppBar from 'app/components/AppBar';
 import Header from 'app/components/Header';
+import { Typography } from 'app/theme';
 
 import { Banner } from '../Banner';
+import { Link } from '../Link';
 
 const StyledHeader = styled(Header)`
   margin-top: 25px;
@@ -57,16 +59,25 @@ const MobileAppBarWrapper = styled(Box)`
   }
 `;
 
-export const DefaultLayout: React.FC<{ title?: string; banners?: Array<React.ReactNode> }> = props => {
+export const DefaultLayout: React.FC<{ title?: string }> = props => {
   const { children, title = 'Home' } = props;
   const upLarge = useMedia('(min-width: 1200px)');
 
   return (
     <>
       <Container>
-        {props.banners?.map(el => (
-          <Banner>{el}</Banner>
-        ))}
+        <Banner>
+          <Typography as="span">
+            Balanced now distributes Balance Tokens as you earn them, instead of once every 24 hours. {''}
+            <Typography as="span" fontWeight="bold" color="white">
+              Liquidity providers won't earn BALN {''}
+            </Typography>
+            from incentivized pools until they stake their LP tokens from the liquidity details section. {''}
+          </Typography>
+          <Link href="https://docs.balanced.network/user-guide/supply-liquidity" noBorder>
+            Learn more in the docs.
+          </Link>
+        </Banner>
         <StyledHeader title={title} />
 
         <Flex flex={[1, 1, 1, 1, 'initial']}>

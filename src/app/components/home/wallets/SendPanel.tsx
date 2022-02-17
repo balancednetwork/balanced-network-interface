@@ -1,9 +1,8 @@
 import React from 'react';
 
 import BigNumber from 'bignumber.js';
-import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { Validator } from 'icon-sdk-js';
 import { isEmpty } from 'lodash';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
@@ -86,7 +85,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
         : bnJs.inject({ account }).getContract((currency as Token).address);
 
     contract
-      .transfer(address, BalancedJs.utils.toLoop(differenceAmount, currency.symbol))
+      .transfer(address, parseUnits(differenceAmount.toFixed(), currency.decimals))
       .then((res: any) => {
         if (!isEmpty(res.result)) {
           addTransaction(
@@ -110,7 +109,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
   };
 
   const isDisabled =
-    !isAddress(address) ||
+    !Validator.isAddress(address) ||
     differenceAmount.isNegative() ||
     differenceAmount.isZero() ||
     differenceAmount.isGreaterThan(maxAmount);
@@ -127,12 +126,10 @@ export default function SendPanel({ currency }: { currency: Currency }) {
           <MaxButton onClick={handleMax}>Send max</MaxButton>
         </Flex>
 
-        <CurrencyInputPanel
+        <CurrencyInputPanel //
           value={value}
-          showMaxButton={false}
           currency={currency}
           onUserInput={handleCurrencyInput}
-          id={`${currency.symbol}-currency-input-in-wallet-panel`}
         />
 
         <AddressInputPanel value={address} onUserInput={handleAddressInput} />

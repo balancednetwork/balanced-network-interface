@@ -209,23 +209,14 @@ const PositionDetailPanel = () => {
         </Typography>
 
         <Flex alignItems="center" justifyContent="space-between" mt={[10, 5, 5, 5, 5]} mb={4}>
-          <Tooltip
-            text="If the bar only fills this section, you have a low risk of liquidation."
-            show={show}
-            placement="bottom"
-            small
-          >
-            <LeftChip
-              bg="primary"
-              style={{
-                background: isPassAllCollateralLocked
-                  ? '#fb6a6a'
-                  : 'linear-gradient(to right, #2ca9b7 ' + lowRisk1 + '%, #144a68 ' + lowRisk1 + '%)',
-              }}
-            >
-              Low risk
-            </LeftChip>
-          </Tooltip>
+          <LeftChip
+            bg="primary"
+            style={{
+              background: isPassAllCollateralLocked
+                ? '#fb6a6a'
+                : 'linear-gradient(to right, #2ca9b7 ' + lowRisk1 + '%, #144a68 ' + lowRisk1 + '%)',
+            }}
+          />
 
           <Box flex={1} style={{ position: 'relative' }}>
             <Locked warned={isLockWarning} pos={pos}>
@@ -254,8 +245,9 @@ const PositionDetailPanel = () => {
               direction="rtl"
               start={[Math.min(currentRatio.toNumber(), 900)]}
               connect={[true, false]}
+              animate={false}
               range={{
-                min: [150],
+                min: [117.7],
                 max: [900],
               }}
               instanceRef={instance => {
@@ -268,8 +260,15 @@ const PositionDetailPanel = () => {
           </Box>
 
           <Tooltip
-            text={`If the ICX price reaches $${liquidationThresholdPrice.toFixed(3)}, 
-                    your collateral will be liquidated.`}
+            text={
+              <Typography variant="body">
+                If the ICX price reaches ${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
+                liquidated. <br />
+                <Typography as="small" fontSize={12} color="text1">
+                  Keep a close eye on the price, as rebalancing may cause it to fluctuate.
+                </Typography>
+              </Typography>
+            }
             show={show}
             placement="bottom"
             small
@@ -417,7 +416,6 @@ const Chip = styled(Box)`
 const LeftChip = styled(Chip)`
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  border-right: 3px solid #0d2a4d;
 `;
 
 const RightChip = styled(Chip)`

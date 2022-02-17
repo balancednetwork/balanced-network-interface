@@ -173,9 +173,7 @@ const RewardSection = () => {
             </Box>
           </Flex>
 
-          <Typography textAlign="center">
-            To earn network fees, stake BALN from your wallet and/or supply it to a liquidity pool.
-          </Typography>
+          <Typography textAlign="center">To earn network fees, stake BALN from your wallet.</Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
@@ -264,7 +262,7 @@ const NetworkFeeSection = () => {
       return (
         <Typography variant="p" as="div">
           Pending
-          <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
+          <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
         </Typography>
       );
     } else if (hasFee) {
@@ -275,7 +273,7 @@ const NetworkFeeSection = () => {
               .filter(key => fees[key].greaterThan(0))
               .map(key => (
                 <Typography key={key} variant="p">
-                  {`${fees[key].toSignificant(2)}`}{' '}
+                  {`${fees[key].toFixed(2)}`}{' '}
                   <Typography key={key} as="span" color="text1">
                     {fees[key].currency.symbol}
                   </Typography>
@@ -291,7 +289,7 @@ const NetworkFeeSection = () => {
       return (
         <Typography variant="p" as="div">
           Ineligible
-          <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
+          <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
         </Typography>
       );
     }
@@ -316,7 +314,7 @@ const NetworkFeeSection = () => {
                 .filter(key => fees[key].greaterThan(0))
                 .map(key => (
                   <Typography key={key} variant="p">
-                    {`${fees[key].toSignificant()}`}{' '}
+                    {`${fees[key].toFixed(2)}`}{' '}
                     <Typography key={key} as="span" color="text1">
                       {fees[key].currency.symbol}
                     </Typography>

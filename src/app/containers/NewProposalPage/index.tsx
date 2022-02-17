@@ -16,13 +16,14 @@ import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect'
 import RatioInput from 'app/components/newproposal/RatioInput';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
-import { CURRENCY_LIST, PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
+import { PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import FundingInput, { CurrencyValue } from '../../components/newproposal/FundingInput';
@@ -101,14 +102,10 @@ export function NewProposalPage() {
   const [forumLink, setForumLink] = useState('');
   const [description, setDescription] = useState('');
   const [ratioInputValue, setRatioInputValue] = useState<{ [key: string]: string }>({});
+  const [balanceList, setBalanceList] = useState<CurrencyAmount<Currency>[]>([]);
   const [currencyInputValue, setCurrencyInputValue] = React.useState<CurrencyValue>({
     recipient: '',
-    amounts: {
-      '0': {
-        amount: '',
-        symbol: CURRENCY_LIST[0],
-      },
-    },
+    amounts: [],
   });
 
   const [showError, setShowError] = useState<ErrorItem>({
@@ -142,8 +139,16 @@ export function NewProposalPage() {
   useEffect(() => {
     (async () => {
       const totalSupply = await bnJs.BALN.totalSupply();
+      const fundingRes = await PROPOSAL_CONFIG.Funding.fetchInputData();
+      setBalanceList(fundingRes);
       setTotalSupply(totalSupply);
+      if (fundingRes)
+        setCurrencyInputValue({
+          recipient: '',
+          amounts: [{ item: CurrencyAmount.fromRawAmount(fundingRes[0].currency, 0) }],
+        });
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { data: platformDay } = usePlatformDayQuery();
@@ -169,9 +174,7 @@ export function NewProposalPage() {
       (Object.values(ratioInputValue).length > 0 && Object.values(ratioInputValue).every(ratio => !!ratio.trim())) ||
       (isFundingProposal &&
         !!currencyInputValue.recipient.trim() &&
-        Object.values(currencyInputValue.amounts)
-          .map(({ amount }) => amount)
-          .some(amount => amount)));
+        currencyInputValue.amounts.some(amount => amount.inputDisplayValue)));
 
   const canSubmit = account && isStakeValid && isFormValid;
 
@@ -233,12 +236,7 @@ export function NewProposalPage() {
     setRatioInputValue({});
     setCurrencyInputValue({
       recipient: '',
-      amounts: {
-        '0': {
-          amount: '',
-          symbol: CURRENCY_LIST[0],
-        },
-      },
+      amounts: [{ item: CurrencyAmount.fromRawAmount(balanceList[0].currency, 0) }],
     });
   };
 
@@ -336,7 +334,11 @@ export function NewProposalPage() {
             />
           )}
           {isFundingProposal && (
-            <FundingInput currencyValue={currencyInputValue} setCurrencyValue={setCurrencyInputValue} />
+            <FundingInput
+              currencyValue={currencyInputValue}
+              setCurrencyValue={setCurrencyInputValue}
+              balanceList={balanceList}
+            />
           )}
           <Typography variant="content" mt="25px" mb="25px" textAlign="center">
             It costs 100 bnUSD to submit a proposal.

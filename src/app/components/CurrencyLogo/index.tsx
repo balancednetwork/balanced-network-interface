@@ -8,7 +8,7 @@ import { Currency } from 'types/balanced-sdk-core';
 import Logo from '../Logo1';
 
 export const getTokenLogoURL = (address: string): string | void => {
-  return `https://raw.githubusercontent.com/balancednetwork/assets/feat/add-icon-assets/blockchains/icon/assets/${address}/logo.png`;
+  return `https://raw.githubusercontent.com/balancednetwork/assets/master/blockchains/icon/assets/${address}/logo.png`;
 };
 
 const StyledICONLogo = styled.img<{ size: string }>`

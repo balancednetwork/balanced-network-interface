@@ -2,7 +2,6 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -17,6 +16,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default function UnstakePanel() {
@@ -66,7 +66,7 @@ export default function UnstakePanel() {
 
     bnJs
       .inject({ account })
-      .sICX.unstake(BalancedJs.utils.toLoop(differenceAmount))
+      .sICX.unstake(parseUnits(differenceAmount.toFixed()))
       .then(res => {
         if (res.result) {
           addTransaction(

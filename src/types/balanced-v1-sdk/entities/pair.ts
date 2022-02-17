@@ -42,7 +42,6 @@ export class Pair {
 
   public readonly poolId?: number;
   public readonly totalSupply?: CurrencyAmount<Token>;
-  public readonly baseAddress?: string;
 
   public static getAddress(tokenA: Token, tokenB: Token): string {
     return computePairAddress({ factoryAddress: FACTORY_ADDRESS, tokenA, tokenB });
@@ -54,7 +53,6 @@ export class Pair {
     additionalArgs?: {
       poolId?: number;
       totalSupply?: string;
-      baseAddress?: string;
     },
   ) {
     const tokenAmounts = currencyAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks
@@ -73,7 +71,6 @@ export class Pair {
     if (additionalArgs) {
       this.poolId = additionalArgs.poolId;
       this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
-      this.baseAddress = additionalArgs.baseAddress;
     }
   }
 

@@ -6,7 +6,10 @@ import styled from 'styled-components';
 import { ReactComponent as CrossIcon } from 'assets/icons/cross.svg';
 
 const BannerStyled = styled(Flex)<{ close?: boolean }>`
-  margin-top: 25px;
+  ${({ theme }) => theme.mediaWidth.upMedium`
+   margin: 25px 120px 0;
+  `}
+  margin: 25px 16px 0;
   padding: 15px 25px;
   border-radius: 10px;
   background: #0b284c;

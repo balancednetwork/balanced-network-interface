@@ -6,10 +6,6 @@ import styled from 'styled-components';
 
 import AppBar from 'app/components/AppBar';
 import Header from 'app/components/Header';
-import { Typography } from 'app/theme';
-
-import { Banner } from '../Banner';
-import { Link } from '../Link';
 
 const StyledHeader = styled(Header)`
   margin-top: 25px;
@@ -66,18 +62,6 @@ export const DefaultLayout: React.FC<{ title?: string }> = props => {
   return (
     <>
       <Container>
-        <Banner>
-          <Typography as="span">
-            Balanced now distributes Balance Tokens as you earn them, instead of once every 24 hours. {''}
-            <Typography as="span" fontWeight="bold" color="white">
-              Liquidity providers won't earn BALN {''}
-            </Typography>
-            from incentivized pools until they stake their LP tokens from the liquidity details section. {''}
-          </Typography>
-          <Link href="https://docs.balanced.network/user-guide/supply-liquidity" noBorder>
-            Learn more in the docs.
-          </Link>
-        </Banner>
         <StyledHeader title={title} />
 
         <Flex flex={[1, 1, 1, 1, 'initial']}>

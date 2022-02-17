@@ -194,8 +194,12 @@ export function useDerivedMintInfo(): {
         const dependentCurrency = dependentField === Field.CURRENCY_B ? currencyB : currencyA;
         const dependentTokenAmount =
           dependentField === Field.CURRENCY_B
-            ? pair.priceOf(tokenA).quote(wrappedIndependentAmount)
-            : pair.priceOf(tokenB).quote(wrappedIndependentAmount);
+            ? pair.involvesToken(tokenA)
+              ? pair.priceOf(tokenA).quote(wrappedIndependentAmount)
+              : CurrencyAmount.fromRawAmount(tokenB, 0)
+            : pair.involvesToken(tokenB)
+            ? pair.priceOf(tokenB).quote(wrappedIndependentAmount)
+            : CurrencyAmount.fromRawAmount(tokenA, 0);
         return dependentCurrency?.isNative
           ? CurrencyAmount.fromRawAmount(dependentCurrency, dependentTokenAmount.quotient)
           : dependentTokenAmount;
@@ -223,7 +227,9 @@ export function useDerivedMintInfo(): {
       return undefined;
     } else {
       const wrappedCurrencyA = currencyA?.wrapped;
-      return pair && wrappedCurrencyA ? pair.priceOf(wrappedCurrencyA) : undefined;
+      return pair && wrappedCurrencyA && pair.involvesToken(wrappedCurrencyA)
+        ? pair.priceOf(wrappedCurrencyA)
+        : undefined;
     }
   }, [currencyA, noLiquidity, pair, parsedAmounts]);
 

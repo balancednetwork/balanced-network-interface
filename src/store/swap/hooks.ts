@@ -183,10 +183,7 @@ export function useDerivedSwapInfo(): {
   const [pairState, pair] = useV2Pair(inputCurrency, outputCurrency);
 
   let price: Price<Token, Token> | undefined;
-  if (pair && pairState === PairState.EXISTS && inputCurrency) {
-    if (pair.involvesToken(inputCurrency.wrapped)) price = pair.priceOf(inputCurrency.wrapped);
-    else price = pair.token0Price; // pair not ready, just set dummy price
-  }
+  if (pair && pairState === PairState.EXISTS && inputCurrency) price = pair.priceOf(inputCurrency.wrapped);
 
   return {
     trade,

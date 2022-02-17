@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs, LOOP } from 'packages/BalancedJs';
@@ -8,51 +8,67 @@ import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { CurrencyAmount } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
-import useLastCount from './useLastCount';
 import { PairState } from './useV2Pairs';
 
 export function useQueuePair(): [PairState, Pair | null] {
-  const [pair, setPair] = useState<[PairState, Pair | null]>([PairState.LOADING, null]);
+  const [reserves, setReserves] = useState<
+    { reserve0: string; reserve1: string; poolId: number; totalSupply: string } | number | undefined
+  >(PairState.LOADING);
+
+  useEffect(() => {
+    setReserves(PairState.LOADING);
+
+    const fetchReserves = async () => {
+      try {
+        let stats;
+        const poolId = BalancedJs.utils.POOL_IDS.sICXICX;
+
+        try {
+          stats = await bnJs.Dex.getPoolStats(poolId);
+        } catch (err) {
+          return undefined;
+        }
+
+        const totalSupply = new BigNumber(stats['total_supply'], 16);
+        const totalSupplyStr = totalSupply.toFixed();
+
+        const rate = new BigNumber(stats['price'], 16).div(LOOP);
+
+        // ICX/sICX
+        setReserves({
+          reserve0: totalSupplyStr,
+          reserve1: totalSupply.div(rate).toFixed(0),
+          totalSupply: totalSupplyStr,
+          poolId: poolId,
+        });
+      } catch (err) {
+        setReserves(PairState.INVALID);
+      }
+    };
+    fetchReserves();
+  }, []);
 
   const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address].wrapped;
   const sICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.sICX.address].wrapped;
 
-  const last = useLastCount(10000);
+  return useMemo(() => {
+    const result = reserves;
 
-  useEffect(() => {
-    const fetchReserves = async () => {
-      try {
-        const poolId = BalancedJs.utils.POOL_IDS.sICXICX;
+    if (result === PairState.LOADING) return [PairState.LOADING, null];
+    if (!result) return [PairState.NOT_EXISTS, null];
 
-        const stats = await bnJs.Dex.getPoolStats(poolId);
+    if (typeof result === 'number') return [PairState.INVALID, null];
 
-        const rate = new BigNumber(stats['price'], 16).div(LOOP);
+    // ICX/sICX
+    const { reserve0, reserve1, poolId, totalSupply } = result;
 
-        const icxSupply = new BigNumber(stats['total_supply'], 16);
-        const sicxSupply = icxSupply.div(rate);
-
-        const totalSupply = icxSupply.toFixed();
-
-        // ICX/sICX
-        const newPair: [PairState, Pair] = [
-          PairState.EXISTS,
-          new Pair(
-            CurrencyAmount.fromRawAmount(ICX, totalSupply),
-            CurrencyAmount.fromRawAmount(sICX, sicxSupply.toFixed(0)),
-            {
-              poolId,
-              totalSupply,
-            },
-          ),
-        ];
-
-        setPair(newPair);
-      } catch (err) {
-        setPair([PairState.INVALID, null]);
-      }
-    };
-    fetchReserves();
-  }, [last, ICX, sICX]);
-
-  return pair;
+    // returning `ICX/sICX`
+    return [
+      PairState.EXISTS,
+      new Pair(CurrencyAmount.fromRawAmount(ICX, reserve0), CurrencyAmount.fromRawAmount(sICX, reserve1), {
+        poolId,
+        totalSupply,
+      }),
+    ];
+  }, [reserves, ICX, sICX]);
 }

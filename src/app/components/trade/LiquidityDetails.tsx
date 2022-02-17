@@ -103,6 +103,22 @@ export default function LiquidityDetails() {
     poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO),
   );
 
+  const sortedPairs = userPools
+    .map(poolId => {
+      const pair: Pair = pairsWithoutQ[poolId];
+
+      if (pair.baseAddress === pair.token0.address) return pair;
+      return new Pair(pair.reserve1, pair.reserve0, {
+        poolId: pair.poolId,
+        totalSupply: pair.totalSupply?.quotient.toString(),
+        baseAddress: pair.baseAddress,
+      });
+    })
+    .reduce((acc, pair) => {
+      if (pair.poolId && pair.poolId > 0) acc[pair.poolId] = pair;
+      return acc;
+    }, {});
+
   return shouldShowQueue || userPools.length ? (
     <BoxPanel bg="bg2" mb={10}>
       <Typography variant="h2" mb={5}>
@@ -133,7 +149,7 @@ export default function LiquidityDetails() {
               key={poolId}
               poolId={parseInt(poolId)}
               balance={balances[poolId]}
-              pair={pairs[poolId]}
+              pair={sortedPairs[poolId]}
               totalReward={rewards[poolId]}
               border={index !== arr.length - 1}
             />

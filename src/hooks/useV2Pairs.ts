@@ -70,6 +70,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
                       {
                         poolId,
                         totalSupply,
+                        baseAddress: stats['base_token'],
                       },
                     ),
                   ];

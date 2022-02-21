@@ -83,8 +83,8 @@ const PositionDetailPanel = () => {
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
+  const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
-  const isMediumSize = !useMedia('(min-width: 600px)');
   const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 360px)');
   const [show, setShow] = React.useState<boolean>(false);
   const { data: rates } = useRatesQuery();
@@ -341,7 +341,9 @@ const PositionDetailPanel = () => {
                 <TooltipContainer width={321}>{averageRebalancingPriceText}</TooltipContainer>
               </RebalancingTooltip>
 
-              <Box width={1 / 2} style={isMediumSize ? { textAlign: 'right' } : {}}>
+              {!upMedium && <VerticalDivider mr={8} />}
+
+              <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(rebalancingTotal, 'currency')} bnUSD</Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
                   {'Loan'}
@@ -369,7 +371,8 @@ const PositionDetailPanel = () => {
                 </Typography>
                 <Typography mt={1}>Daily rewards</Typography>
               </Box>
-              <Box width={1 / 2} style={isMediumSize ? { textAlign: 'right' } : {}}>
+              {!upMedium && <VerticalDivider mr={8} />}
+              <Box width={1 / 2}>
                 <Typography variant="p" color={hasRewardableCollateral ? 'white' : 'alert'}>
                   {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
                 </Typography>

@@ -19,7 +19,7 @@ export const CheckBox = styled(Box)<{ isActive: boolean }>`
   border-radius: 5px;
   background-color: ${props => (props.isActive ? props.theme.colors.primary : '#03334f')};
   position: absolute;
-  margin-top: -35px;
+  top: -12px;
 
   ${({ theme }) => theme.mediaWidth.up500`
     width: 20px;
@@ -114,7 +114,7 @@ export const CurrencyField: React.FC<{
   return (
     <Flex flexDirection="column">
       <Flex alignItems="center">
-        <Flex alignItems="center">
+        <Flex alignItems="center" sx={{ position: 'relative' }}>
           <CheckBox isActive={isActive} mr={2} />
           <Typography as="label" htmlFor={label} unselectable="on" sx={{ userSelect: 'none' }}>
             {label}{' '}

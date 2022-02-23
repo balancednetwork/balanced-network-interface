@@ -6,7 +6,6 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
@@ -20,7 +19,7 @@ import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
 import { toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 import { depositMessage, supplyMessage } from './utils';
 
@@ -245,7 +244,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   return (
     <Modal isOpen={isOpen} onDismiss={() => undefined}>
-      <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+      <ModalContent>
         <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
           {pair ? 'Supply liquidity?' : 'Create liquidity pool?'}
         </Typography>
@@ -383,9 +382,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
             </>
           )}
         </Flex>
-        <LedgerConfirmMessage />
-        {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-      </Flex>
+      </ModalContent>
     </Modal>
   );
 }

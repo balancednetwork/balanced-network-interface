@@ -14,6 +14,7 @@ import Governance from './contracts/Governance';
 import ICX from './contracts/ICX';
 import IRC2 from './contracts/IRC2';
 import Loans from './contracts/Loans';
+import Multicall from './contracts/Multicall';
 import Rebalancing from './contracts/Rebalancing';
 import Rewards from './contracts/Rewards';
 import Router from './contracts/Router';
@@ -58,6 +59,7 @@ export class BalancedJs {
   Governance: Governance;
   Rebalancing: Rebalancing;
   DAOFund: DAOFund;
+  Multicall: Multicall;
 
   static utils = {
     toLoop(value: BigNumber | number | string, currencyKey?: string): BigNumber {
@@ -115,6 +117,7 @@ export class BalancedJs {
     this.Governance = new Governance(this.contractSettings);
     this.Rebalancing = new Rebalancing(this.contractSettings);
     this.DAOFund = new DAOFund(this.contractSettings);
+    this.Multicall = new Multicall(this.contractSettings);
   }
 
   inject({ account, legerSettings }: SettingInjection) {

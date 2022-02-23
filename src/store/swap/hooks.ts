@@ -1,18 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { canBeQueue, getTradePair } from 'constants/currency';
+import { canBeQueue } from 'constants/currency';
+import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
-import { usePools } from 'store/pool/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useCurrencyBalances } from 'store/wallet/hooks';
 import { Trade } from 'types/balanced-v1-sdk';
 import { parseUnits } from 'utils';
 
-import { TradeType, Currency, CurrencyAmount, Percent } from '../../types/balanced-sdk-core';
+import { TradeType, Currency, CurrencyAmount, Percent, Token, Price } from '../../types/balanced-sdk-core';
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './actions';
 import { useTradeExactIn, useTradeExactOut } from './adapter';
@@ -75,41 +74,6 @@ export function useSwapActionHandlers(): {
   };
 }
 
-export function useCurrencyBalances(
-  account: string | undefined,
-  currencies: (Currency | undefined)[],
-): (CurrencyAmount<Currency> | undefined)[] {
-  const balances = useWalletBalances();
-
-  return React.useMemo(
-    () =>
-      currencies.map(currency => {
-        if (!account || !currency) return undefined;
-        return CurrencyAmount.fromRawAmount(
-          currency,
-          parseUnits(balances[currency.symbol!].toFixed(), currency.decimals),
-        );
-      }),
-    [balances, account, currencies],
-  );
-}
-
-export function usePrice(currencyIn?: string, currencyOut?: string): BigNumber | undefined {
-  const pools = usePools();
-
-  if (!currencyIn || !currencyOut) return undefined;
-
-  const [pair, inverse] = getTradePair(currencyIn, currencyOut);
-
-  if (!pair) return undefined;
-
-  const pool = pools[pair.id];
-
-  if (!pool) return undefined;
-
-  return !inverse ? pool.rate : pool.inverseRate;
-}
-
 // try to parse a user entered amount for a given token
 export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmount<Currency> | undefined {
   if (!value || !currency) {
@@ -137,8 +101,7 @@ export function useDerivedSwapInfo(): {
   parsedAmount: CurrencyAmount<Currency> | undefined;
   inputError?: string;
   allowedSlippage: number;
-  // FIXME: need to refactor this later. it is temporarily solution.
-  price: BigNumber | undefined;
+  price: Price<Token, Token> | undefined;
 } {
   const { account } = useIconReact();
 
@@ -149,10 +112,10 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currency: outputCurrency },
   } = useSwapState();
 
-  const relevantTokenBalances = useCurrencyBalances(account ?? undefined, [
-    inputCurrency ?? undefined,
-    outputCurrency ?? undefined,
-  ]);
+  const relevantTokenBalances = useCurrencyBalances(
+    account ?? undefined,
+    useMemo(() => [inputCurrency ?? undefined, outputCurrency ?? undefined], [inputCurrency, outputCurrency]),
+  );
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
@@ -217,7 +180,13 @@ export function useDerivedSwapInfo(): {
 
   if (userHasSpecifiedInputOutput && !trade) inputError = 'Insufficient liquidity';
 
-  const price = usePrice(currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol);
+  const [pairState, pair] = useV2Pair(inputCurrency, outputCurrency);
+
+  let price: Price<Token, Token> | undefined;
+  if (pair && pairState === PairState.EXISTS && inputCurrency) {
+    if (pair.involvesToken(inputCurrency.wrapped)) price = pair.priceOf(inputCurrency.wrapped);
+    else price = pair.token0Price; // pair not ready, just set dummy price
+  }
 
   return {
     trade,

@@ -1,5 +1,34 @@
 import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
+import {
+  sICX,
+  ICX,
+  bnUSD,
+  BALN,
+  IUSDC,
+  USDS,
+  OMM,
+  CFT,
+  METX,
+  IUSDT,
+  GBET,
+  FIN,
+  sICX_YEOUIDO,
+  ICX_YEOUIDO,
+  bnUSD_YEOUIDO,
+  BALN_YEOUIDO,
+  IUSDC_YEOUIDO,
+  USDS_YEOUIDO,
+  OMM_YEOUIDO,
+  CFT_YEOUIDO,
+  sICX_SEJONG,
+  ICX_SEJONG,
+  bnUSD_SEJONG,
+  BALN_SEJONG,
+  FIN_SEJONG,
+} from 'constants/tokens';
+import { Token } from 'types/balanced-sdk-core';
+
 import { NETWORK_ID } from './config';
 
 export interface PairInfo {
@@ -9,6 +38,8 @@ export interface PairInfo {
   readonly baseCurrencyKey: string;
   readonly quoteCurrencyKey: string;
   readonly rewards?: number;
+  readonly baseToken: Token;
+  readonly quoteToken: Token;
 }
 
 // this information contains the pairs the balanced supports
@@ -22,7 +53,9 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'sICX/ICX',
       baseCurrencyKey: 'sICX',
       quoteCurrencyKey: 'ICX',
-      rewards: 0.05,
+      rewards: 0.03,
+      baseToken: sICX,
+      quoteToken: ICX,
     },
     {
       chainId: 1,
@@ -30,7 +63,9 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'sICX/bnUSD',
       baseCurrencyKey: 'sICX',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.145,
+      baseToken: sICX,
+      quoteToken: bnUSD,
+      rewards: 0.12,
     },
     {
       chainId: 1,
@@ -38,7 +73,9 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'BALN/bnUSD',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.145,
+      baseToken: BALN,
+      quoteToken: bnUSD,
+      rewards: 0.12,
     },
     {
       chainId: 1,
@@ -46,15 +83,19 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'BALN/sICX',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'sICX',
-      rewards: 0.1,
+      baseToken: BALN,
+      quoteToken: sICX,
+      rewards: 0.15,
     },
     {
-      chainId: 1, //
+      chainId: 1,
       id: 5,
       name: 'IUSDC/bnUSD',
       baseCurrencyKey: 'IUSDC',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.015,
+      baseToken: IUSDC,
+      quoteToken: bnUSD,
+      rewards: 0.025,
     },
     {
       chainId: 1,
@@ -62,7 +103,9 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'IUSDT/bnUSD',
       baseCurrencyKey: 'IUSDT',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.03,
+      baseToken: IUSDT,
+      quoteToken: bnUSD,
+      rewards: 0.005,
     },
     {
       chainId: 1,
@@ -70,7 +113,9 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'USDS/bnUSD',
       baseCurrencyKey: 'USDS',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.005,
+      baseToken: USDS,
+      quoteToken: bnUSD,
+      rewards: 0.02,
     },
     {
       chainId: 1,
@@ -78,6 +123,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'OMM/sICX',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'sICX',
+      baseToken: OMM,
+      quoteToken: sICX,
     },
     {
       chainId: 1,
@@ -85,6 +132,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'OMM/IUSDC',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'IUSDC',
+      baseToken: OMM,
+      quoteToken: IUSDC,
     },
     {
       chainId: 1,
@@ -92,6 +141,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'OMM/USDS',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'USDS',
+      baseToken: OMM,
+      quoteToken: USDS,
     },
     {
       chainId: 1,
@@ -99,6 +150,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'CFT/sICX',
       baseCurrencyKey: 'CFT',
       quoteCurrencyKey: 'sICX',
+      baseToken: CFT,
+      quoteToken: sICX,
     },
     {
       chainId: 1,
@@ -106,6 +159,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'METX/bnUSD',
       baseCurrencyKey: 'METX',
       quoteCurrencyKey: 'bnUSD',
+      baseToken: METX,
+      quoteToken: bnUSD,
     },
     {
       chainId: 1,
@@ -113,6 +168,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'METX/sICX',
       baseCurrencyKey: 'METX',
       quoteCurrencyKey: 'sICX',
+      baseToken: METX,
+      quoteToken: sICX,
     },
     {
       chainId: 1,
@@ -120,6 +177,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'METX/IUSDC',
       baseCurrencyKey: 'METX',
       quoteCurrencyKey: 'IUSDC',
+      baseToken: METX,
+      quoteToken: IUSDC,
     },
     {
       chainId: 1,
@@ -127,6 +186,26 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'METX/USDS',
       baseCurrencyKey: 'METX',
       quoteCurrencyKey: 'USDS',
+      baseToken: METX,
+      quoteToken: USDS,
+    },
+    {
+      chainId: 1,
+      id: 17,
+      name: 'GBET/bnUSD',
+      baseCurrencyKey: 'GBET',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: GBET,
+      quoteToken: bnUSD,
+    },
+    {
+      chainId: 1,
+      id: 31,
+      name: 'FIN/bnUSD',
+      baseCurrencyKey: 'FIN',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: FIN,
+      quoteToken: bnUSD,
     },
   ],
   [NetworkId.YEOUIDO]: [
@@ -137,6 +216,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       baseCurrencyKey: 'sICX',
       quoteCurrencyKey: 'ICX',
       rewards: 0.1,
+      baseToken: sICX_YEOUIDO,
+      quoteToken: ICX_YEOUIDO,
     },
     {
       chainId: 3,
@@ -144,6 +225,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'sICX/bnUSD',
       baseCurrencyKey: 'sICX',
       quoteCurrencyKey: 'bnUSD',
+      baseToken: sICX_YEOUIDO,
+      quoteToken: bnUSD_YEOUIDO,
       rewards: 0.175,
     },
     {
@@ -152,6 +235,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'BALN/bnUSD',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'bnUSD',
+      baseToken: BALN_YEOUIDO,
+      quoteToken: bnUSD_YEOUIDO,
       rewards: 0.175,
     },
     {
@@ -160,28 +245,36 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'BALN/sICX',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'sICX',
+      baseToken: BALN_YEOUIDO,
+      quoteToken: sICX_YEOUIDO,
       rewards: 0.05,
     },
     {
       chainId: 3,
-      id: 24, // 22?
+      id: 24,
       name: 'OMM/IUSDC',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'IUSDC',
+      baseToken: OMM_YEOUIDO,
+      quoteToken: IUSDC_YEOUIDO,
     },
     {
       chainId: 3,
-      id: 25, // 20?
+      id: 25,
       name: 'OMM/sICX',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'sICX',
+      baseToken: OMM_YEOUIDO,
+      quoteToken: sICX_YEOUIDO,
     },
     {
       chainId: 3,
-      id: 23, // 21?
+      id: 23,
       name: 'OMM/USDS',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'USDS',
+      baseToken: OMM_YEOUIDO,
+      quoteToken: USDS_YEOUIDO,
     },
     {
       chainId: 3,
@@ -189,6 +282,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'CFT/sICX',
       baseCurrencyKey: 'CFT',
       quoteCurrencyKey: 'sICX',
+      baseToken: CFT_YEOUIDO,
+      quoteToken: sICX_YEOUIDO,
     },
   ],
   [NetworkId.SEJONG]: [
@@ -198,7 +293,9 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'sICX/ICX',
       baseCurrencyKey: 'sICX',
       quoteCurrencyKey: 'ICX',
-      rewards: 0.07,
+      baseToken: sICX_SEJONG,
+      quoteToken: ICX_SEJONG,
+      rewards: 0.1,
     },
     {
       chainId: 83,
@@ -206,7 +303,9 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'sICX/bnUSD',
       baseCurrencyKey: 'sICX',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.175,
+      baseToken: sICX_SEJONG,
+      quoteToken: bnUSD_SEJONG,
+      rewards: 0.15,
     },
     {
       chainId: 83,
@@ -214,7 +313,9 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'BALN/bnUSD',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.175,
+      baseToken: BALN_SEJONG,
+      quoteToken: bnUSD_SEJONG,
+      rewards: 0.15,
     },
     {
       chainId: 83,
@@ -222,15 +323,18 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'BALN/sICX',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'sICX',
-      rewards: 0.05,
+      baseToken: BALN_SEJONG,
+      quoteToken: sICX_SEJONG,
+      rewards: 0.1,
     },
     {
-      chainId: 83, //
-      id: 5,
-      name: 'IUSDC/bnUSD',
-      baseCurrencyKey: 'IUSDC',
+      chainId: 83,
+      id: 19,
+      name: 'FIN/bnUSD',
+      baseCurrencyKey: 'FIN',
       quoteCurrencyKey: 'bnUSD',
-      rewards: 0.005,
+      baseToken: FIN_SEJONG,
+      quoteToken: bnUSD_SEJONG,
     },
   ],
 };

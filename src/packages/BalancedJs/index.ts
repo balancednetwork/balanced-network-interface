@@ -1,11 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { isEmpty } from 'lodash';
 
-import { NETWORK_ID } from 'constants/config';
-
-import addresses from './addresses';
 import { SupportedChainId as NetworkId, SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from './chain';
-import Airdrip from './contracts/Airdrip';
 import BALN from './contracts/BALN';
 import Band from './contracts/Band';
 import bnUSD from './contracts/bnUSD';
@@ -17,6 +13,7 @@ import Governance from './contracts/Governance';
 import ICX from './contracts/ICX';
 import IRC2 from './contracts/IRC2';
 import Loans from './contracts/Loans';
+import Multicall from './contracts/Multicall';
 import Rebalancing from './contracts/Rebalancing';
 import Rewards from './contracts/Rewards';
 import Router from './contracts/Router';
@@ -38,7 +35,7 @@ export type SettingInjection = {
   legerSettings?: LedgerSettings;
 };
 
-const LOOP = new BigNumber('1000000000000000000');
+export const LOOP = new BigNumber('1000000000000000000');
 const TEN = new BigNumber('10');
 export class BalancedJs {
   contractSettings: ContractSettings;
@@ -57,11 +54,11 @@ export class BalancedJs {
   Staking: Staking;
   Dex: Dex;
   Rewards: Rewards;
-  Airdrip: Airdrip;
   Dividends: Dividends;
   Governance: Governance;
   Rebalancing: Rebalancing;
   DAOFund: DAOFund;
+  Multicall: Multicall;
 
   static utils = {
     toLoop(value: BigNumber | number | string, currencyKey?: string): BigNumber {
@@ -115,11 +112,11 @@ export class BalancedJs {
     this.Staking = new Staking(this.contractSettings);
     this.Dex = new Dex(this.contractSettings);
     this.Rewards = new Rewards(this.contractSettings);
-    this.Airdrip = new Airdrip(this.contractSettings);
     this.Dividends = new Dividends(this.contractSettings);
     this.Governance = new Governance(this.contractSettings);
     this.Rebalancing = new Rebalancing(this.contractSettings);
     this.DAOFund = new DAOFund(this.contractSettings);
+    this.Multicall = new Multicall(this.contractSettings);
   }
 
   inject({ account, legerSettings }: SettingInjection) {
@@ -131,7 +128,7 @@ export class BalancedJs {
     return this;
   }
 
-  transfer(to: string, value: BigNumber): Promise<any> {
+  transfer(to: string, value: string): Promise<any> {
     const contract = new Contract(this.contractSettings);
     contract.address = to;
     const payload = contract.transferICXParamsBuilder({
@@ -142,11 +139,6 @@ export class BalancedJs {
   }
 
   getContract(address: string): IRC2 {
-    return new IRC2(this.contractSettings, address);
-  }
-
-  getContractFromSymbol(symbol: string): IRC2 {
-    const address = addresses[NETWORK_ID][symbol.toLowerCase()];
     return new IRC2(this.contractSettings, address);
   }
 }

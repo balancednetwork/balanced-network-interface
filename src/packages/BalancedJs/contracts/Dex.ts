@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -33,14 +32,14 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  add(baseToken: string, quoteToken: string, baseValue: BigNumber, quoteValue: BigNumber) {
+  add(baseToken: string, quoteToken: string, baseValue: string, quoteValue: string) {
     const payload = this.transactionParamsBuilder({
       method: 'add',
       params: {
         _baseToken: baseToken,
         _quoteToken: quoteToken,
-        _baseValue: IconConverter.toHex(baseValue),
-        _quoteValue: IconConverter.toHex(quoteValue),
+        _baseValue: baseValue,
+        _quoteValue: quoteValue,
       },
     });
 
@@ -69,12 +68,44 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
+  getNonce() {
+    const callParams = this.paramsBuilder({
+      method: 'getNonce',
+      params: {},
+    });
+
+    return this.call(callParams);
+  }
+
+  getPoolId(tokenAAddress: string, tokenBAddress: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getPoolId',
+      params: {
+        _token1Address: tokenAAddress,
+        _token2Address: tokenBAddress,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
   getPoolTotal(id: number, token: string) {
     const callParams = this.paramsBuilder({
       method: 'getPoolTotal',
       params: {
         _id: IconConverter.toHex(id),
         _token: token,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  getPoolStats(id: number) {
+    const callParams = this.paramsBuilder({
+      method: 'getPoolStats',
+      params: {
+        _id: IconConverter.toHex(id),
       },
     });
 
@@ -93,7 +124,7 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  transferICX(value: BigNumber) {
+  transferICX(value: string) {
     const payload = this.transferICXParamsBuilder({
       value: value,
     });
@@ -119,12 +150,12 @@ export default class Dex extends Contract {
 
   // This method can withdraw up to a user's holdings in a pool, but it cannot
   // be called if the user has not passed their withdrawal lock time period.
-  remove(id: number, value: BigNumber, withdraw: number = 1) {
+  remove(id: number, value: string, withdraw: number = 1) {
     const payload = this.transactionParamsBuilder({
       method: 'remove',
       params: {
         _id: IconConverter.toHex(id),
-        _value: IconConverter.toHex(value),
+        _value: value,
         _withdraw: IconConverter.toHex(withdraw),
       },
     });
@@ -152,12 +183,12 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  withdraw(token: string, value: BigNumber) {
+  withdraw(token: string, value: string) {
     const payload = this.transactionParamsBuilder({
       method: 'withdraw',
       params: {
         _token: token,
-        _value: IconConverter.toHex(value),
+        _value: value,
       },
     });
 
@@ -192,5 +223,17 @@ export default class Dex extends Contract {
     });
 
     return this.callICONPlugins(payload);
+  }
+
+  getPoolStatsForPair(base: string, quote: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getPoolStatsForPair',
+      params: {
+        _base: base,
+        _quote: quote,
+      },
+    });
+
+    return this.call(callParams);
   }
 }

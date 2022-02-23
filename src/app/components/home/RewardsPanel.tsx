@@ -18,7 +18,7 @@ import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'st
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 
 const RewardsPanel = () => {
@@ -148,7 +148,7 @@ const RewardSection = () => {
       {reward && getRewardsUI()}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb={1}>
             Claim Balance Tokens?
           </Typography>
@@ -173,9 +173,7 @@ const RewardSection = () => {
             </Box>
           </Flex>
 
-          <Typography textAlign="center">
-            To earn network fees, stake BALN from your wallet and/or supply it to a liquidity pool.
-          </Typography>
+          <Typography textAlign="center">To earn network fees, stake BALN from your wallet.</Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
@@ -190,11 +188,7 @@ const RewardSection = () => {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </Flex>
   );
@@ -268,7 +262,7 @@ const NetworkFeeSection = () => {
       return (
         <Typography variant="p" as="div">
           Pending
-          <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
+          <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
         </Typography>
       );
     } else if (hasFee) {
@@ -279,7 +273,7 @@ const NetworkFeeSection = () => {
               .filter(key => fees[key].greaterThan(0))
               .map(key => (
                 <Typography key={key} variant="p">
-                  {`${fees[key].toSignificant(2)}`}{' '}
+                  {`${fees[key].toFixed(2)}`}{' '}
                   <Typography key={key} as="span" color="text1">
                     {fees[key].currency.symbol}
                   </Typography>
@@ -295,7 +289,7 @@ const NetworkFeeSection = () => {
       return (
         <Typography variant="p" as="div">
           Ineligible
-          <QuestionHelper text="To be eligible for network fees, stake BALN and/or supply BALN to a liquidity pool." />
+          <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
         </Typography>
       );
     }
@@ -309,7 +303,7 @@ const NetworkFeeSection = () => {
       {getNetworkFeesUI()}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb={1}>
             Claim network fees?
           </Typography>
@@ -320,7 +314,7 @@ const NetworkFeeSection = () => {
                 .filter(key => fees[key].greaterThan(0))
                 .map(key => (
                   <Typography key={key} variant="p">
-                    {`${fees[key].toSignificant()}`}{' '}
+                    {`${fees[key].toFixed(2)}`}{' '}
                     <Typography key={key} as="span" color="text1">
                       {fees[key].currency.symbol}
                     </Typography>
@@ -341,11 +335,7 @@ const NetworkFeeSection = () => {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </Flex>
   );

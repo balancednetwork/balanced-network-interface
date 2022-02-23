@@ -1,10 +1,33 @@
-import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import { Contract } from './contract';
 
 export default class IRC2 extends Contract {
+  name() {
+    const callParams = this.paramsBuilder({
+      method: 'name',
+    });
+
+    return this.call(callParams);
+  }
+
+  symbol() {
+    const callParams = this.paramsBuilder({
+      method: 'symbol',
+    });
+
+    return this.call(callParams);
+  }
+
+  decimals() {
+    const callParams = this.paramsBuilder({
+      method: 'decimals',
+    });
+
+    return this.call(callParams);
+  }
+
   balanceOf(owner: string) {
     const callParams = this.paramsBuilder({
       method: 'balanceOf',
@@ -16,7 +39,18 @@ export default class IRC2 extends Contract {
     return this.call(callParams);
   }
 
-  deposit(value: BigNumber) {
+  availableBalanceOf(owner: string) {
+    const callParams = this.paramsBuilder({
+      method: 'availableBalanceOf',
+      params: {
+        _owner: owner,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  deposit(value: string) {
     return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
   }
 
@@ -28,12 +62,12 @@ export default class IRC2 extends Contract {
     return this.call(callParams);
   }
 
-  swapUsingRoute(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber, path: (string | null)[]) {
+  swapUsingRoute(value: string, outputAddress: string, minimumReceive: string, path: (string | null)[]) {
     const data = {
       method: '_swap',
       params: {
-        toToken: addresses[this.nid][outputSymbol.toLowerCase()],
-        minimumReceive: minimumReceive.toFixed(),
+        toToken: outputAddress,
+        minimumReceive: minimumReceive,
         path: path,
       },
     };
@@ -41,21 +75,12 @@ export default class IRC2 extends Contract {
     return this.transfer(addresses[this.nid].router, value, JSON.stringify(data));
   }
 
-  swap(value: BigNumber, outputSymbol: string, minimumReceive: BigNumber) {
-    const data = {
-      method: '_swap',
-      params: { toToken: addresses[this.nid][outputSymbol.toLowerCase()], minimumReceive: minimumReceive.toFixed() },
-    };
-
-    return this.transfer(addresses[this.nid].dex, value, JSON.stringify(data));
-  }
-
-  transfer(to: string, value: BigNumber, data?: string) {
+  transfer(to: string, value: string, data?: string) {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
       params: {
         _to: to,
-        _value: IconConverter.toHex(value),
+        _value: IconConverter.toHexNumber(value),
         _data: data && IconConverter.toHex(data),
       },
     });

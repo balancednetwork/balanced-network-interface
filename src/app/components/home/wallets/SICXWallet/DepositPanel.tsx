@@ -2,14 +2,12 @@ import React from 'react';
 
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -18,6 +16,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default function DepositPanel() {
@@ -66,7 +65,7 @@ export default function DepositPanel() {
 
     bnJs
       .inject({ account })
-      .sICX.depositAndBorrow(BalancedJs.utils.toLoop(differenceAmount))
+      .sICX.depositAndBorrow(parseUnits(differenceAmount.toFixed()))
       .then((res: any) => {
         if (res.result) {
           addTransaction(
@@ -130,7 +129,7 @@ export default function DepositPanel() {
       </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
             Deposit sICX collateral?
           </Typography>
@@ -172,11 +171,7 @@ export default function DepositPanel() {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

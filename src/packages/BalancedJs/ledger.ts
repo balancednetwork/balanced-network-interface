@@ -1,7 +1,9 @@
 import AppIcx from '@ledgerhq/hw-app-icx';
-import { IconUtil, SignedTransaction } from 'icon-sdk-js';
+import IconService from 'icon-sdk-js';
 
 import ContractSettings, { LedgerSettings } from './contractSettings';
+
+const { IconUtil } = IconService;
 
 export class Ledger {
   actived: boolean = false;
@@ -12,7 +14,7 @@ export class Ledger {
     return this.contractSettings.ledgerSettings;
   }
 
-  async signTransaction(rawTransaction: any): Promise<SignedTransaction> {
+  async signTransaction(rawTransaction: any): Promise<any> {
     const icx = new AppIcx(this.contractSettings.ledgerSettings.transport);
     const hashKey = IconUtil.generateHashKey(rawTransaction);
     const { signedRawTxBase64 } = await icx.signTransaction(this.contractSettings.ledgerSettings.path, hashKey);

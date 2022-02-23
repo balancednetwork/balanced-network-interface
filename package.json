@@ -33,8 +33,8 @@
     "@types/testing-library__jest-dom": "5.9.2",
     "@types/webpack": "4.41.22",
     "@types/webpack-env": "1.15.2",
-    "big.js": "6.1.1",
     "axios": "0.21.3",
+    "big.js": "6.1.1",
     "bignumber.js": "9.0.1",
     "chalk": "4.1.0",
     "cross-env": "7.0.2",
@@ -48,7 +48,7 @@
     "i18next": "19.7.0",
     "i18next-browser-languagedetector": "6.0.1",
     "i18next-scanner": "2.11.0",
-    "icon-sdk-js": "0.0.18",
+    "icon-sdk-js": "1.1.3",
     "jest-styled-components": "7.0.3",
     "jsbi": "3.1.6",
     "lightweight-charts": "3.2.0",
@@ -128,8 +128,8 @@
     ]
   },
   "engines": {
-    "npm": ">=6.4.1",
-    "node": ">=10.13.0"
+    "node": ">=14.0.0 <16.0.0",
+    "yarn": "^1.22.10"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

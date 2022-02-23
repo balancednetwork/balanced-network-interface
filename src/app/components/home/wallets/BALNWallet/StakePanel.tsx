@@ -3,14 +3,12 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import Nouislider from 'nouislider-react';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -18,6 +16,7 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default React.memo(function StakePanel() {
@@ -71,6 +70,7 @@ export default React.memo(function StakePanel() {
   const addTransaction = useTransactionAdder();
 
   const { account } = useIconReact();
+
   const handleConfirm = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
@@ -80,7 +80,7 @@ export default React.memo(function StakePanel() {
 
     bnJs
       .inject({ account })
-      .BALN.stake(BalancedJs.utils.toLoop(afterAmount))
+      .BALN.stake(parseUnits(afterAmount.toString()))
       .then(res => {
         if (res.result) {
           if (shouldStake) {
@@ -115,7 +115,7 @@ export default React.memo(function StakePanel() {
   const date = dayjs().add(3, 'days');
   const description = shouldStake
     ? 'Unstaking takes 3 days.'
-    : `They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('h:ma')}.`;
+    : `They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('hh:mma')}.`;
 
   const hasEnoughICX = useHasEnoughICX();
 
@@ -159,7 +159,7 @@ export default React.memo(function StakePanel() {
       </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
             {shouldStake ? 'Stake Balance Tokens?' : 'Unstake Balance Tokens?'}
           </Typography>
@@ -199,11 +199,7 @@ export default React.memo(function StakePanel() {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

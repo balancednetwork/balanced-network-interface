@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { useMedia } from 'react-use';
@@ -11,7 +10,6 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import { LineBreak } from 'app/components/Divider';
 import { CurrencyField } from 'app/components/Form';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel, BoxPanelWrap } from 'app/components/Panel';
@@ -37,9 +35,10 @@ import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { IcxDisplayType } from 'types';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import ModalContent from '../ModalContent';
 import { MouseoverTooltip } from '../Tooltip';
 
 const CollateralPanel = () => {
@@ -142,31 +141,20 @@ const CollateralPanel = () => {
 
     if (shouldDeposit) {
       try {
-        if (icxDisplayType === 'ICX') {
-          const { result: hash } = await bnJs
-            .inject({ account: account })
-            .Loans.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount));
+        const { result: hash } = await bnJs
+          .inject({ account })
+          .Loans.depositAndBorrow(parseUnits(collateralAmount.toFixed()));
 
-          addTransaction(
-            { hash },
-            {
-              pending: 'Depositing collateral...',
-              summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
-            },
-          );
-        } else {
-          const { result: hash } = await bnJs
-            .inject({ account })
-            .sICX.depositAndBorrow(BalancedJs.utils.toLoop(collateralAmount));
-
-          addTransaction(
-            { hash },
-            {
-              pending: `Depositing collateral...`,
-              summary: `Deposited ${collateralAmount.dp(2).toFormat()} sICX as collateral.`,
-            },
-          );
-        }
+        addTransaction(
+          { hash },
+          {
+            pending: 'Depositing collateral...',
+            summary:
+              icxDisplayType === 'ICX'
+                ? `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`
+                : `Deposited ${collateralAmount.dp(2).toFormat()} sICX as collateral.`,
+          },
+        );
 
         // close modal
         toggleOpen();
@@ -188,7 +176,7 @@ const CollateralPanel = () => {
 
         const { result: hash } = await bnJs
           .inject({ account })
-          .Loans.withdrawCollateral(BalancedJs.utils.toLoop(collateralAmountInSICX));
+          .Loans.withdrawCollateral(parseUnits(collateralAmountInSICX.toFixed()));
 
         addTransaction(
           { hash },
@@ -388,7 +376,7 @@ const CollateralPanel = () => {
       </BoxPanelWrap>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
             {shouldDeposit ? 'Deposit collateral?' : 'Withdraw collateral?'}
           </Typography>
@@ -444,11 +432,7 @@ const CollateralPanel = () => {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

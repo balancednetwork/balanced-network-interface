@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -11,11 +10,11 @@ export default class BALN extends IRC2 {
     this.address = addresses[this.nid].baln;
   }
 
-  stake(value: BigNumber) {
+  stake(value: string) {
     const payload = this.transactionParamsBuilder({
       method: 'stake',
       params: {
-        _value: IconConverter.toHex(value),
+        _value: IconConverter.toHexNumber(value),
       },
     });
 
@@ -25,6 +24,17 @@ export default class BALN extends IRC2 {
   detailsBalanceOf(owner: string) {
     const callParams = this.paramsBuilder({
       method: 'detailsBalanceOf',
+      params: {
+        _owner: owner,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  availableBalanceOf(owner: string) {
+    const callParams = this.paramsBuilder({
+      method: 'availableBalanceOf',
       params: {
         _owner: owner,
       },

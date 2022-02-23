@@ -1,22 +1,21 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, ReactNode } from 'react';
 
-import { BalancedJs } from 'packages/BalancedJs';
+import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
-import { PairInfo } from 'constants/pairs';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
-import { usePool, usePoolPair } from 'store/pool/hooks';
-import { tryParseAmount, useCurrencyBalances } from 'store/swap/hooks';
-import { convertPair } from 'types/adapter';
+import bnJs from 'bnJs';
+import { isNativeCurrency } from 'constants/tokens';
+import { useQueuePair } from 'hooks/useQueuePair';
+import { PairState, useV2Pair } from 'hooks/useV2Pairs';
+import { tryParseAmount } from 'store/swap/hooks';
+import { useAllTransactions } from 'store/transactions/hooks';
+import { useCurrencyBalances } from 'store/wallet/hooks';
 import { Currency, CurrencyAmount, Token, Percent, Price } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
-import { Pool } from 'types/index';
-import { parseUnits } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
-import { Field, typeInput } from './actions';
+import { Field, typeInput, selectCurrency } from './actions';
 
 export function useMintState(): AppState['mint'] {
   return useSelector<AppState, AppState['mint']>(state => state.mint);
@@ -25,11 +24,24 @@ export function useMintState(): AppState['mint'] {
 export function useMintActionHandlers(
   noLiquidity: boolean | undefined,
 ): {
+  onCurrencySelection: (field: Field, currency: Currency) => void;
   onFieldAInput: (typedValue: string) => void;
   onFieldBInput: (typedValue: string) => void;
   onSlide: (field: Field, typedValue: string) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
+
+  const onCurrencySelection = useCallback(
+    (field: Field, currency: Currency) => {
+      dispatch(
+        selectCurrency({
+          field,
+          currency: currency,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   const onFieldAInput = useCallback(
     (typedValue: string) => {
@@ -57,56 +69,60 @@ export function useMintActionHandlers(
   );
 
   return {
+    onCurrencySelection,
     onFieldAInput,
     onFieldBInput,
     onSlide,
   };
 }
 
-const useCurrencies = (pair: PairInfo) => {
-  return React.useMemo(() => {
-    const currencyA = SUPPORTED_TOKENS_LIST.find(token => token.symbol === pair.baseCurrencyKey);
-    const currencyB = SUPPORTED_TOKENS_LIST.find(token => token.symbol === pair.quoteCurrencyKey);
-    return [currencyA, currencyB];
-  }, [pair]);
+const ZERO = JSBI.BigInt(0);
+
+const useCurrencyDeposit = (
+  account: string | undefined | null,
+  currency: Currency | undefined,
+): CurrencyAmount<Currency> | undefined => {
+  const token = currency?.wrapped;
+  const transactions = useAllTransactions();
+  const [result, setResult] = React.useState<string | undefined>();
+
+  React.useEffect(() => {
+    (async () => {
+      if (token?.address && account) {
+        const res = await bnJs.Dex.getDeposit(token?.address || '', account || '');
+        setResult(res);
+      }
+    })();
+  }, [transactions, token, account]);
+
+  return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, JSBI.BigInt(result)) : undefined;
 };
 
-export function useTotalSupply(token?: Currency, pool?: Pool): CurrencyAmount<Token> | undefined {
-  const totalSupply = pool?.total;
-
-  return React.useMemo(
-    () =>
-      token?.isToken && totalSupply
-        ? CurrencyAmount.fromRawAmount(token, parseUnits(totalSupply.toFixed(), token.decimals))
-        : undefined,
-    [token, totalSupply],
-  );
-}
-
 export function useDerivedMintInfo(): {
-  dependentField: Field; //
+  dependentField: Field;
   currencies: { [field in Field]?: Currency };
-  pairInfo: PairInfo;
   pair?: Pair | null;
-  noLiquidity?: boolean;
+  pairState: PairState;
   currencyBalances: { [field in Field]?: CurrencyAmount<Currency> };
+  currencyDeposits: { [field in Field]?: CurrencyAmount<Currency> };
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
   price?: Price<Currency, Currency>;
+  noLiquidity?: boolean;
   liquidityMinted?: CurrencyAmount<Token>;
-  availableLiquidity?: CurrencyAmount<Token>;
+  mintableLiquidity?: CurrencyAmount<Token>;
   poolTokenPercentage?: Percent;
-  error?: string;
-  pool?: Pool;
+  error?: ReactNode;
 } {
   const { account } = useIconReact();
 
-  const { independentField, typedValue, otherTypedValue } = useMintState();
-
+  const {
+    independentField,
+    typedValue,
+    otherTypedValue,
+    [Field.CURRENCY_A]: { currency: currencyA },
+    [Field.CURRENCY_B]: { currency: currencyB },
+  } = useMintState();
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
-
-  const pairInfo = usePoolPair();
-
-  const [currencyA, currencyB] = useCurrencies(pairInfo);
 
   // tokens
   const currencies: { [field in Field]?: Currency } = React.useMemo(
@@ -118,10 +134,24 @@ export function useDerivedMintInfo(): {
   );
 
   // pair
-  const pool = usePool(pairInfo.id);
-  const pair = React.useMemo(() => convertPair(pool), [pool]);
-  const totalSupply = useTotalSupply(pair?.liquidityToken, pool);
-  const noLiquidity = pool?.total.isZero() ? true : false;
+  const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
+
+  // For queue, currencies[Field.CURRENCY_A] = ICX and currencies[Field.CURRENCY_B] = undefined
+  // so used `useQueuePair` in addition to `useV2Pair`.
+  const [pairState1, pair1] = useV2Pair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
+  const [pairState2, pair2] = useQueuePair();
+  const [pairState, pair] = isQueue ? [pairState2, pair2] : [pairState1, pair1];
+
+  const totalSupply = pair?.totalSupply;
+  const noLiquidity: boolean =
+    pairState === PairState.NOT_EXISTS ||
+    Boolean(totalSupply && JSBI.equal(totalSupply.quotient, ZERO)) ||
+    Boolean(
+      pairState === PairState.EXISTS &&
+        pair &&
+        JSBI.equal(pair.reserve0.quotient, ZERO) &&
+        JSBI.equal(pair.reserve1.quotient, ZERO),
+    );
 
   // balances
   const currencyArr = React.useMemo(() => [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]], [currencies]);
@@ -132,6 +162,17 @@ export function useDerivedMintInfo(): {
       [Field.CURRENCY_B]: balances[1],
     }),
     [balances],
+  );
+
+  // deposits
+  const depositA = useCurrencyDeposit(account ?? undefined, currencyA);
+  const depositB = useCurrencyDeposit(account ?? undefined, currencyB);
+  const currencyDeposits: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
+    () => ({
+      [Field.CURRENCY_A]: depositA,
+      [Field.CURRENCY_B]: depositB,
+    }),
+    [depositA, depositB],
   );
 
   // amounts
@@ -153,8 +194,12 @@ export function useDerivedMintInfo(): {
         const dependentCurrency = dependentField === Field.CURRENCY_B ? currencyB : currencyA;
         const dependentTokenAmount =
           dependentField === Field.CURRENCY_B
-            ? pair.priceOf(tokenA).quote(wrappedIndependentAmount)
-            : pair.priceOf(tokenB).quote(wrappedIndependentAmount);
+            ? pair.involvesToken(tokenA)
+              ? pair.priceOf(tokenA).quote(wrappedIndependentAmount)
+              : CurrencyAmount.fromRawAmount(tokenB, 0)
+            : pair.involvesToken(tokenB)
+            ? pair.priceOf(tokenB).quote(wrappedIndependentAmount)
+            : CurrencyAmount.fromRawAmount(tokenA, 0);
         return dependentCurrency?.isNative
           ? CurrencyAmount.fromRawAmount(dependentCurrency, dependentTokenAmount.quotient)
           : dependentTokenAmount;
@@ -182,7 +227,9 @@ export function useDerivedMintInfo(): {
       return undefined;
     } else {
       const wrappedCurrencyA = currencyA?.wrapped;
-      return pair && wrappedCurrencyA ? pair.priceOf(wrappedCurrencyA) : undefined;
+      return pair && wrappedCurrencyA && pair.involvesToken(wrappedCurrencyA)
+        ? pair.priceOf(wrappedCurrencyA)
+        : undefined;
     }
   }, [currencyA, noLiquidity, pair, parsedAmounts]);
 
@@ -202,8 +249,8 @@ export function useDerivedMintInfo(): {
     }
   }, [parsedAmounts, pair, totalSupply]);
 
-  // available liquidity minted by balances
-  const availableLiquidity = React.useMemo(() => {
+  // mintable liquidity by using balances
+  const mintableLiquidity = React.useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = currencyBalances;
     const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
     if (pair && totalSupply && tokenAmountA && tokenAmountB) {
@@ -226,53 +273,54 @@ export function useDerivedMintInfo(): {
     }
   }, [liquidityMinted, totalSupply]);
 
-  let error: string | undefined;
+  let error: ReactNode | undefined;
   if (!account) {
-    error = 'Connect Wallet';
+    error = <>Connect Wallet</>;
   }
 
-  if (!pair) {
-    error = error ?? `Invalid pair`;
+  if (pairState === PairState.INVALID) {
+    error = error ?? <>Invalid pair</>;
   }
 
-  if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
-    error = error ?? 'Enter an amount';
-  }
+  if (isQueue) {
+    if (!parsedAmounts[Field.CURRENCY_A]) {
+      error = error ?? <>Enter an amount</>;
+    }
 
-  const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
+    const { [Field.CURRENCY_A]: currencyAAmount } = parsedAmounts;
 
-  if (pairInfo && pairInfo.id === BalancedJs.utils.POOL_IDS.sICXICX) {
-    if (
-      currencyBAmount &&
-      currencyBalances?.[Field.CURRENCY_B]?.lessThan(
-        currencyBAmount.add(CurrencyAmount.fromRawAmount(currencyBAmount.currency, MINIMUM_ICX_FOR_ACTION)),
-      )
-    ) {
-      error = error ?? 'Insufficient balance';
+    if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
+      error = <>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</>;
     }
   } else {
+    if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
+      error = error ?? <>Enter an amount</>;
+    }
+
+    const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
+
     if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-      error = `Insufficient ${currencies[Field.CURRENCY_A]?.symbol} balance`;
+      error = <>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</>;
     }
 
     if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
-      error = `Insufficient ${currencies[Field.CURRENCY_B]?.symbol} balance`;
+      error = <>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</>;
     }
   }
 
   return {
     dependentField,
     currencies,
-    pairInfo,
     pair,
-    noLiquidity,
+    pairState,
     currencyBalances,
+    currencyDeposits,
     parsedAmounts,
     price,
+    noLiquidity,
     liquidityMinted,
-    availableLiquidity,
+    mintableLiquidity,
     poolTokenPercentage,
     error,
-    pool,
   };
 }

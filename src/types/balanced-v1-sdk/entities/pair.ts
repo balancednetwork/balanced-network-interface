@@ -3,7 +3,7 @@ import { pack, keccak256 } from '@ethersproject/solidity';
 import JSBI from 'jsbi';
 import invariant from 'tiny-invariant';
 
-import { BigintIsh, Price, sqrt, Token, CurrencyAmount, Fraction } from 'types/balanced-sdk-core';
+import { BigintIsh, Price, sqrt, Token, CurrencyAmount } from 'types/balanced-sdk-core';
 
 import {
   FACTORY_ADDRESS,
@@ -16,6 +16,7 @@ import {
   ZERO,
   _99,
   _100,
+  NULL_CONTRACT_ADDRESS,
 } from '../constants';
 import { InsufficientReservesError, InsufficientInputAmountError } from '../errors';
 
@@ -38,7 +39,10 @@ export const computePairAddress = ({
 export class Pair {
   public readonly liquidityToken: Token;
   private readonly tokenAmounts: [CurrencyAmount<Token>, CurrencyAmount<Token>];
-  public readonly queueRate?: Fraction;
+
+  public readonly poolId?: number;
+  public readonly totalSupply?: CurrencyAmount<Token>;
+  public readonly baseAddress?: string;
 
   public static getAddress(tokenA: Token, tokenB: Token): string {
     return computePairAddress({ factoryAddress: FACTORY_ADDRESS, tokenA, tokenB });
@@ -47,7 +51,11 @@ export class Pair {
   public constructor(
     currencyAmountA: CurrencyAmount<Token>,
     tokenAmountB: CurrencyAmount<Token>,
-    queueRate?: Fraction,
+    additionalArgs?: {
+      poolId?: number;
+      totalSupply?: string;
+      baseAddress?: string;
+    },
   ) {
     const tokenAmounts = currencyAmountA.currency.sortsBefore(tokenAmountB.currency) // does safety checks
       ? [currencyAmountA, tokenAmountB]
@@ -55,14 +63,18 @@ export class Pair {
     this.liquidityToken = new Token(
       tokenAmounts[0].currency.chainId,
       // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
-      'cx0000000000000000000000000000000000000001',
+      'cx0000000000000000000000000000000000000002',
       18,
       'BALN-V2',
       'Balanced V2',
     );
     this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
-    if (queueRate) this.queueRate = queueRate;
+    if (additionalArgs) {
+      this.poolId = additionalArgs.poolId;
+      this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
+      this.baseAddress = additionalArgs.baseAddress;
+    }
   }
 
   /**
@@ -121,6 +133,13 @@ export class Pair {
     return this.tokenAmounts[1];
   }
 
+  public get isQueue(): boolean {
+    return (
+      this.tokenAmounts[0].currency.address === NULL_CONTRACT_ADDRESS ||
+      this.tokenAmounts[1].currency.address === NULL_CONTRACT_ADDRESS
+    );
+  }
+
   public reserveOf(token: Token): CurrencyAmount<Token> {
     invariant(this.involvesToken(token), 'TOKEN');
     return token.equals(this.token0) ? this.reserve0 : this.reserve1;
@@ -135,23 +154,18 @@ export class Pair {
     const inputReserve = this.reserveOf(inputAmount.currency);
     const outputReserve = this.reserveOf(inputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
 
-    if (this.queueRate) {
-      if (inputAmount.currency.symbol === 'sICX') {
-        const numerator = JSBI.multiply(JSBI.multiply(inputAmount.numerator, _99), this.queueRate.numerator);
-        const denominator = JSBI.multiply(JSBI.multiply(inputAmount.denominator, _100), this.queueRate.denominator);
-        const outputAmount = CurrencyAmount.fromRawAmount(
-          inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-          JSBI.divide(numerator, denominator),
-        );
-        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+    if (this.isQueue) {
+      if (inputAmount.currency.address === NULL_CONTRACT_ADDRESS) {
+        // ICX -> sICX
+        const numerator = JSBI.multiply(inputAmount.numerator, outputReserve.quotient);
+        const denominator = JSBI.multiply(inputAmount.denominator, inputReserve.quotient);
+        const outputAmount = CurrencyAmount.fromRawAmount(outputReserve.currency, JSBI.divide(numerator, denominator));
+        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
       } else {
-        const numerator = JSBI.multiply(inputAmount.numerator, this.queueRate.denominator);
-        const denominator = JSBI.multiply(inputAmount.denominator, this.queueRate.numerator);
-        const outputAmount = CurrencyAmount.fromRawAmount(
-          inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-          JSBI.divide(numerator, denominator),
-        );
-        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+        const numerator = JSBI.multiply(JSBI.multiply(inputAmount.numerator, _99), outputReserve.quotient);
+        const denominator = JSBI.multiply(JSBI.multiply(inputAmount.denominator, _100), inputReserve.quotient);
+        const outputAmount = CurrencyAmount.fromRawAmount(outputReserve.currency, JSBI.divide(numerator, denominator));
+        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
       }
     }
 
@@ -165,7 +179,7 @@ export class Pair {
     if (JSBI.equal(outputAmount.quotient, ZERO)) {
       throw new InsufficientInputAmountError();
     }
-    return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+    return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
   }
 
   public getInputAmount(outputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
@@ -181,23 +195,18 @@ export class Pair {
     const outputReserve = this.reserveOf(outputAmount.currency);
     const inputReserve = this.reserveOf(outputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
 
-    if (this.queueRate) {
-      if (outputAmount.currency.symbol === 'ICX') {
-        const numerator = JSBI.multiply(JSBI.multiply(outputAmount.numerator, _100), this.queueRate.denominator);
-        const denominator = JSBI.multiply(JSBI.multiply(outputAmount.denominator, _99), this.queueRate.numerator);
-        const inputAmount = CurrencyAmount.fromRawAmount(
-          outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-          JSBI.divide(numerator, denominator),
-        );
-        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+    if (this.isQueue) {
+      if (outputAmount.currency.address === NULL_CONTRACT_ADDRESS) {
+        // sICX -> ICX
+        const numerator = JSBI.multiply(JSBI.multiply(outputAmount.numerator, _100), inputReserve.quotient);
+        const denominator = JSBI.multiply(JSBI.multiply(outputAmount.denominator, _99), outputReserve.quotient);
+        const inputAmount = CurrencyAmount.fromRawAmount(inputReserve.currency, JSBI.divide(numerator, denominator));
+        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
       } else {
-        const numerator = JSBI.multiply(outputAmount.numerator, this.queueRate.numerator);
-        const denominator = JSBI.multiply(outputAmount.denominator, this.queueRate.denominator);
-        const inputAmount = CurrencyAmount.fromRawAmount(
-          outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-          JSBI.divide(numerator, denominator),
-        );
-        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+        const numerator = JSBI.multiply(outputAmount.numerator, inputReserve.quotient);
+        const denominator = JSBI.multiply(outputAmount.denominator, outputReserve.quotient);
+        const inputAmount = CurrencyAmount.fromRawAmount(inputReserve.currency, JSBI.divide(numerator, denominator));
+        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
       }
     }
 
@@ -207,7 +216,7 @@ export class Pair {
       outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
       JSBI.add(JSBI.divide(numerator, denominator), ONE),
     );
-    return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount))];
+    return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
   }
 
   public getLiquidityMinted(
@@ -222,6 +231,15 @@ export class Pair {
     invariant(tokenAmounts[0].currency.equals(this.token0) && tokenAmounts[1].currency.equals(this.token1), 'TOKEN');
 
     let liquidity: JSBI;
+
+    // when the pair is queue, return ICX amount
+    if (this.isQueue) {
+      return CurrencyAmount.fromRawAmount(
+        this.liquidityToken,
+        tokenAmountA.currency.address === NULL_CONTRACT_ADDRESS ? tokenAmountA.quotient : tokenAmountB.quotient,
+      );
+    }
+
     if (JSBI.equal(totalSupply.quotient, ZERO)) {
       liquidity = JSBI.subtract(
         sqrt(JSBI.multiply(tokenAmounts[0].quotient, tokenAmounts[1].quotient)),

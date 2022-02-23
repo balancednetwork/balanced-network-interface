@@ -15,7 +15,6 @@ import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
@@ -36,7 +35,7 @@ import { Pair } from 'types/balanced-v1-sdk';
 import { multiplyCABN, toFraction, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 import { withdrawMessage } from './utils';
 
@@ -418,7 +417,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
       </Flex>
 
       <Modal isOpen={open1} onDismiss={toggleOpen1}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
             Withdraw liquidity?
           </Typography>
@@ -438,15 +437,11 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
 
       <Modal isOpen={open2} onDismiss={toggleOpen2}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
             Withdraw sICX?
           </Typography>
@@ -466,11 +461,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );
@@ -734,7 +725,7 @@ const WithdrawModal = ({
       </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
             Withdraw liquidity?
           </Typography>
@@ -760,11 +751,7 @@ const WithdrawModal = ({
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

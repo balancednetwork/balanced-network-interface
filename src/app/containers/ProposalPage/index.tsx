@@ -118,14 +118,12 @@ export function ProposalPage() {
 
   const proposalType = actionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
 
-  // const isActive =
-  //   proposal &&
-  //   platformDay &&
-  //   proposal.status === 'Active' &&
-  //   proposal.startDay <= platformDay &&
-  //   proposal.endDay > platformDay;
-
-  const isActive = proposal && platformDay && proposal.status === 'Active';
+  const isActive =
+    proposal &&
+    platformDay &&
+    proposal.status === 'Active' &&
+    proposal.startDay <= platformDay &&
+    proposal.endDay > platformDay;
 
   const hasUserVoted = isActive && userStatus?.hasVoted;
 

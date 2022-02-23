@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 export const formatTimeStr = (targetDay, platformDay) => {
   const targetDate = dayjs()
     .utc()
-    .add(targetDay - platformDay - 1, 'day')
+    .add(targetDay - platformDay, 'day')
     .hour(17);
 
   const hoursDiff = targetDate.diff(dayjs().utc(), 'hours');

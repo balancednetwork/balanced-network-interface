@@ -11,13 +11,13 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
-import { banners } from './banner';
 import { Banner } from './components/Banner';
 import { HomePage } from './containers/HomePage/Loadable';
 import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 import { ProposalPage } from './containers/ProposalPage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
 import { VotePage } from './containers/VotePage/Loadable';
+import Message from './Message';
 
 function Updaters() {
   return (
@@ -41,9 +41,12 @@ export function App() {
           <ThemedGlobalStyle />
           <NotificationContainer />
           <WalletModal />
-          {banners.map((banner, idx) => (
-            <Banner key={idx}>{banner}</Banner>
-          ))}
+          {/* Add message for community */}
+          {false && (
+            <Banner>
+              <Message />
+            </Banner>
+          )}
           <BrowserRouter>
             <Helmet
               titleTemplate="%s | Balanced"

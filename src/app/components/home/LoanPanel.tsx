@@ -8,7 +8,6 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel } from 'app/components/Panel';
@@ -34,7 +33,7 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import ModalContent from '../ModalContent';
 import Tooltip from '../Tooltip';
 
 const LoanPanel = () => {
@@ -333,7 +332,7 @@ const LoanPanel = () => {
       </BoxPanel>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
             {shouldBorrow ? 'Borrow Balanced Dollars?' : 'Repay Balanced Dollars?'}
           </Typography>
@@ -373,21 +372,17 @@ const LoanPanel = () => {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
 
       <Modal isOpen={rebalancingModalOpen} onDismiss={() => toggleRebalancingModalOpen(false)} maxWidth={450}>
-        <Flex flexDirection="column" alignItems="center" width="100%" padding="25px">
+        <ModalContent noMessages>
           <Typography>Rebalancing</Typography>
           <RebalancingInfo />
           <BoxWithBorderTop>
             <Button onClick={() => toggleRebalancingModalOpen(true)}>Understood</Button>
           </BoxWithBorderTop>
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

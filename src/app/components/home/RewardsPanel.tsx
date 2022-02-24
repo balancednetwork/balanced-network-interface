@@ -18,7 +18,7 @@ import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'st
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 
 const RewardsPanel = () => {
@@ -148,7 +148,7 @@ const RewardSection = () => {
       {reward && getRewardsUI()}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb={1}>
             Claim Balance Tokens?
           </Typography>
@@ -188,11 +188,7 @@ const RewardSection = () => {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </Flex>
   );
@@ -307,7 +303,7 @@ const NetworkFeeSection = () => {
       {getNetworkFeesUI()}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb={1}>
             Claim network fees?
           </Typography>
@@ -339,11 +335,7 @@ const NetworkFeeSection = () => {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </Flex>
   );

@@ -33,7 +33,13 @@ export function subtract(
   amountA: CurrencyAmount<Currency> | undefined,
   amountB: CurrencyAmount<Currency> | undefined,
 ): CurrencyAmount<Currency> | undefined {
-  return amountA ? (amountB ? amountA.subtract(amountB) : amountA) : undefined;
+  return amountA
+    ? amountB
+      ? amountA.currency.equals(amountB.currency)
+        ? amountA.subtract(amountB)
+        : amountA
+      : amountA
+    : undefined;
 }
 
 function WalletSection() {

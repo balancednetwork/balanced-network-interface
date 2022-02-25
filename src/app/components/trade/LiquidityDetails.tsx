@@ -138,7 +138,7 @@ export default function LiquidityDetails() {
             balance={queueBalance}
             pair={queuePair}
             totalReward={queueReward}
-            border={Object.keys(pairsWithoutQ).length !== 0}
+            border={userPools.length !== 0}
           />
         )}
 

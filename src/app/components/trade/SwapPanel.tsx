@@ -31,7 +31,7 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { Price, TradeType } from 'types/balanced-sdk-core';
 import { Currency, Percent, Token } from 'types/balanced-sdk-core/entities';
 import { Trade, Route } from 'types/balanced-v1-sdk/entities';
-import { formatBigNumber, formatPercent, maxAmountSpend, toHex } from 'utils';
+import { formatBigNumber, formatPercent, maxAmountSpend, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from '../ModalContent';
@@ -147,11 +147,7 @@ export default function SwapPanel() {
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
       bnJs
         .inject({ account })
-        .Router.swapICX(
-          executionTrade.inputAmount.quotient.toString(),
-          executionTrade.route.pathForSwap,
-          toHex(minReceived),
-        )
+        .Router.swapICX(toDec(executionTrade.inputAmount), executionTrade.route.pathForSwap, toDec(minReceived))
         .then((res: any) => {
           setShowSwapConfirm(false);
           addTransaction(
@@ -179,9 +175,9 @@ export default function SwapPanel() {
         .inject({ account })
         .getContract(token.address)
         .swapUsingRoute(
-          executionTrade.inputAmount.quotient.toString(),
+          toDec(executionTrade.inputAmount),
           outputToken.address,
-          minReceived.quotient.toString(),
+          toDec(minReceived),
           executionTrade.route.pathForSwap,
         )
         .then((res: any) => {

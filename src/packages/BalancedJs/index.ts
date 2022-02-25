@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 import { isEmpty } from 'lodash';
 
 import { SupportedChainId as NetworkId, SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from './chain';
@@ -132,7 +133,7 @@ export class BalancedJs {
     const contract = new Contract(this.contractSettings);
     contract.address = to;
     const payload = contract.transferICXParamsBuilder({
-      value,
+      value: IconConverter.toHexNumber(value),
     });
 
     return contract.callICONPlugins(payload);

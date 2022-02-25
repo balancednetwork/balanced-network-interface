@@ -169,6 +169,10 @@ export function isAddress(value: any): string | false {
   return isScoreAddress(value) ? value : false;
 }
 
+export function toDec(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>): string {
+  return value ? value.quotient.toString() : '0';
+}
+
 export function toHex(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>): string {
   return value ? `0x${value.quotient.toString(16)}` : '0x0';
 }
@@ -187,8 +191,8 @@ export function toCurrencyAmountFromRawBN(token: Token, amount: BigNumber): Curr
   return CurrencyAmount.fromFractionalAmount(token, amountNum.toFixed(), amountDeno.toFixed());
 }
 
-export function toFraction(amount: BigNumber): Fraction {
-  const [amountNum, amountDeno] = amount.toFraction();
+export function toFraction(amount: BigNumber | undefined): Fraction {
+  const [amountNum, amountDeno] = amount ? amount.toFraction() : [0, 1];
   return new Fraction(amountNum.toFixed(), amountDeno.toFixed());
 }
 
@@ -205,11 +209,12 @@ export function isZeroCA(ca: CurrencyAmount<Currency>): boolean {
   return JSBI.equal(ca.quotient, BIGINT_ZERO);
 }
 
-export function toBigNumber(ca: CurrencyAmount<Currency>): BigNumber {
-  return new BigNumber(ca.toExact());
+export function toBigNumber(ca: CurrencyAmount<Currency> | undefined): BigNumber {
+  return ca ? new BigNumber(ca.toExact()) : new BigNumber(0);
 }
 
-export function isDPZeroCA(ca: CurrencyAmount<Currency>, decimalPlaces: number): boolean {
+export function isDPZeroCA(ca: CurrencyAmount<Currency> | undefined, decimalPlaces: number): boolean {
+  if (!ca) return true;
   if (decimalPlaces === 0) return isZeroCA(ca);
   return ca.toFixed(decimalPlaces) === `0.${'0'.repeat(decimalPlaces)}`;
 }

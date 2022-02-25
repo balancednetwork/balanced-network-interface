@@ -16,7 +16,7 @@ import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useRatesQuery } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
-import { getTokenFromCurrencyKey } from 'types/adapter';
+import { isDPZeroCA, toFraction } from 'utils';
 
 import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';
@@ -30,7 +30,7 @@ const WalletUIs = {
   BALN: BALNWallet,
 };
 
-const CURRENCY = SUPPORTED_TOKENS_LIST.map(currency => currency.symbol!);
+const ADDRESSES = SUPPORTED_TOKENS_LIST.map(currency => currency.address);
 
 const WalletPanel = () => {
   const balances = useWalletBalances();
@@ -43,7 +43,18 @@ const WalletPanel = () => {
   const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
   const isAvailable = stakedBALN.isGreaterThan(new BigNumber(0)) || unstakingBALN.isGreaterThan(new BigNumber(0));
 
+  const balnAddress = bnJs.BALN.address;
+
+  // rates: using symbol as key?
   const { data: rates } = useRatesQuery();
+  const rateFracs = React.useMemo(() => {
+    if (rates) {
+      return Object.keys(rates).reduce((acc, key) => {
+        acc[key] = toFraction(rates[key]);
+        return acc;
+      }, {});
+    }
+  }, [rates]);
 
   useEffect(() => {
     (async () => {
@@ -60,7 +71,7 @@ const WalletPanel = () => {
         Wallet
       </Typography>
 
-      {balances && Object.keys(balances).filter(token => !balances[token].dp(2).isZero()).length ? (
+      {balances && Object.keys(balances).filter(address => balances[address].toFixed(2) !== '0.00').length ? (
         <Wrapper>
           <DashGrid>
             <HeaderText>Asset</HeaderText>
@@ -70,33 +81,33 @@ const WalletPanel = () => {
 
           <List>
             <Accordion collapsible>
-              {CURRENCY.filter(currency => {
-                if (currency === 'BALN') {
-                  return !totalBALN.dp(2).isZero();
-                }
-                return !balances[currency].dp(2).isZero();
-              }).map((currency, index, arr) => {
-                const WalletUI = WalletUIs[currency] || SendPanel;
+              {ADDRESSES.filter(address => {
+                if (address === balnAddress && totalBALN.dp(2).isZero()) return false;
+                return !isDPZeroCA(balances[address], 2);
+              }).map((address, index, arr) => {
+                const currency = balances[address].currency;
+                const symbol = currency.symbol;
+                const WalletUI = symbol ? WalletUIs[symbol] ?? SendPanel : SendPanel;
                 return (
-                  <AccordionItem key={currency}>
-                    <StyledAccordionButton currency={currency}>
+                  <AccordionItem key={symbol}>
+                    <StyledAccordionButton currency={symbol}>
                       <ListItem border={index !== arr.length - 1}>
                         <AssetSymbol>
-                          <CurrencyLogo currency={getTokenFromCurrencyKey(currency)!} />
+                          <CurrencyLogo currency={currency} />
                           <Typography fontSize={16} fontWeight="bold">
-                            {currency}
+                            {symbol}
                           </Typography>
                         </AssetSymbol>
                         <DataText as="div">
                           {!account
                             ? '-'
-                            : currency.toLowerCase() === 'baln'
+                            : address === balnAddress
                             ? totalBALN.dp(2).toFormat()
-                            : balances[currency].dp(2).toFormat()}
-                          {currency.toLowerCase() === 'baln' && isAvailable && (
+                            : balances[address].toFixed(2, { groupSeparator: ',' })}
+                          {address === balnAddress && isAvailable && (
                             <>
                               <Typography color="rgba(255,255,255,0.75)">
-                                Available: {balances['BALN'].dp(2).toFormat()}
+                                Available: {balances[balnAddress].toFixed(2, { groupSeparator: ',' })}
                               </Typography>
                             </>
                           )}
@@ -104,17 +115,17 @@ const WalletPanel = () => {
 
                         <StyledDataText
                           as="div"
-                          hasNotification={currency.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}
+                          hasNotification={address === bnJs.ICX.address && claimableICX.isGreaterThan(0)}
                         >
-                          {!account || !rates || !rates[currency]
+                          {!account || !rates || !symbol || !rates[symbol] || !rateFracs
                             ? '-'
-                            : currency.toLowerCase() === 'baln'
-                            ? `$${totalBALN.multipliedBy(rates[currency]).dp(2).toFormat()}`
-                            : `$${balances[currency].multipliedBy(rates[currency]).dp(2).toFormat()}`}
-                          {currency.toLowerCase() === 'baln' && isAvailable && rates && rates[currency] && (
+                            : address === balnAddress
+                            ? `$${totalBALN.multipliedBy(rates[symbol]).dp(2).toFormat()}`
+                            : `$${balances[address].multiply(rateFracs[symbol]).toFixed(2, { groupSeparator: ',' })}`}
+                          {address === balnAddress && isAvailable && rateFracs && symbol && (
                             <>
                               <Typography color="rgba(255,255,255,0.75)">
-                                ${balances['BALN'].multipliedBy(rates[currency]).dp(2).toFormat()}
+                                ${balances[balnAddress].multiply(rateFracs[symbol]).toFixed(2, { groupSeparator: ',' })}
                               </Typography>
                             </>
                           )}
@@ -124,10 +135,10 @@ const WalletPanel = () => {
 
                     <StyledAccordionPanel hidden={false}>
                       <BoxPanel bg="bg3">
-                        {currency.toLocaleLowerCase() === 'icx' ? (
-                          <WalletUI currency={getTokenFromCurrencyKey(currency)!} claimableICX={claimableICX} />
+                        {address === bnJs.ICX.address ? (
+                          <WalletUI currency={currency} claimableICX={claimableICX} />
                         ) : (
-                          <WalletUI currency={getTokenFromCurrencyKey(currency)!} />
+                          <WalletUI currency={currency} />
                         )}
                       </BoxPanel>
                     </StyledAccordionPanel>

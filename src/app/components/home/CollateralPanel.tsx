@@ -9,7 +9,6 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
@@ -33,7 +32,7 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import ModalContent from '../ModalContent';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -324,7 +323,7 @@ const CollateralPanel = () => {
       </BoxPanel>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
             {shouldDeposit ? 'Deposit ICON collateral?' : 'Withdraw ICON collateral?'}
           </Typography>
@@ -372,11 +371,7 @@ const CollateralPanel = () => {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

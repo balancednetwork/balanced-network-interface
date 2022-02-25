@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { DropdownPopper } from 'app/components/Popover';
 import QuestionHelper from 'app/components/QuestionHelper';
@@ -35,7 +34,7 @@ import { Trade, Route } from 'types/balanced-v1-sdk/entities';
 import { formatBigNumber, formatPercent, maxAmountSpend, toHex } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
+import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 import { BrightPanel, swapMessage } from './utils';
 
@@ -351,7 +350,7 @@ export default function SwapPanel() {
       </BrightPanel>
 
       <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
           </Typography>
@@ -400,11 +399,7 @@ export default function SwapPanel() {
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

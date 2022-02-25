@@ -306,62 +306,55 @@ export function ProposalPage() {
               )}
             </Flex>
           ) : (
-            userStatus !== undefined && (
-              <Flex flexDirection="column">
-                <Flex alignItems="center">
-                  <Typography fontWeight="bold" variant="p" mr="5px">
-                    Approve
-                  </Typography>
-                  <Typography opacity="0.85" mr="5px" fontWeight="bold">
-                    {proposal?.for}%
-                  </Typography>
-                  <Typography opacity="0.85" fontWeight="bold">
-                    {`(${proposal?.majority}% required)`}
-                  </Typography>
-                </Flex>
-                <Flex>
-                  <Column flexGrow={1}>
-                    <Progress my={3}>
-                      <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
-                    </Progress>
-                  </Column>
-                  {isActive && account && !isSmallScreen && (
-                    <Column>
-                      <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
-                        Approve
-                      </Button>
-                    </Column>
-                  )}
-                </Flex>
-                <Flex alignItems="center">
-                  <Typography fontWeight="bold" variant="p" mr="5px">
-                    Reject
-                  </Typography>
-                  <Typography opacity="0.85" mr="5px" fontWeight="bold">
-                    {proposal?.against}%
-                  </Typography>
-                </Flex>
-                <Flex>
-                  <Column flexGrow={1}>
-                    <Progress my={3}>
-                      <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
-                    </Progress>
-                  </Column>
-                  {isActive && account && !isSmallScreen && (
-                    <Column>
-                      <AlertButton
-                        ml="20px"
-                        width="150px"
-                        color="red"
-                        onClick={() => setModalStatus(ModalStatus.Reject)}
-                      >
-                        Reject
-                      </AlertButton>
-                    </Column>
-                  )}
-                </Flex>
+            <Flex flexDirection="column">
+              <Flex alignItems="center">
+                <Typography fontWeight="bold" variant="p" mr="5px">
+                  Approve
+                </Typography>
+                <Typography opacity="0.85" mr="5px" fontWeight="bold">
+                  {proposal?.for}%
+                </Typography>
+                <Typography opacity="0.85" fontWeight="bold">
+                  {`(${proposal?.majority}% required)`}
+                </Typography>
               </Flex>
-            )
+              <Flex>
+                <Column flexGrow={1}>
+                  <Progress my={3}>
+                    <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
+                  </Progress>
+                </Column>
+                {isActive && account && !isSmallScreen && (
+                  <Column>
+                    <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
+                      Approve
+                    </Button>
+                  </Column>
+                )}
+              </Flex>
+              <Flex alignItems="center">
+                <Typography fontWeight="bold" variant="p" mr="5px">
+                  Reject
+                </Typography>
+                <Typography opacity="0.85" mr="5px" fontWeight="bold">
+                  {proposal?.against}%
+                </Typography>
+              </Flex>
+              <Flex>
+                <Column flexGrow={1}>
+                  <Progress my={3}>
+                    <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
+                  </Progress>
+                </Column>
+                {isActive && account && !isSmallScreen && (
+                  <Column>
+                    <AlertButton ml="20px" width="150px" color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
+                      Reject
+                    </AlertButton>
+                  </Column>
+                )}
+              </Flex>
+            </Flex>
           )}
 
           {isActive && account && isSmallScreen ? (

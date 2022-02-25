@@ -357,7 +357,7 @@ export function ProposalPage() {
             </Flex>
           )}
 
-          {isActive && account && isSmallScreen ? (
+          {isActive && account && isSmallScreen && !hasUserVoted ? (
             <Flex marginTop={2}>
               <Button width="50%" marginRight={2} onClick={() => setModalStatus(ModalStatus.Approve)}>
                 Approve

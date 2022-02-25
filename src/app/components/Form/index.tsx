@@ -6,7 +6,7 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { QuestionWrapper } from 'app/components/QuestionHelper';
-import { MouseoverTooltip } from 'app/components/Tooltip';
+import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { MINUS_INFINITY, PLUS_INFINITY, ZERO } from 'constants/index';
@@ -73,6 +73,8 @@ export const CurrencyField: React.FC<{
   currency: CurrencyKey;
   tooltip?: boolean;
   tooltipText?: React.ReactNode;
+  noticeText?: string;
+  noticeShow?: boolean;
   tooltipWider?: boolean;
   minValue?: BigNumber;
   maxValue?: BigNumber;
@@ -86,6 +88,8 @@ export const CurrencyField: React.FC<{
     tooltip,
     tooltipText,
     tooltipWider,
+    noticeText,
+    noticeShow,
     editable,
     minValue = MINUS_INFINITY,
     maxValue = PLUS_INFINITY,
@@ -137,27 +141,50 @@ export const CurrencyField: React.FC<{
         </Typography>
       )}
 
-      {editable && (
-        <CurrencyInput mt={1}>
-          <NumberInput
-            id={label}
-            value={value}
-            onChange={handleChange}
-            // universal input options
-            inputMode="decimal"
-            title="Token Amount"
-            autoComplete="off"
-            autoCorrect="off"
-            // text-specific options
-            type="text"
-            pattern="^[0-9]*[.,]?[0-9]*$"
-            minLength={1}
-            maxLength={79}
-            spellCheck="false"
-          />
-          <CurrencyUnit>{currency}</CurrencyUnit>
-        </CurrencyInput>
-      )}
+      {editable &&
+        (noticeShow ? (
+          <Tooltip containerStyle={{ width: 'auto' }} placement="bottom" text={noticeText} show={true}>
+            <CurrencyInput mt={1}>
+              <NumberInput
+                id={label}
+                value={value}
+                onChange={handleChange}
+                // universal input options
+                inputMode="decimal"
+                title="Token Amount"
+                autoComplete="off"
+                autoCorrect="off"
+                // text-specific options
+                type="text"
+                pattern="^[0-9]*[.,]?[0-9]*$"
+                minLength={1}
+                maxLength={79}
+                spellCheck="false"
+              />
+              <CurrencyUnit>{currency}</CurrencyUnit>
+            </CurrencyInput>
+          </Tooltip>
+        ) : (
+          <CurrencyInput mt={1}>
+            <NumberInput
+              id={label}
+              value={value}
+              onChange={handleChange}
+              // universal input options
+              inputMode="decimal"
+              title="Token Amount"
+              autoComplete="off"
+              autoCorrect="off"
+              // text-specific options
+              type="text"
+              pattern="^[0-9]*[.,]?[0-9]*$"
+              minLength={1}
+              maxLength={79}
+              spellCheck="false"
+            />
+            <CurrencyUnit>{currency}</CurrencyUnit>
+          </CurrencyInput>
+        ))}
     </Flex>
   );
 };

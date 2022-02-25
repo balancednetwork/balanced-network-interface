@@ -35,7 +35,6 @@ import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from '../ModalContent';
-import Tooltip from '../Tooltip';
 import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
 
 const LoanPanel = () => {
@@ -297,22 +296,17 @@ const LoanPanel = () => {
         <PanelInfoWrap>
           <PanelInfoItem>
             {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
-              <Tooltip
-                containerStyle={{ width: 'auto' }}
-                placement="bottom"
-                text="10 bnUSD minimum"
-                show={isLessThanMinimum}
-              >
-                <CurrencyField
-                  editable={isAdjusting}
-                  isActive
-                  label="Borrowed"
-                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-                  value={formattedAmounts[Field.LEFT]}
-                  currency={'bnUSD'}
-                  onUserInput={onFieldAInput}
-                />
-              </Tooltip>
+              <CurrencyField
+                editable={isAdjusting}
+                isActive
+                label="Borrowed"
+                tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                noticeShow={isLessThanMinimum}
+                noticeText={'10 bnUSD minimum'}
+                value={formattedAmounts[Field.LEFT]}
+                currency={'bnUSD'}
+                onUserInput={onFieldAInput}
+              />
             ) : (
               <CurrencyField
                 editable={isAdjusting}

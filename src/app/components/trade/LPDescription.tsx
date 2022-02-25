@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
@@ -18,6 +19,7 @@ import { formatBigNumber } from 'utils';
 export default function LPDescription() {
   const { currencies, pair, pairState } = useDerivedMintInfo();
   const { account } = useIconReact();
+  const upSmall = useMedia('(min-width: 600px)');
   const userPoolBalance = useLiquidityTokenBalance(account, pair);
   const totalPoolTokens = pair?.totalSupply;
   const [token0Deposited, token1Deposited] =
@@ -64,9 +66,11 @@ export default function LPDescription() {
           {poolRewards ? (
             <Typography variant="h3" mb={2}>
               {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool:`
-                : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool:`}{' '}
-              <Typography fontWeight="normal" fontSize={16} as="span">
+                ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool${
+                    upSmall ? ': ' : ''
+                  }`
+                : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall ? ': ' : ''}`}
+              <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
                 {apy?.times(100).dp(2).toFixed() ?? '-'}% APY
               </Typography>
             </Typography>

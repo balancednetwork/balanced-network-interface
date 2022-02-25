@@ -226,6 +226,7 @@ const PositionDetailPanel = () => {
                   text="You can’t withdraw any collateral if you go beyond this threshold."
                   show={show}
                   placement="top-end"
+                  forcePlacement={true}
                   small
                 >
                   <dt>All collateral locked</dt>
@@ -272,6 +273,7 @@ const PositionDetailPanel = () => {
             }
             show={show}
             placement="bottom"
+            forcePlacement={true}
             small
           >
             <RightChip bg="#fb6a6a" />

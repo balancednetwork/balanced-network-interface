@@ -24,6 +24,9 @@ function CurrencyRow({
   showCurrencyAmount,
   onRemove,
   account,
+  isFocused,
+  index,
+  setFocusedIndex,
 }: {
   currency: Currency;
   onSelect: () => void;
@@ -33,6 +36,9 @@ function CurrencyRow({
   showCurrencyAmount?: boolean;
   onRemove: () => void;
   account?: string | null;
+  isFocused: boolean;
+  index: number;
+  setFocusedIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
 }) {
   const balance = useCurrencyBalance(account ?? undefined, currency);
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
@@ -44,7 +50,16 @@ function CurrencyRow({
   const close = useCallback(() => setShow(false), [setShow]);
 
   return (
-    <ListItem onClick={onSelect} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
+    <ListItem
+      onClick={onSelect}
+      {...(!isIOS ? { onMouseEnter: open } : null)}
+      onMouseLeave={() => {
+        close();
+        setFocusedIndex(undefined);
+      }}
+      onMouseEnter={() => setFocusedIndex(index)}
+      className={isFocused ? 'focused' : ''}
+    >
       <Flex>
         <CurrencyLogo currency={currency} style={{ marginRight: '8px' }} />
         <DataText variant="p" fontWeight="bold">
@@ -82,6 +97,8 @@ export default function CurrencyList({
   setRemoveToken,
   showCurrencyAmount,
   account,
+  focusIndex,
+  setFocusedIndex,
 }: {
   currencies: Currency[];
   selectedCurrency?: Currency | null;
@@ -93,6 +110,8 @@ export default function CurrencyList({
   setRemoveToken: (token: Token) => void;
   showCurrencyAmount?: boolean;
   account?: string | null;
+  focusIndex: number | undefined;
+  setFocusedIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
 }) {
   return (
     <List1 mt={4}>
@@ -101,7 +120,7 @@ export default function CurrencyList({
         <HeaderText textAlign="right">Wallet</HeaderText>
       </DashGrid>
 
-      {currencies.map(currency => (
+      {currencies.map((currency, index) => (
         <CurrencyRow
           account={account}
           key={currencyKey(currency)}
@@ -111,6 +130,9 @@ export default function CurrencyList({
             setRemoveToken(currency as Token);
             showRemoveView();
           }}
+          isFocused={index === focusIndex}
+          setFocusedIndex={setFocusedIndex}
+          index={index}
         />
       ))}
     </List1>

@@ -82,7 +82,9 @@ const WalletPanel = () => {
           <List>
             <Accordion collapsible>
               {ADDRESSES.filter(address => {
-                if (address === balnAddress && totalBALN.dp(2).isZero()) return false;
+                if (address === balnAddress) {
+                  return !totalBALN.dp(2).isZero();
+                }
                 return !isDPZeroCA(balances[address], 2);
               }).map((address, index, arr) => {
                 const currency = balances[address].currency;

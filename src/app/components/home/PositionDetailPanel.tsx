@@ -227,7 +227,6 @@ const PositionDetailPanel = () => {
                   show={show}
                   placement="top-end"
                   forcePlacement={true}
-                  small
                 >
                   <dt>All collateral locked</dt>
                 </Tooltip>
@@ -274,7 +273,6 @@ const PositionDetailPanel = () => {
             show={show}
             placement="bottom"
             forcePlacement={true}
-            small
           >
             <RightChip bg="#fb6a6a" />
           </Tooltip>

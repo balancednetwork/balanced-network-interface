@@ -1,6 +1,5 @@
 import React from 'react';
 
-import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -90,14 +89,9 @@ export default React.memo(function Header(props: { title?: string; className?: s
   const handleDisconnectWallet = async () => {
     closeWalletMenu();
     disconnect();
-    if (!bnJs.contractSettings.ledgerSettings.transport) {
-      bnJs.inject({
-        legerSettings: {
-          transport: await TransportWebHID.create(),
-        },
-      });
+    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+      bnJs.contractSettings.ledgerSettings.transport.close();
     }
-    bnJs.contractSettings.ledgerSettings.transport.close();
   };
 
   const copyAddress = React.useCallback(async (account: string) => {

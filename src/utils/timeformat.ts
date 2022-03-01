@@ -1,9 +1,11 @@
 import dayjs from 'dayjs';
 
-export const formatTimeStr = (targetDay, platformDay) => {
+type targetDayType = 'start' | 'end';
+
+export const formatTimeStr = (targetDay: number, platformDay: number, targetType: targetDayType) => {
   const targetDate = dayjs()
     .utc()
-    .add(targetDay - platformDay, 'day')
+    .add(targetType === 'end' ? targetDay - platformDay - 1 : targetDay - platformDay, 'day')
     .hour(17);
 
   const hoursDiff = targetDate.diff(dayjs().utc(), 'hours');

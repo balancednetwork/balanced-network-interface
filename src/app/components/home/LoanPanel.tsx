@@ -3,8 +3,9 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
@@ -34,10 +35,11 @@ import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from '../ModalContent';
-import Tooltip from '../Tooltip';
+import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
+  const isSuperSmall = useMedia(`(max-width: 420px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -202,9 +204,10 @@ const LoanPanel = () => {
   const shouldShowLock = !usedAmount.isZero();
 
   const hasEnoughICX = useHasEnoughICX();
+
   if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative()) {
     return (
-      <FlexPanel bg="bg3" flexDirection="column">
+      <FlexPanel bg="bg3" flexDirection="column" minHeight={195}>
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="h2">
             Loan:{' '}
@@ -230,10 +233,15 @@ const LoanPanel = () => {
       <BoxPanel bg="bg3">
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="h2">
-            Loan:{' '}
-            <Typography as="span" fontSize={18} fontWeight="normal">
-              US Dollars
-            </Typography>
+            Loan
+            {!isSuperSmall && (
+              <>
+                :{' '}
+                <Typography as="span" fontSize={18} fontWeight="normal">
+                  US Dollars
+                </Typography>
+              </>
+            )}
           </Typography>
 
           <Box>
@@ -285,25 +293,20 @@ const LoanPanel = () => {
           />
         </Box>
 
-        <Flex justifyContent="space-between">
-          <Box width={[1, 1 / 2]} mr={4}>
+        <PanelInfoWrap>
+          <PanelInfoItem>
             {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
-              <Tooltip
-                containerStyle={{ width: 'auto' }}
-                placement="bottom"
-                text="10 bnUSD minimum"
-                show={isLessThanMinimum}
-              >
-                <CurrencyField
-                  editable={isAdjusting}
-                  isActive
-                  label="Borrowed"
-                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-                  value={formattedAmounts[Field.LEFT]}
-                  currency={'bnUSD'}
-                  onUserInput={onFieldAInput}
-                />
-              </Tooltip>
+              <CurrencyField
+                editable={isAdjusting}
+                isActive
+                label="Borrowed"
+                tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                noticeShow={isLessThanMinimum}
+                noticeText={'10 bnUSD minimum'}
+                value={formattedAmounts[Field.LEFT]}
+                currency={'bnUSD'}
+                onUserInput={onFieldAInput}
+              />
             ) : (
               <CurrencyField
                 editable={isAdjusting}
@@ -315,9 +318,9 @@ const LoanPanel = () => {
                 onUserInput={onFieldAInput}
               />
             )}
-          </Box>
+          </PanelInfoItem>
 
-          <Box width={[1, 1 / 2]} ml={4}>
+          <PanelInfoItem>
             <CurrencyField
               editable={isAdjusting}
               isActive={false}
@@ -327,8 +330,8 @@ const LoanPanel = () => {
               currency={'bnUSD'}
               onUserInput={onFieldBInput}
             />
-          </Box>
-        </Flex>
+          </PanelInfoItem>
+        </PanelInfoWrap>
       </BoxPanel>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
@@ -403,20 +406,20 @@ export const RebalancingInfo = () => {
       >
         While you borrow bnUSD, your collateral is used to keep its value stable
       </Typography>
-      <BoxWithBorderRight width="50%" paddingRight="25px">
+      <RebalancingColumn borderRight={true}>
         <InfoBelow />
         <Typography fontWeight="bold" color="#FFF">
           If bnUSD is below $1
         </Typography>
         <Typography>Balanced sells collateral at a premium to repay some of your loan.</Typography>
-      </BoxWithBorderRight>
-      <Box width="50%" paddingLeft="25px" margin="-19px 0 0">
+      </RebalancingColumn>
+      <RebalancingColumn>
         <InfoAbove />
         <Typography fontWeight="bold" color="#FFF" marginTop="19px">
           If bnUSD is above $1
         </Typography>
         <Typography>Balanced increases your loan to buy more collateral at a discount.</Typography>
-      </Box>
+      </RebalancingColumn>
       <Typography marginTop="25px">
         You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD
         pool. The smaller your loan, the less rebalancing affects you.
@@ -433,16 +436,35 @@ const BoxWithBorderTop = styled(Box)`
   text-align: center;
 `;
 
+const RebalancingColumn = styled(Box)<{ borderRight?: boolean }>`
+  width: 50%;
+  padding-left: 10px;
+  margin-top: -19px;
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    padding-left: 25px;
+  `};
+
+  ${props =>
+    props.borderRight &&
+    css`
+      padding-left: 0;
+      padding-right: 10px;
+      margin-top: 0;
+      ${props.theme.mediaWidth.up500`
+      padding-left: 0;
+      padding-right: 25px;
+      border-right: 1px solid rgba(255, 255, 255, 0.15);
+    `}
+    `};
+`;
+
 const RebalancingInfoWrap = styled(Flex)`
   color: '#D5D7DB';
   svg {
     height: auto;
     margin-bottom: 10px;
   }
-`;
-
-const BoxWithBorderRight = styled(Box)`
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
 `;
 
 export default LoanPanel;

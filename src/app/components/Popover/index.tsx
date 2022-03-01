@@ -85,6 +85,7 @@ export interface PopoverProps {
   show: boolean;
   children: React.ReactNode;
   placement?: Placement;
+  forcePlacement?: boolean;
   style?: React.CSSProperties;
   refStyle?: React.CSSProperties;
 }
@@ -96,6 +97,7 @@ export default function Popover({
   show,
   children,
   placement = 'auto',
+  forcePlacement,
 }: PopoverProps) {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -106,6 +108,7 @@ export default function Popover({
     modifiers: [
       { name: 'offset', options: { offset: [skidding[placement] || 0, 12] } },
       { name: 'arrow', options: { element: arrowElement } },
+      { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : undefined } },
     ],
   });
   const updateCallback = useCallback(() => {

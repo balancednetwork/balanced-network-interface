@@ -138,7 +138,7 @@ export default function SwapDescription() {
         {pair ? (
           <>
             {loading ? (
-              <Spinner size={'lg'} centered />
+              <Spinner size={75} centered />
             ) : (
               <>
                 {chartOption.type === CHART_TYPES.AREA && (

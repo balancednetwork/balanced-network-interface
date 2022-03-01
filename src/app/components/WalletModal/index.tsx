@@ -18,7 +18,12 @@ import { Typography } from 'app/theme';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
-import { useWalletModalToggle, useModalOpen } from 'store/application/hooks';
+import {
+  useWalletModalToggle,
+  useModalOpen,
+  useCurrentLedgerAddressPage,
+  useChangeCurrentLedgerAddressPage,
+} from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
@@ -120,7 +125,8 @@ export default function WalletModal() {
     offset: 0,
     limit: LIMIT_PAGING_LEDGER,
   });
-  const [currentLedgerAddressPage, changeCurrentLedgerAddressPage] = useState(1);
+  const currentLedgerAddressPage = useCurrentLedgerAddressPage();
+  const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
 
   const { requestAddress, hasExtension } = useIconReact();
 
@@ -198,7 +204,7 @@ export default function WalletModal() {
 
       await updateLedgerAddress({ offset, limit });
       clearTimeout(timeout);
-    } catch (err) {
+    } catch (err: any) {
       clearTimeout(timeout);
       if (err.id === 'InvalidChannel') {
         await bnJs.contractSettings.ledgerSettings.transport.close();

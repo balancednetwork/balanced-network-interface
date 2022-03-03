@@ -103,8 +103,8 @@ export function Airdrip() {
         addTransaction(
           { hash: res.result },
           {
-            pending: 'Claiming airdrip',
-            summary: `Claimed airdrip`,
+            pending: 'Claiming sICX...',
+            summary: `sICX claimed.`,
           },
         );
       } catch (e) {

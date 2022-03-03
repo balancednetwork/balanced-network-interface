@@ -188,7 +188,7 @@ export function Airdrip() {
           {account && claimableAmountQuery.status === 'success' && hasClaimed && (
             <>
               <Typography variant="p" fontSize="16px" fontWeight="bold">
-                sICX claimed
+                No sICX to claim
               </Typography>
               <Button mt={5} onClick={toggleWalletModal}>
                 Check another wallet

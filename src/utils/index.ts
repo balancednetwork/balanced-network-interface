@@ -156,7 +156,7 @@ export function parseUnits(value: string, decimals: number = 18): string {
   return new BigNumber(value).times(TEN.pow(decimals)).toFixed(0);
 }
 
-export function formatUnits(value: string, decimals: number): string {
+export function formatUnits(value: string, decimals: number = 18): string {
   return new BigNumber(value).div(TEN.pow(decimals)).toFixed(0);
 }
 

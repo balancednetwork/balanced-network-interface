@@ -59,7 +59,7 @@ export function App() {
               <Route exact path="/" component={HomePage} />
               <Route exact path="/vote" component={VotePage} />
               <Route exact path="/trade" component={TradePage} />
-              <Route exact path="/airdrip" component={Airdrip} />
+              <Route exact path="/claim" component={Airdrip} />
               <Route path="/vote/new-proposal" component={NewProposalPage} />
               <Route path="/vote/proposal/:id" component={ProposalPage} />
               <Route

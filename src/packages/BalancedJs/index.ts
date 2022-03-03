@@ -14,6 +14,7 @@ import Dividends from './contracts/Dividends';
 import Governance from './contracts/Governance';
 import ICX from './contracts/ICX';
 import IRC2 from './contracts/IRC2';
+import LiquidationDisbursement from './contracts/LiquidationDisbursement';
 import Loans from './contracts/Loans';
 import Multicall from './contracts/Multicall';
 import Rebalancing from './contracts/Rebalancing';
@@ -62,6 +63,7 @@ export class BalancedJs {
   Rebalancing: Rebalancing;
   DAOFund: DAOFund;
   Multicall: Multicall;
+  LiquidationDisbursement: LiquidationDisbursement;
 
   static utils = {
     toLoop(value: BigNumber | number | string, currencyKey?: string): BigNumber {
@@ -121,6 +123,7 @@ export class BalancedJs {
     this.Rebalancing = new Rebalancing(this.contractSettings);
     this.DAOFund = new DAOFund(this.contractSettings);
     this.Multicall = new Multicall(this.contractSettings);
+    this.LiquidationDisbursement = new LiquidationDisbursement(this.contractSettings);
   }
 
   inject({ account, legerSettings }: SettingInjection) {

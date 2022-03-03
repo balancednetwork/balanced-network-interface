@@ -1,5 +1,6 @@
 import React from 'react';
 
+import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from 'react-query';
@@ -13,7 +14,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
-import { formatUnits, shortenAddress } from 'utils';
+import { shortenAddress } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import 'styles/airdrip.css';
@@ -177,7 +178,7 @@ export function Airdrip() {
           {account && claimableAmountQuery.status === 'success' && !hasClaimed && (
             <>
               <Typography variant="p" fontSize="16px" fontWeight="bold">
-                {formatUnits(claimableAmountQuery.data)} sICX
+                {new BigNumber(claimableAmountQuery.data).div(new BigNumber(10).pow(18)).toFixed(2)} sICX
               </Typography>
               <Button mt={5} onClick={handleClaim}>
                 Claim sICX

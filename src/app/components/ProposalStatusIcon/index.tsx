@@ -9,7 +9,6 @@ import { Typography } from 'app/theme';
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
 import { ReactComponent as FailureIcon } from 'assets/icons/failure.svg';
 import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
-import { usePlatformDayQuery } from 'queries/reward';
 import { formatTimeStr } from 'utils/timeformat';
 
 dayjs.extend(utc);
@@ -34,14 +33,8 @@ interface ProposalStatusProps {
 
 export function ProposalStatusIcon(props: ProposalStatusProps) {
   const { status, startDay, endDay } = props;
-  const platformDayQuery = usePlatformDayQuery();
-  const platformDay = platformDayQuery.data;
-
-  const startTimeStr = platformDay && startDay > platformDay ? formatTimeStr(startDay, platformDay, 'start') : '';
-
-  const endTimeStr = platformDay ? formatTimeStr(endDay, platformDay, 'end') : '';
-
-  const isActive = platformDay ? startDay <= platformDay && platformDay < endDay : false;
+  const startTimeStr = startDay ? formatTimeStr(startDay) : '';
+  const endTimeStr = endDay ? formatTimeStr(endDay) : '';
 
   if (status === 'Defeated' || status === 'No Quorum' || status === 'Failed Execution' || status === 'Cancelled') {
     return (
@@ -66,7 +59,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   }
 
   if (status === 'Active') {
-    if (isActive && !!endTimeStr) {
+    if (!!endTimeStr) {
       return (
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />

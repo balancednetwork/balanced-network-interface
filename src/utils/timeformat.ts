@@ -1,24 +1,26 @@
 import dayjs from 'dayjs';
 
-type targetDayType = 'start' | 'end';
+const LAUNCH_DATE = dayjs('04-26-2021');
 
-export const formatTimeStr = (targetDay: number, platformDay: number, targetType: targetDayType) => {
-  const targetDate = dayjs()
-    .utc()
-    .add(targetType === 'end' ? targetDay - platformDay - 1 : targetDay - platformDay, 'day')
-    .hour(17);
+export const formatTimeStr = (targetDay: number) => {
+  const targetDateUTC = LAUNCH_DATE.utc().add(targetDay, 'days').hour(17);
+  const nowUTC = dayjs().utc();
+  const timeDiff = targetDateUTC.diff(nowUTC, 'milliseconds');
+  const toHours = 1000 * 60 * 60;
 
-  const hoursDiff = targetDate.diff(dayjs().utc(), 'hours');
+  if (timeDiff > 0) {
+    const moduloHoursleft = Math.floor(timeDiff / toHours) % 24;
+    const daysLeft = Math.floor(timeDiff / toHours / 24);
 
-  if (hoursDiff < 0) return '';
-
-  const hoursLeft = hoursDiff % 24;
-  const daysLeft = Math.floor(hoursDiff / 24);
-
-  if (daysLeft < 1) return targetDate.fromNow(true) === 'a day' ? '1 day' : targetDate.fromNow(true);
-
-  const hoursLeftString = hoursLeft === 0 ? '' : hoursLeft === 1 ? 'an hour' : hoursLeft + ' hours';
-  const daysLeftString = daysLeft === 1 ? '1 day' : daysLeft + ' days';
-
-  return daysLeftString + (hoursLeftString ? ', ' + hoursLeftString : hoursLeftString);
+    if (daysLeft) {
+      const hoursLeftString =
+        moduloHoursleft === 0 ? '' : moduloHoursleft === 1 ? 'an hour' : moduloHoursleft + ' hours';
+      const daysLeftString = daysLeft === 1 ? '1 day' : daysLeft + ' days';
+      return daysLeftString + (hoursLeftString ? ' and ' + hoursLeftString : hoursLeftString);
+    } else {
+      return targetDateUTC.from(nowUTC, true) === 'a day' ? '1 day' : targetDateUTC.from(nowUTC, true);
+    }
+  } else {
+    return '';
+  }
 };

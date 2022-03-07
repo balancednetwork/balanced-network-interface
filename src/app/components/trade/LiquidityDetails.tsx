@@ -20,6 +20,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { LOWEST_LIQUIDITY_SUPPLY } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { BalanceData, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -218,19 +219,25 @@ const PoolRecord = ({
   const { share, reward } = getShareReward(pair, balance, totalReward);
 
   return (
-    <ListItem border={border}>
-      <DataText>{`${aBalance?.currency.symbol || '...'} / ${bBalance?.currency.symbol || '...'}`}</DataText>
-      <DataText>
-        {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance?.currency.symbol || '...'}`}
-        <br />
-        {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance?.currency.symbol || '...'}`}
-      </DataText>
-      {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
-      <DataText>
-        <WithdrawText pair={pair} balance={balance} poolId={poolId} />
-      </DataText>
-    </ListItem>
+    <>
+      {Number(bBalance.toFixed(2)) > LOWEST_LIQUIDITY_SUPPLY ? (
+        <ListItem border={border}>
+          <DataText>{`${aBalance?.currency.symbol || '...'} / ${bBalance?.currency.symbol || '...'}`}</DataText>
+          <DataText>
+            {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance?.currency.symbol || '...'}`}
+            <br />
+            {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance?.currency.symbol || '...'}`}
+          </DataText>
+          {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
+          {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
+          <DataText>
+            <WithdrawText pair={pair} balance={balance} poolId={poolId} />
+          </DataText>
+        </ListItem>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 
@@ -698,7 +705,7 @@ const WithdrawModal = ({
           />
         </Box>
         <Typography mb={5} textAlign="right">
-          {`Wallet: 
+          {`Wallet:
             ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[0]?.currency.symbol || '...'} /
             ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[1]?.currency.symbol || '...'}`}
         </Typography>

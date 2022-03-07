@@ -56,9 +56,17 @@ const Gradient = styled.span`
 const Separator = styled.h1`
   margin-top: 15px;
   margin-bottom: 0px;
-  font-size: 60px;
+  font-size: 40px;
   line-height: 1.33;
   text-align: center;
+
+  ${({ theme }) => theme.mediaWidth.up360`
+    font-size: 50px;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    font-size: 60px;
+  `};
 
   ::after {
     content: '';

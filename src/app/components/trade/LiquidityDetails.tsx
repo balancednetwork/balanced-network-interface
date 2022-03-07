@@ -20,7 +20,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { LOWEST_LIQUIDITY_SUPPLY } from 'constants/index';
+import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { BalanceData, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -220,13 +220,13 @@ const PoolRecord = ({
 
   return (
     <>
-      {Number(bBalance.toFixed(2)) > LOWEST_LIQUIDITY_SUPPLY ? (
+      {Number(bBalance.toFixed(2)) > MINIMUM_B_BALANCE_TO_SHOW_POOL ? (
         <ListItem border={border}>
-          <DataText>{`${aBalance?.currency.symbol || '...'} / ${bBalance?.currency.symbol || '...'}`}</DataText>
+          <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
           <DataText>
-            {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance?.currency.symbol || '...'}`}
+            {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance.currency.symbol || '...'}`}
             <br />
-            {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance?.currency.symbol || '...'}`}
+            {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance.currency.symbol || '...'}`}
           </DataText>
           {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
           {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
@@ -287,13 +287,15 @@ const PoolRecordQ = ({
 
   return (
     <ListItem border={border}>
-      <DataText>{`${pair.token0.symbol || '...'} / ${pair.token1.symbol || '...'}`}</DataText>
+      <DataText>{`${balance.balance.currency.symbol || '...'} / ${
+        balance.balance1?.currency.symbol || '...'
+      }`}</DataText>
       <DataText>
         <Typography fontSize={16}>{`${balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ${
-          pair.token0.symbol || '...'
+          balance.balance.currency.symbol || '...'
         }`}</Typography>
         <Typography color="text1">{`${balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} ${
-          pair.token1.symbol || '...'
+          balance.balance1?.currency.symbol || '...'
         }`}</Typography>
       </DataText>
       {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}

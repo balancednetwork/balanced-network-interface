@@ -1,6 +1,7 @@
 import React, { /*KeyboardEvent,*/ RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -140,9 +141,17 @@ export function CurrencySearch({
     setSearchQuery(checksummedInput || input);
   }, []);
 
+  //handle focus on modal open
   useEffect(() => {
-    if (isOpen) inputRef.current?.focus();
-    console.log(inputRef);
+    let focusTimeout;
+    if (isOpen && !isMobile) {
+      focusTimeout = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+    }
+    return () => {
+      clearTimeout(focusTimeout);
+    };
   }, [isOpen]);
 
   // menu ui
@@ -192,7 +201,6 @@ export function CurrencySearch({
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
           onChange={handleInput}
-          // onKeyDown={handleEnter}
         />
       </Flex>
 

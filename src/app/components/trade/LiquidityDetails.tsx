@@ -30,7 +30,6 @@ import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useTrackedTokenPairs } from 'store/user/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
-import { getTokenFromCurrencyKey } from 'types/adapter';
 import { Currency, CurrencyAmount, Fraction, Percent } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 import { multiplyCABN, toFraction, toDec } from 'utils';
@@ -411,7 +410,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
             onClick={handleOption2}
             mr={2}
           >
-            <CurrencyLogo currency={getTokenFromCurrencyKey('sICX')!} size={'35px'} />
+            <CurrencyLogo currency={balance.balance1?.currency} size={'35px'} />
             <Typography>{balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX</Typography>
           </OptionButton>
 
@@ -419,7 +418,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
             disabled={JSBI.equal(balance.balance.quotient || BIGINT_ZERO, BIGINT_ZERO)}
             onClick={handleOption1}
           >
-            <CurrencyLogo currency={getTokenFromCurrencyKey('ICX')!} size={'35px'} />
+            <CurrencyLogo currency={balance.balance.currency} size={'35px'} />
             <Typography>{balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ICX</Typography>
           </OptionButton>
         </Flex>

@@ -423,7 +423,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} {pair.token1.symbol || '...'}
+            {balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} {pair.token0.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

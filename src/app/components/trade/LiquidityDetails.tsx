@@ -20,6 +20,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { BalanceData, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -29,7 +30,6 @@ import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useTrackedTokenPairs } from 'store/user/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
-import { getTokenFromCurrencyKey } from 'types/adapter';
 import { Currency, CurrencyAmount, Fraction, Percent } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 import { multiplyCABN, toFraction, toDec } from 'utils';
@@ -218,19 +218,25 @@ const PoolRecord = ({
   const { share, reward } = getShareReward(pair, balance, totalReward);
 
   return (
-    <ListItem border={border}>
-      <DataText>{`${aBalance?.currency.symbol || '...'} / ${bBalance?.currency.symbol || '...'}`}</DataText>
-      <DataText>
-        {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance?.currency.symbol || '...'}`}
-        <br />
-        {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance?.currency.symbol || '...'}`}
-      </DataText>
-      {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
-      <DataText>
-        <WithdrawText pair={pair} balance={balance} poolId={poolId} />
-      </DataText>
-    </ListItem>
+    <>
+      {Number(bBalance.toFixed(2)) > MINIMUM_B_BALANCE_TO_SHOW_POOL ? (
+        <ListItem border={border}>
+          <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
+          <DataText>
+            {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance.currency.symbol || '...'}`}
+            <br />
+            {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance.currency.symbol || '...'}`}
+          </DataText>
+          {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
+          {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
+          <DataText>
+            <WithdrawText pair={pair} balance={balance} poolId={poolId} />
+          </DataText>
+        </ListItem>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 
@@ -280,13 +286,15 @@ const PoolRecordQ = ({
 
   return (
     <ListItem border={border}>
-      <DataText>{`${pair.token0.symbol || '...'} / ${pair.token1.symbol || '...'}`}</DataText>
+      <DataText>{`${balance.balance.currency.symbol || '...'} / ${
+        balance.balance1?.currency.symbol || '...'
+      }`}</DataText>
       <DataText>
         <Typography fontSize={16}>{`${balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ${
-          pair.token0.symbol || '...'
+          balance.balance.currency.symbol || '...'
         }`}</Typography>
         <Typography color="text1">{`${balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} ${
-          pair.token1.symbol || '...'
+          balance.balance1?.currency.symbol || '...'
         }`}</Typography>
       </DataText>
       {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
@@ -402,7 +410,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
             onClick={handleOption2}
             mr={2}
           >
-            <CurrencyLogo currency={getTokenFromCurrencyKey('sICX')!} size={'35px'} />
+            <CurrencyLogo currency={balance.balance1?.currency} size={'35px'} />
             <Typography>{balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX</Typography>
           </OptionButton>
 
@@ -410,7 +418,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
             disabled={JSBI.equal(balance.balance.quotient || BIGINT_ZERO, BIGINT_ZERO)}
             onClick={handleOption1}
           >
-            <CurrencyLogo currency={getTokenFromCurrencyKey('ICX')!} size={'35px'} />
+            <CurrencyLogo currency={balance.balance.currency} size={'35px'} />
             <Typography>{balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ICX</Typography>
           </OptionButton>
         </Flex>
@@ -423,7 +431,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} {pair.token0.symbol || '...'}
+            {balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} {balance.balance.currency.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -447,7 +455,8 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} {pair.token0.symbol || '...'}
+            {balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'}{' '}
+            {balance.balance1?.currency.symbol || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -698,7 +707,7 @@ const WithdrawModal = ({
           />
         </Box>
         <Typography mb={5} textAlign="right">
-          {`Wallet: 
+          {`Wallet:
             ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[0]?.currency.symbol || '...'} /
             ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[1]?.currency.symbol || '...'}`}
         </Typography>

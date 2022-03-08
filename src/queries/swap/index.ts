@@ -7,7 +7,6 @@ import { getTradePair, isQueue } from 'constants/currency';
 import { ONE } from 'constants/index';
 import QUERY_KEYS from 'queries/queryKeys';
 import { Field } from 'store/swap/actions';
-import { getTokenFromCurrencyKey } from 'types/adapter';
 import { Currency } from 'types/balanced-sdk-core';
 
 import { API_ENDPOINT } from '../constants';
@@ -32,8 +31,8 @@ export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency
 
         let data1;
 
-        const quoteToken = getTokenFromCurrencyKey(pair.quoteCurrencyKey);
-        const baseToken = getTokenFromCurrencyKey(pair.baseCurrencyKey);
+        const quoteToken = pair.quoteToken;
+        const baseToken = pair.baseToken;
 
         const decimal = (quoteToken?.decimals ?? 0) - (baseToken?.decimals ?? 0) + 18;
         if (!inverse) {

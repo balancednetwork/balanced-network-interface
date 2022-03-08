@@ -83,8 +83,9 @@ const PositionDetailPanel = () => {
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
+  const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
-  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 440px)');
+  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 360px)');
   const [show, setShow] = React.useState<boolean>(false);
   const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
@@ -227,7 +228,7 @@ const PositionDetailPanel = () => {
                   text="You can’t withdraw any collateral if you go beyond this threshold."
                   show={show}
                   placement="top-end"
-                  small
+                  forcePlacement={true}
                 >
                   <dt>All collateral locked</dt>
                 </Tooltip>
@@ -267,13 +268,13 @@ const PositionDetailPanel = () => {
                 If the ICX price reaches ${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
                 liquidated. <br />
                 <Typography as="small" fontSize={12} color="text1">
-                  Keep a close eye on the price, as rebalancing may cause it to fluctuate.
+                  Keep a close eye on this number, as rebalancing may cause it to fluctuate.
                 </Typography>
               </Typography>
             }
             show={show}
             placement="bottom"
-            small
+            forcePlacement={true}
           >
             <RightChip bg="#fb6a6a" />
           </Tooltip>
@@ -296,7 +297,7 @@ const PositionDetailPanel = () => {
                   </QuestionWrapper>
                 )}
                 <RebalancingTooltip show={showRebalancing} bottom={false}>
-                  <TooltipContainer width={435}>
+                  <TooltipContainer width={435} className="rebalancing-modal">
                     <RebalancingInfo />
                     {shouldShowSeparateTooltip ? null : shouldShowRebalancingAveragePrice ? (
                       <>
@@ -350,6 +351,8 @@ const PositionDetailPanel = () => {
                 <TooltipContainer width={321}>{averageRebalancingPriceText}</TooltipContainer>
               </RebalancingTooltip>
 
+              {!upMedium && <VerticalDivider mr={8} />}
+
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(rebalancingTotal, 'currency')} bnUSD</Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
@@ -378,6 +381,7 @@ const PositionDetailPanel = () => {
                 </Typography>
                 <Typography mt={1}>Daily rewards</Typography>
               </Box>
+              {!upMedium && <VerticalDivider mr={8} />}
               <Box width={1 / 2}>
                 <Typography variant="p" color={hasRewardableCollateral ? 'white' : 'alert'}>
                   {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
@@ -534,6 +538,7 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
   transition: all ease 0.25s;
   opacity: ${({ show }) => (show ? 1 : 0)};
   pointer-events: ${({ show }) => (show ? 'all' : 'none')};
+  display: none;
 
   &:before {
     ${({ bottom }) => (bottom ? null : `content: ''`)};
@@ -549,21 +554,38 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
     display: inline-block;
   }
 
-  @media screen and (max-width: 999px) {
+  ${({ theme }) => theme.mediaWidth.up360`
+    display: block;
+     margin-left: -170px;
+
+    &:before {
+      margin-left: -14px;
+    }
+  `};
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    margin-left: -173px;
+    
+    &:before {
+      margin-left: -62px;
+    }
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upMedium`
     margin-left: -193px;
 
     &:before {
       margin-left: -42px;
     }
-  }
-  @media screen and (max-width: 599px) {
-    margin-left: -183px;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upLarge`
+    ${({ bottom }) => (bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
+    left: ${({ bottom }) => (bottom ? `50%` : `100%`)};
+    margin-left: ${({ bottom }) => (bottom ? `-160px` : `-225px`)};
 
     &:before {
-      margin-left: -52px;
+      margin-left: -10px;
     }
-  }
-  @media screen and (max-width: 439px) {
-    display: none;
-  }
+  `};
 `;

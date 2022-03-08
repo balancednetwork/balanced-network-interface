@@ -14,7 +14,7 @@ import { parseUnits } from 'utils';
 import { TradeType, Currency, CurrencyAmount, Percent, Token, Price } from '../../types/balanced-sdk-core';
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './actions';
-import { useTradeExactIn, useTradeExactOut } from './adapter';
+import { useTradeExactIn, useTradeExactOut } from './trade';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);

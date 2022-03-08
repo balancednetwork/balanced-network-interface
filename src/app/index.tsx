@@ -11,11 +11,14 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
+import { Banner } from './components/Banner';
+import { Airdrip } from './containers/Airdrip/Loadable';
 import { HomePage } from './containers/HomePage/Loadable';
 import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 import { ProposalPage } from './containers/ProposalPage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
 import { VotePage } from './containers/VotePage/Loadable';
+import Message from './Message';
 
 function Updaters() {
   return (
@@ -39,7 +42,12 @@ export function App() {
           <ThemedGlobalStyle />
           <NotificationContainer />
           <WalletModal />
-
+          {/* Add message for community */}
+          {false && (
+            <Banner>
+              <Message />
+            </Banner>
+          )}
           <BrowserRouter>
             <Helmet
               titleTemplate="%s | Balanced"
@@ -51,6 +59,7 @@ export function App() {
               <Route exact path="/" component={HomePage} />
               <Route exact path="/vote" component={VotePage} />
               <Route exact path="/trade" component={TradePage} />
+              <Route exact path="/claim" component={Airdrip} />
               <Route path="/vote/new-proposal" component={NewProposalPage} />
               <Route path="/vote/proposal/:id" component={ProposalPage} />
               <Route

@@ -10,9 +10,11 @@ import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
+import { toCurrencyAmount } from 'utils';
 
 interface UnstakePanelProps {
   claimableICX: BigNumber;
@@ -21,6 +23,12 @@ interface UnstakePanelProps {
 export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const balances = useWalletBalances();
+
+  const icxContractAddress = bnJs.ICX.address;
+  const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[icxContractAddress];
+  const icxBalance = balances[icxContractAddress];
+
+  const claimableICXCA = toCurrencyAmount(ICX.wrapped, claimableICX);
 
   // to detect if transaction change and reload cliamableICX
   const transactions = useAllTransactions();
@@ -114,14 +122,14 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {`${balances['ICX'].toFixed(2)} ICX`}
+                {`${icxBalance.toFixed(2)} ICX`}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {`${balances['ICX'].plus(claimableICX).toFixed(2)} ICX`}
+                {`${icxBalance.add(claimableICXCA).toFixed(2)} ICX`}
               </Typography>
             </Box>
           </Flex>

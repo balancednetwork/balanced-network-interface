@@ -13,6 +13,11 @@ export default class sICX extends IRC2 {
     return this.transfer(addresses[this.nid].loans, value, JSON.stringify(data));
   }
 
+  /**
+   * not used
+   * @param value
+   * @returns {Promise<void>}
+   */
   swapToICX(value: string) {
     const data = { method: '_swap_icx' };
 

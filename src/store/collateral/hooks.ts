@@ -10,6 +10,7 @@ import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { IcxDisplayType } from 'types';
+import { toBigNumber } from 'utils';
 
 import { AppState } from '../index';
 import { adjust, cancel, changeDepositedAmount, changeIcxDisplayType, type, Field } from './actions';
@@ -41,7 +42,10 @@ export function useIcxDisplayType() {
 }
 
 export function useCollateralAvailableAmount() {
-  const ICXAmount = useWalletBalances()['ICX'];
+  const icxAddress = bnJs.ICX.address;
+  const balances = useWalletBalances();
+  const ICXAmountCA = balances[icxAddress];
+  const ICXAmount = toBigNumber(ICXAmountCA);
 
   return React.useMemo(() => {
     return BigNumber.max(ICXAmount.minus(MINIMUM_ICX_FOR_ACTION), new BigNumber(0));
@@ -155,7 +159,7 @@ export function useCollateralTotalICXAmount() {
 }
 
 export function useCollateralTotalSICXAmount() {
-  const sICXAmount = useCollateralAvailableAmountinSICX();
+  const sICXAmount = toBigNumber(useCollateralAvailableAmountinSICX());
 
   const collateralSICXAmount = useCollateralDepositedAmount();
 

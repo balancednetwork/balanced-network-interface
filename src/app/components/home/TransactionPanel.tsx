@@ -24,17 +24,11 @@ const Row = styled(Box)`
   grid-template-columns: 25% 1fr;
   align-items: center;
   grid-column-gap: 20px;
-  > div:last-child,
-  > p:last-child {
-    display: none;
-  }
+
+  grid-template-columns: 22% 1fr 15%;
 
   ${({ theme }) => theme.mediaWidth.upLarge`
     grid-template-columns: 17% 1fr 15%;
-    > div:last-child,
-    > p:last-child {
-      display: block;
-    }
   `}
 `;
 
@@ -45,6 +39,16 @@ const RowContent = styled(Row)`
 const Table = styled(Box)`
   > div:last-child {
     border-bottom: 0;
+  }
+`;
+
+const ScrollHelper = styled.div`
+  overflow-x: auto;
+  width: 100%;
+
+  ${Table} {
+    min-width: 660px;
+    width: 100%;
   }
 `;
 
@@ -398,7 +402,7 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
 
   return (
     <RowContent>
-      <Typography>{dayjs(tx.item_timestamp).format('D MMMM, HH:mm')}</Typography>
+      <Typography minWidth="150px">{dayjs(tx.item_timestamp).format('D MMMM, HH:mm')}</Typography>
       <Flex>
         <Typography fontSize={16} sx={{ mr: '8px' }}>
           {content}
@@ -408,8 +412,9 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
           target="_blank"
           rel="noreferrer noopener"
           sx={{
-            display: 'inline-flex',
-            paddingBottom: 2,
+            display: 'flex',
+            paddingBottom: '5px',
+            alignItems: 'flex-end',
           }}
         >
           <ExternalIcon width="11px" height="11px" />
@@ -552,7 +557,7 @@ const TransactionTable = () => {
   const txs = parseTransactions(data?.transactions || []);
 
   return (
-    <BoxPanel bg="bg2">
+    <BoxPanel bg="bg2" minHeight={190}>
       <Flex mb={2} alignItems="center" flexWrap="wrap">
         <Typography mr={2} mb={2} variant="h2" width="100%">
           Activity history
@@ -561,24 +566,26 @@ const TransactionTable = () => {
 
         {!isLoading && data?.count ? (
           <>
-            <Table width="100%">
-              <Row>
-                <Typography letterSpacing="3px">DATE</Typography>
-                <Typography letterSpacing="3px" sx={{ flex: 1 }}>
-                  ACTIVITY
-                </Typography>
-                <Typography letterSpacing="3px" textAlign="right">
-                  AMOUNT
-                </Typography>
-              </Row>
-              {txs.map(tx =>
-                tx.method === 'claimUnstakedICX' ? (
-                  <ClaimRowItem tx={tx} key={tx.item_id} />
-                ) : (
-                  <RowItem tx={tx} key={tx.item_id} />
-                ),
-              )}
-            </Table>
+            <ScrollHelper>
+              <Table>
+                <Row>
+                  <Typography letterSpacing="3px">DATE</Typography>
+                  <Typography letterSpacing="3px" sx={{ flex: 1 }}>
+                    ACTIVITY
+                  </Typography>
+                  <Typography letterSpacing="3px" textAlign="right">
+                    AMOUNT
+                  </Typography>
+                </Row>
+                {txs.map(tx =>
+                  tx.method === 'claimUnstakedICX' ? (
+                    <ClaimRowItem tx={tx} key={tx.item_id} />
+                  ) : (
+                    <RowItem tx={tx} key={tx.item_id} />
+                  ),
+                )}
+              </Table>
+            </ScrollHelper>
             <Pagination
               sx={{ mt: 2, width: '100%' }}
               onChangePage={page => {
@@ -593,7 +600,9 @@ const TransactionTable = () => {
           </>
         ) : (
           <Box width="100%">
-            <Typography textAlign="center">No activity yet.</Typography>
+            <Typography textAlign="center" paddingTop={'35px'}>
+              No activity yet.
+            </Typography>
           </Box>
         )}
       </Flex>

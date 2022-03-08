@@ -41,12 +41,90 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import ModalContent from '../ModalContent';
 import { MouseoverTooltip } from '../Tooltip';
 
+export const PanelInfoWrap = styled(Flex)`
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  ${({ theme }) => theme.mediaWidth.up360`
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  `}
+`;
+
+export const PanelInfoItem = styled(Box)`
+  width: 100%;
+  margin-left: 0;
+  padding-top: 10px;
+
+  ${({ theme }) => theme.mediaWidth.up360`
+    width: 50%;
+    margin-left: 5px;
+  `}
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    margin-left: 20px;
+    padding-top: 0;
+  `}
+
+  &:first-of-type {
+    margin-right: 5px;
+    margin-left: 0;
+    margin-bottom: 20px;
+
+    ${({ theme }) => theme.mediaWidth.up360`
+      margin-bottom: 0;
+    `}
+
+    ${({ theme }) => theme.mediaWidth.up500`
+      margin-right: 20px;
+    `}
+  }
+`;
+
+const CollateralTypeUI = styled.div`
+  position: static;
+  display: flex;
+  padding: 35px 25px 15px;
+  margin-top: -20px;
+  background-color: ${({ theme }) => theme.colors.bg2};
+  border-radius: 0 0 10px 10px;
+
+  svg {
+    margin-top: 10px;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 35px 35px 15px;
+  `}
+`;
+
+const CollateralTypeButton = styled.div`
+  border-radius: 100px;
+  padding: 1px 12px;
+  margin-right: 5px;
+  color: #ffffff;
+  font-size: 14px;
+  background-color: #144a68;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:not(.active):hover {
+    background-color: #087083;
+  }
+
+  &.active {
+    cursor: default;
+    background-color: #2ca9b7;
+  }
+`;
+
 const CollateralPanel = () => {
   const { account } = useIconReact();
   const icxDisplayType = useIcxDisplayType();
   const collateralChangeIcxDisplayType = useCollateralChangeIcxDisplayType();
   const [userChoseIcxDisplayType, setUserChoseIcxDisplayType] = useState<boolean>(false);
   const ratio = useRatio();
+  const isSuperSmall = useMedia(`(max-width: 359px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -267,13 +345,15 @@ const CollateralPanel = () => {
     <>
       <BoxPanelWrap>
         <BoxPanel bg="bg3" sx={{ position: 'relative' }}>
-          <Flex justifyContent="space-between" alignItems="center">
+          <Flex justifyContent="space-between" alignItems={isSuperSmall ? 'flex-start' : 'center'}>
             <Typography variant="h2">Collateral</Typography>
 
-            <Box>
+            <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
               {isAdjusting ? (
                 <>
-                  <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
+                  <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
+                    Cancel
+                  </TextButton>
                   <Button onClick={toggleOpen} fontSize={14}>
                     Confirm
                   </Button>
@@ -283,9 +363,11 @@ const CollateralPanel = () => {
                   {buttonText}
                 </Button>
               )}
-            </Box>
+            </Flex>
           </Flex>
+
           {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} />}
+
           <Box marginY={6}>
             <Nouislider
               id="slider-collateral"
@@ -317,8 +399,9 @@ const CollateralPanel = () => {
               onSlide={onSlide}
             />
           </Box>
-          <Flex justifyContent="space-between">
-            <Box width={[1, 1 / 2]} mr={4}>
+
+          <PanelInfoWrap>
+            <PanelInfoItem>
               <CurrencyField
                 editable={isAdjusting}
                 isActive
@@ -329,9 +412,9 @@ const CollateralPanel = () => {
                 maxValue={icxDisplayType === 'ICX' ? totalICXAmount : totalSICXAmount}
                 onUserInput={onFieldAInput}
               />
-            </Box>
+            </PanelInfoItem>
 
-            <Box width={[1, 1 / 2]} ml={4}>
+            <PanelInfoItem>
               <CurrencyField
                 editable={isAdjusting}
                 isActive={false}
@@ -342,8 +425,8 @@ const CollateralPanel = () => {
                 maxValue={icxDisplayType === 'ICX' ? totalICXAmount : totalSICXAmount}
                 onUserInput={onFieldBInput}
               />
-            </Box>
-          </Flex>
+            </PanelInfoItem>
+          </PanelInfoWrap>
         </BoxPanel>
         <CollateralTypeUI>
           <CollateralTypeButton
@@ -437,42 +520,5 @@ const CollateralPanel = () => {
     </>
   );
 };
-
-const CollateralTypeUI = styled.div`
-  position: static;
-  display: flex;
-  padding: 35px 25px 15px;
-  margin-top: -20px;
-  background-color: ${({ theme }) => theme.colors.bg2};
-  border-radius: 0 0 10px 10px;
-
-  svg {
-    margin-top: 10px;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 35px 35px 15px;
-  `}
-`;
-
-const CollateralTypeButton = styled.div`
-  border-radius: 100px;
-  padding: 1px 12px;
-  margin-right: 5px;
-  color: #ffffff;
-  font-size: 14px;
-  background-color: #144a68;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  &:not(.active):hover {
-    background-color: #087083;
-  }
-
-  &.active {
-    cursor: default;
-    background-color: #2ca9b7;
-  }
-`;
 
 export default CollateralPanel;

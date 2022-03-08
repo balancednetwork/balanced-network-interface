@@ -53,7 +53,12 @@ export function useCollateralAvailableAmount() {
 }
 
 export function useCollateralAvailableAmountinSICX() {
-  return useWalletBalances()['sICX'];
+  const sicxAddress = bnJs.sICX.address;
+  const balances = useWalletBalances();
+  const sICXAmountCA = balances[sicxAddress];
+  const sICXAmount = toBigNumber(sICXAmountCA);
+
+  return sICXAmount;
 }
 
 export function useCollateralFetchInfo(account?: string | null) {
@@ -159,7 +164,7 @@ export function useCollateralTotalICXAmount() {
 }
 
 export function useCollateralTotalSICXAmount() {
-  const sICXAmount = toBigNumber(useCollateralAvailableAmountinSICX());
+  const sICXAmount = useCollateralAvailableAmountinSICX();
 
   const collateralSICXAmount = useCollateralDepositedAmount();
 

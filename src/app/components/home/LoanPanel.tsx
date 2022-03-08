@@ -382,7 +382,7 @@ const LoanPanel = () => {
 
       <Modal isOpen={rebalancingModalOpen} onDismiss={() => toggleRebalancingModalOpen(false)} maxWidth={450}>
         <ModalContent noMessages>
-          <Typography>Rebalancing</Typography>
+          <Typography textAlign="center">Rebalancing</Typography>
           <RebalancingInfo />
           <BoxWithBorderTop>
             <Button onClick={() => toggleRebalancingModalOpen(true)}>Understood</Button>

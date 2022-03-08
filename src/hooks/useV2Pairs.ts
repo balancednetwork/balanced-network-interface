@@ -130,7 +130,11 @@ export function useAvailablePairs(
 
 export interface BalanceData {
   poolId: number;
+
+  // liquidity balance or ICX balance
   balance: CurrencyAmount<Token>;
+
+  // sICX balance
   balance1?: CurrencyAmount<Token>;
 }
 

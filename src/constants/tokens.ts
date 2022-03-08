@@ -252,6 +252,7 @@ export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 export interface TokenInfo {
   readonly chainId: number;
   readonly address: string;
+  readonly searchableTerms: string;
   readonly name: string;
   readonly decimals: number;
   readonly symbol: string;

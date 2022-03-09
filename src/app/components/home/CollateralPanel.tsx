@@ -219,20 +219,31 @@ const CollateralPanel = () => {
 
     if (shouldDeposit) {
       try {
-        const { result: hash } = await bnJs
-          .inject({ account })
-          .Loans.depositAndBorrow(parseUnits(collateralAmount.toFixed()));
+        if (icxDisplayType === 'ICX') {
+          const { result: hash } = await bnJs
+            .inject({ account })
+            .Loans.depositAndBorrow(parseUnits(collateralAmount.toFixed()));
 
-        addTransaction(
-          { hash },
-          {
-            pending: 'Depositing collateral...',
-            summary:
-              icxDisplayType === 'ICX'
-                ? `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`
-                : `Deposited ${collateralAmount.dp(2).toFormat()} sICX as collateral.`,
-          },
-        );
+          addTransaction(
+            { hash },
+            {
+              pending: 'Depositing collateral...',
+              summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
+            },
+          );
+        } else {
+          const { result: hash } = await bnJs
+            .inject({ account })
+            .sICX.depositAndBorrow(parseUnits(collateralAmount.toFixed()));
+
+          addTransaction(
+            { hash },
+            {
+              pending: `Depositing collateral...`,
+              summary: `Deposited ${collateralAmount.toFixed(2)} sICX as collateral.`,
+            },
+          );
+        }
 
         // close modal
         toggleOpen();

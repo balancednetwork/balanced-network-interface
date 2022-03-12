@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState, useCallback } from 'react';
+import React, { useEffect, CSSProperties, useState, useCallback } from 'react';
 
 import { isIOS, isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
@@ -7,6 +7,8 @@ import { useTheme } from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { ListItem, DashGrid, HeaderText, DataText, List1 } from 'app/components/List';
+import useArrowControl from 'hooks/useArrowControl';
+import useKeyPress from 'hooks/useKeyPress';
 import { useIsUserAddedToken } from 'store/user/hooks';
 import { useCurrencyBalance } from 'store/wallet/hooks';
 import { Currency, Token } from 'types/balanced-sdk-core';
@@ -25,8 +27,7 @@ function CurrencyRow({
   onRemove,
   account,
   isFocused,
-  index,
-  setFocusedIndex,
+  onFocus,
 }: {
   currency: Currency;
   onSelect: () => void;
@@ -37,8 +38,7 @@ function CurrencyRow({
   onRemove: () => void;
   account?: string | null;
   isFocused: boolean;
-  index: number;
-  setFocusedIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
+  onFocus: () => void;
 }) {
   const balance = useCurrencyBalance(account ?? undefined, currency);
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
@@ -53,11 +53,8 @@ function CurrencyRow({
     <ListItem
       onClick={onSelect}
       {...(!isIOS ? { onMouseEnter: open } : null)}
-      onMouseLeave={() => {
-        close();
-        setFocusedIndex(undefined);
-      }}
-      onMouseEnter={() => setFocusedIndex(index)}
+      onMouseLeave={close}
+      onMouseEnter={onFocus}
       className={isFocused ? 'focused' : ''}
     >
       <Flex>
@@ -97,8 +94,8 @@ export default function CurrencyList({
   setRemoveToken,
   showCurrencyAmount,
   account,
-  focusIndex,
-  setFocusedIndex,
+  isOpen,
+  onDismiss,
 }: {
   currencies: Currency[];
   selectedCurrency?: Currency | null;
@@ -110,9 +107,31 @@ export default function CurrencyList({
   setRemoveToken: (token: Token) => void;
   showCurrencyAmount?: boolean;
   account?: string | null;
-  focusIndex: number | undefined;
-  setFocusedIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
+  isOpen: boolean;
+  onDismiss: () => void;
 }) {
+  const enter = useKeyPress('Enter');
+  const escape = useKeyPress('Escape');
+  const { activeIndex, setActiveIndex } = useArrowControl(isOpen, currencies?.length || 0);
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveIndex(undefined);
+    }
+  }, [isOpen, setActiveIndex]);
+
+  useEffect(() => {
+    if (isOpen && enter && currencies?.length && activeIndex !== undefined) {
+      onCurrencySelect(currencies[activeIndex]);
+    }
+  }, [isOpen, activeIndex, enter, currencies, currencies.length, onCurrencySelect]);
+
+  useEffect(() => {
+    if (isOpen && escape) {
+      onDismiss();
+    }
+  }, [isOpen, escape, onDismiss]);
+
   return (
     <List1 mt={4}>
       <DashGrid>
@@ -130,9 +149,8 @@ export default function CurrencyList({
             setRemoveToken(currency as Token);
             showRemoveView();
           }}
-          isFocused={index === focusIndex}
-          setFocusedIndex={setFocusedIndex}
-          index={index}
+          isFocused={index === activeIndex}
+          onFocus={() => setActiveIndex(index)}
         />
       ))}
     </List1>

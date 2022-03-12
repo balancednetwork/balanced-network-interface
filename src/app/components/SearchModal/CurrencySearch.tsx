@@ -9,9 +9,7 @@ import { Typography } from 'app/theme';
 import SearchIcon from 'assets/icons/search.svg';
 import { FUNDING_TOKENS_LIST, useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
-import useArrowControl from 'hooks/useArrowControl';
 import useDebounce from 'hooks/useDebounce';
-import useKeyPress from 'hooks/useKeyPress';
 import { useOnClickOutside } from 'hooks/useOnClickOutside';
 import useToggle from 'hooks/useToggle';
 import { Currency, Token } from 'types/balanced-sdk-core';
@@ -165,31 +163,6 @@ export function CurrencySearch({
       ? filteredSortedTokensWithICX
       : filteredSortedTokens;
 
-  // keyboard control
-  const enter = useKeyPress('Enter');
-  const escape = useKeyPress('Escape');
-  const { activeIndex, setActiveIndex } = useArrowControl(isOpen, currencies?.length || 0);
-
-  // clear the input on open
-  useEffect(() => {
-    if (isOpen) {
-      setActiveIndex(undefined);
-      setSearchQuery('');
-    }
-  }, [isOpen, setActiveIndex]);
-
-  useEffect(() => {
-    if (isOpen && enter && currencies?.length && activeIndex !== undefined) {
-      handleCurrencySelect(currencies[activeIndex]);
-    }
-  }, [isOpen, activeIndex, enter, currencies, currencies.length, handleCurrencySelect]);
-
-  useEffect(() => {
-    if (isOpen && escape) {
-      onDismiss();
-    }
-  }, [isOpen, escape, onDismiss]);
-
   return (
     <Wrapper width={width}>
       <Flex>
@@ -218,8 +191,8 @@ export function CurrencySearch({
           showRemoveView={showRemoveView}
           setRemoveToken={setRemoveToken}
           showCurrencyAmount={showCurrencyAmount}
-          setFocusedIndex={setActiveIndex}
-          focusIndex={activeIndex}
+          isOpen={isOpen}
+          onDismiss={onDismiss}
         />
       ) : (
         <Column style={{ padding: '20px', height: '100%' }}>

@@ -133,7 +133,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
-      "yarn run eslint --max-warnings=9999"
+      "yarn run eslint --max-warnings=0"
     ],
     "*.{md,json}": [
       "prettier --write"

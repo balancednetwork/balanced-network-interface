@@ -6,7 +6,7 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { QuestionWrapper } from 'app/components/QuestionHelper';
-import { MouseoverTooltip } from 'app/components/Tooltip';
+import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { MINUS_INFINITY, PLUS_INFINITY, ZERO } from 'constants/index';
@@ -15,9 +15,18 @@ import { escapeRegExp } from 'utils'; // match escaped "." characters via in a n
 
 export const CheckBox = styled(Box)<{ isActive: boolean }>`
   width: 20px;
-  height: 20px;
+  height: 5px;
   border-radius: 5px;
   background-color: ${props => (props.isActive ? props.theme.colors.primary : '#03334f')};
+  position: absolute;
+  top: -12px;
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    width: 20px;
+    height: 20px;
+    position: static;
+    margin-top: 0;
+  `}
 `;
 
 const CurrencyInput = styled(Box)`
@@ -27,7 +36,7 @@ const CurrencyInput = styled(Box)`
   border: 2px solid #0c2a4d;
   background-color: #0c2a4d;
   color: #ffffff;
-  padding: 3px 20px;
+  padding: 3px 7px;
   height: 40px;
   border-radius: 10px;
   outline: none;
@@ -35,6 +44,10 @@ const CurrencyInput = styled(Box)`
   -webkit-appearance: none;
   transition: border 0.3s ease;
   overflow: visible;
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    padding: 3px 20px;
+  `}
 `;
 
 const NumberInput = styled.input`
@@ -60,6 +73,8 @@ export const CurrencyField: React.FC<{
   currency: CurrencyKey;
   tooltip?: boolean;
   tooltipText?: React.ReactNode;
+  noticeText?: string;
+  noticeShow?: boolean;
   tooltipWider?: boolean;
   minValue?: BigNumber;
   maxValue?: BigNumber;
@@ -73,12 +88,15 @@ export const CurrencyField: React.FC<{
     tooltip,
     tooltipText,
     tooltipWider,
+    noticeText,
+    noticeShow,
     editable,
     minValue = MINUS_INFINITY,
     maxValue = PLUS_INFINITY,
     onUserInput,
   } = props;
-  const smallSp = useMedia('(max-width: 360px)');
+  const smallSp = useMedia('(max-width: 359px)');
+  const isSmall = !useMedia('(min-width: 500px})');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextUserInput = event.target.value.replace(/,/g, '.');
@@ -100,7 +118,7 @@ export const CurrencyField: React.FC<{
   return (
     <Flex flexDirection="column">
       <Flex alignItems="center">
-        <Flex alignItems="center">
+        <Flex alignItems="center" sx={{ position: 'relative' }}>
           <CheckBox isActive={isActive} mr={2} />
           <Typography as="label" htmlFor={label} unselectable="on" sx={{ userSelect: 'none' }}>
             {label}{' '}
@@ -118,32 +136,55 @@ export const CurrencyField: React.FC<{
       </Flex>
 
       {!editable && (
-        <Typography variant="p" ml={6} mt={1} fontSize={[16, 16, 16, 18]}>
+        <Typography variant="p" ml={isSmall ? 0 : 6} mt={1} fontSize={[16, 16, 16, 18]}>
           {`${BigNumber.max(new BigNumber(value), ZERO).dp(2).toFormat()} ${currency}`}
         </Typography>
       )}
 
-      {editable && (
-        <CurrencyInput mt={1}>
-          <NumberInput
-            id={label}
-            value={value}
-            onChange={handleChange}
-            // universal input options
-            inputMode="decimal"
-            title="Token Amount"
-            autoComplete="off"
-            autoCorrect="off"
-            // text-specific options
-            type="text"
-            pattern="^[0-9]*[.,]?[0-9]*$"
-            minLength={1}
-            maxLength={79}
-            spellCheck="false"
-          />
-          <CurrencyUnit>{currency}</CurrencyUnit>
-        </CurrencyInput>
-      )}
+      {editable &&
+        (noticeShow ? (
+          <Tooltip containerStyle={{ width: 'auto' }} placement="bottom" text={noticeText} show={true}>
+            <CurrencyInput mt={1}>
+              <NumberInput
+                id={label}
+                value={value}
+                onChange={handleChange}
+                // universal input options
+                inputMode="decimal"
+                title="Token Amount"
+                autoComplete="off"
+                autoCorrect="off"
+                // text-specific options
+                type="text"
+                pattern="^[0-9]*[.,]?[0-9]*$"
+                minLength={1}
+                maxLength={79}
+                spellCheck="false"
+              />
+              <CurrencyUnit>{currency}</CurrencyUnit>
+            </CurrencyInput>
+          </Tooltip>
+        ) : (
+          <CurrencyInput mt={1}>
+            <NumberInput
+              id={label}
+              value={value}
+              onChange={handleChange}
+              // universal input options
+              inputMode="decimal"
+              title="Token Amount"
+              autoComplete="off"
+              autoCorrect="off"
+              // text-specific options
+              type="text"
+              pattern="^[0-9]*[.,]?[0-9]*$"
+              minLength={1}
+              maxLength={79}
+              spellCheck="false"
+            />
+            <CurrencyUnit>{currency}</CurrencyUnit>
+          </CurrencyInput>
+        ))}
     </Flex>
   );
 };

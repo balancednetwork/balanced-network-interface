@@ -16,8 +16,8 @@ import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { Fraction, Price, Currency } from 'types/balanced-sdk-core';
-import { generateChartData } from 'utils';
+import { Price, Currency } from 'types/balanced-sdk-core';
+import { generateChartData, toFraction } from 'utils';
 
 export default function SwapDescription() {
   const { currencies, price } = useDerivedSwapInfo();
@@ -39,8 +39,7 @@ export default function SwapDescription() {
     [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
   );
 
-  const [qratioNumerator, qratioDenominator] = ratio.sICXICXratio.toFraction();
-  const qratioFrac = new Fraction(qratioNumerator.toFixed(), qratioDenominator.toFixed());
+  const qratioFrac = toFraction(ratio.sICXICXratio);
 
   let priceInICX: Price<Currency, Currency> | undefined;
 
@@ -139,7 +138,7 @@ export default function SwapDescription() {
         {pair ? (
           <>
             {loading ? (
-              <Spinner size={'lg'} centered />
+              <Spinner size={75} centered />
             ) : (
               <>
                 {chartOption.type === CHART_TYPES.AREA && (

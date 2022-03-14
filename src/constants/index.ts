@@ -11,3 +11,5 @@ export const MINIMUM_ICX_FOR_ACTION = 2;
 export const MINIMUM_ICX_FOR_TX = 1;
 
 export const DEFAULT_SLIPPAGE = 100;
+
+export const MINIMUM_B_BALANCE_TO_SHOW_POOL = 0.01;

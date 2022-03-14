@@ -18,7 +18,12 @@ import { Typography } from 'app/theme';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
-import { useWalletModalToggle, useModalOpen } from 'store/application/hooks';
+import {
+  useWalletModalToggle,
+  useModalOpen,
+  useCurrentLedgerAddressPage,
+  useChangeCurrentLedgerAddressPage,
+} from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
@@ -80,9 +85,9 @@ const WalletOption = styled(Box)`
   color: white;
   user-select: none;
 
-  @media all and (min-width: 370px) {
+  ${({ theme }) => theme.mediaWidth.up360`
     width: 140px;
-  }
+  `};
 
   > *:first-child {
     margin-bottom: 10px;
@@ -100,9 +105,10 @@ const StyledModal = styled(Modal).attrs({
   &[data-reach-dialog-content] {
     width: 320px;
 
-    @media all and (min-width: 370px) {
-      width: 370px;
-    }
+    ${({ theme }) => theme.mediaWidth.up360`
+      width: 100%;
+      max-width: 370px;
+    `};
   }
 `;
 
@@ -113,13 +119,14 @@ export default function WalletModal() {
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
-  const upExtraSmall = useMedia('(min-width: 370px)');
+  const upExtraSmall = useMedia('(min-width: 360px)');
 
   const [{ offset, limit }, updatePaging] = useState({
     offset: 0,
     limit: LIMIT_PAGING_LEDGER,
   });
-  const [currentLedgerAddressPage, changeCurrentLedgerAddressPage] = useState(1);
+  const currentLedgerAddressPage = useCurrentLedgerAddressPage();
+  const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
 
   const { requestAddress, hasExtension } = useIconReact();
 
@@ -197,7 +204,7 @@ export default function WalletModal() {
 
       await updateLedgerAddress({ offset, limit });
       clearTimeout(timeout);
-    } catch (err) {
+    } catch (err: any) {
       clearTimeout(timeout);
       if (err.id === 'InvalidChannel') {
         await bnJs.contractSettings.ledgerSettings.transport.close();

@@ -12,11 +12,13 @@ const MAINNET_ADDRESSES = {
   governance: 'cx44250a12074799e26fdeee75648ae47e2cc84219',
   band: 'cxe647e0af68a4661566f5e9861ad4ac854de808a2',
   router: 'cx21e94c08c03daee80c25d8ee3ea22a20786ec231',
+  airdrip: 'cxaf244cf3c7164fe6f996f398a9d99c4d4a85cf15',
   sicx: 'cx2609b924e33ef00b648a409245c7ea394c467824',
   bnusd: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
   baln: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
   bwt: 'cxcfe9d1f83fa871e903008471cca786662437e58d',
   multicall: 'cx793970c9ec84eb0dcb6164965c74fe678474d7c7',
+  disbursement: 'cxe3905591929d17fc8496ae28ee3b9c144579228e',
 };
 
 const YEOUIDO_ADDRESSES = {
@@ -31,11 +33,13 @@ const YEOUIDO_ADDRESSES = {
   governance: 'cx483630769b61b76387d6ed90c911c16da546784f',
   band: 'cx61a36e5d10412e03c907a507d1e8c6c3856d9964',
   router: 'cx4c456f4a02d2576fe712ea10b311a5fe8d06d205',
+  airdrip: 'cx8ed4fbee9d6497f91ea90933db288ff4b43e54ba',
   sicx: 'cxae6334850f13dfd8b50f8544d5acb126bb8ef82d',
   bnusd: 'cxc48c9c81ceef04445c961c5cc8ff056d733dfe3a',
   baln: 'cx36169736b39f59bf19e8950f6c8fa4bfa18b710a',
   bwt: 'cx5d886977b7d24b9f73a460c9ca2d43847997c285',
   multicall: '',
+  disbursement: '',
 };
 
 const SEJONG_ADDRESSES = {
@@ -50,11 +54,13 @@ const SEJONG_ADDRESSES = {
   governance: 'cx541e2e8b9673e736b727e3f6313ada687539f50f',
   band: 'cx900e2d17c38903a340a0181523fa2f720af9a798',
   router: 'cxf9e996d3ab20b83ed6bacb28ebf157c484c4b695',
+  airdrip: '',
   sicx: 'cx70806fdfa274fe12ab61f1f98c5a7a1409a0c108',
   bnusd: 'cx5838cb516d6156a060f90e9a3de92381331ff024',
   baln: 'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b',
   bwt: 'cx68b822ae2acc76e9ec6143a8afbeb79e50a26e8f',
   multicall: 'cx75256fadf232ad1124d9c6cd70c9b1ec122a0f47',
+  disbursement: '',
 };
 
 const addresses = {

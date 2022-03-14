@@ -172,6 +172,7 @@ export default function LPPanel() {
 
   React.useEffect(() => {
     if (inputType === 'text') {
+      console.log('hello!');
       sliderInstance.current?.noUiSlider.set(sliderValue);
     }
   }, [inputType, sliderValue]);

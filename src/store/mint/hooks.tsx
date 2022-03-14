@@ -243,11 +243,16 @@ export function useDerivedMintInfo(): {
       tokenAmountA &&
       tokenAmountB &&
       pair.involvesToken(tokenAmountA.currency) &&
-      pair.involvesToken(tokenAmountB.currency)
+      pair.involvesToken(tokenAmountB.currency) &&
+      !tokenAmountA.currency.equals(tokenAmountB.currency)
     ) {
       try {
         return pair.getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.isInsufficientInputAmountError) {
+          console.warn('useDerivedMintInfo(): liquidityMinted - Insufficient input amount');
+          return undefined;
+        }
         console.error(error);
         return undefined;
       }
@@ -266,11 +271,16 @@ export function useDerivedMintInfo(): {
       tokenAmountA &&
       tokenAmountB &&
       pair.involvesToken(tokenAmountA.currency) &&
-      pair.involvesToken(tokenAmountB.currency)
+      pair.involvesToken(tokenAmountB.currency) &&
+      !tokenAmountA.currency.equals(tokenAmountB.currency)
     ) {
       try {
         return pair.getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.isInsufficientInputAmountError) {
+          console.warn('useDerivedMintInfo(): mintableLiquidity - Insufficient input amount');
+          return undefined;
+        }
         console.error(error);
         return undefined;
       }

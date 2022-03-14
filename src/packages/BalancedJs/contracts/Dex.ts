@@ -225,6 +225,9 @@ export default class Dex extends Contract {
     return this.callICONPlugins(payload);
   }
 
+  /**
+   * Not used
+   */
   getPoolStatsForPair(base: string, quote: string) {
     const callParams = this.paramsBuilder({
       method: 'getPoolStatsForPair',

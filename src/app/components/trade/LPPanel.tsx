@@ -133,7 +133,8 @@ export default function LPPanel() {
 
   React.useEffect(() => {
     setPercent(0);
-  }, [currencies]);
+    onSlide(Field.CURRENCY_A, '');
+  }, [currencies, onSlide]);
 
   const handleSlider = React.useCallback(
     (values: string[], handle: number) => {

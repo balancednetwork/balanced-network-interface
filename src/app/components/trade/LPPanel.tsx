@@ -132,30 +132,32 @@ export default function LPPanel() {
   const [percent, setPercent] = React.useState(0);
 
   React.useEffect(() => {
-    const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
-    const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
-
-    if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
-      const p = new Percent(Math.floor(percent * 100), 10_000);
-
-      if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
-        onSlide(Field.CURRENCY_A, percent !== 0 ? balanceA.multiply(p).toFixed() : '');
-      } else {
-        const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
-          ? Field.CURRENCY_A
-          : Field.CURRENCY_B;
-        onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
-      }
-    }
-  }, [percent, currencyBalances, onSlide, pair, currencies]);
-
-  React.useEffect(() => {
     setPercent(0);
   }, [currencies]);
 
-  const handleSlider = (values: string[], handle: number) => {
-    setPercent(parseFloat(values[handle]));
-  };
+  const handleSlider = React.useCallback(
+    (values: string[], handle: number) => {
+      const value = parseFloat(values[handle]);
+      setPercent(value);
+
+      const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
+      const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
+
+      if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
+        const p = new Percent(Math.floor(value * 100), 10_000);
+
+        if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
+          onSlide(Field.CURRENCY_A, value !== 0 ? balanceA.multiply(p).toFixed() : '');
+        } else {
+          const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
+            ? Field.CURRENCY_A
+            : Field.CURRENCY_B;
+          onSlide(field, value !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
+        }
+      }
+    },
+    [currencyBalances, onSlide, pair, currencies],
+  );
 
   const sliderValue =
     liquidityMinted && mintableLiquidity
@@ -172,10 +174,13 @@ export default function LPPanel() {
 
   React.useEffect(() => {
     if (inputType === 'text') {
-      console.log('hello!');
-      sliderInstance.current?.noUiSlider.set(sliderValue);
+      setPercent(sliderValue);
     }
   }, [inputType, sliderValue]);
+
+  React.useEffect(() => {
+    sliderInstance.current?.noUiSlider.set(percent);
+  }, [percent]);
 
   // get formatted amounts
   const formattedAmounts = {

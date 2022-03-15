@@ -4,7 +4,6 @@ import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
 import QuestionHelper from 'app/components/QuestionHelper';
@@ -33,8 +32,6 @@ const RewardsPanel = () => {
           <RewardSection />
           <NetworkFeeSection />
         </Flex>
-
-        <LedgerConfirmMessage mt={5} />
       </BoxPanel>
     </div>
   );

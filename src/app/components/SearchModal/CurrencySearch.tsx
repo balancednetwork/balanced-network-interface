@@ -116,7 +116,7 @@ export function CurrencySearch({
 
   const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim();
-    if (s === '' || s === 'i' || s === 'ic' || s === 'icx') {
+    if ('icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0) {
       return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
     }
     return filteredSortedTokens;

@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState, useCallback } from 'react';
+import React, { useEffect, CSSProperties, useState, useCallback } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { isIOS, isMobile } from 'react-device-detect';
@@ -8,6 +8,8 @@ import { useTheme } from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { ListItem, DashGrid, HeaderText, DataText, List1 } from 'app/components/List';
+import useArrowControl from 'hooks/useArrowControl';
+import useKeyPress from 'hooks/useKeyPress';
 import { useIsUserAddedToken } from 'store/user/hooks';
 import { useCurrencyBalance } from 'store/wallet/hooks';
 import { Currency, Token } from 'types/balanced-sdk-core';
@@ -25,6 +27,8 @@ function CurrencyRow({
   showCurrencyAmount,
   onRemove,
   account,
+  isFocused,
+  onFocus,
 }: {
   currency: Currency;
   onSelect: () => void;
@@ -34,6 +38,8 @@ function CurrencyRow({
   showCurrencyAmount?: boolean;
   onRemove: () => void;
   account?: string | null;
+  isFocused: boolean;
+  onFocus: () => void;
 }) {
   const balance = useCurrencyBalance(account ?? undefined, currency);
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
@@ -45,7 +51,13 @@ function CurrencyRow({
   const close = useCallback(() => setShow(false), [setShow]);
 
   return (
-    <ListItem onClick={onSelect} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
+    <ListItem
+      onClick={onSelect}
+      {...(!isIOS ? { onMouseEnter: open } : null)}
+      onMouseLeave={close}
+      onMouseEnter={onFocus}
+      className={isFocused ? 'focused' : ''}
+    >
       <Flex>
         <CurrencyLogo currency={currency} style={{ marginRight: '8px' }} />
         <DataText variant="p" fontWeight="bold">
@@ -83,6 +95,8 @@ export default function CurrencyList({
   setRemoveToken,
   showCurrencyAmount,
   account,
+  isOpen,
+  onDismiss,
 }: {
   currencies: Currency[];
   selectedCurrency?: Currency | null;
@@ -94,7 +108,31 @@ export default function CurrencyList({
   setRemoveToken: (token: Token) => void;
   showCurrencyAmount?: boolean;
   account?: string | null;
+  isOpen: boolean;
+  onDismiss: () => void;
 }) {
+  const enter = useKeyPress('Enter');
+  const escape = useKeyPress('Escape');
+  const { activeIndex, setActiveIndex } = useArrowControl(isOpen, currencies?.length || 0);
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveIndex(undefined);
+    }
+  }, [isOpen, setActiveIndex]);
+
+  useEffect(() => {
+    if (isOpen && enter && currencies?.length && activeIndex !== undefined) {
+      onCurrencySelect(currencies[activeIndex]);
+    }
+  }, [isOpen, activeIndex, enter, currencies, currencies.length, onCurrencySelect]);
+
+  useEffect(() => {
+    if (isOpen && escape) {
+      onDismiss();
+    }
+  }, [isOpen, escape, onDismiss]);
+
   return (
     <List1 mt={4}>
       <DashGrid>
@@ -102,7 +140,7 @@ export default function CurrencyList({
         <HeaderText textAlign="right">Wallet</HeaderText>
       </DashGrid>
 
-      {currencies.map(currency => (
+      {currencies.map((currency, index) => (
         <CurrencyRow
           account={account}
           key={currencyKey(currency)}
@@ -112,6 +150,8 @@ export default function CurrencyList({
             setRemoveToken(currency as Token);
             showRemoveView();
           }}
+          isFocused={index === activeIndex}
+          onFocus={() => setActiveIndex(index)}
         />
       ))}
     </List1>

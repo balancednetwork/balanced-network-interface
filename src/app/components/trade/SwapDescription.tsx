@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import JSBI from 'jsbi';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
+import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
+import { TVChartContainer } from 'app/components/TradingViewAdvanced/TVChartContainer';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -21,6 +23,7 @@ import { generateChartData, toFraction } from 'utils';
 
 export default function SwapDescription() {
   const { currencies, price } = useDerivedSwapInfo();
+  const [tradingViewActive, setTradingViewActive] = useState(false);
 
   const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({
     type: CHART_TYPES.AREA,
@@ -130,6 +133,10 @@ export default function SwapDescription() {
                 {CHART_TYPES[key]}
               </ChartControlButton>
             ))}
+
+            <ChartControlButton type="button" onClick={() => setTradingViewActive(true)} active={tradingViewActive}>
+              TradingView
+            </ChartControlButton>
           </ChartControlGroup>
         </Box>
       </Flex>
@@ -162,9 +169,30 @@ export default function SwapDescription() {
           </Flex>
         )}
       </ChartContainer>
+
+      <Modal isOpen={tradingViewActive} onDismiss={() => setTradingViewActive(false)} maxWidth={99999999}>
+        {tradingViewActive && (
+          <TVChartContainerWrap>
+            <TVChartContainer />
+          </TVChartContainerWrap>
+        )}
+      </Modal>
     </Box>
   );
 }
+
+const TVChartContainerWrap = styled(Box)`
+  left: 0;
+  top: 0;
+  z-index: 99999;
+  width: 90vw;
+  height: 90vh;
+
+  .TVChartContainer {
+    width: 100%;
+    height: 100%;
+  }
+`;
 
 const ChartControlButton = styled(Button)<{ active: boolean }>`
   padding: 1px 12px;

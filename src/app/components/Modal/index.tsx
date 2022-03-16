@@ -79,7 +79,8 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, maxWidth, mobile, is
     `}
 
     ${({ theme }) => theme.mediaWidth.upMedium`
-      width: 50vw;
+      // width: 50vw;
+      width: 70vw;
       margin: 0;
     `}
   }

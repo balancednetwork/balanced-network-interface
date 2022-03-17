@@ -10,7 +10,7 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
-import { useUserCollectedFeesQuery, useRewardQuery, BATCH_SIZE, usePlatformDayQuery } from 'queries/reward';
+import { useUserCollectedFeesQuery, useRewardQuery, usePlatformDayQuery, BATCH_SIZE } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useHasNetworkFees, useHasRewardable } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
@@ -198,15 +198,15 @@ const NetworkFeeSection = () => {
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
+
   const handleFeeClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
-
-    const start = feesIndex * BATCH_SIZE;
-    const end = start + BATCH_SIZE < platformDay ? start + BATCH_SIZE : 0;
+    const end = platformDay - feesIndex * BATCH_SIZE;
+    const start = end - BATCH_SIZE > 0 ? end - BATCH_SIZE : 0;
 
     bnJs
       .inject({ account })

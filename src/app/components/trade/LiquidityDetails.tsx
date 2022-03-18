@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { AnimatePresence } from 'framer-motion';
 import JSBI from 'jsbi';
 import lodash from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
@@ -16,7 +17,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
-import { BoxPanel } from 'app/components/Panel';
+import { BoxPanelMotion } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -94,13 +95,15 @@ export default function LiquidityDetails() {
     (JSBI.greaterThan(queueBalance.balance.quotient, BIGINT_ZERO) ||
       (queueBalance.balance1 && JSBI.greaterThan(queueBalance.balance1.quotient, BIGINT_ZERO)));
 
-  if (!account || Object.keys(pairs).length === 0) return null;
+  if (!account) return null;
 
   const pairsWithoutQ = lodash.omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = lodash.omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const userPools = Object.keys(pairsWithoutQ).filter(
     poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO),
   );
+
+  if (Object.keys(pairs).length && !userPools.length) return null;
 
   const sortedPairs = userPools
     .map(poolId => {
@@ -118,44 +121,62 @@ export default function LiquidityDetails() {
       return acc;
     }, {});
 
-  return shouldShowQueue || userPools.length ? (
-    <BoxPanel bg="bg2" mb={10}>
-      <Typography variant="h2" mb={5}>
-        Liquidity details
-      </Typography>
+  return (
+    <>
+      {Object.keys(pairs).length === 0 && (
+        <div style={{ position: 'relative', marginTop: '100px' }}>
+          <Spinner size={75} centered={true} />
+        </div>
+      )}
+      <AnimatePresence>
+        {Object.keys(pairs).length && (shouldShowQueue || userPools.length) && (
+          <BoxPanelMotion
+            key="list"
+            bg="bg2"
+            mb={10}
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+          >
+            <Typography variant="h2" mb={5}>
+              Liquidity details
+            </Typography>
 
-      <TableWrapper>
-        <DashGrid>
-          <HeaderText>Pool</HeaderText>
-          <HeaderText>Your supply</HeaderText>
-          {upSmall && <HeaderText>Pool share</HeaderText>}
-          {upSmall && <HeaderText>Daily rewards</HeaderText>}
-          <HeaderText></HeaderText>
-        </DashGrid>
+            <TableWrapper>
+              <DashGrid>
+                <HeaderText>Pool</HeaderText>
+                <HeaderText>Your supply</HeaderText>
+                {upSmall && <HeaderText>Pool share</HeaderText>}
+                {upSmall && <HeaderText>Daily rewards</HeaderText>}
+                <HeaderText></HeaderText>
+              </DashGrid>
 
-        {shouldShowQueue && (
-          <PoolRecordQ
-            balance={queueBalance}
-            pair={queuePair}
-            totalReward={queueReward}
-            border={userPools.length !== 0}
-          />
+              {shouldShowQueue && (
+                <PoolRecordQ
+                  balance={queueBalance}
+                  pair={queuePair}
+                  totalReward={queueReward}
+                  border={userPools.length !== 0}
+                />
+              )}
+
+              {balancesWithoutQ &&
+                userPools.map((poolId, index, arr) => (
+                  <PoolRecord
+                    key={poolId}
+                    poolId={parseInt(poolId)}
+                    balance={balances[poolId]}
+                    pair={sortedPairs[poolId]}
+                    totalReward={rewards[poolId]}
+                    border={index !== arr.length - 1}
+                  />
+                ))}
+            </TableWrapper>
+          </BoxPanelMotion>
         )}
-
-        {balancesWithoutQ &&
-          userPools.map((poolId, index, arr) => (
-            <PoolRecord
-              key={poolId}
-              poolId={parseInt(poolId)}
-              balance={balances[poolId]}
-              pair={sortedPairs[poolId]}
-              totalReward={rewards[poolId]}
-              border={index !== arr.length - 1}
-            />
-          ))}
-      </TableWrapper>
-    </BoxPanel>
-  ) : null;
+      </AnimatePresence>
+    </>
+  );
 }
 
 const TableWrapper = styled.div``;

@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -34,3 +35,5 @@ export const BoxPanel = styled(Box)<{
     padding: 35px;
   `}
 `;
+
+export const BoxPanelMotion = motion(BoxPanel);

@@ -134,7 +134,7 @@ export default function LiquidityDetails() {
             key="list"
             bg="bg2"
             mb={10}
-            initial={{ opacity: 0, y: 100 }}
+            initial={{ opacity: 0, y: -100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
           >

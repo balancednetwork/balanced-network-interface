@@ -237,10 +237,22 @@ export function useDerivedMintInfo(): {
   const liquidityMinted = React.useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
     const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
-    if (pair && totalSupply && tokenAmountA && tokenAmountB) {
+    if (
+      pair &&
+      totalSupply &&
+      tokenAmountA &&
+      tokenAmountB &&
+      pair.involvesToken(tokenAmountA.currency) &&
+      pair.involvesToken(tokenAmountB.currency) &&
+      !tokenAmountA.currency.equals(tokenAmountB.currency)
+    ) {
       try {
         return pair.getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.isInsufficientInputAmountError) {
+          console.warn('useDerivedMintInfo(): liquidityMinted - Insufficient input amount');
+          return undefined;
+        }
         console.error(error);
         return undefined;
       }
@@ -253,10 +265,22 @@ export function useDerivedMintInfo(): {
   const mintableLiquidity = React.useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = currencyBalances;
     const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
-    if (pair && totalSupply && tokenAmountA && tokenAmountB) {
+    if (
+      pair &&
+      totalSupply &&
+      tokenAmountA &&
+      tokenAmountB &&
+      pair.involvesToken(tokenAmountA.currency) &&
+      pair.involvesToken(tokenAmountB.currency) &&
+      !tokenAmountA.currency.equals(tokenAmountB.currency)
+    ) {
       try {
         return pair.getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.isInsufficientInputAmountError) {
+          console.warn('useDerivedMintInfo(): mintableLiquidity - Insufficient input amount');
+          return undefined;
+        }
         console.error(error);
         return undefined;
       }

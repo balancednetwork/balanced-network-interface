@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
@@ -84,7 +85,7 @@ const LoanPanel = () => {
         : parsedAmount[dependentField].toFixed(2),
   };
 
-  const buttonText = borrowedAmount.isZero() ? 'Borrow' : 'Adjust';
+  const buttonText = borrowedAmount.isZero() ? t`Borrow` : t`Adjust`;
 
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
@@ -137,8 +138,8 @@ const LoanPanel = () => {
           addTransaction(
             { hash: res.result },
             {
-              pending: 'Borrowing bnUSD...',
-              summary: `Borrowed ${differenceAmount.dp(2).toFormat()} bnUSD.`,
+              pending: t`Borrowing bnUSD...`,
+              summary: t`Borrowed ${differenceAmount.dp(2).toFormat()} bnUSD.`,
             },
           );
           // close modal
@@ -161,8 +162,8 @@ const LoanPanel = () => {
           addTransaction(
             { hash: res.result },
             {
-              pending: 'Repaying bnUSD...',
-              summary: `Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,
+              pending: t`Repaying bnUSD...`,
+              summary: t`Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,
             },
           );
           // close modal
@@ -210,15 +211,17 @@ const LoanPanel = () => {
       <FlexPanel bg="bg3" flexDirection="column" minHeight={195}>
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="h2">
-            Loan:{' '}
+            <Trans>Loan:</Trans>{' '}
             <Typography as="span" fontSize={18} fontWeight="normal">
-              US Dollars
+              <Trans>US Dollars</Trans>
             </Typography>
           </Typography>
         </Flex>
 
         <Flex flex={1} justifyContent="center" alignItems="center">
-          <Typography>To take out a loan, deposit collateral.</Typography>
+          <Typography>
+            <Trans>To take out a loan, deposit collateral.</Trans>
+          </Typography>
         </Flex>
       </FlexPanel>
     );
@@ -255,7 +258,7 @@ const LoanPanel = () => {
                   onClick={handleLoanUpdate}
                   fontSize={14}
                 >
-                  Confirm
+                  <Trans>Confirm</Trans>
                 </Button>
               </>
             ) : (
@@ -299,8 +302,8 @@ const LoanPanel = () => {
               <CurrencyField
                 editable={isAdjusting}
                 isActive
-                label="Borrowed"
-                tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                label={t`Borrowed`}
+                tooltipText={t`Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan.`}
                 noticeShow={isLessThanMinimum}
                 noticeText={'10 bnUSD minimum'}
                 value={formattedAmounts[Field.LEFT]}
@@ -311,8 +314,8 @@ const LoanPanel = () => {
               <CurrencyField
                 editable={isAdjusting}
                 isActive
-                label="Borrowed"
-                tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                label={t`Borrowed`}
+                tooltipText={t`Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan.`}
                 value={formattedAmounts[Field.LEFT]}
                 currency={'bnUSD'}
                 onUserInput={onFieldAInput}
@@ -324,8 +327,8 @@ const LoanPanel = () => {
             <CurrencyField
               editable={isAdjusting}
               isActive={false}
-              label="Available"
-              tooltipText="The amount of ICX available to deposit from your wallet."
+              label={t`Available`}
+              tooltipText={t`The amount of ICX available to deposit from your wallet.`}
               value={formattedAmounts[Field.RIGHT]}
               currency={'bnUSD'}
               onUserInput={onFieldBInput}
@@ -337,7 +340,7 @@ const LoanPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            {shouldBorrow ? 'Borrow Balanced Dollars?' : 'Repay Balanced Dollars?'}
+            {shouldBorrow ? t`Borrow Balanced Dollars?` : `Repay Balanced Dollars?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -360,17 +363,21 @@ const LoanPanel = () => {
             </Box>
           </Flex>
 
-          {shouldBorrow && <Typography textAlign="center">Includes a fee of {fee.dp(2).toFormat()} bnUSD.</Typography>}
+          {shouldBorrow && (
+            <Typography textAlign="center">
+              <Trans>Includes a fee of {fee.dp(2).toFormat()} bnUSD.</Trans>
+            </Typography>
+          )}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </TextButton>
                 <Button disabled={!hasEnoughICX} onClick={handleLoanConfirm} fontSize={14}>
-                  {shouldBorrow ? 'Borrow' : 'Repay'}
+                  <Trans>{shouldBorrow ? 'Borrow' : 'Repay'}</Trans>
                 </Button>
               </>
             )}
@@ -380,10 +387,14 @@ const LoanPanel = () => {
 
       <Modal isOpen={rebalancingModalOpen} onDismiss={() => toggleRebalancingModalOpen(false)} maxWidth={450}>
         <ModalContent noMessages>
-          <Typography>Rebalancing</Typography>
+          <Typography>
+            <Trans>Rebalancing</Trans>
+          </Typography>
           <RebalancingInfo />
           <BoxWithBorderTop>
-            <Button onClick={() => toggleRebalancingModalOpen(true)}>Understood</Button>
+            <Button onClick={() => toggleRebalancingModalOpen(true)}>
+              <Trans>Understood</Trans>
+            </Button>
           </BoxWithBorderTop>
         </ModalContent>
       </Modal>
@@ -404,25 +415,31 @@ export const RebalancingInfo = () => {
         fontWeight="bold"
         color="#FFF"
       >
-        While you borrow bnUSD, your collateral is used to keep its value stable
+        <Trans>While you borrow bnUSD, your collateral is used to keep its value stable</Trans>
       </Typography>
       <RebalancingColumn borderRight={true}>
         <InfoBelow />
         <Typography fontWeight="bold" color="#FFF">
-          If bnUSD is below $1
+          <Trans>If bnUSD is below $1</Trans>
         </Typography>
-        <Typography>Balanced sells collateral at a premium to repay some of your loan.</Typography>
+        <Typography>
+          <Trans>Balanced sells collateral at a premium to repay some of your loan.</Trans>
+        </Typography>
       </RebalancingColumn>
       <RebalancingColumn>
         <InfoAbove />
         <Typography fontWeight="bold" color="#FFF" marginTop="19px">
-          If bnUSD is above $1
+          <Trans>If bnUSD is above $1</Trans>
         </Typography>
-        <Typography>Balanced increases your loan to buy more collateral at a discount.</Typography>
+        <Typography>
+          <Trans>Balanced increases your loan to buy more collateral at a discount.</Trans>
+        </Typography>
       </RebalancingColumn>
       <Typography marginTop="25px">
-        You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD
-        pool. The smaller your loan, the less rebalancing affects you.
+        <Trans>
+          You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD
+          pool. The smaller your loan, the less rebalancing affects you.
+        </Trans>
       </Typography>
     </RebalancingInfoWrap>
   );

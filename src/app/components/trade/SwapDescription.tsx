@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -158,7 +159,9 @@ export default function SwapDescription() {
           </>
         ) : (
           <Flex justifyContent="center" alignItems="center" height="100%">
-            <Typography>No price chart available for this pair.</Typography>
+            <Typography>
+              <Trans>No price chart available for this pair.</Trans>
+            </Typography>
           </Flex>
         )}
       </ChartContainer>

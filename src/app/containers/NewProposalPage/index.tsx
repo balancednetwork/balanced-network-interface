@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -283,7 +284,7 @@ export function NewProposalPage() {
   };
 
   return (
-    <DefaultLayout title="Vote">
+    <DefaultLayout title={t`Vote`}>
       <Helmet>
         <title>Vote</title>
       </Helmet>
@@ -293,7 +294,7 @@ export function NewProposalPage() {
         <ProposalDetailContainer>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
-              Title
+              <Trans>Title</Trans>
             </Typography>
             <Typography variant="p" flex="1" textAlign="right" alignSelf="center">
               {`${title.length}/100`}
@@ -302,7 +303,7 @@ export function NewProposalPage() {
           <FieldInput type="text" onChange={onTitleInputChange} value={title} maxLength={100} />
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
-              Forum link
+              <Trans>Forum link</Trans>
             </Typography>
           </FieldContainer>
           <Tooltip
@@ -316,7 +317,7 @@ export function NewProposalPage() {
           </Tooltip>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
-              Description
+              <Trans>Description</Trans>
             </Typography>
             <Typography variant="p" flex="1" textAlign="right" alignSelf="center">
               {`${description.length}/500`}
@@ -341,11 +342,11 @@ export function NewProposalPage() {
             />
           )}
           <Typography variant="content" mt="25px" mb="25px" textAlign="center">
-            It costs 100 bnUSD to submit a proposal.
+            <Trans>It costs 100 bnUSD to submit a proposal.</Trans>
           </Typography>
           <div style={{ textAlign: 'center' }}>
             <Button disabled={!canSubmit} onClick={formSubmit}>
-              Submit
+              <Trans>Submit</Trans>
             </Button>
           </div>
           {account && !isStakeValid && minimumStakeBalance && (
@@ -358,17 +359,17 @@ export function NewProposalPage() {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            Submit proposal?
+            <Trans>Submit proposal?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            100 bnUSD
+            <Trans>100 bnUSD</Trans>
           </Typography>
 
           <Typography textAlign="center" marginTop="10px">
-            Voting will begin at 5pm UTC,
+            <Trans>Voting will begin at 5pm UTC,</Trans>
             <br />
-            and ends after 5 days.
+            <Trans>and ends after 5 days.</Trans>
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -376,10 +377,10 @@ export function NewProposalPage() {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Go back
+                  <Trans>Go back</Trans>
                 </TextButton>
                 <Button onClick={modalSubmit} fontSize={14} disabled={!hasEnoughICX}>
-                  Submit proposal
+                  <Trans>Submit proposal</Trans>
                 </Button>
               </>
             )}

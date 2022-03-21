@@ -1,0 +1,76 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language: \n"
+"Language-Team: \n"
+"Content-Type: \n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#: src/app/components/Header/index.tsx
+msgid "Change wallet"
+msgstr "Change wallet"
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Collateral"
+msgstr "Collateral"
+
+#: src/app/components/Header/index.tsx
+msgid "Copied"
+msgstr "Copied"
+
+#: src/app/components/Header/index.tsx
+msgid "Copy address"
+msgstr "Copy address"
+
+#: src/app/containers/HomePage/index.tsx
+#~ msgid "Home"
+#~ msgstr "Home"
+
+#: src/app/components/Header/index.tsx
+msgid "Sign in"
+msgstr "Sign in"
+
+#: src/app/containers/HomePage/index.tsx
+msgid "Sign in to use the Home page."
+msgstr "Sign in to use the Home page."
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Sign in with:"
+msgstr "Sign in with:"
+
+#: src/app/components/Header/index.tsx
+msgid "Sign out"
+msgstr "Sign out"
+
+#: src/app/containers/TradePage/index.tsx
+msgid "Swap"
+msgstr "Swap"
+
+#: src/app/containers/TradePage/index.tsx
+#: src/app/containers/TradePage/index.tsx
+msgid "Trade"
+msgstr "Trade"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
+msgstr "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
+
+#: src/app/components/WalletModal/index.tsx
+msgid "View disclaimer."
+msgstr "View disclaimer."
+
+#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/VotePage/index.tsx
+#: src/app/containers/VotePage/index.tsx
+msgid "Vote"
+msgstr "Vote"
+
+#: src/app/components/Header/index.tsx
+msgid "Wallet"
+msgstr "Wallet"

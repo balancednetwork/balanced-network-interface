@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
+import { Trans } from '@lingui/macro';
 import { BalancedJs } from 'packages/BalancedJs';
 import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
@@ -279,7 +280,7 @@ export default function WalletModal() {
       <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal}>
         <Box mx="auto" my={5}>
           <Typography textAlign="center" mb={5}>
-            Sign in with:
+            <Trans>Sign in with:</Trans>
           </Typography>
 
           <Flex alignItems="stretch" justifyContent="space-between" mx={3}>
@@ -297,9 +298,9 @@ export default function WalletModal() {
           </Flex>
 
           <Typography mx={4} mt={6} textAlign="center">
-            Use at your own risk. Project contributors are not liable for any lost or stolen funds.{' '}
+            <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
             <Link href="https://balanced.network/disclaimer/" target="_blank">
-              View disclaimer.
+              <Trans>View disclaimer.</Trans>
             </Link>
           </Typography>
         </Box>

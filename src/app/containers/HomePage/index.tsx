@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { Box } from 'rebass/styled-components';
@@ -52,7 +53,7 @@ export function HomePage() {
   return (
     <DefaultLayout>
       <Helmet>
-        <title>Home</title>
+        <title>{t`Home`}</title>
       </Helmet>
 
       {account ? (
@@ -65,7 +66,9 @@ export function HomePage() {
           <TransactionPanel />
         </Grid>
       ) : (
-        <SignInMessage>Sign in to use the Home page.</SignInMessage>
+        <SignInMessage>
+          <Trans>Sign in to use the Home page.</Trans>
+        </SignInMessage>
       )}
     </DefaultLayout>
   );

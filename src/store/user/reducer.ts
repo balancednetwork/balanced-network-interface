@@ -1,5 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { SupportedLocale } from 'constants/locales';
 import { DEFAULT_DEADLINE_FROM_NOW } from 'constants/misc';
 
 import { updateVersion } from '../global/actions';
@@ -16,6 +17,7 @@ import {
   updateOptimismAlphaAcknowledged,
   updateUserClientSideRouter,
   updateUserDarkMode,
+  updateUserLocale,
   updateUserDeadline,
   updateUserExpertMode,
   updateUserSlippageTolerance,
@@ -33,6 +35,7 @@ export interface UserState {
   optimismAlphaAcknowledged: boolean;
 
   userDarkMode: boolean | null; // the user's choice for dark mode or light mode
+  userLocale: SupportedLocale | null;
 
   userExpertMode: boolean;
 
@@ -74,6 +77,7 @@ export const initialState: UserState = {
   matchesDarkMode: false,
   optimismAlphaAcknowledged: false,
   userDarkMode: null,
+  userLocale: null,
   userExpertMode: false,
   userClientSideRouter: false,
   userHideClosedPositions: false,
@@ -127,6 +131,10 @@ export default createReducer(initialState, builder =>
     })
     .addCase(updateMatchesDarkMode, (state, action) => {
       state.matchesDarkMode = action.payload.matchesDarkMode;
+      state.timestamp = currentTimestamp();
+    })
+    .addCase(updateUserLocale, (state, action) => {
+      state.userLocale = action.payload.userLocale;
       state.timestamp = currentTimestamp();
     })
     .addCase(updateArbitrumAlphaAcknowledged, (state, action) => {

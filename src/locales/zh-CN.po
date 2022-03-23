@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-23 09:50\n"
+"PO-Revision-Date: 2022-03-23 13:28\n"
 "Last-Translator: \n"
 "Language: zh_CN\n"
 "Language-Team: Chinese Simplified\n"
@@ -54,7 +54,7 @@ msgstr ""
 
 #: src/app/containers/TradePage/index.tsx
 msgid "Swap"
-msgstr ""
+msgstr "兑换"
 
 #: src/app/containers/TradePage/index.tsx
 #: src/app/containers/TradePage/index.tsx

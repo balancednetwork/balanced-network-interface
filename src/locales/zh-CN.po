@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: balancednetwork\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-03-23 09:50\n"
+"Last-Translator: \n"
+"Language: zh_CN\n"
+"Language-Team: Chinese Simplified\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: balancednetwork\n"
+"X-Crowdin-Project-ID: 505260\n"
+"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-File: /feat.i18n/src/locales/en-US.po\n"
+"X-Crowdin-File-ID: 10\n"
+
+#: src/app/components/Header/index.tsx
+msgid "Change wallet"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Collateral"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Copied"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Copy address"
+msgstr ""
+
+#: src/app/containers/HomePage/index.tsx
+#~ msgid "Home"
+#~ msgstr "Home"
+
+#: src/app/components/Header/index.tsx
+msgid "Sign in"
+msgstr ""
+
+#: src/app/containers/HomePage/index.tsx
+msgid "Sign in to use the Home page."
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Sign in with:"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Sign out"
+msgstr ""
+
+#: src/app/containers/TradePage/index.tsx
+msgid "Swap"
+msgstr ""
+
+#: src/app/containers/TradePage/index.tsx
+#: src/app/containers/TradePage/index.tsx
+msgid "Trade"
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "View disclaimer."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/VotePage/index.tsx
+#: src/app/containers/VotePage/index.tsx
+msgid "Vote"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Wallet"
+msgstr ""
+

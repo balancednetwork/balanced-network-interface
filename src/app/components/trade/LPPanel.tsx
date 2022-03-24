@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
@@ -70,7 +71,7 @@ function WalletSection() {
     return (
       <Flex flexDirection="row" justifyContent="center" alignItems="center">
         <Typography>
-          {`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol}`}
+          {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol}`}
         </Typography>
       </Flex>
     );
@@ -78,7 +79,7 @@ function WalletSection() {
     return (
       <Flex flexDirection="row" justifyContent="center" alignItems="center">
         <Typography>
-          {`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol} /
+          {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol} /
                       ${formattedRemains[Field.CURRENCY_B]} ${currencies[Field.CURRENCY_B]?.symbol}`}
         </Typography>
       </Flex>
@@ -223,7 +224,9 @@ export default function LPPanel() {
         <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <AutoColumn gap="md">
             <AutoColumn gap="md">
-              <Typography variant="h2">Supply liquidity</Typography>
+              <Typography variant="h2">
+                <Trans>Supply liquidity</Trans>
+              </Typography>
             </AutoColumn>
 
             <AutoColumn gap="md">
@@ -311,12 +314,12 @@ export default function LPPanel() {
             <Flex justifyContent="center">
               {isValid ? (
                 <Button color="primary" onClick={handleSupply}>
-                  {pairState === PairState.EXISTS && 'Supply'}
-                  {pairState === PairState.NOT_EXISTS && 'Create pool'}
+                  {pairState === PairState.EXISTS && t`Supply`}
+                  {pairState === PairState.NOT_EXISTS && t`Create pool`}
                 </Button>
               ) : (
                 <Button disabled={!!account} color="primary" onClick={handleConnectToWallet}>
-                  {account ? error : 'Supply'}
+                  {account ? error : t`Supply`}
                 </Button>
               )}
             </Flex>

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -222,9 +223,11 @@ export default function SwapPanel() {
       <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
         <AutoColumn gap="md">
           <Flex alignItems="center" justifyContent="space-between">
-            <Typography variant="h2">Swap</Typography>
+            <Typography variant="h2">
+              <Trans>Swap</Trans>
+            </Typography>
             <Typography as="div" hidden={!account}>
-              {'Wallet: '}
+              <Trans>Wallet: </Trans>
               {`${currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' })} 
                 ${currencies[Field.INPUT]?.symbol}`}
             </Typography>
@@ -251,7 +254,7 @@ export default function SwapPanel() {
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">For</Typography>
             <Typography as="div" hidden={!account}>
-              {'Wallet: '}
+              <Trans>Wallet: </Trans>
               {`${currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })}
                 ${currencies[Field.OUTPUT]?.symbol}`}
             </Typography>
@@ -270,13 +273,17 @@ export default function SwapPanel() {
 
         <AutoColumn gap="5px" mt={5}>
           <Flex alignItems="center" justifyContent="space-between">
-            <Typography>Price impact</Typography>
+            <Typography>
+              <Trans>Price impact</Trans>
+            </Typography>
 
             <Typography>{priceImpact}</Typography>
           </Flex>
 
           <Flex alignItems="center" justifyContent="space-between">
-            <Typography>Minimum to receive</Typography>
+            <Typography>
+              <Trans>Minimum to receive</Trans>
+            </Typography>
 
             <ClickAwayListener onClickAway={closeDropdown}>
               <div>
@@ -293,7 +300,9 @@ export default function SwapPanel() {
                 <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                   <Box padding={5} bg="bg4" width={328}>
                     <Flex alignItems="center" justifyContent="space-between" mb={2}>
-                      <Typography>Exchange rate</Typography>
+                      <Typography>
+                        <Trans>Exchange rate</Trans>
+                      </Typography>
 
                       {trade && (
                         <TradePrice
@@ -305,13 +314,17 @@ export default function SwapPanel() {
                     </Flex>
 
                     <Flex alignItems="center" justifyContent="space-between" mb={2}>
-                      <Typography>Route</Typography>
+                      <Typography>
+                        <Trans>Route</Trans>
+                      </Typography>
 
                       <Typography textAlign="right">{trade ? <TradeRoute route={trade.route} /> : '-'}</Typography>
                     </Flex>
 
                     <Flex alignItems="center" justifyContent="space-between" mb={2}>
-                      <Typography>Fee</Typography>
+                      <Typography>
+                        <Trans>Fee</Trans>
+                      </Typography>
 
                       <Typography textAlign="right">
                         {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
@@ -320,8 +333,8 @@ export default function SwapPanel() {
 
                     <Flex alignItems="baseline" justifyContent="space-between">
                       <Typography as="span">
-                        Slippage tolerance
-                        <QuestionHelper text="If the price slips by more than this amount, your swap will fail." />
+                        <Trans>Slippage tolerance</Trans>
+                        <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} />
                       </Typography>
                       <SlippageSetting rawSlippage={slippageTolerance} setRawSlippage={setSlippageTolerance} />
                     </Flex>
@@ -334,7 +347,7 @@ export default function SwapPanel() {
           <Flex justifyContent="center" mt={4}>
             {isValid ? (
               <Button color="primary" onClick={handleSwap}>
-                Swap
+                <Trans>Swap</Trans>
               </Button>
             ) : (
               <Button disabled={!!account} color="primary" onClick={handleSwap}>
@@ -348,7 +361,7 @@ export default function SwapPanel() {
       <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>
         <ModalContent>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
-            Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
+            <Trans>Swap</Trans> {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
@@ -390,7 +403,7 @@ export default function SwapPanel() {
               <>
                 <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
                 <Button onClick={handleSwapConfirm} disabled={!hasEnoughICX}>
-                  Swap
+                  <Trans>Swap</Trans>
                 </Button>
               </>
             )}

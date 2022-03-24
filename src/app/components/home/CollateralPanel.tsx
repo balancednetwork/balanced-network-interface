@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
@@ -118,7 +119,7 @@ const CollateralPanel = () => {
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 
-  const buttonText = stakedICXAmount.isZero() ? 'Deposit' : 'Adjust';
+  const buttonText = stakedICXAmount.isZero() ? t`Deposit` : t`Adjust`;
 
   // collateral confirm modal logic & value
   const [open, setOpen] = React.useState(false);
@@ -161,8 +162,8 @@ const CollateralPanel = () => {
         addTransaction(
           { hash },
           {
-            pending: 'Depositing collateral...',
-            summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
+            pending: t`Depositing collateral...`,
+            summary: t`Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
           },
         );
 
@@ -188,8 +189,8 @@ const CollateralPanel = () => {
         addTransaction(
           { hash }, //
           {
-            pending: 'Withdrawing collateral...',
-            summary: `${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
+            pending: t`Withdrawing collateral...`,
+            summary: t`${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
           },
         );
 
@@ -242,16 +243,18 @@ const CollateralPanel = () => {
     <>
       <BoxPanel bg="bg3">
         <Flex justifyContent="space-between" alignItems={isSuperSmall ? 'flex-start' : 'center'}>
-          <Typography variant="h2">Collateral</Typography>
+          <Typography variant="h2">
+            <Trans>Collateral</Trans>
+          </Typography>
 
           <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
             {isAdjusting ? (
               <>
                 <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </TextButton>
                 <Button onClick={toggleOpen} fontSize={14}>
-                  Confirm
+                  <Trans>Confirm</Trans>
                 </Button>
               </>
             ) : (
@@ -311,8 +314,8 @@ const CollateralPanel = () => {
             <CurrencyField
               editable={isAdjusting}
               isActive={false}
-              label="Wallet"
-              tooltipText="The amount of ICX available to deposit from your wallet."
+              label={t`Wallet`}
+              tooltipText={t`The amount of ICX available to deposit from your wallet.`}
               value={formattedAmounts[Field.RIGHT]}
               currency={'ICX'}
               maxValue={totalICXAmount}
@@ -325,7 +328,7 @@ const CollateralPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            {shouldDeposit ? 'Deposit ICON collateral?' : 'Withdraw ICON collateral?'}
+            {shouldDeposit ? t`Deposit ICON collateral?` : t`Withdraw ICON collateral?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -338,7 +341,9 @@ const CollateralPanel = () => {
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {beforeAmount.dp(2).toFormat() + ' ICX'}
               </Typography>
@@ -363,10 +368,10 @@ const CollateralPanel = () => {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </TextButton>
                 <Button onClick={handleCollateralConfirm} fontSize={14} disabled={!hasEnoughICX}>
-                  {shouldDeposit ? 'Deposit' : 'Withdraw'}
+                  {shouldDeposit ? t`Deposit` : t`Withdraw`}
                 </Button>
               </>
             )}

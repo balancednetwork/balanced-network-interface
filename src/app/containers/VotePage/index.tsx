@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
@@ -25,15 +26,21 @@ export function VotePage() {
   };
 
   return (
-    <DefaultLayout title="Vote">
+    <DefaultLayout title={t`Vote`}>
       <Helmet>
-        <title>Vote</title>
+        <title>{t`Vote`}</title>
       </Helmet>
 
       <BoxPanel bg="bg2" width="100%">
         <Flex justifyContent="space-between" mb={5}>
-          <Typography variant="h2">Proposals</Typography>
-          {account && <ButtonLink to="/vote/new-proposal/">New proposal</ButtonLink>}
+          <Typography variant="h2">
+            <Trans>Proposals</Trans>
+          </Typography>
+          {account && (
+            <ButtonLink to="/vote/new-proposal/">
+              <Trans>New proposal</Trans>
+            </ButtonLink>
+          )}
         </Flex>
 
         {proposals ? (

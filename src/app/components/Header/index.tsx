@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -116,7 +117,9 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
         {!account && (
           <Flex alignItems="center">
-            <Button onClick={toggleWalletModal}>Sign in</Button>
+            <Button onClick={toggleWalletModal}>
+              <Trans>Sign in</Trans>
+            </Button>
           </Flex>
         )}
 
@@ -124,10 +127,10 @@ export default React.memo(function Header(props: { title?: string; className?: s
           <Flex alignItems="center">
             <WalletInfo>
               <Typography variant="p" textAlign="right">
-                Wallet
+                <Trans>Wallet</Trans>
               </Typography>
               {account && (
-                <MouseoverTooltip text={isCopied ? 'Copied' : 'Copy address'} placement="left" noArrowAndBorder>
+                <MouseoverTooltip text={isCopied ? t`Copied` : t`Copy address`} placement="left" noArrowAndBorder>
                   <StyledAddress
                     onMouseLeave={() => {
                       setTimeout(() => updateCopyState(false), 250);
@@ -149,8 +152,12 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <WalletMenu>
-                      <ChangeWalletButton onClick={handleChangeWallet}>Change wallet</ChangeWalletButton>
-                      <WalletMenuButton onClick={handleDisconnectWallet}>Sign out</WalletMenuButton>
+                      <ChangeWalletButton onClick={handleChangeWallet}>
+                        <Trans>Change wallet</Trans>
+                      </ChangeWalletButton>
+                      <WalletMenuButton onClick={handleDisconnectWallet}>
+                        <Trans>Sign out</Trans>
+                      </WalletMenuButton>
                     </WalletMenu>
                   </DropdownPopper>
                 </div>

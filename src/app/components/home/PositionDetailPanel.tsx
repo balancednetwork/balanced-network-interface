@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -170,12 +171,14 @@ const PositionDetailPanel = () => {
     <ActivityPanel bg="bg2">
       <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 'initial', 350]}>
         <Typography variant="h2" mb={5}>
-          Position details
+          <Trans>Position details</Trans>
         </Typography>
 
         <Flex>
           <Box flex={1}>
-            <Typography mb={1}>Collateral</Typography>
+            <Typography mb={1}>
+              <Trans>Collateral</Trans>
+            </Typography>
             <Typography variant="p" fontSize={18}>
               ${collateralInputAmountInUSD.dp(2).toFormat()}
             </Typography>
@@ -192,16 +195,17 @@ const PositionDetailPanel = () => {
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
-          The current ICX price is <span className="white">${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
+          <Trans>The current ICX price is</Trans> <span className="white">${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
         </Typography>
         <Typography mb={2}>
-          The current bnUSD price is <span className="white">{rates && `$${rates['bnUSD']?.dp(4).toFormat()}`}</span>.
+          <Trans>The current bnUSD price is</Trans>{' '}
+          <span className="white">{rates && `$${rates['bnUSD']?.dp(4).toFormat()}`}</span>.
         </Typography>
       </BoxPanel>
 
       <BoxPanel bg="bg2" flex={1}>
         <Typography variant="h3">
-          Risk ratio{' '}
+          <Trans>Risk ratio</Trans>{' '}
           {!smallSp && (
             <QuestionWrapper onClick={open} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
               <QuestionIcon width={14} style={{ marginTop: -5 }} />
@@ -223,12 +227,14 @@ const PositionDetailPanel = () => {
             <Locked warned={isLockWarning} pos={pos}>
               <MetaData as="dl" style={{ textAlign: 'right' }}>
                 <Tooltip
-                  text="You can’t withdraw any collateral if you go beyond this threshold."
+                  text={t`You can't withdraw any collateral if you go beyond this threshold.`}
                   show={show}
                   placement="top-end"
                   forcePlacement={true}
                 >
-                  <dt>All collateral locked</dt>
+                  <dt>
+                    <Trans>All collateral locked</Trans>
+                  </dt>
                 </Tooltip>
                 <dd>${lockThresholdPrice.toFixed(3)}</dd>
               </MetaData>

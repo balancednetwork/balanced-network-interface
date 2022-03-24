@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { useIconReact } from 'packages/icon-react';
@@ -185,9 +186,9 @@ export function ProposalPage() {
   };
 
   return (
-    <DefaultLayout title="Vote">
+    <DefaultLayout title={t`Vote`}>
       <Helmet>
-        <title>Vote</title>
+        <title>{t`Vote`}</title>
       </Helmet>
       <ProposalContainer>
         {proposal ? (
@@ -242,7 +243,7 @@ export function ProposalPage() {
               <Flex flex={1} flexDirection="column" width="100%" sx={{ rowGap: '15px' }}>
                 <Flex alignItems="center">
                   <Typography fontWeight="bold" variant="p" mr="5px">
-                    Approve
+                    <Trans>Approve</Trans>
                   </Typography>
                   <Typography opacity="0.85" mr="5px" fontWeight="bold">
                     {proposal?.for}%
@@ -258,7 +259,7 @@ export function ProposalPage() {
 
                 <Flex alignItems="center">
                   <Typography fontWeight="bold" variant="p" mr="5px">
-                    Reject
+                    <Trans>Reject</Trans>
                   </Typography>
                   <Typography opacity="0.85" mr="5px" fontWeight="bold">
                     {proposal?.against}%
@@ -276,7 +277,7 @@ export function ProposalPage() {
                   <Flex flexDirection="column">
                     <Flex alignItems="flex-end" flexWrap="wrap" mb={1}>
                       <Typography variant="h3" marginRight={2}>
-                        You approved
+                        <Trans>You approved</Trans>
                       </Typography>
                       {isActive && account && (
                         <ChangeVoteButton onClick={handleChangeVote}>Change vote</ChangeVoteButton>
@@ -309,7 +310,7 @@ export function ProposalPage() {
             <Flex flexDirection="column">
               <Flex alignItems="center">
                 <Typography fontWeight="bold" variant="p" mr="5px">
-                  Approve
+                  <Trans>Approve</Trans>
                 </Typography>
                 <Typography opacity="0.85" mr="5px" fontWeight="bold">
                   {proposal?.for}%
@@ -327,14 +328,14 @@ export function ProposalPage() {
                 {isActive && account && !isSmallScreen && (
                   <Column>
                     <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
-                      Approve
+                      <Trans>Approve</Trans>
                     </Button>
                   </Column>
                 )}
               </Flex>
               <Flex alignItems="center">
                 <Typography fontWeight="bold" variant="p" mr="5px">
-                  Reject
+                  <Trans>Reject</Trans>
                 </Typography>
                 <Typography opacity="0.85" mr="5px" fontWeight="bold">
                   {proposal?.against}%
@@ -349,7 +350,7 @@ export function ProposalPage() {
                 {isActive && account && !isSmallScreen && (
                   <Column>
                     <AlertButton ml="20px" width="150px" color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
-                      Reject
+                      <Trans>Reject</Trans>
                     </AlertButton>
                   </Column>
                 )}
@@ -360,10 +361,10 @@ export function ProposalPage() {
           {isActive && account && isSmallScreen && !hasUserVoted ? (
             <Flex marginTop={2}>
               <Button width="50%" marginRight={2} onClick={() => setModalStatus(ModalStatus.Approve)}>
-                Approve
+                <Trans>Approve</Trans>
               </Button>
               <AlertButton width="50%" marginLeft={2} color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
-                Reject
+                <Trans>Reject</Trans>
               </AlertButton>
             </Flex>
           ) : null}
@@ -395,7 +396,7 @@ export function ProposalPage() {
 
         <BoxPanel bg="bg2" my={10}>
           <Typography variant="h2" mb="20px">
-            Description
+            <Trans>Description</Trans>
           </Typography>
           <Typography variant="p" mb="20px">
             {proposal ? (
@@ -423,7 +424,7 @@ export function ProposalPage() {
                   href={additionalInfo?.hash && getTrackerLink(networkId, additionalInfo?.hash, 'transaction')}
                   target="_blank"
                 >
-                  Transaction
+                  <Trans>Transaction</Trans>
                 </InfoLink>
                 <ExternalIcon width="15" height="15" style={{ marginLeft: 5 }} />
               </>

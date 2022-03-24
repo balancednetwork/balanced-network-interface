@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans, t } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { Flex, Box } from 'rebass/styled-components';
@@ -29,17 +30,21 @@ export function TradePage() {
   };
 
   return (
-    <DefaultLayout title="Trade">
+    <DefaultLayout title={t`Trade`}>
       <Helmet>
-        <title>Trade</title>
+        <title>{t`Trade`}</title>
       </Helmet>
 
       <Box flex={1}>
         <Flex mb={10} flexDirection="column">
           <Flex alignItems="center" justifyContent="space-between">
             <Tabs value={value} onChange={handleTabClick}>
-              <Tab>Swap</Tab>
-              <Tab>Supply liquidity</Tab>
+              <Tab>
+                <Trans>Swap</Trans>
+              </Tab>
+              <Tab>
+                <Trans>Supply liquidity</Trans>
+              </Tab>
             </Tabs>
           </Flex>
 

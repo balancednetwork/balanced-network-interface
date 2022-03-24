@@ -8,6 +8,7 @@ import * as ReactDOM from 'react-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import * as serviceWorker from 'serviceWorker';
 
 // Use consistent styling
@@ -18,7 +19,7 @@ import { App } from 'app';
 import store from 'store';
 
 // Initialize languages
-import './locales/i18n';
+import { LanguageProvider } from './i18n';
 
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
 
@@ -40,23 +41,20 @@ BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN }); // equivalent
 
 ReactDOM.render(
   <Provider store={store}>
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
-      </QueryClientProvider>
-    </HelmetProvider>
+    <BrowserRouter>
+      <HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <LanguageProvider>
+            <React.StrictMode>
+              <App />
+            </React.StrictMode>
+          </LanguageProvider>
+        </QueryClientProvider>
+      </HelmetProvider>
+    </BrowserRouter>
   </Provider>,
   MOUNT_NODE,
 );
-
-// Hot reloadable translation json files
-if (module.hot) {
-  module.hot.accept(['./locales/i18n'], () => {
-    // No need to render the App again because i18next works with the hooks
-  });
-}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

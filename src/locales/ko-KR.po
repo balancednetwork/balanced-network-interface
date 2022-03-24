@@ -1,0 +1,445 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: balancednetwork\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2022-03-24 05:15\n"
+"Last-Translator: \n"
+"Language: ko_KR\n"
+"Language-Team: Korean\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: balancednetwork\n"
+"X-Crowdin-Project-ID: 505260\n"
+"X-Crowdin-Language: ko\n"
+"X-Crowdin-File: en-US.po\n"
+"X-Crowdin-File-ID: 12\n"
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "100 bnUSD"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+msgid "Adjust"
+msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "All collateral locked"
+msgstr ""
+
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Approve"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Available"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Balanced increases your loan to buy more collateral at a discount."
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Balanced sells collateral at a premium to repay some of your loan."
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Before"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Borrow"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Borrow Balanced Dollars?"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+msgid "Borrowed"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Borrowed {0} bnUSD."
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Borrowing bnUSD..."
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Cancel"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Change wallet"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "Collateral"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+msgid "Confirm"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Copied"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Copy address"
+msgstr ""
+
+#: src/app/components/trade/LPPanel.tsx
+msgid "Create pool"
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Daily rewards"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Deposit"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Deposit ICON collateral?"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Deposited {0} ICX as collateral."
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Depositing collateral..."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Description"
+msgstr ""
+
+#: src/app/components/trade/SwapPanel.tsx
+msgid "Exchange rate"
+msgstr ""
+
+#: src/app/components/trade/SwapPanel.tsx
+msgid "Fee"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Forum link"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Go back"
+msgstr ""
+
+#: src/app/containers/HomePage/index.tsx
+msgid "Home"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "If bnUSD is above $1"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "If bnUSD is below $1"
+msgstr ""
+
+#: src/app/components/trade/SwapPanel.tsx
+msgid "If the price slips by more than this amount, your swap will fail."
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Includes a fee of {0} bnUSD."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "It costs 100 bnUSD to submit a proposal."
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Liquidity details"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Loan:"
+msgstr ""
+
+#: src/app/components/trade/SwapPanel.tsx
+msgid "Minimum to receive"
+msgstr ""
+
+#: src/app/containers/VotePage/index.tsx
+msgid "New proposal"
+msgstr ""
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "No price chart available for this pair."
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Pool share"
+msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "Position details"
+msgstr ""
+
+#: src/app/components/trade/SwapPanel.tsx
+msgid "Price impact"
+msgstr ""
+
+#: src/app/containers/VotePage/index.tsx
+msgid "Proposals"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Rebalancing"
+msgstr ""
+
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Reject"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Repaid {0} bnUSD."
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Repaying bnUSD..."
+msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "Risk ratio"
+msgstr ""
+
+#: src/app/components/trade/SwapPanel.tsx
+msgid "Route"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Sign in"
+msgstr ""
+
+#: src/app/containers/HomePage/index.tsx
+msgid "Sign in to use the Home page."
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Sign in with:"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Sign out"
+msgstr ""
+
+#: src/app/components/trade/SwapPanel.tsx
+msgid "Slippage tolerance"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Submit"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Submit proposal"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Submit proposal?"
+msgstr ""
+
+#: src/app/components/trade/LPPanel.tsx
+#: src/app/components/trade/LPPanel.tsx
+msgid "Supply"
+msgstr ""
+
+#: src/app/components/trade/LPPanel.tsx
+#: src/app/containers/TradePage/index.tsx
+msgid "Supply liquidity"
+msgstr ""
+
+#: src/app/components/trade/SwapPanel.tsx
+#: src/app/components/trade/SwapPanel.tsx
+#: src/app/components/trade/SwapPanel.tsx
+#: src/app/components/trade/SwapPanel.tsx
+#: src/app/containers/TradePage/index.tsx
+msgid "Swap"
+msgstr "스왑"
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+msgid "The amount of ICX available to deposit from your wallet."
+msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "The current ICX price is"
+msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "The current bnUSD price is"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Title"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "To take out a loan, deposit collateral."
+msgstr ""
+
+#: src/app/containers/TradePage/index.tsx
+#: src/app/containers/TradePage/index.tsx
+msgid "Trade"
+msgstr ""
+
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Transaction"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "US Dollars"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Understood"
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "View disclaimer."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/VotePage/index.tsx
+#: src/app/containers/VotePage/index.tsx
+msgid "Vote"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Voting will begin at 5pm UTC,"
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Wallet"
+msgstr ""
+
+#: src/app/components/trade/SwapPanel.tsx
+#: src/app/components/trade/SwapPanel.tsx
+msgid "Wallet:"
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Wallet:\n"
+"{0} {1} /\n"
+"{2} {3}"
+msgstr ""
+
+#: src/app/components/trade/LPPanel.tsx
+msgid "Wallet: {0} {1}"
+msgstr ""
+
+#: src/app/components/trade/LPPanel.tsx
+msgid "Wallet: {0} {1} /\n"
+"{2} {3}"
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Withdraw"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Withdraw ICON collateral?"
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Withdraw liquidity?"
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Withdraw sICX?"
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Withdraw:"
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Withdrawing ICX"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Withdrawing collateral..."
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "Withdrawing sICX"
+msgstr ""
+
+#: src/app/containers/ProposalPage/index.tsx
+msgid "You approved"
+msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "You can't withdraw any collateral if you go beyond this threshold."
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD pool. The smaller your loan, the less rebalancing affects you."
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+msgid "Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "and ends after 5 days."
+msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "{0}"
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "{0} ICX added to your wallet."
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "{0} sICX added to your wallet."
+msgstr ""
+

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-24 05:15\n"
+"PO-Revision-Date: 2022-03-24 10:25\n"
 "Last-Translator: \n"
 "Language: zh_CN\n"
 "Language-Team: Chinese Simplified\n"
@@ -36,8 +36,16 @@ msgstr ""
 msgid "Approve"
 msgstr ""
 
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Assets to send"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Available"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Balance Tokens"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
@@ -77,11 +85,31 @@ msgstr ""
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Cancel"
 msgstr ""
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claim"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claim (1 of {count})"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claim Balance Tokens?"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claim network fees?"
 msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
@@ -94,6 +122,12 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
+#: src/app/components/LedgerConfirmMessage/index.tsx
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Confirm the transaction on your Ledger."
+msgstr ""
+
 #: src/app/components/Header/index.tsx
 msgid "Copied"
 msgstr ""
@@ -102,8 +136,17 @@ msgstr ""
 msgid "Copy address"
 msgstr ""
 
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Create liquidity pool?"
+msgstr ""
+
 #: src/app/components/trade/LPPanel.tsx
+#: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Create pool"
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Creating pool"
 msgstr ""
 
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -164,8 +207,17 @@ msgstr ""
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr ""
 
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "In contract"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Includes a fee of {0} bnUSD."
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Ineligible"
 msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
@@ -177,11 +229,15 @@ msgid "Liquidity details"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-msgid "Loan:"
+msgid "Loan"
 msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Minimum to receive"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Network fees"
 msgstr ""
 
 #: src/app/containers/VotePage/index.tsx
@@ -190,6 +246,16 @@ msgstr ""
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Not now"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Pending"
 msgstr ""
 
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -219,12 +285,28 @@ msgstr ""
 msgid "Reject"
 msgstr ""
 
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Remove"
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Remove your assets to cancel this transaction."
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Removing"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaid {0} bnUSD."
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Rewards"
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -235,12 +317,24 @@ msgstr ""
 msgid "Route"
 msgstr ""
 
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Send"
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Sending"
+msgstr ""
+
 #: src/app/components/Header/index.tsx
 msgid "Sign in"
 msgstr ""
 
 #: src/app/containers/HomePage/index.tsx
 msgid "Sign in to use the Home page."
+msgstr ""
+
+#: src/app/components/trade/LPDescription.tsx
+msgid "Sign in to view your liquidity details."
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
@@ -269,12 +363,25 @@ msgstr ""
 
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/LPPanel.tsx
+#: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supply"
 msgstr ""
 
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/containers/TradePage/index.tsx
 msgid "Supply liquidity"
+msgstr ""
+
+#: src/app/components/trade/LPDescription.tsx
+msgid "Supply liquidity for these assets in any quantity to create a new pool."
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Supply liquidity?"
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Supplying"
 msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
@@ -298,12 +405,39 @@ msgstr ""
 msgid "The current bnUSD price is"
 msgstr ""
 
+#: src/app/components/trade/LPDescription.tsx
+msgid "There's no liquidity pool for this pair yet."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
 msgstr ""
 
+#: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
+msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
+msgid "To earn network fees, stake BALN from your wallet."
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "To receive BALN, you must have ICX in the pool at 1pm Eastern each day."
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
+msgstr ""
+
+#: src/app/components/trade/LPDescription.tsx
+msgid "Total daily rewards"
+msgstr ""
+
+#: src/app/components/trade/LPDescription.tsx
+msgid "Total supply"
 msgstr ""
 
 #: src/app/containers/TradePage/index.tsx
@@ -417,8 +551,16 @@ msgstr ""
 msgid "You can't withdraw any collateral if you go beyond this threshold."
 msgstr ""
 
+#: src/app/components/CurrencyBalanceErrorMessage/index.tsx
+msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD pool. The smaller your loan, the less rebalancing affects you."
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Your ICX will be locked for 24 hours."
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
@@ -426,16 +568,53 @@ msgstr ""
 msgid "Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
 msgstr ""
 
+#: src/app/components/trade/LPDescription.tsx
+msgid "Your daily rewards"
+msgstr ""
+
+#: src/app/components/trade/LPDescription.tsx
+msgid "Your supply"
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "and ends after 5 days."
+msgstr ""
+
+#: src/app/components/trade/LPDescription.tsx
+msgid "liquidity pool"
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "then click Supply."
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "then create the pool."
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "{0}"
 msgstr ""
 
+#: src/app/components/trade/LPDescription.tsx
+msgid "{0} / {1} liquidity pool"
+msgstr ""
+
+#: src/app/components/trade/LPDescription.tsx
+msgid "{0} / {1} liquidity pool\n"
+"{2}"
+msgstr ""
+
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "{0} ICX added to your wallet."
+msgstr ""
+
+#: src/app/components/trade/LPDescription.tsx
+msgid "{0} liquidity pool"
+msgstr ""
+
+#: src/app/components/trade/LPDescription.tsx
+msgid "{0} liquidity pool{1}"
 msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx

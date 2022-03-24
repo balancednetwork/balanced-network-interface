@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
@@ -25,7 +26,9 @@ const RewardsPanel = () => {
     <div>
       <BoxPanel bg="bg2">
         <Flex alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h2">Rewards</Typography>
+          <Typography variant="h2">
+            <Trans>Rewards</Trans>
+          </Typography>
         </Flex>
 
         <Flex>
@@ -98,8 +101,10 @@ const RewardSection = () => {
       return (
         <>
           <Typography variant="p" as="div">
-            Ineligible
-            <QuestionHelper text="To earn Balanced rewards, take out a loan or supply liquidity on the Trade page." />
+            <Trans>Ineligible</Trans>
+            <QuestionHelper
+              text={t`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
+            />
           </Typography>
         </>
       );
@@ -107,8 +112,10 @@ const RewardSection = () => {
       return (
         <>
           <Typography variant="p" as="div">
-            Pending
-            <QuestionHelper text="To earn Balanced rewards, take out a loan or supply liquidity on the Trade page." />
+            <Trans>Pending</Trans>
+            <QuestionHelper
+              text={t`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
+            />
           </Typography>
         </>
       );
@@ -122,7 +129,7 @@ const RewardSection = () => {
             </Typography>
           </Typography>
           <Button mt={2} onClick={toggleOpen}>
-            Claim
+            <Trans>Claim</Trans>
           </Button>
         </>
       );
@@ -140,14 +147,14 @@ const RewardSection = () => {
   return (
     <Flex flex={1} flexDirection="column" alignItems="center" className="border-right">
       <Typography variant="p" mb={2}>
-        Balance Tokens
+        <Trans>Balance Tokens</Trans>
       </Typography>
       {reward && getRewardsUI()}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb={1}>
-            Claim Balance Tokens?
+            <Trans>Claim Balance Tokens?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -170,17 +177,19 @@ const RewardSection = () => {
             </Box>
           </Flex>
 
-          <Typography textAlign="center">To earn network fees, stake BALN from your wallet.</Typography>
+          <Typography textAlign="center">
+            <Trans>To earn network fees, stake BALN from your wallet.</Trans>
+          </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Not now
+                  <Trans>Not now</Trans>
                 </TextButton>
                 <Button onClick={handleRewardClaim} fontSize={14} disabled={!hasEnoughICX}>
-                  Claim
+                  <Trans>Claim</Trans>
                 </Button>
               </>
             )}
@@ -258,8 +267,8 @@ const NetworkFeeSection = () => {
     if (hasNetworkFees && !hasFee) {
       return (
         <Typography variant="p" as="div">
-          Pending
-          <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
+          <Trans>Pending</Trans>
+          <QuestionHelper text={t`To earn network fees, stake BALN from your wallet.`} />
         </Typography>
       );
     } else if (hasFee) {
@@ -278,15 +287,15 @@ const NetworkFeeSection = () => {
               ))}
 
           <Button mt={2} onClick={toggleOpen}>
-            {count && count > 1 ? `Claim (1 of ${count})` : 'Claim'}
+            {count && count > 1 ? t`Claim (1 of ${count})` : t`Claim`}
           </Button>
         </>
       );
     } else {
       return (
         <Typography variant="p" as="div">
-          Ineligible
-          <QuestionHelper text="To earn network fees, stake BALN from your wallet." />
+          <Trans>Ineligible</Trans>
+          <QuestionHelper text={t`To earn network fees, stake BALN from your wallet.`} />
         </Typography>
       );
     }
@@ -295,14 +304,14 @@ const NetworkFeeSection = () => {
   return (
     <Flex flex={1} flexDirection="column" alignItems="center">
       <Typography variant="p" mb={2} as="div">
-        Network fees
+        <Trans>Network fees</Trans>
       </Typography>
       {getNetworkFeesUI()}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb={1}>
-            Claim network fees?
+            <Trans>Claim network fees?</Trans>
           </Typography>
 
           <Flex flexDirection="column" alignItems="center" mt={2}>
@@ -324,10 +333,10 @@ const NetworkFeeSection = () => {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Not now
+                  <Trans>Not now</Trans>
                 </TextButton>
                 <Button onClick={handleFeeClaim} fontSize={14} disabled={!hasEnoughICX}>
-                  Claim
+                  <Trans>Claim</Trans>
                 </Button>
               </>
             )}

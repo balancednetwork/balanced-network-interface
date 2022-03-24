@@ -211,7 +211,7 @@ const LoanPanel = () => {
       <FlexPanel bg="bg3" flexDirection="column" minHeight={195}>
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="h2">
-            <Trans>Loan:</Trans>{' '}
+            <Trans>Loan</Trans>:{' '}
             <Typography as="span" fontSize={18} fontWeight="normal">
               <Trans>US Dollars</Trans>
             </Typography>

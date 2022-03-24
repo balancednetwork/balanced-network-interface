@@ -1,10 +1,10 @@
 name: Crowdin Upload
 
-# on any push to production, we upload the translations to be translated
+# on any push to master, we upload the translations to be translated
 on:
   push:
     branches:
-      - production
+      - master
 
 jobs:
   synchronize-with-crowdin:

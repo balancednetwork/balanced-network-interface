@@ -114,7 +114,7 @@
     "prettify": "prettier --write",
     "extract-messages": "i18next-scanner --config=internals/extractMessages/i18next-scanner.config.js"
   },
-  "proxy": "https://balanced.geometry.io",
+  "proxy": "https://balanced.sudoblock.io",
   "browserslist": {
     "production": [
       ">0.2%",

@@ -4,7 +4,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { NotificationPending } from 'app/components/Notification/TransactionNotification';
+import { NotificationPending, NotificationError } from 'app/components/Notification/TransactionNotification';
 import { getTrackerLink } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
@@ -33,6 +33,13 @@ export function useTransactionAdder(): (
 
       const { hash } = response;
       if (!hash) {
+        toast(
+          <NotificationError failureReason={'Failed to send the transaction. Please check the network and wallet'} />,
+          {
+            toastId: 'possibleWrongNetwork',
+            autoClose: 5000,
+          },
+        );
         throw Error('No transaction hash found.');
       }
 

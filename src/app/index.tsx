@@ -11,6 +11,7 @@ import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
 import { Banner } from './components/Banner';
+import BTPPanel from './components/BTPPanel';
 import { Airdrip } from './containers/Airdrip/Loadable';
 import Message from './Message';
 import Routes from './Routes';

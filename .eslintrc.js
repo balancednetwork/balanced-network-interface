@@ -14,7 +14,6 @@ module.exports = {
     'import/newline-after-import': 'error',
     'import/no-deprecated': 'error',
     'import/no-duplicates': 'error',
-    'import/no-mutable-exports': 'error',
     'import/no-namespace': 'off',
     'import/no-self-import': 'error',
     'import/no-unresolved': 'off',

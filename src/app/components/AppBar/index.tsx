@@ -167,6 +167,11 @@ export default React.memo(function AppBar() {
             </Text>
           </StyledNavLinkWithNotification>
         </ListItem>
+        <ListItem>
+          <StyledNavLinkWithNotification to="/btp">
+            <Text>BTP</Text>
+          </StyledNavLinkWithNotification>
+        </ListItem>
       </List>
     </Navigation>
   );

@@ -86,7 +86,7 @@
     "i18n:pseudo": "lingui extract --locale pseudo && lingui compile",
     "prepare": "yarn i18n:compile"
   },
-  "proxy": "https://balanced.geometry.io",
+  "proxy": "https://balanced.sudoblock.io",
   "browserslist": {
     "production": [
       ">0.2%",

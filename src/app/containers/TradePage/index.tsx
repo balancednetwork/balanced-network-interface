@@ -1,11 +1,9 @@
 import React from 'react';
 
-import { Trans, t } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { Flex, Box } from 'rebass/styled-components';
 
-import { DefaultLayout } from 'app/components/Layout';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import LiquidityDetails from 'app/components/trade/LiquidityDetails';
 import LPPanel from 'app/components/trade/LPPanel';
@@ -30,11 +28,7 @@ export function TradePage() {
   };
 
   return (
-    <DefaultLayout title={t`Trade`}>
-      <Helmet>
-        <title>{t`Trade`}</title>
-      </Helmet>
-
+    <>
       <Box flex={1}>
         <Flex mb={10} flexDirection="column">
           <Flex alignItems="center" justifyContent="space-between">
@@ -62,6 +56,6 @@ export function TradePage() {
 
         {account && value === 1 && <LiquidityDetails />}
       </Box>
-    </DefaultLayout>
+    </>
   );
 }

@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, TextButton } from 'app/components/Button';
-import { DefaultLayout } from 'app/components/Layout';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect';
@@ -284,10 +282,7 @@ export function NewProposalPage() {
   };
 
   return (
-    <DefaultLayout title={t`Vote`}>
-      <Helmet>
-        <title>Vote</title>
-      </Helmet>
+    <>
       <NewProposalContainer>
         <Breadcrumb title={'New proposal'} locationText={'Vote'} locationPath={'/vote'} />
         <ProposalTypesSelect onSelect={handleProposalTypeSelect} selected={selectedProposalType} />
@@ -387,6 +382,6 @@ export function NewProposalPage() {
           </Flex>
         </ModalContent>
       </Modal>
-    </DefaultLayout>
+    </>
   );
 }

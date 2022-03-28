@@ -1,13 +1,11 @@
 import React from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 
 import { ButtonLink } from 'app/components/Button';
-import { DefaultLayout } from 'app/components/Layout';
 import { BoxPanel } from 'app/components/Panel';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
@@ -26,11 +24,7 @@ export function VotePage() {
   };
 
   return (
-    <DefaultLayout title={t`Vote`}>
-      <Helmet>
-        <title>{t`Vote`}</title>
-      </Helmet>
-
+    <>
       <BoxPanel bg="bg2" width="100%">
         <Flex justifyContent="space-between" mb={5}>
           <Typography variant="h2">
@@ -62,6 +56,6 @@ export function VotePage() {
           </>
         )}
       </BoxPanel>
-    </DefaultLayout>
+    </>
   );
 }

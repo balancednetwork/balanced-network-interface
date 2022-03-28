@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -12,7 +11,6 @@ import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
 import RewardsPanel from 'app/components/home/RewardsPanel';
 import TransactionPanel from 'app/components/home/TransactionPanel';
 import WalletPanel from 'app/components/home/WalletPanel';
-import { DefaultLayout } from 'app/components/Layout';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useLoanFetchInfo } from 'store/loan/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
@@ -51,11 +49,7 @@ export function HomePage() {
   useFetchRewardsInfo();
 
   return (
-    <DefaultLayout>
-      <Helmet>
-        <title>{t`Home`}</title>
-      </Helmet>
-
+    <>
       {account ? (
         <Grid>
           <CollateralPanel />
@@ -70,6 +64,6 @@ export function HomePage() {
           <Trans>Sign in to use the Home page.</Trans>
         </SignInMessage>
       )}
-    </DefaultLayout>
+    </>
   );
 }

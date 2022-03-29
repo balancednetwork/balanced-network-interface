@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -55,7 +56,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
       <TransactionInfo flexDirection="column">
         <TransactionInfoBody>
           <Typography variant="p" fontWeight={500}>
-            Your transaction has failed.
+            <Trans>Your transaction has failed.</Trans>
           </Typography>
         </TransactionInfoBody>
         <TransactionInfoBody>

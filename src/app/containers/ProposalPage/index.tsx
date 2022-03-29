@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
@@ -13,7 +12,6 @@ import styled, { useTheme, keyframes } from 'styled-components';
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
 import Column from 'app/components/Column';
-import { DefaultLayout } from 'app/components/Layout';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton } from 'app/components/ProposalInfo';
@@ -186,10 +184,7 @@ export function ProposalPage() {
   };
 
   return (
-    <DefaultLayout title={t`Vote`}>
-      <Helmet>
-        <title>{t`Vote`}</title>
-      </Helmet>
+    <>
       <ProposalContainer>
         {proposal ? (
           <Breadcrumb locationText="Vote" locationPath="/vote" title={proposal?.name || ''} />
@@ -432,7 +427,7 @@ export function ProposalPage() {
           </Flex>
         </BoxPanel>
       </ProposalContainer>
-    </DefaultLayout>
+    </>
   );
 }
 

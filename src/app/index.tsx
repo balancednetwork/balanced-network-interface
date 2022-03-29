@@ -13,12 +13,8 @@ import TransactionUpdater from 'store/transactions/updater';
 
 import { Banner } from './components/Banner';
 import { Airdrip } from './containers/Airdrip/Loadable';
-import { HomePage } from './containers/HomePage/Loadable';
-import { NewProposalPage } from './containers/NewProposalPage/Loadable';
-import { ProposalPage } from './containers/ProposalPage/Loadable';
-import { TradePage } from './containers/TradePage/Loadable';
-import { VotePage } from './containers/VotePage/Loadable';
 import Message from './Message';
+import Routes from './Routes';
 
 function Updaters() {
   return (
@@ -53,28 +49,9 @@ export function App() {
             defaultTitle="Balanced Network"
             htmlAttributes={{ lang: i18n.language }}
           />
-
           <Switch>
-            <Route exact path="/" component={HomePage} />
-            <Route exact path="/vote" component={VotePage} />
-            <Route exact path="/trade" component={TradePage} />
             <Route exact path="/claim" component={Airdrip} />
-            <Route path="/vote/new-proposal" component={NewProposalPage} />
-            <Route path="/vote/proposal/:id" component={ProposalPage} />
-            <Route
-              exact
-              path="/airdrip"
-              component={() => {
-                window.location.href = 'https://balanced.network/';
-                return null;
-              }}
-            />
-            <Route
-              component={() => {
-                window.location.href = 'https://balanced.network/404';
-                return null;
-              }}
-            />
+            <Route component={Routes} />
           </Switch>
         </ThemeProvider>
       </IconReactProvider>

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-25 08:27\n"
+"PO-Revision-Date: 2022-03-29 09:23\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -136,6 +136,22 @@ msgstr ""
 msgid "Copy address"
 msgstr ""
 
+#: src/app/components/trade/utils.tsx
+msgid "Couldn't send {currency} to the {pair} pool. Try again."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Couldn't supply {pair} liquidity. Try again."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
+msgstr ""
+
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Create liquidity pool?"
 msgstr ""
@@ -191,7 +207,7 @@ msgstr ""
 msgid "Go back"
 msgstr ""
 
-#: src/app/containers/HomePage/index.tsx
+#: src/app/Routes.tsx
 msgid "Home"
 msgstr ""
 
@@ -325,6 +341,10 @@ msgstr ""
 msgid "Sending"
 msgstr ""
 
+#: src/app/components/trade/utils.tsx
+msgid "Sending {currency} to the {pair} pool..."
+msgstr ""
+
 #: src/app/components/Header/index.tsx
 msgid "Sign in"
 msgstr ""
@@ -361,6 +381,10 @@ msgstr ""
 msgid "Submit proposal?"
 msgstr ""
 
+#: src/app/components/trade/utils.tsx
+msgid "Supplied {pair} liquidity."
+msgstr ""
+
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
@@ -384,12 +408,24 @@ msgstr ""
 msgid "Supplying"
 msgstr ""
 
+#: src/app/components/trade/utils.tsx
+msgid "Supplying {pair} liquidity..."
+msgstr ""
+
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/containers/TradePage/index.tsx
 msgid "Swap"
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Swapping {inputCurrency} for {outputCurrency}..."
 msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
@@ -440,8 +476,7 @@ msgstr ""
 msgid "Total supply"
 msgstr ""
 
-#: src/app/containers/TradePage/index.tsx
-#: src/app/containers/TradePage/index.tsx
+#: src/app/Routes.tsx
 msgid "Trade"
 msgstr ""
 
@@ -465,11 +500,7 @@ msgstr ""
 msgid "View disclaimer."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/VotePage/index.tsx
-#: src/app/containers/VotePage/index.tsx
+#: src/app/Routes.tsx
 msgid "Vote"
 msgstr ""
 
@@ -541,6 +572,10 @@ msgstr ""
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdrawing sICX"
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
 msgstr ""
 
 #: src/app/containers/ProposalPage/index.tsx
@@ -620,5 +655,17 @@ msgstr ""
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "{0} sICX added to your wallet."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "{currency} sent to the {pair} pool."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "{outputAmount} {outputCurrency} added to your wallet."
 msgstr ""
 

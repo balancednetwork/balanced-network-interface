@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-29 09:23\n"
+"PO-Revision-Date: 2022-03-30 03:01\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -18,23 +18,23 @@ msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "100 bnUSD"
-msgstr ""
+msgstr "100 bnUSD"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Adjust"
-msgstr ""
+msgstr "조정하기"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
-msgstr ""
+msgstr "모든 담보물 잠김"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Approve"
-msgstr ""
+msgstr "승인"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Assets to send"
@@ -46,7 +46,7 @@ msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Balance Tokens"
-msgstr ""
+msgstr "Balance 토큰"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced increases your loan to buy more collateral at a discount."
@@ -62,24 +62,24 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow"
-msgstr ""
+msgstr "대출받기"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow Balanced Dollars?"
-msgstr ""
+msgstr "Balanced 달러를 빌리시겠습니까?"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed"
-msgstr ""
+msgstr "대출금"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed {0} bnUSD."
-msgstr ""
+msgstr "대출금 {0} bnUSD."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowing bnUSD..."
-msgstr ""
+msgstr "대출 중인 bnUSD..."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -87,54 +87,54 @@ msgstr ""
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Cancel"
-msgstr ""
+msgstr "취소"
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
-msgstr ""
+msgstr "지갑 변경"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim"
-msgstr ""
+msgstr "요구하기"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim (1 of {count})"
-msgstr ""
+msgstr "요구하기 (1 of {count})"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim Balance Tokens?"
-msgstr ""
+msgstr "Balance 토큰을 요구하겠습니까?"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim network fees?"
-msgstr ""
+msgstr "네트워크 수수료를 요구하겠습니까?"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Collateral"
-msgstr ""
+msgstr "담보"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Confirm"
-msgstr ""
+msgstr "확인"
 
 #: src/app/components/LedgerConfirmMessage/index.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Confirm the transaction on your Ledger."
-msgstr ""
+msgstr "당신의 렛저 지갑의 트랜잭션을 확인하세요."
 
 #: src/app/components/Header/index.tsx
 msgid "Copied"
-msgstr ""
+msgstr "복사 됨"
 
 #: src/app/components/Header/index.tsx
 msgid "Copy address"
-msgstr ""
+msgstr "주소 복사"
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't send {currency} to the {pair} pool. Try again."
@@ -167,12 +167,12 @@ msgstr ""
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Daily rewards"
-msgstr ""
+msgstr "1일 보상"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposit"
-msgstr ""
+msgstr "예치금"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposit ICON collateral?"
@@ -197,7 +197,7 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"
-msgstr ""
+msgstr "수수료"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
@@ -209,7 +209,7 @@ msgstr ""
 
 #: src/app/Routes.tsx
 msgid "Home"
-msgstr ""
+msgstr "Home"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "If bnUSD is above $1"
@@ -246,7 +246,7 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Loan"
-msgstr ""
+msgstr "대출"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Minimum to receive"
@@ -596,7 +596,7 @@ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Your ICX will be locked for 24 hours."
-msgstr ""
+msgstr "당신의 ICX는 24시간 동안 잠기게 됩니다."
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx

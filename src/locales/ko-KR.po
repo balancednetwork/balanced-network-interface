@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-30 03:01\n"
+"PO-Revision-Date: 2022-03-30 15:25\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -38,11 +38,11 @@ msgstr "승인"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Assets to send"
-msgstr ""
+msgstr "전송할 자산"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Available"
-msgstr ""
+msgstr "대출 허용"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Balance Tokens"
@@ -50,15 +50,15 @@ msgstr "Balance 토큰"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced increases your loan to buy more collateral at a discount."
-msgstr ""
+msgstr "Balanced는 당신의 대출금을 늘려서 더 많은 담보를 할인된 가격에 구매합니다."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced sells collateral at a premium to repay some of your loan."
-msgstr ""
+msgstr "Balanced는 당신의 대출금 일부를 상환하기 위해 담보를 프리미엄 가격에 판매합니다."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Before"
-msgstr ""
+msgstr "적용 전"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow"
@@ -138,32 +138,32 @@ msgstr "주소 복사"
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't send {currency} to the {pair} pool. Try again."
-msgstr ""
+msgstr "{pair} 풀에 {currency} 를 보낼 수 없습니다. 다시 시도하십시오."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't supply {pair} liquidity. Try again."
-msgstr ""
+msgstr "{pair} 에 유동성 물량을 공급할 수 없습니다. 다시 시도하십시오."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
-msgstr ""
+msgstr "{outputCurrency} 를 {inputCurrency} 와 스왑할 수 없습니다. 다시 시도하십시오."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
-msgstr ""
+msgstr "{inputCurrency} / {outputCurrency} 유동성 공급을 해제할 수 없습니다. 다시 시도하십시오."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Create liquidity pool?"
-msgstr ""
+msgstr "유동성 풀을 만드시겠습니까?"
 
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Create pool"
-msgstr ""
+msgstr "풀 생성하기"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Creating pool"
-msgstr ""
+msgstr "풀 생성 중"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Daily rewards"
@@ -176,7 +176,7 @@ msgstr "예치금"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposit ICON collateral?"
-msgstr ""
+msgstr "ICON을 담보로 예치하겠습니까?"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited {0} ICX as collateral."
@@ -201,11 +201,11 @@ msgstr "수수료"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
-msgstr ""
+msgstr "포럼 링크"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Go back"
-msgstr ""
+msgstr "돌아가기"
 
 #: src/app/Routes.tsx
 msgid "Home"

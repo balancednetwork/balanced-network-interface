@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-30 15:25\n"
+"PO-Revision-Date: 2022-03-30 16:32\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -180,20 +180,20 @@ msgstr "ICON을 담보로 예치하겠습니까?"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited {0} ICX as collateral."
-msgstr ""
+msgstr "{0} ICX를 담보로 예치했습니다."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Depositing collateral..."
-msgstr ""
+msgstr "담보를 예치하는 중..."
 
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Description"
-msgstr ""
+msgstr "설명"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Exchange rate"
-msgstr ""
+msgstr "거래 비율"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"
@@ -213,15 +213,15 @@ msgstr "Home"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "If bnUSD is above $1"
-msgstr ""
+msgstr "bnUSD가 $1 이상일 경우"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "If bnUSD is below $1"
-msgstr ""
+msgstr "bnUSD가 $1 미만인 경우"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
-msgstr ""
+msgstr "이 금액보다 가격이 차이가 많이 나는 경우 스왑이 실패합니다."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "In contract"
@@ -229,12 +229,12 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Includes a fee of {0} bnUSD."
-msgstr ""
+msgstr "{0} bnUSD의 수수료가 포함됩니다."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Ineligible"
-msgstr ""
+msgstr "미적용"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "It costs 100 bnUSD to submit a proposal."
@@ -254,11 +254,11 @@ msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
-msgstr ""
+msgstr "네트워크 수수료"
 
 #: src/app/containers/VotePage/index.tsx
 msgid "New proposal"
-msgstr ""
+msgstr "새로운 제안"
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
@@ -272,11 +272,11 @@ msgstr ""
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
-msgstr ""
+msgstr "보류 중"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Pool share"
-msgstr ""
+msgstr "풀 공유"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Position details"
@@ -331,7 +331,7 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Route"
-msgstr ""
+msgstr "변환 과정"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Send"
@@ -367,7 +367,7 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Slippage tolerance"
-msgstr ""
+msgstr "오차 범위"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit"
@@ -435,11 +435,11 @@ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current ICX price is"
-msgstr ""
+msgstr "현재 ICX 가격은"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current bnUSD price is"
-msgstr ""
+msgstr "현재 bnUSD 가격은"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "There's no liquidity pool for this pair yet."

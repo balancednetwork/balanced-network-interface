@@ -213,7 +213,7 @@ export default function WalletModal() {
           handleOpenLedger();
         }, 0);
       }
-      alert('Inject your ledger device, enter your password and retry');
+      alert('Insert your ledger device, then enter your password and try again.');
     }
   };
 

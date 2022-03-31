@@ -56,7 +56,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
       <TransactionInfo flexDirection="column">
         <TransactionInfoBody>
           <Typography variant="p" fontWeight={500}>
-            <Trans>Your transaction has failed.</Trans>
+            <Trans>Couldn't complete your transaction.</Trans>
           </Typography>
         </TransactionInfoBody>
         <TransactionInfoBody>

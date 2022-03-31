@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
@@ -74,8 +75,8 @@ export default function UnstakePanel() {
           addTransaction(
             { hash: res.result },
             {
-              pending: `Preparing to unstake sICX...`,
-              summary: `Unstaking ${differenceAmount.toFixed(2, {
+              pending: t`Preparing to unstake sICX...`,
+              summary: t`Unstaking ${differenceAmount.toFixed(2, {
                 groupSeparator: ',',
               })} sICX. Check ICX in your wallet for details.`,
             },
@@ -99,7 +100,9 @@ export default function UnstakePanel() {
 
   return (
     <>
-      <Typography variant="h3">Unstake sICX</Typography>
+      <Typography variant="h3">
+        <Trans>Unstake sICX</Trans>
+      </Typography>
 
       <Box my={3}>
         <Nouislider
@@ -128,13 +131,15 @@ export default function UnstakePanel() {
       </Flex>
 
       <Flex alignItems="center" justifyContent="center" mt={5}>
-        <Button onClick={toggleOpen}>Unstake sICX</Button>
+        <Button onClick={toggleOpen}>
+          <Trans>Unstake sICX</Trans>
+        </Button>
       </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            Unstake sICX?
+            <Trans>Unstake sICX?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -147,14 +152,18 @@ export default function UnstakePanel() {
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {beforeAmount.toFixed(2, { groupSeparator: ',' }) + ' sICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {afterAmount.toFixed(2, { groupSeparator: ',' }) + ' sICX'}
               </Typography>
@@ -162,7 +171,9 @@ export default function UnstakePanel() {
           </Flex>
 
           <Typography textAlign="center">
-            Takes up to 7 days. When it's ready, go to ICX {'>'} Unstaking in the Wallet section to claim it.
+            <Trans>
+              Takes up to 7 days. When it's ready, go to ICX {'>'} Unstaking in the Wallet section to claim it.
+            </Trans>
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -170,10 +181,10 @@ export default function UnstakePanel() {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </TextButton>
                 <Button onClick={handleUnstake} fontSize={14} disabled={!hasEnoughICX}>
-                  Unstake
+                  <Trans>Unstake</Trans>
                 </Button>
               </>
             )}

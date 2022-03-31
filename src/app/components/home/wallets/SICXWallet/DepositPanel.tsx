@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
@@ -73,8 +74,8 @@ export default function DepositPanel() {
           addTransaction(
             { hash: res.result },
             {
-              pending: `Depositing collateral...`,
-              summary: `Deposited ${differenceAmount.toFixed(2, { groupSeparator: ',' })} sICX as collateral.`,
+              pending: t`Depositing collateral...`,
+              summary: t`Deposited ${differenceAmount.toFixed(2, { groupSeparator: ',' })} sICX as collateral.`,
             },
           );
           toggleOpen();
@@ -96,9 +97,13 @@ export default function DepositPanel() {
 
   return (
     <>
-      <Typography variant="h3">Deposit as collateral</Typography>
+      <Typography variant="h3">
+        <Trans>Deposit as collateral</Trans>
+      </Typography>
 
-      <Typography my={1}>Add your sICX to the collateral pool.</Typography>
+      <Typography my={1}>
+        <Trans>Add your sICX to the collateral pool.</Trans>
+      </Typography>
 
       <Box my={3}>
         <Nouislider
@@ -127,13 +132,15 @@ export default function DepositPanel() {
       </Flex>
 
       <Flex alignItems="center" justifyContent="center" mt={5}>
-        <Button onClick={toggleOpen}>Deposit sICX</Button>
+        <Button onClick={toggleOpen}>
+          <Trans>Deposit sICX</Trans>
+        </Button>
       </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            Deposit sICX collateral?
+            <Trans>Deposit sICX collateral?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -165,10 +172,10 @@ export default function DepositPanel() {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </TextButton>
                 <Button onClick={handleSend} fontSize={14} disabled={!hasEnoughICX}>
-                  Deposit
+                  <Trans>Deposit</Trans>
                 </Button>
               </>
             )}

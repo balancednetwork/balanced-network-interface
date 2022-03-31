@@ -337,7 +337,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
         addTransaction(
           { hash: res.result },
           {
-            pending: t`Withdrawing ICX`,
+            pending: t`Withdrawing ICX...`,
             summary: t`${balance.balance?.toFixed(2, { groupSeparator: ',' }) || '...'} ICX added to your wallet.`,
           },
         );
@@ -366,7 +366,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
         addTransaction(
           { hash: res.result },
           {
-            pending: t`Withdrawing sICX`,
+            pending: t`Withdrawing sICX...`,
             summary: t`${balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX added to your wallet.`,
           },
         );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
@@ -6,19 +6,24 @@ import { Trans } from '@lingui/macro';
 import { BalancedJs } from 'packages/BalancedJs';
 import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
+import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { VerticalDivider } from 'app/components/Divider';
+import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';
-import Modal from 'app/components/Modal';
+import { MenuList, LanguageMenuItem } from 'app/components/Menu';
+import Modal, { ModalProps } from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
+import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import {
   useWalletModalToggle,
   useModalOpen,
@@ -26,6 +31,8 @@ import {
   useChangeCurrentLedgerAddressPage,
 } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
+
+import { DropdownPopper } from '../Popover';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -100,17 +107,29 @@ const WalletOption = styled(Box)`
   }
 `;
 
-const StyledModal = styled(Modal).attrs({
+const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />).attrs({
   'aria-label': 'dialog',
 })`
   &[data-reach-dialog-content] {
-    width: 320px;
+    ${({ mobile, theme }) =>
+      !mobile &&
+      `
+      width: 320px;
 
-    ${({ theme }) => theme.mediaWidth.up360`
-      width: 100%;
-      max-width: 370px;
-    `};
+      @media (min-width: 360px) {
+        width: 100%;
+        max-width: 360px;
+      }
+    `}
   }
+`;
+
+const Wrapper = styled.div`
+  width: 100%;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 `;
 
 export default function WalletModal() {
@@ -275,18 +294,38 @@ export default function WalletModal() {
     return index - 1 <= 0 ? [1, 2, 3] : [index - 1, index, index + 1];
   }
 
+  //
+  const activeLocale = useActiveLocale();
+  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+
+  const arrowRef = React.useRef(null);
+
+  const toggleMenu = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchor(anchor ? null : arrowRef.current);
+  };
+
+  const closeMenu = () => {
+    setAnchor(null);
+  };
+
+  useEffect(() => {
+    if (walletModalOpen) {
+      closeMenu();
+    }
+  }, [walletModalOpen]);
+
   return (
     <>
-      <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal}>
-        <Box mx="auto" my={5}>
-          <Typography textAlign="center" mb={5}>
-            <Trans>Sign in with:</Trans>
+      <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} mobile={isMobile}>
+        <Wrapper>
+          <Typography textAlign="center" mb={1}>
+            <Trans>Sign in with</Trans>:
           </Typography>
 
-          <Flex alignItems="stretch" justifyContent="space-between" mx={3}>
+          <Flex alignItems="stretch" justifyContent="space-between">
             <WalletOption onClick={handleOpenWallet}>
               <IconWalletIcon width="50" height="50" />
-              <Text>ICON wallet</Text>
+              <Text>ICON</Text>
             </WalletOption>
 
             {upExtraSmall && <VerticalDivider text="or"></VerticalDivider>}
@@ -297,13 +336,36 @@ export default function WalletModal() {
             </WalletOption>
           </Flex>
 
-          <Typography mx={4} mt={6} textAlign="center">
+          <Flex justifyContent="center" alignItems="center" sx={{ borderRadius: 10 }} padding={2} bg="bg3">
+            <Typography mr={1}>
+              <Trans>Use Balanced in</Trans>:
+            </Typography>
+            <ClickAwayListener onClickAway={closeMenu}>
+              <div>
+                <UnderlineTextWithArrow onClick={toggleMenu} text={LOCALE_LABEL[activeLocale]} arrowRef={arrowRef} />
+                <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" zIndex={2000}>
+                  <MenuList>
+                    {SUPPORTED_LOCALES.map((locale: SupportedLocale) => (
+                      <LanguageMenuItem
+                        locale={locale}
+                        active={activeLocale === locale}
+                        onClick={closeMenu}
+                        key={locale}
+                      />
+                    ))}
+                  </MenuList>
+                </DropdownPopper>
+              </div>
+            </ClickAwayListener>
+          </Flex>
+
+          <Typography textAlign="center">
             <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
             <Link href="https://balanced.network/disclaimer/" target="_blank">
-              <Trans>View disclaimer.</Trans>
+              <Trans>View disclaimer</Trans>
             </Link>
           </Typography>
-        </Box>
+        </Wrapper>
       </StyledModal>
 
       <LedgerAddressList

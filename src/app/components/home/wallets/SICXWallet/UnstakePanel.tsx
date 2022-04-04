@@ -78,7 +78,7 @@ export default function UnstakePanel() {
               pending: t`Preparing to unstake sICX...`,
               summary: t`Unstaking ${differenceAmount.toFixed(2, {
                 groupSeparator: ',',
-              })} sICX. Check ICX in your wallet for details.`,
+              })} sICX. Check the ICX entry in your wallet for details.`,
             },
           );
           toggleOpen();

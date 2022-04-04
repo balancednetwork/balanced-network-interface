@@ -3,7 +3,13 @@ import React from 'react';
 import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
+import styled, { css } from 'styled-components';
 
+import BTP from 'app/components/BTP';
+import { UnderlineText } from 'app/components/DropdownText';
+import { DefaultLayout } from 'app/components/Layout';
+import Modal from 'app/components/Modal';
+import { ModalContentWrapper } from 'app/components/ModalContent';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import LiquidityDetails from 'app/components/trade/LiquidityDetails';
 import LPPanel from 'app/components/trade/LPPanel';
@@ -13,6 +19,28 @@ import { SectionPanel } from 'app/components/trade/utils';
 import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
+
+const BTPButton = styled(UnderlineText)`
+  padding-right: 0 !important;
+  font-size: 14px;
+  padding-bottom: 5px;
+  margin: 5px 0 20px;
+  width: 250px;
+
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    position: absolute;
+    align-self: flex-end;
+    transform: translate3d(0, 9px, 0);
+    padding-bottom: 0;
+    margin: 0;
+    width: auto;
+  `};
+
+  ${({ theme }) =>
+    css`
+      color: ${theme.colors.primaryBright};
+    `};
+`;
 
 export function TradePage() {
   const { account } = useIconReact();
@@ -27,10 +55,21 @@ export function TradePage() {
     setValue(value);
   };
 
+  //handle btp modal
+  const [isOpen, setOpen] = React.useState(false);
+
+  const handleDismiss = (dismiss: boolean) => {
+    if (dismiss) {
+      setOpen(false);
+      //add wallet reset here
+    }
+  };
+
   return (
     <>
       <Box flex={1}>
         <Flex mb={10} flexDirection="column">
+          <BTPButton onClick={() => setOpen(true)}>Transfer assets between blockchains</BTPButton>
           <Flex alignItems="center" justifyContent="space-between">
             <Tabs value={value} onChange={handleTabClick}>
               <Tab>
@@ -56,6 +95,11 @@ export function TradePage() {
 
         {account && value === 1 && <LiquidityDetails />}
       </Box>
+      <Modal isOpen={isOpen} onDismiss={() => handleDismiss(false)} maxWidth={430}>
+        <ModalContentWrapper>
+          <BTP handleDismiss={handleDismiss} />
+        </ModalContentWrapper>
+      </Modal>
     </>
   );
 }

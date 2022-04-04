@@ -115,8 +115,8 @@ export default React.memo(function StakePanel() {
 
   const date = dayjs().add(3, 'days');
   const description = shouldStake
-    ? 'Unstaking takes 3 days.'
-    : `They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('hh:mma')}.`;
+    ? t`Unstaking takes 3 days.`
+    : t`They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('hh:mma')}.`;
 
   const hasEnoughICX = useHasEnoughICX();
 
@@ -149,7 +149,9 @@ export default React.memo(function StakePanel() {
         <Typography>
           {stakedPercent.multipliedBy(totalBalance).div(100).dp(2).toFormat()} / {totalBalance.dp(2).toFormat()}
         </Typography>
-        <Typography>{stakedPercent.dp(2, BigNumber.ROUND_UP).toFormat()}% staked</Typography>
+        <Typography>
+          <Trans>{stakedPercent.dp(2, BigNumber.ROUND_UP).toFormat()}% staked</Trans>
+        </Typography>
       </Flex>
 
       <Flex alignItems="center" justifyContent="center" mt={5}>
@@ -181,14 +183,18 @@ export default React.memo(function StakePanel() {
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {beforeAmount.dp(2).toFormat() + ' BALN'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {afterAmount.dp(2).toFormat() + ' BALN'}
               </Typography>

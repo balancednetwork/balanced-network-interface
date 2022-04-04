@@ -265,7 +265,7 @@ const CollateralPanel = () => {
           </Flex>
         </Flex>
 
-        {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} />}
+        {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Locked`} />}
 
         <Box marginY={6}>
           <Nouislider
@@ -350,7 +350,9 @@ const CollateralPanel = () => {
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {afterAmount.dp(2).toFormat() + ' ICX'}
               </Typography>
@@ -359,8 +361,8 @@ const CollateralPanel = () => {
 
           <Typography textAlign="center">
             {shouldDeposit
-              ? 'Your ICX will be staked, so your collateral value will increase over time.'
-              : "You'll receive sICX (staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."}
+              ? t`Your ICX will be staked, so your collateral value will increase over time.`
+              : t`You'll receive sICX (staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page.`}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

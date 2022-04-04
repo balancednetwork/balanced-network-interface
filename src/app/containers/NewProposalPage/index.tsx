@@ -346,7 +346,7 @@ export function NewProposalPage() {
           </div>
           {account && !isStakeValid && minimumStakeBalance && (
             <Typography variant="content" mt="25px" mb="25px" textAlign="center" color={theme.colors.alert}>
-              Stake at least {minimumStakeBalance.dp(2).toFormat()} BALN if you want to propose a change.
+              <Trans>Stake at least {minimumStakeBalance.dp(2).toFormat()} BALN if you want to propose a change.</Trans>
             </Typography>
           )}
         </ProposalDetailContainer>

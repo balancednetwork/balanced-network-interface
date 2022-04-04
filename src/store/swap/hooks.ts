@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { t } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -149,15 +150,15 @@ export function useDerivedSwapInfo(): {
 
   let inputError: string | undefined;
   if (!account) {
-    inputError = 'Connect Wallet';
+    inputError = t`Connect Wallet`;
   }
 
   if (!parsedAmount) {
-    inputError = inputError ?? 'Enter amount';
+    inputError = inputError ?? t`Enter amount`;
   }
 
   if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
-    inputError = inputError ?? 'Select a token';
+    inputError = inputError ?? t`Select a token`;
   }
 
   // compare input balance to max input based on version
@@ -170,7 +171,7 @@ export function useDerivedSwapInfo(): {
   ];
 
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    inputError = 'Insufficient ' + currencies[Field.INPUT]?.symbol;
+    inputError = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
   }
 
   //
@@ -178,7 +179,7 @@ export function useDerivedSwapInfo(): {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
   );
 
-  if (userHasSpecifiedInputOutput && !trade) inputError = 'Insufficient liquidity';
+  if (userHasSpecifiedInputOutput && !trade) inputError = t`Insufficient liquidity`;
 
   const [pairState, pair] = useV2Pair(inputCurrency, outputCurrency);
 

@@ -236,7 +236,7 @@ const LoanPanel = () => {
       <BoxPanel bg="bg3">
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="h2">
-            Loan
+            <Trans>Loan</Trans>
             {!isSuperSmall && (
               <>
                 :{' '}
@@ -250,7 +250,9 @@ const LoanPanel = () => {
           <Box>
             {isAdjusting ? (
               <>
-                <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
+                <TextButton onClick={handleCancelAdjusting}>
+                  <Trans>Cancel</Trans>
+                </TextButton>
                 <Button
                   disabled={
                     borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
@@ -269,7 +271,7 @@ const LoanPanel = () => {
           </Box>
         </Flex>
 
-        {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text="Used" />}
+        {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Used`} />}
 
         <Box marginY={6}>
           <Nouislider
@@ -349,14 +351,18 @@ const LoanPanel = () => {
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {beforeAmount.dp(2).toFormat()} bnUSD
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {afterAmount.dp(2).toFormat()} bnUSD
               </Typography>
@@ -377,7 +383,7 @@ const LoanPanel = () => {
                   <Trans>Cancel</Trans>
                 </TextButton>
                 <Button disabled={!hasEnoughICX} onClick={handleLoanConfirm} fontSize={14}>
-                  <Trans>{shouldBorrow ? 'Borrow' : 'Repay'}</Trans>
+                  <Trans>{shouldBorrow ? t`Borrow` : t`Repay`}</Trans>
                 </Button>
               </>
             )}

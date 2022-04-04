@@ -12,14 +12,15 @@ import { ProposalPage } from './containers/ProposalPage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
 import { VotePage } from './containers/VotePage/Loadable';
 
-const routeTexts = [
-  ['/vote', t`Vote`],
-  ['/trade', t`Trade`],
-  ['/', t`Home`],
-];
-
 export default function Routes() {
   const location = useLocation();
+
+  // moved it because of t function
+  const routeTexts = [
+    ['/vote', t`Vote`],
+    ['/trade', t`Trade`],
+    ['/', t`Home`],
+  ];
 
   const title = routeTexts.find(item => location.pathname.startsWith(item[0]))?.[1];
 

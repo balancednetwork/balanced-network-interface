@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-31 02:58\n"
+"PO-Revision-Date: 2022-04-04 03:09\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -18,81 +18,81 @@ msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "100 bnUSD"
-msgstr ""
+msgstr "100 bnUSD"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "ACTIVITY"
-msgstr ""
+msgstr "ACTIVITÉ"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "AMOUNT"
-msgstr ""
+msgstr "MONTANT"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "Activity history"
-msgstr ""
+msgstr "Historique de l'activité"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
-msgstr ""
+msgstr "Ajoutez vos sICX à la pool de collatéral."
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Adjust"
-msgstr ""
+msgstr "Ajuster"
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "After"
-msgstr ""
+msgstr "Après"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
-msgstr ""
+msgstr "Tout le collatéral vérouillé"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Approve"
-msgstr ""
+msgstr "Valider"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Assets to send"
-msgstr ""
+msgstr "Actifs à envoyer"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Available"
-msgstr ""
+msgstr "Disponible"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Balance Tokens"
-msgstr ""
+msgstr "Balance Tokens"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced increases your loan to buy more collateral at a discount."
-msgstr ""
+msgstr "Balanced augmente votre prêt pour acheter plus de collatéral à prix réduit."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced sells collateral at a premium to repay some of your loan."
-msgstr ""
+msgstr "Balanced vend du collatéral à un prix intéressant pour rembourser une partie de votre prêt."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Before"
-msgstr ""
+msgstr "Avant"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow"
-msgstr ""
+msgstr "Emprunter"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow Balanced Dollars?"
@@ -101,7 +101,7 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed"
-msgstr ""
+msgstr "Emprunté"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed {0} bnUSD."
@@ -189,6 +189,14 @@ msgstr ""
 msgid "Copy address"
 msgstr ""
 
+#: src/store/transactions/hooks.tsx
+msgid "Couldn't complete the transaction. Make sure your wallet is set to the right network."
+msgstr ""
+
+#: src/app/components/Notification/TransactionNotification.tsx
+msgid "Couldn't complete your transaction."
+msgstr ""
+
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't send {currency} to the {pair} pool. Try again."
 msgstr ""
@@ -273,10 +281,6 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Exchange rate"
-msgstr ""
-
-#: src/store/transactions/hooks.tsx
-msgid "Failed to send the transaction. Please check the network and wallet"
 msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
@@ -373,6 +377,10 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
+msgstr ""
+
+#: src/store/transactions/hooks.tsx
+msgid "Processing transaction..."
 msgstr ""
 
 #: src/app/containers/VotePage/index.tsx
@@ -472,7 +480,7 @@ msgid "Sign in to view your liquidity details."
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Sign in with:"
+msgid "Sign in with"
 msgstr ""
 
 #: src/app/components/Header/index.tsx
@@ -678,7 +686,11 @@ msgid "Unstaking BALN..."
 msgstr ""
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
-msgid "Unstaking {0} sICX. Check ICX in your wallet for details."
+msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Use Balanced in"
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
@@ -686,7 +698,7 @@ msgid "Use at your own risk. Project contributors are not liable for any lost or
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "View disclaimer."
+msgid "View disclaimer"
 msgstr ""
 
 #: src/app/Routes.tsx
@@ -752,7 +764,7 @@ msgid "Withdraw:"
 msgstr ""
 
 #: src/app/components/trade/LiquidityDetails.tsx
-msgid "Withdrawing ICX"
+msgid "Withdrawing ICX..."
 msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
@@ -760,7 +772,7 @@ msgid "Withdrawing collateral..."
 msgstr ""
 
 #: src/app/components/trade/LiquidityDetails.tsx
-msgid "Withdrawing sICX"
+msgid "Withdrawing sICX..."
 msgstr ""
 
 #: src/app/components/trade/utils.tsx
@@ -807,14 +819,6 @@ msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Your supply"
-msgstr ""
-
-#: src/store/transactions/hooks.tsx
-msgid "Your transaction has been sent to the network"
-msgstr ""
-
-#: src/app/components/Notification/TransactionNotification.tsx
-msgid "Your transaction has failed."
 msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx

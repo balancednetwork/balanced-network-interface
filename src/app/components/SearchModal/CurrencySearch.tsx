@@ -1,5 +1,6 @@
 import React, { /*KeyboardEvent,*/ RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
@@ -174,7 +175,7 @@ export function CurrencySearch({
         <SearchInput
           type="text"
           id="token-search-input"
-          placeholder={`Search name or contract`}
+          placeholder={t`Search name or contract`}
           autoComplete="off"
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
@@ -202,7 +203,7 @@ export function CurrencySearch({
       ) : (
         <Column style={{ padding: '20px', height: '100%' }}>
           <Typography color="text3" textAlign="center" mb="20px">
-            No results found.
+            <Trans>No results found.</Trans>
           </Typography>
         </Column>
       )}

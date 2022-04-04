@@ -1,5 +1,6 @@
 import React, { useEffect, CSSProperties, useState, useCallback } from 'react';
 
+import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isIOS, isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
@@ -136,8 +137,12 @@ export default function CurrencyList({
   return (
     <List1 mt={4}>
       <DashGrid>
-        <HeaderText>Asset</HeaderText>
-        <HeaderText textAlign="right">Wallet</HeaderText>
+        <HeaderText>
+          <Trans>Asset</Trans>
+        </HeaderText>
+        <HeaderText textAlign="right">
+          <Trans>Wallet</Trans>
+        </HeaderText>
       </DashGrid>
 
       {currencies.map((currency, index) => (

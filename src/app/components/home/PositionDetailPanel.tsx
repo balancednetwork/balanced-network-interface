@@ -31,13 +31,6 @@ import { RebalancingInfo } from './LoanPanel';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
-const PERIOD_LABELS: { [key: string]: string } = {
-  [Period.day]: t`Past day`,
-  [Period.week]: t`Past week`,
-  [Period.month]: t`Past month`,
-  [Period.all]: t`All time`,
-};
-
 const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmount();
   const loanInputAmount = useLoanInputAmount();
@@ -80,6 +73,14 @@ const useCollateralLockedSliderPos = () => {
 };
 
 const PositionDetailPanel = () => {
+  // moved it because of t function
+  const PERIOD_LABELS: { [key: string]: string } = {
+    [Period.day]: t`Past day`,
+    [Period.week]: t`Past week`,
+    [Period.month]: t`Past month`,
+    [Period.all]: t`All time`,
+  };
+
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
@@ -187,7 +188,9 @@ const PositionDetailPanel = () => {
           <VerticalDivider mr={8} />
 
           <Box flex={1}>
-            <Typography mb={1}>Loan</Typography>
+            <Typography mb={1}>
+              <Trans>Loan</Trans>
+            </Typography>
             <Typography variant="p" fontSize={18} as="span">
               ${loanInputAmount.dp(2).toFormat()}
             </Typography>

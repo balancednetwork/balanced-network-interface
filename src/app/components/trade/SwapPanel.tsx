@@ -252,7 +252,9 @@ export default function SwapPanel() {
           </Flex>
 
           <Flex alignItems="center" justifyContent="space-between">
-            <Typography variant="h2">For</Typography>
+            <Typography variant="h2">
+              <Trans>For</Trans>
+            </Typography>
             <Typography as="div" hidden={!account}>
               <Trans>Wallet: </Trans>
               {`${currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })}

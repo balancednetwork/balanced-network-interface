@@ -96,9 +96,11 @@ export default function SwapDescription() {
               </Typography>
               {hasSICX && !hasICX && (
                 <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
-                  {`${priceInICX?.toFixed(4) || '...'} 
-                  ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
-                  per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  <Trans>
+                    {`${priceInICX?.toFixed(4) || '...'} 
+                      ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
+                      per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  </Trans>
                 </Typography>
               )}
             </>

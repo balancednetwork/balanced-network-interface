@@ -365,15 +365,19 @@ export default function SwapPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
-              executionTrade?.executionPrice.quoteCurrency.symbol
-            } 
+            <Trans>
+              {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
+                executionTrade?.executionPrice.quoteCurrency.symbol
+              } 
               per ${executionTrade?.executionPrice.baseCurrency.symbol}`}
+            </Trans>
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Pay</Typography>
+              <Typography textAlign="center">
+                <Trans>Pay</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency')}{' '}
                 {currencies[Field.INPUT]?.symbol}
@@ -381,7 +385,9 @@ export default function SwapPanel() {
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">Receive</Typography>
+              <Typography textAlign="center">
+                <Trans>Receive</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency')}{' '}
                 {currencies[Field.OUTPUT]?.symbol}
@@ -393,15 +399,19 @@ export default function SwapPanel() {
             textAlign="center"
             hidden={currencies[Field.INPUT]?.symbol === 'ICX' && currencies[Field.OUTPUT]?.symbol === 'sICX'}
           >
-            Includes a fee of {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
-            {currencies[Field.INPUT]?.symbol}.
+            <Trans>
+              Includes a fee of {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
+              {currencies[Field.INPUT]?.symbol}.
+            </Trans>
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
-                <TextButton onClick={handleSwapConfirmDismiss}>Cancel</TextButton>
+                <TextButton onClick={handleSwapConfirmDismiss}>
+                  <Trans>Cancel</Trans>
+                </TextButton>
                 <Button onClick={handleSwapConfirm} disabled={!hasEnoughICX}>
                   <Trans>Swap</Trans>
                 </Button>

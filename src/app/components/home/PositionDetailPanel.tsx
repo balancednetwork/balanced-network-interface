@@ -32,10 +32,10 @@ import { RebalancingInfo } from './LoanPanel';
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
 const PERIOD_LABELS: { [key: string]: string } = {
-  [Period.day]: 'Past day',
-  [Period.week]: 'Past week',
-  [Period.month]: 'Past month',
-  [Period.all]: 'All time',
+  [Period.day]: t`Past day`,
+  [Period.week]: t`Past week`,
+  [Period.month]: t`Past month`,
+  [Period.all]: t`All time`,
 };
 
 const useThresholdPrices = (): [BigNumber, BigNumber] => {
@@ -241,7 +241,9 @@ const PositionDetailPanel = () => {
             </Locked>
             <Liquidated>
               <MetaData as="dl">
-                <dt>Liquidated</dt>
+                <dt>
+                  <Trans>Liquidated</Trans>
+                </dt>
                 <dd>${liquidationThresholdPrice.dp(3).toFormat()}</dd>
               </MetaData>
             </Liquidated>
@@ -269,10 +271,13 @@ const PositionDetailPanel = () => {
           <Tooltip
             text={
               <Typography variant="body">
-                If the ICX price reaches ${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
-                liquidated. <br />
+                <Trans>
+                  If the ICX price reaches ${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
+                  liquidated.
+                </Trans>
+                <br />
                 <Typography as="small" fontSize={12} color="text1">
-                  Keep a close eye on this number, as rebalancing may cause it to fluctuate.
+                  <Trans>Keep a close eye on this number, as rebalancing may cause it to fluctuate.</Trans>
                 </Typography>
               </Typography>
             }
@@ -290,7 +295,7 @@ const PositionDetailPanel = () => {
           <Box flex={1} my={2}>
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15} sx={{ position: 'relative' }}>
-                Rebalancing{' '}
+                <Trans>Rebalancing</Trans>{' '}
                 {shouldShowRebalancingTooltipAnchor && (
                   <QuestionWrapper
                     onClick={openRebalancing}
@@ -332,7 +337,7 @@ const PositionDetailPanel = () => {
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(totalCollateralSold, 'currency')} sICX</Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
-                  {'Collateral'}
+                  <Trans>Collateral</Trans>
                   <RebalancingTooltipArrow
                     left={25}
                     show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
@@ -352,7 +357,7 @@ const PositionDetailPanel = () => {
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(rebalancingTotal, 'currency')} bnUSD</Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
-                  {'Loan'}
+                  <Trans>Loan</Trans>
                   <RebalancingTooltipArrow
                     left={7}
                     show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
@@ -367,7 +372,7 @@ const PositionDetailPanel = () => {
           <Box flex={1} my={2}>
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
-                Loan rewards
+                <Trans>Loan rewards</Trans>
               </Typography>
             </Flex>
             <Flex>
@@ -375,7 +380,9 @@ const PositionDetailPanel = () => {
                 <Typography variant="p">
                   {hasRewardableCollateral ? `~ ${dailyRewards.dp(2).toFormat()} BALN` : '-'}
                 </Typography>
-                <Typography mt={1}>Daily rewards</Typography>
+                <Typography mt={1}>
+                  <Trans>Daily rewards</Trans>
+                </Typography>
               </Box>
               {!upMedium && <VerticalDivider mr={8} />}
               <Box width={1 / 2}>

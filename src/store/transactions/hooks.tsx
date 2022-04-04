@@ -35,7 +35,9 @@ export function useTransactionAdder(): (
       const { hash } = response;
       if (!hash) {
         toast(
-          <NotificationError failureReason={t`Couldn't complete the transaction. Make sure your wallet is set to the right network.`} />,
+          <NotificationError
+            failureReason={t`Couldn't complete the transaction. Make sure your wallet is set to the right network.`}
+          />,
           {
             toastId: 'possibleWrongNetwork',
             autoClose: 5000,

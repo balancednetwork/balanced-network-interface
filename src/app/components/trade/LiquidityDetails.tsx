@@ -127,8 +127,12 @@ export default function LiquidityDetails() {
 
       <TableWrapper>
         <DashGrid>
-          <HeaderText>Pool</HeaderText>
-          <HeaderText>Your supply</HeaderText>
+          <HeaderText>
+            <Trans>Pool</Trans>
+          </HeaderText>
+          <HeaderText>
+            <Trans>Your supply</Trans>
+          </HeaderText>
           {upSmall && (
             <HeaderText>
               <Trans>Pool share</Trans>
@@ -740,7 +744,9 @@ const WithdrawModal = ({
           />
         </Box>
         <Flex alignItems="center" justifyContent="center">
-          <Button onClick={handleShowConfirm}>Withdraw liquidity</Button>
+          <Button onClick={handleShowConfirm}>
+            <Trans>Withdraw liquidity</Trans>
+          </Button>
         </Flex>
       </Flex>
 
@@ -764,7 +770,9 @@ const WithdrawModal = ({
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
-                <TextButton onClick={toggleOpen}>Cancel</TextButton>
+                <TextButton onClick={toggleOpen}>
+                  <Trans>Cancel</Trans>
+                </TextButton>
                 <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
                   <Trans>Withdraw</Trans>
                 </Button>

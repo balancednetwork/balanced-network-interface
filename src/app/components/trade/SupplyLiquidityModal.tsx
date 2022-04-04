@@ -250,7 +250,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
           {pair ? t`Supply liquidity?` : t`Create liquidity pool?`}
         </Typography>
         <Typography variant="p" textAlign="center" mb={4} hidden={isQueue}>
-          Send each asset to the contract, <br />
+          <Trans>Send each asset to the contract</Trans>, <br />
           {pair ? t`then click Supply.` : t`then create the pool.`}
         </Typography>
         <Flex alignItems="center" mb={1} hidden={isQueue}>

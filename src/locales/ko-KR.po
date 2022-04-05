@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-05 07:22\n"
+"PO-Revision-Date: 2022-04-05 08:28\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -329,7 +329,7 @@ msgstr "수수료"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "For"
-msgstr ""
+msgstr "되려는"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
@@ -498,7 +498,7 @@ msgstr "트랜잭션 처리 중..."
 
 #: src/app/components/newproposal/ProposalTypesSelect.tsx
 msgid "Proposal type"
-msgstr ""
+msgstr "제안 유형"
 
 #: src/app/containers/VotePage/index.tsx
 msgid "Proposals"
@@ -538,7 +538,7 @@ msgstr "{0} bnUSD 상환했습니다."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay"
-msgstr ""
+msgstr "상환"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
@@ -558,11 +558,11 @@ msgstr "변환 과정"
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "Search name or contract"
-msgstr ""
+msgstr "이름 또는 계약 검색"
 
 #: src/store/swap/hooks.ts
 msgid "Select a token"
-msgstr ""
+msgstr "토큰 선택"
 
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/ICXWallet/index.tsx
@@ -644,7 +644,7 @@ msgstr "Balance 토큰을 스테이킹하겠습니까?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Stake at least {0} BALN if you want to propose a change."
-msgstr ""
+msgstr "변경을 제안하려면 최소 {0} BALN을 스테이킹하세요."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake your Balance Tokens to earn network fees."
@@ -748,7 +748,7 @@ msgstr "아직 이 페어에 대한 유동성 풀이 없습니다."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "They'll unstake on {0}, around {1}."
-msgstr ""
+msgstr "{0}, 약 {1} 에 스테이킹 해제됩니다."
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
@@ -834,7 +834,7 @@ msgstr "BALN 스테이킹 해제 중..."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaking takes 3 days."
-msgstr ""
+msgstr "스테이킹 해제는 3일이 소요됩니다."
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
@@ -961,7 +961,7 @@ msgstr "보상으로 BALN을 받게 되며, sICX/bnUSD 풀에 유동성을 공�
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "You'll receive sICX (staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."
-msgstr ""
+msgstr "당신은 sICX(스테이킹된 ICX)를 받게 됩니다. 지갑 > sICX 메뉴에서 '스테이킹 해제'하거나 '거래' 페이지에서 ICX로 스왑할 수 있습니다."
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "Your BALN will unstake on {0} at\n"
@@ -975,7 +975,7 @@ msgstr "당신의 ICX는 24시간 동안 잠기게 됩니다."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be staked, so your collateral value will increase over time."
-msgstr ""
+msgstr "당신의 담보 ICX는 스테이킹됨으로 인해, 시간이 지남에 따라 수량이 증가할 것입니다."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Your ICX will be unstaked as more collateral is deposited into Balanced."
@@ -1065,7 +1065,7 @@ msgstr "{2} 당 {0} {1}"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "{0}% staked"
-msgstr ""
+msgstr "{0} % 스테이킹 됨"
 
 #: src/app/components/trade/utils.tsx
 msgid "{currency} sent to the {pair} pool."

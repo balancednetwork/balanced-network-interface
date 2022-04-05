@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-05 08:28\n"
+"PO-Revision-Date: 2022-04-05 17:25\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -842,7 +842,7 @@ msgstr "{0} sICX를 스테이킹 해제하고 있습니다. 자세한 내용은 
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Use Balanced in"
-msgstr "Use Balanced in"
+msgstr "언어 선택"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."

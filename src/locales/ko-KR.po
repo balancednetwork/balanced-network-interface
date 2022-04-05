@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-04 15:26\n"
+"PO-Revision-Date: 2022-04-05 07:22\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -74,7 +74,7 @@ msgstr "승인"
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 msgid "Asset"
-msgstr ""
+msgstr "자산"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Assets to send"
@@ -86,7 +86,7 @@ msgstr "대출 허용"
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
-msgstr ""
+msgstr "Balanced 웹사이트로 돌아가기"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Balance Tokens"
@@ -209,7 +209,7 @@ msgstr "당신의 렛저 지갑의 트랜잭션을 확인하세요."
 #: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Connect Wallet"
-msgstr ""
+msgstr "지갑 연결"
 
 #: src/app/components/Header/index.tsx
 msgid "Copied"
@@ -312,12 +312,12 @@ msgstr "sICX를 거래소에 보내지 마십시오."
 
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
-msgstr ""
+msgstr "수량을 입력하세요."
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 msgid "Enter an amount"
-msgstr ""
+msgstr "수량을 입력하세요."
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Exchange rate"
@@ -379,20 +379,20 @@ msgstr "미적용"
 
 #: src/store/swap/hooks.ts
 msgid "Insufficient liquidity"
-msgstr ""
+msgstr "유동성 물량 부족"
 
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
-msgstr ""
+msgstr "{0} 가 부족합니다."
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 msgid "Insufficient {0} balance"
-msgstr ""
+msgstr "{0} 잔액이 부족합니다."
 
 #: src/store/mint/hooks.tsx
 msgid "Invalid pair"
-msgstr ""
+msgstr "유효하지 않은 페어"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "It costs 100 bnUSD to submit a proposal."
@@ -423,7 +423,7 @@ msgstr "대출 보상"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
-msgstr ""
+msgstr "잠김"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Minimum to receive"
@@ -443,7 +443,7 @@ msgstr "이 거래의 가격 차트는 준비되지 않았습니다."
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "No results found."
-msgstr ""
+msgstr "결과를 찾을 수 없습니다."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -850,7 +850,7 @@ msgstr "자신의 책임하에 사용하십시오. 프로젝트 기여자는 분
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
-msgstr ""
+msgstr "사용 됨"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "View disclaimer"

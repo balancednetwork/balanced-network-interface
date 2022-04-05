@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-04 15:26\n"
+"PO-Revision-Date: 2022-04-05 20:25\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -59,11 +59,11 @@ msgstr "Après"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
-msgstr "Tout le collatéral vérouillé"
+msgstr "Tout le collatéral verrouillé"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
-msgstr ""
+msgstr "Depuis le début"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -74,7 +74,7 @@ msgstr "Valider"
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 msgid "Asset"
-msgstr ""
+msgstr "Actif"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Assets to send"
@@ -86,7 +86,7 @@ msgstr "Disponible"
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
-msgstr ""
+msgstr "Retour sur le site de Balanced"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Balance Tokens"
@@ -117,7 +117,7 @@ msgstr "Emprunter"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow Balanced Dollars?"
-msgstr ""
+msgstr "Emprunter du Balanced Dollar (bnUSD) ?"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -146,18 +146,18 @@ msgstr ""
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
-msgstr ""
+msgstr "Changer de portefeuille"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim"
-msgstr ""
+msgstr "Réclamer"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim (1 of {count})"
@@ -165,20 +165,20 @@ msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim Balance Tokens?"
-msgstr ""
+msgstr "Réclamer du Balance Token (BALN) ?"
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX"
-msgstr ""
+msgstr "Réclamer ICX"
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX?"
-msgstr ""
+msgstr "Réclamer ICX ?"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim network fees?"
-msgstr ""
+msgstr "Réclamer les frais de réseau ?"
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claimed {0} ICX."
@@ -192,32 +192,32 @@ msgstr ""
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Collateral"
-msgstr ""
+msgstr "Collatéral"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Confirm"
-msgstr ""
+msgstr "Valider"
 
 #: src/app/components/LedgerConfirmMessage/index.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Confirm the transaction on your Ledger."
-msgstr ""
+msgstr "Valider la transaction sur votre Ledger."
 
 #: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Connect Wallet"
-msgstr ""
+msgstr "Connecter le portefeuille"
 
 #: src/app/components/Header/index.tsx
 msgid "Copied"
-msgstr ""
+msgstr "Copié"
 
 #: src/app/components/Header/index.tsx
 msgid "Copy address"
-msgstr ""
+msgstr "Copier l'adresse"
 
 #: src/store/transactions/hooks.tsx
 msgid "Couldn't complete the transaction. Make sure your wallet is set to the right network."
@@ -245,20 +245,20 @@ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Create liquidity pool?"
-msgstr ""
+msgstr "Créer un pool de liquidité ?"
 
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Create pool"
-msgstr ""
+msgstr "Créer un pool"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Creating pool"
-msgstr ""
+msgstr "Création d'un pool"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
-msgstr ""
+msgstr "DATE"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -270,19 +270,19 @@ msgstr ""
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/index.tsx
 msgid "Deposit"
-msgstr ""
+msgstr "Déposer"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposit ICON collateral?"
-msgstr ""
+msgstr "Déposer ICON collatéral ?"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit as collateral"
-msgstr ""
+msgstr "Déposer comme collatéral"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX"
-msgstr ""
+msgstr "Déposer sICX"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX collateral?"
@@ -304,7 +304,7 @@ msgstr ""
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
@@ -312,45 +312,45 @@ msgstr ""
 
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
-msgstr ""
+msgstr "Entrer le montant"
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 msgid "Enter an amount"
-msgstr ""
+msgstr "Entrer un montant"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Exchange rate"
-msgstr ""
+msgstr "Taux de change"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"
-msgstr ""
+msgstr "Frais"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "For"
-msgstr ""
+msgstr "Pour"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
-msgstr ""
+msgstr "Lien du forum"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Go back"
-msgstr ""
+msgstr "Retour"
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
 msgid "Home"
-msgstr ""
+msgstr "Accueil"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "If bnUSD is above $1"
-msgstr ""
+msgstr "Si bnUSD est supérieur à 1$"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "If bnUSD is below $1"
-msgstr ""
+msgstr "Si bnUSD est inférieur à 1$"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "If the ICX price reaches ${0}, all your collateral will be liquidated."
@@ -404,7 +404,7 @@ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Liquidated"
-msgstr ""
+msgstr "Liquidé"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Liquidity details"
@@ -415,7 +415,7 @@ msgstr ""
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan"
-msgstr ""
+msgstr "Emprunt"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan rewards"
@@ -431,11 +431,11 @@ msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
-msgstr ""
+msgstr "Frais de réseau"
 
 #: src/app/containers/VotePage/index.tsx
 msgid "New proposal"
-msgstr ""
+msgstr "Nouvelle proposition"
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
@@ -449,19 +449,19 @@ msgstr ""
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Not now"
-msgstr ""
+msgstr "Plus tard"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
-msgstr ""
+msgstr "Hier"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past month"
-msgstr ""
+msgstr "Mois dernier"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past week"
-msgstr ""
+msgstr "Semaine dernière"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Pay"
@@ -470,7 +470,7 @@ msgstr ""
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
-msgstr ""
+msgstr "En attente"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Pool"

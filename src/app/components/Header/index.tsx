@@ -36,11 +36,12 @@ const WalletInfo = styled(Box)`
 const WalletButtonWrapper = styled.div``;
 
 const WalletMenu = styled.div`
-  max-width: 160px;
+  max-width: 164px;
   font-size: 14px;
   padding: 25px;
   display: grid;
   grid-template-rows: auto;
+  justify-items: center;
   grid-gap: 20px;
 `;
 

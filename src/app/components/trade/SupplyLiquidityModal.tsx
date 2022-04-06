@@ -102,8 +102,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       addTransaction(
         { hash: res.result },
         {
-          pending: `Withdrawing ${token.symbol}`,
-          summary: `${amountWithdraw?.toSignificant(6)} ${token.symbol} added to your wallet`,
+          pending: t`Withdrawing ${token.symbol}`,
+          summary: t`${amountWithdraw?.toSignificant(6)} ${token.symbol} added to your wallet`,
         },
       );
 

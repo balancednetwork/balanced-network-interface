@@ -604,7 +604,7 @@ const TransactionTable = () => {
         ) : (
           <Box width="100%">
             <Typography textAlign="center" paddingTop={'35px'}>
-              No activity yet.
+              <Trans>No activity yet.</Trans>
             </Typography>
           </Box>
         )}

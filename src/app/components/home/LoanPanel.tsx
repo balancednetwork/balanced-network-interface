@@ -307,7 +307,7 @@ const LoanPanel = () => {
                 label={t`Borrowed`}
                 tooltipText={t`Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan.`}
                 noticeShow={isLessThanMinimum}
-                noticeText={'10 bnUSD minimum'}
+                noticeText={t`10 bnUSD minimum`}
                 value={formattedAmounts[Field.LEFT]}
                 currency={'bnUSD'}
                 onUserInput={onFieldAInput}

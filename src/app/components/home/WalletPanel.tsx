@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
+import { Trans } from '@lingui/macro';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
@@ -69,7 +70,7 @@ const WalletPanel = () => {
 
   const availableBALN = balances && balances[balnAddress] && (
     <Typography color="rgba(255,255,255,0.75)">
-      Available: {balances[balnAddress].toFixed(2, { groupSeparator: ',' })}
+      <Trans>Available</Trans>: {balances[balnAddress].toFixed(2, { groupSeparator: ',' })}
     </Typography>
   );
 
@@ -82,10 +83,18 @@ const WalletPanel = () => {
       {balances && Object.keys(balances).filter(address => balances[address].toFixed(2) !== '0.00').length ? (
         <Wrapper>
           <DashGrid>
-            <HeaderText>Asset</HeaderText>
+            <HeaderText>
+              <Trans>Asset</Trans>
+            </HeaderText>
             <BalanceAndValueWrap>
-              <HeaderText>Balance</HeaderText>
-              {isSmallScreen ? null : <HeaderText>Value</HeaderText>}
+              <HeaderText>
+                <Trans>Balance</Trans>
+              </HeaderText>
+              {isSmallScreen ? null : (
+                <HeaderText>
+                  <Trans>Value</Trans>
+                </HeaderText>
+              )}
             </BalanceAndValueWrap>
           </DashGrid>
 
@@ -164,7 +173,7 @@ const WalletPanel = () => {
       ) : (
         <Wrapper>
           <Typography textAlign="center" paddingTop={'20px'}>
-            No assets available.
+            <Trans>No assets available.</Trans>
           </Typography>
         </Wrapper>
       )}

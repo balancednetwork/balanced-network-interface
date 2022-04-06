@@ -269,7 +269,7 @@ const WithdrawText = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceD
   return (
     <ClickAwayListener onClickAway={close}>
       <div>
-        <UnderlineTextWithArrow onClick={toggle} text="Withdraw" arrowRef={arrowRef} />
+        <UnderlineTextWithArrow onClick={toggle} text={t`Withdraw`} arrowRef={arrowRef} />
         <DropdownPopper show={Boolean(anchor)} anchorEl={anchor}>
           {poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
             <WithdrawModalQ balance={balance} pair={pair} onClose={close} />

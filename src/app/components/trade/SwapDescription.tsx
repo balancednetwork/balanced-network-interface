@@ -91,8 +91,10 @@ export default function SwapDescription() {
           {pair && (
             <>
               <Typography variant="p">
-                {`${price?.toFixed(4) || '...'} 
-                ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                <Trans>
+                  {`${price?.toFixed(4) || '...'} 
+                    ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                </Trans>
               </Typography>
               {hasSICX && !hasICX && (
                 <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">

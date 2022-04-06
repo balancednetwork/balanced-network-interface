@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { IconReactProvider } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Switch, Route } from 'react-router-dom';
@@ -31,30 +30,28 @@ export function App() {
   return (
     <>
       <FixedGlobalStyle />
-      <IconReactProvider>
-        <Updaters />
+      <Updaters />
 
-        <ThemeProvider>
-          <ThemedGlobalStyle />
-          <NotificationContainer />
-          <WalletModal />
-          {/* Add message for community */}
-          {false && (
-            <Banner>
-              <Message />
-            </Banner>
-          )}
-          <Helmet
-            titleTemplate="%s | Balanced"
-            defaultTitle="Balanced Network"
-            htmlAttributes={{ lang: i18n.language }}
-          />
-          <Switch>
-            <Route exact path="/claim" component={Airdrip} />
-            <Route component={Routes} />
-          </Switch>
-        </ThemeProvider>
-      </IconReactProvider>
+      <ThemeProvider>
+        <ThemedGlobalStyle />
+        <NotificationContainer />
+        <WalletModal />
+        {/* Add message for community */}
+        {false && (
+          <Banner>
+            <Message />
+          </Banner>
+        )}
+        <Helmet
+          titleTemplate="%s | Balanced"
+          defaultTitle="Balanced Network"
+          htmlAttributes={{ lang: i18n.language }}
+        />
+        <Switch>
+          <Route exact path="/claim" component={Airdrip} />
+          <Route component={Routes} />
+        </Switch>
+      </ThemeProvider>
     </>
   );
 }

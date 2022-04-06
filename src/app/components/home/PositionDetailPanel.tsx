@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import { MessageDescriptor } from '@lingui/core';
+import { defineMessage, t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -30,6 +31,13 @@ import { DropdownPopper } from '../Popover';
 import { RebalancingInfo } from './LoanPanel';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
+
+const PERIOD_LABELS: { [key: string]: MessageDescriptor } = {
+  [Period.day]: defineMessage({ message: 'Past day' }),
+  [Period.week]: defineMessage({ message: 'Past week' }),
+  [Period.month]: defineMessage({ message: 'Past month' }),
+  [Period.all]: defineMessage({ message: 'All time' }),
+};
 
 const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmount();
@@ -73,14 +81,6 @@ const useCollateralLockedSliderPos = () => {
 };
 
 const PositionDetailPanel = () => {
-  // moved it because of t function
-  const PERIOD_LABELS: { [key: string]: string } = {
-    [Period.day]: t`Past day`,
-    [Period.week]: t`Past week`,
-    [Period.month]: t`Past month`,
-    [Period.all]: t`All time`,
-  };
-
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
@@ -323,12 +323,16 @@ const PositionDetailPanel = () => {
 
               <ClickAwayListener onClickAway={closeMenu}>
                 <div>
-                  <UnderlineTextWithArrow onClick={handleToggle} text={PERIOD_LABELS[period]} arrowRef={arrowRef} />
+                  <UnderlineTextWithArrow
+                    onClick={handleToggle}
+                    text={<Trans id={PERIOD_LABELS[period].id} />}
+                    arrowRef={arrowRef}
+                  />
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (
                         <MenuItem className={p === 'all' ? 'border-top' : ''} key={p} onClick={() => handlePeriod(p)}>
-                          {PERIOD_LABELS[p]}
+                          <Trans id={PERIOD_LABELS[p].id} />
                         </MenuItem>
                       ))}
                     </MenuList>

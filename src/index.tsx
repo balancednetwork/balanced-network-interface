@@ -4,6 +4,7 @@ import 'react-app-polyfill/stable';
 import * as React from 'react';
 
 import BigNumber from 'bignumber.js';
+import { IconReactProvider } from 'packages/icon-react';
 import * as ReactDOM from 'react-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -44,11 +45,13 @@ ReactDOM.render(
     <BrowserRouter>
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>
-          <LanguageProvider>
-            <React.StrictMode>
-              <App />
-            </React.StrictMode>
-          </LanguageProvider>
+          <IconReactProvider>
+            <LanguageProvider>
+              <React.StrictMode>
+                <App />
+              </React.StrictMode>
+            </LanguageProvider>
+          </IconReactProvider>
         </QueryClientProvider>
       </HelmetProvider>
     </BrowserRouter>

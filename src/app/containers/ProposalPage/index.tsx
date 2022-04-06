@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { useIconReact } from 'packages/icon-react';
@@ -15,14 +15,12 @@ import Column from 'app/components/Column';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton } from 'app/components/ProposalInfo';
+import { VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
-import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
-import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
-import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
@@ -145,8 +143,8 @@ export function ProposalPage() {
         addTransaction(
           { hash: res.result },
           {
-            pending: `Casting your vote...`,
-            summary: `Vote cast.`,
+            pending: t`Casting your vote...`,
+            summary: t`Vote cast.`,
           },
         );
 
@@ -196,37 +194,11 @@ export function ProposalPage() {
           <Typography variant="h2" mb={4}>
             {proposal ? proposal.name : <StyledSkeleton animation="wave" height={35} />}
           </Typography>
-          <Flex alignItems="center" mb={3} flexWrap="wrap" sx={{ columnGap: '15px' }}>
-            {proposal?.status && proposal?.startDay && proposal?.endDay ? (
-              <ProposalStatusIcon status={proposal.status} startDay={proposal.startDay} endDay={proposal.endDay} />
-            ) : (
-              <>
-                <StyledSkeleton animation="wave" width={22} height={22} variant="circle" />
-                <StyledSkeleton animation="wave" width={80} />
-              </>
-            )}
 
-            <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
-              <PieChartIcon height="22" width="22" />
-              <Typography variant="content" color="white">
-                {proposal?.sum ? `${proposal?.sum}% voted` : <StyledSkeleton animation="wave" width={80} />}
-              </Typography>
-            </Flex>
-
-            <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
-              <UserIcon height="22" width="22" />
-              <Typography variant="content" color="white">
-                {typeof proposal?.voters === 'number' ? (
-                  proposal.id === 1 ? (
-                    `- voters`
-                  ) : (
-                    `${proposal?.voters} voters`
-                  )
-                ) : (
-                  <StyledSkeleton animation="wave" width={80} />
-                )}
-              </Typography>
-            </Flex>
+          <Flex alignItems="center" mb={3} flexWrap="wrap" sx={{ columnGap: '15px' }} my={1}>
+            <VoteStatusLabel proposal={proposal} />
+            <VoterPercentLabel value={proposal?.sum} />
+            <VoterNumberLabel value={proposal?.voters} />
           </Flex>
 
           {hasUserVoted ? (

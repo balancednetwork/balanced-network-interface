@@ -153,14 +153,18 @@ export default function DepositPanel() {
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {beforeAmount.toFixed(2, { groupSeparator: ',' }) + ' sICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {afterAmount.toFixed(2, { groupSeparator: ',' }) + ' sICX'}
               </Typography>

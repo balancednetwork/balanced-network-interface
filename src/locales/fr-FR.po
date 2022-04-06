@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-05 20:25\n"
+"PO-Revision-Date: 2022-04-06 04:30\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -16,6 +16,10 @@ msgstr ""
 "X-Crowdin-File: en-US.po\n"
 "X-Crowdin-File-ID: 12\n"
 
+#: src/app/components/home/LoanPanel.tsx
+msgid "10 bnUSD minimum"
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "100 bnUSD"
 msgstr "100 bnUSD"
@@ -27,6 +31,10 @@ msgstr "ACTIVITÉ"
 #: src/app/components/home/TransactionPanel.tsx
 msgid "AMOUNT"
 msgstr "MONTANT"
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Active"
+msgstr ""
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "Activity history"
@@ -52,6 +60,7 @@ msgstr "Ajuster"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "After"
@@ -72,7 +81,12 @@ msgstr "Depuis le début"
 msgid "Approve"
 msgstr "Valider"
 
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Approved"
+msgstr ""
+
 #: src/app/components/SearchModal/CurrencyList.tsx
+#: src/app/components/home/WalletPanel.tsx
 msgid "Asset"
 msgstr "Actif"
 
@@ -81,12 +95,17 @@ msgid "Assets to send"
 msgstr "Actifs à envoyer"
 
 #: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/WalletPanel.tsx
 msgid "Available"
 msgstr "Disponible"
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
 msgstr "Retour sur le site de Balanced"
+
+#: src/app/components/home/WalletPanel.tsx
+msgid "Balance"
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Balance Tokens"
@@ -105,6 +124,7 @@ msgstr "Balanced vend du collatéral à un prix intéressant pour rembourser une
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Before"
@@ -147,6 +167,14 @@ msgstr ""
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Cancel"
 msgstr "Annuler"
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Cancelled"
+msgstr ""
+
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Casting your vote..."
+msgstr ""
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
@@ -289,6 +317,10 @@ msgid "Deposit sICX collateral?"
 msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
+msgid "Deposited"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited {0} ICX as collateral."
 msgstr ""
 
@@ -310,6 +342,10 @@ msgstr "Description"
 msgid "Do not send sICX to an exchange."
 msgstr ""
 
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Enacted"
+msgstr ""
+
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
 msgstr "Entrer le montant"
@@ -322,6 +358,10 @@ msgstr "Entrer un montant"
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Exchange rate"
 msgstr "Taux de change"
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Failed to enact"
+msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"
@@ -437,6 +477,14 @@ msgstr "Frais de réseau"
 msgid "New proposal"
 msgstr "Nouvelle proposition"
 
+#: src/app/components/home/TransactionPanel.tsx
+msgid "No activity yet."
+msgstr ""
+
+#: src/app/components/home/WalletPanel.tsx
+msgid "No assets available."
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
 msgstr ""
@@ -467,6 +515,7 @@ msgstr "Semaine dernière"
 msgid "Pay"
 msgstr ""
 
+#: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
@@ -504,6 +553,10 @@ msgstr ""
 msgid "Proposals"
 msgstr ""
 
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Quorum not reached"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Rebalancing"
@@ -518,6 +571,10 @@ msgstr ""
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Reject"
+msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Rejected"
 msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
@@ -656,6 +713,11 @@ msgstr ""
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staking BALN..."
+msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Starting in {startTimeStr}"
 msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
@@ -852,6 +914,10 @@ msgstr ""
 msgid "Used"
 msgstr ""
 
+#: src/app/components/home/WalletPanel.tsx
+msgid "Value"
+msgstr ""
+
 #: src/app/components/WalletModal/index.tsx
 msgid "View disclaimer"
 msgstr ""
@@ -859,6 +925,10 @@ msgstr ""
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
 msgid "Vote"
+msgstr ""
+
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Vote cast."
 msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
@@ -899,6 +969,7 @@ msgstr ""
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdraw"
 msgstr ""
 
@@ -934,6 +1005,10 @@ msgstr ""
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdrawing sICX..."
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "Withdrawing {0}"
 msgstr ""
 
 #: src/app/components/trade/utils.tsx
@@ -975,6 +1050,10 @@ msgstr ""
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Your ICX will be unstaked as more collateral is deposited into Balanced."
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Your collateral balance is <0>{0} sICX</0> (staked ICX). The ICX value of your sICX is displayed, and will increase over time from staking rewards. You can't use it unless you withdraw it."
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
@@ -1053,6 +1132,15 @@ msgstr ""
 msgid "{0} sICX added to your wallet."
 msgstr ""
 
+#: src/app/components/ProposalInfo/components.tsx
+msgid "{0} voters"
+msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "{0} {1} added to your wallet"
+msgstr ""
+
+#: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "{0} {1} per {2}"
@@ -1066,11 +1154,19 @@ msgstr ""
 msgid "{currency} sent to the {pair} pool."
 msgstr ""
 
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "{endTimeStr} left"
+msgstr ""
+
 #: src/app/components/trade/utils.tsx
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
 msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "{outputAmount} {outputCurrency} added to your wallet."
+msgstr ""
+
+#: src/app/components/ProposalInfo/components.tsx
+msgid "{value}% voted"
 msgstr ""
 

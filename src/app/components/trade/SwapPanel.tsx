@@ -227,7 +227,7 @@ export default function SwapPanel() {
               <Trans>Swap</Trans>
             </Typography>
             <Typography as="div" hidden={!account}>
-              <Trans>Wallet: </Trans>
+              <Trans>Wallet:</Trans>{' '}
               {`${currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' })} 
                 ${currencies[Field.INPUT]?.symbol}`}
             </Typography>
@@ -256,7 +256,7 @@ export default function SwapPanel() {
               <Trans>For</Trans>
             </Typography>
             <Typography as="div" hidden={!account}>
-              <Trans>Wallet: </Trans>
+              <Trans>Wallet:</Trans>{' '}
               {`${currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })}
                 ${currencies[Field.OUTPUT]?.symbol}`}
             </Typography>

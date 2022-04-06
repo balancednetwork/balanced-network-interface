@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { t } from '@lingui/macro';
+import { MessageDescriptor } from '@lingui/core';
+import { defineMessage } from '@lingui/macro';
 import { Helmet } from 'react-helmet-async';
 import { Switch, Route, useLocation } from 'react-router-dom';
 
@@ -12,22 +13,21 @@ import { ProposalPage } from './containers/ProposalPage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
 import { VotePage } from './containers/VotePage/Loadable';
 
+const routeTexts: [string, MessageDescriptor][] = [
+  ['/vote', defineMessage({ message: 'Vote' })],
+  ['/trade', defineMessage({ message: 'Trade' })],
+  ['/', defineMessage({ message: 'Home' })],
+];
+
 export default function Routes() {
   const location = useLocation();
-
-  // moved it because of t function
-  const routeTexts = [
-    ['/vote', t`Vote`],
-    ['/trade', t`Trade`],
-    ['/', t`Home`],
-  ];
 
   const title = routeTexts.find(item => location.pathname.startsWith(item[0]))?.[1];
 
   return (
-    <DefaultLayout title={title}>
+    <DefaultLayout title={title?.id}>
       <Helmet>
-        <title>{title}</title>
+        <title>{title?.message}</title>
       </Helmet>
       <Switch>
         <Route exact path="/" component={HomePage} />

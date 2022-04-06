@@ -61,7 +61,7 @@ const StyledAddress = styled(Typography)`
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
-export default React.memo(function Header(props: { title?: string; className?: string }) {
+export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
   const { account, disconnect } = useIconReact();
@@ -107,7 +107,9 @@ export default React.memo(function Header(props: { title?: string; className?: s
       <Flex justifyContent="space-between">
         <Flex alignItems="center">
           <StyledLogo />
-          <Typography variant="h1">{title}</Typography>
+          <Typography variant="h1">
+            <Trans id={title} />
+          </Typography>
           {NETWORK_ID !== NetworkId.MAINNET && (
             <Typography variant="h3" color="alert">
               {CHAIN_INFO[NETWORK_ID].name}
@@ -168,4 +170,4 @@ export default React.memo(function Header(props: { title?: string; className?: s
       </Flex>
     </header>
   );
-});
+}

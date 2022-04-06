@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import { defineMessage, Trans } from '@lingui/macro';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -17,14 +17,14 @@ dayjs.extend(utc);
 dayjs.extend(relativeTime);
 
 const StatusMap = {
-  Pending: t`Pending`,
-  Active: t`Active`,
-  Cancelled: t`Cancelled`,
-  Defeated: t`Rejected`,
-  Succeeded: t`Approved`,
-  'No Quorum': t`Quorum not reached`,
-  Executed: t`Enacted`,
-  'Failed Execution': t`Failed to enact`,
+  Pending: defineMessage({ message: `Pending` }),
+  Active: defineMessage({ message: `Active` }),
+  Cancelled: defineMessage({ message: `Cancelled` }),
+  Defeated: defineMessage({ message: `Rejected` }),
+  Succeeded: defineMessage({ message: `Approved` }),
+  'No Quorum': defineMessage({ message: `Quorum not reached` }),
+  Executed: defineMessage({ message: `Enacted` }),
+  'Failed Execution': defineMessage({ message: `Failed to enact` }),
 };
 
 interface ProposalStatusProps {
@@ -49,7 +49,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <FailureIcon height="22" width="22" />
         <Typography variant="content" color="white">
-          <Trans id={StatusMap[status]} />
+          <Trans id={StatusMap[status].id} />
         </Typography>
       </Flex>
     );
@@ -93,7 +93,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <TickIcon height="22" width="22" />
         <Typography variant="content" color="white">
-          <Trans id={StatusMap[status]} />
+          <Trans id={StatusMap[status].id} />
         </Typography>
       </Flex>
     );
@@ -102,7 +102,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   return (
     <Flex alignItems="center">
       <Typography variant="content" color="white">
-        <Trans id={StatusMap[status]} />
+        <Trans id={StatusMap[status].id} />
       </Typography>
     </Flex>
   );

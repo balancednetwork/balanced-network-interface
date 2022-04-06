@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-06 04:30\n"
+"PO-Revision-Date: 2022-04-06 05:22\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -72,7 +72,7 @@ msgstr "모든 담보물 잠김"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
-msgstr "모든 시간"
+msgstr "모든 기간"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -97,7 +97,7 @@ msgstr "송금할 자산"
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/WalletPanel.tsx
 msgid "Available"
-msgstr "대출 허용"
+msgstr "대출 가능"
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
@@ -142,11 +142,11 @@ msgstr "Balanced 달러를 빌리시겠습니까?"
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed"
-msgstr "대출금"
+msgstr "대출됨"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed {0} bnUSD."
-msgstr "대출금 {0} bnUSD."
+msgstr "{0} bnUSD 대출됨."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowing bnUSD..."
@@ -479,11 +479,11 @@ msgstr "새로운 제안"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "No activity yet."
-msgstr ""
+msgstr "아직 활동이 없습니다."
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "No assets available."
-msgstr ""
+msgstr "사용 가능한 자산이 없습니다."
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
@@ -555,7 +555,7 @@ msgstr "제안"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
-msgstr ""
+msgstr "정족수에 도달하지 못했습니다"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -575,7 +575,7 @@ msgstr "거부하다"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Rejected"
-msgstr ""
+msgstr "거부됨"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove"
@@ -668,7 +668,7 @@ msgstr "연결하기"
 
 #: src/app/containers/HomePage/index.tsx
 msgid "Sign in to use the Home page."
-msgstr "홈 페이지를 사용하려면 지갑을 연결하세요."
+msgstr "사용을 위해 지갑을 연결하세요."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Sign in to view your liquidity details."
@@ -718,7 +718,7 @@ msgstr "BALN 스테이킹 중..."
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Starting in {startTimeStr}"
-msgstr ""
+msgstr "{startTimeStr} 에 시작됨"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit"
@@ -786,7 +786,7 @@ msgstr "최대 7일이 소요될 수 있습니다. 진행을 원하시면 '지�
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "The amount of ICX available to deposit from your wallet."
-msgstr "지갑에서 입금할 수 있는 ICX의 양입니다."
+msgstr "지갑에서 예치 가능한 ICX의 양."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current ICX price is"
@@ -929,7 +929,7 @@ msgstr "투표"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
-msgstr ""
+msgstr "투표 하기."
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Voting will begin at 5pm UTC,"
@@ -1012,7 +1012,7 @@ msgstr "sICX 회수하는 중..."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Withdrawing {0}"
-msgstr ""
+msgstr "{0} 를 회수하는 중"
 
 #: src/app/components/trade/utils.tsx
 msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
@@ -1058,7 +1058,7 @@ msgstr "Balanced에 더 많은 담보가 예치됨에 따라 당신의 ICX는 �
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your collateral balance is <0>{0} sICX</0> (staked ICX). The ICX value of your sICX is displayed, and will increase over time from staking rewards. You can't use it unless you withdraw it."
-msgstr ""
+msgstr "당신의 담보 잔액은 <0>{0} sICX</0> (스테이킹 된 ICX)입니다. sICX의 ICX 값이 표시되며, 시간이 지남에 따라 스테이킹 보상으로 수량이 증가하며. 인출하지 않으면 사용할 수 없습니다."
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1139,11 +1139,11 @@ msgstr "{0} sICX가 지갑에 추가되었습니다."
 
 #: src/app/components/ProposalInfo/components.tsx
 msgid "{0} voters"
-msgstr ""
+msgstr "{0} 유권자"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "{0} {1} added to your wallet"
-msgstr ""
+msgstr "{0} {1} 이 지갑에 추가되었습니다."
 
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapDescription.tsx
@@ -1161,7 +1161,7 @@ msgstr "{currency} 를 {pair} 풀로 보냈습니다."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "{endTimeStr} left"
-msgstr ""
+msgstr "{endTimeStr} 남음"
 
 #: src/app/components/trade/utils.tsx
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
@@ -1173,5 +1173,5 @@ msgstr "{outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
 
 #: src/app/components/ProposalInfo/components.tsx
 msgid "{value}% voted"
-msgstr ""
+msgstr "{value}% 투표됨"
 

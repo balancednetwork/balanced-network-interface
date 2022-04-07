@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-06 05:22\n"
+"PO-Revision-Date: 2022-04-07 08:29\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -133,11 +133,11 @@ msgstr "적용 전"
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow"
-msgstr "대출받기"
+msgstr "대출"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow Balanced Dollars?"
-msgstr "Balanced 달러를 빌리시겠습니까?"
+msgstr "Balanced 달러를 대출 하겠습니까?"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -382,7 +382,7 @@ msgstr "돌아가기"
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
 msgid "Home"
-msgstr "예치"
+msgstr "홈"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "If bnUSD is above $1"

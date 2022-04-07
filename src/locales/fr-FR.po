@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-07 20:25\n"
+"PO-Revision-Date: 2022-04-07 21:21\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -42,7 +42,7 @@ msgstr "Historique de l'activité"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
-msgstr "Ajoutez vos sICX au pool de garanties."
+msgstr "Ajoutez vos sICX à la réserve de garanties."
 
 #: src/app/components/AddressInputPanel/index.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
@@ -79,11 +79,11 @@ msgstr "Depuis le début"
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Approve"
-msgstr "Valider"
+msgstr "Approuver"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
-msgstr "Validé"
+msgstr "Approuvé"
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/home/WalletPanel.tsx
@@ -249,7 +249,7 @@ msgstr "Copier l'adresse"
 
 #: src/store/transactions/hooks.tsx
 msgid "Couldn't complete the transaction. Make sure your wallet is set to the right network."
-msgstr "Impossible de terminer la transaction. Assurez-vous que votre portefeuille est bien défini sur le bon réseau."
+msgstr "Impossible de terminer la transaction. Assurez-vous que votre portefeuille est défini sur le bon réseau."
 
 #: src/app/components/Notification/TransactionNotification.tsx
 msgid "Couldn't complete your transaction."
@@ -344,7 +344,7 @@ msgstr "Ne pas envoyer sICX vers un exchange."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
-msgstr "Adopté"
+msgstr "Promulgué"
 
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
@@ -361,7 +361,7 @@ msgstr "Taux de change"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Failed to enact"
-msgstr "Non-approuvé"
+msgstr "Non promulgué"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"
@@ -448,7 +448,7 @@ msgstr "Liquidé"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Liquidity details"
-msgstr ""
+msgstr "Détails de la liquidité"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -595,7 +595,7 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay"
-msgstr ""
+msgstr "Rembourser"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
@@ -611,15 +611,15 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Route"
-msgstr ""
+msgstr "Itinéraire"
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "Search name or contract"
-msgstr ""
+msgstr "Rechercher un nom ou un contrat"
 
 #: src/store/swap/hooks.ts
 msgid "Select a token"
-msgstr ""
+msgstr "Sélectionner un token"
 
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/ICXWallet/index.tsx
@@ -628,11 +628,11 @@ msgstr ""
 #: src/app/components/home/wallets/SendPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Send"
-msgstr ""
+msgstr "Envoyer"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send asset?"
-msgstr ""
+msgstr "Envoyer un actif ?"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Send each asset to the contract"
@@ -640,7 +640,7 @@ msgstr ""
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send max"
-msgstr ""
+msgstr "Envoyer le maximum"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send {0}"
@@ -648,7 +648,7 @@ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Sending"
-msgstr ""
+msgstr "Envoi en cours"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Sending {0}..."
@@ -693,11 +693,11 @@ msgstr "Staking"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens"
-msgstr ""
+msgstr "Stake Balance Tokens"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens?"
-msgstr ""
+msgstr "Stake Balance Tokens ?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Stake at least {0} BALN if you want to propose a change."
@@ -713,7 +713,7 @@ msgstr ""
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staking BALN..."
-msgstr ""
+msgstr "Staking BALN..."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/ProposalStatusIcon/index.tsx
@@ -722,7 +722,7 @@ msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit"
-msgstr ""
+msgstr "Soumettre"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit proposal"
@@ -753,7 +753,7 @@ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
-msgstr ""
+msgstr "Fournir de la liquidité ?"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supplying"
@@ -841,7 +841,7 @@ msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total supply"
-msgstr ""
+msgstr "Offre totale"
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
@@ -854,7 +854,7 @@ msgstr "Transaction"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "US Dollars"
-msgstr ""
+msgstr "Dollars US"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Understood"
@@ -868,12 +868,12 @@ msgstr "Unstake"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstake Balance Tokens?"
-msgstr ""
+msgstr "Unstake Balance Tokens ?"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX"
-msgstr ""
+msgstr "Unstake sICX"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX?"
@@ -888,15 +888,15 @@ msgstr ""
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/index.tsx
 msgid "Unstaking"
-msgstr ""
+msgstr "Enelver du staking"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaking BALN..."
-msgstr ""
+msgstr "Enlever du staking BALN..."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaking takes 3 days."
-msgstr ""
+msgstr "Enlever du staking prend 3 jours."
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
@@ -925,7 +925,7 @@ msgstr "Voir la clause de non-responsabilité"
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
 msgid "Vote"
-msgstr ""
+msgstr "Voter"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
@@ -988,7 +988,7 @@ msgstr "Retirer des liquidités ?"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdraw sICX?"
-msgstr ""
+msgstr "Retirer sICX ?"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1017,7 +1017,7 @@ msgstr ""
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "You approved"
-msgstr ""
+msgstr "Vous avez approuvé"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "You can't withdraw any collateral if you go beyond this threshold."

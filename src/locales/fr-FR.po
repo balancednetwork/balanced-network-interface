@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-06 21:22\n"
+"PO-Revision-Date: 2022-04-07 20:25\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -42,7 +42,7 @@ msgstr "Historique de l'activité"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
-msgstr "Ajoutez vos sICX à la réserve de garanties."
+msgstr "Ajoutez vos sICX au pool de garanties."
 
 #: src/app/components/AddressInputPanel/index.tsx
 #: src/app/components/home/wallets/SendPanel.tsx

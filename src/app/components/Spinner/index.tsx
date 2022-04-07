@@ -2,24 +2,17 @@ import React, { FC } from 'react';
 
 import styled, { keyframes, css } from 'styled-components';
 
-import spinnerImgBig from 'assets/images/spinner-big.png';
-import spinnerImg from 'assets/images/spinner.png';
-
-type ImageSize = 'lg' | 'sm';
+import spinnerImg from 'assets/images/spinner-big.png';
 
 type SpinnerProps = {
-  size?: ImageSize;
+  size?: number;
   className?: string;
   centered?: boolean;
 };
 
-const Spinner: FC<SpinnerProps> = ({ size = 'sm', className, centered = false, ...rest }) => (
+const Spinner: FC<SpinnerProps> = ({ size = 20, className, centered = false, ...rest }) => (
   <Container className={className} centered={centered} {...rest}>
-    {size === 'sm' ? (
-      <Img src={spinnerImg} alt="spinner" width="20" height="20" />
-    ) : (
-      <Img src={spinnerImgBig} alt="spinner" width="75" height="75" />
-    )}
+    <Img src={spinnerImg} alt="spinner" width={size} height={size} />
   </Container>
 );
 

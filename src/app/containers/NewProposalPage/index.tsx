@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
+import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, TextButton } from 'app/components/Button';
-import { DefaultLayout } from 'app/components/Layout';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect';
@@ -283,17 +282,14 @@ export function NewProposalPage() {
   };
 
   return (
-    <DefaultLayout title="Vote">
-      <Helmet>
-        <title>Vote</title>
-      </Helmet>
+    <>
       <NewProposalContainer>
         <Breadcrumb title={'New proposal'} locationText={'Vote'} locationPath={'/vote'} />
         <ProposalTypesSelect onSelect={handleProposalTypeSelect} selected={selectedProposalType} />
         <ProposalDetailContainer>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
-              Title
+              <Trans>Title</Trans>
             </Typography>
             <Typography variant="p" flex="1" textAlign="right" alignSelf="center">
               {`${title.length}/100`}
@@ -302,7 +298,7 @@ export function NewProposalPage() {
           <FieldInput type="text" onChange={onTitleInputChange} value={title} maxLength={100} />
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
-              Forum link
+              <Trans>Forum link</Trans>
             </Typography>
           </FieldContainer>
           <Tooltip
@@ -316,7 +312,7 @@ export function NewProposalPage() {
           </Tooltip>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
-              Description
+              <Trans>Description</Trans>
             </Typography>
             <Typography variant="p" flex="1" textAlign="right" alignSelf="center">
               {`${description.length}/500`}
@@ -341,16 +337,16 @@ export function NewProposalPage() {
             />
           )}
           <Typography variant="content" mt="25px" mb="25px" textAlign="center">
-            It costs 100 bnUSD to submit a proposal.
+            <Trans>It costs 100 bnUSD to submit a proposal.</Trans>
           </Typography>
           <div style={{ textAlign: 'center' }}>
             <Button disabled={!canSubmit} onClick={formSubmit}>
-              Submit
+              <Trans>Submit</Trans>
             </Button>
           </div>
           {account && !isStakeValid && minimumStakeBalance && (
             <Typography variant="content" mt="25px" mb="25px" textAlign="center" color={theme.colors.alert}>
-              Stake at least {minimumStakeBalance.dp(2).toFormat()} BALN if you want to propose a change.
+              <Trans>Stake at least {minimumStakeBalance.dp(2).toFormat()} BALN if you want to propose a change.</Trans>
             </Typography>
           )}
         </ProposalDetailContainer>
@@ -358,17 +354,17 @@ export function NewProposalPage() {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            Submit proposal?
+            <Trans>Submit proposal?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            100 bnUSD
+            <Trans>100 bnUSD</Trans>
           </Typography>
 
           <Typography textAlign="center" marginTop="10px">
-            Voting will begin at 5pm UTC,
+            <Trans>Voting will begin at 5pm UTC,</Trans>
             <br />
-            and ends after 5 days.
+            <Trans>and ends after 5 days.</Trans>
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -376,16 +372,16 @@ export function NewProposalPage() {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Go back
+                  <Trans>Go back</Trans>
                 </TextButton>
                 <Button onClick={modalSubmit} fontSize={14} disabled={!hasEnoughICX}>
-                  Submit proposal
+                  <Trans>Submit proposal</Trans>
                 </Button>
               </>
             )}
           </Flex>
         </ModalContent>
       </Modal>
-    </DefaultLayout>
+    </>
   );
 }

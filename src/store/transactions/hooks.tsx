@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
 
+import { t } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { NotificationPending } from 'app/components/Notification/TransactionNotification';
+import { NotificationPending, NotificationError } from 'app/components/Notification/TransactionNotification';
 import { getTrackerLink } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
@@ -33,16 +34,24 @@ export function useTransactionAdder(): (
 
       const { hash } = response;
       if (!hash) {
+        toast(
+          <NotificationError
+            failureReason={t`Couldn't complete the transaction. Make sure your wallet is set to the right network.`}
+          />,
+          {
+            toastId: 'possibleWrongNetwork',
+            autoClose: 5000,
+          },
+        );
         throw Error('No transaction hash found.');
       }
 
-      //
       const link = getTrackerLink(networkId, hash, 'transaction');
       const toastProps = {
         onClick: () => window.open(link, '_blank'),
       };
 
-      toast(<NotificationPending summary={pending || 'Your transaction has been sent to the network'} />, {
+      toast(<NotificationPending summary={pending || t`Processing transaction...`} />, {
         ...toastProps,
         toastId: hash,
       });

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -16,8 +17,8 @@ import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { Fraction, Price, Currency } from 'types/balanced-sdk-core';
-import { generateChartData } from 'utils';
+import { Price, Currency } from 'types/balanced-sdk-core';
+import { generateChartData, toFraction } from 'utils';
 
 export default function SwapDescription() {
   const { currencies, price } = useDerivedSwapInfo();
@@ -39,8 +40,7 @@ export default function SwapDescription() {
     [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
   );
 
-  const [qratioNumerator, qratioDenominator] = ratio.sICXICXratio.toFraction();
-  const qratioFrac = new Fraction(qratioNumerator.toFixed(), qratioDenominator.toFixed());
+  const qratioFrac = toFraction(ratio.sICXICXratio);
 
   let priceInICX: Price<Currency, Currency> | undefined;
 
@@ -91,14 +91,18 @@ export default function SwapDescription() {
           {pair && (
             <>
               <Typography variant="p">
-                {`${price?.toFixed(4) || '...'} 
-                ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                <Trans>
+                  {`${price?.toFixed(4) || '...'} 
+                    ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                </Trans>
               </Typography>
               {hasSICX && !hasICX && (
                 <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
-                  {`${priceInICX?.toFixed(4) || '...'} 
-                  ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
-                  per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  <Trans>
+                    {`${priceInICX?.toFixed(4) || '...'} 
+                      ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
+                      per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  </Trans>
                 </Typography>
               )}
             </>
@@ -139,7 +143,7 @@ export default function SwapDescription() {
         {pair ? (
           <>
             {loading ? (
-              <Spinner size={'lg'} centered />
+              <Spinner size={75} centered />
             ) : (
               <>
                 {chartOption.type === CHART_TYPES.AREA && (
@@ -159,7 +163,9 @@ export default function SwapDescription() {
           </>
         ) : (
           <Flex justifyContent="center" alignItems="center" height="100%">
-            <Typography>No price chart available for this pair.</Typography>
+            <Typography>
+              <Trans>No price chart available for this pair.</Trans>
+            </Typography>
           </Flex>
         )}
       </ChartContainer>

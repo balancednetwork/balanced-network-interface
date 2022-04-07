@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -31,8 +32,10 @@ export default function ProposalTypesSelect({
   };
 
   return (
-    <Flex alignItems="flex-end" marginTop="50px">
-      <Typography variant="h2">Proposal type:&nbsp;</Typography>
+    <Flex alignItems="flex-end" marginTop="50px" flexWrap="wrap">
+      <Typography variant="h2">
+        <Trans>Proposal type</Trans>:&nbsp;
+      </Typography>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <div ref={ref}>
           <StyledWrapper onClick={toggleOpen}>

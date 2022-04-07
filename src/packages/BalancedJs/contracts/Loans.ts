@@ -22,7 +22,7 @@ export default class Loans extends Contract {
   depositAndBorrow(value: string, params: { asset?: 'bnUSD'; amount?: string; from?: string; value?: string } = {}) {
     const payload = this.transactionParamsBuilder({
       method: 'depositAndBorrow',
-      value: value,
+      value: IconConverter.toHexNumber(value),
       params: {
         _asset: params.asset,
         _amount: params.amount && IconConverter.toHexNumber(params.amount),

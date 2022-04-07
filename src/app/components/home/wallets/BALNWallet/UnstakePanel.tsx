@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 
@@ -18,18 +19,22 @@ export default function UnstakePanel() {
   return (
     <>
       <Grid>
-        <Typography variant="h3">Unstaking</Typography>
+        <Typography variant="h3">
+          <Trans>Unstaking</Trans>
+        </Typography>
 
         {unstakingBalance.isZero() ? (
-          <Typography>There's no BALN unstaking.</Typography>
+          <Typography>
+            <Trans>There's no BALN unstaking.</Trans>
+          </Typography>
         ) : (
           <>
             <Typography>
-              {`Your BALN will unstake on ${unstakingDate && dayjs(unstakingDate).format('MMM D')} at
+              {t`Your BALN will unstake on ${unstakingDate && dayjs(unstakingDate).format('MMM D')} at
                 ${unstakingDate && dayjs(unstakingDate).format('hh:mma')}.`}
             </Typography>
 
-            <Typography variant="p">{unstakingBalance.dp(2).toFormat()} BALN unstaking</Typography>
+            <Typography variant="p">{t`${unstakingBalance.dp(2).toFormat()} BALN unstaking`}</Typography>
           </>
         )}
       </Grid>

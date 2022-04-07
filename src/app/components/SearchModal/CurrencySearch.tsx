@@ -1,6 +1,8 @@
 import React, { /*KeyboardEvent,*/ RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
+import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -116,7 +118,7 @@ export function CurrencySearch({
 
   const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim();
-    if (s === '' || s === 'i' || s === 'ic' || s === 'icx') {
+    if ('icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0) {
       return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
     }
     return filteredSortedTokens;
@@ -143,10 +145,29 @@ export function CurrencySearch({
     setSearchQuery(checksummedInput || input);
   }, []);
 
+  //handle focus on modal open
+  useEffect(() => {
+    let focusTimeout;
+    if (isOpen && !isMobile) {
+      focusTimeout = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+    }
+    return () => {
+      clearTimeout(focusTimeout);
+    };
+  }, [isOpen]);
+
   // menu ui
   const [open, toggle] = useToggle(false);
   const node = useRef<HTMLDivElement>();
   useOnClickOutside(node, open ? toggle : undefined);
+
+  const currencies =
+    currencySelectionType === CurrencySelectionType.NORMAL ||
+    currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
+      ? filteredSortedTokensWithICX
+      : filteredSortedTokens;
 
   return (
     <Wrapper width={width}>
@@ -154,12 +175,11 @@ export function CurrencySearch({
         <SearchInput
           type="text"
           id="token-search-input"
-          placeholder={`Search name or contract`}
+          placeholder={t`Search name or contract`}
           autoComplete="off"
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
           onChange={handleInput}
-          // onKeyDown={handleEnter}
         />
       </Flex>
 
@@ -170,23 +190,20 @@ export function CurrencySearch({
       ) : filteredSortedTokensWithICX?.length > 0 ? (
         <CurrencyList
           account={account}
-          currencies={
-            currencySelectionType === CurrencySelectionType.NORMAL ||
-            currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
-              ? filteredSortedTokensWithICX
-              : filteredSortedTokens
-          }
+          currencies={currencies}
           onCurrencySelect={handleCurrencySelect}
           showImportView={showImportView}
           setImportToken={setImportToken}
           showRemoveView={showRemoveView}
           setRemoveToken={setRemoveToken}
           showCurrencyAmount={showCurrencyAmount}
+          isOpen={isOpen}
+          onDismiss={onDismiss}
         />
       ) : (
         <Column style={{ padding: '20px', height: '100%' }}>
           <Typography color="text3" textAlign="center" mb="20px">
-            No results found.
+            <Trans>No results found.</Trans>
           </Typography>
         </Column>
       )}

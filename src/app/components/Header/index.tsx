@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TransportWebHID from '@ledgerhq/hw-transport-webhid';
+import { t, Trans } from '@lingui/macro';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -36,11 +36,12 @@ const WalletInfo = styled(Box)`
 const WalletButtonWrapper = styled.div``;
 
 const WalletMenu = styled.div`
-  max-width: 160px;
+  max-width: 164px;
   font-size: 14px;
   padding: 25px;
   display: grid;
   grid-template-rows: auto;
+  justify-items: center;
   grid-gap: 20px;
 `;
 
@@ -61,7 +62,7 @@ const StyledAddress = styled(Typography)`
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
-export default React.memo(function Header(props: { title?: string; className?: string }) {
+export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
   const { account, disconnect } = useIconReact();
@@ -90,14 +91,9 @@ export default React.memo(function Header(props: { title?: string; className?: s
   const handleDisconnectWallet = async () => {
     closeWalletMenu();
     disconnect();
-    if (!bnJs.contractSettings.ledgerSettings.transport) {
-      bnJs.inject({
-        legerSettings: {
-          transport: await TransportWebHID.create(),
-        },
-      });
+    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+      bnJs.contractSettings.ledgerSettings.transport.close();
     }
-    bnJs.contractSettings.ledgerSettings.transport.close();
   };
 
   const copyAddress = React.useCallback(async (account: string) => {
@@ -112,7 +108,9 @@ export default React.memo(function Header(props: { title?: string; className?: s
       <Flex justifyContent="space-between">
         <Flex alignItems="center">
           <StyledLogo />
-          <Typography variant="h1">{title}</Typography>
+          <Typography variant="h1">
+            <Trans id={title} />
+          </Typography>
           {NETWORK_ID !== NetworkId.MAINNET && (
             <Typography variant="h3" color="alert">
               {CHAIN_INFO[NETWORK_ID].name}
@@ -122,7 +120,9 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
         {!account && (
           <Flex alignItems="center">
-            <Button onClick={toggleWalletModal}>Sign in</Button>
+            <Button onClick={toggleWalletModal}>
+              <Trans>Sign in</Trans>
+            </Button>
           </Flex>
         )}
 
@@ -130,10 +130,10 @@ export default React.memo(function Header(props: { title?: string; className?: s
           <Flex alignItems="center">
             <WalletInfo>
               <Typography variant="p" textAlign="right">
-                Wallet
+                <Trans>Wallet</Trans>
               </Typography>
               {account && (
-                <MouseoverTooltip text={isCopied ? 'Copied' : 'Copy address'} placement="left" noArrowAndBorder>
+                <MouseoverTooltip text={isCopied ? t`Copied` : t`Copy address`} placement="left" noArrowAndBorder>
                   <StyledAddress
                     onMouseLeave={() => {
                       setTimeout(() => updateCopyState(false), 250);
@@ -155,8 +155,12 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <WalletMenu>
-                      <ChangeWalletButton onClick={handleChangeWallet}>Change wallet</ChangeWalletButton>
-                      <WalletMenuButton onClick={handleDisconnectWallet}>Sign out</WalletMenuButton>
+                      <ChangeWalletButton onClick={handleChangeWallet}>
+                        <Trans>Change wallet</Trans>
+                      </ChangeWalletButton>
+                      <WalletMenuButton onClick={handleDisconnectWallet}>
+                        <Trans>Sign out</Trans>
+                      </WalletMenuButton>
                     </WalletMenu>
                   </DropdownPopper>
                 </div>
@@ -167,4 +171,4 @@ export default React.memo(function Header(props: { title?: string; className?: s
       </Flex>
     </header>
   );
-});
+}

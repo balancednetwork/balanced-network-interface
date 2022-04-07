@@ -255,8 +255,8 @@ export const USDS_BERLIN = new Token(
   SupportedChainId.BERLIN,
   'cx91a9327ca44e78983e143b1cfb18e8024a1f31d9',
   18,
-  'FIN',
-  'Fin Token',
+  'USDS',
+  'Stably USD',
 );
 
 // todo: calculate supported tokens from supported tokens info

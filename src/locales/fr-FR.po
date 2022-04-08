@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-07 21:21\n"
+"PO-Revision-Date: 2022-04-08 13:36\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -210,11 +210,11 @@ msgstr "Réclamer les frais de réseau ?"
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claimed {0} ICX."
-msgstr ""
+msgstr "Réclamation de {0} ICX."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claiming ICX..."
-msgstr ""
+msgstr "Réclamation d'ICX en cours..."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -265,11 +265,11 @@ msgstr "Impossible de fournir la liquidité {pair}. Réessayez."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
-msgstr ""
+msgstr "Impossible d'échanger {inputCurrency} contre {outputCurrency}. Réessayez."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
-msgstr ""
+msgstr "Impossible de retirer la liquidité {inputCurrency} / {outputCurrency}. Réessayez."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Create liquidity pool?"
@@ -322,11 +322,11 @@ msgstr "Déposé"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited {0} ICX as collateral."
-msgstr ""
+msgstr "{0} ICX déposés comme garantie."
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposited {0} sICX as collateral."
-msgstr ""
+msgstr "{0} sICX déposés comme garantie."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
@@ -406,11 +406,11 @@ msgstr "Dans le contrat"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Includes a fee of {0} bnUSD."
-msgstr ""
+msgstr "Comprend des frais de {0} bnUSD."
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Includes a fee of {0} {1}."
-msgstr ""
+msgstr "Comprend des frais de {0} {1}."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -423,12 +423,12 @@ msgstr "Liquidité insuffisante"
 
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
-msgstr ""
+msgstr "Insuffisant {0}"
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 msgid "Insufficient {0} balance"
-msgstr ""
+msgstr "Solde {0} insuffisant"
 
 #: src/store/mint/hooks.tsx
 msgid "Invalid pair"
@@ -467,7 +467,7 @@ msgstr "Verrouillé"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Minimum to receive"
-msgstr ""
+msgstr "Minimum à recevoir"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
@@ -555,12 +555,12 @@ msgstr "Propositions"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
-msgstr ""
+msgstr "Minimum requis non atteint"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Rebalancing"
-msgstr ""
+msgstr "Rééquilibrage"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
@@ -644,7 +644,7 @@ msgstr "Envoyer le maximum"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send {0}"
-msgstr ""
+msgstr "Envoyer {0}"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Sending"
@@ -652,7 +652,7 @@ msgstr "Envoi en cours"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Sending {0}..."
-msgstr ""
+msgstr "Envoi en cours {0}..."
 
 #: src/app/components/trade/utils.tsx
 msgid "Sending {currency} to the {pair} pool..."
@@ -684,7 +684,7 @@ msgstr "Se déconnecter"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Slippage tolerance"
-msgstr ""
+msgstr "Tolérance de \"glissement\""
 
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx

@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import DataFeed from 'app/components/TradingViewAdvanced/api';
+
 import {
   widget,
   ChartingLibraryWidgetOptions,
@@ -53,7 +55,7 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
       symbol: this.props.symbol as string,
       // BEWARE: no trailing slash is expected in feed URL
       // tslint:disable-next-line:no-any
-      datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(this.props.datafeedUrl),
+      datafeed: new DataFeed(this.props.datafeedUrl || ''),
       interval: this.props.interval as ChartingLibraryWidgetOptions['interval'],
       container: this.ref.current,
       library_path: this.props.libraryPath as string,

@@ -1,5 +1,6 @@
 import React, { useCallback, ReactNode } from 'react';
 
+import { Trans } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -237,10 +238,22 @@ export function useDerivedMintInfo(): {
   const liquidityMinted = React.useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
     const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
-    if (pair && totalSupply && tokenAmountA && tokenAmountB) {
+    if (
+      pair &&
+      totalSupply &&
+      tokenAmountA &&
+      tokenAmountB &&
+      pair.involvesToken(tokenAmountA.currency) &&
+      pair.involvesToken(tokenAmountB.currency) &&
+      !tokenAmountA.currency.equals(tokenAmountB.currency)
+    ) {
       try {
         return pair.getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.isInsufficientInputAmountError) {
+          console.warn('useDerivedMintInfo(): liquidityMinted - Insufficient input amount');
+          return undefined;
+        }
         console.error(error);
         return undefined;
       }
@@ -253,10 +266,22 @@ export function useDerivedMintInfo(): {
   const mintableLiquidity = React.useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = currencyBalances;
     const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
-    if (pair && totalSupply && tokenAmountA && tokenAmountB) {
+    if (
+      pair &&
+      totalSupply &&
+      tokenAmountA &&
+      tokenAmountB &&
+      pair.involvesToken(tokenAmountA.currency) &&
+      pair.involvesToken(tokenAmountB.currency) &&
+      !tokenAmountA.currency.equals(tokenAmountB.currency)
+    ) {
       try {
         return pair.getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.isInsufficientInputAmountError) {
+          console.warn('useDerivedMintInfo(): mintableLiquidity - Insufficient input amount');
+          return undefined;
+        }
         console.error(error);
         return undefined;
       }
@@ -275,16 +300,16 @@ export function useDerivedMintInfo(): {
 
   let error: ReactNode | undefined;
   if (!account) {
-    error = <>Connect Wallet</>;
+    error = <Trans>Connect Wallet</Trans>;
   }
 
   if (pairState === PairState.INVALID) {
-    error = error ?? <>Invalid pair</>;
+    error = error ?? <Trans>Invalid pair</Trans>;
   }
 
   if (isQueue) {
     if (!parsedAmounts[Field.CURRENCY_A]) {
-      error = error ?? <>Enter an amount</>;
+      error = error ?? <Trans>Enter an amount</Trans>;
     }
 
     const { [Field.CURRENCY_A]: currencyAAmount } = parsedAmounts;
@@ -294,17 +319,17 @@ export function useDerivedMintInfo(): {
     }
   } else {
     if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
-      error = error ?? <>Enter an amount</>;
+      error = error ?? <Trans>Enter an amount</Trans>;
     }
 
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
 
     if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-      error = <>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</>;
+      error = <Trans>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</Trans>;
     }
 
     if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
-      error = <>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</>;
+      error = <Trans>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</Trans>;
     }
   }
 

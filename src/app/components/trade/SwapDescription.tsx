@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { Trans } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -93,14 +94,18 @@ export default function SwapDescription() {
           {pair && (
             <>
               <Typography variant="p">
-                {`${price?.toFixed(4) || '...'} 
-                ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                <Trans>
+                  {`${price?.toFixed(4) || '...'} 
+                    ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                </Trans>
               </Typography>
               {hasSICX && !hasICX && (
                 <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
-                  {`${priceInICX?.toFixed(4) || '...'} 
-                  ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
-                  per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  <Trans>
+                    {`${priceInICX?.toFixed(4) || '...'} 
+                      ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
+                      per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  </Trans>
                 </Typography>
               )}
             </>
@@ -165,7 +170,9 @@ export default function SwapDescription() {
           </>
         ) : (
           <Flex justifyContent="center" alignItems="center" height="100%">
-            <Typography>No price chart available for this pair.</Typography>
+            <Typography>
+              <Trans>No price chart available for this pair.</Trans>
+            </Typography>
           </Flex>
         )}
       </ChartContainer>

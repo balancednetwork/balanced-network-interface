@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import lodash from 'lodash';
@@ -121,15 +122,27 @@ export default function LiquidityDetails() {
   return shouldShowQueue || userPools.length ? (
     <BoxPanel bg="bg2" mb={10}>
       <Typography variant="h2" mb={5}>
-        Liquidity details
+        <Trans>Liquidity details</Trans>
       </Typography>
 
       <TableWrapper>
         <DashGrid>
-          <HeaderText>Pool</HeaderText>
-          <HeaderText>Your supply</HeaderText>
-          {upSmall && <HeaderText>Pool share</HeaderText>}
-          {upSmall && <HeaderText>Daily rewards</HeaderText>}
+          <HeaderText>
+            <Trans>Pool</Trans>
+          </HeaderText>
+          <HeaderText>
+            <Trans>Your supply</Trans>
+          </HeaderText>
+          {upSmall && (
+            <HeaderText>
+              <Trans>Pool share</Trans>
+            </HeaderText>
+          )}
+          {upSmall && (
+            <HeaderText>
+              <Trans>Daily rewards</Trans>
+            </HeaderText>
+          )}
           <HeaderText></HeaderText>
         </DashGrid>
 
@@ -256,7 +269,7 @@ const WithdrawText = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceD
   return (
     <ClickAwayListener onClickAway={close}>
       <div>
-        <UnderlineTextWithArrow onClick={toggle} text="Withdraw" arrowRef={arrowRef} />
+        <UnderlineTextWithArrow onClick={toggle} text={t`Withdraw`} arrowRef={arrowRef} />
         <DropdownPopper show={Boolean(anchor)} anchorEl={anchor}>
           {poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
             <WithdrawModalQ balance={balance} pair={pair} onClose={close} />
@@ -328,8 +341,8 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
         addTransaction(
           { hash: res.result },
           {
-            pending: 'Withdrawing ICX',
-            summary: `${balance.balance?.toFixed(2, { groupSeparator: ',' }) || '...'} ICX added to your wallet.`,
+            pending: t`Withdrawing ICX...`,
+            summary: t`${balance.balance?.toFixed(2, { groupSeparator: ',' }) || '...'} ICX added to your wallet.`,
           },
         );
         toggleOpen1();
@@ -357,8 +370,8 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
         addTransaction(
           { hash: res.result },
           {
-            pending: 'Withdrawing sICX',
-            summary: `${balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX added to your wallet.`,
+            pending: t`Withdrawing sICX...`,
+            summary: t`${balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX added to your wallet.`,
           },
         );
         toggleOpen2();
@@ -400,7 +413,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
     <>
       <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
         <Typography variant="h3" mb={3}>
-          Withdraw:&nbsp;
+          <Trans>Withdraw:</Trans>&nbsp;
           <Typography as="span">{`${pair.token0.symbol || '...'} / ${pair.token1.symbol || '...'}`}</Typography>
         </Typography>
 
@@ -427,7 +440,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
       <Modal isOpen={open1} onDismiss={toggleOpen1}>
         <ModalContent>
           <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
-            Withdraw liquidity?
+            <Trans>Withdraw liquidity?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
@@ -440,7 +453,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
               <>
                 <TextButton onClick={toggleOpen1}>Cancel</TextButton>
                 <Button onClick={handleCancelOrder} disabled={!hasEnoughICX}>
-                  Withdraw
+                  <Trans>Withdraw</Trans>
                 </Button>
               </>
             )}
@@ -451,7 +464,7 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
       <Modal isOpen={open2} onDismiss={toggleOpen2}>
         <ModalContent>
           <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
-            Withdraw sICX?
+            <Trans>Withdraw sICX?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
@@ -463,9 +476,11 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
-                <TextButton onClick={toggleOpen2}>Cancel</TextButton>
+                <TextButton onClick={toggleOpen2}>
+                  <Trans>Cancel</Trans>
+                </TextButton>
                 <Button onClick={handleWithdrawEarnings} disabled={!hasEnoughICX}>
-                  Withdraw
+                  <Trans>Withdraw</Trans>
                 </Button>
               </>
             )}
@@ -685,7 +700,7 @@ const WithdrawModal = ({
     <>
       <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
         <Typography variant="h3" mb={3}>
-          Withdraw:&nbsp;
+          <Trans>Withdraw:</Trans>&nbsp;
           <Typography as="span">{`${aBalance.currency.symbol || '...'} / ${
             bBalance.currency.symbol || '...'
           }`}</Typography>
@@ -707,7 +722,7 @@ const WithdrawModal = ({
           />
         </Box>
         <Typography mb={5} textAlign="right">
-          {`Wallet:
+          {t`Wallet:
             ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[0]?.currency.symbol || '...'} /
             ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[1]?.currency.symbol || '...'}`}
         </Typography>
@@ -729,14 +744,16 @@ const WithdrawModal = ({
           />
         </Box>
         <Flex alignItems="center" justifyContent="center">
-          <Button onClick={handleShowConfirm}>Withdraw liquidity</Button>
+          <Button onClick={handleShowConfirm}>
+            <Trans>Withdraw liquidity</Trans>
+          </Button>
         </Flex>
       </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
-            Withdraw liquidity?
+            <Trans>Withdraw liquidity?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
@@ -753,9 +770,11 @@ const WithdrawModal = ({
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
-                <TextButton onClick={toggleOpen}>Cancel</TextButton>
+                <TextButton onClick={toggleOpen}>
+                  <Trans>Cancel</Trans>
+                </TextButton>
                 <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
-                  Withdraw
+                  <Trans>Withdraw</Trans>
                 </Button>
               </>
             )}

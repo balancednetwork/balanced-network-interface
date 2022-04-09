@@ -45,6 +45,7 @@ export const sICX = new Token(
   18,
   'sICX',
   'Staked ICX',
+  'icon',
 );
 export const bnUSD = new Token(
   SupportedChainId.MAINNET,
@@ -52,6 +53,7 @@ export const bnUSD = new Token(
   18,
   'bnUSD',
   'Balanced Dollar',
+  'stable',
 );
 export const BALN = new Token(
   SupportedChainId.MAINNET,
@@ -66,6 +68,7 @@ export const IUSDC = new Token(
   6,
   'IUSDC',
   'ICON USD Coin',
+  'stable dollar',
 );
 export const USDS = new Token(
   SupportedChainId.MAINNET,
@@ -73,6 +76,7 @@ export const USDS = new Token(
   18,
   'USDS',
   'Stably USD',
+  'stable dollar',
 );
 export const OMM = new Token(
   SupportedChainId.MAINNET,
@@ -101,6 +105,7 @@ export const IUSDT = new Token(
   6,
   'IUSDT',
   'ICON Tether',
+  'stable dollar usd',
 );
 export const GBET = new Token(
   SupportedChainId.MAINNET,
@@ -115,6 +120,7 @@ export const FIN = new Token(
   18,
   'FIN',
   'Fin Token',
+  'optimus',
 );
 
 // yeouido
@@ -252,6 +258,7 @@ export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 export interface TokenInfo {
   readonly chainId: number;
   readonly address: string;
+  readonly searchableTerms: string;
   readonly name: string;
   readonly decimals: number;
   readonly symbol: string;

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
@@ -101,8 +102,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       addTransaction(
         { hash: res.result },
         {
-          pending: `Withdrawing ${token.symbol}`,
-          summary: `${amountWithdraw?.toSignificant(6)} ${token.symbol} added to your wallet`,
+          pending: t`Withdrawing ${token.symbol}`,
+          summary: t`${amountWithdraw?.toSignificant(6)} ${token.symbol} added to your wallet`,
         },
       );
 
@@ -246,11 +247,11 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     <Modal isOpen={isOpen} onDismiss={() => undefined}>
       <ModalContent>
         <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-          {pair ? 'Supply liquidity?' : 'Create liquidity pool?'}
+          {pair ? t`Supply liquidity?` : t`Create liquidity pool?`}
         </Typography>
         <Typography variant="p" textAlign="center" mb={4} hidden={isQueue}>
-          Send each asset to the contract, <br />
-          {pair ? 'then click Supply.' : 'then create the pool.'}
+          <Trans>Send each asset to the contract</Trans>, <br />
+          {pair ? t`then click Supply.` : t`then create the pool.`}
         </Typography>
         <Flex alignItems="center" mb={1} hidden={isQueue}>
           <Box
@@ -262,7 +263,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
           >
             <StyledDL>
               <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                Assets to send
+                <Trans>Assets to send</Trans>
               </Typography>
 
               {[Field.CURRENCY_A, Field.CURRENCY_B].map((field: Field) => (
@@ -276,7 +277,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                         <>
                           <Spinner></Spinner>
                           <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                            Confirm the transaction on your Ledger.
+                            <Trans>Confirm the transaction on your Ledger.</Trans>
                           </Typography>
                         </>
                       )}
@@ -290,7 +291,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                             mt={2}
                             onClick={handleAdd(field)}
                           >
-                            {!UIStatus[field].isAddPending ? 'Send' : 'Sending'}
+                            {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
                           </SupplyButton>
                         </>
                       )}
@@ -307,7 +308,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
           <Box width={1 / 2}>
             <StyledDL>
               <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                In contract
+                <Trans>In contract</Trans>
               </Typography>
 
               {[Field.CURRENCY_A, Field.CURRENCY_B].map((field: Field) => (
@@ -325,7 +326,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                         <>
                           <Spinner></Spinner>
                           <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                            Confirm the transaction on your Ledger.
+                            <Trans>Confirm the transaction on your Ledger.</Trans>
                           </Typography>
                         </>
                       )}
@@ -338,7 +339,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                           mt={2}
                           onClick={handleRemove(field, currencyDeposits[field])}
                         >
-                          {!UIStatus[field].isRemovePending ? 'Remove' : 'Removing'}
+                          {!UIStatus[field].isRemovePending ? t`Remove` : t`Removing`}
                         </RemoveButton>
                       )}
                     </>
@@ -354,29 +355,32 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {currencies[Field.CURRENCY_A]?.symbol}
             </Typography>
             <Typography mt={2} textAlign="center">
-              Your ICX will be locked for 24 hours. <br />
-              To receive BALN, you must have ICX in the pool at 1pm Eastern each day.
+              <Trans>Your ICX will be locked for 24 hours. </Trans>
+              <br />
+              <Trans>To receive BALN, you must have ICX in the pool at 1pm Eastern each day.</Trans>
             </Typography>
           </Box>
         </Flex>
         {hasErrorMessage && (
           <Typography textAlign="center" color="alert">
-            Remove your assets to cancel this transaction.
+            <Trans>Remove your assets to cancel this transaction.</Trans>
           </Typography>
         )}
         <Flex justifyContent="center" mt={4} pt={4} className="border-top">
           {shouldLedgerSign && <Spinner></Spinner>}
           {!shouldLedgerSign && (
             <>
-              <TextButton onClick={handleCancelSupply}>Cancel</TextButton>
+              <TextButton onClick={handleCancelSupply}>
+                <Trans>Cancel</Trans>
+              </TextButton>
 
               {pair ? (
                 <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                  {confirmTx ? 'Supplying' : 'Supply'}
+                  {confirmTx ? t`Supplying` : t`Supply`}
                 </Button>
               ) : (
                 <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                  {confirmTx ? 'Creating pool' : 'Create pool'}
+                  {confirmTx ? t`Creating pool` : t`Create pool`}
                 </Button>
               )}
             </>

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import { NavLink } from 'react-router-dom';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -145,19 +146,25 @@ export default React.memo(function AppBar() {
         <ListItem>
           <StyledNavLink exact to="/">
             <HomeIcon width="35" height="33" />
-            <Text>Home</Text>
+            <Text>
+              <Trans>Home</Trans>
+            </Text>
           </StyledNavLink>
         </ListItem>
         <ListItem>
           <StyledNavLink exact to="/trade">
             <TradeIcon width="35" height="33" />
-            <Text>Trade</Text>
+            <Text>
+              <Trans>Trade</Trans>
+            </Text>
           </StyledNavLink>
         </ListItem>
         <ListItem>
           <StyledNavLinkWithNotification to="/vote" hasNotification={activeProposals && activeProposals.length}>
             <VoteIcon width="35" height="33" />
-            <Text>Vote</Text>
+            <Text>
+              <Trans>Vote</Trans>
+            </Text>
           </StyledNavLinkWithNotification>
         </ListItem>
       </List>

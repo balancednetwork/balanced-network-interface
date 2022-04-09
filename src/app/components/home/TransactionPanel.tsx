@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
@@ -560,7 +561,7 @@ const TransactionTable = () => {
     <BoxPanel bg="bg2" minHeight={190}>
       <Flex mb={2} alignItems="center" flexWrap="wrap">
         <Typography mr={2} mb={2} variant="h2" width="100%">
-          Activity history
+          <Trans>Activity history</Trans>
         </Typography>
         {isLoading && <Spinner />}
 
@@ -569,12 +570,14 @@ const TransactionTable = () => {
             <ScrollHelper>
               <Table>
                 <Row>
-                  <Typography letterSpacing="3px">DATE</Typography>
+                  <Typography letterSpacing="3px">
+                    <Trans>DATE</Trans>
+                  </Typography>
                   <Typography letterSpacing="3px" sx={{ flex: 1 }}>
-                    ACTIVITY
+                    <Trans>ACTIVITY</Trans>
                   </Typography>
                   <Typography letterSpacing="3px" textAlign="right">
-                    AMOUNT
+                    <Trans>AMOUNT</Trans>
                   </Typography>
                 </Row>
                 {txs.map(tx =>
@@ -601,7 +604,7 @@ const TransactionTable = () => {
         ) : (
           <Box width="100%">
             <Typography textAlign="center" paddingTop={'35px'}>
-              No activity yet.
+              <Trans>No activity yet.</Trans>
             </Typography>
           </Box>
         )}

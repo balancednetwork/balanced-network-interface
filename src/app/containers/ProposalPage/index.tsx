@@ -49,7 +49,7 @@ const Progress = styled(Flex)`
 
 const setBarWidth = (width: string) => keyframes`
     0% {
-        width : 0; 
+        width : 0;
     }
     100% {
         width : ${width}%;
@@ -129,9 +129,9 @@ export function ProposalPage() {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const [txHash, setTxHash] = useState('');
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
+      await changeShouldLedgerSign(true);
     }
 
     const hasApproved = modalStatus === ModalStatus.Approve || modalStatus === ModalStatus.ChangeToApprove;

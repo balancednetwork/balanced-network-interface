@@ -133,7 +133,7 @@ export default function SwapPanel() {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
+      await changeShouldLedgerSign(true);
     }
 
     const message = swapMessage(
@@ -228,7 +228,7 @@ export default function SwapPanel() {
             </Typography>
             <Typography as="div" hidden={!account}>
               <Trans>Wallet:</Trans>{' '}
-              {`${currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' })} 
+              {`${currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' })}
                 ${currencies[Field.INPUT]?.symbol}`}
             </Typography>
           </Flex>
@@ -370,9 +370,8 @@ export default function SwapPanel() {
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
             <Trans>
-              {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
-                executionTrade?.executionPrice.quoteCurrency.symbol
-              } 
+              {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${executionTrade?.executionPrice.quoteCurrency.symbol
+                }
               per ${executionTrade?.executionPrice.baseCurrency.symbol}`}
             </Trans>
           </Typography>
@@ -467,7 +466,7 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
   );
 }
 
-function TradeRoute({ route }: { route: Route<Currency, Currency> }) {
+function TradeRoute({ route }: { route: Route<Currency, Currency>; }) {
   return (
     <>
       {route.path.map((token: Token, index: number) => (
@@ -483,7 +482,7 @@ const FlipButton = styled(Box)`
   cursor: pointer;
 `;
 
-const AutoColumn = styled(Box)<{
+const AutoColumn = styled(Box) <{
   gap?: 'sm' | 'md' | 'lg' | string;
   justify?: 'stretch' | 'center' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'space-between';
 }>`

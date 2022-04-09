@@ -72,11 +72,11 @@ export default React.memo(function StakePanel() {
 
   const { account } = useIconReact();
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
+      await changeShouldLedgerSign(true);
     }
 
     bnJs

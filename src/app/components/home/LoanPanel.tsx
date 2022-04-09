@@ -120,12 +120,12 @@ const LoanPanel = () => {
     borrowedAmount.isLessThanOrEqualTo(0) ? toggleRebalancingModalOpen() : toggleOpen();
   };
 
-  const handleLoanConfirm = () => {
+  const handleLoanConfirm = async () => {
     if (!account) return;
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
+      await changeShouldLedgerSign(true);
     }
 
     if (shouldBorrow) {

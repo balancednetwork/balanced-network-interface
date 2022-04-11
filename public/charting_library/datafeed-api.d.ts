@@ -135,10 +135,12 @@ export interface LibrarySymbolInfo {
 	 */
 	session: string;
 	session_display?: string;
+	/** @deprecated Use session_holidays instead */
+	holidays?: string;
 	/**
 	 * @example "20181105,20181107,20181112"
 	 */
-	holidays?: string;
+	session_holidays?: string;
 	/**
 	 * @example "1900F4-2350F4,1000-1845:20181113;1000-1400:20181114"
 	 */

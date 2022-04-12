@@ -216,7 +216,7 @@ export function ProposalPage() {
                     {proposal?.for}%
                   </Typography>
                   <Typography opacity="0.85" fontWeight="bold">
-                    <Trans>{`(${proposal?.majority}% required)`}</Trans>
+                    <Trans>({proposal?.majority}% required)</Trans>
                   </Typography>
                 </Flex>
 
@@ -291,7 +291,7 @@ export function ProposalPage() {
                   {proposal?.for}%
                 </Typography>
                 <Typography opacity="0.85" fontWeight="bold">
-                  <Trans>{`(${proposal?.majority}% required)`}</Trans>
+                  <Trans>({proposal?.majority}% required)</Trans>
                 </Typography>
               </Flex>
               <Flex>

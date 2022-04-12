@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-08 13:36\n"
+"PO-Revision-Date: 2022-04-12 03:06\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -98,6 +98,10 @@ msgstr "Actifs à envoyer"
 #: src/app/components/home/WalletPanel.tsx
 msgid "Available"
 msgstr "Disponible"
+
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "BALN allocation"
+msgstr ""
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
@@ -375,6 +379,10 @@ msgstr "Pour"
 msgid "Forum link"
 msgstr "Lien du forum"
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Funding"
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Go back"
 msgstr "Retour"
@@ -457,9 +465,17 @@ msgstr "Détails de la liquidité"
 msgid "Loan"
 msgstr "Emprunt"
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Loan fee"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan rewards"
 msgstr "Récompenses du prêt"
+
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Loan to value ratio"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
@@ -469,10 +485,15 @@ msgstr "Verrouillé"
 msgid "Minimum to receive"
 msgstr "Minimum à recevoir"
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Network fee allocation"
+msgstr ""
+
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
 msgstr "Frais de réseau"
 
+#: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/VotePage/index.tsx
 msgid "New proposal"
 msgstr "Nouvelle proposition"
@@ -561,6 +582,10 @@ msgstr "Minimum requis non atteint"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Rebalancing"
 msgstr "Rééquilibrage"
+
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Rebalancing threshold"
+msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
@@ -783,6 +808,10 @@ msgstr ""
 msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
 msgstr ""
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Text"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "The amount of ICX available to deposit from your wallet."
@@ -924,6 +953,8 @@ msgstr "Voir la clause de non-responsabilité"
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
+#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
 msgid "Vote"
 msgstr "Voter"
 

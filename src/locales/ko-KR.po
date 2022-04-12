@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-07 08:29\n"
+"PO-Revision-Date: 2022-04-12 03:06\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -98,6 +98,10 @@ msgstr "송금할 자산"
 #: src/app/components/home/WalletPanel.tsx
 msgid "Available"
 msgstr "대출 가능"
+
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "BALN allocation"
+msgstr ""
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
@@ -375,6 +379,10 @@ msgstr "되려는"
 msgid "Forum link"
 msgstr "포럼 링크"
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Funding"
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Go back"
 msgstr "돌아가기"
@@ -457,9 +465,17 @@ msgstr "유동성 현황"
 msgid "Loan"
 msgstr "대출"
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Loan fee"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan rewards"
 msgstr "대출 보상"
+
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Loan to value ratio"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
@@ -469,10 +485,15 @@ msgstr "잠김"
 msgid "Minimum to receive"
 msgstr "오차범위 고려 최소 값"
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Network fee allocation"
+msgstr ""
+
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
 msgstr "네트워크 수수료"
 
+#: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/VotePage/index.tsx
 msgid "New proposal"
 msgstr "새로운 제안"
@@ -561,6 +582,10 @@ msgstr "정족수에 도달하지 못했습니다"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Rebalancing"
 msgstr "재조정"
+
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Rebalancing threshold"
+msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
@@ -783,6 +808,10 @@ msgstr "{inputCurrency} 을 {outputCurrency} 으로 스왑하는 중..."
 msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
 msgstr "최대 7일이 소요될 수 있습니다. 진행을 원하시면 '지갑' 메뉴 > '스테이킹 해제'를 선택하고 실행하세요."
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Text"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "The amount of ICX available to deposit from your wallet."
@@ -924,6 +953,8 @@ msgstr "면책조항 보기"
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
+#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
 msgid "Vote"
 msgstr "투표"
 

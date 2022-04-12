@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-12 03:06\n"
+"PO-Revision-Date: 2022-04-12 04:30\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -101,7 +101,7 @@ msgstr "대출 가능"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "BALN allocation"
-msgstr ""
+msgstr "BALN 할당"
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
@@ -381,7 +381,7 @@ msgstr "포럼 링크"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Funding"
-msgstr ""
+msgstr "펀딩"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Go back"
@@ -467,7 +467,7 @@ msgstr "대출"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Loan fee"
-msgstr ""
+msgstr "대출 수수료"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan rewards"
@@ -475,7 +475,7 @@ msgstr "대출 보상"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Loan to value ratio"
-msgstr ""
+msgstr "가치 대비 대출 비율"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
@@ -487,7 +487,7 @@ msgstr "오차범위 고려 최소 값"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Network fee allocation"
-msgstr ""
+msgstr "네트워크 수수료 할당"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
@@ -585,7 +585,7 @@ msgstr "재조정"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Rebalancing threshold"
-msgstr ""
+msgstr "재조정 임계값"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
@@ -810,7 +810,7 @@ msgstr "최대 7일이 소요될 수 있습니다. 진행을 원하시면 '지�
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Text"
-msgstr ""
+msgstr "글"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx

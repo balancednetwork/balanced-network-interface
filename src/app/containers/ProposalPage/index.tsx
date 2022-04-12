@@ -185,7 +185,7 @@ export function ProposalPage() {
     <>
       <ProposalContainer>
         {proposal ? (
-          <Breadcrumb locationText="Vote" locationPath="/vote" title={proposal?.name || ''} />
+          <Breadcrumb locationText={t`Vote`} locationPath="/vote" title={proposal?.name || ''} />
         ) : (
           <StyledSkeleton animation="wave" width={280} height={28} />
         )}

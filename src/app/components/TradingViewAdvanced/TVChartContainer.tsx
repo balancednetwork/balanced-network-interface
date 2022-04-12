@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import DataFeed from 'app/components/TradingViewAdvanced/api';
+// import DataFeed from 'app/components/TradingViewAdvanced/api';
 
 import {
   widget,
@@ -8,6 +8,7 @@ import {
   IChartingLibraryWidget,
   ResolutionString,
 } from '../../../charting_library';
+import CustomDataFeed from './api/customApi';
 
 export interface ChartContainerProps {
   symbol: ChartingLibraryWidgetOptions['symbol'];
@@ -52,11 +53,14 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
     }
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      symbol: this.props.symbol as string,
+      debug: true,
+      symbol: 'BALN/bnUSD',
       // BEWARE: no trailing slash is expected in feed URL
       // tslint:disable-next-line:no-any
-      datafeed: new DataFeed(this.props.datafeedUrl || ''),
-      interval: this.props.interval as ChartingLibraryWidgetOptions['interval'],
+      // datafeed: new DataFeed(this.props.datafeedUrl || ''),
+      datafeed: new CustomDataFeed(),
+      interval: '60' as ChartingLibraryWidgetOptions['interval'],
+      // interval: this.props.interval as ChartingLibraryWidgetOptions['interval'],
       container: this.ref.current,
       library_path: this.props.libraryPath as string,
 

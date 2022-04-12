@@ -1,3 +1,26 @@
+import { LibrarySymbolInfo, ResolutionString, SubscribeBarsCallback } from 'charting_library/charting_library';
+import { BalancedJs } from 'packages/BalancedJs';
+
+export interface Subscriber {
+  guid: string;
+  symbolInfo: LibrarySymbolInfo;
+  resolution: ResolutionString;
+  listener: ReturnType<typeof setInterval>;
+  cb: SubscribeBarsCallback;
+}
+
+export const formatBarItem = (bar, decimal) => {
+  return {
+    time: bar.time / 1_000,
+    value: BalancedJs.utils.toFormat(bar.close, decimal).toNumber(),
+    open: BalancedJs.utils.toFormat(bar.open, decimal).toNumber(),
+    close: BalancedJs.utils.toFormat(bar.close, decimal).toNumber(),
+    high: BalancedJs.utils.toFormat(bar.high, decimal).toNumber(),
+    low: BalancedJs.utils.toFormat(bar.low, decimal).toNumber(),
+    volume: BalancedJs.utils.toIcx(bar.volume).toNumber(),
+  };
+};
+
 export interface RequestParams {
   [paramName: string]: string | string[] | number;
 }

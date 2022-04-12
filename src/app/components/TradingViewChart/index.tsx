@@ -16,7 +16,6 @@ import { usePrevious } from 'react-use';
 import styled from 'styled-components';
 
 export enum CHART_PERIODS {
-  '5m' = '5m',
   '15m' = '15m',
   '1H' = '1H',
   '4H' = '4H',

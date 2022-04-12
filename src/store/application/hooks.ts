@@ -45,12 +45,16 @@ export function useCurrentLedgerAddressPage(): AppState['application']['currentL
   return currentLedgerAddressPage;
 }
 
-export function useChangeShouldLedgerSign(): (shouldLedgerSign: boolean) => void {
+export function useChangeShouldLedgerSign(): (shouldLedgerSign: boolean) => Promise<void> {
   const dispatch = useDispatch();
   return useCallback(
     async (shouldLedgerSign: boolean) => {
       if (shouldLedgerSign) {
-        await bnJs.initialiseTransport();
+        try {
+          await bnJs.initializeTransport();
+        } catch (e) {
+          console.error('error', e);
+        }
       }
       dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign }));
     },

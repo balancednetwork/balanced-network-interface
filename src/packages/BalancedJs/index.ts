@@ -154,7 +154,7 @@ export class BalancedJs {
     this.contractSettings.resetLedgerSettings();
   }
 
-  async initialiseTransport(): Promise<void> {
+  async initializeTransport(): Promise<void> {
     debugger;
     if (this.contractSettings.ledgerSettings.transport?.device?.opened) {
       this.contractSettings.ledgerSettings.transport.close();

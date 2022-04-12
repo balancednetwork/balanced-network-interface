@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-12 04:30\n"
+"PO-Revision-Date: 2022-04-12 10:28\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -16,6 +16,11 @@ msgstr ""
 "X-Crowdin-File: en-US.po\n"
 "X-Crowdin-File-ID: 12\n"
 
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "({0}% required)"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "10 bnUSD minimum"
 msgstr "최소 10 bnUSD"
@@ -23,6 +28,26 @@ msgstr "최소 10 bnUSD"
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "100 bnUSD"
 msgstr "100 bnUSD"
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "15m"
+msgstr ""
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "1D"
+msgstr ""
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "1H"
+msgstr ""
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "1W"
+msgstr ""
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "4H"
+msgstr ""
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "ACTIVITY"
@@ -172,17 +197,34 @@ msgstr "대출 중인 bnUSD..."
 msgid "Cancel"
 msgstr "취소"
 
+#: src/app/components/WalletModal/index.tsx
+msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
+msgstr ""
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Cancelled"
 msgstr "취소됨"
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "Candles"
+msgstr ""
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Casting your vote..."
 msgstr "투표하는 중..."
 
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Change vote"
+msgstr ""
+
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
 msgstr "지갑 변경"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Choose a wallet from your Ledger:"
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -212,6 +254,14 @@ msgstr "ICX 요구하기?"
 msgid "Claim network fees?"
 msgstr "네트워크 수수료를 요구하겠습니까?"
 
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claimed fees."
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claimed {0} BALN."
+msgstr ""
+
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claimed {0} ICX."
 msgstr "승인된 {0} ICX."
@@ -219,6 +269,14 @@ msgstr "승인된 {0} ICX."
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claiming ICX..."
 msgstr "ICX 승인중..."
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claiming fees..."
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claiming rewards..."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -342,6 +400,10 @@ msgstr "담보를 예치하는 중..."
 msgid "Description"
 msgstr "설명"
 
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Discussion"
+msgstr ""
+
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
 msgstr "sICX를 거래소에 보내지 마십시오."
@@ -449,6 +511,10 @@ msgstr "제안서를 제출하는 데 100 bnUSD 가 필요합니다."
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Keep a close eye on this number, as rebalancing may cause it to fluctuate."
 msgstr "재조정으로 인해 수치가 변동될 수 있으므로, 이 수치를 주의 깊게 관찰하십시오."
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "Line"
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Liquidated"
@@ -583,6 +649,14 @@ msgstr "정족수에 도달하지 못했습니다"
 msgid "Rebalancing"
 msgstr "재조정"
 
+#: src/app/components/trade/RebalanceButton.tsx
+msgid "Rebalancing complete."
+msgstr ""
+
+#: src/app/components/trade/RebalanceButton.tsx
+msgid "Rebalancing the bnUSD price..."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Rebalancing threshold"
 msgstr "재조정 임계값"
@@ -621,6 +695,10 @@ msgstr "{0} bnUSD 상환했습니다."
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay"
 msgstr "상환"
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Repay Balanced Dollars?"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
@@ -757,6 +835,10 @@ msgstr "제안 제출"
 msgid "Submit proposal?"
 msgstr "제안을 제출하겠습니까?"
 
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Submitting a proposal..."
+msgstr ""
+
 #: src/app/components/trade/utils.tsx
 msgid "Supplied {pair} liquidity."
 msgstr "{pair} 공급된 유동성."
@@ -795,6 +877,10 @@ msgstr "{pair} 유동성을 제공하는 중..."
 #: src/app/containers/TradePage/index.tsx
 msgid "Swap"
 msgstr "스왑"
+
+#: src/app/components/trade/SwapPanel.tsx
+msgid "Swap {0} for {1}?"
+msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
@@ -882,10 +968,6 @@ msgid "Transaction"
 msgstr "거래"
 
 #: src/app/components/home/LoanPanel.tsx
-msgid "US Dollars"
-msgstr "US 달러"
-
-#: src/app/components/home/LoanPanel.tsx
 msgid "Understood"
 msgstr "동의함"
 
@@ -962,6 +1044,11 @@ msgstr "투표"
 msgid "Vote cast."
 msgstr "투표 하기."
 
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Voting weight: {0} BALN"
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Voting will begin at 5pm UTC,"
 msgstr "투표는 오전 2시부터 시작됩니다."
@@ -969,6 +1056,7 @@ msgstr "투표는 오전 2시부터 시작됩니다."
 #: src/app/components/Header/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/WalletPanel.tsx
 msgid "Wallet"
 msgstr "지갑"
 
@@ -1061,6 +1149,10 @@ msgstr "이 임계값을 초과하면 담보를 인출 할 수 없습니다."
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
 msgstr "이 거래를 완료하려면 지갑에 최소 {MINIMUM_ICX_FOR_TX} ICX가 필요합니다."
 
+#: src/app/containers/ProposalPage/index.tsx
+msgid "You rejected"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD pool. The smaller your loan, the less rebalancing affects you."
 msgstr "보상으로 BALN을 받게 되며, sICX/bnUSD 풀에 유동성을 공급하여 변동을 완화할 수 있습니다. 대출 규모가 작을수록 재조정이 영향을 덜 받습니다."
@@ -1126,14 +1218,13 @@ msgid "{0}"
 msgstr "{0}"
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "{0} / {1} liquidity pool"
-msgstr "{0} / {1} 유동성 풀"
+msgid "{0} / {1} \n"
+"liquidity pool{2}"
+msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "{0} / {1} liquidity pool\n"
-"{2}"
-msgstr "{0} / {1} 유동성 풀\n"
-"{2}"
+msgid "{0} / {1} liquidity pool"
+msgstr "{0} / {1} 유동성 풀"
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "{0} BALN unstaking"
@@ -1197,6 +1288,10 @@ msgstr "{endTimeStr} 남음"
 #: src/app/components/trade/utils.tsx
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
 msgstr "{inputAmount} {inputCurrency} 및 {outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "{label} proposal submitted."
+msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "{outputAmount} {outputCurrency} added to your wallet."

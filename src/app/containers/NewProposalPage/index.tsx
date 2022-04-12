@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Trans } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -284,7 +284,7 @@ export function NewProposalPage() {
   return (
     <>
       <NewProposalContainer>
-        <Breadcrumb title={'New proposal'} locationText={'Vote'} locationPath={'/vote'} />
+        <Breadcrumb title={t`New proposal`} locationText={t`Vote`} locationPath={'/vote'} />
         <ProposalTypesSelect onSelect={handleProposalTypeSelect} selected={selectedProposalType} />
         <ProposalDetailContainer>
           <FieldContainer>

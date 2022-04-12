@@ -39,7 +39,9 @@ export default function ProposalTypesSelect({
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <div ref={ref}>
           <StyledWrapper onClick={toggleOpen}>
-            <Text active={open}>{selected}</Text>
+            <Text active={open}>
+              <Trans id={PROPOSAL_TYPE_LABELS[selected].id} />
+            </Text>
             <StyledArrowDownIcon />
           </StyledWrapper>
 

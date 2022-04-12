@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Trans } from '@lingui/macro';
+import { defineMessage, Trans } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -19,6 +19,19 @@ import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
 import { Price, Currency } from 'types/balanced-sdk-core';
 import { generateChartData, toFraction } from 'utils';
+
+const CHART_TYPES_LABELS = {
+  [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),
+  [CHART_TYPES.CANDLE]: defineMessage({ message: 'Candles' }),
+};
+
+const CHART_PERIODS_LABELS = {
+  [CHART_PERIODS['15m']]: defineMessage({ message: '15m' }),
+  [CHART_PERIODS['1H']]: defineMessage({ message: '1H' }),
+  [CHART_PERIODS['4H']]: defineMessage({ message: '4H' }),
+  [CHART_PERIODS['1D']]: defineMessage({ message: '1D' }),
+  [CHART_PERIODS['1W']]: defineMessage({ message: '1W' }),
+};
 
 export default function SwapDescription() {
   const { currencies, price } = useDerivedSwapInfo();
@@ -118,7 +131,7 @@ export default function SwapDescription() {
                 onClick={handleChartPeriodChange}
                 active={chartOption.period === CHART_PERIODS[key]}
               >
-                {CHART_PERIODS[key]}
+                <Trans id={CHART_PERIODS_LABELS[CHART_PERIODS[key]].id} />
               </ChartControlButton>
             ))}
           </ChartControlGroup>
@@ -132,7 +145,7 @@ export default function SwapDescription() {
                 onClick={handleChartTypeChange}
                 active={chartOption.type === CHART_TYPES[key]}
               >
-                {CHART_TYPES[key]}
+                <Trans id={CHART_TYPES_LABELS[CHART_TYPES[key]].id} />
               </ChartControlButton>
             ))}
           </ChartControlGroup>

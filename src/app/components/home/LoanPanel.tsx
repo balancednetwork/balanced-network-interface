@@ -4,7 +4,6 @@ import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
-import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
@@ -40,7 +39,6 @@ import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
-  const isSuperSmall = useMedia(`(max-width: 420px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -211,10 +209,7 @@ const LoanPanel = () => {
       <FlexPanel bg="bg3" flexDirection="column" minHeight={195}>
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="h2">
-            <Trans>Loan</Trans>:{' '}
-            <Typography as="span" fontSize={18} fontWeight="normal">
-              <Trans>US Dollars</Trans>
-            </Typography>
+            <Trans>Loan</Trans>
           </Typography>
         </Flex>
 
@@ -237,14 +232,6 @@ const LoanPanel = () => {
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="h2">
             <Trans>Loan</Trans>
-            {!isSuperSmall && (
-              <>
-                :{' '}
-                <Typography as="span" fontSize={18} fontWeight="normal">
-                  US Dollars
-                </Typography>
-              </>
-            )}
           </Typography>
 
           <Box>
@@ -342,7 +329,7 @@ const LoanPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            {shouldBorrow ? t`Borrow Balanced Dollars?` : `Repay Balanced Dollars?`}
+            {shouldBorrow ? t`Borrow Balanced Dollars?` : t`Repay Balanced Dollars?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -393,7 +380,7 @@ const LoanPanel = () => {
 
       <Modal isOpen={rebalancingModalOpen} onDismiss={() => toggleRebalancingModalOpen(false)} maxWidth={450}>
         <ModalContent noMessages>
-          <Typography>
+          <Typography textAlign="center">
             <Trans>Rebalancing</Trans>
           </Typography>
           <RebalancingInfo />

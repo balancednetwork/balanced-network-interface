@@ -353,7 +353,7 @@ export default function SwapPanel() {
               </Button>
             ) : (
               <Button disabled={!!account} color="primary" onClick={handleSwap}>
-                {account ? inputError : 'Swap'}
+                {account ? inputError : t`Swap`}
               </Button>
             )}
           </Flex>
@@ -363,7 +363,9 @@ export default function SwapPanel() {
       <Modal isOpen={showSwapConfirm} onDismiss={handleSwapConfirmDismiss}>
         <ModalContent>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
-            <Trans>Swap</Trans> {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
+            <Trans>
+              Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
+            </Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">

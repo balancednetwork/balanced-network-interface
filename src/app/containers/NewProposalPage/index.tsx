@@ -15,7 +15,7 @@ import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect'
 import RatioInput from 'app/components/newproposal/RatioInput';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
-import { PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
+import { PROPOSAL_CONFIG, PROPOSAL_TYPE, PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
@@ -258,11 +258,13 @@ export function NewProposalPage() {
         .Governance.defineVote(title, description, platformDay + 1, platformDay, actions)
         .then(res => {
           if (res.result) {
+            const label = t({ id: PROPOSAL_TYPE_LABELS[selectedProposalType].id });
+
             addTransaction(
               { hash: res.result },
               {
-                pending: 'Submitting a proposal...',
-                summary: `${selectedProposalType} proposal submitted.`,
+                pending: t`Submitting a proposal...`,
+                summary: t`${label} proposal submitted.`,
               },
             );
             toggleOpen();

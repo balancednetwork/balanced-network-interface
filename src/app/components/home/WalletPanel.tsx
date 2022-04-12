@@ -77,7 +77,7 @@ const WalletPanel = () => {
   return (
     <BoxPanel bg="bg2" minHeight={195}>
       <Typography variant="h2" mb={5}>
-        Wallet
+        <Trans>Wallet</Trans>
       </Typography>
 
       {balances && Object.keys(balances).filter(address => balances[address].toFixed(2) !== '0.00').length ? (

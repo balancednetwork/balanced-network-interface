@@ -378,7 +378,7 @@ export default function WalletModal() {
       >
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb={3}>
-            Choose a wallet from your Ledger:
+            <Trans>Choose a wallet from your Ledger:</Trans>
           </Typography>
           {isLedgerLoading && (
             <Flex justifyContent="center">
@@ -388,7 +388,7 @@ export default function WalletModal() {
           {isLedgerErr && (
             <Flex justifyContent="center" mt={4} mb={4}>
               <Typography>
-                Cancel any pending transactions on your Ledger, or give Chrome permission to use it.
+                <Trans>Cancel any pending transactions on your Ledger, or give Chrome permission to use it.</Trans>
               </Typography>
             </Flex>
           )}

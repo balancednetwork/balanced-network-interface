@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { Trans } from '@lingui/macro';
+import { ResolutionString } from 'charting_library/charting_library';
 import JSBI from 'jsbi';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -82,13 +83,14 @@ export default function SwapDescription() {
 
   const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
   const hasICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX');
+  const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
 
   return (
     <Box bg="bg2" flex={1} p={[5, 7]}>
       <Flex mb={5} flexWrap="wrap">
         <Box width={[1, 1 / 2]}>
           <Typography variant="h3" mb={2}>
-            {currencies[Field.INPUT]?.symbol} / {currencies[Field.OUTPUT]?.symbol}
+            {symbolName}
           </Typography>
 
           {pair && (
@@ -180,7 +182,10 @@ export default function SwapDescription() {
       <Modal isOpen={tradingViewActive} onDismiss={() => setTradingViewActive(false)} maxWidth={99999999}>
         {tradingViewActive && (
           <TVChartContainerWrap>
-            <TVChartContainer />
+            <TVChartContainer
+              interval={chartOption.period as ResolutionString}
+              symbol={symbolName.replaceAll(' ', '')}
+            />
           </TVChartContainerWrap>
         )}
       </Modal>

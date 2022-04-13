@@ -155,8 +155,9 @@ export class BalancedJs {
   }
 
   async initializeTransport(): Promise<void> {
-    debugger;
-    if (this.contractSettings.ledgerSettings.transport?.device?.opened) {
+    // extract ledger address index from path to create a new transport with the correct wallet address
+    let addressIndex = Number(this.contractSettings.ledgerSettings.path?.replaceAll("'", '').split('/')[4]);
+    if (this.contractSettings.ledgerSettings.transport?.device?.opened && addressIndex >= 0) {
       this.contractSettings.ledgerSettings.transport.close();
       this.contractSettings.ledgerSettings = {} as LedgerSettings;
       const transport = await TransportWebHID.create();
@@ -166,7 +167,7 @@ export class BalancedJs {
       this.inject({
         legerSettings: {
           transport,
-          path: getLedgerAddressPath(-1),
+          path: getLedgerAddressPath(addressIndex),
         },
       });
     }

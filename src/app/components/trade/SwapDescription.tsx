@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { defineMessage, Trans } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -16,8 +17,21 @@ import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { Fraction, Price, Currency } from 'types/balanced-sdk-core';
-import { generateChartData } from 'utils';
+import { Price, Currency } from 'types/balanced-sdk-core';
+import { generateChartData, toFraction } from 'utils';
+
+const CHART_TYPES_LABELS = {
+  [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),
+  [CHART_TYPES.CANDLE]: defineMessage({ message: 'Candles' }),
+};
+
+const CHART_PERIODS_LABELS = {
+  [CHART_PERIODS['15m']]: defineMessage({ message: '15m' }),
+  [CHART_PERIODS['1H']]: defineMessage({ message: '1H' }),
+  [CHART_PERIODS['4H']]: defineMessage({ message: '4H' }),
+  [CHART_PERIODS['1D']]: defineMessage({ message: '1D' }),
+  [CHART_PERIODS['1W']]: defineMessage({ message: '1W' }),
+};
 
 export default function SwapDescription() {
   const { currencies, price } = useDerivedSwapInfo();
@@ -39,8 +53,7 @@ export default function SwapDescription() {
     [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
   );
 
-  const [qratioNumerator, qratioDenominator] = ratio.sICXICXratio.toFraction();
-  const qratioFrac = new Fraction(qratioNumerator.toFixed(), qratioDenominator.toFixed());
+  const qratioFrac = toFraction(ratio.sICXICXratio);
 
   let priceInICX: Price<Currency, Currency> | undefined;
 
@@ -91,14 +104,18 @@ export default function SwapDescription() {
           {pair && (
             <>
               <Typography variant="p">
-                {`${price?.toFixed(4) || '...'} 
-                ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                <Trans>
+                  {`${price?.toFixed(4) || '...'} 
+                    ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                </Trans>
               </Typography>
               {hasSICX && !hasICX && (
                 <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
-                  {`${priceInICX?.toFixed(4) || '...'} 
-                  ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
-                  per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  <Trans>
+                    {`${priceInICX?.toFixed(4) || '...'} 
+                      ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
+                      per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  </Trans>
                 </Typography>
               )}
             </>
@@ -114,7 +131,7 @@ export default function SwapDescription() {
                 onClick={handleChartPeriodChange}
                 active={chartOption.period === CHART_PERIODS[key]}
               >
-                {CHART_PERIODS[key]}
+                <Trans id={CHART_PERIODS_LABELS[CHART_PERIODS[key]].id} />
               </ChartControlButton>
             ))}
           </ChartControlGroup>
@@ -128,7 +145,7 @@ export default function SwapDescription() {
                 onClick={handleChartTypeChange}
                 active={chartOption.type === CHART_TYPES[key]}
               >
-                {CHART_TYPES[key]}
+                <Trans id={CHART_TYPES_LABELS[CHART_TYPES[key]].id} />
               </ChartControlButton>
             ))}
           </ChartControlGroup>
@@ -139,7 +156,7 @@ export default function SwapDescription() {
         {pair ? (
           <>
             {loading ? (
-              <Spinner size={'lg'} centered />
+              <Spinner size={75} centered />
             ) : (
               <>
                 {chartOption.type === CHART_TYPES.AREA && (
@@ -159,7 +176,9 @@ export default function SwapDescription() {
           </>
         ) : (
           <Flex justifyContent="center" alignItems="center" height="100%">
-            <Typography>No price chart available for this pair.</Typography>
+            <Typography>
+              <Trans>No price chart available for this pair.</Trans>
+            </Typography>
           </Flex>
         )}
       </ChartContainer>

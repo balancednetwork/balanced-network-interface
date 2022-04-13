@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -10,13 +10,13 @@ export default class Router extends Contract {
     this.address = addresses[this.nid].router;
   }
 
-  swapICX(value: BigNumber, path: (string | null)[], minimumReceive: string) {
+  swapICX(value: string, path: (string | null)[], minimumReceive: string) {
     const payload = this.transactionParamsBuilder({
       method: 'route',
-      value: value,
+      value: IconConverter.toHexNumber(value),
       params: {
         _path: path,
-        _minReceive: minimumReceive,
+        _minReceive: IconConverter.toHexNumber(minimumReceive),
       },
     });
 

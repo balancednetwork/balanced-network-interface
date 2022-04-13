@@ -1,72 +1,72 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
-import { isAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { Validator } from 'icon-sdk-js';
+import JSBI from 'jsbi';
 import _ from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
-import IRC2 from 'packages/BalancedJs/contracts/IRC2';
-import ContractSettings from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
-import { SUPPORTED_TOKENS_LIST, isNativeCurrency, SUPPORTED_TOKENS_MAP_BY_ADDRESS, isBALN } from 'constants/tokens';
+import { BIGINT_ZERO } from 'constants/misc';
+import {
+  SUPPORTED_TOKENS_LIST,
+  isNativeCurrency,
+  SUPPORTED_TOKENS_MAP_BY_ADDRESS,
+  isBALN,
+  isFIN,
+} from 'constants/tokens';
 import { useBnJsContractQuery } from 'queries/utils';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { useUserAddedTokens } from 'store/user/hooks';
 import { Token, CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-import { changeBalances, resetBalances } from './actions';
-
-const contractSettings = new ContractSettings({ networkId: NETWORK_ID });
+import { changeBalances } from './actions';
 
 export function useWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);
 }
 
+export function useAvailableBalances(
+  account: string | undefined,
+  tokens: Token[],
+): {
+  [key: string]: CurrencyAmount<Currency>;
+} {
+  const balances = useCurrencyBalances(account || undefined, tokens);
+
+  return React.useMemo(() => {
+    return balances.reduce((acc, balance) => {
+      if (!balance) return acc;
+      if (!JSBI.greaterThan(balance.quotient, BIGINT_ZERO) && balance.currency.wrapped.address !== bnJs.BALN.address) {
+        return acc;
+      }
+      acc[balance.currency.wrapped.address] = balance;
+
+      return acc;
+    }, {});
+  }, [balances]);
+}
+
 export function useWalletFetchBalances(account?: string | null) {
   const dispatch = useDispatch();
-  const details = useBALNDetails();
-  const availableBALN: BigNumber = React.useMemo(() => details['Available balance'] || new BigNumber(0), [details]);
 
-  const transactions = useAllTransactions();
+  const userAddedTokens = useUserAddedTokens();
+
+  const tokens = useMemo(() => {
+    return [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
+  }, [userAddedTokens]);
+
+  const balances = useAvailableBalances(account || undefined, tokens);
 
   React.useEffect(() => {
-    const fetchBalances = async () => {
-      if (account) {
-        const list = SUPPORTED_TOKENS_LIST;
-
-        const results = await Promise.all(
-          SUPPORTED_TOKENS_LIST.map(token => {
-            if (token.symbol === 'ICX') {
-              return bnJs.ICX.balanceOf(account);
-            } else {
-              return new IRC2(contractSettings, token.address).balanceOf(account);
-            }
-          }),
-        );
-
-        const data = results.reduce((prev, result, index) => {
-          const symbol = list[index].symbol || 'ERR';
-
-          prev[symbol] = BalancedJs.utils.toIcx(result, symbol);
-          if (symbol === 'BALN') {
-            prev[symbol] = availableBALN;
-          }
-          return prev;
-        }, {});
-        dispatch(changeBalances(data));
-      } else {
-        dispatch(resetBalances());
-      }
-    };
-
-    fetchBalances();
-  }, [transactions, account, availableBALN, dispatch]);
+    dispatch(changeBalances(balances));
+  }, [balances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {
@@ -98,7 +98,8 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
 
 export const useHasEnoughICX = () => {
   const balances = useWalletBalances();
-  return balances['ICX'].isGreaterThan(MINIMUM_ICX_FOR_TX);
+  const icxAddress = bnJs.ICX.address;
+  return balances[icxAddress] && balances[icxAddress].greaterThan(MINIMUM_ICX_FOR_TX);
 };
 
 export function useTokenBalances(
@@ -115,6 +116,7 @@ export function useTokenBalances(
         tokens.map(async token => {
           if (!account) return undefined;
           if (isBALN(token)) return bnJs.BALN.availableBalanceOf(account);
+          if (isFIN(token)) return bnJs.getContract(token.address).availableBalanceOf(account);
           return bnJs.getContract(token.address).balanceOf(account);
         }),
       );
@@ -188,7 +190,7 @@ export function useCurrencyBalance(account?: string, currency?: Currency): Curre
 export function useICXBalances(
   uncheckedAddresses: (string | undefined)[],
 ): { [address: string]: CurrencyAmount<Currency> | undefined } {
-  const [balances, setBalances] = useState<BigNumber[]>([]);
+  const [balances, setBalances] = useState<string[]>([]);
 
   const transactions = useAllTransactions();
 
@@ -196,7 +198,7 @@ export function useICXBalances(
     () =>
       uncheckedAddresses
         ? uncheckedAddresses
-            .filter(isAddress)
+            .filter(Validator.isAddress)
             .filter((a): a is string => a !== undefined)
             .sort()
         : [],
@@ -207,7 +209,7 @@ export function useICXBalances(
     const fetchBalances = async () => {
       const result = await Promise.all(
         addresses.map(async address => {
-          return bnJs.ICX.balanceOf(address);
+          return bnJs.ICX.balanceOf(address).then(res => res.toFixed());
         }),
       );
 
@@ -223,7 +225,7 @@ export function useICXBalances(
     return addresses.reduce((agg, address, idx) => {
       const balance = balances[idx];
 
-      if (balance) agg[address] = CurrencyAmount.fromRawAmount(ICX, balance.toFixed(0));
+      if (balance) agg[address] = CurrencyAmount.fromRawAmount(ICX, balance);
       else agg[address] = CurrencyAmount.fromRawAmount(ICX, 0);
 
       return agg;

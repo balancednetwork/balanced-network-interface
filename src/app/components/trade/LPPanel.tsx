@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
@@ -17,6 +18,7 @@ import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/m
 import { CurrencyAmount, Currency, Percent } from 'types/balanced-sdk-core';
 import { maxAmountSpend } from 'utils';
 
+import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
@@ -32,7 +34,13 @@ export function subtract(
   amountA: CurrencyAmount<Currency> | undefined,
   amountB: CurrencyAmount<Currency> | undefined,
 ): CurrencyAmount<Currency> | undefined {
-  return amountA ? (amountB ? amountA.subtract(amountB) : amountA) : undefined;
+  return amountA
+    ? amountB
+      ? amountA.currency.equals(amountB.currency)
+        ? amountA.subtract(amountB)
+        : amountA
+      : amountA
+    : undefined;
 }
 
 function WalletSection() {
@@ -63,7 +71,7 @@ function WalletSection() {
     return (
       <Flex flexDirection="row" justifyContent="center" alignItems="center">
         <Typography>
-          {`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol}`}
+          {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol}`}
         </Typography>
       </Flex>
     );
@@ -71,7 +79,7 @@ function WalletSection() {
     return (
       <Flex flexDirection="row" justifyContent="center" alignItems="center">
         <Typography>
-          {`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol} /
+          {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol} /
                       ${formattedRemains[Field.CURRENCY_B]} ${currencies[Field.CURRENCY_B]?.symbol}`}
         </Typography>
       </Flex>
@@ -122,32 +130,18 @@ export default function LPPanel() {
   } = useDerivedMintInfo();
   const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection } = useMintActionHandlers(noLiquidity);
 
-  const [percent, setPercent] = React.useState(0);
+  const sliderInstance = React.useRef<any>(null);
+
+  const [{ percent, needUpdate }, setPercent] = React.useState({ percent: 0, needUpdate: false });
 
   React.useEffect(() => {
-    const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
-    const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
-
-    if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
-      const p = new Percent(Math.floor(percent * 100), 10_000);
-
-      if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
-        onSlide(Field.CURRENCY_A, percent !== 0 ? balanceA.multiply(p).toFixed() : '');
-      } else {
-        const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
-          ? Field.CURRENCY_A
-          : Field.CURRENCY_B;
-        onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
-      }
-    }
-  }, [percent, currencyBalances, onSlide, pair, currencies]);
-
-  React.useEffect(() => {
-    setPercent(0);
-  }, [currencies]);
+    sliderInstance.current?.noUiSlider.set(0);
+    setPercent({ percent: 0, needUpdate: false });
+    onSlide(Field.CURRENCY_A, '');
+  }, [currencies, onSlide, sliderInstance]);
 
   const handleSlider = (values: string[], handle: number) => {
-    setPercent(parseFloat(values[handle]));
+    setPercent({ percent: parseFloat(values[handle]), needUpdate: true });
   };
 
   const sliderValue =
@@ -161,13 +155,32 @@ export default function LPPanel() {
         )
       : 0;
 
-  const sliderInstance = React.useRef<any>(null);
-
   React.useEffect(() => {
     if (inputType === 'text') {
       sliderInstance.current?.noUiSlider.set(sliderValue);
+      setPercent({ percent: sliderValue, needUpdate: false });
     }
   }, [inputType, sliderValue]);
+
+  React.useEffect(() => {
+    if (needUpdate) {
+      const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
+      const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
+
+      if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
+        const p = new Percent(Math.floor(percent * 100), 10_000);
+
+        if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
+          onSlide(Field.CURRENCY_A, percent !== 0 ? balanceA.multiply(p).toFixed() : '');
+        } else {
+          const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
+            ? Field.CURRENCY_A
+            : Field.CURRENCY_B;
+          onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
+        }
+      }
+    }
+  }, [percent, needUpdate, currencyBalances, onSlide, pair, currencies]);
 
   // get formatted amounts
   const formattedAmounts = {
@@ -211,16 +224,17 @@ export default function LPPanel() {
         <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <AutoColumn gap="md">
             <AutoColumn gap="md">
-              <Typography variant="h2">Supply liquidity</Typography>
+              <Typography variant="h2">
+                <Trans>Supply liquidity</Trans>
+              </Typography>
             </AutoColumn>
 
             <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
                   account={account}
-                  id="supply-liquidity-input-token-a"
                   value={formattedAmounts[Field.CURRENCY_A]}
-                  showCommonBases={false}
+                  currencySelectionType={CurrencySelectionType.TRADE_MINT_BASE}
                   currency={currencies[Field.CURRENCY_A]}
                   onUserInput={onFieldAInput}
                   onCurrencySelect={handleCurrencyASelect}
@@ -233,9 +247,8 @@ export default function LPPanel() {
               <Flex>
                 <CurrencyInputPanel
                   account={account}
-                  id="supply-liquidity-input-token-b"
                   value={formattedAmounts[Field.CURRENCY_B]}
-                  showCommonBases={true}
+                  currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
                   currency={currencies[Field.CURRENCY_B]}
                   onUserInput={onFieldBInput}
                   onCurrencySelect={handleCurrencyBSelect}
@@ -301,12 +314,12 @@ export default function LPPanel() {
             <Flex justifyContent="center">
               {isValid ? (
                 <Button color="primary" onClick={handleSupply}>
-                  {pairState === PairState.EXISTS && 'Supply'}
-                  {pairState === PairState.NOT_EXISTS && 'Create pool'}
+                  {pairState === PairState.EXISTS && t`Supply`}
+                  {pairState === PairState.NOT_EXISTS && t`Create pool`}
                 </Button>
               ) : (
                 <Button disabled={!!account} color="primary" onClick={handleConnectToWallet}>
-                  {account ? error : 'Supply'}
+                  {account ? error : t`Supply`}
                 </Button>
               )}
             </Flex>

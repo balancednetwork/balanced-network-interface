@@ -12,11 +12,14 @@ const MAINNET_ADDRESSES = {
   governance: 'cx44250a12074799e26fdeee75648ae47e2cc84219',
   band: 'cxe647e0af68a4661566f5e9861ad4ac854de808a2',
   router: 'cx21e94c08c03daee80c25d8ee3ea22a20786ec231',
+  airdrip: 'cxaf244cf3c7164fe6f996f398a9d99c4d4a85cf15',
   sicx: 'cx2609b924e33ef00b648a409245c7ea394c467824',
   bnusd: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
   baln: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
   bwt: 'cxcfe9d1f83fa871e903008471cca786662437e58d',
   stakedLp: '',
+  multicall: 'cx793970c9ec84eb0dcb6164965c74fe678474d7c7',
+  disbursement: 'cxe3905591929d17fc8496ae28ee3b9c144579228e',
 };
 
 const YEOUIDO_ADDRESSES = {
@@ -27,15 +30,18 @@ const YEOUIDO_ADDRESSES = {
   daofund: 'cx4d3c7b8f59662c0946eb69eb3e6a0dbce2cecb6a',
   rewards: 'cxfb74dc7fb33ec9fa0da0f09e3faaebb0b153d06f',
   dex: 'cx759f611f9fee49f4ba163070a6b157b863f5fbc3',
+  rebalancing: '',
   governance: 'cxcf64d3520d5d9224d2fe57ba5ac8b88a94f395e4',
   band: 'cx61a36e5d10412e03c907a507d1e8c6c3856d9964',
-  router: 'cx607ed2dc0576a3ed916eb344f6f035033a9e4c50',
-  sicx: 'cx81730290ed56a72539c531ceb8346a4f15b19d0a',
-  bnusd: 'cx7bd90c91db9b0be9f688442dce7569aebb1ff7fe',
-  baln: 'cx40b768f5834a124ea242f9741b853af804fb497f',
-  bwt: 'cx81214e6f8efdac9843e25a4a9b8322126a755218',
-  rebalancing: 'cx03ebfe239c69aee14df2e3435cd0824fd3e75904',
-  stakedLp: 'cxc8840892de6a5bc5c69bfca7346967943aa51a69',
+  router: 'cx4c456f4a02d2576fe712ea10b311a5fe8d06d205',
+  airdrip: 'cx8ed4fbee9d6497f91ea90933db288ff4b43e54ba',
+  sicx: 'cxae6334850f13dfd8b50f8544d5acb126bb8ef82d',
+  bnusd: 'cxc48c9c81ceef04445c961c5cc8ff056d733dfe3a',
+  baln: 'cx36169736b39f59bf19e8950f6c8fa4bfa18b710a',
+  bwt: 'cx5d886977b7d24b9f73a460c9ca2d43847997c285',
+  stakedLp: '',
+  multicall: '',
+  disbursement: '',
 };
 
 const SEJONG_ADDRESSES = {
@@ -49,13 +55,15 @@ const SEJONG_ADDRESSES = {
   rebalancing: 'cx566d6608f5545f7fc66ebe6780dbcaf1a5db5951',
   governance: 'cxd7bfcd4cd15cb58ca62e5c35f634164faa9aa553',
   band: 'cx900e2d17c38903a340a0181523fa2f720af9a798',
-  router: 'cx69d8384c08fb263ba52188408cc8508b87359535',
-  sicx: 'cx65ec133dc87b510be450a8efd02eabec824590a8',
-  bnusd: 'cx22f9c2aebce6bcc4d6dde07826c7fd301783663b',
-  baln: 'cx1a2822b08c22c2cd1a8be757d769067a27ed819c',
-  bwt: 'cx04a19aea7b916c35ca13254cf823ac8cc5187377',
+  router: 'cxf9e996d3ab20b83ed6bacb28ebf157c484c4b695',
+  airdrip: '',
+  sicx: 'cx70806fdfa274fe12ab61f1f98c5a7a1409a0c108',
+  bnusd: 'cx5838cb516d6156a060f90e9a3de92381331ff024',
+  baln: 'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b',
+  bwt: 'cx68b822ae2acc76e9ec6143a8afbeb79e50a26e8f',
+  multicall: 'cx75256fadf232ad1124d9c6cd70c9b1ec122a0f47',
   stakedLp: 'cxaee5c6ac107c5d4f9273c105895e793c084d7827',
-  fin: 'cx0d0c689da98fd4ca66a5695fd8581648def604eb',
+  disbursement: '',
 };
 
 const addresses = {

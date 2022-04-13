@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { isEoaAddress, isScoreAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
@@ -9,6 +9,8 @@ import { BIGINT_ZERO } from 'constants/misc';
 import { PairInfo } from 'constants/pairs';
 import { Field } from 'store/swap/actions';
 import { Currency, CurrencyAmount, Fraction, Token } from 'types/balanced-sdk-core';
+
+const { isEoaAddress, isScoreAddress } = Validator;
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
@@ -151,11 +153,11 @@ export const normalizeContent = (text: string): string => {
 const TEN = new BigNumber(10);
 
 export function parseUnits(value: string, decimals: number = 18): string {
-  return new BigNumber(value).times(TEN.pow(decimals)).toFixed();
+  return new BigNumber(value).times(TEN.pow(decimals)).toFixed(0);
 }
 
-export function formatUnits(value: string, decimals: number): string {
-  return new BigNumber(value).div(TEN.pow(decimals)).toFixed();
+export function formatUnits(value: string, decimals: number = 18): string {
+  return new BigNumber(value).div(TEN.pow(decimals)).toFixed(0);
 }
 
 export function getPairName(pair: PairInfo) {
@@ -165,6 +167,10 @@ export function getPairName(pair: PairInfo) {
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
   return isScoreAddress(value) ? value : false;
+}
+
+export function toDec(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>): string {
+  return value ? value.quotient.toString() : '0';
 }
 
 export function toHex(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>): string {
@@ -185,8 +191,8 @@ export function toCurrencyAmountFromRawBN(token: Token, amount: BigNumber): Curr
   return CurrencyAmount.fromFractionalAmount(token, amountNum.toFixed(), amountDeno.toFixed());
 }
 
-export function toFraction(amount: BigNumber): Fraction {
-  const [amountNum, amountDeno] = amount.toFraction();
+export function toFraction(amount: BigNumber | undefined): Fraction {
+  const [amountNum, amountDeno] = amount ? amount.toFraction() : [0, 1];
   return new Fraction(amountNum.toFixed(), amountDeno.toFixed());
 }
 
@@ -203,11 +209,12 @@ export function isZeroCA(ca: CurrencyAmount<Currency>): boolean {
   return JSBI.equal(ca.quotient, BIGINT_ZERO);
 }
 
-export function toBigNumber(ca: CurrencyAmount<Currency>): BigNumber {
-  return new BigNumber(ca.toExact());
+export function toBigNumber(ca: CurrencyAmount<Currency> | undefined): BigNumber {
+  return ca ? new BigNumber(ca.toExact()) : new BigNumber(0);
 }
 
-export function isDPZeroCA(ca: CurrencyAmount<Currency>, decimalPlaces: number): boolean {
+export function isDPZeroCA(ca: CurrencyAmount<Currency> | undefined, decimalPlaces: number): boolean {
+  if (!ca) return true;
   if (decimalPlaces === 0) return isZeroCA(ca);
   return ca.toFixed(decimalPlaces) === `0.${'0'.repeat(decimalPlaces)}`;
 }

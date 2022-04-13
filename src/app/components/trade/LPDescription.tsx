@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
@@ -18,6 +20,7 @@ import { formatBigNumber } from 'utils';
 export default function LPDescription() {
   const { currencies, pair, pairState } = useDerivedMintInfo();
   const { account } = useIconReact();
+  const upSmall = useMedia('(min-width: 600px)');
   const userPoolBalance = useLiquidityTokenBalance(account, pair);
   const totalPoolTokens = pair?.totalSupply;
   const [token0Deposited, token1Deposited] =
@@ -47,13 +50,15 @@ export default function LPDescription() {
       {pairState === PairState.NOT_EXISTS && (
         <Flex bg="bg2" flex={1} padding={[5, 7]} flexDirection="column">
           <Typography variant="h3" mb={2}>
-            {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`} liquidity pool{' '}
+            {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`}{' '}
+            <Trans>liquidity pool</Trans>
           </Typography>
 
           <Flex flex={1} alignItems="center" justifyContent="center">
             <Typography textAlign="center">
-              There's no liquidity pool for this pair yet. <br />
-              Supply liquidity for these assets in any quantity to create a new pool.
+              <Trans>There's no liquidity pool for this pair yet.</Trans>
+              <br />
+              <Trans>Supply liquidity for these assets in any quantity to create a new pool.</Trans>
             </Typography>
           </Flex>
         </Flex>
@@ -64,17 +69,18 @@ export default function LPDescription() {
           {poolRewards ? (
             <Typography variant="h3" mb={2}>
               {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool:`
-                : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool:`}{' '}
-              <Typography fontWeight="normal" fontSize={16} as="span">
+                ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} 
+                    liquidity pool${upSmall && ': '}`
+                : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall && ': '}`}{' '}
+              <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
                 {apy?.times(100).dp(2).toFixed() ?? '-'}% APY
               </Typography>
             </Typography>
           ) : (
             <Typography variant="h3" mb={2}>
               {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                ? `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
-                : `${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}{' '}
+                ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
+                : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}
             </Typography>
           )}
 
@@ -89,7 +95,7 @@ export default function LPDescription() {
               {pair && !account && (
                 <Flex alignItems="center" justifyContent="center" height="100%">
                   <Typography textAlign="center" marginBottom="5px" color="text1">
-                    Sign in to view your liquidity details.
+                    <Trans>Sign in to view your liquidity details.</Trans>
                   </Typography>
                 </Flex>
               )}
@@ -98,7 +104,7 @@ export default function LPDescription() {
                 <>
                   <Box sx={{ margin: '15px 0 25px 0' }}>
                     <Typography textAlign="center" marginBottom="5px" color="text1">
-                      Your supply
+                      <Trans>Your supply</Trans>
                     </Typography>
 
                     <Typography textAlign="center" variant="p">
@@ -119,7 +125,7 @@ export default function LPDescription() {
                   {userRewards && (
                     <Box sx={{ margin: '15px 0 25px 0' }}>
                       <Typography textAlign="center" marginBottom="5px" color="text1">
-                        Your daily rewards
+                        <Trans>Your daily rewards</Trans>
                       </Typography>
                       <Typography textAlign="center" variant="p">
                         ~ {formatBigNumber(userRewards, 'currency')} BALN
@@ -133,7 +139,7 @@ export default function LPDescription() {
             <Box width={[1, 1 / 2]}>
               <Box sx={{ margin: '15px 0 25px 0' }}>
                 <Typography textAlign="center" marginBottom="5px" color="text1">
-                  Total supply
+                  <Trans>Total supply</Trans>
                 </Typography>
                 {pair && (
                   <Typography textAlign="center" variant="p">
@@ -153,7 +159,7 @@ export default function LPDescription() {
               {poolRewards && (
                 <Box sx={{ margin: '15px 0 25px 0' }}>
                   <Typography textAlign="center" marginBottom="5px" color="text1">
-                    Total daily rewards
+                    <Trans>Total daily rewards</Trans>
                   </Typography>
                   <Typography textAlign="center" variant="p">
                     {formatBigNumber(poolRewards, 'currency')} BALN

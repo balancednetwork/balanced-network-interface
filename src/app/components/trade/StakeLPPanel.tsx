@@ -98,7 +98,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
     if (shouldStake) {
       bnJs
         .inject({ account: account })
-        .Dex.stake(poolId, BalancedJs.utils.toLoop(differenceAmount.abs()))
+        .Dex.stake(poolId, BalancedJs.utils.toLoop(differenceAmount.abs()).toFixed())
         .then(res => {
           if (res.result) {
             addTransaction(
@@ -122,7 +122,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
     } else {
       bnJs
         .inject({ account: account })
-        .StakedLP.unstake(poolId, BalancedJs.utils.toLoop(differenceAmount.abs()))
+        .StakedLP.unstake(poolId, BalancedJs.utils.toLoop(differenceAmount.abs()).toFixed())
         .then(res => {
           if (res.result) {
             addTransaction(

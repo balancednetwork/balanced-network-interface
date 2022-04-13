@@ -200,8 +200,14 @@ export const ListItem = styled(Flex)`
   }
 
   flex-direction: column;
+  p {
+    margin-bottom: 7px;
+  }
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
     flex-direction: row;
+    p {
+      margin-bottom: 0;
+    }
   `}
 `;
 
@@ -228,11 +234,15 @@ const FieldInput = styled.input<{ hasTitle?: boolean }>`
   color: white;
   padding: 3px 20px 3px 10px;
   text-align: center;
-  margin-left: ${props => (props.hasTitle ? '15px' : '0')};
+  margin-left: 0;
   background-color: ${({ theme }) => theme.colors.bg5};
   :hover,
   :focus {
     border: 2px solid ${({ theme }) => theme.colors.primaryBright};
     outline: none;
   }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    margin-left: ${props => (props.hasTitle ? '15px' : '0')};
+  `}
 `;

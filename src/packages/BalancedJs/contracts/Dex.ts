@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -39,8 +38,8 @@ export default class Dex extends Contract {
       params: {
         _baseToken: baseToken,
         _quoteToken: quoteToken,
-        _baseValue: baseValue,
-        _quoteValue: quoteValue,
+        _baseValue: IconConverter.toHexNumber(baseValue),
+        _quoteValue: IconConverter.toHexNumber(quoteValue),
       },
     });
 
@@ -125,20 +124,20 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  transferICX(value: BigNumber) {
+  transferICX(value: string) {
     const payload = this.transferICXParamsBuilder({
-      value: value,
+      value: IconConverter.toHexNumber(value),
     });
 
     return this.callICONPlugins(payload);
   }
 
-  transfer(to: string, poolId: number, value: BigNumber, data?: string) {
+  transfer(to: string, poolId: number, value: string, data?: string) {
     const callParams = this.transactionParamsBuilder({
       method: 'transfer',
       params: {
         _to: to,
-        _id: poolId,
+        _id: IconConverter.toHex(poolId),
         _value: IconConverter.toHex(value),
         _data: data && IconConverter.toHex(data),
       },
@@ -147,13 +146,8 @@ export default class Dex extends Contract {
     return this.callICONPlugins(callParams);
   }
 
-  stake(poolId: number, value: BigNumber) {
-    return this.transfer(
-      addresses[this.nid].stakedLp,
-      IconConverter.toHex(poolId),
-      IconConverter.toHex(value),
-      JSON.stringify({ method: '_stake' }),
-    );
+  stake(poolId: number, value: string) {
+    return this.transfer(addresses[this.nid].stakedLp, poolId, value, JSON.stringify({ method: '_stake' }));
   }
 
   getICXWithdrawLock() {
@@ -179,7 +173,7 @@ export default class Dex extends Contract {
       method: 'remove',
       params: {
         _id: IconConverter.toHex(id),
-        _value: value,
+        _value: IconConverter.toHexNumber(value),
         _withdraw: IconConverter.toHex(withdraw),
       },
     });
@@ -212,7 +206,7 @@ export default class Dex extends Contract {
       method: 'withdraw',
       params: {
         _token: token,
-        _value: value,
+        _value: IconConverter.toHexNumber(value),
       },
     });
 
@@ -247,5 +241,20 @@ export default class Dex extends Contract {
     });
 
     return this.callICONPlugins(payload);
+  }
+
+  /**
+   * Not used
+   */
+  getPoolStatsForPair(base: string, quote: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getPoolStatsForPair',
+      params: {
+        _base: base,
+        _quote: quote,
+      },
+    });
+
+    return this.call(callParams);
   }
 }

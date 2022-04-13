@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -34,7 +33,7 @@ export default class StakedLP extends Contract {
     return this.call(callParams);
   }
 
-  unstake(poolId: number, value: BigNumber) {
+  unstake(poolId: number, value: string) {
     const callParams = this.transactionParamsBuilder({
       method: 'unstake',
       params: {

@@ -1,16 +1,15 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import Nouislider from 'nouislider-react';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
-import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -18,6 +17,7 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default React.memo(function StakePanel() {
@@ -71,6 +71,7 @@ export default React.memo(function StakePanel() {
   const addTransaction = useTransactionAdder();
 
   const { account } = useIconReact();
+
   const handleConfirm = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
@@ -80,23 +81,23 @@ export default React.memo(function StakePanel() {
 
     bnJs
       .inject({ account })
-      .BALN.stake(BalancedJs.utils.toLoop(afterAmount))
+      .BALN.stake(parseUnits(afterAmount.toString()))
       .then(res => {
         if (res.result) {
           if (shouldStake) {
             addTransaction(
               { hash: res.result },
               {
-                pending: 'Staking BALN tokens...',
-                summary: `Staked ${differenceAmount.abs().dp(2).toFormat()} BALN tokens.`,
+                pending: t`Staking BALN...`,
+                summary: t`Staked ${differenceAmount.abs().dp(2).toFormat()} BALN.`,
               },
             );
           } else {
             addTransaction(
               { hash: res.result },
               {
-                pending: 'Unstaking BALN tokens...',
-                summary: `Unstaked ${differenceAmount.abs().dp(2).toFormat()} BALN tokens.`,
+                pending: t`Unstaking BALN...`,
+                summary: t`Unstaked ${differenceAmount.abs().dp(2).toFormat()} BALN.`,
               },
             );
           }
@@ -114,16 +115,20 @@ export default React.memo(function StakePanel() {
 
   const date = dayjs().add(3, 'days');
   const description = shouldStake
-    ? 'Unstaking takes 3 days.'
-    : `They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('hh:mma')}.`;
+    ? t`Unstaking takes 3 days.`
+    : t`They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('hh:mma')}.`;
 
   const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
-      <Typography variant="h3">Stake Balance Tokens</Typography>
+      <Typography variant="h3">
+        <Trans>Stake Balance Tokens</Trans>
+      </Typography>
 
-      <Typography my={1}>Stake your Balance Tokens to earn network fees.</Typography>
+      <Typography my={1}>
+        <Trans>Stake your Balance Tokens to earn network fees.</Trans>
+      </Typography>
 
       <Box my={3}>
         <Nouislider
@@ -144,24 +149,32 @@ export default React.memo(function StakePanel() {
         <Typography>
           {stakedPercent.multipliedBy(totalBalance).div(100).dp(2).toFormat()} / {totalBalance.dp(2).toFormat()}
         </Typography>
-        <Typography>{stakedPercent.dp(2, BigNumber.ROUND_UP).toFormat()}% staked</Typography>
+        <Typography>
+          <Trans>{stakedPercent.dp(2, BigNumber.ROUND_UP).toFormat()}% staked</Trans>
+        </Typography>
       </Flex>
 
       <Flex alignItems="center" justifyContent="center" mt={5}>
         {!isAdjusting ? (
-          <Button onClick={handleAdjust}>Adjust</Button>
+          <Button onClick={handleAdjust}>
+            <Trans>Adjust</Trans>
+          </Button>
         ) : (
           <>
-            <TextButton onClick={handleCancel}>Cancel</TextButton>
-            <Button onClick={toggleOpen}>Confirm</Button>
+            <TextButton onClick={handleCancel}>
+              <Trans>Cancel</Trans>
+            </TextButton>
+            <Button onClick={toggleOpen}>
+              <Trans>Confirm</Trans>
+            </Button>
           </>
         )}
       </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
-            {shouldStake ? 'Stake Balance Tokens?' : 'Unstake Balance Tokens?'}
+            {shouldStake ? t`Stake Balance Tokens?` : t`Unstake Balance Tokens?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -170,14 +183,18 @@ export default React.memo(function StakePanel() {
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {beforeAmount.dp(2).toFormat() + ' BALN'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {afterAmount.dp(2).toFormat() + ' BALN'}
               </Typography>
@@ -191,19 +208,15 @@ export default React.memo(function StakePanel() {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </TextButton>
                 <Button onClick={handleConfirm} fontSize={14} disabled={!hasEnoughICX}>
-                  {shouldStake ? 'Stake' : 'Unstake'}
+                  {shouldStake ? t`Stake` : t`Unstake`}
                 </Button>
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

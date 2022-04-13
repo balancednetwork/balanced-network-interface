@@ -13,6 +13,7 @@ import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useUserAddedTokens } from 'store/user/hooks';
 import { Currency, CurrencyAmount, Fraction, Price, Token } from 'types/balanced-sdk-core';
+import { toFraction } from 'utils';
 
 interface PoolState {
   total: CurrencyAmount<Currency>;
@@ -65,6 +66,8 @@ export function usePools(): { [poolId: number]: PoolState } {
 
           const totalSupply = new BigNumber(stats['total_supply'], 16);
 
+          // which is better? for code readability or best practices
+          // NULL_CONTRACT_ADDRESS or bnJs.ICX.address?
           const baseToken = tokensByAddress[stats['base_token'] || NULL_CONTRACT_ADDRESS];
           const quoteToken = tokensByAddress[stats['quote_token'] || NULL_CONTRACT_ADDRESS];
 
@@ -278,18 +281,17 @@ export function usePoolData(poolId: number) {
 
   return React.useMemo(() => {
     if (pool) {
-      const [rewardNumerator, rewardDenominator] = reward ? reward.toFraction() : [0, 1];
       // it's a fraction, yet represents BALN amount
-      const rewardFraction = new Fraction(rewardNumerator.toFixed(), rewardDenominator.toFixed());
+      const rewardFrac = toFraction(reward);
       return {
         totalBase: pool.base,
         totalQuote: pool.quote,
-        totalReward: rewardFraction,
         totalLP: balance?.balance,
         suppliedLP: balance?.suppliedLP,
+        totalReward: rewardFrac,
         suppliedBase: balance?.base,
         suppliedQuote: balance?.quote,
-        suppliedReward: poolShare.multiply(rewardFraction),
+        suppliedReward: poolShare.multiply(rewardFrac),
         poolShare,
         stakedLPBalance: balance?.stakedLPBalance,
       };

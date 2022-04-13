@@ -1,9 +1,22 @@
 import { useCallback } from 'react';
 
+import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppDispatch, AppState } from '../index';
-import { changeShouldLedgedSignMessage, ApplicationModal, setOpenModal, updateSlippageTolerance } from './actions';
+import {
+  changeShouldLedgedSignMessage,
+  changeCurrentLedgerAddressPage,
+  ApplicationModal,
+  setOpenModal,
+  updateSlippageTolerance,
+} from './reducer';
+
+export function useBlockNumber(): number | undefined {
+  const { networkId: chainId } = useIconReact();
+
+  return useSelector((state: AppState) => state.application.blockNumber[chainId ?? -1]);
+}
 
 export function useModalOpen(modal: ApplicationModal): boolean {
   const openModal = useSelector((state: AppState) => state.application.openModal);
@@ -25,11 +38,26 @@ export function useShouldLedgerSign(): AppState['application']['shouldLedgerSign
   return shouldSignLedger;
 }
 
+export function useCurrentLedgerAddressPage(): AppState['application']['currentLedgerAddressPage'] {
+  const currentLedgerAddressPage = useSelector((state: AppState) => state.application.currentLedgerAddressPage);
+  return currentLedgerAddressPage;
+}
+
 export function useChangeShouldLedgerSign(): (shouldLedgerSign: boolean) => void {
   const dispatch = useDispatch();
   return useCallback(
     (shouldLedgerSign: boolean) => {
       dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign }));
+    },
+    [dispatch],
+  );
+}
+
+export function useChangeCurrentLedgerAddressPage(): (currentLedgerAddressPage: number) => void {
+  const dispatch = useDispatch();
+  return useCallback(
+    (currentLedgerAddressPage: number) => {
+      dispatch(changeCurrentLedgerAddressPage({ currentLedgerAddressPage }));
     },
     [dispatch],
   );

@@ -1,7 +1,8 @@
-import { LibrarySymbolInfo, ResolutionString } from 'charting_library/charting_library';
+import { LibrarySymbolInfo, ResolutionString, SearchSymbolResultItem } from 'charting_library/charting_library';
 
 import { getTradePair } from 'constants/currency';
-import { PairInfo } from 'constants/pairs';
+import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
+import { Token } from 'types/balanced-sdk-core';
 
 import { defaultConfig } from '.';
 
@@ -53,4 +54,31 @@ export const getSymbolInfo = (name: string): BalancedLibrarySymbolInfo => {
     volume_precision: 2,
     data_status: 'streaming',
   };
+};
+
+export const getFilteredSupportedPairNames = (query: string = ''): SearchSymbolResultItem[] => {
+  const isQueried = (query: string, token: Token): boolean => {
+    return (
+      token.name!.toLowerCase().indexOf(query.toLowerCase()) >= 0 ||
+      token.symbol!.toLowerCase().indexOf(query.toLowerCase()) >= 0 ||
+      token.searchableTerms.toLowerCase().indexOf(query.toLowerCase()) >= 0
+    );
+  };
+
+  return SUPPORTED_PAIRS.filter(pair => {
+    return (
+      isQueried(query, pair.baseToken) ||
+      isQueried(query, pair.quoteToken) ||
+      pair.name.toLowerCase().indexOf(query.toLowerCase()) >= 0
+    );
+  }).map(pair => {
+    return {
+      symbol: pair.baseToken.name!,
+      full_name: pair.name,
+      description: pair.name,
+      type: '',
+      exchange: '',
+      ticker: pair.name,
+    };
+  });
 };

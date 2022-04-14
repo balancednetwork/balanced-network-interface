@@ -14,7 +14,7 @@ import { DatafeedConfiguration } from 'charting_library/datafeed-api';
 import { formatBarItem } from 'queries/swap';
 
 import { getHistoryBars } from './history';
-import { BalancedLibrarySymbolInfo, getSymbolInfo } from './symbols';
+import { BalancedLibrarySymbolInfo, getFilteredSupportedPairNames, getSymbolInfo } from './symbols';
 
 interface Subscriber {
   guid: string;
@@ -54,12 +54,9 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
     }, 0);
   }
 
-  public searchSymbols(
-    userInput: string,
-    exchange: string,
-    symbolType: string,
-    onResult: SearchSymbolsCallback,
-  ): void {}
+  public searchSymbols(userInput: string, exchange: string, symbolType: string, onResult: SearchSymbolsCallback): void {
+    onResult(getFilteredSupportedPairNames(userInput));
+  }
 
   public getBars(
     symbolInfo: BalancedLibrarySymbolInfo,

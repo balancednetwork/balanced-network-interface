@@ -181,28 +181,28 @@ export const CFT_YEOUIDO = new Token(
 export const ICX_SEJONG = new Token(SupportedChainId.SEJONG, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 export const sICX_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cx65ec133dc87b510be450a8efd02eabec824590a8',
+  'cx70806fdfa274fe12ab61f1f98c5a7a1409a0c108',
   18,
   'sICX',
   'Staked ICX',
 );
 export const bnUSD_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cx22f9c2aebce6bcc4d6dde07826c7fd301783663b',
+  'cx5838cb516d6156a060f90e9a3de92381331ff024',
   18,
   'bnUSD',
   'Balanced Dollar',
 );
 export const BALN_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cx1a2822b08c22c2cd1a8be757d769067a27ed819c',
+  'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b',
   18,
   'BALN',
   'Balance Token',
 );
 export const IUSDC_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cxb2c075e9130440dd64e6bfd3fe09e5c629f6e183',
+  'cx599d58885e5b1736c934fca7e53e04c797ab05be',
   6,
   'IUSDC',
   'ICON USD Coin',

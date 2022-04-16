@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-14 22:26\n"
+"PO-Revision-Date: 2022-04-16 07:22\n"
 "Last-Translator: \n"
 "Language: de_DE\n"
 "Language-Team: German\n"
@@ -59,7 +59,7 @@ msgstr "MENGE"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
-msgstr ""
+msgstr "aktiv"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "Activity history"
@@ -97,7 +97,7 @@ msgstr "Alle Sicherheiten gesperrt"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
-msgstr ""
+msgstr "Allzeit"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx

@@ -2,6 +2,8 @@ import { t } from '@lingui/macro';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { Fraction } from 'types/balanced-sdk-core/entities/fractions/fraction';
+
 export const Panel = styled(Flex)`
   overflow: hidden;
   border-top-right-radius: 10px;
@@ -59,3 +61,9 @@ export function withdrawMessage(
   const failureMessage = t`Couldn't withdraw ${inputCurrency} / ${outputCurrency} liquidity. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
+
+export const stakedFraction = stakedLPPercent => {
+  const [stakedNumerator, stakedDenominator] = stakedLPPercent ? stakedLPPercent.toFraction() : [0, 1];
+  const stakedFraction = new Fraction(stakedNumerator.toFixed(), stakedDenominator.toFixed());
+  return stakedFraction;
+};

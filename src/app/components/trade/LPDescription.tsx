@@ -9,13 +9,17 @@ import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
+import { usePoolData } from 'hooks/usePools';
 import { PairState } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useReward } from 'store/reward/hooks';
+import { useStakedLPPercent } from 'store/stakedLP/hooks';
 import { useLiquidityTokenBalance } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
+
+import { stakedFraction } from './utils';
 
 export default function LPDescription() {
   const { currencies, pair, pairState } = useDerivedMintInfo();
@@ -44,6 +48,10 @@ export default function LPDescription() {
 
   const apys = useAllPairsAPY();
   const apy = apys && apys[pair?.poolId ?? -1];
+
+  const stakedLPPercent = useStakedLPPercent(pair?.poolId ?? -1);
+  const stakedFractionValue = stakedFraction(stakedLPPercent);
+  const poolData = usePoolData(pair?.poolId ?? -1);
 
   return (
     <>
@@ -128,7 +136,15 @@ export default function LPDescription() {
                         <Trans>Your potential rewards</Trans>
                       </Typography>
                       <Typography textAlign="center" variant="p">
-                        ~ {formatBigNumber(userRewards, 'currency')} BALN
+                        {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX
+                          ? `~ ${userRewards.toFixed(4) || '---'} BALN`
+                          : `~ ${
+                              poolData?.suppliedReward
+                                ?.multiply(stakedFractionValue)
+                                .divide(100)
+                                .toFixed(4, { groupSeparator: ',' }) || '---'
+                            }
+                        BALN`}
                       </Typography>
                     </Box>
                   )}

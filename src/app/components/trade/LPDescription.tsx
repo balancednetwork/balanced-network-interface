@@ -49,7 +49,7 @@ export default function LPDescription() {
     <>
       {pairState === PairState.NOT_EXISTS && (
         <Flex bg="bg2" flex={1} padding={[5, 7]} flexDirection="column">
-          <Typography variant="h3" mb={2}>
+          <Typography variant="h3" mb={2} marginBottom={40}>
             {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`}{' '}
             <Trans>liquidity pool</Trans>
           </Typography>
@@ -67,7 +67,7 @@ export default function LPDescription() {
       {pairState === PairState.EXISTS && (
         <Box bg="bg2" flex={1} padding={[5, 7]}>
           {poolRewards ? (
-            <Typography variant="h3" mb={2}>
+            <Typography variant="h3" mb={2} marginBottom={40}>
               {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
                 ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} 
                     liquidity pool${upSmall && ': '}`
@@ -77,7 +77,7 @@ export default function LPDescription() {
               </Typography>
             </Typography>
           ) : (
-            <Typography variant="h3" mb={2}>
+            <Typography variant="h3" mb={2} marginBottom={40}>
               {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
                 ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
                 : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}
@@ -125,7 +125,7 @@ export default function LPDescription() {
                   {userRewards && (
                     <Box sx={{ margin: '15px 0 25px 0' }}>
                       <Typography textAlign="center" marginBottom="5px" color="text1">
-                        <Trans>Your daily rewards</Trans>
+                        <Trans>Your potential rewards</Trans>
                       </Typography>
                       <Typography textAlign="center" variant="p">
                         ~ {formatBigNumber(userRewards, 'currency')} BALN

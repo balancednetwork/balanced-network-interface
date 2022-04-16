@@ -355,9 +355,10 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {currencies[Field.CURRENCY_A]?.symbol}
             </Typography>
             <Typography mt={2} textAlign="center">
-              <Trans>Your ICX will be locked for 24 hours. </Trans>
-              <br />
-              <Trans>To receive BALN, you must have ICX in the pool at 1pm Eastern each day.</Trans>
+              <Trans>
+                This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this
+                happens.
+              </Trans>
             </Typography>
           </Box>
         </Flex>

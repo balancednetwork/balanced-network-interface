@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-17 10:25\n"
+"PO-Revision-Date: 2022-04-17 12:38\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -364,70 +364,70 @@ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposit ICON collateral?"
-msgstr ""
+msgstr "ICON onderpand storten?"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit as collateral"
-msgstr ""
+msgstr "Storten als onderpand"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX"
-msgstr ""
+msgstr "Stort sICX"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX collateral?"
-msgstr ""
+msgstr "sICX onderpand storten?"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited"
-msgstr ""
+msgstr "Gestort"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited {0} ICX as collateral."
-msgstr ""
+msgstr "{0} ICX als onderpand gestort."
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposited {0} sICX as collateral."
-msgstr ""
+msgstr "{0} sICX als onderpand gestort."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Depositing collateral..."
-msgstr ""
+msgstr "Onderpand aan het storten..."
 
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Description"
-msgstr ""
+msgstr "Omschrijving"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Discussion"
-msgstr ""
+msgstr "Discussie"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
-msgstr ""
+msgstr "Stuur geen sICX naar een exchange."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
-msgstr ""
+msgstr "Uitgevoerd"
 
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
-msgstr ""
+msgstr "Vul bedrag in"
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 msgid "Enter an amount"
-msgstr ""
+msgstr "Vul bedrag in"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Exchange rate"
-msgstr ""
+msgstr "Wisselkoers"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Failed to enact"
-msgstr ""
+msgstr "Uitvoeren mislukt"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"

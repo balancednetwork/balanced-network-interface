@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-14 20:25\n"
+"PO-Revision-Date: 2022-04-17 10:25\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -264,96 +264,96 @@ msgstr "{0} BALN geclaimd."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claimed {0} ICX."
-msgstr ""
+msgstr "{0} BALN geclaimd."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claiming ICX..."
-msgstr ""
+msgstr "ICX claimen..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claiming fees..."
-msgstr ""
+msgstr "Vergoedingen claimen..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claiming rewards..."
-msgstr ""
+msgstr "Beloningen opeisen..."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Collateral"
-msgstr ""
+msgstr "Onderpand"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Confirm"
-msgstr ""
+msgstr "Bevestigen"
 
 #: src/app/components/LedgerConfirmMessage/index.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Confirm the transaction on your Ledger."
-msgstr ""
+msgstr "Bevestig de transactie op je ledger."
 
 #: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Connect Wallet"
-msgstr ""
+msgstr "Koppel je wallet"
 
 #: src/app/components/Header/index.tsx
 msgid "Copied"
-msgstr ""
+msgstr "Gekopieerd"
 
 #: src/app/components/Header/index.tsx
 msgid "Copy address"
-msgstr ""
+msgstr "Kopieer adres"
 
 #: src/store/transactions/hooks.tsx
 msgid "Couldn't complete the transaction. Make sure your wallet is set to the right network."
-msgstr ""
+msgstr "Transactie kon niet worden voltooid. Controleer of je Wallet is ingesteld op het juiste netwerk."
 
 #: src/app/components/Notification/TransactionNotification.tsx
 msgid "Couldn't complete your transaction."
-msgstr ""
+msgstr "Je transactie kon niet worden voltooid."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't send {currency} to the {pair} pool. Try again."
-msgstr ""
+msgstr "Kon {currency} niet verzenden naar de {pair} pool. Probeer het opnieuw."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't supply {pair} liquidity. Try again."
-msgstr ""
+msgstr "Kan {pair} liquiditeit niet verstrekken. Probeer het opnieuw."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
-msgstr ""
+msgstr "Kon {inputCurrency} niet wisselen voor {outputCurrency}. Probeer het opnieuw."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
-msgstr ""
+msgstr "Kon {inputCurrency} / {outputCurrency} liquiditeit niet opnemen. Probeer het opnieuw."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Create liquidity pool?"
-msgstr ""
+msgstr "Pool aanmaken?"
 
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Create pool"
-msgstr ""
+msgstr "Pool aanmaken"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Creating pool"
-msgstr ""
+msgstr "Pool aan het aanmaken"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
-msgstr ""
+msgstr "Datum"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Daily rewards"
-msgstr ""
+msgstr "Dagelijkse beloningen"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx

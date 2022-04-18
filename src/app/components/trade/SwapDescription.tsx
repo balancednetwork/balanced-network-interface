@@ -179,7 +179,7 @@ export default function SwapDescription() {
         )}
       </ChartContainer>
 
-      <Modal isOpen={tradingViewActive} onDismiss={() => setTradingViewActive(false)} maxWidth={99999999}>
+      <Modal isOpen={tradingViewActive} onDismiss={() => setTradingViewActive(false)} fullscreen>
         {tradingViewActive && (
           <TVChartContainerWrap>
             <TVChartContainer
@@ -197,8 +197,8 @@ const TVChartContainerWrap = styled(Box)`
   left: 0;
   top: 0;
   z-index: 99999;
-  width: 90vw;
-  height: 90vh;
+  width: 98vw;
+  height: 98vh;
 
   .TVChartContainer {
     width: 100%;

@@ -33,7 +33,7 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
       container: this.ref.current,
       library_path: '/charting_library/',
       locale: 'en',
-      disabled_features: [],
+      disabled_features: ['header_compare', 'timeframes_toolbar'],
       enabled_features: [],
       client_id: 'balanced',
       fullscreen: false,

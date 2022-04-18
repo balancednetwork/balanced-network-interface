@@ -103,7 +103,7 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
           _onTick(latestBar);
         }
       });
-    }, 3000);
+    }, 5000);
 
     const existingSubIndex = __subs.findIndex(e => e.guid === listenerGuid);
     if (existingSubIndex >= 0) {

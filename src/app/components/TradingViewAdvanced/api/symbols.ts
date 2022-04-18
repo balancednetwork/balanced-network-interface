@@ -12,6 +12,8 @@ export interface BalancedLibrarySymbolInfo extends LibrarySymbolInfo {
   decimal: number;
 }
 
+const SUPPORTED_PAIRS_WITHOUT_QUEUE = SUPPORTED_PAIRS.filter(pair => pair.name !== 'sICX/ICX');
+
 const getPairIDAndInversion = (pairName: string): [PairInfo | undefined, boolean | undefined] => {
   const splitName = pairName.replaceAll(' ', '').split('/');
   return getTradePair(splitName[0], splitName[1]);
@@ -65,7 +67,7 @@ export const getFilteredSupportedPairNames = (query: string = ''): SearchSymbolR
     );
   };
 
-  return SUPPORTED_PAIRS.filter(pair => {
+  return SUPPORTED_PAIRS_WITHOUT_QUEUE.filter(pair => {
     return (
       isQueried(query, pair.baseToken) ||
       isQueried(query, pair.quoteToken) ||

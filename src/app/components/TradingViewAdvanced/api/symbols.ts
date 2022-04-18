@@ -73,9 +73,9 @@ export const getFilteredSupportedPairNames = (query: string = ''): SearchSymbolR
     );
   }).map(pair => {
     return {
-      symbol: pair.baseToken.name!,
+      symbol: pair.name.replace('/', ''),
       full_name: pair.name,
-      description: pair.name,
+      description: `${pair.baseToken.name!} / ${pair.quoteToken.name!}`,
       type: '',
       exchange: '',
       ticker: pair.name,

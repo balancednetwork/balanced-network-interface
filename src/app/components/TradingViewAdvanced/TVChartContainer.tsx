@@ -26,14 +26,14 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
     }
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      debug: true,
+      debug: false,
       symbol: this.props.symbol,
       datafeed: new DataFeed(),
       interval: this.props.interval || ('4h' as ResolutionString),
       container: this.ref.current,
       library_path: '/charting_library/',
       locale: 'en',
-      disabled_features: ['legend_widget'],
+      disabled_features: [],
       enabled_features: [],
       client_id: 'balanced',
       fullscreen: false,
@@ -49,6 +49,7 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
         'mainSeriesProperties.candleStyle.wickUpColor': '#2ca9b7',
         'mainSeriesProperties.candleStyle.wickDownColor': '#fb6a6a',
       },
+      custom_css_url: './themed.css',
     };
 
     const tvWidget = new widget(widgetOptions);

@@ -35,8 +35,12 @@ export const defaultConfig: DatafeedConfiguration = {
     '5' as ResolutionString,
     '15' as ResolutionString,
     '60' as ResolutionString,
+    '120' as ResolutionString,
     '240' as ResolutionString,
+    '480' as ResolutionString,
     '1D' as ResolutionString,
+    '2D' as ResolutionString,
+    '4D' as ResolutionString,
     '1W' as ResolutionString,
   ],
 };

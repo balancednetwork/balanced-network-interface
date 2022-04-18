@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-17 13:29\n"
+"PO-Revision-Date: 2022-04-18 19:20\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -360,7 +360,7 @@ msgstr "Dagelijkse beloningen"
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/index.tsx
 msgid "Deposit"
-msgstr ""
+msgstr "Storten"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposit ICON collateral?"
@@ -570,159 +570,159 @@ msgstr "Nog geen activiteit."
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "No assets available."
-msgstr ""
+msgstr "Geen activa beschikbaar."
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
-msgstr ""
+msgstr "Geen prijsgrafiek beschikbaar voor dit paar."
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "No results found."
-msgstr ""
+msgstr "Geen resultaten gevonden."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Not now"
-msgstr ""
+msgstr "Niet nu"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
-msgstr ""
+msgstr "Afgelopen dag"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past month"
-msgstr ""
+msgstr "Afgelopen maand"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past week"
-msgstr ""
+msgstr "Afgelopen week"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Pay"
-msgstr ""
+msgstr "Betaal"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
-msgstr ""
+msgstr "In behandeling"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Pool"
-msgstr ""
+msgstr "Pool"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Pool share"
-msgstr ""
+msgstr "Pool aandeel"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Position details"
-msgstr ""
+msgstr "Positie details"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
-msgstr ""
+msgstr "sICX unstaken voorbereiden..."
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
-msgstr ""
+msgstr "Prijsimpact"
 
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
-msgstr ""
+msgstr "Transactie verwerken..."
 
 #: src/app/components/newproposal/ProposalTypesSelect.tsx
 msgid "Proposal type"
-msgstr ""
+msgstr "Voorstel type"
 
 #: src/app/containers/VotePage/index.tsx
 msgid "Proposals"
-msgstr ""
+msgstr "Voorstellen"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
-msgstr ""
+msgstr "Quorum niet bereikt"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Rebalancing"
-msgstr ""
+msgstr "Rebalancing"
 
 #: src/app/components/trade/RebalanceButton.tsx
 msgid "Rebalancing complete."
-msgstr ""
+msgstr "Rebalancing compleet."
 
 #: src/app/components/trade/RebalanceButton.tsx
 msgid "Rebalancing the bnUSD price..."
-msgstr ""
+msgstr "Bezig met het rebalancen van de bnUSD prijs..."
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Rebalancing threshold"
-msgstr ""
+msgstr "Rebalancing grenslijn"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
-msgstr ""
+msgstr "Ontvang"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Reject"
-msgstr ""
+msgstr "Afwijzen"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Rejected"
-msgstr ""
+msgstr "Afgewezen"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove"
-msgstr ""
+msgstr "Verwijderen"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
-msgstr ""
+msgstr "Verwijder je activa om deze transactie te annuleren."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Removing"
-msgstr ""
+msgstr "Verwijderen"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaid {0} bnUSD."
-msgstr ""
+msgstr "{0} bnUSD terugbetaald."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay"
-msgstr ""
+msgstr "Aflossen"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay Balanced Dollars?"
-msgstr ""
+msgstr "Balanced Dollars aflossen?"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
-msgstr ""
+msgstr "bnUSD aan het aflossen..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Rewards"
-msgstr ""
+msgstr "Beloningen"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
-msgstr ""
+msgstr "Risico ratio"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Route"
-msgstr ""
+msgstr "Route"
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "Search name or contract"
-msgstr ""
+msgstr "Zoek een naam of contract"
 
 #: src/store/swap/hooks.ts
 msgid "Select a token"
-msgstr ""
+msgstr "Selecteer een token"
 
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/ICXWallet/index.tsx
@@ -731,51 +731,51 @@ msgstr ""
 #: src/app/components/home/wallets/SendPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Send"
-msgstr ""
+msgstr "Verzenden"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send asset?"
-msgstr ""
+msgstr "Activa versturen?"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Send each asset to the contract"
-msgstr ""
+msgstr "Verzend elk activum naar het contract"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send max"
-msgstr ""
+msgstr "Verstuur max"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send {0}"
-msgstr ""
+msgstr "Verzend {0}"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Sending"
-msgstr ""
+msgstr "Verzenden"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Sending {0}..."
-msgstr ""
+msgstr "{0} wordt verzonden..."
 
 #: src/app/components/trade/utils.tsx
 msgid "Sending {currency} to the {pair} pool..."
-msgstr ""
+msgstr "{currency} naar de {pair} pool aan het verzenden..."
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Sent {0} {1} to {address}."
-msgstr ""
+msgstr "{0} {1} verzonden naar {address}."
 
 #: src/app/components/Header/index.tsx
 msgid "Sign in"
-msgstr ""
+msgstr "Inloggen"
 
 #: src/app/containers/HomePage/index.tsx
 msgid "Sign in to use the Home page."
-msgstr ""
+msgstr "Log in om de startpagina te gebruiken."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Sign in to view your liquidity details."
-msgstr ""
+msgstr "Log in om je liquiditeitsgegevens te bekijken."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Sign in with"
@@ -1112,7 +1112,7 @@ msgstr ""
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdraw:"
-msgstr ""
+msgstr "Opnemen:"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdrawing ICX..."

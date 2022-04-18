@@ -18,6 +18,7 @@ module.exports = {
     'import/no-self-import': 'error',
     'import/no-unresolved': 'off',
     'import/no-useless-path-segments': 'error',
+
     'import/order': [
       'error',
       {

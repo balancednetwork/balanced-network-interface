@@ -1,16 +1,20 @@
 import React from 'react';
 
-import transferIcon from 'btp/src/assets/images/vector-icon.svg';
-import { Select, SelectAsset } from 'btp/src/components/Select';
-import { media } from 'btp/src/components/Styles/Media';
-import { Header, Text } from 'btp/src/components/Typography';
-import { getTartgetNetwork } from 'btp/src/utils/constants';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/macro';
 
-import { Button as PrimaryButton } from 'app/components/Button';
+import transferIcon from '../../assets/images/vector-icon.svg';
+import { chainList } from '../../connectors/chainConfigs';
+import { PrimaryButton } from '../Button';
+import { Select, SelectAsset } from '../Select';
+import { media } from '../Styles/Media';
+import { Header, Text } from '../Typography';
 
 const StyledCard = styled.div`
+  width: 480px;
+  background-color: #1d1b22;
+  padding: 32px;
+
   .desc-txt {
     text-align: center;
     color: #878491;
@@ -70,6 +74,13 @@ export const TransferCard = ({ setStep, setSendingInfo, isConnected, currentNetw
     setStep(1);
   };
 
+  const targetChains = chainList
+    .map(({ CHAIN_NAME, id }) => ({
+      value: id,
+      label: CHAIN_NAME,
+    }))
+    .filter(({ label }) => label !== currentNetwork);
+
   return (
     <StyledCard>
       <Header className="sm bold center">Transfer</Header>
@@ -79,23 +90,23 @@ export const TransferCard = ({ setStep, setSendingInfo, isConnected, currentNetw
 
         <div className="send">
           <Text className="md">Send</Text>
-          <SelectAsset onChange={onChange} currentNetwork={currentNetwork} />
+          <SelectAsset onChange={onChange} />
         </div>
 
         <div className="devider" />
 
         <div className="to">
           <Text className="md">To</Text>
-          <Select options={getTartgetNetwork(currentNetwork)} onChange={onChange} name="network" />
+          <Select options={targetChains} onChange={onChange} name="network" />
         </div>
 
         <div className="button-section">
           {isConnected ? (
-            <PrimaryButton width={'100%'} height={64} onClick={onNext} type="button">
+            <PrimaryButton width={416} height={64} onClick={onNext} type="button">
               Next
             </PrimaryButton>
           ) : (
-            <PrimaryButton width={'100%'} height={64} disabled>
+            <PrimaryButton width={416} height={64} disabled>
               Connect wallet
             </PrimaryButton>
           )}

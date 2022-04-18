@@ -61,7 +61,7 @@ export const Icon = memo(({ icon = 'metamask', width = '25.67px', size, iconURL,
     NEAR: nearIcon,
   };
 
-  const MySource = SVGComp || (!iconURL && icons[icon]) || iconURL;
+  const MySource = SVGComp || (!iconURL && icons[icon]) || iconURL || icons.ICX;
   const isImagePath = iconURL || (typeof MySource === 'string' && MySource.includes('/'));
 
   return (

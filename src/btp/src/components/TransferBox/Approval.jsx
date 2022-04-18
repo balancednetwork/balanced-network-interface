@@ -142,7 +142,7 @@ export const Approval = memo(({ setStep, values, sendingInfo, account, form, isC
       desc: 'Waiting for confirmation in your wallet.',
     });
 
-    getService()?.transfer(tx, isSendingNativeCoin, network);
+    getService()?.transfer(tx, isSendingNativeCoin, token, network);
   };
 
   return (

@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { Icon } from 'btp/src/components/Icon';
-import { colors } from 'btp/src/components/Styles/Colors';
-import { TextWithIcon } from 'btp/src/components/TextWithIcon';
-import { Text } from 'btp/src/components/Typography';
-import { getTokenOptions } from 'btp/src/utils/constants';
 import styled from 'styled-components/macro';
 
+import { chainList } from '../../connectors/chainConfigs';
+import { Icon } from '../Icon';
+import { colors } from '../Styles/Colors';
+import { TextWithIcon } from '../TextWithIcon';
+import { Text } from '../Typography';
 import Select from './Select';
 
 const StyledItem = styled.div`
@@ -36,19 +36,19 @@ const Item = ({ symbol, children, ...props }) => {
   );
 };
 
-const SelectAsset = ({ onChange, currentNetwork }) => {
+const SelectAsset = ({ onChange }) => {
   /* eslint-disable react/display-name */
-  const options = getTokenOptions(currentNetwork).map(({ symbol, netWorkLabel }) => ({
-    value: symbol,
-    label: symbol,
+  const options = chainList.map(({ CHAIN_NAME, COIN_SYMBOL }) => ({
+    value: COIN_SYMBOL,
+    label: COIN_SYMBOL,
     renderLabel: () => (
-      <TextWithIcon icon={symbol} width="24px">
-        {symbol}
+      <TextWithIcon icon={COIN_SYMBOL} width="24px">
+        {COIN_SYMBOL}
       </TextWithIcon>
     ),
     renderItem: () => (
-      <Item icon={symbol} symbol={symbol}>
-        {netWorkLabel}
+      <Item icon={COIN_SYMBOL} symbol={COIN_SYMBOL}>
+        {CHAIN_NAME}
       </Item>
     ),
   }));

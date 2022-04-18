@@ -1,6 +1,10 @@
 import { connectedNetWorks, pairedNetworks, getPairedNetwork } from 'btp/src/utils/constants';
 import IconService from 'icon-sdk-js';
 
+import store from 'store';
+
+import { chainConfigs } from './chainConfigs';
+
 // https://www.icondev.io/iconex-connect/chrome-extension#methods
 export const TYPES = {
   REQUEST_HAS_ACCOUNT: 'REQUEST_HAS_ACCOUNT',
@@ -12,6 +16,9 @@ export const TYPES = {
   REQUEST_SIGNING: 'REQUEST_SIGNING',
   RESPONSE_SIGNING: 'RESPONSE_SIGNING',
   CANCEL_SIGNING: 'CANCEL_SIGNING',
+  REQUEST_JSON_RPC: 'REQUEST_JSON-RPC',
+  RESPONSE_JSON_RPC: 'RESPONSE_JSON-RPC',
+  CANCEL_JSON_RPC: 'CANCEL_JSON-RPC',
 };
 
 export const ADDRESS_LOCAL_STORAGE = 'address';
@@ -118,6 +125,7 @@ export const getServerEndpoint = pairedNetworksValue => {
 export let serverEndpoint = getServerEndpoint(currentPairedNetworks);
 export let httpProvider = new IconService.HttpProvider(currentICONexNetwork.endpoint);
 export let iconService = new IconService(httpProvider);
+export const getCurrentChain = () => chainConfigs[store.getState().account.id] || {};
 
 // On dev process, we now have 2 paires of networks: ICON-Moonbeam & ICON-BSC
 // This fuction will handle switching back and forth between these paired networks

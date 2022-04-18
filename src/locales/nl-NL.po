@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-18 19:20\n"
+"PO-Revision-Date: 2022-04-18 20:25\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -1116,27 +1116,27 @@ msgstr "Opnemen:"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdrawing ICX..."
-msgstr ""
+msgstr "ICX aan het opnemen..."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Withdrawing collateral..."
-msgstr ""
+msgstr "Onderpand aan het opnemen..."
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdrawing sICX..."
-msgstr ""
+msgstr "sICX aan het opnemen..."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Withdrawing {0}"
-msgstr ""
+msgstr "{0} aan het opnemen"
 
 #: src/app/components/trade/utils.tsx
 msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
-msgstr ""
+msgstr "Opnemen van {inputCurrency} / {outputCurrency} liquiditeit..."
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "You approved"
-msgstr ""
+msgstr "Je hebt goedgekeurd"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "You can't withdraw any collateral if you go beyond this threshold."

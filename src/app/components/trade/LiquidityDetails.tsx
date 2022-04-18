@@ -24,7 +24,7 @@ import { ZERO, MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import {
   useBalance,
-  usePool,
+  // usePool,
   usePoolData,
   // useAvailableBalances, pairToken
 } from 'hooks/usePools';
@@ -45,7 +45,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 import StakeLPPanel from './StakeLPPanel';
-import { withdrawMessage } from './utils';
+import { stakedFraction, withdrawMessage } from './utils';
 
 function getRate(pair: Pair, balance: BalanceData): Fraction {
   if (
@@ -152,55 +152,42 @@ export default function LiquidityDetails() {
           )}
           <HeaderText></HeaderText>
         </DashGrid>
-        <Accordion collapsible>
-          {Object.keys(balances).map((poolId, index, arr) => (
-            <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
+        {shouldShowQueue && (
+          <Accordion collapsible>
+            <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={false}>
               <StyledAccordionButton>
-                <PoolRecord
-                  poolId={+poolId}
-                  balance={balances[poolId]}
-                  pair={sortedPairs[poolId]}
-                  totalReward={rewards[poolId]}
-                  border={index !== arr.length - 1}
-                />
+                <PoolRecordQ balance={queueBalance} pair={queuePair} totalReward={queueReward} />
               </StyledAccordionButton>
               <StyledAccordionPanel hidden={false}>
                 <StyledBoxPanel bg="bg3">
-                  <StakeLPPanel poolId={+poolId} />
-                  <WithdrawModal poolId={+poolId} balance={balances[poolId]} pair={sortedPairs[poolId]} />
+                  <WithdrawModalQ balance={queueBalance} pair={queuePair} />
                 </StyledBoxPanel>
               </StyledAccordionPanel>
             </StyledAccordionItem>
-          ))}
-        </Accordion>
-        {shouldShowQueue && (
-          <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX}>
-            <StyledAccordionButton>
-              <PoolRecordQ
-                balance={queueBalance}
-                pair={queuePair}
-                totalReward={queueReward}
-                border={userPools.length !== 0}
-              />
-            </StyledAccordionButton>
-            <StyledAccordionPanel hidden={false}>
-              <StyledBoxPanel bg="bg3">
-                <WithdrawModalQ balance={queueBalance} pair={queuePair} />
-              </StyledBoxPanel>
-            </StyledAccordionPanel>
-          </StyledAccordionItem>
+          </Accordion>
         )}
-        {balancesWithoutQ &&
-          userPools.map((poolId, index, arr) => (
-            <PoolRecord
-              key={poolId}
-              poolId={parseInt(poolId)}
-              balance={balances[poolId]}
-              pair={sortedPairs[poolId]}
-              totalReward={rewards[poolId]}
-              border={index !== arr.length - 1}
-            />
-          ))}
+        {balancesWithoutQ && (
+          <Accordion collapsible>
+            {userPools.map((poolId, index, arr) => (
+              <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
+                <StyledAccordionButton>
+                  <PoolRecord
+                    poolId={parseInt(poolId)}
+                    balance={balances[poolId]}
+                    pair={sortedPairs[poolId]}
+                    totalReward={rewards[poolId]}
+                  />
+                </StyledAccordionButton>
+                <StyledAccordionPanel hidden={false}>
+                  <StyledBoxPanel bg="bg3">
+                    <StakeLPPanel poolId={parseInt(poolId)} />
+                    <WithdrawModal poolId={parseInt(poolId)} balance={balances[poolId]} pair={sortedPairs[poolId]} />
+                  </StyledBoxPanel>
+                </StyledAccordionPanel>
+              </StyledAccordionItem>
+            ))}
+          </Accordion>
+        )}
       </TableWrapper>
     </BoxPanel>
   ) : null;
@@ -246,7 +233,9 @@ const StyledArrowDownIcon = styled(ArrowDownIcon)`
   margin-top: 10px;
   transition: transform 0.3s ease;
 `;
-const StyledDataText = styled(Flex)``;
+const StyledDataText = styled(Flex)`
+  font-weight: bold;
+`;
 
 const StyledBoxPanel = styled(BoxPanel)`
   display: flex;
@@ -277,7 +266,7 @@ const OptionButton = styled(Box)`
   color: white;
   user-select: none;
   text-align: center;
-  background-color: ${({ theme }) => theme.colors.bg4};
+  background-color: ${({ theme }) => theme.colors.bg2};
   border: 2px solid #144a68;
   transition: border 0.3s ease;
   padding: 10px;
@@ -363,21 +352,20 @@ const StyledAccordionPanel = styled(AccordionPanel)`
     `}
   }
 `;
+
 const PoolRecord = ({
   poolId,
-  border,
   pair,
   balance,
-  totalReward,
-}: {
+}: // totalReward,
+{
   pair: Pair;
   balance: BalanceData;
   poolId: number;
-  border: boolean;
   totalReward: BigNumber;
 }) => {
   const poolData = usePoolData(poolId);
-  const pool = usePool(poolId);
+  // const pool = usePool(poolId);
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
 
@@ -400,94 +388,94 @@ const PoolRecord = ({
   const baseCurrencyTotalSupply = totalSupply(baseValue, poolData?.suppliedBase);
   const quoteCurrencyTotalSupply = totalSupply(quoteValue, poolData?.suppliedQuote);
 
-  const [stakedNumerator, stakedDenominator] = stakedLPPercent ? stakedLPPercent.toFraction() : [0, 1];
-  const stakedFraction = new Fraction(stakedNumerator.toFixed(), stakedDenominator.toFixed());
+  const stakedFractionValue = stakedFraction(stakedLPPercent);
 
   const [aBalance, bBalance] = getABBalance(pair, balance);
-  const { share, reward } = getShareReward(pair, balance, totalReward);
+  // const { share, reward } = getShareReward(pair, balance, totalReward);
 
   return (
-    <ListItem>
-      <StyledDataText>
-        <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
-        <StyledArrowDownIcon />
-      </StyledDataText>
-      <DataText>
-        {`${baseCurrencyTotalSupply} ${pool?.baseToken.symbol || '...'}`}
-        <br />
-        {`${quoteCurrencyTotalSupply} ${pool?.quoteToken.symbol || '...'}`}
-      </DataText>
-      {upSmall && (
-        <DataText>
+    <>
+      {Number(bBalance.toFixed(2)) > MINIMUM_B_BALANCE_TO_SHOW_POOL ? (
+        <ListItem>
+          <StyledDataText>
+            <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
+            <StyledArrowDownIcon />
+          </StyledDataText>
+          <DataText>
+            {`${baseCurrencyTotalSupply} ${aBalance.currency.symbol || '...'}`}
+            <br />
+            {`${quoteCurrencyTotalSupply} ${bBalance.currency.symbol || '...'}`}
+          </DataText>
+
           {upSmall && (
             <DataText>{`${
               ((baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
                 ? poolData?.poolShare.multiply(100)
                 : poolData?.poolShare.multiply(100).multiply(availableWithdrawnPercentFraction)
-              )?.toFixed(2, { groupSeparator: ',' }) || '...'
+              )?.toFixed(4, { groupSeparator: ',' }) || '---'
             }%`}</DataText>
           )}
-        </DataText>
-      )}
-      {upSmall && (
-        <DataText>
-          {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
-            ? stakedLPPercent.isGreaterThanOrEqualTo(new BigNumber(100))
-              ? `~ ${
-                  poolData?.stakedLPBalance
-                    ?.divide(poolData?.suppliedLP || BIGINT_ZERO)
-                    .multiply(poolData?.totalReward || BIGINT_ZERO)
-                    .toFixed(2, { groupSeparator: ',' }) || '...'
-                } BALN`
-              : 'ー'
-            : `~ ${
-                poolData?.suppliedReward?.multiply(stakedFraction).divide(100).toFixed(2, { groupSeparator: ',' }) ||
-                '...'
-              } BALN`}
-        </DataText>
-      )}
-      <>
-        {Number(bBalance.toFixed(2)) > MINIMUM_B_BALANCE_TO_SHOW_POOL ? (
-          <ListItem>
-            <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
 
+          {/* {upSmall && (
+            <DataText>{`${
+              ((baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
+                ? share.multiply(100)
+                : share.multiply(100).multiply(availableWithdrawnPercentFraction)
+              )?.toFixed(4, { groupSeparator: ',' }) || '---'
+            }%`}</DataText>
+          )} */}
+
+          {upSmall && (
             <DataText>
-              {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance.currency.symbol || '...'}`}
-              <br />
-              {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance.currency.symbol || '...'}`}
+              {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
+                ? 'ー'
+                : `~ ${
+                    poolData?.suppliedReward
+                      ?.multiply(stakedFractionValue)
+                      .divide(100)
+                      .toFixed(4, { groupSeparator: ',' }) || '---'
+                  } BALN`}
             </DataText>
-            {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
-            {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
-          </ListItem>
-        ) : (
-          <></>
-        )}
-      </>
-    </ListItem>
+          )}
+        </ListItem>
+      ) : (
+        <></>
+      )}
+    </>
+    // <>
+    //   {Number(bBalance.toFixed(2)) > MINIMUM_B_BALANCE_TO_SHOW_POOL ? (
+    //     <ListItem>
+    //       <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
+
+    //       <DataText>
+    //         {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance.currency.symbol || '...'}`}
+    //         <br />
+    //         {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance.currency.symbol || '...'}`}
+    //       </DataText>
+    //       {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
+    //       {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
+    //     </ListItem>
+    //   ) : (
+    //     <></>
+    //   )}
+    // </>
   );
 };
 
-const PoolRecordQ = ({
-  border,
-  balance,
-  pair,
-  totalReward,
-}: {
-  border: boolean;
-  balance: BalanceData;
-  pair: Pair;
-  totalReward: BigNumber;
-}) => {
+const PoolRecordQ = ({ balance, pair, totalReward }: { balance: BalanceData; pair: Pair; totalReward: BigNumber }) => {
   const upSmall = useMedia('(min-width: 800px)');
 
   const { share, reward } = getShareReward(pair, balance, totalReward);
 
   return (
     <ListItem>
-      <DataText>{`${balance.balance.currency.symbol || '...'} / ${
-        balance.balance1?.currency.symbol || '...'
-      }`}</DataText>
-      <StyledArrowDownIcon />
+      <StyledDataText>
+        <DataText>{`${balance.balance.currency.symbol || '...'} / ${
+          balance.balance1?.currency.symbol || '...'
+        }`}</DataText>
+        <StyledArrowDownIcon />
+      </StyledDataText>
+
       <DataText>
         <Typography fontSize={16}>{`${balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ${
           balance.balance.currency.symbol || '...'
@@ -592,7 +580,7 @@ const WithdrawModalQ = ({ balance, pair }: { pair: Pair; balance: BalanceData })
 
   return (
     <>
-      <Flex flexDirection="column" alignItems="center">
+      <Flex flexDirection="column" alignItems="center" margin="0 auto">
         <Typography variant="h3" mb={3}>
           <Trans>Withdraw:</Trans>&nbsp;
           <Typography as="span" fontSize="16px" fontWeight="normal">{`${pair.token0.symbol || '...'} / ${
@@ -877,9 +865,9 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
 
   const hasEnoughICX = useHasEnoughICX();
 
-  // const availableCurrency = (stakedValue, suppliedValue) =>
-  //   (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' }) ||
-  //   '...';
+  const availableCurrency = (stakedValue, suppliedValue) =>
+    (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' }) ||
+    '...';
 
   return (
     <>
@@ -903,13 +891,17 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
             value={formattedAmounts[Field.CURRENCY_B]}
             currency={bBalance.currency}
             onUserInput={handleFieldBInput}
-            bg="bg5"
+            bg="bg2"
           />
         </Box>
         <Typography mb={5} textAlign="right">
-          {t`Wallet:
-            ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[0]?.currency.symbol || '...'} /
-            ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[1]?.currency.symbol || '...'}`}
+          {`Available: 
+            ${availableCurrency(parsedAmount[Field.CURRENCY_A], availableBase)} ${
+            balances[0]?.currency.symbol || '...'
+          } /
+            ${availableCurrency(parsedAmount[Field.CURRENCY_B], availableQuote)} ${
+            balances[1]?.currency.symbol || '...'
+          }`}
         </Typography>
         <Box mb={5}>
           <Nouislider

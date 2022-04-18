@@ -37,7 +37,7 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
       enabled_features: [],
       client_id: 'balanced',
       fullscreen: false,
-      autosize: false,
+      autosize: true,
       theme: 'Dark',
       overrides: {
         'paneProperties.background': '#0c2a4d',
@@ -48,6 +48,9 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
         'mainSeriesProperties.candleStyle.downColor': '#fb6a6a',
         'mainSeriesProperties.candleStyle.wickUpColor': '#2ca9b7',
         'mainSeriesProperties.candleStyle.wickDownColor': '#fb6a6a',
+        'mainSeriesProperties.lineStyle.color': '#2ca9b7',
+        'mainSeriesProperties.areaStyle.color2': '#2ca9b7',
+        'mainSeriesProperties.areaStyle.linecolor': '#2ca9b7',
       },
       custom_css_url: './themed.css',
     };

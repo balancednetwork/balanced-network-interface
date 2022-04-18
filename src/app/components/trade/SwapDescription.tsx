@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Trans } from '@lingui/macro';
 import { ResolutionString } from 'charting_library/charting_library';
 import JSBI from 'jsbi';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -83,7 +84,9 @@ export default function SwapDescription() {
 
   const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
   const hasICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX');
+
   const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
+  const isSuperSmall = useMedia('(max-width: 359px)');
 
   return (
     <Box bg="bg2" flex={1} p={[5, 7]}>
@@ -141,9 +144,11 @@ export default function SwapDescription() {
               </ChartControlButton>
             ))}
 
-            <ChartControlButton type="button" onClick={() => setTradingViewActive(true)} active={tradingViewActive}>
-              TradingView
-            </ChartControlButton>
+            {!isSuperSmall && (
+              <ChartControlButton type="button" onClick={() => setTradingViewActive(true)} active={tradingViewActive}>
+                TradingView
+              </ChartControlButton>
+            )}
           </ChartControlGroup>
         </Box>
       </Flex>
@@ -193,14 +198,17 @@ export default function SwapDescription() {
   );
 }
 
-const TVChartContainerWrap = styled(Box)`
+const TVChartContainerWrap = styled(Flex)`
   left: 0;
   top: 0;
   z-index: 99999;
-  width: 98vw;
-  height: 98vh;
+  width: 100%;
 
   .TVChartContainer {
+    width: 100%;
+  }
+
+  iframe {
     width: 100%;
     height: 100%;
   }

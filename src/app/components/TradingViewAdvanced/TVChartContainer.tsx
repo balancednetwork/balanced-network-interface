@@ -37,7 +37,7 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
       enabled_features: [],
       client_id: 'balanced',
       fullscreen: false,
-      autosize: true,
+      autosize: false,
       theme: 'Dark',
       overrides: {
         'paneProperties.background': '#0c2a4d',

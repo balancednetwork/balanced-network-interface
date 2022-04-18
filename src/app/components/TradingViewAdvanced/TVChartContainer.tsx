@@ -39,19 +39,6 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
       fullscreen: false,
       autosize: true,
       theme: 'Dark',
-      overrides: {
-        'paneProperties.background': '#0c2a4d',
-        'scalesProperties.textColor': '#AAA',
-        'paneProperties.vertGridProperties.color': 'rgba(0,0,0,0)',
-        'paneProperties.horzGridProperties.color': 'rgba(0,0,0,0)',
-        'mainSeriesProperties.candleStyle.upColor': '#2ca9b7',
-        'mainSeriesProperties.candleStyle.downColor': '#fb6a6a',
-        'mainSeriesProperties.candleStyle.wickUpColor': '#2ca9b7',
-        'mainSeriesProperties.candleStyle.wickDownColor': '#fb6a6a',
-        'mainSeriesProperties.lineStyle.color': '#2ca9b7',
-        'mainSeriesProperties.areaStyle.color2': '#2ca9b7',
-        'mainSeriesProperties.areaStyle.linecolor': '#2ca9b7',
-      },
       custom_css_url: './themed.css',
     };
 

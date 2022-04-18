@@ -15,12 +15,12 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/compon
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { getTradePair, isQueue } from 'constants/currency';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import useWidth from 'hooks/useWidth';
 import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
-import { useDerivedSwapInfo } from 'store/swap/hooks';
+import { useDerivedSwapInfo, useSwapActionHandlers } from 'store/swap/hooks';
 import { Price, Currency } from 'types/balanced-sdk-core';
 import { generateChartData, toFraction } from 'utils';
 
@@ -85,8 +85,31 @@ export default function SwapDescription() {
   const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
   const hasICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX');
 
+  const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
   const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
   const isSuperSmall = useMedia('(max-width: 359px)');
+
+  const { onCurrencySelection } = useSwapActionHandlers();
+
+  const handleTVDismiss = () => {
+    setTradingViewActive(false);
+
+    if (activeSymbol !== undefined) {
+      const tokens = activeSymbol.split('/');
+
+      const inputToken = SUPPORTED_TOKENS_LIST.filter(
+        token => token.symbol!.toLowerCase() === tokens[0].toLowerCase(),
+      )[0];
+      const outputToken = SUPPORTED_TOKENS_LIST.filter(
+        token => token.symbol!.toLowerCase() === tokens[1].toLowerCase(),
+      )[0];
+
+      if (inputToken && outputToken) {
+        onCurrencySelection(Field.INPUT, inputToken);
+        onCurrencySelection(Field.OUTPUT, outputToken);
+      }
+    }
+  };
 
   return (
     <Box bg="bg2" flex={1} p={[5, 7]}>
@@ -184,12 +207,13 @@ export default function SwapDescription() {
         )}
       </ChartContainer>
 
-      <Modal isOpen={tradingViewActive} onDismiss={() => setTradingViewActive(false)} fullscreen>
+      <Modal isOpen={tradingViewActive} onDismiss={handleTVDismiss} fullscreen>
         {tradingViewActive && (
           <TVChartContainerWrap>
             <TVChartContainer
               interval={chartOption.period as ResolutionString}
               symbol={symbolName.replaceAll(' ', '')}
+              setActiveSymbol={setActiveSymbol}
             />
           </TVChartContainerWrap>
         )}

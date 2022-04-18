@@ -12,6 +12,7 @@ export interface ChartContainerProps {
   fullscreen: ChartingLibraryWidgetOptions['fullscreen'];
   autosize: ChartingLibraryWidgetOptions['autosize'];
   container: ChartingLibraryWidgetOptions['container'];
+  setActiveSymbol: (symbol: string | undefined) => void;
 }
 
 export interface ChartContainerState {}
@@ -43,6 +44,13 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
     };
 
     const tvWidget = new widget(widgetOptions);
+    const setActiveSymbol = this.props.setActiveSymbol!;
+    tvWidget.onChartReady(() => {
+      tvWidget
+        .activeChart()
+        .onSymbolChanged()
+        .subscribe(null, () => setActiveSymbol(tvWidget.activeChart().symbol()));
+    });
     this.tvWidget = tvWidget;
   }
 

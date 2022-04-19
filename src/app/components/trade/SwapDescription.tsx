@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { defineMessage, Trans } from '@lingui/macro';
 import { ResolutionString } from 'charting_library/charting_library';
 import JSBI from 'jsbi';
+import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -98,6 +99,7 @@ export default function SwapDescription() {
   const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
   const hasICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX');
 
+  const { account } = useIconReact();
   const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
   const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
   const isSuperSmall = useMedia('(max-width: 359px)');
@@ -227,6 +229,8 @@ export default function SwapDescription() {
               interval={chartOption.period as ResolutionString}
               symbol={symbolName.replaceAll(' ', '')}
               setActiveSymbol={setActiveSymbol}
+              userId={account || 'not_signed_in'}
+              locale="en"
             />
           </TVChartContainerWrap>
         )}

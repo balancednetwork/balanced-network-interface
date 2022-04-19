@@ -8,16 +8,36 @@ export interface ChartContainerProps {
   symbol: ChartingLibraryWidgetOptions['symbol'];
   interval: ChartingLibraryWidgetOptions['interval'];
   libraryPath: ChartingLibraryWidgetOptions['library_path'];
+  chartsStorageUrl: ChartingLibraryWidgetOptions['charts_storage_url'];
+  chartsStorageApiVersion: ChartingLibraryWidgetOptions['charts_storage_api_version'];
   clientId: ChartingLibraryWidgetOptions['client_id'];
+  userId: ChartingLibraryWidgetOptions['user_id'];
   fullscreen: ChartingLibraryWidgetOptions['fullscreen'];
   autosize: ChartingLibraryWidgetOptions['autosize'];
+  studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides'];
   container: ChartingLibraryWidgetOptions['container'];
+  locale: ChartingLibraryWidgetOptions['locale'];
   setActiveSymbol: (symbol: string | undefined) => void;
 }
 
 export interface ChartContainerState {}
 
 export class TVChartContainer extends React.PureComponent<Partial<ChartContainerProps>, ChartContainerState> {
+  public static defaultProps: Omit<ChartContainerProps, 'container'> = {
+    symbol: 'BALN/BNUSD',
+    interval: '60' as ResolutionString,
+    libraryPath: '/charting_library/',
+    chartsStorageUrl: 'https://saveload.tradingview.com',
+    chartsStorageApiVersion: '1.1',
+    clientId: '_balanced_',
+    userId: 'not_signed_in',
+    locale: 'en',
+    fullscreen: false,
+    autosize: true,
+    studiesOverrides: {},
+    setActiveSymbol: () => {},
+  };
+
   private tvWidget: IChartingLibraryWidget | null = null;
   private ref: React.RefObject<HTMLDivElement> = React.createRef();
 
@@ -32,15 +52,17 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
       datafeed: new DataFeed(),
       interval: this.props.interval || ('4h' as ResolutionString),
       container: this.ref.current,
-      library_path: '/charting_library/',
-      locale: 'en',
-      disabled_features: ['header_compare', 'timeframes_toolbar'],
-      enabled_features: ['save_shortcut', 'header_saveload'],
-      client_id: 'balanced',
-      fullscreen: false,
-      autosize: true,
+      library_path: this.props.libraryPath as string,
+      locale: this.props.locale || 'en',
+      fullscreen: this.props.fullscreen,
+      autosize: this.props.autosize,
       theme: 'Dark',
+      client_id: this.props.clientId,
+      user_id: this.props.userId,
+      charts_storage_url: this.props.chartsStorageUrl,
+      charts_storage_api_version: this.props.chartsStorageApiVersion,
       custom_css_url: './themed.css',
+      disabled_features: ['header_compare', 'timeframes_toolbar'],
     };
 
     const tvWidget = new widget(widgetOptions);

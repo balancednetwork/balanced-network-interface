@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { defineMessage, Trans } from '@lingui/macro';
-import { ResolutionString } from 'charting_library/charting_library';
+import { LanguageCode, ResolutionString } from 'charting_library/charting_library';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
@@ -17,6 +17,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { getTradePair, isQueue } from 'constants/currency';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import useWidth from 'hooks/useWidth';
 import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
@@ -103,6 +104,7 @@ export default function SwapDescription() {
   const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
   const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
   const isSuperSmall = useMedia('(max-width: 359px)');
+  const locale = useActiveLocale();
 
   const { onCurrencySelection } = useSwapActionHandlers();
 
@@ -230,7 +232,7 @@ export default function SwapDescription() {
               symbol={symbolName.replaceAll(' ', '')}
               setActiveSymbol={setActiveSymbol}
               userId={account || 'not_signed_in'}
-              locale="en"
+              locale={locale.split('-')[0] as LanguageCode | undefined}
             />
           </TVChartContainerWrap>
         )}

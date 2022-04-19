@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-18 20:25\n"
+"PO-Revision-Date: 2022-04-19 17:30\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -19,66 +19,66 @@ msgstr ""
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "({0}% required)"
-msgstr ""
+msgstr "({0}% yêu cầu)"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "10 bnUSD minimum"
-msgstr ""
+msgstr "Tối thiểu 10 bnUSD"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "100 bnUSD"
-msgstr ""
+msgstr "100 bnUSD"
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "15m"
-msgstr ""
+msgstr "15 phút"
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "1D"
-msgstr ""
+msgstr "1 ngày"
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "1H"
-msgstr ""
+msgstr "1 giờ"
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "1W"
-msgstr ""
+msgstr "1 tuần"
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "4H"
-msgstr ""
+msgstr "4 giờ"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "ACTIVITY"
-msgstr ""
+msgstr "Hoạt động"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "AMOUNT"
-msgstr ""
+msgstr "Số lượng"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
-msgstr ""
+msgstr "Kích hoạt"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "Activity history"
-msgstr ""
+msgstr "Lịch sử hoạt động"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
-msgstr ""
+msgstr "Thêm sICX của bạn vào tài sản thế chấp."
 
 #: src/app/components/AddressInputPanel/index.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Address"
-msgstr ""
+msgstr "Địa chỉ"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Adjust"
-msgstr ""
+msgstr "Điều chỉnh"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -89,40 +89,40 @@ msgstr ""
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "After"
-msgstr ""
+msgstr "Sau"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
-msgstr ""
+msgstr "Tất cả tài sản thế chấp bị khoá"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
-msgstr ""
+msgstr "Toàn bộ thời gian"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Approve"
-msgstr ""
+msgstr "Phê duyệt"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
-msgstr ""
+msgstr "Đã phê duyệt"
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/home/WalletPanel.tsx
 msgid "Asset"
-msgstr ""
+msgstr "Tài sản"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Assets to send"
-msgstr ""
+msgstr "Tài sản để gửi đi"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/WalletPanel.tsx
 msgid "Available"
-msgstr ""
+msgstr "Khả dụng"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "BALN allocation"
@@ -130,19 +130,19 @@ msgstr ""
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
-msgstr ""
+msgstr "Trở lại trang chủ Balanced.network"
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "Balance"
-msgstr ""
+msgstr "Số dư"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Balance Tokens"
-msgstr ""
+msgstr "Đồng xu balance"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced increases your loan to buy more collateral at a discount."
-msgstr ""
+msgstr "Balanced tăng số nợ để mua thêm tài sản thế chấp với giá thấp hơn thị trường."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced sells collateral at a premium to repay some of your loan."

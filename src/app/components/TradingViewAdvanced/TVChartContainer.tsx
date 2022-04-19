@@ -62,7 +62,7 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
       charts_storage_url: this.props.chartsStorageUrl,
       charts_storage_api_version: this.props.chartsStorageApiVersion,
       custom_css_url: './themed.css',
-      disabled_features: ['header_compare', 'timeframes_toolbar'],
+      disabled_features: ['header_compare', 'timeframes_toolbar', 'header_saveload'],
     };
 
     const tvWidget = new widget(widgetOptions);

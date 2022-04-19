@@ -181,28 +181,28 @@ export const CFT_YEOUIDO = new Token(
 export const ICX_SEJONG = new Token(SupportedChainId.SEJONG, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 export const sICX_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cx70806fdfa274fe12ab61f1f98c5a7a1409a0c108',
+  'cxcc57144332b23ca8f36d09d862bc202caa76dc30',
   18,
   'sICX',
   'Staked ICX',
 );
 export const bnUSD_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cx5838cb516d6156a060f90e9a3de92381331ff024',
+  'cx38b5f44ad2f4486172dfea12e6cde67a23eadaf1',
   18,
   'bnUSD',
   'Balanced Dollar',
 );
 export const BALN_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b',
+  'cx24e326b2e8b979c444b86037255a1cf161246f12',
   18,
   'BALN',
   'Balance Token',
 );
 export const IUSDC_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cxb2c075e9130440dd64e6bfd3fe09e5c629f6e183',
+  'cx599d58885e5b1736c934fca7e53e04c797ab05be',
   6,
   'IUSDC',
   'ICON USD Coin',
@@ -215,6 +215,21 @@ export const FIN_SEJONG = new Token(
   'Fin Token',
 );
 
+export const OMM_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cxca0454cef5bb7586a70cf811e6775503e0e61eda',
+  18,
+  'OMM',
+  'OMM Token',
+);
+
+export const USDS_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cxc0dbb2eb24719f8355a7ec3c1aaa93826669ab8e',
+  18,
+  'USDS',
+  'USDS Token',
+);
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
   [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT, GBET, FIN],
@@ -229,7 +244,16 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
     CFT_YEOUIDO,
   ],
   //[SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, IUSDC_SEJONG],
-  [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, FIN_SEJONG],
+  [SupportedChainId.SEJONG]: [
+    ICX_SEJONG,
+    sICX_SEJONG,
+    bnUSD_SEJONG,
+    BALN_SEJONG,
+    FIN_SEJONG,
+    OMM_SEJONG,
+    USDS_SEJONG,
+    IUSDC_SEJONG,
+  ],
 };
 
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];

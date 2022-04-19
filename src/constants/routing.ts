@@ -18,6 +18,8 @@ import {
   bnUSD_SEJONG,
   IUSDT,
   OMM,
+  IUSDC_SEJONG,
+  USDS_SEJONG,
 } from './tokens';
 
 type ChainCurrencyList = {
@@ -47,7 +49,7 @@ export const MAX_HOPS = 4;
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
   [SupportedChainId.MAINNET]: [sICX, bnUSD, IUSDC, USDS],
   [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
-  [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
+  [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG, IUSDC_SEJONG, USDS_SEJONG],
 };
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
   [SupportedChainId.MAINNET]: {

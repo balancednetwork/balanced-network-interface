@@ -63,8 +63,8 @@ const RewardSection = () => {
         addTransaction(
           { hash: res.result }, //
           {
-            summary: `Claimed ${reward?.dp(2).toFormat()} BALN.`,
-            pending: 'Claiming rewards...',
+            summary: t`Claimed ${reward?.dp(2).toFormat()} BALN.`,
+            pending: t`Claiming rewards...`,
           },
         );
         setRewardTx(res.result);
@@ -228,8 +228,8 @@ const NetworkFeeSection = () => {
         addTransaction(
           { hash: res.result }, //
           {
-            summary: `Claimed fees.`,
-            pending: 'Claiming fees...',
+            summary: t`Claimed fees.`,
+            pending: t`Claiming fees...`,
           },
         );
         setFeeTx(res.result);

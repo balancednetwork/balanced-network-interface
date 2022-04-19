@@ -185,7 +185,7 @@ export function ProposalPage() {
     <>
       <ProposalContainer>
         {proposal ? (
-          <Breadcrumb locationText="Vote" locationPath="/vote" title={proposal?.name || ''} />
+          <Breadcrumb locationText={t`Vote`} locationPath="/vote" title={proposal?.name || ''} />
         ) : (
           <StyledSkeleton animation="wave" width={280} height={28} />
         )}
@@ -216,7 +216,7 @@ export function ProposalPage() {
                     {proposal?.for}%
                   </Typography>
                   <Typography opacity="0.85" fontWeight="bold">
-                    {`(${proposal?.majority}% required)`}
+                    <Trans>({proposal?.majority}% required)</Trans>
                   </Typography>
                 </Flex>
 
@@ -247,10 +247,14 @@ export function ProposalPage() {
                         <Trans>You approved</Trans>
                       </Typography>
                       {isActive && account && (
-                        <ChangeVoteButton onClick={handleChangeVote}>Change vote</ChangeVoteButton>
+                        <ChangeVoteButton onClick={handleChangeVote}>
+                          <Trans>Change vote</Trans>
+                        </ChangeVoteButton>
                       )}
                     </Flex>
-                    <Typography>{`Voting weight: ${userStatus?.approval.dp(2).toFormat()} BALN`}</Typography>
+                    <Typography>
+                      <Trans>{`Voting weight: ${userStatus?.approval.dp(2).toFormat()} BALN`}</Trans>
+                    </Typography>
                   </Flex>
                 </ResultPanel>
               )}
@@ -261,14 +265,18 @@ export function ProposalPage() {
                   <Flex flexDirection="column">
                     <Flex alignItems="flex-end" flexWrap="wrap" mb={1}>
                       <Typography variant="h3" marginRight={2}>
-                        You rejected
+                        <Trans>You rejected</Trans>
                       </Typography>
                       {isActive && account && (
-                        <ChangeVoteButton onClick={handleChangeVote}>Change vote</ChangeVoteButton>
+                        <ChangeVoteButton onClick={handleChangeVote}>
+                          <Trans>Change vote</Trans>
+                        </ChangeVoteButton>
                       )}
                     </Flex>
 
-                    <Typography>{`Voting weight: ${userStatus?.reject.dp(2).toFormat()} BALN`}</Typography>
+                    <Typography>
+                      <Trans>{`Voting weight: ${userStatus?.reject.dp(2).toFormat()} BALN`}</Trans>
+                    </Typography>
                   </Flex>
                 </ResultPanel>
               )}
@@ -283,7 +291,7 @@ export function ProposalPage() {
                   {proposal?.for}%
                 </Typography>
                 <Typography opacity="0.85" fontWeight="bold">
-                  {`(${proposal?.majority}% required)`}
+                  <Trans>({proposal?.majority}% required)</Trans>
                 </Typography>
               </Flex>
               <Flex>
@@ -380,7 +388,7 @@ export function ProposalPage() {
             {additionalInfo?.discussionURL && (
               <>
                 <InfoLink href={additionalInfo?.discussionURL} target="_blank">
-                  Discussion
+                  <Trans>Discussion</Trans>
                 </InfoLink>
                 <ExternalIcon width="15" height="15" style={{ marginLeft: 5, marginRight: 15 }} />
               </>

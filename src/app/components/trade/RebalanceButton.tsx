@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -26,8 +27,8 @@ export default function RebalanceButton() {
         addTransaction(
           { hash: res.result },
           {
-            pending: 'Rebalancing the bnUSD price...',
-            summary: `Rebalancing complete. `,
+            pending: t`Rebalancing the bnUSD price...`,
+            summary: t`Rebalancing complete.`,
           },
         );
       } catch (e) {

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-08 13:36\n"
+"PO-Revision-Date: 2022-04-12 20:25\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -16,6 +16,11 @@ msgstr ""
 "X-Crowdin-File: en-US.po\n"
 "X-Crowdin-File-ID: 12\n"
 
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "({0}% required)"
+msgstr "({0}% requis)"
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "10 bnUSD minimum"
 msgstr "10 bnUSD minimum"
@@ -23,6 +28,26 @@ msgstr "10 bnUSD minimum"
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "100 bnUSD"
 msgstr "100 bnUSD"
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "15m"
+msgstr "15m"
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "1D"
+msgstr "1J"
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "1H"
+msgstr "1h"
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "1W"
+msgstr "1S"
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "4H"
+msgstr "4h"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "ACTIVITY"
@@ -99,6 +124,10 @@ msgstr "Actifs à envoyer"
 msgid "Available"
 msgstr "Disponible"
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "BALN allocation"
+msgstr "Allocation BALN"
+
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
 msgstr "Retour sur le site de Balanced"
@@ -150,7 +179,7 @@ msgstr "{0} bnUSD emprunté."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowing bnUSD..."
-msgstr "Emprunt de bnUSD en cours..."
+msgstr "Emprunt de bnUSD..."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -168,17 +197,34 @@ msgstr "Emprunt de bnUSD en cours..."
 msgid "Cancel"
 msgstr "Annuler"
 
+#: src/app/components/WalletModal/index.tsx
+msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
+msgstr ""
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Cancelled"
 msgstr "Annulé"
+
+#: src/app/components/trade/SwapDescription.tsx
+msgid "Candles"
+msgstr "Chandeliers"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Casting your vote..."
 msgstr "Vote en cours..."
 
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Change vote"
+msgstr "Modifer le vote"
+
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
 msgstr "Changer de portefeuille"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Choose a wallet from your Ledger:"
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -208,13 +254,29 @@ msgstr "Réclamer ICX ?"
 msgid "Claim network fees?"
 msgstr "Réclamer les frais de réseau ?"
 
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claimed fees."
+msgstr "Frais réclamés."
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claimed {0} BALN."
+msgstr ""
+
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claimed {0} ICX."
 msgstr "Réclamation de {0} ICX."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claiming ICX..."
-msgstr "Réclamation d'ICX en cours..."
+msgstr "Réclamation d'ICX..."
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claiming fees..."
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Claiming rewards..."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -338,6 +400,10 @@ msgstr "Dépôt en garantie..."
 msgid "Description"
 msgstr "Description"
 
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Discussion"
+msgstr "Discussion"
+
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
 msgstr "Ne pas envoyer sICX vers un exchange."
@@ -374,6 +440,10 @@ msgstr "Pour"
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
 msgstr "Lien du forum"
+
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Funding"
+msgstr "Financement"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Go back"
@@ -442,6 +512,10 @@ msgstr "Soumettre une proposition coûte 100 bnUSD."
 msgid "Keep a close eye on this number, as rebalancing may cause it to fluctuate."
 msgstr ""
 
+#: src/app/components/trade/SwapDescription.tsx
+msgid "Line"
+msgstr "Ligne"
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Liquidated"
 msgstr "Liquidé"
@@ -457,9 +531,17 @@ msgstr "Détails de la liquidité"
 msgid "Loan"
 msgstr "Emprunt"
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Loan fee"
+msgstr "Frais d'emprunt"
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan rewards"
 msgstr "Récompenses du prêt"
+
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Loan to value ratio"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
@@ -469,10 +551,15 @@ msgstr "Verrouillé"
 msgid "Minimum to receive"
 msgstr "Minimum à recevoir"
 
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Network fee allocation"
+msgstr "Allocation des frais de réseau"
+
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
 msgstr "Frais de réseau"
 
+#: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/VotePage/index.tsx
 msgid "New proposal"
 msgstr "Nouvelle proposition"
@@ -483,11 +570,11 @@ msgstr "Aucune activité pour l'instant."
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "No assets available."
-msgstr ""
+msgstr "Pas d'actifs disponibles."
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
-msgstr ""
+msgstr "Aucun graphique de prix n'est disponible pour cette paire."
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "No results found."
@@ -535,7 +622,7 @@ msgstr "Détails de la position"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
-msgstr ""
+msgstr "Préparation à l'unstake de sICX..."
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
@@ -562,6 +649,18 @@ msgstr "Minimum requis non atteint"
 msgid "Rebalancing"
 msgstr "Rééquilibrage"
 
+#: src/app/components/trade/RebalanceButton.tsx
+msgid "Rebalancing complete."
+msgstr ""
+
+#: src/app/components/trade/RebalanceButton.tsx
+msgid "Rebalancing the bnUSD price..."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Rebalancing threshold"
+msgstr ""
+
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
 msgstr "Recevoir"
@@ -579,7 +678,7 @@ msgstr "Rejeté"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove"
-msgstr "Retirer"
+msgstr "Supprimer"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
@@ -587,7 +686,7 @@ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Removing"
-msgstr ""
+msgstr "Suppression"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaid {0} bnUSD."
@@ -598,8 +697,12 @@ msgid "Repay"
 msgstr "Rembourser"
 
 #: src/app/components/home/LoanPanel.tsx
-msgid "Repaying bnUSD..."
+msgid "Repay Balanced Dollars?"
 msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+msgid "Repaying bnUSD..."
+msgstr "Remboursement de bnUSD..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Rewards"
@@ -607,7 +710,7 @@ msgstr "Récompenses"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
-msgstr ""
+msgstr "Ratio de risque"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Route"
@@ -689,7 +792,7 @@ msgstr "Tolérance de \"glissement\""
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake"
-msgstr "Staking"
+msgstr "Stake"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens"
@@ -709,7 +812,7 @@ msgstr ""
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staked {0} BALN."
-msgstr ""
+msgstr "{0} BALN stakés."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staking BALN..."
@@ -731,6 +834,10 @@ msgstr "Soumettre une proposition"
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit proposal?"
 msgstr "Soumettre une proposition ?"
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Submitting a proposal..."
+msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "Supplied {pair} liquidity."
@@ -757,7 +864,7 @@ msgstr "Fournir de la liquidité ?"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supplying"
-msgstr ""
+msgstr "Apport"
 
 #: src/app/components/trade/utils.tsx
 msgid "Supplying {pair} liquidity..."
@@ -771,6 +878,10 @@ msgstr ""
 msgid "Swap"
 msgstr "Échanger"
 
+#: src/app/components/trade/SwapPanel.tsx
+msgid "Swap {0} for {1}?"
+msgstr ""
+
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr ""
@@ -781,7 +892,11 @@ msgstr ""
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
-msgstr ""
+msgstr "Cela peut prendre jusqu'à 7 jours. Lorsque c'est prêt, allez dans ICX > Unstaking dans la section Portefeuille pour le réclamer."
+
+#: src/app/containers/NewProposalPage/constant.ts
+msgid "Text"
+msgstr "Texte"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -798,11 +913,11 @@ msgstr "Le prix actuel du bnUSD est"
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "There's no BALN unstaking."
-msgstr ""
+msgstr "Il n'y a pas d'unstaking de BALN."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "There's no ICX unstaking."
-msgstr ""
+msgstr "Il n'y a pas d'unstaking d'ICX."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "There's no liquidity pool for this pair yet."
@@ -837,7 +952,7 @@ msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total daily rewards"
-msgstr ""
+msgstr "Total des récompenses quotidiennes"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total supply"
@@ -851,10 +966,6 @@ msgstr "Échanger"
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Transaction"
 msgstr "Transaction"
-
-#: src/app/components/home/LoanPanel.tsx
-msgid "US Dollars"
-msgstr "Dollars US"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Understood"
@@ -877,22 +988,22 @@ msgstr "Unstake sICX"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX?"
-msgstr ""
+msgstr "Unstake sICX ?"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaked {0} BALN."
-msgstr ""
+msgstr "{0} BALN unstakés."
 
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/index.tsx
 msgid "Unstaking"
-msgstr "Enelver du staking"
+msgstr "Unstaking"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaking BALN..."
-msgstr "Enlever du staking BALN..."
+msgstr "Unstaking de BALN..."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaking takes 3 days."
@@ -908,7 +1019,7 @@ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
-msgstr ""
+msgstr "Utilisation à vos propres risques et périls. Les contributeurs du projet ne sont pas tenus responsables de la perte ou du vol des fonds."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
@@ -924,12 +1035,19 @@ msgstr "Voir la clause de non-responsabilité"
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
+#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
 msgid "Vote"
 msgstr "Voter"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
-msgstr ""
+msgstr "Vote exprimé."
+
+#: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Voting weight: {0} BALN"
+msgstr "Poids du vote : {0} BALN"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Voting will begin at 5pm UTC,"
@@ -938,6 +1056,7 @@ msgstr ""
 #: src/app/components/Header/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/WalletPanel.tsx
 msgid "Wallet"
 msgstr "Portefeuille"
 
@@ -1009,7 +1128,7 @@ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Withdrawing {0}"
-msgstr ""
+msgstr "Retrait {0}"
 
 #: src/app/components/trade/utils.tsx
 msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
@@ -1025,6 +1144,10 @@ msgstr ""
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
+msgstr ""
+
+#: src/app/containers/ProposalPage/index.tsx
+msgid "You rejected"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
@@ -1072,7 +1195,7 @@ msgstr "Votre apport"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "and ends after 5 days."
-msgstr ""
+msgstr "et se termine arpès 5 jours."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
@@ -1088,15 +1211,15 @@ msgstr "puis créer le pool."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "{0}"
+msgstr "{0}"
+
+#: src/app/components/trade/LPDescription.tsx
+msgid "{0} / {1} \n"
+"liquidity pool{2}"
 msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} liquidity pool"
-msgstr ""
-
-#: src/app/components/trade/LPDescription.tsx
-msgid "{0} / {1} liquidity pool\n"
-"{2}"
 msgstr ""
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
@@ -1105,11 +1228,11 @@ msgstr ""
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX"
-msgstr ""
+msgstr "{0} ICX"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "{0} ICX added to your wallet."
-msgstr ""
+msgstr "{0} ICX ajouté à votre portefeuille."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"
@@ -1160,6 +1283,10 @@ msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "{label} proposal submitted."
 msgstr ""
 
 #: src/app/components/trade/utils.tsx

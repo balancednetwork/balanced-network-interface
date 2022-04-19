@@ -27,7 +27,7 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
     }
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      debug: false,
+      debug: true,
       symbol: this.props.symbol,
       datafeed: new DataFeed(),
       interval: this.props.interval || ('4h' as ResolutionString),
@@ -35,7 +35,7 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
       library_path: '/charting_library/',
       locale: 'en',
       disabled_features: ['header_compare', 'timeframes_toolbar'],
-      enabled_features: [],
+      enabled_features: ['save_shortcut', 'header_saveload'],
       client_id: 'balanced',
       fullscreen: false,
       autosize: true,

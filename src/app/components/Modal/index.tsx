@@ -91,6 +91,15 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, maxWidth, mobile, is
         height: calc(100vh - 40px);
         max-height: calc(100vh - 40px);
       `}
+
+      ${({ theme, fullscreen }) =>
+      fullscreen &&
+      theme.mediaWidth.upMedium`
+        width: calc(100vw - 80px);
+        max-width: calc(100vw - 80px);
+        height: calc(100vh - 80px);
+        max-height: calc(100vh - 80px);
+      `}
   }
 `;
 

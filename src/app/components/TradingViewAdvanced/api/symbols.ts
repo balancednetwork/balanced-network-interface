@@ -73,14 +73,16 @@ export const getFilteredSupportedPairNames = (query: string = ''): SearchSymbolR
       isQueried(query, pair.quoteToken) ||
       pair.name.toLowerCase().indexOf(query.toLowerCase()) >= 0
     );
-  }).map(pair => {
-    return {
-      symbol: pair.name.replace('/', ''),
-      full_name: pair.name,
-      description: `${pair.baseToken.name!} / ${pair.quoteToken.name!}`,
-      type: '',
-      exchange: '',
-      ticker: pair.name,
-    };
-  });
+  })
+    .map(pair => {
+      return {
+        symbol: pair.name.replace('/', ''),
+        full_name: pair.name,
+        description: `${pair.baseToken.name!} / ${pair.quoteToken.name!}`,
+        type: '',
+        exchange: '',
+        ticker: pair.name,
+      };
+    })
+    .sort((a, b) => a.symbol.localeCompare(b.symbol));
 };

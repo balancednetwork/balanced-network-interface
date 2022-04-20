@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-19 23:21\n"
+"PO-Revision-Date: 2022-04-20 02:10\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -489,16 +489,16 @@ msgstr "Không đủ điều kiện"
 
 #: src/store/swap/hooks.ts
 msgid "Insufficient liquidity"
-msgstr ""
+msgstr "Không đủ thanh khoản (liquidity)"
 
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
-msgstr ""
+msgstr "Không đủ {0}"
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 msgid "Insufficient {0} balance"
-msgstr ""
+msgstr "Số dư {0} không đủ"
 
 #: src/store/mint/hooks.tsx
 msgid "Invalid pair"
@@ -506,7 +506,7 @@ msgstr "Cặp đôi không hợp lệ"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "It costs 100 bnUSD to submit a proposal."
-msgstr ""
+msgstr "Tiền phí để tạo đề xuất mới là 100 bnUSD."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Keep a close eye on this number, as rebalancing may cause it to fluctuate."
@@ -514,11 +514,11 @@ msgstr ""
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "Line"
-msgstr ""
+msgstr "Đường thẳng"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Liquidated"
-msgstr ""
+msgstr "Thanh lý"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Liquidity details"
@@ -545,7 +545,7 @@ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
-msgstr ""
+msgstr "Đã khóa"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Minimum to receive"
@@ -638,7 +638,7 @@ msgstr ""
 
 #: src/app/containers/VotePage/index.tsx
 msgid "Proposals"
-msgstr ""
+msgstr "Các đề xuất"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
@@ -670,11 +670,11 @@ msgstr ""
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Reject"
-msgstr ""
+msgstr "Từ chối"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Rejected"
-msgstr ""
+msgstr "Đã từ chối"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove"
@@ -860,7 +860,7 @@ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
-msgstr ""
+msgstr "Cung cấp thanh khoản (liquidity)?"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supplying"
@@ -979,12 +979,12 @@ msgstr ""
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstake Balance Tokens?"
-msgstr ""
+msgstr "Hủy đặt cọc đồng xu Balance?"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX"
-msgstr ""
+msgstr "Huỷ đặt cọc sICX"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX?"
@@ -1023,11 +1023,11 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
-msgstr ""
+msgstr "Đã sử dụng"
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "Value"
-msgstr ""
+msgstr "Giá trị"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "View disclaimer"
@@ -1038,7 +1038,7 @@ msgstr ""
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote"
-msgstr ""
+msgstr "Bỏ phiếu"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
@@ -1058,12 +1058,12 @@ msgstr ""
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/WalletPanel.tsx
 msgid "Wallet"
-msgstr ""
+msgstr "Ví"
 
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Wallet:"
-msgstr ""
+msgstr "Ví:"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Wallet:\n"
@@ -1090,11 +1090,11 @@ msgstr ""
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdraw"
-msgstr ""
+msgstr "Rút tiền"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Withdraw ICON collateral?"
-msgstr ""
+msgstr "Rút ICX khỏi tài khoản thế chấp?"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdraw liquidity"
@@ -1112,7 +1112,7 @@ msgstr ""
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdraw:"
-msgstr ""
+msgstr "Rút:"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdrawing ICX..."
@@ -1140,7 +1140,7 @@ msgstr "Bạn đã phê duyệt"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "You can't withdraw any collateral if you go beyond this threshold."
-msgstr ""
+msgstr "Nếu bạn vượt qua ngưỡng này, tài sản thế chấp sẽ bị khóa và ko thể rút ra."
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."

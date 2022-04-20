@@ -59,7 +59,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   }
 
   if (status === 'Active') {
-    if (!!endTimeStr) {
+    if (!startTimeStr && !!endTimeStr) {
       return (
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />

@@ -24,11 +24,11 @@ import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import bnJs from 'bnJs';
-import { usePlatformDayQuery } from 'queries/reward';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { getTrackerLink } from 'utils';
+import { formatTimeStr } from 'utils/timeformat';
 
 import { ACTIONS_MAPPING, RATIO_VALUE_FORMATTER } from '../NewProposalPage/constant';
 import Funding from './Funding';
@@ -105,7 +105,6 @@ export function ProposalPage() {
   const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotDay);
   const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
   const { data: userStatus } = voteStatusQuery;
-  const { data: platformDay } = usePlatformDayQuery();
 
   const actions = JSON.parse(proposal?.actions || '{}');
   const actionKeyList = Object.keys(actions);
@@ -119,11 +118,7 @@ export function ProposalPage() {
   const proposalType = actionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
 
   const isActive =
-    proposal &&
-    platformDay &&
-    proposal.status === 'Active' &&
-    proposal.startDay <= platformDay &&
-    proposal.endDay > platformDay;
+    proposal && proposal.status === 'Active' && !formatTimeStr(proposal.startDay) && !!formatTimeStr(proposal.endDay);
 
   const hasUserVoted = isActive && userStatus?.hasVoted;
 
@@ -305,62 +300,55 @@ export function ProposalPage() {
               )}
             </Flex>
           ) : (
-            userStatus !== undefined && (
-              <Flex flexDirection="column">
-                <Flex alignItems="center">
-                  <Typography fontWeight="bold" variant="p" mr="5px">
-                    Approve
-                  </Typography>
-                  <Typography opacity="0.85" mr="5px" fontWeight="bold">
-                    {proposal?.for}%
-                  </Typography>
-                  <Typography opacity="0.85" fontWeight="bold">
-                    {`(${proposal?.majority}% required)`}
-                  </Typography>
-                </Flex>
-                <Flex>
-                  <Column flexGrow={1}>
-                    <Progress my={3}>
-                      <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
-                    </Progress>
-                  </Column>
-                  {isActive && account && (
-                    <Column>
-                      <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
-                        Approve
-                      </Button>
-                    </Column>
-                  )}
-                </Flex>
-                <Flex alignItems="center">
-                  <Typography fontWeight="bold" variant="p" mr="5px">
-                    Reject
-                  </Typography>
-                  <Typography opacity="0.85" mr="5px" fontWeight="bold">
-                    {proposal?.against}%
-                  </Typography>
-                </Flex>
-                <Flex>
-                  <Column flexGrow={1}>
-                    <Progress my={3}>
-                      <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
-                    </Progress>
-                  </Column>
-                  {isActive && account && (
-                    <Column>
-                      <AlertButton
-                        ml="20px"
-                        width="150px"
-                        color="red"
-                        onClick={() => setModalStatus(ModalStatus.Reject)}
-                      >
-                        Reject
-                      </AlertButton>
-                    </Column>
-                  )}
-                </Flex>
+            <Flex flexDirection="column">
+              <Flex alignItems="center">
+                <Typography fontWeight="bold" variant="p" mr="5px">
+                  Approve
+                </Typography>
+                <Typography opacity="0.85" mr="5px" fontWeight="bold">
+                  {proposal?.for}%
+                </Typography>
+                <Typography opacity="0.85" fontWeight="bold">
+                  {`(${proposal?.majority}% required)`}
+                </Typography>
               </Flex>
-            )
+              <Flex>
+                <Column flexGrow={1}>
+                  <Progress my={3}>
+                    <ProgressBar percentage={`${proposal?.for}`} type={'Approve'} />
+                  </Progress>
+                </Column>
+                {isActive && account && (
+                  <Column>
+                    <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
+                      Approve
+                    </Button>
+                  </Column>
+                )}
+              </Flex>
+              <Flex alignItems="center">
+                <Typography fontWeight="bold" variant="p" mr="5px">
+                  Reject
+                </Typography>
+                <Typography opacity="0.85" mr="5px" fontWeight="bold">
+                  {proposal?.against}%
+                </Typography>
+              </Flex>
+              <Flex>
+                <Column flexGrow={1}>
+                  <Progress my={3}>
+                    <ProgressBar percentage={`${proposal?.against}`} type={'Reject'} />
+                  </Progress>
+                </Column>
+                {isActive && account && (
+                  <Column>
+                    <AlertButton ml="20px" width="150px" color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
+                      Reject
+                    </AlertButton>
+                  </Column>
+                )}
+              </Flex>
+            </Flex>
           )}
 
           <ProposalModal

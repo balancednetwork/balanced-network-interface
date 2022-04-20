@@ -1,9 +1,11 @@
 import dayjs from 'dayjs';
 
-const LAUNCH_DATE = dayjs('04-26-2021');
+import { LAUNCH_DAY, ONE_DAY_DURATION } from 'utils';
+
+const beginFrom = dayjs(LAUNCH_DAY - ONE_DAY_DURATION);
 
 export const formatTimeStr = (targetDay: number) => {
-  const targetDateUTC = LAUNCH_DATE.utc().add(targetDay, 'days').hour(17);
+  const targetDateUTC = beginFrom.utc().add(targetDay, 'days').hour(17);
   const nowUTC = dayjs().utc();
   const timeDiff = targetDateUTC.diff(nowUTC, 'milliseconds');
   const toHours = 1000 * 60 * 60;

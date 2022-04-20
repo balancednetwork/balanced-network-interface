@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
@@ -11,16 +12,16 @@ import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { parseUnits } from 'utils';
+import { isZeroCA, multiplyCABN, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 export default function UnstakePanel() {
-  const [portion, setPortion] = React.useState(ZERO);
+  const [portion, setPortion] = React.useState<number>(0);
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -29,16 +30,18 @@ export default function UnstakePanel() {
   const sliderInstance = React.useRef<any>(null);
 
   const handleSlider = (values: string[], handle: number) => {
-    setPortion(new BigNumber(values[handle]).div(100));
+    setPortion(parseFloat(values[handle]) / 100);
   };
 
   const { account } = useIconReact();
 
   const wallet = useWalletBalances();
 
+  const sicxAddress = bnJs.sICX.address;
+
   const ratio = useRatio();
 
-  const maxAmount = wallet['sICX'];
+  const maxAmount = wallet[sicxAddress];
 
   // modal logic
   const [open, setOpen] = React.useState(false);
@@ -49,11 +52,11 @@ export default function UnstakePanel() {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet['sICX'];
+  const beforeAmount = wallet[sicxAddress];
 
-  const differenceAmount = wallet['sICX'].times(portion);
+  const differenceAmount = multiplyCABN(beforeAmount, new BigNumber(portion));
 
-  const afterAmount = beforeAmount.minus(differenceAmount);
+  const afterAmount = beforeAmount.subtract(differenceAmount);
 
   const addTransaction = useTransactionAdder();
 
@@ -66,18 +69,20 @@ export default function UnstakePanel() {
 
     bnJs
       .inject({ account })
-      .sICX.unstake(parseUnits(differenceAmount.toFixed()))
+      .sICX.unstake(toDec(differenceAmount))
       .then(res => {
         if (res.result) {
           addTransaction(
             { hash: res.result },
             {
-              pending: `Preparing to unstake sICX...`,
-              summary: `Unstaking ${differenceAmount.dp(2).toFormat()} sICX. Check ICX in your wallet for details.`,
+              pending: t`Preparing to unstake sICX...`,
+              summary: t`Unstaking ${differenceAmount.toFixed(2, {
+                groupSeparator: ',',
+              })} sICX. Check the ICX entry in your wallet for details.`,
             },
           );
           toggleOpen();
-          setPortion(ZERO);
+          setPortion(0);
           sliderInstance?.current?.noUiSlider.set(0);
         } else {
           console.error(res);
@@ -89,23 +94,25 @@ export default function UnstakePanel() {
       });
   };
 
-  const differenceAmountByICX = differenceAmount.multipliedBy(ratio.sICXICXratio);
+  const differenceAmountByICX = multiplyCABN(differenceAmount, ratio.sICXICXratio);
 
   const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
-      <Typography variant="h3">Unstake sICX</Typography>
+      <Typography variant="h3">
+        <Trans>Unstake sICX</Trans>
+      </Typography>
 
       <Box my={3}>
         <Nouislider
-          disabled={maxAmount.isZero()}
+          disabled={isZeroCA(maxAmount)}
           start={[0]}
           padding={[0]}
           connect={[true, false]}
           range={{
             min: [0],
-            max: [maxAmount.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
+            max: [isZeroCA(maxAmount) ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : 100],
           }}
           onSlide={handleSlider}
           instanceRef={instance => {
@@ -118,47 +125,55 @@ export default function UnstakePanel() {
 
       <Flex my={1} alignItems="center" justifyContent="space-between">
         <Typography>
-          {differenceAmount.dp(2).toFormat()} / {maxAmount.dp(2).toFormat()} sICX
+          {differenceAmount.toFixed(2, { groupSeparator: ',' })} / {maxAmount.toFixed(2, { groupSeparator: ',' })} sICX
         </Typography>
-        <Typography>~ {differenceAmountByICX.dp(2).toFormat()} ICX</Typography>
+        <Typography>~ {differenceAmountByICX.toFixed(2, { groupSeparator: ',' })} ICX</Typography>
       </Flex>
 
       <Flex alignItems="center" justifyContent="center" mt={5}>
-        <Button onClick={toggleOpen}>Unstake sICX</Button>
+        <Button onClick={toggleOpen}>
+          <Trans>Unstake sICX</Trans>
+        </Button>
       </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            Unstake sICX?
+            <Trans>Unstake sICX?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.dp(2).toFormat() + ' sICX'}
+            {differenceAmount.toFixed(2, { groupSeparator: ',' }) + ' sICX'}
           </Typography>
 
           <Typography textAlign="center" mb="5px">
-            {differenceAmountByICX.dp(2).toFormat()} ICX
+            {differenceAmountByICX.toFixed(2, { groupSeparator: ',' })} ICX
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(2).toFormat() + ' sICX'}
+                {beforeAmount.toFixed(2, { groupSeparator: ',' }) + ' sICX'}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(2).toFormat() + ' sICX'}
+                {afterAmount.toFixed(2, { groupSeparator: ',' }) + ' sICX'}
               </Typography>
             </Box>
           </Flex>
 
           <Typography textAlign="center">
-            Takes up to 7 days. When it's ready, go to ICX {'>'} Unstaking in the Wallet section to claim it.
+            <Trans>
+              Takes up to 7 days. When it's ready, go to ICX {'>'} Unstaking in the Wallet section to claim it.
+            </Trans>
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -166,10 +181,10 @@ export default function UnstakePanel() {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </TextButton>
                 <Button onClick={handleUnstake} fontSize={14} disabled={!hasEnoughICX}>
-                  Unstake
+                  <Trans>Unstake</Trans>
                 </Button>
               </>
             )}

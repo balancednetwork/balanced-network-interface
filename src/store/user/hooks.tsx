@@ -2,12 +2,13 @@ import { useMemo, useCallback } from 'react';
 
 import { useIconReact } from 'packages/icon-react';
 
+import { SupportedLocale } from 'constants/locales';
 import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from 'constants/routing';
 import { useAllTokens } from 'hooks/Tokens';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 import { Token } from 'types/balanced-sdk-core';
 
-import { addSerializedToken, SerializedToken, removeSerializedToken } from './actions';
+import { addSerializedToken, SerializedToken, removeSerializedToken, updateUserLocale } from './actions';
 
 function serializeToken(token: Token): SerializedToken {
   return {
@@ -117,4 +118,22 @@ export function useTrackedTokenPairs(): [Token, Token][] {
 
     return Object.keys(keyed).map(key => keyed[key]);
   }, [combinedList]);
+}
+
+export function useUserLocale(): SupportedLocale | null {
+  return useAppSelector(state => state.user.userLocale);
+}
+
+export function useUserLocaleManager(): [SupportedLocale | null, (newLocale: SupportedLocale) => void] {
+  const dispatch = useAppDispatch();
+  const locale = useUserLocale();
+
+  const setLocale = useCallback(
+    (newLocale: SupportedLocale) => {
+      dispatch(updateUserLocale({ userLocale: newLocale }));
+    },
+    [dispatch],
+  );
+
+  return [locale, setLocale];
 }

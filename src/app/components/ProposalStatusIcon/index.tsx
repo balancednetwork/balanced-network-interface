@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { defineMessage, Trans } from '@lingui/macro';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -15,14 +16,14 @@ dayjs.extend(utc);
 dayjs.extend(relativeTime);
 
 const StatusMap = {
-  Pending: 'Pending',
-  Active: 'Active',
-  Cancelled: 'Cancelled',
-  Defeated: 'Rejected',
-  Succeeded: 'Approved',
-  'No Quorum': 'Quorum not reached',
-  Executed: 'Enacted',
-  'Failed Execution': 'Failed to enact',
+  Pending: defineMessage({ message: `Pending` }),
+  Active: defineMessage({ message: `Active` }),
+  Cancelled: defineMessage({ message: `Cancelled` }),
+  Defeated: defineMessage({ message: `Rejected` }),
+  Succeeded: defineMessage({ message: `Approved` }),
+  'No Quorum': defineMessage({ message: `Quorum not reached` }),
+  Executed: defineMessage({ message: `Enacted` }),
+  'Failed Execution': defineMessage({ message: `Failed to enact` }),
 };
 
 interface ProposalStatusProps {
@@ -41,7 +42,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <FailureIcon height="22" width="22" />
         <Typography variant="content" color="white">
-          {StatusMap[status]}
+          <Trans id={StatusMap[status].id} />
         </Typography>
       </Flex>
     );
@@ -52,7 +53,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <CalendarIcon height="22" width="22" />
         <Typography variant="content" color="white">
-          {`Starting in ${startTimeStr}`}
+          <Trans>{`Starting in ${startTimeStr}`}</Trans>
         </Typography>
       </Flex>
     );
@@ -64,7 +65,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {`${endTimeStr} left`}
+            <Trans>{`${endTimeStr} left`}</Trans>
           </Typography>
         </Flex>
       );
@@ -73,7 +74,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            {`Starting in ${startTimeStr}`}
+            <Trans>{`Starting in ${startTimeStr}`}</Trans>
           </Typography>
         </Flex>
       );
@@ -85,15 +86,16 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <TickIcon height="22" width="22" />
         <Typography variant="content" color="white">
-          {StatusMap[status]}
+          <Trans id={StatusMap[status].id} />
         </Typography>
       </Flex>
     );
   }
+
   return (
     <Flex alignItems="center">
       <Typography variant="content" color="white">
-        {StatusMap[status]}
+        <Trans id={StatusMap[status].id} />
       </Typography>
     </Flex>
   );

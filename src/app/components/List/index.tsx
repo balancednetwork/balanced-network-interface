@@ -26,7 +26,8 @@ export const ListItem = styled(DashGrid)<{ small?: boolean }>`
   color: #ffffff;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 
-  :hover {
+  :hover,
+  &.focused {
     color: #2ca9b7;
     transition: color 0.2s ease;
   }

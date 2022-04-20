@@ -31,10 +31,15 @@ export function createTokenFilterFunction<T extends Token | TokenInfo>(search: s
       .split(/\s+/)
       .filter(s => s.length > 0);
 
-    return lowerSearchParts.every(p => p.length === 0 || sParts.some(sp => sp.startsWith(p) || sp.endsWith(p)));
+    return lowerSearchParts.every(p => p.length === 0 || sParts.some(sp => sp.indexOf(p) >= 0));
   };
 
-  return ({ name, symbol }: T): boolean => Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)));
+  return ({ name, symbol, searchableTerms }: T): boolean =>
+    Boolean(
+      (symbol && matchesSearch(symbol)) ||
+        (name && matchesSearch(name)) ||
+        (searchableTerms && matchesSearch(searchableTerms)),
+    );
 }
 
 export function filterTokens<T extends Token | TokenInfo>(tokens: T[], search: string): T[] {

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-export const Link = styled.a`
+export const Link = styled.a<{ noBorder?: boolean; fontSize?: string }>`
   color: #2fccdc;
-  font-size: 14px;
+  font-size: ${props => props.fontSize ?? '14px'};
   text-decoration: none;
   background: transparent;
   display: inline-block;
@@ -24,6 +24,6 @@ export const Link = styled.a`
 
   &:hover:after {
     width: 100%;
-    background: #2fccdc;
+    background: ${props => (props.noBorder ? 'transparent' : '#2fccdc')};
   }
 `;

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t } from '@lingui/macro';
 import { BoxProps, Flex } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
@@ -9,7 +10,7 @@ export default function CurrencyBalanceErrorMessage(props: BoxProps) {
   return (
     <Flex justifyContent="center" {...props}>
       <Typography maxWidth="320px" color="alert" textAlign="center">
-        {`You need at least ${MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction.`}
+        {t`You need at least ${MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction.`}
       </Typography>
     </Flex>
   );

@@ -1,3 +1,5 @@
+import { Converter as IconConverter } from 'icon-sdk-js';
+
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
@@ -19,7 +21,7 @@ export default class Staking extends Contract {
   stakeICX(to: string, value: string) {
     const payload = this.transactionParamsBuilder({
       method: 'stakeICX',
-      value: value,
+      value: IconConverter.toHexNumber(value),
       params: {
         _to: to,
       },

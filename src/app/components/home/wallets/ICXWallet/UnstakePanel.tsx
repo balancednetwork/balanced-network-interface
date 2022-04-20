@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
@@ -10,9 +11,11 @@ import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
+import { toCurrencyAmount } from 'utils';
 
 interface UnstakePanelProps {
   claimableICX: BigNumber;
@@ -21,6 +24,12 @@ interface UnstakePanelProps {
 export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const balances = useWalletBalances();
+
+  const icxContractAddress = bnJs.ICX.address;
+  const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[icxContractAddress];
+  const icxBalance = balances[icxContractAddress];
+
+  const claimableICXCA = toCurrencyAmount(ICX.wrapped, claimableICX);
 
   // to detect if transaction change and reload cliamableICX
   const transactions = useAllTransactions();
@@ -46,8 +55,8 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
       addTransaction(
         { hash: res.result },
         {
-          pending: `Claiming ICX...`,
-          summary: `Claimed ${claimableICX.toNumber()} ICX.`,
+          pending: t`Claiming ICX...`,
+          summary: t`Claimed ${claimableICX.toNumber()} ICX.`,
         },
       );
     } catch (ex) {}
@@ -75,63 +84,75 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
   return (
     <>
       <Typography mb="3" variant="h3">
-        Unstaking
+        <Trans>Unstaking</Trans>
       </Typography>
 
       {!unstakingAmount.isZero() ? (
         <>
-          <Typography mb="1">Your ICX will be unstaked as more collateral is deposited into Balanced.</Typography>
+          <Typography mb="1">
+            <Trans>Your ICX will be unstaked as more collateral is deposited into Balanced.</Trans>
+          </Typography>
 
-          <Typography variant="p">{unstakingAmount.dp(2).toFormat()} ICX unstaking</Typography>
+          <Typography variant="p">
+            <Trans>{unstakingAmount.dp(2).toFormat()} ICX unstaking</Trans>
+          </Typography>
         </>
       ) : (
-        <Typography>There's no ICX unstaking.</Typography>
+        <Typography>
+          <Trans>There's no ICX unstaking.</Trans>
+        </Typography>
       )}
 
       {claimableICX.isGreaterThan(0) && (
         <Typography mt="1" fontSize={16} color="#fff">
-          {claimableICX.toFixed(2)} ICX is ready to claim
+          <Trans>{claimableICX.toFixed(2)} ICX is ready to claim</Trans>
         </Typography>
       )}
 
       {claimableICX.isGreaterThan(0) && (
         <Flex mt={5}>
-          <Button onClick={toggleOpen}>Claim ICX</Button>
+          <Button onClick={toggleOpen}>
+            <Trans>Claim ICX</Trans>
+          </Button>
         </Flex>
       )}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">
-            Claim ICX?
+            <Trans>Claim ICX?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${claimableICX.toFixed(2)} ICX`}
+            <Trans>{`${claimableICX.toFixed(2)} ICX`}</Trans>
           </Typography>
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
-                {`${balances['ICX'].toFixed(2)} ICX`}
+                {`${icxBalance.toFixed(2)} ICX`}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
-                {`${balances['ICX'].plus(claimableICX).toFixed(2)} ICX`}
+                {`${icxBalance.add(claimableICXCA).toFixed(2)} ICX`}
               </Typography>
             </Box>
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>
-              Not now
+              <Trans>Not now</Trans>
             </TextButton>
             <Button onClick={handleUnstake} fontSize={14}>
-              Claim ICX
+              <Trans>Claim ICX</Trans>
             </Button>
           </Flex>
         </ModalContent>

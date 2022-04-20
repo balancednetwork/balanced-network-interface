@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-20 02:10\n"
+"PO-Revision-Date: 2022-04-20 19:20\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -146,7 +146,7 @@ msgstr "Balanced tăng số nợ để mua thêm tài sản thế chấp với g
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced sells collateral at a premium to repay some of your loan."
-msgstr ""
+msgstr "Balanced bán tài sản của bạn với giá cao hơn giá thị trường để trả 1 phần khoản nợ bạn vay."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -384,50 +384,50 @@ msgstr "Đã nạp"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited {0} ICX as collateral."
-msgstr ""
+msgstr "Đã nạp {0} ICX vào tài khoản thế chấp."
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposited {0} sICX as collateral."
-msgstr ""
+msgstr "Đã nạp {0} sICX vào tài khoản thế chấp."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Depositing collateral..."
-msgstr ""
+msgstr "Đang nạp tài sản..."
 
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Description"
-msgstr ""
+msgstr "Mô tả"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Discussion"
-msgstr ""
+msgstr "Thảo luận"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
-msgstr ""
+msgstr "Ko gửi sICX đến bất cứ sàn giao dịch nào."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
-msgstr ""
+msgstr "Đã kích hoạt"
 
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
-msgstr ""
+msgstr "Nhập vào số lượng"
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 msgid "Enter an amount"
-msgstr ""
+msgstr "Nhập số lượng"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Exchange rate"
-msgstr ""
+msgstr "Tỷ giá"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Failed to enact"
-msgstr ""
+msgstr "Kích hoạt thất bại"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"
@@ -439,11 +439,11 @@ msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
-msgstr ""
+msgstr "Đường dẫn vào diễn đàn"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Funding"
-msgstr ""
+msgstr "Tài trợ"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Go back"
@@ -533,7 +533,7 @@ msgstr "Khoản vay"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Loan fee"
-msgstr ""
+msgstr "Phí vay nợ"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan rewards"
@@ -626,11 +626,11 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
-msgstr ""
+msgstr "Tác động Giá"
 
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
-msgstr ""
+msgstr "Đang xử lý giao dịch..."
 
 #: src/app/components/newproposal/ProposalTypesSelect.tsx
 msgid "Proposal type"
@@ -642,7 +642,7 @@ msgstr "Các đề xuất"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
-msgstr ""
+msgstr "Mục tiêu không đạt"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -663,7 +663,7 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
-msgstr ""
+msgstr "Nhận"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -929,12 +929,12 @@ msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
-msgstr ""
+msgstr "Tiêu đề"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
-msgstr ""
+msgstr "Để nhận phần thưởng, mượn tiền hoặc cung cấp thanh khoản khu giao dịch."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -948,34 +948,34 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
-msgstr ""
+msgstr "Để vay tiền, nạp tài sản thế cháp."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total daily rewards"
-msgstr ""
+msgstr "Tổng phần thường mỗi ngày"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total supply"
-msgstr ""
+msgstr "Tổng lượng cung"
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
 msgid "Trade"
-msgstr ""
+msgstr "Giao dịch"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Transaction"
-msgstr ""
+msgstr "Giao dịch"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Understood"
-msgstr ""
+msgstr "Đã hiểu"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/index.tsx
 msgid "Unstake"
-msgstr ""
+msgstr "Hủy đặt cọc"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstake Balance Tokens?"

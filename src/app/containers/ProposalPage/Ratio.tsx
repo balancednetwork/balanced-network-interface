@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 
+import { t } from '@lingui/macro';
+
 import { Wrapper, RatioValue, ListBox } from 'app/components/newproposal/RatioInput';
 
 import { PROPOSAL_CONFIG } from '../NewProposalPage/constant';
@@ -24,8 +26,8 @@ export default function Ratio({ proposalStatus, proposalType, proposedList }: Ra
 
   return (
     <Wrapper>
-      {ratioValues && <ListBox title="Current" list={ratioValues} hidden={isExecuted} />}
-      {proposedList && <ListBox title="Proposed" list={proposedList} />}
+      {ratioValues && <ListBox title={t`Current`} list={ratioValues} hidden={isExecuted} />}
+      {proposedList && <ListBox title={t`Proposed`} list={proposedList} />}
     </Wrapper>
   );
 }

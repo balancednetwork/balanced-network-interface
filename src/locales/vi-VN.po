@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-21 04:02\n"
+"PO-Revision-Date: 2022-04-21 08:31\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -127,7 +127,7 @@ msgstr "Khả dụng"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "BALN allocation"
-msgstr ""
+msgstr "Phân bổ BALN"
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
@@ -223,7 +223,7 @@ msgstr "Thay đổi phiếu bầu"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Change vote?"
-msgstr ""
+msgstr "Thay đổi phiếu bầu?"
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
@@ -355,7 +355,7 @@ msgstr "Đang tạo ao thanh khoản"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Current"
-msgstr ""
+msgstr "Hiện tại"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
@@ -521,7 +521,7 @@ msgstr "Tiền phí để tạo đề xuất mới là 100 bnUSD."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Keep a close eye on this number, as rebalancing may cause it to fluctuate."
-msgstr ""
+msgstr "Chú ý đến con số này, vì việc tái cân bằng có thể làm nó dao động."
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "Line"
@@ -533,7 +533,7 @@ msgstr "Thanh lý"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Liquidity details"
-msgstr ""
+msgstr "Chi tiết"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -548,11 +548,11 @@ msgstr "Phí vay nợ"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan rewards"
-msgstr ""
+msgstr "Phần thưởng từ vay nợ"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Loan to value ratio"
-msgstr ""
+msgstr "Tỷ lệ vay vốn"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
@@ -564,7 +564,7 @@ msgstr "Nhận được tối thiểu"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Network fee allocation"
-msgstr ""
+msgstr "Phân bổ phí mạng lưới"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
@@ -629,7 +629,7 @@ msgstr "Tài sản trong hồ thanh quản"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Position details"
-msgstr ""
+msgstr "Chi tiết"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
@@ -653,7 +653,7 @@ msgstr "Các đề xuất"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Proposed"
-msgstr ""
+msgstr "Đã đề xuất"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
@@ -662,15 +662,15 @@ msgstr "Mục tiêu không đạt"
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Rebalancing"
-msgstr ""
+msgstr "Tái cân bằng"
 
 #: src/app/components/trade/RebalanceButton.tsx
 msgid "Rebalancing complete."
-msgstr ""
+msgstr "Tài cân bằng hoàn tất."
 
 #: src/app/components/trade/RebalanceButton.tsx
 msgid "Rebalancing the bnUSD price..."
-msgstr ""
+msgstr "Đang tái cân bằng giá bnUSD..."
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Rebalancing threshold"
@@ -854,11 +854,11 @@ msgstr "Gửi đề xuất?"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote"
-msgstr ""
+msgstr "Bỏ phiếu"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote?"
-msgstr ""
+msgstr "Bỏ phiếu?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submitting a proposal..."
@@ -1048,7 +1048,7 @@ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
-msgstr ""
+msgstr "Sử dụng có trách nhiệm. Những người đóng góp cho dự án này không chịu trách nhiệm cho bất cứ số tiền nào bị mất hoặc bị đánh cắp."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
@@ -1084,7 +1084,7 @@ msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Voting will begin at 5pm UTC,"
-msgstr ""
+msgstr "Bỏ phiếu bắt đầu vào lúc 5:00PM giờ UTC"
 
 #: src/app/components/Header/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
@@ -1115,7 +1115,7 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
-msgstr ""
+msgstr "Khi bạn vay bnUSD, tài sản thế chấp của bạn sẽ bị sử dụng để giữ giá cho bnUSD"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1123,7 +1123,7 @@ msgstr ""
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdraw"
-msgstr "Rút tiền"
+msgstr "Rút"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Withdraw ICON collateral?"
@@ -1131,16 +1131,16 @@ msgstr "Rút ICX khỏi tài khoản thế chấp?"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdraw liquidity"
-msgstr ""
+msgstr "Lấy lại thanh khoản"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdraw liquidity?"
-msgstr ""
+msgstr "Lấy lại thanh khoản?"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdraw sICX?"
-msgstr ""
+msgstr "Lấy lại sICX?"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1149,11 +1149,11 @@ msgstr "Rút:"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdrawing ICX..."
-msgstr ""
+msgstr "Đang rút ICX..."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Withdrawing collateral..."
-msgstr ""
+msgstr "Đang lấy lại tài sản thế chấp..."
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdrawing sICX..."

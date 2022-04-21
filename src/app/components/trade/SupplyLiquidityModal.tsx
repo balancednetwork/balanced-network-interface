@@ -119,11 +119,11 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   const [confirmTx, setConfirmTx] = React.useState('');
 
-  const handleSupplyConfirm = () => {
+  const handleSupplyConfirm = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
+      await changeShouldLedgerSign(true);
     }
 
     if (isQueue) {

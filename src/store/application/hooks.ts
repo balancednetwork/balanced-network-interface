@@ -3,6 +3,8 @@ import { useCallback } from 'react';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import bnJs from 'bnJs';
+
 import { AppDispatch, AppState } from '../index';
 import {
   changeShouldLedgedSignMessage,
@@ -43,10 +45,17 @@ export function useCurrentLedgerAddressPage(): AppState['application']['currentL
   return currentLedgerAddressPage;
 }
 
-export function useChangeShouldLedgerSign(): (shouldLedgerSign: boolean) => void {
+export function useChangeShouldLedgerSign(): (shouldLedgerSign: boolean) => Promise<void> {
   const dispatch = useDispatch();
   return useCallback(
-    (shouldLedgerSign: boolean) => {
+    async (shouldLedgerSign: boolean) => {
+      if (shouldLedgerSign) {
+        try {
+          await bnJs.initializeTransport();
+        } catch (e) {
+          console.error('error', e);
+        }
+      }
       dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign }));
     },
     [dispatch],

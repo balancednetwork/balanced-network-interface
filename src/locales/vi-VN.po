@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-21 08:31\n"
+"PO-Revision-Date: 2022-04-21 09:25\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -813,7 +813,7 @@ msgstr "Đặt cọc cổ phần"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens"
-msgstr "Đặt cọc đồng xu Balance"
+msgstr "Stake đồng xu Balance"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens?"
@@ -1004,16 +1004,16 @@ msgstr "Đã hiểu"
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/index.tsx
 msgid "Unstake"
-msgstr "Hủy đặt cọc"
+msgstr "Huỷ stake"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstake Balance Tokens?"
-msgstr "Hủy đặt cọc đồng xu Balance?"
+msgstr "Hủy stake đồng xu Balance?"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX"
-msgstr "Huỷ đặt cọc sICX"
+msgstr "Huỷ Stake sICX"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX?"
@@ -1177,7 +1177,7 @@ msgstr "Nếu bạn vượt qua ngưỡng này, tài sản thế chấp sẽ b�
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
-msgstr ""
+msgstr "Bạn cần ít nhất {MINIMUM_ICX_FOR_TX} ICX trong ví để hoàn tất giao dịch này."
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "You rejected"

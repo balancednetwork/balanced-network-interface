@@ -88,8 +88,8 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, maxWidth, mobile, is
       theme.mediaWidth.up360`
         width: calc(100vw - 40px);
         max-width: calc(100vw - 40px);
-        height: calc(100vh - 40px);
-        max-height: calc(100vh - 40px);
+        height: calc(100vh - 180px);
+        max-height: calc(100vh - 180px);
       `}
 
       ${({ theme, fullscreen }) =>

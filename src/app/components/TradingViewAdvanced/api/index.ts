@@ -11,6 +11,7 @@ import {
 } from 'charting_library/charting_library';
 import { DatafeedConfiguration } from 'charting_library/datafeed-api';
 
+import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { formatBarItem } from 'queries/swap';
 
 import { getHistoryBars } from './history';
@@ -27,6 +28,8 @@ interface Subscriber {
 const __subs: Subscriber[] = [];
 
 const LAST_BAR_CONSTANT = 604800000000;
+
+const PAIR_NAMES = SUPPORTED_PAIRS.map(pair => pair.name);
 
 type PeriodParamsWithOptionalCountBack = Omit<PeriodParams, 'countBack'> & { countBack?: number };
 
@@ -59,7 +62,11 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
   }
 
   public searchSymbols(userInput: string, exchange: string, symbolType: string, onResult: SearchSymbolsCallback): void {
-    onResult(getFilteredSupportedPairNames(userInput));
+    let input = userInput;
+    if (PAIR_NAMES.indexOf(input) >= 0) {
+      input = '';
+    }
+    onResult(getFilteredSupportedPairNames(input.replace('/', '')));
   }
 
   public getBars(

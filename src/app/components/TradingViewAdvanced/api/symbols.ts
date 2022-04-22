@@ -71,7 +71,7 @@ export const getFilteredSupportedPairNames = (query: string = ''): SearchSymbolR
     return (
       isQueried(query, pair.baseToken) ||
       isQueried(query, pair.quoteToken) ||
-      pair.name.toLowerCase().indexOf(query.toLowerCase()) >= 0
+      pair.name.toLowerCase().replace('/', '').indexOf(query.toLowerCase()) >= 0
     );
   })
     .map(pair => {

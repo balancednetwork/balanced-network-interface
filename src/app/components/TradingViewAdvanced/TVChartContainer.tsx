@@ -47,7 +47,7 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
     }
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
-      debug: true,
+      debug: false,
       symbol: this.props.symbol,
       datafeed: new DataFeed(),
       interval: this.props.interval || ('4h' as ResolutionString),

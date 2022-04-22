@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-21 04:02\n"
+"PO-Revision-Date: 2022-04-22 14:23\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -223,7 +223,7 @@ msgstr "Verander stem"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Change vote?"
-msgstr ""
+msgstr "Stem veranderen?"
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
@@ -231,7 +231,7 @@ msgstr "Wijzig portemonnee"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Choose a wallet from your Ledger:"
-msgstr "Kies een portemonnee uit uw Ledger:"
+msgstr "Kies een portemonnee uit je Ledger:"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -355,7 +355,7 @@ msgstr "Pool aan het aanmaken"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Current"
-msgstr ""
+msgstr "Huidig"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
@@ -653,7 +653,7 @@ msgstr "Voorstellen"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Proposed"
-msgstr ""
+msgstr "Voorgesteld"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
@@ -854,11 +854,11 @@ msgstr "Voorstel bevestigen?"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote"
-msgstr ""
+msgstr "Stem uitbrengen"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote?"
-msgstr ""
+msgstr "Stem uitbrengen?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submitting a proposal..."
@@ -909,44 +909,44 @@ msgstr "{0} omwisselen voor {1}?"
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
-msgstr ""
+msgstr "{inputAmount} {inputCurrency} gewisseld voor {outputAmount} {outputCurrency}."
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapping {inputCurrency} for {outputCurrency}..."
-msgstr ""
+msgstr "Wisselen van {inputCurrency} voor {outputCurrency}..."
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
-msgstr ""
+msgstr "Neemt tot 7 dagen in beslag. Wanneer het klaar is, ga dan naar ICX > Unstaking in de Wallet sectie om het te claimen."
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Text"
-msgstr ""
+msgstr "Tekst"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "The amount of ICX available to deposit from your wallet."
-msgstr ""
+msgstr "De hoeveelheid ICX die beschikbaar is om te storten uit je portemonnee."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current ICX price is"
-msgstr ""
+msgstr "De huidige ICX prijs is"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current bnUSD price is"
-msgstr ""
+msgstr "De huidige bnUSD prijs is"
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "There's no BALN unstaking."
-msgstr ""
+msgstr "Er is geen BALN aan het unstaken."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "There's no ICX unstaking."
-msgstr ""
+msgstr "Er is geen ICX aan het unstaken."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "There's no liquidity pool for this pair yet."
-msgstr ""
+msgstr "Er is nog geen liquiditeitspool voor dit paar."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "They'll unstake on {0}, around {1}."

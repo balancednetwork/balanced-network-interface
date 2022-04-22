@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-22 14:23\n"
+"PO-Revision-Date: 2022-04-22 15:26\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -909,11 +909,11 @@ msgstr "{0} omwisselen voor {1}?"
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
-msgstr "{inputAmount} {inputCurrency} gewisseld voor {outputAmount} {outputCurrency}."
+msgstr "{inputAmount} {inputCurrency} omgewisseld voor {outputAmount} {outputCurrency}."
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapping {inputCurrency} for {outputCurrency}..."
-msgstr "Wisselen van {inputCurrency} voor {outputCurrency}..."
+msgstr "Omwisselen van {inputCurrency} voor {outputCurrency}..."
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
@@ -950,26 +950,26 @@ msgstr "Er is nog geen liquiditeitspool voor dit paar."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "They'll unstake on {0}, around {1}."
-msgstr ""
+msgstr "Ze zullen unstaken op {0}, rond {1}."
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 #: src/app/containers/ProposalPage/Funding.tsx
 msgid "To"
-msgstr ""
+msgstr "Naar"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
-msgstr ""
+msgstr "Neem een lening of lever liquiditeit op de handelspagina om Balanced beloningen te verdienen."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."
-msgstr ""
+msgstr "Stake BALN uit je portemonnee om netwerkvergoedingen te verdienen."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "To receive BALN, you must have ICX in the pool at 1pm Eastern each day."
@@ -977,11 +977,11 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
-msgstr ""
+msgstr "Stort onderpand om een lening af te sluiten."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total daily rewards"
-msgstr ""
+msgstr "Totale dagelijkse beloningen"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total supply"
@@ -994,97 +994,97 @@ msgstr ""
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Transaction"
-msgstr ""
+msgstr "Transactie"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Understood"
-msgstr ""
+msgstr "Begrepen"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/index.tsx
 msgid "Unstake"
-msgstr ""
+msgstr "Unstake"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstake Balance Tokens?"
-msgstr ""
+msgstr "Unstake Balance Tokens?"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX"
-msgstr ""
+msgstr "Unstake sICX"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX?"
-msgstr ""
+msgstr "Unstake sICX?"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaked {0} BALN."
-msgstr ""
+msgstr "{0} BALN unstaked."
 
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/index.tsx
 msgid "Unstaking"
-msgstr ""
+msgstr "Unstaking"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaking BALN..."
-msgstr ""
+msgstr "Unstaking BALN..."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaking takes 3 days."
-msgstr ""
+msgstr "Unstaken duurt 3 dagen."
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
-msgstr ""
+msgstr "{0} sICX aan het unstaken. Bekijk de ICX-vermelding in je portemonnee voor mee informatie."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Use Balanced in"
-msgstr ""
+msgstr "Gebruik Balanced in"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
-msgstr ""
+msgstr "Gebruik op eigen risico. Projectmedewerkers zijn niet aansprakelijk voor verloren of gestolen fondsen."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
-msgstr ""
+msgstr "Gebruikt"
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "Value"
-msgstr ""
+msgstr "Waarde"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "View disclaimer"
-msgstr ""
+msgstr "Bekijk disclaimer"
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote"
-msgstr ""
+msgstr "Stemmen"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
-msgstr ""
+msgstr "Stem uitgebracht."
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
-msgstr ""
+msgstr "Stemgewicht"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Voting weight: {0} BALN"
-msgstr ""
+msgstr "Stemgewicht: {0} BALN"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Voting will begin at 5pm UTC,"
-msgstr ""
+msgstr "De stemming begint om 17.00 uur UTC,"
 
 #: src/app/components/Header/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx

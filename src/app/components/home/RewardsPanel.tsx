@@ -49,11 +49,13 @@ const RewardSection = () => {
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const handleRewardClaim = async () => {
+  const handleRewardClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      await changeShouldLedgerSign(true);
+      changeShouldLedgerSign(true);
     }
+
     bnJs
       .inject({ account })
       .Rewards.claimRewards()
@@ -210,11 +212,11 @@ const NetworkFeeSection = () => {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
 
-  const handleFeeClaim = async () => {
+  const handleFeeClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      await changeShouldLedgerSign(true);
+      changeShouldLedgerSign(true);
     }
     const end = platformDay - feesIndex * BATCH_SIZE;
     const start = end - BATCH_SIZE > 0 ? end - BATCH_SIZE : 0;

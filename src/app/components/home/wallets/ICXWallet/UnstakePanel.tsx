@@ -46,7 +46,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
 
   const handleUnstake = async () => {
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      await changeShouldLedgerSign(true);
+      changeShouldLedgerSign(true);
     }
 
     try {

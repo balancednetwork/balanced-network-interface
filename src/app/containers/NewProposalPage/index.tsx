@@ -239,11 +239,11 @@ export function NewProposalPage() {
     });
   };
 
-  const modalSubmit = async () => {
+  const modalSubmit = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      await changeShouldLedgerSign(true);
+      changeShouldLedgerSign(true);
     }
 
     const actions = isTextProposal

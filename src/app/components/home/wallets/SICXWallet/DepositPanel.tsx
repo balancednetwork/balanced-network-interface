@@ -59,11 +59,11 @@ export default function DepositPanel() {
 
   const addTransaction = useTransactionAdder();
 
-  const handleSend = async () => {
+  const handleSend = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      await changeShouldLedgerSign(true);
+      changeShouldLedgerSign(true);
     }
 
     bnJs

@@ -75,11 +75,11 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const addTransaction = useTransactionAdder();
 
-  const handleSend = async () => {
+  const handleSend = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      await changeShouldLedgerSign(true);
+      changeShouldLedgerSign(true);
     }
 
     const contract =

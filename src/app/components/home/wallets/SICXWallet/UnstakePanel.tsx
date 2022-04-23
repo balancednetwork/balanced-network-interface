@@ -60,11 +60,11 @@ export default function UnstakePanel() {
 
   const addTransaction = useTransactionAdder();
 
-  const handleUnstake = async () => {
+  const handleUnstake = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      await changeShouldLedgerSign(true);
+      changeShouldLedgerSign(true);
     }
 
     bnJs

@@ -327,11 +327,11 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const handleCancelOrder = async () => {
+  const handleCancelOrder = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      await changeShouldLedgerSign(true);
+      changeShouldLedgerSign(true);
     }
 
     bnJs
@@ -357,11 +357,11 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
       });
   };
 
-  const handleWithdrawEarnings = async () => {
+  const handleWithdrawEarnings = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      await changeShouldLedgerSign(true);
+      changeShouldLedgerSign(true);
     }
     bnJs
       .inject({ account })
@@ -641,12 +641,12 @@ const WithdrawModal = ({
 
   const addTransaction = useTransactionAdder();
 
-  const handleWithdraw = async () => {
+  const handleWithdraw = () => {
     if (!account) return;
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
-      await changeShouldLedgerSign(true);
+      changeShouldLedgerSign(true);
     }
 
     const numPortion = new BigNumber(portion / 100);

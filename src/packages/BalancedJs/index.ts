@@ -1,4 +1,3 @@
-import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import BigNumber from 'bignumber.js';
 import { Converter as IconConverter } from 'icon-sdk-js';
 import { isEmpty } from 'lodash';
@@ -23,7 +22,7 @@ import Rewards from './contracts/Rewards';
 import Router from './contracts/Router';
 import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
-import ContractSettings, { getLedgerAddressPath, LedgerSettings } from './contractSettings';
+import ContractSettings, { LedgerSettings } from './contractSettings';
 
 export { SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO };
 
@@ -152,24 +151,5 @@ export class BalancedJs {
 
   resetContractLedgerSettings() {
     this.contractSettings.resetLedgerSettings();
-  }
-
-  async initializeTransport(): Promise<void> {
-    // extract ledger address index from path to create a new transport with the correct wallet address
-    let addressIndex = Number(this.contractSettings.ledgerSettings.path?.replaceAll("'", '').split('/')[4]);
-    if (this.contractSettings.ledgerSettings.transport?.device?.opened && addressIndex >= 0) {
-      this.contractSettings.ledgerSettings.transport.close();
-      this.contractSettings.ledgerSettings = {} as LedgerSettings;
-      const transport = await TransportWebHID.create();
-      if (transport.setDebugMode) {
-        transport.setDebugMode(false);
-      }
-      this.inject({
-        legerSettings: {
-          transport,
-          path: getLedgerAddressPath(addressIndex),
-        },
-      });
-    }
   }
 }

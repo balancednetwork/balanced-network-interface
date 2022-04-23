@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-21 04:02\n"
+"PO-Revision-Date: 2022-04-23 05:21\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -223,7 +223,7 @@ msgstr "Cambiar voto"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Change vote?"
-msgstr ""
+msgstr "Cambiar voto?"
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
@@ -355,7 +355,7 @@ msgstr "Creando pool"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Current"
-msgstr ""
+msgstr "Actual"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
@@ -653,7 +653,7 @@ msgstr "Propuestas"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Proposed"
-msgstr ""
+msgstr "Propuesto"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
@@ -854,11 +854,11 @@ msgstr "Enviar propuesta?"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote"
-msgstr ""
+msgstr "Enviar voto"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote?"
-msgstr ""
+msgstr "Enviar voto?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submitting a proposal..."
@@ -958,7 +958,7 @@ msgstr "Título"
 
 #: src/app/containers/ProposalPage/Funding.tsx
 msgid "To"
-msgstr ""
+msgstr "Para"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -1075,7 +1075,7 @@ msgstr "Voto emitido."
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
-msgstr ""
+msgstr "Peso de votación"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -1308,7 +1308,7 @@ msgstr "{0} {1} por {2}"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "{0} {1}per {2}"
-msgstr ""
+msgstr "{0} {1}por {2}"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "{0}% staked"

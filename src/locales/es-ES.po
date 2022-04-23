@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-23 05:21\n"
+"PO-Revision-Date: 2022-04-23 18:28\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -1303,12 +1303,9 @@ msgstr "{0} {1} añadido a tu billetera"
 
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapDescription.tsx
+#: src/app/components/trade/SwapPanel.tsx
 msgid "{0} {1} per {2}"
 msgstr "{0} {1} por {2}"
-
-#: src/app/components/trade/SwapPanel.tsx
-msgid "{0} {1}per {2}"
-msgstr "{0} {1}por {2}"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "{0}% staked"

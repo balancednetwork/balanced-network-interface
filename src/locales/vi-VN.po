@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-21 09:25\n"
+"PO-Revision-Date: 2022-04-23 18:28\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -1298,11 +1298,8 @@ msgstr ""
 
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapDescription.tsx
-msgid "{0} {1} per {2}"
-msgstr ""
-
 #: src/app/components/trade/SwapPanel.tsx
-msgid "{0} {1}per {2}"
+msgid "{0} {1} per {2}"
 msgstr ""
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx

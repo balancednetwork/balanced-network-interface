@@ -39,12 +39,6 @@ class ContractSettings {
 
     this.provider = provider || getDefaultProvider(this.networkId);
   }
-
-  resetLedgerSettings() {
-    this.ledgerSettings.path = LEDGER_BASE_PATH;
-    this.ledgerSettings.transport = null;
-    this.ledgerSettings.actived = false;
-  }
 }
 
 export default ContractSettings;

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-24 13:30\n"
+"PO-Revision-Date: 2022-04-24 15:25\n"
 "Last-Translator: \n"
 "Language: pl_PL\n"
 "Language-Team: Polish\n"
@@ -413,7 +413,7 @@ msgstr "Opis"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Discussion"
-msgstr ""
+msgstr "Dyskusja"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
@@ -425,12 +425,12 @@ msgstr "Wprowadzona w życie"
 
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
-msgstr ""
+msgstr "Wprowadź kwotę"
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 msgid "Enter an amount"
-msgstr ""
+msgstr "Wprowadź kwotę"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Exchange rate"
@@ -454,7 +454,7 @@ msgstr "Link do forum"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Funding"
-msgstr ""
+msgstr "Finansowanie"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Go back"
@@ -479,7 +479,7 @@ msgstr "Jeśli cena ICX osiągnie ${0}, całe Twoje zabezpieczenie zostanie zlik
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
-msgstr ""
+msgstr "Jeśli cena spadnie o więcej niż o tę kwotę, Twoja wymiana nie powiedzie się."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "In contract"
@@ -487,11 +487,11 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Includes a fee of {0} bnUSD."
-msgstr ""
+msgstr "Zawiera prowizję w wysokości {0} bnUSD."
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Includes a fee of {0} {1}."
-msgstr ""
+msgstr "Zawiera prowizję w wysokości {0} {1}."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -581,7 +581,7 @@ msgstr "Dotąd nie podjęto żadnych działań."
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "No assets available."
-msgstr ""
+msgstr "Brak dostępnych aktywów."
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
@@ -694,51 +694,51 @@ msgstr "Odrzucona"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove"
-msgstr ""
+msgstr "Usuń"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
-msgstr ""
+msgstr "Usuń swoje aktywa, aby anulować tę transakcję."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Removing"
-msgstr ""
+msgstr "Usuwanie"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaid {0} bnUSD."
-msgstr ""
+msgstr "Zwrócono {0} bnUSD."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay"
-msgstr ""
+msgstr "Zwróć"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay Balanced Dollars?"
-msgstr ""
+msgstr "Czy chcesz zwrócić dolary Balanced?"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
-msgstr ""
+msgstr "Zwracanie bnUSD..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Rewards"
-msgstr ""
+msgstr "Nagrody"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
-msgstr ""
+msgstr "Wskaźnik ryzyka"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Route"
-msgstr ""
+msgstr "Ścieżka"
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "Search name or contract"
-msgstr ""
+msgstr "Szukaj nazwy lub kontraktu"
 
 #: src/store/swap/hooks.ts
 msgid "Select a token"
-msgstr ""
+msgstr "Wybierz token"
 
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/ICXWallet/index.tsx
@@ -748,39 +748,39 @@ msgstr ""
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/containers/ProposalPage/Funding.tsx
 msgid "Send"
-msgstr ""
+msgstr "Wyślij"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send asset?"
-msgstr ""
+msgstr "Wysłać aktywa?"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Send each asset to the contract"
-msgstr ""
+msgstr "Wyślij każde aktywo do kontraktu"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send max"
-msgstr ""
+msgstr "Wyślij wszystko"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send {0}"
-msgstr ""
+msgstr "Wyślij {0}"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Sending"
-msgstr ""
+msgstr "Wysyłanie"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Sending {0}..."
-msgstr ""
+msgstr "Wysyłanie {0}..."
 
 #: src/app/components/trade/utils.tsx
 msgid "Sending {currency} to the {pair} pool..."
-msgstr ""
+msgstr "Wysyłanie {currency} do puli {pair}..."
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Sent {0} {1} to {address}."
-msgstr ""
+msgstr "Wysłano {0} {1} do {address}."
 
 #: src/app/components/Header/index.tsx
 msgid "Sign in"
@@ -842,27 +842,27 @@ msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit"
-msgstr ""
+msgstr "Zgłoś"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit proposal"
-msgstr ""
+msgstr "Zgłoś propozycję"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit proposal?"
-msgstr ""
+msgstr "Czy chcesz zgłosić propozycję?"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote"
-msgstr ""
+msgstr "Zagłosuj"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote?"
-msgstr ""
+msgstr "Czy chcesz zagłosować?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submitting a proposal..."
-msgstr ""
+msgstr "Zgłaszanie propozycji..."
 
 #: src/app/components/trade/utils.tsx
 msgid "Supplied {pair} liquidity."
@@ -1219,7 +1219,7 @@ msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Your daily rewards"
-msgstr ""
+msgstr "Twoje dzienne nagrody"
 
 #: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1244,7 +1244,7 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "{0}"
-msgstr ""
+msgstr "{0}"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} \n"
@@ -1261,7 +1261,7 @@ msgstr ""
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX"
-msgstr ""
+msgstr "{0} ICX"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "{0} ICX added to your wallet."
@@ -1308,11 +1308,11 @@ msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "{currency} sent to the {pair} pool."
-msgstr ""
+msgstr "{currency} wysłano do puli {pair}."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "{endTimeStr} left"
-msgstr ""
+msgstr "Pozostało {endTimeStr}"
 
 #: src/app/components/trade/utils.tsx
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
@@ -1320,7 +1320,7 @@ msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "{label} proposal submitted."
-msgstr ""
+msgstr "Propozycja {label} została zgłoszona."
 
 #: src/app/components/trade/utils.tsx
 msgid "{outputAmount} {outputCurrency} added to your wallet."

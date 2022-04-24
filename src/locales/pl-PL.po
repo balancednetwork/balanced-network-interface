@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-23 18:28\n"
+"PO-Revision-Date: 2022-04-24 12:39\n"
 "Last-Translator: \n"
 "Language: pl_PL\n"
 "Language-Team: Polish\n"
@@ -59,7 +59,7 @@ msgstr "KWOTA"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
-msgstr ""
+msgstr "Aktywna"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "Activity history"
@@ -78,7 +78,7 @@ msgstr "Adres"
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Adjust"
-msgstr ""
+msgstr "Dostosuj"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -89,15 +89,15 @@ msgstr ""
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "After"
-msgstr ""
+msgstr "Po"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
-msgstr ""
+msgstr "Całe zabezpieczenie zablokowane"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
-msgstr ""
+msgstr "Od początku"
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -105,11 +105,11 @@ msgstr ""
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Approve"
-msgstr ""
+msgstr "Za"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
-msgstr ""
+msgstr "Zatwierdzona"
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/home/WalletPanel.tsx
@@ -127,11 +127,11 @@ msgstr "Dostępne"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "BALN allocation"
-msgstr ""
+msgstr "Przydział BALN"
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
-msgstr ""
+msgstr "Powrót do strony Balanced"
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "Balance"
@@ -143,11 +143,11 @@ msgstr "Tokeny Balance"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced increases your loan to buy more collateral at a discount."
-msgstr ""
+msgstr "Balanced zwiększa Twoją pożyczkę, aby kupić więcej zabezpieczenia po obniżonej cenie."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced sells collateral at a premium to repay some of your loan."
-msgstr ""
+msgstr "Balanced sprzedaje zabezpieczenie po podwyższonej cenie, aby spłacić część Twojej pożyczki."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -158,29 +158,29 @@ msgstr ""
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Before"
-msgstr ""
+msgstr "Przed"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow"
-msgstr ""
+msgstr "Zaciągnij pożyczkę"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow Balanced Dollars?"
-msgstr ""
+msgstr "Czy chcesz pożyczyć dolary Balanced?"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed"
-msgstr ""
+msgstr "Pożyczono"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed {0} bnUSD."
-msgstr ""
+msgstr "Pożyczono {0} bnUSD."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowing bnUSD..."
-msgstr ""
+msgstr "Pożyczanie bnUSD..."
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -197,7 +197,7 @@ msgstr ""
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Cancel"
-msgstr ""
+msgstr "Anuluj"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
@@ -205,7 +205,7 @@ msgstr "Anuluj wszystkie oczekujące transakcje na swoim Ledgerze albo przyznaj 
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Cancelled"
-msgstr ""
+msgstr "Anulowana"
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "Candles"
@@ -219,15 +219,15 @@ msgstr "Przesyłanie Twojego głosu..."
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Change vote"
-msgstr ""
+msgstr "Zmień głos"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Change vote?"
-msgstr ""
+msgstr "Chcesz zmienić głos?"
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
-msgstr ""
+msgstr "Zmień portfel"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Choose a wallet from your Ledger:"
@@ -238,32 +238,32 @@ msgstr "Wybierz portfel ze swojego Ledgera:"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim"
-msgstr ""
+msgstr "Odbierz"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim (1 of {count})"
-msgstr ""
+msgstr "Odbierz (1 z {count})"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim Balance Tokens?"
-msgstr ""
+msgstr "Odebrać tokeny Balance?"
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX"
-msgstr ""
+msgstr "Odbierz ICX"
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX?"
-msgstr ""
+msgstr "Odebrać ICX?"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim network fees?"
-msgstr ""
+msgstr "Odebrać prowizje sieciowe?"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claimed fees."
-msgstr ""
+msgstr "Odebrano prowizje."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claimed {0} BALN."
@@ -279,7 +279,7 @@ msgstr "Odbieranie ICX..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claiming fees..."
-msgstr ""
+msgstr "Odbieranie prowizji..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claiming rewards..."
@@ -295,13 +295,13 @@ msgstr "Zabezpieczenie"
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Confirm"
-msgstr ""
+msgstr "Zatwierdź"
 
 #: src/app/components/LedgerConfirmMessage/index.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Confirm the transaction on your Ledger."
-msgstr "Potwierdź transakcję na swoim Ledgerze."
+msgstr "Zatwierdź transakcję na swoim Ledgerze."
 
 #: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
@@ -330,15 +330,15 @@ msgstr "Nie udało się wysłać {currency} do puli {pair}. Spróbuj ponownie."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't supply {pair} liquidity. Try again."
-msgstr ""
+msgstr "Nie udało się dostarczyć płynności do pary {pair}. Spróbuj ponownie."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
-msgstr ""
+msgstr "Nie udało się wymienić {inputCurrency} na {outputCurrency}. Spróbuj ponownie."
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
-msgstr ""
+msgstr "Nie udało się wypłacić płynności {inputCurrency} / {outputCurrency}. Spróbuj ponownie."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Create liquidity pool?"
@@ -355,7 +355,7 @@ msgstr "Tworzenie puli"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Current"
-msgstr ""
+msgstr "Obecnie"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
@@ -421,7 +421,7 @@ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
-msgstr ""
+msgstr "Wprowadzona w życie"
 
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
@@ -438,7 +438,7 @@ msgstr "Kurs wymiany"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Failed to enact"
-msgstr ""
+msgstr "Nie udało się wprowadzić w życie"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"
@@ -446,7 +446,7 @@ msgstr "Prowizja"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "For"
-msgstr ""
+msgstr "Na"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
@@ -529,51 +529,51 @@ msgstr "Linia"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Liquidated"
-msgstr ""
+msgstr "Zlikwidowane"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Liquidity details"
-msgstr ""
+msgstr "Szczegóły dotyczące płynności"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan"
-msgstr ""
+msgstr "Pożyczka"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Loan fee"
-msgstr ""
+msgstr "Opłata za udzielenie pożyczki"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan rewards"
-msgstr ""
+msgstr "Nagrody za zaciągniętą pożyczkę"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Loan to value ratio"
-msgstr ""
+msgstr "Stosunek pożyczki do wartości zabezpieczenia"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
-msgstr ""
+msgstr "Zablokowane"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Minimum to receive"
-msgstr ""
+msgstr "Minimum do otrzymania"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Network fee allocation"
-msgstr ""
+msgstr "Przydział prowizji sieciowych"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
-msgstr ""
+msgstr "Prowizje sieciowe"
 
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/VotePage/index.tsx
 msgid "New proposal"
-msgstr ""
+msgstr "Nowa propozycja"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "No activity yet."
@@ -595,41 +595,41 @@ msgstr ""
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Not now"
-msgstr ""
+msgstr "Nie teraz"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
-msgstr ""
+msgstr "Ostatni dzień"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past month"
-msgstr ""
+msgstr "Ostatni miesiąc"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past week"
-msgstr ""
+msgstr "Ostatni tydzień"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Pay"
-msgstr ""
+msgstr "Zapłać"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
-msgstr ""
+msgstr "W oczekiwaniu"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Pool"
-msgstr ""
+msgstr "Pula"
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Pool share"
-msgstr ""
+msgstr "Udział w puli"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Position details"
-msgstr ""
+msgstr "Szczegóły pozycji"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
@@ -637,7 +637,7 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
-msgstr ""
+msgstr "Wpływ na cenę"
 
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
@@ -645,11 +645,11 @@ msgstr ""
 
 #: src/app/components/newproposal/ProposalTypesSelect.tsx
 msgid "Proposal type"
-msgstr ""
+msgstr "Typ propozycji"
 
 #: src/app/containers/VotePage/index.tsx
 msgid "Proposals"
-msgstr ""
+msgstr "Propozycje"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Proposed"
@@ -657,7 +657,7 @@ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
-msgstr ""
+msgstr "Kworum nie zostało osiągnięte"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -678,7 +678,7 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
-msgstr ""
+msgstr "Otrzymaj"
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -686,11 +686,11 @@ msgstr ""
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Reject"
-msgstr ""
+msgstr "Przeciw"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Rejected"
-msgstr ""
+msgstr "Odrzucona"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove"
@@ -784,27 +784,27 @@ msgstr ""
 
 #: src/app/components/Header/index.tsx
 msgid "Sign in"
-msgstr ""
+msgstr "Zaloguj się"
 
 #: src/app/containers/HomePage/index.tsx
 msgid "Sign in to use the Home page."
-msgstr ""
+msgstr "Zaloguj się, aby korzystać ze strony głównej."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Sign in to view your liquidity details."
-msgstr ""
+msgstr "Zaloguj się, aby zobaczyć szczegóły dotyczące swojej płynności."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Sign in with"
-msgstr ""
+msgstr "Zaloguj się poprzez"
 
 #: src/app/components/Header/index.tsx
 msgid "Sign out"
-msgstr ""
+msgstr "Wyloguj się"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Slippage tolerance"
-msgstr ""
+msgstr "Tolerancja poślizgu cenowego"
 
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
@@ -901,19 +901,19 @@ msgstr ""
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/containers/TradePage/index.tsx
 msgid "Swap"
-msgstr ""
+msgstr "Wymiana"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Swap {0} for {1}?"
-msgstr ""
+msgstr "Wymienić {0} na {1}?"
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
-msgstr ""
+msgstr "Wymieniono {inputAmount} {inputCurrency} na {outputAmount} {outputCurrency}."
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapping {inputCurrency} for {outputCurrency}..."
-msgstr ""
+msgstr "Wymienianie {inputCurrency} na {outputCurrency}..."
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
@@ -921,7 +921,7 @@ msgstr ""
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Text"
-msgstr ""
+msgstr "Tekst"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx

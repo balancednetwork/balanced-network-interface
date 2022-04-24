@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-24 12:39\n"
+"PO-Revision-Date: 2022-04-24 13:30\n"
 "Last-Translator: \n"
 "Language: pl_PL\n"
 "Language-Team: Polish\n"
@@ -517,11 +517,11 @@ msgstr "Nieprawidłowa para"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "It costs 100 bnUSD to submit a proposal."
-msgstr ""
+msgstr "Zgłoszenie propozycji kosztuje 100 bnUSD."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Keep a close eye on this number, as rebalancing may cause it to fluctuate."
-msgstr ""
+msgstr "Należy obserwować tę liczbę, ponieważ rebalansowanie może powodować jej wahania."
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "Line"
@@ -577,7 +577,7 @@ msgstr "Nowa propozycja"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "No activity yet."
-msgstr ""
+msgstr "Dotąd nie podjęto żadnych działań."
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "No assets available."
@@ -585,11 +585,11 @@ msgstr ""
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
-msgstr ""
+msgstr "Wykres cenowy nie jest dostępny dla tej pary."
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "No results found."
-msgstr ""
+msgstr "Nie znaleziono żadnych wyników."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -633,7 +633,7 @@ msgstr "Szczegóły pozycji"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
-msgstr ""
+msgstr "Przygotowywanie do odstakowania sICX..."
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
@@ -641,7 +641,7 @@ msgstr "Wpływ na cenę"
 
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
-msgstr ""
+msgstr "Przetwarzanie transakcji..."
 
 #: src/app/components/newproposal/ProposalTypesSelect.tsx
 msgid "Proposal type"
@@ -653,7 +653,7 @@ msgstr "Propozycje"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Proposed"
-msgstr ""
+msgstr "Proponowane"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
@@ -662,19 +662,19 @@ msgstr "Kworum nie zostało osiągnięte"
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Rebalancing"
-msgstr ""
+msgstr "Rebalansowanie"
 
 #: src/app/components/trade/RebalanceButton.tsx
 msgid "Rebalancing complete."
-msgstr ""
+msgstr "Rebalansowanie zakończone."
 
 #: src/app/components/trade/RebalanceButton.tsx
 msgid "Rebalancing the bnUSD price..."
-msgstr ""
+msgstr "Rebalansowanie ceny bnUSD..."
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Rebalancing threshold"
-msgstr ""
+msgstr "Próg rebalansowania"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"

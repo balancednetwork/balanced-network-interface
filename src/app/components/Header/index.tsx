@@ -65,9 +65,11 @@ const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 const CopyableAddress = ({
   tooltipPlacement,
   account,
+  closeAfterDelay,
 }: {
   tooltipPlacement: 'left' | 'top';
   account: string | null | undefined;
+  closeAfterDelay?: number;
 }) => {
   const [isCopied, updateCopyState] = React.useState(false);
   const copyAddress = React.useCallback(async (account: string) => {
@@ -76,7 +78,12 @@ const CopyableAddress = ({
   }, []);
 
   return account ? (
-    <MouseoverTooltip text={isCopied ? t`Copied` : t`Copy address`} placement={tooltipPlacement} noArrowAndBorder>
+    <MouseoverTooltip
+      text={isCopied ? t`Copied` : t`Copy address`}
+      placement={tooltipPlacement}
+      noArrowAndBorder
+      closeAfterDelay={closeAfterDelay}
+    >
       <StyledAddress
         onMouseLeave={() => {
           setTimeout(() => updateCopyState(false), 250);
@@ -165,7 +172,7 @@ export default function Header(props: { title?: string; className?: string }) {
 
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <WalletMenu>
-                      {!upSmall && <CopyableAddress tooltipPlacement="top" account={account} />}
+                      {!upSmall && <CopyableAddress tooltipPlacement="top" account={account} closeAfterDelay={1000} />}
                       <ChangeWalletButton onClick={handleChangeWallet}>
                         <Trans>Change wallet</Trans>
                       </ChangeWalletButton>

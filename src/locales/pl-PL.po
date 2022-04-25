@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-24 15:25\n"
+"PO-Revision-Date: 2022-04-25 18:32\n"
 "Last-Translator: \n"
 "Language: pl_PL\n"
 "Language-Team: Polish\n"
@@ -371,40 +371,40 @@ msgstr "Dzienne nagrody"
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/index.tsx
 msgid "Deposit"
-msgstr ""
+msgstr "Zdeponuj"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposit ICON collateral?"
-msgstr ""
+msgstr "Czy chcesz zdeponować ICON jako zabezpieczenie?"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit as collateral"
-msgstr ""
+msgstr "Zdeponuj jako zabezpieczenie"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX"
-msgstr ""
+msgstr "Zdeponuj sICX"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX collateral?"
-msgstr ""
+msgstr "Czy chcesz zdeponować sICX jako zabezpieczenie?"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited"
-msgstr ""
+msgstr "Zdeponowane"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited {0} ICX as collateral."
-msgstr ""
+msgstr "Zdeponowano {0} ICX jako zabezpieczenie."
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposited {0} sICX as collateral."
-msgstr ""
+msgstr "Zdeponowano {0} sICX jako zabezpieczenie."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Depositing collateral..."
-msgstr ""
+msgstr "Deponowanie zabezpieczenia..."
 
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -417,7 +417,7 @@ msgstr "Dyskusja"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
-msgstr ""
+msgstr "Nie wysyłaj sICX na giełdę."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
@@ -483,7 +483,7 @@ msgstr "Jeśli cena spadnie o więcej niż o tę kwotę, Twoja wymiana nie powie
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "In contract"
-msgstr ""
+msgstr "W kontrakcie"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Includes a fee of {0} bnUSD."
@@ -496,20 +496,20 @@ msgstr "Zawiera prowizję w wysokości {0} {1}."
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Ineligible"
-msgstr ""
+msgstr "Niespełnione warunki"
 
 #: src/store/swap/hooks.ts
 msgid "Insufficient liquidity"
-msgstr ""
+msgstr "Niewystarczająca płynność"
 
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
-msgstr ""
+msgstr "Niewystarczająca ilość {0}"
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 msgid "Insufficient {0} balance"
-msgstr ""
+msgstr "Niewystarczające saldo {0}"
 
 #: src/store/mint/hooks.tsx
 msgid "Invalid pair"
@@ -633,7 +633,7 @@ msgstr "Szczegóły pozycji"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
-msgstr "Przygotowywanie do odstakowania sICX..."
+msgstr "Przygotowywanie do odstake'owania sICX..."
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
@@ -809,36 +809,36 @@ msgstr "Tolerancja poślizgu cenowego"
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake"
-msgstr ""
+msgstr "Stake'uj"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens"
-msgstr ""
+msgstr "Stake'uj tokeny Balance"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens?"
-msgstr ""
+msgstr "Czy chcesz zastake'ować tokeny Balance?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Stake at least {0} BALN if you want to propose a change."
-msgstr ""
+msgstr "Zastake'uj co najmniej {0} BALN, jeśli chcesz zaproponować zmianę."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake your Balance Tokens to earn network fees."
-msgstr ""
+msgstr "Zastake'uj swoje tokeny Balance, aby zarabiać prowizje sieciowe."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staked {0} BALN."
-msgstr ""
+msgstr "Zastake'owano {0} BALN."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staking BALN..."
-msgstr ""
+msgstr "Stake'owanie BALN..."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Starting in {startTimeStr}"
-msgstr ""
+msgstr "Rozpoczęcie za {startTimeStr}"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit"
@@ -866,34 +866,34 @@ msgstr "Zgłaszanie propozycji..."
 
 #: src/app/components/trade/utils.tsx
 msgid "Supplied {pair} liquidity."
-msgstr ""
+msgstr "Dostarczono płynności do pary {pair}."
 
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supply"
-msgstr ""
+msgstr "Dostarcz"
 
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/containers/TradePage/index.tsx
 msgid "Supply liquidity"
-msgstr ""
+msgstr "Dostarczanie płynności"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Supply liquidity for these assets in any quantity to create a new pool."
-msgstr ""
+msgstr "Dostarcz płynność dla tych aktywów w dowolnej ilości, aby utworzyć nową pulę."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
-msgstr ""
+msgstr "Czy chcesz dostarczyć płynność?"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supplying"
-msgstr ""
+msgstr "Dostarczanie"
 
 #: src/app/components/trade/utils.tsx
 msgid "Supplying {pair} liquidity..."
-msgstr ""
+msgstr "Dostarczanie płynności do pary {pair}..."
 
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
@@ -917,7 +917,7 @@ msgstr "Wymienianie {inputCurrency} na {outputCurrency}..."
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
-msgstr ""
+msgstr "Zajmuje do 7 dni. Kiedy będzie gotowe, przejdź do ICX > Odstake'owanie w sekcji Portfel, aby odebrać środki."
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Text"

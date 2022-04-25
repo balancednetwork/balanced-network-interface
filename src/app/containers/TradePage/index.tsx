@@ -7,7 +7,6 @@ import styled, { css } from 'styled-components';
 
 import BTP from 'app/components/BTP';
 import { UnderlineText } from 'app/components/DropdownText';
-import { DefaultLayout } from 'app/components/Layout';
 import Modal from 'app/components/Modal';
 import { ModalContentWrapper } from 'app/components/ModalContent';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';

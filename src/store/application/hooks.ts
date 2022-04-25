@@ -33,6 +33,10 @@ export function useWalletModalToggle(): () => void {
   return useToggleModal(ApplicationModal.WALLET);
 }
 
+export function useBridgeWalletModalToggle(): () => void {
+  return useToggleModal(ApplicationModal.BRIDGE_WALLET);
+}
+
 export function useShouldLedgerSign(): AppState['application']['shouldLedgerSign'] {
   const shouldSignLedger = useSelector((state: AppState) => state.application.shouldLedgerSign);
   return shouldSignLedger;

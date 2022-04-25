@@ -108,7 +108,7 @@ const NetworkSelector = ({ label }: NetworkSelectorProps) => {
     setShowItems(prevState => !prevState);
   };
 
-  const closeDropdown = () => {
+  const closeDropdown = item => {
     setShowItems(false);
   };
 
@@ -133,6 +133,7 @@ const NetworkSelector = ({ label }: NetworkSelectorProps) => {
                 <SelectItem>Ethereum</SelectItem>
                 <SelectItem>Moonbeam</SelectItem>
                 <SelectItem>Icon</SelectItem>
+                <SelectItem>Binance</SelectItem>
               </SelectItems>
             )}
           </AnimatePresence>

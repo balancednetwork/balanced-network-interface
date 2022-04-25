@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import { Typography } from 'app/theme';
+import { useBridgeWalletModalToggle } from 'store/application/hooks';
 
 import Address from './Address';
 import AssetToTransfer from './AssetToTransfer';
@@ -31,6 +32,8 @@ const Grid = styled(Box)`
 `;
 
 const BTP = ({ handleDismiss }: BTPProps) => {
+  const toggleWalletModal = useBridgeWalletModalToggle();
+
   return (
     <Provider store={store}>
       <Flex flexDirection={'column'} width={'100%'}>
@@ -55,12 +58,12 @@ const BTP = ({ handleDismiss }: BTPProps) => {
         <Divider margin={'20px 0'} />
         <Flex justifyContent={'center'}>
           <TextButton onClick={() => handleDismiss(true)}>Cancel</TextButton>
-          <Button>Transfer</Button>
+          <Button onClick={toggleWalletModal}>Transfer</Button>
         </Flex>
       </Flex>
 
       {/* <WalletConnect />
-        
+
             <Transfer /> */}
     </Provider>
   );

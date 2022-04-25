@@ -11,6 +11,7 @@ import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
 import { Banner } from './components/Banner';
+import BridgeWalletModal from './components/BTP/BridgeWalletModal';
 import BTPPanel from './components/BTPPanel';
 import { Airdrip } from './containers/Airdrip/Loadable';
 import Message from './Message';
@@ -37,6 +38,7 @@ export function App() {
         <ThemedGlobalStyle />
         <NotificationContainer />
         <WalletModal />
+        <BridgeWalletModal />
         {/* Add message for community */}
         {false && (
           <Banner>
@@ -50,6 +52,7 @@ export function App() {
         />
         <Switch>
           <Route exact path="/claim" component={Airdrip} />
+          <Route exact path="/btp" component={BTPPanel} />
           <Route component={Routes} />
         </Switch>
       </ThemeProvider>

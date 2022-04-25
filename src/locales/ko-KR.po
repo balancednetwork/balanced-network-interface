@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-23 18:28\n"
+"PO-Revision-Date: 2022-04-25 11:21\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -223,7 +223,7 @@ msgstr "투표 변경"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Change vote?"
-msgstr ""
+msgstr "투표 변경?"
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
@@ -355,7 +355,7 @@ msgstr "풀 생성 중"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Current"
-msgstr ""
+msgstr "현재"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
@@ -653,7 +653,7 @@ msgstr "제안"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Proposed"
-msgstr ""
+msgstr "제안"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
@@ -854,11 +854,11 @@ msgstr "제안을 제출하겠습니까?"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote"
-msgstr ""
+msgstr "투표 제출"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote?"
-msgstr ""
+msgstr "투표 제출?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submitting a proposal..."
@@ -958,7 +958,7 @@ msgstr "제목"
 
 #: src/app/containers/ProposalPage/Funding.tsx
 msgid "To"
-msgstr ""
+msgstr "로"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -1075,7 +1075,7 @@ msgstr "투표 하기."
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
-msgstr ""
+msgstr "투표 가중치"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx

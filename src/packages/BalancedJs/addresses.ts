@@ -59,7 +59,7 @@ const SEJONG_ADDRESSES = {
   bnusd: 'cx5838cb516d6156a060f90e9a3de92381331ff024',
   baln: 'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b',
   bwt: 'cx68b822ae2acc76e9ec6143a8afbeb79e50a26e8f',
-  multicall: 'cx75256fadf232ad1124d9c6cd70c9b1ec122a0f47',
+  multicall: 'cx02510602b5f028ee418fc5a8ba893aa2dbb56ece',
   disbursement: '',
 };
 

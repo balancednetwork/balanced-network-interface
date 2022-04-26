@@ -2,6 +2,8 @@ import * as React from 'react';
 
 import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget, ResolutionString } from 'charting_library';
 
+import { theme } from 'app/theme';
+
 import DataFeed from './api';
 
 export interface ChartContainerProps {
@@ -56,11 +58,11 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
       locale: this.props.locale || 'en',
       fullscreen: this.props.fullscreen,
       autosize: this.props.autosize,
-      theme: 'Dark',
       client_id: this.props.clientId,
       user_id: this.props.userId,
       charts_storage_url: this.props.chartsStorageUrl,
       charts_storage_api_version: this.props.chartsStorageApiVersion,
+      theme: 'Dark',
       custom_css_url: './themed.css',
       disabled_features: ['header_compare', 'timeframes_toolbar', 'header_saveload'],
     };
@@ -68,6 +70,56 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
     const tvWidget = new widget(widgetOptions);
     const setActiveSymbol = this.props.setActiveSymbol!;
     tvWidget.onChartReady(() => {
+      tvWidget.applyOverrides({
+        'paneProperties.backgroundType': 'solid',
+        'paneProperties.background': theme().colors.bg4,
+        'paneProperties.vertGridProperties.color': 'rgba(0,0,0,0)',
+        'paneProperties.horzGridProperties.color': 'rgba(0,0,0,0)',
+
+        'mainSeriesProperties.priceLineColor': theme().colors.primary,
+
+        'mainSeriesProperties.candleStyle.upColor': theme().colors.primary,
+        'mainSeriesProperties.candleStyle.downColor': theme().colors.alert,
+        'mainSeriesProperties.candleStyle.drawWick': true,
+        'mainSeriesProperties.candleStyle.drawBorder': true,
+        'mainSeriesProperties.candleStyle.borderColor': theme().colors.primary,
+        'mainSeriesProperties.candleStyle.borderUpColor': theme().colors.primary,
+        'mainSeriesProperties.candleStyle.borderDownColor': theme().colors.alert,
+        'mainSeriesProperties.candleStyle.wickUpColor': theme().colors.primary,
+        'mainSeriesProperties.candleStyle.wickDownColor': theme().colors.alert,
+
+        'mainSeriesProperties.hollowCandleStyle.upColor': theme().colors.primary,
+        'mainSeriesProperties.hollowCandleStyle.downColor': theme().colors.alert,
+        'mainSeriesProperties.hollowCandleStyle.drawWick': true,
+        'mainSeriesProperties.hollowCandleStyle.drawBorder': true,
+        'mainSeriesProperties.hollowCandleStyle.borderColor': theme().colors.primary,
+        'mainSeriesProperties.hollowCandleStyle.borderUpColor': theme().colors.primary,
+        'mainSeriesProperties.hollowCandleStyle.borderDownColor': theme().colors.alert,
+        'mainSeriesProperties.hollowCandleStyle.wickUpColor': theme().colors.primary,
+        'mainSeriesProperties.hollowCandleStyle.wickDownColor': theme().colors.alert,
+
+        'mainSeriesProperties.haStyle.upColor': theme().colors.primary,
+        'mainSeriesProperties.haStyle.downColor': theme().colors.alert,
+        'mainSeriesProperties.haStyle.drawWick': true,
+        'mainSeriesProperties.haStyle.drawBorder': true,
+        'mainSeriesProperties.haStyle.borderColor': theme().colors.primary,
+        'mainSeriesProperties.haStyle.borderUpColor': theme().colors.primary,
+        'mainSeriesProperties.haStyle.borderDownColor': theme().colors.alert,
+        'mainSeriesProperties.haStyle.wickUpColor': theme().colors.primary,
+        'mainSeriesProperties.haStyle.wickDownColor': theme().colors.alert,
+
+        'mainSeriesProperties.barStyle.upColor': theme().colors.primary,
+        'mainSeriesProperties.barStyle.downColor': theme().colors.alert,
+
+        'mainSeriesProperties.lineStyle.color': theme().colors.primary,
+
+        'mainSeriesProperties.areaStyle.color1': 'rgba(33, 150, 243, 0.28)',
+        'mainSeriesProperties.areaStyle.color2': theme().colors.primary,
+        'mainSeriesProperties.areaStyle.linecolor': theme().colors.primary,
+
+        'mainSeriesProperties.baselineStyle.topLineColor': theme().colors.primary,
+        'mainSeriesProperties.baselineStyle.bottomLineColor': theme().colors.alert,
+      });
       tvWidget
         .activeChart()
         .onSymbolChanged()

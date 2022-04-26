@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-23 18:28\n"
+"PO-Revision-Date: 2022-04-26 19:20\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -201,7 +201,7 @@ msgstr "Annuler"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
-msgstr ""
+msgstr "Annulez toutes les transactions en attente sur votre Ledger, ou donnez à Chrome la permission de l'utiliser."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Cancelled"
@@ -223,7 +223,7 @@ msgstr "Modifer le vote"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Change vote?"
-msgstr ""
+msgstr "Changer le vote ?"
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
@@ -231,7 +231,7 @@ msgstr "Changer de portefeuille"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Choose a wallet from your Ledger:"
-msgstr ""
+msgstr "Choisissez un portefeuille de votre Ledger :"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -267,7 +267,7 @@ msgstr "Frais réclamés."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claimed {0} BALN."
-msgstr ""
+msgstr "{0} BALN réclamés."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claimed {0} ICX."
@@ -279,11 +279,11 @@ msgstr "Réclamation d'ICX..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claiming fees..."
-msgstr ""
+msgstr "Réclamation des frais..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claiming rewards..."
-msgstr ""
+msgstr "Réclamation des récompenses..."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -355,7 +355,7 @@ msgstr "Création d'un pool"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Current"
-msgstr ""
+msgstr "Actuel"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
@@ -552,7 +552,7 @@ msgstr "Récompenses du prêt"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Loan to value ratio"
-msgstr ""
+msgstr "Ratio prêt - valeur"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
@@ -653,7 +653,7 @@ msgstr "Propositions"
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Proposed"
-msgstr ""
+msgstr "Proposé"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
@@ -706,7 +706,7 @@ msgstr "Suppression"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaid {0} bnUSD."
-msgstr ""
+msgstr "Remboursé {0} bnUSD."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay"
@@ -714,7 +714,7 @@ msgstr "Rembourser"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay Balanced Dollars?"
-msgstr ""
+msgstr "Rembourser Balanced Dollar (bnUSD) ?"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
@@ -854,11 +854,11 @@ msgstr "Soumettre une proposition ?"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote"
-msgstr ""
+msgstr "Soumettre le vote"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Submit vote?"
-msgstr ""
+msgstr "Soumettre le vote ?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submitting a proposal..."
@@ -946,7 +946,7 @@ msgstr "Il n'y a pas d'unstaking d'ICX."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "There's no liquidity pool for this pair yet."
-msgstr ""
+msgstr "Il n'y a pas encore de pool de liquidité pour cette paire."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "They'll unstake on {0}, around {1}."
@@ -958,7 +958,7 @@ msgstr "Titre"
 
 #: src/app/containers/ProposalPage/Funding.tsx
 msgid "To"
-msgstr ""
+msgstr "À"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -973,7 +973,7 @@ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "To receive BALN, you must have ICX in the pool at 1pm Eastern each day."
-msgstr ""
+msgstr "Pour recevoir BALN, vous devez avoir ICX dans la pool à 1h pm EST chaque jour."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
@@ -1181,7 +1181,7 @@ msgstr ""
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "You rejected"
-msgstr ""
+msgstr "Vous avez rejeté"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD pool. The smaller your loan, the less rebalancing affects you."
@@ -1198,7 +1198,7 @@ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Your ICX will be locked for 24 hours."
-msgstr ""
+msgstr "Vos ICX seront vérouillés pendant 24 heures."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be staked, so your collateral value will increase over time."
@@ -1249,11 +1249,11 @@ msgstr "{0}"
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} \n"
 "liquidity pool{2}"
-msgstr ""
+msgstr "{0} / {1} pool de liquidité {2}"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} liquidity pool"
-msgstr ""
+msgstr "{0} / {1} pool de liquidité"
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "{0} BALN unstaking"
@@ -1269,7 +1269,7 @@ msgstr "{0} ICX ajouté à votre portefeuille."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"
-msgstr ""
+msgstr "{0} ICX est prêt à être réclamé"
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX unstaking"
@@ -1277,11 +1277,11 @@ msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} liquidity pool"
-msgstr ""
+msgstr "{0} pool de liquidité"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} liquidity pool{1}"
-msgstr ""
+msgstr "{0} pool de liquidité {1}"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx

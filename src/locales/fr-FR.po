@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-26 19:20\n"
+"PO-Revision-Date: 2022-04-27 07:24\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -881,7 +881,7 @@ msgstr "Fournir de la liquidité"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Supply liquidity for these assets in any quantity to create a new pool."
-msgstr ""
+msgstr "Fournir de la liquidité pour ces actifs dans n'importe quelle quantité pour créer un nouveau pool."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
@@ -893,7 +893,7 @@ msgstr "Apport"
 
 #: src/app/components/trade/utils.tsx
 msgid "Supplying {pair} liquidity..."
-msgstr ""
+msgstr "Apport de liquidité {pair}..."
 
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-14 23:24\n"
+"PO-Revision-Date: 2022-04-23 18:28\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -99,6 +99,7 @@ msgstr "Tu colateral está bloqueado"
 msgid "All time"
 msgstr "Desde siempre"
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -181,6 +182,7 @@ msgstr "Préstamo de {0} bnUSD."
 msgid "Borrowing bnUSD..."
 msgstr "Prestando bnUSD..."
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -213,10 +215,15 @@ msgstr "Velas"
 msgid "Casting your vote..."
 msgstr "Enviando voto..."
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Change vote"
 msgstr "Cambiar voto"
+
+#: src/app/components/ProposalModal/index.tsx
+msgid "Change vote?"
+msgstr "Cambiar voto?"
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
@@ -345,6 +352,10 @@ msgstr "Crear pool"
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Creating pool"
 msgstr "Creando pool"
+
+#: src/app/containers/ProposalPage/Ratio.tsx
+msgid "Current"
+msgstr "Actual"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
@@ -640,6 +651,10 @@ msgstr "Tipo de propuesta"
 msgid "Proposals"
 msgstr "Propuestas"
 
+#: src/app/containers/ProposalPage/Ratio.tsx
+msgid "Proposed"
+msgstr "Propuesto"
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
 msgstr "Quórum no alcanzado"
@@ -665,6 +680,7 @@ msgstr "Umbral de rebalancing"
 msgid "Receive"
 msgstr "Recibir"
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -730,6 +746,7 @@ msgstr "Selecciona un token"
 #: src/app/components/home/wallets/SendPanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/containers/ProposalPage/Funding.tsx
 msgid "Send"
 msgstr "Enviar"
 
@@ -835,6 +852,14 @@ msgstr "Enviar propuesta"
 msgid "Submit proposal?"
 msgstr "Enviar propuesta?"
 
+#: src/app/components/ProposalModal/index.tsx
+msgid "Submit vote"
+msgstr "Enviar voto"
+
+#: src/app/components/ProposalModal/index.tsx
+msgid "Submit vote?"
+msgstr "Enviar voto?"
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submitting a proposal..."
 msgstr "Enviando una propuesta..."
@@ -930,6 +955,10 @@ msgstr "Dejarán de estar staked en {0}, alrededor de {1}."
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
 msgstr "Título"
+
+#: src/app/containers/ProposalPage/Funding.tsx
+msgid "To"
+msgstr "Para"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -1043,6 +1072,10 @@ msgstr "Votar"
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
 msgstr "Voto emitido."
+
+#: src/app/components/ProposalModal/index.tsx
+msgid "Voting weight"
+msgstr "Peso de votación"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx

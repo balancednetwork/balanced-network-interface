@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -21,7 +22,9 @@ export default function Funding({ recipient, amounts }: Props) {
   return (
     <Wrapper>
       <BoxPanel width={'50%'}>
-        <Heading variant="p">Send</Heading>
+        <Heading variant="p">
+          <Trans>Send</Trans>
+        </Heading>
         <List>
           {amounts
             .map(({ amount, address }) =>
@@ -38,7 +41,9 @@ export default function Funding({ recipient, amounts }: Props) {
         </List>
       </BoxPanel>
       <BoxPanel width={'50%'}>
-        <Heading variant="p">To</Heading>
+        <Heading variant="p">
+          <Trans>To</Trans>
+        </Heading>
         <Typography variant="p" textAlign="center">
           {recipient}
         </Typography>

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-16 07:22\n"
+"PO-Revision-Date: 2022-04-23 18:28\n"
 "Last-Translator: \n"
 "Language: de_DE\n"
 "Language-Team: German\n"
@@ -99,6 +99,7 @@ msgstr "Alle Sicherheiten gesperrt"
 msgid "All time"
 msgstr "Allzeit"
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -181,6 +182,7 @@ msgstr "Ausgeliehene {0} bnUSD."
 msgid "Borrowing bnUSD..."
 msgstr "Ausleihen von bnUSD..."
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -213,10 +215,15 @@ msgstr "Kerzen"
 msgid "Casting your vote..."
 msgstr "Gib deine Stimme ab..."
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Change vote"
 msgstr "Stimme ändern"
+
+#: src/app/components/ProposalModal/index.tsx
+msgid "Change vote?"
+msgstr ""
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
@@ -344,6 +351,10 @@ msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Creating pool"
+msgstr ""
+
+#: src/app/containers/ProposalPage/Ratio.tsx
+msgid "Current"
 msgstr ""
 
 #: src/app/components/home/TransactionPanel.tsx
@@ -640,6 +651,10 @@ msgstr ""
 msgid "Proposals"
 msgstr ""
 
+#: src/app/containers/ProposalPage/Ratio.tsx
+msgid "Proposed"
+msgstr ""
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
 msgstr ""
@@ -665,6 +680,7 @@ msgstr ""
 msgid "Receive"
 msgstr ""
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -730,6 +746,7 @@ msgstr ""
 #: src/app/components/home/wallets/SendPanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/containers/ProposalPage/Funding.tsx
 msgid "Send"
 msgstr ""
 
@@ -835,6 +852,14 @@ msgstr "Vorschlag einreichen"
 msgid "Submit proposal?"
 msgstr "Vorschlag einreichen?"
 
+#: src/app/components/ProposalModal/index.tsx
+msgid "Submit vote"
+msgstr ""
+
+#: src/app/components/ProposalModal/index.tsx
+msgid "Submit vote?"
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submitting a proposal..."
 msgstr "Vorschlag wird eingereicht..."
@@ -876,19 +901,19 @@ msgstr ""
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/containers/TradePage/index.tsx
 msgid "Swap"
-msgstr ""
+msgstr "Tauschen"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Swap {0} for {1}?"
-msgstr ""
+msgstr "Tausche {0} für {1}?"
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
-msgstr ""
+msgstr "{inputAmount} {inputCurrency} wurden getauscht für {outputAmount} {outputCurrency}."
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapping {inputCurrency} for {outputCurrency}..."
-msgstr ""
+msgstr "Tausche {inputCurrency} für {outputCurrency}..."
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
@@ -930,6 +955,10 @@ msgstr "Sie werden am {0} um {1} zur Verfügung stehen."
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
 msgstr "Titel"
+
+#: src/app/containers/ProposalPage/Funding.tsx
+msgid "To"
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -1042,6 +1071,10 @@ msgstr ""
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
+msgstr ""
+
+#: src/app/components/ProposalModal/index.tsx
+msgid "Voting weight"
 msgstr ""
 
 #: src/app/containers/ProposalPage/index.tsx

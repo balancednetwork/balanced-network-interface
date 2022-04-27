@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-27 08:29\n"
+"PO-Revision-Date: 2022-04-27 16:38\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -475,11 +475,11 @@ msgstr "Si bnUSD est inférieur à 1$"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "If the ICX price reaches ${0}, all your collateral will be liquidated."
-msgstr ""
+msgstr "Si le prix de l'ICX atteint {0}$, toute votre garantie sera liquidée."
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
-msgstr ""
+msgstr "Si le prix baisse plus que ce montant, votre échange échouera."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "In contract"
@@ -521,7 +521,7 @@ msgstr "Soumettre une proposition coûte 100 bnUSD."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Keep a close eye on this number, as rebalancing may cause it to fluctuate."
-msgstr ""
+msgstr "Gardez un œil vigilant sur ce nombre, car le réequilibrage peut entraîner sa fluctuation."
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "Line"
@@ -666,15 +666,15 @@ msgstr "Rééquilibrage"
 
 #: src/app/components/trade/RebalanceButton.tsx
 msgid "Rebalancing complete."
-msgstr ""
+msgstr "Rééquilibrage terminé."
 
 #: src/app/components/trade/RebalanceButton.tsx
 msgid "Rebalancing the bnUSD price..."
-msgstr ""
+msgstr "Rééquilibrage du prix du bnUSD..."
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Rebalancing threshold"
-msgstr ""
+msgstr "Seul de rééquilibrage"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
@@ -776,11 +776,11 @@ msgstr "Envoi en cours {0}..."
 
 #: src/app/components/trade/utils.tsx
 msgid "Sending {currency} to the {pair} pool..."
-msgstr ""
+msgstr "Envoi de {currency} dans le pool {pair}..."
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Sent {0} {1} to {address}."
-msgstr ""
+msgstr "Envoyé {0} {1} à {address}."
 
 #: src/app/components/Header/index.tsx
 msgid "Sign in"
@@ -1153,7 +1153,7 @@ msgstr "Retrait ICX en cours..."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Withdrawing collateral..."
-msgstr ""
+msgstr "Retrait de garantie..."
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdrawing sICX..."
@@ -1173,7 +1173,7 @@ msgstr "Vous avez approuvé"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "You can't withdraw any collateral if you go beyond this threshold."
-msgstr ""
+msgstr "Vous ne pouvez pas retirer de garantie si vous dépassez ce seuil."
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
@@ -1202,7 +1202,7 @@ msgstr "Vos ICX seront vérouillés pendant 24 heures."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be staked, so your collateral value will increase over time."
-msgstr ""
+msgstr "Vos ICX seront stakés, donc la valeur de votre garantie augmentera avec le temps."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Your ICX will be unstaked as more collateral is deposited into Balanced."

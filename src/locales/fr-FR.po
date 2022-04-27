@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-27 17:31\n"
+"PO-Revision-Date: 2022-04-27 20:27\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -271,7 +271,7 @@ msgstr "{0} BALN réclamés."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claimed {0} ICX."
-msgstr "Réclamation de {0} ICX."
+msgstr "{0} ICX réclamés."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claiming ICX..."
@@ -475,7 +475,7 @@ msgstr "Si bnUSD est inférieur à 1$"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "If the ICX price reaches ${0}, all your collateral will be liquidated."
-msgstr "Si le prix de l'ICX atteint {0}$, toute votre garantie sera liquidée."
+msgstr "Si le prix de l'ICX atteint {0}$, toutes vos garanties seront liquidées."
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "If the price slips by more than this amount, your swap will fail."

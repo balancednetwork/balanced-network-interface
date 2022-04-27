@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-27 07:24\n"
+"PO-Revision-Date: 2022-04-27 08:29\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -698,7 +698,7 @@ msgstr "Supprimer"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
-msgstr ""
+msgstr "Supprimez vos actifs pour annuler cette transaction."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Removing"
@@ -756,7 +756,7 @@ msgstr "Envoyer un actif ?"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Send each asset to the contract"
-msgstr ""
+msgstr "Envoyez chaque actif au contrat"
 
 #: src/app/components/home/wallets/SendPanel.tsx
 msgid "Send max"
@@ -905,7 +905,7 @@ msgstr "Échanger"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Swap {0} for {1}?"
-msgstr ""
+msgstr "Échanger {0} pour {1} ?"
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
@@ -963,7 +963,7 @@ msgstr "À"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
-msgstr ""
+msgstr "Pour gagner des récompenses Balanced (BALN), contractez un prêt ou fournissez de la liquidité sur la page Trade."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -1290,21 +1290,21 @@ msgstr ""
 
 #: src/app/components/ProposalInfo/components.tsx
 msgid "{0} voters"
-msgstr ""
+msgstr "{0} votants"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "{0} {1} added to your wallet"
-msgstr ""
+msgstr "{0} {1} ajouté à votre portefeuille"
 
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "{0} {1} per {2}"
-msgstr ""
+msgstr "{0} {1} par {2}"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "{0}% staked"
-msgstr ""
+msgstr "{0}% stackés"
 
 #: src/app/components/trade/utils.tsx
 msgid "{currency} sent to the {pair} pool."
@@ -1324,9 +1324,9 @@ msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "{outputAmount} {outputCurrency} added to your wallet."
-msgstr ""
+msgstr "{outputAmount} {outputCurrency} ajouté à votre portefeuille."
 
 #: src/app/components/ProposalInfo/components.tsx
 msgid "{value}% voted"
-msgstr ""
+msgstr "{value}% de votes"
 

@@ -76,6 +76,8 @@ export class TVChartContainer extends React.PureComponent<Partial<ChartContainer
         'paneProperties.vertGridProperties.color': 'rgba(0,0,0,0)',
         'paneProperties.horzGridProperties.color': 'rgba(0,0,0,0)',
 
+        'mainSeriesProperties.statusViewStyle.symbolTextSource': 'ticker',
+
         'mainSeriesProperties.priceLineColor': theme().colors.primary,
 
         'mainSeriesProperties.candleStyle.upColor': theme().colors.primary,

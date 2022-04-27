@@ -14,3 +14,7 @@ html.theme-dark [class*='symbolDescription-'] {
 	--tv-color-toolbar-button-text-active: #2ca9b7;
 	--tv-color-toolbar-button-text-active-hover: #FFF;
 }
+
+#header-toolbar-symbol-search, input[class*='search-'], [class*='symbolTitle-'] {
+	text-transform: none !important;
+}

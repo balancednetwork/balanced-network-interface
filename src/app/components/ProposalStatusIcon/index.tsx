@@ -53,7 +53,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <CalendarIcon height="22" width="22" />
         <Typography variant="content" color="white">
-          <Trans>{`Starting in ${startTimeStr}`}</Trans>
+          <Trans>{`Voting starts in ${startTimeStr}`}</Trans>
         </Typography>
       </Flex>
     );
@@ -65,7 +65,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            <Trans>{`${endTimeStr} left`}</Trans>
+            <Trans>{`Voting ends in ${endTimeStr}`}</Trans>
           </Typography>
         </Flex>
       );
@@ -74,7 +74,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            <Trans>{`Starting in ${startTimeStr}`}</Trans>
+            <Trans>{`Voting starts in ${startTimeStr}`}</Trans>
           </Typography>
         </Flex>
       );

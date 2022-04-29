@@ -24,6 +24,7 @@ interface PoolState {
   baseToken: Token;
   quoteToken: Token;
   liquidityToken: Token;
+  minQuoteTokenAmount: BigNumber;
 }
 
 export function pairToken(chainId: number): Token {
@@ -70,6 +71,9 @@ export function usePools(): { [poolId: number]: PoolState } {
           // NULL_CONTRACT_ADDRESS or bnJs.ICX.address?
           const baseToken = tokensByAddress[stats['base_token'] || NULL_CONTRACT_ADDRESS];
           const quoteToken = tokensByAddress[stats['quote_token'] || NULL_CONTRACT_ADDRESS];
+          const minQuoteTokenAmount = new BigNumber(stats['min_quote'], 16).div(
+            new BigNumber(10).pow(stats['quote_decimals']),
+          );
 
           if (!baseToken || !quoteToken) return;
 
@@ -95,6 +99,7 @@ export function usePools(): { [poolId: number]: PoolState } {
               baseToken,
               quoteToken,
               liquidityToken,
+              minQuoteTokenAmount,
             };
           } else {
             const baseReserve = new BigNumber(stats['base'], 16);
@@ -113,6 +118,7 @@ export function usePools(): { [poolId: number]: PoolState } {
               baseToken,
               quoteToken,
               liquidityToken,
+              minQuoteTokenAmount,
             };
           }
         }),
@@ -286,6 +292,7 @@ export function usePoolData(poolId: number) {
       return {
         totalBase: pool.base,
         totalQuote: pool.quote,
+        minQuoteTokenAmount: pool.minQuoteTokenAmount,
         totalLP: balance?.balance,
         suppliedLP: balance?.suppliedLP,
         totalReward: rewardFrac,

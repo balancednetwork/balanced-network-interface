@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { isNativeCurrency } from 'constants/tokens';
+import { usePoolData } from 'hooks/usePools';
 import { useQueuePair } from 'hooks/useQueuePair';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
@@ -143,6 +144,8 @@ export function useDerivedMintInfo(): {
   const [pairState2, pair2] = useQueuePair();
   const [pairState, pair] = isQueue ? [pairState2, pair2] : [pairState1, pair1];
 
+  const poolData = usePoolData(Number(pair?.poolId));
+
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =
     pairState === PairState.NOT_EXISTS ||
@@ -159,8 +162,8 @@ export function useDerivedMintInfo(): {
   const balances = useCurrencyBalances(account ?? undefined, currencyArr);
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
     () => ({
-      [Field.CURRENCY_A]: balances[0],
-      [Field.CURRENCY_B]: balances[1],
+      [Field.CURRENCY_A]: balances[0], // base token
+      [Field.CURRENCY_B]: balances[1], // quote token
     }),
     [balances],
   );
@@ -328,7 +331,10 @@ export function useDerivedMintInfo(): {
       error = <Trans>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</Trans>;
     }
 
-    if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
+    if (
+      (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) ||
+      (poolData && Number(currencyBAmount?.toFixed(2)) < poolData?.minQuoteTokenAmount.toNumber())
+    ) {
       error = <Trans>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</Trans>;
     }
   }

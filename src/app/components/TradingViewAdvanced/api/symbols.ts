@@ -43,7 +43,7 @@ export const getSymbolInfo = (name: string): BalancedLibrarySymbolInfo => {
     description: '',
     type: 'crypto',
     session: '24x7',
-    exchange: '',
+    exchange: 'Balanced',
     listed_exchange: '',
     timezone: 'America/New_York',
     format: 'price',

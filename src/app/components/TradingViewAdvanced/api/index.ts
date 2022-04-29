@@ -35,8 +35,6 @@ type PeriodParamsWithOptionalCountBack = Omit<PeriodParams, 'countBack'> & { cou
 
 export const defaultConfig: DatafeedConfiguration = {
   supported_resolutions: [
-    '5' as ResolutionString,
-    '15' as ResolutionString,
     '60' as ResolutionString,
     '120' as ResolutionString,
     '240' as ResolutionString,

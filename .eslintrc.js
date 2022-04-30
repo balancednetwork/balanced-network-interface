@@ -49,5 +49,5 @@ module.exports = {
       rules: { 'prettier/prettier': ['warn', prettierOptions] },
     },
   ],
-  ignorePatterns: ['**/hw-app-icx/**/*.js', '**/charting_library/**/**', '**/datafeeds/**/**'],
+  ignorePatterns: ['**/hw-app-icx/**/*.js', '**/charting_library/**/**'],
 };

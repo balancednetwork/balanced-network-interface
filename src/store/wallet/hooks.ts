@@ -135,7 +135,7 @@ export function useTokenBalances(
           };
         });
 
-        const data: any[] = await bnJs.Multicall.getAggregateData(false, cds);
+        const data: any[] = await bnJs.Multicall.getAggregateData(cds);
         const result = data.map(bal => (bal === null ? undefined : bal));
 
         setBalances(result);

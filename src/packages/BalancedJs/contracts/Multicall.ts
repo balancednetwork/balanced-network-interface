@@ -42,9 +42,9 @@ export default class Multicall extends Contract {
     return this.call(callParams);
   }
 
-  async getAggregateData(requireSuccess: boolean, calls: CallData[]) {
+  async getAggregateData(calls: CallData[]) {
     try {
-      const result = await this.tryAggregate(requireSuccess, calls);
+      const result = await this.tryAggregate(false, calls);
       const aggs = result['returnData'];
 
       const data = aggs.map(agg => {

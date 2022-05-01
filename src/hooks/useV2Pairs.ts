@@ -61,7 +61,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
           }
         });
 
-        const data: any[] = await bnJs.Multicall.getAggregateData(false, cds);
+        const data: any[] = await bnJs.Multicall.getAggregateData(cds);
 
         const ps = data.map((stats, idx): [PairState, Pair | null] => {
           const [tokenA, tokenB] = tokens[idx];
@@ -158,7 +158,7 @@ export function useBalances(
           params: [account],
         });
 
-      const data: any[] = await bnJs.Multicall.getAggregateData(false, cds);
+      const data: any[] = await bnJs.Multicall.getAggregateData(cds);
       const sicxBalance = data[data.length - 1];
 
       const balances = poolKeys.map((poolId, idx) => {

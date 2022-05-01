@@ -134,35 +134,56 @@ export function useBalances(
     async function fetchBalances() {
       if (!account) return;
 
-      const balances = await Promise.all(
-        Object.keys(pools).map(async poolId => {
-          const pool = pools[+poolId];
+      const poolKeys = Object.keys(pools);
 
-          if (!pool) return;
-
+      const cds: CallData[] = poolKeys
+        .map(poolId => {
           if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-            const [balance, balance1] = await Promise.all([
-              bnJs.Dex.getICXBalance(account),
-              bnJs.Dex.getSicxEarnings(account),
-            ]);
-
             return {
-              poolId: +poolId,
-              balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(balance, 16).toFixed()),
-              balance1: CurrencyAmount.fromRawAmount(pool.token1, new BigNumber(balance1, 16).toFixed()),
+              target: bnJs.Dex.address,
+              method: 'getICXBalance',
+              params: [account],
             };
           } else {
-            const balance = await bnJs.Dex.balanceOf(account, +poolId);
-
             return {
-              poolId: +poolId,
-              balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance, 16).toFixed()),
+              target: bnJs.Dex.address,
+              method: 'balanceOf',
+              params: [account, `0x${(+poolId).toString(16)}`],
             };
           }
-        }),
-      );
+        })
+        .concat({
+          target: bnJs.Dex.address,
+          method: 'getSicxEarnings',
+          params: [account],
+        });
 
-      setBalances(balances);
+      const data: any[] = await bnJs.Multicall.getAggregateData(false, cds);
+      const sicxBalance = data[data.length - 1];
+
+      const balances = poolKeys.map((poolId, idx) => {
+        const pool = pools[+poolId];
+        const balance = data[idx];
+
+        if (!pool) return undefined;
+
+        if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+          return {
+            poolId: +poolId,
+            balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(balance, 16).toFixed()),
+            balance1: CurrencyAmount.fromRawAmount(pool.token1, new BigNumber(sicxBalance, 16).toFixed()),
+          };
+        } else {
+          return {
+            poolId: +poolId,
+            balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance, 16).toFixed()),
+          };
+        }
+      });
+
+      if (balances.length > 0) {
+        setBalances(balances);
+      }
     }
 
     fetchBalances();

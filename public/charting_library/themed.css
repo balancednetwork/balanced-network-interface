@@ -1,0 +1,20 @@
+html:not(.theme-dark) [class*='symbolDescription-'],
+html.theme-dark [class*='symbolDescription-'] {
+    text-transform: none;
+}
+
+:root, .theme-dark:root {
+    --tv-color-platform-background: #021338;
+	--tv-color-pane-background: #021338;
+	--tv-color-toolbar-button-background-hover: #2ca9b7;
+	--tv-color-toolbar-button-background-secondary-hover: #FFF;
+	--tv-color-toolbar-button-background-expanded: #2ca9b7;
+	--tv-color-toolbar-button-text: #FFF;
+	--tv-color-toolbar-button-text-hover: #FFF;
+	--tv-color-toolbar-button-text-active: #2ca9b7;
+	--tv-color-toolbar-button-text-active-hover: #FFF;
+}
+
+#header-toolbar-symbol-search, input[class*='search-'], [class*='symbolTitle-'] {
+	text-transform: none !important;
+}

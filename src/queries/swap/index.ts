@@ -41,10 +41,15 @@ export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency
   });
 };
 
-export const formatBarItem = (bar: BarType, decimal: number, isPairInverted: boolean): BarType => {
+export const formatBarItem = (
+  bar: BarType,
+  decimal: number,
+  isPairInverted: boolean,
+  timeFormatConstant: number = 1_000_000,
+): BarType => {
   const formattedBar = isPairInverted
     ? {
-        time: bar.time / 1_000,
+        time: bar.time / timeFormatConstant,
         value: ONE.div(BalancedJs.utils.toFormat(bar.close, decimal)).toNumber(),
         open: ONE.div(BalancedJs.utils.toFormat(bar.open, decimal)).toNumber(),
         close: ONE.div(BalancedJs.utils.toFormat(bar.close, decimal)).toNumber(),
@@ -53,7 +58,7 @@ export const formatBarItem = (bar: BarType, decimal: number, isPairInverted: boo
         volume: ONE.div(BalancedJs.utils.toIcx(bar.volume)).toNumber(),
       }
     : {
-        time: bar.time / 1_000,
+        time: bar.time / timeFormatConstant,
         value: BalancedJs.utils.toFormat(bar.close, decimal).toNumber(),
         open: BalancedJs.utils.toFormat(bar.open, decimal).toNumber(),
         close: BalancedJs.utils.toFormat(bar.close, decimal).toNumber(),

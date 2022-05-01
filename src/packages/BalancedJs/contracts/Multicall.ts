@@ -12,6 +12,18 @@ export interface CallData {
 
 export const MULTICALL_POOL = 'cx75256fadf232ad1124d9c6cd70c9b1ec122a0f47';
 
+export function convertParams(params: any[]): string[] {
+  return params.map(param => {
+    if (typeof param === 'number') {
+      return IconConverter.toHexNumber(param);
+    } else if (typeof param === 'boolean') {
+      return param ? '0x1' : '0x0';
+    } else {
+      return param;
+    }
+  });
+}
+
 export default class Multicall extends Contract {
   constructor(contractSettings: ContractSettings) {
     super(contractSettings);

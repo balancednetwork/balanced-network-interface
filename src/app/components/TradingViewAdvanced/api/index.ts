@@ -29,6 +29,8 @@ const __subs: Subscriber[] = [];
 
 const LAST_BAR_CONSTANT = 604800000000;
 
+const TIME_FORMAT_CONSTATNT = 1_000;
+
 const PAIR_NAMES = SUPPORTED_PAIRS.map(pair => pair.name);
 
 type PeriodParamsWithOptionalCountBack = Omit<PeriodParams, 'countBack'> & { countBack?: number };
@@ -81,7 +83,9 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
         if (response.status === 200) {
           const { data } = response;
           const meta: { noData?: boolean } = {};
-          const dataMapped = data.map(item => formatBarItem(item, symbolInfo.decimal, symbolInfo.isPairInverted));
+          const dataMapped = data.map(item =>
+            formatBarItem(item, symbolInfo.decimal, symbolInfo.isPairInverted, TIME_FORMAT_CONSTATNT),
+          );
 
           if (countBack && countBack > data.length) {
             meta.noData = true;
@@ -108,7 +112,12 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
       getHistoryBars(_symbolInfo.pairID, resolution, now - LAST_BAR_CONSTANT, now).then(response => {
         if (response.status === 200) {
           const { data } = response;
-          const latestBar = formatBarItem(data.at(-1), _symbolInfo.decimal, _symbolInfo.isPairInverted);
+          const latestBar = formatBarItem(
+            data.at(-1),
+            _symbolInfo.decimal,
+            _symbolInfo.isPairInverted,
+            TIME_FORMAT_CONSTATNT,
+          );
           _onTick(latestBar);
         }
       });

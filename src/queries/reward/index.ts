@@ -36,6 +36,7 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
       let feesArr = await bnJs.Multicall.getAggregateData(cds);
 
       feesArr = feesArr.map(fees => {
+        if (!fees) return null;
         if (!Object.values(fees).find(value => !BalancedJs.utils.toIcx(value as string).isZero())) return null;
 
         const t = Object.keys(fees).reduce((prev, address) => {

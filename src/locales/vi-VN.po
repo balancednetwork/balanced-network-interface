@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-23 18:28\n"
+"PO-Revision-Date: 2022-05-04 02:15\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -359,7 +359,7 @@ msgstr "Hiện tại"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
-msgstr ""
+msgstr "Ngày Tháng"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -446,7 +446,7 @@ msgstr "Mức phí"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "For"
-msgstr ""
+msgstr "Cho"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
@@ -633,7 +633,7 @@ msgstr "Chi tiết"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
-msgstr ""
+msgstr "Đang gỡ sICX..."
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
@@ -645,7 +645,7 @@ msgstr "Đang xử lý giao dịch..."
 
 #: src/app/components/newproposal/ProposalTypesSelect.tsx
 msgid "Proposal type"
-msgstr ""
+msgstr "Loại đề xuất"
 
 #: src/app/containers/VotePage/index.tsx
 msgid "Proposals"
@@ -674,7 +674,7 @@ msgstr "Đang tái cân bằng giá bnUSD..."
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Rebalancing threshold"
-msgstr ""
+msgstr "Ngưỡng tái cân bằng"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
@@ -881,7 +881,7 @@ msgstr "Cung cấp thanh khoản (liquidity)"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Supply liquidity for these assets in any quantity to create a new pool."
-msgstr ""
+msgstr "Cung cấp thanh khoản để tạo 1 ao thanh khoản mới."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
@@ -938,19 +938,19 @@ msgstr "Giá bnUSD hiện tại là"
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "There's no BALN unstaking."
-msgstr ""
+msgstr "Hiện tại ko có BALN nào đang được gỡ ra."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "There's no ICX unstaking."
-msgstr ""
+msgstr "Hiện tại ko có ICX nào đang được gỡ ra."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "There's no liquidity pool for this pair yet."
-msgstr ""
+msgstr "Hiện chưa có thanh khoản trong ao này."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "They'll unstake on {0}, around {1}."
-msgstr ""
+msgstr "Unstake sẽ hoàn tất vào {0}, khoảng {1}."
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
@@ -958,7 +958,7 @@ msgstr "Tiêu đề"
 
 #: src/app/containers/ProposalPage/Funding.tsx
 msgid "To"
-msgstr ""
+msgstr "Tới"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -969,11 +969,11 @@ msgstr "Để nhận phần thưởng, mượn tiền hoặc cung cấp thanh kh
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."
-msgstr ""
+msgstr "Để nhận tiền phí hoạt động, khóa BALN vào hợp đồng thông minh."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "To receive BALN, you must have ICX in the pool at 1pm Eastern each day."
-msgstr ""
+msgstr "Để nhận được BLAN, bạn phải giữ ICX trong hồ thanh khoản vào 1PM giờ phương đông mỗi ngày."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
@@ -1017,34 +1017,34 @@ msgstr "Huỷ Stake sICX"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX?"
-msgstr ""
+msgstr "Gỡ khóa sICX?"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaked {0} BALN."
-msgstr ""
+msgstr "Gỡ khóa {0} BALN."
 
 #: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/index.tsx
 msgid "Unstaking"
-msgstr ""
+msgstr "Đang Gỡ khóa"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaking BALN..."
-msgstr ""
+msgstr "Đang gỡ khóa BALN..."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstaking takes 3 days."
-msgstr ""
+msgstr "Gỡ khóa mất 3 ngày."
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
-msgstr ""
+msgstr "Gỡ khóa {0} sICX. Hãy kiểm trả ví của bạn phần ICX để có thêm chi tiết."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Use Balanced in"
-msgstr ""
+msgstr "Sử dụng balanced trong"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
@@ -1060,7 +1060,7 @@ msgstr "Giá trị"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "View disclaimer"
-msgstr ""
+msgstr "Xem tuyên bố từ chối trách nhiệm"
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
@@ -1071,16 +1071,16 @@ msgstr "Bỏ phiếu"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
-msgstr ""
+msgstr "Bỏ phiếu."
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
-msgstr ""
+msgstr "Cân nặng phiếu bầu"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Voting weight: {0} BALN"
-msgstr ""
+msgstr "Trọng lượng phiếu bầu: {0} BALN"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Voting will begin at 5pm UTC,"
@@ -1102,16 +1102,18 @@ msgstr "Ví:"
 msgid "Wallet:\n"
 "{0} {1} /\n"
 "{2} {3}"
-msgstr ""
+msgstr "Ví:\n"
+"{0}{1}/{2}{3}"
 
 #: src/app/components/trade/LPPanel.tsx
 msgid "Wallet: {0} {1}"
-msgstr ""
+msgstr "Ví: {0}{1}"
 
 #: src/app/components/trade/LPPanel.tsx
 msgid "Wallet: {0} {1} /\n"
 "{2} {3}"
-msgstr ""
+msgstr "Ví: {0} {1} /\n"
+"{2} {3}"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
@@ -1157,15 +1159,15 @@ msgstr "Đang lấy lại tài sản thế chấp..."
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Withdrawing sICX..."
-msgstr ""
+msgstr "Đang rút sICX..."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Withdrawing {0}"
-msgstr ""
+msgstr "Đang rút {0}"
 
 #: src/app/components/trade/utils.tsx
 msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
-msgstr ""
+msgstr "Đang rút {inputCurrency}/{outputCurrency} trong hồ thanh khoản..."
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "You approved"
@@ -1185,11 +1187,11 @@ msgstr "Bạn đã phản đối"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD pool. The smaller your loan, the less rebalancing affects you."
-msgstr ""
+msgstr "Bạn sẽ được thưởng BALN, và có thể giảm thiểu những biến động bằng cách cung cấp thanh khoản vào ao sICX/bnUSD. Số nợ càng nhỏ thì biến động từ tái cân bằng càng nhỏ."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "You'll receive sICX (staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."
-msgstr ""
+msgstr "Bạn sẽ nhận được sICX (Khóa ICX). Bỏ khóa hoặc đổi qua ICX trong phần Trao đổi."
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "Your BALN will unstake on {0} at\n"
@@ -1202,20 +1204,20 @@ msgstr "ICX sẽ bị khóa trong 24 giờ."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be staked, so your collateral value will increase over time."
-msgstr ""
+msgstr "ICX sẽ bị khóa, vì vậy giá trị tài sản thế chấp của bạn sẽ tăng lên theo thời gian."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Your ICX will be unstaked as more collateral is deposited into Balanced."
-msgstr ""
+msgstr "ICX sẽ được mở khóa khi số lượng ICX được nạp thêm vào Balanced từ những người khác."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your collateral balance is <0>{0} sICX</0> (staked ICX). The ICX value of your sICX is displayed, and will increase over time from staking rewards. You can't use it unless you withdraw it."
-msgstr ""
+msgstr "Số dư tài khoản của bạn là {0} sICX. (ICX bị khóa). Giá trị hiển thị là ICX và sẽ tăng lên theo thời gian từ việc đặt khóa ICX. Bạn không thể sử dụng nó trừ khi bạn rút nó ra."
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-msgstr ""
+msgstr "Số dư tài sản của bạn. Nhận được tiền lãi từ staking, nhưng cũng sẽ bị bán theo thời gian để trả khoản vay của bạn."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Your daily rewards"
@@ -1224,7 +1226,7 @@ msgstr "Phần thưởng hằng ngày"
 #: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Your supply"
-msgstr ""
+msgstr "Số cung của bạn"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "and ends after 5 days."
@@ -1232,7 +1234,7 @@ msgstr "và kết thúc sau 5 ngày."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
-msgstr ""
+msgstr "hồ thanh khoản"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then click Supply."
@@ -1240,20 +1242,21 @@ msgstr "rồi ấn vào Supply."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then create the pool."
-msgstr ""
+msgstr "sau đó tạo hồ thanh khoản."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "{0}"
-msgstr ""
+msgstr "{0}"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} \n"
 "liquidity pool{2}"
-msgstr ""
+msgstr "{0}/{1}\n"
+"hồ thành khoản {2}"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} liquidity pool"
-msgstr ""
+msgstr "hồ thanh khoản {0}/{1}"
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "{0} BALN unstaking"
@@ -1277,38 +1280,38 @@ msgstr "Cổ phần đang được rút: {0} ICX"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} liquidity pool"
-msgstr ""
+msgstr "hồ thanh khoản {0}"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} liquidity pool{1}"
-msgstr ""
+msgstr "{0} hồ thanh khoản{1}"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "{0} sICX added to your wallet."
-msgstr ""
+msgstr "{0} sICX đã được thêm vào ví của bạn."
 
 #: src/app/components/ProposalInfo/components.tsx
 msgid "{0} voters"
-msgstr ""
+msgstr "{0} cử tri"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "{0} {1} added to your wallet"
-msgstr ""
+msgstr "{0}{1} đã được thêm vào ví của bạn"
 
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "{0} {1} per {2}"
-msgstr ""
+msgstr "{0}{1} cho mỗi {2}"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "{0}% staked"
-msgstr ""
+msgstr "{0}% đã khóa"
 
 #: src/app/components/trade/utils.tsx
 msgid "{currency} sent to the {pair} pool."
-msgstr ""
+msgstr "{currency} gửi tới ao {pair} thanh khoản."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "{endTimeStr} left"
@@ -1320,7 +1323,7 @@ msgstr "{inputAmount}{inputCurrency} and {outputAmount}{outputCurrency} đã đ�
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "{label} proposal submitted."
-msgstr ""
+msgstr "{label} đề xuất đã được gửi đi."
 
 #: src/app/components/trade/utils.tsx
 msgid "{outputAmount} {outputCurrency} added to your wallet."

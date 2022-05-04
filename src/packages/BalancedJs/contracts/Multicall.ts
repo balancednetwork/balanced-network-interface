@@ -10,8 +10,6 @@ export interface CallData {
   params: string[];
 }
 
-export const MULTICALL_POOL = 'cx75256fadf232ad1124d9c6cd70c9b1ec122a0f47';
-
 export function convertParams(params: any[]): string[] {
   return params.map(param => {
     if (typeof param === 'number') {

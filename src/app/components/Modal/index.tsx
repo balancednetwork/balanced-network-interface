@@ -27,7 +27,7 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
 const AnimatedDialogContent = animated(DialogContent);
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogContent = styled(({ minHeight, maxHeight, maxWidth, mobile, isOpen, ...rest }) => (
+const StyledDialogContent = styled(({ minHeight, maxHeight, maxWidth, mobile, isOpen, fullscreen, ...rest }) => (
   <AnimatedDialogContent {...rest} />
 )).attrs({
   'aria-label': 'dialog',
@@ -82,6 +82,24 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, maxWidth, mobile, is
       width: 50vw;
       margin: 0;
     `}
+
+    ${({ theme, fullscreen }) =>
+      fullscreen &&
+      theme.mediaWidth.up360`
+        width: calc(100vw - 40px);
+        max-width: calc(100vw - 40px);
+        height: calc(100vh - 180px);
+        max-height: calc(100vh - 180px);
+      `}
+
+      ${({ theme, fullscreen }) =>
+      fullscreen &&
+      theme.mediaWidth.upMedium`
+        width: calc(100vw - 80px);
+        max-width: calc(100vw - 80px);
+        height: calc(100vh - 80px);
+        max-height: calc(100vh - 80px);
+      `}
   }
 `;
 
@@ -94,6 +112,7 @@ export interface ModalProps {
   initialFocusRef?: React.RefObject<any>;
   children?: React.ReactNode;
   className?: string;
+  fullscreen?: boolean;
 }
 
 export default function Modal({
@@ -105,6 +124,7 @@ export default function Modal({
   initialFocusRef,
   children,
   className,
+  fullscreen,
 }: ModalProps) {
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
@@ -144,6 +164,7 @@ export default function Modal({
                 maxWidth={maxWidth}
                 mobile={isMobile}
                 className={className}
+                fullscreen={fullscreen}
               >
                 {/* prevents the automatic focusing of inputs on mobile by the reach dialog */}
                 {!initialFocusRef && isMobile ? <div tabIndex={1} /> : null}

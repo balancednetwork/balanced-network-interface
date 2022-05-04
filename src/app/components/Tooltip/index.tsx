@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { isIOS } from 'react-device-detect';
 import styled, { css } from 'styled-components';
@@ -74,10 +74,26 @@ export default function Tooltip({
   );
 }
 
-export function MouseoverTooltip({ children, noArrowAndBorder, ...rest }: Omit<TooltipProps, 'show'>) {
+interface MouseoverTooltipProps extends TooltipProps {
+  closeAfterDelay?: number;
+}
+
+export function MouseoverTooltip({
+  children,
+  noArrowAndBorder,
+  closeAfterDelay,
+  ...rest
+}: Omit<MouseoverTooltipProps, 'show'>) {
   const [show, setShow] = useState(false);
   const open = useCallback(() => setShow(true), [setShow]);
   const close = useCallback(() => setShow(false), [setShow]);
+
+  useEffect(() => {
+    if (show && closeAfterDelay) {
+      setTimeout(close, closeAfterDelay);
+    }
+  }, [show, closeAfterDelay, close]);
+
   return (
     <Tooltip {...rest} show={show} noArrowAndBorder={noArrowAndBorder}>
       <div onClick={open} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>

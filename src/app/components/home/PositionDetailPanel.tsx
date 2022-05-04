@@ -489,8 +489,14 @@ const Locked = styled(Threshold)<{ pos: number }>`
   left: ${({ pos }) => (1 - pos) * 100}%;
 
   ${MetaData} {
-    width: 150px;
-    margin-left: -165px;
+    width: 155px;
+    margin-left: -170px;
+
+    ${({ theme }) => theme.mediaWidth.up360`
+    
+    width: 195px;
+    margin-left: -210px;
+  `};
   }
 `;
 

@@ -4,6 +4,7 @@ import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
@@ -18,6 +19,7 @@ import { ReactComponent as InfoAbove } from 'assets/images/rebalancing-above.svg
 import { ReactComponent as InfoBelow } from 'assets/images/rebalancing-below.svg';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useCollateralActionHandlers } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
@@ -39,6 +41,9 @@ import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
+  const locale = useActiveLocale();
+
+  const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE'.indexOf(locale) >= 0 ? '450px' : '300px'})`);
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -234,10 +239,10 @@ const LoanPanel = () => {
             <Trans>Loan</Trans>
           </Typography>
 
-          <Box>
+          <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
             {isAdjusting ? (
               <>
-                <TextButton onClick={handleCancelAdjusting}>
+                <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
                   <Trans>Cancel</Trans>
                 </TextButton>
                 <Button
@@ -255,7 +260,7 @@ const LoanPanel = () => {
                 {buttonText}
               </Button>
             )}
-          </Box>
+          </Flex>
         </Flex>
 
         {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Used`} />}

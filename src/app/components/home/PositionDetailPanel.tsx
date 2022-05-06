@@ -19,6 +19,7 @@ import Tooltip, { TooltipContainer } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { ZERO } from 'constants/index';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useRatesQuery } from 'queries/reward';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
@@ -92,6 +93,8 @@ const PositionDetailPanel = () => {
   const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
+  const locale = useActiveLocale();
+  const heightenBars = 'es-ES,pl-PL,nl-NL,de-DE,fr-FR'.indexOf(locale) >= 0 && smallSp;
 
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
@@ -216,7 +219,12 @@ const PositionDetailPanel = () => {
           )}
         </Typography>
 
-        <Flex alignItems="center" justifyContent="space-between" mt={[10, 5, 5, 5, 5]} mb={4}>
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          mt={heightenBars ? [70, 5, 5, 5, 5] : [10, 5, 5, 5, 5]}
+          mb={4}
+        >
           <LeftChip
             bg="primary"
             style={{
@@ -227,7 +235,7 @@ const PositionDetailPanel = () => {
           />
 
           <Box flex={1} style={{ position: 'relative' }}>
-            <Locked warned={isLockWarning} pos={pos}>
+            <Locked warned={isLockWarning} pos={pos} heightened={heightenBars}>
               <MetaData as="dl" style={{ textAlign: 'right' }}>
                 <Tooltip
                   text={t`You can't withdraw any collateral if you go beyond this threshold.`}
@@ -242,7 +250,7 @@ const PositionDetailPanel = () => {
                 <dd>${lockThresholdPrice.toFixed(3)}</dd>
               </MetaData>
             </Locked>
-            <Liquidated>
+            <Liquidated heightened={heightenBars}>
               <MetaData as="dl">
                 <dt>
                   <Trans>Liquidated</Trans>
@@ -448,11 +456,12 @@ const RightChip = styled(Chip)`
   border-left: 1px solid #0d2a4d;
 `;
 
-const Threshold = styled(Box)<{ warned?: boolean }>`
+const Threshold = styled(Box)<{ warned?: boolean; heightened?: boolean }>`
   color: ${({ warned }) => (warned ? '#fb6a6a' : '#ffffff')};
   position: absolute;
+  bottom: 0;
   width: 1px;
-  height: 50px;
+  height: ${({ heightened }) => (heightened ? '70px' : '50px')};
   margin-top: -34px;
   background-color: ${({ warned }) => (warned ? '#fb6a6a' : '#ffffff')};
   z-index: 2;
@@ -494,8 +503,8 @@ const Locked = styled(Threshold)<{ pos: number }>`
 
     ${({ theme }) => theme.mediaWidth.up360`
     
-    width: 195px;
-    margin-left: -210px;
+    width: 220px;
+    margin-left: -235px;
   `};
   }
 `;
@@ -508,7 +517,7 @@ const Liquidated = styled(Threshold)`
   }
 
   ${MetaData} {
-    width: 90px;
+    width: 110px;
     padding-left: 15px;
   }
 `;

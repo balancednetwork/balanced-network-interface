@@ -43,7 +43,7 @@ const LoanPanel = () => {
   const { account } = useIconReact();
   const locale = useActiveLocale();
 
-  const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE'.indexOf(locale) >= 0 ? '450px' : '300px'})`);
+  const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '300px'})`);
 
   const shouldLedgerSign = useShouldLedgerSign();
 

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
@@ -11,6 +12,7 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useUserCollectedFeesQuery, useRewardQuery, usePlatformDayQuery, BATCH_SIZE } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useHasNetworkFees, useHasRewardable } from 'store/reward/hooks';
@@ -22,6 +24,9 @@ import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 
 const RewardsPanel = () => {
+  const locale = useActiveLocale();
+  const shouldBreakOnMobile = useMedia('(max-width: 499px)') && 'en-US,ko-KR'.indexOf(locale) < 0;
+
   return (
     <div>
       <BoxPanel bg="bg2">
@@ -31,9 +36,9 @@ const RewardsPanel = () => {
           </Typography>
         </Flex>
 
-        <Flex>
-          <RewardSection />
-          <NetworkFeeSection />
+        <Flex flexDirection={shouldBreakOnMobile ? 'column' : 'row'}>
+          <RewardSection shouldBreakOnMobile={shouldBreakOnMobile} />
+          <NetworkFeeSection shouldBreakOnMobile={shouldBreakOnMobile} />
         </Flex>
       </BoxPanel>
     </div>
@@ -42,7 +47,7 @@ const RewardsPanel = () => {
 
 export default RewardsPanel;
 
-const RewardSection = () => {
+const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }) => {
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
   const shouldLedgerSign = useShouldLedgerSign();
@@ -145,7 +150,14 @@ const RewardSection = () => {
   const afterAmount = beforeAmount.plus(reward || ZERO);
 
   return (
-    <Flex flex={1} flexDirection="column" alignItems="center" className="border-right">
+    <Flex
+      flex={1}
+      flexDirection="column"
+      alignItems={shouldBreakOnMobile ? 'start' : 'center'}
+      mb={shouldBreakOnMobile ? '20px' : ''}
+      pb={shouldBreakOnMobile ? '20px' : ''}
+      className={shouldBreakOnMobile ? 'border-bottom' : 'border-right'}
+    >
       <Typography variant="p" mb={2}>
         <Trans>Balance Tokens</Trans>
       </Typography>
@@ -204,7 +216,7 @@ const RewardSection = () => {
   );
 };
 
-const NetworkFeeSection = () => {
+const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }) => {
   const { account } = useIconReact();
   const [feeTx, setFeeTx] = React.useState('');
   const shouldLedgerSign = useShouldLedgerSign();
@@ -306,7 +318,7 @@ const NetworkFeeSection = () => {
   };
 
   return (
-    <Flex flex={1} flexDirection="column" alignItems="center">
+    <Flex flex={1} flexDirection="column" alignItems={shouldBreakOnMobile ? 'start' : 'center'}>
       <Typography variant="p" mb={2} as="div">
         <Trans>Network fees</Trans>
       </Typography>

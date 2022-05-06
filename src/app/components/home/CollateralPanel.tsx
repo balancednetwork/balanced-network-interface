@@ -79,9 +79,8 @@ export const PanelInfoItem = styled(Box)`
 const CollateralPanel = () => {
   const { account } = useIconReact();
   const locale = useActiveLocale();
-  console.log(locale);
 
-  const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE'.indexOf(locale) >= 0 ? '450px' : '359px'})`);
+  const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '359px'})`);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();

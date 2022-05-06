@@ -84,17 +84,20 @@ const useCollateralLockedSliderPos = () => {
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
+  const locale = useActiveLocale();
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
   const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
-  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 360px)');
+  const shouldShowRebalancingTooltipAnchor = useMedia(
+    `(min-width: ${'pl-PL,fr-FR'.indexOf(locale) >= 0 ? '400px' : '360px'})`,
+  );
   const [show, setShow] = React.useState<boolean>(false);
   const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
-  const locale = useActiveLocale();
-  const heightenBars = 'es-ES,pl-PL,nl-NL,de-DE,fr-FR'.indexOf(locale) >= 0 && smallSp;
+  const heightenBars =
+    (useMedia('(max-width: 359px)') && 'es-ES,nl-NL,de-DE,fr-FR'.indexOf(locale) >= 0) || 'pl-PL'.indexOf(locale) >= 0;
 
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
@@ -316,7 +319,7 @@ const PositionDetailPanel = () => {
                     <QuestionIcon width={14} style={{ transform: 'translate3d(1px, 1px, 0)' }} />
                   </QuestionWrapper>
                 )}
-                <RebalancingTooltip show={showRebalancing} bottom={false}>
+                <RebalancingTooltip show={showRebalancing} bottom={false} isActive={shouldShowRebalancingTooltipAnchor}>
                   <TooltipContainer width={435} className="rebalancing-modal">
                     <RebalancingInfo />
                     {shouldShowSeparateTooltip ? null : shouldShowRebalancingAveragePrice ? (
@@ -363,6 +366,7 @@ const PositionDetailPanel = () => {
               <RebalancingTooltip
                 show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
                 bottom={true}
+                isActive={shouldShowRebalancingTooltipAnchor}
               >
                 <TooltipContainer width={321}>{averageRebalancingPriceText}</TooltipContainer>
               </RebalancingTooltip>
@@ -550,7 +554,7 @@ const RebalancingTooltipArrow = styled.span<{ left: number; show: boolean }>`
   }
 `;
 
-const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
+const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean; isActive: boolean }>`
   background: ${({ theme }) => theme.colors.bg4};
   border: 2px solid ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.text1};
@@ -563,7 +567,7 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
   transition: all ease 0.25s;
   opacity: ${({ show }) => (show ? 1 : 0)};
   pointer-events: ${({ show }) => (show ? 'all' : 'none')};
-  display: none;
+  display: ${({ isActive }) => (isActive ? 'block' : 'none')};
 
   &:before {
     ${({ bottom }) => (bottom ? null : `content: ''`)};
@@ -580,7 +584,6 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
   }
 
   ${({ theme }) => theme.mediaWidth.up360`
-    display: block;
      margin-left: -170px;
 
     &:before {

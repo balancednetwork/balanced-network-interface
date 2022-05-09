@@ -1,7 +1,6 @@
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
-import { CallData, convertParams } from 'packages/BalancedJs/contracts/Multicall';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
@@ -22,18 +21,13 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
   return useQuery<({ [address in string]: CurrencyAmount<Currency> } | null)[]>(
     QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
     async () => {
-      const cds: CallData[] = [];
-
+      const promises: Promise<any>[] = [];
       for (let i = end; i > 1; i -= BATCH_SIZE + 1) {
         const startValue = i - BATCH_SIZE;
-        cds.push({
-          target: bnJs.Dividends.address,
-          method: 'getUserDividends',
-          params: convertParams([account!, startValue > 0 ? startValue : 0, i]),
-        });
+        promises.push(bnJs.Dividends.getUserDividends(account!, startValue > 0 ? startValue : 0, i));
       }
 
-      let feesArr = await bnJs.Multicall.getAggregateData(cds);
+      let feesArr = await Promise.all(promises);
 
       feesArr = feesArr.map(fees => {
         if (!fees) return null;

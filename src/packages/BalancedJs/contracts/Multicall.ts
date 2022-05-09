@@ -10,12 +10,15 @@ export interface CallData {
   params: string[];
 }
 
+/**
+ * Not yet used
+ */
 export function convertParams(params: any[]): string[] {
   return params.map(param => {
     if (typeof param === 'number') {
       return IconConverter.toHexNumber(param);
     } else if (typeof param === 'boolean') {
-      return param ? '0x1' : '0x0';
+      return param ? 'true' : 'false';
     } else {
       return param;
     }

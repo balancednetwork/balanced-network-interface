@@ -17,7 +17,7 @@ const MAINNET_ADDRESSES = {
   bnusd: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
   baln: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
   bwt: 'cxcfe9d1f83fa871e903008471cca786662437e58d',
-  multicall: 'cx793970c9ec84eb0dcb6164965c74fe678474d7c7',
+  multicall: 'cxa4aa9185e23558cff990f494c1fd2845f6cbf741',
   disbursement: 'cxe3905591929d17fc8496ae28ee3b9c144579228e',
 };
 

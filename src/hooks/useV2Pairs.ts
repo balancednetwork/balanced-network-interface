@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
-import { CallData, MULTICALL_POOL } from 'packages/BalancedJs/contracts/Multicall';
+import { CallData } from 'packages/BalancedJs/contracts/Multicall';
 
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
@@ -47,12 +47,13 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
               };
             } else {
               return {
-                target: MULTICALL_POOL,
+                target: bnJs.Multicall.address,
                 method: 'getPoolStatsForPair',
                 params: [tokenA.address, tokenB.address],
               };
             }
           } else {
+            // useless, just a placeholder
             return {
               target: bnJs.Multicall.address,
               method: 'getBlockNumber',

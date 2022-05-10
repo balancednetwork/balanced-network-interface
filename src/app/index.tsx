@@ -11,6 +11,7 @@ import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
 import { Banner } from './components/Banner';
+import TransferAssetsModal from './components/BTP'
 import BridgeWalletModal from './components/BTP/BridgeWalletModal';
 import BTPPanel from './components/BTPPanel';
 import { Airdrip } from './containers/Airdrip/Loadable';
@@ -38,6 +39,7 @@ export function App() {
         <ThemedGlobalStyle />
         <NotificationContainer />
         <WalletModal />
+        <TransferAssetsModal/>
         <BridgeWalletModal />
         {/* Add message for community */}
         {false && (

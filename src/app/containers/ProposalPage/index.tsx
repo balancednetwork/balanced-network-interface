@@ -64,7 +64,8 @@ const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   border-radius: ${props => (props.percentage === '100' ? '5px' : '5px 0 0 5px')};
   transition: width 0.2s ease-in;
   justify-content: center;
-  animation: ${({ percentage }) => percentage !== '0' && setBarWidth(percentage)} 2s ease-in-out forwards;
+  animation: ${({ percentage }) => percentage !== '0' && percentage !== 'undefined' && setBarWidth(percentage)} 2s
+    ease-in-out forwards;
 `;
 
 const ResultPanel = styled(Flex)`

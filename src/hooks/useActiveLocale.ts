@@ -54,3 +54,33 @@ export function useActiveLocale(): SupportedLocale {
   const userLocale = useUserLocale();
   return useMemo(() => urlLocale ?? userLocale ?? navigatorLocale() ?? DEFAULT_LOCALE, [urlLocale, userLocale]);
 }
+
+export function useActiveLocaleRequire(): SupportedLocale {
+  const locale = useActiveLocale();
+
+  switch (locale) {
+    case 'de-DE':
+      require('dayjs/locale/de');
+      break;
+    case 'es-ES':
+      require('dayjs/locale/es');
+      break;
+    case 'fr-FR':
+      require('dayjs/locale/fr');
+      break;
+    case 'ko-KR':
+      require('dayjs/locale/ko');
+      break;
+    case 'pl-PL':
+      require('dayjs/locale/pl');
+      break;
+    case 'nl-NL':
+      require('dayjs/locale/nl');
+      break;
+    case 'vi-VN':
+      require('dayjs/locale/vi');
+      break;
+  }
+
+  return locale;
+}

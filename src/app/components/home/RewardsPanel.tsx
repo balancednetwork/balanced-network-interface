@@ -105,7 +105,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
     if (!hasRewardable && reward?.isZero()) {
       return (
         <>
-          <Typography variant="p" as="div">
+          <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
             <Trans>Ineligible</Trans>
             <QuestionHelper
               text={t`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
@@ -116,7 +116,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
     } else if (reward?.isZero()) {
       return (
         <>
-          <Typography variant="p" as="div">
+          <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
             <Trans>Pending</Trans>
             <QuestionHelper
               text={t`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
@@ -158,7 +158,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       pb={shouldBreakOnMobile ? '20px' : ''}
       className={shouldBreakOnMobile ? 'border-bottom' : 'border-right'}
     >
-      <Typography variant="p" mb={2}>
+      <Typography variant="p" mb={2} textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
         <Trans>Balance Tokens</Trans>
       </Typography>
       {reward && getRewardsUI()}
@@ -282,7 +282,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
   const getNetworkFeesUI = () => {
     if (hasNetworkFees && !hasFee) {
       return (
-        <Typography variant="p" as="div">
+        <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
           <Trans>Pending</Trans>
           <QuestionHelper text={t`To earn network fees, stake BALN from your wallet.`} />
         </Typography>
@@ -309,7 +309,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
       );
     } else {
       return (
-        <Typography variant="p" as="div">
+        <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
           <Trans>Ineligible</Trans>
           <QuestionHelper text={t`To earn network fees, stake BALN from your wallet.`} />
         </Typography>
@@ -319,7 +319,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
 
   return (
     <Flex flex={1} flexDirection="column" alignItems={shouldBreakOnMobile ? 'start' : 'center'}>
-      <Typography variant="p" mb={2} as="div">
+      <Typography variant="p" mb={2} as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
         <Trans>Network fees</Trans>
       </Typography>
       {getNetworkFeesUI()}

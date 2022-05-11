@@ -16,6 +16,9 @@ export const sizes = {
   upSmall: 800,
   upMedium: 1000,
   upLarge: 1200,
+  up360: 360,
+  up420: 420,
+  up500: 500,
 };
 
 export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce((acc, label) => {
@@ -623,7 +626,7 @@ export const ThemedGlobalStyle = createGlobalStyle`
     font-size: 14px;
     margin-top: -20px;
     margin-left: -23px;
-    width: 60px;
+    width: 80px;
   }
   #indicator-used .label {
     margin-left: -17px;

@@ -110,11 +110,12 @@ export const useHasRewardableLiquidity = () => {
   React.useEffect(() => {
     const checkIfRewardable = async () => {
       if (account) {
+        // Question: isEarningRewards exists?
         const result = await Promise.all([
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNsICX),
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXbnUSD),
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXICX),
+          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNsICX),
+          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
+          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXbnUSD),
+          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXICX),
         ]);
 
         if (result.find(pool => Number(pool))) setHasRewardableLiquidity(true);

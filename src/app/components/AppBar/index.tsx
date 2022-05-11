@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import { NavLink } from 'react-router-dom';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -65,13 +66,24 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
   margin-left: 50%;
   transform: translate(-50%);
   padding: 10px 10px;
-  width: 100px;
+  width: 80px;
   border-radius: 25px;
   color: #8695a6;
   text-decoration: none;
   text-align: center;
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 14px;
+
+  svg {
+    display: none;
+  }
+
+  ${({ theme }) => theme.mediaWidth.up360`
+    width: 100px;
+    svg {
+      display: inline-block;
+    }
+  `};
 
   &.${activeClassName} {
     color: ${({ theme }) => theme.colors.bg1};
@@ -134,19 +146,25 @@ export default React.memo(function AppBar() {
         <ListItem>
           <StyledNavLink exact to="/">
             <HomeIcon width="35" height="33" />
-            <Text>Home</Text>
+            <Text>
+              <Trans>Home</Trans>
+            </Text>
           </StyledNavLink>
         </ListItem>
         <ListItem>
           <StyledNavLink exact to="/trade">
             <TradeIcon width="35" height="33" />
-            <Text>Trade</Text>
+            <Text>
+              <Trans>Trade</Trans>
+            </Text>
           </StyledNavLink>
         </ListItem>
         <ListItem>
           <StyledNavLinkWithNotification to="/vote" hasNotification={activeProposals && activeProposals.length}>
             <VoteIcon width="35" height="33" />
-            <Text>Vote</Text>
+            <Text>
+              <Trans>Vote</Trans>
+            </Text>
           </StyledNavLinkWithNotification>
         </ListItem>
       </List>

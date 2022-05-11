@@ -38,8 +38,8 @@ export default class Dex extends Contract {
       params: {
         _baseToken: baseToken,
         _quoteToken: quoteToken,
-        _baseValue: baseValue,
-        _quoteValue: quoteValue,
+        _baseValue: IconConverter.toHexNumber(baseValue),
+        _quoteValue: IconConverter.toHexNumber(quoteValue),
       },
     });
 
@@ -126,7 +126,7 @@ export default class Dex extends Contract {
 
   transferICX(value: string) {
     const payload = this.transferICXParamsBuilder({
-      value: value,
+      value: IconConverter.toHexNumber(value),
     });
 
     return this.callICONPlugins(payload);
@@ -155,7 +155,7 @@ export default class Dex extends Contract {
       method: 'remove',
       params: {
         _id: IconConverter.toHex(id),
-        _value: value,
+        _value: IconConverter.toHexNumber(value),
         _withdraw: IconConverter.toHex(withdraw),
       },
     });
@@ -188,7 +188,7 @@ export default class Dex extends Contract {
       method: 'withdraw',
       params: {
         _token: token,
-        _value: value,
+        _value: IconConverter.toHexNumber(value),
       },
     });
 
@@ -223,5 +223,20 @@ export default class Dex extends Contract {
     });
 
     return this.callICONPlugins(payload);
+  }
+
+  /**
+   * Not used, and not on chain
+   */
+  getPoolStatsForPair(base: string, quote: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getPoolStatsForPair',
+      params: {
+        _base: base,
+        _quote: quote,
+      },
+    });
+
+    return this.call(callParams);
   }
 }

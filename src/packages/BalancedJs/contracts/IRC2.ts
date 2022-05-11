@@ -67,6 +67,7 @@ export default class IRC2 extends Contract {
       method: '_swap',
       params: {
         toToken: outputAddress,
+        // this should be decimal
         minimumReceive: minimumReceive,
         path: path,
       },

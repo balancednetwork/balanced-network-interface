@@ -1,25 +1,35 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { isIOS } from 'react-device-detect';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import Popover, { PopoverProps, PopperWithoutArrowAndBorder } from '../Popover';
 
-export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; width?: number }>`
+export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; width?: number; className?: string }>`
   width: ${props => (props.width ? `${props.width}px` : props.wide ? '300px' : '260px')};
   padding: 10px 0.9375rem;
   line-height: 150%;
   font-weight: 400;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.white};
+  ${props => props.small && ' width: 170px; padding: 11px;'}
 
-  @media (max-width: 650px) {
-    ${props => props.small && ' width: 180px; padding: 11px;'}
-  }
+  ${({ theme, small }) =>
+    small &&
+    theme.mediaWidth.upExtraSmall`
+    padding: 10px 0.9375rem;
+    width: 260px;
+  `};
 
-  @media (max-width: 410px) {
-    ${props => props.small && ' width: 120px; padding: 10px'}
-  }
+  ${({ className }) =>
+    className === 'rebalancing-modal' &&
+    css`
+      max-width: 335px;
+    `};
+
+  ${({ theme }) => theme.mediaWidth.up500`
+      max-width: 435px !important;
+  `};
 `;
 
 export interface TooltipProps extends Omit<PopoverProps, 'content'> {
@@ -64,10 +74,26 @@ export default function Tooltip({
   );
 }
 
-export function MouseoverTooltip({ children, noArrowAndBorder, ...rest }: Omit<TooltipProps, 'show'>) {
+interface MouseoverTooltipProps extends TooltipProps {
+  closeAfterDelay?: number;
+}
+
+export function MouseoverTooltip({
+  children,
+  noArrowAndBorder,
+  closeAfterDelay,
+  ...rest
+}: Omit<MouseoverTooltipProps, 'show'>) {
   const [show, setShow] = useState(false);
   const open = useCallback(() => setShow(true), [setShow]);
   const close = useCallback(() => setShow(false), [setShow]);
+
+  useEffect(() => {
+    if (show && closeAfterDelay) {
+      setTimeout(close, closeAfterDelay);
+    }
+  }, [show, closeAfterDelay, close]);
+
   return (
     <Tooltip {...rest} show={show} noArrowAndBorder={noArrowAndBorder}>
       <div onClick={open} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>

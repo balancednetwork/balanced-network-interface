@@ -16,9 +16,22 @@ export class Token extends BaseCurrency {
    */
   public readonly address: string;
 
-  public constructor(chainId: number, address: string, decimals: number, symbol?: string, name?: string) {
+  /**
+   * Field that optimizes token search based on text query
+   */
+  public readonly searchableTerms: string = '';
+
+  public constructor(
+    chainId: number,
+    address: string,
+    decimals: number,
+    symbol?: string,
+    name?: string,
+    searchableTerms?: string,
+  ) {
     super(chainId, decimals, symbol, name);
     this.address = validateAndParseAddress(address);
+    this.searchableTerms = searchableTerms || '';
   }
 
   /**

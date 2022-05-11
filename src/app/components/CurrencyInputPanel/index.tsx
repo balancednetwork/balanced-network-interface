@@ -142,7 +142,7 @@ export default function CurrencyInputPanel({
                 <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
               </>
             ) : (
-              <StyledTokenName>Select a token</StyledTokenName>
+              <StyledTokenName>Choose a token</StyledTokenName>
             )}
             {onCurrencySelect && <StyledDropDown selected={!!currency} />}
           </CurrencySelect>

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import styled from 'styled-components';
 
 const InputContainer = styled.div`
@@ -59,7 +60,9 @@ interface AddressInputPanelProps {
 export default function AddressInputPanel({ value, onUserInput, bg, className }: AddressInputPanelProps) {
   return (
     <InputContainer className={className}>
-      <AddressInputLabel bg={bg}>Address</AddressInputLabel>
+      <AddressInputLabel bg={bg}>
+        <Trans>Address</Trans>
+      </AddressInputLabel>
 
       <AddressInput
         placeholder="hx00000..."

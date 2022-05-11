@@ -3,17 +3,15 @@ import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { Flex, Box } from 'rebass/styled-components';
+import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
-import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
-import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import { ProposalInterface } from 'types';
 import { normalizeContent } from 'utils';
 
 import { notificationCSS } from '../home/wallets/utils';
+import { ApprovalLabel, RejectionLabel, VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from './components';
 
 dayjs.extend(duration);
 
@@ -43,18 +41,6 @@ const ProposalWrapper = styled.div<{ showNotification?: boolean }>`
     background-color: ${({ theme }) => theme.colors.primaryBright};
   }
 `;
-const ApprovalSwatch = styled(Box)`
-  background: #2ca9b7;
-  height: 20px;
-  width: 20px;
-  border-radius: 5px;
-`;
-const RejectionSwatch = styled(Box)`
-  background: #fb6a6a;
-  height: 20px;
-  width: 20px;
-  border-radius: 5px;
-`;
 const Divider = styled.div`
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   margin-bottom: 15px;
@@ -76,18 +62,7 @@ export default function ProposalInfo({
   proposal?: ProposalInterface;
   showNotification?: boolean;
 }) {
-  const {
-    id,
-    name: title,
-    description,
-    startDay,
-    endDay,
-    status,
-    for: approvePercentage,
-    against: rejectPercentage,
-    sum,
-    voters,
-  } = proposal || {};
+  const { name: title, description } = proposal || {};
 
   return (
     <ProposalWrapper showNotification={showNotification}>
@@ -98,59 +73,12 @@ export default function ProposalInfo({
         {title ? description && normalizeContent(description) : <StyledSkeleton animation="wave" height={20} />}
       </ContentText>
       <Divider />
-      <Flex alignItems="center" flexWrap="wrap" sx={{ columnGap: '15px' }}>
-        {status && startDay && endDay ? (
-          <ProposalStatusIcon status={status} startDay={startDay} endDay={endDay} />
-        ) : (
-          <>
-            <StyledSkeleton animation="wave" width={22} height={22} variant="circle" />
-            <StyledSkeleton animation="wave" width={80} />
-          </>
-        )}
-
-        <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
-          <PieChartIcon height="22" width="22" />
-          <Typography variant="content" color="white">
-            {typeof sum === 'number' ? `${sum}% voted` : <StyledSkeleton animation="wave" width={80} />}
-          </Typography>
-        </Flex>
-
-        <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
-          <UserIcon height="22" width="22" />
-          <Typography variant="content" color="white">
-            {typeof voters === 'number' ? (
-              id === 1 ? (
-                `- voters`
-              ) : (
-                `${voters} voters`
-              )
-            ) : (
-              <StyledSkeleton animation="wave" width={80} />
-            )}
-          </Typography>
-        </Flex>
-
-        <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
-          <ApprovalSwatch />
-          <Typography variant="content" color="white">
-            {typeof approvePercentage === 'number' ? (
-              `${approvePercentage}%`
-            ) : (
-              <StyledSkeleton animation="wave" width={40} />
-            )}
-          </Typography>
-        </Flex>
-
-        <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
-          <RejectionSwatch />
-          <Typography variant="content" color="white">
-            {typeof rejectPercentage === 'number' ? (
-              `${rejectPercentage}%`
-            ) : (
-              <StyledSkeleton animation="wave" width={40} />
-            )}
-          </Typography>
-        </Flex>
+      <Flex alignItems="center" flexWrap="wrap" sx={{ columnGap: '15px' }} my={1}>
+        <VoteStatusLabel proposal={proposal} />
+        <VoterPercentLabel value={proposal?.sum} />
+        <VoterNumberLabel value={proposal?.voters} />
+        <ApprovalLabel value={proposal?.for} />
+        <RejectionLabel value={proposal?.against} />
       </Flex>
     </ProposalWrapper>
   );

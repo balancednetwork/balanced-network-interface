@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { usePrevious } from 'react-use';
 import { Flex } from 'rebass/styled-components';
@@ -13,13 +14,13 @@ import { ReactComponent as CrossIcon } from 'assets/icons/failure.svg';
 import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
 import { useShouldLedgerSign } from 'store/application/hooks';
 
-import LedgerConfirmMessage from '../LedgerConfirmMessage';
+import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 
 const CancelButton = styled(Button)`
   flex-grow: 1;
   max-height: 33px;
-  max-width: 130px;
+  max-width: 145px;
   font-size: 14px;
   background-color: inherit;
   color: ${({ theme }) => theme.colors.text1};
@@ -33,7 +34,7 @@ const CancelButton = styled(Button)`
 const SubmitButton = styled(Button)`
   flex-grow: 1;
   max-height: 33px;
-  max-width: 130px;
+  max-width: 145px;
   font-size: 14px;
 `;
 
@@ -41,6 +42,8 @@ export enum ModalStatus {
   'None' = 'None',
   'Approve' = 'Approve',
   'Reject' = 'Reject',
+  'ChangeToApprove' = 'ChangeToApprove',
+  'ChangeToReject' = 'ChangeToReject',
 }
 
 interface ProposalProps {
@@ -62,11 +65,13 @@ export function ProposalModal(props: ProposalProps) {
 
   return (
     <Modal isOpen={isOpen} onDismiss={onCancel}>
-      <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+      <ModalContent noCurrencyBalanceErrorMessage>
         <Typography variant="content" textAlign="center" mb={1}>
-          Submit vote?
+          {UIStatus === ModalStatus.ChangeToApprove || UIStatus === ModalStatus.ChangeToReject
+            ? t`Change vote?`
+            : t`Submit vote?`}
         </Typography>
-        {UIStatus === ModalStatus.Reject && (
+        {(UIStatus === ModalStatus.Reject || UIStatus === ModalStatus.ChangeToReject) && (
           <>
             <CrossIcon
               width="35px"
@@ -74,11 +79,11 @@ export function ProposalModal(props: ProposalProps) {
               style={{ margin: 'auto', display: 'block', marginTop: '5px', marginBottom: '5px' }}
             />
             <Typography variant="h3" textAlign="center" mb={3}>
-              Reject
+              <Trans>Reject</Trans>
             </Typography>
           </>
         )}
-        {UIStatus === ModalStatus.Approve && (
+        {(UIStatus === ModalStatus.Approve || UIStatus === ModalStatus.ChangeToApprove) && (
           <>
             <TickIcon
               width="35px"
@@ -86,25 +91,30 @@ export function ProposalModal(props: ProposalProps) {
               style={{ margin: 'auto', display: 'block', marginTop: '5px', marginBottom: '5px' }}
             />
             <Typography variant="h3" textAlign="center" mb={3}>
-              Approve
+              <Trans>Approve</Trans>
             </Typography>
           </>
         )}
         <Typography variant="content" textAlign="center" mb={3}>
-          {`Voting weight: ${weight?.dp(2).toFormat()} BALN`}
+          <Trans>Voting weight</Trans>: {weight?.dp(2).toFormat()} BALN
         </Typography>
         <Divider mb={5} />
         <Flex flexDirection="row" width="100%" justifyContent="center">
           {shouldLedgerSign && <Spinner />}
           {!shouldLedgerSign && (
             <>
-              <CancelButton onClick={onCancel}>Cancel</CancelButton>
-              <SubmitButton onClick={onSubmit}>Submit vote</SubmitButton>
+              <CancelButton onClick={onCancel}>
+                <Trans>Cancel</Trans>
+              </CancelButton>
+              <SubmitButton onClick={onSubmit}>
+                {UIStatus === ModalStatus.ChangeToApprove || UIStatus === ModalStatus.ChangeToReject
+                  ? t`Change vote`
+                  : t`Submit vote`}
+              </SubmitButton>
             </>
           )}
         </Flex>
-        <LedgerConfirmMessage />
-      </Flex>
+      </ModalContent>
     </Modal>
   );
 }

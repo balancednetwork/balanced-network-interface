@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { MessageDescriptor } from '@lingui/core';
+import { defineMessage, t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -30,11 +32,11 @@ import { RebalancingInfo } from './LoanPanel';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
-const PERIOD_LABELS: { [key: string]: string } = {
-  [Period.day]: 'Past day',
-  [Period.week]: 'Past week',
-  [Period.month]: 'Past month',
-  [Period.all]: 'All time',
+const PERIOD_LABELS: { [key: string]: MessageDescriptor } = {
+  [Period.day]: defineMessage({ message: 'Past day' }),
+  [Period.week]: defineMessage({ message: 'Past week' }),
+  [Period.month]: defineMessage({ message: 'Past month' }),
+  [Period.all]: defineMessage({ message: 'All time' }),
 };
 
 const useThresholdPrices = (): [BigNumber, BigNumber] => {
@@ -83,8 +85,9 @@ const PositionDetailPanel = () => {
   const rewardsAPY = useLoanAPY();
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
+  const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
-  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 440px)');
+  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 360px)');
   const [show, setShow] = React.useState<boolean>(false);
   const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
@@ -169,12 +172,14 @@ const PositionDetailPanel = () => {
     <ActivityPanel bg="bg2">
       <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 'initial', 350]}>
         <Typography variant="h2" mb={5}>
-          Position details
+          <Trans>Position details</Trans>
         </Typography>
 
         <Flex>
           <Box flex={1}>
-            <Typography mb={1}>Collateral</Typography>
+            <Typography mb={1}>
+              <Trans>Collateral</Trans>
+            </Typography>
             <Typography variant="p" fontSize={18}>
               ${collateralInputAmountInUSD.dp(2).toFormat()}
             </Typography>
@@ -183,7 +188,9 @@ const PositionDetailPanel = () => {
           <VerticalDivider mr={8} />
 
           <Box flex={1}>
-            <Typography mb={1}>Loan</Typography>
+            <Typography mb={1}>
+              <Trans>Loan</Trans>
+            </Typography>
             <Typography variant="p" fontSize={18} as="span">
               ${loanInputAmount.dp(2).toFormat()}
             </Typography>
@@ -191,16 +198,17 @@ const PositionDetailPanel = () => {
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
-          The current ICX price is <span className="white">${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
+          <Trans>The current ICX price is</Trans> <span className="white">${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
         </Typography>
         <Typography mb={2}>
-          The current bnUSD price is <span className="white">{rates && `$${rates['bnUSD']?.dp(4).toFormat()}`}</span>.
+          <Trans>The current bnUSD price is</Trans>{' '}
+          <span className="white">{rates && `$${rates['bnUSD']?.dp(4).toFormat()}`}</span>.
         </Typography>
       </BoxPanel>
 
       <BoxPanel bg="bg2" flex={1}>
         <Typography variant="h3">
-          Risk ratio{' '}
+          <Trans>Risk ratio</Trans>{' '}
           {!smallSp && (
             <QuestionWrapper onClick={open} {...(!isIOS ? { onMouseEnter: open } : null)} onMouseLeave={close}>
               <QuestionIcon width={14} style={{ marginTop: -5 }} />
@@ -222,19 +230,23 @@ const PositionDetailPanel = () => {
             <Locked warned={isLockWarning} pos={pos}>
               <MetaData as="dl" style={{ textAlign: 'right' }}>
                 <Tooltip
-                  text="You can’t withdraw any collateral if you go beyond this threshold."
+                  text={t`You can't withdraw any collateral if you go beyond this threshold.`}
                   show={show}
                   placement="top-end"
-                  small
+                  forcePlacement={true}
                 >
-                  <dt>All collateral locked</dt>
+                  <dt>
+                    <Trans>All collateral locked</Trans>
+                  </dt>
                 </Tooltip>
                 <dd>${lockThresholdPrice.toFixed(3)}</dd>
               </MetaData>
             </Locked>
             <Liquidated>
               <MetaData as="dl">
-                <dt>Liquidated</dt>
+                <dt>
+                  <Trans>Liquidated</Trans>
+                </dt>
                 <dd>${liquidationThresholdPrice.dp(3).toFormat()}</dd>
               </MetaData>
             </Liquidated>
@@ -245,6 +257,7 @@ const PositionDetailPanel = () => {
               direction="rtl"
               start={[Math.min(currentRatio.toNumber(), 900)]}
               connect={[true, false]}
+              animate={false}
               range={{
                 min: [117.7],
                 max: [900],
@@ -261,16 +274,19 @@ const PositionDetailPanel = () => {
           <Tooltip
             text={
               <Typography variant="body">
-                If the ICX price reaches ${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
-                liquidated. <br />
+                <Trans>
+                  If the ICX price reaches ${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
+                  liquidated.
+                </Trans>
+                <br />
                 <Typography as="small" fontSize={12} color="text1">
-                  Keep a close eye on the price, as rebalancing may cause it to fluctuate.
+                  <Trans>Keep a close eye on this number, as rebalancing may cause it to fluctuate.</Trans>
                 </Typography>
               </Typography>
             }
             show={show}
             placement="bottom"
-            small
+            forcePlacement={true}
           >
             <RightChip bg="#fb6a6a" />
           </Tooltip>
@@ -282,7 +298,7 @@ const PositionDetailPanel = () => {
           <Box flex={1} my={2}>
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15} sx={{ position: 'relative' }}>
-                Rebalancing{' '}
+                <Trans>Rebalancing</Trans>{' '}
                 {shouldShowRebalancingTooltipAnchor && (
                   <QuestionWrapper
                     onClick={openRebalancing}
@@ -293,7 +309,7 @@ const PositionDetailPanel = () => {
                   </QuestionWrapper>
                 )}
                 <RebalancingTooltip show={showRebalancing} bottom={false}>
-                  <TooltipContainer width={435}>
+                  <TooltipContainer width={435} className="rebalancing-modal">
                     <RebalancingInfo />
                     {shouldShowSeparateTooltip ? null : shouldShowRebalancingAveragePrice ? (
                       <>
@@ -307,12 +323,16 @@ const PositionDetailPanel = () => {
 
               <ClickAwayListener onClickAway={closeMenu}>
                 <div>
-                  <UnderlineTextWithArrow onClick={handleToggle} text={PERIOD_LABELS[period]} arrowRef={arrowRef} />
+                  <UnderlineTextWithArrow
+                    onClick={handleToggle}
+                    text={<Trans id={PERIOD_LABELS[period].id} />}
+                    arrowRef={arrowRef}
+                  />
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <MenuList>
                       {PERIODS.map(p => (
                         <MenuItem className={p === 'all' ? 'border-top' : ''} key={p} onClick={() => handlePeriod(p)}>
-                          {PERIOD_LABELS[p]}
+                          <Trans id={PERIOD_LABELS[p].id} />
                         </MenuItem>
                       ))}
                     </MenuList>
@@ -324,7 +344,7 @@ const PositionDetailPanel = () => {
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(totalCollateralSold, 'currency')} sICX</Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
-                  {'Collateral'}
+                  <Trans>Collateral</Trans>
                   <RebalancingTooltipArrow
                     left={25}
                     show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
@@ -339,10 +359,12 @@ const PositionDetailPanel = () => {
                 <TooltipContainer width={321}>{averageRebalancingPriceText}</TooltipContainer>
               </RebalancingTooltip>
 
+              {!upMedium && <VerticalDivider mr={8} />}
+
               <Box width={1 / 2}>
                 <Typography variant="p">{formatBigNumber(rebalancingTotal, 'currency')} bnUSD</Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
-                  {'Loan'}
+                  <Trans>Loan</Trans>
                   <RebalancingTooltipArrow
                     left={7}
                     show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
@@ -357,7 +379,7 @@ const PositionDetailPanel = () => {
           <Box flex={1} my={2}>
             <Flex alignItems="center" mb={3}>
               <Typography variant="h3" mr={15}>
-                Loan rewards
+                <Trans>Loan rewards</Trans>
               </Typography>
             </Flex>
             <Flex>
@@ -365,8 +387,11 @@ const PositionDetailPanel = () => {
                 <Typography variant="p">
                   {hasRewardableCollateral ? `~ ${dailyRewards.dp(2).toFormat()} BALN` : '-'}
                 </Typography>
-                <Typography mt={1}>Daily rewards</Typography>
+                <Typography mt={1}>
+                  <Trans>Daily rewards</Trans>
+                </Typography>
               </Box>
+              {!upMedium && <VerticalDivider mr={8} />}
               <Box width={1 / 2}>
                 <Typography variant="p" color={hasRewardableCollateral ? 'white' : 'alert'}>
                   {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
@@ -523,6 +548,7 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
   transition: all ease 0.25s;
   opacity: ${({ show }) => (show ? 1 : 0)};
   pointer-events: ${({ show }) => (show ? 'all' : 'none')};
+  display: none;
 
   &:before {
     ${({ bottom }) => (bottom ? null : `content: ''`)};
@@ -538,21 +564,38 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
     display: inline-block;
   }
 
-  @media screen and (max-width: 999px) {
+  ${({ theme }) => theme.mediaWidth.up360`
+    display: block;
+     margin-left: -170px;
+
+    &:before {
+      margin-left: -14px;
+    }
+  `};
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    margin-left: -173px;
+    
+    &:before {
+      margin-left: -62px;
+    }
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upMedium`
     margin-left: -193px;
 
     &:before {
       margin-left: -42px;
     }
-  }
-  @media screen and (max-width: 599px) {
-    margin-left: -183px;
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upLarge`
+    ${({ bottom }) => (bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
+    left: ${({ bottom }) => (bottom ? `50%` : `100%`)};
+    margin-left: ${({ bottom }) => (bottom ? `-160px` : `-225px`)};
 
     &:before {
-      margin-left: -52px;
+      margin-left: -10px;
     }
-  }
-  @media screen and (max-width: 439px) {
-    display: none;
-  }
+  `};
 `;

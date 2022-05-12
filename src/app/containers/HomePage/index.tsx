@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -40,7 +39,7 @@ const SignInMessage = styled(Box)`
 `;
 
 export function HomePage() {
-  const { account } = useIconReact();
+  const { account } = { account: 'cxee1fa51a14783577bc4b900c13579b9bcb0b55f5' };
 
   useFetchPrice();
   useWalletFetchBalances(account);

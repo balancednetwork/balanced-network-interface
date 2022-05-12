@@ -17,7 +17,7 @@ const MAINNET_ADDRESSES = {
   bnusd: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
   baln: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
   bwt: 'cxcfe9d1f83fa871e903008471cca786662437e58d',
-  multicall: 'cxa4aa9185e23558cff990f494c1fd2845f6cbf741',
+  multicall: 'cx793970c9ec84eb0dcb6164965c74fe678474d7c7',
   disbursement: 'cxe3905591929d17fc8496ae28ee3b9c144579228e',
 };
 
@@ -59,7 +59,7 @@ const SEJONG_ADDRESSES = {
   bnusd: 'cx5838cb516d6156a060f90e9a3de92381331ff024',
   baln: 'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b',
   bwt: 'cx68b822ae2acc76e9ec6143a8afbeb79e50a26e8f',
-  multicall: 'cx02510602b5f028ee418fc5a8ba893aa2dbb56ece',
+  multicall: 'cx75256fadf232ad1124d9c6cd70c9b1ec122a0f47',
   disbursement: '',
 };
 

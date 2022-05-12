@@ -2,7 +2,6 @@ import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { BalancedJs } from 'packages/BalancedJs';
-import { useIconReact } from 'packages/icon-react';
 import { stringify } from 'querystring';
 import { useQuery } from 'react-query';
 
@@ -37,7 +36,7 @@ const getTimestamp = (period: Period) => {
 };
 
 export function useRebalancingDataQuery(period: Period) {
-  const { account } = useIconReact();
+  const { account } = { account: 'cxee1fa51a14783577bc4b900c13579b9bcb0b55f5' };
   return useQuery<{ totalCollateralSold: BigNumber; totalRepaid: BigNumber }>(
     QUERY_KEYS.PositionDetails.Rebalancing(account ?? '', period),
     async () => {

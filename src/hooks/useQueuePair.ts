@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { BalancedJs } from 'packages/BalancedJs';
+import BigNumber from 'bignumber.js';
+import { BalancedJs, LOOP } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { CurrencyAmount } from 'types/balanced-sdk-core';
 import { Pair } from 'types/balanced-v1-sdk';
-import { getQueuePair } from 'utils';
 
 import useLastCount from './useLastCount';
 import { PairState } from './useV2Pairs';
@@ -25,7 +26,25 @@ export function useQueuePair(): [PairState, Pair | null] {
 
         const stats = await bnJs.Dex.getPoolStats(poolId);
 
-        const newPair = getQueuePair(stats, ICX, sICX);
+        const rate = new BigNumber(stats['price'], 16).div(LOOP);
+
+        const icxSupply = new BigNumber(stats['total_supply'], 16);
+        const sicxSupply = icxSupply.div(rate);
+
+        const totalSupply = icxSupply.toFixed();
+
+        // ICX/sICX
+        const newPair: [PairState, Pair] = [
+          PairState.EXISTS,
+          new Pair(
+            CurrencyAmount.fromRawAmount(ICX, totalSupply),
+            CurrencyAmount.fromRawAmount(sICX, sicxSupply.toFixed(0)),
+            {
+              poolId,
+              totalSupply,
+            },
+          ),
+        ];
 
         setPair(newPair);
       } catch (err) {

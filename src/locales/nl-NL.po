@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-27 19:18\n"
+"PO-Revision-Date: 2022-05-12 05:32\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -784,7 +784,7 @@ msgstr "{0} {1} verzonden naar {address}."
 
 #: src/app/components/Header/index.tsx
 msgid "Sign in"
-msgstr "Login"
+msgstr "Log in"
 
 #: src/app/containers/HomePage/index.tsx
 msgid "Sign in to use the Home page."
@@ -813,11 +813,11 @@ msgstr "Stake"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens"
-msgstr "Stake Balanced Tokens"
+msgstr "Stake Balance Tokens"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens?"
-msgstr "Stake Balanced Tokens?"
+msgstr "Stake Balance Tokens?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Stake at least {0} BALN if you want to propose a change."
@@ -825,11 +825,11 @@ msgstr "Stake minimaal {0} BALN als je een verandering wilt voorstellen."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake your Balance Tokens to earn network fees."
-msgstr "Stake je Balanced Tokens om netwerk kosten te verdienen."
+msgstr "Stake je Balance Tokens om netwerk kosten te verdienen."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staked {0} BALN."
-msgstr "{0} BALN Gestaked."
+msgstr "{0} BALN gestaked."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staking BALN..."
@@ -985,7 +985,7 @@ msgstr "Totale dagelijkse beloningen"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total supply"
-msgstr "Totale Voorraad"
+msgstr "Totale voorraad"
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx

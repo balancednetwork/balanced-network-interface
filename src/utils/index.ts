@@ -172,7 +172,7 @@ export function getPairName(pair: PairInfo) {
  * @param {tokenA} ICX
  * @param {tokenB} sICX
  *  */
-export function getQueuePair(stats, tokenA, tokenB) {
+export function getQueuePair(stats, tokenA: Token, tokenB: Token) {
   const rate = new BigNumber(stats['price'], 16).div(LOOP);
 
   const icxSupply = new BigNumber(stats['total_supply'], 16);
@@ -180,12 +180,14 @@ export function getQueuePair(stats, tokenA, tokenB) {
 
   const totalSupply = icxSupply.toFixed();
 
+  const [ICX, sICX] = tokenA.symbol === 'ICX' ? [tokenA, tokenB] : [tokenB, tokenA];
+
   // ICX/sICX
   const pair: [PairState, Pair] = [
     PairState.EXISTS,
     new Pair(
-      CurrencyAmount.fromRawAmount(tokenA, totalSupply),
-      CurrencyAmount.fromRawAmount(tokenB, sicxSupply.toFixed(0)),
+      CurrencyAmount.fromRawAmount(ICX, totalSupply),
+      CurrencyAmount.fromRawAmount(sICX, sicxSupply.toFixed(0)),
       {
         poolId: BalancedJs.utils.POOL_IDS.sICXICX,
         totalSupply,

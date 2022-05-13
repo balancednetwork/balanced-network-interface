@@ -98,7 +98,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <TickIcon height="22" width="22" />
         <Typography variant="content" color="white">
-          <Trans>Vote is over</Trans>
+          <Trans>Voting has ended</Trans>
         </Typography>
       </Flex>
     );

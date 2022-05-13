@@ -92,6 +92,18 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
     );
   }
 
+  //this state might occur shortly after voting ends before smart contract updates vote status
+  if (!endTimeStr && !startTimeStr) {
+    return (
+      <Flex alignItems="center" sx={{ columnGap: '10px' }}>
+        <TickIcon height="22" width="22" />
+        <Typography variant="content" color="white">
+          <Trans>Vote is over</Trans>
+        </Typography>
+      </Flex>
+    );
+  }
+
   return (
     <Flex alignItems="center">
       <Typography variant="content" color="white">

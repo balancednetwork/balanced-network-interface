@@ -6,8 +6,8 @@ import { Trans } from '@lingui/macro';
 import { BalancedJs } from 'packages/BalancedJs';
 import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
-import { isMobile } from 'react-device-detect';
-import { Flex, Box, Text } from 'rebass/styled-components';
+import { useSelector } from 'react-redux';
+import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import Modal, { ModalProps } from 'app/components/Modal';
@@ -18,12 +18,16 @@ import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import { ReactComponent as MetamaskIcon } from 'assets/icons/metamask.svg';
 import bnJs from 'bnJs';
 import {
-  useModalOpen,
-  useCurrentLedgerAddressPage,
-  useChangeCurrentLedgerAddressPage,
+  useTransferAssetsModalToggle,
   useBridgeWalletModalToggle,
+  useChangeCurrentLedgerAddressPage,
+  useCurrentLedgerAddressPage,
+  useModalOpen,
 } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
+
+import { requestAddress } from '../../../../store/bridge/connectors/ICONex/events';
+import { EthereumInstance } from '../../../../store/bridge/connectors/MetaMask';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -72,6 +76,23 @@ const LedgerAddressList = styled(Modal)`
   width: 500px;
 `;
 
+const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />).attrs({
+  'aria-label': 'dialog',
+})`
+  &[data-reach-dialog-content] {
+    ${({ mobile, theme }) =>
+      !mobile &&
+      `
+      width: 320px;
+
+      @media (min-width: 360px) {
+        width: 100%;
+        max-width: 430px;
+      }
+    `}
+  }
+`;
+
 const WalletOption = styled(Box)`
   display: flex;
   flex-direction: column;
@@ -112,23 +133,6 @@ const WalletOption = styled(Box)`
   }
 `;
 
-const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />).attrs({
-  'aria-label': 'dialog',
-})`
-  &[data-reach-dialog-content] {
-    ${({ mobile, theme }) =>
-      !mobile &&
-      `
-      width: 320px;
-
-      @media (min-width: 400px) {
-        width: 100%;
-        max-width: 400px;
-      }
-    `}
-  }
-`;
-
 const Wrapper = styled.div`
   width: 100%;
   padding: 25px;
@@ -138,8 +142,10 @@ const Wrapper = styled.div`
 `;
 
 export default function BridgeWalletModal() {
+  const [loading, setLoading] = useState(false);
   const walletModalOpen = useModalOpen(ApplicationModal.BRIDGE_WALLET);
   const toggleWalletModal = useBridgeWalletModalToggle();
+  const toggleTransferAssetsModal = useTransferAssetsModalToggle();
   const [showLedgerAddress, updateShowledgerAddress] = useState(false);
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
@@ -152,18 +158,47 @@ export default function BridgeWalletModal() {
   const currentLedgerAddressPage = useCurrentLedgerAddressPage();
   const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
 
-  const { requestAddress, hasExtension } = useIconReact();
+  // const { requestAddress } = useIconReact();
 
-  const handleOpenWallet = () => {
-    toggleWalletModal();
-    if (isMobile) {
-      requestAddress();
-    } else {
-      if (hasExtension) {
-        requestAddress();
-      } else {
-        window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
-      }
+  const accInfo = useSelector(state => state);
+
+  // console.log('------', accInfo);
+
+  const handleOpenWallet = async (type: string) => {
+    // toggleWalletModal();
+    // if (isMobile) {
+    //   requestAddress();
+    // } else {
+    //   if (hasExtension) {
+    //     requestAddress();
+    //   } else {
+    //     window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
+    //   }
+    // }
+    setLoading(true);
+    switch (type) {
+      case 'metamask':
+        const isConnected = await EthereumInstance.connectMetaMaskWallet();
+        console.log('isConnected', isConnected);
+        if (isConnected) {
+          await EthereumInstance.getEthereumAccounts();
+        }
+        setLoading(false);
+        toggleWalletModal();
+        toggleTransferAssetsModal();
+        break;
+      case 'iconex':
+      case 'hana':
+        const hasAccount = requestAddress();
+        // if (!hasAccount) {
+        //   setLoading(false);
+        // }
+        setLoading(false);
+        toggleWalletModal();
+        toggleTransferAssetsModal();
+        break;
+      default:
+        break;
     }
   };
 
@@ -279,20 +314,20 @@ export default function BridgeWalletModal() {
     [limit, currentLedgerAddressPage, updatePaging, changeCurrentLedgerAddressPage, updateLedgerAddress],
   );
 
-  const chooseLedgerAddress = ({ address, point }: { address: string; point: number }) => {
-    requestAddress({
-      address,
-      point,
-    });
-    bnJs.inject({
-      account: address,
-      legerSettings: {
-        path: getLedgerAddressPath(point),
-      },
-    });
-    updateShowledgerAddress(false);
-    toggleWalletModal();
-  };
+  // const chooseLedgerAddress = ({ address, point }: { address: string; point: number }) => {
+  //   requestAddress({
+  //     address,
+  //     point,
+  //   });
+  //   bnJs.inject({
+  //     account: address,
+  //     legerSettings: {
+  //       path: getLedgerAddressPath(point),
+  //     },
+  //   });
+  //   updateShowledgerAddress(false);
+  //   toggleWalletModal();
+  // };
 
   function getPageNumbers(index: number) {
     return index - 1 <= 0 ? [1, 2, 3] : [index - 1, index, index + 1];
@@ -300,19 +335,19 @@ export default function BridgeWalletModal() {
 
   return (
     <>
-      <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} mobile={isMobile}>
+      <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} maxWidth={430}>
         <Wrapper>
           <Typography textAlign="center" mb={1}>
             <Trans>Choose wallet</Trans>:
           </Typography>
 
           <Flex alignItems="stretch" justifyContent="space-between">
-            <WalletOption onClick={handleOpenWallet}>
+            <WalletOption onClick={() => handleOpenWallet('iconex')}>
               <IconWalletIcon width="50" height="50" />
               <Text textAlign="center">ICON</Text>
             </WalletOption>
 
-            <WalletOption onClick={handleOpenWallet}>
+            <WalletOption onClick={() => handleOpenWallet('metamask')}>
               <MetamaskIcon width="50" height="50" />
               <Text textAlign="center">Metamask</Text>
             </WalletOption>
@@ -324,7 +359,6 @@ export default function BridgeWalletModal() {
           </Flex>
         </Wrapper>
       </StyledModal>
-
       <LedgerAddressList
         isOpen={showLedgerAddress}
         onDismiss={() => {
@@ -357,12 +391,12 @@ export default function BridgeWalletModal() {
                     return (
                       <tr
                         key={address.point}
-                        onClick={() => {
-                          chooseLedgerAddress({
-                            address: address.address,
-                            point: address.point,
-                          });
-                        }}
+                        // onClick={() => {
+                        //   chooseLedgerAddress({
+                        //     address: address.address,
+                        //     point: address.point,
+                        //   });
+                        // }}
                       >
                         <td style={{ textAlign: 'left' }}>{displayAddress(address.address)}</td>
                         <td style={{ textAlign: 'right' }}>{address.balance} ICX</td>

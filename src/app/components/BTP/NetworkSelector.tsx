@@ -10,6 +10,7 @@ import { ReactComponent as ArrowDown } from 'assets/icons/arrow-down.svg';
 
 interface NetworkSelectorProps {
   label?: string;
+  data: string[];
 }
 
 export const Label = styled(Typography)`
@@ -101,9 +102,9 @@ const SelectItem = styled(Box)`
   }
 `;
 
-const NetworkSelector = ({ label }: NetworkSelectorProps) => {
+const NetworkSelector = ({ label, data }: NetworkSelectorProps) => {
   const [showItems, setShowItems] = useState(false);
-
+  const [selectNetwork, setSelectNetwork] = useState(null);
   const toggleDropdown = () => {
     setShowItems(prevState => !prevState);
   };
@@ -112,33 +113,49 @@ const NetworkSelector = ({ label }: NetworkSelectorProps) => {
     setShowItems(false);
   };
 
+  const onSelect = select => {
+    setSelectNetwork(select);
+    toggleDropdown();
+  };
+
   return (
     <>
       {label && <Label>{label}</Label>}
-      <ClickAwayListener onClickAway={closeDropdown}>
-        <Select>
-          <Selected onClick={toggleDropdown}>
-            Binance
-            <StyledArrowDown />
-          </Selected>
-          <AnimatePresence>
-            {showItems && (
-              <SelectItems
-                key={'select-items'}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                <SelectItem>Ethereum</SelectItem>
-                <SelectItem>Moonbeam</SelectItem>
-                <SelectItem>Icon</SelectItem>
-                <SelectItem>Binance</SelectItem>
-              </SelectItems>
-            )}
-          </AnimatePresence>
-        </Select>
-      </ClickAwayListener>
+      {
+       data && data.map((item) => {
+        <Label>{item}</Label>
+        })
+      }
+      {data && (
+        <ClickAwayListener onClickAway={closeDropdown}>
+          <Select>
+            <Selected onClick={toggleDropdown}>
+              {selectNetwork}
+              <StyledArrowDown />
+            </Selected>
+            <AnimatePresence>
+              {showItems && (
+                <SelectItems
+                  key={'select-items'}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {data &&
+                    data.map(network => {
+                      <SelectItem onClick={() => onSelect(network)}>{network}</SelectItem>;
+                    })}
+                  {/* <SelectItem>Ethereum</SelectItem>
+                  <SelectItem>Moonbeam</SelectItem>
+                  <SelectItem>Icon</SelectItem>
+                  <SelectItem>Binance</SelectItem> */}
+                </SelectItems>
+              )}
+            </AnimatePresence>
+          </Select>
+        </ClickAwayListener>
+      )}
     </>
   );
 };

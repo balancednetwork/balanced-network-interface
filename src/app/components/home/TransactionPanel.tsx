@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -58,33 +58,33 @@ const ScrollHelper = styled.div`
 `;
 
 const METHOD_CONTENT = {
-  SupplyICX: t`Supplied (amount) ICX to the ICX / sICX pool`,
-  RewardsClaimed: t`Claimed (amount) BALN`,
-  stake: t`Adjusted BALN stake`,
-  withdrawCollateral: t`Withdrew (amount) sICX collateral`,
-  LoanRepaid: t`Repaid (amount) bnUSD`,
-  OriginateLoan: t`Borrowed (amount) bnUSD`,
-  cancelSicxicxOrder: t`Withdrew (amount) ICX from the ICX / sICX pool`,
-  ClaimSicxEarnings: t`Withdrew (amount) sICX from the ICX / sICX pool`,
-  CollateralReceived: t`Deposited (amount) sICX as collateral`,
-  UnstakeSICXRequest: t`Unstaked (amount) sICX`,
+  SupplyICX: 'Supplied (amount) ICX to the ICX / sICX pool',
+  RewardsClaimed: 'Claimed (amount) BALN',
+  stake: 'Adjusted BALN stake',
+  withdrawCollateral: 'Withdrew (amount) sICX collateral',
+  LoanRepaid: 'Repaid (amount) bnUSD',
+  OriginateLoan: 'Borrowed (amount) bnUSD',
+  cancelSicxicxOrder: 'Withdrew (amount) ICX from the ICX / sICX pool',
+  ClaimSicxEarnings: 'Withdrew (amount) sICX from the ICX / sICX pool',
+  CollateralReceived: 'Deposited (amount) sICX as collateral ',
+  UnstakeSICXRequest: 'Unstaked (amount) sICX',
   UnstakeRequest: '',
-  claimUnstakedICX: t`Claimed (amount) ICX`,
-  Deposit: t`Transferred (amount) (currency) to the Balanced exchange`,
-  Withdraw1Value: t`Withdrew (amount) (currency)`,
+  claimUnstakedICX: 'Claimed (amount) ICX',
+  Deposit: 'Transferred (amount) (currency) to the Balanced exchange',
+  Withdraw1Value: 'Withdrew (amount) (currency)',
   VoteCast: '',
-  Claimed: t`Claimed network fees`,
+  Claimed: 'Claimed network fees',
   TokenTransfer: '',
   Transfer: '',
   Rebalance: '',
 
   //  2 symbols
-  stakeICX: t`Swapped (amount1) ICX for (amount2) sICX`,
-  Remove: t`Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool`,
-  Swap: t`Swapped (amount1) (currency1) for (amount2) (currency2)`,
-  AssetRetired: t`Retired (amount) bnUSD for (amount) sICX`,
-  Withdraw: t`Withdrew (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool`,
-  Add: t`Supplied (amount1) (currency1) and (amount2) (currency2) to the (currency1) / (currency2) pool`,
+  stakeICX: 'Swapped (amount1) ICX for (amount2) sICX',
+  Remove: 'Removed (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
+  Swap: 'Swapped (amount1) (currency1) for (amount2) (currency2)',
+  AssetRetired: 'Retired (amount) bnUSD for (amount) sICX',
+  Withdraw: 'Withdrew (amount1) (currency1) and (amount2) (currency2) from the (currency1) / (currency2) pool',
+  Add: 'Supplied (amount1) (currency1) and (amount2) (currency2) to the (currency1) / (currency2) pool',
 };
 
 const METHOD_POSITIVE_SIGN = [

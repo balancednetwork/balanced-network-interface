@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-18 10:29\n"
+"PO-Revision-Date: 2022-05-18 16:41\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -1240,7 +1240,7 @@ msgstr "pool de liquidez"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "or"
-msgstr ""
+msgstr "o"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then click Supply."

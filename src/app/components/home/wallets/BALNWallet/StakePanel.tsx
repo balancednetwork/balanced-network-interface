@@ -3,6 +3,7 @@ import React from 'react';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -14,11 +15,14 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
+
+dayjs.extend(localizedFormat);
 
 export default React.memo(function StakePanel() {
   const details = useBALNDetails();
@@ -113,10 +117,15 @@ export default React.memo(function StakePanel() {
       });
   };
 
+  const locale = useActiveLocale();
+  const languageCode = locale.split('-')[0];
+
   const date = dayjs().add(3, 'days');
   const description = shouldStake
     ? t`Unstaking takes 3 days.`
-    : t`They'll unstake on ${date && dayjs(date).format('MMM D')}, around ${date && dayjs(date).format('hh:mma')}.`;
+    : t`They'll unstake on ${date && dayjs(date).locale(languageCode).format('ll')}, around ${
+        date && dayjs(date).locale(languageCode).format('LT')
+      }.`;
 
   const hasEnoughICX = useHasEnoughICX();
 

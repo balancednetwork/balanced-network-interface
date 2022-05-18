@@ -221,7 +221,7 @@ export default function LPPanel() {
   return (
     <>
       <SectionPanel bg="bg2">
-        <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
+        <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
           <AutoColumn gap="md">
             <AutoColumn gap="md">
               <Typography variant="h2">

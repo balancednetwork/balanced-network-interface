@@ -195,6 +195,7 @@ const DashGrid = styled.div`
   grid-template-columns: 3fr 5fr;
   grid-template-areas: 'asset balance&value';
   align-items: center;
+  white-space: nowrap;
 
   ${({ theme }) => theme.mediaWidth.up500`
     grid-template-columns: 1fr 3fr;

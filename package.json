@@ -28,6 +28,7 @@
     "lightweight-charts": "3.2.0",
     "lint-staged": "10.3.0",
     "lodash": "4.17.21",
+    "make-plural": "7.1.0",
     "node-plop": "0.26.2",
     "nouislider": "14.6.4",
     "nouislider-react": "3.3.9",

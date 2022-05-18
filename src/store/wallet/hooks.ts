@@ -5,6 +5,7 @@ import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 import _ from 'lodash';
 import { BalancedJs } from 'packages/BalancedJs';
+import { CallData } from 'packages/BalancedJs/contracts/Multicall';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -112,19 +113,40 @@ export function useTokenBalances(
 
   useEffect(() => {
     const fetchBalances = async () => {
-      const result = await Promise.all(
-        tokens.map(async token => {
-          if (!account) return undefined;
-          if (isBALN(token)) return bnJs.BALN.availableBalanceOf(account);
-          if (isFIN(token)) return bnJs.getContract(token.address).availableBalanceOf(account);
-          return bnJs.getContract(token.address).balanceOf(account);
-        }),
-      );
+      if (account) {
+        const cds: CallData[] = tokens.map(token => {
+          if (isBALN(token))
+            return {
+              target: bnJs.BALN.address,
+              method: 'availableBalanceOf',
+              params: [account],
+            };
+          if (isFIN(token))
+            return {
+              target: token.address,
+              method: 'availableBalanceOf',
+              params: [account],
+            };
 
-      setBalances(result);
+          return {
+            target: token.address,
+            method: 'balanceOf',
+            params: [account],
+          };
+        });
+
+        const data: any[] = await bnJs.Multicall.getAggregateData(cds);
+        const result = data.map(bal => (bal === null ? undefined : bal));
+
+        setBalances(result);
+      } else {
+        setBalances(Array(tokens.length).fill(undefined));
+      }
     };
 
-    fetchBalances();
+    if (tokens.length > 0) {
+      fetchBalances();
+    }
   }, [transactions, tokens, account]);
 
   return useMemo(() => {

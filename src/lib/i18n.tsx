@@ -86,6 +86,9 @@ export async function dynamicActivate(locale: SupportedLocale) {
   // Bundlers will either export it as default or as a named export named default.
   i18n.load(locale, catalog.messages || catalog.default.messages);
   i18n.activate(locale);
+  // load dayjs locale
+  const languageCode = locale.split('-')[0];
+  await import(`dayjs/locale/${languageCode}.js`);
 }
 
 interface ProviderProps {

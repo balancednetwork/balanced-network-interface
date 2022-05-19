@@ -37,7 +37,7 @@ export default function UnstakePanel() {
         ) : (
           <>
             <Typography>
-              {t`Your BALN will unstake on ${unstakingDate && dayjs(unstakingDate).locale(languageCode).format('ll')} at
+              {t`Your BALN will unstake on ${unstakingDate && dayjs(unstakingDate).locale(languageCode).format('LL')} at
                 ${unstakingDate && dayjs(unstakingDate).locale(languageCode).format('LT')}.`}
             </Typography>
 

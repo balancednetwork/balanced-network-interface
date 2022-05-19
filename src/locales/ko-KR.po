@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-12 05:32\n"
+"PO-Revision-Date: 2022-05-18 10:29\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -1237,6 +1237,10 @@ msgstr "5일 후에 종료됩니다."
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
 msgstr "유동성 풀"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "or"
+msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then click Supply."

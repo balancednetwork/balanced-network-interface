@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-27 21:22\n"
+"PO-Revision-Date: 2022-05-18 10:29\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -1235,6 +1235,10 @@ msgstr "et se termine arpès 5 jours."
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
 msgstr "Pool de liquidité"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "or"
+msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then click Supply."

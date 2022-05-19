@@ -408,7 +408,7 @@ const PositionDetailPanel = () => {
 
 export default PositionDetailPanel;
 
-const ActivityPanel = styled(FlexPanel)`
+export const ActivityPanel = styled(FlexPanel)`
   padding: 0;
   grid-area: initial;
   flex-direction: column;
@@ -471,7 +471,7 @@ const Threshold = styled(Box)<{ warned?: boolean }>`
   }
 `;
 
-const MetaData = styled(Box)`
+export const MetaData = styled(Box)`
   font-size: 14px;
   margin-top: -10px;
 

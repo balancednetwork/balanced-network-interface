@@ -20,11 +20,11 @@ import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
-import BALNWallet from './wallets/BALNWallet';
-import ICXWallet from './wallets/ICXWallet';
-import SendPanel from './wallets/SendPanel';
-import SICXWallet from './wallets/SICXWallet';
-import { notificationCSS } from './wallets/utils';
+import BALNWallet from '../Wallet/wallets/BALNWallet';
+import ICXWallet from '../Wallet/wallets/ICXWallet';
+import SendPanel from '../Wallet/wallets/SendPanel';
+import SICXWallet from '../Wallet/wallets/SICXWallet';
+import { notificationCSS } from '../Wallet/wallets/utils';
 
 const WalletUIs = {
   ICX: ICXWallet,

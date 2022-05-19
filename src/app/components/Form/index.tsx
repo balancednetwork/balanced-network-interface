@@ -63,7 +63,7 @@ const NumberInput = styled.input`
 
 const CurrencyUnit = styled.span``;
 
-const inputRegex = RegExp(`^\\d+(?:\\\\[.])?\\d*$`);
+export const inputRegex = RegExp(`^\\d+(?:\\\\[.])?\\d*$`);
 
 export const CurrencyField: React.FC<{
   editable: boolean;

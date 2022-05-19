@@ -19,6 +19,8 @@ import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
+import Wallet from '../Wallet';
+
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
 
@@ -35,22 +37,24 @@ const WalletInfo = styled(Box)`
 
 const WalletButtonWrapper = styled.div``;
 
-const WalletMenu = styled.div`
-  max-width: 240px;
-  font-size: 14px;
-  padding: 25px;
-  display: grid;
-  grid-template-rows: auto;
-  justify-items: center;
-  grid-gap: 20px;
-`;
-
-const WalletMenuButton = styled(Button)`
-  padding: 7px 25px;
-`;
-
-const ChangeWalletButton = styled(Link)`
+const WalletButton = styled(Link)`
   cursor: pointer;
+`;
+
+const WalletWrap = styled(Box)`
+  width: 400px;
+  max-width: calc(100vw - 4px);
+`;
+const WalletMenu = styled.div`
+  font-size: 14px;
+  padding: 25px 25px 15px 25px;
+  display: flex;
+`;
+
+const WalletButtons = styled(Flex)`
+  margin-left: auto;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledAddress = styled(Typography)`
@@ -96,7 +100,7 @@ const CopyableAddress = ({
 
 export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
-
+  const upSmall = useMedia('(min-width: 600px)');
   const { account, disconnect } = useIconReact();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -125,8 +129,6 @@ export default function Header(props: { title?: string; className?: string }) {
     }
   };
 
-  const upSmall = useMedia('(min-width: 800px)');
-
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
@@ -136,7 +138,7 @@ export default function Header(props: { title?: string; className?: string }) {
             <Trans id={title} />
           </Typography>
           {NETWORK_ID !== NetworkId.MAINNET && (
-            <Typography variant="h3" color="alert">
+            <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
               {CHAIN_INFO[NETWORK_ID].name}
             </Typography>
           )}
@@ -155,7 +157,7 @@ export default function Header(props: { title?: string; className?: string }) {
             <WalletInfo>
               {upSmall && (
                 <Typography variant="p" textAlign="right">
-                  <Trans>Wallet</Trans>
+                  <Trans>ICON wallet</Trans>
                 </Typography>
               )}
               {account && upSmall && <CopyableAddress account={account} />}
@@ -168,16 +170,29 @@ export default function Header(props: { title?: string; className?: string }) {
                     <WalletIcon />
                   </IconButton>
 
-                  <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
-                    <WalletMenu>
-                      {!upSmall && <CopyableAddress account={account} closeAfterDelay={1000} />}
-                      <ChangeWalletButton onClick={handleChangeWallet}>
-                        <Trans>Change wallet</Trans>
-                      </ChangeWalletButton>
-                      <WalletMenuButton onClick={handleDisconnectWallet}>
-                        <Trans>Sign out</Trans>
-                      </WalletMenuButton>
-                    </WalletMenu>
+                  <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" offset={[0, 15]}>
+                    <WalletWrap>
+                      <WalletMenu>
+                        <Typography variant="h2">
+                          <Trans>Wallet</Trans>
+                        </Typography>
+                        <WalletButtons>
+                          <WalletButton onClick={handleChangeWallet}>
+                            <Trans>Change wallet</Trans>
+                          </WalletButton>
+                          <Typography padding={'0px 5px'}>{' | '}</Typography>
+                          <WalletButton onClick={handleDisconnectWallet}>
+                            <Trans>Sign out</Trans>
+                          </WalletButton>
+                        </WalletButtons>
+                      </WalletMenu>
+                      {!upSmall && (
+                        <Flex justifyContent={'flex-end'} width={'100%'} padding={'2px 25px 25px'}>
+                          <CopyableAddress account={account} closeAfterDelay={1000} />
+                        </Flex>
+                      )}
+                      <Wallet anchor={anchor} setAnchor={setAnchor} />
+                    </WalletWrap>
                   </DropdownPopper>
                 </div>
               </ClickAwayListener>

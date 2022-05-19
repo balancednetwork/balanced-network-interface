@@ -19,6 +19,7 @@ import Tooltip, { TooltipContainer } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { ZERO } from 'constants/index';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useRatesQuery } from 'queries/reward';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
@@ -83,15 +84,20 @@ const useCollateralLockedSliderPos = () => {
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
+  const locale = useActiveLocale();
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
   const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
-  const shouldShowRebalancingTooltipAnchor = useMedia('(min-width: 360px)');
+  const shouldShowRebalancingTooltipAnchor = useMedia(
+    `(min-width: ${'pl-PL,fr-FR'.indexOf(locale) >= 0 ? '400px' : '360px'})`,
+  );
   const [show, setShow] = React.useState<boolean>(false);
   const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
+  const heightenBars =
+    (useMedia('(max-width: 359px)') && 'es-ES,nl-NL,de-DE,fr-FR'.indexOf(locale) >= 0) || 'pl-PL'.indexOf(locale) >= 0;
 
   const open = React.useCallback(() => setShow(true), [setShow]);
   const close = React.useCallback(() => setShow(false), [setShow]);
@@ -216,7 +222,12 @@ const PositionDetailPanel = () => {
           )}
         </Typography>
 
-        <Flex alignItems="center" justifyContent="space-between" mt={[10, 5, 5, 5, 5]} mb={4}>
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          mt={heightenBars ? [70, 5, 5, 5, 5] : [10, 5, 5, 5, 5]}
+          mb={4}
+        >
           <LeftChip
             bg="primary"
             style={{
@@ -227,7 +238,7 @@ const PositionDetailPanel = () => {
           />
 
           <Box flex={1} style={{ position: 'relative' }}>
-            <Locked warned={isLockWarning} pos={pos}>
+            <Locked warned={isLockWarning} pos={pos} heightened={heightenBars}>
               <MetaData as="dl" style={{ textAlign: 'right' }}>
                 <Tooltip
                   text={t`You can't withdraw any collateral if you go beyond this threshold.`}
@@ -242,7 +253,7 @@ const PositionDetailPanel = () => {
                 <dd>${lockThresholdPrice.toFixed(3)}</dd>
               </MetaData>
             </Locked>
-            <Liquidated>
+            <Liquidated heightened={heightenBars}>
               <MetaData as="dl">
                 <dt>
                   <Trans>Liquidated</Trans>
@@ -308,7 +319,7 @@ const PositionDetailPanel = () => {
                     <QuestionIcon width={14} style={{ transform: 'translate3d(1px, 1px, 0)' }} />
                   </QuestionWrapper>
                 )}
-                <RebalancingTooltip show={showRebalancing} bottom={false}>
+                <RebalancingTooltip show={showRebalancing} bottom={false} isActive={shouldShowRebalancingTooltipAnchor}>
                   <TooltipContainer width={435} className="rebalancing-modal">
                     <RebalancingInfo />
                     {shouldShowSeparateTooltip ? null : shouldShowRebalancingAveragePrice ? (
@@ -355,6 +366,7 @@ const PositionDetailPanel = () => {
               <RebalancingTooltip
                 show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
                 bottom={true}
+                isActive={shouldShowRebalancingTooltipAnchor}
               >
                 <TooltipContainer width={321}>{averageRebalancingPriceText}</TooltipContainer>
               </RebalancingTooltip>
@@ -448,11 +460,12 @@ const RightChip = styled(Chip)`
   border-left: 1px solid #0d2a4d;
 `;
 
-const Threshold = styled(Box)<{ warned?: boolean }>`
+const Threshold = styled(Box)<{ warned?: boolean; heightened?: boolean }>`
   color: ${({ warned }) => (warned ? '#fb6a6a' : '#ffffff')};
   position: absolute;
+  bottom: 0;
   width: 1px;
-  height: 50px;
+  height: ${({ heightened }) => (heightened ? '70px' : '50px')};
   margin-top: -34px;
   background-color: ${({ warned }) => (warned ? '#fb6a6a' : '#ffffff')};
   z-index: 2;
@@ -489,8 +502,14 @@ const Locked = styled(Threshold)<{ pos: number }>`
   left: ${({ pos }) => (1 - pos) * 100}%;
 
   ${MetaData} {
-    width: 150px;
-    margin-left: -165px;
+    width: 155px;
+    margin-left: -170px;
+
+    ${({ theme }) => theme.mediaWidth.up360`
+    
+    width: 220px;
+    margin-left: -235px;
+  `};
   }
 `;
 
@@ -502,7 +521,7 @@ const Liquidated = styled(Threshold)`
   }
 
   ${MetaData} {
-    width: 90px;
+    width: 110px;
     padding-left: 15px;
   }
 `;
@@ -535,7 +554,7 @@ const RebalancingTooltipArrow = styled.span<{ left: number; show: boolean }>`
   }
 `;
 
-const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
+const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean; isActive: boolean }>`
   background: ${({ theme }) => theme.colors.bg4};
   border: 2px solid ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.text1};
@@ -548,7 +567,7 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
   transition: all ease 0.25s;
   opacity: ${({ show }) => (show ? 1 : 0)};
   pointer-events: ${({ show }) => (show ? 'all' : 'none')};
-  display: none;
+  display: ${({ isActive }) => (isActive ? 'block' : 'none')};
 
   &:before {
     ${({ bottom }) => (bottom ? null : `content: ''`)};
@@ -565,7 +584,6 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean }>`
   }
 
   ${({ theme }) => theme.mediaWidth.up360`
-    display: block;
      margin-left: -170px;
 
     &:before {

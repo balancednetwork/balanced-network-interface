@@ -2,6 +2,7 @@ import React from 'react';
 
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -12,6 +13,7 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useUserCollectedFeesQuery, useRewardQuery, usePlatformDayQuery, BATCH_SIZE } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useHasNetworkFees, useHasRewardable } from 'store/reward/hooks';
@@ -40,7 +42,7 @@ const RewardsPanelLayout = styled(FlexPanel)`
   `}
 `;
 
-const RewardSection = () => {
+const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }) => {
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
   const shouldLedgerSign = useShouldLedgerSign();
@@ -98,7 +100,7 @@ const RewardSection = () => {
     if (!hasRewardable && reward?.isZero()) {
       return (
         <>
-          <Typography variant="p" as="div" fontSize={16}>
+          <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
             <Trans>Ineligible</Trans>
             <QuestionHelper
               text={t`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
@@ -109,7 +111,7 @@ const RewardSection = () => {
     } else if (reward?.isZero()) {
       return (
         <>
-          <Typography variant="p" as="div" fontSize={16}>
+          <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
             <Trans>Pending</Trans>
             <QuestionHelper
               text={t`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
@@ -143,8 +145,15 @@ const RewardSection = () => {
   const afterAmount = beforeAmount.plus(reward || ZERO);
 
   return (
-    <Flex flex={1} flexDirection="column" alignItems="center" className="border-right">
-      <Typography variant="p" mb={2} fontSize={14} opacity={0.75}>
+    <Flex
+      flex={1}
+      flexDirection="column"
+      alignItems={shouldBreakOnMobile ? 'start' : 'center'}
+      mb={shouldBreakOnMobile ? '20px' : ''}
+      pb={shouldBreakOnMobile ? '20px' : ''}
+      className={shouldBreakOnMobile ? 'border-bottom' : 'border-right'}
+    >
+      <Typography variant="p" mb={2} textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
         <Trans>Balance Tokens</Trans>
       </Typography>
       {reward && getRewardsUI()}
@@ -198,7 +207,7 @@ const RewardSection = () => {
   );
 };
 
-const NetworkFeeSection = () => {
+const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }) => {
   const { account } = useIconReact();
   const [feeTx, setFeeTx] = React.useState('');
   const shouldLedgerSign = useShouldLedgerSign();
@@ -264,7 +273,7 @@ const NetworkFeeSection = () => {
   const getNetworkFeesUI = () => {
     if (hasNetworkFees && !hasFee) {
       return (
-        <Typography variant="p" as="div" fontSize={16}>
+        <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
           <Trans>Pending</Trans>
           <QuestionHelper text={t`To earn network fees, stake BALN from your wallet.`} />
         </Typography>
@@ -291,7 +300,7 @@ const NetworkFeeSection = () => {
       );
     } else {
       return (
-        <Typography variant="p" as="div" fontSize={16}>
+        <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
           <Trans>Ineligible</Trans>
           <QuestionHelper text={t`To earn network fees, stake BALN from your wallet.`} />
         </Typography>
@@ -300,8 +309,8 @@ const NetworkFeeSection = () => {
   };
 
   return (
-    <Flex flex={1} flexDirection="column" alignItems="center">
-      <Typography variant="p" mb={2} as="div" fontSize={14} opacity={0.75}>
+    <Flex flex={1} flexDirection="column" alignItems={shouldBreakOnMobile ? 'start' : 'center'}>
+      <Typography variant="p" mb={2} as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
         <Trans>Network fees</Trans>
       </Typography>
       {getNetworkFeesUI()}
@@ -346,6 +355,8 @@ const NetworkFeeSection = () => {
 };
 
 const RewardsPanel = () => {
+  const locale = useActiveLocale();
+  const shouldBreakOnMobile = useMedia('(max-width: 499px)') && 'en-US,ko-KR'.indexOf(locale) < 0;
   return (
     <RewardsPanelLayout bg="bg2">
       <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 'initial', 350]}>
@@ -353,9 +364,9 @@ const RewardsPanel = () => {
           <Trans>Rewards</Trans>
         </Flex>
 
-        <Flex>
-          <RewardSection />
-          <NetworkFeeSection />
+        <Flex flexDirection={shouldBreakOnMobile ? 'column' : 'row'}>
+          <RewardSection shouldBreakOnMobile={shouldBreakOnMobile} />
+          <NetworkFeeSection shouldBreakOnMobile={shouldBreakOnMobile} />
         </Flex>
 
         <LedgerConfirmMessage mt={5} />

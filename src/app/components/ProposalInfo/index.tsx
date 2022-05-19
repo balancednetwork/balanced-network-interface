@@ -73,7 +73,7 @@ export default function ProposalInfo({
         {title ? description && normalizeContent(description) : <StyledSkeleton animation="wave" height={20} />}
       </ContentText>
       <Divider />
-      <Flex alignItems="center" flexWrap="wrap" sx={{ columnGap: '15px' }} my={1}>
+      <Flex alignItems="center" flexWrap="wrap" sx={{ columnGap: '15px' }}>
         <VoteStatusLabel proposal={proposal} />
         <VoterPercentLabel value={proposal?.sum} />
         <VoterNumberLabel value={proposal?.voters} />

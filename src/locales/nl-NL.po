@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-27 19:18\n"
+"PO-Revision-Date: 2022-05-18 19:22\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -784,7 +784,7 @@ msgstr "{0} {1} verzonden naar {address}."
 
 #: src/app/components/Header/index.tsx
 msgid "Sign in"
-msgstr "Login"
+msgstr "Log in"
 
 #: src/app/containers/HomePage/index.tsx
 msgid "Sign in to use the Home page."
@@ -813,11 +813,11 @@ msgstr "Stake"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens"
-msgstr "Stake Balanced Tokens"
+msgstr "Stake Balance Tokens"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens?"
-msgstr "Stake Balanced Tokens?"
+msgstr "Stake Balance Tokens?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Stake at least {0} BALN if you want to propose a change."
@@ -825,11 +825,11 @@ msgstr "Stake minimaal {0} BALN als je een verandering wilt voorstellen."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake your Balance Tokens to earn network fees."
-msgstr "Stake je Balanced Tokens om netwerk kosten te verdienen."
+msgstr "Stake je Balance Tokens om netwerk kosten te verdienen."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staked {0} BALN."
-msgstr "{0} BALN Gestaked."
+msgstr "{0} BALN gestaked."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staking BALN..."
@@ -872,7 +872,7 @@ msgstr "{pair} liquiditeit geleverd."
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Supply"
-msgstr "Voorraad"
+msgstr "Leveren"
 
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/containers/TradePage/index.tsx
@@ -985,7 +985,7 @@ msgstr "Totale dagelijkse beloningen"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total supply"
-msgstr "Totale Voorraad"
+msgstr "Totale voorraad"
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
@@ -1193,7 +1193,7 @@ msgstr "Je zult BALN als beloning ontvangen, en kan de fluctuaties verzachten do
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "You'll receive sICX (staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."
-msgstr "Je zult sICX (Gestakede ICX), Unstake het vanuit je wallet, of ruil het voor ICX op de handelspagina."
+msgstr "Je ontvangt sICX (staked ICX), Unstake het vanuit je wallet, of ruil het voor ICX op de handelspagina."
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "Your BALN will unstake on {0} at\n"
@@ -1214,7 +1214,7 @@ msgstr "Je ICX zal geunstaked worden omdat er meer onderpand wordt gestort op Ba
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your collateral balance is <0>{0} sICX</0> (staked ICX). The ICX value of your sICX is displayed, and will increase over time from staking rewards. You can't use it unless you withdraw it."
-msgstr "Je onderpand is <0>{0} sICX</0> (gestaakte ICX). De ICX waarde van uw sICX wordt weergegeven en zal toenemen na staking rewards. U kunt het niet gebruiken tenzij u het opneemt."
+msgstr "Je onderpand is <0>{0} sICX</0> (staked ICX). De ICX waarde van uw sICX wordt weergegeven en zal toenemen na staking rewards. U kunt het niet gebruiken tenzij u het opneemt."
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1237,6 +1237,10 @@ msgstr "en eindigt na 5 dagen."
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
 msgstr "liquiditeitspool"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "or"
+msgstr "of"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then click Supply."

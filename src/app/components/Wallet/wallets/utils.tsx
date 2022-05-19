@@ -13,7 +13,7 @@ export const StyledTabList = styled(TabList)`
 export const StyledTab = styled(Tab)<{ hasNotification?: boolean }>`
   &[data-reach-tab] {
     box-sizing: border-box;
-    padding: 0 10px 10px;
+    padding: 0 5px 10px;
     margin-right: 0px;
     border-bottom: 3px solid #144a68;
     color: rgba(255, 255, 255, 0.75);
@@ -22,6 +22,10 @@ export const StyledTab = styled(Tab)<{ hasNotification?: boolean }>`
     position: relative;
 
     ${({ theme }) => theme.mediaWidth.up360`
+      padding: 0 8px 10px;
+    `};
+
+    ${({ theme }) => theme.mediaWidth.up500`
       padding: 0 15px 10px 15px;
     `};
 

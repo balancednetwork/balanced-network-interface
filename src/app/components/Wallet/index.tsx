@@ -55,11 +55,12 @@ const HeaderText = styled(Typography)`
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 3px;
+  white-space: nowrap;
 `;
 
 const DashGrid = styled(Box)`
   display: grid;
-  grid-template-columns: 2fr 3fr;
+  grid-template-columns: 2fr 4fr;
   grid-template-areas: 'asset balance&value';
   align-items: center;
   @media screen and (max-width: ${walletBreakpoint}) {

@@ -49,10 +49,10 @@ const WalletMenu = styled.div`
   font-size: 14px;
   padding: 25px 25px 15px 25px;
   display: flex;
+  flex-wrap: wrap;
 `;
 
 const WalletButtons = styled(Flex)`
-  margin-left: auto;
   display: flex;
   align-items: center;
 `;
@@ -173,7 +173,7 @@ export default function Header(props: { title?: string; className?: string }) {
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" offset={[0, 15]}>
                     <WalletWrap>
                       <WalletMenu>
-                        <Typography variant="h2">
+                        <Typography variant="h2" mr={'auto'}>
                           <Trans>Wallet</Trans>
                         </Typography>
                         <WalletButtons>

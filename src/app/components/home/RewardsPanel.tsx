@@ -128,7 +128,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
               BALN
             </Typography>
           </Typography>
-          <Button mt={3} onClick={toggleOpen} fontSize={14}>
+          <Button mt={3} mx={shouldBreakOnMobile ? 0 : 2} onClick={toggleOpen} fontSize={14}>
             <Trans>Claim</Trans>
           </Button>
         </>
@@ -153,7 +153,14 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       pb={shouldBreakOnMobile ? '20px' : ''}
       className={shouldBreakOnMobile ? 'border-bottom' : 'border-right'}
     >
-      <Typography variant="p" mb={2} textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
+      <Typography
+        variant="p"
+        mb={2}
+        opacity={0.75}
+        fontSize={14}
+        textAlign={'center'}
+        padding={shouldBreakOnMobile ? '0' : '0 10px'}
+      >
         <Trans>Balance Tokens</Trans>
       </Typography>
       {reward && getRewardsUI()}
@@ -293,7 +300,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
                 </Typography>
               ))}
 
-          <Button mt={3} onClick={toggleOpen} fontSize={14}>
+          <Button mt={3} mx={shouldBreakOnMobile ? 0 : 2} onClick={toggleOpen} fontSize={14}>
             {count && count > 1 ? t`Claim (1 of ${count})` : t`Claim`}
           </Button>
         </>
@@ -310,7 +317,15 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
 
   return (
     <Flex flex={1} flexDirection="column" alignItems={shouldBreakOnMobile ? 'start' : 'center'}>
-      <Typography variant="p" mb={2} as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
+      <Typography
+        variant="p"
+        mb={2}
+        opacity={0.75}
+        fontSize={14}
+        as="div"
+        textAlign={'center'}
+        padding={shouldBreakOnMobile ? '0' : '0 10px'}
+      >
         <Trans>Network fees</Trans>
       </Typography>
       {getNetworkFeesUI()}

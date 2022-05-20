@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 
 import Divider from 'app/components/Divider';
@@ -15,9 +16,15 @@ export default function BALNWallet({ currency }: { currency: Currency }) {
     <>
       <Tabs>
         <StyledTabList>
-          <StyledTab>Stake</StyledTab>
-          <StyledTab>Send</StyledTab>
-          <StyledTab>Unstaking</StyledTab>
+          <StyledTab>
+            <Trans>Stake</Trans>
+          </StyledTab>
+          <StyledTab>
+            <Trans>Send</Trans>
+          </StyledTab>
+          <StyledTab>
+            <Trans>Unstaking</Trans>
+          </StyledTab>
         </StyledTabList>
         <Divider mb={3} />
         <TabPanels>

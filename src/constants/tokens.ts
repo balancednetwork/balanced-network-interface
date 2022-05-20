@@ -21,6 +21,10 @@ export const isBALN = (token?: Currency): boolean => {
   );
 };
 
+export const isFIN = (token?: Currency): boolean => {
+  return token instanceof Token && (token.address === FIN.address || token.address === FIN_SEJONG.address);
+};
+
 export const useICX = () => {
   const { networkId: chainId } = useIconReact();
   if (chainId === SupportedChainId.MAINNET) {
@@ -41,6 +45,7 @@ export const sICX = new Token(
   18,
   'sICX',
   'Staked ICX',
+  'icon',
 );
 export const bnUSD = new Token(
   SupportedChainId.MAINNET,
@@ -48,6 +53,7 @@ export const bnUSD = new Token(
   18,
   'bnUSD',
   'Balanced Dollar',
+  'stable',
 );
 export const BALN = new Token(
   SupportedChainId.MAINNET,
@@ -62,6 +68,7 @@ export const IUSDC = new Token(
   6,
   'IUSDC',
   'ICON USD Coin',
+  'stable dollar',
 );
 export const USDS = new Token(
   SupportedChainId.MAINNET,
@@ -69,6 +76,7 @@ export const USDS = new Token(
   18,
   'USDS',
   'Stably USD',
+  'stable dollar',
 );
 export const OMM = new Token(
   SupportedChainId.MAINNET,
@@ -97,6 +105,7 @@ export const IUSDT = new Token(
   6,
   'IUSDT',
   'ICON Tether',
+  'stable dollar usd',
 );
 export const GBET = new Token(
   SupportedChainId.MAINNET,
@@ -104,6 +113,14 @@ export const GBET = new Token(
   18,
   'GBET',
   'GangstaBet Token',
+);
+export const FIN = new Token(
+  SupportedChainId.MAINNET,
+  'cx785d504f44b5d2c8dac04c5a1ecd75f18ee57d16',
+  18,
+  'FIN',
+  'Fin Token',
+  'optimus',
 );
 
 // yeouido
@@ -190,10 +207,17 @@ export const IUSDC_SEJONG = new Token(
   'IUSDC',
   'ICON USD Coin',
 );
+export const FIN_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cx0d0c689da98fd4ca66a5695fd8581648def604eb',
+  18,
+  'FIN',
+  'Fin Token',
+);
 
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
-  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT, GBET],
+  [SupportedChainId.MAINNET]: [ICX, sICX, bnUSD, BALN, IUSDC, OMM, USDS, CFT, METX, IUSDT, GBET, FIN],
   [SupportedChainId.YEOUIDO]: [
     ICX_YEOUIDO,
     sICX_YEOUIDO,
@@ -205,7 +229,7 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
     CFT_YEOUIDO,
   ],
   //[SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, IUSDC_SEJONG],
-  [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG],
+  [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, FIN_SEJONG],
 };
 
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];
@@ -217,6 +241,14 @@ export const SUPPORTED_TOKENS_MAP_BY_ADDRESS: {
   return prev;
 }, {});
 
+export const FUNDING_TOKENS: { [chainId: number]: Token[] } = {
+  [SupportedChainId.MAINNET]: [sICX, bnUSD, BALN],
+  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, BALN_YEOUIDO],
+  [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG],
+};
+
+export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
+
 /*
  * this information contains the tokens the balanced supports
  * eventually this information will saved in json file.
@@ -226,6 +258,7 @@ export const SUPPORTED_TOKENS_MAP_BY_ADDRESS: {
 export interface TokenInfo {
   readonly chainId: number;
   readonly address: string;
+  readonly searchableTerms: string;
   readonly name: string;
   readonly decimals: number;
   readonly symbol: string;

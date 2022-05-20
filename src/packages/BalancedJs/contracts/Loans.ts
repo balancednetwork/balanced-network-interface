@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import { IconConverter } from 'icon-sdk-js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -11,39 +10,36 @@ export default class Loans extends Contract {
     this.address = addresses[this.nid].loans;
   }
 
-  withdrawCollateral(value: BigNumber) {
+  withdrawCollateral(value: string) {
     const payload = this.transactionParamsBuilder({
       method: 'withdrawCollateral',
-      params: { _value: IconConverter.toHex(value) },
+      params: { _value: IconConverter.toHexNumber(value) },
     });
 
     return this.callICONPlugins(payload);
   }
 
-  depositAndBorrow(
-    value: BigNumber,
-    params: { asset?: 'bnUSD'; amount?: BigNumber; from?: string; value?: BigNumber } = {},
-  ) {
+  depositAndBorrow(value: string, params: { asset?: 'bnUSD'; amount?: string; from?: string; value?: string } = {}) {
     const payload = this.transactionParamsBuilder({
       method: 'depositAndBorrow',
-      value: value,
+      value: IconConverter.toHexNumber(value),
       params: {
         _asset: params.asset,
-        _amount: params.amount && IconConverter.toHex(params.amount),
+        _amount: params.amount && IconConverter.toHexNumber(params.amount),
         _from: params.from,
-        _value: params.value && IconConverter.toHex(params.value),
+        _value: params.value && IconConverter.toHexNumber(params.value),
       },
     });
 
     return this.callICONPlugins(payload);
   }
 
-  returnAsset(symbol: string, value: BigNumber, repay: number) {
+  returnAsset(symbol: string, value: string, repay: number) {
     const payload = this.transactionParamsBuilder({
       method: 'returnAsset',
       params: {
         _symbol: symbol,
-        _value: IconConverter.toHex(value),
+        _value: IconConverter.toHexNumber(value),
         _repay: IconConverter.toHex(repay),
       },
     });

@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { Converter as IconConverter } from 'icon-sdk-js';
 
 import addresses from '../addresses';
 import ContractSettings from '../contractSettings';
@@ -18,10 +18,10 @@ export default class Staking extends Contract {
     return this.call(callParams);
   }
 
-  stakeICX(to: string, value: BigNumber) {
+  stakeICX(to: string, value: string) {
     const payload = this.transactionParamsBuilder({
       method: 'stakeICX',
-      value: value,
+      value: IconConverter.toHexNumber(value),
       params: {
         _to: to,
       },

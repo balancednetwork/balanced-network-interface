@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, TextButton } from 'app/components/Button';
-import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
-import { DefaultLayout } from 'app/components/Layout';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import ModalContent from 'app/components/ModalContent';
 import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect';
 import RatioInput from 'app/components/newproposal/RatioInput';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
-import { CURRENCY_LIST, PROPOSAL_CONFIG, PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
+import { PROPOSAL_CONFIG, PROPOSAL_TYPE, PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import FundingInput, { CurrencyValue } from '../../components/newproposal/FundingInput';
@@ -102,14 +101,10 @@ export function NewProposalPage() {
   const [forumLink, setForumLink] = useState('');
   const [description, setDescription] = useState('');
   const [ratioInputValue, setRatioInputValue] = useState<{ [key: string]: string }>({});
+  const [balanceList, setBalanceList] = useState<CurrencyAmount<Currency>[]>([]);
   const [currencyInputValue, setCurrencyInputValue] = React.useState<CurrencyValue>({
     recipient: '',
-    amounts: {
-      '0': {
-        amount: '',
-        symbol: CURRENCY_LIST[0],
-      },
-    },
+    amounts: [],
   });
 
   const [showError, setShowError] = useState<ErrorItem>({
@@ -143,8 +138,16 @@ export function NewProposalPage() {
   useEffect(() => {
     (async () => {
       const totalSupply = await bnJs.BALN.totalSupply();
+      const fundingRes = await PROPOSAL_CONFIG.Funding.fetchInputData();
+      setBalanceList(fundingRes);
       setTotalSupply(totalSupply);
+      if (fundingRes)
+        setCurrencyInputValue({
+          recipient: '',
+          amounts: [{ item: CurrencyAmount.fromRawAmount(fundingRes[0].currency, 0) }],
+        });
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { data: platformDay } = usePlatformDayQuery();
@@ -170,9 +173,7 @@ export function NewProposalPage() {
       (Object.values(ratioInputValue).length > 0 && Object.values(ratioInputValue).every(ratio => !!ratio.trim())) ||
       (isFundingProposal &&
         !!currencyInputValue.recipient.trim() &&
-        Object.values(currencyInputValue.amounts)
-          .map(({ amount }) => amount)
-          .some(amount => amount)));
+        currencyInputValue.amounts.some(amount => amount.inputDisplayValue)));
 
   const canSubmit = account && isStakeValid && isFormValid;
 
@@ -234,12 +235,7 @@ export function NewProposalPage() {
     setRatioInputValue({});
     setCurrencyInputValue({
       recipient: '',
-      amounts: {
-        '0': {
-          amount: '',
-          symbol: CURRENCY_LIST[0],
-        },
-      },
+      amounts: [{ item: CurrencyAmount.fromRawAmount(balanceList[0].currency, 0) }],
     });
   };
 
@@ -262,11 +258,13 @@ export function NewProposalPage() {
         .Governance.defineVote(title, description, platformDay + 1, platformDay, actions)
         .then(res => {
           if (res.result) {
+            const label = t({ id: PROPOSAL_TYPE_LABELS[selectedProposalType].id });
+
             addTransaction(
               { hash: res.result },
               {
-                pending: 'Submitting a proposal...',
-                summary: `${selectedProposalType} proposal submitted.`,
+                pending: t`Submitting a proposal...`,
+                summary: t`${label} proposal submitted.`,
               },
             );
             toggleOpen();
@@ -286,17 +284,14 @@ export function NewProposalPage() {
   };
 
   return (
-    <DefaultLayout title="Vote">
-      <Helmet>
-        <title>Vote</title>
-      </Helmet>
+    <>
       <NewProposalContainer>
-        <Breadcrumb title={'New proposal'} locationText={'Vote'} locationPath={'/vote'} />
+        <Breadcrumb title={t`New proposal`} locationText={t`Vote`} locationPath={'/vote'} />
         <ProposalTypesSelect onSelect={handleProposalTypeSelect} selected={selectedProposalType} />
         <ProposalDetailContainer>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
-              Title
+              <Trans>Title</Trans>
             </Typography>
             <Typography variant="p" flex="1" textAlign="right" alignSelf="center">
               {`${title.length}/100`}
@@ -305,7 +300,7 @@ export function NewProposalPage() {
           <FieldInput type="text" onChange={onTitleInputChange} value={title} maxLength={100} />
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
-              Forum link
+              <Trans>Forum link</Trans>
             </Typography>
           </FieldContainer>
           <Tooltip
@@ -319,7 +314,7 @@ export function NewProposalPage() {
           </Tooltip>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
-              Description
+              <Trans>Description</Trans>
             </Typography>
             <Typography variant="p" flex="1" textAlign="right" alignSelf="center">
               {`${description.length}/500`}
@@ -337,37 +332,41 @@ export function NewProposalPage() {
             />
           )}
           {isFundingProposal && (
-            <FundingInput currencyValue={currencyInputValue} setCurrencyValue={setCurrencyInputValue} />
+            <FundingInput
+              currencyValue={currencyInputValue}
+              setCurrencyValue={setCurrencyInputValue}
+              balanceList={balanceList}
+            />
           )}
           <Typography variant="content" mt="25px" mb="25px" textAlign="center">
-            It costs 100 bnUSD to submit a proposal.
+            <Trans>It costs 100 bnUSD to submit a proposal.</Trans>
           </Typography>
           <div style={{ textAlign: 'center' }}>
             <Button disabled={!canSubmit} onClick={formSubmit}>
-              Submit
+              <Trans>Submit</Trans>
             </Button>
           </div>
           {account && !isStakeValid && minimumStakeBalance && (
             <Typography variant="content" mt="25px" mb="25px" textAlign="center" color={theme.colors.alert}>
-              Stake at least {minimumStakeBalance.dp(2).toFormat()} BALN if you want to propose a change.
+              <Trans>Stake at least {minimumStakeBalance.dp(2).toFormat()} BALN if you want to propose a change.</Trans>
             </Typography>
           )}
         </ProposalDetailContainer>
       </NewProposalContainer>
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
-            Submit proposal?
+            <Trans>Submit proposal?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            100 bnUSD
+            <Trans>100 bnUSD</Trans>
           </Typography>
 
           <Typography textAlign="center" marginTop="10px">
-            Voting will begin at 5pm UTC,
+            <Trans>Voting will begin at 5pm UTC,</Trans>
             <br />
-            and ends after 5 days.
+            <Trans>and ends after 5 days.</Trans>
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -375,20 +374,16 @@ export function NewProposalPage() {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Go back
+                  <Trans>Go back</Trans>
                 </TextButton>
                 <Button onClick={modalSubmit} fontSize={14} disabled={!hasEnoughICX}>
-                  Submit proposal
+                  <Trans>Submit proposal</Trans>
                 </Button>
               </>
             )}
           </Flex>
-
-          <LedgerConfirmMessage />
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
-    </DefaultLayout>
+    </>
   );
 }

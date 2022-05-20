@@ -1,26 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 
+import { defineMessage, Trans } from '@lingui/macro';
+import { LanguageCode, ResolutionString } from 'charting_library/charting_library';
 import JSBI from 'jsbi';
+import { useIconReact } from 'packages/icon-react';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
+import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
+import { TVChartContainer } from 'app/components/TradingViewAdvanced/TVChartContainer';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { getTradePair, isQueue } from 'constants/currency';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import useWidth from 'hooks/useWidth';
 import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
-import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { Fraction, Price, Currency } from 'types/balanced-sdk-core';
-import { generateChartData } from 'utils';
+import { useDerivedSwapInfo, useSwapActionHandlers } from 'store/swap/hooks';
+import { Price, Currency } from 'types/balanced-sdk-core';
+import { generateChartData, toFraction } from 'utils';
+
+const CHART_TYPES_LABELS = {
+  [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),
+  [CHART_TYPES.CANDLE]: defineMessage({ message: 'Candles' }),
+};
+
+const CHART_PERIODS_LABELS = {
+  [CHART_PERIODS['15m']]: defineMessage({ message: '15m' }),
+  [CHART_PERIODS['1H']]: defineMessage({ message: '1H' }),
+  [CHART_PERIODS['4H']]: defineMessage({ message: '4H' }),
+  [CHART_PERIODS['1D']]: defineMessage({ message: '1D' }),
+  [CHART_PERIODS['1W']]: defineMessage({ message: '1W' }),
+};
 
 export default function SwapDescription() {
   const { currencies, price } = useDerivedSwapInfo();
+  const [tradingViewActive, setTradingViewActive] = useState(false);
 
   const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({
     type: CHART_TYPES.AREA,
@@ -39,8 +60,7 @@ export default function SwapDescription() {
     [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
   );
 
-  const [qratioNumerator, qratioDenominator] = ratio.sICXICXratio.toFraction();
-  const qratioFrac = new Fraction(qratioNumerator.toFixed(), qratioDenominator.toFixed());
+  const qratioFrac = toFraction(ratio.sICXICXratio);
 
   let priceInICX: Price<Currency, Currency> | undefined;
 
@@ -80,25 +100,57 @@ export default function SwapDescription() {
   const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
   const hasICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX');
 
+  const { account } = useIconReact();
+  const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
+  const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
+  const isSuperSmall = useMedia('(max-width: 359px)');
+  const locale = useActiveLocale();
+
+  const { onCurrencySelection } = useSwapActionHandlers();
+
+  const handleTVDismiss = () => {
+    setTradingViewActive(false);
+
+    if (activeSymbol !== undefined) {
+      const tokens = activeSymbol.split('/');
+
+      const inputToken = SUPPORTED_TOKENS_LIST.filter(
+        token => token.symbol!.toLowerCase() === tokens[0].toLowerCase(),
+      )[0];
+      const outputToken = SUPPORTED_TOKENS_LIST.filter(
+        token => token.symbol!.toLowerCase() === tokens[1].toLowerCase(),
+      )[0];
+
+      if (inputToken && outputToken) {
+        onCurrencySelection(Field.INPUT, inputToken);
+        onCurrencySelection(Field.OUTPUT, outputToken);
+      }
+    }
+  };
+
   return (
     <Box bg="bg2" flex={1} p={[5, 7]}>
       <Flex mb={5} flexWrap="wrap">
         <Box width={[1, 1 / 2]}>
           <Typography variant="h3" mb={2}>
-            {currencies[Field.INPUT]?.symbol} / {currencies[Field.OUTPUT]?.symbol}
+            {symbolName}
           </Typography>
 
           {pair && (
             <>
               <Typography variant="p">
-                {`${price?.toFixed(4) || '...'} 
-                ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                <Trans>
+                  {`${price?.toFixed(4) || '...'} 
+                    ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                </Trans>
               </Typography>
               {hasSICX && !hasICX && (
                 <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
-                  {`${priceInICX?.toFixed(4) || '...'} 
-                  ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
-                  per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  <Trans>
+                    {`${priceInICX?.toFixed(4) || '...'} 
+                      ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
+                      per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  </Trans>
                 </Typography>
               )}
             </>
@@ -114,7 +166,7 @@ export default function SwapDescription() {
                 onClick={handleChartPeriodChange}
                 active={chartOption.period === CHART_PERIODS[key]}
               >
-                {CHART_PERIODS[key]}
+                <Trans id={CHART_PERIODS_LABELS[CHART_PERIODS[key]].id} />
               </ChartControlButton>
             ))}
           </ChartControlGroup>
@@ -128,9 +180,15 @@ export default function SwapDescription() {
                 onClick={handleChartTypeChange}
                 active={chartOption.type === CHART_TYPES[key]}
               >
-                {CHART_TYPES[key]}
+                <Trans id={CHART_TYPES_LABELS[CHART_TYPES[key]].id} />
               </ChartControlButton>
             ))}
+
+            {!isSuperSmall && (
+              <ChartControlButton type="button" onClick={() => setTradingViewActive(true)} active={tradingViewActive}>
+                TradingView
+              </ChartControlButton>
+            )}
           </ChartControlGroup>
         </Box>
       </Flex>
@@ -139,7 +197,7 @@ export default function SwapDescription() {
         {pair ? (
           <>
             {loading ? (
-              <Spinner size={'lg'} centered />
+              <Spinner size={75} centered />
             ) : (
               <>
                 {chartOption.type === CHART_TYPES.AREA && (
@@ -159,13 +217,45 @@ export default function SwapDescription() {
           </>
         ) : (
           <Flex justifyContent="center" alignItems="center" height="100%">
-            <Typography>No price chart available for this pair.</Typography>
+            <Typography>
+              <Trans>No price chart available for this pair.</Trans>
+            </Typography>
           </Flex>
         )}
       </ChartContainer>
+
+      <Modal isOpen={tradingViewActive} onDismiss={handleTVDismiss} fullscreen>
+        {tradingViewActive && (
+          <TVChartContainerWrap>
+            <TVChartContainer
+              interval={chartOption.period as ResolutionString}
+              symbol={symbolName.replaceAll(' ', '')}
+              setActiveSymbol={setActiveSymbol}
+              userId={account || 'not_signed_in'}
+              locale={locale.split('-')[0] as LanguageCode | undefined}
+            />
+          </TVChartContainerWrap>
+        )}
+      </Modal>
     </Box>
   );
 }
+
+const TVChartContainerWrap = styled(Flex)`
+  left: 0;
+  top: 0;
+  z-index: 99999;
+  width: 100%;
+
+  .TVChartContainer {
+    width: 100%;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+  }
+`;
 
 const ChartControlButton = styled(Button)<{ active: boolean }>`
   padding: 1px 12px;

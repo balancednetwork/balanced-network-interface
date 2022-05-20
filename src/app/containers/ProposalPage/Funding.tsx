@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
-import { addressToCurrencyKeyMap } from 'constants/currency';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { CurrencyAmount, Token } from 'types/balanced-sdk-core';
 
 interface AmountItem {
   amount: string;
@@ -21,20 +22,28 @@ export default function Funding({ recipient, amounts }: Props) {
   return (
     <Wrapper>
       <BoxPanel width={'50%'}>
-        <Heading variant="p">Send</Heading>
+        <Heading variant="p">
+          <Trans>Send</Trans>
+        </Heading>
         <List>
-          {amounts.map(({ amount, address }) => (
-            <ListItem>
-              <Typography variant="h3">{`${Number(BalancedJs.utils.toIcx(amount).toFixed(2))}  ${
-                addressToCurrencyKeyMap[NetworkId.YEOUIDO][address] ||
-                addressToCurrencyKeyMap[NetworkId.MAINNET][address]
-              }`}</Typography>
-            </ListItem>
-          ))}
+          {amounts
+            .map(({ amount, address }) =>
+              CurrencyAmount.fromRawAmount<Token>(SUPPORTED_TOKENS_MAP_BY_ADDRESS[address] as Token, amount),
+            )
+            .filter((amount: CurrencyAmount<Token>) => amount.greaterThan('0'))
+            .map((amount: CurrencyAmount<Token>) => (
+              <ListItem key={amount.currency.address}>
+                <Typography variant="h3">
+                  {amount.toFixed(2, { groupSeparator: ',' })} {amount.currency.symbol}
+                </Typography>
+              </ListItem>
+            ))}
         </List>
       </BoxPanel>
       <BoxPanel width={'50%'}>
-        <Heading variant="p">To</Heading>
+        <Heading variant="p">
+          <Trans>To</Trans>
+        </Heading>
         <Typography variant="p" textAlign="center">
           {recipient}
         </Typography>

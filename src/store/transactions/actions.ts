@@ -3,8 +3,8 @@ import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
 export interface SerializableTransactionReceipt {
   to: string;
-  from: string;
-  scoreAddress: string;
+  from?: string;
+  scoreAddress?: string;
   txIndex: number;
   blockHash: string;
   txHash: string;

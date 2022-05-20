@@ -7,8 +7,8 @@ import styled from 'styled-components';
 
 import useInterval from 'hooks/useInterval';
 
-const PopoverContainer = styled.div<{ show: boolean }>`
-  z-index: ${({ theme }) => theme.zIndices.tooltip};
+const PopoverContainer = styled.div<{ show: boolean; zIndex?: number }>`
+  z-index: ${({ zIndex, theme }) => zIndex || theme.zIndices.tooltip};
   visibility: ${props => (props.show ? 'visible' : 'hidden')};
   opacity: ${props => (props.show ? 1 : 0)};
   transition: visibility 150ms linear, opacity 150ms linear;
@@ -85,6 +85,7 @@ export interface PopoverProps {
   show: boolean;
   children: React.ReactNode;
   placement?: Placement;
+  forcePlacement?: boolean;
   style?: React.CSSProperties;
   refStyle?: React.CSSProperties;
 }
@@ -96,6 +97,7 @@ export default function Popover({
   show,
   children,
   placement = 'auto',
+  forcePlacement,
 }: PopoverProps) {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -106,6 +108,7 @@ export default function Popover({
     modifiers: [
       { name: 'offset', options: { offset: [skidding[placement] || 0, 12] } },
       { name: 'arrow', options: { element: arrowElement } },
+      { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : undefined } },
     ],
   });
   const updateCallback = useCallback(() => {
@@ -176,11 +179,12 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
 export function DropdownPopper({
   show,
   children,
-  placement = 'auto',
-  anchorEl,
   arrowEl,
   containerOffset,
   offset,
+  placement = 'auto',
+  anchorEl,
+  zIndex,
 }: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
@@ -218,7 +222,13 @@ export function DropdownPopper({
 
   return (
     <Portal>
-      <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+      <PopoverContainer
+        show={show}
+        ref={setPopperElement as any}
+        zIndex={zIndex}
+        style={styles.popper}
+        {...attributes.popper}
+      >
         <ContentWrapper>{children}</ContentWrapper>
         <Arrow
           className={`arrow-${attributes.popper?.['data-popper-placement'] ?? ''}`}
@@ -236,6 +246,7 @@ export interface PopperProps {
   show: boolean;
   children: React.ReactNode;
   placement?: Placement;
+  zIndex?: number;
 }
 
 export function SelectorPopover({ show, children, placement = 'auto', anchorEl }: PopperProps) {

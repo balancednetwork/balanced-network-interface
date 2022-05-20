@@ -1,14 +1,14 @@
+import { defineMessage } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { BalancedJs, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
-import { addressToCurrencyKeyMap } from 'constants/currency';
+import { FUNDING_TOKENS_LIST } from 'constants/tokens';
+import { CurrencyAmount, Token } from 'types/balanced-sdk-core';
 
 import { CurrencyValue } from '../../components/newproposal/FundingInput';
 
 export const MAX_RATIO_VALUE = 100;
-
-export const CURRENCY_LIST = ['BALN', 'bnUSD', 'sICX'];
 
 export const PROPOSAL_MAPPING = {
   // network fee allocation
@@ -37,6 +37,16 @@ export enum PROPOSAL_TYPE {
   REBALANCING_THRESHOLD = 'Rebalancing threshold',
   FUNDING = 'Funding',
 }
+
+export const PROPOSAL_TYPE_LABELS = {
+  [PROPOSAL_TYPE.TEXT]: defineMessage({ message: 'Text' }),
+  [PROPOSAL_TYPE.BALN_ALLOCATION]: defineMessage({ message: 'BALN allocation' }),
+  [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: defineMessage({ message: 'Network fee allocation' }),
+  [PROPOSAL_TYPE.LOAN_FEE]: defineMessage({ message: 'Loan fee' }),
+  [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: defineMessage({ message: 'Loan to value ratio' }),
+  [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: defineMessage({ message: 'Rebalancing threshold' }),
+  [PROPOSAL_TYPE.FUNDING]: defineMessage({ message: 'Funding' }),
+};
 
 export const ACTIONS_MAPPING = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: ['updateBalTokenDistPercentage', 'updateDistPercent'],
@@ -92,10 +102,6 @@ export const RATIO_VALUE_FORMATTER = {
     const _percent = PERCENT_MAPPING[PROPOSAL_TYPE.REBALANCING_THRESHOLD](data);
     return [{ percent: _percent }];
   },
-};
-
-const getKeyByValue = (value, mapping) => {
-  return Object.keys(mapping).find(key => mapping[key] === value);
 };
 
 export const PROPOSAL_CONFIG = {
@@ -194,25 +200,17 @@ export const PROPOSAL_CONFIG = {
   [PROPOSAL_TYPE.FUNDING]: {
     fetchInputData: async () => {
       const res = await bnJs.DAOFund.getBalances();
-      return Object.entries(res).map(item => {
-        return {
-          symbol:
-            addressToCurrencyKeyMap[NetworkId.YEOUIDO][item[0]] ||
-            addressToCurrencyKeyMap[NetworkId.MAINNET][item[0]] ||
-            item[0],
-          amount: BalancedJs.utils.toIcx(item[1] as string),
-        };
-      });
+      return FUNDING_TOKENS_LIST.filter(token => res[token.address]).map(token =>
+        CurrencyAmount.fromRawAmount(token, res[token.address]),
+      );
     },
     submitParams: (currencyValue: CurrencyValue) => {
-      const amounts = Object.values(currencyValue.amounts)
+      const amounts = currencyValue.amounts
         .map(
-          ({ amount, symbol }) =>
-            amount && {
-              amount: BalancedJs.utils.toLoop(amount).toNumber(),
-              address:
-                getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.YEOUIDO]) ||
-                getKeyByValue(symbol, addressToCurrencyKeyMap[NetworkId.MAINNET]),
+          (amount, idx) =>
+            amount.inputDisplayValue && {
+              amount: amount.item.quotient.toString(),
+              address: (amount.item.currency as Token).address,
             },
         )
         .filter(value => value);

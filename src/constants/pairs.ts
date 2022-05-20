@@ -12,6 +12,7 @@ import {
   METX,
   IUSDT,
   GBET,
+  FIN,
   sICX_YEOUIDO,
   ICX_YEOUIDO,
   bnUSD_YEOUIDO,
@@ -24,6 +25,7 @@ import {
   ICX_SEJONG,
   bnUSD_SEJONG,
   BALN_SEJONG,
+  FIN_SEJONG,
 } from 'constants/tokens';
 import { Token } from 'types/balanced-sdk-core';
 
@@ -51,7 +53,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       name: 'sICX/ICX',
       baseCurrencyKey: 'sICX',
       quoteCurrencyKey: 'ICX',
-      rewards: 0.05,
+      rewards: 0.03,
       baseToken: sICX,
       quoteToken: ICX,
     },
@@ -63,7 +65,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: sICX,
       quoteToken: bnUSD,
-      rewards: 0.145,
+      rewards: 0.12,
     },
     {
       chainId: 1,
@@ -73,7 +75,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: BALN,
       quoteToken: bnUSD,
-      rewards: 0.145,
+      rewards: 0.12,
     },
     {
       chainId: 1,
@@ -83,7 +85,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'sICX',
       baseToken: BALN,
       quoteToken: sICX,
-      rewards: 0.1,
+      rewards: 0.15,
     },
     {
       chainId: 1,
@@ -194,6 +196,15 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       baseCurrencyKey: 'GBET',
       quoteCurrencyKey: 'bnUSD',
       baseToken: GBET,
+      quoteToken: bnUSD,
+    },
+    {
+      chainId: 1,
+      id: 31,
+      name: 'FIN/bnUSD',
+      baseCurrencyKey: 'FIN',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: FIN,
       quoteToken: bnUSD,
     },
   ],
@@ -315,6 +326,15 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       baseToken: BALN_SEJONG,
       quoteToken: sICX_SEJONG,
       rewards: 0.1,
+    },
+    {
+      chainId: 83,
+      id: 19,
+      name: 'FIN/bnUSD',
+      baseCurrencyKey: 'FIN',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: FIN_SEJONG,
+      quoteToken: bnUSD_SEJONG,
     },
   ],
 };

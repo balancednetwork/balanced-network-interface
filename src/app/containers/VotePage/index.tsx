@@ -1,12 +1,11 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 
 import { ButtonLink } from 'app/components/Button';
-import { DefaultLayout } from 'app/components/Layout';
 import { BoxPanel } from 'app/components/Panel';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
@@ -25,15 +24,17 @@ export function VotePage() {
   };
 
   return (
-    <DefaultLayout title="Vote">
-      <Helmet>
-        <title>Vote</title>
-      </Helmet>
-
+    <>
       <BoxPanel bg="bg2" width="100%">
         <Flex justifyContent="space-between" mb={5}>
-          <Typography variant="h2">Proposals</Typography>
-          {account && <ButtonLink to="/vote/new-proposal/">New proposal</ButtonLink>}
+          <Typography variant="h2">
+            <Trans>Proposals</Trans>
+          </Typography>
+          {account && (
+            <ButtonLink to="/vote/new-proposal/">
+              <Trans>New proposal</Trans>
+            </ButtonLink>
+          )}
         </Flex>
 
         {proposals ? (
@@ -55,6 +56,6 @@ export function VotePage() {
           </>
         )}
       </BoxPanel>
-    </DefaultLayout>
+    </>
   );
 }

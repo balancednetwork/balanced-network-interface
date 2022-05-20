@@ -5,6 +5,12 @@ node_modules
 stats.json
 .pnp
 .pnp.js
+src/lib/locales/**/*.js
+src/lib/locales/**/en-US.po
+src/lib/locales/**/pseudo.po
+src/locales/**/*.js
+src/locales/**/en-US.po
+src/locales/**/pseudo.po
 
 # misc
 .DS_Store

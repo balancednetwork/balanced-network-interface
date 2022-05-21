@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-21 19:21\n"
+"PO-Revision-Date: 2022-05-21 20:27\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -93,7 +93,7 @@ msgstr "Sau"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
-msgstr "Tổng số tài sản thế chấp bị khoá"
+msgstr "Tất cả tài sản thế chấp sẽ bị khóa"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"

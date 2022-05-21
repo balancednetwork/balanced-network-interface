@@ -61,8 +61,8 @@ const BTP = () => {
   const [accountInfo, setAccountInfo] = useState(JSON.parse(String(localStorage.getItem('account_info'))));
   console.log(accountInfo);
 
-  const [networkFrom, setNetworkFrom] = useState(['Ethereum','Moonbeam','Icon','Binance']) 
-  
+  const [networkFrom, setNetworkFrom] = useState(['Ethereum', 'Moonbeam', 'Binance']);
+  const [networkTo, setNetworkTo] = useState(['Ethereum', 'Moonbeam', 'Binance']);
   const tokens = [
     { label: accountInfo.unit, value: accountInfo.unit },
     ...getBalanceToken()!
@@ -70,22 +70,21 @@ const BTP = () => {
       .filter(item => item.label !== accountInfo.unit),
   ];
   console.log(tokens);
-  
-  const assetTransfer = []
+
+  const assetTransfer = [];
   const onChangeRefundSelect = async => {
-  //  tokens.forEach((token)  => {
-  
-  // })
-  var a:any = getService()
-  ?.getBalanceOf({
-    address: accountInfo.address,
-    refundable: true,
-    symbol: accountInfo.unit,
-  })
-  a.then(refund => {
-    console.log(refund);
-  });
-}
+    //  tokens.forEach((token)  => {
+
+    // })
+    var a: any = getService()?.getBalanceOf({
+      address: accountInfo.address,
+      refundable: true,
+      symbol: accountInfo.unit,
+    });
+    a.then(refund => {
+      console.log(refund);
+    });
+  };
 
   const handleTransfer = () => {
     toggleWalletModal();
@@ -102,10 +101,10 @@ const BTP = () => {
 
             <Grid>
               <Box>
-                <NetworkSelector label={'From'} data={networkFrom}/>
+                <NetworkSelector label={'From'} data={networkFrom} />
               </Box>
               <Box>
-                <NetworkSelector label={'To'} data={networkFrom} />
+                <NetworkSelector label={'To'} data={networkTo} />
               </Box>
               <Box className="full-width">
                 <AssetToTransfer />

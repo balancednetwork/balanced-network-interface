@@ -104,7 +104,7 @@ const SelectItem = styled(Box)`
 
 const NetworkSelector = ({ label, data }: NetworkSelectorProps) => {
   const [showItems, setShowItems] = useState(false);
-  const [selectNetwork, setSelectNetwork] = useState(null);
+  const [selectNetwork, setSelectNetwork] = useState(data[0]);
   const toggleDropdown = () => {
     setShowItems(prevState => !prevState);
   };
@@ -117,15 +117,9 @@ const NetworkSelector = ({ label, data }: NetworkSelectorProps) => {
     setSelectNetwork(select);
     toggleDropdown();
   };
-
   return (
     <>
       {label && <Label>{label}</Label>}
-      {
-       data && data.map((item) => {
-        <Label>{item}</Label>
-        })
-      }
       {data && (
         <ClickAwayListener onClickAway={closeDropdown}>
           <Select>
@@ -142,12 +136,17 @@ const NetworkSelector = ({ label, data }: NetworkSelectorProps) => {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {data &&
-                    data.map(network => {
-                      <SelectItem onClick={() => onSelect(network)}>{network}</SelectItem>;
-                    })}
-                  {/* <SelectItem>Ethereum</SelectItem>
-                  <SelectItem>Moonbeam</SelectItem>
+                  {data.map((network, index) => {
+                    console.log(network);
+
+                    return (
+                      <SelectItem key={index} onClick={() => onSelect(network)}>
+                        {network}
+                      </SelectItem>
+                    );
+                  })}
+                  {/* <SelectItem>Ethereum</SelectItem> */}
+                  {/* <SelectItem>Moonbeam</SelectItem>
                   <SelectItem>Icon</SelectItem>
                   <SelectItem>Binance</SelectItem> */}
                 </SelectItems>

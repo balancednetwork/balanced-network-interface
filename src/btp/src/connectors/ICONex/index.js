@@ -75,7 +75,7 @@ const eventHandler = async event => {
         toast(<NotificationPending summary={message.pendingMessage || t`Processing transaction...`} />, {
           ...toastProps,
           toastId: txHash,
-          autoClose: 5000,
+          autoClose: 3000,
         });
 
         await new Promise((resolve, reject) => {

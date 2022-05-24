@@ -13,7 +13,6 @@ import TransactionUpdater from 'store/transactions/updater';
 import { Banner } from './components/Banner';
 import TransferAssetsModal from './components/BTP';
 import BridgeWalletModal from './components/BTP/BridgeWalletModal';
-import BTPPanel from './components/BTPPanel';
 import { Airdrip } from './containers/Airdrip/Loadable';
 import Message from './Message';
 import Routes from './Routes';
@@ -54,7 +53,6 @@ export function App() {
         />
         <Switch>
           <Route exact path="/claim" component={Airdrip} />
-          <Route exact path="/btp" component={BTPPanel} />
           <Route component={Routes} />
         </Switch>
       </ThemeProvider>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { Trans } from '@lingui/macro';
+import { CONNECTED_WALLET_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { requestAddress } from 'btp/src/connectors/ICONex/events';
 import { EthereumInstance } from 'btp/src/connectors/MetaMask';
 import { wallets } from 'btp/src/utils/constants';
@@ -165,6 +166,8 @@ export default function BridgeWalletModal() {
 
   const handleOpenWallet = async (type: string) => {
     setLoading(true);
+    window['accountInfo'] = null;
+    localStorage.setItem(CONNECTED_WALLET_LOCAL_STORAGE, type);
     switch (type) {
       case wallets.metamask:
         const isConnected = await EthereumInstance.connectMetaMaskWallet();

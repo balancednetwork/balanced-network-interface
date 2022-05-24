@@ -10,12 +10,11 @@ import { Avatar } from 'btp/src/components/Avatar';
 import { Modal } from 'btp/src/components/NotificationModal';
 import { SuccessSubmittedTxContent } from 'btp/src/components/NotificationModal/SuccessSubmittedTxContent';
 import { SubTitle, Text } from 'btp/src/components/Typography';
-import { CONNECTED_WALLET_LOCAL_STORAGE, setCurrentICONexNetwork } from 'btp/src/connectors/constants';
+import { CONNECTED_WALLET_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 // import { requestAddress, isICONexInstalled, checkICONexInstalled } from 'btp/src/connectors/ICONex/events';
 import { requestAddress } from 'btp/src/connectors/ICONex/events';
 import { resetTransferStep } from 'btp/src/connectors/ICONex/utils';
 import { EthereumInstance } from 'btp/src/connectors/MetaMask';
-import { connect, getNearAccountInfo, signOut } from 'btp/src/connectors/NEARWallet';
 import { useDispatch, useSelect } from 'btp/src/hooks/useRematch';
 import { toSeparatedNumberString, hashShortener } from 'btp/src/utils/app';
 import { wallets, PAIRED_NETWORKS, getPairedNetwork, pairedNetworks } from 'btp/src/utils/constants';
@@ -86,9 +85,6 @@ const WalletConnect = () => {
       case wallets.metamask:
         EthereumInstance.getEthereumAccounts();
         break;
-      case wallets.near:
-        getNearAccountInfo();
-        break;
       default:
         return;
     }
@@ -140,10 +136,6 @@ const WalletConnect = () => {
         setLoading(false);
         break;
 
-      case wallets.near:
-        await connect();
-        setLoading(false);
-        break;
       default:
         return;
     }
@@ -157,7 +149,6 @@ const WalletConnect = () => {
   };
 
   const onDisconnectWallet = () => {
-    signOut();
     resetTransferStep();
     resetAccountInfo();
     toggleModal();
@@ -176,7 +167,6 @@ const WalletConnect = () => {
   const onChangePairedNetworks = e => {
     const { value } = e.target;
     localStorage.setItem(PAIRED_NETWORKS, value);
-    setCurrentICONexNetwork(value);
   };
 
   useEffect(() => {

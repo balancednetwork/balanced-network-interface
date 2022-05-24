@@ -1,8 +1,8 @@
-import { ADDRESS_LOCAL_STORAGE, CONNECTED_WALLET_LOCAL_STORAGE } from 'btp/src/connectors/constants';
-import { roundNumber } from 'btp/src/utils/app';
+import { ADDRESS_LOCAL_STORAGE, CONNECTED_WALLET_LOCAL_STORAGE } from '../../connectors/constants';
+import { roundNumber } from '../../utils/app';
 
 const initState = {
-  unit: '', // a.k.a symbol
+  symbol: '',
   wallet: '',
   address: '',
   balance: 0,

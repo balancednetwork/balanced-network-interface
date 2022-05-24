@@ -1,36 +1,24 @@
-import * as ICONServices from 'btp/src/connectors/ICONex/ICONServices';
-import * as BSCServices from 'btp/src/connectors/MetaMask/services/BSCServices';
-import * as MoonbeamServices from 'btp/src/connectors/MetaMask/services/MoonbeamServices';
-import * as NEARServices from 'btp/src/connectors/NEARWallet';
-import store from 'btp/src/store';
-import { wallets, connectedNetWorks } from 'btp/src/utils/constants';
+import * as ICONServices from '../connectors/ICONex/ICONServices';
+import * as MoonbeamServices from '../connectors/MetaMask/services';
+import { wallets } from '../utils/constants';
+
+// import * as NEARServices from 'connectors/NEARWallet';
 
 export const getCurrentTransferService = () => (curentWallet, currentNetwork) => {
-  const { wallet, currentNetwork: network } = store.getState().account;
+  const { wallet, currentNetwork: network } = window.accountInfo;
   if (!wallet && !curentWallet) throw new Error('Missing wallet');
   if (!network && !currentNetwork) throw new Error('Missing network');
 
   switch (wallet || curentWallet) {
     case wallets.metamask:
-      // There are 2 networks using Metamask now: Moonbeam & BSC
-      switch (network || currentNetwork) {
-        case connectedNetWorks.moonbeam:
-          return MoonbeamServices;
-
-        case connectedNetWorks.bsc:
-          return BSCServices;
-        default:
-          console.log('No matching network');
-          break;
-      }
-      break;
+      return MoonbeamServices;
 
     case wallets.iconex:
     case wallets.hana:
       return ICONServices;
 
-    case wallets.near:
-      return NEARServices;
+    // case wallets.near:
+    //   return NEARServices;
 
     default:
       console.log('No matching wallet service');

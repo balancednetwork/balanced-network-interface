@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { Trans } from '@lingui/macro';
+import { requestAddress } from 'btp/src/connectors/ICONex/events';
+import { EthereumInstance } from 'btp/src/connectors/MetaMask';
+import { wallets } from 'btp/src/utils/constants';
 import { BalancedJs } from 'packages/BalancedJs';
-import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
-import { useIconReact } from 'packages/icon-react';
-import { useSelector } from 'react-redux';
+import { LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -25,9 +26,7 @@ import {
   useModalOpen,
 } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
-
-import { requestAddress } from '../../../../store/bridge/connectors/ICONex/events';
-import { EthereumInstance } from '../../../../store/bridge/connectors/MetaMask';
+import { useFromNetwork } from 'store/bridge/hooks';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -150,6 +149,8 @@ export default function BridgeWalletModal() {
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
+  const fromNetwork = useFromNetwork();
+  const [networkSelected, setNetworkSelected] = useState(fromNetwork);
 
   const [{ offset, limit }, updatePaging] = useState({
     offset: 0,
@@ -158,26 +159,14 @@ export default function BridgeWalletModal() {
   const currentLedgerAddressPage = useCurrentLedgerAddressPage();
   const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
 
-  // const { requestAddress } = useIconReact();
-
-  const accInfo = useSelector(state => state);
-
-  // console.log('------', accInfo);
+  useEffect(() => {
+    setNetworkSelected(fromNetwork);
+  }, [fromNetwork]);
 
   const handleOpenWallet = async (type: string) => {
-    // toggleWalletModal();
-    // if (isMobile) {
-    //   requestAddress();
-    // } else {
-    //   if (hasExtension) {
-    //     requestAddress();
-    //   } else {
-    //     window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
-    //   }
-    // }
     setLoading(true);
     switch (type) {
-      case 'metamask':
+      case wallets.metamask:
         const isConnected = await EthereumInstance.connectMetaMaskWallet();
         console.log('isConnected', isConnected);
         if (isConnected) {
@@ -187,12 +176,9 @@ export default function BridgeWalletModal() {
         toggleWalletModal();
         toggleTransferAssetsModal();
         break;
-      case 'iconex':
-      case 'hana':
-        const hasAccount = requestAddress();
-        // if (!hasAccount) {
-        //   setLoading(false);
-        // }
+      case wallets.iconex:
+      case wallets.hana:
+        requestAddress();
         setLoading(false);
         toggleWalletModal();
         toggleTransferAssetsModal();
@@ -342,15 +328,17 @@ export default function BridgeWalletModal() {
           </Typography>
 
           <Flex alignItems="stretch" justifyContent="space-between">
-            <WalletOption onClick={() => handleOpenWallet('iconex')}>
-              <IconWalletIcon width="50" height="50" />
-              <Text textAlign="center">ICON</Text>
-            </WalletOption>
-
-            <WalletOption onClick={() => handleOpenWallet('metamask')}>
-              <MetamaskIcon width="50" height="50" />
-              <Text textAlign="center">Metamask</Text>
-            </WalletOption>
+            {networkSelected.value === 'ICON' ? (
+              <WalletOption onClick={() => handleOpenWallet('iconex')}>
+                <IconWalletIcon width="50" height="50" />
+                <Text textAlign="center">ICON</Text>
+              </WalletOption>
+            ) : (
+              <WalletOption onClick={() => handleOpenWallet('metamask')}>
+                <MetamaskIcon width="50" height="50" />
+                <Text textAlign="center">Metamask</Text>
+              </WalletOption>
+            )}
 
             <WalletOption onClick={handleOpenLedger}>
               <LedgerIcon width="50" height="50" />

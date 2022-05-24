@@ -8,6 +8,7 @@ import { save, load } from 'redux-localstorage-simple';
 import createSagaMiddleware from 'redux-saga';
 
 import application from './application/reducer';
+import bridge from './bridge/reducer';
 import collateral from './collateral/reducer';
 import loan from './loan/reducer';
 import mint from './mint/reducer';
@@ -48,6 +49,7 @@ export function configureAppStore() {
       mint,
       swap,
       user,
+      bridge,
     }),
     middleware: [
       ...getDefaultMiddleware({

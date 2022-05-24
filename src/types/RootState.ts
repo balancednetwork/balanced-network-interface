@@ -1,10 +1,11 @@
 // [IMPORT NEW CONTAINERSTATE ABOVE] < Needed for generating containers seamlessly
 
-/* 
+/*
   Because the redux-injectors injects your reducers asynchronously somewhere in your code
   You have to declare them here manually
 */
 import { ApplicationState } from 'store/application/reducer';
+import { BridgeState } from 'store/bridge/reducer';
 import { CollateralState } from 'store/collateral/reducer';
 import { LoanState } from 'store/loan/reducer';
 import { MintState } from 'store/mint/reducer';
@@ -28,4 +29,5 @@ export interface RootState {
   mint: MintState;
   swap: SwapState;
   user: UserState;
+  bridge: BridgeState;
 }

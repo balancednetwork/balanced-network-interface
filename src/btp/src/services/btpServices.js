@@ -1,4 +1,4 @@
-import { fetchAPI } from 'btp/src/utils/fetch';
+import { fetchAPI } from '../utils/fetch';
 
 export const baseAuctionURL = '/auctions';
 export const baseRelayURL = '/relays';
@@ -58,4 +58,14 @@ export const getTransferHistoryByTxHash = txHash => {
 
 export const tokenToUsd = async (token, amount) => {
   return fetchAPI(`${baseBTPNetwork}/converter?token=${token}&amount=${amount}&convert_to=usd`);
+};
+
+export const sendLog = async payload => {
+  return fetchAPI('/transaction-ips', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
 };

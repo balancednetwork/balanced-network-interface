@@ -1,19 +1,27 @@
 import { ethers } from 'ethers';
 
+import { EthereumInstance } from '.';
 import { roundNumber } from '../../utils/app';
-
-import { chainConfigs } from '../chainConfigs';
+import { chainConfigs, checkIsToken } from '../chainConfigs';
 import { signingActions, rawTransaction, getCurrentChain } from '../constants';
-import { EthereumInstance } from './MetaMask';
-import { convertToICX, toChecksumAddress } from './utils';
+import { convertToICX } from '../ICONex/utils';
+import { toChecksumAddress } from './utils';
 
-export const serviceName = 'TODO';
 const ICONchain = chainConfigs.ICON || {};
 
-export const getBalanceOf = async ({ address, refundable = false, symbol = 'ICX' }) => {
+export const getBalanceOf = async ({ address, refundable = false, symbol = 'ICX', isToken }) => {
   try {
-    const balance = await EthereumInstance.contract.getBalanceOf(address, symbol);
-    return refundable ? convertToICX(balance._refundableBalance._hex) : roundNumber(convertToICX(balance[0]._hex), 6);
+    let balance = 0;
+    // ETH is the only one ERC20 token so far, others are coin.
+    if (isToken) {
+      balance = await EthereumInstance.BEP20Contract.balanceOf(address);
+    } else {
+      balance = await EthereumInstance.contract.getBalanceOf(address, symbol);
+    }
+
+    return refundable
+      ? convertToICX(balance._refundableBalance._hex)
+      : roundNumber(convertToICX(balance._hex || balance[0]._hex), 6);
   } catch (err) {
     console.log('Err: ', err);
     return 0;
@@ -43,6 +51,8 @@ export const reclaim = async ({ coinName, value }) => {
 export const transfer = async (tx, sendNativeCoin, token) => {
   const {
     BSH_CORE,
+    BSH_PROXY,
+    BEP20,
     GAS_LIMIT,
     methods: { transferNativeCoin = {}, approve = {} },
   } = getCurrentChain();
@@ -70,13 +80,16 @@ export const transfer = async (tx, sendNativeCoin, token) => {
   } else {
     window[rawTransaction] = tx;
     window[signingActions.globalName] = signingActions.approve;
+    const isToken = checkIsToken(token);
+
     data = EthereumInstance.ABI.encodeFunctionData(
       approve.newName || 'approve',
-      approve.params ? approve.params({ amount: value, coinName: token }) : [BSH_CORE, value],
+      approve.params ? approve.params({ amount: value, coinName: token }) : [isToken ? BSH_PROXY : BSH_CORE, value],
     );
+
     txParams = {
       ...txParams,
-      to: getCurrentChain()['BSH_' + token],
+      to: isToken ? BEP20 : getCurrentChain()['BSH_' + token],
     };
     delete txParams.value;
   }
@@ -93,28 +106,29 @@ export const transfer = async (tx, sendNativeCoin, token) => {
 export const sendNoneNativeCoin = async () => {
   const {
     BSH_CORE,
+    BSH_PROXY,
     GAS_LIMIT,
     methods: { transfer = {} },
   } = getCurrentChain();
 
-  const hexValue = ethers.utils.parseEther(window[rawTransaction].value)._hex;
+  const { value, to, coinName } = window[rawTransaction];
+  const hexValue = ethers.utils.parseEther(value)._hex;
 
   const data = EthereumInstance.ABI.encodeFunctionData(
     transfer.newName || 'transfer',
     transfer.params
       ? transfer.params({
           amount: hexValue,
-          recipientAddress: window[rawTransaction].to,
+          recipientAddress: to,
         })
-      : // TODO: remove hard-coded ICX
-        ['ICX', hexValue, `btp://${ICONchain.NETWORK_ADDRESS}/${window[rawTransaction].to}`],
+      : [coinName, hexValue, `btp://${ICONchain.NETWORK_ADDRESS}/${to}`],
   );
 
   window[signingActions.globalName] = signingActions.transfer;
 
   await EthereumInstance.sendTransaction({
     from: EthereumInstance.ethereum.selectedAddress,
-    to: BSH_CORE,
+    to: checkIsToken(coinName) ? BSH_PROXY : BSH_CORE,
     gas: GAS_LIMIT,
     data,
   });

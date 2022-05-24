@@ -1,31 +1,28 @@
+import { ethers } from 'ethers';
+import IconService, { Converter as IconConverter, Builder as IconBuilder } from 'icon-sdk-js';
+
+import { roundNumber } from '../../utils/app';
+import { wallets } from '../../utils/constants';
+import { chainConfigs, getTokenList } from '../chainConfigs';
 import {
-  getCurrentICONexNetwork,
   ADDRESS_LOCAL_STORAGE,
-  MOON_BEAM_NODE,
-  BSC_NODE,
   signingActions,
   rawTransaction,
+  txPayload,
   iconService,
   httpProvider,
-} from 'btp/src/connectors/constants';
-import { roundNumber } from 'btp/src/utils/app';
-import { connectedNetWorks } from 'btp/src/utils/constants';
-import { ethers } from 'ethers';
-import IconService from 'icon-sdk-js';
+  getCurrentChain,
+} from '../constants';
+import { requestICONexSigning, requestHanaSigning } from './events';
+import Request, { convertToICX, convertToLoopUnit, makeICXCall, getICONBSHAddressforEachChain } from './utils';
 
-import store from 'store';
-
-import { requestSigning } from './events';
-import Request, { convertToICX, convertToLoopUnit, makeICXCall } from './utils';
-
-const { IcxTransactionBuilder, CallTransactionBuilder } = IconService.IconBuilder;
-const { serialize } = IconService.IconUtil;
+const { IconUtil } = IconService;
+const { serialize } = IconUtil;
 
 export { transfer } from './transfer';
 
-const { modal } = store.dispatch;
-
-export const serviceName = connectedNetWorks.icon;
+const ICONchain = chainConfigs.ICON || {};
+export const serviceName = ICONchain.id;
 
 /**
  * Get balance from an ICON address
@@ -61,6 +58,16 @@ export const sendTransaction = async signature => {
   }
 };
 
+export const estimateStep = async tx => {
+  try {
+    const request = new Request('debug_estimateStep', tx);
+    return await new IconService.HttpProvider(chainConfigs.ICON?.RPC_URL + '/debug/v3').request(request).execute();
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
 /**
  * Get transaction result
  * https://www.icondev.io/icon-node/goloop/json-rpc/jsonrpc_v3#icx_gettransactionresult
@@ -80,48 +87,21 @@ export const getTxResult = txHash => {
 };
 
 /**
- * Set approval for sending non-native token
- * @param {object} tx Transaction object
- */
-export const setApproveForSendNonNativeCoin = async tx => {
-  const { to, coinName, value } = tx;
-  const bshAddress = await getBSHAddressOfCoinName(coinName);
-
-  const transaction = {
-    to: bshAddress,
-  };
-
-  const options = {
-    builder: new CallTransactionBuilder(),
-    method: 'approve',
-    params: {
-      spender: getCurrentICONexNetwork().BSHAddress,
-      amount: ethers.utils.parseEther(value).toString(10),
-    },
-  };
-
-  window[rawTransaction] = tx;
-  window[signingActions.receiver] = to;
-  window[signingActions.globalName] = signingActions.approve;
-  signTx(transaction, options);
-  return { transaction, options };
-};
-
-/**
  * Send non-native token which was approved
  */
 export const sendNonNativeCoin = () => {
+  const { coinName, value, to, network } = window[txPayload];
   const transaction = {
-    to: getCurrentICONexNetwork().BSHAddress,
+    to: chainConfigs[network].ICON_BSH_ADDRESS,
   };
 
   const options = {
-    builder: new CallTransactionBuilder(),
+    builder: new IconBuilder.CallTransactionBuilder(),
     method: 'transfer',
     params: {
-      _to: `btp://${MOON_BEAM_NODE.networkAddress}/${window[signingActions.receiver]}`,
-      _value: window[rawTransaction].data.params.amount,
-      _coinName: 'DEV',
+      _to: `btp://${chainConfigs[network].NETWORK_ADDRESS}/${to}`,
+      _value: IconConverter.toHex(convertToLoopUnit(value)),
+      _coinName: coinName,
     },
   };
 
@@ -130,17 +110,18 @@ export const sendNonNativeCoin = () => {
   return { transaction, options };
 };
 
-export const sendNativeCoin = ({ value, to }, networkAddress) => {
+export const sendNativeCoin = tx => {
+  const { value, to, network } = tx;
   const transaction = {
-    to: getCurrentICONexNetwork().BSHAddress,
+    to: chainConfigs[network]?.ICON_BSH_ADDRESS,
     value,
   };
 
   const options = {
-    builder: new CallTransactionBuilder(),
+    builder: new IconBuilder.CallTransactionBuilder(),
     method: 'transferNativeCoin',
     params: {
-      _to: `btp://${networkAddress}/${to}`,
+      _to: `btp://${chainConfigs[network]?.NETWORK_ADDRESS}/${to}`,
     },
   };
 
@@ -149,24 +130,50 @@ export const sendNativeCoin = ({ value, to }, networkAddress) => {
 };
 
 /**
+ * Set approval for sending non-native token
+ * @param {object} tx Transaction object
+ */
+export const setApproveForSendNonNativeCoin = async tx => {
+  const { coinName, value, network } = tx;
+  const bshAddress = await getBSHAddressOfCoinName(coinName);
+
+  const transaction = {
+    to: bshAddress,
+  };
+
+  const options = {
+    builder: new IconBuilder.CallTransactionBuilder(),
+    method: 'approve',
+    params: {
+      spender: chainConfigs[network].ICON_BSH_ADDRESS,
+      amount: IconConverter.toHex(convertToLoopUnit(value)),
+    },
+  };
+
+  window[txPayload] = tx;
+  window[signingActions.globalName] = signingActions.approve;
+  signTx(transaction, options);
+};
+
+/**
  * Claim token which was failed to refunded automatically
  * @param {object} payload
  */
 export const reclaim = async ({ coinName, value }) => {
   const transaction = {
-    to: getCurrentICONexNetwork().BSHAddress,
+    to: getICONBSHAddressforEachChain(coinName),
   };
 
   const options = {
-    builder: new CallTransactionBuilder(),
+    builder: new IconBuilder.CallTransactionBuilder(),
     method: 'reclaim',
     params: {
       _coinName: coinName,
-      _value: IconService.IconConverter.toHex(convertToLoopUnit(value)),
+      _value: IconConverter.toHex(convertToLoopUnit(value)),
     },
   };
 
-  signTx(transaction, options);
+  return signTx(transaction, options);
 };
 
 /**
@@ -182,7 +189,7 @@ export const placeBid = (auctionName, value, fas) => {
   };
 
   const options = {
-    builder: new CallTransactionBuilder(),
+    builder: new IconBuilder.CallTransactionBuilder(),
     method: 'bid',
     params: {
       _tokenName: auctionName,
@@ -198,28 +205,28 @@ export const placeBid = (auctionName, value, fas) => {
  * @param {object} transaction
  * @param {onject} options
  */
-export const signTx = (transaction = {}, options = {}) => {
+export const signTx = async (transaction = {}, options = {}) => {
   const { from = localStorage.getItem(ADDRESS_LOCAL_STORAGE), to, value } = transaction;
   const { method, params, builder, nid, timestamp } = options;
 
-  if (!modal.isICONexWalletConnected()) {
-    return;
-  }
+  // if (!modal.isICONexWalletConnected()) {
+  //   return;
+  // }
 
-  modal.openModal({
-    icon: 'loader',
-    desc: 'Waiting for confirmation in your wallet.',
-  });
+  // modal.openModal({
+  //   icon: 'loader',
+  //   desc: 'Waiting for confirmation in your wallet.',
+  // });
 
-  const txBuilder = builder || new IcxTransactionBuilder();
+  const txBuilder = builder || new IconBuilder.IcxTransactionBuilder();
 
   let tx = txBuilder
     .from(from)
     .to(to)
-    .stepLimit(IconService.IconConverter.toBigNumber(getCurrentICONexNetwork().stepLimit))
-    .nid(IconService.IconConverter.toBigNumber(nid || getCurrentICONexNetwork().nid))
-    .nonce(IconService.IconConverter.toBigNumber(1))
-    .version(IconService.IconConverter.toBigNumber(3))
+    .stepLimit(IconConverter.toBigNumber(ICONchain.STEP_LIMIT))
+    .nid(IconConverter.toBigNumber(nid || ICONchain.NETWORK_ADDRESS?.split('.')[0]))
+    .nonce(IconConverter.toBigNumber(1))
+    .version(IconConverter.toBigNumber(3))
     .timestamp(timestamp || new Date().getTime() * 1000);
 
   if (value) {
@@ -232,17 +239,19 @@ export const signTx = (transaction = {}, options = {}) => {
 
   tx = tx.build();
 
-  const rawTx = IconService.IconConverter.toRawTransaction(tx);
+  const rawTx = IconConverter.toRawTransaction(tx);
 
   window[rawTransaction] = rawTx;
   const transactionHash = serialize(rawTx);
 
-  requestSigning({
-    from,
-    hash: transactionHash,
-  });
-
-  return transactionHash;
+  if (window.accountInfo.wallet === wallets.hana) {
+    return requestHanaSigning(rawTx);
+  } else {
+    return requestICONexSigning({
+      from,
+      hash: transactionHash,
+    });
+  }
 };
 
 /**
@@ -250,16 +259,16 @@ export const signTx = (transaction = {}, options = {}) => {
  * @return {string} unit: 1/10000
  * ref: https://github.com/icon-project/btp/blob/iconloop/javascore/nativecoin/src/main/java/foundation/icon/btp/nativecoin/NativeCoinService.java#L40
  */
-export const getBTPfee = async () => {
+export const getBTPfee = async (id, network) => {
   const fee = await makeICXCall({
-    to: getCurrentICONexNetwork().BSHAddress,
+    to: chainConfigs[network]?.ICON_BSH_ADDRESS || chainConfigs[id]?.ICON_BSH_ADDRESS,
     dataType: 'call',
     data: {
       method: 'feeRatio',
     },
   });
 
-  return IconService.IconConverter.toNumber(fee);
+  return IconConverter.toNumber(fee);
 };
 
 /**
@@ -272,7 +281,7 @@ export const getBSHAddressOfCoinName = async coinName => {
   try {
     const payload = {
       dataType: 'call',
-      to: getCurrentICONexNetwork().BSHAddress,
+      to: getICONBSHAddressforEachChain(coinName),
       data: {
         method: 'coinAddress',
         params: {
@@ -292,24 +301,36 @@ export const getBSHAddressOfCoinName = async coinName => {
  * @param {object} payload
  * @returns {string} non-native token balance or refundable balance in a user-friendly format
  */
-export const getBalanceOf = async ({ address, refundable = false, symbol = 'DEV' }) => {
+export const getBalanceOf = async ({ address, refundable = false, symbol, isToken }) => {
   try {
-    const bshAddressToken = await getBSHAddressOfCoinName(symbol);
+    const {
+      methods: { getBalanceOf = {} },
+    } = getCurrentChain();
+
+    const customPayload = getBalanceOf?.payload || {};
+    delete customPayload.symbol;
 
     const payload = {
       dataType: 'call',
-      to: bshAddressToken,
       data: {
         method: 'balanceOf',
         params: {
           _owner: address,
         },
       },
+      ...customPayload,
     };
 
     if (refundable) {
-      payload.to = getCurrentICONexNetwork().BSHAddress;
-      payload.data.params._coinName = symbol;
+      payload.to = getICONBSHAddressforEachChain(symbol);
+      payload.data.params._coinName = symbol.split('-')[0];
+    } else if (isToken) {
+      const targetChain = getTokenList().find(token => token.symbol === symbol);
+      payload.to = chainConfigs[targetChain.chainId].ICON_IRC2_ADDRESS;
+    } else {
+      const bshAddressToken = await getBSHAddressOfCoinName(symbol.split('-')[0]);
+      if (!bshAddressToken) throw new Error('BSH address not found');
+      payload.to = bshAddressToken;
     }
 
     const balance = await makeICXCall(payload);
@@ -317,47 +338,47 @@ export const getBalanceOf = async ({ address, refundable = false, symbol = 'DEV'
     return refundable ? convertToICX(balance.refundable) : roundNumber(ethers.utils.formatEther(balance), 6);
   } catch (err) {
     console.log('getBalanceOf err', err);
+    return 0;
   }
 };
 
-/**
- * Set approval for sending BNB
- * @param {object} tx
- */
-export const depositTokensIntoBSH = tx => {
+export const approveIRC2 = tx => {
+  const { value, network } = tx;
+  const { ICON_IRC2_ADDRESS, ICON_TOKEN_BSH_ADDRESS } = chainConfigs[network];
+
   const transaction = {
-    to: getCurrentICONexNetwork().irc2token,
+    to: ICON_IRC2_ADDRESS,
   };
 
   const options = {
-    builder: new CallTransactionBuilder(),
+    builder: new IconBuilder.CallTransactionBuilder(),
     method: 'transfer',
     params: {
-      _to: getCurrentICONexNetwork().TOKEN_BSH_ADDRESS,
-      _value: IconService.IconConverter.toHex(convertToLoopUnit(tx.value)),
+      _to: ICON_TOKEN_BSH_ADDRESS,
+      _value: IconConverter.toHex(convertToLoopUnit(value)),
     },
   };
 
-  window[signingActions.receiver] = tx.to;
-  window[signingActions.globalName] = signingActions.deposit;
+  window[txPayload] = tx;
+  window[signingActions.globalName] = signingActions.approveIRC2;
   signTx(transaction, options);
 };
 
-/**
- * Send BNB which was approved
- */
-export const sendNoneNativeCoinBSC = () => {
+export const transferIRC2 = () => {
+  const { coinName, value, to, network } = window[txPayload];
+  const { NETWORK_ADDRESS, ICON_TOKEN_BSH_ADDRESS } = chainConfigs[network];
+
   const transaction = {
-    to: getCurrentICONexNetwork().TOKEN_BSH_ADDRESS,
+    to: ICON_TOKEN_BSH_ADDRESS,
   };
 
   const options = {
-    builder: new CallTransactionBuilder(),
+    builder: new IconBuilder.CallTransactionBuilder(),
     method: 'transfer',
     params: {
-      tokenName: 'ETH',
-      to: `btp://${BSC_NODE.networkAddress}/${window[signingActions.receiver]}`,
-      value: window[rawTransaction].data.params._value,
+      tokenName: coinName,
+      value: IconConverter.toHex(convertToLoopUnit(value)),
+      to: `btp://${NETWORK_ADDRESS}/${to}`,
     },
   };
 

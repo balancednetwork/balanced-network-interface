@@ -1,6 +1,9 @@
-import { colors } from 'components/Styles/Colors';
-import { Text } from 'components/Typography';
+import React from 'react';
+
 import styled from 'styled-components/macro';
+
+import { colors } from '../Styles/Colors';
+import { Text } from '../Typography';
 
 const Wrapper = styled.div`
   text-align: left;

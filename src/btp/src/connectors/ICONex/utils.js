@@ -1,13 +1,14 @@
-import { httpProvider } from 'btp/src/connectors/constants';
-import { SUCCESS_TRANSACTION } from 'btp/src/utils/constants';
 import IconService from 'icon-sdk-js';
 
-//{ IconAmount, IconUtil } from 'icon-sdk-js';
+import { SUCCESS_TRANSACTION } from '../../utils/constants';
+import { chainList } from '../chainConfigs';
+import { httpProvider } from '../constants';
 
+const { IconAmount, IconUtil } = IconService;
 export default class Request {
   constructor(method, params) {
     this.jsonrpc = '2.0';
-    this.id = IconService.IconUtil.getCurrentTime();
+    this.id = IconUtil.getCurrentTime();
     this.method = method;
     this.params = params;
   }
@@ -19,9 +20,7 @@ export default class Request {
  * @returns {string} balance in user-friendly format
  */
 export const convertToICX = balance => {
-  return IconService.IconAmount.of(balance, IconService.IconAmount.Unit.LOOP)
-    .convertUnit(IconService.IconAmount.Unit.ICX)
-    .toString();
+  return IconAmount.of(balance, IconAmount.Unit.LOOP).convertUnit(IconAmount.Unit.ICX).toString();
 };
 
 /**
@@ -30,7 +29,7 @@ export const convertToICX = balance => {
  * @returns {string} balance as Loop Unit
  */
 export const convertToLoopUnit = value => {
-  return IconService.IconAmount.of(value, IconService.IconAmount.Unit.ICX).toLoop();
+  return IconAmount.of(value, IconAmount.Unit.ICX).toLoop();
 };
 
 export const makeICXCall = async payload => {
@@ -48,4 +47,15 @@ export const makeICXCall = async payload => {
 export const resetTransferStep = () => {
   const event = new Event(SUCCESS_TRANSACTION);
   document.dispatchEvent(event);
+};
+
+export const getICONBSHAddressforEachChain = coinName => {
+  const chain = chainList.find(({ COIN_SYMBOL, id }) => COIN_SYMBOL === coinName || coinName.endsWith(id));
+
+  if (!chain) {
+    console.error('relevant chain not found');
+    return null;
+  }
+
+  return chain.ICON_BSH_ADDRESS;
 };

@@ -7,6 +7,8 @@ import { inputRegex } from 'app/components/CurrencyInputPanel';
 import { UnderlineText } from 'app/components/DropdownText';
 import { escapeRegExp } from 'utils';
 
+import AssetSelector from './AssetSelector';
+import { Icon } from './Icon';
 import { Label } from './NetworkSelector';
 
 const WalletAmount = styled(UnderlineText)`
@@ -18,7 +20,6 @@ const WalletAmount = styled(UnderlineText)`
 
 export const AssetInfo = styled(Flex)`
   border-radius: 10px;
-
   ${({ theme }) =>
     css`
       background-color: ${theme.colors.bg5};
@@ -28,10 +29,18 @@ export const AssetInfo = styled(Flex)`
 export const AssetName = styled(Flex)`
   font-weight: 700;
   color: #fff;
+  border: 2px solid #021338;
   border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px 0 0 10px;
   align-items: center;
   padding: 3px 20px;
   font-size: 14px;
+  ${({ theme }) =>
+    css`
+      &:hover {
+        border: 2px solid #2ca9b7;
+      }
+    `};
 `;
 
 export const AssetInput = styled.input`
@@ -56,11 +65,11 @@ export const AssetInput = styled.input`
   }
 `;
 
-const AssetToTransfer = () => {
+const AssetToTransfer = ({ assetName, toggleDropdown, closeDropdown, setBalance }) => {
   const [inputAmount, setInputAmount] = useState('');
-
   const onUserInput = (input: string) => {
     setInputAmount(input);
+    setBalance(input);
   };
 
   const enforcer = (nextUserInput: string) => {
@@ -77,8 +86,12 @@ const AssetToTransfer = () => {
           Wallet: <WalletAmount color={'red'}>{`${0} tokens`}</WalletAmount>
         </Label>
       </Flex>
+
       <AssetInfo>
-        <AssetName>GLMR</AssetName>
+        <AssetName>
+          <Icon icon={assetName} margin={'0 8px 0 0'} />
+          <AssetSelector assetName={assetName} toggleDropdown={toggleDropdown} closeDropdown={closeDropdown} />
+        </AssetName>
         <AssetInput
           placeholder="0"
           value={inputAmount}
@@ -96,7 +109,7 @@ const AssetToTransfer = () => {
           minLength={1}
           maxLength={79}
           spellCheck="false"
-        ></AssetInput>
+        ></AssetInput>{' '}
       </AssetInfo>
     </>
   );

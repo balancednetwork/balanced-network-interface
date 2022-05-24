@@ -7,10 +7,21 @@ import styled, { css } from 'styled-components';
 
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDown } from 'assets/icons/arrow-down.svg';
+import { useFromNetwork, useSelectNetworkDst, useSelectNetworkSrc, useToNetwork } from 'store/bridge/hooks';
 
 interface NetworkSelectorProps {
   label?: string;
-  data: string[];
+  data: Array<NetworkItem>;
+  dependInput?: string;
+  onChange: Function;
+  setSendingInfo?: Function;
+  toggleWallet?: Function;
+}
+
+interface NetworkItem {
+  name?: string;
+  value: string;
+  label: string;
 }
 
 export const Label = styled(Typography)`
@@ -102,9 +113,25 @@ const SelectItem = styled(Box)`
   }
 `;
 
-const NetworkSelector = ({ label, data }: NetworkSelectorProps) => {
+const NetworkSelector = ({ label, data, onChange, toggleWallet }: NetworkSelectorProps) => {
   const [showItems, setShowItems] = useState(false);
-  const [selectNetwork, setSelectNetwork] = useState(data[0]);
+  let initialNetwork = data[0];
+  const setNetworkSrc = useSelectNetworkSrc();
+  const setNetworkDst = useSelectNetworkDst();
+  const fromNetwork = useFromNetwork();
+  const toNetwork = useToNetwork();
+
+  if ('From' === label) {
+    initialNetwork = fromNetwork ? fromNetwork : initialNetwork;
+    setNetworkSrc(initialNetwork);
+  } else {
+    data = data.filter(item => item.value !== fromNetwork.value);
+    initialNetwork = toNetwork && toNetwork.value !== fromNetwork.value ? toNetwork : data[0];
+    setNetworkDst(initialNetwork);
+  }
+
+  const [selectedValue, setSelectedValue] = useState(initialNetwork || {});
+
   const toggleDropdown = () => {
     setShowItems(prevState => !prevState);
   };
@@ -113,10 +140,22 @@ const NetworkSelector = ({ label, data }: NetworkSelectorProps) => {
     setShowItems(false);
   };
 
-  const onSelect = select => {
-    setSelectNetwork(select);
+  const onSelect = network => {
     toggleDropdown();
+
+    if (toggleWallet) {
+      toggleWallet();
+    }
+    onChange(network);
+    setSelectedValue(network);
+    if ('From' === label) {
+      setNetworkSrc(network);
+    } else {
+      debugger;
+      setNetworkDst(network);
+    }
   };
+
   return (
     <>
       {label && <Label>{label}</Label>}
@@ -124,7 +163,7 @@ const NetworkSelector = ({ label, data }: NetworkSelectorProps) => {
         <ClickAwayListener onClickAway={closeDropdown}>
           <Select>
             <Selected onClick={toggleDropdown}>
-              {selectNetwork}
+              {selectedValue?.label}
               <StyledArrowDown />
             </Selected>
             <AnimatePresence>
@@ -136,19 +175,13 @@ const NetworkSelector = ({ label, data }: NetworkSelectorProps) => {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {data.map((network, index) => {
-                    console.log(network);
-
+                  {data.map((network, idx) => {
                     return (
-                      <SelectItem key={index} onClick={() => onSelect(network)}>
-                        {network}
+                      <SelectItem key={idx} onClick={() => onSelect(network)}>
+                        {network?.label}
                       </SelectItem>
                     );
                   })}
-                  {/* <SelectItem>Ethereum</SelectItem> */}
-                  {/* <SelectItem>Moonbeam</SelectItem>
-                  <SelectItem>Icon</SelectItem>
-                  <SelectItem>Binance</SelectItem> */}
                 </SelectItems>
               )}
             </AnimatePresence>

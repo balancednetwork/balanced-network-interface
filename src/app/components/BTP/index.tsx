@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
+import { chainConfigs, chainList, getTokenList } from 'btp/src/connectors/chainConfigs';
+import { ADDRESS_LOCAL_STORAGE } from 'btp/src/connectors/constants';
+import { addICONexListener } from 'btp/src/connectors/ICONex';
+import { requestHasAddress } from 'btp/src/connectors/ICONex/events';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -10,12 +14,11 @@ import { Typography } from 'app/theme';
 import { useModalOpen, useTransferAssetsModalToggle, useBridgeWalletModalToggle } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
 
-import { getService } from '../../../store/bridge/services/transfer';
-import { getBalanceToken } from '../../../store/bridge/utils/constants';
 import Address from './Address';
+import { AssetModal } from './AssetModal';
 import AssetToTransfer from './AssetToTransfer';
 import NetworkSelector from './NetworkSelector';
-// import Transfer from './transfer';
+import { TransferAssetModal } from './TransferModal';
 
 const Grid = styled(Box)`
   display: grid;
@@ -52,43 +55,110 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
     `}
   }
 `;
+addICONexListener();
 
 const BTP = () => {
   const [isOpenConfirm, setIsOpenConfirm] = useState(false);
   const walletModalOpen = useModalOpen(ApplicationModal.TRANSFER_ASSETS);
+  const [nativeCoin, setNativeCoin] = useState('ICX');
+  const [assetName, setAssetName] = useState('ICX');
+  const [sendingAddress, setSendingAddress] = useState('');
+  const [balance, setBalance] = useState(0);
+  const [networkId, setNetworkId] = useState('0x7');
+  const [isOpenAssetOptions, setIsOpenAssetOptions] = useState(false);
   const toggleTransferAssetsModal = useTransferAssetsModalToggle();
   const toggleWalletModal = useBridgeWalletModalToggle();
-  const [accountInfo, setAccountInfo] = useState(JSON.parse(String(localStorage.getItem('account_info'))));
-  console.log(accountInfo);
+  const [sendingInfo, setSendingInfo] = useState({ token: '', network: '' });
 
-  const [networkFrom, setNetworkFrom] = useState(['Ethereum', 'Moonbeam', 'Binance']);
-  const [networkTo, setNetworkTo] = useState(['Ethereum', 'Moonbeam', 'Binance']);
-  const tokens = [
-    { label: accountInfo.unit, value: accountInfo.unit },
-    ...getBalanceToken()!
-      .map(symbol => ({ label: symbol, value: symbol }))
-      .filter(item => item.label !== accountInfo.unit),
-  ];
-  console.log(tokens);
-
-  const assetTransfer = [];
-  const onChangeRefundSelect = async => {
-    //  tokens.forEach((token)  => {
-
-    // })
-    var a: any = getService()?.getBalanceOf({
-      address: accountInfo.address,
-      refundable: true,
-      symbol: accountInfo.unit,
-    });
-    a.then(refund => {
-      console.log(refund);
-    });
+  const onSendingInfoChange = (info = {}) => {
+    setSendingInfo(sendingInfo => ({ ...sendingInfo, ...info }));
   };
 
   const handleTransfer = () => {
-    toggleWalletModal();
     setIsOpenConfirm(true);
+  };
+
+  useEffect(() => {
+    const address = localStorage.getItem(ADDRESS_LOCAL_STORAGE);
+    if (address) {
+      setTimeout(() => {
+        requestHasAddress(address);
+      }, 2000);
+    }
+  }, []);
+
+  const onChange = values => {
+    // const {
+    //   target: { value, name },
+    // } = values;
+    // if (name) {
+    //   setSendingInfo({ [name]: value } as any);
+    // }
+  };
+
+  const chainInfo = () => {
+    const lala = chainList.map(({ CHAIN_NAME, id, ...others }) => ({
+      value: id,
+      label: CHAIN_NAME,
+      ...others,
+    }));
+    return lala;
+  };
+
+  const getTartgetChains = () => {
+    /*
+    We have 8 transfer cases supported for now => explain the options of dropdowns
+
+    [From ICON]
+    Transfer ICX to BSC
+    Transfer BNB to BSC
+    Transfer ICX to Harmony
+    Transfer ONE to Harmony
+
+    [From BSC]
+    Transfer BNB to ICON
+    Transfer ICX to ICON
+
+    [From Harmony]
+    Transfer ONE to ICON
+    Transfer ICX to ICON
+    */
+    const targetChains = chainInfo();
+
+    if (!nativeCoin) return targetChains;
+    if (nativeCoin !== chainConfigs.ICON.COIN_SYMBOL) {
+      return targetChains.filter(({ value }) => value === chainConfigs.ICON.id);
+    }
+    // if (nativeCoin === chainConfigs.ICON.COIN_SYMBOL && sendingInfo.token === chainConfigs.ICON.COIN_SYMBOL) {
+    //   return targetChains.filter(({ value }) => value !== chainConfigs.ICON.id);
+    // } else {
+    //   return targetChains.filter(({ COIN_SYMBOL }) => sendingInfo.token === COIN_SYMBOL);
+    // }
+    return targetChains;
+  };
+
+  const getAssetOptions = () => {
+    const options = [...chainList, ...getTokenList()].map(({ CHAIN_NAME, COIN_SYMBOL, symbol, chain, ...others }) => {
+      const tokenSymbol = COIN_SYMBOL || symbol;
+      return {
+        value: tokenSymbol,
+        label: tokenSymbol,
+        ...others,
+      };
+    });
+
+    // if (!nativeCoin || networkId === chainConfigs.ICON.id) {
+    //   return options;
+    // }
+
+    // return options.filter(
+    //   option => option.id === networkId || option.id === chainConfigs.ICON.id || networkId === option.chainId,
+    // );
+    return options;
+  };
+
+  const onChangeAsset = asset => {
+    setAssetName(asset.value);
   };
 
   return (
@@ -101,26 +171,51 @@ const BTP = () => {
 
             <Grid>
               <Box>
-                <NetworkSelector label={'From'} data={networkFrom} />
+                <NetworkSelector
+                  label={'From'}
+                  data={chainInfo()}
+                  onChange={onChange}
+                  toggleWallet={toggleWalletModal}
+                />
               </Box>
               <Box>
-                <NetworkSelector label={'To'} data={networkTo} />
+                <NetworkSelector
+                  label={'To'}
+                  data={getTartgetChains()}
+                  onChange={onChange}
+                  setSendingInfo={onSendingInfoChange}
+                />
               </Box>
               <Box className="full-width">
-                <AssetToTransfer />
+                <AssetToTransfer
+                  assetName={assetName}
+                  toggleDropdown={() => {
+                    setIsOpenAssetOptions(prevState => !prevState);
+                  }}
+                  closeDropdown={() => setIsOpenAssetOptions(false)}
+                  setBalance={setBalance}
+                />
               </Box>
+
+              {isOpenAssetOptions && <AssetModal data={getAssetOptions()} onChange={onChangeAsset} />}
+              <TransferAssetModal
+                isOpen={isOpenConfirm}
+                setIsOpen={setIsOpenConfirm}
+                sendingAddress={sendingAddress}
+                balance={balance}
+                tokenSymbol={assetName}
+              />
               <Box className="full-width">
-                <Address />
+                <Address onChange={setSendingAddress} />
               </Box>
             </Grid>
 
             <Divider margin={'20px 0'} />
             <Flex justifyContent={'center'}>
               <TextButton onClick={toggleTransferAssetsModal}>Cancel</TextButton>
-              <Button onClick={handleTransfer}>Transfer</Button>
+              <Button onClick={() => handleTransfer()}>Transfer</Button>
             </Flex>
           </Flex>
-          {/* {isOpenConfirm && <Transfer handleClose={handleClose} />} */}
         </Wrapper>
       </StyledModal>
     </>

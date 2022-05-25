@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-19 09:28\n"
+"PO-Revision-Date: 2022-05-25 05:28\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -835,11 +835,6 @@ msgstr "Staked {0} BALN."
 msgid "Staking BALN..."
 msgstr "Staking BALN..."
 
-#: src/app/components/ProposalStatusIcon/index.tsx
-#: src/app/components/ProposalStatusIcon/index.tsx
-msgid "Starting in {startTimeStr}"
-msgstr "Comienza en {startTimeStr}"
-
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit"
 msgstr "Enviar"
@@ -1073,6 +1068,19 @@ msgstr "Votar"
 msgid "Vote cast."
 msgstr "Voto emitido."
 
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting ends in {endTimeStr}"
+msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting has ended"
+msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting starts in {startTimeStr}"
+msgstr ""
+
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
 msgstr "Peso de votación"
@@ -1234,9 +1242,25 @@ msgstr "Tu suministro"
 msgid "and ends after 5 days."
 msgstr "y termina después de 5 días."
 
+#: src/utils/timeformat.ts
+msgid "d"
+msgstr ""
+
+#: src/utils/timeformat.ts
+msgid "h"
+msgstr ""
+
+#: src/utils/timeformat.ts
+msgid "less then a minute"
+msgstr ""
+
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
 msgstr "pool de liquidez"
+
+#: src/utils/timeformat.ts
+msgid "m"
+msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 msgid "or"
@@ -1318,10 +1342,6 @@ msgstr "{0}% staked"
 #: src/app/components/trade/utils.tsx
 msgid "{currency} sent to the {pair} pool."
 msgstr "{currency} enviado al pool {pair}."
-
-#: src/app/components/ProposalStatusIcon/index.tsx
-msgid "{endTimeStr} left"
-msgstr "Quedan {endTimeStr}"
 
 #: src/app/components/trade/utils.tsx
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."

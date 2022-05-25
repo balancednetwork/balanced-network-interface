@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-18 10:29\n"
+"PO-Revision-Date: 2022-05-25 05:28\n"
 "Last-Translator: \n"
 "Language: zh_CN\n"
 "Language-Team: Chinese Simplified\n"
@@ -835,11 +835,6 @@ msgstr ""
 msgid "Staking BALN..."
 msgstr ""
 
-#: src/app/components/ProposalStatusIcon/index.tsx
-#: src/app/components/ProposalStatusIcon/index.tsx
-msgid "Starting in {startTimeStr}"
-msgstr ""
-
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit"
 msgstr ""
@@ -1073,6 +1068,19 @@ msgstr ""
 msgid "Vote cast."
 msgstr ""
 
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting ends in {endTimeStr}"
+msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting has ended"
+msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting starts in {startTimeStr}"
+msgstr ""
+
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
 msgstr ""
@@ -1230,8 +1238,24 @@ msgstr ""
 msgid "and ends after 5 days."
 msgstr ""
 
+#: src/utils/timeformat.ts
+msgid "d"
+msgstr ""
+
+#: src/utils/timeformat.ts
+msgid "h"
+msgstr ""
+
+#: src/utils/timeformat.ts
+msgid "less then a minute"
+msgstr ""
+
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
+msgstr ""
+
+#: src/utils/timeformat.ts
+msgid "m"
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
@@ -1312,10 +1336,6 @@ msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "{currency} sent to the {pair} pool."
-msgstr ""
-
-#: src/app/components/ProposalStatusIcon/index.tsx
-msgid "{endTimeStr} left"
 msgstr ""
 
 #: src/app/components/trade/utils.tsx

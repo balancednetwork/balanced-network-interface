@@ -116,8 +116,8 @@ export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const LAUNCH_DAY = 1619366400000;
-const ONE_DAY_DURATION = 86400000;
+export const LAUNCH_DAY = 1619366400000;
+export const ONE_DAY_DURATION = 86400000;
 
 export const generateChartData = (rate: BigNumber, currencies: { [field in Field]?: Currency }) => {
   const today = new Date().valueOf();

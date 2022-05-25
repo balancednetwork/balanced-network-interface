@@ -12,7 +12,7 @@ import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
-import { DropdownPopper } from 'app/components/Popover';
+import Popover, { DropdownPopper } from 'app/components/Popover';
 import QuestionHelper from 'app/components/QuestionHelper';
 import SlippageSetting from 'app/components/SlippageSetting';
 import { Typography } from 'app/theme';
@@ -27,6 +27,7 @@ import {
 } from 'store/application/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
+import { useStabilityFundState } from 'store/swap/stabilityFund';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { Price, TradeType } from 'types/balanced-sdk-core';
@@ -37,14 +38,15 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
+import StabilityFund from '../StabilityFund';
 import { BrightPanel, swapMessage } from './utils';
 
 export default function SwapPanel() {
   const { account } = useIconReact();
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-
   const { trade, currencyBalances, currencies, parsedAmount, inputError, percents } = useDerivedSwapInfo();
+  const { isFundUsable } = useStabilityFundState();
 
   const parsedAmounts = React.useMemo(
     () => ({
@@ -73,6 +75,11 @@ export default function SwapPanel() {
     },
     [onUserInput],
   );
+
+  const clearSwapInputOutput = (): void => {
+    handleTypeInput('');
+    handleTypeOutput('');
+  };
 
   const maxInputAmount = maxAmountSpend(currencyBalances[Field.INPUT]);
 
@@ -190,8 +197,7 @@ export default function SwapPanel() {
               summary: message.successMessage,
             },
           );
-          handleTypeInput('');
-          handleTypeOutput('');
+          clearSwapInputOutput();
         })
         .catch(e => {
           console.error('error', e);
@@ -347,15 +353,23 @@ export default function SwapPanel() {
           </Flex>
 
           <Flex justifyContent="center" mt={4}>
-            {isValid ? (
-              <Button color="primary" onClick={handleSwap}>
-                <Trans>Swap</Trans>
-              </Button>
-            ) : (
-              <Button disabled={!!account} color="primary" onClick={handleSwap}>
-                {account ? inputError : t`Swap`}
-              </Button>
-            )}
+            <Popover
+              content={<StabilityFund clearSwapInputOutput={clearSwapInputOutput} />}
+              show={isFundUsable}
+              placement="bottom"
+              forcePlacement
+              zIndex={10}
+            >
+              {isValid ? (
+                <Button color="primary" onClick={handleSwap}>
+                  <Trans>Swap</Trans>
+                </Button>
+              ) : (
+                <Button disabled={!!account} color="primary" onClick={handleSwap}>
+                  {account ? inputError : t`Swap`}
+                </Button>
+              )}
+            </Popover>
           </Flex>
         </AutoColumn>
       </BrightPanel>

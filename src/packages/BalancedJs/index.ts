@@ -21,6 +21,7 @@ import Rebalancing from './contracts/Rebalancing';
 import Rewards from './contracts/Rewards';
 import Router from './contracts/Router';
 import sICX from './contracts/sICX';
+import StabilityFund from './contracts/StabilityFund';
 import Staking from './contracts/Staking';
 import ContractSettings, { LedgerSettings } from './contractSettings';
 
@@ -63,6 +64,7 @@ export class BalancedJs {
   Rebalancing: Rebalancing;
   DAOFund: DAOFund;
   Multicall: Multicall;
+  StabilityFund: StabilityFund;
   LiquidationDisbursement: LiquidationDisbursement;
 
   static utils = {
@@ -124,6 +126,7 @@ export class BalancedJs {
     this.DAOFund = new DAOFund(this.contractSettings);
     this.Multicall = new Multicall(this.contractSettings);
     this.LiquidationDisbursement = new LiquidationDisbursement(this.contractSettings);
+    this.StabilityFund = new StabilityFund(this.contractSettings);
   }
 
   inject({ account, legerSettings }: SettingInjection) {

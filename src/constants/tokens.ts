@@ -202,10 +202,17 @@ export const BALN_SEJONG = new Token(
 );
 export const IUSDC_SEJONG = new Token(
   SupportedChainId.SEJONG,
-  'cxb2c075e9130440dd64e6bfd3fe09e5c629f6e183',
+  'cx599d58885e5b1736c934fca7e53e04c797ab05be',
   6,
   'IUSDC',
   'ICON USD Coin',
+);
+export const USDS_SEJONG = new Token(
+  SupportedChainId.SEJONG,
+  'cxc0dbb2eb24719f8355a7ec3c1aaa93826669ab8e',
+  18,
+  'USDS',
+  'Stably USD',
 );
 export const FIN_SEJONG = new Token(
   SupportedChainId.SEJONG,

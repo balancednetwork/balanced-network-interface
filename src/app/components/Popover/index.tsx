@@ -88,6 +88,7 @@ export interface PopoverProps {
   forcePlacement?: boolean;
   style?: React.CSSProperties;
   refStyle?: React.CSSProperties;
+  zIndex?: number;
 }
 
 export default function Popover({
@@ -98,6 +99,7 @@ export default function Popover({
   children,
   placement = 'auto',
   forcePlacement,
+  zIndex,
 }: PopoverProps) {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -126,6 +128,7 @@ export default function Popover({
           show={show}
           ref={setPopperElement as any}
           style={{ ...style, ...styles.popper }}
+          zIndex={zIndex}
           {...attributes.popper}
         >
           <ContentWrapper>{content}</ContentWrapper>

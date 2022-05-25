@@ -12,6 +12,8 @@ import { isTradeBetter } from '../../types/balanced-v1-sdk/utils/isTradeBetter';
 function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
   const allCurrencyCombinations = useAllCurrencyCombinations(currencyA, currencyB);
 
+  // Note: allCurrencyCombinations can be an empty array
+
   const allPairs = useV2Pairs(allCurrencyCombinations);
 
   return useMemo(

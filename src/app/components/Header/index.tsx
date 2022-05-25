@@ -36,7 +36,7 @@ const WalletInfo = styled(Box)`
 const WalletButtonWrapper = styled.div``;
 
 const WalletMenu = styled.div`
-  max-width: 164px;
+  max-width: 240px;
   font-size: 14px;
   padding: 25px;
   display: grid;
@@ -62,6 +62,38 @@ const StyledAddress = styled(Typography)`
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
+const CopyableAddress = ({
+  account,
+  closeAfterDelay,
+}: {
+  account: string | null | undefined;
+  closeAfterDelay?: number;
+}) => {
+  const [isCopied, updateCopyState] = React.useState(false);
+  const copyAddress = React.useCallback(async (account: string) => {
+    await navigator.clipboard.writeText(account);
+    updateCopyState(true);
+  }, []);
+
+  return account ? (
+    <MouseoverTooltip
+      text={isCopied ? t`Copied` : t`Copy address`}
+      placement={'left'}
+      noArrowAndBorder
+      closeAfterDelay={closeAfterDelay}
+    >
+      <StyledAddress
+        onMouseLeave={() => {
+          setTimeout(() => updateCopyState(false), 250);
+        }}
+        onClick={() => copyAddress(account)}
+      >
+        {shortenAddress(account)}
+      </StyledAddress>
+    </MouseoverTooltip>
+  ) : null;
+};
+
 export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
@@ -69,9 +101,6 @@ export default function Header(props: { title?: string; className?: string }) {
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const walletButtonRef = React.useRef<HTMLElement>(null);
-
-  const [isCopied, updateCopyState] = React.useState(false);
-
   const toggleWalletMenu = () => {
     setAnchor(anchor ? null : walletButtonRef.current);
   };
@@ -95,11 +124,6 @@ export default function Header(props: { title?: string; className?: string }) {
       bnJs.contractSettings.ledgerSettings.transport.close();
     }
   };
-
-  const copyAddress = React.useCallback(async (account: string) => {
-    await navigator.clipboard.writeText(account);
-    updateCopyState(true);
-  }, []);
 
   const upSmall = useMedia('(min-width: 800px)');
 
@@ -126,24 +150,15 @@ export default function Header(props: { title?: string; className?: string }) {
           </Flex>
         )}
 
-        {account && upSmall && (
+        {account && (
           <Flex alignItems="center">
             <WalletInfo>
-              <Typography variant="p" textAlign="right">
-                <Trans>Wallet</Trans>
-              </Typography>
-              {account && (
-                <MouseoverTooltip text={isCopied ? t`Copied` : t`Copy address`} placement="left" noArrowAndBorder>
-                  <StyledAddress
-                    onMouseLeave={() => {
-                      setTimeout(() => updateCopyState(false), 250);
-                    }}
-                    onClick={() => copyAddress(account)}
-                  >
-                    {shortenAddress(account)}
-                  </StyledAddress>
-                </MouseoverTooltip>
+              {upSmall && (
+                <Typography variant="p" textAlign="right">
+                  <Trans>Wallet</Trans>
+                </Typography>
               )}
+              {account && upSmall && <CopyableAddress account={account} />}
             </WalletInfo>
 
             <WalletButtonWrapper>
@@ -155,6 +170,7 @@ export default function Header(props: { title?: string; className?: string }) {
 
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <WalletMenu>
+                      {!upSmall && <CopyableAddress account={account} closeAfterDelay={1000} />}
                       <ChangeWalletButton onClick={handleChangeWallet}>
                         <Trans>Change wallet</Trans>
                       </ChangeWalletButton>

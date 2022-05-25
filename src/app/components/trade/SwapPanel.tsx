@@ -220,7 +220,7 @@ export default function SwapPanel() {
 
   return (
     <>
-      <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
+      <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
         <AutoColumn gap="md">
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">

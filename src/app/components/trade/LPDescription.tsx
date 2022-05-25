@@ -78,8 +78,8 @@ export default function LPDescription() {
             <Typography variant="h3" mb={2} marginBottom={40}>
               {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
                 ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} 
-                    liquidity pool${upSmall && ': '}`
-                : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall && ': '}`}{' '}
+                    liquidity pool${upSmall ? ': ' : ''}`
+                : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall ? ': ' : ''}`}{' '}
               <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
                 {apy?.times(100).dp(2).toFixed() ?? '-'}% APY
               </Typography>

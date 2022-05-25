@@ -17,6 +17,7 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
 import {
@@ -77,7 +78,9 @@ export const PanelInfoItem = styled(Box)`
 
 const CollateralPanel = () => {
   const { account } = useIconReact();
-  const isSuperSmall = useMedia(`(max-width: 359px)`);
+  const locale = useActiveLocale();
+
+  const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '359px'})`);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();

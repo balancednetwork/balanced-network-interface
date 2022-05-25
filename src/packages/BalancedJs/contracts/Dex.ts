@@ -244,7 +244,7 @@ export default class Dex extends Contract {
   }
 
   /**
-   * Not used
+   * Not used, and not on chain
    */
   getPoolStatsForPair(base: string, quote: string) {
     const callParams = this.paramsBuilder({

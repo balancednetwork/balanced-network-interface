@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-18 10:29\n"
+"PO-Revision-Date: 2022-05-21 20:27\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -93,7 +93,7 @@ msgstr "Sau"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
-msgstr "Tổng số tài sản thế chấp bị khoá"
+msgstr "Tất cả tài sản thế chấp sẽ bị khóa"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
@@ -446,7 +446,7 @@ msgstr "Mức phí"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "For"
-msgstr "Cho"
+msgstr "Thành"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
@@ -1196,7 +1196,7 @@ msgstr "Bạn sẽ nhận được sICX (Khóa ICX). Bỏ khóa hoặc đổi qu
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "Your BALN will unstake on {0} at\n"
 "{1}."
-msgstr "Bạn sẽ nhận lại {0} BALN lúc {1}."
+msgstr "Bạn sẽ nhận lại BALN vào {0} lúc {1}."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Your ICX will be locked for 24 hours."
@@ -1238,7 +1238,7 @@ msgstr "hồ thanh khoản"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "or"
-msgstr ""
+msgstr "hoặc"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then click Supply."

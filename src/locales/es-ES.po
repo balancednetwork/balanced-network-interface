@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-18 16:41\n"
+"PO-Revision-Date: 2022-05-19 09:28\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -67,7 +67,7 @@ msgstr "Historial de actividad"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
-msgstr "Agrega sICX al collateral pool."
+msgstr "Agrega sICX a tu colateral."
 
 #: src/app/components/AddressInputPanel/index.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
@@ -93,7 +93,7 @@ msgstr "Después"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
-msgstr "Tu colateral está bloqueado"
+msgstr "Colateral bloqueado"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
@@ -139,7 +139,7 @@ msgstr "Balance"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Balance Tokens"
-msgstr "Balance Tokens"
+msgstr "Monedas Balance"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Balanced increases your loan to buy more collateral at a discount."
@@ -246,7 +246,7 @@ msgstr "Cobrar (1 de {count})"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim Balance Tokens?"
-msgstr "¿Cobrar Balance Tokens?"
+msgstr "¿Cobrar Monedas Balance?"
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
@@ -263,7 +263,7 @@ msgstr "¿Cobrar ganancias?"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claimed fees."
-msgstr "Comisiones cobradas."
+msgstr "Ganancias cobradas."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claimed {0} BALN."
@@ -279,7 +279,7 @@ msgstr "Cobrando ICX..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claiming fees..."
-msgstr "Cobrando comisiones..."
+msgstr "Cobrando ganancias ..."
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claiming rewards..."
@@ -446,7 +446,7 @@ msgstr "Comisión"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "For"
-msgstr "Para"
+msgstr "Por"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
@@ -564,11 +564,11 @@ msgstr "Mínimo a recibir"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Network fee allocation"
-msgstr "Asignar comisiones de la red"
+msgstr "Asignación de ganancias de red"
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
-msgstr "Comisiones de la red"
+msgstr "Ganancias de la red"
 
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/VotePage/index.tsx
@@ -813,11 +813,11 @@ msgstr "Stake"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens"
-msgstr "Stake de Balance Tokens"
+msgstr "Stake de Monedas de Balance"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake Balance Tokens?"
-msgstr "¿Hacer Stake de Balanced Tokens?"
+msgstr "¿Hacer Stake de tus Monedas Balance?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Stake at least {0} BALN if you want to propose a change."
@@ -825,7 +825,7 @@ msgstr "Haz stake de al menos {0} BALN si quieres proponer un cambio."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Stake your Balance Tokens to earn network fees."
-msgstr "Haz stake de tus Balance Tokens para ganar comisiones de la red."
+msgstr "Haz stake de tus Monedas Balance para obtener ganancias de la red."
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Staked {0} BALN."
@@ -969,7 +969,7 @@ msgstr "Para ganar recompensas Balanced, tome un préstamo o suministre liquidez
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."
-msgstr "Para ganar comisiones de red, haz staking con tus BALN."
+msgstr "Para obtener ganancias de la red, haz staking con tus BALN."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "To receive BALN, you must have ICX in the pool at 1pm Eastern each day."
@@ -1008,7 +1008,7 @@ msgstr "Unstake"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Unstake Balance Tokens?"
-msgstr "¿Hacer unstake de Balance Tokens?"
+msgstr "¿Hacer unstake de Monedas Balance?"
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
@@ -1176,7 +1176,7 @@ msgstr "Aprobaste"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "You can't withdraw any collateral if you go beyond this threshold."
-msgstr "No puedes retirar ningún colateral si vas más allá de este umbral."
+msgstr "No puedes retirar nada de tu colateral si vas más allá de este umbral."
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
@@ -1278,7 +1278,7 @@ msgstr "{0} ICX añadido a tu billetera."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"
-msgstr "{0} ICX está listo para cobrar"
+msgstr "{0} ICX listos para cobrar"
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX unstaking"

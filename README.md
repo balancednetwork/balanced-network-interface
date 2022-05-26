@@ -51,7 +51,7 @@ REACT_APP_NETWORK_ID=1
 ## Contribution
 
 **Please open all pull requests against the `master` branch.**
-CI checks will run against all PRs.
+CI checks will run against all PR.
 
 ### Code Style/Convention
 

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-25 05:28\n"
+"PO-Revision-Date: 2022-05-27 19:22\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -985,7 +985,7 @@ msgstr "Suministro total"
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
 msgid "Trade"
-msgstr "Trade"
+msgstr "Trading"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Transaction"
@@ -1070,16 +1070,16 @@ msgstr "Voto emitido."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting ends in {endTimeStr}"
-msgstr ""
+msgstr "La votación termina en {endTimeStr}"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting has ended"
-msgstr ""
+msgstr "La votación ha terminado"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting starts in {startTimeStr}"
-msgstr ""
+msgstr "La votación comienza en {startTimeStr}"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
@@ -1244,15 +1244,15 @@ msgstr "y termina después de 5 días."
 
 #: src/utils/timeformat.ts
 msgid "d"
-msgstr ""
+msgstr "d"
 
 #: src/utils/timeformat.ts
 msgid "h"
-msgstr ""
+msgstr "h"
 
 #: src/utils/timeformat.ts
 msgid "less then a minute"
-msgstr ""
+msgstr "menos de un minuto"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
@@ -1260,7 +1260,7 @@ msgstr "pool de liquidez"
 
 #: src/utils/timeformat.ts
 msgid "m"
-msgstr ""
+msgstr "m"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "or"

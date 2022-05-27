@@ -34,4 +34,16 @@ export default class StabilityFund extends Contract {
 
     return this.call(payload);
   }
+
+  //returns balance limit of the token in stability fund
+  getLimit(address: string) {
+    const payload = this.paramsBuilder({
+      method: 'getLimit',
+      params: {
+        _address: address,
+      },
+    });
+
+    return this.call(payload);
+  }
 }

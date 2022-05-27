@@ -12,11 +12,10 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useMaxSwapSize, useFeeAmount } from 'store/stabilityFund/hooks';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { useFeeOut, useFeeIn } from 'store/swap/stabilityFund';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { Fraction } from 'types/balanced-sdk-core';
 import { toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -26,6 +25,11 @@ import ModalContent from '../ModalContent';
 import QuestionHelper from '../QuestionHelper';
 import Spinner from '../Spinner';
 import { swapMessage } from '../trade/utils';
+
+interface StabilityFundProps {
+  clearSwapInputOutput: () => void;
+  setInput: (input: string) => void;
+}
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
@@ -53,11 +57,22 @@ const FundButton = styled.button`
   }
 `;
 
-const StabilityFund = ({ clearSwapInputOutput }: { clearSwapInputOutput: () => void }) => {
+const SwapSizeNotice = styled.div`
+  text-align: center;
+  font-size: 14px;
+
+  ${FundButton} {
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+  }
+`;
+
+const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) => {
   const { account } = useIconReact();
   const { trade } = useDerivedSwapInfo();
-  const feeOut = useFeeOut();
-  const feeIn = useFeeIn();
+  const maxSwapSize = useMaxSwapSize();
+  const feeAmount = useFeeAmount();
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
@@ -68,30 +83,8 @@ const StabilityFund = ({ clearSwapInputOutput }: { clearSwapInputOutput: () => v
   const sendSymbol = trade?.inputAmount.currency.symbol;
   const receivedCurrency = trade?.outputAmount.currency;
   const isBnUSDGoingIn = sendSymbol === 'bnUSD';
-  const fee = isBnUSDGoingIn ? feeOut : feeIn;
-
-  const handleFundSwapConfirmDismiss = () => {
-    if (shouldLedgerSign) return;
-
-    setShowFundSwapConfirm(false);
-    changeShouldLedgerSign(false);
-  };
-
-  const getFeeAmount = (): string => {
-    if (!!sendAmount && !!fee) {
-      return sendAmount.multiply(new Fraction(1, 1 / fee)).toSignificant();
-    } else {
-      return '';
-    }
-  };
-
-  const getAmountReceived = (): string => {
-    if (!!sendAmount && !!fee) {
-      return sendAmount.subtract(sendAmount.multiply(new Fraction(1, 1 / fee))).toSignificant();
-    } else {
-      return '';
-    }
-  };
+  const hasFundEnoughBalance =
+    sendAmount && maxSwapSize ? new BigNumber(sendAmount.toFixed(4)).isLessThanOrEqualTo(maxSwapSize) : 'loading';
 
   const handleFundTransfer = () => {
     if (!account) return;
@@ -104,11 +97,11 @@ const StabilityFund = ({ clearSwapInputOutput }: { clearSwapInputOutput: () => v
       changeShouldLedgerSign(true);
     }
 
-    if (sendAmount && sendSymbol && receivedCurrency) {
+    if (sendAmount && sendSymbol && receivedCurrency && feeAmount) {
       const message = swapMessage(
         sendAmount?.toFixed(2),
         sendSymbol,
-        getAmountReceived(),
+        sendAmount.subtract(feeAmount).toSignificant(),
         receivedCurrency.symbol || 'IN',
       );
 
@@ -119,7 +112,6 @@ const StabilityFund = ({ clearSwapInputOutput }: { clearSwapInputOutput: () => v
         .then((res: any) => {
           setShowFundSwapConfirm(false);
           if (!isEmpty(res.result)) {
-            console.log(res.result);
             addTransaction(
               { hash: res.result },
               {
@@ -142,17 +134,30 @@ const StabilityFund = ({ clearSwapInputOutput }: { clearSwapInputOutput: () => v
     }
   };
 
+  const handleFundSwapConfirmDismiss = () => {
+    if (shouldLedgerSign) return;
+
+    setShowFundSwapConfirm(false);
+    changeShouldLedgerSign(false);
+  };
+
   return (
     <>
       <Wrapper>
-        {sendAmount && receivedCurrency && fee ? (
+        {hasFundEnoughBalance === 'loading' ? (
+          <Box paddingTop={4}>
+            <Spinner centered />
+          </Box>
+        ) : hasFundEnoughBalance && sendAmount && feeAmount ? (
           <>
             <HorizontalDivider text={t`Or`} />
             <FundButton onClick={() => setShowFundSwapConfirm(true)}>
               <Box>
-                {t`Use the Stability Fund to swap ${`${sendAmount?.toSignificant()} ${sendSymbol}`} for ${`${getAmountReceived()} ${
-                  receivedCurrency?.symbol
-                }`}`}
+                {t`Use the Stability Fund to swap ${`${new BigNumber(
+                  sendAmount.toSignificant(),
+                ).toFormat()} ${sendSymbol}`} for ${`${new BigNumber(
+                  sendAmount.subtract(feeAmount).toSignificant(),
+                ).toFormat()} ${receivedCurrency?.symbol}`}`}
                 <QuestionHelper
                   text={t`The Stability Fund allows you to mint or burn bnUSD 1:1 for approved stablecoins.`}
                   placement={'right'}
@@ -161,9 +166,15 @@ const StabilityFund = ({ clearSwapInputOutput }: { clearSwapInputOutput: () => v
             </FundButton>
           </>
         ) : (
-          <Box paddingTop={4}>
-            <Spinner centered />
-          </Box>
+          maxSwapSize && (
+            <SwapSizeNotice>
+              {t`Maximum swap size that can be covered by Stability Fund is`}
+              {` `}
+              <FundButton onClick={() => setInput(maxSwapSize.toFixed(2))}>
+                {`${maxSwapSize?.toFormat()} ${sendSymbol}`}
+              </FundButton>
+            </SwapSizeNotice>
+          )
         )}
       </Wrapper>
 
@@ -194,13 +205,16 @@ const StabilityFund = ({ clearSwapInputOutput }: { clearSwapInputOutput: () => v
                 <Trans>Receive</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {new BigNumber(getAmountReceived()).toFormat()} {receivedCurrency?.symbol}
+                {feeAmount && sendAmount
+                  ? new BigNumber(sendAmount.subtract(feeAmount).toSignificant() || 0).toFormat()
+                  : '-'}{' '}
+                {receivedCurrency?.symbol}
               </Typography>
             </Box>
           </Flex>
           <Typography textAlign="center">
             <Trans>
-              Includes a fee of {new BigNumber(getFeeAmount()).toFormat()} {receivedCurrency?.symbol}.
+              Includes a fee of {feeAmount ? feeAmount.toSignificant() : '-'} {receivedCurrency?.symbol}.
             </Trans>
           </Typography>
 

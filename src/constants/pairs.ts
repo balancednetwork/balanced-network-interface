@@ -26,6 +26,9 @@ import {
   bnUSD_SEJONG,
   BALN_SEJONG,
   FIN_SEJONG,
+  sICX_BERLIN,
+  bnUSD_BERLIN,
+  BALN_BERLIN,
 } from 'constants/tokens';
 import { Token } from 'types/balanced-sdk-core';
 
@@ -337,6 +340,28 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: FIN_SEJONG,
       quoteToken: bnUSD_SEJONG,
+    },
+  ],
+  [NetworkId.BERLIN]: [
+    {
+      chainId: 7,
+      id: 2,
+      name: 'sICX/bnUSD',
+      baseCurrencyKey: 'sICX',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: sICX_BERLIN,
+      quoteToken: bnUSD_BERLIN,
+      rewards: 0.15,
+    },
+    {
+      chainId: 7,
+      id: 3,
+      name: 'BALN/bnUSD',
+      baseCurrencyKey: 'BALN',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: BALN_BERLIN,
+      quoteToken: bnUSD_BERLIN,
+      rewards: 0.15,
     },
   ],
 };

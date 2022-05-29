@@ -66,10 +66,33 @@ const SEJONG_ADDRESSES = {
   disbursement: '',
 };
 
+const BERLIN_ADDRESSES = {
+  loans: 'cx676b4a6c1fd366c279c249e819cbb1290d64cc35',
+  staking: 'cx5764fa757f3449ee7bf087ffa24d1ea88071550e',
+  dividends: 'cx904162fd71c2107a120d04bac01077268ef6ef50',
+  reserve: 'cx4caea6d990afc10cb0907f5ea90740f8d83f1d10',
+  daofund: 'cx7a2798f58e266f15211ca99836f44d7e6b72209d',
+  rewards: 'cxadc86b0244bdb80e120073acdfe59972de712f44',
+  dex: 'cxd12d5b4afdde9199bcfd8ac39cf2f3c15cc7c376',
+  rebalancing: 'cx5f0a40b6844c42f1ef1f4fe661d1dece3a334d0a',
+  governance: 'cx1674e49b70e05040869b82bb5a0d112a4e07b931',
+  band: '',
+  router: 'cxeb2de4a4c404a2e67a09bab5d71b4aedaed35375',
+  airdrip: '',
+  sicx: 'cx7337ca84ac6176def03a5fbae9769b1fe1d44a42',
+  bnusd: 'cx34bda1418b594a89df326402d62db191d421472d',
+  baln: 'cx84eea4658b11b3538c5dd5bea51d9a3154852336',
+  bwt: 'cx807d050f6d918b807bf719cb03b7a77c65e67c98',
+  stakedLp: 'cx17236b39bc3b22e397c1bb03a2bc52b1a584f3b0',
+  multicall: 'cx94a9a5750182d117a82a866e78ce7c75856c1edb',
+  disbursement: '',
+};
+
 const addresses = {
   [NetworkId.MAINNET]: MAINNET_ADDRESSES,
   [NetworkId.YEOUIDO]: YEOUIDO_ADDRESSES,
   [NetworkId.SEJONG]: SEJONG_ADDRESSES,
+  [NetworkId.BERLIN]: BERLIN_ADDRESSES,
 };
 
 export default addresses;

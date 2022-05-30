@@ -153,18 +153,20 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
         ) : hasFundEnoughBalance && sendAmount && feeAmount ? (
           <>
             <HorizontalDivider text={t`Or`} />
-            <FundButton onClick={() => (account ? setShowFundSwapConfirm(true) : toggleWalletModal())}>
-              <Box>
+            <Box></Box>
+            <FundButton>
+              <span onClick={() => (account ? setShowFundSwapConfirm(true) : toggleWalletModal())}>
                 {t`Use the Stability Fund to swap ${`${new BigNumber(sendAmount.toSignificant()).toFormat(
                   2,
                 )} ${sendSymbol}`} for ${`${new BigNumber(sendAmount.subtract(feeAmount).toSignificant()).toFormat(
                   2,
                 )} ${receivedCurrency?.symbol}`}`}
-                <QuestionHelper
-                  text={t`The Stability Fund allows you to mint or burn bnUSD 1:1 for approved stablecoins.`}
-                  placement={'right'}
-                />
-              </Box>
+              </span>
+
+              <QuestionHelper
+                text={t`The Stability Fund allows you to mint or burn bnUSD 1:1 for approved stablecoins.`}
+                placement={'right'}
+              />
             </FundButton>
           </>
         ) : (

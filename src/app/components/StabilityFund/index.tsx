@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useMaxSwapSize, useFeeAmount } from 'store/stabilityFund/hooks';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -60,6 +60,7 @@ const FundButton = styled.button`
 const SwapSizeNotice = styled.div`
   text-align: center;
   font-size: 14px;
+  margin-top: 5px;
 
   ${FundButton} {
     margin: 0;
@@ -71,6 +72,7 @@ const SwapSizeNotice = styled.div`
 const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) => {
   const { account } = useIconReact();
   const { trade } = useDerivedSwapInfo();
+  const toggleWalletModal = useWalletModalToggle();
   const maxSwapSize = useMaxSwapSize();
   const feeAmount = useFeeAmount();
   const shouldLedgerSign = useShouldLedgerSign();
@@ -99,10 +101,10 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
 
     if (sendAmount && sendSymbol && receivedCurrency && feeAmount) {
       const message = swapMessage(
-        sendAmount?.toFixed(2),
+        new BigNumber(sendAmount?.toSignificant(2)).toFormat(2),
         sendSymbol,
-        sendAmount.subtract(feeAmount).toSignificant(),
-        receivedCurrency.symbol || 'IN',
+        new BigNumber(sendAmount.subtract(feeAmount).toSignificant()).toFormat(2),
+        receivedCurrency.symbol || 'OUT',
       );
 
       const contract = bnJs.inject({ account }).getContract(sendAmount.currency.wrapped.address);
@@ -151,13 +153,13 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
         ) : hasFundEnoughBalance && sendAmount && feeAmount ? (
           <>
             <HorizontalDivider text={t`Or`} />
-            <FundButton onClick={() => setShowFundSwapConfirm(true)}>
+            <FundButton onClick={() => (account ? setShowFundSwapConfirm(true) : toggleWalletModal())}>
               <Box>
-                {t`Use the Stability Fund to swap ${`${new BigNumber(
-                  sendAmount.toSignificant(),
-                ).toFormat()} ${sendSymbol}`} for ${`${new BigNumber(
-                  sendAmount.subtract(feeAmount).toSignificant(),
-                ).toFormat()} ${receivedCurrency?.symbol}`}`}
+                {t`Use the Stability Fund to swap ${`${new BigNumber(sendAmount.toSignificant()).toFormat(
+                  2,
+                )} ${sendSymbol}`} for ${`${new BigNumber(sendAmount.subtract(feeAmount).toSignificant()).toFormat(
+                  2,
+                )} ${receivedCurrency?.symbol}`}`}
                 <QuestionHelper
                   text={t`The Stability Fund allows you to mint or burn bnUSD 1:1 for approved stablecoins.`}
                   placement={'right'}
@@ -167,13 +169,17 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
           </>
         ) : (
           maxSwapSize && (
-            <SwapSizeNotice>
-              {t`Maximum swap size that can be covered by Stability Fund is`}
-              {` `}
-              <FundButton onClick={() => setInput(maxSwapSize.toFixed(2))}>
-                {`${maxSwapSize?.toFormat()} ${sendSymbol}`}
-              </FundButton>
-            </SwapSizeNotice>
+            <>
+              <HorizontalDivider text={t`Or`} />
+              <SwapSizeNotice>
+                {t`Use the Stability Fund to swap a maximum of`}
+                {` `}
+                <FundButton onClick={() => setInput(maxSwapSize.toFixed(2))}>
+                  {`${maxSwapSize?.toFormat()} ${sendSymbol}`}
+                </FundButton>{' '}
+                {t`for`} {`${receivedCurrency?.symbol}`}
+              </SwapSizeNotice>
+            </>
           )
         )}
       </Wrapper>
@@ -196,7 +202,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
                 <Trans>Pay</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {new BigNumber(sendAmount?.toSignificant() || 0).toFormat()} {sendSymbol}
+                {new BigNumber(sendAmount?.toSignificant() || 0).toFormat(2)} {sendSymbol}
               </Typography>
             </Box>
 
@@ -206,7 +212,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
               </Typography>
               <Typography variant="p" textAlign="center">
                 {feeAmount && sendAmount
-                  ? new BigNumber(sendAmount.subtract(feeAmount).toSignificant() || 0).toFormat()
+                  ? new BigNumber(sendAmount.subtract(feeAmount).toSignificant() || 0).toFormat(2)
                   : '-'}{' '}
                 {receivedCurrency?.symbol}
               </Typography>
@@ -214,7 +220,8 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
           </Flex>
           <Typography textAlign="center">
             <Trans>
-              Includes a fee of {feeAmount ? feeAmount.toSignificant() : '-'} {receivedCurrency?.symbol}.
+              Includes a fee of {feeAmount ? new BigNumber(feeAmount.toSignificant()).toFormat(2) : '-'}{' '}
+              {receivedCurrency?.symbol}.
             </Trans>
           </Typography>
 

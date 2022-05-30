@@ -25,7 +25,7 @@ import {
   useChangeShouldLedgerSign,
   useShouldLedgerSign,
 } from 'store/application/hooks';
-import { useIsSwapEligible } from 'store/stabilityFund/hooks';
+import { useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -47,6 +47,8 @@ export default function SwapPanel() {
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
   const { trade, currencyBalances, currencies, parsedAmount, inputError, percents } = useDerivedSwapInfo();
   const isSwapEligibleForStabilityFund = useIsSwapEligible();
+  const fundMaxSwap = useMaxSwapSize();
+  const showFundOption = isSwapEligibleForStabilityFund && fundMaxSwap?.isGreaterThan(0);
 
   const parsedAmounts = React.useMemo(
     () => ({
@@ -223,6 +225,17 @@ export default function SwapPanel() {
 
   const hasEnoughICX = useHasEnoughICX();
 
+  const SwapButton = () =>
+    isValid ? (
+      <Button color="primary" onClick={handleSwap}>
+        <Trans>Swap</Trans>
+      </Button>
+    ) : (
+      <Button disabled={!!account} color="primary" onClick={handleSwap}>
+        {account ? inputError : t`Swap`}
+      </Button>
+    );
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -352,28 +365,18 @@ export default function SwapPanel() {
           </Flex>
 
           <Flex justifyContent="center" mt={4}>
-            {isValid ? (
-              isSwapEligibleForStabilityFund ? (
-                <Popover
-                  content={<StabilityFund clearSwapInputOutput={clearSwapInputOutput} setInput={handleTypeInput} />}
-                  show={true}
-                  placement="bottom"
-                  forcePlacement
-                  zIndex={10}
-                >
-                  <Button color="primary" onClick={handleSwap}>
-                    <Trans>Swap</Trans>
-                  </Button>
-                </Popover>
-              ) : (
-                <Button color="primary" onClick={handleSwap}>
-                  <Trans>Swap</Trans>
-                </Button>
-              )
+            {showFundOption ? (
+              <Popover
+                content={<StabilityFund clearSwapInputOutput={clearSwapInputOutput} setInput={handleTypeInput} />}
+                show={true}
+                placement="bottom"
+                forcePlacement
+                zIndex={10}
+              >
+                <SwapButton />
+              </Popover>
             ) : (
-              <Button disabled={!!account} color="primary" onClick={handleSwap}>
-                {account ? inputError : t`Swap`}
-              </Button>
+              <SwapButton />
             )}
           </Flex>
         </AutoColumn>

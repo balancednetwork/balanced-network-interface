@@ -18,6 +18,7 @@ const bnUSDAddress = bnJs.bnUSD.address;
 const stabilityFundAddress = bnJs.StabilityFund.address;
 const toDec = new BigNumber(10).pow(18);
 const toPercent = new BigNumber(10).pow(2);
+const swapDollarLimitCushion = new BigNumber(1);
 
 export function useStabilityFundInfo(): AppState['stabilityFund'] {
   return useSelector((state: AppState) => state.stabilityFund);
@@ -80,10 +81,14 @@ export function useMaxSwapSize() {
 
   if (trade && limits) {
     if (isBnUSDGoingIn) {
-      return new BigNumber(balances[trade.outputAmount.currency.wrapped.address].toFixed(2));
+      const balance = balances[trade.outputAmount.currency.wrapped.address];
+      return balance && new BigNumber(balance.toFixed(2));
     } else {
       const tokenAddress = trade.inputAmount.currency.wrapped.address;
-      return limits[tokenAddress].minus(new BigNumber(balances[tokenAddress].toFixed(2)));
+      return (
+        limits[tokenAddress] &&
+        limits[tokenAddress]?.minus(swapDollarLimitCushion).minus(new BigNumber(balances[tokenAddress].toFixed(2)))
+      );
     }
   }
 }

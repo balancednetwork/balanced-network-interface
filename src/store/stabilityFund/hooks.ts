@@ -18,7 +18,7 @@ const bnUSDAddress = bnJs.bnUSD.address;
 const stabilityFundAddress = bnJs.StabilityFund.address;
 const toDec = new BigNumber(10).pow(18);
 const toPercent = new BigNumber(10).pow(2);
-const swapDollarLimitCushion = new BigNumber(1);
+const swapDollarLimitCushion = new BigNumber(3);
 
 export function useStabilityFundInfo(): AppState['stabilityFund'] {
   return useSelector((state: AppState) => state.stabilityFund);

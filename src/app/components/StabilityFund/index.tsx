@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 import { isEmpty } from 'lodash';
 import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -80,6 +81,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
   const addTransaction = useTransactionAdder();
   const [showFundSwapConfirm, setShowFundSwapConfirm] = useState<boolean>(false);
   const hasEnoughICX = useHasEnoughICX();
+  const isSmall = useMedia('(max-width: 500px)');
 
   const sendAmount = trade?.inputAmount;
   const sendSymbol = trade?.inputAmount.currency.symbol;
@@ -165,7 +167,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
 
               <QuestionHelper
                 text={t`The Stability Fund allows you to mint or burn bnUSD 1:1 for approved stablecoins.`}
-                placement={'right'}
+                placement={isSmall ? 'auto' : 'right'}
               />
             </FundButton>
           </>

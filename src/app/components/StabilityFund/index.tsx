@@ -44,7 +44,7 @@ const Wrapper = styled.div`
   align-content: center;
 `;
 
-const FundButton = styled.button`
+const FundCTA = styled.span`
   color: ${({ theme }) => theme.colors.primaryBright};
   border: 0;
   appearance: none;
@@ -52,6 +52,7 @@ const FundButton = styled.button`
   cursor: pointer;
   transition: color ease 0.2s;
   margin-top: 5px;
+  text-align: center;
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
@@ -63,7 +64,7 @@ const SwapSizeNotice = styled.div`
   font-size: 14px;
   margin-top: 5px;
 
-  ${FundButton} {
+  ${FundCTA} {
     margin: 0;
     padding: 0;
     white-space: nowrap;
@@ -155,8 +156,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
         ) : hasFundEnoughBalance && sendAmount && feeAmount ? (
           <>
             <HorizontalDivider text={t`Or`} />
-            <Box></Box>
-            <FundButton>
+            <FundCTA>
               <span onClick={() => (account ? setShowFundSwapConfirm(true) : toggleWalletModal())}>
                 {t`Use the Stability Fund to swap ${`${new BigNumber(sendAmount.toSignificant()).toFormat(
                   2,
@@ -169,7 +169,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
                 text={t`The Stability Fund allows you to mint or burn bnUSD 1:1 for approved stablecoins.`}
                 placement={isSmall ? 'auto' : 'right'}
               />
-            </FundButton>
+            </FundCTA>
           </>
         ) : (
           maxSwapSize && (
@@ -178,10 +178,14 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
               <SwapSizeNotice>
                 {t`Use the Stability Fund to swap a maximum of`}
                 {` `}
-                <FundButton onClick={() => setInput(maxSwapSize.toFixed(2))}>
+                <FundCTA onClick={() => setInput(maxSwapSize.toFixed(2))}>
                   {`${maxSwapSize?.toFormat()} ${sendSymbol}`}
-                </FundButton>{' '}
+                </FundCTA>{' '}
                 {t`for`} {`${receivedCurrency?.symbol}`}
+                <QuestionHelper
+                  text={t`The Stability Fund allows you to mint or burn bnUSD 1:1 for approved stablecoins.`}
+                  placement={isSmall ? 'auto' : 'right'}
+                />
               </SwapSizeNotice>
             </>
           )

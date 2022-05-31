@@ -84,7 +84,7 @@ const BERLIN_ADDRESSES = {
   baln: 'cx84eea4658b11b3538c5dd5bea51d9a3154852336',
   bwt: 'cx807d050f6d918b807bf719cb03b7a77c65e67c98',
   stakedLp: 'cx17236b39bc3b22e397c1bb03a2bc52b1a584f3b0',
-  multicall: 'cx94a9a5750182d117a82a866e78ce7c75856c1edb',
+  multicall: 'cx993325d59b75fac3a936dfadee6b6e7637172443',
   disbursement: '',
 };
 

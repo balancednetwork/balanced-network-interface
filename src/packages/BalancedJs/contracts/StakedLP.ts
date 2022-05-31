@@ -37,8 +37,8 @@ export default class StakedLP extends Contract {
     const callParams = this.transactionParamsBuilder({
       method: 'unstake',
       params: {
-        _id: IconConverter.toHex(poolId),
-        _value: IconConverter.toHex(value),
+        id: IconConverter.toHex(poolId),
+        value: IconConverter.toHexNumber(value),
       },
     });
 

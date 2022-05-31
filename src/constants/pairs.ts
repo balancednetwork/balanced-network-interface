@@ -29,6 +29,7 @@ import {
   sICX_BERLIN,
   bnUSD_BERLIN,
   BALN_BERLIN,
+  ICX_BERLIN,
 } from 'constants/tokens';
 import { Token } from 'types/balanced-sdk-core';
 
@@ -343,6 +344,16 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
   ],
   [NetworkId.BERLIN]: [
+    {
+      chainId: 7,
+      id: 1,
+      name: 'sICX/ICX',
+      baseCurrencyKey: 'sICX',
+      quoteCurrencyKey: 'ICX',
+      baseToken: sICX_BERLIN,
+      quoteToken: ICX_BERLIN,
+      rewards: 0.1,
+    },
     {
       chainId: 7,
       id: 2,

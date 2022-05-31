@@ -10,14 +10,20 @@ export const NULL_CONTRACT_ADDRESS = 'cx0000000000000000000000000000000000000000
 export const isNativeCurrency = (token?: Currency): boolean => {
   return (
     token instanceof Token &&
-    (token.address === ICX.address || token.address === ICX_YEOUIDO.address || token.address === ICX_SEJONG.address)
+    (token.address === ICX.address ||
+      token.address === ICX_YEOUIDO.address ||
+      token.address === ICX_SEJONG.address ||
+      token.address === ICX_BERLIN.address)
   );
 };
 
 export const isBALN = (token?: Currency): boolean => {
   return (
     token instanceof Token &&
-    (token.address === BALN.address || token.address === BALN_YEOUIDO.address || token.address === BALN_SEJONG.address)
+    (token.address === BALN.address ||
+      token.address === BALN_YEOUIDO.address ||
+      token.address === BALN_SEJONG.address ||
+      token.address === BALN_BERLIN.address)
   );
 };
 
@@ -34,7 +40,7 @@ export const useICX = () => {
   } else if (chainId === SupportedChainId.SEJONG) {
     return ICX_SEJONG;
   } else if (chainId === SupportedChainId.BERLIN) {
-    return ICX_SEJONG;
+    return ICX_BERLIN;
   } else {
     return sICX_SEJONG;
   }
@@ -271,6 +277,7 @@ export const FUNDING_TOKENS: { [chainId: number]: Token[] } = {
   [SupportedChainId.MAINNET]: [sICX, bnUSD, BALN],
   [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, BALN_YEOUIDO],
   [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG],
+  [SupportedChainId.BERLIN]: [sICX_BERLIN, bnUSD_BERLIN, BALN_BERLIN],
 };
 
 export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];

@@ -138,7 +138,7 @@ export default class Dex extends Contract {
       params: {
         _to: to,
         _id: IconConverter.toHex(poolId),
-        _value: IconConverter.toHex(value),
+        _value: IconConverter.toHexNumber(value),
         _data: data && IconConverter.toHex(data),
       },
     });

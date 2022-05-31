@@ -31,11 +31,9 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const balance = useBalance(poolId);
-  const stakedBalance = useMemo(
-    () => new BigNumber(balance?.stakedLPBalance?.toFixed() || 0),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [balance?.stakedLPBalance],
-  );
+  const stakedBalance = useMemo(() => new BigNumber(balance?.stakedLPBalance?.toFixed() || 0), [
+    balance?.stakedLPBalance,
+  ]);
 
   const totalStaked = useTotalStaked(poolId);
 

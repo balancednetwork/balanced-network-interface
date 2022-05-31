@@ -77,7 +77,7 @@ export default function LPDescription() {
           {poolRewards ? (
             <Typography variant="h3" mb={2} marginBottom={40}>
               {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} 
+                ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}
                     liquidity pool${upSmall ? ': ' : ''}`
                 : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall ? ': ' : ''}`}{' '}
               <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
@@ -133,7 +133,7 @@ export default function LPDescription() {
                   {userRewards && (
                     <Box sx={{ margin: '15px 0 25px 0' }}>
                       <Typography textAlign="center" marginBottom="5px" color="text1">
-                        <Trans>Your potential rewards</Trans>
+                        <Trans>Your daily rewards</Trans>
                       </Typography>
                       <Typography textAlign="center" variant="p">
                         {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX

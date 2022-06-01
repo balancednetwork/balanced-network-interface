@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
@@ -8,7 +9,6 @@ import { SelectorPopover } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import useWidth from 'hooks/useWidth';
 import { COMMON_PERCENTS } from 'store/swap/actions';
-import { Currency } from 'types/balanced-sdk-core';
 import { escapeRegExp } from 'utils';
 
 import { HorizontalList, Option } from '../List';

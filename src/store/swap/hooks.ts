@@ -1,5 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { TradeType, Currency, CurrencyAmount, Percent, Token, Price } from '@balancednetwork/sdk-core';
+import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
@@ -9,10 +11,8 @@ import { canBeQueue } from 'constants/currency';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
 import { useCurrencyBalances } from 'store/wallet/hooks';
-import { Trade } from 'types/balanced-v1-sdk';
 import { parseUnits } from 'utils';
 
-import { TradeType, Currency, CurrencyAmount, Percent, Token, Price } from '../../types/balanced-sdk-core';
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './actions';
 import { useTradeExactIn, useTradeExactOut } from './trade';

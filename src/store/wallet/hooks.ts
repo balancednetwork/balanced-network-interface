@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
+import { Token, CurrencyAmount, Currency } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
@@ -22,8 +24,6 @@ import {
 import { useBnJsContractQuery } from 'queries/utils';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useUserAddedTokens } from 'store/user/hooks';
-import { Token, CurrencyAmount, Currency } from 'types/balanced-sdk-core';
-import { Pair } from 'types/balanced-v1-sdk';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';

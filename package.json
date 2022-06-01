@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@balancednetwork/sdk-core": "1.0.1",
+    "@balancednetwork/v1-sdk": "1.0.0",
     "@ethersproject/address": "5.4.0",
     "@ethersproject/solidity": "5.4.0",
     "@ledgerhq/hw-app-icx": "file:src/packages/hw-app-icx",

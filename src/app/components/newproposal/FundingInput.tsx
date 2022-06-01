@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import styled from 'styled-components';
@@ -7,7 +8,6 @@ import styled from 'styled-components';
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { BoxPanel } from 'app/components/newproposal/RatioInput';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { parseUnits } from 'utils';
 
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
+import { Pair } from '@balancednetwork/v1-sdk';
 import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { Pair } from 'types/balanced-v1-sdk';
 import { getQueuePair } from 'utils';
 
 import useLastCount from './useLastCount';

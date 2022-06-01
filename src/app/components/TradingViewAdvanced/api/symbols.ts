@@ -1,8 +1,8 @@
+import { Token } from '@balancednetwork/sdk-core';
 import { LibrarySymbolInfo, ResolutionString, SearchSymbolResultItem } from 'charting_library/charting_library';
 
 import { getTradePair } from 'constants/currency';
 import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
-import { Token } from 'types/balanced-sdk-core';
 
 import { defaultConfig } from '.';
 

@@ -4,6 +4,7 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { isMobile } from 'react-device-detect';
 import { ChevronRight } from 'react-feather';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -370,6 +371,7 @@ export default function SwapPanel() {
                 content={<StabilityFund clearSwapInputOutput={clearSwapInputOutput} setInput={handleTypeInput} />}
                 show={true}
                 placement="bottom"
+                fallbackPlacements={isMobile ? [] : ['right-start', 'top']}
                 zIndex={10}
               >
                 <SwapButton />

@@ -370,7 +370,6 @@ export default function SwapPanel() {
                 content={<StabilityFund clearSwapInputOutput={clearSwapInputOutput} setInput={handleTypeInput} />}
                 show={true}
                 placement="bottom"
-                forcePlacement
                 zIndex={10}
               >
                 <SwapButton />

@@ -166,7 +166,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
               </span>
 
               <QuestionHelper
-                text={t`The Stability Fund allows you to mint or burn bnUSD 1:1 for approved stablecoins.`}
+                text={t`The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee.`}
                 placement={isSmall ? 'auto' : 'right'}
               />
             </FundCTA>
@@ -183,7 +183,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
                 </FundCTA>{' '}
                 {t`for`} {`${receivedCurrency?.symbol}`}
                 <QuestionHelper
-                  text={t`The Stability Fund allows you to mint or burn bnUSD 1:1 for approved stablecoins.`}
+                  text={t`The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee.`}
                   placement={isSmall ? 'auto' : 'right'}
                 />
               </SwapSizeNotice>

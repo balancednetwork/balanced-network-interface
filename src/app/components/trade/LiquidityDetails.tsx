@@ -20,7 +20,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
-import { ZERO, MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
+import { ZERO } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import {
   useBalance,
@@ -105,9 +105,8 @@ export default function LiquidityDetails() {
 
   const pairsWithoutQ = lodash.omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = lodash.omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
-  const userPools = Object.keys(pairsWithoutQ).filter(
-    poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO),
-  );
+  //JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO)
+  const userPools = Object.keys(pairsWithoutQ).filter(poolId => balances[poolId]);
 
   const sortedPairs = userPools
     .map(poolId => {
@@ -394,42 +393,38 @@ const PoolRecord = ({
 
   return (
     <>
-      {Number(bBalance.toFixed(2)) > MINIMUM_B_BALANCE_TO_SHOW_POOL ? (
-        <ListItem>
-          <StyledDataText>
-            <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
-            <StyledArrowDownIcon />
-          </StyledDataText>
-          <DataText>
-            {`${baseCurrencyTotalSupply} ${aBalance.currency.symbol || '...'}`}
-            <br />
-            {`${quoteCurrencyTotalSupply} ${bBalance.currency.symbol || '...'}`}
-          </DataText>
+      <ListItem>
+        <StyledDataText>
+          <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
+          <StyledArrowDownIcon />
+        </StyledDataText>
+        <DataText>
+          {`${baseCurrencyTotalSupply} ${aBalance.currency.symbol || '...'}`}
+          <br />
+          {`${quoteCurrencyTotalSupply} ${bBalance.currency.symbol || '...'}`}
+        </DataText>
 
-          {upSmall && (
-            <DataText>{`${
-              ((baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
-                ? poolData?.poolShare.multiply(100)
-                : poolData?.poolShare.multiply(availableWithdrawnPercentFraction)
-              )?.toFixed(4, { groupSeparator: ',' }) || '---'
-            }%`}</DataText>
-          )}
-          {upSmall && (
-            <DataText>
-              {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
-                ? 'ー'
-                : `~ ${
-                    poolData?.suppliedReward
-                      ?.multiply(stakedFractionValue)
-                      .divide(100)
-                      .toFixed(4, { groupSeparator: ',' }) || '---'
-                  } BALN`}
-            </DataText>
-          )}
-        </ListItem>
-      ) : (
-        <></>
-      )}
+        {upSmall && (
+          <DataText>{`${
+            ((baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
+              ? poolData?.poolShare.multiply(100)
+              : poolData?.poolShare.multiply(availableWithdrawnPercentFraction)
+            )?.toFixed(4, { groupSeparator: ',' }) || '---'
+          }%`}</DataText>
+        )}
+        {upSmall && (
+          <DataText>
+            {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
+              ? 'ー'
+              : `~ ${
+                  poolData?.suppliedReward
+                    ?.multiply(stakedFractionValue)
+                    .divide(100)
+                    .toFixed(4, { groupSeparator: ',' }) || '---'
+                } BALN`}
+          </DataText>
+        )}
+      </ListItem>
     </>
     // <>
     //   {Number(bBalance.toFixed(2)) > MINIMUM_B_BALANCE_TO_SHOW_POOL ? (

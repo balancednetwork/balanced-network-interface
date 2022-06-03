@@ -20,7 +20,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
-import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
+import { ZERO, MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import {
   useBalance,
@@ -68,7 +68,6 @@ function getABBalance(pair: Pair, balance: BalanceData) {
 
 function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber) {
   const rate = getRate(pair, balance);
-
   const totalRewardFrac = totalReward ? toFraction(totalReward) : FRACTION_ZERO;
 
   return {
@@ -368,7 +367,19 @@ const PoolRecord = ({
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
 
-  const { baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
+  // const { baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
+
+  const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
+  const availableWithdrawnPercent = new BigNumber(100).minus(percent || ZERO);
+
+  const [availableWithdrawnPercentNumerator, availableWithdrawnPercentDenominator] = availableWithdrawnPercent
+    ? availableWithdrawnPercent.toFraction()
+    : [0, 1];
+  // it's a fraction, yet represents BALN amount
+  const availableWithdrawnPercentFraction = new Fraction(
+    availableWithdrawnPercentNumerator.toFixed(),
+    availableWithdrawnPercentDenominator.toFixed(),
+  );
 
   const totalSupply = (stakedValue, suppliedValue) =>
     (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' }) ||
@@ -380,7 +391,6 @@ const PoolRecord = ({
   const stakedFractionValue = stakedFraction(stakedLPPercent);
 
   const [aBalance, bBalance] = getABBalance(pair, balance);
-  const { share } = getShareReward(pair, balance, totalReward);
 
   return (
     <>
@@ -396,8 +406,14 @@ const PoolRecord = ({
             {`${quoteCurrencyTotalSupply} ${bBalance.currency.symbol || '...'}`}
           </DataText>
 
-          {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
-
+          {upSmall && (
+            <DataText>{`${
+              ((baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
+                ? poolData?.poolShare.multiply(100)
+                : poolData?.poolShare.multiply(availableWithdrawnPercentFraction)
+              )?.toFixed(4, { groupSeparator: ',' }) || '---'
+            }%`}</DataText>
+          )}
           {upSmall && (
             <DataText>
               {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)

@@ -13,7 +13,7 @@ import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { API_ENDPOINT } from '../constants';
 import { useBnJsContractQuery } from '../utils';
 
-export const BATCH_SIZE = 50;
+export const BATCH_SIZE = 30;
 
 export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) => {
   const { account } = useIconReact();

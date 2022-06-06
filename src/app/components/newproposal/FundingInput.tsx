@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { addresses } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import styled from 'styled-components';
 

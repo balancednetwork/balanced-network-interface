@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Pair } from '@balancednetwork/v1-sdk';
-import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';

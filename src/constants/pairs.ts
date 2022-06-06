@@ -1,5 +1,5 @@
+import { SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Token } from '@balancednetwork/sdk-core';
-import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
 
 import {
   sICX,

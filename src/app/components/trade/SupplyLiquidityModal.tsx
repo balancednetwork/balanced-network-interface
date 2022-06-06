@@ -1,8 +1,8 @@
 import React from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Currency, Token } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';

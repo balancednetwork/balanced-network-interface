@@ -1,7 +1,7 @@
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { defineMessage } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { FUNDING_TOKENS_LIST } from 'constants/tokens';

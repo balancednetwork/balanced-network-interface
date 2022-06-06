@@ -1,6 +1,6 @@
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency } from '@balancednetwork/sdk-core';
 import axios from 'axios';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useQuery } from 'react-query';
 
 import { CHART_PERIODS } from 'app/components/TradingViewChart';

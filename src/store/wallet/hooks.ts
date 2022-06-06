@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
+import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Token, CurrencyAmount, Currency } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 import _ from 'lodash';
-import { BalancedJs } from 'packages/BalancedJs';
-import { CallData } from 'packages/BalancedJs/contracts/Multicall';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 

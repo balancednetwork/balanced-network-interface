@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
-import { CallData } from 'packages/BalancedJs/contracts/Multicall';
 
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';

@@ -1243,6 +1243,23 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
+"@balancednetwork/balanced-js@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.0.1.tgz#3330fa623d20741e45486ddb86e860fb6aaa9854"
+  integrity sha512-9Znlb46KN/9QVGNPY1801bwF7INK6LwwSSrSauLCGB2nxdUrUqCCUxSt7bkh79dTwPTAne29A0t8L5s4J9lC5Q==
+  dependencies:
+    "@balancednetwork/hw-app-icx" "^1.0.6"
+    bignumber.js "9.0.1"
+    icon-sdk-js "^1.2.1"
+    lodash-es "4.17.21"
+
+"@balancednetwork/hw-app-icx@1.0.6", "@balancednetwork/hw-app-icx@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/hw-app-icx/-/hw-app-icx-1.0.6.tgz#72f690ea14bbc5160fdf877ff416658de14b297e"
+  integrity sha512-Q9AIkUe/w4H4Re7xmqdYjquzAMt0D6+pWWB+LxeNg0wvSEMNurwqxxLTjNxqBB8/mWtQEVIMbEntaVij/xuYqw==
+  dependencies:
+    "@ledgerhq/hw-transport" "^4.13.0"
+
 "@balancednetwork/sdk-core@1.0.1", "@balancednetwork/sdk-core@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@balancednetwork/sdk-core/-/sdk-core-1.0.1.tgz#05eba5030aa20eaddf9b50fc9c7616af97cbfee3"
@@ -1877,11 +1894,6 @@
   version "5.50.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-5.50.0.tgz#e3a6834cb8c19346efca214c1af84ed28e69dad9"
   integrity sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==
-
-"@ledgerhq/hw-app-icx@file:src/packages/hw-app-icx":
-  version "0.1.0"
-  dependencies:
-    "@ledgerhq/hw-transport" "^4.13.0"
 
 "@ledgerhq/hw-transport-webhid@5.51.1":
   version "5.51.1"
@@ -7853,6 +7865,19 @@ icon-sdk-js@1.1.3:
     uuid "^3.3.2"
     xmlhttprequest "^1.8.0"
 
+icon-sdk-js@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/icon-sdk-js/-/icon-sdk-js-1.2.1.tgz#56ef2af27e43bbf3bab4388c10cfa331ca48487f"
+  integrity sha512-tTX43XYrRcx89LgwozE93IGURS+IoyOsMJeCZ85aa7WRcQPF5aJBz6R6528iLfaeum27EqeuB5LJldai27B0XA==
+  dependencies:
+    bignumber.js "^7.2.1"
+    bip66 "^1.1.5"
+    js-sha3 "^0.8.0"
+    secp256k1 "3.5.2"
+    utf8 "^3.0.0"
+    uuid "^3.3.2"
+    xmlhttprequest "^1.8.0"
+
 iconv-lite@0.4.24, iconv-lite@^0.4.24:
   version "0.4.24"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.24.tgz#2022b4b25fbddc21d2f524974a474aafe733908b"
@@ -9520,6 +9545,11 @@ locate-path@^5.0.0:
   integrity sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==
   dependencies:
     p-locate "^4.1.0"
+
+lodash-es@4.17.21:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
 
 lodash._reinterpolate@^3.0.0:
   version "3.0.0"

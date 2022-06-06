@@ -1,5 +1,5 @@
+import { SupportedChainId } from '@balancednetwork/balanced-js';
 import { Token, Currency } from '@balancednetwork/sdk-core';
-import { SupportedChainId } from 'packages/BalancedJs/chain';
 import { useIconReact } from 'packages/icon-react';
 
 import { NETWORK_ID } from './config';

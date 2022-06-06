@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import lodash from 'lodash';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';

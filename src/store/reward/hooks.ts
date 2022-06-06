@@ -2,7 +2,7 @@ import React from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
-import _ from 'lodash';
+import { forOwn } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -46,7 +46,7 @@ export function useFetchRewardsInfo() {
       let result = await Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission()]);
       const [_rules, _emission] = result;
       const a = {};
-      _.forOwn(_rules, function (value, key) {
+      forOwn(_rules, function (value, key) {
         a[key] = BalancedJs.utils.toIcx(value);
       });
 

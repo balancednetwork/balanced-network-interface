@@ -6,7 +6,7 @@ import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
-import _ from 'lodash';
+import { forEach } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -81,7 +81,7 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
 
         const temp = {};
 
-        _.forEach(result, function (value, key) {
+        forEach(result, function (value, key) {
           if (key === 'Unstaking time (in microseconds)') temp[key] = new BigNumber(value);
           else temp[key] = BalancedJs.utils.toIcx(value);
         });

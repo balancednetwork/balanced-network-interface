@@ -6,7 +6,7 @@ import { Pair } from '@balancednetwork/v1-sdk';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
-import lodash from 'lodash';
+import { omit } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -97,8 +97,8 @@ export default function LiquidityDetails() {
 
   if (!account || Object.keys(pairs).length === 0) return null;
 
-  const pairsWithoutQ = lodash.omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
-  const balancesWithoutQ = lodash.omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
+  const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
+  const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const userPools = Object.keys(pairsWithoutQ).filter(
     poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO),
   );

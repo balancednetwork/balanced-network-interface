@@ -4,7 +4,7 @@ import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';

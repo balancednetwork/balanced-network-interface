@@ -15,7 +15,12 @@ import Column from 'app/components/Column';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton } from 'app/components/ProposalInfo';
-import { VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
+import {
+  UserStatusLabel,
+  VoterNumberLabel,
+  VoterPercentLabel,
+  VoteStatusLabel,
+} from 'app/components/ProposalInfo/components';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
 import { PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
@@ -195,6 +200,7 @@ export function ProposalPage() {
 
           <Flex alignItems="center" mb={3} flexWrap="wrap" sx={{ columnGap: '15px' }} my={1}>
             <VoteStatusLabel proposal={proposal} />
+            <UserStatusLabel proposal={proposal} />
             <VoterPercentLabel value={proposal?.sum} />
             <VoterNumberLabel value={proposal?.voters} />
           </Flex>

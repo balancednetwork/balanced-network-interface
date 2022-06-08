@@ -11,7 +11,14 @@ import { ProposalInterface } from 'types';
 import { normalizeContent } from 'utils';
 
 import { notificationCSS } from '../home/wallets/utils';
-import { ApprovalLabel, RejectionLabel, VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from './components';
+import {
+  ApprovalLabel,
+  RejectionLabel,
+  VoterNumberLabel,
+  VoterPercentLabel,
+  VoteStatusLabel,
+  UserStatusLabel,
+} from './components';
 
 dayjs.extend(duration);
 
@@ -75,6 +82,7 @@ export default function ProposalInfo({
       <Divider />
       <Flex alignItems="center" flexWrap="wrap" sx={{ columnGap: '15px' }}>
         <VoteStatusLabel proposal={proposal} />
+        <UserStatusLabel proposal={proposal} />
         <VoterPercentLabel value={proposal?.sum} />
         <VoterNumberLabel value={proposal?.voters} />
         <ApprovalLabel value={proposal?.for} />

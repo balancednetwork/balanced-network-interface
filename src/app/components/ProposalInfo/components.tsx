@@ -11,7 +11,6 @@ import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
-import { useUserVoteStatusQuery } from 'queries/vote';
 import { ProposalInterface } from 'types';
 
 dayjs.extend(duration);
@@ -123,32 +122,5 @@ export const RejectionLabel = ({ value }: { value?: number }) => {
         )
       }
     />
-  );
-};
-
-export const UserStatusLabel = ({ proposal }: { proposal?: ProposalInterface }) => {
-  const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
-  const { data: userStatus } = voteStatusQuery;
-
-  const UserStatus = () => {
-    if (!userStatus?.reject.isZero()) {
-      return <Trans>rejected</Trans>;
-    }
-    if (!userStatus?.approval.isZero()) {
-      return <Trans>approved</Trans>;
-    }
-    return null;
-  };
-
-  return (
-    <>
-      {userStatus?.hasVoted && (
-        <Typography color="#FFF">
-          {'('}
-          <Trans>You</Trans> <UserStatus />
-          {')'}
-        </Typography>
-      )}
-    </>
   );
 };

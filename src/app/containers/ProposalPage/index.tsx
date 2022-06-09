@@ -7,7 +7,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useParams } from 'react-router-dom';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled, { useTheme, keyframes } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
@@ -48,15 +48,6 @@ const Progress = styled(Flex)`
   border-radius: 5px;
 `;
 
-const setBarWidth = (width: string) => keyframes`
-    0% {
-        width : 3px; 
-    }
-    100% {
-        width : ${width}%;
-    }
-`;
-
 const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   background: ${props =>
     (props.type === 'Approve' && props.theme.colors.primary) || (props.type === 'Reject' && props.theme.colors.alert)};
@@ -64,8 +55,7 @@ const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   border-radius: ${props => (props.percentage === '100' ? '5px' : '5px 0 0 5px')};
   transition: width 0.2s ease-in;
   justify-content: center;
-  animation: ${({ percentage }) => percentage !== '0' && percentage !== 'undefined' && setBarWidth(percentage)} 2s
-    ease-in-out forwards;
+  width: ${({ percentage }) => `${percentage}%`};
 `;
 
 const ResultPanel = styled(Flex)`

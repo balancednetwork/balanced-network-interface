@@ -12,6 +12,7 @@ import { LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { VerticalDivider } from 'app/components/Divider';
 import Modal, { ModalProps } from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
@@ -94,15 +95,16 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
 `;
 
 const WalletOption = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  padding: 15px 0;
-  border-radius: 10px;
-  text-decoration: none;
-  color: white;
-  user-select: none;
+display: flex;
+flex-direction: column;
+align-items: center;
+cursor: pointer;
+padding: 5px 20px;
+margin: 0px 10px;
+border-radius: 10px;
+text-decoration: none;
+color: white;
+user-select: none;
 
   ${({ theme }) => theme.mediaWidth.up420`
     width: 140px;
@@ -332,17 +334,17 @@ export default function BridgeWalletModal() {
 
           <Flex alignItems="stretch" justifyContent="space-between">
             {networkSelected.value === 'ICON' ? (
-              <WalletOption onClick={() => handleOpenWallet('iconex')}>
-                <IconWalletIcon width="50" height="50" />
-                <Text textAlign="center">ICON</Text>
-              </WalletOption>
+                <WalletOption onClick={() => handleOpenWallet('iconex')}>
+                  <IconWalletIcon width="50" height="50" />
+                  <Text textAlign="center">ICON</Text>
+                </WalletOption>
             ) : (
               <WalletOption onClick={() => handleOpenWallet('metamask')}>
                 <MetamaskIcon width="50" height="50" />
                 <Text textAlign="center">Metamask</Text>
               </WalletOption>
             )}
-
+            <VerticalDivider text="or"></VerticalDivider>
             <WalletOption onClick={handleOpenLedger}>
               <LedgerIcon width="50" height="50" />
               <Text textAlign="center">Ledger</Text>

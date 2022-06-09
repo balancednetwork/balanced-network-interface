@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednetwork/balanced-js';
-import * as HwUtils from '@balancednetwork/hw-app-icx';
+import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
@@ -11,7 +11,6 @@ import { useMedia } from 'react-use';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-// eslint-disable-next-line import/no-deprecated
 import { VerticalDivider } from 'app/components/Divider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';

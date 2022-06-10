@@ -320,7 +320,7 @@ const getAmountWithSign = (tx: Transaction) => {
     case 'Claimed': {
       const amountItemList = getValuesAndSymbols(tx);
 
-      return amountItemList.map(({ symbol, amount }) => (
+      return amountItemList?.map(({ symbol, amount }) => (
         <AmountItem key={symbol + amount} value={amount} symbol={symbol} positive={true} />
       ));
     }
@@ -382,7 +382,7 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
 
       case 'Claimed': {
         const claimedList = getValuesAndSymbols(tx);
-        if (claimedList.length === 0) {
+        if (claimedList?.length === 0) {
           content = '';
         }
         break;

@@ -9,6 +9,7 @@ import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
+import { FRACTION_ZERO } from 'constants/misc';
 import { usePoolData } from 'hooks/usePools';
 import { PairState } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
@@ -133,19 +134,24 @@ export default function LPDescription() {
                   {userRewards && (
                     <Box sx={{ margin: '15px 0 25px 0' }}>
                       <Typography textAlign="center" marginBottom="5px" color="text1">
-                        <Trans>Your daily rewards</Trans>
+                        <Trans>Your daily rewards </Trans>
                       </Typography>
-                      <Typography textAlign="center" variant="p">
-                        {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX
-                          ? `~ ${userRewards.toFixed(4) || '---'} BALN`
-                          : `~ ${
-                              poolData?.suppliedReward
+                      {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
+                        <Typography textAlign="center" variant="p">
+                          {userRewards?.isEqualTo(0) ? 'N/A' : userRewards ? `~ ${userRewards.toFixed(2)} BALN` : 'N/A'}
+                        </Typography>
+                      ) : (
+                        <Typography textAlign="center" variant="p">
+                          {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
+                            ? 'N/A'
+                            : poolData?.suppliedReward?.multiply(stakedFractionValue)
+                            ? `~ ${poolData?.suppliedReward
                                 ?.multiply(stakedFractionValue)
                                 .divide(100)
-                                .toFixed(4, { groupSeparator: ',' }) || '---'
-                            }
-                        BALN`}
-                      </Typography>
+                                .toFixed(2, { groupSeparator: ',' })} BALN`
+                            : 'N/A'}
+                        </Typography>
+                      )}
                     </Box>
                   )}
                 </>

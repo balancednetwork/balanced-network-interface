@@ -415,13 +415,13 @@ const PoolRecord = ({
         {upSmall && (
           <DataText>
             {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
-              ? 'ー'
-              : `~ ${
-                  poolData?.suppliedReward
-                    ?.multiply(stakedFractionValue)
-                    .divide(100)
-                    .toFixed(4, { groupSeparator: ',' }) || '---'
-                } BALN`}
+              ? 'N/A'
+              : poolData?.suppliedReward?.multiply(stakedFractionValue)
+              ? `~ ${poolData?.suppliedReward
+                  ?.multiply(stakedFractionValue)
+                  .divide(100)
+                  .toFixed(2, { groupSeparator: ',' })} BALN`
+              : 'N/A'}
           </DataText>
         )}
       </ListItem>
@@ -468,8 +468,8 @@ const PoolRecordQ = ({ balance, pair, totalReward }: { balance: BalanceData; pai
           balance.balance1?.currency.symbol || '...'
         }`}</Typography>
       </DataText>
-      {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
+      {upSmall && <DataText>{`${share.multiply(100).toFixed(2) || '---'}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${reward.toFixed(2, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
     </ListItem>
   );
 };

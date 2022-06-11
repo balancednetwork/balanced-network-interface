@@ -288,8 +288,7 @@ export default function LPPanel() {
                 </Flex>
               </PoolPriceBar>
             )}
-
-          {pairState === PairState.EXISTS && account && mintableLiquidity && (
+          {pairState === PairState.EXISTS && account && (
             <Slider mt={5}>
               <Nouislider
                 start={[0]}

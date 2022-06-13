@@ -8,7 +8,6 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
-import SearchIcon from 'assets/icons/search.svg';
 import { FUNDING_TOKENS_LIST, useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
 import useDebounce from 'hooks/useDebounce';
@@ -20,6 +19,7 @@ import Column from '../Column';
 import CurrencyList from './CurrencyList';
 import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';
+import SearchInput from './SearchInput';
 import { useTokenComparator } from './sorting';
 
 export enum CurrencySelectionType {
@@ -210,46 +210,6 @@ export function CurrencySearch({
     </Wrapper>
   );
 }
-
-export const SearchInput = styled.input`
-  background-image: url(${SearchIcon});
-  background-repeat: no-repeat;
-  background-size: 18px;
-  background-position: 15px 10px;
-
-  position: relative;
-  display: flex;
-  padding: 3px 20px 3px 45px;
-  height: 40px;
-  align-items: center;
-  width: 100%;
-  white-space: nowrap;
-  background-color: ${({ theme }) => theme.colors.bg5};
-  border: none;
-  outline: none;
-  border-radius: 10px;
-  color: ${({ theme }) => theme.colors.text};
-  border-style: solid;
-  border: 2px solid ${({ theme }) => theme.colors.bg5};
-  -webkit-appearance: none;
-  transition: border 0.3s ease;
-  font-size: 16px;
-
-  ::placeholder {
-    color: rgba(255, 255, 255, 0.75);
-    opacity: 1;
-  }
-
-  :focus {
-    border: 2px solid ${({ theme }) => theme.colors.primary};
-    outline: none;
-  }
-
-  :hover {
-    border: 2px solid ${({ theme }) => theme.colors.primary};
-    outline: none;
-  }
-`;
 
 const Wrapper = styled(Flex)`
   flex-direction: column;

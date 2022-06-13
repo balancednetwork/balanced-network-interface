@@ -19,7 +19,6 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
-import { BoxPanel } from 'app/components/Panel';
 import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -119,56 +118,50 @@ export default function LiquidityDetails() {
       return acc;
     }, {});
 
-  return shouldShowQueue || userPools.length ? (
-    <BoxPanel bg="bg2" mb={10}>
-      <Typography variant="h2" mb={5}>
-        <Trans>Liquidity details</Trans>
-      </Typography>
-
-      <TableWrapper>
-        <DashGrid>
+  return (
+    <TableWrapper>
+      <DashGrid>
+        <HeaderText>
+          <Trans>Pool</Trans>
+        </HeaderText>
+        <HeaderText>
+          <Trans>Your supply</Trans>
+        </HeaderText>
+        {upSmall && (
           <HeaderText>
-            <Trans>Pool</Trans>
+            <Trans>Pool share</Trans>
           </HeaderText>
-          <HeaderText>
-            <Trans>Your supply</Trans>
-          </HeaderText>
-          {upSmall && (
-            <HeaderText>
-              <Trans>Pool share</Trans>
-            </HeaderText>
-          )}
-          {upSmall && (
-            <HeaderText>
-              <Trans>Daily rewards</Trans>
-            </HeaderText>
-          )}
-          <HeaderText></HeaderText>
-        </DashGrid>
-
-        {shouldShowQueue && (
-          <PoolRecordQ
-            balance={queueBalance}
-            pair={queuePair}
-            totalReward={queueReward}
-            border={userPools.length !== 0}
-          />
         )}
+        {upSmall && (
+          <HeaderText>
+            <Trans>Daily rewards</Trans>
+          </HeaderText>
+        )}
+        <HeaderText></HeaderText>
+      </DashGrid>
 
-        {balancesWithoutQ &&
-          userPools.map((poolId, index, arr) => (
-            <PoolRecord
-              key={poolId}
-              poolId={parseInt(poolId)}
-              balance={balances[poolId]}
-              pair={sortedPairs[poolId]}
-              totalReward={rewards[poolId]}
-              border={index !== arr.length - 1}
-            />
-          ))}
-      </TableWrapper>
-    </BoxPanel>
-  ) : null;
+      {shouldShowQueue && (
+        <PoolRecordQ
+          balance={queueBalance}
+          pair={queuePair}
+          totalReward={queueReward}
+          border={userPools.length !== 0}
+        />
+      )}
+
+      {balancesWithoutQ &&
+        userPools.map((poolId, index, arr) => (
+          <PoolRecord
+            key={poolId}
+            poolId={parseInt(poolId)}
+            balance={balances[poolId]}
+            pair={sortedPairs[poolId]}
+            totalReward={rewards[poolId]}
+            border={index !== arr.length - 1}
+          />
+        ))}
+    </TableWrapper>
+  );
 }
 
 const TableWrapper = styled.div``;

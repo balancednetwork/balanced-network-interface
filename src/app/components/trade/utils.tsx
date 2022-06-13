@@ -1,6 +1,9 @@
 import { t } from '@lingui/macro';
-import { Flex } from 'rebass/styled-components';
+import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
+
+import { Button } from 'app/components/Button';
+import { HEIGHT } from 'app/components/TradingViewChart';
 
 export const Panel = styled(Flex)`
   overflow: hidden;
@@ -59,3 +62,41 @@ export function withdrawMessage(
   const failureMessage = t`Couldn't withdraw ${inputCurrency} / ${outputCurrency} liquidity. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
+
+export const ChartContainer = styled(Box)`
+  position: relative;
+  height: ${HEIGHT}px;
+`;
+
+export const ChartControlGroup = styled(Box)`
+  text-align: left;
+
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    text-align: right;
+  `}
+
+  & button {
+    margin-right: 5px;
+  }
+
+  & button:last-child {
+    margin-right: 0;
+  }
+`;
+
+export const ChartControlButton = styled(Button)<{ active?: boolean }>`
+  padding: 1px 12px;
+  border-radius: 100px;
+  color: #ffffff;
+  font-size: 14px;
+  background-color: ${({ theme, active }) => (active ? theme.colors.primary : theme.colors.bg3)};
+  transition: background-color 0.3s ease;
+
+  :hover {
+    background-color: ${({ theme }) => theme.colors.primary};
+  }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 1px 12px;
+  `}
+`;

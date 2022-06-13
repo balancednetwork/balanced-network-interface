@@ -5,7 +5,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
-import LiquidityDetails from 'app/components/trade/LiquidityDetails';
+import LiquidityPoolsPanel from 'app/components/trade/LiquidityPoolsPanel';
 import LPPanel from 'app/components/trade/LPPanel';
 import SwapDescription from 'app/components/trade/SwapDescription';
 import SwapPanel from 'app/components/trade/SwapPanel';
@@ -54,7 +54,7 @@ export function TradePage() {
           </TabPanel>
         </Flex>
 
-        {account && value === 1 && <LiquidityDetails />}
+        {account && value === 1 && <LiquidityPoolsPanel />}
       </Box>
     </>
   );

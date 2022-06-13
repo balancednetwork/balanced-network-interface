@@ -159,8 +159,8 @@ export function parseUnits(value: string, decimals: number = 18): string {
   return new BigNumber(value).times(TEN.pow(decimals)).toFixed(0);
 }
 
-export function formatUnits(value: string, decimals: number = 18): string {
-  return new BigNumber(value).div(TEN.pow(decimals)).toFixed(0);
+export function formatUnits(value: string, decimals: number = 18, fixed: number = 0): string {
+  return new BigNumber(value).div(TEN.pow(decimals)).toFixed(fixed);
 }
 
 export function getPairName(pair: PairInfo) {

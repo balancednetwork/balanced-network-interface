@@ -105,8 +105,13 @@ export default function LiquidityDetails() {
 
   const pairsWithoutQ = lodash.omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = lodash.omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
-  //JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO)
-  const userPools = Object.keys(pairsWithoutQ).filter(poolId => balances[poolId]);
+  // filter user pools and show only the pairs that user has balance or staked LP balance greater than 0
+  const userPools = Object.keys(pairsWithoutQ).filter(
+    poolId =>
+      balances[poolId] &&
+      (JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO) ||
+        JSBI.greaterThan(balances[poolId].stakedLPBalance.quotient, BIGINT_ZERO)),
+  );
 
   const sortedPairs = userPools
     .map(poolId => {

@@ -2,7 +2,7 @@ import React, { useEffect, CSSProperties, useState, useCallback } from 'react';
 
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { isIOS, isMobile } from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
 import { Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
@@ -51,12 +51,16 @@ function CurrencyRow({
   const open = useCallback(() => setShow(true), [setShow]);
   const close = useCallback(() => setShow(false), [setShow]);
 
+  const focusCombined = () => {
+    onFocus();
+    open();
+  };
+
   return (
     <ListItem
       onClick={onSelect}
-      {...(!isIOS ? { onMouseEnter: open } : null)}
+      {...(!isMobile ? { onMouseEnter: focusCombined } : null)}
       onMouseLeave={close}
-      onMouseEnter={onFocus}
       className={isFocused ? 'focused' : ''}
     >
       <Flex>

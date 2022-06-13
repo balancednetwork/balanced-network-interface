@@ -1,3 +1,4 @@
+import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Converter as IconConverter } from 'icon-sdk-js';
 import { useQuery } from 'react-query';
@@ -9,7 +10,6 @@ import useInterval from 'hooks/useInterval';
 import { useBnJsContractQuery } from 'queries/utils';
 import { AppState } from 'store';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { CurrencyAmount, Fraction, Token } from 'types/balanced-sdk-core';
 import { toCurrencyAmountFromRawBN } from 'utils';
 
 import { setBalances } from './actions';

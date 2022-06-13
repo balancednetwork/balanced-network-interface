@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
+import { addresses } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isEmpty } from 'lodash';
-import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';

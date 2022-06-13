@@ -1,12 +1,12 @@
 import React from 'react';
 
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { CurrencyAmount, Token } from 'types/balanced-sdk-core';
 
 interface AmountItem {
   amount: string;

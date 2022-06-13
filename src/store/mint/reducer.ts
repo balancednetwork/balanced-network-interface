@@ -1,7 +1,7 @@
+import { Currency } from '@balancednetwork/sdk-core';
 import { createReducer } from '@reduxjs/toolkit';
 
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
-import { Currency } from 'types/balanced-sdk-core';
 
 import { Field, resetMintState, typeInput, selectCurrency } from './actions';
 

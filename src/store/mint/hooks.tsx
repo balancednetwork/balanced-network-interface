@@ -1,5 +1,7 @@
 import React, { useCallback, ReactNode } from 'react';
 
+import { Currency, CurrencyAmount, Token, Percent, Price } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
@@ -12,8 +14,6 @@ import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useCurrencyBalances } from 'store/wallet/hooks';
-import { Currency, CurrencyAmount, Token, Percent, Price } from 'types/balanced-sdk-core';
-import { Pair } from 'types/balanced-v1-sdk';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, typeInput, selectCurrency } from './actions';

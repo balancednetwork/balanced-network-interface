@@ -1,9 +1,10 @@
 import React from 'react';
 
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
@@ -20,7 +21,6 @@ import { BIGINT_ZERO } from 'constants/misc';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { maxAmountSpend, toCurrencyAmount, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 

@@ -1,11 +1,10 @@
 import React from 'react';
 
+import { SupportedChainId as NetworkId, addresses } from '@balancednetwork/balanced-js';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
-import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex, Link } from 'rebass/styled-components';
 import styled from 'styled-components';

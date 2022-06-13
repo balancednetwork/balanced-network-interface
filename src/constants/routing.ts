@@ -1,6 +1,5 @@
-import { SupportedChainId } from 'packages/BalancedJs';
-
-import { Currency, Token } from 'types/balanced-sdk-core';
+import { SupportedChainId } from '@balancednetwork/balanced-js';
+import { Currency, Token } from '@balancednetwork/sdk-core';
 
 import {
   ICX,

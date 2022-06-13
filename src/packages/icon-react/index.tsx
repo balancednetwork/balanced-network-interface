@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 
+import { SupportedChainId as NetworkId, CHAIN_INFO, getLedgerAddressPath } from '@balancednetwork/balanced-js';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import IconService, { Builder as IconBuilder, Converter as IconConverter } from 'icon-sdk-js';
-import { SupportedChainId as NetworkId, CHAIN_INFO } from 'packages/BalancedJs';
-import { getLedgerAddressPath } from 'packages/BalancedJs/contractSettings';
 import {
   request,
   ICONexResponseEvent,

@@ -117,7 +117,7 @@ const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: stri
 
 const convertValue = (value: string, currencyKey?: string) => {
   const decimals = SUPPORTED_TOKENS_LIST.find(token => token.symbol === currencyKey)?.decimals;
-  const currency = new BigNumber(formatUnits(value, decimals || 18));
+  const currency = new BigNumber(formatUnits(value, decimals || 18, 2));
   const exceptionList = ['IUSDT', 'IUSDC'];
 
   return currency.isGreaterThan(0.004) || (currencyKey && exceptionList.includes(currencyKey))

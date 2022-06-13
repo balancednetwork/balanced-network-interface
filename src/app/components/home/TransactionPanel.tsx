@@ -1,11 +1,10 @@
 import React from 'react';
 
+import { SupportedChainId as NetworkId, addresses } from '@balancednetwork/balanced-js';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
-import addresses from 'packages/BalancedJs/addresses';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex, Link } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -118,7 +117,7 @@ const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: stri
 
 const convertValue = (value: string, currencyKey?: string) => {
   const decimals = SUPPORTED_TOKENS_LIST.find(token => token.symbol === currencyKey)?.decimals;
-  const currency = new BigNumber(formatUnits(value, decimals || 18));
+  const currency = new BigNumber(formatUnits(value, decimals || 18, 2));
   const exceptionList = ['IUSDT', 'IUSDC'];
 
   return currency.isGreaterThan(0.004) || (currencyKey && exceptionList.includes(currencyKey))
@@ -321,7 +320,7 @@ const getAmountWithSign = (tx: Transaction) => {
     case 'Claimed': {
       const amountItemList = getValuesAndSymbols(tx);
 
-      return amountItemList.map(({ symbol, amount }) => (
+      return amountItemList?.map(({ symbol, amount }) => (
         <AmountItem key={symbol + amount} value={amount} symbol={symbol} positive={true} />
       ));
     }
@@ -383,7 +382,7 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
 
       case 'Claimed': {
         const claimedList = getValuesAndSymbols(tx);
-        if (claimedList.length === 0) {
+        if (claimedList?.length === 0) {
           content = '';
         }
         break;

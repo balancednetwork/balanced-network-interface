@@ -1,22 +1,28 @@
+import { t } from '@lingui/macro';
 import dayjs from 'dayjs';
 
-export const formatTimeStr = (targetDay, platformDay) => {
-  const targetDate = dayjs()
-    .utc()
-    .add(targetDay - platformDay - 1, 'day')
-    .hour(17);
+import { LAUNCH_DAY, ONE_DAY_DURATION } from 'utils';
 
-  const hoursDiff = targetDate.diff(dayjs().utc(), 'hours');
+const beginFrom = dayjs(LAUNCH_DAY - ONE_DAY_DURATION);
 
-  if (hoursDiff < 0) return '';
+export const formatTimeStr = (targetDay: number) => {
+  const targetDateUTC = beginFrom.utc().add(targetDay, 'days').hour(17);
+  const nowUTC = dayjs().utc();
+  const timeDiff = targetDateUTC.diff(nowUTC, 'milliseconds');
 
-  const hoursLeft = hoursDiff % 24;
-  const daysLeft = Math.floor(hoursDiff / 24);
+  if (timeDiff > 0) {
+    const toMinutes = 1000 * 60;
+    const toHours = toMinutes * 60;
+    const toDays = toHours * 24;
+    const daysLeft = Math.floor(timeDiff / toDays);
+    const hoursLeft = Math.floor(timeDiff / toHours) % 24;
+    const minutesLeft = Math.floor(timeDiff / toMinutes) % 60;
+    const formattedString = `${daysLeft ? daysLeft + t`d` + ' ' : ''}${hoursLeft ? hoursLeft + t`h` + ' ' : ''}${
+      minutesLeft ? minutesLeft + t`m` : ''
+    }`;
 
-  if (daysLeft < 1) return targetDate.fromNow(true) === 'a day' ? '1 day' : targetDate.fromNow(true);
-
-  const hoursLeftString = hoursLeft === 0 ? '' : hoursLeft === 1 ? 'an hour' : hoursLeft + ' hours';
-  const daysLeftString = daysLeft === 1 ? '1 day' : daysLeft + ' days';
-
-  return daysLeftString + (hoursLeftString ? ', ' + hoursLeftString : hoursLeftString);
+    return formattedString || t`less then a minute`;
+  } else {
+    return '';
+  }
 };

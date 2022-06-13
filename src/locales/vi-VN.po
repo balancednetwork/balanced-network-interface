@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-18 10:29\n"
+"PO-Revision-Date: 2022-05-28 18:31\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -93,7 +93,7 @@ msgstr "Sau"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
-msgstr "Tổng số tài sản thế chấp bị khoá"
+msgstr "Tất cả tài sản thế chấp sẽ bị khóa"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
@@ -446,7 +446,7 @@ msgstr "Mức phí"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "For"
-msgstr "Cho"
+msgstr "Thành"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
@@ -835,11 +835,6 @@ msgstr "Đã đặt cọc {0} BALN."
 msgid "Staking BALN..."
 msgstr "Đang đặt cọc BALN..."
 
-#: src/app/components/ProposalStatusIcon/index.tsx
-#: src/app/components/ProposalStatusIcon/index.tsx
-msgid "Starting in {startTimeStr}"
-msgstr "Bắt đầu trong {startTimeStr}"
-
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit"
 msgstr "Gửi đi"
@@ -1073,6 +1068,19 @@ msgstr "Bỏ phiếu"
 msgid "Vote cast."
 msgstr "Bỏ phiếu."
 
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting ends in {endTimeStr}"
+msgstr "Bỏ phiếu kết thúc trong {endTimeStr}"
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting has ended"
+msgstr "Bỏ phiếu đã kết thúc"
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting starts in {startTimeStr}"
+msgstr "Bỏ phiếu bắt đầu trong {startTimeStr}"
+
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
 msgstr "Cân nặng phiếu bầu"
@@ -1196,7 +1204,7 @@ msgstr "Bạn sẽ nhận được sICX (Khóa ICX). Bỏ khóa hoặc đổi qu
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "Your BALN will unstake on {0} at\n"
 "{1}."
-msgstr "Bạn sẽ nhận lại {0} BALN lúc {1}."
+msgstr "Bạn sẽ nhận lại BALN vào {0} lúc {1}."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Your ICX will be locked for 24 hours."
@@ -1232,13 +1240,29 @@ msgstr "Số cung của bạn"
 msgid "and ends after 5 days."
 msgstr "và kết thúc sau 5 ngày."
 
+#: src/utils/timeformat.ts
+msgid "d"
+msgstr "ngày"
+
+#: src/utils/timeformat.ts
+msgid "h"
+msgstr "giờ"
+
+#: src/utils/timeformat.ts
+msgid "less then a minute"
+msgstr "dưới 1 phút"
+
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
 msgstr "hồ thanh khoản"
 
+#: src/utils/timeformat.ts
+msgid "m"
+msgstr "phút"
+
 #: src/app/components/WalletModal/index.tsx
 msgid "or"
-msgstr ""
+msgstr "hoặc"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then click Supply."
@@ -1316,10 +1340,6 @@ msgstr "{0}% đã khóa"
 #: src/app/components/trade/utils.tsx
 msgid "{currency} sent to the {pair} pool."
 msgstr "{currency} gửi tới ao {pair} thanh khoản."
-
-#: src/app/components/ProposalStatusIcon/index.tsx
-msgid "{endTimeStr} left"
-msgstr "còn lại {endTimeStr}"
 
 #: src/app/components/trade/utils.tsx
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."

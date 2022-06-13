@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
+import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednetwork/balanced-js';
+import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { t, Trans } from '@lingui/macro';
-import { BalancedJs } from 'packages/BalancedJs';
-import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';

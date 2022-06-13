@@ -1,8 +1,8 @@
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { createReducer } from '@reduxjs/toolkit';
 
 import { ZERO } from 'constants/index';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
 import { changeBalances, resetBalances } from './actions';
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Price, TradeType, Currency, Percent, Token } from '@balancednetwork/sdk-core';
 import { Trade, Route } from '@balancednetwork/v1-sdk';
@@ -124,14 +124,14 @@ export default function SwapPanel() {
   const toggleWalletModal = useWalletModalToggle();
 
   const [executionTrade, setExecutionTrade] = React.useState<Trade<Currency, Currency, TradeType>>();
-  const handleSwap = () => {
+  const handleSwap = useCallback(() => {
     if (!account) {
       toggleWalletModal();
     } else {
       setShowSwapConfirm(true);
       setExecutionTrade(trade);
     }
-  };
+  }, [account, toggleWalletModal, trade]);
 
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
@@ -225,16 +225,15 @@ export default function SwapPanel() {
 
   const hasEnoughICX = useHasEnoughICX();
 
-  const SwapButton = () =>
-    isValid ? (
-      <Button color="primary" onClick={handleSwap}>
-        <Trans>Swap</Trans>
-      </Button>
-    ) : (
-      <Button disabled={!!account} color="primary" onClick={handleSwap}>
-        {account ? inputError : t`Swap`}
-      </Button>
-    );
+  const swapButton = isValid ? (
+    <Button color="primary" onClick={handleSwap}>
+      <Trans>Swap</Trans>
+    </Button>
+  ) : (
+    <Button disabled={!!account} color="primary" onClick={handleSwap}>
+      {account ? inputError : t`Swap`}
+    </Button>
+  );
 
   return (
     <>
@@ -373,10 +372,10 @@ export default function SwapPanel() {
                 fallbackPlacements={isMobile ? [] : ['right-start', 'top']}
                 zIndex={10}
               >
-                <SwapButton />
+                {swapButton}
               </Popover>
             ) : (
-              <SwapButton />
+              swapButton
             )}
           </Flex>
         </AutoColumn>

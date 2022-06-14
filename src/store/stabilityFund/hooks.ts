@@ -1,3 +1,4 @@
+import { CallData } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Converter as IconConverter } from 'icon-sdk-js';
@@ -38,21 +39,21 @@ export function useFetchStabilityFundBalances() {
   const whitelistedTokens = useWhitelistedTokenAddresses() || [];
 
   useInterval(async () => {
-    const tokens: Array<any> = await Promise.all(
-      whitelistedTokens.map(async address => {
-        const balance = await bnJs.getContract(address).balanceOf(stabilityFundAddress);
-        return {
-          address: address,
-          balance: toCurrencyAmountFromRawBN(
-            SUPPORTED_TOKENS_LIST.filter(token => token.address === address)[0],
-            new BigNumber(balance),
-          ),
-        };
-      }),
-    );
-    const balances = {};
-    tokens.forEach(token => {
-      balances[token.address] = token.balance;
+    const cds: CallData[] = whitelistedTokens.map(address => {
+      return {
+        target: address,
+        method: 'balanceOf',
+        params: [stabilityFundAddress],
+      };
+    });
+
+    const data: string[] = await bnJs.Multicall.getAggregateData(cds);
+
+    const balances: { [key: string]: CurrencyAmount<Token> } = {};
+    data.forEach((balance, index) => {
+      const address = whitelistedTokens[index];
+      const token = SUPPORTED_TOKENS_LIST.filter(token => token.address === address)[0];
+      balances[address] = toCurrencyAmountFromRawBN(token, new BigNumber(balance));
     });
 
     dispatch(setBalances({ balances }));
@@ -109,22 +110,23 @@ export function useFundLimits() {
   const whitelistedTokenAddresses = useWhitelistedTokenAddresses() || [];
 
   return useQuery<{ [key: string]: BigNumber }>(`useFundLimitsQuery${whitelistedTokenAddresses.length}`, async () => {
-    const tokens: Array<any> = await Promise.all(
-      whitelistedTokenAddresses.map(async address => {
-        const limit = await bnJs.StabilityFund.getLimit(address);
-        return {
-          address: address,
-          limit: new BigNumber(limit).div(
-            new BigNumber(10).pow(SUPPORTED_TOKENS_LIST.filter(token => token.address === address)[0].decimals),
-          ),
-        };
-      }),
-    );
+    const cds: CallData[] = whitelistedTokenAddresses.map(address => {
+      return {
+        target: stabilityFundAddress,
+        method: 'getLimit',
+        params: [address],
+      };
+    });
+
+    const data: string[] = await bnJs.Multicall.getAggregateData(cds);
 
     const limits = {};
-    tokens.forEach(token => {
-      limits[token.address] = token.limit;
+    data.forEach((limit, index) => {
+      const address = whitelistedTokenAddresses[index];
+      const token = SUPPORTED_TOKENS_LIST.filter(token => token.address === address)[0];
+      limits[address] = new BigNumber(limit).div(new BigNumber(10).pow(token.decimals));
     });
+
     return limits;
   });
 }

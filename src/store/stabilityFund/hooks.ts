@@ -2,16 +2,15 @@ import { CallData } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Converter as IconConverter } from 'icon-sdk-js';
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import useInterval from 'hooks/useInterval';
 import { useBnJsContractQuery } from 'queries/utils';
 import { AppState } from 'store';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
-import { toCurrencyAmountFromRawBN } from 'utils';
 
 import { setBalances } from './actions';
 
@@ -34,7 +33,7 @@ export function useWhitelistedTokenAddresses(): string[] | undefined {
   return data;
 }
 
-export function useFetchStabilityFundBalances() {
+export function useFetchStabilityFundBalances(): void {
   const dispatch = useDispatch();
   const whitelistedTokens = useWhitelistedTokenAddresses() || [];
 
@@ -52,8 +51,8 @@ export function useFetchStabilityFundBalances() {
     const balances: { [key: string]: CurrencyAmount<Token> } = {};
     data.forEach((balance, index) => {
       const address = whitelistedTokens[index];
-      const token = SUPPORTED_TOKENS_LIST.filter(token => token.address === address)[0];
-      balances[address] = toCurrencyAmountFromRawBN(token, new BigNumber(balance));
+      const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address] as Token;
+      balances[address] = CurrencyAmount.fromRawAmount<Token>(token, balance);
     });
 
     dispatch(setBalances({ balances }));
@@ -74,27 +73,27 @@ export function useIsSwapEligible(): boolean {
   return isEligible;
 }
 
-export function useMaxSwapSize() {
+export function useMaxSwapSize(): CurrencyAmount<Token> | undefined {
   const balances = useStabilityFundBalances();
   const { data: limits } = useFundLimits();
   const { trade } = useDerivedSwapInfo();
   const isBnUSDGoingIn = trade?.inputAmount.currency.symbol === 'bnUSD';
-
   if (trade && limits) {
     if (isBnUSDGoingIn) {
-      const balance = balances[trade.outputAmount.currency.wrapped.address];
-      return balance && new BigNumber(balance.toFixed(2));
+      return balances[trade.outputAmount.currency.wrapped.address];
     } else {
       const tokenAddress = trade.inputAmount.currency.wrapped.address;
       return (
         limits[tokenAddress] &&
-        limits[tokenAddress]?.minus(swapDollarLimitCushion).minus(new BigNumber(balances[tokenAddress].toFixed(2)))
+        limits[tokenAddress]
+          .subtract(balances[tokenAddress])
+          .subtract(CurrencyAmount.fromRawAmount(trade.inputAmount.currency.wrapped, swapDollarLimitCushion.toFixed()))
       );
     }
   }
 }
 
-export function useFeeAmount() {
+export function useFeeAmount(): CurrencyAmount<Token> | undefined {
   const feeOut = useFeeOut();
   const feeIn = useFeeIn();
   const { trade } = useDerivedSwapInfo();
@@ -102,45 +101,48 @@ export function useFeeAmount() {
   const fee = isBnUSDGoingIn ? feeOut : feeIn;
 
   if (!!trade && !!fee) {
-    return trade.inputAmount.multiply(new Fraction(1, 1 / fee));
+    return trade.inputAmount.multiply(new Fraction(1, 1 / fee)) as CurrencyAmount<Token>;
   }
 }
 
-export function useFundLimits() {
+export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<Token> }> {
   const whitelistedTokenAddresses = useWhitelistedTokenAddresses() || [];
 
-  return useQuery<{ [key: string]: BigNumber }>(`useFundLimitsQuery${whitelistedTokenAddresses.length}`, async () => {
-    const cds: CallData[] = whitelistedTokenAddresses.map(address => {
-      return {
-        target: stabilityFundAddress,
-        method: 'getLimit',
-        params: [address],
-      };
-    });
+  return useQuery<{ [key: string]: CurrencyAmount<Token> }>(
+    `useFundLimitsQuery${whitelistedTokenAddresses.length}`,
+    async () => {
+      const cds: CallData[] = whitelistedTokenAddresses.map(address => {
+        return {
+          target: stabilityFundAddress,
+          method: 'getLimit',
+          params: [address],
+        };
+      });
 
-    const data: string[] = await bnJs.Multicall.getAggregateData(cds);
+      const data: string[] = await bnJs.Multicall.getAggregateData(cds);
 
-    const limits = {};
-    data.forEach((limit, index) => {
-      const address = whitelistedTokenAddresses[index];
-      const token = SUPPORTED_TOKENS_LIST.filter(token => token.address === address)[0];
-      limits[address] = new BigNumber(limit).div(new BigNumber(10).pow(token.decimals));
-    });
+      const limits = {};
+      data.forEach((limit, index) => {
+        const address = whitelistedTokenAddresses[index];
+        const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address] as Token;
+        limits[address] = CurrencyAmount.fromRawAmount(token, limit);
+      });
 
-    return limits;
-  });
+      return limits;
+    },
+  );
 }
 
-export function useFeeIn() {
-  const { data } = useBnJsContractQuery<number>('StabilityFund', 'getFeeIn', [], false);
+export function useFeeIn(): number {
+  const { data } = useBnJsContractQuery<string>('StabilityFund', 'getFeeIn', [], false);
   return IconConverter.toBigNumber(data || 0)
     .div(toDec.valueOf())
     .div(toPercent.valueOf())
     .toNumber();
 }
 
-export function useFeeOut() {
-  const { data } = useBnJsContractQuery<number>('StabilityFund', 'getFeeOut', [], false);
+export function useFeeOut(): number {
+  const { data } = useBnJsContractQuery<string>('StabilityFund', 'getFeeOut', [], false);
   return IconConverter.toBigNumber(data || 0)
     .div(toDec.valueOf())
     .div(toPercent.valueOf())

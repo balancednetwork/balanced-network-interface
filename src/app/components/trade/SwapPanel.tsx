@@ -48,7 +48,7 @@ export default function SwapPanel() {
   const { trade, currencyBalances, currencies, parsedAmount, inputError, percents } = useDerivedSwapInfo();
   const isSwapEligibleForStabilityFund = useIsSwapEligible();
   const fundMaxSwap = useMaxSwapSize();
-  const showFundOption = isSwapEligibleForStabilityFund && fundMaxSwap?.isGreaterThan(0);
+  const showFundOption = isSwapEligibleForStabilityFund && fundMaxSwap?.greaterThan(0);
 
   const parsedAmounts = React.useMemo(
     () => ({

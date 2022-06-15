@@ -89,7 +89,9 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
   const receivedCurrency = trade?.outputAmount.currency;
   const isBnUSDGoingIn = sendSymbol === 'bnUSD';
   const hasFundEnoughBalance =
-    sendAmount && maxSwapSize ? new BigNumber(sendAmount.toFixed(4)).isLessThanOrEqualTo(maxSwapSize) : 'loading';
+    sendAmount && maxSwapSize
+      ? new BigNumber(sendAmount.toFixed()).isLessThanOrEqualTo(new BigNumber(maxSwapSize.toFixed()))
+      : 'loading';
 
   const handleFundTransfer = () => {
     if (!account) return;
@@ -179,7 +181,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
                 {t`Use the Stability Fund to swap a maximum of`}
                 {` `}
                 <FundCTA onClick={() => setInput(maxSwapSize.toFixed(2))}>
-                  {`${maxSwapSize?.toFormat()} ${sendSymbol}`}
+                  {`${new BigNumber(maxSwapSize.toFixed(2)).toFormat()} ${sendSymbol}`}
                 </FundCTA>{' '}
                 {t`for`} {`${receivedCurrency?.symbol}`}
                 <QuestionHelper

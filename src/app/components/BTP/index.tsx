@@ -4,6 +4,7 @@ import { chainConfigs, chainList, getTokenList } from 'btp/src/connectors/chainC
 import { ADDRESS_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { addICONexListener } from 'btp/src/connectors/ICONex';
 import { requestHasAddress } from 'btp/src/connectors/ICONex/events';
+import { toChecksumAddress } from 'btp/src/connectors/MetaMask/utils';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -11,6 +12,7 @@ import { Button, TextButton } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import Modal, { ModalProps } from 'app/components/Modal';
 import { Typography } from 'app/theme';
+import { ReactComponent as ArrowIcon } from 'assets/icons/arrow.svg';
 import { useModalOpen, useTransferAssetsModalToggle, useBridgeWalletModalToggle } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
 
@@ -23,7 +25,7 @@ import { TransferAssetModal } from './TransferModal';
 const Grid = styled(Box)`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 35px;
+  grid-gap: 20px;
   margin-top: 15px;
 
   .full-width {
@@ -39,6 +41,15 @@ const Wrapper = styled.div`
   gap: 15px;
 `;
 
+const FlexSelector = styled(Box)`
+  gap: 20px;
+  display: flex;
+  margin-top: 30px;
+  .content {
+    flex: 1;
+  }
+`;
+
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />).attrs({
   'aria-label': 'dialog',
 })`
@@ -50,7 +61,7 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
 
       @media (min-width: 360px) {
         width: 100%;
-        max-width: 430px;
+        max-width: 500px;
       }
     `}
   }
@@ -168,24 +179,19 @@ const BTP = () => {
           <Flex flexDirection={'column'} width={'100%'}>
             <Typography variant={'h2'}>Transfer assets</Typography>
             <Typography padding={'10px 0'}>Move assets between ICON and other blockchains</Typography>
-
+            <FlexSelector width={'100%'}>
+              <Box className="content">
+                <NetworkSelector data={chainInfo()} onChange={onChange} toggleWallet={toggleWalletModal} />
+              </Box>
+              <Box>
+                {' '}
+                <ArrowIcon width="20" height="18" />
+              </Box>
+              <Box className="content">
+                <NetworkSelector data={getTartgetChains()} onChange={onChange} setSendingInfo={onSendingInfoChange} />
+              </Box>
+            </FlexSelector>
             <Grid>
-              <Box>
-                <NetworkSelector
-                  label={'From'}
-                  data={chainInfo()}
-                  onChange={onChange}
-                  toggleWallet={toggleWalletModal}
-                />
-              </Box>
-              <Box>
-                <NetworkSelector
-                  label={'To'}
-                  data={getTartgetChains()}
-                  onChange={onChange}
-                  setSendingInfo={onSendingInfoChange}
-                />
-              </Box>
               <Box className="full-width">
                 <AssetToTransfer
                   assetName={assetName}
@@ -213,7 +219,9 @@ const BTP = () => {
             <Divider margin={'20px 0'} />
             <Flex justifyContent={'center'}>
               <TextButton onClick={toggleTransferAssetsModal}>Cancel</TextButton>
-              <Button onClick={() => handleTransfer()}>Transfer</Button>
+              <Button disabled={!balance || !toChecksumAddress(sendingAddress)} onClick={() => handleTransfer()}>
+                Transfer
+              </Button>
             </Flex>
           </Flex>
         </Wrapper>

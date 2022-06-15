@@ -24,7 +24,7 @@ const Selected = styled(Flex)`
   line-height: 18px;
   font-weight: 700;
   color: #ffffff;
-  height: 40px;
+  height: 30px;
   align-items: center;
   border-radius: 10px;
   cursor: pointer;

@@ -15,9 +15,6 @@ const Address = ({ onChange }) => {
 
   return (
     <>
-      <Flex justifyContent={'space-between'}>
-        <Label>Address to transfer to</Label>
-      </Flex>
       <AddressInfo>
         <AddressLabel>Address</AddressLabel>
         <AddressInput

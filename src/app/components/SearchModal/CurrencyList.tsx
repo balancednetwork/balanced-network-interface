@@ -1,5 +1,6 @@
 import React, { useEffect, CSSProperties, useState, useCallback } from 'react';
 
+import { Currency, Token } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
@@ -13,7 +14,6 @@ import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useIsUserAddedToken } from 'store/user/hooks';
 import { useCurrencyBalance } from 'store/wallet/hooks';
-import { Currency, Token } from 'types/balanced-sdk-core';
 
 function currencyKey(currency: Currency): string {
   return currency.isToken ? currency.address : 'ICX';

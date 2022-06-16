@@ -1,6 +1,7 @@
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
@@ -8,7 +9,6 @@ import bnJs from 'bnJs';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import QUERY_KEYS from 'queries/queryKeys';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
 import { API_ENDPOINT } from '../constants';
 import { useBnJsContractQuery } from '../utils';

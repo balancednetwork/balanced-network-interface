@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Currency, Token } from 'types/balanced-sdk-core';
+import { Currency, Token } from '@balancednetwork/sdk-core';
 
 import { ADDITIONAL_BASES, BASES_TO_CHECK_TRADES_AGAINST, CUSTOM_BASES } from '../constants/routing';
 

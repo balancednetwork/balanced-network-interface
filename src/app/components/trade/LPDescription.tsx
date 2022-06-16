@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';

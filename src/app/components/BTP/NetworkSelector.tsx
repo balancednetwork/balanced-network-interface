@@ -151,14 +151,14 @@ const NetworkSelector = ({ label, data, onChange, toggleWallet }: NetworkSelecto
     if ('From' === label) {
       setNetworkSrc(network);
     } else {
-      debugger;
+      // debugger;
       setNetworkDst(network);
     }
   };
 
   return (
     <>
-      {label && <Label>{label}</Label>}
+      {/* {label && <Label>{label}</Label>} */}
       {data && (
         <ClickAwayListener onClickAway={closeDropdown}>
           <Select>

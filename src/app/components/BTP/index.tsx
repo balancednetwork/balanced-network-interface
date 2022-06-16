@@ -61,7 +61,7 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
 
       @media (min-width: 360px) {
         width: 100%;
-        max-width: 500px;
+        max-width: 525px;
       }
     `}
   }
@@ -172,6 +172,10 @@ const BTP = () => {
     setAssetName(asset.value);
   };
 
+  const [percent, setPercent] =React.useState<number>(0);
+  const handlePercentSelect = (field: string, percent : number)  => {
+    setPercent(percent)
+  };
   return (
     <>
       <StyledModal isOpen={walletModalOpen} onDismiss={toggleTransferAssetsModal} maxWidth={430}>
@@ -181,14 +185,14 @@ const BTP = () => {
             <Typography padding={'10px 0'}>Move assets between ICON and other blockchains</Typography>
             <FlexSelector width={'100%'}>
               <Box className="content">
-                <NetworkSelector data={chainInfo()} onChange={onChange} toggleWallet={toggleWalletModal} />
+                <NetworkSelector label='From' data={chainInfo()} onChange={onChange} toggleWallet={toggleWalletModal} />
               </Box>
               <Box>
                 {' '}
                 <ArrowIcon width="20" height="18" />
               </Box>
               <Box className="content">
-                <NetworkSelector data={getTartgetChains()} onChange={onChange} setSendingInfo={onSendingInfoChange} />
+                <NetworkSelector label='To' data={getTartgetChains()} onChange={onChange} setSendingInfo={onSendingInfoChange} />
               </Box>
             </FlexSelector>
             <Grid>
@@ -200,6 +204,8 @@ const BTP = () => {
                   }}
                   closeDropdown={() => setIsOpenAssetOptions(false)}
                   setBalance={setBalance}
+                  onPercentSelect={ (percent: number) => handlePercentSelect(assetName, percent)}
+                  percent={percent}
                 />
               </Box>
 

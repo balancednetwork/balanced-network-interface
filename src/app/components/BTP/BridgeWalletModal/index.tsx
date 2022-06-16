@@ -88,7 +88,7 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
 
       @media (min-width: 360px) {
         width: 100%;
-        max-width: 430px;
+        max-width: 360px;
       }
     `}
   }

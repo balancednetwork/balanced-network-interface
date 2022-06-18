@@ -1,7 +1,6 @@
 import { CallData } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { Converter as IconConverter } from 'icon-sdk-js';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,14 +10,13 @@ import useInterval from 'hooks/useInterval';
 import { useBnJsContractQuery } from 'queries/utils';
 import { AppState } from 'store';
 import { useDerivedSwapInfo } from 'store/swap/hooks';
+import { formatUnits } from 'utils';
 
 import { setBalances } from './actions';
 
 const bnUSDAddress = bnJs.bnUSD.address;
 const stabilityFundAddress = bnJs.StabilityFund.address;
-const toDec = new BigNumber(10).pow(18);
-const toPercent = new BigNumber(10).pow(2);
-const swapDollarLimitCushion = new BigNumber(5);
+const swapDollarLimitCushion = 5;
 
 export function useStabilityFundInfo(): AppState['stabilityFund'] {
   return useSelector((state: AppState) => state.stabilityFund);
@@ -80,14 +78,24 @@ export function useMaxSwapSize(): CurrencyAmount<Token> | undefined {
   const isBnUSDGoingIn = trade?.inputAmount.currency.symbol === 'bnUSD';
   if (trade && limits) {
     if (isBnUSDGoingIn) {
-      return balances[trade.outputAmount.currency.wrapped.address];
+      return CurrencyAmount.fromRawAmount(
+        trade.inputAmount.currency.wrapped,
+        new BigNumber(balances[trade.outputAmount.currency.wrapped.address].toFixed())
+          .times(new BigNumber(10).pow(trade.inputAmount.currency.wrapped.decimals))
+          .toFixed(0),
+      );
     } else {
       const tokenAddress = trade.inputAmount.currency.wrapped.address;
       return (
         limits[tokenAddress] &&
         limits[tokenAddress]
           .subtract(balances[tokenAddress])
-          .subtract(CurrencyAmount.fromRawAmount(trade.inputAmount.currency.wrapped, swapDollarLimitCushion.toFixed()))
+          .subtract(
+            CurrencyAmount.fromRawAmount(
+              trade.inputAmount.currency.wrapped,
+              swapDollarLimitCushion * Math.pow(10, trade.inputAmount.currency.decimals),
+            ),
+          )
       );
     }
   }
@@ -101,7 +109,7 @@ export function useFeeAmount(): CurrencyAmount<Token> | undefined {
   const fee = isBnUSDGoingIn ? feeOut : feeIn;
 
   if (!!trade && !!fee) {
-    return trade.inputAmount.multiply(new Fraction(1, 1 / fee)) as CurrencyAmount<Token>;
+    return trade.inputAmount.multiply(new Fraction(fee, 1000)).divide(100) as CurrencyAmount<Token>;
   }
 }
 
@@ -133,18 +141,12 @@ export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<
   );
 }
 
-export function useFeeIn(): number {
+function useFeeIn(): string | undefined {
   const { data } = useBnJsContractQuery<string>('StabilityFund', 'getFeeIn', [], false);
-  return IconConverter.toBigNumber(data || 0)
-    .div(toDec.valueOf())
-    .div(toPercent.valueOf())
-    .toNumber();
+  return data && formatUnits(data, 15);
 }
 
-export function useFeeOut(): number {
+function useFeeOut(): string | undefined {
   const { data } = useBnJsContractQuery<string>('StabilityFund', 'getFeeOut', [], false);
-  return IconConverter.toBigNumber(data || 0)
-    .div(toDec.valueOf())
-    .div(toPercent.valueOf())
-    .toNumber();
+  return data && formatUnits(data, 15);
 }

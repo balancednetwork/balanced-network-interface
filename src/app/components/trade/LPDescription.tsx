@@ -14,21 +14,26 @@ import { usePoolData } from 'hooks/usePools';
 import { PairState } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
 import { Field } from 'store/mint/actions';
-import { useDerivedMintInfo } from 'store/mint/hooks';
+import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
 import { useReward } from 'store/reward/hooks';
-import { useStakedLPPercent } from 'store/stakedLP/hooks';
+import { useWithdrawnPercent } from 'store/stakedLP/hooks';
+import { tryParseAmount } from 'store/swap/hooks';
 import { useLiquidityTokenBalance } from 'store/wallet/hooks';
+import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { formatBigNumber } from 'utils';
 
-import { stakedFraction } from './utils';
-
 export default function LPDescription() {
-  const { currencies, pair, pairState } = useDerivedMintInfo();
+  const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();
+  const { independentField, typedValue, otherTypedValue } = useMintState();
+
   const { account } = useIconReact();
   const upSmall = useMedia('(min-width: 600px)');
   const userPoolBalance = useLiquidityTokenBalance(account, pair);
   const totalPoolTokens = pair?.totalSupply;
-  const [token0Deposited, token1Deposited] =
+  const [
+    token0Deposited,
+    // token1Deposited
+  ] =
     !!pair &&
     !!totalPoolTokens &&
     !!userPoolBalance &&
@@ -36,23 +41,68 @@ export default function LPDescription() {
     JSBI.greaterThanOrEqual(totalPoolTokens.quotient, userPoolBalance.quotient)
       ? [
           pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false),
-          pair.getLiquidityValue(pair.token1, totalPoolTokens, userPoolBalance, false),
+          // pair.getLiquidityValue(pair.token1, totalPoolTokens, userPoolBalance, false),
         ]
-      : [undefined, undefined];
-
-  const poolRewards = useReward(pair?.poolId ?? -1);
-  const userRewards = useMemo(() => {
-    return !!pair && !!totalPoolTokens && !!userPoolBalance && !!poolRewards
-      ? poolRewards.times(new BigNumber(userPoolBalance.toFixed()).div(new BigNumber(totalPoolTokens.toFixed())))
-      : undefined;
-  }, [pair, totalPoolTokens, userPoolBalance, poolRewards]);
+      : [
+          undefined,
+          // undefined
+        ];
 
   const apys = useAllPairsAPY();
   const apy = apys && apys[pair?.poolId ?? -1];
 
-  const stakedLPPercent = useStakedLPPercent(pair?.poolId ?? -1);
-  const stakedFractionValue = stakedFraction(stakedLPPercent);
   const poolData = usePoolData(pair?.poolId ?? -1);
+
+  //calulate Your supply temporary value  and Your daily reward temporary value
+  const formattedAmounts = {
+    [independentField]: tryParseAmount(typedValue, currencies[independentField]),
+    [dependentField]: noLiquidity
+      ? tryParseAmount(otherTypedValue, currencies[dependentField])
+      : parsedAmounts[dependentField],
+  };
+  const poolRewards = useReward(pair?.poolId ?? -1);
+  const tempTotalPoolTokens = new BigNumber(totalPoolTokens?.toFixed() || 0).plus(
+    formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0,
+  );
+  const userRewards = useMemo(() => {
+    return !!pair && !!totalPoolTokens && !!poolRewards && !!userPoolBalance
+      ? poolRewards.times(
+          new BigNumber(userPoolBalance.toFixed())
+            .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
+            .div(tempTotalPoolTokens),
+        )
+      : undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pair, totalPoolTokens, userPoolBalance, poolRewards, formattedAmounts[Field.CURRENCY_A]?.toFixed()]);
+
+  const { baseValue, quoteValue } = useWithdrawnPercent(pair?.poolId ?? -1) || {};
+
+  const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
+    !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
+
+  const baseCurrencyTotalSupply = totalSupply(baseValue, poolData?.suppliedBase);
+  const quoteCurrencyTotalSupply = totalSupply(quoteValue, poolData?.suppliedQuote);
+  const baseCurrencyTotalSupplyStr = baseCurrencyTotalSupply?.toFixed() || '0';
+  const quoteCurrencyTotalSupplyStr = baseCurrencyTotalSupply?.toFixed() || '0';
+
+  const tempTotalSupplyValue = new BigNumber(pair?.reserve0.toFixed() || 0).plus(
+    new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0),
+  );
+
+  const suppliedReward = useMemo(
+    () =>
+      poolRewards
+        ?.times(
+          baseCurrencyTotalSupplyStr
+            ? new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0).plus(
+                new BigNumber(baseCurrencyTotalSupplyStr),
+              )
+            : baseCurrencyTotalSupply?.toFixed() || 0,
+        )
+        .div(tempTotalSupplyValue.isZero() ? 1 : tempTotalSupplyValue),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [baseCurrencyTotalSupply, formattedAmounts[Field.CURRENCY_A]?.toFixed(), poolRewards, pair?.reserve0.toFixed()],
+  );
 
   return (
     <>
@@ -119,14 +169,32 @@ export default function LPDescription() {
                     <Typography textAlign="center" variant="p">
                       {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                         <>
-                          {token0Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
+                          {formattedAmounts[Field.CURRENCY_A]
+                            ? new BigNumber(baseCurrencyTotalSupplyStr)
+                                .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
+                                .dp(6)
+                                .toFormat()
+                            : baseCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' }) || '...'}{' '}
+                          {pair?.reserve0.currency?.symbol}
                           <br />
-                          {token1Deposited?.toSignificant(6, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
+                          {formattedAmounts[Field.CURRENCY_B]
+                            ? new BigNumber(quoteCurrencyTotalSupplyStr)
+                                .plus(formattedAmounts[Field.CURRENCY_B]?.toFixed() || 0)
+                                .dp(6)
+                                .toFormat()
+                            : quoteCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' }) || '...'}{' '}
+                          {pair?.reserve1.currency?.symbol}
                         </>
                       ) : (
-                        `${token0Deposited?.toSignificant(6, { groupSeparator: ',' })} ${
-                          pair?.reserve0.currency?.symbol
-                        }`
+                        `${
+                          formattedAmounts[Field.CURRENCY_A]
+                            ? new BigNumber(token0Deposited?.toFixed() || 0)
+                                .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
+                                .toFixed()
+                            : token0Deposited?.toSignificant(6, {
+                                groupSeparator: ',',
+                              }) || 0
+                        } ${pair?.reserve0.currency?.symbol}`
                       )}
                     </Typography>
                   </Box>
@@ -134,22 +202,25 @@ export default function LPDescription() {
                   {userRewards && (
                     <Box sx={{ margin: '15px 0 25px 0' }}>
                       <Typography textAlign="center" marginBottom="5px" color="text1">
-                        <Trans>Your daily rewards </Trans>
+                        <Trans>
+                          {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX
+                            ? 'Your daily rewards'
+                            : 'Your potential rewards'}
+                        </Trans>
                       </Typography>
                       {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
                         <Typography textAlign="center" variant="p">
-                          {userRewards?.isEqualTo(0) ? 'N/A' : userRewards ? `~ ${userRewards.toFixed(2)} BALN` : 'N/A'}
+                          {userRewards?.isEqualTo(0)
+                            ? 'N/A'
+                            : userRewards
+                            ? `~ ${userRewards.dp(2).toFormat()} BALN`
+                            : 'N/A'}
                         </Typography>
                       ) : (
                         <Typography textAlign="center" variant="p">
                           {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
                             ? 'N/A'
-                            : poolData?.suppliedReward?.multiply(stakedFractionValue)
-                            ? `~ ${poolData?.suppliedReward
-                                ?.multiply(stakedFractionValue)
-                                .divide(100)
-                                .toFixed(2, { groupSeparator: ',' })} BALN`
-                            : 'N/A'}
+                            : `~ ${suppliedReward?.dp(2).toFormat() || '...'} BALN`}
                         </Typography>
                       )}
                     </Box>

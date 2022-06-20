@@ -1,19 +1,22 @@
 import React, { useEffect, CSSProperties, useState, useCallback } from 'react';
 
-import { Currency, Token } from '@balancednetwork/sdk-core';
+import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { isMobile } from 'react-device-detect';
+import { isIOS, isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
 import { Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { ListItem, DashGrid, HeaderText, DataText, List1 } from 'app/components/List';
+import { Typography } from 'app/theme';
 import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
+import { useRatesQuery } from 'queries/reward';
 import { useIsUserAddedToken } from 'store/user/hooks';
 import { useCurrencyBalance } from 'store/wallet/hooks';
+import { toFraction } from 'utils';
 
 function currencyKey(currency: Currency): string {
   return currency.isToken ? currency.address : 'ICX';
@@ -30,6 +33,7 @@ function CurrencyRow({
   account,
   isFocused,
   onFocus,
+  rateFracs,
 }: {
   currency: Currency;
   onSelect: () => void;
@@ -41,6 +45,7 @@ function CurrencyRow({
   account?: string | null;
   isFocused: boolean;
   onFocus: () => void;
+  rateFracs: { [key in string]: Fraction } | undefined;
 }) {
   const balance = useCurrencyBalance(account ?? undefined, currency);
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
@@ -51,40 +56,82 @@ function CurrencyRow({
   const open = useCallback(() => setShow(true), [setShow]);
   const close = useCallback(() => setShow(false), [setShow]);
 
-  const focusCombined = () => {
-    onFocus();
-    open();
+  const RowContentSignedIn = () => {
+    return (
+      <>
+        <Flex alignItems={'center'}>
+          <CurrencyLogo currency={currency} style={{ marginRight: '15px' }} />
+          <DataText variant="p" fontWeight="bold">
+            {currency?.symbol}
+            <Typography variant={'span'} fontSize={14} color={theme.colors.text2} sx={{ display: 'block' }}>
+              {rateFracs && rateFracs[currency.symbol!] && `$${rateFracs[currency.symbol!].toFixed(2)}`}
+            </Typography>
+          </DataText>
+        </Flex>
+        <Flex justifyContent="flex-end" alignItems="center">
+          <DataText variant="p" textAlign="right">
+            {new BigNumber(balance?.toSignificant(4) || 0).toFormat()}
+
+            {balance?.greaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
+              <Typography variant={'span'} fontSize={14} color={theme.colors.text2} sx={{ display: 'block' }}>
+                {`$${balance.multiply(rateFracs[currency.symbol!]).toFixed(2)}`}
+              </Typography>
+            )}
+          </DataText>
+          {isUserAddedToken && (isMobile || show) && (
+            <MinusCircle
+              color={theme.colors.alert}
+              size={18}
+              style={{ marginLeft: '12px' }}
+              onClick={e => {
+                e.stopPropagation();
+                onRemove();
+              }}
+            />
+          )}
+        </Flex>
+      </>
+    );
+  };
+
+  const RowContentNotSignedIn = () => {
+    return (
+      <>
+        <Flex>
+          <CurrencyLogo currency={currency} style={{ marginRight: '8px' }} />
+          <DataText variant="p" fontWeight="bold">
+            {currency?.symbol}
+          </DataText>
+        </Flex>
+        <Flex justifyContent="flex-end" alignItems="center">
+          <DataText variant="p" textAlign="right">
+            {rateFracs && rateFracs[currency.symbol!] && `$${rateFracs[currency.symbol!].toFixed(2)}`}
+          </DataText>
+          {isUserAddedToken && (isMobile || show) && (
+            <MinusCircle
+              color={theme.colors.alert}
+              size={18}
+              style={{ marginLeft: '12px' }}
+              onClick={e => {
+                e.stopPropagation();
+                onRemove();
+              }}
+            />
+          )}
+        </Flex>
+      </>
+    );
   };
 
   return (
     <ListItem
       onClick={onSelect}
-      {...(!isMobile ? { onMouseEnter: focusCombined } : null)}
+      {...(!isIOS ? { onMouseEnter: open } : null)}
       onMouseLeave={close}
+      onMouseEnter={onFocus}
       className={isFocused ? 'focused' : ''}
     >
-      <Flex>
-        <CurrencyLogo currency={currency} style={{ marginRight: '8px' }} />
-        <DataText variant="p" fontWeight="bold">
-          {currency?.symbol}
-        </DataText>
-      </Flex>
-      <Flex justifyContent="flex-end" alignItems="center">
-        <DataText variant="p" textAlign="right">
-          {new BigNumber(balance?.toSignificant(4) || 0).toFormat()}
-        </DataText>
-        {isUserAddedToken && (isMobile || show) && (
-          <MinusCircle
-            color={theme.colors.alert}
-            size={18}
-            style={{ marginLeft: '12px' }}
-            onClick={e => {
-              e.stopPropagation();
-              onRemove();
-            }}
-          />
-        )}
-      </Flex>
+      {account ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
     </ListItem>
   );
 }
@@ -120,6 +167,16 @@ export default function CurrencyList({
   const escape = useKeyPress('Escape');
   const { activeIndex, setActiveIndex } = useArrowControl(isOpen, currencies?.length || 0);
 
+  const { data: rates } = useRatesQuery();
+  const rateFracs = React.useMemo(() => {
+    if (rates) {
+      return Object.keys(rates).reduce((acc, key) => {
+        acc[key] = toFraction(rates[key]);
+        return acc;
+      }, {});
+    }
+  }, [rates]);
+
   useEffect(() => {
     if (isOpen) {
       setActiveIndex(undefined);
@@ -144,9 +201,7 @@ export default function CurrencyList({
         <HeaderText>
           <Trans>Asset</Trans>
         </HeaderText>
-        <HeaderText textAlign="right">
-          <Trans>Wallet</Trans>
-        </HeaderText>
+        <HeaderText textAlign="right">{account ? <Trans>Wallet</Trans> : <Trans>Price</Trans>}</HeaderText>
       </DashGrid>
 
       {currencies.map((currency, index) => (
@@ -161,6 +216,7 @@ export default function CurrencyList({
           }}
           isFocused={index === activeIndex}
           onFocus={() => setActiveIndex(index)}
+          rateFracs={rateFracs}
         />
       ))}
     </List1>

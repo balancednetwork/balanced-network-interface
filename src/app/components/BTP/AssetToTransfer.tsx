@@ -128,7 +128,7 @@ const AssetToTransfer = ({ assetName, toggleDropdown, closeDropdown, setBalance,
           Wallet: <WalletAmount color={'red'}>{`${0} tokens`}</WalletAmount>
         </Label>
       </Flex>
-      <AssetInfo>
+      <AssetInfo ref={ref}>
         <AssetName>
           <Icon icon={assetName} margin={'0 8px 0 0'} />
           <AssetSelector assetName={assetName} toggleDropdown={toggleDropdown} closeDropdown={closeDropdown} />

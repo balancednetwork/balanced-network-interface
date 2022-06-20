@@ -4,7 +4,8 @@ import { chainConfigs, chainList, getTokenList } from 'btp/src/connectors/chainC
 import { ADDRESS_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { addICONexListener } from 'btp/src/connectors/ICONex';
 import { requestHasAddress } from 'btp/src/connectors/ICONex/events';
-import { toChecksumAddress } from 'btp/src/connectors/MetaMask/utils';
+import { toCheckAddress } from 'btp/src/connectors/MetaMask/utils';
+import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -89,6 +90,16 @@ const BTP = () => {
     setIsOpenConfirm(true);
   };
 
+  const coins = [...chainList, ...getTokenList()].map(({ CHAIN_NAME, COIN_SYMBOL, symbol, chain, ...others }) => {
+    return COIN_SYMBOL || symbol;
+  });
+  const coinNames: string[] = [...coins];
+
+  console.log(coinNames);
+
+  const [currentBalance, symbol] = useTokenBalance('ICX');
+  console.log(currentBalance, symbol);
+
   useEffect(() => {
     const address = localStorage.getItem(ADDRESS_LOCAL_STORAGE);
     if (address) {
@@ -172,9 +183,9 @@ const BTP = () => {
     setAssetName(asset.value);
   };
 
-  const [percent, setPercent] =React.useState<number>(0);
-  const handlePercentSelect = (field: string, percent : number)  => {
-    setPercent(percent)
+  const [percent, setPercent] = React.useState<number>(0);
+  const handlePercentSelect = (field: string, percent: number) => {
+    setPercent(percent);
   };
   return (
     <>
@@ -185,14 +196,18 @@ const BTP = () => {
             <Typography padding={'10px 0'}>Move assets between ICON and other blockchains</Typography>
             <FlexSelector width={'100%'}>
               <Box className="content">
-                <NetworkSelector label='From' data={chainInfo()} onChange={onChange} toggleWallet={toggleWalletModal} />
+                <NetworkSelector label="From" data={chainInfo()} onChange={onChange} toggleWallet={toggleWalletModal} />
               </Box>
               <Box>
-                {' '}
                 <ArrowIcon width="20" height="18" />
               </Box>
               <Box className="content">
-                <NetworkSelector label='To' data={getTartgetChains()} onChange={onChange} setSendingInfo={onSendingInfoChange} />
+                <NetworkSelector
+                  label="To"
+                  data={getTartgetChains()}
+                  onChange={onChange}
+                  setSendingInfo={onSendingInfoChange}
+                />
               </Box>
             </FlexSelector>
             <Grid>
@@ -204,7 +219,7 @@ const BTP = () => {
                   }}
                   closeDropdown={() => setIsOpenAssetOptions(false)}
                   setBalance={setBalance}
-                  onPercentSelect={ (percent: number) => handlePercentSelect(assetName, percent)}
+                  onPercentSelect={(percent: number) => handlePercentSelect(assetName, percent)}
                   percent={percent}
                 />
               </Box>
@@ -225,7 +240,7 @@ const BTP = () => {
             <Divider margin={'20px 0'} />
             <Flex justifyContent={'center'}>
               <TextButton onClick={toggleTransferAssetsModal}>Cancel</TextButton>
-              <Button disabled={!balance || !toChecksumAddress(sendingAddress)} onClick={() => handleTransfer()}>
+              <Button disabled={!balance || !toCheckAddress(sendingAddress)} onClick={() => handleTransfer()}>
                 Transfer
               </Button>
             </Flex>

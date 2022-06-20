@@ -8,3 +8,10 @@ export const toChecksumAddress = address => {
 
   return address;
 };
+
+export const toCheckAddress = address => {
+  if (address && address.startsWith('hx') && address.length === 42) {
+    return true;
+  }
+  return false;
+};

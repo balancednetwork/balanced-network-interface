@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { usePrevious } from 'react-use';
 import { Flex } from 'rebass/styled-components';
@@ -67,8 +68,8 @@ export function ProposalModal(props: ProposalProps) {
       <ModalContent noCurrencyBalanceErrorMessage>
         <Typography variant="content" textAlign="center" mb={1}>
           {UIStatus === ModalStatus.ChangeToApprove || UIStatus === ModalStatus.ChangeToReject
-            ? 'Change vote?'
-            : 'Submit vote?'}
+            ? t`Change vote?`
+            : t`Submit vote?`}
         </Typography>
         {(UIStatus === ModalStatus.Reject || UIStatus === ModalStatus.ChangeToReject) && (
           <>
@@ -78,7 +79,7 @@ export function ProposalModal(props: ProposalProps) {
               style={{ margin: 'auto', display: 'block', marginTop: '5px', marginBottom: '5px' }}
             />
             <Typography variant="h3" textAlign="center" mb={3}>
-              Reject
+              <Trans>Reject</Trans>
             </Typography>
           </>
         )}
@@ -90,23 +91,25 @@ export function ProposalModal(props: ProposalProps) {
               style={{ margin: 'auto', display: 'block', marginTop: '5px', marginBottom: '5px' }}
             />
             <Typography variant="h3" textAlign="center" mb={3}>
-              Approve
+              <Trans>Approve</Trans>
             </Typography>
           </>
         )}
         <Typography variant="content" textAlign="center" mb={3}>
-          {`Voting weight: ${weight?.dp(2).toFormat()} BALN`}
+          <Trans>Voting weight</Trans>: {weight?.dp(2).toFormat()} BALN
         </Typography>
         <Divider mb={5} />
         <Flex flexDirection="row" width="100%" justifyContent="center">
           {shouldLedgerSign && <Spinner />}
           {!shouldLedgerSign && (
             <>
-              <CancelButton onClick={onCancel}>Cancel</CancelButton>
+              <CancelButton onClick={onCancel}>
+                <Trans>Cancel</Trans>
+              </CancelButton>
               <SubmitButton onClick={onSubmit}>
                 {UIStatus === ModalStatus.ChangeToApprove || UIStatus === ModalStatus.ChangeToReject
-                  ? 'Change vote'
-                  : 'Submit vote'}
+                  ? t`Change vote`
+                  : t`Submit vote`}
               </SubmitButton>
             </>
           )}

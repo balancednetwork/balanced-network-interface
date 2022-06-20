@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
+import { SupportedChainId as NetworkId, CHAIN_INFO, getLedgerAddressPath } from '@balancednetwork/balanced-js';
+import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import IconService, { Builder as IconBuilder, Converter as IconConverter } from 'icon-sdk-js';
-import { SupportedChainId as NetworkId, CHAIN_INFO } from 'packages/BalancedJs';
 import {
   request,
   ICONexResponseEvent,
@@ -10,11 +11,16 @@ import {
   ICONexResponseEventType,
 } from 'packages/iconex';
 
+import bnJs from 'bnJs';
+import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
+
 export const GOVERNANCE_BASE_ADDRESS = 'cx0000000000000000000000000000000000000001';
 
 export const API_VERSION = IconConverter.toBigNumber(3);
 
 export const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
+
+const LOCAL_STORAGE_ADDRESS_EXPIRY = 3600000;
 
 const iconService = new IconService(new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint));
 
@@ -36,7 +42,7 @@ interface ICONReactContextInterface {
 }
 
 const IconReactContext = React.createContext<ICONReactContextInterface>({
-  account: undefined,
+  account: null,
   ledgerAddressPoint: -1,
   request: request,
   requestAddress: (ledgerAccount?: { address: string; point: number }) => null,
@@ -47,28 +53,61 @@ const IconReactContext = React.createContext<ICONReactContextInterface>({
 });
 
 export function IconReactProvider({ children }) {
-  const [ledgerAddressPoint, setLedgerAddressPoint] = React.useState(-1);
-  const [account, setAccount] = React.useState<string | null>();
+  const [ledgerAddressPoint, setLedgerAddressPoint] = useLocalStorageWithExpiry<number>(
+    'ledgerAddressPointWithExpiry',
+    -1,
+    LOCAL_STORAGE_ADDRESS_EXPIRY,
+  );
+  const [account, setAccount] = useLocalStorageWithExpiry<string | null>(
+    'accountWithExpiry',
+    null,
+    LOCAL_STORAGE_ADDRESS_EXPIRY,
+  );
   const [hasExtension, setHasExtension] = React.useState<boolean>(false);
 
-  const requestAddress = React.useCallback(async (ledgerAccount?: { address: string; point: number }) => {
-    if (!ledgerAccount) {
-      const detail = await request({
-        type: ICONexRequestEventType.REQUEST_ADDRESS,
-      });
-
-      if (detail?.type === ICONexResponseEventType.RESPONSE_ADDRESS) {
-        setAccount(detail?.payload);
+  useEffect(() => {
+    async function createConnection() {
+      if (ledgerAddressPoint >= 0) {
+        const transport = await TransportWebHID.create();
+        transport.setDebugMode && transport.setDebugMode(false);
+        bnJs.inject({
+          account,
+          legerSettings: {
+            transport,
+            path: getLedgerAddressPath(ledgerAddressPoint),
+          },
+        });
       }
-    } else if (ledgerAccount) {
-      setAccount(ledgerAccount?.address);
-      setLedgerAddressPoint(ledgerAccount?.point || 0);
     }
+    createConnection();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const requestAddress = React.useCallback(
+    async (ledgerAccount?: { address: string; point: number }) => {
+      if (!ledgerAccount) {
+        setLedgerAddressPoint(-1);
+        bnJs.resetContractLedgerSettings();
+        const detail = await request({
+          type: ICONexRequestEventType.REQUEST_ADDRESS,
+        });
+
+        if (detail?.type === ICONexResponseEventType.RESPONSE_ADDRESS) {
+          setAccount(detail?.payload);
+        }
+      } else if (ledgerAccount) {
+        setAccount(ledgerAccount?.address);
+        setLedgerAddressPoint(ledgerAccount?.point || 0);
+      }
+    },
+    [setAccount, setLedgerAddressPoint],
+  );
 
   const disconnect = React.useCallback(() => {
     setAccount(null);
-  }, []);
+    setLedgerAddressPoint(-1);
+    bnJs.resetContractLedgerSettings();
+  }, [setAccount, setLedgerAddressPoint]);
 
   React.useEffect(() => {
     const handler = async () => {

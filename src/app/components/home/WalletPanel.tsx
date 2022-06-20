@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Trans } from '@lingui/macro';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box } from 'rebass/styled-components';
@@ -195,6 +195,7 @@ const DashGrid = styled.div`
   grid-template-columns: 3fr 5fr;
   grid-template-areas: 'asset balance&value';
   align-items: center;
+  white-space: nowrap;
 
   ${({ theme }) => theme.mediaWidth.up500`
     grid-template-columns: 1fr 3fr;

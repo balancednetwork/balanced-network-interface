@@ -1,5 +1,6 @@
 import React, { /*KeyboardEvent,*/ RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { Currency, Token } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
@@ -13,7 +14,6 @@ import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hoo
 import useDebounce from 'hooks/useDebounce';
 import { useOnClickOutside } from 'hooks/useOnClickOutside';
 import useToggle from 'hooks/useToggle';
-import { Currency, Token } from 'types/balanced-sdk-core';
 import { isAddress } from 'utils';
 
 import Column from '../Column';

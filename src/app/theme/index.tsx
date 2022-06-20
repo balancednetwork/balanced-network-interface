@@ -626,7 +626,7 @@ export const ThemedGlobalStyle = createGlobalStyle`
     font-size: 14px;
     margin-top: -20px;
     margin-left: -23px;
-    width: 80px;
+    width: 100px;
   }
   #indicator-used .label {
     margin-left: -17px;

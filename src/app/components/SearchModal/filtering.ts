@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 
+import { Token } from '@balancednetwork/sdk-core';
+
 import { TokenInfo } from 'constants/tokens';
-import { Token } from 'types/balanced-sdk-core';
 import { isAddress } from 'utils';
 
 const alwaysTrue = () => true;

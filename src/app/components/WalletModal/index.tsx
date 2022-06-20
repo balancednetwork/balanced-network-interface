@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
+import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednetwork/balanced-js';
+import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
-import { Trans } from '@lingui/macro';
-import { BalancedJs } from 'packages/BalancedJs';
-import { getLedgerAddressPath, LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
+import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
@@ -130,6 +129,10 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 15px;
+`;
+
+const UnbrakableText = styled(Text)`
+  white-space: nowrap;
 `;
 
 export default function WalletModal() {
@@ -325,14 +328,14 @@ export default function WalletModal() {
           <Flex alignItems="stretch" justifyContent="space-between">
             <WalletOption onClick={handleOpenWallet}>
               <IconWalletIcon width="50" height="50" />
-              <Text>ICON</Text>
+              <UnbrakableText>ICON</UnbrakableText>
             </WalletOption>
 
-            {upExtraSmall && <VerticalDivider text="or"></VerticalDivider>}
+            {upExtraSmall && <VerticalDivider text={t`or`}></VerticalDivider>}
 
             <WalletOption onClick={handleOpenLedger}>
               <LedgerIcon width="50" height="50" />
-              <Text>Ledger</Text>
+              <UnbrakableText>Ledger</UnbrakableText>
             </WalletOption>
           </Flex>
 
@@ -361,9 +364,11 @@ export default function WalletModal() {
 
           <Typography textAlign="center">
             <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
-            <Link href="https://balanced.network/disclaimer/" target="_blank">
-              <Trans>View disclaimer</Trans>
-            </Link>
+            <Box>
+              <Link href="https://balanced.network/disclaimer/" target="_blank">
+                <Trans>View disclaimer</Trans>
+              </Link>
+            </Box>
           </Typography>
         </Wrapper>
       </StyledModal>

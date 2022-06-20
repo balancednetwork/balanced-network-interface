@@ -52,13 +52,17 @@ export const Tabs: React.FC<{
 const StyledTab = styled.li<{ selected: boolean }>`
   float: left;
   margin-right: 5px;
-  padding: 15px 35px;
+  padding: 10px 15px;
   list-style: none;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   background-color: ${({ selected }) => (selected ? '#144a68' : '#0c2a4d')};
   transition: background-color 0.3s ease;
   outline: none;
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 15px 35px;
+  `};
 
   &:not([aria-selected='true']):hover {
     cursor: pointer !important;

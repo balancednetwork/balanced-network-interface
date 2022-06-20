@@ -10,7 +10,7 @@ import { SelectorPopover } from 'app/components/Popover';
 import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import useWidth from 'hooks/useWidth';
 import { COMMON_PERCENTS } from 'store/swap/actions';
-import { Currency } from 'types/balanced-sdk-core';
+// import { Currency } from 'types/balanced-sdk-core';
 import { escapeRegExp } from 'utils';
 
 import { HorizontalList, Option } from '../List';

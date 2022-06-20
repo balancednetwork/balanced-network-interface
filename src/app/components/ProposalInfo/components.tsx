@@ -35,7 +35,7 @@ export const StyledSkeleton = styled(Skeleton)`
 
 export const IconLabel = ({ icon, content }: { icon: React.ReactNode; content: React.ReactNode }) => {
   return (
-    <Flex alignItems="center" sx={{ columnGap: '10px' }}>
+    <Flex alignItems="center" sx={{ columnGap: '10px', lineHeight: '35px' }}>
       <>{icon}</>
       <>{content}</>
     </Flex>

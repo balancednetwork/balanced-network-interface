@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Price, TradeType, Currency, Percent, Token } from '@balancednetwork/sdk-core';
+import { Trade, Route } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
@@ -29,9 +31,6 @@ import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { Price, TradeType } from 'types/balanced-sdk-core';
-import { Currency, Percent, Token } from 'types/balanced-sdk-core/entities';
-import { Trade, Route } from 'types/balanced-v1-sdk/entities';
 import { formatBigNumber, formatPercent, maxAmountSpend, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -220,7 +219,7 @@ export default function SwapPanel() {
 
   return (
     <>
-      <BrightPanel bg="bg3" p={[5, 7]} flexDirection="column" alignItems="stretch" flex={1}>
+      <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
         <AutoColumn gap="md">
           <Flex alignItems="center" justifyContent="space-between">
             <Typography variant="h2">

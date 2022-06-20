@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
+// import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { Trans } from '@lingui/macro';
 import { CONNECTED_WALLET_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { requestAddress } from 'btp/src/connectors/ICONex/events';
 import { EthereumInstance } from 'btp/src/connectors/MetaMask';
 import { wallets } from 'btp/src/utils/constants';
-import { BalancedJs } from 'packages/BalancedJs';
-import { LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
+// import { BalancedJs } from 'packages/BalancedJs';
+// import { LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
 import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -32,44 +32,44 @@ import { useFromNetwork } from 'store/bridge/hooks';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
-const generatePaths = (point: number) => {
-  const paths = HwUtils.splitPath(`${LEDGER_BASE_PATH}/${point}'`);
-  const buffer = Buffer.alloc(1 + paths.length * 4);
-  buffer[0] = paths.length;
-  paths.forEach((element, index) => {
-    buffer.writeUInt32BE(element, 1 + 4 * index);
-  });
-  return buffer;
-};
+// const generatePaths = (point: number) => {
+//   const paths = HwUtils.splitPath(`${LEDGER_BASE_PATH}/${point}'`);
+//   const buffer = Buffer.alloc(1 + paths.length * 4);
+//   buffer[0] = paths.length;
+//   paths.forEach((element, index) => {
+//     buffer.writeUInt32BE(element, 1 + 4 * index);
+//   });
+//   return buffer;
+// };
 
-const requestLedgerAddress = async ({
-  paging: { offset, limit },
-}: {
-  paging: {
-    offset: number;
-    limit: number;
-  };
-}): Promise<any[]> => {
-  const addressFromLedger: any[] = [];
+// const requestLedgerAddress = async ({
+//   paging: { offset, limit },
+// }: {
+//   paging: {
+//     offset: number;
+//     limit: number;
+//   };
+// }): Promise<any[]> => {
+//   const addressFromLedger: any[] = [];
 
-  for (let i = offset; i < offset + limit; i++) {
-    const buffer = generatePaths(i);
-    const response = await bnJs.contractSettings.ledgerSettings.transport.send(0xe0, 0x02, 0x00, 0x01, buffer);
+//   for (let i = offset; i < offset + limit; i++) {
+//     const buffer = generatePaths(i);
+//     const response = await bnJs.contractSettings.ledgerSettings.transport.send(0xe0, 0x02, 0x00, 0x01, buffer);
 
-    const publicKeyLength = response[0];
-    const addressLength = response[1 + publicKeyLength];
+//     const publicKeyLength = response[0];
+//     const addressLength = response[1 + publicKeyLength];
 
-    addressFromLedger.push({
-      publicKey: response.slice(1, 1 + publicKeyLength).toString('hex'),
-      address: response.slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength).toString(),
-      chainCode: '',
-      point: i,
-      balance: '-',
-    });
-  }
+//     addressFromLedger.push({
+//       publicKey: response.slice(1, 1 + publicKeyLength).toString('hex'),
+//       address: response.slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength).toString(),
+//       chainCode: '',
+//       point: i,
+//       balance: '-',
+//     });
+//   }
 
-  return addressFromLedger;
-};
+//   return addressFromLedger;
+// };
 
 const LIMIT_PAGING_LEDGER = 5;
 
@@ -193,117 +193,117 @@ export default function BridgeWalletModal() {
     }
   };
 
-  const updateLedgerAddress = React.useCallback(async ({ offset, limit }) => {
-    const currentAddressList: any[] = await requestLedgerAddress({
-      paging: {
-        offset,
-        limit,
-      },
-    });
+  // const updateLedgerAddress = React.useCallback(async ({ offset, limit }) => {
+  //   const currentAddressList: any[] = await requestLedgerAddress({
+  //     paging: {
+  //       offset,
+  //       limit,
+  //     },
+  //   });
 
-    setIsLedgerErr(false);
-    updateAddressList(currentAddressList);
-    resolveBalanceByAddress(currentAddressList);
-  }, []);
+  //   setIsLedgerErr(false);
+  //   updateAddressList(currentAddressList);
+  //   resolveBalanceByAddress(currentAddressList);
+  // }, []);
 
-  const resolveBalanceByAddress = async (addressList: any[]) => {
-    const data = await Promise.all(
-      addressList.map((address: any) => {
-        return new Promise((resolve, reject) => {
-          bnJs.ICX.balanceOf(address.address)
-            .then(balance => {
-              resolve({
-                ...address,
-                balance: BalancedJs.utils.toIcx(balance.toFixed()).toFixed(2),
-              });
-            })
-            .catch(reject);
-        });
-      }),
-    );
+  // const resolveBalanceByAddress = async (addressList: any[]) => {
+  //   const data = await Promise.all(
+  //     addressList.map((address: any) => {
+  //       return new Promise((resolve, reject) => {
+  //         bnJs.ICX.balanceOf(address.address)
+  //           .then(balance => {
+  //             resolve({
+  //               ...address,
+  //               balance: BalancedJs.utils.toIcx(balance.toFixed()).toFixed(2),
+  //             });
+  //           })
+  //           .catch(reject);
+  //       });
+  //     }),
+  //   );
 
-    updateAddressList(data);
-    setLedgerLoading(false);
-  };
+  //   updateAddressList(data);
+  //   setLedgerLoading(false);
+  // };
 
   const handleOpenLedger = async () => {
-    setLedgerLoading(true);
-    setIsLedgerErr(false);
-    updateAddressList([]);
-    updatePaging({
-      offset: 0,
-      limit: LIMIT_PAGING_LEDGER,
-    });
+  //   setLedgerLoading(true);
+  //   setIsLedgerErr(false);
+  //   updateAddressList([]);
+  //   updatePaging({
+  //     offset: 0,
+  //     limit: LIMIT_PAGING_LEDGER,
+  //   });
 
-    const timeout = setTimeout(() => {
-      setIsLedgerErr(true);
-    }, 3 * 1000);
+  //   const timeout = setTimeout(() => {
+  //     setIsLedgerErr(true);
+  //   }, 3 * 1000);
 
-    try {
-      if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-        bnJs.contractSettings.ledgerSettings.transport.close();
-      }
-      const transport = await TransportWebHID.create();
-      transport.setDebugMode && transport.setDebugMode(false);
-      bnJs.inject({
-        legerSettings: {
-          transport,
-        },
-      });
-      updateShowledgerAddress(true);
+  //   try {
+  //     if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+  //       bnJs.contractSettings.ledgerSettings.transport.close();
+  //     }
+  //     const transport = await TransportWebHID.create();
+  //     transport.setDebugMode && transport.setDebugMode(false);
+  //     bnJs.inject({
+  //       legerSettings: {
+  //         transport,
+  //       },
+  //     });
+  //     updateShowledgerAddress(true);
 
-      await updateLedgerAddress({ offset, limit });
-      clearTimeout(timeout);
-    } catch (err: any) {
-      clearTimeout(timeout);
-      if (err.id === 'InvalidChannel') {
-        await bnJs.contractSettings.ledgerSettings.transport.close();
-        return setTimeout(() => {
-          handleOpenLedger();
-        }, 0);
-      }
-      alert('Insert your ledger device, then enter your password and try again.');
-    }
+  //     await updateLedgerAddress({ offset, limit });
+  //     clearTimeout(timeout);
+  //   } catch (err: any) {
+  //     clearTimeout(timeout);
+  //     if (err.id === 'InvalidChannel') {
+  //       await bnJs.contractSettings.ledgerSettings.transport.close();
+  //       return setTimeout(() => {
+  //         handleOpenLedger();
+  //       }, 0);
+  //     }
+  //     alert('Insert your ledger device, then enter your password and try again.');
+  //   }
   };
 
-  const getLedgerPage = React.useCallback(
-    async (pageNum: number) => {
-      updateAddressList([]);
+  // const getLedgerPage = React.useCallback(
+  //   async (pageNum: number) => {
+  //     updateAddressList([]);
 
-      setLedgerLoading(true);
-      setIsLedgerErr(false);
+  //     setLedgerLoading(true);
+  //     setIsLedgerErr(false);
 
-      const timeout = setTimeout(() => {
-        setIsLedgerErr(true);
-      }, 3 * 1000);
+  //     const timeout = setTimeout(() => {
+  //       setIsLedgerErr(true);
+  //     }, 3 * 1000);
 
-      if (pageNum <= 0) {
-        // should disable page number < 0;
-        console.log('This is first pages, cannot request more address, try other please.');
-        return;
-      }
+  //     if (pageNum <= 0) {
+  //       // should disable page number < 0;
+  //       console.log('This is first pages, cannot request more address, try other please.');
+  //       return;
+  //     }
 
-      // disable current page
-      if (pageNum === currentLedgerAddressPage) {
-        return;
-      }
+  //     // disable current page
+  //     if (pageNum === currentLedgerAddressPage) {
+  //       return;
+  //     }
 
-      const next = (pageNum - 1) * limit;
+  //     const next = (pageNum - 1) * limit;
 
-      await updateLedgerAddress({ offset: next, limit });
-      clearTimeout(timeout);
+  //     await updateLedgerAddress({ offset: next, limit });
+  //     clearTimeout(timeout);
 
-      // setLedgerLoading(false);
-      setIsLedgerErr(false);
+  //     // setLedgerLoading(false);
+  //     setIsLedgerErr(false);
 
-      updatePaging({
-        limit,
-        offset: next,
-      });
-      changeCurrentLedgerAddressPage(pageNum);
-    },
-    [limit, currentLedgerAddressPage, updatePaging, changeCurrentLedgerAddressPage, updateLedgerAddress],
-  );
+  //     updatePaging({
+  //       limit,
+  //       offset: next,
+  //     });
+  //     changeCurrentLedgerAddressPage(pageNum);
+  //   },
+  //   [limit, currentLedgerAddressPage, updatePaging, changeCurrentLedgerAddressPage, updateLedgerAddress],
+  // );
 
   // const chooseLedgerAddress = ({ address, point }: { address: string; point: number }) => {
   //   requestAddress({
@@ -398,7 +398,7 @@ export default function BridgeWalletModal() {
                   })}
                 </tbody>
               </table>
-              {!isLedgerLoading && (
+              {/* {!isLedgerLoading && (
                 <ul className="pagination">
                   <li
                     onClick={async () => {
@@ -428,7 +428,7 @@ export default function BridgeWalletModal() {
                     ˃
                   </li>
                 </ul>
-              )}
+              )} */}
             </>
           )}
         </Flex>

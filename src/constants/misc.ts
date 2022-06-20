@@ -1,6 +1,5 @@
+import { Fraction, Percent } from '@balancednetwork/sdk-core';
 import JSBI from 'jsbi';
-
-import { Fraction, Percent } from 'types/balanced-sdk-core';
 
 // 30 minutes, denominated in seconds
 export const DEFAULT_DEADLINE_FROM_NOW = 60 * 30;

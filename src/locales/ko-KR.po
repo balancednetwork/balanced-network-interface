@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-13 04:32\n"
+"PO-Revision-Date: 2022-05-25 05:28\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -99,6 +99,7 @@ msgstr "모든 담보물 잠김"
 msgid "All time"
 msgstr "모든 기간"
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -122,7 +123,7 @@ msgstr "송금할 자산"
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/WalletPanel.tsx
 msgid "Available"
-msgstr "대출 가능"
+msgstr "이용 가능"
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "BALN allocation"
@@ -181,6 +182,7 @@ msgstr "{0} bnUSD 대출됨."
 msgid "Borrowing bnUSD..."
 msgstr "대출 중인 bnUSD..."
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -213,10 +215,15 @@ msgstr "캔들"
 msgid "Casting your vote..."
 msgstr "투표하는 중..."
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Change vote"
 msgstr "투표 변경"
+
+#: src/app/components/ProposalModal/index.tsx
+msgid "Change vote?"
+msgstr "투표 변경?"
 
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
@@ -345,6 +352,10 @@ msgstr "풀 생성하기"
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Creating pool"
 msgstr "풀 생성 중"
+
+#: src/app/containers/ProposalPage/Ratio.tsx
+msgid "Current"
+msgstr "현재"
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "DATE"
@@ -640,6 +651,10 @@ msgstr "제안 유형"
 msgid "Proposals"
 msgstr "제안"
 
+#: src/app/containers/ProposalPage/Ratio.tsx
+msgid "Proposed"
+msgstr "제안"
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
 msgstr "정족수에 도달하지 못했습니다"
@@ -665,6 +680,7 @@ msgstr "재조정 임계값"
 msgid "Receive"
 msgstr "송금받기"
 
+#: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -730,6 +746,7 @@ msgstr "토큰 선택"
 #: src/app/components/home/wallets/SendPanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/containers/ProposalPage/Funding.tsx
 msgid "Send"
 msgstr "송금하기"
 
@@ -818,11 +835,6 @@ msgstr "{0} BALN이 스테이킹 됨."
 msgid "Staking BALN..."
 msgstr "BALN 스테이킹 중..."
 
-#: src/app/components/ProposalStatusIcon/index.tsx
-#: src/app/components/ProposalStatusIcon/index.tsx
-msgid "Starting in {startTimeStr}"
-msgstr "{startTimeStr} 에 시작됨"
-
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit"
 msgstr "제출하기"
@@ -834,6 +846,14 @@ msgstr "제안 제출"
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit proposal?"
 msgstr "제안을 제출하겠습니까?"
+
+#: src/app/components/ProposalModal/index.tsx
+msgid "Submit vote"
+msgstr "투표 제출"
+
+#: src/app/components/ProposalModal/index.tsx
+msgid "Submit vote?"
+msgstr "투표 제출?"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submitting a proposal..."
@@ -930,6 +950,10 @@ msgstr "{0}, 약 {1} 에 스테이킹 해제됩니다."
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
 msgstr "제목"
+
+#: src/app/containers/ProposalPage/Funding.tsx
+msgid "To"
+msgstr "로"
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -1043,6 +1067,23 @@ msgstr "투표"
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
 msgstr "투표 하기."
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting ends in {endTimeStr}"
+msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting has ended"
+msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#: src/app/components/ProposalStatusIcon/index.tsx
+msgid "Voting starts in {startTimeStr}"
+msgstr ""
+
+#: src/app/components/ProposalModal/index.tsx
+msgid "Voting weight"
+msgstr "투표 가중치"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -1201,9 +1242,29 @@ msgstr "당신의 공급량"
 msgid "and ends after 5 days."
 msgstr "5일 후에 종료됩니다."
 
+#: src/utils/timeformat.ts
+msgid "d"
+msgstr ""
+
+#: src/utils/timeformat.ts
+msgid "h"
+msgstr ""
+
+#: src/utils/timeformat.ts
+msgid "less then a minute"
+msgstr ""
+
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
 msgstr "유동성 풀"
+
+#: src/utils/timeformat.ts
+msgid "m"
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "or"
+msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then click Supply."
@@ -1281,10 +1342,6 @@ msgstr "{0} % 스테이킹 됨"
 #: src/app/components/trade/utils.tsx
 msgid "{currency} sent to the {pair} pool."
 msgstr "{currency} 를 {pair} 풀로 보냈습니다."
-
-#: src/app/components/ProposalStatusIcon/index.tsx
-msgid "{endTimeStr} left"
-msgstr "{endTimeStr} 남음"
 
 #: src/app/components/trade/utils.tsx
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."

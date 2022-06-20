@@ -17,16 +17,17 @@ import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton } from 'app/components/ProposalInfo';
 import { VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
+import { PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import bnJs from 'bnJs';
-import { usePlatformDayQuery } from 'queries/reward';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { getTrackerLink } from 'utils';
+import { formatTimeStr } from 'utils/timeformat';
 
 import { ACTIONS_MAPPING, RATIO_VALUE_FORMATTER } from '../NewProposalPage/constant';
 import Funding from './Funding';
@@ -49,7 +50,7 @@ const Progress = styled(Flex)`
 
 const setBarWidth = (width: string) => keyframes`
     0% {
-        width : 0; 
+        width : 3px; 
     }
     100% {
         width : ${width}%;
@@ -63,7 +64,8 @@ const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   border-radius: ${props => (props.percentage === '100' ? '5px' : '5px 0 0 5px')};
   transition: width 0.2s ease-in;
   justify-content: center;
-  animation: ${({ percentage }) => setBarWidth(percentage)} 2s ease-in-out forwards;
+  animation: ${({ percentage }) => percentage !== '0' && percentage !== 'undefined' && setBarWidth(percentage)} 2s
+    ease-in-out forwards;
 `;
 
 const ResultPanel = styled(Flex)`
@@ -103,7 +105,6 @@ export function ProposalPage() {
   const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotDay);
   const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
   const { data: userStatus } = voteStatusQuery;
-  const { data: platformDay } = usePlatformDayQuery();
   const isSmallScreen = useMedia('(max-width: 600px)');
 
   const actions = JSON.parse(proposal?.actions || '{}');
@@ -118,11 +119,8 @@ export function ProposalPage() {
   const proposalType = actionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
 
   const isActive =
-    proposal &&
-    platformDay &&
-    proposal.status === 'Active' &&
-    proposal.startDay <= platformDay &&
-    proposal.endDay > platformDay;
+    proposal && proposal.status === 'Active' && !formatTimeStr(proposal.startDay) && !!formatTimeStr(proposal.endDay);
+
   const hasUserVoted = isActive && userStatus?.hasVoted;
 
   const { account } = useIconReact();
@@ -355,7 +353,7 @@ export function ProposalPage() {
         {proposalType && actionKey && (
           <BoxPanel bg="bg2" my={10}>
             <Typography variant="h2" mb="20px">
-              {proposalType}
+              <Trans id={PROPOSAL_TYPE_LABELS[proposalType].id} />
             </Typography>
             {actionKey === ACTIONS_MAPPING.Funding[0] ? (
               <Funding recipient={actions[actionKey]._recipient} amounts={actions[actionKey]._amounts} />

@@ -1,10 +1,10 @@
 import React from 'react';
 
+import { SupportedChainId as NetworkId, addresses } from '@balancednetwork/balanced-js';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
-import addresses from 'packages/BalancedJs/addresses';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex, Link } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -16,8 +16,11 @@ import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import { Transaction, useAllTransactionsQuery, useInternalTransactionQuery } from 'queries/history';
 import { formatBigNumber, formatUnits, getTrackerLink } from 'utils';
+
+dayjs.extend(localizedFormat);
 
 const Row = styled(Box)`
   display: grid;
@@ -29,7 +32,7 @@ const Row = styled(Box)`
   grid-template-columns: 22% 1fr 15%;
 
   ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: 17% 1fr 15%;
+    grid-template-columns: 20% 1fr 15%;
   `}
 `;
 
@@ -114,7 +117,7 @@ const AmountItem = ({ value, symbol, positive }: { value?: string; symbol?: stri
 
 const convertValue = (value: string, currencyKey?: string) => {
   const decimals = SUPPORTED_TOKENS_LIST.find(token => token.symbol === currencyKey)?.decimals;
-  const currency = new BigNumber(formatUnits(value, decimals || 18));
+  const currency = new BigNumber(formatUnits(value, decimals || 18, 2));
   const exceptionList = ['IUSDT', 'IUSDC'];
 
   return currency.isGreaterThan(0.004) || (currencyKey && exceptionList.includes(currencyKey))
@@ -317,7 +320,7 @@ const getAmountWithSign = (tx: Transaction) => {
     case 'Claimed': {
       const amountItemList = getValuesAndSymbols(tx);
 
-      return amountItemList.map(({ symbol, amount }) => (
+      return amountItemList?.map(({ symbol, amount }) => (
         <AmountItem key={symbol + amount} value={amount} symbol={symbol} positive={true} />
       ));
     }
@@ -345,6 +348,8 @@ const ClaimRowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
 };
 const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
   const { networkId } = useIconReact();
+  const locale = useActiveLocale();
+  const languageCode = locale.split('-')[0];
 
   const method = tx.method as keyof typeof METHOD_CONTENT;
 
@@ -377,7 +382,7 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
 
       case 'Claimed': {
         const claimedList = getValuesAndSymbols(tx);
-        if (claimedList.length === 0) {
+        if (claimedList?.length === 0) {
           content = '';
         }
         break;
@@ -403,7 +408,7 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
 
   return (
     <RowContent>
-      <Typography minWidth="150px">{dayjs(tx.item_timestamp).format('D MMMM, HH:mm')}</Typography>
+      <Typography minWidth="150px">{dayjs(tx.item_timestamp).locale(languageCode).format('lll')}</Typography>
       <Flex>
         <Typography fontSize={16} sx={{ mr: '8px' }}>
           {content}

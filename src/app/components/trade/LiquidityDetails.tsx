@@ -69,6 +69,31 @@ function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber
   };
 }
 
+export const useHasLiquidity = (): boolean => {
+  const { account } = useIconReact();
+
+  const trackedTokenPairs = useTrackedTokenPairs();
+
+  // fetch the reserves for all V2 pools
+  const pairs = useAvailablePairs(trackedTokenPairs);
+
+  // fetch the user's balances of all tracked V2 LP tokens
+  const balances = useBalances(account, pairs);
+
+  const queuePair = pairs[BalancedJs.utils.POOL_IDS.sICXICX];
+  const queueBalance = balances[BalancedJs.utils.POOL_IDS.sICXICX];
+
+  const shouldShowQueue =
+    queuePair &&
+    queueBalance &&
+    (JSBI.greaterThan(queueBalance.balance.quotient, BIGINT_ZERO) ||
+      (queueBalance.balance1 && JSBI.greaterThan(queueBalance.balance1.quotient, BIGINT_ZERO)));
+
+  const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
+
+  return !!shouldShowQueue || !!balancesWithoutQ;
+};
+
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
 

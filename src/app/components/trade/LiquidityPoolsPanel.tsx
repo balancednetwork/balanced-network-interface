@@ -1,30 +1,44 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 import { Trans, t } from '@lingui/macro';
+import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass/styled-components';
 
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { isAddress } from 'utils';
 
 import SearchInput from '../SearchModal/SearchInput';
 import AllPoolsPanel from './AllPoolsPanel';
-import LiquidityDetails from './LiquidityDetails';
+import LiquidityDetails, { useHasLiquidity } from './LiquidityDetails';
 import { ChartControlButton, ChartControlGroup } from './utils';
 
+enum PanelType {
+  YourPools,
+  AllPools,
+}
+
 export default function LiquidityPoolsPanel() {
+  const { account } = useIconReact();
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const handleInput = useCallback(event => {
-    const input = event.target.value;
-    const checksummedInput = isAddress(input);
-    setSearchQuery(checksummedInput || input);
+    setSearchQuery(event.target.value);
   }, []);
 
-  const [value, setValue] = useState<number>(0);
-  const handleSwitch = (v: number) => {
-    setValue(v);
+  const [panelType, setPanelType] = useState<PanelType>(PanelType.AllPools);
+  const handleSwitch = (v: PanelType) => {
+    setPanelType(v);
   };
+
+  const hasLiquidity = useHasLiquidity();
+
+  useEffect(() => {
+    if (account && hasLiquidity) {
+      setPanelType(PanelType.YourPools);
+    } else {
+      setPanelType(PanelType.AllPools);
+    }
+  }, [account, hasLiquidity]);
 
   return (
     <BoxPanel bg="bg2" mb={10}>
@@ -34,20 +48,30 @@ export default function LiquidityPoolsPanel() {
             <Trans>Liquidity pools</Trans>
           </Typography>
 
-          <ChartControlGroup>
-            <ChartControlButton type="button" onClick={() => handleSwitch(0)} active={value === 0}>
-              <Trans>Your Pools</Trans>
-            </ChartControlButton>
-            <ChartControlButton type="button" onClick={() => handleSwitch(1)} active={value === 1}>
-              <Trans>All pools</Trans>
-            </ChartControlButton>
-          </ChartControlGroup>
+          {account && (
+            <ChartControlGroup>
+              <ChartControlButton
+                type="button"
+                onClick={() => handleSwitch(PanelType.YourPools)}
+                active={panelType === PanelType.YourPools}
+              >
+                <Trans>Your pools</Trans>
+              </ChartControlButton>
+              <ChartControlButton
+                type="button"
+                onClick={() => handleSwitch(PanelType.AllPools)}
+                active={panelType === PanelType.AllPools}
+              >
+                <Trans>All pools</Trans>
+              </ChartControlButton>
+            </ChartControlGroup>
+          )}
         </Flex>
 
         <SearchInput
           type="text"
           id="pool-search-input"
-          placeholder={t`Search pools ...`}
+          placeholder={t`Search pools...`}
           autoComplete="off"
           value={searchQuery}
           onChange={handleInput}
@@ -55,7 +79,7 @@ export default function LiquidityPoolsPanel() {
         />
       </Flex>
 
-      {value === 0 ? <LiquidityDetails /> : <AllPoolsPanel />}
+      {panelType === PanelType.YourPools ? <LiquidityDetails /> : <AllPoolsPanel />}
     </BoxPanel>
   );
 }

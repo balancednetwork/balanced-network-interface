@@ -54,7 +54,7 @@ export function TradePage() {
           </TabPanel>
         </Flex>
 
-        {account && value === 1 && <LiquidityPoolsPanel />}
+        {value === 1 && <LiquidityPoolsPanel />}
       </Box>
     </>
   );

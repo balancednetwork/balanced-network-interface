@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
@@ -91,6 +91,9 @@ export default function LiquidityDetails() {
 
   const rewards = useRewards();
 
+  // prevent accordion expanded on mounted
+  const [isHided, setIsHided] = useState(true);
+
   const queuePair = pairs[BalancedJs.utils.POOL_IDS.sICXICX];
   const queueBalance = balances[BalancedJs.utils.POOL_IDS.sICXICX];
   const queueReward = rewards[BalancedJs.utils.POOL_IDS.sICXICX];
@@ -158,10 +161,10 @@ export default function LiquidityDetails() {
         <Accordion collapsible>
           {shouldShowQueue && (
             <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
-              <StyledAccordionButton>
+              <StyledAccordionButton onClick={() => setIsHided(false)}>
                 <PoolRecordQ balance={queueBalance} pair={queuePair} totalReward={queueReward} />
               </StyledAccordionButton>
-              <StyledAccordionPanel hidden={false}>
+              <StyledAccordionPanel hidden={isHided}>
                 <StyledBoxPanel bg="bg3">
                   <WithdrawModalQ balance={queueBalance} pair={queuePair} />
                 </StyledBoxPanel>
@@ -171,7 +174,7 @@ export default function LiquidityDetails() {
           {balancesWithoutQ &&
             userPools.map((poolId, index, arr) => (
               <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
-                <StyledAccordionButton>
+                <StyledAccordionButton onClick={() => setIsHided(false)}>
                   <PoolRecord
                     poolId={parseInt(poolId)}
                     balance={balances[poolId]}
@@ -179,7 +182,7 @@ export default function LiquidityDetails() {
                     totalReward={rewards[poolId]}
                   />
                 </StyledAccordionButton>
-                <StyledAccordionPanel hidden={false}>
+                <StyledAccordionPanel hidden={isHided}>
                   <StyledBoxPanel bg="bg3">
                     <StakeLPPanel poolId={parseInt(poolId)} />
                     <WithdrawModal poolId={parseInt(poolId)} balance={balances[poolId]} pair={sortedPairs[poolId]} />

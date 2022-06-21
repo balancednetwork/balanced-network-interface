@@ -79,7 +79,7 @@ function CurrencyRow({
 
             {balance?.greaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
               <Typography variant={'span'} fontSize={14} color={theme.colors.text2} sx={{ display: 'block' }}>
-                {`$${balance.multiply(rateFracs[currency.symbol!]).toFixed(2)}`}
+                {`$${balance.multiply(rateFracs[currency.symbol!]).toFixed(2, { groupSeparator: ',' })}`}
               </Typography>
             )}
           </DataText>

@@ -2,7 +2,6 @@ import React, { useEffect, CSSProperties, useState, useCallback } from 'react';
 
 import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
 import { Flex } from 'rebass/styled-components';
@@ -75,7 +74,7 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {new BigNumber(balance?.toSignificant(4) || 0).toFormat()}
+            {balance && balance.greaterThan(0) ? balance.toFixed(2, { groupSeparator: ',' }) : 0}
 
             {balance?.greaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
               <Typography variant={'span'} fontSize={14} color={theme.colors.text2} sx={{ display: 'block' }}>
@@ -110,7 +109,7 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {rateFracs && rateFracs[currency.symbol!] && `$${rateFracs[currency.symbol!].toFixed(2)}`}
+            {rateFracs && rateFracs[currency.symbol!] && `$${rateFracs[currency.symbol!].toSignificant(3)}`}
           </DataText>
           {isUserAddedToken && (isMobile || show) && (
             <MinusCircle

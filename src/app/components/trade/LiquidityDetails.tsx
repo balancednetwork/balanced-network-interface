@@ -156,7 +156,7 @@ export default function LiquidityDetails() {
         </DashGrid>
         {shouldShowQueue && (
           <Accordion collapsible>
-            <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={false}>
+            <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
               <StyledAccordionButton>
                 <PoolRecordQ balance={queueBalance} pair={queuePair} totalReward={queueReward} />
               </StyledAccordionButton>
@@ -430,23 +430,6 @@ const PoolRecord = ({
         )}
       </ListItem>
     </>
-    // <>
-    //   {Number(bBalance.toFixed(2)) > MINIMUM_B_BALANCE_TO_SHOW_POOL ? (
-    //     <ListItem>
-    //       <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
-
-    //       <DataText>
-    //         {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance.currency.symbol || '...'}`}
-    //         <br />
-    //         {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance.currency.symbol || '...'}`}
-    //       </DataText>
-    //       {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
-    //       {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
-    //     </ListItem>
-    //   ) : (
-    //     <></>
-    //   )}
-    // </>
   );
 };
 

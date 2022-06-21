@@ -10,7 +10,6 @@ import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
-import { FRACTION_ZERO } from 'constants/misc';
 import { usePoolData } from 'hooks/usePools';
 import { PairState } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
@@ -30,23 +29,14 @@ export default function LPDescription() {
   const upSmall = useMedia('(min-width: 600px)');
   const userPoolBalance = useLiquidityTokenBalance(account, pair);
   const totalPoolTokens = pair?.totalSupply;
-  const [
-    token0Deposited,
-    // token1Deposited
-  ] =
+  const token0Deposited =
     !!pair &&
     !!totalPoolTokens &&
     !!userPoolBalance &&
     // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
     JSBI.greaterThanOrEqual(totalPoolTokens.quotient, userPoolBalance.quotient)
-      ? [
-          pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false),
-          // pair.getLiquidityValue(pair.token1, totalPoolTokens, userPoolBalance, false),
-        ]
-      : [
-          undefined,
-          // undefined
-        ];
+      ? pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false)
+      : undefined;
 
   const apys = useAllPairsAPY();
   const apy = apys && apys[pair?.poolId ?? -1];
@@ -60,6 +50,7 @@ export default function LPDescription() {
       ? tryParseAmount(otherTypedValue, currencies[dependentField])
       : parsedAmounts[dependentField],
   };
+
   const poolRewards = useReward(pair?.poolId ?? -1);
   const tempTotalPoolTokens = new BigNumber(totalPoolTokens?.toFixed() || 0).plus(
     formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0,
@@ -80,10 +71,8 @@ export default function LPDescription() {
   const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
     !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
 
-  const baseCurrencyTotalSupply = totalSupply(baseValue, poolData?.suppliedBase);
-  const quoteCurrencyTotalSupply = totalSupply(quoteValue, poolData?.suppliedQuote);
-  const baseCurrencyTotalSupplyStr = baseCurrencyTotalSupply?.toFixed() || '0';
-  const quoteCurrencyTotalSupplyStr = baseCurrencyTotalSupply?.toFixed() || '0';
+  const baseCurrencyTotalSupply = new BigNumber(totalSupply(baseValue, poolData?.suppliedBase)?.toFixed() || '0');
+  const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, poolData?.suppliedQuote)?.toFixed() || '0');
 
   const tempTotalSupplyValue = new BigNumber(pair?.reserve0.toFixed() || 0).plus(
     new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0),
@@ -92,16 +81,10 @@ export default function LPDescription() {
   const suppliedReward = useMemo(
     () =>
       poolRewards
-        ?.times(
-          baseCurrencyTotalSupplyStr
-            ? new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0).plus(
-                new BigNumber(baseCurrencyTotalSupplyStr),
-              )
-            : baseCurrencyTotalSupply?.toFixed() || 0,
-        )
+        ?.times(new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0).plus(baseCurrencyTotalSupply))
         .div(tempTotalSupplyValue.isZero() ? 1 : tempTotalSupplyValue),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [baseCurrencyTotalSupply, formattedAmounts[Field.CURRENCY_A]?.toFixed(), poolRewards, pair?.reserve0.toFixed()],
+    [baseCurrencyTotalSupply, formattedAmounts[Field.CURRENCY_A]?.toFixed(), poolRewards],
   );
 
   return (
@@ -170,19 +153,19 @@ export default function LPDescription() {
                       {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                         <>
                           {formattedAmounts[Field.CURRENCY_A]
-                            ? new BigNumber(baseCurrencyTotalSupplyStr)
+                            ? new BigNumber(baseCurrencyTotalSupply)
                                 .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
                                 .dp(6)
-                                .toFormat()
-                            : baseCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' }) || '...'}{' '}
+                                .toFormat() || '...'
+                            : baseCurrencyTotalSupply?.dp(6).toFormat() || '...'}{' '}
                           {pair?.reserve0.currency?.symbol}
                           <br />
                           {formattedAmounts[Field.CURRENCY_B]
-                            ? new BigNumber(quoteCurrencyTotalSupplyStr)
+                            ? new BigNumber(quoteCurrencyTotalSupply)
                                 .plus(formattedAmounts[Field.CURRENCY_B]?.toFixed() || 0)
                                 .dp(6)
-                                .toFormat()
-                            : quoteCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' }) || '...'}{' '}
+                                .toFormat() || '...'
+                            : quoteCurrencyTotalSupply?.dp(6).toFormat() || '...'}{' '}
                           {pair?.reserve1.currency?.symbol}
                         </>
                       ) : (
@@ -218,9 +201,7 @@ export default function LPDescription() {
                         </Typography>
                       ) : (
                         <Typography textAlign="center" variant="p">
-                          {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
-                            ? 'N/A'
-                            : `~ ${suppliedReward?.dp(2).toFormat() || '...'} BALN`}
+                          {suppliedReward?.isEqualTo(0) ? 'N/A' : `~ ${suppliedReward?.dp(2).toFormat() || '...'} BALN`}
                         </Typography>
                       )}
                     </Box>

@@ -69,7 +69,7 @@ function CurrencyRow({
           <DataText variant="p" fontWeight="bold">
             {currency?.symbol}
             <Typography variant={'span'} fontSize={14} color={theme.colors.text2} sx={{ display: 'block' }}>
-              {rateFracs && rateFracs[currency.symbol!] && `$${rateFracs[currency.symbol!].toFixed(2)}`}
+              {rateFracs && rateFracs[currency.symbol!] && `$${rateFracs[currency.symbol!].toSignificant(3)}`}
             </Typography>
           </DataText>
         </Flex>

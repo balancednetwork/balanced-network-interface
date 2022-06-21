@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';

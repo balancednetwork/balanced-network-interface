@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
@@ -19,7 +20,6 @@ import { useReward } from 'store/reward/hooks';
 import { useWithdrawnPercent } from 'store/stakedLP/hooks';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useLiquidityTokenBalance } from 'store/wallet/hooks';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { formatBigNumber } from 'utils';
 
 export default function LPDescription() {

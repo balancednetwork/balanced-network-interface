@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Fraction, Price, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { parseInt, range } from 'lodash';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 
 import bnJs from 'bnJs';
@@ -12,7 +13,6 @@ import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useReward } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useUserAddedTokens } from 'store/user/hooks';
-import { Currency, CurrencyAmount, Fraction, Price, Token } from 'types/balanced-sdk-core';
 import { toFraction } from 'utils';
 
 interface PoolState {

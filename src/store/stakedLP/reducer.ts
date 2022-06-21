@@ -1,7 +1,6 @@
+import { CurrencyAmount, Currency } from '@balancednetwork/sdk-core';
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
-
-import { CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 
 import { setStakedLPPercent, setWithdrawnValue } from './actions';
 

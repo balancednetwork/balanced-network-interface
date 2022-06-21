@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { CurrencyAmount, Currency } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -9,7 +10,6 @@ import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { useBalance } from 'hooks/usePools';
 import { AppState } from 'store';
-import { CurrencyAmount, Currency } from 'types/balanced-sdk-core';
 
 import { setStakedLPPercent, setWithdrawnValue } from './actions';
 

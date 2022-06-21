@@ -1,8 +1,7 @@
+import { Fraction } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
-
-import { Fraction } from 'types/balanced-sdk-core/entities/fractions/fraction';
 
 export const Panel = styled(Flex)`
   overflow: hidden;

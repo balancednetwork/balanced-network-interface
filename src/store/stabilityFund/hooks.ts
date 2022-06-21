@@ -1,6 +1,6 @@
 import { CallData } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
+import JSBI from 'jsbi';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -16,7 +16,8 @@ import { setBalances } from './actions';
 
 const bnUSDAddress = bnJs.bnUSD.address;
 const stabilityFundAddress = bnJs.StabilityFund.address;
-const swapDollarLimitCushion = 5;
+const SWAP_DOLLAR_LIMIT_CUSHION = JSBI.BigInt(5);
+const TEN = JSBI.BigInt(10);
 
 export function useStabilityFundInfo(): AppState['stabilityFund'] {
   return useSelector((state: AppState) => state.stabilityFund);
@@ -80,9 +81,13 @@ export function useMaxSwapSize(): CurrencyAmount<Token> | undefined {
     if (isBnUSDGoingIn) {
       return CurrencyAmount.fromRawAmount(
         trade.inputAmount.currency.wrapped,
-        new BigNumber(balances[trade.outputAmount.currency.wrapped.address].toFixed())
-          .times(new BigNumber(10).pow(trade.inputAmount.currency.wrapped.decimals))
-          .toFixed(0),
+        JSBI.multiply(
+          balances[trade.outputAmount.currency.wrapped.address].numerator,
+          JSBI.exponentiate(
+            TEN,
+            JSBI.BigInt(trade.inputAmount.currency.decimals - trade.outputAmount.currency.decimals),
+          ),
+        ),
       );
     } else {
       const tokenAddress = trade.inputAmount.currency.wrapped.address;
@@ -93,7 +98,10 @@ export function useMaxSwapSize(): CurrencyAmount<Token> | undefined {
           .subtract(
             CurrencyAmount.fromRawAmount(
               trade.inputAmount.currency.wrapped,
-              swapDollarLimitCushion * Math.pow(10, trade.inputAmount.currency.decimals),
+              JSBI.multiply(
+                SWAP_DOLLAR_LIMIT_CUSHION,
+                JSBI.exponentiate(TEN, JSBI.BigInt(trade.inputAmount.currency.decimals)),
+              ),
             ),
           )
       );

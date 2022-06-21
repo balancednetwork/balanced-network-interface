@@ -1,6 +1,5 @@
+import { Currency } from '@balancednetwork/sdk-core';
 import { createAction } from '@reduxjs/toolkit';
-
-import { Currency } from 'types/balanced-sdk-core';
 
 export enum Field {
   CURRENCY_A = 'CURRENCY_A',

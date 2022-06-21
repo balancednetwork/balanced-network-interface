@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-25 05:28\n"
+"PO-Revision-Date: 2022-05-28 18:31\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -1070,16 +1070,16 @@ msgstr "Bỏ phiếu."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting ends in {endTimeStr}"
-msgstr ""
+msgstr "Bỏ phiếu kết thúc trong {endTimeStr}"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting has ended"
-msgstr ""
+msgstr "Bỏ phiếu đã kết thúc"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting starts in {startTimeStr}"
-msgstr ""
+msgstr "Bỏ phiếu bắt đầu trong {startTimeStr}"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
@@ -1242,15 +1242,15 @@ msgstr "và kết thúc sau 5 ngày."
 
 #: src/utils/timeformat.ts
 msgid "d"
-msgstr ""
+msgstr "ngày"
 
 #: src/utils/timeformat.ts
 msgid "h"
-msgstr ""
+msgstr "giờ"
 
 #: src/utils/timeformat.ts
 msgid "less then a minute"
-msgstr ""
+msgstr "dưới 1 phút"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
@@ -1258,7 +1258,7 @@ msgstr "hồ thanh khoản"
 
 #: src/utils/timeformat.ts
 msgid "m"
-msgstr ""
+msgstr "phút"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "or"

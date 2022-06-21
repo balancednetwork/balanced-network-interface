@@ -1,7 +1,7 @@
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { stringify } from 'querystring';
 import { useQuery } from 'react-query';

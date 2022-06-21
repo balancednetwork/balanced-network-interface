@@ -1,7 +1,8 @@
 import React from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { CurrencyAmount, Currency, Token } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -16,7 +17,6 @@ import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
 import { toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 

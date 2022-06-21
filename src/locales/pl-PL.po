@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-25 05:28\n"
+"PO-Revision-Date: 2022-05-26 20:29\n"
 "Last-Translator: \n"
 "Language: pl_PL\n"
 "Language-Team: Polish\n"
@@ -1070,16 +1070,16 @@ msgstr "Głos oddany."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting ends in {endTimeStr}"
-msgstr ""
+msgstr "Głosowanie zakończy się za {endTimeStr}"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting has ended"
-msgstr ""
+msgstr "Głosowanie zakończone"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting starts in {startTimeStr}"
-msgstr ""
+msgstr "Głosowanie rozpocznie się za {startTimeStr}"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
@@ -1244,15 +1244,15 @@ msgstr "i kończy się po 5 dniach."
 
 #: src/utils/timeformat.ts
 msgid "d"
-msgstr ""
+msgstr "d"
 
 #: src/utils/timeformat.ts
 msgid "h"
-msgstr ""
+msgstr "godz."
 
 #: src/utils/timeformat.ts
 msgid "less then a minute"
-msgstr ""
+msgstr "mniej niż minutę"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
@@ -1260,11 +1260,11 @@ msgstr "pula płynności"
 
 #: src/utils/timeformat.ts
 msgid "m"
-msgstr ""
+msgstr "min"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "or"
-msgstr ""
+msgstr "lub"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then click Supply."

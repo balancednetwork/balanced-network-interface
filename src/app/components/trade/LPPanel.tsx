@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { CurrencyAmount, Currency, Percent } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
@@ -15,7 +16,6 @@ import { PairState } from 'hooks/useV2Pairs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
-import { CurrencyAmount, Currency, Percent } from 'types/balanced-sdk-core';
 import { maxAmountSpend } from 'utils';
 
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';

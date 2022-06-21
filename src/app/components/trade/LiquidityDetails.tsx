@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
 import { t, Trans } from '@lingui/macro';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
-import lodash from 'lodash';
-import { BalancedJs } from 'packages/BalancedJs';
+import { omit } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { useMedia } from 'react-use';
@@ -37,8 +39,6 @@ import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useTrackedTokenPairs } from 'store/user/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
-import { Currency, CurrencyAmount, Fraction, Percent } from 'types/balanced-sdk-core';
-import { Pair } from 'types/balanced-v1-sdk';
 import { multiplyCABN, toFraction, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -103,9 +103,8 @@ export default function LiquidityDetails() {
 
   if (!account || Object.keys(pairs).length === 0) return null;
 
-  const pairsWithoutQ = lodash.omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
-  const balancesWithoutQ = lodash.omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
-  // filter user pools and show only the pairs that user has balance or staked LP balance greater than 0
+  const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
+  const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const userPools = Object.keys(pairsWithoutQ).filter(
     poolId =>
       balances[poolId] &&

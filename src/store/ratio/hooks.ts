@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { BalancedJs } from 'packages/BalancedJs';
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';

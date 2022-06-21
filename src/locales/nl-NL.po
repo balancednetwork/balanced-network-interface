@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-25 05:28\n"
+"PO-Revision-Date: 2022-06-11 19:19\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -1070,16 +1070,16 @@ msgstr "Stem uitgebracht."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting ends in {endTimeStr}"
-msgstr ""
+msgstr "Stemmen eindigt over {endTimeStr}"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting has ended"
-msgstr ""
+msgstr "De stemming is afgelopen"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting starts in {startTimeStr}"
-msgstr ""
+msgstr "Stemmen begint over {startTimeStr}"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
@@ -1244,15 +1244,15 @@ msgstr "en eindigt na 5 dagen."
 
 #: src/utils/timeformat.ts
 msgid "d"
-msgstr ""
+msgstr "d"
 
 #: src/utils/timeformat.ts
 msgid "h"
-msgstr ""
+msgstr "h"
 
 #: src/utils/timeformat.ts
 msgid "less then a minute"
-msgstr ""
+msgstr "minder dan een minuut"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
@@ -1260,7 +1260,7 @@ msgstr "liquiditeitspool"
 
 #: src/utils/timeformat.ts
 msgid "m"
-msgstr ""
+msgstr "m"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "or"

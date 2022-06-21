@@ -1,10 +1,10 @@
-import React, { createRef, forwardRef } from 'react';
+import React from 'react';
 
 import { Skeleton } from '@material-ui/lab';
+import { motion } from 'framer-motion';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import AnimateList from 'app/components/AnimatedList';
 import Divider from 'app/components/Divider';
 import PoolLogo, { IconWrapper, PoolLogoWrapper } from 'app/components/PoolLogo';
 import { ReactComponent as SigmaIcon } from 'assets/icons/sigma.svg';
@@ -213,9 +213,9 @@ type PairItemProps = {
   };
 };
 
-const PairItem = forwardRef(({ pair }: PairItemProps, ref) => (
+const PairItem = ({ pair }: PairItemProps) => (
   <>
-    <DashGrid my={2} ref={ref}>
+    <DashGrid my={2}>
       <DataText>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px' }}>
@@ -232,7 +232,7 @@ const PairItem = forwardRef(({ pair }: PairItemProps, ref) => (
     </DashGrid>
     <Divider />
   </>
-));
+);
 
 export default function PairSection() {
   const allPairs = useAllPairs();
@@ -312,11 +312,11 @@ export default function PairSection() {
         </DashGrid>
 
         {allPairs ? (
-          <AnimateList>
-            {sortData(Object.values(allPairs)).map(pair => (
-              <PairItem key={`${pair.baseCurrencyKey}${pair.quoteCurrencyKey}`} ref={createRef()} pair={pair} />
-            ))}
-          </AnimateList>
+          sortData(Object.values(allPairs)).map(pair => (
+            <motion.div key={`${pair.baseCurrencyKey}${pair.quoteCurrencyKey}`} layout>
+              <PairItem pair={pair} />
+            </motion.div>
+          ))
         ) : (
           <>
             <SkeletonPairPlaceholder />

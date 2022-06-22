@@ -67,13 +67,7 @@ function CurrencyRow({
           <CurrencyLogo currency={currency} style={{ marginRight: '15px' }} />
           <DataText variant="p" fontWeight="bold">
             {currency?.symbol}
-            <Typography
-              variant={'span'}
-              fontSize={14}
-              fontWeight={400}
-              color={theme.colors.text2}
-              sx={{ display: 'block' }}
-            >
+            <Typography variant="span" fontSize={14} fontWeight={400} color="text2" display="block">
               {rateFracs && rateFracs[currency.symbol!] && `$${rateFracs[currency.symbol!].toSignificant(3)}`}
             </Typography>
           </DataText>
@@ -83,7 +77,7 @@ function CurrencyRow({
             {balance && balance.greaterThan(0) ? balance.toFixed(2, { groupSeparator: ',' }) : 0}
 
             {balance?.greaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
-              <Typography variant={'span'} fontSize={14} color={theme.colors.text2} sx={{ display: 'block' }}>
+              <Typography variant="span" fontSize={14} color="text2" display="block">
                 {`$${balance.multiply(rateFracs[currency.symbol!]).toFixed(2, { groupSeparator: ',' })}`}
               </Typography>
             )}

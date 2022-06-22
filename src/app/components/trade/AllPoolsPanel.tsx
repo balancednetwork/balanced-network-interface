@@ -6,11 +6,10 @@ import { Flex, Box, Text } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
 import Divider from 'app/components/Divider';
-import PoolLogo, { IconWrapper, PoolLogoWrapper } from 'app/components/PoolLogo';
-import { ReactComponent as SigmaIcon } from 'assets/icons/sigma.svg';
+import PoolLogo from 'app/components/PoolLogo';
 import { PairInfo } from 'constants/pairs';
 import useSort from 'hooks/useSort';
-import { useAllPairs, useAllPairsTotal } from 'queries/reward';
+import { useAllPairs } from 'queries/reward';
 import { getFormattedNumber } from 'utils/formatter';
 
 const List = styled(Box)`
@@ -23,9 +22,9 @@ const DashGrid = styled(Box)`
   display: grid;
   gap: 1em;
   align-items: center;
-  grid-template-columns: 2fr repeat(5, 1fr);
+  grid-template-columns: 2fr repeat(4, 1fr);
   ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: 1.2fr 0.5fr repeat(4, 1fr);
+    grid-template-columns: 1.2fr 0.5fr repeat(3, 1fr);
   `}
   > * {
     justify-content: flex-end;
@@ -42,10 +41,6 @@ const DataText = styled(Flex)`
   color: #ffffff;
   align-items: center;
   line-height: 1.4;
-`;
-
-const FooterText = styled(DataText)`
-  font-weight: bold;
 `;
 
 const StyledSkeleton = styled(Skeleton)`
@@ -156,20 +151,6 @@ export const HeaderText = styled(Flex)<{ className?: string }>`
   }
 `;
 
-function TotalIcon() {
-  return (
-    <PoolLogoWrapper>
-      <IconWrapper></IconWrapper>
-      <IconWrapper ml="-38px"></IconWrapper>
-      <IconWrapper ml="-38px"></IconWrapper>
-      <IconWrapper ml="-38px"></IconWrapper>
-      <IconWrapper ml="-38px">
-        <SigmaIcon width={20} height={20} />
-      </IconWrapper>
-    </PoolLogoWrapper>
-  );
-}
-
 const SkeletonPairPlaceholder = () => {
   return (
     <DashGrid my={2}>
@@ -186,9 +167,6 @@ const SkeletonPairPlaceholder = () => {
       </DataText>
       <DataText>
         <StyledSkeleton width={50} />
-      </DataText>
-      <DataText>
-        <StyledSkeleton width={70} />
       </DataText>
       <DataText>
         <StyledSkeleton width={100} />
@@ -225,7 +203,6 @@ const PairItem = ({ pair }: PairItemProps) => (
         </Flex>
       </DataText>
       <DataText>{pair.apy ? getFormattedNumber(pair.apy, 'percent2') : '-'}</DataText>
-      <DataText>{getFormattedNumber(pair.participant, 'number')}</DataText>
       <DataText>{getFormattedNumber(pair.tvl, 'currency0')}</DataText>
       <DataText>{pair.volume ? getFormattedNumber(pair.volume, 'currency0') : '-'}</DataText>
       <DataText>{pair.fees ? getFormattedNumber(pair.fees, 'currency0') : '-'}</DataText>
@@ -236,7 +213,6 @@ const PairItem = ({ pair }: PairItemProps) => (
 
 export default function PairSection() {
   const allPairs = useAllPairs();
-  const total = useAllPairsTotal();
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apy', order: 'DESC' });
 
   return (
@@ -264,17 +240,6 @@ export default function PairSection() {
             }
           >
             APY
-          </HeaderText>
-          <HeaderText
-            role="button"
-            className={sortBy.key === 'participant' ? sortBy.order : ''}
-            onClick={() =>
-              handleSortSelect({
-                key: 'participant',
-              })
-            }
-          >
-            PARTICIPANTS
           </HeaderText>
           <HeaderText
             role="button"
@@ -341,24 +306,6 @@ export default function PairSection() {
             <Divider />
             <SkeletonPairPlaceholder />
           </>
-        )}
-
-        {total && (
-          <DashGrid my={2}>
-            <FooterText>
-              <Flex alignItems="center">
-                <Box sx={{ minWidth: '95px' }}>
-                  <TotalIcon />
-                </Box>
-                <Text ml={2}>Total</Text>
-              </Flex>
-            </FooterText>
-            <FooterText>–</FooterText>
-            <FooterText>{getFormattedNumber(total.participant, 'number')}</FooterText>
-            <FooterText>{getFormattedNumber(total.tvl, 'currency0')}</FooterText>
-            <FooterText>{getFormattedNumber(total.volume, 'currency0')}</FooterText>
-            <FooterText>{getFormattedNumber(total.fees, 'currency0')}</FooterText>
-          </DashGrid>
         )}
       </List>
     </Box>

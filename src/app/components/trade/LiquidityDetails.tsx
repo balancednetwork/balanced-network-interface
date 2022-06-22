@@ -119,8 +119,6 @@ export default function LiquidityDetails() {
     (JSBI.greaterThan(queueBalance.balance.quotient, BIGINT_ZERO) ||
       (queueBalance.balance1 && JSBI.greaterThan(queueBalance.balance1.quotient, BIGINT_ZERO)));
 
-  if (!account || Object.keys(pairs).length === 0) return null;
-
   const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const userPools = Object.keys(pairsWithoutQ).filter(

@@ -24,12 +24,7 @@ import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
-import {
-  useBalance,
-  // usePool,
-  usePoolData,
-  // useAvailableBalances, pairToken
-} from 'hooks/usePools';
+import { useBalance, usePoolData } from 'hooks/usePools';
 import { BalanceData, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
@@ -371,8 +366,6 @@ const PoolRecord = ({
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
 
-  // const { baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
-
   const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
   const availableWithdrawnPercent = new BigNumber(100).minus(percent || ZERO);
 
@@ -659,7 +652,6 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
     account ?? undefined,
     useMemo(() => [pair.token0, pair.token1], [pair]),
   );
-  // const pool = usePool(poolId);
   const lpBalance = useBalance(poolId);
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();

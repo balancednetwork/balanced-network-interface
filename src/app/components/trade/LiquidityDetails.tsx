@@ -378,9 +378,8 @@ const PoolRecord = ({
     availableWithdrawnPercentDenominator.toFixed(),
   );
 
-  const totalSupply = (stakedValue, suppliedValue) =>
-    (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' }) ||
-    '...';
+  const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
+    (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' });
 
   const baseCurrencyTotalSupply = totalSupply(baseValue, poolData?.suppliedBase);
   const quoteCurrencyTotalSupply = totalSupply(quoteValue, poolData?.suppliedQuote);
@@ -397,17 +396,22 @@ const PoolRecord = ({
           <StyledArrowDownIcon />
         </StyledDataText>
         <DataText>
-          {`${baseCurrencyTotalSupply} ${aBalance.currency.symbol || '...'}`}
+          {`${baseCurrencyTotalSupply || '...'} ${aBalance.currency.symbol || '...'}`}
           <br />
-          {`${quoteCurrencyTotalSupply} ${bBalance.currency.symbol || '...'}`}
+          {`${quoteCurrencyTotalSupply || '...'} ${bBalance.currency.symbol || '...'}`}
         </DataText>
 
         {upSmall && (
           <DataText>{`${
-            ((baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
-              ? poolData?.poolShare.multiply(100)
-              : poolData?.poolShare.multiply(availableWithdrawnPercentFraction)
-            )?.toFixed(4, { groupSeparator: ',' }) || '---'
+            (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
+              ? poolData?.poolShare.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
+              : percent?.isEqualTo(100)
+              ? new BigNumber(baseCurrencyTotalSupply || 0)
+                  .div(new BigNumber(pair?.reserve0.toFixed(4) || 1))
+                  .dp(4)
+                  .toFormat()
+              : poolData?.poolShare.multiply(availableWithdrawnPercentFraction)?.toFixed(4, { groupSeparator: ',' }) ||
+                '---'
           }%`}</DataText>
         )}
         {upSmall && (

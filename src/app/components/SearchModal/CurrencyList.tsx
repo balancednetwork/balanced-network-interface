@@ -67,7 +67,13 @@ function CurrencyRow({
           <CurrencyLogo currency={currency} style={{ marginRight: '15px' }} />
           <DataText variant="p" fontWeight="bold">
             {currency?.symbol}
-            <Typography variant={'span'} fontSize={14} color={theme.colors.text2} sx={{ display: 'block' }}>
+            <Typography
+              variant={'span'}
+              fontSize={14}
+              fontWeight={400}
+              color={theme.colors.text2}
+              sx={{ display: 'block' }}
+            >
               {rateFracs && rateFracs[currency.symbol!] && `$${rateFracs[currency.symbol!].toSignificant(3)}`}
             </Typography>
           </DataText>

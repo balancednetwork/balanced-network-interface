@@ -104,7 +104,7 @@ const BTP = () => {
       const { balance } = window['accountInfo'];
       setBalanceOfAssetName(balance);
     }
-  }, []);
+  }, [window['accountInfo']]);
 
   const onChange = values => {
     // const {

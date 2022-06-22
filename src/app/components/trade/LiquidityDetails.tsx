@@ -833,6 +833,12 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
     (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' }) ||
     '...';
 
+  const isValid =
+    formattedAmounts[Field.CURRENCY_A] &&
+    formattedAmounts[Field.CURRENCY_B] &&
+    formattedAmounts[Field.CURRENCY_A] !== '0' &&
+    formattedAmounts[Field.CURRENCY_B] !== '0';
+
   return (
     <>
       <Wrapper>
@@ -885,7 +891,7 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
           />
         </Box>
         <Flex alignItems="center" justifyContent="center">
-          <Button onClick={handleShowConfirm}>
+          <Button onClick={handleShowConfirm} disabled={!isValid}>
             <Trans>Withdraw liquidity</Trans>
           </Button>
         </Flex>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 import { Skeleton } from '@material-ui/lab';
 import { motion } from 'framer-motion';
@@ -7,6 +7,9 @@ import styled, { css } from 'styled-components';
 
 import Divider from 'app/components/Divider';
 import PoolLogo from 'app/components/PoolLogo';
+import { MouseoverTooltip } from 'app/components/Tooltip';
+import { Typography } from 'app/theme';
+import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { PairInfo } from 'constants/pairs';
 import useSort from 'hooks/useSort';
 import { useAllPairs } from 'queries/reward';
@@ -24,7 +27,7 @@ const DashGrid = styled(Box)`
   align-items: center;
   grid-template-columns: 2fr repeat(4, 1fr);
   ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: 1.2fr 0.5fr repeat(3, 1fr);
+    grid-template-columns: 1.2fr repeat(4, 1fr);
   `}
   > * {
     justify-content: flex-end;
@@ -151,6 +154,15 @@ export const HeaderText = styled(Flex)<{ className?: string }>`
   }
 `;
 
+const APYItem = styled(Flex)`
+  align-items: flex-end;
+  line-height: 25px;
+`;
+
+const QuestionWrapper = styled(Box)`
+  margin: 0 5px 0 5px;
+`;
+
 const SkeletonPairPlaceholder = () => {
   return (
     <DashGrid my={2}>
@@ -185,16 +197,18 @@ type PairItemProps = {
   pair: PairInfo & {
     tvl: number;
     apy: number;
+    feesApy: number;
+    apyTotal: number;
     participant: number;
     volume: number;
     fees: number;
   };
 };
 
-const PairItem = ({ pair }: PairItemProps) => (
+const PairItem = forwardRef(({ pair }: PairItemProps, ref) => (
   <>
-    <DashGrid my={2}>
-      <DataText>
+    <DashGrid my={2} ref={ref}>
+      <DataText minWidth={'220px'}>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px' }}>
             <PoolLogo baseCurrency={pair.baseToken} quoteCurrency={pair.quoteToken} />
@@ -202,18 +216,38 @@ const PairItem = ({ pair }: PairItemProps) => (
           <Text ml={2}>{`${pair.baseCurrencyKey} / ${pair.quoteCurrencyKey}`}</Text>
         </Flex>
       </DataText>
-      <DataText>{pair.apy ? getFormattedNumber(pair.apy, 'percent2') : '-'}</DataText>
+      <DataText>
+        <Flex flexDirection="column" py={2} alignItems="flex-end">
+          {pair.apy && (
+            <APYItem>
+              <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                BALN:
+              </Typography>
+              {getFormattedNumber(pair.apy, 'percent2')}
+            </APYItem>
+          )}
+          {pair.feesApy !== 0 && (
+            <APYItem>
+              <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                Fees:
+              </Typography>
+              {getFormattedNumber(pair.feesApy, 'percent2')}
+            </APYItem>
+          )}
+          {!pair.feesApy && !pair.apy && '-'}
+        </Flex>
+      </DataText>
       <DataText>{getFormattedNumber(pair.tvl, 'currency0')}</DataText>
       <DataText>{pair.volume ? getFormattedNumber(pair.volume, 'currency0') : '-'}</DataText>
       <DataText>{pair.fees ? getFormattedNumber(pair.fees, 'currency0') : '-'}</DataText>
     </DashGrid>
     <Divider />
   </>
-);
+));
 
 export default function PairSection() {
   const allPairs = useAllPairs();
-  const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apy', order: 'DESC' });
+  const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
 
   return (
     <Box overflow="auto">
@@ -231,14 +265,34 @@ export default function PairSection() {
             <span>POOL</span>
           </HeaderText>
           <HeaderText
+            minWidth={'135px'}
             role="button"
-            className={sortBy.key === 'apy' ? sortBy.order : ''}
+            className={sortBy.key === 'apyTotal' ? sortBy.order : ''}
             onClick={() =>
               handleSortSelect({
-                key: 'apy',
+                key: 'apyTotal',
               })
             }
           >
+            <MouseoverTooltip
+              width={330}
+              text={
+                <>
+                  The BALN APY is calculated from the USD value of BALN rewards available for a pool.
+                  <br />
+                  <br />
+                  The fee APY is calculated from the swap fees earned by a pool in the last 30 days.
+                  <Typography marginTop={'20px'} color="text1" fontSize={14}>
+                    Impermanent loss is not factored in.
+                  </Typography>
+                </>
+              }
+              placement="top"
+            >
+              <QuestionWrapper onClick={e => e.stopPropagation()}>
+                <QuestionIcon className="header-tooltip" width={14} />
+              </QuestionWrapper>
+            </MouseoverTooltip>
             APY
           </HeaderText>
           <HeaderText

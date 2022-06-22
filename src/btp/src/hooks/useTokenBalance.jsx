@@ -3,9 +3,8 @@ import { useState, useEffect } from 'react';
 import { useSelect } from 'btp/src/hooks/useRematch';
 import { getService } from 'btp/src/services/transfer';
 
-export const useTokenBalance = currentSymbol => {
-  const [token, setToken] = useState({ balance: null, symbol: currentSymbol });
-
+export const useTokenBalance = coinNames => {
+  const [balances, setBalance] = useState([]);
   // const {
   //   accountInfo: { address, balance, unit, currentNetwork },
   // } = useSelect(({ account: { selectAccountInfo } }) => ({
@@ -16,21 +15,26 @@ export const useTokenBalance = currentSymbol => {
   useEffect(() => {
     if (window['accountInfo'] != null) {
       const { address, balance, symbol, currentNetwork } = window['accountInfo'];
-      if (currentNetwork && currentSymbol?.length > 0) {
-        const isNativeCoin = currentSymbol === symbol;
+      const fetchBalances = async () => {
+        const result = await Promise.all(
+          coinNames.map(async coin => {
+            const isNativeCoin = coin.label === symbol;
+            if (isNativeCoin) {
+              return { ...coin, balance };
+            } else {
+              return getService()
+                .getBalanceOf({ address, symbol: coin.label })
+                .then(result => {
+                  return { ...coin, balance: result };
+                });
+            }
+          }),
+        );
+        setBalance(result);
+      };
 
-        if (isNativeCoin) {
-          setToken({ balance, symbol: symbol });
-        } else {
-          getService()
-            .getBalanceOf({ address, symbol: currentSymbol })
-            .then(result => {
-              setToken({ balance: result, symbol: currentSymbol });
-            });
-        }
-      }
+      fetchBalances();
     }
   }, [window['accountInfo']]);
-
-  return [token.balance, token.symbol];
+  return balances;
 };

@@ -63,6 +63,7 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
       @media (min-width: 360px) {
         width: 100%;
         max-width: 525px;
+        z-index: 1500;
       }
     `}
   }
@@ -74,6 +75,7 @@ const BTP = () => {
   const walletModalOpen = useModalOpen(ApplicationModal.TRANSFER_ASSETS);
   const [nativeCoin, setNativeCoin] = useState('ICX');
   const [assetName, setAssetName] = useState('ICX');
+  const [balanceOfAssetName, setBalanceOfAssetName] = useState(0);
   const [sendingAddress, setSendingAddress] = useState('');
   const [balance, setBalance] = useState(0);
   const [networkId, setNetworkId] = useState('0x7');
@@ -81,6 +83,7 @@ const BTP = () => {
   const toggleTransferAssetsModal = useTransferAssetsModalToggle();
   const toggleWalletModal = useBridgeWalletModalToggle();
   const [sendingInfo, setSendingInfo] = useState({ token: '', network: '' });
+  const [assetOptions, setAssetOptions] = useState([]);
 
   const onSendingInfoChange = (info = {}) => {
     setSendingInfo(sendingInfo => ({ ...sendingInfo, ...info }));
@@ -90,22 +93,16 @@ const BTP = () => {
     setIsOpenConfirm(true);
   };
 
-  const coins = [...chainList, ...getTokenList()].map(({ CHAIN_NAME, COIN_SYMBOL, symbol, chain, ...others }) => {
-    return COIN_SYMBOL || symbol;
-  });
-  const coinNames: string[] = [...coins];
-
-  console.log(coinNames);
-
-  const [currentBalance, symbol] = useTokenBalance('ICX');
-  console.log(currentBalance, symbol);
-
   useEffect(() => {
     const address = localStorage.getItem(ADDRESS_LOCAL_STORAGE);
     if (address) {
       setTimeout(() => {
         requestHasAddress(address);
       }, 2000);
+    }
+    if (window['accountInfo'] != null) {
+      const { balance } = window['accountInfo'];
+      setBalanceOfAssetName(balance);
     }
   }, []);
 
@@ -179,8 +176,20 @@ const BTP = () => {
     return options;
   };
 
+  const coins = [...chainList, ...getTokenList()].map(({ CHAIN_NAME, COIN_SYMBOL, symbol, chain, ...others }) => {
+    const tokenSymbol = COIN_SYMBOL || symbol;
+    return {
+      value: tokenSymbol,
+      label: tokenSymbol,
+      ...others,
+    };
+  });
+  const coinNames: string[] = [...coins];
+  const balanceOf = useTokenBalance(coinNames);
+
   const onChangeAsset = asset => {
     setAssetName(asset.value);
+    setBalanceOfAssetName(asset.balance);
   };
 
   const [percent, setPercent] = React.useState<number>(0);
@@ -189,7 +198,7 @@ const BTP = () => {
   };
   return (
     <>
-      <StyledModal isOpen={walletModalOpen} onDismiss={toggleTransferAssetsModal} maxWidth={430}>
+      <StyledModal isOpen={walletModalOpen} onDismiss={toggleTransferAssetsModal} maxWidth={525}>
         <Wrapper>
           <Flex flexDirection={'column'} width={'100%'}>
             <Typography variant={'h2'}>Transfer assets</Typography>
@@ -214,6 +223,7 @@ const BTP = () => {
               <Box className="full-width">
                 <AssetToTransfer
                   assetName={assetName}
+                  balanceOfAssetName={balanceOfAssetName}
                   toggleDropdown={() => {
                     setIsOpenAssetOptions(prevState => !prevState);
                   }}
@@ -224,7 +234,7 @@ const BTP = () => {
                 />
               </Box>
 
-              {isOpenAssetOptions && <AssetModal data={getAssetOptions()} onChange={onChangeAsset} />}
+              {isOpenAssetOptions && <AssetModal data={balanceOf} onChange={onChangeAsset} />}
               <TransferAssetModal
                 isOpen={isOpenConfirm}
                 setIsOpen={setIsOpenConfirm}

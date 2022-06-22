@@ -100,7 +100,15 @@ const ItemList = styled(Option)<{ selected: boolean }>`
   ${props => props.selected && ' background-color: #2ca9b7;'}
 `;
 
-const AssetToTransfer = ({ assetName, toggleDropdown, closeDropdown, setBalance, onPercentSelect, percent }) => {
+const AssetToTransfer = ({
+  assetName,
+  balanceOfAssetName,
+  toggleDropdown,
+  closeDropdown,
+  setBalance,
+  onPercentSelect,
+  percent,
+}) => {
   const [inputAmount, setInputAmount] = React.useState('');
   const [isActive, setIsActive] = React.useState(false);
 
@@ -125,7 +133,10 @@ const AssetToTransfer = ({ assetName, toggleDropdown, closeDropdown, setBalance,
     <>
       <Flex justifyContent={'end'}>
         <Label>
-          Wallet: <WalletAmount color={'red'}>{`${0} tokens`}</WalletAmount>
+          Wallet:{' '}
+          <WalletAmount color={'red'}>
+            {balanceOfAssetName == 0 ? balanceOfAssetName : balanceOfAssetName.toFixed(2)} {assetName}
+          </WalletAmount>
         </Label>
       </Flex>
       <AssetInfo ref={ref}>
@@ -152,17 +163,19 @@ const AssetToTransfer = ({ assetName, toggleDropdown, closeDropdown, setBalance,
           spellCheck="false"
           active={onPercentSelect && isActive}
         />
-        <SelectorPopover show={true} anchorEl={ref.current} placement="bottom-end">
-          <HorizontalList justifyContent="center" alignItems="center">
-            {COMMON_PERCENTS.map(value => (
-              <ItemList
-                key={value}
-                onClick={handlePercentSelect(value)}
-                selected={value === percent}
-              >{`${value}%`}</ItemList>
-            ))}
-          </HorizontalList>
-        </SelectorPopover>
+        {onPercentSelect && (
+          <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">
+            <HorizontalList justifyContent="center" alignItems="center">
+              {COMMON_PERCENTS.map(value => (
+                <ItemList
+                  key={value}
+                  onClick={handlePercentSelect(value)}
+                  selected={value === percent}
+                >{`${value}%`}</ItemList>
+              ))}
+            </HorizontalList>
+          </SelectorPopover>
+        )}
       </AssetInfo>
     </>
   );

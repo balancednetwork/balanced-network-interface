@@ -10,7 +10,7 @@ export const toChecksumAddress = address => {
 };
 
 export const toCheckAddress = address => {
-  if (address && address.startsWith('hx') && address.length === 42) {
+  if (address && (address.startsWith('hx') || address.startsWith('0x')) && address.length === 42) {
     return true;
   }
   return false;

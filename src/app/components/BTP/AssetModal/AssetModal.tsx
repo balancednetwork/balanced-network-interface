@@ -49,7 +49,7 @@ const AssetItem = ({ asset, onChange }) => {
       </Flex>
       <Flex justifyContent="flex-end" alignItems="center">
         <DataText variant="p" textAlign="right">
-          10
+          {asset.balance == 0 ? asset.balance : asset.balance.toFixed(2)}
         </DataText>
       </Flex>
     </ListItem>

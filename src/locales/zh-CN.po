@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-25 05:28\n"
+"PO-Revision-Date: 2022-06-23 02:12\n"
 "Last-Translator: \n"
 "Language: zh_CN\n"
 "Language-Team: Chinese Simplified\n"
@@ -615,7 +615,6 @@ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr ""
 
@@ -633,6 +632,10 @@ msgstr ""
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
+msgstr ""
+
+#: src/app/components/SearchModal/CurrencyList.tsx
+msgid "Price"
 msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
@@ -955,7 +958,6 @@ msgstr ""
 msgid "To"
 msgstr ""
 
-#: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr ""

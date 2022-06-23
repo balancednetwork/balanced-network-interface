@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-25 05:28\n"
+"PO-Revision-Date: 2022-06-23 02:12\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -615,7 +615,6 @@ msgstr "지불"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr "보류 중"
 
@@ -634,6 +633,10 @@ msgstr "현재 상황"
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
 msgstr "sICX 스테이킹 해제 준비 중..."
+
+#: src/app/components/SearchModal/CurrencyList.tsx
+msgid "Price"
+msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
@@ -955,7 +958,6 @@ msgstr "제목"
 msgid "To"
 msgstr "로"
 
-#: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Balanced 보상을 받으려면 거래 페이지에서 대출을 받거나 유동성을 공급하십시오."

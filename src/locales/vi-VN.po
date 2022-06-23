@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-28 18:31\n"
+"PO-Revision-Date: 2022-06-23 02:12\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -615,7 +615,6 @@ msgstr "Thanh toán"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr "Đang chờ xử lý"
 
@@ -634,6 +633,10 @@ msgstr "Chi tiết"
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
 msgstr "Đang gỡ sICX..."
+
+#: src/app/components/SearchModal/CurrencyList.tsx
+msgid "Price"
+msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
@@ -955,7 +958,6 @@ msgstr "Tiêu đề"
 msgid "To"
 msgstr "Tới"
 
-#: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Để nhận phần thưởng, mượn tiền hoặc cung cấp thanh khoản khu giao dịch."

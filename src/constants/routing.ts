@@ -18,8 +18,10 @@ import {
   IUSDT,
   OMM,
   sICX_BERLIN,
-  bnUSD_BERLIN,
   ICX_BERLIN,
+  bnUSD_BERLIN,
+  IUSDC_BERLIN,
+  USDS_BERLIN,
 } from './tokens';
 
 type ChainCurrencyList = {
@@ -50,7 +52,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
   [SupportedChainId.MAINNET]: [sICX, bnUSD, IUSDC, USDS],
   [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
   [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
-  [SupportedChainId.BERLIN]: [sICX_BERLIN, bnUSD_BERLIN],
+  [SupportedChainId.BERLIN]: [sICX_BERLIN, bnUSD_BERLIN, IUSDC_BERLIN, USDS_BERLIN],
 };
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
   [SupportedChainId.MAINNET]: {
@@ -76,6 +78,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
   [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
   [SupportedChainId.BERLIN]: [sICX_BERLIN, bnUSD_BERLIN],
+  [SupportedChainId.SEJONG]: [sICX_BERLIN, bnUSD_BERLIN],
 };
 export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
   [SupportedChainId.MAINNET]: [[ICX, sICX]],

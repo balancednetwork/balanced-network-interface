@@ -41,7 +41,7 @@ export const useICX = () => {
   } else if (chainId === SupportedChainId.BERLIN) {
     return ICX_BERLIN;
   } else {
-    return sICX_SEJONG;
+    return ICX;
   }
 };
 
@@ -222,6 +222,7 @@ export const FIN_SEJONG = new Token(
   'Fin Token',
 );
 
+// berlin
 export const ICX_BERLIN = new Token(SupportedChainId.BERLIN, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 export const sICX_BERLIN = new Token(
   SupportedChainId.BERLIN,
@@ -244,6 +245,27 @@ export const BALN_BERLIN = new Token(
   'BALN',
   'Balance Token',
 );
+export const IUSDC_BERLIN = new Token(
+  SupportedChainId.BERLIN,
+  'cx538a925f49427d4f1078aed638c8cb525071fc68',
+  6,
+  'IUSDC',
+  'ICON USD Coin',
+);
+export const OMM_BERLIN = new Token(
+  SupportedChainId.BERLIN,
+  'cx1359af0b9bbaf266fe0b3d7adc281c75b69fed5e',
+  18,
+  'OMM',
+  'Omm Token',
+);
+export const USDS_BERLIN = new Token(
+  SupportedChainId.BERLIN,
+  'cx91a9327ca44e78983e143b1cfb18e8024a1f31d9',
+  18,
+  'USDS',
+  'Stably USD',
+);
 
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
@@ -258,9 +280,16 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
     OMM_YEOUIDO,
     CFT_YEOUIDO,
   ],
-  //[SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, IUSDC_SEJONG],
   [SupportedChainId.SEJONG]: [ICX_SEJONG, sICX_SEJONG, bnUSD_SEJONG, BALN_SEJONG, FIN_SEJONG],
-  [SupportedChainId.BERLIN]: [ICX_BERLIN, sICX_BERLIN, bnUSD_BERLIN, BALN_BERLIN],
+  [SupportedChainId.BERLIN]: [
+    ICX_BERLIN,
+    sICX_BERLIN,
+    bnUSD_BERLIN,
+    BALN_BERLIN,
+    IUSDC_BERLIN,
+    USDS_BERLIN,
+    OMM_BERLIN,
+  ],
 };
 
 export const SUPPORTED_TOKENS_LIST = SUPPORTED_TOKENS[NETWORK_ID];

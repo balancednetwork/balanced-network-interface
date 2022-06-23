@@ -102,39 +102,6 @@ export const useHasRewardableLoan = () => {
   return false;
 };
 
-export const useHasRewardableLiquidity = () => {
-  const { account } = useIconReact();
-
-  const [hasRewardableLiquidity, setHasRewardableLiquidity] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkIfRewardable = async () => {
-      if (account) {
-        // Question: isEarningRewards exists?
-        const result = await Promise.all([
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNsICX),
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXbnUSD),
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXICX),
-        ]);
-
-        if (result.find(pool => Number(pool))) setHasRewardableLiquidity(true);
-        else setHasRewardableLiquidity(false);
-      }
-    };
-
-    checkIfRewardable();
-  }, [account]);
-
-  return hasRewardableLiquidity;
-};
-
-export const useHasRewardable = () => {
-  const hasRewardableLiquidity = useHasRewardableLiquidity();
-  const hasRewardableLoan = useHasRewardableLoan();
-  return hasRewardableLiquidity || hasRewardableLoan;
-};
-
 export const useHasNetworkFees = () => {
   const { account } = useIconReact();
   const transactions = useAllTransactions();

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-22 15:27\n"
+"PO-Revision-Date: 2022-06-23 02:12\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -615,7 +615,6 @@ msgstr "지불"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr "보류 중"
 
@@ -959,7 +958,6 @@ msgstr "제목"
 msgid "To"
 msgstr "로"
 
-#: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Balanced 보상을 받으려면 거래 페이지에서 대출을 받거나 유동성을 공급하십시오."

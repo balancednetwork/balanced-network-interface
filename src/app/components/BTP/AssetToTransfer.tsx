@@ -131,14 +131,16 @@ const AssetToTransfer = ({
 
   return (
     <>
-      <Flex justifyContent={'end'}>
-        <Label>
-          Wallet:{' '}
-          <WalletAmount color={'red'}>
-            {balanceOfAssetName == 0 ? balanceOfAssetName : balanceOfAssetName.toFixed(2)} {assetName}
-          </WalletAmount>
-        </Label>
-      </Flex>
+      {assetName && (
+        <Flex justifyContent={'end'}>
+          <Label>
+            Wallet:{' '}
+            <WalletAmount color={'red'}>
+              {balanceOfAssetName == 0 ? balanceOfAssetName : balanceOfAssetName.toFixed(2)} {assetName}
+            </WalletAmount>
+          </Label>
+        </Flex>
+      )}
       <AssetInfo ref={ref}>
         <AssetName>
           <Icon icon={assetName} margin={'0 8px 0 0'} />

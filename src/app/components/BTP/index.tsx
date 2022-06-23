@@ -74,7 +74,7 @@ const BTP = () => {
   const [isOpenConfirm, setIsOpenConfirm] = useState(false);
   const walletModalOpen = useModalOpen(ApplicationModal.TRANSFER_ASSETS);
   const [nativeCoin, setNativeCoin] = useState('ICX');
-  const [assetName, setAssetName] = useState('ICX');
+  const [assetName, setAssetName] = useState('');
   const [balanceOfAssetName, setBalanceOfAssetName] = useState(0);
   const [sendingAddress, setSendingAddress] = useState('');
   const [balance, setBalance] = useState(0);
@@ -100,8 +100,12 @@ const BTP = () => {
         requestHasAddress(address);
       }, 2000);
     }
+  }, []);
+
+  useEffect(() => {
     if (window['accountInfo'] != null) {
-      const { balance } = window['accountInfo'];
+      const { balance, symbol } = window['accountInfo'];
+      setAssetName(symbol);
       setBalanceOfAssetName(balance);
     }
   }, [window['accountInfo']]);

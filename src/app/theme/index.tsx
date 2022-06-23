@@ -104,7 +104,7 @@ export function theme(): DefaultTheme {
   };
 }
 
-type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'body' | 'content';
+type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'body' | 'content' | 'span';
 
 export const Typography = React.forwardRef((props: TextProps & { variant?: TypographyVariant }, ref) => {
   const { variant, ...rest } = props;
@@ -124,6 +124,8 @@ export const Typography = React.forwardRef((props: TextProps & { variant?: Typog
       return <Text ref={ref} as="p" fontSize={14} {...rest} />;
     case 'content':
       return <Text ref={ref} as="p" fontSize="0.875em" {...rest} />;
+    case 'span':
+      return <Text ref={ref} as="span" fontSize={14} {...rest} />;
     default:
       return <Text ref={ref} as="p" fontSize={14} {...rest} />;
   }

@@ -19,6 +19,7 @@ import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/m
 import { maxAmountSpend } from 'utils';
 
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
+import Tooltip from '../Tooltip';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
@@ -90,6 +91,7 @@ function WalletSection() {
 export default function LPPanel() {
   const { account } = useIconReact();
   const toggleWalletModal = useWalletModalToggle();
+  const [isShowTooltip, setIsShowTooltip] = React.useState(false);
 
   // modal
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
@@ -127,6 +129,7 @@ export default function LPPanel() {
     pairState,
     liquidityMinted,
     mintableLiquidity,
+    minQuoteTokenAmount,
   } = useDerivedMintInfo();
   const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection } = useMintActionHandlers(noLiquidity);
 
@@ -166,7 +169,13 @@ export default function LPPanel() {
     if (needUpdate) {
       const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
       const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
-
+      const currentValueB = new BigNumber(formattedAmounts[Field.CURRENCY_B]);
+      console.log(currentValueB.toFixed());
+      if (currentValueB.eq(0) || (minQuoteTokenAmount && minQuoteTokenAmount.lt(currentValueB))) {
+        setIsShowTooltip(false);
+      } else {
+        setIsShowTooltip(true);
+      }
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
@@ -180,6 +189,7 @@ export default function LPPanel() {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [percent, needUpdate, currencyBalances, onSlide, pair, currencies]);
 
   // get formatted amounts
@@ -245,15 +255,22 @@ export default function LPPanel() {
 
             <AutoColumn gap="md" hidden={isQueue}>
               <Flex>
-                <CurrencyInputPanel
-                  account={account}
-                  value={formattedAmounts[Field.CURRENCY_B]}
-                  currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
-                  currency={currencies[Field.CURRENCY_B]}
-                  onUserInput={onFieldBInput}
-                  onCurrencySelect={handleCurrencyBSelect}
-                  onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
-                />
+                <Tooltip
+                  containerStyle={{ width: 'auto' }}
+                  placement="right"
+                  text={`${minQuoteTokenAmount?.toFixed(2)} minimum`}
+                  show={isShowTooltip}
+                >
+                  <CurrencyInputPanel
+                    account={account}
+                    value={formattedAmounts[Field.CURRENCY_B]}
+                    currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
+                    currency={currencies[Field.CURRENCY_B]}
+                    onUserInput={onFieldBInput}
+                    onCurrencySelect={handleCurrencyBSelect}
+                    onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
+                  />
+                </Tooltip>
               </Flex>
             </AutoColumn>
           </AutoColumn>

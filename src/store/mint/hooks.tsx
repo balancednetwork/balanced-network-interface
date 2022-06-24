@@ -3,6 +3,7 @@ import React, { useCallback, ReactNode } from 'react';
 import { Currency, CurrencyAmount, Token, Percent, Price } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -114,6 +115,7 @@ export function useDerivedMintInfo(): {
   mintableLiquidity?: CurrencyAmount<Token>;
   poolTokenPercentage?: Percent;
   error?: ReactNode;
+  minQuoteTokenAmount?: BigNumber;
 } {
   const { account } = useIconReact();
 
@@ -145,7 +147,7 @@ export function useDerivedMintInfo(): {
   const [pairState, pair] = isQueue ? [pairState2, pair2] : [pairState1, pair1];
 
   const poolData = usePoolData(Number(pair?.poolId));
-
+  const minQuoteTokenAmount = poolData?.minQuoteTokenAmount;
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =
     pairState === PairState.NOT_EXISTS ||
@@ -353,5 +355,6 @@ export function useDerivedMintInfo(): {
     mintableLiquidity,
     poolTokenPercentage,
     error,
+    minQuoteTokenAmount,
   };
 }

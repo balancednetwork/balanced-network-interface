@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-23 02:12\n"
+"PO-Revision-Date: 2022-06-25 18:31\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -869,6 +869,7 @@ msgstr "Liquidez para {pair} suministrada."
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/store/mint/hooks.tsx
 msgid "Supply"
 msgstr "Suministrar"
 
@@ -950,6 +951,10 @@ msgstr "Aún no existe un pool de liquidez para este par."
 msgid "They'll unstake on {0}, around {1}."
 msgstr "Dejarán de estar staked en {0}, alrededor de {1}."
 
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
 msgstr "Título"
@@ -967,10 +972,6 @@ msgstr "Para ganar recompensas Balanced, tome un préstamo o suministre liquidez
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."
 msgstr "Para obtener ganancias de la red, haz staking con tus BALN."
-
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "To receive BALN, you must have ICX in the pool at 1pm Eastern each day."
-msgstr "Para ganar BALN, debes tener ICX en el pool a la 1pm (eastern time) de cada día."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
@@ -1108,14 +1109,6 @@ msgstr "Billetera"
 msgid "Wallet:"
 msgstr "Billetera:"
 
-#: src/app/components/trade/LiquidityDetails.tsx
-msgid "Wallet:\n"
-"{0} {1} /\n"
-"{2} {3}"
-msgstr "Billetera:\n"
-"{0} {1} /\n"
-"{2} {3}"
-
 #: src/app/components/trade/LPPanel.tsx
 msgid "Wallet: {0} {1}"
 msgstr "Billetera: {0} {1}"
@@ -1131,7 +1124,6 @@ msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
 msgstr "Mientras tomas prestado bnUSD, tu colateral se usa para mantener su valor estable"
 
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1210,10 +1202,6 @@ msgid "Your BALN will unstake on {0} at\n"
 msgstr "Tus BALN dejarán de estar staked el {0} en\n"
 "{1}."
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "Your ICX will be locked for 24 hours."
-msgstr "Tus ICX estará bloqueados durante 24 horas."
-
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be staked, so your collateral value will increase over time."
 msgstr "Tus ICX harán stakiny, por lo que su valor como colateral aumentará con el tiempo."
@@ -1230,10 +1218,6 @@ msgstr "Tu saldo de colateral es <0>{0} sICX</0> (staked ICX). El valor en ICX d
 #: src/app/components/home/LoanPanel.tsx
 msgid "Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
 msgstr "Tu saldo de colateral. Gana intereses por staking, pero también se vende con el tiempo para pagar tu préstamo."
-
-#: src/app/components/trade/LPDescription.tsx
-msgid "Your daily rewards"
-msgstr "Tus recompensas diarias"
 
 #: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1277,14 +1261,14 @@ msgid "then create the pool."
 msgstr "después cree el pool."
 
 #: src/app/components/home/LoanPanel.tsx
+#: src/app/components/trade/LPDescription.tsx
 msgid "{0}"
 msgstr "{0}"
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "{0} / {1} \n"
+msgid "{0} / {1}\n"
 "liquidity pool{2}"
-msgstr "{0} / {1} \n"
-"pool de liquidez{2}"
+msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} liquidity pool"

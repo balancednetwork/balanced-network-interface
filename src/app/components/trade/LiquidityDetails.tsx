@@ -367,19 +367,9 @@ const PoolRecord = ({
   const stakedLPPercent = useStakedLPPercent(poolId);
 
   const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
-  const availableWithdrawnPercent = new BigNumber(100).minus(percent || ZERO);
-
-  const [availableWithdrawnPercentNumerator, availableWithdrawnPercentDenominator] = availableWithdrawnPercent
-    ? availableWithdrawnPercent.toFraction()
-    : [0, 1];
-  // it's a fraction, yet represents BALN amount
-  const availableWithdrawnPercentFraction = new Fraction(
-    availableWithdrawnPercentNumerator.toFixed(),
-    availableWithdrawnPercentDenominator.toFixed(),
-  );
 
   const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
-    (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' });
+    !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
 
   const baseCurrencyTotalSupply = totalSupply(baseValue, poolData?.suppliedBase);
   const quoteCurrencyTotalSupply = totalSupply(quoteValue, poolData?.suppliedQuote);
@@ -396,22 +386,20 @@ const PoolRecord = ({
           <StyledArrowDownIcon />
         </StyledDataText>
         <DataText>
-          {`${baseCurrencyTotalSupply || '...'} ${aBalance.currency.symbol || '...'}`}
+          {`${baseCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' }) || '...'} ${
+            aBalance.currency.symbol || '...'
+          }`}
           <br />
-          {`${quoteCurrencyTotalSupply || '...'} ${bBalance.currency.symbol || '...'}`}
+          {`${quoteCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' }) || '...'} ${
+            bBalance.currency.symbol || '...'
+          }`}
         </DataText>
 
         {upSmall && (
           <DataText>{`${
             (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
               ? poolData?.poolShare.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
-              : percent?.isEqualTo(100)
-              ? new BigNumber(baseCurrencyTotalSupply || 0)
-                  .div(new BigNumber(pair?.reserve0.toFixed(4) || 1))
-                  .dp(4)
-                  .toFormat()
-              : poolData?.poolShare.multiply(availableWithdrawnPercentFraction)?.toFixed(4, { groupSeparator: ',' }) ||
-                '---'
+              : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
           }%`}</DataText>
         )}
         {upSmall && (

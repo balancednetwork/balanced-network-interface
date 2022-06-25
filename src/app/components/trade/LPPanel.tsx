@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Typography } from 'app/theme';
+import { BIGINT_ZERO } from 'constants/misc';
 import { isNativeCurrency } from 'constants/tokens';
 import { PairState } from 'hooks/useV2Pairs';
 import { useWalletModalToggle } from 'store/application/hooks';
@@ -19,7 +20,6 @@ import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/m
 import { maxAmountSpend } from 'utils';
 
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
-import Tooltip from '../Tooltip';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
@@ -91,7 +91,6 @@ function WalletSection() {
 export default function LPPanel() {
   const { account } = useIconReact();
   const toggleWalletModal = useWalletModalToggle();
-  const [isShowTooltip, setIsShowTooltip] = React.useState(false);
 
   // modal
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
@@ -129,7 +128,6 @@ export default function LPPanel() {
     pairState,
     liquidityMinted,
     mintableLiquidity,
-    minQuoteTokenAmount,
   } = useDerivedMintInfo();
   const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection } = useMintActionHandlers(noLiquidity);
 
@@ -158,20 +156,10 @@ export default function LPPanel() {
         )
       : 0;
 
-  const handleShowTooltip = () => {
-    const currentValueB = new BigNumber(formattedAmounts[Field.CURRENCY_B]);
-    if (account && currentValueB.gt(0) && minQuoteTokenAmount && currentValueB.lt(minQuoteTokenAmount)) {
-      setIsShowTooltip(true);
-    } else {
-      setIsShowTooltip(false);
-    }
-  };
-
   React.useEffect(() => {
     if (inputType === 'text') {
       sliderInstance.current?.noUiSlider.set(sliderValue);
       setPercent({ percent: sliderValue, needUpdate: false });
-      handleShowTooltip();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputType, sliderValue]);
@@ -180,7 +168,6 @@ export default function LPPanel() {
     if (needUpdate) {
       const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
       const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
-
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
@@ -193,7 +180,6 @@ export default function LPPanel() {
           onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
         }
       }
-      handleShowTooltip();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [percent, needUpdate, currencyBalances, onSlide, pair, currencies]);
@@ -260,30 +246,22 @@ export default function LPPanel() {
             </AutoColumn>
 
             <AutoColumn gap="md" hidden={isQueue}>
-              <Tooltip
-                containerStyle={{ width: 'auto' }}
-                text={`${minQuoteTokenAmount?.toFixed(2)} ${currencies[Field.CURRENCY_B]?.symbol} minimum`}
-                show={isShowTooltip}
-              >
-                <Flex>
-                  <CurrencyInputPanel
-                    account={account}
-                    value={formattedAmounts[Field.CURRENCY_B]}
-                    currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
-                    currency={currencies[Field.CURRENCY_B]}
-                    onUserInput={onFieldBInput}
-                    onCurrencySelect={handleCurrencyBSelect}
-                    onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
-                  />
-                </Flex>
-              </Tooltip>
+              <Flex>
+                <CurrencyInputPanel
+                  account={account}
+                  value={formattedAmounts[Field.CURRENCY_B]}
+                  currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
+                  currency={currencies[Field.CURRENCY_B]}
+                  onUserInput={onFieldBInput}
+                  onCurrencySelect={handleCurrencyBSelect}
+                  onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
+                />
+              </Flex>
             </AutoColumn>
           </AutoColumn>
-
           <Flex mt={3} justifyContent="flex-end">
             <WalletSection />
           </Flex>
-
           {currencies[Field.CURRENCY_A] &&
             currencies[Field.CURRENCY_B] &&
             !isQueue &&
@@ -310,27 +288,29 @@ export default function LPPanel() {
                 </Flex>
               </PoolPriceBar>
             )}
-          {pairState === PairState.EXISTS && account && (
-            <Slider mt={5}>
-              <Nouislider
-                start={[0]}
-                padding={[0, 0]}
-                connect={[true, false]}
-                range={{
-                  min: [0],
-                  max: [100],
-                }}
-                onSlide={handleSlider}
-                step={0.01}
-                instanceRef={instance => {
-                  if (instance) {
-                    sliderInstance.current = instance;
-                  }
-                }}
-              />
-            </Slider>
-          )}
-
+          {pairState === PairState.EXISTS &&
+            account &&
+            maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO) &&
+            maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(BIGINT_ZERO) && (
+              <Slider mt={5}>
+                <Nouislider
+                  start={[0]}
+                  padding={[0, 0]}
+                  connect={[true, false]}
+                  range={{
+                    min: [0],
+                    max: [100],
+                  }}
+                  onSlide={handleSlider}
+                  step={0.01}
+                  instanceRef={instance => {
+                    if (instance) {
+                      sliderInstance.current = instance;
+                    }
+                  }}
+                />
+              </Slider>
+            )}
           <AutoColumn gap="5px" mt={5}>
             <Flex justifyContent="center">
               {isValid ? (

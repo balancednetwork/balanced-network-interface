@@ -102,7 +102,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: IUSDC,
       quoteToken: bnUSD,
-      rewards: 0.025,
+      // rewards: 0.025,
     },
     {
       chainId: 1,

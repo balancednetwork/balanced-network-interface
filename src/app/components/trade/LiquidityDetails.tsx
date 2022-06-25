@@ -22,7 +22,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
-import { ZERO } from 'constants/index';
+import { MINIMUM_B_BALANCE_TO_SHOW_POOL, ZERO } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { useBalance, usePoolData } from 'hooks/usePools';
 import { BalanceData, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
@@ -106,8 +106,8 @@ export default function LiquidityDetails() {
   const userPools = Object.keys(pairsWithoutQ).filter(
     poolId =>
       balances[poolId] &&
-      (JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO) ||
-        JSBI.greaterThan(balances[poolId].stakedLPBalance.quotient, BIGINT_ZERO)),
+      (Number(balances[poolId].balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
+        Number(balances[poolId].stakedLPBalance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL),
   );
 
   const sortedPairs = userPools

@@ -28,8 +28,8 @@ import {
   BALN_SEJONG,
   FIN_SEJONG,
   sICX_BERLIN,
-  ICX_BERLIN,
   bnUSD_BERLIN,
+  ICX_BERLIN,
   BALN_BERLIN,
   OMM_BERLIN,
   IUSDC_BERLIN,
@@ -238,7 +238,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
     {
       chainId: 3,
-      id: 3,
+      id: 6,
       name: 'BALN/bnUSD',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'bnUSD',
@@ -248,7 +248,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
     {
       chainId: 3,
-      id: 4,
+      //id: 4,
+      id: 5,
       name: 'BALN/sICX',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'sICX',
@@ -267,7 +268,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
     {
       chainId: 3,
-      id: 25,
+      id: 4,
+      // id: 25,
       name: 'OMM/sICX',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'sICX',

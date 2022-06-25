@@ -158,24 +158,29 @@ export default function LPPanel() {
         )
       : 0;
 
+  const handleShowTooltip = () => {
+    const currentValueB = new BigNumber(formattedAmounts[Field.CURRENCY_B]);
+    if (account && currentValueB.gt(0) && minQuoteTokenAmount && currentValueB.lt(minQuoteTokenAmount)) {
+      setIsShowTooltip(true);
+    } else {
+      setIsShowTooltip(false);
+    }
+  };
+
   React.useEffect(() => {
     if (inputType === 'text') {
       sliderInstance.current?.noUiSlider.set(sliderValue);
       setPercent({ percent: sliderValue, needUpdate: false });
+      handleShowTooltip();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputType, sliderValue]);
 
   React.useEffect(() => {
     if (needUpdate) {
       const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
       const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
-      const currentValueB = new BigNumber(formattedAmounts[Field.CURRENCY_B]);
-      console.log(currentValueB.toFixed());
-      if (currentValueB.eq(0) || (minQuoteTokenAmount && minQuoteTokenAmount.lt(currentValueB))) {
-        setIsShowTooltip(false);
-      } else {
-        setIsShowTooltip(true);
-      }
+
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
@@ -188,6 +193,7 @@ export default function LPPanel() {
           onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
         }
       }
+      handleShowTooltip();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [percent, needUpdate, currencyBalances, onSlide, pair, currencies]);
@@ -254,13 +260,12 @@ export default function LPPanel() {
             </AutoColumn>
 
             <AutoColumn gap="md" hidden={isQueue}>
-              <Flex>
-                <Tooltip
-                  containerStyle={{ width: 'auto' }}
-                  placement="right"
-                  text={`${minQuoteTokenAmount?.toFixed(2)} minimum`}
-                  show={isShowTooltip}
-                >
+              <Tooltip
+                containerStyle={{ width: 'auto' }}
+                text={`${minQuoteTokenAmount?.toFixed(2)} ${currencies[Field.CURRENCY_B]?.symbol} minimum`}
+                show={isShowTooltip}
+              >
+                <Flex>
                   <CurrencyInputPanel
                     account={account}
                     value={formattedAmounts[Field.CURRENCY_B]}
@@ -270,8 +275,8 @@ export default function LPPanel() {
                     onCurrencySelect={handleCurrencyBSelect}
                     onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
                   />
-                </Tooltip>
-              </Flex>
+                </Flex>
+              </Tooltip>
             </AutoColumn>
           </AutoColumn>
 

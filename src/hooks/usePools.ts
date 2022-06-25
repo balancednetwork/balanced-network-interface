@@ -11,6 +11,7 @@ import bnJs from 'bnJs';
 import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
 import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useReward } from 'store/reward/hooks';
+import { useAllTransactions } from 'store/transactions/hooks';
 import { useUserAddedTokens } from 'store/user/hooks';
 import { toFraction } from 'utils';
 
@@ -38,7 +39,7 @@ function tokenForPair(base: Token, quote: Token): Token | undefined {
 
 export function usePools(): { [poolId: number]: PoolState } {
   const [pools, setPools] = useState<(PoolState | undefined)[]>([]);
-
+  const transactions = useAllTransactions();
   const userAddedTokens = useUserAddedTokens();
 
   const tokensByAddress = useMemo(() => {
@@ -138,7 +139,7 @@ export function usePools(): { [poolId: number]: PoolState } {
     }
 
     fetchPools();
-  }, [tokensByAddress]);
+  }, [tokensByAddress, transactions]);
 
   return useMemo(() => {
     return pools.reduce((acc, curr, idx) => {
@@ -158,7 +159,7 @@ interface BalanceState {
 export function useBalances(): { [poolId: number]: BalanceState } {
   const { account } = useIconReact();
   const pools = usePools();
-
+  const transactions = useAllTransactions();
   const [balances, setBalances] = useState<(BalanceState | undefined)[]>([]);
 
   useEffect(() => {
@@ -259,7 +260,7 @@ export function useBalances(): { [poolId: number]: BalanceState } {
     }
 
     fetchBalances();
-  }, [account, pools]);
+  }, [account, pools, transactions]);
 
   return useMemo(() => {
     return balances.reduce((acc, curr, idx) => {

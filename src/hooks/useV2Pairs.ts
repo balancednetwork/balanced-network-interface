@@ -209,7 +209,7 @@ export function useBalances(
             poolId: +poolId,
             balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance || 0, 16).toFixed()),
             stakedLPBalance: CurrencyAmount.fromRawAmount(
-              pool.token1,
+              pool.liquidityToken,
               new BigNumber(stakedLPBalance || 0, 16).toFixed(),
             ),
           };

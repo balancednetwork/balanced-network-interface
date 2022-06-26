@@ -201,7 +201,9 @@ export default function LPDescription() {
                         </Typography>
                       ) : (
                         <Typography textAlign="center" variant="p">
-                          {suppliedReward?.isEqualTo(0) ? 'N/A' : `~ ${suppliedReward?.dp(2).toFormat() || '...'} BALN`}
+                          {suppliedReward?.isEqualTo(0) || suppliedReward?.isNaN()
+                            ? 'N/A'
+                            : `~ ${suppliedReward?.dp(2).toFormat() || '...'} BALN`}
                         </Typography>
                       )}
                     </Box>

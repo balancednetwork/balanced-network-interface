@@ -130,12 +130,13 @@ export default function LiquidityDetails() {
       return acc;
     }, {});
 
-  const userProvidedLiquidity = shouldShowQueue || userPools.length;
+  const userSuppliedLiquidity = shouldShowQueue || userPools.length;
+  const isLiquidityInfoLoading = shouldShowQueue === undefined;
 
   return (
     <>
       <AnimatePresence>
-        {!userProvidedLiquidity && (
+        {isLiquidityInfoLoading && (
           <motion.div
             key="spinner"
             initial={{ opacity: 0 }}
@@ -147,7 +148,7 @@ export default function LiquidityDetails() {
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {userProvidedLiquidity && (
+        {userSuppliedLiquidity && (
           <MotionBoxPanel
             key="LPDetails"
             bg="bg2"

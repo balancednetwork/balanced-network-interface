@@ -123,7 +123,7 @@ export default React.memo(function StakeLPPanel({ poolId, pair }: { poolId: numb
     } else {
       bnJs
         .inject({ account: account })
-        .StakedLP.unstake(poolId, parseUnits(differenceAmount.toFixed(), decimals))
+        .StakedLP.unstake(poolId, parseUnits(differenceAmount.abs().toFixed(), decimals))
         .then(res => {
           if (res.result) {
             addTransaction(

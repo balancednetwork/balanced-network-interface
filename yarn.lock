@@ -1243,10 +1243,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@balancednetwork/balanced-js@1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.0.5.tgz#8ad698e122ccb1b2bef85b61b7144d526afa1df0"
-  integrity sha512-x/QKZ4p09Hdesm/4av86DAtma+vJw+liHWLFFFRaxzoHZ9QarSUkkUGwBrtKo2nCS3DEUrcide7EIkZAqmo49w==
+"@balancednetwork/balanced-js@1.0.10":
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.0.10.tgz#328da3b2aacb0ab800c4abbdc572993ba3ea08cc"
+  integrity sha512-NJTUnraUMF2W2UwpeTBQ60WiKSeVEfwB2zKk1PJk7crOCNR64hXov4GLk7MvCffVfK8wZTx4flzr7/Llp7T3fw==
   dependencies:
     "@balancednetwork/hw-app-icx" "^1.0.6"
     bignumber.js "9.0.1"
@@ -1272,10 +1272,10 @@
     tiny-invariant "^1.1.0"
     toformat "^2.0.0"
 
-"@balancednetwork/v1-sdk@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.0.tgz#1b36daf409941af838798ecbb7eab41d1e8a15b9"
-  integrity sha512-EN0DmWTZC4VRkMO2mmg4yfwuBP95XTnobvmG/HT/SCARGAyLuwcx/I/na31LVHT4boEkZu6svZv1VxPe3w65mQ==
+"@balancednetwork/v1-sdk@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.1.tgz#87423a047594d6c2a00ac805e0777b4d8c2b9096"
+  integrity sha512-m6gFb5oIKa2UAC02CzeoiSRhCmJhYj9GDMPFThqdQ9H9EfvJOrf5/8UneYhZ4CQ8c6v0ZTqjACyQYza/iAjEFA==
   dependencies:
     "@balancednetwork/sdk-core" "^1.0.1"
     "@ethersproject/address" "^5.0.0"
@@ -4590,9 +4590,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001280:
-  version "1.0.30001282"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001282.tgz#38c781ee0a90ccfe1fe7fefd00e43f5ffdcb96fd"
-  integrity sha512-YhF/hG6nqBEllymSIjLtR2iWDDnChvhnVJqp+vloyt2tEHFG1yBR+ac2B/rOw0qOK0m0lEXU2dv4E/sMk5P9Kg==
+  version "1.0.30001344"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001344.tgz"
+  integrity sha512-0ZFjnlCaXNOAYcV7i+TtdKBp0L/3XEU2MF/x6Du1lrh+SRX4IfzIVL4HNJg5pB2PmFb8rszIGyOvsZnqqRoc2g==
 
 capture-exit@^2.0.0:
   version "2.0.0"

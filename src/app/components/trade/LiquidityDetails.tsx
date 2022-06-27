@@ -179,7 +179,7 @@ export default function LiquidityDetails() {
                 </StyledAccordionButton>
                 <StyledAccordionPanel hidden={isHided}>
                   <StyledBoxPanel bg="bg3">
-                    <StakeLPPanel poolId={parseInt(poolId)} />
+                    <StakeLPPanel poolId={parseInt(poolId)} pair={sortedPairs[poolId]} />
                     <WithdrawModal poolId={parseInt(poolId)} balance={balances[poolId]} pair={sortedPairs[poolId]} />
                   </StyledBoxPanel>
                 </StyledAccordionPanel>

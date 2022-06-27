@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import Nouislider from 'nouislider-react';
 import { useIconReact } from 'packages/icon-react';
@@ -21,9 +21,10 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useChangeStakedLPPercent, useStakedLPPercent, useTotalStaked } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) {
+export default React.memo(function StakeLPPanel({ poolId, pair }: { poolId: number; pair: Pair }) {
   const { account } = useIconReact();
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -93,10 +94,12 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
+
+    const decimals = (pair.token0.decimals + pair.token1.decimals) / 2;
     if (shouldStake) {
       bnJs
         .inject({ account: account })
-        .Dex.stake(poolId, BalancedJs.utils.toLoop(differenceAmount.abs()).toFixed())
+        .Dex.stake(poolId, parseUnits(differenceAmount.toFixed(), decimals))
         .then(res => {
           if (res.result) {
             addTransaction(
@@ -120,7 +123,7 @@ export default React.memo(function StakeLPPanel({ poolId }: { poolId: number }) 
     } else {
       bnJs
         .inject({ account: account })
-        .StakedLP.unstake(poolId, BalancedJs.utils.toLoop(differenceAmount.abs()).toFixed())
+        .StakedLP.unstake(poolId, parseUnits(differenceAmount.toFixed(), decimals))
         .then(res => {
           if (res.result) {
             addTransaction(

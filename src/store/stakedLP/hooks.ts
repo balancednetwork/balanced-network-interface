@@ -42,17 +42,18 @@ export const useTotalStaked = (poolId: number) => {
   const { account } = useIconReact();
   const balance = useBalance(poolId);
   const [totalStaked, setTotalStaked] = useState(ZERO);
-
   const stakedBalance = balance?.stakedLPBalance || ZERO;
-
+  const decimal0 = balance?.base?.currency?.decimals || 0;
+  const decimal1 = balance?.quote?.currency?.decimals || 0;
+  const decimals = decimal0 !== decimal1 ? (decimal0 + decimal1) / 2 : decimal0;
   useEffect(() => {
     (async () => {
       if (account) {
         const availableStake = await bnJs.Dex.balanceOf(account, poolId);
-        setTotalStaked(BalancedJs.utils.toIcx(availableStake).plus(stakedBalance.toFixed()));
+        setTotalStaked(BalancedJs.utils.toFormat(availableStake, decimals).plus(stakedBalance.toFixed()));
       }
     })();
-  }, [stakedBalance, account, poolId]);
+  }, [stakedBalance, account, poolId, decimals]);
 
   return totalStaked;
 };

@@ -11,6 +11,7 @@ import { MintState } from 'store/mint/reducer';
 import { RatioState } from 'store/ratio/reducer';
 import { RewardState } from 'store/reward/reducer';
 import { StabilityFundState } from 'store/stabilityFund/reducer';
+import { StakedLPState } from 'store/stakedLP/reducer';
 import { SwapState } from 'store/swap/reducer';
 import { TransactionState } from 'store/transactions/reducer';
 import { UserState } from 'store/user/reducer';
@@ -29,5 +30,6 @@ export interface RootState {
   mint: MintState;
   swap: SwapState;
   stabilityFund: StabilityFundState;
+  stakedLP: StakedLPState;
   user: UserState;
 }

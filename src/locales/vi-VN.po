@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-28 18:31\n"
+"PO-Revision-Date: 2022-06-25 18:31\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -615,7 +615,6 @@ msgstr "Thanh toán"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr "Đang chờ xử lý"
 
@@ -634,6 +633,10 @@ msgstr "Chi tiết"
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
 msgstr "Đang gỡ sICX..."
+
+#: src/app/components/SearchModal/CurrencyList.tsx
+msgid "Price"
+msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
@@ -866,6 +869,7 @@ msgstr "Đã cung cấp {pair} vào hồ thanh khoản."
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/store/mint/hooks.tsx
 msgid "Supply"
 msgstr "Cung cấp"
 
@@ -947,6 +951,10 @@ msgstr "Hiện chưa có thanh khoản trong ao này."
 msgid "They'll unstake on {0}, around {1}."
 msgstr "Unstake sẽ hoàn tất vào {0}, khoảng {1}."
 
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
 msgstr "Tiêu đề"
@@ -956,7 +964,6 @@ msgid "To"
 msgstr "Tới"
 
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Để nhận phần thưởng, mượn tiền hoặc cung cấp thanh khoản khu giao dịch."
 
@@ -965,10 +972,6 @@ msgstr "Để nhận phần thưởng, mượn tiền hoặc cung cấp thanh kh
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."
 msgstr "Để nhận tiền phí hoạt động, khóa BALN vào hợp đồng thông minh."
-
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "To receive BALN, you must have ICX in the pool at 1pm Eastern each day."
-msgstr "Để nhận được BLAN, bạn phải giữ ICX trong hồ thanh khoản vào 1PM giờ phương đông mỗi ngày."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
@@ -1106,13 +1109,6 @@ msgstr "Ví"
 msgid "Wallet:"
 msgstr "Ví:"
 
-#: src/app/components/trade/LiquidityDetails.tsx
-msgid "Wallet:\n"
-"{0} {1} /\n"
-"{2} {3}"
-msgstr "Ví:\n"
-"{0}{1}/{2}{3}"
-
 #: src/app/components/trade/LPPanel.tsx
 msgid "Wallet: {0} {1}"
 msgstr "Ví: {0}{1}"
@@ -1128,7 +1124,6 @@ msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
 msgstr "Khi bạn vay bnUSD, tài sản thế chấp của bạn sẽ bị sử dụng để giữ giá cho bnUSD"
 
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1206,10 +1201,6 @@ msgid "Your BALN will unstake on {0} at\n"
 "{1}."
 msgstr "Bạn sẽ nhận lại BALN vào {0} lúc {1}."
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "Your ICX will be locked for 24 hours."
-msgstr "ICX sẽ bị khóa trong 24 giờ."
-
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be staked, so your collateral value will increase over time."
 msgstr "ICX sẽ bị khóa, vì vậy giá trị tài sản thế chấp của bạn sẽ tăng lên theo thời gian."
@@ -1226,10 +1217,6 @@ msgstr "Số dư tài khoản của bạn là {0} sICX. (ICX bị khóa). Giá t
 #: src/app/components/home/LoanPanel.tsx
 msgid "Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
 msgstr "Số dư tài sản của bạn. Nhận được tiền lãi từ staking, nhưng cũng sẽ bị bán theo thời gian để trả khoản vay của bạn."
-
-#: src/app/components/trade/LPDescription.tsx
-msgid "Your daily rewards"
-msgstr "Phần thưởng hằng ngày"
 
 #: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1273,14 +1260,14 @@ msgid "then create the pool."
 msgstr "sau đó tạo hồ thanh khoản."
 
 #: src/app/components/home/LoanPanel.tsx
+#: src/app/components/trade/LPDescription.tsx
 msgid "{0}"
 msgstr "{0}"
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "{0} / {1} \n"
+msgid "{0} / {1}\n"
 "liquidity pool{2}"
-msgstr "{0}/{1}\n"
-"hồ thành khoản {2}"
+msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} liquidity pool"

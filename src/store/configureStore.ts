@@ -15,6 +15,7 @@ import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
 import reward from './reward/reducer';
 import stabilityFund from './stabilityFund/reducer';
+import stakedLP from './stakedLP/reducer';
 import swap from './swap/reducer';
 import transactions from './transactions/reducer';
 import user from './user/reducer';
@@ -49,6 +50,7 @@ export function configureAppStore() {
       mint,
       swap,
       stabilityFund,
+      stakedLP,
       user,
     }),
     middleware: [

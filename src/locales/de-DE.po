@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-25 05:28\n"
+"PO-Revision-Date: 2022-06-25 18:31\n"
 "Last-Translator: \n"
 "Language: de_DE\n"
 "Language-Team: German\n"
@@ -615,7 +615,6 @@ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr ""
 
@@ -633,6 +632,10 @@ msgstr ""
 
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
+msgstr ""
+
+#: src/app/components/SearchModal/CurrencyList.tsx
+msgid "Price"
 msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
@@ -866,6 +869,7 @@ msgstr "Hat {pair} Liquidität bereitgestellt."
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/store/mint/hooks.tsx
 msgid "Supply"
 msgstr ""
 
@@ -947,6 +951,10 @@ msgstr "Es gibt noch keinen Tauschpool für dieses Paar."
 msgid "They'll unstake on {0}, around {1}."
 msgstr "Sie werden am {0} um {1} zur Verfügung stehen."
 
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
 msgstr "Titel"
@@ -956,7 +964,6 @@ msgid "To"
 msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Um BALN als Belohnungg zu erahlten müssen Sie einen Kredit aufnehmen oder Liquidität in einen Tauschpool auf der Handelseite bereitstellen."
 
@@ -965,10 +972,6 @@ msgstr "Um BALN als Belohnungg zu erahlten müssen Sie einen Kredit aufnehmen od
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."
 msgstr "Um Netzwerkgebühren zu erhalten, müssen Sie BALN aus Ihrer Wallet anlegen."
-
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "To receive BALN, you must have ICX in the pool at 1pm Eastern each day."
-msgstr "Um BALN zu erhalten, müssen Sie jeden Tag ICX im Pool um 13:00 Uhr Eastern Standard Time (EST) haben."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
@@ -1106,12 +1109,6 @@ msgstr ""
 msgid "Wallet:"
 msgstr ""
 
-#: src/app/components/trade/LiquidityDetails.tsx
-msgid "Wallet:\n"
-"{0} {1} /\n"
-"{2} {3}"
-msgstr ""
-
 #: src/app/components/trade/LPPanel.tsx
 msgid "Wallet: {0} {1}"
 msgstr ""
@@ -1126,7 +1123,6 @@ msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
 msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1204,10 +1200,6 @@ msgid "Your BALN will unstake on {0} at\n"
 "{1}."
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "Your ICX will be locked for 24 hours."
-msgstr ""
-
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be staked, so your collateral value will increase over time."
 msgstr ""
@@ -1223,10 +1215,6 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-msgstr ""
-
-#: src/app/components/trade/LPDescription.tsx
-msgid "Your daily rewards"
 msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
@@ -1271,11 +1259,12 @@ msgid "then create the pool."
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
+#: src/app/components/trade/LPDescription.tsx
 msgid "{0}"
 msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "{0} / {1} \n"
+msgid "{0} / {1}\n"
 "liquidity pool{2}"
 msgstr ""
 

@@ -157,7 +157,7 @@ export default function LPDescription() {
                                 .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
                                 .dp(6)
                                 .toFormat() || '...'
-                            : baseCurrencyTotalSupply?.dp(6).toFormat() || '...'}{' '}
+                            : baseCurrencyTotalSupply?.dp(6).toFormat(2) || '...'}{' '}
                           {pair?.reserve0.currency?.symbol}
                           <br />
                           {formattedAmounts[Field.CURRENCY_B]
@@ -165,7 +165,7 @@ export default function LPDescription() {
                                 .plus(formattedAmounts[Field.CURRENCY_B]?.toFixed() || 0)
                                 .dp(6)
                                 .toFormat() || '...'
-                            : quoteCurrencyTotalSupply?.dp(6).toFormat() || '...'}{' '}
+                            : quoteCurrencyTotalSupply?.dp(6).toFormat(2) || '...'}{' '}
                           {pair?.reserve1.currency?.symbol}
                         </>
                       ) : (

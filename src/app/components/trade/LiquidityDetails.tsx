@@ -6,6 +6,7 @@ import { Pair } from '@balancednetwork/v1-sdk';
 import { t, Trans } from '@lingui/macro';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
+import { AnimatePresence, motion } from 'framer-motion';
 import JSBI from 'jsbi';
 import { omit } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
@@ -38,6 +39,7 @@ import { multiplyCABN, toFraction, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from '../ModalContent';
+import { StyledSkeleton } from '../ProposalInfo/components';
 import Spinner from '../Spinner';
 import StakeLPPanel from './StakeLPPanel';
 import { stakedFraction, withdrawMessage } from './utils';
@@ -70,6 +72,8 @@ function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber
     reward: totalRewardFrac.multiply(rate),
   };
 }
+
+const MotionBoxPanel = motion(BoxPanel);
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -126,69 +130,90 @@ export default function LiquidityDetails() {
       return acc;
     }, {});
 
-  return shouldShowQueue || userPools.length ? (
-    <BoxPanel bg="bg2" mb={10}>
-      <Typography variant="h2" mb={5}>
-        <Trans>Liquidity details</Trans>
-      </Typography>
+  const userProvidedLiquidity = shouldShowQueue || userPools.length;
 
-      <TableWrapper>
-        <DashGrid>
-          <HeaderText>
-            <Trans>Pool</Trans>
-          </HeaderText>
-          <HeaderText>
-            <Trans>Your supply</Trans>
-          </HeaderText>
-          {upSmall && (
-            <HeaderText>
-              <Trans>Pool share</Trans>
-            </HeaderText>
-          )}
-          {upSmall && (
-            <HeaderText>
-              <Trans>Daily rewards</Trans>
-            </HeaderText>
-          )}
-          <HeaderText></HeaderText>
-        </DashGrid>
+  return (
+    <>
+      <AnimatePresence>
+        {!userProvidedLiquidity && (
+          <motion.div
+            key="spinner"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{ height: '100px', position: 'relative' }}
+          >
+            <Spinner size={75} centered></Spinner>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {userProvidedLiquidity && (
+          <MotionBoxPanel
+            key="LPDetails"
+            bg="bg2"
+            mb={10}
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+          >
+            <Typography variant="h2" mb={5}>
+              <Trans>Liquidity details</Trans>
+            </Typography>
+            <TableWrapper>
+              <DashGrid>
+                <HeaderText>
+                  <Trans>Pool</Trans>
+                </HeaderText>
+                <HeaderText>
+                  <Trans>Your supply</Trans>
+                </HeaderText>
+                {upSmall && (
+                  <HeaderText>
+                    <Trans>Pool share</Trans>
+                  </HeaderText>
+                )}
+                {upSmall && (
+                  <HeaderText>
+                    <Trans>Daily rewards</Trans>
+                  </HeaderText>
+                )}
+                <HeaderText></HeaderText>
+              </DashGrid>
 
-        <Accordion collapsible>
-          {shouldShowQueue && (
-            <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
-              <StyledAccordionButton onClick={() => setIsHided(false)}>
-                <PoolRecordQ balance={queueBalance} pair={queuePair} totalReward={queueReward} />
-              </StyledAccordionButton>
-              <StyledAccordionPanel hidden={isHided}>
-                <StyledBoxPanel bg="bg3">
-                  <WithdrawModalQ balance={queueBalance} pair={queuePair} />
-                </StyledBoxPanel>
-              </StyledAccordionPanel>
-            </StyledAccordionItem>
-          )}
-          {balancesWithoutQ &&
-            userPools.map((poolId, index, arr) => (
-              <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
-                <StyledAccordionButton onClick={() => setIsHided(false)}>
-                  <PoolRecord
-                    poolId={parseInt(poolId)}
-                    balance={balances[poolId]}
-                    pair={sortedPairs[poolId]}
-                    totalReward={rewards[poolId]}
-                  />
-                </StyledAccordionButton>
-                <StyledAccordionPanel hidden={isHided}>
-                  <StyledBoxPanel bg="bg3">
-                    <StakeLPPanel poolId={parseInt(poolId)} />
-                    <WithdrawModal poolId={parseInt(poolId)} balance={balances[poolId]} pair={sortedPairs[poolId]} />
-                  </StyledBoxPanel>
-                </StyledAccordionPanel>
-              </StyledAccordionItem>
-            ))}
-        </Accordion>
-      </TableWrapper>
-    </BoxPanel>
-  ) : null;
+              <Accordion collapsible>
+                {shouldShowQueue && (
+                  <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
+                    <StyledAccordionButton onClick={() => setIsHided(false)}>
+                      <PoolRecordQ balance={queueBalance} pair={queuePair} totalReward={queueReward} />
+                    </StyledAccordionButton>
+                    <StyledAccordionPanel hidden={isHided}>
+                      <StyledBoxPanel bg="bg3">
+                        <WithdrawModalQ balance={queueBalance} pair={queuePair} />
+                      </StyledBoxPanel>
+                    </StyledAccordionPanel>
+                  </StyledAccordionItem>
+                )}
+                {balancesWithoutQ &&
+                  userPools.map((poolId, index, arr) => (
+                    <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
+                      <StyledAccordionButton onClick={() => setIsHided(false)}>
+                        <PoolRecord balance={balances[poolId]} pair={sortedPairs[poolId]} />
+                      </StyledAccordionButton>
+                      <StyledAccordionPanel hidden={isHided}>
+                        <StyledBoxPanel bg="bg3">
+                          <StakeLPPanel pair={sortedPairs[poolId]} />
+                          <WithdrawModal balance={balances[poolId]} pair={sortedPairs[poolId]} />
+                        </StyledBoxPanel>
+                      </StyledAccordionPanel>
+                    </StyledAccordionItem>
+                  ))}
+              </Accordion>
+            </TableWrapper>
+          </MotionBoxPanel>
+        )}
+      </AnimatePresence>
+    </>
+  );
 }
 
 const TableWrapper = styled.div``;
@@ -222,8 +247,11 @@ const HeaderText = styled(Typography)`
   letter-spacing: 3px;
 `;
 
-const DataText = styled(Box)`
+const DataText = styled(Flex)`
   font-size: 16px;
+  justify-content: center;
+  align-items: end;
+  flex-direction: column;
 `;
 const StyledArrowDownIcon = styled(ArrowDownIcon)`
   width: 10px;
@@ -307,6 +335,17 @@ const StyledAccordionButton = styled(AccordionButton)`
     bottom: 0;
     left: 30px;
   }
+
+  & > ${ListItem} {
+    p,
+    & > div {
+      transition: all ease-in-out 200ms;
+      path {
+        transition: all ease-in-out 200ms;
+      }
+    }
+  }
+
   &:hover {
     & > ${ListItem} {
       p,
@@ -344,32 +383,23 @@ const StyledAccordionPanel = styled(AccordionPanel)`
   max-height: 0;
   transition: all ease-in-out 0.5s;
   &[data-state='open'] {
-    max-height: 100%;
+    max-height: 800px;
     ${({ theme }) => theme.mediaWidth.upSmall`
       max-height: 400px;
     `}
   }
 `;
 
-const PoolRecord = ({
-  poolId,
-  pair,
-  balance,
-  totalReward,
-}: {
-  pair: Pair;
-  balance: BalanceData;
-  poolId: number;
-  totalReward: BigNumber;
-}) => {
+export const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
+  !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
+
+const PoolRecord = ({ pair, balance }: { pair: Pair; balance: BalanceData }) => {
+  const poolId = pair.poolId!;
   const poolData = usePoolData(poolId);
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
 
   const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
-
-  const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
-    !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
 
   const baseCurrencyTotalSupply = totalSupply(baseValue, poolData?.suppliedBase);
   const quoteCurrencyTotalSupply = totalSupply(quoteValue, poolData?.suppliedQuote);
@@ -386,32 +416,51 @@ const PoolRecord = ({
           <StyledArrowDownIcon />
         </StyledDataText>
         <DataText>
-          {`${baseCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' }) || '...'} ${
-            aBalance.currency.symbol || '...'
-          }`}
-          <br />
-          {`${quoteCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' }) || '...'} ${
-            bBalance.currency.symbol || '...'
-          }`}
+          {baseCurrencyTotalSupply ? (
+            <Typography fontSize={16}>{`${baseCurrencyTotalSupply.toFixed(2, { groupSeparator: ',' })} ${
+              aBalance.currency.symbol || '...'
+            }`}</Typography>
+          ) : (
+            <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+          )}
+          {quoteCurrencyTotalSupply ? (
+            <Typography fontSize={16}>{`${quoteCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' })} ${
+              bBalance.currency.symbol || '...'
+            }`}</Typography>
+          ) : (
+            <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+          )}
         </DataText>
 
         {upSmall && (
-          <DataText>{`${
-            (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
-              ? poolData?.poolShare.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
-              : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
-          }%`}</DataText>
+          <DataText>
+            {baseValue && quoteValue && percent && poolData && baseCurrencyTotalSupply ? (
+              `${
+                (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
+                  ? poolData?.poolShare.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
+                  : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
+              }%`
+            ) : (
+              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            )}
+          </DataText>
         )}
         {upSmall && (
           <DataText>
-            {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
-              ? 'N/A'
-              : poolData?.suppliedReward?.multiply(stakedFractionValue)
-              ? `~ ${poolData?.suppliedReward
+            {poolData?.suppliedReward ? (
+              poolData.suppliedReward.equalTo(FRACTION_ZERO) ? (
+                'N/A'
+              ) : poolData?.suppliedReward?.multiply(stakedFractionValue) ? (
+                `~ ${poolData?.suppliedReward
                   ?.multiply(stakedFractionValue)
                   .divide(100)
                   .toFixed(2, { groupSeparator: ',' })} BALN`
-              : 'N/A'}
+              ) : (
+                'N/A'
+              )
+            ) : (
+              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            )}
           </DataText>
         )}
       </ListItem>
@@ -545,11 +594,11 @@ const WithdrawModalQ = ({ balance, pair }: { pair: Pair; balance: BalanceData })
           }`}</Typography>
         </Typography>
 
-        <Flex alignItems="center" justifyContent="space-between">
+        <Flex alignItems="center" justifyContent="center" flexWrap="wrap">
           <OptionButton
             disabled={JSBI.equal(balance.balance1?.quotient || BIGINT_ZERO, BIGINT_ZERO)}
             onClick={handleOption2}
-            mr={2}
+            m={1}
           >
             <CurrencyLogo currency={balance.balance1?.currency} size={'35px'} />
             <Typography fontSize="16px" fontWeight="bold">
@@ -560,6 +609,7 @@ const WithdrawModalQ = ({ balance, pair }: { pair: Pair; balance: BalanceData })
           <OptionButton
             disabled={JSBI.equal(balance.balance.quotient || BIGINT_ZERO, BIGINT_ZERO)}
             onClick={handleOption1}
+            m={1}
           >
             <CurrencyLogo currency={balance.balance.currency} size={'35px'} />
             <Typography fontSize="16px" fontWeight="bold">
@@ -626,24 +676,29 @@ const WithdrawModalQ = ({ balance, pair }: { pair: Pair; balance: BalanceData })
 const Wrapper = styled(Flex)`
   padding-left: 0;
   margin-left: 0;
-  margin-top: 40px;
+  margin-top: 30px;
   flex-direction: column;
   border-left: none;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 
   ${({ theme }) => theme.mediaWidth.upSmall`
     padding-left: 35px;
     margin-left: 35px;
+    padding-top: 0;
     border-left: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 0;
     margin-top: 0;
   `}
 `;
 
-const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
+const WithdrawModal = ({ pair, balance }: { pair: Pair; balance: BalanceData }) => {
   const { account } = useIconReact();
   const balances = useCurrencyBalances(
     account ?? undefined,
     useMemo(() => [pair.token0, pair.token1], [pair]),
   );
+  const poolId = pair.poolId!;
   const lpBalance = useBalance(poolId);
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -710,7 +765,9 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
   }
 
   const handleFieldAInput = (value: string) => {
-    if (availableBase) {
+    if (value === '0' || value === '') {
+      resetValue();
+    } else if (availableBase) {
       const valueBN = new BigNumber(value || '0');
       const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(availableBase.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
@@ -718,7 +775,9 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
   };
 
   const handleFieldBInput = (value: string) => {
-    if (availableQuote) {
+    if (value === '0' || value === '') {
+      resetValue();
+    } else if (availableQuote) {
       const valueBN = new BigNumber(value || '0');
       const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(availableQuote.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
@@ -749,7 +808,7 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
 
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(portion);
+      sliderInstance.current && sliderInstance.current.noUiSlider.set(portion);
     }
   }, [sliderInstance, inputType, portion]);
 
@@ -763,7 +822,7 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
   const addTransaction = useTransactionAdder();
 
   const resetValue = () => {
-    sliderInstance.current.noUiSlider.set(0);
+    sliderInstance.current && sliderInstance.current.noUiSlider.set(0);
     setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
   };
 
@@ -831,6 +890,8 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
     formattedAmounts[Field.CURRENCY_A] !== '0' &&
     formattedAmounts[Field.CURRENCY_B] !== '0';
 
+  const hasUnstakedLP = availableBase?.greaterThan(0) && availableQuote?.greaterThan(0);
+
   return (
     <>
       <Wrapper>
@@ -866,24 +927,26 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
           }`}
         </Typography>
         <Box mb={5}>
-          <Nouislider
-            start={[0]}
-            connect={[true, false]}
-            range={{
-              min: [0],
-              max: [100],
-            }}
-            step={0.01}
-            onSlide={handleSlide}
-            instanceRef={instance => {
-              if (instance && !sliderInstance.current) {
-                sliderInstance.current = instance;
-              }
-            }}
-          />
+          {hasUnstakedLP && (
+            <Nouislider
+              start={[0]}
+              connect={[true, false]}
+              range={{
+                min: [0],
+                max: [100],
+              }}
+              step={0.01}
+              onSlide={handleSlide}
+              instanceRef={instance => {
+                if (instance && !sliderInstance.current) {
+                  sliderInstance.current = instance;
+                }
+              }}
+            />
+          )}
         </Box>
         <Flex alignItems="center" justifyContent="center">
-          <Button onClick={handleShowConfirm} disabled={!isValid}>
+          <Button onClick={handleShowConfirm} disabled={!isValid || !hasUnstakedLP}>
             <Trans>Withdraw liquidity</Trans>
           </Button>
         </Flex>

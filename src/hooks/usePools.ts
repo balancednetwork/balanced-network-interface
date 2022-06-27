@@ -27,14 +27,16 @@ interface PoolState {
   minQuoteTokenAmount: BigNumber;
 }
 
-export function pairToken(chainId: number): Token {
-  return new Token(chainId, 'cx0000000000000000000000000000000000000002', 18, 'BALN-V2', 'Balanced V2');
+export function pairToken(chainId: number, decimals: number): Token {
+  return new Token(chainId, 'cx0000000000000000000000000000000000000002', decimals, 'BALN-V2', 'Balanced V2');
 }
 
 function tokenForPair(base: Token, quote: Token): Token | undefined {
   if (base.chainId !== quote.chainId) return;
-
-  return pairToken(base.chainId);
+  const decimal0 = base.decimals;
+  const decimal1 = quote.decimals;
+  const decimals = decimal0 !== decimal1 ? (decimal0 + decimal1) / 2 : decimal0;
+  return pairToken(base.chainId, decimals);
 }
 
 export function usePools(): { [poolId: number]: PoolState } {

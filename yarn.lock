@@ -1272,10 +1272,10 @@
     tiny-invariant "^1.1.0"
     toformat "^2.0.0"
 
-"@balancednetwork/v1-sdk@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.0.tgz#1b36daf409941af838798ecbb7eab41d1e8a15b9"
-  integrity sha512-EN0DmWTZC4VRkMO2mmg4yfwuBP95XTnobvmG/HT/SCARGAyLuwcx/I/na31LVHT4boEkZu6svZv1VxPe3w65mQ==
+"@balancednetwork/v1-sdk@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.1.tgz#87423a047594d6c2a00ac805e0777b4d8c2b9096"
+  integrity sha512-m6gFb5oIKa2UAC02CzeoiSRhCmJhYj9GDMPFThqdQ9H9EfvJOrf5/8UneYhZ4CQ8c6v0ZTqjACyQYza/iAjEFA==
   dependencies:
     "@balancednetwork/sdk-core" "^1.0.1"
     "@ethersproject/address" "^5.0.0"

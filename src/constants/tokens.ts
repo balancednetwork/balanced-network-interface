@@ -254,7 +254,7 @@ export const IUSDC_BERLIN = new Token(
 );
 export const OMM_BERLIN = new Token(
   SupportedChainId.BERLIN,
-  'cx1359af0b9bbaf266fe0b3d7adc281c75b69fed5e',
+  'cx0fa7815de5b2be6e51dc52caa0dc556012ae0f98',
   18,
   'OMM',
   'Omm Token',

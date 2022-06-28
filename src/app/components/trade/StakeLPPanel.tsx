@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -30,6 +29,7 @@ import {
 } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { StyledSkeleton } from '../ProposalInfo/components';
@@ -110,10 +110,12 @@ export default React.memo(function StakeLPPanel({ pair }: { pair: Pair }) {
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
+
+    const decimals = (pair.token0.decimals + pair.token1.decimals) / 2;
     if (shouldStake) {
       bnJs
         .inject({ account: account })
-        .Dex.stake(poolId, BalancedJs.utils.toLoop(differenceAmount.abs()).toFixed())
+        .Dex.stake(poolId, parseUnits(differenceAmount.toFixed(), decimals))
         .then(res => {
           if (res.result) {
             addTransaction(
@@ -137,7 +139,7 @@ export default React.memo(function StakeLPPanel({ pair }: { pair: Pair }) {
     } else {
       bnJs
         .inject({ account: account })
-        .StakedLP.unstake(poolId, BalancedJs.utils.toLoop(differenceAmount.abs()).toFixed())
+        .StakedLP.unstake(poolId, parseUnits(differenceAmount.abs().toFixed(), decimals))
         .then(res => {
           if (res.result) {
             addTransaction(

@@ -336,9 +336,6 @@ export function useDerivedMintInfo(): {
     if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
       error = <Trans>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</Trans>;
     }
-    if (poolData && Number(currencyBAmount?.toFixed(2)) < poolData?.minQuoteTokenAmount.toNumber()) {
-      error = <Trans>Supply</Trans>;
-    }
   }
 
   return {

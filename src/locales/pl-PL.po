@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-25 18:31\n"
+"PO-Revision-Date: 2022-06-30 02:22\n"
 "Last-Translator: \n"
 "Language: pl_PL\n"
 "Language-Team: Polish\n"
@@ -20,6 +20,10 @@ msgstr ""
 #: src/app/containers/ProposalPage/index.tsx
 msgid "({0}% required)"
 msgstr "(wymagane {0}%)"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "1 {sendSymbol} per {0}"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "10 bnUSD minimum"
@@ -183,6 +187,7 @@ msgid "Borrowing bnUSD..."
 msgstr "Pożyczanie bnUSD..."
 
 #: src/app/components/ProposalModal/index.tsx
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -489,6 +494,7 @@ msgstr "W kontrakcie"
 msgid "Includes a fee of {0} bnUSD."
 msgstr "Zawiera prowizję w wysokości {0} bnUSD."
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Includes a fee of {0} {1}."
 msgstr "Zawiera prowizję w wysokości {0} {1}."
@@ -597,6 +603,11 @@ msgstr "Nie znaleziono żadnych wyników."
 msgid "Not now"
 msgstr "Nie teraz"
 
+#: src/app/components/StabilityFund/index.tsx
+#: src/app/components/StabilityFund/index.tsx
+msgid "Or"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
 msgstr "Ostatni dzień"
@@ -609,6 +620,7 @@ msgstr "Ostatni miesiąc"
 msgid "Past week"
 msgstr "Ostatni tydzień"
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Pay"
 msgstr "Zapłać"
@@ -679,6 +691,7 @@ msgstr "Rebalansowanie ceny bnUSD..."
 msgid "Rebalancing threshold"
 msgstr "Próg rebalansowania"
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
 msgstr "Otrzymaj"
@@ -894,6 +907,7 @@ msgstr "Dostarczanie"
 msgid "Supplying {pair} liquidity..."
 msgstr "Dostarczanie płynności do pary {pair}..."
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
@@ -905,6 +919,10 @@ msgstr "Wymiana"
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Swap {0} for {1}?"
 msgstr "Wymienić {0} na {1}?"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "Swap {sendSymbol} for {0}?"
+msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
@@ -921,6 +939,11 @@ msgstr "Trwa do 7 dni. Kiedy będzie gotowe, przejdź do ICX > Odstake'owanie w 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Text"
 msgstr "Tekst"
+
+#: src/app/components/StabilityFund/index.tsx
+#: src/app/components/StabilityFund/index.tsx
+msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1047,6 +1070,14 @@ msgstr "Język Balanced"
 #: src/app/components/WalletModal/index.tsx
 msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
 msgstr "Używasz na własne ryzyko. Współtwórcy projektu nie ponoszą odpowiedzialności za utracone lub skradzione środki."
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "Use the Stability Fund to swap a maximum of"
+msgstr ""
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "Use the Stability Fund to swap {0} for {1}"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
@@ -1231,6 +1262,10 @@ msgstr "i kończy się po 5 dniach."
 #: src/utils/timeformat.ts
 msgid "d"
 msgstr "d"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "for"
+msgstr ""
 
 #: src/utils/timeformat.ts
 msgid "h"

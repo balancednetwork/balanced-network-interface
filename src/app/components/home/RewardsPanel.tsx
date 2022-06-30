@@ -84,14 +84,13 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       });
   };
 
-  const rewardQuery = useRewardQuery();
-  const reward = rewardQuery.data;
+  const { data: reward, refetch } = useRewardQuery();
 
   const [rewardTx, setRewardTx] = React.useState('');
   const rewardTxStatus = useTransactionStatus(rewardTx);
   React.useEffect(() => {
-    if (rewardTxStatus === TransactionStatus.success) rewardQuery.refetch();
-  }, [rewardTxStatus, rewardQuery]);
+    if (rewardTxStatus === TransactionStatus.success) refetch();
+  }, [rewardTxStatus, refetch]);
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {

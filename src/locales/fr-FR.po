@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-30 02:22\n"
+"PO-Revision-Date: 2022-06-30 23:26\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -23,7 +23,7 @@ msgstr "({0}% requis)"
 
 #: src/app/components/StabilityFund/index.tsx
 msgid "1 {sendSymbol} per {0}"
-msgstr ""
+msgstr "1 {sendSymbol} pour {0}"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "10 bnUSD minimum"
@@ -451,7 +451,7 @@ msgstr "Frais"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "For"
-msgstr "Pour"
+msgstr "Contre"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
@@ -606,7 +606,7 @@ msgstr "Plus tard"
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
 msgid "Or"
-msgstr ""
+msgstr "Ou"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
@@ -648,7 +648,7 @@ msgstr "Préparation à déstaker sICX..."
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 msgid "Price"
-msgstr ""
+msgstr "Prix"
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Price impact"
@@ -922,7 +922,7 @@ msgstr "Échanger {0} contre {1} ?"
 
 #: src/app/components/StabilityFund/index.tsx
 msgid "Swap {sendSymbol} for {0}?"
-msgstr ""
+msgstr "Échanger {sendSymbol} contre {0} ?"
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
@@ -943,7 +943,7 @@ msgstr "Texte"
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
 msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
-msgstr ""
+msgstr "Le Fond de Stabilité vous permet de minter ou de brûler du bnUSD 1:1 contre des monnaies stables approuvées, moyennant des frais de 0,5%."
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -976,7 +976,7 @@ msgstr "Ils se déstakeront sur {0}, autour de {1}."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
-msgstr ""
+msgstr "Ce pool fonctionne comme une file d'attente, ainsi vos ICX sont progressivement convertis en sICX. Vous gagnerez du BALN jusqu'à ce que cela se produise."
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
@@ -1073,11 +1073,11 @@ msgstr "Utilisation à vos propres risques et périls. Les contributeurs du proj
 
 #: src/app/components/StabilityFund/index.tsx
 msgid "Use the Stability Fund to swap a maximum of"
-msgstr ""
+msgstr "Utilisez le Fond de Stabilité pour échanger un maximum de"
 
 #: src/app/components/StabilityFund/index.tsx
 msgid "Use the Stability Fund to swap {0} for {1}"
-msgstr ""
+msgstr "Utilisez le Fond de Stabilité pour échanger {0} contre {1}"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
@@ -1104,16 +1104,16 @@ msgstr "Vote exprimé."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting ends in {endTimeStr}"
-msgstr ""
+msgstr "Le vote se termine dans {endTimeStr}"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting has ended"
-msgstr ""
+msgstr "Le vote est terminé"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting starts in {startTimeStr}"
-msgstr ""
+msgstr "Le vote commence dans {startTimeStr}"
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
@@ -1259,19 +1259,19 @@ msgstr "et se termine arpès 5 jours."
 
 #: src/utils/timeformat.ts
 msgid "d"
-msgstr ""
+msgstr "d"
 
 #: src/app/components/StabilityFund/index.tsx
 msgid "for"
-msgstr ""
+msgstr "pour"
 
 #: src/utils/timeformat.ts
 msgid "h"
-msgstr ""
+msgstr "h"
 
 #: src/utils/timeformat.ts
 msgid "less then a minute"
-msgstr ""
+msgstr "moins d'une minute"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "liquidity pool"
@@ -1279,11 +1279,11 @@ msgstr "Pool de liquidité"
 
 #: src/utils/timeformat.ts
 msgid "m"
-msgstr ""
+msgstr "m"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "or"
-msgstr ""
+msgstr "ou"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then click Supply."
@@ -1301,7 +1301,7 @@ msgstr "{0}"
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1}\n"
 "liquidity pool{2}"
-msgstr ""
+msgstr "{0} / {1} pool de liquidité {2}"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} liquidity pool"

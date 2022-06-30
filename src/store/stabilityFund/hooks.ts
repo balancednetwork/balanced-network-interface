@@ -76,8 +76,9 @@ export function useMaxSwapSize(): CurrencyAmount<Token> | undefined {
   const balances = useStabilityFundBalances();
   const { data: limits } = useFundLimits();
   const { trade } = useDerivedSwapInfo();
+  const isSwapEligible = useIsSwapEligible();
   const isBnUSDGoingIn = trade?.inputAmount.currency.symbol === 'bnUSD';
-  if (trade && limits) {
+  if (isSwapEligible && trade && limits) {
     if (isBnUSDGoingIn) {
       return CurrencyAmount.fromRawAmount(
         trade.inputAmount.currency.wrapped,

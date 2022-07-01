@@ -5,20 +5,26 @@ import { useIconReact } from 'packages/icon-react';
 
 import bnJs from 'bnJs';
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'constants/routing';
-import { isNativeCurrency, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { useCombinedActiveList, TokenAddressMap } from 'store/lists/hooks';
 import { useUserAddedTokens } from 'store/user/hooks';
 import { isAddress } from 'utils';
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
-function useTokensFromMap(
-  tokenMap: { [address: string]: Token },
-  includeUserAdded: boolean,
-): { [address: string]: Token } {
+function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
   const { networkId: chainId } = useIconReact();
   const userAddedTokens = useUserAddedTokens();
 
   return useMemo(() => {
     if (!chainId) return {};
+
+    // reduce to just tokens
+    const mapWithoutUrls = Object.keys(tokenMap[chainId] ?? {}).reduce<{ [address: string]: Token }>(
+      (newMap, address) => {
+        newMap[address] = tokenMap[chainId][address].token;
+        return newMap;
+      },
+      {},
+    );
 
     if (includeUserAdded) {
       return (
@@ -31,25 +37,18 @@ function useTokensFromMap(
             },
             // must make a copy because reduce modifies the map, and we do not
             // want to make a copy in every iteration
-            { ...tokenMap },
+            { ...mapWithoutUrls },
           )
       );
     }
 
-    return tokenMap;
+    return mapWithoutUrls;
   }, [chainId, userAddedTokens, tokenMap, includeUserAdded]);
 }
 
 export function useAllTokens(): { [address: string]: Token } {
-  const allTokens = useMemo(
-    () =>
-      SUPPORTED_TOKENS_LIST.filter(token => !isNativeCurrency(token)).reduce((res, token) => {
-        res[token.address] = token;
-        return res;
-      }, {}),
-    [],
-  );
-  return useTokensFromMap(allTokens as { [address: string]: Token }, true);
+  const allTokens = useCombinedActiveList();
+  return useTokensFromMap(allTokens, true);
 }
 
 export function useCommonBases(): { [address: string]: Token } {

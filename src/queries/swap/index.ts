@@ -1,10 +1,10 @@
 import { BalancedJs } from '@balancednetwork/balanced-js';
-import { Currency } from '@balancednetwork/sdk-core';
+import { Currency, Token } from '@balancednetwork/sdk-core';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 
 import { CHART_PERIODS } from 'app/components/TradingViewChart';
-import { getTradePair, isQueue } from 'constants/currency';
+import bnJs from 'bnJs';
 import { ONE } from 'constants/index';
 import QUERY_KEYS from 'queries/queryKeys';
 import { Field } from 'store/swap/actions';
@@ -17,20 +17,27 @@ type BarType = { time: number; open: number; close: number; high: number; low: n
 
 export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency }, period: CHART_PERIODS) => {
   return useQuery<BarType[]>(QUERY_KEYS.Swap.PriceChart(currencies, period), async () => {
-    const [pair, inverse] = getTradePair(
-      currencies[Field.INPUT]?.symbol as string,
-      currencies[Field.OUTPUT]?.symbol as string,
+    const data = await bnJs.Multicall.getPoolStatsForPair(
+      (currencies[Field.INPUT] as Token)?.address,
+      (currencies[Field.OUTPUT] as Token)?.address,
     );
-    if (pair && !isQueue(pair)) {
+
+    console.log('data', data);
+
+    const pairId = parseInt(data.id);
+    const inverse = data.base_token !== (currencies[Field.INPUT] as Token)?.address;
+
+    // the first pair is sICX/ICX pair
+    if (data && data.id > 1) {
       const day = new Date().valueOf() * 1_000;
       const {
         data: result,
       }: {
         data: BarType[];
-      } = await axios.get(`${API_ENDPOINT}/dex/swap-chart/${pair?.id}/${period.toLowerCase()}/${LAUNCH_DAY}/${day}`);
+      } = await axios.get(`${API_ENDPOINT}/dex/swap-chart/${pairId}/${period.toLowerCase()}/${LAUNCH_DAY}/${day}`);
 
-      const quoteToken = pair.quoteToken;
-      const baseToken = pair.baseToken;
+      const baseToken = inverse ? currencies[Field.OUTPUT] : currencies[Field.INPUT];
+      const quoteToken = inverse ? currencies[Field.INPUT] : currencies[Field.OUTPUT];
 
       const decimal = (quoteToken?.decimals ?? 0) - (baseToken?.decimals ?? 0) + 18;
 

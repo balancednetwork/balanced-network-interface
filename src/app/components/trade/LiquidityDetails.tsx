@@ -24,8 +24,7 @@ import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL, ZERO } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
-import { useBalance, usePoolData } from 'hooks/usePools';
-import { BalanceData, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
+import { BalanceData, useAvailablePairs, useBalances, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useRewards } from 'store/reward/hooks';
@@ -43,13 +42,11 @@ import StakeLPPanel from './StakeLPPanel';
 import { stakedFraction, withdrawMessage } from './utils';
 
 function getRate(pair: Pair, balance: BalanceData): Fraction {
-  if (
-    pair.totalSupply &&
-    JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO) &&
-    balance &&
-    JSBI.greaterThan(balance.balance.quotient, BIGINT_ZERO)
-  ) {
-    const amount = balance.balance.divide(pair.totalSupply);
+  //When balance = 0, use stakedLPBalance to calculate rate
+  if (pair.totalSupply && JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO) && balance) {
+    const amount = (balance?.stakedLPBalance ? balance.balance.add(balance.stakedLPBalance) : balance.balance).divide(
+      pair.totalSupply,
+    );
     return new Fraction(amount.numerator, amount.denominator);
   }
   return FRACTION_ZERO;
@@ -362,21 +359,21 @@ const PoolRecord = ({
   poolId: number;
   totalReward: BigNumber;
 }) => {
-  const poolData = usePoolData(poolId);
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
 
   const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
+  const { share, reward } = getShareReward(pair, balance, totalReward);
+  const [aBalance, bBalance] = getABBalance(pair, balance);
+  const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
 
   const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
     !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
 
-  const baseCurrencyTotalSupply = totalSupply(baseValue, poolData?.suppliedBase);
-  const quoteCurrencyTotalSupply = totalSupply(quoteValue, poolData?.suppliedQuote);
+  const baseCurrencyTotalSupply = totalSupply(baseValue, lpBalance?.base);
+  const quoteCurrencyTotalSupply = totalSupply(quoteValue, lpBalance?.quote);
 
   const stakedFractionValue = stakedFraction(stakedLPPercent);
-
-  const [aBalance, bBalance] = getABBalance(pair, balance);
 
   return (
     <>
@@ -398,19 +395,16 @@ const PoolRecord = ({
         {upSmall && (
           <DataText>{`${
             (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
-              ? poolData?.poolShare.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
+              ? share.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
               : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
           }%`}</DataText>
         )}
         {upSmall && (
           <DataText>
-            {poolData?.suppliedReward?.equalTo(FRACTION_ZERO)
+            {reward?.equalTo(FRACTION_ZERO)
               ? 'N/A'
-              : poolData?.suppliedReward?.multiply(stakedFractionValue)
-              ? `~ ${poolData?.suppliedReward
-                  ?.multiply(stakedFractionValue)
-                  .divide(100)
-                  .toFixed(2, { groupSeparator: ',' })} BALN`
+              : reward?.multiply(stakedFractionValue)
+              ? `~ ${reward?.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
               : 'N/A'}
           </DataText>
         )}
@@ -644,7 +638,6 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
     account ?? undefined,
     useMemo(() => [pair.token0, pair.token1], [pair]),
   );
-  const lpBalance = useBalance(poolId);
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const onChangeWithdrawnValue = useChangeWithdrawnValue();
@@ -669,11 +662,10 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
 
   const percent = useMemo(() => new Percent(Math.floor(portion * 100), 10_000), [portion]);
   const stakedLPPercent = useStakedLPPercent(poolId);
-  const availablePercent = new BigNumber(100).minus(stakedLPPercent).abs();
-  const availableBase = lpBalance?.base.multiply(availablePercent.toFixed(0)).divide(100);
-  const availableQuote = lpBalance?.quote.multiply(availablePercent.toFixed(0)).divide(100);
-
   const [aBalance, bBalance] = getABBalance(pair, balance);
+  const availablePercent = new BigNumber(100).minus(stakedLPPercent).abs();
+  const availableBase = aBalance.multiply(availablePercent.toFixed(0)).divide(100);
+  const availableQuote = bBalance.multiply(availablePercent.toFixed(0)).divide(100);
 
   if (inputType === 'slider') {
     parsedAmount = {
@@ -710,7 +702,7 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
   }
 
   const handleFieldAInput = (value: string) => {
-    if (availableBase) {
+    if (availableBase && availableBase.greaterThan(0)) {
       const valueBN = new BigNumber(value || '0');
       const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(availableBase.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
@@ -718,7 +710,7 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
   };
 
   const handleFieldBInput = (value: string) => {
-    if (availableQuote) {
+    if (availableQuote && availableQuote.greaterThan(0)) {
       const valueBN = new BigNumber(value || '0');
       const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(availableQuote.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
@@ -737,13 +729,16 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
   useEffect(() => {
     availableBase &&
       availableQuote &&
+      availableBase.greaterThan(0) &&
+      availableQuote.greaterThan(0) &&
       onChangeWithdrawnValue(
         poolId,
         new BigNumber(portion),
         availableBase.multiply(percent),
         availableQuote.multiply(percent),
       );
-  }, [onChangeWithdrawnValue, percent, portion, availableQuote, availableBase, poolId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onChangeWithdrawnValue, percent, portion, availableBase?.toFixed(), availableQuote?.toFixed(), poolId]);
 
   const sliderInstance = React.useRef<any>(null);
 
@@ -779,8 +774,8 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
 
     const t = multiplyCABN(balance.balance, numPortion);
 
-    const aT = multiplyCABN(aBalance, numPortion);
-    const bT = multiplyCABN(bBalance, numPortion);
+    const aT = multiplyCABN(availableBase, numPortion);
+    const bT = multiplyCABN(availableQuote, numPortion);
 
     bnJs
       .inject({ account })

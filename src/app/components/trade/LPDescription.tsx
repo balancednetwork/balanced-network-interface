@@ -10,8 +10,7 @@ import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
-import { usePoolData } from 'hooks/usePools';
-import { PairState } from 'hooks/useV2Pairs';
+import { PairState, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
@@ -41,8 +40,7 @@ export default function LPDescription() {
   const apys = useAllPairsAPY();
   const apy = apys && apys[pair?.poolId ?? -1];
 
-  const poolData = usePoolData(pair?.poolId ?? -1);
-
+  const balances = useSuppliedTokens(pair?.poolId ?? -1, currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
   //calulate Your supply temporary value  and Your daily reward temporary value
   const formattedAmounts = {
     [independentField]: tryParseAmount(typedValue, currencies[independentField]),
@@ -71,8 +69,8 @@ export default function LPDescription() {
   const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
     !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
 
-  const baseCurrencyTotalSupply = new BigNumber(totalSupply(baseValue, poolData?.suppliedBase)?.toFixed() || '0');
-  const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, poolData?.suppliedQuote)?.toFixed() || '0');
+  const baseCurrencyTotalSupply = new BigNumber(totalSupply(baseValue, balances?.base)?.toFixed() || '0');
+  const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, balances?.quote)?.toFixed() || '0');
 
   const tempTotalSupplyValue = new BigNumber(pair?.reserve0.toFixed() || 0).plus(
     new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0),

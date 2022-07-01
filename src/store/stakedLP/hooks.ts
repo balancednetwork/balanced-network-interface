@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Currency } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
-import { useBalance } from 'hooks/usePools';
+import { useBalance } from 'hooks/useV2Pairs';
 import { AppState } from 'store';
 
 import { setStakedLPPercent, setWithdrawnValue } from './actions';
@@ -39,22 +36,16 @@ export function useChangeWithdrawnValue(): (
 }
 
 export const useTotalStaked = (poolId: number) => {
-  const { account } = useIconReact();
   const balance = useBalance(poolId);
-  const [totalStaked, setTotalStaked] = useState(ZERO);
 
   const stakedBalance = balance?.stakedLPBalance || ZERO;
+  const availableStake = balance?.balance || ZERO;
 
-  useEffect(() => {
-    (async () => {
-      if (account) {
-        const availableStake = await bnJs.Dex.balanceOf(account, poolId);
-        setTotalStaked(BalancedJs.utils.toIcx(availableStake).plus(stakedBalance.toFixed()));
-      }
-    })();
-  }, [stakedBalance, account, poolId]);
-
-  return totalStaked;
+  return React.useMemo(
+    () => new BigNumber(stakedBalance.toFixed()).plus(availableStake.toFixed()),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [stakedBalance.toFixed(), availableStake.toFixed()],
+  );
 };
 
 export function useStakedLPPercent(poolId: number): BigNumber {

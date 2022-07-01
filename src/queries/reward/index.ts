@@ -22,7 +22,7 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
     QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
     async () => {
       const promises: Promise<any>[] = [];
-      for (let i = end; i > 1; i -= BATCH_SIZE + 1) {
+      for (let i = end; i > 1; i -= BATCH_SIZE) {
         const startValue = i - BATCH_SIZE;
         promises.push(bnJs.Dividends.getUserDividends(account!, startValue > 0 ? startValue : 0, i));
       }

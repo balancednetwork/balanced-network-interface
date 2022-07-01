@@ -246,15 +246,14 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
 
   const hasNetworkFees = useHasNetworkFees();
   const { data: platformDay = 0 } = usePlatformDayQuery();
-  const feesQuery = useUserCollectedFeesQuery(1, platformDay);
-  const feesArr = feesQuery.data;
+  const { data: feesArr, refetch } = useUserCollectedFeesQuery(1, platformDay);
   const fees = feesArr?.find(fees => fees);
   const feesIndex = feesArr?.findIndex(fees => fees) || 0;
   const hasFee = !!fees;
   const count = feesArr?.reduce((c, v) => (v ? ++c : c), 0);
   React.useEffect(() => {
-    if (feeTxStatus === TransactionStatus.success) feesQuery.refetch();
-  }, [feeTxStatus, feesQuery]);
+    if (feeTxStatus === TransactionStatus.success) refetch();
+  }, [feeTxStatus, refetch]);
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {

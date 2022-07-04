@@ -1,7 +1,6 @@
 import { Token } from '@balancednetwork/sdk-core';
 import { LibrarySymbolInfo, ResolutionString, SearchSymbolResultItem } from 'charting_library/charting_library';
 
-import { getTradePair } from 'constants/currency';
 import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 
 import { defaultConfig } from '.';
@@ -14,14 +13,21 @@ export interface BalancedLibrarySymbolInfo extends LibrarySymbolInfo {
 
 const SUPPORTED_PAIRS_WITHOUT_QUEUE = SUPPORTED_PAIRS.filter(pair => pair.name !== 'sICX/ICX');
 
-const getPairIDAndInversion = (pairName: string): [PairInfo | undefined, boolean | undefined] => {
-  const splitName = pairName.replaceAll(' ', '').split('/');
-  return getTradePair(splitName[0], splitName[1]);
+const getPairIDAndInversion = (pairName: string): { info: PairInfo | undefined; inversion: boolean | undefined } => {
+  const name = pairName.replaceAll(' ', '');
+  const reversedName = name.split('/').reverse().join('/');
+  const pairInfo = SUPPORTED_PAIRS.find(pair => pair.name === name);
+  const pairInfoFromInversion = SUPPORTED_PAIRS.find(pair => pair.name === reversedName);
+
+  return {
+    info: pairInfo || pairInfoFromInversion,
+    inversion: pairInfoFromInversion !== undefined,
+  };
 };
 
 export const getSymbolInfo = (name: string): BalancedLibrarySymbolInfo => {
   const pairInfo = getPairIDAndInversion(name);
-  const pair = pairInfo[0];
+  const pair = pairInfo.info;
   let decimal = 18;
   let pairID = -1;
 
@@ -31,11 +37,10 @@ export const getSymbolInfo = (name: string): BalancedLibrarySymbolInfo => {
     decimal = (quoteToken?.decimals ?? 0) - (baseToken?.decimals ?? 0) + 18;
     pairID = pair.id;
   }
-  const isPairInverted = !!pairInfo[1];
 
   return {
     pairID: pairID ? pairID : -1,
-    isPairInverted,
+    isPairInverted: !!pairInfo.inversion,
     decimal,
     name,
     full_name: name,

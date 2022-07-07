@@ -7,10 +7,10 @@ import styled from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { Typography } from 'app/theme';
 import { ReactComponent as SearchIcon } from 'assets/icons/search.svg';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useCollateralChangeCollateralType, useAllCollateralData } from 'store/collateral/hooks';
-import { getTokenFromCurrencyKey } from 'types/adapter';
 
 const SearchField = styled.input`
   background-color: ${({ theme }) => theme.colors.bg5};
@@ -151,7 +151,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   useEffect(() => {
     if (anchor && filteredCollateralTypes.length && enter) {
       setAnchor(null);
-      changeCollateralType(filteredCollateralTypes[activeIndex].symbol);
+      activeIndex && changeCollateralType(filteredCollateralTypes[activeIndex].symbol);
     }
   }, [
     anchor,
@@ -213,7 +213,10 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
             >
               <CollateralTypesGridItem>
                 <AssetInfo>
-                  <CurrencyLogo size={'26px'} currency={getTokenFromCurrencyKey(collateralType.symbol)!} />
+                  <CurrencyLogo
+                    size={'26px'}
+                    currency={SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType.symbol)}
+                  />
                   <Box>
                     <Typography className="white" fontWeight={700}>
                       {collateralType.symbol}

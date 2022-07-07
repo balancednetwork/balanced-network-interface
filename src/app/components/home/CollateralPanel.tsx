@@ -249,7 +249,7 @@ const CollateralPanel = () => {
   return (
     <>
       <BoxPanel bg="bg3">
-        <Flex justifyContent="space-between" alignItems={isSuperSmall ? 'flex-start' : 'center'}>
+        <Flex justifyContent="space-between" alignItems={isSuperSmall ? 'flex-start' : 'center'} ref={ref}>
           <CollateralTypeSwitcherWrap>
             <Typography variant="h2" paddingRight={'7px'}>
               <Trans>Collateral</Trans>:

@@ -151,7 +151,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   useEffect(() => {
     if (anchor && filteredCollateralTypes.length && enter) {
       setAnchor(null);
-      activeIndex && changeCollateralType(filteredCollateralTypes[activeIndex].symbol);
+      activeIndex !== undefined && changeCollateralType(filteredCollateralTypes[activeIndex].symbol);
     }
   }, [
     anchor,

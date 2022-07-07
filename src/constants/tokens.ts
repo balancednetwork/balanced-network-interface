@@ -233,21 +233,21 @@ export const FIN_SEJONG = new Token(
 export const ICX_BERLIN = new Token(SupportedChainId.BERLIN, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 export const sICX_BERLIN = new Token(
   SupportedChainId.BERLIN,
-  'cxdd89d7a425b8f0b6448a8c80136727c517e64033',
+  'cx2609b924e33ef00b648a409245c7ea394c467824',
   18,
   'sICX',
   'Staked ICX',
 );
 export const bnUSD_BERLIN = new Token(
   SupportedChainId.BERLIN,
-  'cx1cd2da25f9942fda5144e139bbda3e5108d3c083',
+  'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
   18,
   'bnUSD',
   'Balanced Dollar',
 );
 export const BALN_BERLIN = new Token(
   SupportedChainId.BERLIN,
-  'cx9eefbe346b17328e2265573f6e166f6bc4a13cc4',
+  'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
   18,
   'BALN',
   'Balance Token',

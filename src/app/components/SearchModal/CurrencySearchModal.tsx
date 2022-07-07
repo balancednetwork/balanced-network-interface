@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { Currency, Token } from '@balancednetwork/sdk-core';
+
 import useLast from 'hooks/useLast';
-import { Currency, Token } from 'types/balanced-sdk-core';
 
 import Modal from '../Modal';
 import { PopperWithoutArrow } from '../Popover';

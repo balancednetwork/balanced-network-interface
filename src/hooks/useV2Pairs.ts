@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
-import { CallData } from 'packages/BalancedJs/contracts/Multicall';
 
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
-import { Currency, CurrencyAmount, Token } from 'types/balanced-sdk-core';
-import { Pair } from 'types/balanced-v1-sdk';
 import { getPair } from 'utils';
 
 import useLastCount from './useLastCount';
@@ -121,6 +120,8 @@ export interface BalanceData {
 
   // sICX balance
   balance1?: CurrencyAmount<Token>;
+
+  stakedLPBalance?: CurrencyAmount<Token>;
 }
 
 export function useBalances(
@@ -137,7 +138,7 @@ export function useBalances(
 
       const poolKeys = Object.keys(pools);
 
-      const cds: CallData[] = poolKeys
+      let cds = poolKeys
         .map(poolId => {
           if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
             return {
@@ -146,11 +147,18 @@ export function useBalances(
               params: [account],
             };
           } else {
-            return {
-              target: bnJs.Dex.address,
-              method: 'balanceOf',
-              params: [account, `0x${(+poolId).toString(16)}`],
-            };
+            return [
+              {
+                target: bnJs.Dex.address,
+                method: 'balanceOf',
+                params: [account, `0x${(+poolId).toString(16)}`],
+              },
+              {
+                target: bnJs.StakedLP.address,
+                method: 'balanceOf',
+                params: [account, `0x${(+poolId).toString(16)}`],
+              },
+            ];
           }
         })
         .concat({
@@ -159,25 +167,51 @@ export function useBalances(
           params: [account],
         });
 
-      const data: any[] = await bnJs.Multicall.getAggregateData(cds);
+      const cdsFlatted: CallData[] = cds.flat();
+      const data: any[] = await bnJs.Multicall.getAggregateData(cdsFlatted);
       const sicxBalance = data[data.length - 1];
+
+      // Remapping the result was returned by multicall based on the order of the cds
+      let trackedIdx = 0;
+      const reMappingData = cds.map((cdsItem, idx) => {
+        if (Array.isArray(cdsItem)) {
+          if (trackedIdx === 0) {
+            trackedIdx = idx + 1;
+            return [data[idx], data[idx + 1]];
+          } else {
+            trackedIdx += 2;
+            return [data[trackedIdx - 1], data[trackedIdx]];
+          }
+        }
+        return data[idx];
+      });
 
       const balances = poolKeys.map((poolId, idx) => {
         const pool = pools[+poolId];
-        const balance = data[idx];
+        let balance = reMappingData[idx];
+        let stakedLPBalance;
+
+        if (Array.isArray(cds[idx])) {
+          balance = reMappingData[idx][0];
+          stakedLPBalance = reMappingData[idx][1];
+        }
 
         if (!pool) return undefined;
 
         if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
           return {
             poolId: +poolId,
-            balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(balance, 16).toFixed()),
-            balance1: CurrencyAmount.fromRawAmount(pool.token1, new BigNumber(sicxBalance, 16).toFixed()),
+            balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(balance || 0, 16).toFixed()),
+            balance1: CurrencyAmount.fromRawAmount(pool.token1, new BigNumber(sicxBalance || 0, 16).toFixed()),
           };
         } else {
           return {
             poolId: +poolId,
-            balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance, 16).toFixed()),
+            balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance || 0, 16).toFixed()),
+            stakedLPBalance: CurrencyAmount.fromRawAmount(
+              pool.token1,
+              new BigNumber(stakedLPBalance || 0, 16).toFixed(),
+            ),
           };
         }
       });

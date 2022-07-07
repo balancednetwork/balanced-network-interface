@@ -1,12 +1,12 @@
 import React from 'react';
 
+import { Currency, Token } from '@balancednetwork/sdk-core';
 import { Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { AutoColumn } from 'app/components/Column';
 import { Typography } from 'app/theme';
 import { useAddUserToken } from 'store/user/hooks';
-import { Currency, Token } from 'types/balanced-sdk-core';
 
 import TokenImportCard from './TokenImportCard';
 

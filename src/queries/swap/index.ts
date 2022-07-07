@@ -1,5 +1,6 @@
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Currency } from '@balancednetwork/sdk-core';
 import axios from 'axios';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useQuery } from 'react-query';
 
 import { CHART_PERIODS } from 'app/components/TradingViewChart';
@@ -7,7 +8,6 @@ import { getTradePair, isQueue } from 'constants/currency';
 import { ONE } from 'constants/index';
 import QUERY_KEYS from 'queries/queryKeys';
 import { Field } from 'store/swap/actions';
-import { Currency } from 'types/balanced-sdk-core';
 
 import { API_ENDPOINT } from '../constants';
 

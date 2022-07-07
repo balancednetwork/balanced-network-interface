@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Trans } from '@lingui/macro';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box } from 'rebass/styled-components';

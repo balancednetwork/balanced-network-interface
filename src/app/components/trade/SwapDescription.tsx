@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { Price, Currency } from '@balancednetwork/sdk-core';
 import { defineMessage, Trans } from '@lingui/macro';
 import { LanguageCode, ResolutionString } from 'charting_library/charting_library';
 import JSBI from 'jsbi';
@@ -23,7 +24,6 @@ import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers } from 'store/swap/hooks';
-import { Price, Currency } from 'types/balanced-sdk-core';
 import { generateChartData, toFraction } from 'utils';
 
 const CHART_TYPES_LABELS = {

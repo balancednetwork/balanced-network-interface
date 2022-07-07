@@ -88,6 +88,8 @@ export interface PopoverProps {
   forcePlacement?: boolean;
   style?: React.CSSProperties;
   refStyle?: React.CSSProperties;
+  zIndex?: number;
+  fallbackPlacements?: Placement[];
 }
 
 export default function Popover({
@@ -98,6 +100,8 @@ export default function Popover({
   children,
   placement = 'auto',
   forcePlacement,
+  zIndex,
+  fallbackPlacements,
 }: PopoverProps) {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -108,7 +112,7 @@ export default function Popover({
     modifiers: [
       { name: 'offset', options: { offset: [skidding[placement] || 0, 12] } },
       { name: 'arrow', options: { element: arrowElement } },
-      { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : undefined } },
+      { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : fallbackPlacements } },
     ],
   });
   const updateCallback = useCallback(() => {
@@ -126,6 +130,7 @@ export default function Popover({
           show={show}
           ref={setPopperElement as any}
           style={{ ...style, ...styles.popper }}
+          zIndex={zIndex}
           {...attributes.popper}
         >
           <ContentWrapper>{content}</ContentWrapper>

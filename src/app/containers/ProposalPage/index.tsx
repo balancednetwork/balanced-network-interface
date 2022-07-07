@@ -23,11 +23,11 @@ import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import bnJs from 'bnJs';
-import { usePlatformDayQuery } from 'queries/reward';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { getTrackerLink } from 'utils';
+import { formatTimeStr } from 'utils/timeformat';
 
 import { ACTIONS_MAPPING, RATIO_VALUE_FORMATTER } from '../NewProposalPage/constant';
 import Funding from './Funding';
@@ -105,7 +105,6 @@ export function ProposalPage() {
   const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotDay);
   const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
   const { data: userStatus } = voteStatusQuery;
-  const { data: platformDay } = usePlatformDayQuery();
   const isSmallScreen = useMedia('(max-width: 600px)');
 
   const actions = JSON.parse(proposal?.actions || '{}');
@@ -120,11 +119,8 @@ export function ProposalPage() {
   const proposalType = actionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
 
   const isActive =
-    proposal &&
-    platformDay &&
-    proposal.status === 'Active' &&
-    proposal.startDay <= platformDay &&
-    proposal.endDay > platformDay;
+    proposal && proposal.status === 'Active' && !formatTimeStr(proposal.startDay) && !!formatTimeStr(proposal.endDay);
+
   const hasUserVoted = isActive && userStatus?.hasVoted;
 
   const { account } = useIconReact();

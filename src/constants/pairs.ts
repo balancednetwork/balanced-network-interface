@@ -1,4 +1,5 @@
-import { SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import { SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
+import { Token } from '@balancednetwork/sdk-core';
 
 import {
   sICX,
@@ -26,8 +27,14 @@ import {
   bnUSD_SEJONG,
   BALN_SEJONG,
   FIN_SEJONG,
+  sICX_BERLIN,
+  bnUSD_BERLIN,
+  ICX_BERLIN,
+  BALN_BERLIN,
+  OMM_BERLIN,
+  IUSDC_BERLIN,
+  USDS_BERLIN,
 } from 'constants/tokens';
-import { Token } from 'types/balanced-sdk-core';
 
 import { NETWORK_ID } from './config';
 
@@ -231,7 +238,7 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
     {
       chainId: 3,
-      id: 3,
+      id: 6,
       name: 'BALN/bnUSD',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'bnUSD',
@@ -241,7 +248,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
     {
       chainId: 3,
-      id: 4,
+      //id: 4,
+      id: 5,
       name: 'BALN/sICX',
       baseCurrencyKey: 'BALN',
       quoteCurrencyKey: 'sICX',
@@ -260,7 +268,8 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
     },
     {
       chainId: 3,
-      id: 25,
+      id: 4,
+      // id: 25,
       name: 'OMM/sICX',
       baseCurrencyKey: 'OMM',
       quoteCurrencyKey: 'sICX',
@@ -335,6 +344,85 @@ export const SUPPORTED_PAIRS_INFO: { [networkId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: FIN_SEJONG,
       quoteToken: bnUSD_SEJONG,
+    },
+  ],
+  [NetworkId.BERLIN]: [
+    {
+      chainId: 7,
+      id: 1,
+      name: 'sICX/ICX',
+      baseCurrencyKey: 'sICX',
+      quoteCurrencyKey: 'ICX',
+      // rewards: 0.1,
+      baseToken: sICX_BERLIN,
+      quoteToken: ICX_BERLIN,
+    },
+    {
+      chainId: 7,
+      id: 2,
+      name: 'sICX/bnUSD',
+      baseCurrencyKey: 'sICX',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: sICX_BERLIN,
+      quoteToken: bnUSD_BERLIN,
+      // rewards: 0.175,
+    },
+    {
+      chainId: 7,
+      id: 3,
+      name: 'BALN/bnUSD',
+      baseCurrencyKey: 'BALN',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: BALN_BERLIN,
+      quoteToken: bnUSD_BERLIN,
+      // rewards: 0.175,
+    },
+    {
+      chainId: 7,
+      id: 4,
+      name: 'IUSDC/bnUSD',
+      baseCurrencyKey: 'IUSDC',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: IUSDC_BERLIN,
+      quoteToken: bnUSD_BERLIN,
+      // rewards: 0.175,
+    },
+    {
+      chainId: 7,
+      id: 5,
+      name: 'BALN/sICX',
+      baseCurrencyKey: 'BALN',
+      quoteCurrencyKey: 'sICX',
+      baseToken: BALN_YEOUIDO,
+      quoteToken: sICX_YEOUIDO,
+      // rewards: 0.05,
+    },
+    {
+      chainId: 7,
+      id: 6,
+      name: 'OMM/USDS',
+      baseCurrencyKey: 'OMM',
+      quoteCurrencyKey: 'USDS',
+      baseToken: OMM_BERLIN,
+      quoteToken: USDS_BERLIN,
+    },
+    {
+      chainId: 7,
+      id: 7,
+      name: 'OMM/IUSDC',
+      baseCurrencyKey: 'OMM',
+      quoteCurrencyKey: 'IUSDC',
+      baseToken: OMM_BERLIN,
+      quoteToken: IUSDC_BERLIN,
+    },
+    {
+      chainId: 7,
+      id: 8,
+      name: 'OMM/sICX',
+      baseCurrencyKey: 'OMM',
+      quoteCurrencyKey: 'sICX',
+      baseToken: OMM_BERLIN,
+      quoteToken: sICX_BERLIN,
     },
   ],
 };

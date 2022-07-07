@@ -36,7 +36,6 @@ import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from '../CollateralTypeSwitcher';
-import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import ModalContent from '../ModalContent';
 
 export const PanelInfoWrap = styled(Flex)`

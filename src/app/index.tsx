@@ -37,7 +37,7 @@ export function App() {
         <NotificationContainer />
         <WalletModal />
         {/* Add message for community */}
-        {true && (
+        {false && (
           <Banner>
             <Message />
           </Banner>

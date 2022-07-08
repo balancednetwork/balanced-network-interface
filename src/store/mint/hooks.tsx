@@ -146,7 +146,7 @@ export function useDerivedMintInfo(): {
     currencies[Field.CURRENCY_B],
   );
   const [pairState2, pair2, minQuoteTokenAmount2] = useQueuePair();
-  const [pairState, pair, minQuoteTokenAmount] = isQueue
+  const [pairState, pair] = isQueue
     ? [pairState2, pair2, minQuoteTokenAmount2]
     : [pairState1, pair1, minQuoteTokenAmount1];
 
@@ -337,9 +337,6 @@ export function useDerivedMintInfo(): {
 
     if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
       error = <Trans>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</Trans>;
-    }
-    if (minQuoteTokenAmount && Number(currencyBAmount?.toFixed(2)) < minQuoteTokenAmount.toNumber()) {
-      error = <Trans>Supply</Trans>;
     }
   }
 

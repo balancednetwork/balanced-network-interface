@@ -16,7 +16,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
-import { useBalance } from 'hooks/usePools';
+import { useBalance } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useChangeStakedLPPercent, useStakedLPPercent, useTotalStaked } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -55,7 +55,7 @@ export default React.memo(function StakeLPPanel({ poolId, pair }: { poolId: numb
       totalStaked.isZero() ? ZERO : stakedBalance.dividedBy(totalStaked).multipliedBy(100),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onStakedLPPercentSelected, poolId, stakedBalance, totalStaked]);
+  }, [onStakedLPPercentSelected, poolId, stakedBalance.toFixed(), totalStaked.toFixed()]);
 
   const handleSlide = useCallback(
     (values: string[], handle: number) => {
@@ -72,7 +72,7 @@ export default React.memo(function StakeLPPanel({ poolId, pair }: { poolId: numb
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onStakedLPPercentSelected, isAdjusting, totalStaked, poolId, stakedBalance]);
+  }, [onStakedLPPercentSelected, isAdjusting, totalStaked.toFixed(), poolId, stakedBalance.toFixed()]);
 
   // modal
   const [open, setOpen] = React.useState(false);

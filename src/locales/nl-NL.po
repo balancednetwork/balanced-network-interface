@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-25 18:31\n"
+"PO-Revision-Date: 2022-06-30 02:22\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -20,6 +20,10 @@ msgstr ""
 #: src/app/containers/ProposalPage/index.tsx
 msgid "({0}% required)"
 msgstr "({0}% vereist)"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "1 {sendSymbol} per {0}"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "10 bnUSD minimum"
@@ -183,6 +187,7 @@ msgid "Borrowing bnUSD..."
 msgstr "bnUSD lenen..."
 
 #: src/app/components/ProposalModal/index.tsx
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -489,6 +494,7 @@ msgstr "In contract"
 msgid "Includes a fee of {0} bnUSD."
 msgstr "Bevat een vergoeding van {0} bnUSD."
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Includes a fee of {0} {1}."
 msgstr "Bevat een vergoeding van {0} {1}."
@@ -597,6 +603,11 @@ msgstr "Geen resultaten gevonden."
 msgid "Not now"
 msgstr "Niet nu"
 
+#: src/app/components/StabilityFund/index.tsx
+#: src/app/components/StabilityFund/index.tsx
+msgid "Or"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
 msgstr "Afgelopen dag"
@@ -609,6 +620,7 @@ msgstr "Afgelopen maand"
 msgid "Past week"
 msgstr "Afgelopen week"
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Pay"
 msgstr "Betaal"
@@ -679,6 +691,7 @@ msgstr "Bezig met het rebalancen van de bnUSD prijs..."
 msgid "Rebalancing threshold"
 msgstr "Rebalancing grenslijn"
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
 msgstr "Ontvang"
@@ -894,6 +907,7 @@ msgstr "Leveren"
 msgid "Supplying {pair} liquidity..."
 msgstr "{pair} liquiditeit leveren..."
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
@@ -905,6 +919,10 @@ msgstr "Verwissel"
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Swap {0} for {1}?"
 msgstr "{0} omwisselen voor {1}?"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "Swap {sendSymbol} for {0}?"
+msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
@@ -921,6 +939,11 @@ msgstr "Neemt tot 7 dagen in beslag. Wanneer het klaar is, ga dan naar ICX > Uns
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Text"
 msgstr "Tekst"
+
+#: src/app/components/StabilityFund/index.tsx
+#: src/app/components/StabilityFund/index.tsx
+msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1047,6 +1070,14 @@ msgstr "Gebruik Balanced in"
 #: src/app/components/WalletModal/index.tsx
 msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
 msgstr "Gebruik op eigen risico. Projectmedewerkers zijn niet aansprakelijk voor verloren of gestolen fondsen."
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "Use the Stability Fund to swap a maximum of"
+msgstr ""
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "Use the Stability Fund to swap {0} for {1}"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
@@ -1231,6 +1262,10 @@ msgstr "en eindigt na 5 dagen."
 #: src/utils/timeformat.ts
 msgid "d"
 msgstr "d"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "for"
+msgstr ""
 
 #: src/utils/timeformat.ts
 msgid "h"

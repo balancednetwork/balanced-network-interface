@@ -173,6 +173,7 @@ export function useCollateralInputAmountInUSD() {
 interface CollateralType {
   symbol: string;
   name: string;
+  displayName?: string;
   collateralUsed: BigNumber;
   collateralAvailable: BigNumber;
   loanTaken: BigNumber;
@@ -184,6 +185,7 @@ export function useAllCollateralData(): Array<CollateralType> {
     {
       symbol: 'ICX',
       name: 'Icon',
+      displayName: 'ICX / sICX',
       collateralUsed: new BigNumber(11133),
       collateralAvailable: new BigNumber(3867),
       loanTaken: new BigNumber(9472),
@@ -204,22 +206,6 @@ export function useAllCollateralData(): Array<CollateralType> {
       collateralAvailable: new BigNumber(3057),
       loanTaken: new BigNumber(0),
       loanAvailable: new BigNumber(876),
-    },
-    {
-      symbol: 'IUSDC',
-      name: 'IUSDC dollar',
-      collateralUsed: new BigNumber(0),
-      collateralAvailable: new BigNumber(3057),
-      loanTaken: new BigNumber(0),
-      loanAvailable: new BigNumber(876),
-    },
-    {
-      symbol: 'OMM',
-      name: 'OMM',
-      collateralUsed: new BigNumber(0),
-      collateralAvailable: new BigNumber(3057),
-      loanTaken: new BigNumber(0),
-      loanAvailable: new BigNumber(276),
     },
   ];
 

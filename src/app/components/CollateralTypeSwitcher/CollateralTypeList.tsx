@@ -219,7 +219,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
                   />
                   <Box>
                     <Typography className="white" fontWeight={700}>
-                      {collateralType.symbol}
+                      {collateralType.displayName ?? collateralType.symbol}
                     </Typography>
                     <Typography className="grey">{'Available:'}</Typography>
                   </Box>
@@ -228,18 +228,14 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
 
               {!hideCollateralInfoColumn && (
                 <CollateralTypesGridItem>
-                  <Typography className="white">
-                    {`${collateralType.collateralUsed.dp(2).toFormat()} ${collateralType.symbol}`}
-                  </Typography>
-                  <Typography className="grey">{`${collateralType.collateralAvailable.dp(2).toFormat()} ${
-                    collateralType.symbol
-                  }`}</Typography>
+                  <Typography className="white">{`$${collateralType.collateralUsed.dp(2).toFormat()}`}</Typography>
+                  <Typography className="grey">{`$${collateralType.collateralAvailable.dp(2).toFormat()}`}</Typography>
                 </CollateralTypesGridItem>
               )}
 
               <CollateralTypesGridItem>
-                <Typography className="white">{`${collateralType.loanTaken.dp(2).toFormat()} bnUSD`}</Typography>
-                <Typography className="grey">{`${collateralType.loanAvailable.dp(2).toFormat()} bnUSD`}</Typography>
+                <Typography className="white">{`$${collateralType.loanTaken.dp(2).toFormat()}`}</Typography>
+                <Typography className="grey">{`$${collateralType.loanAvailable.dp(2).toFormat()}`}</Typography>
               </CollateralTypesGridItem>
             </CollateralTypesGrid>
           );

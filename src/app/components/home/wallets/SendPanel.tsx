@@ -1,8 +1,10 @@
 import React from 'react';
 
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
@@ -19,7 +21,6 @@ import { BIGINT_ZERO } from 'constants/misc';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 import { maxAmountSpend, toCurrencyAmount, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -93,8 +94,10 @@ export default function SendPanel({ currency }: { currency: Currency }) {
           addTransaction(
             { hash: res.result },
             {
-              pending: `Sending ${currency.symbol}...`,
-              summary: `Sent ${differenceAmount.toFixed(2, { groupSeparator: ',' })} ${currency.symbol} to ${address}.`,
+              pending: t`Sending ${currency.symbol}...`,
+              summary: t`Sent ${differenceAmount.toFixed(2, { groupSeparator: ',' })} ${
+                currency.symbol
+              } to ${address}.`,
             },
           );
           toggleOpen();
@@ -124,8 +127,12 @@ export default function SendPanel({ currency }: { currency: Currency }) {
     <>
       <Grid>
         <Flex alignItems="center" justifyContent="space-between">
-          <Typography variant="h3">Send {currency.symbol}</Typography>
-          <MaxButton onClick={handleMax}>Send max</MaxButton>
+          <Typography variant="h3">
+            <Trans>Send {currency.symbol}</Trans>
+          </Typography>
+          <MaxButton onClick={handleMax}>
+            <Trans>Send max</Trans>
+          </MaxButton>
         </Flex>
 
         <CurrencyInputPanel //
@@ -139,14 +146,14 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
       <Flex alignItems="center" justifyContent="center" mt={5}>
         <Button onClick={toggleOpen} disabled={isDisabled}>
-          Send
+          <Trans>Send</Trans>
         </Button>
       </Flex>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            Send asset?
+            <Trans>Send asset?</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -154,7 +161,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
           </Typography>
 
           <Typography textAlign="center" mb="2px" mt="20px">
-            Address
+            <Trans>Address</Trans>
           </Typography>
 
           <Typography variant="p" textAlign="center" margin={'auto'} maxWidth={200} fontSize={16}>
@@ -163,14 +170,18 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {`${beforeAmount.toFixed(2, { groupSeparator: ',' })} ${currency?.symbol}`}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {`${afterAmount.toFixed(2, { groupSeparator: ',' })} ${currency?.symbol}`}
               </Typography>
@@ -178,7 +189,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
           </Flex>
           {currency?.wrapped.address === bnJs.sICX.address && (
             <Typography variant="content" textAlign="center" color={theme.colors.alert}>
-              Do not send sICX to an exchange.
+              <Trans>Do not send sICX to an exchange.</Trans>
             </Typography>
           )}
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -186,10 +197,10 @@ export default function SendPanel({ currency }: { currency: Currency }) {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </TextButton>
                 <Button onClick={handleSend} fontSize={14} disabled={!hasEnoughICX}>
-                  Send
+                  <Trans>Send</Trans>
                 </Button>
               </>
             )}

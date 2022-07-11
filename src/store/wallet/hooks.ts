@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
+import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
+import { Token, CurrencyAmount, Currency } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
-import _ from 'lodash';
-import { BalancedJs } from 'packages/BalancedJs';
+import { forEach } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -21,8 +23,6 @@ import {
 import { useBnJsContractQuery } from 'queries/utils';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useUserAddedTokens } from 'store/user/hooks';
-import { Token, CurrencyAmount, Currency } from 'types/balanced-sdk-core';
-import { Pair } from 'types/balanced-v1-sdk';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
@@ -81,7 +81,7 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
 
         const temp = {};
 
-        _.forEach(result, function (value, key) {
+        forEach(result, function (value, key) {
           if (key === 'Unstaking time (in microseconds)') temp[key] = new BigNumber(value);
           else temp[key] = BalancedJs.utils.toIcx(value);
         });
@@ -112,19 +112,40 @@ export function useTokenBalances(
 
   useEffect(() => {
     const fetchBalances = async () => {
-      const result = await Promise.all(
-        tokens.map(async token => {
-          if (!account) return undefined;
-          if (isBALN(token)) return bnJs.BALN.availableBalanceOf(account);
-          if (isFIN(token)) return bnJs.getContract(token.address).availableBalanceOf(account);
-          return bnJs.getContract(token.address).balanceOf(account);
-        }),
-      );
+      if (account) {
+        const cds: CallData[] = tokens.map(token => {
+          if (isBALN(token))
+            return {
+              target: bnJs.BALN.address,
+              method: 'availableBalanceOf',
+              params: [account],
+            };
+          if (isFIN(token))
+            return {
+              target: token.address,
+              method: 'availableBalanceOf',
+              params: [account],
+            };
 
-      setBalances(result);
+          return {
+            target: token.address,
+            method: 'balanceOf',
+            params: [account],
+          };
+        });
+
+        const data: any[] = await bnJs.Multicall.getAggregateData(cds);
+        const result = data.map(bal => (bal === null ? undefined : bal));
+
+        setBalances(result);
+      } else {
+        setBalances(Array(tokens.length).fill(undefined));
+      }
     };
 
-    fetchBalances();
+    if (tokens.length > 0) {
+      fetchBalances();
+    }
   }, [transactions, tokens, account]);
 
   return useMemo(() => {

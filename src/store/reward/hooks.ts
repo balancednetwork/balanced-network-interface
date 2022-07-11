@@ -1,8 +1,8 @@
 import React from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
-import _ from 'lodash';
-import { BalancedJs } from 'packages/BalancedJs';
+import { forOwn } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -46,7 +46,7 @@ export function useFetchRewardsInfo() {
       let result = await Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission()]);
       const [_rules, _emission] = result;
       const a = {};
-      _.forOwn(_rules, function (value, key) {
+      forOwn(_rules, function (value, key) {
         a[key] = BalancedJs.utils.toIcx(value);
       });
 
@@ -100,38 +100,6 @@ export const useHasRewardableLoan = () => {
   }
 
   return false;
-};
-
-export const useHasRewardableLiquidity = () => {
-  const { account } = useIconReact();
-
-  const [hasRewardableLiquidity, setHasRewardableLiquidity] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkIfRewardable = async () => {
-      if (account) {
-        const result = await Promise.all([
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNsICX),
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXbnUSD),
-          await bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXICX),
-        ]);
-
-        if (result.find(pool => Number(pool))) setHasRewardableLiquidity(true);
-        else setHasRewardableLiquidity(false);
-      }
-    };
-
-    checkIfRewardable();
-  }, [account]);
-
-  return hasRewardableLiquidity;
-};
-
-export const useHasRewardable = () => {
-  const hasRewardableLiquidity = useHasRewardableLiquidity();
-  const hasRewardableLoan = useHasRewardableLoan();
-  return hasRewardableLiquidity || hasRewardableLoan;
 };
 
 export const useHasNetworkFees = () => {

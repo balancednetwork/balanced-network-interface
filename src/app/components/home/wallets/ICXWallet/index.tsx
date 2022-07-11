@@ -1,10 +1,11 @@
 import React from 'react';
 
+import { Currency } from '@balancednetwork/sdk-core';
+import { Trans } from '@lingui/macro';
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 import BigNumber from 'bignumber.js';
 
 import Divider from 'app/components/Divider';
-import { Currency } from 'types/balanced-sdk-core';
 
 import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';
@@ -26,8 +27,12 @@ export default function ICXWallet({ currency, claimableICX }: ICXWalletProps) {
     <>
       <Tabs index={tabIndex} onChange={handleTabsChange}>
         <StyledTabList>
-          <StyledTab>Send</StyledTab>
-          <StyledTab hasNotification={claimableICX.isGreaterThan(0)}>Unstaking</StyledTab>
+          <StyledTab>
+            <Trans>Send</Trans>
+          </StyledTab>
+          <StyledTab hasNotification={claimableICX.isGreaterThan(0)}>
+            <Trans>Unstaking</Trans>
+          </StyledTab>
         </StyledTabList>
         <Divider mb={3} />
         <TabPanels>

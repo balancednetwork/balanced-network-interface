@@ -1,9 +1,10 @@
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { defineMessage } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 
 import bnJs from 'bnJs';
 import { FUNDING_TOKENS_LIST } from 'constants/tokens';
-import { CurrencyAmount, Token } from 'types/balanced-sdk-core';
 
 import { CurrencyValue } from '../../components/newproposal/FundingInput';
 
@@ -36,6 +37,16 @@ export enum PROPOSAL_TYPE {
   REBALANCING_THRESHOLD = 'Rebalancing threshold',
   FUNDING = 'Funding',
 }
+
+export const PROPOSAL_TYPE_LABELS = {
+  [PROPOSAL_TYPE.TEXT]: defineMessage({ message: 'Text' }),
+  [PROPOSAL_TYPE.BALN_ALLOCATION]: defineMessage({ message: 'BALN allocation' }),
+  [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: defineMessage({ message: 'Network fee allocation' }),
+  [PROPOSAL_TYPE.LOAN_FEE]: defineMessage({ message: 'Loan fee' }),
+  [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: defineMessage({ message: 'Loan to value ratio' }),
+  [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: defineMessage({ message: 'Rebalancing threshold' }),
+  [PROPOSAL_TYPE.FUNDING]: defineMessage({ message: 'Funding' }),
+};
 
 export const ACTIONS_MAPPING = {
   [PROPOSAL_TYPE.BALN_ALLOCATION]: ['updateBalTokenDistPercentage', 'updateDistPercent'],

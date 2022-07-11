@@ -1,10 +1,9 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { Flex, Box } from 'rebass/styled-components';
 
-import { DefaultLayout } from 'app/components/Layout';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import LiquidityDetails from 'app/components/trade/LiquidityDetails';
 import LPPanel from 'app/components/trade/LPPanel';
@@ -13,6 +12,7 @@ import SwapPanel from 'app/components/trade/SwapPanel';
 import { SectionPanel } from 'app/components/trade/utils';
 import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';
+import { useFetchStabilityFundBalances } from 'store/stabilityFund/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 export function TradePage() {
@@ -21,6 +21,7 @@ export function TradePage() {
   useFetchPrice();
   useWalletFetchBalances(account);
   useFetchRewardsInfo();
+  useFetchStabilityFundBalances();
 
   const [value, setValue] = React.useState<number>(0);
 
@@ -29,17 +30,17 @@ export function TradePage() {
   };
 
   return (
-    <DefaultLayout title="Trade">
-      <Helmet>
-        <title>Trade</title>
-      </Helmet>
-
+    <>
       <Box flex={1}>
         <Flex mb={10} flexDirection="column">
           <Flex alignItems="center" justifyContent="space-between">
             <Tabs value={value} onChange={handleTabClick}>
-              <Tab>Swap</Tab>
-              <Tab>Supply liquidity</Tab>
+              <Tab>
+                <Trans>Swap</Trans>
+              </Tab>
+              <Tab>
+                <Trans>Supply liquidity</Trans>
+              </Tab>
             </Tabs>
           </Flex>
 
@@ -57,6 +58,6 @@ export function TradePage() {
 
         {account && value === 1 && <LiquidityDetails />}
       </Box>
-    </DefaultLayout>
+    </>
   );
 }

@@ -53,7 +53,7 @@ export const UnderlineText = styled.span`
 
 type UnderlineTextWithArrowProps = {
   arrowRef?: ((instance: SVGSVGElement | null) => void) | React.RefObject<SVGSVGElement> | null | undefined;
-  text: string;
+  text: React.ReactNode;
 } & React.HTMLAttributes<HTMLSpanElement>;
 
 export const UnderlineTextWithArrow: React.FC<UnderlineTextWithArrowProps> = props => {

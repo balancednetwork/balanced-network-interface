@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';

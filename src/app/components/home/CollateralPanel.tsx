@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
@@ -18,6 +19,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
 import {
@@ -124,7 +126,9 @@ const CollateralPanel = () => {
   const collateralChangeIcxDisplayType = useCollateralChangeIcxDisplayType();
   const [userChoseIcxDisplayType, setUserChoseIcxDisplayType] = useState<boolean>(false);
   const ratio = useRatio();
-  const isSuperSmall = useMedia(`(max-width: 359px)`);
+  const locale = useActiveLocale();
+
+  const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '359px'})`);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -182,7 +186,7 @@ const CollateralPanel = () => {
     [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
   };
 
-  const buttonText = stakedICXAmount.isZero() ? 'Deposit' : 'Adjust';
+  const buttonText = stakedICXAmount.isZero() ? t`Deposit` : t`Adjust`;
 
   // collateral confirm modal logic & value
   const [open, setOpen] = React.useState(false);
@@ -227,8 +231,8 @@ const CollateralPanel = () => {
           addTransaction(
             { hash },
             {
-              pending: 'Depositing collateral...',
-              summary: `Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
+              pending: t`Depositing collateral...`,
+              summary: t`Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
             },
           );
         } else {
@@ -239,8 +243,8 @@ const CollateralPanel = () => {
           addTransaction(
             { hash },
             {
-              pending: `Depositing collateral...`,
-              summary: `Deposited ${collateralAmount.toFixed(2)} sICX as collateral.`,
+              pending: t`Depositing collateral...`,
+              summary: t`Deposited ${collateralAmount.toFixed(2)} sICX as collateral.`,
             },
           );
         }
@@ -270,8 +274,8 @@ const CollateralPanel = () => {
         addTransaction(
           { hash },
           {
-            pending: 'Withdrawing collateral...',
-            summary: `${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
+            pending: t`Withdrawing collateral...`,
+            summary: t`${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
           },
         );
 
@@ -357,16 +361,17 @@ const CollateralPanel = () => {
       <BoxPanelWrap>
         <BoxPanel bg="bg3" sx={{ position: 'relative' }}>
           <Flex justifyContent="space-between" alignItems={isSuperSmall ? 'flex-start' : 'center'}>
-            <Typography variant="h2">Collateral</Typography>
-
+            <Typography variant="h2">
+              <Trans>Collateral</Trans>
+            </Typography>
             <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
               {isAdjusting ? (
                 <>
                   <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
-                    Cancel
+                    <Trans>Cancel</Trans>
                   </TextButton>
                   <Button onClick={toggleOpen} fontSize={14}>
-                    Confirm
+                    <Trans>Confirm</Trans>
                   </Button>
                 </>
               ) : (
@@ -377,7 +382,7 @@ const CollateralPanel = () => {
             </Flex>
           </Flex>
 
-          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} />}
+          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Locked`} />}
 
           <Box marginY={6}>
             <Nouislider
@@ -472,7 +477,7 @@ const CollateralPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            {shouldDeposit ? 'Deposit collateral?' : 'Withdraw collateral?'}
+            {shouldDeposit ? t`Deposit collateral?` : t`Withdraw collateral?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -485,14 +490,18 @@ const CollateralPanel = () => {
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {beforeAmount.dp(2).toFormat() + (icxDisplayType === 'ICX' ? ' ICX' : ' sICX')}
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {afterAmount.dp(2).toFormat() + (icxDisplayType === 'ICX' ? ' ICX' : ' sICX')}
               </Typography>
@@ -503,12 +512,12 @@ const CollateralPanel = () => {
             <Typography textAlign="center">
               {shouldDeposit ? (
                 <>
-                  {`Your ICX will be converted to sICX (Staked ICX).`}
+                  {t`Your ICX will be converted to sICX (Staked ICX).`}
                   <LineBreak />
-                  {`You’ll receive sICX when you withdraw, which you can unstake or swap for ICX on the Trade page.`}
+                  {t`You’ll receive sICX when you withdraw, which you can unstake or swap for ICX on the Trade page.`}
                 </>
               ) : (
-                "You'll receive sICX (Staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."
+                t`You'll receive sICX (Staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page.`
               )}
             </Typography>
           )}
@@ -518,10 +527,10 @@ const CollateralPanel = () => {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </TextButton>
                 <Button onClick={handleCollateralConfirm} fontSize={14} disabled={!hasEnoughICX}>
-                  {shouldDeposit ? 'Deposit' : 'Withdraw'}
+                  {shouldDeposit ? t`Deposit` : t`Withdraw`}
                 </Button>
               </>
             )}

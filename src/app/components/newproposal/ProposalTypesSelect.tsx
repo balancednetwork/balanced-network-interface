@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -7,7 +8,7 @@ import styled from 'styled-components';
 import { StyledArrowDownIcon, Wrapper } from 'app/components/DropdownText';
 import { DataText, List, ListItem } from 'app/components/List';
 import { PopperWithoutArrow } from 'app/components/Popover';
-import { PROPOSAL_TYPE } from 'app/containers/NewProposalPage/constant';
+import { PROPOSAL_TYPE, PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 
 export default function ProposalTypesSelect({
@@ -32,11 +33,15 @@ export default function ProposalTypesSelect({
 
   return (
     <Flex alignItems="flex-end" marginTop="50px" flexWrap="wrap">
-      <Typography variant="h2">Proposal type:&nbsp;</Typography>
+      <Typography variant="h2">
+        <Trans>Proposal type</Trans>:&nbsp;
+      </Typography>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <div ref={ref}>
           <StyledWrapper onClick={toggleOpen}>
-            <Text active={open}>{selected}</Text>
+            <Text active={open}>
+              <Trans id={PROPOSAL_TYPE_LABELS[selected].id} />
+            </Text>
             <StyledArrowDownIcon />
           </StyledWrapper>
 
@@ -45,7 +50,7 @@ export default function ProposalTypesSelect({
               {Object.values(PROPOSAL_TYPE).map(type => (
                 <ListItem key={type} small onClick={() => handleSelectProposal(type as PROPOSAL_TYPE)}>
                   <DataText variant="p" fontWeight="bold" small>
-                    {type}
+                    <Trans id={PROPOSAL_TYPE_LABELS[type].id} />
                   </DataText>
                 </ListItem>
               ))}

@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -68,8 +68,8 @@ export function useCollateralFetchInfo(account?: string | null) {
   const fetchCollateralInfo = React.useCallback(
     async (account: string) => {
       const res = await bnJs.Loans.getAccountPositions(account);
-
-      const depositedsICX = res['assets'] ? BalancedJs.utils.toIcx(res['assets']['sICX']) : new BigNumber(0);
+      const depositedsICX =
+        res['assets'] && res['assets']['sICX'] ? BalancedJs.utils.toIcx(res['assets']['sICX']) : new BigNumber(0);
 
       changeStakedICXAmount(depositedsICX);
     },

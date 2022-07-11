@@ -1,9 +1,10 @@
 import React from 'react';
 
+import { Currency } from '@balancednetwork/sdk-core';
+import { Trans } from '@lingui/macro';
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 
 import Divider from 'app/components/Divider';
-import { Currency } from 'types/balanced-sdk-core';
 
 import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';
@@ -14,8 +15,12 @@ export default function SICXWallet({ currency }: { currency: Currency }) {
     <>
       <Tabs>
         <StyledTabList>
-          <StyledTab>Send</StyledTab>
-          <StyledTab>Unstake</StyledTab>
+          <StyledTab>
+            <Trans>Send</Trans>
+          </StyledTab>
+          <StyledTab>
+            <Trans>Unstake</Trans>
+          </StyledTab>
         </StyledTabList>
         <Divider mb={3} />
         <TabPanels>

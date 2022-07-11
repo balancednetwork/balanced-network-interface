@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react';
 
-import BigNumber from 'bignumber.js';
-import { BalancedJs, LOOP } from 'packages/BalancedJs';
+import { BalancedJs } from '@balancednetwork/balanced-js';
 
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { CurrencyAmount } from 'types/balanced-sdk-core';
-import { Pair } from 'types/balanced-v1-sdk';
+import { getQueuePair } from 'utils';
 
 import useLastCount from './useLastCount';
-import { PairState } from './useV2Pairs';
+import { PairData, PairState } from './useV2Pairs';
 
-export function useQueuePair(): [PairState, Pair | null] {
-  const [pair, setPair] = useState<[PairState, Pair | null]>([PairState.LOADING, null]);
+export function useQueuePair(): PairData {
+  const [pair, setPair] = useState<PairData>([PairState.LOADING, null, null]);
 
   const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address].wrapped;
   const sICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.sICX.address].wrapped;
@@ -26,29 +24,11 @@ export function useQueuePair(): [PairState, Pair | null] {
 
         const stats = await bnJs.Dex.getPoolStats(poolId);
 
-        const rate = new BigNumber(stats['price'], 16).div(LOOP);
-
-        const icxSupply = new BigNumber(stats['total_supply'], 16);
-        const sicxSupply = icxSupply.div(rate);
-
-        const totalSupply = icxSupply.toFixed();
-
-        // ICX/sICX
-        const newPair: [PairState, Pair] = [
-          PairState.EXISTS,
-          new Pair(
-            CurrencyAmount.fromRawAmount(ICX, totalSupply),
-            CurrencyAmount.fromRawAmount(sICX, sicxSupply.toFixed(0)),
-            {
-              poolId,
-              totalSupply,
-            },
-          ),
-        ];
+        const newPair = getQueuePair(stats, ICX, sICX);
 
         setPair(newPair);
       } catch (err) {
-        setPair([PairState.INVALID, null]);
+        setPair([PairState.INVALID, null, null]);
       }
     };
     fetchReserves();

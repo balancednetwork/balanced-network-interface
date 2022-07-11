@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Trans } from '@lingui/macro';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box } from 'rebass/styled-components';
@@ -69,23 +70,31 @@ const WalletPanel = () => {
 
   const availableBALN = balances && balances[balnAddress] && (
     <Typography color="rgba(255,255,255,0.75)">
-      Available: {balances[balnAddress].toFixed(2, { groupSeparator: ',' })}
+      <Trans>Available</Trans>: {balances[balnAddress].toFixed(2, { groupSeparator: ',' })}
     </Typography>
   );
 
   return (
     <BoxPanel bg="bg2" minHeight={195}>
       <Typography variant="h2" mb={5}>
-        Wallet
+        <Trans>Wallet</Trans>
       </Typography>
 
       {balances && Object.keys(balances).filter(address => balances[address].toFixed(2) !== '0.00').length ? (
         <Wrapper>
           <DashGrid>
-            <HeaderText>Asset</HeaderText>
+            <HeaderText>
+              <Trans>Asset</Trans>
+            </HeaderText>
             <BalanceAndValueWrap>
-              <HeaderText>Balance</HeaderText>
-              {isSmallScreen ? null : <HeaderText>Value</HeaderText>}
+              <HeaderText>
+                <Trans>Balance</Trans>
+              </HeaderText>
+              {isSmallScreen ? null : (
+                <HeaderText>
+                  <Trans>Value</Trans>
+                </HeaderText>
+              )}
             </BalanceAndValueWrap>
           </DashGrid>
 
@@ -164,7 +173,7 @@ const WalletPanel = () => {
       ) : (
         <Wrapper>
           <Typography textAlign="center" paddingTop={'20px'}>
-            No assets available.
+            <Trans>No assets available.</Trans>
           </Typography>
         </Wrapper>
       )}
@@ -186,6 +195,7 @@ const DashGrid = styled.div`
   grid-template-columns: 3fr 5fr;
   grid-template-areas: 'asset balance&value';
   align-items: center;
+  white-space: nowrap;
 
   ${({ theme }) => theme.mediaWidth.up500`
     grid-template-columns: 1fr 3fr;

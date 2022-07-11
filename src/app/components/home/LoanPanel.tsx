@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
@@ -18,6 +19,7 @@ import { ReactComponent as InfoAbove } from 'assets/images/rebalancing-above.svg
 import { ReactComponent as InfoBelow } from 'assets/images/rebalancing-below.svg';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
+import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useCollateralActionHandlers } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
@@ -39,7 +41,9 @@ import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
-  const isSuperSmall = useMedia(`(max-width: 420px)`);
+  const locale = useActiveLocale();
+
+  const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '300px'})`);
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -84,7 +88,7 @@ const LoanPanel = () => {
         : parsedAmount[dependentField].toFixed(2),
   };
 
-  const buttonText = borrowedAmount.isZero() ? 'Borrow' : 'Adjust';
+  const buttonText = borrowedAmount.isZero() ? t`Borrow` : t`Adjust`;
 
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
@@ -137,8 +141,8 @@ const LoanPanel = () => {
           addTransaction(
             { hash: res.result },
             {
-              pending: 'Borrowing bnUSD...',
-              summary: `Borrowed ${differenceAmount.dp(2).toFormat()} bnUSD.`,
+              pending: t`Borrowing bnUSD...`,
+              summary: t`Borrowed ${differenceAmount.dp(2).toFormat()} bnUSD.`,
             },
           );
           // close modal
@@ -161,8 +165,8 @@ const LoanPanel = () => {
           addTransaction(
             { hash: res.result },
             {
-              pending: 'Repaying bnUSD...',
-              summary: `Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,
+              pending: t`Repaying bnUSD...`,
+              summary: t`Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,
             },
           );
           // close modal
@@ -210,15 +214,14 @@ const LoanPanel = () => {
       <FlexPanel bg="bg3" flexDirection="column" minHeight={195}>
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="h2">
-            Loan:{' '}
-            <Typography as="span" fontSize={18} fontWeight="normal">
-              US Dollars
-            </Typography>
+            <Trans>Loan</Trans>
           </Typography>
         </Flex>
 
         <Flex flex={1} justifyContent="center" alignItems="center">
-          <Typography>To take out a loan, deposit collateral.</Typography>
+          <Typography>
+            <Trans>To take out a loan, deposit collateral.</Trans>
+          </Typography>
         </Flex>
       </FlexPanel>
     );
@@ -234,21 +237,14 @@ const LoanPanel = () => {
         <BoxPanel bg="bg3">
           <Flex justifyContent="space-between" alignItems="center">
             <Typography variant="h2">
-              Loan
-              {!isSuperSmall && (
-                <>
-                  :{' '}
-                  <Typography as="span" fontSize={18} fontWeight="normal">
-                    US Dollars
-                  </Typography>
-                </>
-              )}
+              <Trans>Loan</Trans>
             </Typography>
-
-            <Box>
+            <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
               {isAdjusting ? (
                 <>
-                  <TextButton onClick={handleCancelAdjusting}>Cancel</TextButton>
+                  <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
+                    <Trans>Cancel</Trans>
+                  </TextButton>
                   <Button
                     disabled={
                       borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
@@ -256,7 +252,7 @@ const LoanPanel = () => {
                     onClick={handleLoanUpdate}
                     fontSize={14}
                   >
-                    Confirm
+                    <Trans>Confirm</Trans>
                   </Button>
                 </>
               ) : (
@@ -264,10 +260,10 @@ const LoanPanel = () => {
                   {buttonText}
                 </Button>
               )}
-            </Box>
+            </Flex>
           </Flex>
 
-          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text="Used" />}
+          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Used`} />}
 
           <Box marginY={6}>
             <Nouislider
@@ -293,7 +289,6 @@ const LoanPanel = () => {
               onSlide={onSlide}
             />
           </Box>
-
           <PanelInfoWrap>
             <PanelInfoItem>
               {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
@@ -339,7 +334,7 @@ const LoanPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            {shouldBorrow ? 'Borrow Balanced Dollars?' : 'Repay Balanced Dollars?'}
+            {shouldBorrow ? t`Borrow Balanced Dollars?` : t`Repay Balanced Dollars?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -348,31 +343,39 @@ const LoanPanel = () => {
 
           <Flex my={5}>
             <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {beforeAmount.dp(2).toFormat()} bnUSD
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
               <Typography variant="p" textAlign="center">
                 {afterAmount.dp(2).toFormat()} bnUSD
               </Typography>
             </Box>
           </Flex>
 
-          {shouldBorrow && <Typography textAlign="center">Includes a fee of {fee.dp(2).toFormat()} bnUSD.</Typography>}
+          {shouldBorrow && (
+            <Typography textAlign="center">
+              <Trans>Includes a fee of {fee.dp(2).toFormat()} bnUSD.</Trans>
+            </Typography>
+          )}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
+                  <Trans>Cancel</Trans>
                 </TextButton>
                 <Button disabled={!hasEnoughICX} onClick={handleLoanConfirm} fontSize={14}>
-                  {shouldBorrow ? 'Borrow' : 'Repay'}
+                  <Trans>{shouldBorrow ? t`Borrow` : t`Repay`}</Trans>
                 </Button>
               </>
             )}
@@ -382,10 +385,14 @@ const LoanPanel = () => {
 
       <Modal isOpen={rebalancingModalOpen} onDismiss={() => toggleRebalancingModalOpen(false)} maxWidth={450}>
         <ModalContent noMessages>
-          <Typography textAlign="center">Rebalancing</Typography>
+          <Typography textAlign="center">
+            <Trans>Rebalancing</Trans>
+          </Typography>
           <RebalancingInfo />
           <BoxWithBorderTop>
-            <Button onClick={() => toggleRebalancingModalOpen(true)}>Understood</Button>
+            <Button onClick={() => toggleRebalancingModalOpen(true)}>
+              <Trans>Understood</Trans>
+            </Button>
           </BoxWithBorderTop>
         </ModalContent>
       </Modal>
@@ -406,25 +413,31 @@ export const RebalancingInfo = () => {
         fontWeight="bold"
         color="#FFF"
       >
-        While you borrow bnUSD, your collateral is used to keep its value stable
+        <Trans>While you borrow bnUSD, your collateral is used to keep its value stable</Trans>
       </Typography>
       <RebalancingColumn borderRight={true}>
         <InfoBelow />
         <Typography fontWeight="bold" color="#FFF">
-          If bnUSD is below $1
+          <Trans>If bnUSD is below $1</Trans>
         </Typography>
-        <Typography>Balanced sells collateral at a premium to repay some of your loan.</Typography>
+        <Typography>
+          <Trans>Balanced sells collateral at a premium to repay some of your loan.</Trans>
+        </Typography>
       </RebalancingColumn>
       <RebalancingColumn>
         <InfoAbove />
         <Typography fontWeight="bold" color="#FFF" marginTop="19px">
-          If bnUSD is above $1
+          <Trans>If bnUSD is above $1</Trans>
         </Typography>
-        <Typography>Balanced increases your loan to buy more collateral at a discount.</Typography>
+        <Typography>
+          <Trans>Balanced increases your loan to buy more collateral at a discount.</Trans>
+        </Typography>
       </RebalancingColumn>
       <Typography marginTop="25px">
-        You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD
-        pool. The smaller your loan, the less rebalancing affects you.
+        <Trans>
+          You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD
+          pool. The smaller your loan, the less rebalancing affects you.
+        </Trans>
       </Typography>
     </RebalancingInfoWrap>
   );

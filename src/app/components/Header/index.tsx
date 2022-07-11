@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs';
+import { CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
+import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -35,11 +36,12 @@ const WalletInfo = styled(Box)`
 const WalletButtonWrapper = styled.div``;
 
 const WalletMenu = styled.div`
-  max-width: 160px;
+  max-width: 240px;
   font-size: 14px;
   padding: 25px;
   display: grid;
   grid-template-rows: auto;
+  justify-items: center;
   grid-gap: 20px;
 `;
 
@@ -60,16 +62,45 @@ const StyledAddress = styled(Typography)`
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
-export default React.memo(function Header(props: { title?: string; className?: string }) {
+const CopyableAddress = ({
+  account,
+  closeAfterDelay,
+}: {
+  account: string | null | undefined;
+  closeAfterDelay?: number;
+}) => {
+  const [isCopied, updateCopyState] = React.useState(false);
+  const copyAddress = React.useCallback(async (account: string) => {
+    await navigator.clipboard.writeText(account);
+    updateCopyState(true);
+  }, []);
+
+  return account ? (
+    <MouseoverTooltip
+      text={isCopied ? t`Copied` : t`Copy address`}
+      placement={'left'}
+      noArrowAndBorder
+      closeAfterDelay={closeAfterDelay}
+    >
+      <StyledAddress
+        onMouseLeave={() => {
+          setTimeout(() => updateCopyState(false), 250);
+        }}
+        onClick={() => copyAddress(account)}
+      >
+        {shortenAddress(account)}
+      </StyledAddress>
+    </MouseoverTooltip>
+  ) : null;
+};
+
+export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
 
   const { account, disconnect } = useIconReact();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const walletButtonRef = React.useRef<HTMLElement>(null);
-
-  const [isCopied, updateCopyState] = React.useState(false);
-
   const toggleWalletMenu = () => {
     setAnchor(anchor ? null : walletButtonRef.current);
   };
@@ -94,11 +125,6 @@ export default React.memo(function Header(props: { title?: string; className?: s
     }
   };
 
-  const copyAddress = React.useCallback(async (account: string) => {
-    await navigator.clipboard.writeText(account);
-    updateCopyState(true);
-  }, []);
-
   const upSmall = useMedia('(min-width: 800px)');
 
   return (
@@ -106,7 +132,9 @@ export default React.memo(function Header(props: { title?: string; className?: s
       <Flex justifyContent="space-between">
         <Flex alignItems="center">
           <StyledLogo />
-          <Typography variant="h1">{title}</Typography>
+          <Typography variant="h1">
+            <Trans id={title} />
+          </Typography>
           {NETWORK_ID !== NetworkId.MAINNET && (
             <Typography variant="h3" color="alert">
               {CHAIN_INFO[NETWORK_ID].name}
@@ -116,28 +144,21 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
         {!account && (
           <Flex alignItems="center">
-            <Button onClick={toggleWalletModal}>Sign in</Button>
+            <Button onClick={toggleWalletModal}>
+              <Trans>Sign in</Trans>
+            </Button>
           </Flex>
         )}
 
-        {account && upSmall && (
+        {account && (
           <Flex alignItems="center">
             <WalletInfo>
-              <Typography variant="p" textAlign="right">
-                Wallet
-              </Typography>
-              {account && (
-                <MouseoverTooltip text={isCopied ? 'Copied' : 'Copy address'} placement="left" noArrowAndBorder>
-                  <StyledAddress
-                    onMouseLeave={() => {
-                      setTimeout(() => updateCopyState(false), 250);
-                    }}
-                    onClick={() => copyAddress(account)}
-                  >
-                    {shortenAddress(account)}
-                  </StyledAddress>
-                </MouseoverTooltip>
+              {upSmall && (
+                <Typography variant="p" textAlign="right">
+                  <Trans>Wallet</Trans>
+                </Typography>
               )}
+              {account && upSmall && <CopyableAddress account={account} />}
             </WalletInfo>
 
             <WalletButtonWrapper>
@@ -149,8 +170,13 @@ export default React.memo(function Header(props: { title?: string; className?: s
 
                   <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
                     <WalletMenu>
-                      <ChangeWalletButton onClick={handleChangeWallet}>Change wallet</ChangeWalletButton>
-                      <WalletMenuButton onClick={handleDisconnectWallet}>Sign out</WalletMenuButton>
+                      {!upSmall && <CopyableAddress account={account} closeAfterDelay={1000} />}
+                      <ChangeWalletButton onClick={handleChangeWallet}>
+                        <Trans>Change wallet</Trans>
+                      </ChangeWalletButton>
+                      <WalletMenuButton onClick={handleDisconnectWallet}>
+                        <Trans>Sign out</Trans>
+                      </WalletMenuButton>
                     </WalletMenu>
                   </DropdownPopper>
                 </div>
@@ -161,4 +187,4 @@ export default React.memo(function Header(props: { title?: string; className?: s
       </Flex>
     </header>
   );
-});
+}

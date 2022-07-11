@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
+import { Trans, t } from '@lingui/macro';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { useIconReact } from 'packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
@@ -12,24 +12,22 @@ import styled, { useTheme, keyframes } from 'styled-components';
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
 import Column from 'app/components/Column';
-import { DefaultLayout } from 'app/components/Layout';
 import { Link } from 'app/components/Link';
 import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton } from 'app/components/ProposalInfo';
+import { VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
-import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
+import { PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
-import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
-import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import bnJs from 'bnJs';
-import { usePlatformDayQuery } from 'queries/reward';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { getTrackerLink } from 'utils';
+import { formatTimeStr } from 'utils/timeformat';
 
 import { ACTIONS_MAPPING, RATIO_VALUE_FORMATTER } from '../NewProposalPage/constant';
 import Funding from './Funding';
@@ -52,7 +50,7 @@ const Progress = styled(Flex)`
 
 const setBarWidth = (width: string) => keyframes`
     0% {
-        width : 0; 
+        width : 3px; 
     }
     100% {
         width : ${width}%;
@@ -66,7 +64,8 @@ const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   border-radius: ${props => (props.percentage === '100' ? '5px' : '5px 0 0 5px')};
   transition: width 0.2s ease-in;
   justify-content: center;
-  animation: ${({ percentage }) => setBarWidth(percentage)} 2s ease-in-out forwards;
+  animation: ${({ percentage }) => percentage !== '0' && percentage !== 'undefined' && setBarWidth(percentage)} 2s
+    ease-in-out forwards;
 `;
 
 const ResultPanel = styled(Flex)`
@@ -106,7 +105,6 @@ export function ProposalPage() {
   const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotDay);
   const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
   const { data: userStatus } = voteStatusQuery;
-  const { data: platformDay } = usePlatformDayQuery();
   const isSmallScreen = useMedia('(max-width: 600px)');
 
   const actions = JSON.parse(proposal?.actions || '{}');
@@ -121,11 +119,8 @@ export function ProposalPage() {
   const proposalType = actionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
 
   const isActive =
-    proposal &&
-    platformDay &&
-    proposal.status === 'Active' &&
-    proposal.startDay <= platformDay &&
-    proposal.endDay > platformDay;
+    proposal && proposal.status === 'Active' && !formatTimeStr(proposal.startDay) && !!formatTimeStr(proposal.endDay);
+
   const hasUserVoted = isActive && userStatus?.hasVoted;
 
   const { account } = useIconReact();
@@ -146,8 +141,8 @@ export function ProposalPage() {
         addTransaction(
           { hash: res.result },
           {
-            pending: `Casting your vote...`,
-            summary: `Vote cast.`,
+            pending: t`Casting your vote...`,
+            summary: t`Vote cast.`,
           },
         );
 
@@ -185,13 +180,10 @@ export function ProposalPage() {
   };
 
   return (
-    <DefaultLayout title="Vote">
-      <Helmet>
-        <title>Vote</title>
-      </Helmet>
+    <>
       <ProposalContainer>
         {proposal ? (
-          <Breadcrumb locationText="Vote" locationPath="/vote" title={proposal?.name || ''} />
+          <Breadcrumb locationText={t`Vote`} locationPath="/vote" title={proposal?.name || ''} />
         ) : (
           <StyledSkeleton animation="wave" width={280} height={28} />
         )}
@@ -200,37 +192,11 @@ export function ProposalPage() {
           <Typography variant="h2" mb={4}>
             {proposal ? proposal.name : <StyledSkeleton animation="wave" height={35} />}
           </Typography>
-          <Flex alignItems="center" mb={3} flexWrap="wrap" sx={{ columnGap: '15px' }}>
-            {proposal?.status && proposal?.startDay && proposal?.endDay ? (
-              <ProposalStatusIcon status={proposal.status} startDay={proposal.startDay} endDay={proposal.endDay} />
-            ) : (
-              <>
-                <StyledSkeleton animation="wave" width={22} height={22} variant="circle" />
-                <StyledSkeleton animation="wave" width={80} />
-              </>
-            )}
 
-            <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
-              <PieChartIcon height="22" width="22" />
-              <Typography variant="content" color="white">
-                {proposal?.sum ? `${proposal?.sum}% voted` : <StyledSkeleton animation="wave" width={80} />}
-              </Typography>
-            </Flex>
-
-            <Flex alignItems="center" my={1} sx={{ columnGap: '10px' }}>
-              <UserIcon height="22" width="22" />
-              <Typography variant="content" color="white">
-                {typeof proposal?.voters === 'number' ? (
-                  proposal.id === 1 ? (
-                    `- voters`
-                  ) : (
-                    `${proposal?.voters} voters`
-                  )
-                ) : (
-                  <StyledSkeleton animation="wave" width={80} />
-                )}
-              </Typography>
-            </Flex>
+          <Flex alignItems="center" mb={3} flexWrap="wrap" sx={{ columnGap: '15px' }} my={1}>
+            <VoteStatusLabel proposal={proposal} />
+            <VoterPercentLabel value={proposal?.sum} />
+            <VoterNumberLabel value={proposal?.voters} />
           </Flex>
 
           {hasUserVoted ? (
@@ -242,13 +208,13 @@ export function ProposalPage() {
               <Flex flex={1} flexDirection="column" width="100%" sx={{ rowGap: '15px' }}>
                 <Flex alignItems="center">
                   <Typography fontWeight="bold" variant="p" mr="5px">
-                    Approve
+                    <Trans>Approve</Trans>
                   </Typography>
                   <Typography opacity="0.85" mr="5px" fontWeight="bold">
                     {proposal?.for}%
                   </Typography>
                   <Typography opacity="0.85" fontWeight="bold">
-                    {`(${proposal?.majority}% required)`}
+                    <Trans>({proposal?.majority}% required)</Trans>
                   </Typography>
                 </Flex>
 
@@ -258,7 +224,7 @@ export function ProposalPage() {
 
                 <Flex alignItems="center">
                   <Typography fontWeight="bold" variant="p" mr="5px">
-                    Reject
+                    <Trans>Reject</Trans>
                   </Typography>
                   <Typography opacity="0.85" mr="5px" fontWeight="bold">
                     {proposal?.against}%
@@ -276,13 +242,17 @@ export function ProposalPage() {
                   <Flex flexDirection="column">
                     <Flex alignItems="flex-end" flexWrap="wrap" mb={1}>
                       <Typography variant="h3" marginRight={2}>
-                        You approved
+                        <Trans>You approved</Trans>
                       </Typography>
                       {isActive && account && (
-                        <ChangeVoteButton onClick={handleChangeVote}>Change vote</ChangeVoteButton>
+                        <ChangeVoteButton onClick={handleChangeVote}>
+                          <Trans>Change vote</Trans>
+                        </ChangeVoteButton>
                       )}
                     </Flex>
-                    <Typography>{`Voting weight: ${userStatus?.approval.dp(2).toFormat()} BALN`}</Typography>
+                    <Typography>
+                      <Trans>{`Voting weight: ${userStatus?.approval.dp(2).toFormat()} BALN`}</Trans>
+                    </Typography>
                   </Flex>
                 </ResultPanel>
               )}
@@ -293,14 +263,18 @@ export function ProposalPage() {
                   <Flex flexDirection="column">
                     <Flex alignItems="flex-end" flexWrap="wrap" mb={1}>
                       <Typography variant="h3" marginRight={2}>
-                        You rejected
+                        <Trans>You rejected</Trans>
                       </Typography>
                       {isActive && account && (
-                        <ChangeVoteButton onClick={handleChangeVote}>Change vote</ChangeVoteButton>
+                        <ChangeVoteButton onClick={handleChangeVote}>
+                          <Trans>Change vote</Trans>
+                        </ChangeVoteButton>
                       )}
                     </Flex>
 
-                    <Typography>{`Voting weight: ${userStatus?.reject.dp(2).toFormat()} BALN`}</Typography>
+                    <Typography>
+                      <Trans>{`Voting weight: ${userStatus?.reject.dp(2).toFormat()} BALN`}</Trans>
+                    </Typography>
                   </Flex>
                 </ResultPanel>
               )}
@@ -309,13 +283,13 @@ export function ProposalPage() {
             <Flex flexDirection="column">
               <Flex alignItems="center">
                 <Typography fontWeight="bold" variant="p" mr="5px">
-                  Approve
+                  <Trans>Approve</Trans>
                 </Typography>
                 <Typography opacity="0.85" mr="5px" fontWeight="bold">
                   {proposal?.for}%
                 </Typography>
                 <Typography opacity="0.85" fontWeight="bold">
-                  {`(${proposal?.majority}% required)`}
+                  <Trans>({proposal?.majority}% required)</Trans>
                 </Typography>
               </Flex>
               <Flex>
@@ -327,14 +301,14 @@ export function ProposalPage() {
                 {isActive && account && !isSmallScreen && (
                   <Column>
                     <Button ml="20px" width="150px" onClick={() => setModalStatus(ModalStatus.Approve)}>
-                      Approve
+                      <Trans>Approve</Trans>
                     </Button>
                   </Column>
                 )}
               </Flex>
               <Flex alignItems="center">
                 <Typography fontWeight="bold" variant="p" mr="5px">
-                  Reject
+                  <Trans>Reject</Trans>
                 </Typography>
                 <Typography opacity="0.85" mr="5px" fontWeight="bold">
                   {proposal?.against}%
@@ -349,7 +323,7 @@ export function ProposalPage() {
                 {isActive && account && !isSmallScreen && (
                   <Column>
                     <AlertButton ml="20px" width="150px" color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
-                      Reject
+                      <Trans>Reject</Trans>
                     </AlertButton>
                   </Column>
                 )}
@@ -360,10 +334,10 @@ export function ProposalPage() {
           {isActive && account && isSmallScreen && !hasUserVoted ? (
             <Flex marginTop={2}>
               <Button width="50%" marginRight={2} onClick={() => setModalStatus(ModalStatus.Approve)}>
-                Approve
+                <Trans>Approve</Trans>
               </Button>
               <AlertButton width="50%" marginLeft={2} color="red" onClick={() => setModalStatus(ModalStatus.Reject)}>
-                Reject
+                <Trans>Reject</Trans>
               </AlertButton>
             </Flex>
           ) : null}
@@ -379,7 +353,7 @@ export function ProposalPage() {
         {proposalType && actionKey && (
           <BoxPanel bg="bg2" my={10}>
             <Typography variant="h2" mb="20px">
-              {proposalType}
+              <Trans id={PROPOSAL_TYPE_LABELS[proposalType].id} />
             </Typography>
             {actionKey === ACTIONS_MAPPING.Funding[0] ? (
               <Funding recipient={actions[actionKey]._recipient} amounts={actions[actionKey]._amounts} />
@@ -395,7 +369,7 @@ export function ProposalPage() {
 
         <BoxPanel bg="bg2" my={10}>
           <Typography variant="h2" mb="20px">
-            Description
+            <Trans>Description</Trans>
           </Typography>
           <Typography variant="p" mb="20px">
             {proposal ? (
@@ -412,7 +386,7 @@ export function ProposalPage() {
             {additionalInfo?.discussionURL && (
               <>
                 <InfoLink href={additionalInfo?.discussionURL} target="_blank">
-                  Discussion
+                  <Trans>Discussion</Trans>
                 </InfoLink>
                 <ExternalIcon width="15" height="15" style={{ marginLeft: 5, marginRight: 15 }} />
               </>
@@ -423,7 +397,7 @@ export function ProposalPage() {
                   href={additionalInfo?.hash && getTrackerLink(networkId, additionalInfo?.hash, 'transaction')}
                   target="_blank"
                 >
-                  Transaction
+                  <Trans>Transaction</Trans>
                 </InfoLink>
                 <ExternalIcon width="15" height="15" style={{ marginLeft: 5 }} />
               </>
@@ -431,7 +405,7 @@ export function ProposalPage() {
           </Flex>
         </BoxPanel>
       </ProposalContainer>
-    </DefaultLayout>
+    </>
   );
 }
 

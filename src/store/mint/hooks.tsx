@@ -1,5 +1,9 @@
 import React, { useCallback, ReactNode } from 'react';
 
+import { Currency, CurrencyAmount, Token, Percent, Price } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
+import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,8 +15,6 @@ import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useCurrencyBalances } from 'store/wallet/hooks';
-import { Currency, CurrencyAmount, Token, Percent, Price } from 'types/balanced-sdk-core';
-import { Pair } from 'types/balanced-v1-sdk';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, typeInput, selectCurrency } from './actions';
@@ -112,6 +114,7 @@ export function useDerivedMintInfo(): {
   mintableLiquidity?: CurrencyAmount<Token>;
   poolTokenPercentage?: Percent;
   error?: ReactNode;
+  minQuoteTokenAmount?: BigNumber | null;
 } {
   const { account } = useIconReact();
 
@@ -138,9 +141,14 @@ export function useDerivedMintInfo(): {
 
   // For queue, currencies[Field.CURRENCY_A] = ICX and currencies[Field.CURRENCY_B] = undefined
   // so used `useQueuePair` in addition to `useV2Pair`.
-  const [pairState1, pair1] = useV2Pair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
-  const [pairState2, pair2] = useQueuePair();
-  const [pairState, pair] = isQueue ? [pairState2, pair2] : [pairState1, pair1];
+  const [pairState1, pair1, minQuoteTokenAmount1] = useV2Pair(
+    currencies[Field.CURRENCY_A],
+    currencies[Field.CURRENCY_B],
+  );
+  const [pairState2, pair2, minQuoteTokenAmount2] = useQueuePair();
+  const [pairState, pair, minQuoteTokenAmount] = isQueue
+    ? [pairState2, pair2, minQuoteTokenAmount2]
+    : [pairState1, pair1, minQuoteTokenAmount1];
 
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =
@@ -158,8 +166,8 @@ export function useDerivedMintInfo(): {
   const balances = useCurrencyBalances(account ?? undefined, currencyArr);
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
     () => ({
-      [Field.CURRENCY_A]: balances[0],
-      [Field.CURRENCY_B]: balances[1],
+      [Field.CURRENCY_A]: balances[0], // base token
+      [Field.CURRENCY_B]: balances[1], // quote token
     }),
     [balances],
   );
@@ -237,10 +245,22 @@ export function useDerivedMintInfo(): {
   const liquidityMinted = React.useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
     const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
-    if (pair && totalSupply && tokenAmountA && tokenAmountB) {
+    if (
+      pair &&
+      totalSupply &&
+      tokenAmountA &&
+      tokenAmountB &&
+      pair.involvesToken(tokenAmountA.currency) &&
+      pair.involvesToken(tokenAmountB.currency) &&
+      !tokenAmountA.currency.equals(tokenAmountB.currency)
+    ) {
       try {
         return pair.getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.isInsufficientInputAmountError) {
+          console.warn('useDerivedMintInfo(): liquidityMinted - Insufficient input amount');
+          return undefined;
+        }
         console.error(error);
         return undefined;
       }
@@ -253,10 +273,22 @@ export function useDerivedMintInfo(): {
   const mintableLiquidity = React.useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = currencyBalances;
     const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
-    if (pair && totalSupply && tokenAmountA && tokenAmountB) {
+    if (
+      pair &&
+      totalSupply &&
+      tokenAmountA &&
+      tokenAmountB &&
+      pair.involvesToken(tokenAmountA.currency) &&
+      pair.involvesToken(tokenAmountB.currency) &&
+      !tokenAmountA.currency.equals(tokenAmountB.currency)
+    ) {
       try {
         return pair.getLiquidityMinted(totalSupply, tokenAmountA, tokenAmountB);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.isInsufficientInputAmountError) {
+          console.warn('useDerivedMintInfo(): mintableLiquidity - Insufficient input amount');
+          return undefined;
+        }
         console.error(error);
         return undefined;
       }
@@ -275,16 +307,16 @@ export function useDerivedMintInfo(): {
 
   let error: ReactNode | undefined;
   if (!account) {
-    error = <>Connect Wallet</>;
+    error = <Trans>Connect Wallet</Trans>;
   }
 
   if (pairState === PairState.INVALID) {
-    error = error ?? <>Invalid pair</>;
+    error = error ?? <Trans>Invalid pair</Trans>;
   }
 
   if (isQueue) {
     if (!parsedAmounts[Field.CURRENCY_A]) {
-      error = error ?? <>Enter an amount</>;
+      error = error ?? <Trans>Enter an amount</Trans>;
     }
 
     const { [Field.CURRENCY_A]: currencyAAmount } = parsedAmounts;
@@ -294,17 +326,20 @@ export function useDerivedMintInfo(): {
     }
   } else {
     if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
-      error = error ?? <>Enter an amount</>;
+      error = error ?? <Trans>Enter an amount</Trans>;
     }
 
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
 
     if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-      error = <>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</>;
+      error = <Trans>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</Trans>;
     }
 
     if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
-      error = <>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</>;
+      error = <Trans>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</Trans>;
+    }
+    if (minQuoteTokenAmount && Number(currencyBAmount?.toFixed(2)) < minQuoteTokenAmount.toNumber()) {
+      error = <Trans>Supply</Trans>;
     }
   }
 
@@ -322,5 +357,6 @@ export function useDerivedMintInfo(): {
     mintableLiquidity,
     poolTokenPercentage,
     error,
+    minQuoteTokenAmount,
   };
 }

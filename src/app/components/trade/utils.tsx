@@ -1,3 +1,5 @@
+import { Fraction } from '@balancednetwork/sdk-core';
+import { t } from '@lingui/macro';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -24,23 +26,23 @@ export const BrightPanel = styled(Panel)`
 `;
 
 export function swapMessage(inputAmount: string, inputCurrency: string, outputAmount: string, outputCurrency: string) {
-  const pendingMessage = `Swapping ${inputCurrency} for ${outputCurrency}...`;
-  const successMessage = `Swapped ${inputAmount} ${inputCurrency} for ${outputAmount} ${outputCurrency}.`;
-  const failureMessage = `Couldn't swap ${inputCurrency} for ${outputCurrency}. Try again.`;
+  const pendingMessage = t`Swapping ${inputCurrency} for ${outputCurrency}...`;
+  const successMessage = t`Swapped ${inputAmount} ${inputCurrency} for ${outputAmount} ${outputCurrency}.`;
+  const failureMessage = t`Couldn't swap ${inputCurrency} for ${outputCurrency}. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
 
 export function depositMessage(currency: string, pair: string) {
-  const pendingMessage = `Sending ${currency} to the ${pair} pool...`;
-  const successMessage = `${currency} sent to the ${pair} pool.`;
-  const failureMessage = `Couldn't send ${currency} to the ${pair} pool. Try again.`;
+  const pendingMessage = t`Sending ${currency} to the ${pair} pool...`;
+  const successMessage = t`${currency} sent to the ${pair} pool.`;
+  const failureMessage = t`Couldn't send ${currency} to the ${pair} pool. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
 
 export function supplyMessage(pair: string) {
-  const pendingMessage = `Supplying ${pair} liquidity...`;
-  const successMessage = `Supplied ${pair} liquidity.`;
-  const failureMessage = `Couldn't supply ${pair} liquidity. Try again.`;
+  const pendingMessage = t`Supplying ${pair} liquidity...`;
+  const successMessage = t`Supplied ${pair} liquidity.`;
+  const failureMessage = t`Couldn't supply ${pair} liquidity. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
 
@@ -50,11 +52,17 @@ export function withdrawMessage(
   outputAmount: string,
   outputCurrency: string,
 ) {
-  const pendingMessage = `Withdrawing ${inputCurrency} / ${outputCurrency} liquidity...`;
+  const pendingMessage = t`Withdrawing ${inputCurrency} / ${outputCurrency} liquidity...`;
   const successMessage =
     outputCurrency.toLowerCase() === 'icx'
-      ? `${outputAmount} ${outputCurrency} added to your wallet.`
-      : `${inputAmount} ${inputCurrency} and ${outputAmount} ${outputCurrency} added to your wallet.`;
-  const failureMessage = `Couldn't withdraw ${inputCurrency} / ${outputCurrency} liquidity. Try again.`;
+      ? t`${outputAmount} ${outputCurrency} added to your wallet.`
+      : t`${inputAmount} ${inputCurrency} and ${outputAmount} ${outputCurrency} added to your wallet.`;
+  const failureMessage = t`Couldn't withdraw ${inputCurrency} / ${outputCurrency} liquidity. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
+
+export const stakedFraction = stakedLPPercent => {
+  const [stakedNumerator, stakedDenominator] = stakedLPPercent ? stakedLPPercent.toFraction() : [0, 1];
+  const stakedFraction = new Fraction(stakedNumerator.toFixed(), stakedDenominator.toFixed());
+  return stakedFraction;
+};

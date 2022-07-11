@@ -141,14 +141,9 @@ export function useDerivedMintInfo(): {
 
   // For queue, currencies[Field.CURRENCY_A] = ICX and currencies[Field.CURRENCY_B] = undefined
   // so used `useQueuePair` in addition to `useV2Pair`.
-  const [pairState1, pair1] = useV2Pair(
-    currencies[Field.CURRENCY_A],
-    currencies[Field.CURRENCY_B],
-  );
+  const [pairState1, pair1] = useV2Pair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
   const [pairState2, pair2] = useQueuePair();
-  const [pairState, pair] = isQueue
-    ? [pairState2, pair2]
-    : [pairState1, pair1];
+  const [pairState, pair] = isQueue ? [pairState2, pair2] : [pairState1, pair1];
 
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =

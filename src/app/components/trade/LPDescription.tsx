@@ -153,17 +153,17 @@ export default function LPDescription() {
                           {formattedAmounts[Field.CURRENCY_A]
                             ? new BigNumber(baseCurrencyTotalSupply)
                                 .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
-                                .dp(6)
+                                .dp(2)
                                 .toFormat() || '...'
-                            : baseCurrencyTotalSupply?.dp(6).toFormat() || '...'}{' '}
+                            : baseCurrencyTotalSupply?.dp(2).toFormat() || '...'}{' '}
                           {pair?.reserve0.currency?.symbol}
                           <br />
                           {formattedAmounts[Field.CURRENCY_B]
                             ? new BigNumber(quoteCurrencyTotalSupply)
                                 .plus(formattedAmounts[Field.CURRENCY_B]?.toFixed() || 0)
-                                .dp(6)
+                                .dp(2)
                                 .toFormat() || '...'
-                            : quoteCurrencyTotalSupply?.dp(6).toFormat() || '...'}{' '}
+                            : quoteCurrencyTotalSupply?.dp(2).toFormat() || '...'}{' '}
                           {pair?.reserve1.currency?.symbol}
                         </>
                       ) : (
@@ -172,7 +172,7 @@ export default function LPDescription() {
                             ? new BigNumber(token0Deposited?.toFixed() || 0)
                                 .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
                                 .toFixed()
-                            : token0Deposited?.toSignificant(6, {
+                            : token0Deposited?.toSignificant(2, {
                                 groupSeparator: ',',
                               }) || 0
                         } ${pair?.reserve0.currency?.symbol}`

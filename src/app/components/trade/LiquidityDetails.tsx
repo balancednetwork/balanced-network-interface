@@ -195,12 +195,21 @@ export default function LiquidityDetails() {
                   userPools.map((poolId, index, arr) => (
                     <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
                       <StyledAccordionButton onClick={() => setIsHided(false)}>
-                        <PoolRecord balance={balances[poolId]} pair={sortedPairs[poolId]} poolId={parseInt(poolId)} />
+                        <PoolRecord
+                          poolId={parseInt(poolId)}
+                          balance={balances[poolId]}
+                          pair={sortedPairs[poolId]}
+                          totalReward={rewards[poolId]}
+                        />
                       </StyledAccordionButton>
                       <StyledAccordionPanel hidden={isHided}>
                         <StyledBoxPanel bg="bg3">
                           <StakeLPPanel pair={sortedPairs[poolId]} />
-                          <WithdrawModal balance={balances[poolId]} pair={sortedPairs[poolId]} />
+                          <WithdrawModal
+                            poolId={parseInt(poolId)}
+                            balance={balances[poolId]}
+                            pair={sortedPairs[poolId]}
+                          />
                         </StyledBoxPanel>
                       </StyledAccordionPanel>
                     </StyledAccordionItem>
@@ -400,13 +409,13 @@ const PoolRecord = ({
   pair: Pair;
   balance: BalanceData;
   poolId: number;
-  totalReward?: BigNumber;
+  totalReward: BigNumber;
 }) => {
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
 
   const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
-  const { share, reward } = getShareReward(pair, balance, totalReward || new BigNumber(0));
+  const { share, reward } = getShareReward(pair, balance, totalReward);
   const [aBalance, bBalance] = getABBalance(pair, balance);
   const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
 
@@ -684,13 +693,12 @@ const Wrapper = styled(Flex)`
   `}
 `;
 
-const WithdrawModal = ({ pair, balance }: { pair: Pair; balance: BalanceData }) => {
+const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
   const { account } = useIconReact();
   const balances = useCurrencyBalances(
     account ?? undefined,
     useMemo(() => [pair.token0, pair.token1], [pair]),
   );
-  const poolId = pair.poolId!;
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const onChangeWithdrawnValue = useChangeWithdrawnValue();

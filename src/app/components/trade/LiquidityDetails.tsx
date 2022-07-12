@@ -730,7 +730,7 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
   let parsedAmount: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
 
   const percent = useMemo(() => new Percent(Math.floor(portion * 100), 10_000), [portion]);
-  const stakedLPPercent = useStakedLPPercent(pair.poolId ?? -1);
+  const stakedLPPercent = useStakedLPPercent(poolId);
   const [aBalance, bBalance] = getABBalance(pair, balance);
   const availablePercent = new BigNumber(100).minus(stakedLPPercent).abs();
   const availableBase = aBalance.multiply(availablePercent.toFixed(0)).divide(100);

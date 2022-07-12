@@ -19,7 +19,7 @@ import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { FRACTION_ZERO } from 'constants/misc';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
-import { useBalance, usePoolData } from 'hooks/usePools';
+import { useBalance } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import {
   useChangeStakedLPPercent,
@@ -39,7 +39,7 @@ export default React.memo(function StakeLPPanel({ pair }: { pair: Pair }) {
   const { account } = useIconReact();
   const poolId = pair.poolId!;
 
-  const poolData = usePoolData(poolId);
+  // const poolData = usePoolData(poolId);
   const stakedLPPercent = useStakedLPPercent(poolId);
   const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
 
@@ -71,7 +71,7 @@ export default React.memo(function StakeLPPanel({ pair }: { pair: Pair }) {
       totalStaked.isZero() ? ZERO : stakedBalance.dividedBy(totalStaked).multipliedBy(100),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onStakedLPPercentSelected, poolId, stakedBalance, totalStaked]);
+  }, [onStakedLPPercentSelected, poolId, stakedBalance.toFixed(), totalStaked.toFixed()]);
 
   const handleSlide = useCallback(
     (values: string[], handle: number) => {
@@ -88,7 +88,7 @@ export default React.memo(function StakeLPPanel({ pair }: { pair: Pair }) {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onStakedLPPercentSelected, isAdjusting, totalStaked, poolId, stakedBalance]);
+  }, [onStakedLPPercentSelected, isAdjusting, totalStaked.toFixed(), poolId, stakedBalance.toFixed()]);
 
   // modal
   const [open, setOpen] = React.useState(false);
@@ -173,61 +173,61 @@ export default React.memo(function StakeLPPanel({ pair }: { pair: Pair }) {
 
   const stakedFractionValue = stakedFraction(stakedLPPercent);
 
-  const baseCurrencyTotalSupply = totalSupply(baseValue, poolData?.suppliedBase);
+  // const baseCurrencyTotalSupply = totalSupply(baseValue, poolData?.suppliedBase);
 
-  const RespoRewardsInfo = () => {
-    return (
-      <Flex
-        marginBottom={4}
-        justifyContent="space-between"
-        paddingBottom={4}
-        sx={{ borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}
-      >
-        <Box>
-          <Typography color="text2">
-            <Trans>Daily rewards</Trans>
-          </Typography>
-          <Typography color="text" fontSize={16}>
-            {poolData?.suppliedReward ? (
-              poolData.suppliedReward.equalTo(FRACTION_ZERO) ? (
-                'N/A'
-              ) : poolData?.suppliedReward?.multiply(stakedFractionValue) ? (
-                `~ ${poolData?.suppliedReward
-                  ?.multiply(stakedFractionValue)
-                  .divide(100)
-                  .toFixed(2, { groupSeparator: ',' })} BALN`
-              ) : (
-                'N/A'
-              )
-            ) : (
-              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
-            )}
-          </Typography>
-        </Box>
+  // const RespoRewardsInfo = () => {
+  //   return (
+  //     <Flex
+  //       marginBottom={4}
+  //       justifyContent="space-between"
+  //       paddingBottom={4}
+  //       sx={{ borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}
+  //     >
+  //       <Box>
+  //         <Typography color="text2">
+  //           <Trans>Daily rewards</Trans>
+  //         </Typography>
+  //         <Typography color="text" fontSize={16}>
+  //           {poolData?.suppliedReward ? (
+  //             poolData.suppliedReward.equalTo(FRACTION_ZERO) ? (
+  //               'N/A'
+  //             ) : poolData?.suppliedReward?.multiply(stakedFractionValue) ? (
+  //               `~ ${poolData?.suppliedReward
+  //                 ?.multiply(stakedFractionValue)
+  //                 .divide(100)
+  //                 .toFixed(2, { groupSeparator: ',' })} BALN`
+  //             ) : (
+  //               'N/A'
+  //             )
+  //           ) : (
+  //             <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+  //           )}
+  //         </Typography>
+  //       </Box>
 
-        <Box sx={{ textAlign: 'right' }}>
-          <Typography color="text2">
-            <Trans>Pool share</Trans>
-          </Typography>
-          <Typography color="text" fontSize={16}>
-            {baseValue && quoteValue && percent && poolData && baseCurrencyTotalSupply ? (
-              `${
-                (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
-                  ? poolData?.poolShare.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
-                  : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
-              }%`
-            ) : (
-              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
-            )}
-          </Typography>
-        </Box>
-      </Flex>
-    );
-  };
+  //       <Box sx={{ textAlign: 'right' }}>
+  //         <Typography color="text2">
+  //           <Trans>Pool share</Trans>
+  //         </Typography>
+  //         <Typography color="text" fontSize={16}>
+  //           {baseValue && quoteValue && percent && poolData && baseCurrencyTotalSupply ? (
+  //             `${
+  //               (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
+  //                 ? poolData?.poolShare.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
+  //                 : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
+  //             }%`
+  //           ) : (
+  //             <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+  //           )}
+  //         </Typography>
+  //       </Box>
+  //     </Flex>
+  //   );
+  // };
 
   return (
     <Box width={upSmall ? 1 / 2 : 1}>
-      {!upSmall && <RespoRewardsInfo />}
+      {/* {!upSmall && <RespoRewardsInfo />} */}
       <Typography variant="h3" marginBottom="15px">
         Stake LP tokens
       </Typography>

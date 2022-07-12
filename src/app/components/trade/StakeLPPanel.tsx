@@ -190,13 +190,11 @@ export default React.memo(function StakeLPPanel({ pair, totalReward }: { pair: P
             <Trans>Daily rewards</Trans>
           </Typography>
           <Typography color="text" fontSize={16}>
-            {reward?.equalTo(FRACTION_ZERO) ? (
-              'N/A'
-            ) : stakedFractionValue.greaterThan(0) ? (
-              `~ ${reward.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
-            ) : (
-              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
-            )}
+            {reward?.equalTo(FRACTION_ZERO)
+              ? 'N/A'
+              : stakedFractionValue.greaterThan(0)
+              ? `~ ${reward.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
+              : 'N/A'}
           </Typography>
         </Box>
 

@@ -54,13 +54,13 @@ function getRate(pair: Pair, balance: BalanceData): Fraction {
   return FRACTION_ZERO;
 }
 
-function getABBalance(pair: Pair, balance: BalanceData) {
+export function getABBalance(pair: Pair, balance: BalanceData) {
   const rate = getRate(pair, balance);
 
   return [pair.reserve0.multiply(rate), pair.reserve1.multiply(rate)];
 }
 
-function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber) {
+export function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber) {
   const rate = getRate(pair, balance);
   const totalRewardFrac = totalReward ? toFraction(totalReward) : FRACTION_ZERO;
 
@@ -204,7 +204,7 @@ export default function LiquidityDetails() {
                       </StyledAccordionButton>
                       <StyledAccordionPanel hidden={isHided}>
                         <StyledBoxPanel bg="bg3">
-                          <StakeLPPanel pair={sortedPairs[poolId]} />
+                          <StakeLPPanel pair={sortedPairs[poolId]} totalReward={rewards[poolId]} />
                           <WithdrawModal
                             poolId={parseInt(poolId)}
                             balance={balances[poolId]}
@@ -449,19 +449,27 @@ const PoolRecord = ({
         </DataText>
 
         {upSmall && (
-          <DataText>{`${
-            (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
-              ? share.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
-              : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
-          }%`}</DataText>
+          <DataText>
+            {!baseCurrencyTotalSupply && baseValue?.equalTo(0) ? (
+              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            ) : (
+              `${
+                (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
+                  ? share.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
+                  : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
+              }%`
+            )}
+          </DataText>
         )}
         {upSmall && (
           <DataText>
-            {reward?.equalTo(FRACTION_ZERO)
-              ? 'N/A'
-              : reward?.multiply(stakedFractionValue)
-              ? `~ ${reward?.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
-              : 'N/A'}
+            {reward?.equalTo(FRACTION_ZERO) ? (
+              'N/A'
+            ) : stakedFractionValue.greaterThan(0) ? (
+              `~ ${reward.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
+            ) : (
+              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            )}
           </DataText>
         )}
       </ListItem>

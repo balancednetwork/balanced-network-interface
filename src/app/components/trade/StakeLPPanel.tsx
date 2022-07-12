@@ -13,13 +13,13 @@ import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMess
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
-import { totalSupply } from 'app/components/trade/LiquidityDetails';
+import { getABBalance, getShareReward, totalSupply } from 'app/components/trade/LiquidityDetails';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { FRACTION_ZERO } from 'constants/misc';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
-import { useBalance } from 'hooks/useV2Pairs';
+import { useBalance, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import {
   useChangeStakedLPPercent,
@@ -35,7 +35,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import { StyledSkeleton } from '../ProposalInfo/components';
 import { stakedFraction } from './utils';
 
-export default React.memo(function StakeLPPanel({ pair }: { pair: Pair }) {
+export default React.memo(function StakeLPPanel({ pair, totalReward }: { pair: Pair; totalReward: BigNumber }) {
   const { account } = useIconReact();
   const poolId = pair.poolId!;
 
@@ -171,63 +171,58 @@ export default React.memo(function StakeLPPanel({ pair }: { pair: Pair }) {
 
   const upSmall = useMedia('(min-width: 800px)');
 
+  const [aBalance, bBalance] = getABBalance(pair, balance);
+  const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
+  const baseCurrencyTotalSupply = totalSupply(baseValue, lpBalance?.base);
+  const { share, reward } = getShareReward(pair, balance, totalReward);
   const stakedFractionValue = stakedFraction(stakedLPPercent);
 
-  // const baseCurrencyTotalSupply = totalSupply(baseValue, poolData?.suppliedBase);
+  const RespoRewardsInfo = () => {
+    return (
+      <Flex
+        marginBottom={4}
+        justifyContent="space-between"
+        paddingBottom={4}
+        sx={{ borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}
+      >
+        <Box>
+          <Typography color="text2">
+            <Trans>Daily rewards</Trans>
+          </Typography>
+          <Typography color="text" fontSize={16}>
+            {reward?.equalTo(FRACTION_ZERO) ? (
+              'N/A'
+            ) : stakedFractionValue.greaterThan(0) ? (
+              `~ ${reward.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
+            ) : (
+              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            )}
+          </Typography>
+        </Box>
 
-  // const RespoRewardsInfo = () => {
-  //   return (
-  //     <Flex
-  //       marginBottom={4}
-  //       justifyContent="space-between"
-  //       paddingBottom={4}
-  //       sx={{ borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}
-  //     >
-  //       <Box>
-  //         <Typography color="text2">
-  //           <Trans>Daily rewards</Trans>
-  //         </Typography>
-  //         <Typography color="text" fontSize={16}>
-  //           {poolData?.suppliedReward ? (
-  //             poolData.suppliedReward.equalTo(FRACTION_ZERO) ? (
-  //               'N/A'
-  //             ) : poolData?.suppliedReward?.multiply(stakedFractionValue) ? (
-  //               `~ ${poolData?.suppliedReward
-  //                 ?.multiply(stakedFractionValue)
-  //                 .divide(100)
-  //                 .toFixed(2, { groupSeparator: ',' })} BALN`
-  //             ) : (
-  //               'N/A'
-  //             )
-  //           ) : (
-  //             <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
-  //           )}
-  //         </Typography>
-  //       </Box>
-
-  //       <Box sx={{ textAlign: 'right' }}>
-  //         <Typography color="text2">
-  //           <Trans>Pool share</Trans>
-  //         </Typography>
-  //         <Typography color="text" fontSize={16}>
-  //           {baseValue && quoteValue && percent && poolData && baseCurrencyTotalSupply ? (
-  //             `${
-  //               (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
-  //                 ? poolData?.poolShare.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
-  //                 : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
-  //             }%`
-  //           ) : (
-  //             <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
-  //           )}
-  //         </Typography>
-  //       </Box>
-  //     </Flex>
-  //   );
-  // };
+        <Box sx={{ textAlign: 'right' }}>
+          <Typography color="text2">
+            <Trans>Pool share</Trans>
+          </Typography>
+          <Typography color="text" fontSize={16}>
+            {!baseCurrencyTotalSupply && baseValue?.equalTo(0) ? (
+              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            ) : (
+              `${
+                (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
+                  ? share.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
+                  : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
+              }%`
+            )}
+          </Typography>
+        </Box>
+      </Flex>
+    );
+  };
 
   return (
     <Box width={upSmall ? 1 / 2 : 1}>
-      {/* {!upSmall && <RespoRewardsInfo />} */}
+      {!upSmall && <RespoRewardsInfo />}
       <Typography variant="h3" marginBottom="15px">
         Stake LP tokens
       </Typography>

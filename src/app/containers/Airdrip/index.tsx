@@ -8,7 +8,6 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
-import { Link } from 'app/components/Link';
 import Logo from 'app/components/Logo';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -145,18 +144,11 @@ export function Airdrip() {
 
       <Flex flexDirection="column" mx="auto" alignItems="center" width="fit-content" mb={50}>
         <Separator>
-          <Gradient>Goodwill</Gradient> disbursement
+          <Gradient>Claim</Gradient> network fees
         </Separator>
         <Typography variant="p" fontSize={20} maxWidth="500px" textAlign="center" color="text1">
-          If you were a borrower on Balanced between January 20 - 24, you’re eligible to claim sICX as a gesture of
-          goodwill.{' '}
-          <Link
-            fontSize="20px"
-            href="https://gov.balanced.network/t/emergency-fund-goodwill-blackswan-event-refine-proposal/759/141"
-            target="_blank"
-          >
-            View proposal details.
-          </Link>
+          Balanced network fees have moved to a continuous rewards structure. Sign in to check for and claim any
+          outstanding fees earned between April 26, 2021 – July 14, 2022.
         </Typography>
       </Flex>
 
@@ -189,7 +181,7 @@ export function Airdrip() {
                 {new BigNumber(claimableAmountQuery.data).div(new BigNumber(10).pow(18)).toFixed(2)} sICX
               </Typography>
               <Button mt={5} onClick={handleClaim}>
-                Claim sICX
+                Claim fees
               </Button>
             </>
           )}
@@ -197,7 +189,7 @@ export function Airdrip() {
           {account && claimableAmountQuery.status === 'success' && hasClaimed && (
             <>
               <Typography variant="p" fontSize="16px" fontWeight="bold">
-                No sICX to claim
+                No fees to claim
               </Typography>
               <Button mt={5} onClick={toggleWalletModal}>
                 Check another wallet

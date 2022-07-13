@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@balancednetwork/balanced-js": "1.0.10",
+    "@balancednetwork/balanced-js": "1.0.12",
     "@balancednetwork/hw-app-icx": "1.0.6",
     "@balancednetwork/sdk-core": "1.0.1",
     "@balancednetwork/v1-sdk": "1.0.1",

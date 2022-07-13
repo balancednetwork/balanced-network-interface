@@ -13,7 +13,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
-import { useUserCollectedFeesQuery, useRewardQuery, usePlatformDayQuery, BATCH_SIZE } from 'queries/reward';
+import { useRewardQuery, useUnclaimedDividendsQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
@@ -204,7 +204,6 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
 
 const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }) => {
   const { account } = useIconReact();
-  const [feeTx, setFeeTx] = React.useState('');
   const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -216,21 +215,18 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
-    const end = platformDay - feesIndex * BATCH_SIZE;
-    const start = end - BATCH_SIZE > 0 ? end - BATCH_SIZE : 0;
 
     bnJs
       .inject({ account })
-      .Dividends.claim(start, end)
+      .Dividends.claimDividends()
       .then(res => {
         addTransaction(
-          { hash: res.result }, //
+          { hash: res.result },
           {
             summary: t`Claimed fees.`,
             pending: t`Claiming fees...`,
           },
         );
-        setFeeTx(res.result);
         toggleOpen();
       })
       .catch(e => {
@@ -242,18 +238,8 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
       });
   };
 
-  const feeTxStatus = useTransactionStatus(feeTx);
-
   const hasNetworkFees = useHasNetworkFees();
-  const { data: platformDay = 0 } = usePlatformDayQuery();
-  const { data: feesArr, refetch } = useUserCollectedFeesQuery(1, platformDay);
-  const fees = feesArr?.find(fees => fees);
-  const feesIndex = feesArr?.findIndex(fees => fees) || 0;
-  const hasFee = !!fees;
-  const count = feesArr?.reduce((c, v) => (v ? ++c : c), 0);
-  React.useEffect(() => {
-    if (feeTxStatus === TransactionStatus.success) refetch();
-  }, [feeTxStatus, refetch]);
+  const { data: fees } = useUnclaimedDividendsQuery();
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
@@ -265,14 +251,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
   const hasEnoughICX = useHasEnoughICX();
 
   const getNetworkFeesUI = () => {
-    if (hasNetworkFees && !hasFee) {
-      return (
-        <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
-          <Trans>Pending</Trans>
-          <QuestionHelper text={t`To earn network fees, stake BALN from your wallet.`} />
-        </Typography>
-      );
-    } else if (hasFee) {
+    if (hasNetworkFees) {
       return (
         <>
           {fees &&
@@ -286,10 +265,13 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
                   </Typography>
                 </Typography>
               ))}
-
-          <Button mt={2} onClick={toggleOpen}>
-            {count && count > 1 ? t`Claim (1 of ${count})` : t`Claim`}
-          </Button>
+          {fees && Object.keys(fees).filter(key => fees[key].greaterThan(0)).length ? (
+            <Button mt={2} onClick={toggleOpen}>
+              <Trans>Claim</Trans>
+            </Button>
+          ) : (
+            <Spinner></Spinner>
+          )}
         </>
       );
     } else {

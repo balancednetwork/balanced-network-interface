@@ -23,7 +23,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
-import { MINIMUM_B_BALANCE_TO_SHOW_POOL, ZERO } from 'constants/index';
+import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { BalanceData, useAvailablePairs, useBalances, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -41,7 +41,7 @@ import ModalContent from '../ModalContent';
 import { StyledSkeleton } from '../ProposalInfo/components';
 import Spinner from '../Spinner';
 import StakeLPPanel from './StakeLPPanel';
-import { stakedFraction, withdrawMessage } from './utils';
+import { getFormattedPoolShare, getFormattedRewards, stakedFraction, totalSupply, withdrawMessage } from './utils';
 
 function getRate(pair: Pair, balance: BalanceData): Fraction {
   //When balance = 0, use stakedLPBalance to calculate rate
@@ -127,7 +127,7 @@ export default function LiquidityDetails() {
       return acc;
     }, {});
 
-  const userSuppliedLiquidity = shouldShowQueue || userPools.length;
+  const hasLiquidity = shouldShowQueue || userPools.length;
   const isLiquidityInfoLoading = shouldShowQueue === undefined;
 
   return (
@@ -145,7 +145,7 @@ export default function LiquidityDetails() {
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {userSuppliedLiquidity && (
+        {hasLiquidity && (
           <MotionBoxPanel
             key="LPDetails"
             bg="bg2"
@@ -397,9 +397,6 @@ const StyledAccordionPanel = styled(AccordionPanel)`
   }
 `;
 
-export const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
-  !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
-
 const PoolRecord = ({
   poolId,
   pair,
@@ -434,14 +431,14 @@ const PoolRecord = ({
         <DataText>
           {baseCurrencyTotalSupply ? (
             <Typography fontSize={16}>{`${baseCurrencyTotalSupply.toFixed(2, { groupSeparator: ',' })} ${
-              aBalance.currency.symbol || '...'
+              aBalance.currency.symbol
             }`}</Typography>
           ) : (
             <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
           )}
           {quoteCurrencyTotalSupply ? (
             <Typography fontSize={16}>{`${quoteCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' })} ${
-              bBalance.currency.symbol || '...'
+              bBalance.currency.symbol
             }`}</Typography>
           ) : (
             <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
@@ -453,23 +450,11 @@ const PoolRecord = ({
             {!baseCurrencyTotalSupply && baseValue?.equalTo(0) ? (
               <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
             ) : (
-              `${
-                (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
-                  ? share.multiply(100)?.toFixed(4, { groupSeparator: ',' }) || '---'
-                  : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
-              }%`
+              getFormattedPoolShare(baseValue, quoteValue, percent, share, baseCurrencyTotalSupply, pair)
             )}
           </DataText>
         )}
-        {upSmall && (
-          <DataText>
-            {reward?.equalTo(FRACTION_ZERO)
-              ? 'N/A'
-              : stakedFractionValue.greaterThan(0)
-              ? `~ ${reward.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
-              : 'N/A'}
-          </DataText>
-        )}
+        {upSmall && <DataText>{getFormattedRewards(reward, stakedFractionValue)}</DataText>}
       </ListItem>
     </>
   );
@@ -811,7 +796,7 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
 
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current && sliderInstance.current.noUiSlider.set(portion);
+      sliderInstance.current?.noUiSlider.set(portion);
     }
   }, [sliderInstance, inputType, portion]);
 
@@ -825,7 +810,7 @@ const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: Balance
   const addTransaction = useTransactionAdder();
 
   const resetValue = () => {
-    sliderInstance.current && sliderInstance.current.noUiSlider.set(0);
+    sliderInstance.current?.noUiSlider.set(0);
     setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
   };
 

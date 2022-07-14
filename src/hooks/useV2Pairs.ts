@@ -201,6 +201,7 @@ export function useBalances(
       const cdsFlatted: CallData[] = cds.flat();
       const data: any[] = await bnJs.Multicall.getAggregateData(cdsFlatted);
       const sicxBalance = data[data.length - 1];
+      const icxBalance = !Array.isArray(data[0]) ? data[0] : 0;
 
       // Remapping the result was returned by multicall based on the order of the cds
       let trackedIdx = 0;
@@ -231,7 +232,7 @@ export function useBalances(
         if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
           return {
             poolId: +poolId,
-            balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(balance || 0, 16).toFixed()),
+            balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(icxBalance, 16).toFixed()),
             balance1: CurrencyAmount.fromRawAmount(pool.token1, new BigNumber(sicxBalance || 0, 16).toFixed()),
           };
         } else {

@@ -120,9 +120,7 @@ export const PROPOSAL_CONFIG = {
         recipient_name: item[0],
         dist_percent: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
       }));
-      return {
-        updateBalTokenDistPercentage: { _recipient_list: recipientList },
-      };
+      return [['updateBalTokenDistPercentage', { _recipient_list: recipientList }]];
     },
     validate: sum => ({ isValid: sum === 100, message: 'Allocation must equal 100%.' }),
   },
@@ -142,9 +140,7 @@ export const PROPOSAL_CONFIG = {
           }
         );
       });
-      return {
-        setDividendsCategoryPercentage: { _dist_list: dist_list },
-      };
+      return [['setDividendsCategoryPercentage', { _dist_list: dist_list }]];
     },
     validate: sum => ({ isValid: sum === 100, message: 'Allocation must equal 100%.' }),
   },
@@ -156,7 +152,7 @@ export const PROPOSAL_CONFIG = {
     },
     submitParams: ratioInputValue => {
       const origination_fee = Number(Object.values(ratioInputValue)) * 100;
-      return { setOriginationFee: { _fee: origination_fee } };
+      return [['setOriginationFee', { _fee: origination_fee }]];
     },
     validate: sum => ({
       isValid: sum <= 10,
@@ -172,7 +168,7 @@ export const PROPOSAL_CONFIG = {
     },
     submitParams: ratioInputValue => {
       const locking_ratio = Math.round(1000000 / Number(Object.values(ratioInputValue)));
-      return { setLockingRatio: { _value: locking_ratio } };
+      return [['setLockingRatio', { _value: locking_ratio }]];
     },
     validate: sum => ({
       isValid: sum < 66.67,
@@ -190,7 +186,7 @@ export const PROPOSAL_CONFIG = {
         .toLoop(Number(Object.values(ratioInputValue)))
         .div(100)
         .toNumber();
-      return { setRebalancingThreshold: { _value: rebalance_ratio } };
+      return [['setRebalancingThreshold', { _value: rebalance_ratio }]];
     },
     validate: sum => ({
       isValid: sum <= 7.5,
@@ -214,7 +210,7 @@ export const PROPOSAL_CONFIG = {
             },
         )
         .filter(value => value);
-      return { daoDisburse: { _recipient: currencyValue.recipient, _amounts: amounts } };
+      return [['daoDisburse', { _recipient: currencyValue.recipient, _amounts: amounts }]];
     },
   },
 };

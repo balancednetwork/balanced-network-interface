@@ -1,8 +1,9 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Currency, Token } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
@@ -23,7 +24,6 @@ import useKeyPress from 'hooks/useKeyPress';
 import { useRatesQuery } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
-import { Currency, Token } from 'types/balanced-sdk-core';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import { SearchInput } from '../SearchModal/CurrencySearch';

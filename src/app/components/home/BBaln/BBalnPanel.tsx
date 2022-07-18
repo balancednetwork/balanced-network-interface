@@ -474,7 +474,7 @@ export default function BBalnPanel() {
                   <Typography paddingRight={'5px'}>{parsedBBalnAmount[Field.LEFT].toFormat()}</Typography>
                 )}
 
-                <Typography paddingRight={'15px'}> / {balnBalanceAvailable.toFormat()} BALN</Typography>
+                <Typography paddingRight={'15px'}> / {balnBalanceAvailable.toFormat(2)} BALN</Typography>
               </Flex>
 
               {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
@@ -615,11 +615,11 @@ export default function BBalnPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceBBalnAmount.abs().toFormat()} BALN
+            {differenceBBalnAmount.abs().toFormat(2)} BALN
           </Typography>
           {!shouldBoost && (
             <Typography textAlign="center" fontSize={14} color="#fb6a6a">
-              Minus 50% fee: {differenceBBalnAmount.div(2).abs().toFormat()} BALN
+              Minus 50% fee: {differenceBBalnAmount.div(2).abs().toFormat(2)} BALN
             </Typography>
           )}
 
@@ -627,7 +627,7 @@ export default function BBalnPanel() {
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {balnBalanceAvailable.minus(bBalnAmount).toFormat()} BALN
+                {balnBalanceAvailable.minus(bBalnAmount).toFormat(2)} BALN
               </Typography>
             </Box>
 
@@ -637,7 +637,7 @@ export default function BBalnPanel() {
                 {balnBalanceAvailable
                   .minus(bBalnAmount)
                   .minus(shouldBoost ? differenceBBalnAmount : differenceBBalnAmount.div(2))
-                  .toFormat()}{' '}
+                  .toFormat(2)}{' '}
                 BALN
               </Typography>
             </Box>

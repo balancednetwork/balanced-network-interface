@@ -1,13 +1,16 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
 import { t, Trans } from '@lingui/macro';
+import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
+import { AnimatePresence, motion } from 'framer-motion';
 import JSBI from 'jsbi';
-import lodash from 'lodash';
-import { BalancedJs } from 'packages/BalancedJs';
+import { omit } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
-import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -15,53 +18,50 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
-import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
+import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
-import { BalanceData, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
+import { BalanceData, useAvailablePairs, useBalances, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useRewards } from 'store/reward/hooks';
+import { useChangeWithdrawnValue, useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useTrackedTokenPairs } from 'store/user/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
-import { Currency, CurrencyAmount, Fraction, Percent } from 'types/balanced-sdk-core';
-import { Pair } from 'types/balanced-v1-sdk';
 import { multiplyCABN, toFraction, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from '../ModalContent';
+import { StyledSkeleton } from '../ProposalInfo/components';
 import Spinner from '../Spinner';
-import { withdrawMessage } from './utils';
+import StakeLPPanel from './StakeLPPanel';
+import { getFormattedPoolShare, getFormattedRewards, stakedFraction, totalSupply, withdrawMessage } from './utils';
 
 function getRate(pair: Pair, balance: BalanceData): Fraction {
-  if (
-    pair.totalSupply &&
-    JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO) &&
-    balance &&
-    JSBI.greaterThan(balance.balance.quotient, BIGINT_ZERO)
-  ) {
-    const amount = balance.balance.divide(pair.totalSupply);
+  //When balance = 0, use stakedLPBalance to calculate rate
+  if (pair.totalSupply && JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO) && balance) {
+    const amount = (balance?.stakedLPBalance ? balance.balance.add(balance.stakedLPBalance) : balance.balance).divide(
+      pair.totalSupply,
+    );
     return new Fraction(amount.numerator, amount.denominator);
   }
   return FRACTION_ZERO;
 }
 
-function getABBalance(pair: Pair, balance: BalanceData) {
+export function getABBalance(pair: Pair, balance: BalanceData) {
   const rate = getRate(pair, balance);
 
   return [pair.reserve0.multiply(rate), pair.reserve1.multiply(rate)];
 }
 
-function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber) {
+export function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber) {
   const rate = getRate(pair, balance);
-
   const totalRewardFrac = totalReward ? toFraction(totalReward) : FRACTION_ZERO;
 
   return {
@@ -69,6 +69,8 @@ function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber
     reward: totalRewardFrac.multiply(rate),
   };
 }
+
+const MotionBoxPanel = motion(BoxPanel);
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -85,6 +87,9 @@ export default function LiquidityDetails() {
 
   const rewards = useRewards();
 
+  // prevent accordion expanded on mounted
+  const [isHided, setIsHided] = useState(true);
+
   const queuePair = pairs[BalancedJs.utils.POOL_IDS.sICXICX];
   const queueBalance = balances[BalancedJs.utils.POOL_IDS.sICXICX];
   const queueReward = rewards[BalancedJs.utils.POOL_IDS.sICXICX];
@@ -97,10 +102,13 @@ export default function LiquidityDetails() {
 
   if (!account || Object.keys(pairs).length === 0) return null;
 
-  const pairsWithoutQ = lodash.omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
-  const balancesWithoutQ = lodash.omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
+  const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
+  const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const userPools = Object.keys(pairsWithoutQ).filter(
-    poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO),
+    poolId =>
+      balances[poolId] &&
+      (Number(balances[poolId].balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
+        Number(balances[poolId].stakedLPBalance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL),
   );
 
   const sortedPairs = userPools
@@ -119,63 +127,107 @@ export default function LiquidityDetails() {
       return acc;
     }, {});
 
-  return shouldShowQueue || userPools.length ? (
-    <BoxPanel bg="bg2" mb={10}>
-      <Typography variant="h2" mb={5}>
-        <Trans>Liquidity details</Trans>
-      </Typography>
+  const hasLiquidity = shouldShowQueue || userPools.length;
+  const isLiquidityInfoLoading = shouldShowQueue === undefined;
 
-      <TableWrapper>
-        <DashGrid>
-          <HeaderText>
-            <Trans>Pool</Trans>
-          </HeaderText>
-          <HeaderText>
-            <Trans>Your supply</Trans>
-          </HeaderText>
-          {upSmall && (
-            <HeaderText>
-              <Trans>Pool share</Trans>
-            </HeaderText>
-          )}
-          {upSmall && (
-            <HeaderText>
-              <Trans>Daily rewards</Trans>
-            </HeaderText>
-          )}
-          <HeaderText></HeaderText>
-        </DashGrid>
-
-        {shouldShowQueue && (
-          <PoolRecordQ
-            balance={queueBalance}
-            pair={queuePair}
-            totalReward={queueReward}
-            border={userPools.length !== 0}
-          />
+  return (
+    <>
+      <AnimatePresence>
+        {isLiquidityInfoLoading && (
+          <motion.div
+            key="spinner"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{ height: '100px', position: 'relative' }}
+          >
+            <Spinner size={75} centered></Spinner>
+          </motion.div>
         )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {hasLiquidity && (
+          <MotionBoxPanel
+            key="LPDetails"
+            bg="bg2"
+            mb={10}
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+          >
+            <Typography variant="h2" mb={5}>
+              <Trans>Liquidity details</Trans>
+            </Typography>
+            <TableWrapper>
+              <DashGrid>
+                <HeaderText>
+                  <Trans>Pool</Trans>
+                </HeaderText>
+                <HeaderText>
+                  <Trans>Your supply</Trans>
+                </HeaderText>
+                {upSmall && (
+                  <HeaderText>
+                    <Trans>Pool share</Trans>
+                  </HeaderText>
+                )}
+                {upSmall && (
+                  <HeaderText>
+                    <Trans>Daily rewards</Trans>
+                  </HeaderText>
+                )}
+                <HeaderText></HeaderText>
+              </DashGrid>
 
-        {balancesWithoutQ &&
-          userPools.map((poolId, index, arr) => (
-            <PoolRecord
-              key={poolId}
-              poolId={parseInt(poolId)}
-              balance={balances[poolId]}
-              pair={sortedPairs[poolId]}
-              totalReward={rewards[poolId]}
-              border={index !== arr.length - 1}
-            />
-          ))}
-      </TableWrapper>
-    </BoxPanel>
-  ) : null;
+              <Accordion collapsible>
+                {shouldShowQueue && (
+                  <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
+                    <StyledAccordionButton onClick={() => setIsHided(false)}>
+                      <PoolRecordQ balance={queueBalance} pair={queuePair} totalReward={queueReward} />
+                    </StyledAccordionButton>
+                    <StyledAccordionPanel hidden={isHided}>
+                      <StyledBoxPanel bg="bg3">
+                        <WithdrawModalQ balance={queueBalance} pair={queuePair} />
+                      </StyledBoxPanel>
+                    </StyledAccordionPanel>
+                  </StyledAccordionItem>
+                )}
+                {balancesWithoutQ &&
+                  userPools.map((poolId, index, arr) => (
+                    <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
+                      <StyledAccordionButton onClick={() => setIsHided(false)}>
+                        <PoolRecord
+                          poolId={parseInt(poolId)}
+                          balance={balances[poolId]}
+                          pair={sortedPairs[poolId]}
+                          totalReward={rewards[poolId]}
+                        />
+                      </StyledAccordionButton>
+                      <StyledAccordionPanel hidden={isHided}>
+                        <StyledBoxPanel bg="bg3">
+                          <StakeLPPanel pair={sortedPairs[poolId]} totalReward={rewards[poolId]} />
+                          <WithdrawModal
+                            poolId={parseInt(poolId)}
+                            balance={balances[poolId]}
+                            pair={sortedPairs[poolId]}
+                          />
+                        </StyledBoxPanel>
+                      </StyledAccordionPanel>
+                    </StyledAccordionItem>
+                  ))}
+              </Accordion>
+            </TableWrapper>
+          </MotionBoxPanel>
+        )}
+      </AnimatePresence>
+    </>
+  );
 }
 
 const TableWrapper = styled.div``;
 
 const DashGrid = styled.div`
   display: grid;
-  grid-template-columns: 4fr 5fr 3fr;
+  grid-template-columns: 4fr 5fr;
   gap: 10px;
   grid-template-areas: 'name supply action';
   align-items: center;
@@ -191,7 +243,7 @@ const DashGrid = styled.div`
   }
 
   ${({ theme }) => theme.mediaWidth.upSmall`
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-areas: 'name supply share rewards action';
   `}
 `;
@@ -202,19 +254,151 @@ const HeaderText = styled(Typography)`
   letter-spacing: 3px;
 `;
 
-const DataText = styled(Box)`
+const DataText = styled(Flex)`
   font-size: 16px;
+  justify-content: center;
+  align-items: end;
+  flex-direction: column;
+`;
+const StyledArrowDownIcon = styled(ArrowDownIcon)`
+  width: 10px;
+  margin-left: 10px;
+  margin-top: 10px;
+  transition: transform 0.3s ease;
+`;
+const StyledDataText = styled(Flex)`
+  font-weight: bold;
 `;
 
-const ListItem = styled(DashGrid)<{ border?: boolean }>`
+const StyledBoxPanel = styled(BoxPanel)`
+  display: flex;
+  margin-bottom: 20px;
+  flex-direction: column;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+     flex-direction: row;
+  `}
+`;
+
+const StyledAccordionItem = styled(AccordionItem)<{ border?: boolean }>`
+  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
+  transition: border-bottom ease-in-out 50ms 480ms;
+`;
+const ListItem = styled(DashGrid)`
   padding: 20px 0;
   color: #ffffff;
-  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
+`;
+
+const OptionButton = styled(Box)`
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+  text-decoration: none;
+  color: white;
+  user-select: none;
+  text-align: center;
+  background-color: ${({ theme }) => theme.colors.bg2};
+  border: 2px solid #144a68;
+  transition: border 0.3s ease;
+  padding: 10px;
+
+  &[disabled] {
+    background: rgba(255, 255, 255, 0.15);
+    cursor: default;
+    pointer-events: none;
+  }
+
+  :hover {
+    border: 2px solid ${({ theme }) => theme.colors.primary};
+    transition: border 0.2s ease;
+  }
+
+  > svg,
+  img {
+    margin-bottom: 10px;
+  }
+`;
+
+const StyledAccordionButton = styled(AccordionButton)`
+  background-color: transparent;
+  width: 100%;
+  border: none;
+  position: relative;
+
+  &:before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 12px solid #144a68;
+    position: absolute;
+    transition: all ease-in-out 200ms;
+    transform: translate3d(0, 20px, 0);
+    opacity: 0;
+    pointer-events: none;
+    bottom: 0;
+    left: 30px;
+  }
+
+  & > ${ListItem} {
+    p,
+    & > div {
+      transition: all ease-in-out 200ms;
+      path {
+        transition: all ease-in-out 200ms;
+      }
+    }
+  }
+
+  &:hover {
+    & > ${ListItem} {
+      p,
+      & > div {
+        color: ${({ theme }) => theme.colors.primary};
+        path {
+          stroke: ${({ theme }) => theme.colors.primary} !important;
+        }
+      }
+    }
+  }
+  &[aria-expanded='true'] {
+    &:before {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+    & > ${ListItem} {
+      p,
+      & > div {
+        color: ${({ theme }) => theme.colors.primary};
+        & > svg {
+          transform: rotateX(180deg);
+
+          path {
+            stroke: ${({ theme }) => theme.colors.primary} !important;
+          }
+        }
+      }
+    }
+  }
+`;
+
+const StyledAccordionPanel = styled(AccordionPanel)`
+  overflow: hidden;
+  max-height: 0;
+  transition: all ease-in-out 0.5s;
+  &[data-state='open'] {
+    max-height: 800px;
+    ${({ theme }) => theme.mediaWidth.upSmall`
+      max-height: 400px;
+    `}
+  }
 `;
 
 const PoolRecord = ({
   poolId,
-  border,
   pair,
   balance,
   totalReward,
@@ -222,86 +406,74 @@ const PoolRecord = ({
   pair: Pair;
   balance: BalanceData;
   poolId: number;
-  border: boolean;
   totalReward: BigNumber;
 }) => {
   const upSmall = useMedia('(min-width: 800px)');
+  const stakedLPPercent = useStakedLPPercent(poolId);
 
-  const [aBalance, bBalance] = getABBalance(pair, balance);
+  const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
   const { share, reward } = getShareReward(pair, balance, totalReward);
+  const [aBalance, bBalance] = getABBalance(pair, balance);
+  const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
+
+  const baseCurrencyTotalSupply = totalSupply(baseValue, lpBalance?.base);
+  const quoteCurrencyTotalSupply = totalSupply(quoteValue, lpBalance?.quote);
+
+  const stakedFractionValue = stakedFraction(stakedLPPercent);
 
   return (
     <>
-      {Number(bBalance.toFixed(2)) > MINIMUM_B_BALANCE_TO_SHOW_POOL ? (
-        <ListItem border={border}>
+      <ListItem>
+        <StyledDataText>
           <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
+          <StyledArrowDownIcon />
+        </StyledDataText>
+        <DataText>
+          {baseCurrencyTotalSupply ? (
+            <Typography fontSize={16}>{`${baseCurrencyTotalSupply.toFixed(2, { groupSeparator: ',' })} ${
+              aBalance.currency.symbol
+            }`}</Typography>
+          ) : (
+            <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+          )}
+          {quoteCurrencyTotalSupply ? (
+            <Typography fontSize={16}>{`${quoteCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' })} ${
+              bBalance.currency.symbol
+            }`}</Typography>
+          ) : (
+            <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+          )}
+        </DataText>
+
+        {upSmall && (
           <DataText>
-            {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance.currency.symbol || '...'}`}
-            <br />
-            {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance.currency.symbol || '...'}`}
+            {!baseCurrencyTotalSupply && baseValue?.equalTo(0) ? (
+              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            ) : (
+              getFormattedPoolShare(baseValue, quoteValue, percent, share, baseCurrencyTotalSupply, pair)
+            )}
           </DataText>
-          {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
-          {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
-          <DataText>
-            <WithdrawText pair={pair} balance={balance} poolId={poolId} />
-          </DataText>
-        </ListItem>
-      ) : (
-        <></>
-      )}
+        )}
+        {upSmall && <DataText>{getFormattedRewards(reward, stakedFractionValue)}</DataText>}
+      </ListItem>
     </>
   );
 };
 
-const WithdrawText = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
-  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
-  const arrowRef = React.useRef(null);
-
-  const toggle = () => {
-    setAnchor(anchor ? null : arrowRef.current);
-  };
-
-  const close = () => {
-    setAnchor(null);
-  };
-
-  return (
-    <ClickAwayListener onClickAway={close}>
-      <div>
-        <UnderlineTextWithArrow onClick={toggle} text={t`Withdraw`} arrowRef={arrowRef} />
-        <DropdownPopper show={Boolean(anchor)} anchorEl={anchor}>
-          {poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
-            <WithdrawModalQ balance={balance} pair={pair} onClose={close} />
-          ) : (
-            <WithdrawModal balance={balance} pair={pair} poolId={poolId} onClose={close} />
-          )}
-        </DropdownPopper>
-      </div>
-    </ClickAwayListener>
-  );
-};
-
-const PoolRecordQ = ({
-  border,
-  balance,
-  pair,
-  totalReward,
-}: {
-  border: boolean;
-  balance: BalanceData;
-  pair: Pair;
-  totalReward: BigNumber;
-}) => {
+const PoolRecordQ = ({ balance, pair, totalReward }: { balance: BalanceData; pair: Pair; totalReward: BigNumber }) => {
   const upSmall = useMedia('(min-width: 800px)');
 
   const { share, reward } = getShareReward(pair, balance, totalReward);
 
   return (
-    <ListItem border={border}>
-      <DataText>{`${balance.balance.currency.symbol || '...'} / ${
-        balance.balance1?.currency.symbol || '...'
-      }`}</DataText>
+    <ListItem>
+      <StyledDataText>
+        <DataText>{`${balance.balance.currency.symbol || '...'} / ${
+          balance.balance1?.currency.symbol || '...'
+        }`}</DataText>
+        <StyledArrowDownIcon />
+      </StyledDataText>
+
       <DataText>
         <Typography fontSize={16}>{`${balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ${
           balance.balance.currency.symbol || '...'
@@ -310,16 +482,13 @@ const PoolRecordQ = ({
           balance.balance1?.currency.symbol || '...'
         }`}</Typography>
       </DataText>
-      {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
-      <DataText>
-        <WithdrawText pair={pair} balance={balance} poolId={BalancedJs.utils.POOL_IDS.sICXICX} />
-      </DataText>
+      {upSmall && <DataText>{`${share.multiply(100).toFixed(2) || '---'}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${reward.toFixed(2, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
     </ListItem>
   );
 };
 
-const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: BalanceData; onClose: () => void }) => {
+const WithdrawModalQ = ({ balance, pair }: { pair: Pair; balance: BalanceData }) => {
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
 
@@ -393,7 +562,6 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
   };
   const handleOption1 = () => {
     toggleOpen1();
-    onClose();
   };
 
   const [open2, setOpen2] = React.useState(false);
@@ -404,35 +572,41 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
   };
   const handleOption2 = () => {
     toggleOpen2();
-    onClose();
   };
 
   const hasEnoughICX = useHasEnoughICX();
 
   return (
     <>
-      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
+      <Flex flexDirection="column" alignItems="center" margin="0 auto">
         <Typography variant="h3" mb={3}>
           <Trans>Withdraw:</Trans>&nbsp;
-          <Typography as="span">{`${pair.token0.symbol || '...'} / ${pair.token1.symbol || '...'}`}</Typography>
+          <Typography as="span" fontSize="16px" fontWeight="normal">{`${pair.token0.symbol || '...'} / ${
+            pair.token1.symbol || '...'
+          }`}</Typography>
         </Typography>
 
-        <Flex alignItems="center" justifyContent="space-between">
+        <Flex alignItems="center" justifyContent="center" flexWrap="wrap">
           <OptionButton
             disabled={JSBI.equal(balance.balance1?.quotient || BIGINT_ZERO, BIGINT_ZERO)}
             onClick={handleOption2}
-            mr={2}
+            m={1}
           >
             <CurrencyLogo currency={balance.balance1?.currency} size={'35px'} />
-            <Typography>{balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX</Typography>
+            <Typography fontSize="16px" fontWeight="bold">
+              {balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX
+            </Typography>
           </OptionButton>
 
           <OptionButton
             disabled={JSBI.equal(balance.balance.quotient || BIGINT_ZERO, BIGINT_ZERO)}
             onClick={handleOption1}
+            m={1}
           >
             <CurrencyLogo currency={balance.balance.currency} size={'35px'} />
-            <Typography>{balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ICX</Typography>
+            <Typography fontSize="16px" fontWeight="bold">
+              {balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ICX
+            </Typography>
           </OptionButton>
         </Flex>
       </Flex>
@@ -491,58 +665,34 @@ const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: Balan
   );
 };
 
-const OptionButton = styled(Box)`
-  width: 96px;
-  display: flex;
+const Wrapper = styled(Flex)`
+  padding-left: 0;
+  margin-left: 0;
+  margin-top: 30px;
   flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  border-radius: 10px;
-  text-decoration: none;
-  color: white;
-  user-select: none;
-  text-align: center;
-  background-color: ${({ theme }) => theme.colors.bg3};
-  border: 2px solid #144a68;
-  transition: border 0.3s ease;
-  padding: 10px;
-  transition: border 0.3s ease;
+  border-left: none;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 
-  &[disabled] {
-    background: rgba(255, 255, 255, 0.15);
-    cursor: default;
-    pointer-events: none;
-  }
-
-  :hover {
-    border: 2px solid ${({ theme }) => theme.colors.primary};
-    transition: border 0.2s ease;
-  }
-
-  > svg {
-    margin-bottom: 10px;
-  }
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    padding-left: 35px;
+    margin-left: 35px;
+    padding-top: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 0;
+    margin-top: 0;
+  `}
 `;
 
-const WithdrawModal = ({
-  pair,
-  balance,
-  poolId,
-  onClose,
-}: {
-  pair: Pair;
-  balance: BalanceData;
-  poolId: number;
-  onClose: () => void;
-}) => {
+const WithdrawModal = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
   const { account } = useIconReact();
   const balances = useCurrencyBalances(
     account ?? undefined,
     useMemo(() => [pair.token0, pair.token1], [pair]),
   );
-
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
+  const onChangeWithdrawnValue = useChangeWithdrawnValue();
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
     typedValue: string;
@@ -555,20 +705,24 @@ const WithdrawModal = ({
     inputType: 'text',
     portion: 0,
   });
+
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
   const price =
     independentField === Field.CURRENCY_A ? pair.token0Price || FRACTION_ONE : pair.token1Price || FRACTION_ONE;
 
   let parsedAmount: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
 
-  const percent = new Percent(Math.floor(portion * 100), 10_000);
-
+  const percent = useMemo(() => new Percent(Math.floor(portion * 100), 10_000), [portion]);
+  const stakedLPPercent = useStakedLPPercent(poolId);
   const [aBalance, bBalance] = getABBalance(pair, balance);
+  const availablePercent = new BigNumber(100).minus(stakedLPPercent).abs();
+  const availableBase = aBalance.multiply(availablePercent.toFixed(0)).divide(100);
+  const availableQuote = bBalance.multiply(availablePercent.toFixed(0)).divide(100);
 
   if (inputType === 'slider') {
     parsedAmount = {
-      [Field.CURRENCY_A]: aBalance.multiply(percent),
-      [Field.CURRENCY_B]: bBalance.multiply(percent),
+      [Field.CURRENCY_A]: availableBase?.multiply(percent),
+      [Field.CURRENCY_B]: availableQuote?.multiply(percent),
     };
 
     formattedAmounts = {
@@ -600,17 +754,17 @@ const WithdrawModal = ({
   }
 
   const handleFieldAInput = (value: string) => {
-    if (aBalance) {
+    if (availableBase && availableBase.greaterThan(0)) {
       const valueBN = new BigNumber(value || '0');
-      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(aBalance.toFixed()).multipliedBy(100).toNumber(), 100);
+      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(availableBase.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
     }
   };
 
   const handleFieldBInput = (value: string) => {
-    if (bBalance) {
+    if (availableQuote && availableQuote.greaterThan(0)) {
       const valueBN = new BigNumber(value || '0');
-      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(bBalance.toFixed()).multipliedBy(100).toNumber(), 100);
+      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(availableQuote.toFixed()).multipliedBy(100).toNumber(), 100);
       setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
     }
   };
@@ -624,11 +778,25 @@ const WithdrawModal = ({
     });
   };
 
+  useEffect(() => {
+    availableBase &&
+      availableQuote &&
+      availableBase.greaterThan(0) &&
+      availableQuote.greaterThan(0) &&
+      onChangeWithdrawnValue(
+        poolId,
+        new BigNumber(portion),
+        availableBase.multiply(percent),
+        availableQuote.multiply(percent),
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onChangeWithdrawnValue, percent, portion, availableBase?.toFixed(), availableQuote?.toFixed(), poolId]);
+
   const sliderInstance = React.useRef<any>(null);
 
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(portion);
+      sliderInstance.current?.noUiSlider.set(portion);
     }
   }, [sliderInstance, inputType, portion]);
 
@@ -640,6 +808,11 @@ const WithdrawModal = ({
   };
 
   const addTransaction = useTransactionAdder();
+
+  const resetValue = () => {
+    sliderInstance.current?.noUiSlider.set(0);
+    setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
+  };
 
   const handleWithdraw = () => {
     if (!account) return;
@@ -653,8 +826,8 @@ const WithdrawModal = ({
 
     const t = multiplyCABN(balance.balance, numPortion);
 
-    const aT = multiplyCABN(aBalance, numPortion);
-    const bT = multiplyCABN(bBalance, numPortion);
+    const aT = multiplyCABN(availableBase, numPortion);
+    const bT = multiplyCABN(availableQuote, numPortion);
 
     bnJs
       .inject({ account })
@@ -684,24 +857,35 @@ const WithdrawModal = ({
       })
       .finally(() => {
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-
         changeShouldLedgerSign(false);
+        resetValue();
       });
   };
 
   const handleShowConfirm = () => {
     toggleOpen();
-    onClose();
   };
 
   const hasEnoughICX = useHasEnoughICX();
 
+  const availableCurrency = (stakedValue, suppliedValue) =>
+    (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' }) ||
+    '...';
+
+  const isValid =
+    formattedAmounts[Field.CURRENCY_A] &&
+    formattedAmounts[Field.CURRENCY_B] &&
+    formattedAmounts[Field.CURRENCY_A] !== '0' &&
+    formattedAmounts[Field.CURRENCY_B] !== '0';
+
+  const hasUnstakedLP = availableBase?.greaterThan(0) && availableQuote?.greaterThan(0);
+
   return (
     <>
-      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
+      <Wrapper>
         <Typography variant="h3" mb={3}>
           <Trans>Withdraw:</Trans>&nbsp;
-          <Typography as="span">{`${aBalance.currency.symbol || '...'} / ${
+          <Typography as="span" fontSize="16px" fontWeight="normal">{`${aBalance.currency.symbol || '...'} / ${
             bBalance.currency.symbol || '...'
           }`}</Typography>
         </Typography>
@@ -710,7 +894,7 @@ const WithdrawModal = ({
             value={formattedAmounts[Field.CURRENCY_A]}
             currency={aBalance.currency}
             onUserInput={handleFieldAInput}
-            bg="bg5"
+            bg="bg2"
           />
         </Box>
         <Box mb={3}>
@@ -718,37 +902,43 @@ const WithdrawModal = ({
             value={formattedAmounts[Field.CURRENCY_B]}
             currency={bBalance.currency}
             onUserInput={handleFieldBInput}
-            bg="bg5"
+            bg="bg2"
           />
         </Box>
         <Typography mb={5} textAlign="right">
-          {t`Wallet:
-            ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[0]?.currency.symbol || '...'} /
-            ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[1]?.currency.symbol || '...'}`}
+          {`Available:
+            ${availableCurrency(parsedAmount[Field.CURRENCY_A], availableBase)} ${
+            balances[0]?.currency.symbol || '...'
+          } /
+            ${availableCurrency(parsedAmount[Field.CURRENCY_B], availableQuote)} ${
+            balances[1]?.currency.symbol || '...'
+          }`}
         </Typography>
         <Box mb={5}>
-          <Nouislider
-            start={[0]}
-            connect={[true, false]}
-            range={{
-              min: [0],
-              max: [100],
-            }}
-            step={0.01}
-            onSlide={handleSlide}
-            instanceRef={instance => {
-              if (instance && !sliderInstance.current) {
-                sliderInstance.current = instance;
-              }
-            }}
-          />
+          {hasUnstakedLP && (
+            <Nouislider
+              start={[0]}
+              connect={[true, false]}
+              range={{
+                min: [0],
+                max: [100],
+              }}
+              step={0.01}
+              onSlide={handleSlide}
+              instanceRef={instance => {
+                if (instance && !sliderInstance.current) {
+                  sliderInstance.current = instance;
+                }
+              }}
+            />
+          )}
         </Box>
         <Flex alignItems="center" justifyContent="center">
-          <Button onClick={handleShowConfirm}>
+          <Button onClick={handleShowConfirm} disabled={!isValid || !hasUnstakedLP}>
             <Trans>Withdraw liquidity</Trans>
           </Button>
         </Flex>
-      </Flex>
+      </Wrapper>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>

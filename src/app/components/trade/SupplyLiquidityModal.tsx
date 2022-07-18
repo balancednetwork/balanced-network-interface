@@ -1,7 +1,8 @@
 import React from 'react';
 
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { CurrencyAmount, Currency, Token } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -16,7 +17,6 @@ import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { CurrencyAmount, Currency, Token } from 'types/balanced-sdk-core';
 import { toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -351,13 +351,14 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
         </Flex>
         <Flex alignItems="center" hidden={!isQueue}>
           <Box width={1}>
-            <Typography variant="p" fontWeight="bold" textAlign={isQueue ? 'center' : 'right'}>
+            <Typography fontWeight="bold" textAlign={isQueue ? 'center' : 'right'} fontSize="20px" as="h3">
               {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {currencies[Field.CURRENCY_A]?.symbol}
             </Typography>
             <Typography mt={2} textAlign="center">
-              <Trans>Your ICX will be locked for 24 hours. </Trans>
-              <br />
-              <Trans>To receive BALN, you must have ICX in the pool at 1pm Eastern each day.</Trans>
+              <Trans>
+                This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this
+                happens.
+              </Trans>
             </Typography>
           </Box>
         </Flex>

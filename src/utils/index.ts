@@ -1,17 +1,16 @@
+import { BalancedJs, LOOP, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
-import { BalancedJs, LOOP } from 'packages/BalancedJs';
-import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs/chain';
 
 import { canBeQueue } from 'constants/currency';
 import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { PairInfo } from 'constants/pairs';
-import { PairState } from 'hooks/useV2Pairs';
+import { PairData, PairState } from 'hooks/useV2Pairs';
 import { Field } from 'store/swap/actions';
-import { Currency, CurrencyAmount, Fraction, Token } from 'types/balanced-sdk-core';
-import { Pair } from 'types/balanced-v1-sdk';
 
 const { isEoaAddress, isScoreAddress } = Validator;
 
@@ -116,8 +115,8 @@ export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const LAUNCH_DAY = 1619366400000;
-const ONE_DAY_DURATION = 86400000;
+export const LAUNCH_DAY = 1619366400000;
+export const ONE_DAY_DURATION = 86400000;
 
 export const generateChartData = (rate: BigNumber, currencies: { [field in Field]?: Currency }) => {
   const today = new Date().valueOf();
@@ -159,8 +158,8 @@ export function parseUnits(value: string, decimals: number = 18): string {
   return new BigNumber(value).times(TEN.pow(decimals)).toFixed(0);
 }
 
-export function formatUnits(value: string, decimals: number = 18): string {
-  return new BigNumber(value).div(TEN.pow(decimals)).toFixed(0);
+export function formatUnits(value: string, decimals: number = 18, fixed: number = 0): string {
+  return new BigNumber(value).div(TEN.pow(decimals)).toFixed(fixed);
 }
 
 export function getPairName(pair: PairInfo) {
@@ -182,8 +181,10 @@ export function getQueuePair(stats, tokenA: Token, tokenB: Token) {
 
   const [ICX, sICX] = tokenA.symbol === 'ICX' ? [tokenA, tokenB] : [tokenB, tokenA];
 
+  const minQuoteTokenAmount = BalancedJs.utils.toFormat(new BigNumber(stats['min_quote'], 16), stats['quote_decimals']);
+
   // ICX/sICX
-  const pair: [PairState, Pair] = [
+  const pair: [PairState, Pair, BigNumber] = [
     PairState.EXISTS,
     new Pair(
       CurrencyAmount.fromRawAmount(ICX, totalSupply),
@@ -193,20 +194,22 @@ export function getQueuePair(stats, tokenA: Token, tokenB: Token) {
         totalSupply,
       },
     ),
+    minQuoteTokenAmount,
   ];
 
   return pair;
 }
 
-export function getPair(stats, tokenA: Token, tokenB: Token): [PairState, Pair | null] {
+export function getPair(stats, tokenA: Token, tokenB: Token): PairData {
   if (canBeQueue(tokenA, tokenB)) return getQueuePair(stats, tokenA, tokenB);
 
   const poolId = parseInt(stats['id'], 16);
-  if (poolId === 0) return [PairState.NOT_EXISTS, null];
+  if (poolId === 0) return [PairState.NOT_EXISTS, null, null];
 
   const baseReserve = new BigNumber(stats['base'], 16).toFixed();
   const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();
   const totalSupply = new BigNumber(stats['total_supply'], 16).toFixed();
+  const minQuoteTokenAmount = BalancedJs.utils.toFormat(new BigNumber(stats['min_quote'], 16), stats['quote_decimals']);
 
   const [reserveA, reserveB] =
     stats['base_token'] === tokenA.address ? [baseReserve, quoteReserve] : [quoteReserve, baseReserve];
@@ -218,6 +221,7 @@ export function getPair(stats, tokenA: Token, tokenB: Token): [PairState, Pair |
       totalSupply,
       baseAddress: stats['base_token'],
     }),
+    minQuoteTokenAmount,
   ];
 }
 

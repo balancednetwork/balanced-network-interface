@@ -1,6 +1,6 @@
+import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 

@@ -10,7 +10,6 @@ import { Typography } from 'app/theme';
 import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
 import { ReactComponent as FailureIcon } from 'assets/icons/failure.svg';
 import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
-import { usePlatformDayQuery } from 'queries/reward';
 import { formatTimeStr } from 'utils/timeformat';
 
 dayjs.extend(utc);
@@ -35,14 +34,8 @@ interface ProposalStatusProps {
 
 export function ProposalStatusIcon(props: ProposalStatusProps) {
   const { status, startDay, endDay } = props;
-  const platformDayQuery = usePlatformDayQuery();
-  const platformDay = platformDayQuery.data;
-
-  const startTimeStr = platformDay && startDay > platformDay ? formatTimeStr(startDay, platformDay) : '';
-
-  const endTimeStr = platformDay ? formatTimeStr(endDay, platformDay) : '';
-
-  const isActive = platformDay ? startDay <= platformDay && platformDay < endDay : false;
+  const startTimeStr = startDay ? formatTimeStr(startDay) : '';
+  const endTimeStr = endDay ? formatTimeStr(endDay) : '';
 
   if (status === 'Defeated' || status === 'No Quorum' || status === 'Failed Execution' || status === 'Cancelled') {
     return (
@@ -60,19 +53,19 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <CalendarIcon height="22" width="22" />
         <Typography variant="content" color="white">
-          <Trans>{`Starting in ${startTimeStr}`}</Trans>
+          <Trans>{`Voting starts in ${startTimeStr}`}</Trans>
         </Typography>
       </Flex>
     );
   }
 
   if (status === 'Active') {
-    if (isActive && !!endTimeStr) {
+    if (!startTimeStr && !!endTimeStr) {
       return (
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            <Trans>{`${endTimeStr} left`}</Trans>
+            <Trans>{`Voting ends in ${endTimeStr}`}</Trans>
           </Typography>
         </Flex>
       );
@@ -81,7 +74,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
           <CalendarIcon height="22" width="22" />
           <Typography variant="content" color="white">
-            <Trans>{`Starting in ${startTimeStr}`}</Trans>
+            <Trans>{`Voting starts in ${startTimeStr}`}</Trans>
           </Typography>
         </Flex>
       );
@@ -94,6 +87,18 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
         <TickIcon height="22" width="22" />
         <Typography variant="content" color="white">
           <Trans id={StatusMap[status].id} />
+        </Typography>
+      </Flex>
+    );
+  }
+
+  //this state might occur shortly after voting ends before smart contract updates vote status
+  if (!endTimeStr && !startTimeStr) {
+    return (
+      <Flex alignItems="center" sx={{ columnGap: '10px' }}>
+        <TickIcon height="22" width="22" />
+        <Typography variant="content" color="white">
+          <Trans>Voting has ended</Trans>
         </Typography>
       </Flex>
     );

@@ -1,6 +1,7 @@
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { BalancedJs } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
@@ -8,12 +9,11 @@ import bnJs from 'bnJs';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import QUERY_KEYS from 'queries/queryKeys';
-import { Currency, CurrencyAmount } from 'types/balanced-sdk-core';
 
 import { API_ENDPOINT } from '../constants';
 import { useBnJsContractQuery } from '../utils';
 
-export const BATCH_SIZE = 50;
+export const BATCH_SIZE = 10;
 
 export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) => {
   const { account } = useIconReact();
@@ -22,7 +22,7 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
     QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
     async () => {
       const promises: Promise<any>[] = [];
-      for (let i = end; i > 1; i -= BATCH_SIZE + 1) {
+      for (let i = end; i > 1; i -= BATCH_SIZE) {
         const startValue = i - BATCH_SIZE;
         promises.push(bnJs.Dividends.getUserDividends(account!, startValue > 0 ? startValue : 0, i));
       }

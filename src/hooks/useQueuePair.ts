@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 
-import { BalancedJs } from 'packages/BalancedJs';
+import { BalancedJs } from '@balancednetwork/balanced-js';
 
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { Pair } from 'types/balanced-v1-sdk';
 import { getQueuePair } from 'utils';
 
 import useLastCount from './useLastCount';
-import { PairState } from './useV2Pairs';
+import { PairData, PairState } from './useV2Pairs';
 
-export function useQueuePair(): [PairState, Pair | null] {
-  const [pair, setPair] = useState<[PairState, Pair | null]>([PairState.LOADING, null]);
+export function useQueuePair(): PairData {
+  const [pair, setPair] = useState<PairData>([PairState.LOADING, null, null]);
 
   const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address].wrapped;
   const sICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.sICX.address].wrapped;
@@ -29,7 +28,7 @@ export function useQueuePair(): [PairState, Pair | null] {
 
         setPair(newPair);
       } catch (err) {
-        setPair([PairState.INVALID, null]);
+        setPair([PairState.INVALID, null, null]);
       }
     };
     fetchReserves();

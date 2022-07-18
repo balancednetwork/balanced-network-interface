@@ -37,11 +37,10 @@ export function App() {
         <NotificationContainer />
         <WalletModal />
         {/* Add message for community */}
-        {false && (
-          <Banner>
-            <Message />
-          </Banner>
-        )}
+        <Banner messageID={'stakingLP'}>
+          <Message />
+        </Banner>
+
         <Helmet
           titleTemplate="%s | Balanced"
           defaultTitle="Balanced Network"

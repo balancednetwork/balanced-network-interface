@@ -16,7 +16,7 @@ import { ZERO } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useUserCollectedFeesQuery, useRewardQuery, usePlatformDayQuery, BATCH_SIZE } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useHasNetworkFees, useHasRewardable } from 'store/reward/hooks';
+import { useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -79,16 +79,13 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       });
   };
 
-  const rewardQuery = useRewardQuery();
-  const reward = rewardQuery.data;
-
-  const hasRewardable = useHasRewardable();
+  const { data: reward, refetch } = useRewardQuery();
 
   const [rewardTx, setRewardTx] = React.useState('');
   const rewardTxStatus = useTransactionStatus(rewardTx);
   React.useEffect(() => {
-    if (rewardTxStatus === TransactionStatus.success) rewardQuery.refetch();
-  }, [rewardTxStatus, rewardQuery]);
+    if (rewardTxStatus === TransactionStatus.success) refetch();
+  }, [rewardTxStatus, refetch]);
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
@@ -97,22 +94,11 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
   };
 
   const getRewardsUI = () => {
-    if (!hasRewardable && reward?.isZero()) {
+    if (reward?.isZero()) {
       return (
         <>
           <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
             <Trans>Ineligible</Trans>
-            <QuestionHelper
-              text={t`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
-            />
-          </Typography>
-        </>
-      );
-    } else if (reward?.isZero()) {
-      return (
-        <>
-          <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
-            <Trans>Pending</Trans>
             <QuestionHelper
               text={t`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
             />
@@ -255,18 +241,17 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
   };
 
   const feeTxStatus = useTransactionStatus(feeTx);
-  React.useEffect(() => {
-    if (feeTxStatus === TransactionStatus.success) feesQuery.refetch();
-  });
 
   const hasNetworkFees = useHasNetworkFees();
   const { data: platformDay = 0 } = usePlatformDayQuery();
-  const feesQuery = useUserCollectedFeesQuery(1, platformDay);
-  const feesArr = feesQuery.data;
+  const { data: feesArr, refetch } = useUserCollectedFeesQuery(1, platformDay);
   const fees = feesArr?.find(fees => fees);
   const feesIndex = feesArr?.findIndex(fees => fees) || 0;
   const hasFee = !!fees;
   const count = feesArr?.reduce((c, v) => (v ? ++c : c), 0);
+  React.useEffect(() => {
+    if (feeTxStatus === TransactionStatus.success) refetch();
+  }, [feeTxStatus, refetch]);
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {

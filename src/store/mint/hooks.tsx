@@ -1,6 +1,9 @@
 import React, { useCallback, ReactNode } from 'react';
 
+import { Currency, CurrencyAmount, Token, Percent, Price } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,8 +15,6 @@ import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useCurrencyBalances } from 'store/wallet/hooks';
-import { Currency, CurrencyAmount, Token, Percent, Price } from 'types/balanced-sdk-core';
-import { Pair } from 'types/balanced-v1-sdk';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, typeInput, selectCurrency } from './actions';
@@ -113,6 +114,7 @@ export function useDerivedMintInfo(): {
   mintableLiquidity?: CurrencyAmount<Token>;
   poolTokenPercentage?: Percent;
   error?: ReactNode;
+  minQuoteTokenAmount?: BigNumber | null;
 } {
   const { account } = useIconReact();
 
@@ -159,8 +161,8 @@ export function useDerivedMintInfo(): {
   const balances = useCurrencyBalances(account ?? undefined, currencyArr);
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
     () => ({
-      [Field.CURRENCY_A]: balances[0],
-      [Field.CURRENCY_B]: balances[1],
+      [Field.CURRENCY_A]: balances[0], // base token
+      [Field.CURRENCY_B]: balances[1], // quote token
     }),
     [balances],
   );

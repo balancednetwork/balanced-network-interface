@@ -1,12 +1,12 @@
 import { useMemo, useEffect, useState } from 'react';
 
+import { Token, Currency } from '@balancednetwork/sdk-core';
 import { useIconReact } from 'packages/icon-react';
 
 import bnJs from 'bnJs';
 import { BASES_TO_CHECK_TRADES_AGAINST } from 'constants/routing';
 import { isNativeCurrency, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useUserAddedTokens } from 'store/user/hooks';
-import { Token, Currency } from 'types/balanced-sdk-core';
 import { isAddress } from 'utils';
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens

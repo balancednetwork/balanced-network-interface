@@ -1,5 +1,6 @@
+import { Currency } from '@balancednetwork/sdk-core';
+
 import { CurrencyKey, Pool } from 'types';
-import { Currency } from 'types/balanced-sdk-core';
 
 import { PairInfo, SUPPORTED_PAIRS } from './pairs';
 

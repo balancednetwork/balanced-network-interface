@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 
+import { SupportedChainId as NetworkId, CHAIN_INFO, getLedgerAddressPath } from '@balancednetwork/balanced-js';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import IconService, { Builder as IconBuilder, Converter as IconConverter } from 'icon-sdk-js';
-import { SupportedChainId as NetworkId, CHAIN_INFO } from 'packages/BalancedJs';
-import { getLedgerAddressPath } from 'packages/BalancedJs/contractSettings';
 import {
   request,
   ICONexResponseEvent,
@@ -13,13 +12,15 @@ import {
 } from 'packages/iconex';
 
 import bnJs from 'bnJs';
-import useLocalStorage from 'hooks/useLocalStorage';
+import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
 
 export const GOVERNANCE_BASE_ADDRESS = 'cx0000000000000000000000000000000000000001';
 
 export const API_VERSION = IconConverter.toBigNumber(3);
 
 export const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
+
+const LOCAL_STORAGE_ADDRESS_EXPIRY = 3600000;
 
 const iconService = new IconService(new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint));
 
@@ -52,8 +53,16 @@ const IconReactContext = React.createContext<ICONReactContextInterface>({
 });
 
 export function IconReactProvider({ children }) {
-  const [ledgerAddressPoint, setLedgerAddressPoint] = useLocalStorage<number>('ledgerAddressPoint', -1);
-  const [account, setAccount] = useLocalStorage<string | null>('account', null);
+  const [ledgerAddressPoint, setLedgerAddressPoint] = useLocalStorageWithExpiry<number>(
+    'ledgerAddressPointWithExpiry',
+    -1,
+    LOCAL_STORAGE_ADDRESS_EXPIRY,
+  );
+  const [account, setAccount] = useLocalStorageWithExpiry<string | null>(
+    'accountWithExpiry',
+    null,
+    LOCAL_STORAGE_ADDRESS_EXPIRY,
+  );
   const [hasExtension, setHasExtension] = React.useState<boolean>(false);
 
   useEffect(() => {

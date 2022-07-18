@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
-import { CHAIN_INFO, SupportedChainId as NetworkId } from 'packages/BalancedJs';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';

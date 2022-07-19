@@ -223,7 +223,7 @@ export function Claim() {
         </Separator>
         <Typography variant="p" fontSize={20} maxWidth="500px" textAlign="center" color="text1">
           Balanced network fees have moved to a continuous rewards structure. Sign in to check for and claim any
-          outstanding fees earned between April 26, 2021 – July 14, 2022.
+          outstanding fees earned between April 26, 2021 – July 21, 2022.
         </Typography>
       </Flex>
 

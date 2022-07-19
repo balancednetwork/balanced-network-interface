@@ -279,3 +279,9 @@ export function isDPZeroCA(ca: CurrencyAmount<Currency> | undefined, decimalPlac
   if (decimalPlaces === 0) return isZeroCA(ca);
   return ca.toFixed(decimalPlaces) === `0.${'0'.repeat(decimalPlaces)}`;
 }
+
+export enum PageLocation {
+  HOME = '/',
+  TRADE = '/trade',
+  VOTE = '/vote',
+}

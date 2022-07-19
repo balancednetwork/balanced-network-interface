@@ -1,11 +1,13 @@
 import React, { ReactNode } from 'react';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { ReactComponent as CrossIcon } from 'assets/icons/cross.svg';
 import useLocalStorage from 'hooks/useLocalStorage';
+import { PageLocation } from 'utils';
 
 const BannerContainer = styled(motion(Box))`
   margin: 0 0 25px;
@@ -60,8 +62,18 @@ enum BannerStatus {
   CLOSED = 'closed',
 }
 
-export const Banner = ({ children, messageID }: { children: ReactNode; messageID: string }) => {
+export const Banner = ({
+  children,
+  messageID,
+  location,
+}: {
+  children: ReactNode;
+  messageID: string;
+  location?: PageLocation;
+}) => {
   const [bannerClosed, setBannerClosed] = useLocalStorage(`banner_${messageID}`, BannerStatus.ACTIVE);
+  const userLocation = useLocation();
+  const shouldShow = !location || userLocation.pathname === location;
 
   const handleClose = (): void => {
     setBannerClosed(BannerStatus.CLOSED);
@@ -69,7 +81,7 @@ export const Banner = ({ children, messageID }: { children: ReactNode; messageID
 
   return (
     <AnimatePresence>
-      {!bannerClosed && (
+      {shouldShow && !bannerClosed && (
         <BannerContainer
           initial={{ y: 10 }}
           animate={{ y: 0, height: 'auto', transition: { type: 'spring', stiffness: 750 } }}

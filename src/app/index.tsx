@@ -9,6 +9,7 @@ import WalletModal from 'app/components/WalletModal';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
+import { PageLocation } from 'utils';
 
 import { Banner } from './components/Banner';
 import { Claim } from './containers/Claim/Loadable';
@@ -37,7 +38,7 @@ export function App() {
         <NotificationContainer />
         <WalletModal />
         {/* Add message for community */}
-        <Banner messageID={'stakingLP'}>
+        <Banner messageID={'continuousFees'} location={PageLocation.HOME}>
           <Message />
         </Banner>
 

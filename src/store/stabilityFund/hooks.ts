@@ -1,5 +1,7 @@
+import React, { useMemo } from 'react';
+
 import { CallData } from '@balancednetwork/balanced-js';
-import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import JSBI from 'jsbi';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,16 +29,56 @@ export function useStabilityFundBalances(): { [key: string]: CurrencyAmount<Toke
   return useSelector((state: AppState) => state.stabilityFund.balances);
 }
 
-export function useWhitelistedTokenAddresses(): string[] | undefined {
+function useArrayMemo<T>(array: T[]) {
+  const ref = React.useRef<T[]>([]);
+  const areArraysConsideredTheSame =
+    ref.current && array.length === ref.current.length
+      ? array.every((element, i) => {
+          return ref.current && element === ref.current[i];
+        })
+      : false;
+
+  React.useEffect(() => {
+    if (!areArraysConsideredTheSame) {
+      ref.current = array;
+    }
+  }, [areArraysConsideredTheSame, array]);
+
+  return areArraysConsideredTheSame ? ref.current : array;
+}
+
+function useCAsMemo(CAs: { [key: string]: CurrencyAmount<Token> } | undefined) {
+  const ref = React.useRef<{
+    [key: string]: CurrencyAmount<Token>;
+  }>();
+
+  const areCAsConsideredTheSame =
+    CAs && ref.current && Object.keys(CAs).length === Object.keys(ref.current).length
+      ? Object.keys(CAs).every(key => {
+          return ref.current && CAs[key].equalTo(ref.current[key]);
+        })
+      : false;
+
+  React.useEffect(() => {
+    if (!areCAsConsideredTheSame) {
+      ref.current = CAs;
+    }
+  }, [areCAsConsideredTheSame, CAs]);
+
+  return areCAsConsideredTheSame ? ref.current : CAs;
+}
+
+export function useWhitelistedTokenAddresses(): string[] {
   const { data } = useBnJsContractQuery<string[]>('StabilityFund', 'getAcceptedTokens', [], false);
-  return data;
+  const addresses = useArrayMemo<string>(data || []);
+  return addresses;
 }
 
 export function useFetchStabilityFundBalances(): void {
   const dispatch = useDispatch();
   const whitelistedTokens = useWhitelistedTokenAddresses() || [];
 
-  useInterval(async () => {
+  const fetch = async () => {
     const cds: CallData[] = whitelistedTokens.map(address => {
       return {
         target: address,
@@ -55,59 +97,72 @@ export function useFetchStabilityFundBalances(): void {
     });
 
     dispatch(setBalances({ balances }));
-  }, 3000);
+  };
+
+  useInterval(fetch, 3000);
 }
 
-export function useIsSwapEligible(): boolean {
-  const whitelistedTokenAddresses = useWhitelistedTokenAddresses() || [];
-  const { currencies } = useDerivedSwapInfo();
+export function useIsSwapEligible(addressIN: string | undefined, addressOUT: string | undefined): boolean {
+  const whitelistedTokenAddresses = useWhitelistedTokenAddresses();
 
-  let isEligible = false;
-  if (currencies.INPUT?.isToken && currencies.OUTPUT?.isToken) {
-    isEligible =
-      (whitelistedTokenAddresses.indexOf(currencies.INPUT.address) >= 0 &&
-        currencies.OUTPUT.address === bnUSDAddress) ||
-      (whitelistedTokenAddresses.indexOf(currencies.OUTPUT.address) >= 0 && currencies.INPUT.address === bnUSDAddress);
-  }
-  return isEligible;
-}
-
-export function useMaxSwapSize(): CurrencyAmount<Token> | undefined {
-  const balances = useStabilityFundBalances();
-  const { data: limits } = useFundLimits();
-  const { trade } = useDerivedSwapInfo();
-  const isSwapEligible = useIsSwapEligible();
-  const isBnUSDGoingIn = trade?.inputAmount.currency.symbol === 'bnUSD';
-  if (isSwapEligible && trade && limits) {
-    if (isBnUSDGoingIn) {
-      return CurrencyAmount.fromRawAmount(
-        trade.inputAmount.currency.wrapped,
-        JSBI.multiply(
-          balances[trade.outputAmount.currency.wrapped.address].numerator,
-          JSBI.exponentiate(
-            TEN,
-            JSBI.BigInt(trade.inputAmount.currency.decimals - trade.outputAmount.currency.decimals),
-          ),
-        ),
+  return useMemo(() => {
+    const whitelist = whitelistedTokenAddresses || [];
+    if (addressIN && addressOUT) {
+      return (
+        (whitelist.indexOf(addressIN!) >= 0 && addressOUT === bnUSDAddress) ||
+        (whitelist.indexOf(addressOUT!) >= 0 && addressIN === bnUSDAddress)
       );
     } else {
-      const tokenAddress = trade.inputAmount.currency.wrapped.address;
-      return (
-        limits[tokenAddress] &&
-        limits[tokenAddress]
-          .subtract(balances[tokenAddress])
-          .subtract(
-            CurrencyAmount.fromRawAmount(
-              trade.inputAmount.currency.wrapped,
-              JSBI.multiply(
-                SWAP_DOLLAR_LIMIT_CUSHION,
-                JSBI.exponentiate(TEN, JSBI.BigInt(trade.inputAmount.currency.decimals)),
-              ),
-            ),
-          )
-      );
+      return false;
     }
-  }
+  }, [whitelistedTokenAddresses, addressIN, addressOUT]);
+}
+
+export function useMaxSwapSize(
+  inputAmount: CurrencyAmount<Currency> | undefined,
+  outputAmount: CurrencyAmount<Currency> | undefined,
+): CurrencyAmount<Token> | undefined {
+  const balances = useStabilityFundBalances();
+  const { data: limits } = useFundLimits();
+  const isSwapEligible = useIsSwapEligible(
+    inputAmount?.currency.wrapped.address,
+    outputAmount?.currency.wrapped.address,
+  );
+  const isBnUSDGoingIn = inputAmount?.currency.symbol === 'bnUSD';
+
+  const memoizedLimits = useCAsMemo(limits);
+
+  return useMemo(() => {
+    if (isSwapEligible && inputAmount && outputAmount && memoizedLimits) {
+      if (isBnUSDGoingIn && balances) {
+        return CurrencyAmount.fromRawAmount(
+          inputAmount.currency.wrapped,
+          JSBI.multiply(
+            balances[outputAmount.currency.wrapped.address].numerator,
+            JSBI.exponentiate(TEN, JSBI.BigInt(inputAmount.currency.decimals - outputAmount.currency.decimals)),
+          ),
+        );
+      } else {
+        const tokenAddress = inputAmount.currency.wrapped.address;
+        return (
+          memoizedLimits[tokenAddress] &&
+          balances &&
+          balances[tokenAddress] &&
+          memoizedLimits[tokenAddress]
+            .subtract(balances[tokenAddress])
+            .subtract(
+              CurrencyAmount.fromRawAmount(
+                inputAmount.currency.wrapped,
+                JSBI.multiply(
+                  SWAP_DOLLAR_LIMIT_CUSHION,
+                  JSBI.exponentiate(TEN, JSBI.BigInt(inputAmount.currency.decimals)),
+                ),
+              ),
+            )
+        );
+      }
+    }
+  }, [balances, inputAmount, outputAmount, isBnUSDGoingIn, isSwapEligible, memoizedLimits]);
 }
 
 export function useFeeAmount(): CurrencyAmount<Token> | undefined {
@@ -117,9 +172,11 @@ export function useFeeAmount(): CurrencyAmount<Token> | undefined {
   const isBnUSDGoingIn = trade?.inputAmount.currency.symbol === 'bnUSD';
   const fee = isBnUSDGoingIn ? feeOut : feeIn;
 
-  if (!!trade && !!fee) {
-    return trade.inputAmount.multiply(new Fraction(fee, 1000)).divide(100) as CurrencyAmount<Token>;
-  }
+  return useMemo(() => {
+    if (!!trade && !!fee) {
+      return trade.inputAmount.multiply(new Fraction(fee, 1000)).divide(100) as CurrencyAmount<Token>;
+    }
+  }, [fee, trade]);
 }
 
 export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<Token> }> {

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-07-14 02:30\n"
+"PO-Revision-Date: 2022-07-20 21:23\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -98,6 +98,10 @@ msgstr "Après"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
 msgstr "Tout le collatéral verrouillé"
+
+#: src/app/containers/Claim/index.tsx
+msgid "All fees claimed"
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
@@ -242,10 +246,11 @@ msgstr "Choisissez un portefeuille de votre Ledger :"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claim"
 msgstr "Réclamer"
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claim (1 of {count})"
 msgstr "Réclamer (1 sur )"
 
@@ -267,6 +272,7 @@ msgid "Claim network fees?"
 msgstr "Réclamer les frais de réseau ?"
 
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claimed fees."
 msgstr "Frais réclamés."
 
@@ -283,6 +289,7 @@ msgid "Claiming ICX..."
 msgstr "Réclamation d'ICX..."
 
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claiming fees..."
 msgstr "Réclamation des frais..."
 
@@ -590,6 +597,10 @@ msgstr "Aucune activité pour l'instant."
 msgid "No assets available."
 msgstr "Pas d'actifs disponibles."
 
+#: src/app/containers/Claim/index.tsx
+msgid "No fees to claim"
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
 msgstr "Aucun graphique de prix n'est disponible pour cette paire."
@@ -627,6 +638,7 @@ msgid "Pay"
 msgstr "Payer"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
+#: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr "En attente"
@@ -991,7 +1003,6 @@ msgstr "À"
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Pour gagner des récompenses Balanced (BALN), contractez un prêt ou fournissez de la liquidité sur la page \"Trade\"."
 
-#: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."

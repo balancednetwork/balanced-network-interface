@@ -261,7 +261,9 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
               .filter(key => fees[key].greaterThan(0))
               .map(key => (
                 <Typography key={key} variant="p">
-                  {`${fees[key].toFixed(2)}`}{' '}
+                  {`${fees[key].toSignificant(2, {
+                    groupSeparator: ',',
+                  })}`}{' '}
                   <Typography key={key} as="span" color="text1">
                     {fees[key].currency.symbol}
                   </Typography>
@@ -305,7 +307,9 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
                 .filter(key => fees[key].greaterThan(0))
                 .map(key => (
                   <Typography key={key} variant="p">
-                    {`${fees[key].toFixed(2)}`}{' '}
+                    {`${fees[key].toSignificant(2, {
+                      groupSeparator: ',',
+                    })}`}{' '}
                     <Typography key={key} as="span" color="text1">
                       {fees[key].currency.symbol}
                     </Typography>

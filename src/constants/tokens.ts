@@ -9,15 +9,15 @@ import { NETWORK_ID } from './config';
 export const NULL_CONTRACT_ADDRESS = 'cx0000000000000000000000000000000000000000';
 
 export const isNativeCurrency = (token?: Currency): boolean => {
-  return token instanceof Token && token.address === NULL_CONTRACT_ADDRESS;
+  return !!token && (token as any)?.address === NULL_CONTRACT_ADDRESS;
 };
 
-export const isBALN = (token?: Currency): boolean => {
-  return token instanceof Token && BALN[token.chainId]?.address === token.address;
+export const isBALN = (token?: Token): boolean => {
+  return !!token && BALN[token.chainId]?.address === token.address;
 };
 
-export const isFIN = (token?: Currency): boolean => {
-  return token instanceof Token && FIN[token.chainId]?.address === token.address;
+export const isFIN = (token?: Token): boolean => {
+  return !!token && FIN[token.chainId]?.address === token.address;
 };
 
 export const useICX = () => {
@@ -116,6 +116,7 @@ export const SUPPORTED_TOKENS_MAP_BY_ADDRESS = Object.keys(TRANSFORMED_DEFAULT_T
   newMap[address] = TRANSFORMED_DEFAULT_TOKEN_LIST[chainId][address].token;
   return newMap;
 }, {});
+SUPPORTED_TOKENS_MAP_BY_ADDRESS[NULL_CONTRACT_ADDRESS] = ICX[chainId];
 
 export const SUPPORTED_TOKENS_LIST: Token[] = Object.values(SUPPORTED_TOKENS_MAP_BY_ADDRESS);
 

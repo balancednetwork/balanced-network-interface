@@ -16,9 +16,9 @@ import { TVChartContainer } from 'app/components/TradingViewAdvanced/TVChartCont
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { getTradePair, isQueue } from 'constants/currency';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useActiveLocale } from 'hooks/useActiveLocale';
+import { useV2Pair } from 'hooks/useV2Pairs';
 import useWidth from 'hooks/useWidth';
 import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
@@ -81,7 +81,7 @@ export default function SwapDescription() {
           );
   }
 
-  const [pair] = getTradePair(currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol);
+  const [, pair] = useV2Pair(currencies[Field.INPUT], currencies[Field.OUTPUT]);
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
@@ -156,7 +156,7 @@ export default function SwapDescription() {
             </>
           )}
         </Box>
-        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair || isQueue(pair)}>
+        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair || pair.poolId === 1}>
           <ChartControlGroup mb={2}>
             {Object.keys(CHART_PERIODS).map(key => (
               <ChartControlButton
@@ -202,8 +202,8 @@ export default function SwapDescription() {
               <>
                 {chartOption.type === CHART_TYPES.AREA && (
                   <TradingViewChart
-                    data={isQueue(pair) ? queueData : data}
-                    volumeData={isQueue(pair) ? queueData : data}
+                    data={pair.poolId === 1 ? queueData : data}
+                    volumeData={pair.poolId === 1 ? queueData : data}
                     width={width}
                     type={CHART_TYPES.AREA}
                   />

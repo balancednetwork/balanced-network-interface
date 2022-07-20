@@ -13,8 +13,9 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
-import { useRewardQuery, useUnclaimedDividendsQuery } from 'queries/reward';
+import { useRewardQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useFetchUnclaimedDividends, useUnclaimedFees } from 'store/fees/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
@@ -24,6 +25,7 @@ import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 
 const RewardsPanel = () => {
+  useFetchUnclaimedDividends();
   const locale = useActiveLocale();
   const shouldBreakOnMobile = useMedia('(max-width: 499px)') && 'en-US,ko-KR'.indexOf(locale) < 0;
 
@@ -239,7 +241,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
   };
 
   const hasNetworkFees = useHasNetworkFees();
-  const { data: fees } = useUnclaimedDividendsQuery();
+  const fees = useUnclaimedFees();
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {

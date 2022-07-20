@@ -6,6 +6,7 @@
 */
 import { ApplicationState } from 'store/application/reducer';
 import { CollateralState } from 'store/collateral/reducer';
+import { FeesState } from 'store/fees/reducer';
 import { LoanState } from 'store/loan/reducer';
 import { MintState } from 'store/mint/reducer';
 import { RatioState } from 'store/ratio/reducer';
@@ -32,4 +33,5 @@ export interface RootState {
   stabilityFund: StabilityFundState;
   stakedLP: StakedLPState;
   user: UserState;
+  fees: FeesState;
 }

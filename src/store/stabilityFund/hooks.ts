@@ -83,11 +83,10 @@ export function useIsSwapEligible(addressIN: string | undefined, addressOUT: str
   const whitelistedTokenAddresses = useWhitelistedTokenAddresses();
 
   return useMemo(() => {
-    const whitelist = whitelistedTokenAddresses || [];
     if (addressIN && addressOUT) {
       return (
-        (whitelist.indexOf(addressIN!) >= 0 && addressOUT === bnUSDAddress) ||
-        (whitelist.indexOf(addressOUT!) >= 0 && addressIN === bnUSDAddress)
+        (whitelistedTokenAddresses.indexOf(addressIN!) >= 0 && addressOUT === bnUSDAddress) ||
+        (whitelistedTokenAddresses.indexOf(addressOUT!) >= 0 && addressIN === bnUSDAddress)
       );
     } else {
       return false;

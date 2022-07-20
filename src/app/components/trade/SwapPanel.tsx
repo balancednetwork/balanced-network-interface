@@ -141,10 +141,7 @@ export default function SwapPanel() {
     }
   }, [account, toggleWalletModal, trade]);
 
-  const minimumToReceive = React.useMemo(() => trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000)), [
-    trade,
-    slippageTolerance,
-  ]);
+  const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
   const addTransaction = useTransactionAdder();
 

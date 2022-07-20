@@ -26,7 +26,7 @@ export default createReducer(initialState, builder =>
           : false;
 
       if (!isBalanceEqual) {
-        state.balances = balances || state.balances;
+        state.balances = balances;
       }
     }
   }),

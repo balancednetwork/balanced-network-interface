@@ -193,16 +193,14 @@ export function useDerivedSwapInfo(): {
     else price = pair.token0Price; // pair not ready, just set dummy price
   }
 
-  return React.useMemo(() => {
-    return {
-      trade,
-      currencies,
-      currencyBalances,
-      parsedAmount,
-      inputError,
-      allowedSlippage,
-      percents,
-      price,
-    };
-  }, [trade, currencies, currencyBalances, parsedAmount, inputError, allowedSlippage, percents, price]);
+  return {
+    trade,
+    currencies,
+    currencyBalances,
+    parsedAmount,
+    inputError,
+    allowedSlippage,
+    percents,
+    price,
+  };
 }

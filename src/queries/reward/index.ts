@@ -1,5 +1,5 @@
 import { BalancedJs } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
@@ -149,18 +149,18 @@ export const useAllPairsTVL = () => {
   return;
 };
 
-export const useUnclaimedDividendsQuery = (): UseQueryResult<{ [address in string]: CurrencyAmount<Currency> }> => {
+export const useUnclaimedDividendsQuery = (): UseQueryResult<{ [address in string]: CurrencyAmount<Token> }> => {
   const { account } = useIconReact();
   const blockNumber = useBlockNumber();
 
-  return useQuery<{ [address in string]: CurrencyAmount<Currency> }>(
+  return useQuery<{ [address in string]: CurrencyAmount<Token> }>(
     `useUnclaimedDividendsQuery${account}${blockNumber}`,
     async () => {
       const data = await bnJs.Dividends.getUnclaimedDividends(account!);
 
-      const fees: { [address in string]: CurrencyAmount<Currency> } = Object.keys(data).reduce((prev, address) => {
+      const fees: { [address in string]: CurrencyAmount<Token> } = Object.keys(data).reduce((prev, address) => {
         const currency = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
-        prev[address] = CurrencyAmount.fromFractionalAmount(currency, data[address], 1);
+        prev[address] = CurrencyAmount.fromRawAmount(currency, data[address]);
         return prev;
       }, {});
 

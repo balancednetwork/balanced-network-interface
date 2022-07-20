@@ -121,7 +121,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
           </Typography>
         </>
       );
-    } else {
+    } else if (reward?.isGreaterThan(0.01)) {
       return (
         <>
           <Typography variant="p">
@@ -134,6 +134,12 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
             <Trans>Claim</Trans>
           </Button>
         </>
+      );
+    } else {
+      return (
+        <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
+          <Trans>Pending</Trans>
+        </Typography>
       );
     }
   };
@@ -282,7 +288,9 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
               <Trans>Claim</Trans>
             </Button>
           ) : (
-            <Trans>Pending</Trans>
+            <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
+              <Trans>Pending</Trans>
+            </Typography>
           )}
         </>
       );

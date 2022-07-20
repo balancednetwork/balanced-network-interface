@@ -389,6 +389,7 @@ export default function SwapPanel() {
                 placement="bottom"
                 fallbackPlacements={isMobile ? [] : ['right-start', 'top']}
                 zIndex={10}
+                strategy="absolute"
               >
                 {swapButton}
               </Popover>

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
@@ -12,6 +13,7 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRewardQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -19,10 +21,16 @@ import { useFetchUnclaimedDividends, useUnclaimedFees } from 'store/fees/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
+
+const MIN_AMOUNT_TO_SHOW = CurrencyAmount.fromRawAmount(
+  SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address],
+  parseUnits('1', 16),
+);
 
 const RewardsPanel = () => {
   useFetchUnclaimedDividends();
@@ -258,23 +266,22 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
         <>
           {fees &&
             Object.keys(fees)
-              .filter(key => fees[key].greaterThan(0))
+              .filter(key => fees[key].greaterThan(MIN_AMOUNT_TO_SHOW))
               .map(key => (
                 <Typography key={key} variant="p">
-                  {`${fees[key].toSignificant(2, {
-                    groupSeparator: ',',
-                  })}`}{' '}
+                  {`${fees[key].toFixed(2)}`}{' '}
                   <Typography key={key} as="span" color="text1">
                     {fees[key].currency.symbol}
                   </Typography>
                 </Typography>
               ))}
-          {fees && Object.keys(fees).filter(key => fees[key].greaterThan(0)).length ? (
+
+          {fees && Object.keys(fees).filter(key => fees[key].greaterThan(MIN_AMOUNT_TO_SHOW)).length ? (
             <Button mt={2} onClick={toggleOpen}>
               <Trans>Claim</Trans>
             </Button>
           ) : (
-            <Spinner></Spinner>
+            <Trans>Pending</Trans>
           )}
         </>
       );
@@ -304,12 +311,10 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
           <Flex flexDirection="column" alignItems="center" mt={2}>
             {fees &&
               Object.keys(fees)
-                .filter(key => fees[key].greaterThan(0))
+                .filter(key => fees[key].greaterThan(MIN_AMOUNT_TO_SHOW))
                 .map(key => (
                   <Typography key={key} variant="p">
-                    {`${fees[key].toSignificant(2, {
-                      groupSeparator: ',',
-                    })}`}{' '}
+                    {`${fees[key].toFixed(2)}`}{' '}
                     <Typography key={key} as="span" color="text1">
                       {fees[key].currency.symbol}
                     </Typography>

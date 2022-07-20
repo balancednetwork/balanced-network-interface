@@ -11,7 +11,6 @@ import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import useInterval from 'hooks/useInterval';
 import { useBnJsContractQuery } from 'queries/utils';
 import { AppState } from 'store';
-import { useDerivedSwapInfo } from 'store/swap/hooks';
 import { formatUnits } from 'utils';
 
 import { setBalances } from './actions';
@@ -29,49 +28,27 @@ export function useStabilityFundBalances(): { [key: string]: CurrencyAmount<Toke
   return useSelector((state: AppState) => state.stabilityFund.balances);
 }
 
-function useArrayMemo<T>(array: T[]) {
-  const ref = React.useRef<T[]>([]);
-  const areArraysConsideredTheSame =
-    ref.current && array.length === ref.current.length
-      ? array.every((element, i) => {
-          return ref.current && element === ref.current[i];
-        })
-      : false;
-
-  React.useEffect(() => {
-    if (!areArraysConsideredTheSame) {
-      ref.current = array;
-    }
-  }, [areArraysConsideredTheSame, array]);
-
-  return areArraysConsideredTheSame ? ref.current : array;
-}
-
-function useCAsMemo(CAs: { [key: string]: CurrencyAmount<Token> } | undefined) {
-  const ref = React.useRef<{
-    [key: string]: CurrencyAmount<Token>;
-  }>();
+export function useCAMemo(CA: CurrencyAmount<Currency> | undefined) {
+  const ref = React.useRef<CurrencyAmount<Currency>>();
 
   const areCAsConsideredTheSame =
-    CAs && ref.current && Object.keys(CAs).length === Object.keys(ref.current).length
-      ? Object.keys(CAs).every(key => {
-          return ref.current && CAs[key].equalTo(ref.current[key]);
-        })
-      : false;
+    CA &&
+    ref.current &&
+    CA.equalTo(ref.current) &&
+    CA.currency.wrapped.address === ref.current.currency.wrapped.address;
 
   React.useEffect(() => {
     if (!areCAsConsideredTheSame) {
-      ref.current = CAs;
+      ref.current = CA;
     }
-  }, [areCAsConsideredTheSame, CAs]);
+  }, [areCAsConsideredTheSame, CA]);
 
-  return areCAsConsideredTheSame ? ref.current : CAs;
+  return areCAsConsideredTheSame ? ref.current : CA;
 }
 
 export function useWhitelistedTokenAddresses(): string[] {
   const { data } = useBnJsContractQuery<string[]>('StabilityFund', 'getAcceptedTokens', [], false);
-  const addresses = useArrayMemo<string>(data || []);
-  return addresses;
+  return data || [];
 }
 
 export function useFetchStabilityFundBalances(): void {
@@ -130,10 +107,8 @@ export function useMaxSwapSize(
   );
   const isBnUSDGoingIn = inputAmount?.currency.symbol === 'bnUSD';
 
-  const memoizedLimits = useCAsMemo(limits);
-
   return useMemo(() => {
-    if (isSwapEligible && inputAmount && outputAmount && memoizedLimits) {
+    if (isSwapEligible && inputAmount && outputAmount && limits) {
       if (isBnUSDGoingIn && balances) {
         return CurrencyAmount.fromRawAmount(
           inputAmount.currency.wrapped,
@@ -145,10 +120,10 @@ export function useMaxSwapSize(
       } else {
         const tokenAddress = inputAmount.currency.wrapped.address;
         return (
-          memoizedLimits[tokenAddress] &&
+          limits[tokenAddress] &&
           balances &&
           balances[tokenAddress] &&
-          memoizedLimits[tokenAddress]
+          limits[tokenAddress]
             .subtract(balances[tokenAddress])
             .subtract(
               CurrencyAmount.fromRawAmount(
@@ -162,21 +137,20 @@ export function useMaxSwapSize(
         );
       }
     }
-  }, [balances, inputAmount, outputAmount, isBnUSDGoingIn, isSwapEligible, memoizedLimits]);
+  }, [balances, inputAmount, outputAmount, isBnUSDGoingIn, isSwapEligible, limits]);
 }
 
-export function useFeeAmount(): CurrencyAmount<Token> | undefined {
+export function useFeeAmount(inputAmount: CurrencyAmount<Currency> | undefined): CurrencyAmount<Token> | undefined {
   const feeOut = useFeeOut();
   const feeIn = useFeeIn();
-  const { trade } = useDerivedSwapInfo();
-  const isBnUSDGoingIn = trade?.inputAmount.currency.symbol === 'bnUSD';
+  const isBnUSDGoingIn = inputAmount?.currency.symbol === 'bnUSD';
   const fee = isBnUSDGoingIn ? feeOut : feeIn;
 
   return useMemo(() => {
-    if (!!trade && !!fee) {
-      return trade.inputAmount.multiply(new Fraction(fee, 1000)).divide(100) as CurrencyAmount<Token>;
+    if (!!inputAmount && !!fee) {
+      return inputAmount.multiply(new Fraction(fee, 1000)).divide(100) as CurrencyAmount<Token>;
     }
-  }, [fee, trade]);
+  }, [fee, inputAmount]);
 }
 
 export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<Token> }> {

@@ -28,7 +28,7 @@ import {
   useChangeShouldLedgerSign,
   useShouldLedgerSign,
 } from 'store/application/hooks';
-import { useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
+import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -48,11 +48,13 @@ export default function SwapPanel() {
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
   const { trade, currencyBalances, currencies, parsedAmount, inputError, percents } = useDerivedSwapInfo();
+  const memoizedInputAmount = useCAMemo(trade?.inputAmount);
+  const memoizedOutputAmount = useCAMemo(trade?.outputAmount);
   const isSwapEligibleForStabilityFund = useIsSwapEligible(
     currencies.INPUT?.wrapped.address,
     currencies.OUTPUT?.wrapped.address,
   );
-  const fundMaxSwap = useMaxSwapSize(trade?.inputAmount, trade?.outputAmount);
+  const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
   const showFundOption = isSwapEligibleForStabilityFund && fundMaxSwap?.greaterThan(0);
 
   const parsedAmounts = React.useMemo(
@@ -379,8 +381,8 @@ export default function SwapPanel() {
                   <MemoizedStabilityFund
                     clearSwapInputOutput={clearSwapInputOutput}
                     setInput={handleTypeInput}
-                    inputAmount={trade?.inputAmount}
-                    outputAmount={trade?.outputAmount}
+                    inputAmount={memoizedInputAmount}
+                    outputAmount={memoizedOutputAmount}
                   />
                 }
                 show={true}

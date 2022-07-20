@@ -27,6 +27,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 
+//show only fees greater then 0.01
 const MIN_AMOUNT_TO_SHOW = CurrencyAmount.fromRawAmount(
   SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address],
   parseUnits('1', 16),
@@ -76,7 +77,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       .Rewards.claimRewards()
       .then(res => {
         addTransaction(
-          { hash: res.result }, //
+          { hash: res.result },
           {
             summary: t`Claimed ${reward?.dp(2).toFormat()} BALN.`,
             pending: t`Claiming rewards...`,

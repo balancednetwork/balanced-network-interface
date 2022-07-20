@@ -19,7 +19,7 @@ export function useFetchUnclaimedDividends(): void {
 
   useInterval(async () => {
     if (account) {
-      const data = await bnJs.Dividends.getUnclaimedDividends(account!);
+      const data = await bnJs.Dividends.getUnclaimedDividends(account);
       const fees: { [address in string]: CurrencyAmount<Token> } = Object.keys(data).reduce((prev, address) => {
         const currency = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
         prev[address] = CurrencyAmount.fromRawAmount(currency, data[address]);

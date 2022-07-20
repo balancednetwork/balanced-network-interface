@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { isNativeCurrency } from 'constants/tokens';
-import { usePoolData } from 'hooks/usePools';
 import { useQueuePair } from 'hooks/useQueuePair';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
@@ -115,7 +114,7 @@ export function useDerivedMintInfo(): {
   mintableLiquidity?: CurrencyAmount<Token>;
   poolTokenPercentage?: Percent;
   error?: ReactNode;
-  minQuoteTokenAmount?: BigNumber;
+  minQuoteTokenAmount?: BigNumber | null;
 } {
   const { account } = useIconReact();
 
@@ -146,8 +145,6 @@ export function useDerivedMintInfo(): {
   const [pairState2, pair2] = useQueuePair();
   const [pairState, pair] = isQueue ? [pairState2, pair2] : [pairState1, pair1];
 
-  const poolData = usePoolData(Number(pair?.poolId));
-  const minQuoteTokenAmount = poolData?.minQuoteTokenAmount;
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =
     pairState === PairState.NOT_EXISTS ||
@@ -336,9 +333,6 @@ export function useDerivedMintInfo(): {
     if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
       error = <Trans>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</Trans>;
     }
-    if (poolData && Number(currencyBAmount?.toFixed(2)) < poolData?.minQuoteTokenAmount.toNumber()) {
-      error = <Trans>Supply</Trans>;
-    }
   }
 
   return {
@@ -355,6 +349,5 @@ export function useDerivedMintInfo(): {
     mintableLiquidity,
     poolTokenPercentage,
     error,
-    minQuoteTokenAmount,
   };
 }

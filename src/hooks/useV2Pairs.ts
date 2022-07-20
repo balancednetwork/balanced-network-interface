@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
+import JSBI from 'jsbi';
+import { useIconReact } from 'packages/icon-react';
 
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
+import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
+import { useTrackedTokenPairs } from 'store/user/hooks';
 import { getPair } from 'utils';
 
 import useLastCount from './useLastCount';
@@ -20,12 +24,14 @@ export enum PairState {
   INVALID,
 }
 
-export function useV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
+export type PairData = [PairState, Pair | null, BigNumber | null] | [PairState, Pair | null];
+
+export function useV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): PairData[] {
   const tokens = useMemo(() => {
     return currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
   }, [currencies]);
 
-  const [pairs, setPairs] = useState<[PairState, Pair | null][]>(Array(tokens.length).fill([PairState.LOADING, null]));
+  const [pairs, setPairs] = useState<PairData[]>(Array(tokens.length).fill([PairState.LOADING, null]));
 
   const last = useLastCount(10000);
 
@@ -63,15 +69,17 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
 
         const data: any[] = await bnJs.Multicall.getAggregateData(cds);
 
-        const ps = data.map((stats, idx): [PairState, Pair | null] => {
-          const [tokenA, tokenB] = tokens[idx];
+        const ps = data.map(
+          (stats, idx): PairData => {
+            const [tokenA, tokenB] = tokens[idx];
 
-          if (!tokenA || !tokenB || !stats) {
-            return [PairState.NOT_EXISTS, null];
-          }
+            if (!tokenA || !tokenB || !stats) {
+              return [PairState.NOT_EXISTS, null, null];
+            }
 
-          return getPair(stats, tokenA, tokenB);
-        });
+            return getPair(stats, tokenA, tokenB);
+          },
+        );
 
         setPairs(ps);
       } catch (err) {
@@ -87,9 +95,25 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
   return pairs;
 }
 
-export function useV2Pair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null] {
+export function useV2Pair(tokenA?: Currency, tokenB?: Currency): PairData {
   const inputs: [[Currency | undefined, Currency | undefined]] = useMemo(() => [[tokenA, tokenB]], [tokenA, tokenB]);
   return useV2Pairs(inputs)[0];
+}
+
+export function usePoolShare(poolId: number, tokenA?: Currency, tokenB?: Currency): Fraction {
+  const balance: BalanceData | undefined = useBalance(poolId);
+  const pair = useV2Pair(tokenA, tokenB)[1];
+
+  return useMemo(() => {
+    if (balance && pair && JSBI.greaterThan(pair.totalSupply?.quotient || BIGINT_ZERO, BIGINT_ZERO)) {
+      const res = balance.stakedLPBalance
+        ? balance.balance.add(balance.stakedLPBalance).divide(pair.totalSupply || BIGINT_ZERO)
+        : balance.balance.divide(pair.totalSupply || BIGINT_ZERO);
+      return new Fraction(res.numerator, res.denominator);
+    }
+
+    return FRACTION_ZERO;
+  }, [balance, pair]);
 }
 
 export function useAvailablePairs(
@@ -120,6 +144,8 @@ export interface BalanceData {
 
   // sICX balance
   balance1?: CurrencyAmount<Token>;
+
+  suppliedLP?: CurrencyAmount<Token>;
 
   stakedLPBalance?: CurrencyAmount<Token>;
 }
@@ -154,6 +180,11 @@ export function useBalances(
                 params: [account, `0x${(+poolId).toString(16)}`],
               },
               {
+                target: bnJs.Dex.address,
+                method: 'totalSupply',
+                params: [`0x${(+poolId).toString(16)}`],
+              },
+              {
                 target: bnJs.StakedLP.address,
                 method: 'balanceOf',
                 params: [account, `0x${(+poolId).toString(16)}`],
@@ -170,30 +201,30 @@ export function useBalances(
       const cdsFlatted: CallData[] = cds.flat();
       const data: any[] = await bnJs.Multicall.getAggregateData(cdsFlatted);
       const sicxBalance = data[data.length - 1];
+      const icxBalance = !Array.isArray(data[0]) ? data[0] : 0;
 
       // Remapping the result was returned by multicall based on the order of the cds
       let trackedIdx = 0;
       const reMappingData = cds.map((cdsItem, idx) => {
         if (Array.isArray(cdsItem)) {
-          if (trackedIdx === 0) {
-            trackedIdx = idx + 1;
-            return [data[idx], data[idx + 1]];
-          } else {
-            trackedIdx += 2;
-            return [data[trackedIdx - 1], data[trackedIdx]];
-          }
+          const tmp = data.slice(trackedIdx, trackedIdx + cdsItem.length);
+          trackedIdx += cdsItem.length;
+          return tmp;
         }
+        trackedIdx += 1;
         return data[idx];
       });
 
       const balances = poolKeys.map((poolId, idx) => {
         const pool = pools[+poolId];
-        let balance = reMappingData[idx];
+        let balance = reMappingData[idx][0];
+        let totalSupply;
         let stakedLPBalance;
 
         if (Array.isArray(cds[idx])) {
           balance = reMappingData[idx][0];
-          stakedLPBalance = reMappingData[idx][1];
+          totalSupply = reMappingData[idx][1];
+          stakedLPBalance = reMappingData[idx][2];
         }
 
         if (!pool) return undefined;
@@ -201,15 +232,19 @@ export function useBalances(
         if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
           return {
             poolId: +poolId,
-            balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(balance || 0, 16).toFixed()),
+            balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(icxBalance, 16).toFixed()),
             balance1: CurrencyAmount.fromRawAmount(pool.token1, new BigNumber(sicxBalance || 0, 16).toFixed()),
           };
         } else {
           return {
             poolId: +poolId,
             balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance || 0, 16).toFixed()),
+            suppliedLP: CurrencyAmount.fromRawAmount(
+              pool.liquidityToken,
+              new BigNumber(totalSupply || 0, 16).toFixed(),
+            ),
             stakedLPBalance: CurrencyAmount.fromRawAmount(
-              pool.token1,
+              pool.liquidityToken,
               new BigNumber(stakedLPBalance || 0, 16).toFixed(),
             ),
           };
@@ -230,4 +265,43 @@ export function useBalances(
       return acc;
     }, {});
   }, [balances]);
+}
+
+export function useSuppliedTokens(poolId: number, tokenA?: Currency, tokenB?: Currency) {
+  const balance: BalanceData | undefined = useBalance(poolId);
+  const share = usePoolShare(poolId, tokenA, tokenB);
+  const pair = useV2Pair(tokenA, tokenB)[1];
+
+  return useMemo(() => {
+    if (pair && balance) {
+      let suppliedBaseTokens: CurrencyAmount<Currency>;
+      let suppliedQuoteTokens: CurrencyAmount<Currency>;
+
+      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
+        suppliedBaseTokens = balance.balance;
+        suppliedQuoteTokens = balance.balance;
+      } else {
+        suppliedBaseTokens = pair.reserve0.multiply(share || 0);
+        suppliedQuoteTokens = pair.reserve1.multiply(share || 0);
+      }
+
+      return {
+        base: suppliedBaseTokens,
+        quote: suppliedQuoteTokens,
+      };
+    } else return;
+  }, [pair, balance, poolId, share]);
+}
+
+export function useBalance(poolId: number) {
+  const { account } = useIconReact();
+
+  const trackedTokenPairs = useTrackedTokenPairs();
+
+  // fetch the reserves for all V2 pools
+  const pairs = useAvailablePairs(trackedTokenPairs);
+
+  // fetch the user's balances of all tracked V2 LP tokens
+  const balances = useBalances(account, pairs);
+  return balances[poolId];
 }

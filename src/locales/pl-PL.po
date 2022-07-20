@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-30 02:22\n"
+"PO-Revision-Date: 2022-07-14 02:30\n"
 "Last-Translator: \n"
 "Language: pl_PL\n"
 "Language-Team: Polish\n"
@@ -368,6 +368,7 @@ msgstr "DATA"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Daily rewards"
 msgstr "Dzienne nagrody"
 
@@ -635,6 +636,7 @@ msgid "Pool"
 msgstr "Pula"
 
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Pool share"
 msgstr "Udział w puli"
 
@@ -882,7 +884,6 @@ msgstr "Dostarczono płynności do pary {pair}."
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/store/mint/hooks.tsx
 msgid "Supply"
 msgstr "Dostarcz"
 

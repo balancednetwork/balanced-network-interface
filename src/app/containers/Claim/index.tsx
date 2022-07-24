@@ -11,7 +11,7 @@ import Logo from 'app/components/Logo';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { BATCH_SIZE, usePlatformDayQuery, useUserCollectedFeesQuery } from 'queries/reward';
+import { BATCH_SIZE, useUserCollectedFeesQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
@@ -132,7 +132,7 @@ export function Claim() {
   const feeTxStatus = useTransactionStatus(feeTx);
 
   const hasNetworkFees = useHasNetworkFees();
-  const { data: platformDay = 0 } = usePlatformDayQuery();
+  const platformDay = 452;
   const { data: feesArr, refetch } = useUserCollectedFeesQuery(1, platformDay);
   const fees = feesArr?.find(fees => fees);
   const feesIndex = feesArr?.findIndex(fees => fees) || 0;

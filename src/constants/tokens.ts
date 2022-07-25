@@ -240,7 +240,7 @@ export const sICX_BERLIN = new Token(
 );
 export const bnUSD_BERLIN = new Token(
   SupportedChainId.BERLIN,
-  'cx1cd2da25f9942fda5144e139bbda3e5108d3c083',
+  'cx0de413b6c9f8ef1086dfb2707b59b5ea8c66d204',
   18,
   'bnUSD',
   'Balanced Dollar',

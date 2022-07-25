@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
@@ -12,18 +13,28 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useActiveLocale } from 'hooks/useActiveLocale';
-import { useUserCollectedFeesQuery, useRewardQuery, usePlatformDayQuery, BATCH_SIZE } from 'queries/reward';
+import { useRewardQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useFetchUnclaimedDividends, useUnclaimedFees } from 'store/fees/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 
+//show only fees greater then 0.01
+const MIN_AMOUNT_TO_SHOW = CurrencyAmount.fromRawAmount(
+  SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address],
+  parseUnits('1', 16),
+);
+
 const RewardsPanel = () => {
+  useFetchUnclaimedDividends();
   const locale = useActiveLocale();
   const shouldBreakOnMobile = useMedia('(max-width: 499px)') && 'en-US,ko-KR'.indexOf(locale) < 0;
 
@@ -66,7 +77,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       .Rewards.claimRewards()
       .then(res => {
         addTransaction(
-          { hash: res.result }, //
+          { hash: res.result },
           {
             summary: t`Claimed ${reward?.dp(2).toFormat()} BALN.`,
             pending: t`Claiming rewards...`,
@@ -110,7 +121,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
           </Typography>
         </>
       );
-    } else {
+    } else if (reward?.isGreaterThan(0.01)) {
       return (
         <>
           <Typography variant="p">
@@ -123,6 +134,12 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
             <Trans>Claim</Trans>
           </Button>
         </>
+      );
+    } else {
+      return (
+        <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
+          <Trans>Pending</Trans>
+        </Typography>
       );
     }
   };
@@ -204,7 +221,6 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
 
 const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }) => {
   const { account } = useIconReact();
-  const [feeTx, setFeeTx] = React.useState('');
   const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -216,21 +232,18 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
-    const end = platformDay - feesIndex * BATCH_SIZE;
-    const start = end - BATCH_SIZE > 0 ? end - BATCH_SIZE : 0;
 
     bnJs
       .inject({ account })
-      .Dividends.claim(start, end)
+      .Dividends.claimDividends()
       .then(res => {
         addTransaction(
-          { hash: res.result }, //
+          { hash: res.result },
           {
             summary: t`Claimed fees.`,
             pending: t`Claiming fees...`,
           },
         );
-        setFeeTx(res.result);
         toggleOpen();
       })
       .catch(e => {
@@ -242,18 +255,8 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
       });
   };
 
-  const feeTxStatus = useTransactionStatus(feeTx);
-
   const hasNetworkFees = useHasNetworkFees();
-  const { data: platformDay = 0 } = usePlatformDayQuery();
-  const { data: feesArr, refetch } = useUserCollectedFeesQuery(1, platformDay);
-  const fees = feesArr?.find(fees => fees);
-  const feesIndex = feesArr?.findIndex(fees => fees) || 0;
-  const hasFee = !!fees;
-  const count = feesArr?.reduce((c, v) => (v ? ++c : c), 0);
-  React.useEffect(() => {
-    if (feeTxStatus === TransactionStatus.success) refetch();
-  }, [feeTxStatus, refetch]);
+  const fees = useUnclaimedFees();
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
@@ -265,19 +268,12 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
   const hasEnoughICX = useHasEnoughICX();
 
   const getNetworkFeesUI = () => {
-    if (hasNetworkFees && !hasFee) {
-      return (
-        <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
-          <Trans>Pending</Trans>
-          <QuestionHelper text={t`To earn network fees, stake BALN from your wallet.`} />
-        </Typography>
-      );
-    } else if (hasFee) {
+    if (hasNetworkFees) {
       return (
         <>
           {fees &&
             Object.keys(fees)
-              .filter(key => fees[key].greaterThan(0))
+              .filter(key => fees[key].greaterThan(MIN_AMOUNT_TO_SHOW))
               .map(key => (
                 <Typography key={key} variant="p">
                   {`${fees[key].toFixed(2)}`}{' '}
@@ -287,9 +283,15 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
                 </Typography>
               ))}
 
-          <Button mt={2} onClick={toggleOpen}>
-            {count && count > 1 ? t`Claim (1 of ${count})` : t`Claim`}
-          </Button>
+          {fees && Object.keys(fees).filter(key => fees[key].greaterThan(MIN_AMOUNT_TO_SHOW)).length ? (
+            <Button mt={2} onClick={toggleOpen}>
+              <Trans>Claim</Trans>
+            </Button>
+          ) : (
+            <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
+              <Trans>Pending</Trans>
+            </Typography>
+          )}
         </>
       );
     } else {
@@ -318,7 +320,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
           <Flex flexDirection="column" alignItems="center" mt={2}>
             {fees &&
               Object.keys(fees)
-                .filter(key => fees[key].greaterThan(0))
+                .filter(key => fees[key].greaterThan(MIN_AMOUNT_TO_SHOW))
                 .map(key => (
                   <Typography key={key} variant="p">
                     {`${fees[key].toFixed(2)}`}{' '}

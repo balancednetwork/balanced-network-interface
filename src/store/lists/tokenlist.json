@@ -1,5 +1,5 @@
 {
-  "name": "Balanced Token",
+  "name": "Balanced Tokens",
   "timestamp": "2022-07-01T08:37:27.276Z",
   "version": {
     "major": 1,
@@ -93,7 +93,7 @@
     {
       "address": "cx2aa9b28a657e3121b75d3d4fe65e569398645d56",
       "chainId": 1,
-      "name": "Test Token",
+      "name": "FRAMD Token",
       "symbol": "FRMD",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/frmd.png"
@@ -149,7 +149,7 @@
     {
       "address": "cx0fa7815de5b2be6e51dc52caa0dc556012ae0f98",
       "chainId": 7,
-      "name": "OMM Token",
+      "name": "Omm Token",
       "symbol": "OMM",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"

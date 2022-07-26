@@ -22,8 +22,6 @@ export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency
       (currencies[Field.OUTPUT] as Token)?.address,
     );
 
-    console.log('data', data);
-
     const pairId = parseInt(data.id);
     const inverse = data.base_token !== (currencies[Field.INPUT] as Token)?.address;
 

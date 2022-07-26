@@ -1,4 +1,4 @@
-import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
+import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
 import { Token, Currency } from '@balancednetwork/sdk-core';
 import { useIconReact } from 'packages/icon-react';
 
@@ -34,37 +34,31 @@ export const ICX: TokenMap = {
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX'),
 };
 
-// disable prettier printWidth rule
-// prettier-ignore
 export const sICX: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET,'cx2609b924e33ef00b648a409245c7ea394c467824',18, 'sICX', 'Staked ICX', 'icon'),
-  [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cx70806fdfa274fe12ab61f1f98c5a7a1409a0c108', 18, 'sICX', 'Staked ICX'),
-  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cx81730290ed56a72539c531ceb8346a4f15b19d0a', 18, 'sICX', 'Staked ICX'),
-  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cxdd89d7a425b8f0b6448a8c80136727c517e64033', 18, 'sICX', 'Staked ICX'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].sicx, 18, 'sICX', 'Staked ICX'),
+  [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].sicx, 18, 'sICX', 'Staked ICX'),
+  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].sicx, 18, 'sICX', 'Staked ICX'),
+  [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].sicx, 18, 'sICX', 'Staked ICX'),
 };
 
-// disable prettier printWidth rule
-// prettier-ignore
 export const bnUSD: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb', 18, 'bnUSD', 'Balanced Dollar', 'stable dollar'),
-  [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cx5838cb516d6156a060f90e9a3de92381331ff024', 18, 'bnUSD', 'Balanced Dollar'),
-  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cx7bd90c91db9b0be9f688442dce7569aebb1ff7fe', 18, 'bnUSD', 'Balanced Dollar'),
-  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx1cd2da25f9942fda5144e139bbda3e5108d3c083', 18, 'bnUSD', 'Balanced Dollar'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
+  [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
+  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
+  [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
 };
 
-// disable prettier printWidth rule
-// prettier-ignore
 export const BALN: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619', 18, 'BALN', 'Balance Token'),
-  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO,'cx40b768f5834a124ea242f9741b853af804fb497f', 18, 'BALN', 'Balance Token'),
-  [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cx303470dbc10e5b4ab8831a61dbe00f75db10c38b', 18, 'BALN', 'Balance Token'),
-  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx9eefbe346b17328e2265573f6e166f6bc4a13cc4', 18, 'BALN', 'Balance Token'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].baln, 18, 'BALN', 'Balance Token'),
+  [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].baln, 18, 'BALN', 'Balance Token'),
+  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].baln, 18, 'BALN', 'Balance Token'),
+  [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].baln, 18, 'BALN', 'Balance Token'),
 };
 
 // disable prettier printWidth rule
 // prettier-ignore
 export const IUSDC: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cxae3034235540b924dfcc1b45836c293dcc82bfb7', 6, 'IUSDC', 'ICON USD Coin', 'stable dollar'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cxae3034235540b924dfcc1b45836c293dcc82bfb7', 6, 'IUSDC', 'ICON USD Coin'),
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cx65f639254090820361da483df233f6d0e69af9b7', 6, 'IUSDC', 'ICON USD Coin'),
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cx599d58885e5b1736c934fca7e53e04c797ab05be', 6, 'IUSDC', 'ICON USD Coin'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx538a925f49427d4f1078aed638c8cb525071fc68', 6, 'IUSDC', 'ICON USD Coin'),
@@ -73,7 +67,7 @@ export const IUSDC: TokenMap = {
 // disable prettier printWidth rule
 // prettier-ignore
 export const USDS: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cxbb2871f468a3008f80b08fdde5b8b951583acf06', 18, 'USDS', 'Stably USD', 'stable dollar'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cxbb2871f468a3008f80b08fdde5b8b951583acf06', 18, 'USDS', 'Stably USD'),
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cxc0666df567a6e0b49342648e98ccbe5362b264ea', 18, 'USDS', 'Stably USD'),
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cxc0dbb2eb24719f8355a7ec3c1aaa93826669ab8e', 18, 'USDS', 'Stably USD'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx91a9327ca44e78983e143b1cfb18e8024a1f31d9', 18, 'USDS', 'Stably USD'),
@@ -82,7 +76,7 @@ export const USDS: TokenMap = {
 // disable prettier printWidth rule
 // prettier-ignore
 export const FIN: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx785d504f44b5d2c8dac04c5a1ecd75f18ee57d16', 18, 'FIN', 'Fin Token', 'optimus'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx785d504f44b5d2c8dac04c5a1ecd75f18ee57d16', 18, 'FIN', 'Fin Token'),
 };
 
 export const OMM: TokenMap = {
@@ -92,7 +86,7 @@ export const OMM: TokenMap = {
 // disable prettier printWidth rule
 // prettier-ignore
 export const IUSDT: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88', 6, 'IUSDT', 'ICON Tether', 'stable dollar'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88', 6, 'IUSDT', 'ICON Tether'),
 };
 
 export const CFT: TokenMap = {

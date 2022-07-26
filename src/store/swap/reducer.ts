@@ -1,7 +1,8 @@
 import { Currency } from '@balancednetwork/sdk-core';
 import { createReducer } from '@reduxjs/toolkit';
 
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { NETWORK_ID } from 'constants/config';
+import { bnUSD, BALN } from 'constants/tokens';
 
 import {
   Field,
@@ -31,11 +32,11 @@ const initialState: SwapState = {
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {
-    currency: SUPPORTED_TOKENS_LIST[3],
+    currency: BALN[NETWORK_ID],
     percent: 0,
   },
   [Field.OUTPUT]: {
-    currency: SUPPORTED_TOKENS_LIST[2],
+    currency: bnUSD[NETWORK_ID],
   },
   recipient: null,
 };

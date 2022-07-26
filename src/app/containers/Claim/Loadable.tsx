@@ -4,7 +4,7 @@
 
 import { lazyLoad } from 'utils/loadable';
 
-export const Airdrip = lazyLoad(
+export const Claim = lazyLoad(
   () => import('./index'),
-  module => module.Airdrip,
+  module => module.Claim,
 );

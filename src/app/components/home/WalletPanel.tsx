@@ -14,7 +14,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import '@reach/tabs/styles.css';
-import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useRatesQuery } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
@@ -33,9 +33,6 @@ const WalletUIs = {
 };
 
 const ADDRESSES = SUPPORTED_TOKENS_LIST.map(currency => currency.address);
-const icxAddressIndex = ADDRESSES.indexOf(NULL_CONTRACT_ADDRESS);
-const icxAddress = ADDRESSES.splice(icxAddressIndex, 1)[0];
-ADDRESSES.splice(0, 0, icxAddress);
 
 const WalletPanel = () => {
   const balances = useWalletBalances();

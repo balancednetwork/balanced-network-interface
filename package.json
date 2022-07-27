@@ -20,7 +20,6 @@
     "@reach/portal": "0.12.1",
     "@reach/tabs": "0.13.0",
     "@reduxjs/toolkit": "1.4.0",
-    "@uniswap/token-lists": "1.0.0-beta.30",
     "axios": "0.21.3",
     "big.js": "6.1.1",
     "bignumber.js": "9.0.1",

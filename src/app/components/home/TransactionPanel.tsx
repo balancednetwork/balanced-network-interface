@@ -15,7 +15,7 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { Transaction, useAllTransactionsQuery, useInternalTransactionQuery } from 'queries/history';
 import { formatBigNumber, formatUnits, getTrackerLink } from 'utils';
@@ -95,8 +95,7 @@ const METHOD_POSITIVE_SIGN = [
   'Withdraw1Value',
 ];
 
-const getTokenSymbol = (address?: string) =>
-  SUPPORTED_TOKENS_LIST.find(token => token.address === address)?.symbol || '';
+const getTokenSymbol = (address?: string) => SUPPORTED_TOKENS_MAP_BY_ADDRESS[address!]?.symbol || '';
 
 const getContractAddr = (tx: Transaction) => tx.indexed?.find(item => item.startsWith('cx'));
 

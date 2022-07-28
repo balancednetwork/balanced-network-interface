@@ -79,7 +79,7 @@
       "chainId": 1,
       "name": "ICON Tether",
       "symbol": "IUSDT",
-      "decimals": 18,
+      "decimals": 6,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdt.png"
     },
     {
@@ -135,7 +135,7 @@
       "chainId": 7,
       "name": "ICON USD Coin",
       "symbol": "IUSDC",
-      "decimals": 18,
+      "decimals": 6,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
     },
     {

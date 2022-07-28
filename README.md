@@ -10,6 +10,20 @@ An open source interface for Balanced: a decentralized synthetic asset generator
 - Medium: [@BalancedDAO](https://balanceddao.medium.com/)
 - Whitepaper: [Link](https://docs.balanced.network/technical/white-paper)
 
+## Token listing
+
+### Add a token to the default token list
+
+https://github.com/balancednetwork/balanced-network-interface/blob/master/src/store/lists/tokenlist.json
+
+Make a PR from the master branch
+
+### Add an icon to the icon repository
+
+https://github.com/balancednetwork/icons
+
+Make a PR from the main branch
+
 ## Development
 
 ### Install Dependencies

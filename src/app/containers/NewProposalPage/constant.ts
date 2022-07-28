@@ -134,11 +134,10 @@ export const PROPOSAL_CONFIG = {
     },
     submitParams: ratioInputValue => {
       const dist_list = Object.entries(ratioInputValue).map(item => {
-        return (
-          item[0] && {
-            [item[0]]: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
-          }
-        );
+        return {
+          recipient_name: item[0],
+          dist_percent: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
+        };
       });
       return [['setDividendsCategoryPercentage', { _dist_list: dist_list }]];
     },

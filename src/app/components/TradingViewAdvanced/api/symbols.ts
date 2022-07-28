@@ -1,8 +1,9 @@
 import { Token } from '@balancednetwork/sdk-core';
 import { LibrarySymbolInfo, ResolutionString, SearchSymbolResultItem } from 'charting_library/charting_library';
 
-import { getTradePair } from 'constants/currency';
-import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
+import bnJs from 'bnJs';
+import { SUPPORTED_PAIRS } from 'constants/pairs';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 
 import { defaultConfig } from '.';
 
@@ -14,28 +15,35 @@ export interface BalancedLibrarySymbolInfo extends LibrarySymbolInfo {
 
 const SUPPORTED_PAIRS_WITHOUT_QUEUE = SUPPORTED_PAIRS.filter(pair => pair.name !== 'sICX/ICX');
 
-const getPairIDAndInversion = (pairName: string): [PairInfo | undefined, boolean | undefined] => {
-  const splitName = pairName.replaceAll(' ', '').split('/');
-  return getTradePair(splitName[0], splitName[1]);
+const getPairTokens = (pairName: string): { base: Token; quote: Token } | undefined => {
+  const name = pairName.replaceAll(' ', '').split('/');
+  const base = SUPPORTED_TOKENS_LIST.find(token => token.symbol === name[0]);
+  const quote = SUPPORTED_TOKENS_LIST.find(token => token.symbol === name[1]);
+
+  if (base && quote) {
+    return {
+      base,
+      quote,
+    };
+  }
 };
 
-export const getSymbolInfo = (name: string): BalancedLibrarySymbolInfo => {
-  const pairInfo = getPairIDAndInversion(name);
-  const pair = pairInfo[0];
+export const getSymbolInfo = async (name: string): Promise<BalancedLibrarySymbolInfo> => {
+  const pairTokens = getPairTokens(name);
+  const poolData =
+    pairTokens && (await bnJs.Multicall.getPoolStatsForPair(pairTokens.base.address, pairTokens.quote.address));
+  const inverse = poolData.base_token !== pairTokens?.base.address;
   let decimal = 18;
   let pairID = -1;
 
-  if (pair) {
-    const quoteToken = pair.quoteToken;
-    const baseToken = pair.baseToken;
-    decimal = (quoteToken?.decimals ?? 0) - (baseToken?.decimals ?? 0) + 18;
-    pairID = pair.id;
+  if (poolData && pairTokens) {
+    decimal = (pairTokens.quote.decimals ?? 0) - (pairTokens.base.decimals ?? 0) + 18;
+    pairID = parseInt(poolData.id);
   }
-  const isPairInverted = !!pairInfo[1];
 
   return {
     pairID: pairID ? pairID : -1,
-    isPairInverted,
+    isPairInverted: inverse,
     decimal,
     name,
     full_name: name,

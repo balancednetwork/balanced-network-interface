@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
 import { Token } from '@balancednetwork/sdk-core';
+import { TokenInfo } from '@uniswap/token-lists';
 
-import { TokenInfo } from 'constants/tokens';
 import { isAddress } from 'utils';
 
 const alwaysTrue = () => true;
@@ -35,11 +35,11 @@ export function createTokenFilterFunction<T extends Token | TokenInfo>(search: s
     return lowerSearchParts.every(p => p.length === 0 || sParts.some(sp => sp.indexOf(p) >= 0));
   };
 
-  return ({ name, symbol, searchableTerms }: T): boolean =>
+  // consider whether the searchableTerms is useful
+  return ({ name, symbol /*searchableTerms*/ }: T): boolean =>
     Boolean(
-      (symbol && matchesSearch(symbol)) ||
-        (name && matchesSearch(name)) ||
-        (searchableTerms && matchesSearch(searchableTerms)),
+      (symbol && matchesSearch(symbol)) || (name && matchesSearch(name)),
+      // (searchableTerms && matchesSearch(searchableTerms)),
     );
 }
 

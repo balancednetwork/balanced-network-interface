@@ -28,10 +28,9 @@ import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 
 //show only fees greater then 0.01
-const MIN_AMOUNT_TO_SHOW = CurrencyAmount.fromRawAmount(
-  SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address],
-  parseUnits('1', 16),
-);
+const MIN_AMOUNT_TO_SHOW =
+  SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address] &&
+  CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], parseUnits('1', 16));
 
 const RewardsPanel = () => {
   useFetchUnclaimedDividends();

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-30 02:22\n"
+"PO-Revision-Date: 2022-07-20 21:23\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -98,6 +98,10 @@ msgstr "Na"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
 msgstr "Gehele onderpand vergrendeld"
+
+#: src/app/containers/Claim/index.tsx
+msgid "All fees claimed"
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
@@ -242,10 +246,11 @@ msgstr "Kies een portemonnee uit je Ledger:"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claim"
 msgstr "Claim"
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claim (1 of {count})"
 msgstr "Claim (1 van {count})"
 
@@ -267,6 +272,7 @@ msgid "Claim network fees?"
 msgstr "Netwerkvergoedingen claimen?"
 
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claimed fees."
 msgstr "Geclaimde vergoedingen."
 
@@ -283,6 +289,7 @@ msgid "Claiming ICX..."
 msgstr "ICX claimen..."
 
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claiming fees..."
 msgstr "Vergoedingen claimen..."
 
@@ -368,6 +375,7 @@ msgstr "Datum"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Daily rewards"
 msgstr "Dagelijkse beloningen"
 
@@ -589,6 +597,10 @@ msgstr "Nog geen activiteit."
 msgid "No assets available."
 msgstr "Geen activa beschikbaar."
 
+#: src/app/containers/Claim/index.tsx
+msgid "No fees to claim"
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
 msgstr "Geen prijsgrafiek beschikbaar voor dit paar."
@@ -627,6 +639,7 @@ msgstr "Betaal"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr "In behandeling"
 
@@ -635,6 +648,7 @@ msgid "Pool"
 msgstr "Pool"
 
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Pool share"
 msgstr "Pool aandeel"
 
@@ -882,7 +896,6 @@ msgstr "{pair} liquiditeit geleverd."
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/store/mint/hooks.tsx
 msgid "Supply"
 msgstr "Leveren"
 
@@ -990,7 +1003,6 @@ msgstr "Naar"
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Neem een lening of lever liquiditeit op de handelspagina om Balanced beloningen te verdienen."
 
-#: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."

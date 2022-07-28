@@ -9,9 +9,10 @@ import WalletModal from 'app/components/WalletModal';
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
+import { PageLocation } from 'utils';
 
 import { Banner } from './components/Banner';
-import { Airdrip } from './containers/Airdrip/Loadable';
+import { Claim } from './containers/Claim/Loadable';
 import Message from './Message';
 import Routes from './Routes';
 
@@ -37,18 +38,17 @@ export function App() {
         <NotificationContainer />
         <WalletModal />
         {/* Add message for community */}
-        {false && (
-          <Banner>
-            <Message />
-          </Banner>
-        )}
+        <Banner messageID={'continuousFees'} location={PageLocation.HOME}>
+          <Message />
+        </Banner>
+
         <Helmet
           titleTemplate="%s | Balanced"
           defaultTitle="Balanced Network"
           htmlAttributes={{ lang: i18n.language }}
         />
         <Switch>
-          <Route exact path="/claim" component={Airdrip} />
+          <Route exact path="/claim" component={Claim} />
           <Route component={Routes} />
         </Switch>
       </ThemeProvider>

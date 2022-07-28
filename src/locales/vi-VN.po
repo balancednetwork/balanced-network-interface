@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-30 02:22\n"
+"PO-Revision-Date: 2022-07-20 21:23\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -98,6 +98,10 @@ msgstr "Sau"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
 msgstr "Tất cả tài sản thế chấp sẽ bị khóa"
+
+#: src/app/containers/Claim/index.tsx
+msgid "All fees claimed"
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
@@ -242,10 +246,11 @@ msgstr "Chọn 1 ví từ Ledger:"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claim"
 msgstr "Nhận"
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claim (1 of {count})"
 msgstr "Nhận (1 trong {count})"
 
@@ -267,6 +272,7 @@ msgid "Claim network fees?"
 msgstr "Nhận phí hoạt động từ balanced?"
 
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claimed fees."
 msgstr "Đang nhận tiền phí."
 
@@ -283,6 +289,7 @@ msgid "Claiming ICX..."
 msgstr "Đang nhận ICX..."
 
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claiming fees..."
 msgstr "Đang nhận tiền phí..."
 
@@ -368,6 +375,7 @@ msgstr "Ngày Tháng"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Daily rewards"
 msgstr "Phần thưởng mỗi ngày"
 
@@ -589,6 +597,10 @@ msgstr "Chưa có hoạt động nào."
 msgid "No assets available."
 msgstr "Ko có tài sản sẵn có."
 
+#: src/app/containers/Claim/index.tsx
+msgid "No fees to claim"
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
 msgstr "Biểu đồ giá cả hiện chưa có."
@@ -627,6 +639,7 @@ msgstr "Thanh toán"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr "Đang chờ xử lý"
 
@@ -635,6 +648,7 @@ msgid "Pool"
 msgstr "Pool"
 
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Pool share"
 msgstr "Tài sản trong hồ thanh quản"
 
@@ -882,7 +896,6 @@ msgstr "Đã cung cấp {pair} vào hồ thanh khoản."
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/LPPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/store/mint/hooks.tsx
 msgid "Supply"
 msgstr "Cung cấp"
 
@@ -990,7 +1003,6 @@ msgstr "Tới"
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Để nhận phần thưởng, mượn tiền hoặc cung cấp thanh khoản khu giao dịch."
 
-#: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."

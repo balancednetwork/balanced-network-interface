@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { addresses } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isEmpty } from 'lodash';
@@ -13,8 +14,7 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
-import { useMaxSwapSize, useFeeAmount } from 'store/stabilityFund/hooks';
-import { useDerivedSwapInfo } from 'store/swap/hooks';
+import { useFeeAmount, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { toDec } from 'utils';
@@ -30,6 +30,8 @@ import { swapMessage } from '../trade/utils';
 interface StabilityFundProps {
   clearSwapInputOutput: () => void;
   setInput: (input: string) => void;
+  inputAmount: CurrencyAmount<Currency> | undefined;
+  outputAmount: CurrencyAmount<Currency> | undefined;
 }
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
@@ -71,12 +73,11 @@ const SwapSizeNotice = styled.div`
   }
 `;
 
-const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) => {
+const StabilityFund = ({ clearSwapInputOutput, setInput, inputAmount, outputAmount }: StabilityFundProps) => {
   const { account } = useIconReact();
-  const { trade } = useDerivedSwapInfo();
   const toggleWalletModal = useWalletModalToggle();
-  const maxSwapSize = useMaxSwapSize();
-  const feeAmount = useFeeAmount();
+  const maxSwapSize = useMaxSwapSize(inputAmount, outputAmount);
+  const feeAmount = useFeeAmount(inputAmount);
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
@@ -84,9 +85,9 @@ const StabilityFund = ({ clearSwapInputOutput, setInput }: StabilityFundProps) =
   const hasEnoughICX = useHasEnoughICX();
   const isSmall = useMedia('(max-width: 500px)');
 
-  const sendAmount = trade?.inputAmount;
-  const sendSymbol = trade?.inputAmount.currency.symbol;
-  const receivedCurrency = trade?.outputAmount.currency;
+  const sendAmount = inputAmount;
+  const sendSymbol = inputAmount?.currency.symbol;
+  const receivedCurrency = outputAmount?.currency;
   const isBnUSDGoingIn = sendSymbol === 'bnUSD';
   const hasFundEnoughBalance = sendAmount && maxSwapSize ? sendAmount.lessThan(maxSwapSize) : 'loading';
 

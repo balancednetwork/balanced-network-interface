@@ -107,7 +107,7 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/fin.png"
     },
     {
-      "address": "cxdd89d7a425b8f0b6448a8c80136727c517e64033",
+      "address": "cxd1ed2e5d5c132574ed8ffa7e141cff2460ab7015",
       "chainId": 7,
       "name": "Staked ICX",
       "symbol": "sICX",
@@ -115,7 +115,7 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sicx.png"
     },
     {
-      "address": "cx1cd2da25f9942fda5144e139bbda3e5108d3c083",
+      "address": "cx0de413b6c9f8ef1086dfb2707b59b5ea8c66d204",
       "chainId": 7,
       "name": "Balanced Dollar",
       "symbol": "bnUSD",
@@ -123,7 +123,7 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
     },
     {
-      "address": "cx9eefbe346b17328e2265573f6e166f6bc4a13cc4",
+      "address": "cxbfdbb940fb377c15d3b5ad131e45e24cb28463ef",
       "chainId": 7,
       "name": "Balance Token",
       "symbol": "BALN",

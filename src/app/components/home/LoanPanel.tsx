@@ -12,7 +12,7 @@ import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
-import { BoxPanel, FlexPanel } from 'app/components/Panel';
+import { BoxPanel, FlexPanel, BoxPanelWrap } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as InfoAbove } from 'assets/images/rebalancing-above.svg';
@@ -233,103 +233,103 @@ const LoanPanel = () => {
 
   return (
     <>
-      <BoxPanel bg="bg3">
-        <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">
-            <Trans>Loan</Trans>
-          </Typography>
-
-          <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
-            {isAdjusting ? (
-              <>
-                <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button
-                  disabled={
-                    borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
-                  }
-                  onClick={handleLoanUpdate}
-                  fontSize={14}
-                >
-                  <Trans>Confirm</Trans>
+      <BoxPanelWrap>
+        <BoxPanel bg="bg3">
+          <Flex justifyContent="space-between" alignItems="center">
+            <Typography variant="h2">
+              <Trans>Loan</Trans>
+            </Typography>
+            <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
+              {isAdjusting ? (
+                <>
+                  <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
+                    <Trans>Cancel</Trans>
+                  </TextButton>
+                  <Button
+                    disabled={
+                      borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
+                    }
+                    onClick={handleLoanUpdate}
+                    fontSize={14}
+                  >
+                    <Trans>Confirm</Trans>
+                  </Button>
+                </>
+              ) : (
+                <Button onClick={handleEnableAdjusting} fontSize={14}>
+                  {buttonText}
                 </Button>
-              </>
-            ) : (
-              <Button onClick={handleEnableAdjusting} fontSize={14}>
-                {buttonText}
-              </Button>
-            )}
+              )}
+            </Flex>
           </Flex>
-        </Flex>
 
-        {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Used`} />}
+          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Used`} />}
 
-        <Box marginY={6}>
-          <Nouislider
-            disabled={!isAdjusting}
-            id="slider-loan"
-            start={[borrowedAmount.dp(2).toNumber()]}
-            padding={[Math.max(Math.min(usedAmount.dp(2).toNumber(), _totalBorrowableAmount.dp(2).toNumber()), 0), 0]}
-            connect={[true, false]}
-            range={{
-              min: [0],
-              // https://github.com/balancednetwork/balanced-network-interface/issues/50
-              max: [
-                isNaN(_totalBorrowableAmount.dp(2).toNumber()) || _totalBorrowableAmount.dp(2).isZero()
-                  ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                  : _totalBorrowableAmount.dp(2).toNumber(),
-              ],
-            }}
-            instanceRef={instance => {
-              if (instance) {
-                sliderInstance.current = instance;
-              }
-            }}
-            onSlide={onSlide}
-          />
-        </Box>
-
-        <PanelInfoWrap>
-          <PanelInfoItem>
-            {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
-              <CurrencyField
-                editable={isAdjusting}
-                isActive
-                label={t`Borrowed`}
-                tooltipText={t`Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan.`}
-                noticeShow={isLessThanMinimum}
-                noticeText={t`10 bnUSD minimum`}
-                value={formattedAmounts[Field.LEFT]}
-                currency={'bnUSD'}
-                onUserInput={onFieldAInput}
-              />
-            ) : (
-              <CurrencyField
-                editable={isAdjusting}
-                isActive
-                label={t`Borrowed`}
-                tooltipText={t`Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan.`}
-                value={formattedAmounts[Field.LEFT]}
-                currency={'bnUSD'}
-                onUserInput={onFieldAInput}
-              />
-            )}
-          </PanelInfoItem>
-
-          <PanelInfoItem>
-            <CurrencyField
-              editable={isAdjusting}
-              isActive={false}
-              label={t`Available`}
-              tooltipText={t`The amount of ICX available to deposit from your wallet.`}
-              value={formattedAmounts[Field.RIGHT]}
-              currency={'bnUSD'}
-              onUserInput={onFieldBInput}
+          <Box marginY={6}>
+            <Nouislider
+              disabled={!isAdjusting}
+              id="slider-loan"
+              start={[borrowedAmount.dp(2).toNumber()]}
+              padding={[Math.max(Math.min(usedAmount.dp(2).toNumber(), _totalBorrowableAmount.dp(2).toNumber()), 0), 0]}
+              connect={[true, false]}
+              range={{
+                min: [0],
+                // https://github.com/balancednetwork/balanced-network-interface/issues/50
+                max: [
+                  isNaN(_totalBorrowableAmount.dp(2).toNumber()) || _totalBorrowableAmount.dp(2).isZero()
+                    ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
+                    : _totalBorrowableAmount.dp(2).toNumber(),
+                ],
+              }}
+              instanceRef={instance => {
+                if (instance) {
+                  sliderInstance.current = instance;
+                }
+              }}
+              onSlide={onSlide}
             />
-          </PanelInfoItem>
-        </PanelInfoWrap>
-      </BoxPanel>
+          </Box>
+          <PanelInfoWrap>
+            <PanelInfoItem>
+              {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
+                <CurrencyField
+                  editable={isAdjusting}
+                  isActive
+                  label="Borrowed"
+                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                  noticeShow={isLessThanMinimum}
+                  noticeText={'10 bnUSD minimum'}
+                  value={formattedAmounts[Field.LEFT]}
+                  currency={'bnUSD'}
+                  onUserInput={onFieldAInput}
+                />
+              ) : (
+                <CurrencyField
+                  editable={isAdjusting}
+                  isActive
+                  label="Borrowed"
+                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                  value={formattedAmounts[Field.LEFT]}
+                  currency={'bnUSD'}
+                  onUserInput={onFieldAInput}
+                />
+              )}
+            </PanelInfoItem>
+
+            <PanelInfoItem>
+              <CurrencyField
+                editable={isAdjusting}
+                isActive={false}
+                label="Available"
+                tooltipText="The amount of ICX available to deposit from your wallet."
+                value={formattedAmounts[Field.RIGHT]}
+                currency={'bnUSD'}
+                onUserInput={onFieldBInput}
+              />
+            </PanelInfoItem>
+          </PanelInfoWrap>
+        </BoxPanel>
+      </BoxPanelWrap>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>

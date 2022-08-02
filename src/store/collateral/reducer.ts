@@ -1,13 +1,24 @@
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { CurrencyKey } from 'types';
+import { CurrencyKey, IcxDisplayType } from 'types';
 
-import { changeDepositedAmount, changeCollateralType, adjust, cancel, type, Field } from './actions';
+import {
+  changeDepositedAmount,
+  changeCollateralType,
+  changeIcxDisplayType,
+  adjust,
+  cancel,
+  type,
+  Field,
+} from './actions';
 
 export interface CollateralState {
   depositedAmount: BigNumber;
   collateralType: CurrencyKey;
+  icxDisplayType: IcxDisplayType;
+  depositedAmounts: CurrencyAmount<Currency>[];
 
   // collateral panel UI state
   state: {
@@ -21,8 +32,8 @@ export interface CollateralState {
 const initialState: CollateralState = {
   depositedAmount: new BigNumber(0),
   collateralType: 'ICX',
-
-  // collateral panel UI state
+  icxDisplayType: 'ICX',
+  depositedAmounts: [],
   state: {
     isAdjusting: false,
     typedValue: '',
@@ -50,5 +61,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(changeCollateralType, (state, { payload: { collateralType } }) => {
       state.collateralType = collateralType;
+    })
+    .addCase(changeIcxDisplayType, (state, { payload: { icxDisplayType } }) => {
+      state.icxDisplayType = icxDisplayType;
     }),
 );

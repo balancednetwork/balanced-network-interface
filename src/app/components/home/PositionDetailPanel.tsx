@@ -22,7 +22,7 @@ import { ZERO } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useRatesQuery } from 'queries/reward';
-import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
+import { useCollateralInputAmount, useCollateralInputAmountInUSD, useIcxDisplayType } from 'store/collateral/hooks';
 import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY, useLoanParameters } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
@@ -96,6 +96,7 @@ const PositionDetailPanel = () => {
   const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
+  const icxDisplayType = useIcxDisplayType();
   const heightenBars =
     (useMedia('(max-width: 359px)') && 'es-ES,nl-NL,de-DE,fr-FR'.indexOf(locale) >= 0) || 'pl-PL'.indexOf(locale) >= 0;
 
@@ -122,6 +123,7 @@ const PositionDetailPanel = () => {
   const [lockThresholdPrice, liquidationThresholdPrice] = useThresholdPrices();
 
   const currentRatio = useCurrentCollateralRatio();
+
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
 
   const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
@@ -353,7 +355,15 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex sx={{ position: 'relative' }}>
               <Box width={1 / 2}>
-                <Typography variant="p">{formatBigNumber(totalCollateralSold, 'currency')} sICX</Typography>
+                <Typography variant="p">
+                  {formatBigNumber(
+                    icxDisplayType === 'ICX'
+                      ? data?.totalCollateralSold.times(ratio.sICXICXratio)
+                      : data?.totalCollateralSold,
+                    'currency',
+                  )}
+                  {` ${icxDisplayType}`}
+                </Typography>
                 <Typography mt={1} sx={{ position: 'relative' }}>
                   <Trans>Collateral</Trans>
                   <RebalancingTooltipArrow

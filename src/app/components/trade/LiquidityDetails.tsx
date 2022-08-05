@@ -425,7 +425,12 @@ const PoolRecord = ({
     <>
       <ListItem>
         <StyledDataText>
-          <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
+          {aBalance.currency.symbol == 'bnUSD' ||
+          (aBalance.currency.symbol == 'sICX' && bBalance.currency.symbol == 'BALN') ? (
+            <DataText>{`${bBalance.currency.symbol || '...'} / ${aBalance.currency.symbol || '...'}`}</DataText>
+          ) : (
+            <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
+          )}
           <StyledArrowDownIcon />
         </StyledDataText>
         <DataText>

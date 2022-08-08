@@ -3,6 +3,7 @@ import React, { useState, /* useCallback,*/ useEffect } from 'react';
 import { Trans /* t */ } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass/styled-components';
+import styled from 'styled-components';
 
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
@@ -16,6 +17,19 @@ enum PanelType {
   YourPools,
   AllPools,
 }
+
+const Wrapper = styled(Flex)`
+  flex-direction: column;
+  align-items: start;
+  margin-bottom: 30px;
+  gap: 12px;
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  `}
+`;
 
 export default function LiquidityPoolsPanel() {
   const { account } = useIconReact();
@@ -42,14 +56,14 @@ export default function LiquidityPoolsPanel() {
 
   return (
     <BoxPanel bg="bg2" mb={10}>
-      <Flex alignItems="center" justifyContent="space-between" mb={5}>
-        <Flex alignItems="center">
-          <Typography variant="h2" mr={4}>
-            <Trans>Liquidity pools</Trans>
-          </Typography>
+      <Wrapper>
+        <Typography variant="h2">
+          <Trans>Liquidity pools</Trans>
+        </Typography>
 
-          {account && (
-            <ChartControlGroup>
+        {account && (
+          <ChartControlGroup>
+            {hasLiquidity && (
               <ChartControlButton
                 type="button"
                 onClick={() => handleSwitch(PanelType.YourPools)}
@@ -57,16 +71,16 @@ export default function LiquidityPoolsPanel() {
               >
                 <Trans>Your pools</Trans>
               </ChartControlButton>
-              <ChartControlButton
-                type="button"
-                onClick={() => handleSwitch(PanelType.AllPools)}
-                active={panelType === PanelType.AllPools}
-              >
-                <Trans>All pools</Trans>
-              </ChartControlButton>
-            </ChartControlGroup>
-          )}
-        </Flex>
+            )}
+            <ChartControlButton
+              type="button"
+              onClick={() => handleSwitch(PanelType.AllPools)}
+              active={panelType === PanelType.AllPools}
+            >
+              <Trans>All pools</Trans>
+            </ChartControlButton>
+          </ChartControlGroup>
+        )}
 
         {/* !todo: implement search box  */}
         {/* <SearchInput
@@ -78,7 +92,7 @@ export default function LiquidityPoolsPanel() {
           onChange={handleInput}
           style={{ maxWidth: '400px' }}
         /> */}
-      </Flex>
+      </Wrapper>
 
       {panelType === PanelType.YourPools ? <LiquidityDetails /> : <AllPoolsPanel />}
     </BoxPanel>

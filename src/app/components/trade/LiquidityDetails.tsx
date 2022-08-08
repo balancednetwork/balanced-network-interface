@@ -90,10 +90,17 @@ export const useHasLiquidity = (): boolean => {
     (JSBI.greaterThan(queueBalance.balance.quotient, BIGINT_ZERO) ||
       (queueBalance.balance1 && JSBI.greaterThan(queueBalance.balance1.quotient, BIGINT_ZERO)));
 
-  const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
+  const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
+  const userPools = Object.keys(pairsWithoutQ).filter(
+    poolId =>
+      balances[poolId] &&
+      (Number(balances[poolId].balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
+        Number(balances[poolId].stakedLPBalance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL),
+  );
 
-  return !!shouldShowQueue || !!balancesWithoutQ;
+  return !!shouldShowQueue || !!userPools.length;
 };
+
 const MotionBoxPanel = motion(BoxPanel);
 
 export default function LiquidityDetails() {

@@ -4,11 +4,13 @@ import BigNumber from 'bignumber.js';
 import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, adjust, cancel, type, Field } from './actions';
 
 export interface LoanState {
-  borrowedAmount: BigNumber;
   badDebt: BigNumber;
   totalSupply: BigNumber;
   totalRepaid: BigNumber;
   totalCollateralSold: BigNumber;
+  borrowedAmounts: {
+    [key in string]: BigNumber;
+  };
 
   // loan panel UI state
   state: {
@@ -20,11 +22,11 @@ export interface LoanState {
 }
 
 const initialState: LoanState = {
-  borrowedAmount: new BigNumber(0),
   badDebt: new BigNumber(0),
   totalSupply: new BigNumber(0),
   totalRepaid: new BigNumber(0),
   totalCollateralSold: new BigNumber(0),
+  borrowedAmounts: {},
 
   // loan panel UI state
   state: {
@@ -49,8 +51,10 @@ export default createReducer(initialState, builder =>
       state.state.typedValue = typedValue ?? state.state.typedValue;
       state.state.inputType = inputType || state.state.inputType;
     })
-    .addCase(changeBorrowedAmount, (state, { payload: { borrowedAmount } }) => {
-      state.borrowedAmount = borrowedAmount;
+    .addCase(changeBorrowedAmount, (state, { payload: { borrowedAmount, collateralType } }) => {
+      const updatedAmounts = { ...state.borrowedAmounts };
+      updatedAmounts[collateralType] = borrowedAmount;
+      state.borrowedAmounts = updatedAmounts;
     })
     .addCase(changeBadDebt, (state, { payload: { badDebt } }) => {
       state.badDebt = badDebt;

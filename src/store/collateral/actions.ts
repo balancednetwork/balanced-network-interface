@@ -8,7 +8,9 @@ export enum Field {
   RIGHT = 'RIGHT',
 }
 
-export const changeDepositedAmount = createAction<{ depositedAmount: BigNumber }>('collateral/changeDepositedAmount');
+export const changeDepositedAmount = createAction<{ depositedAmount: BigNumber; token: string }>(
+  'collateral/changeDepositedAmount',
+);
 
 export const changeCollateralType = createAction<{ collateralType: CurrencyKey }>('collateral/changeCollateralType');
 

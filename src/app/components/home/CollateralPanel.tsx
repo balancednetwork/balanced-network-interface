@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
+import { addresses } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
@@ -16,8 +17,8 @@ import Modal from 'app/components/Modal';
 import { BoxPanel, BoxPanelWrap } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
-import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import useWidth from 'hooks/useWidth';
@@ -25,25 +26,23 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
-  useCollateralDepositedAmountInICX,
-  useCollateralDepositedAmount,
-  useCollateralTotalICXAmount,
-  useCollateralTotalSICXAmount,
   useCollateralActionHandlers,
   useIcxDisplayType,
-  useCollateralChangeIcxDisplayType,
+  useCollateralType,
+  useDepositedCollateral,
+  useTotalCollateral,
+  useSupportedCollateralTokens,
 } from 'store/collateral/hooks';
-import { useLockedICXAmount, useLockedSICXAmount, useLoanActionHandlers } from 'store/loan/hooks';
+import { useLoanActionHandlers, useLockedCollateralAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { IcxDisplayType } from 'types';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from '../CollateralTypeSwitcher';
+import ICXDisplayTypeSwitcher from '../ICXDisplayTypeSwitcher';
 import ModalContent from '../ModalContent';
-import { MouseoverTooltip } from '../Tooltip';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -85,50 +84,13 @@ export const PanelInfoItem = styled(Box)`
   }
 `;
 
-const CollateralTypeUI = styled.div`
-  position: static;
-  display: flex;
-  padding: 35px 25px 15px;
-  margin-top: -20px;
-  background-color: ${({ theme }) => theme.colors.bg2};
-  border-radius: 0 0 10px 10px;
-
-  svg {
-    margin-top: 10px;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 35px 35px 15px;
-  `}
-`;
-
-const CollateralTypeButton = styled.div`
-  border-radius: 100px;
-  padding: 1px 12px;
-  margin-right: 5px;
-  color: #ffffff;
-  font-size: 14px;
-  background-color: #144a68;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  &:not(.active):hover {
-    background-color: #087083;
-  }
-
-  &.active {
-    cursor: default;
-    background-color: #2ca9b7;
-  }
-`;
-
 const CollateralPanel = () => {
   const { account } = useIconReact();
   const icxDisplayType = useIcxDisplayType();
-  const collateralChangeIcxDisplayType = useCollateralChangeIcxDisplayType();
-  const [userChoseIcxDisplayType, setUserChoseIcxDisplayType] = useState<boolean>(false);
   const ratio = useRatio();
   const locale = useActiveLocale();
+  const collateralType = useCollateralType();
+  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
 
   const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '359px'})`);
 
@@ -142,8 +104,6 @@ const CollateralPanel = () => {
   const { independentField, typedValue, isAdjusting, inputType } = useCollateralState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
-  // const typedValueIcxDisplayDypeDependent = icxDisplayType === 'ICX' ?
-
   const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
 
@@ -152,43 +112,31 @@ const CollateralPanel = () => {
     adjustLoan(false);
   };
 
-  const handleCancelAdjusting = () => {
+  const handleCancelAdjusting = useCallback(() => {
     adjust(false);
-  };
+  }, [adjust]);
 
-  //
-  const stakedICXAmount = useCollateralDepositedAmountInICX(); // collateral in ICX
-  const totalICXAmount = useCollateralTotalICXAmount();
+  const collateralDeposit = useDepositedCollateral();
+  const collateralTotal = useTotalCollateral();
 
-  const sICXAmount = useCollateralDepositedAmount(); // collateral in sICX
-  const totalSICXAmount = useCollateralTotalSICXAmount();
+  const shouldDisplayICXValues = collateralType === 'sICX' && icxDisplayType === 'ICX';
 
   //  calculate dependentField value
-  const parsedAmount = {
-    [independentField]:
-      icxDisplayType === 'ICX'
-        ? new BigNumber(typedValue || '0')
-        : new BigNumber(typedValue || '0').div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio),
-    [dependentField]:
-      icxDisplayType === 'ICX'
-        ? totalICXAmount.minus(new BigNumber(typedValue || '0'))
-        : totalSICXAmount.minus(
-            new BigNumber(typedValue || '0').div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio),
-          ),
-  };
+  const parsedAmount = useMemo(() => {
+    return {
+      [independentField]: new BigNumber(typedValue || '0'),
+      [dependentField]: collateralTotal.minus(new BigNumber(typedValue || '0')),
+    };
+  }, [independentField, dependentField, typedValue, collateralTotal]);
 
-  const formattedAmounts = {
-    [independentField]:
-      icxDisplayType === 'ICX'
-        ? typedValue
-        : new BigNumber(typedValue || '0')
-            .div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio)
-            .toFixed(2)
-            .toString(),
-    [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
-  };
+  const formattedAmounts = useMemo(() => {
+    return {
+      [independentField]: typedValue,
+      [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
+    };
+  }, [independentField, dependentField, typedValue, parsedAmount]);
 
-  const buttonText = stakedICXAmount.isZero() ? t`Deposit` : t`Adjust`;
+  const buttonText = collateralDeposit.isZero() ? t`Deposit` : t`Adjust`;
 
   // collateral confirm modal logic & value
   const [open, setOpen] = React.useState(false);
@@ -199,21 +147,12 @@ const CollateralPanel = () => {
     changeShouldLedgerSign(false);
   };
 
-  const smallSp = useMedia('(max-width: 360px)');
-
-  //before
-  const beforeAmount = icxDisplayType === 'ICX' ? stakedICXAmount : sICXAmount;
-  //after
+  const beforeAmount = collateralDeposit;
   const afterAmount = parsedAmount[Field.LEFT];
-  //difference = after-before
   const differenceAmount = afterAmount.minus(beforeAmount);
-  const differenceAmountInSICX = differenceAmount.div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio);
-  //collateral amount
-  const collateralAmount = differenceAmount.abs();
-  //whether if deposit or withdraw
+  const collateralDifference = differenceAmount.abs();
   const shouldDeposit = differenceAmount.isPositive();
 
-  //
   const addTransaction = useTransactionAdder();
 
   const handleCollateralConfirm = async () => {
@@ -225,28 +164,35 @@ const CollateralPanel = () => {
 
     if (shouldDeposit) {
       try {
-        if (icxDisplayType === 'ICX') {
+        if (shouldDisplayICXValues) {
           const { result: hash } = await bnJs
             .inject({ account })
-            .Loans.depositAndBorrow(parseUnits(collateralAmount.toFixed()));
+            .Loans.depositAndBorrow(parseUnits(collateralDifference.toFixed()));
 
           addTransaction(
             { hash },
             {
               pending: t`Depositing collateral...`,
-              summary: t`Deposited ${collateralAmount.dp(2).toFormat()} ICX as collateral.`,
+              summary: t`Deposited ${collateralDifference.dp(2).toFormat()} ICX as collateral.`,
             },
           );
         } else {
+          const collateralTokenAddress = supportedCollateralTokens && supportedCollateralTokens[collateralType];
+          const transferData = { _asset: '', _amount: 0 };
           const { result: hash } = await bnJs
             .inject({ account })
-            .sICX.depositAndBorrow(parseUnits(collateralAmount.toFixed()));
+            .getContract(collateralTokenAddress!)
+            .transfer(
+              addresses[NETWORK_ID].loans,
+              parseUnits(collateralDifference.toFixed()),
+              JSON.stringify(transferData),
+            );
 
           addTransaction(
             { hash },
             {
               pending: t`Depositing collateral...`,
-              summary: t`Deposited ${collateralAmount.toFixed(2)} sICX as collateral.`,
+              summary: t`Deposited ${collateralDifference.toFixed(2)} sICX as collateral.`,
             },
           );
         }
@@ -266,18 +212,18 @@ const CollateralPanel = () => {
       try {
         const collateralAmountInSICX =
           icxDisplayType === 'ICX'
-            ? collateralAmount.div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio)
-            : collateralAmount;
+            ? collateralDifference.div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio)
+            : collateralDifference;
 
         const { result: hash } = await bnJs
           .inject({ account })
-          .Loans.withdrawCollateral(parseUnits(collateralAmountInSICX.toFixed()));
+          .Loans.withdrawCollateral(parseUnits(collateralAmountInSICX.toFixed()), collateralType);
 
         addTransaction(
           { hash },
           {
             pending: t`Withdrawing collateral...`,
-            summary: t`${collateralAmountInSICX.dp(2).toFormat()} sICX added to your wallet.`,
+            summary: t`${collateralAmountInSICX.dp(2).toFormat()} ${collateralType} added to your wallet.`,
           },
         );
 
@@ -295,21 +241,13 @@ const CollateralPanel = () => {
     }
   };
 
-  const handleChangeIcxDisplayType = (type: IcxDisplayType) => {
-    collateralChangeIcxDisplayType(type);
-    handleCancelAdjusting();
-    setUserChoseIcxDisplayType(true);
-  };
-
   // reset collateral ui state if cancel adjusting
   // change typedValue if sICX and ratio changes
   React.useEffect(() => {
     if (!isAdjusting) {
-      onFieldAInput(
-        stakedICXAmount.isZero() ? '0' : icxDisplayType === 'ICX' ? stakedICXAmount.toFixed(2) : sICXAmount.toFixed(2),
-      );
+      onFieldAInput(collateralDeposit.isZero() ? '0' : collateralDeposit.toFixed(2));
     }
-  }, [onFieldAInput, stakedICXAmount, isAdjusting, sICXAmount, icxDisplayType]);
+  }, [onFieldAInput, collateralDeposit, isAdjusting]);
 
   // optimize slider performance
   // change slider value if only a user types
@@ -319,42 +257,23 @@ const CollateralPanel = () => {
     }
   }, [afterAmount, inputType]);
 
-  // default icx display to 'ICX' instead of 'sICX' if deposited collateral equals zero
-  React.useEffect(() => {
-    if (!userChoseIcxDisplayType) {
-      if (stakedICXAmount.isZero()) {
-        collateralChangeIcxDisplayType('ICX');
-      } else {
-        collateralChangeIcxDisplayType('sICX');
-      }
-    }
-  }, [stakedICXAmount, collateralChangeIcxDisplayType, userChoseIcxDisplayType]);
-
   // display locked sICX for borrowed bnUSD
-  const lockedICXAmount = useLockedICXAmount();
-  const lockedSICXAmount = useLockedSICXAmount();
+  //TODOXX
+  // const lockedICXAmount = useLockedICXAmount();
+  // const lockedSICXAmount = useLockedSICXAmount();
 
-  const shouldShowLock = !lockedICXAmount.isZero();
+  const lockedCollateral = useLockedCollateralAmount();
+
+  const shouldShowLock = !lockedCollateral.isZero();
 
   // add one more ICX to the locked marker if user has debt to remove insufficient error.
-  const tLockedICXAmount = React.useMemo(
-    () => BigNumber.min(lockedICXAmount.plus(shouldShowLock ? 1 : 0), totalICXAmount),
-    [lockedICXAmount, totalICXAmount, shouldShowLock],
+  //TODOXX
+  const tLockedAmount = React.useMemo(
+    () => BigNumber.min(lockedCollateral.plus(shouldShowLock ? 1 : 0), collateralTotal),
+    [lockedCollateral, collateralTotal, shouldShowLock],
   );
 
-  const tLockedSICXAmount = React.useMemo(
-    () => BigNumber.min(lockedSICXAmount.plus(shouldShowLock ? 1 : 0), totalSICXAmount),
-    [lockedSICXAmount, totalSICXAmount, shouldShowLock],
-  );
-
-  const percent =
-    icxDisplayType === 'ICX'
-      ? totalICXAmount.isZero()
-        ? 0
-        : tLockedICXAmount.div(totalICXAmount).times(100).toNumber()
-      : totalSICXAmount.isZero()
-      ? 0
-      : tLockedSICXAmount.div(totalSICXAmount).times(100).toNumber();
+  const percent = collateralTotal.isZero() ? 0 : tLockedAmount.div(collateralTotal).times(100).toNumber();
 
   const hasEnoughICX = useHasEnoughICX();
 
@@ -396,24 +315,12 @@ const CollateralPanel = () => {
             <Nouislider
               id="slider-collateral"
               disabled={!isAdjusting}
-              start={[icxDisplayType === 'ICX' ? stakedICXAmount.dp(2).toNumber() : sICXAmount.dp(2).toNumber()]}
-              padding={
-                icxDisplayType === 'ICX'
-                  ? [Math.max(tLockedICXAmount.dp(2).toNumber(), 0), 0]
-                  : [Math.max(tLockedSICXAmount.dp(2).toNumber(), 0), 0]
-              }
+              start={collateralDeposit.toNumber()}
+              padding={[Math.max(tLockedAmount.dp(2).toNumber(), 0), 0]}
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [
-                  icxDisplayType === 'ICX'
-                    ? totalICXAmount.isZero()
-                      ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                      : totalICXAmount.dp(2).toNumber()
-                    : totalSICXAmount.isZero()
-                    ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                    : totalSICXAmount.dp(2).toNumber(),
-                ],
+                max: [collateralTotal.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : collateralTotal.dp(2).toNumber()],
               }}
               instanceRef={instance => {
                 if (instance) {
@@ -432,8 +339,8 @@ const CollateralPanel = () => {
                 label="Deposited"
                 tooltip={false}
                 value={formattedAmounts[Field.LEFT]}
-                currency={icxDisplayType}
-                maxValue={icxDisplayType === 'ICX' ? totalICXAmount : totalSICXAmount}
+                currency={shouldDisplayICXValues ? 'ICX' : collateralType}
+                maxValue={collateralTotal}
                 onUserInput={onFieldAInput}
               />
             </PanelInfoItem>
@@ -443,43 +350,16 @@ const CollateralPanel = () => {
                 editable={isAdjusting}
                 isActive={false}
                 label="Wallet"
-                tooltipText="The amount of ICX available to deposit from your wallet."
+                tooltipText={collateralType === 'sICX' && 'The amount of ICX available to deposit from your wallet.'}
                 value={formattedAmounts[Field.RIGHT]}
-                currency={icxDisplayType}
-                maxValue={icxDisplayType === 'ICX' ? totalICXAmount : totalSICXAmount}
+                currency={shouldDisplayICXValues ? 'ICX' : collateralType}
+                maxValue={collateralTotal}
                 onUserInput={onFieldBInput}
               />
             </PanelInfoItem>
           </PanelInfoWrap>
         </BoxPanel>
-        <CollateralTypeUI>
-          <CollateralTypeButton
-            className={icxDisplayType === 'ICX' ? `active` : ''}
-            onClick={() => handleChangeIcxDisplayType('ICX')}
-          >
-            {`ICX`}
-          </CollateralTypeButton>
-          <CollateralTypeButton
-            className={icxDisplayType === 'sICX' ? `active` : ''}
-            onClick={() => handleChangeIcxDisplayType('sICX')}
-          >
-            {`sICX`}
-          </CollateralTypeButton>
-          <MouseoverTooltip
-            text={
-              <Box>
-                <Typography>
-                  View and manage your collateral as ICX or sICX (Staked ICX).
-                  <LineBreak />
-                  The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset.
-                </Typography>
-              </Box>
-            }
-            placement="top"
-          >
-            {!smallSp && <QuestionIcon width={14} color="text1" style={{ marginTop: 4, color: '#D5D7DB' }} />}
-          </MouseoverTooltip>
-        </CollateralTypeUI>
+        <ICXDisplayTypeSwitcher handleCancelAdjusting={handleCancelAdjusting} />
       </BoxPanelWrap>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
@@ -489,11 +369,11 @@ const CollateralPanel = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.dp(2).toFormat() + (icxDisplayType === 'ICX' ? ' ICX' : ' sICX')}
+            {differenceAmount.dp(2).toFormat() + (shouldDisplayICXValues ? ' ICX' : ` ${collateralType}`)}
           </Typography>
 
-          {!shouldDeposit && icxDisplayType === 'ICX' && (
-            <Typography textAlign="center">{differenceAmountInSICX.dp(2).toFormat() + ' sICX'}</Typography>
+          {!shouldDeposit && shouldDisplayICXValues && (
+            <Typography textAlign="center">{collateralDifference.dp(2).toFormat() + ' sICX'}</Typography>
           )}
 
           <Flex my={5}>
@@ -502,7 +382,7 @@ const CollateralPanel = () => {
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(2).toFormat() + (icxDisplayType === 'ICX' ? ' ICX' : ' sICX')}
+                {beforeAmount.dp(2).toFormat() + (shouldDisplayICXValues ? ' ICX' : ` ${collateralType}`)}
               </Typography>
             </Box>
 
@@ -511,12 +391,12 @@ const CollateralPanel = () => {
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(2).toFormat() + (icxDisplayType === 'ICX' ? ' ICX' : ' sICX')}
+                {afterAmount.dp(2).toFormat() + (shouldDisplayICXValues ? ' ICX' : ` ${collateralType}`)}
               </Typography>
             </Box>
           </Flex>
 
-          {icxDisplayType === 'ICX' && (
+          {shouldDisplayICXValues && (
             <Typography textAlign="center">
               {shouldDeposit ? (
                 <>
@@ -530,7 +410,7 @@ const CollateralPanel = () => {
             </Typography>
           )}
 
-          <Flex justifyContent="center" mt={icxDisplayType === 'ICX' ? 4 : 0} pt={4} className="border-top">
+          <Flex justifyContent="center" mt={shouldDisplayICXValues ? 4 : 0} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>

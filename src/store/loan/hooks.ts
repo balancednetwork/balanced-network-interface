@@ -1,24 +1,37 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { useBnJsContractQuery } from 'queries/utils';
-import { useCollateralInputAmount } from 'store/collateral/hooks';
+import {
+  DEFAULT_COLLATERAL_TOKEN,
+  useCollateralInputAmountAbsolute,
+  useCollateralType,
+  useIsHandlingICX,
+} from 'store/collateral/hooks';
+import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { toBigNumber } from 'utils';
+import { formatUnits, toBigNumber } from 'utils';
 
 import { AppState } from '..';
 import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, Field, adjust, cancel, type } from './actions';
 
-export function useLoanBorrowedAmount(): AppState['loan']['borrowedAmount'] {
-  return useSelector((state: AppState) => state.loan.borrowedAmount);
+export function useLoanBorrowedAmount(): BigNumber {
+  const borrowedAmounts = useBorrowedAmounts();
+  const collateralType = useCollateralType();
+  return borrowedAmounts[collateralType] ? borrowedAmounts[collateralType] : new BigNumber(0);
+}
+
+export function useBorrowedAmounts(): AppState['loan']['borrowedAmounts'] {
+  return useSelector((state: AppState) => state.loan.borrowedAmounts);
 }
 
 export function useLoanBadDebt(): AppState['loan']['badDebt'] {
@@ -29,11 +42,11 @@ export function useLoanTotalSupply(): AppState['loan']['totalSupply'] {
   return useSelector((state: AppState) => state.loan.totalSupply);
 }
 
-export function useLoanChangeBorrowedAmount(): (borrowedAmount: BigNumber) => void {
+export function useLoanChangeBorrowedAmount(): (borrowedAmount: BigNumber, collateralType?: string) => void {
   const dispatch = useDispatch();
   return React.useCallback(
-    (borrowedAmount: BigNumber) => {
-      dispatch(changeBorrowedAmount({ borrowedAmount }));
+    (borrowedAmount: BigNumber, collateralType: string = DEFAULT_COLLATERAL_TOKEN) => {
+      dispatch(changeBorrowedAmount({ borrowedAmount, collateralType }));
     },
     [dispatch],
   );
@@ -79,13 +92,14 @@ export function useLoanFetchInfo(account?: string | null) {
             : new BigNumber(0);
           const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
 
-          const bnUSDDebt = resultDebt['assets']
-            ? BalancedJs.utils.toIcx(resultDebt['assets']['bnUSD'] || '0')
-            : new BigNumber(0);
+          resultDebt.holdings &&
+            Object.keys(resultDebt.holdings).forEach(token => {
+              const depositedAmount = new BigNumber(formatUnits(resultDebt.holdings[token]['bnUSD'] || 0));
+              changeBorrowedAmount(depositedAmount, token);
+            });
 
           changeBadDebt(bnUSDbadDebt);
           changeTotalSupply(bnUSDTotalSupply);
-          changeBorrowedAmount(bnUSDDebt);
         });
       }
     },
@@ -148,14 +162,17 @@ export function useLoanActionHandlers() {
 }
 
 export function useLoanTotalBorrowableAmount() {
-  const ratio = useRatio();
+  const collateralAmount = useCollateralInputAmountAbsolute();
+  const lockingRatio = useLockingRatio();
+  const oraclePrice = useOraclePrice();
 
-  const stakedICXAmount = useCollateralInputAmount();
-  const loanParameters = useLoanParameters();
-  const { lockingRatio } = loanParameters || {};
-
-  if (lockingRatio) return stakedICXAmount.multipliedBy(ratio.ICXUSDratio).div(lockingRatio);
-  else return ZERO;
+  return useMemo(() => {
+    if (collateralAmount && lockingRatio && oraclePrice) {
+      return collateralAmount.multipliedBy(oraclePrice).div(lockingRatio);
+    } else {
+      return ZERO;
+    }
+  }, [lockingRatio, collateralAmount, oraclePrice]);
 }
 
 export function useLoanInputAmount() {
@@ -199,6 +216,23 @@ export function useLockedSICXAmount() {
     const icxLockedAmount = bnUSDLoanAmount.multipliedBy(lockingRatio || 0).div(price);
     return icxLockedAmount.div(sicxIcxRatio);
   }, [bnUSDLoanAmount, ratio.ICXUSDratio, ratio.sICXICXratio, lockingRatio]);
+}
+
+export function useLockedCollateralAmount() {
+  const oraclePrice = useOraclePrice();
+  const bnUSDLoanAmount = useLoanInputAmount();
+  const lockingRatio = useLockingRatio();
+  const isHandlingICX = useIsHandlingICX();
+  const ratio = useRatio();
+
+  return useMemo(() => {
+    if (lockingRatio && oraclePrice && bnUSDLoanAmount && ratio?.sICXICXratio) {
+      const lockedAmount = bnUSDLoanAmount.multipliedBy(lockingRatio).div(oraclePrice);
+      return isHandlingICX ? lockedAmount.multipliedBy(ratio.sICXICXratio) : lockedAmount;
+    } else {
+      return new BigNumber(0);
+    }
+  }, [bnUSDLoanAmount, lockingRatio, oraclePrice, isHandlingICX, ratio]);
 }
 
 export function useLoanDebtHoldingShare() {
@@ -247,6 +281,33 @@ export function useLoanAPY(): BigNumber | undefined {
   }, [totalLoanDailyRewards, ratio.BALNbnUSDratio, totalbnUSDDebt]);
 }
 
+function useLockingRatioRaw() {
+  const collateralType = useCollateralType();
+  return useQuery(`${collateralType}LockingRatio`, async () => {
+    const data = await bnJs.Loans.getLockingRatio(collateralType);
+    return data;
+  });
+}
+
+export function useLockingRatio() {
+  const { data: rawRatio } = useLockingRatioRaw();
+  return rawRatio && Number(formatUnits(rawRatio, 4, 6));
+}
+
+function useLiquidationRatioRaw() {
+  const collateralType = useCollateralType();
+  return useQuery(`${collateralType}LiquidationRatio`, async () => {
+    const data = await bnJs.Loans.getLiquidationRatio(collateralType);
+    return data;
+  });
+}
+
+export function useLiquidationRatio() {
+  const { data: rawRatio } = useLiquidationRatioRaw();
+  return rawRatio && Number(formatUnits(rawRatio, 4, 6));
+}
+
+//deprecate
 export function useLoanParameters() {
   const query = useBnJsContractQuery<any>('Loans', 'getParameters', [], false);
 
@@ -261,3 +322,45 @@ export function useLoanParameters() {
     };
   }
 }
+
+export const useThresholdPrices = (): [BigNumber, BigNumber] => {
+  const collateralInputAmount = useCollateralInputAmountAbsolute();
+  const loanInputAmount = useLoanInputAmount();
+  const lockingRatio = useLockingRatio();
+  const liquidationRatio = useLiquidationRatio();
+
+  return React.useMemo(() => {
+    if (collateralInputAmount && !collateralInputAmount.isZero() && lockingRatio && liquidationRatio) {
+      return [
+        loanInputAmount.div(collateralInputAmount).times(lockingRatio),
+        loanInputAmount.div(collateralInputAmount).times(liquidationRatio),
+      ];
+    }
+
+    return [new BigNumber(0), new BigNumber(0)];
+  }, [collateralInputAmount, loanInputAmount, lockingRatio, liquidationRatio]);
+};
+
+//TODOXX: refactor for other collateral types
+export const useOwnDailyRewards = (): BigNumber => {
+  const debtHoldShare = useLoanDebtHoldingShare();
+
+  const rewards = useRewards();
+
+  const totalDailyRewards = rewards['Loans'] || ZERO;
+
+  return totalDailyRewards.times(debtHoldShare).div(100);
+};
+
+export const useCollateralLockedSliderPos = () => {
+  const lockingRatio = useLockingRatio();
+  const liquidationRatio = useLiquidationRatio();
+
+  return React.useMemo(() => {
+    if (lockingRatio && liquidationRatio) {
+      return (lockingRatio - liquidationRatio) / (9 - liquidationRatio);
+    }
+
+    return 0;
+  }, [lockingRatio, liquidationRatio]);
+};

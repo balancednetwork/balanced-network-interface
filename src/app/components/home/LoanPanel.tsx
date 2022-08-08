@@ -18,10 +18,10 @@ import { Typography } from 'app/theme';
 import { ReactComponent as InfoAbove } from 'assets/images/rebalancing-above.svg';
 import { ReactComponent as InfoBelow } from 'assets/images/rebalancing-below.svg';
 import bnJs from 'bnJs';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useCollateralActionHandlers } from 'store/collateral/hooks';
+import { useCollateralActionHandlers, useCollateralType } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
   useLoanBorrowedAmount,
@@ -41,6 +41,7 @@ import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
+  const collateralType = useCollateralType();
   const locale = useActiveLocale();
 
   const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '300px'})`);
@@ -71,7 +72,6 @@ const LoanPanel = () => {
 
   //
   const borrowedAmount = useLoanBorrowedAmount();
-
   const totalBorrowableAmount = useLoanTotalBorrowableAmount();
 
   //  calculate dependentField value
@@ -136,7 +136,7 @@ const LoanPanel = () => {
     if (shouldBorrow) {
       bnJs
         .inject({ account })
-        .Loans.depositAndBorrow(ZERO.toFixed(), { asset: 'bnUSD', amount: parseUnits(differenceAmount.toFixed()) })
+        .Loans.borrow(parseUnits(differenceAmount.toFixed()), collateralType)
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
@@ -160,7 +160,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .inject({ account })
-        .Loans.returnAsset('bnUSD', parseUnits(differenceAmount.abs().toFixed()), 1)
+        .Loans.returnAsset('bnUSD', parseUnits(differenceAmount.abs().toFixed()), collateralType)
         .then(res => {
           addTransaction(
             { hash: res.result },

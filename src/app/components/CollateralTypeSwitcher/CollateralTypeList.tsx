@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 import { useMedia } from 'react-use';
 import { Box } from 'rebass';
@@ -139,26 +139,39 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   const enter = useKeyPress('Enter');
   const escape = useKeyPress('Escape');
 
-  const filteredCollateralTypes = allCollateralData?.filter(
-    collateralType =>
-      collateralType.symbol.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0 ||
-      collateralType.name.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0,
+  const filteredCollateralTypes = useMemo(
+    () =>
+      allCollateralData?.filter(
+        collateralType =>
+          collateralType.collateral.currency.symbol!.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0 ||
+          collateralType.collateral.currency.name!.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0,
+      ),
+    [allCollateralData, searchQuery],
   );
 
   const { activeIndex, setActiveIndex } = useArrowControl(!!anchor, filteredCollateralTypes?.length || 0);
 
+  const handleCollateralTypeChange = useCallback(
+    symbol => {
+      setAnchor(null);
+      changeCollateralType(symbol);
+    },
+    [changeCollateralType, setAnchor],
+  );
+
   //on enter press
   useEffect(() => {
-    if (anchor && filteredCollateralTypes.length && enter) {
+    if (anchor && filteredCollateralTypes?.length && enter) {
       setAnchor(null);
-      activeIndex !== undefined && changeCollateralType(filteredCollateralTypes[activeIndex].symbol);
+      activeIndex !== undefined &&
+        changeCollateralType(filteredCollateralTypes[activeIndex].collateral.currency.symbol!);
     }
   }, [
     anchor,
     activeIndex,
     enter,
     filteredCollateralTypes,
-    filteredCollateralTypes.length,
+    filteredCollateralTypes?.length,
     changeCollateralType,
     setAnchor,
   ]);
@@ -197,7 +210,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
       ) : null}
 
       <GridWrap>
-        {filteredCollateralTypes.map((collateralType, i, { length }) => {
+        {filteredCollateralTypes?.map((collateralType, i, { length }) => {
           const isLast = length - 1 === i;
           const isFirst = 0 === i;
 
@@ -207,7 +220,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
               border={!isLast}
               negativeMargin={isFirst}
               hideCollateralInfoColumn={hideCollateralInfoColumn}
-              onClick={() => changeCollateralType(collateralType.symbol)}
+              onClick={() => handleCollateralTypeChange(collateralType.collateral.currency.symbol!)}
               onMouseEnter={() => setActiveIndex(i)}
               className={i === activeIndex ? 'active' : ''}
             >
@@ -215,11 +228,15 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
                 <AssetInfo>
                   <CurrencyLogo
                     size={'26px'}
-                    currency={SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType.symbol)}
+                    currency={SUPPORTED_TOKENS_LIST.find(
+                      token => token.symbol === collateralType.collateral.currency.symbol!,
+                    )}
                   />
                   <Box>
                     <Typography className="white" fontWeight={700}>
-                      {collateralType.displayName ?? collateralType.symbol}
+                      {collateralType.collateral.currency.symbol === 'sICX'
+                        ? 'ICX / sICX'
+                        : collateralType.collateral.currency.symbol}
                     </Typography>
                     <Typography className="grey">{'Available:'}</Typography>
                   </Box>
@@ -228,14 +245,14 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
 
               {!hideCollateralInfoColumn && (
                 <CollateralTypesGridItem>
-                  <Typography className="white">{`$${collateralType.collateralUsed.dp(2).toFormat()}`}</Typography>
-                  <Typography className="grey">{`$${collateralType.collateralAvailable.dp(2).toFormat()}`}</Typography>
+                  <Typography className="white">{`$0`}</Typography>
+                  <Typography className="grey">{`$0`}</Typography>
                 </CollateralTypesGridItem>
               )}
 
               <CollateralTypesGridItem>
-                <Typography className="white">{`$${collateralType.loanTaken.dp(2).toFormat()}`}</Typography>
-                <Typography className="grey">{`$${collateralType.loanAvailable.dp(2).toFormat()}`}</Typography>
+                <Typography className="white">{`$0`}</Typography>
+                <Typography className="grey">{`$0`}</Typography>
               </CollateralTypesGridItem>
             </CollateralTypesGrid>
           );

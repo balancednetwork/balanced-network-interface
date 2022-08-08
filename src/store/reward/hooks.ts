@@ -9,9 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { PLUS_INFINITY } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
-import { useCollateralInputAmount } from 'store/collateral/hooks';
+import { useCollateralInputAmountAbsolute } from 'store/collateral/hooks';
 import { useLoanInputAmount, useLoanParameters } from 'store/loan/hooks';
-import { useRatio } from 'store/ratio/hooks';
+import { useOraclePrice } from 'store/oracle/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -74,15 +74,15 @@ export function useFetchRewardsInfo() {
 }
 
 export const useCurrentCollateralRatio = (): BigNumber => {
-  const collateralInputAmount = useCollateralInputAmount();
+  const collateralInputAmount = useCollateralInputAmountAbsolute();
   const loanInputAmount = useLoanInputAmount();
-  const ratio = useRatio();
+  const oraclePrice = useOraclePrice();
 
   return React.useMemo(() => {
-    if (loanInputAmount.isZero()) return PLUS_INFINITY;
+    if (loanInputAmount.isZero() || !collateralInputAmount || !oraclePrice) return PLUS_INFINITY;
 
-    return collateralInputAmount.times(ratio.ICXUSDratio).dividedBy(loanInputAmount).multipliedBy(100);
-  }, [collateralInputAmount, loanInputAmount, ratio.ICXUSDratio]);
+    return collateralInputAmount.times(oraclePrice).dividedBy(loanInputAmount).multipliedBy(100);
+  }, [collateralInputAmount, loanInputAmount, oraclePrice]);
 };
 
 export const useHasRewardableLoan = () => {

@@ -13,6 +13,8 @@ import { MINUS_INFINITY, PLUS_INFINITY, ZERO } from 'constants/index';
 import { CurrencyKey } from 'types';
 import { escapeRegExp } from 'utils'; // match escaped "." characters via in a non-capturing group
 
+import { StyledSkeleton } from '../ProposalInfo';
+
 export const CheckBox = styled(Box)<{ isActive: boolean }>`
   width: 20px;
   height: 5px;
@@ -137,7 +139,11 @@ export const CurrencyField: React.FC<{
 
       {!editable && (
         <Typography variant="p" ml={isSmall ? 0 : 6} mt={1} fontSize={[16, 16, 16, 18]}>
-          {`${BigNumber.max(new BigNumber(value), ZERO).dp(2).toFormat()} ${currency}`}
+          {value !== 'NaN' ? (
+            `${BigNumber.max(new BigNumber(value), ZERO).dp(2).toFormat()} ${currency}`
+          ) : (
+            <StyledSkeleton width={80} animation="wave" />
+          )}
         </Typography>
       )}
 

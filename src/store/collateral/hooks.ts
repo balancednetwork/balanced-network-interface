@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
+import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { useOraclePrices } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { CurrencyKey, IcxDisplayType } from 'types';
-import { toBigNumber } from 'utils';
+import { formatUnits, toBigNumber } from 'utils';
 
 import { AppState } from '../index';
 import {
@@ -23,12 +26,14 @@ import {
   Field,
 } from './actions';
 
-export function useCollateralChangeDepositedAmount(): (depositedAmount: BigNumber) => void {
+export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
+
+export function useCollateralChangeDepositedAmount(): (depositedAmount: BigNumber, token?: string) => void {
   const dispatch = useDispatch();
 
   return React.useCallback(
-    (depositedAmount: BigNumber) => {
-      dispatch(changeDepositedAmount({ depositedAmount }));
+    (depositedAmount: BigNumber, token: string = DEFAULT_COLLATERAL_TOKEN) => {
+      dispatch(changeDepositedAmount({ depositedAmount, token }));
     },
     [dispatch],
   );
@@ -84,19 +89,25 @@ export function useCollateralAvailableAmountinSICX() {
   return sICXAmount;
 }
 
+export function useCollateralAmounts(): { [key in string]: BigNumber } {
+  return useSelector((state: AppState) => state.collateral.depositedAmounts);
+}
+
 export function useCollateralFetchInfo(account?: string | null) {
-  const changeStakedICXAmount = useCollateralChangeDepositedAmount();
+  const changeDepositedAmount = useCollateralChangeDepositedAmount();
   const transactions = useAllTransactions();
 
   const fetchCollateralInfo = React.useCallback(
     async (account: string) => {
       const res = await bnJs.Loans.getAccountPositions(account);
-      const depositedsICX =
-        res['assets'] && res['assets']['sICX'] ? BalancedJs.utils.toIcx(res['assets']['sICX']) : new BigNumber(0);
 
-      changeStakedICXAmount(depositedsICX);
+      res.holdings &&
+        Object.keys(res.holdings).forEach(token => {
+          const depositedAmount = new BigNumber(formatUnits(res.holdings[token][token] || 0, 18, 4));
+          changeDepositedAmount(depositedAmount, token);
+        });
     },
-    [changeStakedICXAmount],
+    [changeDepositedAmount],
   );
 
   React.useEffect(() => {
@@ -112,34 +123,27 @@ export function useCollateralState() {
 
 export function useCollateralActionHandlers() {
   const dispatch = useDispatch();
-  const icxDisplayType = useIcxDisplayType();
-  const ratio = useRatio();
 
   const onFieldAInput = React.useCallback(
     (value: string) => {
-      value = icxDisplayType === 'ICX' ? value : new BigNumber(value).times(ratio.sICXICXratio).toString();
       dispatch(type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' }));
     },
-    [dispatch, icxDisplayType, ratio.sICXICXratio],
+    [dispatch],
   );
 
   const onFieldBInput = React.useCallback(
     (value: string) => {
-      value = icxDisplayType === 'ICX' ? value : new BigNumber(value).times(ratio.sICXICXratio).toString();
-
       dispatch(type({ independentField: Field.RIGHT, typedValue: value, inputType: 'text' }));
     },
-    [dispatch, icxDisplayType, ratio.sICXICXratio],
+    [dispatch],
   );
 
   const onSlide = React.useCallback(
     (values: string[], handle: number) => {
-      const value =
-        icxDisplayType === 'ICX' ? values[handle] : new BigNumber(values[handle]).times(ratio.sICXICXratio).toString();
-
+      const value = values[handle];
       dispatch(type({ independentField: Field.LEFT, typedValue: value, inputType: 'slider' }));
     },
-    [dispatch, icxDisplayType, ratio.sICXICXratio],
+    [dispatch],
   );
 
   const onAdjust = React.useCallback(
@@ -162,7 +166,9 @@ export function useCollateralActionHandlers() {
 }
 
 export function useCollateralDepositedAmount() {
-  return useSelector((state: AppState) => state.collateral.depositedAmount);
+  const depositedAmounts = useCollateralAmounts();
+  const collateralType = useCollateralType();
+  return depositedAmounts[collateralType] || new BigNumber(0);
 }
 
 export function useCollateralDepositedAmountInICX() {
@@ -186,7 +192,7 @@ export function useCollateralTotalICXAmount() {
   }, [stakedICXAmount, ICXAmount]);
 }
 
-export function useCollateralTotalSICXAmount() {
+export function useCollateralTotalAmount() {
   const sICXAmount = useCollateralAvailableAmountinSICX();
 
   const collateralSICXAmount = useCollateralDepositedAmount();
@@ -200,18 +206,11 @@ export function useCollateralTotalSICXAmount() {
 export function useCollateralInputAmount() {
   const { independentField, typedValue } = useCollateralState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
-  const icxDisplayType = useIcxDisplayType();
-  const ratio = useRatio();
-
-  const totalICXAmount = useCollateralTotalICXAmount();
-  const totalSICXAmount = useCollateralTotalSICXAmount();
+  const collateralTotal = useTotalCollateral() || new BigNumber(0);
 
   const roundedTypedValue = Math.round(new BigNumber(typedValue || '0').times(100).toNumber()) / 100;
 
-  const currentAmount =
-    icxDisplayType === 'ICX'
-      ? totalICXAmount.minus(new BigNumber(roundedTypedValue))
-      : totalSICXAmount.minus(new BigNumber(roundedTypedValue).div(ratio.sICXICXratio)).times(ratio.sICXICXratio);
+  const currentAmount = collateralTotal.minus(new BigNumber(roundedTypedValue));
 
   //  calculate dependentField value
   const parsedAmount = {
@@ -222,11 +221,23 @@ export function useCollateralInputAmount() {
   return parsedAmount[Field.LEFT];
 }
 
+export function useCollateralInputAmountAbsolute() {
+  const collateralInputAmount = useCollateralInputAmount();
+  const isHandlingICX = useIsHandlingICX();
+  const ratio = useRatio();
+
+  return useMemo(() => {
+    if (ratio) {
+      return isHandlingICX ? collateralInputAmount.div(ratio.sICXICXratio) : collateralInputAmount;
+    }
+  }, [ratio, isHandlingICX, collateralInputAmount]);
+}
+
 export function useCollateralInputAmountInSICX() {
   const { independentField, typedValue } = useCollateralState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
-  const totalSICXAmount = useCollateralTotalSICXAmount();
+  const totalSICXAmount = useCollateralTotalAmount();
 
   //  calculate dependentField value
   const parsedAmount = {
@@ -238,52 +249,128 @@ export function useCollateralInputAmountInSICX() {
 }
 
 export function useCollateralInputAmountInUSD() {
-  const collateralInputAmount = useCollateralInputAmount();
-  const ratio = useRatio();
+  const collateralInputAmount = useCollateralInputAmountAbsolute();
+  const oraclePrices = useOraclePrices();
+  const collateralType = useCollateralType();
 
   return React.useMemo(() => {
-    return collateralInputAmount.multipliedBy(ratio.ICXUSDratio);
-  }, [collateralInputAmount, ratio.ICXUSDratio]);
+    if (oraclePrices && collateralInputAmount && oraclePrices[collateralType])
+      return collateralInputAmount.multipliedBy(oraclePrices[collateralType]);
+  }, [collateralInputAmount, oraclePrices, collateralType]);
 }
 
-interface CollateralType {
-  symbol: string;
-  name: string;
-  displayName?: string;
-  collateralUsed: BigNumber;
-  collateralAvailable: BigNumber;
-  loanTaken: BigNumber;
-  loanAvailable: BigNumber;
+// interface CollateralType {
+//   symbol: string;
+//   name: string;
+//   displayName?: string;
+//   collateralUsed: BigNumber;
+//   collateralAvailable: BigNumber;
+//   loanTaken: BigNumber;
+//   loanAvailable: BigNumber;
+// }
+
+type Position = {
+  collateral: CurrencyAmount<Token>;
+  loan: CurrencyAmount<Token>;
+};
+
+export function useAllCollateralData(): Position[] | undefined {
+  const { data: collateralToknes } = useSupportedCollateralTokens();
+
+  const allPositions: Position[] | undefined =
+    collateralToknes &&
+    Object.values(collateralToknes).map(address => {
+      //getBalances and loans
+      return {
+        collateral: CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[address], 0),
+        loan: CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], 0),
+      };
+    });
+
+  // const dummyData: CollateralType[] = [
+  //   {
+  //     symbol: 'ICX',
+  //     name: 'Icon',
+  //     displayName: 'ICX / sICX',
+  //     collateralUsed: new BigNumber(11133),
+  //     collateralAvailable: new BigNumber(3867),
+  //     loanTaken: new BigNumber(9472),
+  //     loanAvailable: new BigNumber(1397),
+  //   },
+  //   {
+  //     symbol: 'BALN',
+  //     name: 'Balanced',
+  //     collateralUsed: new BigNumber(0),
+  //     collateralAvailable: new BigNumber(3057),
+  //     loanTaken: new BigNumber(0),
+  //     loanAvailable: new BigNumber(876),
+  //   },
+  // ];
+
+  return allPositions;
 }
 
-export function useAllCollateralData(): Array<CollateralType> {
-  const dummyData: Array<CollateralType> = [
-    {
-      symbol: 'ICX',
-      name: 'Icon',
-      displayName: 'ICX / sICX',
-      collateralUsed: new BigNumber(11133),
-      collateralAvailable: new BigNumber(3867),
-      loanTaken: new BigNumber(9472),
-      loanAvailable: new BigNumber(1397),
-    },
-    {
-      symbol: 'bnUSD',
-      name: 'Balanced Dollar',
-      collateralUsed: new BigNumber(0),
-      collateralAvailable: new BigNumber(4567),
-      loanTaken: new BigNumber(0),
-      loanAvailable: new BigNumber(1054),
-    },
-    {
-      symbol: 'BALN',
-      name: 'Balanced',
-      collateralUsed: new BigNumber(0),
-      collateralAvailable: new BigNumber(3057),
-      loanTaken: new BigNumber(0),
-      loanAvailable: new BigNumber(876),
-    },
-  ];
+export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
+  return useQuery('getCollateralTokens', async () => {
+    const data = await bnJs.Loans.getCollateralTokens();
+    return data;
+  });
+}
 
-  return dummyData;
+///////////////////////
+export function useDepositedCollateral() {
+  const collateralType = useCollateralType();
+  const icxDisplayType = useIcxDisplayType();
+  const collateralAmounts = useCollateralAmounts();
+  const ratio = useRatio();
+
+  return useMemo(() => {
+    if (collateralAmounts[collateralType]) {
+      if (collateralType !== 'sICX') {
+        return collateralAmounts[collateralType];
+      } else {
+        return icxDisplayType === 'sICX'
+          ? collateralAmounts[collateralType]
+          : collateralAmounts[collateralType] && ratio && collateralAmounts[collateralType].times(ratio.sICXICXratio);
+      }
+    } else {
+      return new BigNumber(0);
+    }
+  }, [collateralType, collateralAmounts, ratio, icxDisplayType]);
+}
+
+export function useAvailableCollateral() {
+  const collateralType = useCollateralType();
+  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
+  const icxDisplayType = useIcxDisplayType();
+  const balances = useWalletBalances();
+  const shouldGetIcx = collateralType === 'sICX' && icxDisplayType === 'ICX';
+  const icxAddress = bnJs.ICX.address;
+  const amount = useMemo(
+    () =>
+      toBigNumber(
+        supportedCollateralTokens && balances[shouldGetIcx ? icxAddress : supportedCollateralTokens[collateralType]],
+      ),
+    [balances, shouldGetIcx, icxAddress, supportedCollateralTokens, collateralType],
+  );
+
+  return useMemo(() => {
+    return shouldGetIcx ? BigNumber.max(amount.minus(MINIMUM_ICX_FOR_ACTION), new BigNumber(0)) : amount;
+  }, [shouldGetIcx, amount]);
+}
+
+export function useTotalCollateral() {
+  const availableCollateral = useAvailableCollateral();
+  const depositedCollateral = useDepositedCollateral();
+
+  return useMemo(() => {
+    return availableCollateral.plus(depositedCollateral);
+  }, [availableCollateral, depositedCollateral]);
+}
+
+export function useIsHandlingICX() {
+  const collateralType = useCollateralType();
+  const icxDisplayType = useIcxDisplayType();
+
+  return collateralType === 'sICX' && icxDisplayType === 'ICX';
 }

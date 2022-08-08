@@ -18,17 +18,24 @@ import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip, { TooltipContainer } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
-import { ZERO } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useRatesQuery } from 'queries/reward';
-import { useCollateralInputAmount, useCollateralInputAmountInUSD, useIcxDisplayType } from 'store/collateral/hooks';
-import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY, useLoanParameters } from 'store/loan/hooks';
+import { useCollateralInputAmountInUSD, useCollateralType, useIcxDisplayType } from 'store/collateral/hooks';
+import {
+  useLoanInputAmount,
+  useLoanAPY,
+  useOwnDailyRewards,
+  useThresholdPrices,
+  useCollateralLockedSliderPos,
+} from 'store/loan/hooks';
+import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
-import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
+import { useHasRewardableLoan, useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
+import { StyledSkeleton } from '../ProposalInfo';
 import { RebalancingInfo } from './LoanPanel';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
@@ -40,50 +47,11 @@ const PERIOD_LABELS: { [key: string]: MessageDescriptor } = {
   [Period.all]: defineMessage({ message: 'All time' }),
 };
 
-const useThresholdPrices = (): [BigNumber, BigNumber] => {
-  const collateralInputAmount = useCollateralInputAmount();
-  const loanInputAmount = useLoanInputAmount();
-  const loanParameters = useLoanParameters();
-  const { lockingRatio, liquidationRatio } = loanParameters || {};
-
-  return React.useMemo(() => {
-    if (!collateralInputAmount.isZero() && lockingRatio && liquidationRatio) {
-      return [
-        loanInputAmount.div(collateralInputAmount).times(lockingRatio),
-        loanInputAmount.div(collateralInputAmount).times(liquidationRatio),
-      ];
-    }
-
-    return [new BigNumber(0), new BigNumber(0)];
-  }, [collateralInputAmount, loanInputAmount, lockingRatio, liquidationRatio]);
-};
-
-const useOwnDailyRewards = (): BigNumber => {
-  const debtHoldShare = useLoanDebtHoldingShare();
-
-  const rewards = useRewards();
-
-  const totalDailyRewards = rewards['Loans'] || ZERO;
-
-  return totalDailyRewards.times(debtHoldShare).div(100);
-};
-
-const useCollateralLockedSliderPos = () => {
-  const loanParameters = useLoanParameters();
-  const { lockingRatio, liquidationRatio } = loanParameters || {};
-
-  return React.useMemo(() => {
-    if (lockingRatio && liquidationRatio) {
-      return (lockingRatio - liquidationRatio) / (9 - liquidationRatio);
-    }
-
-    return 0;
-  }, [lockingRatio, liquidationRatio]);
-};
-
 const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
+  const oraclePrice = useOraclePrice();
+  const collateralType = useCollateralType();
   const locale = useActiveLocale();
   const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
@@ -126,9 +94,9 @@ const PositionDetailPanel = () => {
 
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
 
-  const isLockWarning = lockThresholdPrice.minus(ratio.ICXUSDratio).isGreaterThan(-0.01);
+  const isLockWarning = oraclePrice && lockThresholdPrice.minus(oraclePrice).isGreaterThan(-0.01);
 
-  const isPassAllCollateralLocked = ratio.ICXUSDratio.isLessThan(lockThresholdPrice);
+  const isPassAllCollateralLocked = oraclePrice?.isLessThan(lockThresholdPrice);
 
   // handle rebalancing logic
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -189,7 +157,11 @@ const PositionDetailPanel = () => {
               <Trans>Collateral</Trans>
             </Typography>
             <Typography variant="p" fontSize={18}>
-              ${collateralInputAmountInUSD.dp(2).toFormat()}
+              {collateralInputAmountInUSD ? (
+                `${collateralInputAmountInUSD.dp(2).toFormat()}`
+              ) : (
+                <StyledSkeleton width={90} animation="wave" />
+              )}
             </Typography>
           </Box>
 
@@ -206,7 +178,7 @@ const PositionDetailPanel = () => {
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
-          <Trans>The current ICX price is</Trans> <span className="white">${ratio.ICXUSDratio.dp(4).toFormat()}</span>.
+          {t`The current ${collateralType} price is`} <span className="white">${oraclePrice?.dp(4).toFormat()}</span>.
         </Typography>
         <Typography mb={2}>
           <Trans>The current bnUSD price is</Trans>{' '}
@@ -287,10 +259,10 @@ const PositionDetailPanel = () => {
           <Tooltip
             text={
               <Typography variant="body">
-                <Trans>
-                  If the ICX price reaches ${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
-                  liquidated.
-                </Trans>
+                {t`If the ${collateralType} price reaches ${liquidationThresholdPrice.toFixed(
+                  3,
+                )}, all your collateral will be
+                  liquidated.`}
                 <br />
                 <Typography as="small" fontSize={12} color="text1">
                   <Trans>Keep a close eye on this number, as rebalancing may cause it to fluctuate.</Trans>

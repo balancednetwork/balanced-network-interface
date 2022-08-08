@@ -9,11 +9,14 @@ import createSagaMiddleware from 'redux-saga';
 
 import application from './application/reducer';
 import collateral from './collateral/reducer';
+import fees from './fees/reducer';
 import loan from './loan/reducer';
 import mint from './mint/reducer';
 import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
 import reward from './reward/reducer';
+import stabilityFund from './stabilityFund/reducer';
+import stakedLP from './stakedLP/reducer';
 import swap from './swap/reducer';
 import transactions from './transactions/reducer';
 import user from './user/reducer';
@@ -47,7 +50,10 @@ export function configureAppStore() {
       transactions,
       mint,
       swap,
+      stabilityFund,
+      stakedLP,
       user,
+      fees,
     }),
     middleware: [
       ...getDefaultMiddleware({

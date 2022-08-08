@@ -1,63 +1,21 @@
-import { SupportedChainId } from '@balancednetwork/balanced-js';
-import { Currency, Token } from '@balancednetwork/sdk-core';
+import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
+import { Token } from '@balancednetwork/sdk-core';
 
-import {
-  ICX,
-  sICX, //
-  bnUSD,
-  IUSDC,
-  USDS,
-  ICX_YEOUIDO,
-  sICX_YEOUIDO,
-  bnUSD_YEOUIDO,
-  IUSDC_YEOUIDO,
-  USDS_YEOUIDO,
-  ICX_SEJONG,
-  sICX_SEJONG,
-  bnUSD_SEJONG,
-  IUSDT,
-  OMM,
-  ICX_BERLIN,
-  sICX_BERLIN,
-  bnUSD_BERLIN,
-  IUSDC_BERLIN,
-  USDS_BERLIN,
-} from './tokens';
-
-type ChainCurrencyList = {
-  readonly [chainId: number]: Currency[];
-};
-/**
- * Shows up in the currency select for swap and add liquidity
- */
-export const COMMON_BASES: ChainCurrencyList = {
-  [SupportedChainId.MAINNET]: [
-    sICX, //
-    bnUSD,
-    IUSDC,
-    USDS,
-  ],
-  [SupportedChainId.YEOUIDO]: [
-    sICX_YEOUIDO, //
-    bnUSD_YEOUIDO,
-    IUSDC_YEOUIDO,
-    USDS_YEOUIDO,
-  ],
-};
+import { ICX, sICX, bnUSD, IUSDC, USDS, OMM, IUSDT } from './tokens';
 
 export const MAX_HOPS = 4;
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
-  [SupportedChainId.MAINNET]: [sICX, bnUSD, IUSDC, USDS],
-  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
-  [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
-  [SupportedChainId.BERLIN]: [sICX_BERLIN, bnUSD_BERLIN, IUSDC_BERLIN, USDS_BERLIN],
+  [ChainId.MAINNET]: [sICX[ChainId.MAINNET], bnUSD[ChainId.MAINNET], IUSDC[ChainId.MAINNET], USDS[ChainId.MAINNET]],
+  [ChainId.YEOUIDO]: [sICX[ChainId.YEOUIDO], bnUSD[ChainId.YEOUIDO], IUSDC[ChainId.YEOUIDO], USDS[ChainId.YEOUIDO]],
+  [ChainId.SEJONG]: [sICX[ChainId.SEJONG], bnUSD[ChainId.SEJONG]],
+  [ChainId.BERLIN]: [sICX[ChainId.BERLIN], bnUSD[ChainId.BERLIN], IUSDC[ChainId.BERLIN], USDS[ChainId.BERLIN]],
 };
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
-  [SupportedChainId.MAINNET]: {
-    [IUSDC.address]: [OMM, IUSDT],
-    [sICX.address]: [OMM, IUSDT],
+  [ChainId.MAINNET]: {
+    [IUSDC[ChainId.MAINNET].address]: [OMM[ChainId.MAINNET], IUSDT[ChainId.MAINNET]],
+    [sICX[ChainId.MAINNET].address]: [OMM[ChainId.MAINNET], IUSDT[ChainId.MAINNET]],
   },
 };
 /**
@@ -65,7 +23,7 @@ export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: To
  * tokens.
  */
 export const CUSTOM_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
-  [SupportedChainId.MAINNET]: {},
+  [ChainId.MAINNET]: {},
 };
 
 type ChainTokenList = {
@@ -74,14 +32,14 @@ type ChainTokenList = {
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
-  [SupportedChainId.MAINNET]: [sICX, bnUSD, IUSDC, USDS],
-  [SupportedChainId.YEOUIDO]: [sICX_YEOUIDO, bnUSD_YEOUIDO, IUSDC_YEOUIDO, USDS_YEOUIDO],
-  [SupportedChainId.SEJONG]: [sICX_SEJONG, bnUSD_SEJONG],
-  [SupportedChainId.SEJONG]: [sICX_BERLIN, bnUSD_BERLIN],
+  [ChainId.MAINNET]: [sICX[ChainId.MAINNET], bnUSD[ChainId.MAINNET], IUSDC[ChainId.MAINNET], USDS[ChainId.MAINNET]],
+  [ChainId.YEOUIDO]: [sICX[ChainId.YEOUIDO], bnUSD[ChainId.YEOUIDO], IUSDC[ChainId.YEOUIDO], USDS[ChainId.YEOUIDO]],
+  [ChainId.SEJONG]: [sICX[ChainId.SEJONG], bnUSD[ChainId.SEJONG]],
+  [ChainId.BERLIN]: [sICX[ChainId.BERLIN], bnUSD[ChainId.BERLIN]],
 };
 export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
-  [SupportedChainId.MAINNET]: [[ICX, sICX]],
-  [SupportedChainId.YEOUIDO]: [[ICX_YEOUIDO, sICX_YEOUIDO]],
-  [SupportedChainId.SEJONG]: [[ICX_SEJONG, sICX_SEJONG]],
-  [SupportedChainId.BERLIN]: [[ICX_BERLIN, sICX_BERLIN]],
+  [ChainId.MAINNET]: [[ICX[ChainId.MAINNET], sICX[ChainId.MAINNET]]],
+  [ChainId.YEOUIDO]: [[ICX[ChainId.YEOUIDO], sICX[ChainId.YEOUIDO]]],
+  [ChainId.SEJONG]: [[ICX[ChainId.SEJONG], sICX[ChainId.SEJONG]]],
+  [ChainId.BERLIN]: [[ICX[ChainId.BERLIN], sICX[ChainId.BERLIN]]],
 };

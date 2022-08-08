@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Price, TradeType, Currency, Percent, Token } from '@balancednetwork/sdk-core';
 import { Trade, Route } from '@balancednetwork/v1-sdk';
@@ -6,6 +6,7 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { isMobile } from 'react-device-detect';
 import { ChevronRight } from 'react-feather';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -14,7 +15,7 @@ import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
-import { DropdownPopper } from 'app/components/Popover';
+import Popover, { DropdownPopper } from 'app/components/Popover';
 import QuestionHelper from 'app/components/QuestionHelper';
 import SlippageSetting from 'app/components/SlippageSetting';
 import { Typography } from 'app/theme';
@@ -27,6 +28,7 @@ import {
   useChangeShouldLedgerSign,
   useShouldLedgerSign,
 } from 'store/application/hooks';
+import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -36,14 +38,24 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
+import StabilityFund from '../StabilityFund';
 import { BrightPanel, swapMessage } from './utils';
+
+const MemoizedStabilityFund = React.memo(StabilityFund);
 
 export default function SwapPanel() {
   const { account } = useIconReact();
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-
   const { trade, currencyBalances, currencies, parsedAmount, inputError, percents } = useDerivedSwapInfo();
+  const memoizedInputAmount = useCAMemo(trade?.inputAmount);
+  const memoizedOutputAmount = useCAMemo(trade?.outputAmount);
+  const isSwapEligibleForStabilityFund = useIsSwapEligible(
+    currencies.INPUT?.wrapped.address,
+    currencies.OUTPUT?.wrapped.address,
+  );
+  const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
+  const showFundOption = isSwapEligibleForStabilityFund && fundMaxSwap?.greaterThan(0);
 
   const parsedAmounts = React.useMemo(
     () => ({
@@ -53,39 +65,45 @@ export default function SwapPanel() {
     [independentField, parsedAmount, trade],
   );
 
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
-  };
+  const formattedAmounts = React.useMemo(() => {
+    return {
+      [independentField]: typedValue,
+      [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+    };
+  }, [dependentField, independentField, parsedAmounts, typedValue]);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection } = useSwapActionHandlers();
 
-  const handleTypeInput = React.useCallback(
+  const handleTypeInput = useCallback(
     (value: string) => {
       onUserInput(Field.INPUT, value);
     },
     [onUserInput],
   );
-  const handleTypeOutput = React.useCallback(
+  const handleTypeOutput = useCallback(
     (value: string) => {
       onUserInput(Field.OUTPUT, value);
     },
     [onUserInput],
   );
 
-  const maxInputAmount = maxAmountSpend(currencyBalances[Field.INPUT]);
+  const clearSwapInputOutput = useCallback((): void => {
+    handleTypeInput('');
+    handleTypeOutput('');
+  }, [handleTypeInput, handleTypeOutput]);
 
-  const handleInputSelect = React.useCallback(
-    (inputCurrency: Currency) => onCurrencySelection(Field.INPUT, inputCurrency),
-    [onCurrencySelection],
-  );
+  const maxInputAmount = React.useMemo(() => maxAmountSpend(currencyBalances[Field.INPUT]), [currencyBalances]);
 
-  const handleOutputSelect = React.useCallback(
+  const handleInputSelect = useCallback((inputCurrency: Currency) => onCurrencySelection(Field.INPUT, inputCurrency), [
+    onCurrencySelection,
+  ]);
+
+  const handleOutputSelect = useCallback(
     (outputCurrency: Currency) => onCurrencySelection(Field.OUTPUT, outputCurrency),
     [onCurrencySelection],
   );
 
-  const handleInputPercentSelect = React.useCallback(
+  const handleInputPercentSelect = useCallback(
     (percent: number) => {
       maxInputAmount &&
         onPercentSelection(Field.INPUT, percent, maxInputAmount.multiply(new Percent(percent, 100)).toFixed());
@@ -114,14 +132,14 @@ export default function SwapPanel() {
   const toggleWalletModal = useWalletModalToggle();
 
   const [executionTrade, setExecutionTrade] = React.useState<Trade<Currency, Currency, TradeType>>();
-  const handleSwap = () => {
+  const handleSwap = useCallback(() => {
     if (!account) {
       toggleWalletModal();
     } else {
       setShowSwapConfirm(true);
       setExecutionTrade(trade);
     }
-  };
+  }, [account, toggleWalletModal, trade]);
 
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
@@ -189,8 +207,7 @@ export default function SwapPanel() {
               summary: message.successMessage,
             },
           );
-          handleTypeInput('');
-          handleTypeOutput('');
+          clearSwapInputOutput();
         })
         .catch(e => {
           console.error('error', e);
@@ -202,7 +219,6 @@ export default function SwapPanel() {
     }
   };
 
-  //
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
@@ -216,6 +232,16 @@ export default function SwapPanel() {
   };
 
   const hasEnoughICX = useHasEnoughICX();
+
+  const swapButton = isValid ? (
+    <Button color="primary" onClick={handleSwap}>
+      <Trans>Swap</Trans>
+    </Button>
+  ) : (
+    <Button disabled={!!account} color="primary" onClick={handleSwap}>
+      {account ? inputError : t`Swap`}
+    </Button>
+  );
 
   return (
     <>
@@ -346,14 +372,26 @@ export default function SwapPanel() {
           </Flex>
 
           <Flex justifyContent="center" mt={4}>
-            {isValid ? (
-              <Button color="primary" onClick={handleSwap}>
-                <Trans>Swap</Trans>
-              </Button>
+            {showFundOption ? (
+              <Popover
+                content={
+                  <MemoizedStabilityFund
+                    clearSwapInputOutput={clearSwapInputOutput}
+                    setInput={handleTypeInput}
+                    inputAmount={memoizedInputAmount}
+                    outputAmount={memoizedOutputAmount}
+                  />
+                }
+                show={true}
+                placement="bottom"
+                fallbackPlacements={isMobile ? [] : ['right-start', 'top']}
+                zIndex={10}
+                strategy="absolute"
+              >
+                {swapButton}
+              </Popover>
             ) : (
-              <Button disabled={!!account} color="primary" onClick={handleSwap}>
-                {account ? inputError : t`Swap`}
-              </Button>
+              swapButton
             )}
           </Flex>
         </AutoColumn>
@@ -453,7 +491,7 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
 
   const label = showInverted ? `${price.quoteCurrency?.symbol}` : `${price.baseCurrency?.symbol} `;
   const labelInverted = showInverted ? `${price.baseCurrency?.symbol} ` : `${price.quoteCurrency?.symbol}`;
-  const flipPrice = React.useCallback(() => setShowInverted(!showInverted), [setShowInverted, showInverted]);
+  const flipPrice = useCallback(() => setShowInverted(!showInverted), [setShowInverted, showInverted]);
 
   const text = `${'1 ' + labelInverted + ' = ' + formattedPrice ?? '-'} ${label}`;
 

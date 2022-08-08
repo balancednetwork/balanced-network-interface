@@ -1243,10 +1243,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@balancednetwork/balanced-js@1.0.8":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.0.8.tgz#0877484fd3ac2ffc1788c3640a2f7954951f9189"
-  integrity sha512-BLoyZiSW3TGNvcHaISOMtUS4jKCfJnmQXhktt26HpE961WynptcoDVGcKxuRyrWrbH/PItAiaj+BYDXIMAE/Hw==
+"@balancednetwork/balanced-js@1.0.16":
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.0.16.tgz#30102de783404a6b32ae1af04e1cf37ee1cdcde7"
+  integrity sha512-DGARmZHk/Po7bDu9XrPrvjyw4W4qZFLXL74dEWKmVvfIz8bjsiY3Y5CCP3AMvc1tEgAUeel4xzh56hUz+hoJGg==
   dependencies:
     "@balancednetwork/hw-app-icx" "^1.0.6"
     bignumber.js "9.0.1"
@@ -1272,10 +1272,10 @@
     tiny-invariant "^1.1.0"
     toformat "^2.0.0"
 
-"@balancednetwork/v1-sdk@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.0.tgz#1b36daf409941af838798ecbb7eab41d1e8a15b9"
-  integrity sha512-EN0DmWTZC4VRkMO2mmg4yfwuBP95XTnobvmG/HT/SCARGAyLuwcx/I/na31LVHT4boEkZu6svZv1VxPe3w65mQ==
+"@balancednetwork/v1-sdk@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.1.tgz#87423a047594d6c2a00ac805e0777b4d8c2b9096"
+  integrity sha512-m6gFb5oIKa2UAC02CzeoiSRhCmJhYj9GDMPFThqdQ9H9EfvJOrf5/8UneYhZ4CQ8c6v0ZTqjACyQYza/iAjEFA==
   dependencies:
     "@balancednetwork/sdk-core" "^1.0.1"
     "@ethersproject/address" "^5.0.0"
@@ -3233,6 +3233,11 @@
     "@typescript-eslint/types" "4.33.0"
     eslint-visitor-keys "^2.0.0"
 
+"@uniswap/token-lists@1.0.0-beta.30":
+  version "1.0.0-beta.30"
+  resolved "https://registry.yarnpkg.com/@uniswap/token-lists/-/token-lists-1.0.0-beta.30.tgz#2103ca23b8007c59ec71718d34cdc97861c409e5"
+  integrity sha512-HwY2VvkQ8lNR6ks5NqQfAtg+4IZqz3KV1T8d2DlI8emIn9uMmaoFbIOg0nzjqAVKKnZSbMTRRtUoAh6mmjRvog==
+
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.9.0.tgz#bd850604b4042459a5a41cd7d338cbed695ed964"
@@ -4595,9 +4600,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001280:
-  version "1.0.30001282"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001282.tgz#38c781ee0a90ccfe1fe7fefd00e43f5ffdcb96fd"
-  integrity sha512-YhF/hG6nqBEllymSIjLtR2iWDDnChvhnVJqp+vloyt2tEHFG1yBR+ac2B/rOw0qOK0m0lEXU2dv4E/sMk5P9Kg==
+  version "1.0.30001344"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001344.tgz"
+  integrity sha512-0ZFjnlCaXNOAYcV7i+TtdKBp0L/3XEU2MF/x6Du1lrh+SRX4IfzIVL4HNJg5pB2PmFb8rszIGyOvsZnqqRoc2g==
 
 capture-exit@^2.0.0:
   version "2.0.0"

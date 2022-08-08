@@ -88,6 +88,9 @@ export interface PopoverProps {
   forcePlacement?: boolean;
   style?: React.CSSProperties;
   refStyle?: React.CSSProperties;
+  zIndex?: number;
+  fallbackPlacements?: Placement[];
+  strategy?: 'fixed' | 'absolute';
 }
 
 export default function Popover({
@@ -98,17 +101,20 @@ export default function Popover({
   children,
   placement = 'auto',
   forcePlacement,
+  zIndex,
+  fallbackPlacements,
+  strategy,
 }: PopoverProps) {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
   const { styles, update, attributes } = usePopper(referenceElement, popperElement, {
     placement,
-    strategy: 'fixed',
+    strategy: strategy ? strategy : 'fixed',
     modifiers: [
       { name: 'offset', options: { offset: [skidding[placement] || 0, 12] } },
       { name: 'arrow', options: { element: arrowElement } },
-      { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : undefined } },
+      { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : fallbackPlacements } },
     ],
   });
   const updateCallback = useCallback(() => {
@@ -126,6 +132,7 @@ export default function Popover({
           show={show}
           ref={setPopperElement as any}
           style={{ ...style, ...styles.popper }}
+          zIndex={zIndex}
           {...attributes.popper}
         >
           <ContentWrapper>{content}</ContentWrapper>
@@ -236,7 +243,7 @@ export function SelectorPopover({ show, children, placement = 'auto', anchorEl }
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
     placement,
-    strategy: 'fixed',
+    strategy: 'absolute',
     modifiers: [{ name: 'offset', options: { offset: [0, 1] } }],
   });
   const updateCallback = useCallback(() => {

@@ -1,9 +1,14 @@
+import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import { HEIGHT } from 'app/components/TradingViewChart';
+import { ZERO } from 'constants/index';
+import { FRACTION_ZERO } from 'constants/misc';
 
 export const Panel = styled(Flex)`
   overflow: hidden;
@@ -100,3 +105,32 @@ export const ChartControlButton = styled(Button)<{ active?: boolean }>`
     padding: 1px 12px;
   `}
 `;
+export const stakedFraction = stakedLPPercent => {
+  const [stakedNumerator, stakedDenominator] = stakedLPPercent ? stakedLPPercent.toFraction() : [0, 1];
+  const stakedFraction = new Fraction(stakedNumerator.toFixed(), stakedDenominator.toFixed());
+  return stakedFraction;
+};
+
+export const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
+  !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
+
+export const getFormattedPoolShare = (
+  baseValue: CurrencyAmount<Currency>,
+  quoteValue: CurrencyAmount<Currency>,
+  percent: BigNumber,
+  share: Fraction,
+  baseCurrencyTotalSupply: CurrencyAmount<Currency> | undefined,
+  pair: Pair,
+): string =>
+  `${
+    (baseValue?.equalTo(0) || quoteValue?.equalTo(0)) && percent?.isGreaterThan(ZERO)
+      ? share.multiply(100)?.toFixed(4, { groupSeparator: ',' })
+      : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
+  }%`;
+
+export const getFormattedRewards = (reward: Fraction, stakedFractionValue: Fraction): string =>
+  reward?.equalTo(FRACTION_ZERO)
+    ? 'N/A'
+    : stakedFractionValue.greaterThan(0)
+    ? `~ ${reward.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
+    : 'N/A';

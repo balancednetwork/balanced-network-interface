@@ -12,6 +12,7 @@ import SwapPanel from 'app/components/trade/SwapPanel';
 import { SectionPanel } from 'app/components/trade/utils';
 import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';
+import { useFetchStabilityFundBalances } from 'store/stabilityFund/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 export function TradePage() {
@@ -20,6 +21,7 @@ export function TradePage() {
   useFetchPrice();
   useWalletFetchBalances(account);
   useFetchRewardsInfo();
+  useFetchStabilityFundBalances();
 
   const [value, setValue] = React.useState<number>(0);
 

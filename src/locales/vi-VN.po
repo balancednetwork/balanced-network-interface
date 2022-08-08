@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-22 15:27\n"
+"PO-Revision-Date: 2022-07-20 21:23\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -20,6 +20,10 @@ msgstr ""
 #: src/app/containers/ProposalPage/index.tsx
 msgid "({0}% required)"
 msgstr "({0}% yêu cầu)"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "1 {sendSymbol} per {0}"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "10 bnUSD minimum"
@@ -94,6 +98,10 @@ msgstr "Sau"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
 msgstr "Tất cả tài sản thế chấp sẽ bị khóa"
+
+#: src/app/containers/Claim/index.tsx
+msgid "All fees claimed"
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
@@ -183,6 +191,7 @@ msgid "Borrowing bnUSD..."
 msgstr "Đang vay bnUSD..."
 
 #: src/app/components/ProposalModal/index.tsx
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -237,10 +246,11 @@ msgstr "Chọn 1 ví từ Ledger:"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claim"
 msgstr "Nhận"
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claim (1 of {count})"
 msgstr "Nhận (1 trong {count})"
 
@@ -262,6 +272,7 @@ msgid "Claim network fees?"
 msgstr "Nhận phí hoạt động từ balanced?"
 
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claimed fees."
 msgstr "Đang nhận tiền phí."
 
@@ -278,6 +289,7 @@ msgid "Claiming ICX..."
 msgstr "Đang nhận ICX..."
 
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claiming fees..."
 msgstr "Đang nhận tiền phí..."
 
@@ -363,6 +375,7 @@ msgstr "Ngày Tháng"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Daily rewards"
 msgstr "Phần thưởng mỗi ngày"
 
@@ -489,6 +502,7 @@ msgstr "Trong hợp đồng thông minh"
 msgid "Includes a fee of {0} bnUSD."
 msgstr "Bao gồm {0} bnusd tiền phí."
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Includes a fee of {0} {1}."
 msgstr "Bao gồm tiền phí {0} {1}."
@@ -583,6 +597,10 @@ msgstr "Chưa có hoạt động nào."
 msgid "No assets available."
 msgstr "Ko có tài sản sẵn có."
 
+#: src/app/containers/Claim/index.tsx
+msgid "No fees to claim"
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
 msgstr "Biểu đồ giá cả hiện chưa có."
@@ -597,6 +615,11 @@ msgstr "Không có kết quả."
 msgid "Not now"
 msgstr "Không phải bây giờ"
 
+#: src/app/components/StabilityFund/index.tsx
+#: src/app/components/StabilityFund/index.tsx
+msgid "Or"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
 msgstr "Hôm qua"
@@ -609,6 +632,7 @@ msgstr "Tháng trước"
 msgid "Past week"
 msgstr "Tuần trước"
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Pay"
 msgstr "Thanh toán"
@@ -624,6 +648,7 @@ msgid "Pool"
 msgstr "Pool"
 
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Pool share"
 msgstr "Tài sản trong hồ thanh quản"
 
@@ -680,6 +705,7 @@ msgstr "Đang tái cân bằng giá bnUSD..."
 msgid "Rebalancing threshold"
 msgstr "Ngưỡng tái cân bằng"
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
 msgstr "Nhận"
@@ -894,6 +920,7 @@ msgstr "Đang cung cấp"
 msgid "Supplying {pair} liquidity..."
 msgstr "Đang cung cấp {pair} vào hồ thanh khoản..."
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
@@ -905,6 +932,10 @@ msgstr "Đổi"
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Swap {0} for {1}?"
 msgstr "Đổi {0} thành {1}"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "Swap {sendSymbol} for {0}?"
+msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
@@ -921,6 +952,11 @@ msgstr "Lên tới 7 ngày. Khi hoàn tất, ấn vào ICX > Unstaking trong ví
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Text"
 msgstr "Nội dung"
+
+#: src/app/components/StabilityFund/index.tsx
+#: src/app/components/StabilityFund/index.tsx
+msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -951,6 +987,10 @@ msgstr "Hiện chưa có thanh khoản trong ao này."
 msgid "They'll unstake on {0}, around {1}."
 msgstr "Unstake sẽ hoàn tất vào {0}, khoảng {1}."
 
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
 msgstr "Tiêu đề"
@@ -960,19 +1000,13 @@ msgid "To"
 msgstr "Tới"
 
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Để nhận phần thưởng, mượn tiền hoặc cung cấp thanh khoản khu giao dịch."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."
 msgstr "Để nhận tiền phí hoạt động, khóa BALN vào hợp đồng thông minh."
-
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "To receive BALN, you must have ICX in the pool at 1pm Eastern each day."
-msgstr "Để nhận được BLAN, bạn phải giữ ICX trong hồ thanh khoản vào 1PM giờ phương đông mỗi ngày."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
@@ -1049,6 +1083,14 @@ msgstr "Sử dụng balanced trong"
 msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
 msgstr "Sử dụng có trách nhiệm. Những người đóng góp cho dự án này không chịu trách nhiệm cho bất cứ số tiền nào bị mất hoặc bị đánh cắp."
 
+#: src/app/components/StabilityFund/index.tsx
+msgid "Use the Stability Fund to swap a maximum of"
+msgstr ""
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "Use the Stability Fund to swap {0} for {1}"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
 msgstr "Đã sử dụng"
@@ -1110,13 +1152,6 @@ msgstr "Ví"
 msgid "Wallet:"
 msgstr "Ví:"
 
-#: src/app/components/trade/LiquidityDetails.tsx
-msgid "Wallet:\n"
-"{0} {1} /\n"
-"{2} {3}"
-msgstr "Ví:\n"
-"{0}{1}/{2}{3}"
-
 #: src/app/components/trade/LPPanel.tsx
 msgid "Wallet: {0} {1}"
 msgstr "Ví: {0}{1}"
@@ -1132,7 +1167,6 @@ msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
 msgstr "Khi bạn vay bnUSD, tài sản thế chấp của bạn sẽ bị sử dụng để giữ giá cho bnUSD"
 
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1210,10 +1244,6 @@ msgid "Your BALN will unstake on {0} at\n"
 "{1}."
 msgstr "Bạn sẽ nhận lại BALN vào {0} lúc {1}."
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "Your ICX will be locked for 24 hours."
-msgstr "ICX sẽ bị khóa trong 24 giờ."
-
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be staked, so your collateral value will increase over time."
 msgstr "ICX sẽ bị khóa, vì vậy giá trị tài sản thế chấp của bạn sẽ tăng lên theo thời gian."
@@ -1232,10 +1262,6 @@ msgid "Your collateral balance. It earns interest from staking, but is also sold
 msgstr "Số dư tài sản của bạn. Nhận được tiền lãi từ staking, nhưng cũng sẽ bị bán theo thời gian để trả khoản vay của bạn."
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "Your daily rewards"
-msgstr "Phần thưởng hằng ngày"
-
-#: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Your supply"
 msgstr "Số cung của bạn"
@@ -1247,6 +1273,10 @@ msgstr "và kết thúc sau 5 ngày."
 #: src/utils/timeformat.ts
 msgid "d"
 msgstr "ngày"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "for"
+msgstr ""
 
 #: src/utils/timeformat.ts
 msgid "h"
@@ -1277,14 +1307,14 @@ msgid "then create the pool."
 msgstr "sau đó tạo hồ thanh khoản."
 
 #: src/app/components/home/LoanPanel.tsx
+#: src/app/components/trade/LPDescription.tsx
 msgid "{0}"
 msgstr "{0}"
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "{0} / {1} \n"
+msgid "{0} / {1}\n"
 "liquidity pool{2}"
-msgstr "{0}/{1}\n"
-"hồ thành khoản {2}"
+msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} liquidity pool"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-06-22 15:27\n"
+"PO-Revision-Date: 2022-07-20 21:23\n"
 "Last-Translator: \n"
 "Language: pl_PL\n"
 "Language-Team: Polish\n"
@@ -20,6 +20,10 @@ msgstr ""
 #: src/app/containers/ProposalPage/index.tsx
 msgid "({0}% required)"
 msgstr "(wymagane {0}%)"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "1 {sendSymbol} per {0}"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "10 bnUSD minimum"
@@ -94,6 +98,10 @@ msgstr "Po"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
 msgstr "Całe zabezpieczenie zablokowane"
+
+#: src/app/containers/Claim/index.tsx
+msgid "All fees claimed"
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
@@ -183,6 +191,7 @@ msgid "Borrowing bnUSD..."
 msgstr "Pożyczanie bnUSD..."
 
 #: src/app/components/ProposalModal/index.tsx
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -237,10 +246,11 @@ msgstr "Wybierz portfel ze swojego Ledgera:"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claim"
 msgstr "Odbierz"
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claim (1 of {count})"
 msgstr "Odbierz (1 z {count})"
 
@@ -262,6 +272,7 @@ msgid "Claim network fees?"
 msgstr "Odebrać prowizje sieciowe?"
 
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claimed fees."
 msgstr "Odebrano prowizje."
 
@@ -278,6 +289,7 @@ msgid "Claiming ICX..."
 msgstr "Odbieranie ICX..."
 
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/Claim/index.tsx
 msgid "Claiming fees..."
 msgstr "Odbieranie prowizji..."
 
@@ -363,6 +375,7 @@ msgstr "DATA"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Daily rewards"
 msgstr "Dzienne nagrody"
 
@@ -489,6 +502,7 @@ msgstr "W kontrakcie"
 msgid "Includes a fee of {0} bnUSD."
 msgstr "Zawiera prowizję w wysokości {0} bnUSD."
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Includes a fee of {0} {1}."
 msgstr "Zawiera prowizję w wysokości {0} {1}."
@@ -583,6 +597,10 @@ msgstr "Dotąd nie podjęto żadnych działań."
 msgid "No assets available."
 msgstr "Brak dostępnych aktywów."
 
+#: src/app/containers/Claim/index.tsx
+msgid "No fees to claim"
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 msgid "No price chart available for this pair."
 msgstr "Wykres cenowy nie jest dostępny dla tej pary."
@@ -597,6 +615,11 @@ msgstr "Nie znaleziono żadnych wyników."
 msgid "Not now"
 msgstr "Nie teraz"
 
+#: src/app/components/StabilityFund/index.tsx
+#: src/app/components/StabilityFund/index.tsx
+msgid "Or"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
 msgstr "Ostatni dzień"
@@ -609,6 +632,7 @@ msgstr "Ostatni miesiąc"
 msgid "Past week"
 msgstr "Ostatni tydzień"
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Pay"
 msgstr "Zapłać"
@@ -624,6 +648,7 @@ msgid "Pool"
 msgstr "Pula"
 
 #: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Pool share"
 msgstr "Udział w puli"
 
@@ -680,6 +705,7 @@ msgstr "Rebalansowanie ceny bnUSD..."
 msgid "Rebalancing threshold"
 msgstr "Próg rebalansowania"
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
 msgstr "Otrzymaj"
@@ -894,6 +920,7 @@ msgstr "Dostarczanie"
 msgid "Supplying {pair} liquidity..."
 msgstr "Dostarczanie płynności do pary {pair}..."
 
+#: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
@@ -905,6 +932,10 @@ msgstr "Wymiana"
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Swap {0} for {1}?"
 msgstr "Wymienić {0} na {1}?"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "Swap {sendSymbol} for {0}?"
+msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
@@ -921,6 +952,11 @@ msgstr "Trwa do 7 dni. Kiedy będzie gotowe, przejdź do ICX > Odstake'owanie w 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Text"
 msgstr "Tekst"
+
+#: src/app/components/StabilityFund/index.tsx
+#: src/app/components/StabilityFund/index.tsx
+msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -951,6 +987,10 @@ msgstr "Dla tej pary nie ma jeszcze puli płynności."
 msgid "They'll unstake on {0}, around {1}."
 msgstr "Odstake'owanie nastąpi w dniu {0}, około godz. {1}."
 
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Title"
 msgstr "Tytuł"
@@ -960,19 +1000,13 @@ msgid "To"
 msgstr "Do"
 
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Aby zarabiać nagrody Balanced, zaciągnij pożyczkę lub dostarcz płynność na stronie Handluj."
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "To earn network fees, stake BALN from your wallet."
 msgstr "Aby zarabiać prowizje sieciowe, zastake'uj BALN ze swojego portfela."
-
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "To receive BALN, you must have ICX in the pool at 1pm Eastern each day."
-msgstr "Aby otrzymać BALN, należy mieć ICX w puli każdego dnia o godz. 13:00 czasu wschodniego."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
@@ -1049,6 +1083,14 @@ msgstr "Język Balanced"
 msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
 msgstr "Używasz na własne ryzyko. Współtwórcy projektu nie ponoszą odpowiedzialności za utracone lub skradzione środki."
 
+#: src/app/components/StabilityFund/index.tsx
+msgid "Use the Stability Fund to swap a maximum of"
+msgstr ""
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "Use the Stability Fund to swap {0} for {1}"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
 msgstr "Wykorzystane"
@@ -1110,14 +1152,6 @@ msgstr "Portfel"
 msgid "Wallet:"
 msgstr "Portfel:"
 
-#: src/app/components/trade/LiquidityDetails.tsx
-msgid "Wallet:\n"
-"{0} {1} /\n"
-"{2} {3}"
-msgstr "Portfel:\n"
-"{0} {1} /\n"
-"{2} {3}"
-
 #: src/app/components/trade/LPPanel.tsx
 msgid "Wallet: {0} {1}"
 msgstr "Portfel: {0} {1}"
@@ -1133,7 +1167,6 @@ msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
 msgstr "Gdy pożyczasz bnUSD, Twoje zabezpieczenie jest wykorzystywane do utrzymania jego wartości na stabilnym poziomie"
 
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1212,10 +1245,6 @@ msgid "Your BALN will unstake on {0} at\n"
 msgstr "Odstake'owanie BALN nastąpi w dniu {0} około godz.\n"
 "{1}."
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "Your ICX will be locked for 24 hours."
-msgstr "Twoje ICX zostaną zablokowane na 24 godziny."
-
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX will be staked, so your collateral value will increase over time."
 msgstr "Twoje ICX będą zastake'owane, więc wartość zabezpieczenia będzie z czasem wzrastać."
@@ -1234,10 +1263,6 @@ msgid "Your collateral balance. It earns interest from staking, but is also sold
 msgstr "Saldo Twojego zabezpieczenia. Zarabia odsetki ze stake'owania, ale bywa również sprzedawane, aby spłacać pożyczkę."
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "Your daily rewards"
-msgstr "Twoje dzienne nagrody"
-
-#: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Your supply"
 msgstr "Twoja podaż"
@@ -1249,6 +1274,10 @@ msgstr "i kończy się po 5 dniach."
 #: src/utils/timeformat.ts
 msgid "d"
 msgstr "d"
+
+#: src/app/components/StabilityFund/index.tsx
+msgid "for"
+msgstr ""
 
 #: src/utils/timeformat.ts
 msgid "h"
@@ -1279,14 +1308,14 @@ msgid "then create the pool."
 msgstr "następnie utwórz pulę."
 
 #: src/app/components/home/LoanPanel.tsx
+#: src/app/components/trade/LPDescription.tsx
 msgid "{0}"
 msgstr "{0}"
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "{0} / {1} \n"
+msgid "{0} / {1}\n"
 "liquidity pool{2}"
-msgstr "{0} / {1} \n"
-"pula płynności{2}"
+msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} / {1} liquidity pool"

@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react';
 
 import { Skeleton } from '@material-ui/lab';
-import { motion } from 'framer-motion';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
@@ -13,6 +12,8 @@ import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { PairInfo } from 'constants/pairs';
 import useSort from 'hooks/useSort';
 import { useAllPairs } from 'queries/reward';
+import { Field } from 'store/mint/actions';
+import { useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { getFormattedNumber } from 'utils/formatter';
 
 const List = styled(Box)`
@@ -44,6 +45,25 @@ const DataText = styled(Flex)`
   color: #ffffff;
   align-items: center;
   line-height: 1.4;
+`;
+
+const PairGrid = styled(DashGrid)`
+  cursor: pointer;
+  &:hover {
+    & > div {
+      p,
+      & > div {
+        color: ${({ theme }) => theme.colors.primary} !important;
+        path {
+          stroke: ${({ theme }) => theme.colors.primary} !important;
+        }
+      }
+    }
+
+    > ${DataText} {
+      color: ${({ theme }) => theme.colors.primary};
+    }
+  }
 `;
 
 const StyledSkeleton = styled(Skeleton)`
@@ -203,11 +223,12 @@ type PairItemProps = {
     volume: number;
     fees: number;
   };
+  onClick: (pair: PairInfo) => void;
 };
 
-const PairItem = forwardRef(({ pair }: PairItemProps, ref) => (
+const PairItem = forwardRef(({ pair, onClick }: PairItemProps, ref) => (
   <>
-    <DashGrid my={2} ref={ref}>
+    <PairGrid my={2} ref={ref} onClick={() => onClick(pair)}>
       <DataText minWidth={'220px'}>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px' }}>
@@ -240,14 +261,21 @@ const PairItem = forwardRef(({ pair }: PairItemProps, ref) => (
       <DataText>{getFormattedNumber(pair.tvl, 'currency0')}</DataText>
       <DataText>{pair.volume ? getFormattedNumber(pair.volume, 'currency0') : '-'}</DataText>
       <DataText>{pair.fees ? getFormattedNumber(pair.fees, 'currency0') : '-'}</DataText>
-    </DashGrid>
+    </PairGrid>
     <Divider />
   </>
 ));
 
-export default function PairSection() {
+export default function AllPoolsPanel() {
   const allPairs = useAllPairs();
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
+  const { noLiquidity } = useDerivedMintInfo();
+  const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
+
+  const handlePoolLick = (pair: PairInfo) => {
+    onCurrencySelection(Field.CURRENCY_A, pair.baseToken);
+    onCurrencySelection(Field.CURRENCY_B, pair.quoteToken);
+  };
 
   return (
     <Box overflow="auto">
@@ -331,11 +359,7 @@ export default function PairSection() {
         </DashGrid>
 
         {allPairs ? (
-          sortData(Object.values(allPairs)).map(pair => (
-            <motion.div key={`${pair.baseCurrencyKey}${pair.quoteCurrencyKey}`} layout>
-              <PairItem pair={pair} />
-            </motion.div>
-          ))
+          sortData(Object.values(allPairs)).map(pair => <PairItem pair={pair} onClick={handlePoolLick} />)
         ) : (
           <>
             <SkeletonPairPlaceholder />

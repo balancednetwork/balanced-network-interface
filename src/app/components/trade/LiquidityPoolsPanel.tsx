@@ -1,16 +1,20 @@
-import React, { useState, /* useCallback,*/ useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
-import { Trans /* t */ } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-
 // import SearchInput from '../SearchModal/SearchInput';
+import { useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
+import { useTrackedTokenPairs } from 'store/user/hooks';
+
 import AllPoolsPanel from './AllPoolsPanel';
-import LiquidityDetails, { useHasLiquidity } from './LiquidityDetails';
+import LiquidityDetails from './LiquidityDetails';
+import { useHasLiquidity } from './LiquidityDetails/shared';
+import { PoolPanelContext } from './PoolPanelContext';
 import { ChartControlButton, ChartControlGroup } from './utils';
 
 enum PanelType {
@@ -54,6 +58,23 @@ export default function LiquidityPoolsPanel() {
     }
   }, [account, hasLiquidity]);
 
+  const trackedTokenPairs = useTrackedTokenPairs();
+
+  // fetch the reserves for all V2 pools
+  const pairs = useAvailablePairs(trackedTokenPairs);
+
+  // fetch the user's balances of all tracked V2 LP tokens
+  const balances = useBalances(account, pairs);
+
+  const data = useMemo(
+    () => ({
+      trackedTokenPairs,
+      pairs,
+      balances,
+    }),
+    [trackedTokenPairs, pairs, balances],
+  );
+
   return (
     <BoxPanel bg="bg2" mb={10}>
       <Wrapper>
@@ -94,7 +115,9 @@ export default function LiquidityPoolsPanel() {
         /> */}
       </Wrapper>
 
-      {panelType === PanelType.YourPools ? <LiquidityDetails /> : <AllPoolsPanel />}
+      <PoolPanelContext.Provider value={data}>
+        {panelType === PanelType.YourPools ? <LiquidityDetails /> : <AllPoolsPanel />}
+      </PoolPanelContext.Provider>
     </BoxPanel>
   );
 }

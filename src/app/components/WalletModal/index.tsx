@@ -362,7 +362,7 @@ export default function WalletModal() {
             </ClickAwayListener>
           </Flex>
 
-          <Typography textAlign="center">
+          <Typography textAlign="center" as="div">
             <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
             <Box>
               <Link href="https://balanced.network/disclaimer/" target="_blank">

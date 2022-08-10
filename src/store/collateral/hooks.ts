@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { useBorrowedAmounts, useLockingRatio } from 'store/loan/hooks';
 import { useOraclePrices } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -259,55 +259,60 @@ export function useCollateralInputAmountInUSD() {
   }, [collateralInputAmount, oraclePrices, collateralType]);
 }
 
-// interface CollateralType {
-//   symbol: string;
-//   name: string;
-//   displayName?: string;
-//   collateralUsed: BigNumber;
-//   collateralAvailable: BigNumber;
-//   loanTaken: BigNumber;
-//   loanAvailable: BigNumber;
-// }
-
-type Position = {
-  collateral: CurrencyAmount<Token>;
-  loan: CurrencyAmount<Token>;
+type CollateralInfo = {
+  symbol: string;
+  name: string;
+  displayName?: string;
+  collateralDeposit: BigNumber;
+  collateralAvailable: BigNumber;
+  loanTaken: BigNumber;
+  loanAvailable: BigNumber;
 };
 
-export function useAllCollateralData(): Position[] | undefined {
-  const { data: collateralToknes } = useSupportedCollateralTokens();
+export function useAllCollateralData(): CollateralInfo[] | undefined {
+  const { data: collateralTokens } = useSupportedCollateralTokens();
+  const depositedAmounts = useCollateralAmounts();
+  const borrowedAmounts = useBorrowedAmounts();
+  const lockingRatio = useLockingRatio();
+  const oraclePrices = useOraclePrices();
+  const balances = useWalletBalances();
 
-  const allPositions: Position[] | undefined =
-    collateralToknes &&
-    Object.values(collateralToknes).map(address => {
-      //getBalances and loans
-      return {
-        collateral: CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[address], 0),
-        loan: CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], 0),
-      };
-    });
+  return useMemo(() => {
+    const allCollateralInfo: CollateralInfo[] | undefined =
+      collateralTokens &&
+      Object.values(collateralTokens).map(address => {
+        const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
 
-  // const dummyData: CollateralType[] = [
-  //   {
-  //     symbol: 'ICX',
-  //     name: 'Icon',
-  //     displayName: 'ICX / sICX',
-  //     collateralUsed: new BigNumber(11133),
-  //     collateralAvailable: new BigNumber(3867),
-  //     loanTaken: new BigNumber(9472),
-  //     loanAvailable: new BigNumber(1397),
-  //   },
-  //   {
-  //     symbol: 'BALN',
-  //     name: 'Balanced',
-  //     collateralUsed: new BigNumber(0),
-  //     collateralAvailable: new BigNumber(3057),
-  //     loanTaken: new BigNumber(0),
-  //     loanAvailable: new BigNumber(876),
-  //   },
-  // ];
+        const collateralDepositUSDValue =
+          depositedAmounts && oraclePrices && depositedAmounts[token.symbol!]
+            ? depositedAmounts[token.symbol!].times(oraclePrices[token.symbol!])
+            : new BigNumber(0);
 
-  return allPositions;
+        const availableCollateral =
+          token.symbol === 'sICX'
+            ? toBigNumber(balances[address])
+                .plus(toBigNumber(balances[NULL_CONTRACT_ADDRESS]))
+                .multipliedBy(oraclePrices[token.symbol!])
+            : toBigNumber(balances[address]).multipliedBy(oraclePrices[token.symbol!]);
+
+        const loanTaken =
+          borrowedAmounts && borrowedAmounts[token.symbol!] ? borrowedAmounts[token.symbol!] : new BigNumber(0);
+
+        const loanAvailable =
+          lockingRatio && availableCollateral ? availableCollateral.div(lockingRatio) : new BigNumber(0);
+
+        return {
+          symbol: token.symbol!,
+          name: token.name!,
+          displayName: token.symbol === 'sICX' ? 'ICX / sICX' : '',
+          collateralDeposit: collateralDepositUSDValue,
+          collateralAvailable: availableCollateral,
+          loanTaken: loanTaken,
+          loanAvailable: loanAvailable,
+        };
+      });
+    return allCollateralInfo;
+  }, [collateralTokens, depositedAmounts, borrowedAmounts, oraclePrices, balances, lockingRatio]);
 }
 
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
@@ -317,7 +322,6 @@ export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]
   });
 }
 
-///////////////////////
 export function useDepositedCollateral() {
   const collateralType = useCollateralType();
   const icxDisplayType = useIcxDisplayType();

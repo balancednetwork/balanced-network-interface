@@ -143,8 +143,8 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
     () =>
       allCollateralData?.filter(
         collateralType =>
-          collateralType.collateral.currency.symbol!.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0 ||
-          collateralType.collateral.currency.name!.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0,
+          collateralType.symbol.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0 ||
+          collateralType.name.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0,
       ),
     [allCollateralData, searchQuery],
   );
@@ -163,8 +163,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   useEffect(() => {
     if (anchor && filteredCollateralTypes?.length && enter) {
       setAnchor(null);
-      activeIndex !== undefined &&
-        changeCollateralType(filteredCollateralTypes[activeIndex].collateral.currency.symbol!);
+      activeIndex !== undefined && changeCollateralType(filteredCollateralTypes[activeIndex].symbol);
     }
   }, [
     anchor,
@@ -220,7 +219,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
               border={!isLast}
               negativeMargin={isFirst}
               hideCollateralInfoColumn={hideCollateralInfoColumn}
-              onClick={() => handleCollateralTypeChange(collateralType.collateral.currency.symbol!)}
+              onClick={() => handleCollateralTypeChange(collateralType.symbol)}
               onMouseEnter={() => setActiveIndex(i)}
               className={i === activeIndex ? 'active' : ''}
             >
@@ -228,15 +227,11 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
                 <AssetInfo>
                   <CurrencyLogo
                     size={'26px'}
-                    currency={SUPPORTED_TOKENS_LIST.find(
-                      token => token.symbol === collateralType.collateral.currency.symbol!,
-                    )}
+                    currency={SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType.symbol)}
                   />
                   <Box>
                     <Typography className="white" fontWeight={700}>
-                      {collateralType.collateral.currency.symbol === 'sICX'
-                        ? 'ICX / sICX'
-                        : collateralType.collateral.currency.symbol}
+                      {collateralType.displayName ? collateralType.displayName : collateralType.symbol}
                     </Typography>
                     <Typography className="grey">{'Available:'}</Typography>
                   </Box>
@@ -245,14 +240,14 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
 
               {!hideCollateralInfoColumn && (
                 <CollateralTypesGridItem>
-                  <Typography className="white">{`$0`}</Typography>
-                  <Typography className="grey">{`$0`}</Typography>
+                  <Typography className="white">{`$${collateralType.collateralDeposit.toFormat(0)}`}</Typography>
+                  <Typography className="grey">{`$${collateralType.collateralAvailable.toFormat(0)}`}</Typography>
                 </CollateralTypesGridItem>
               )}
 
               <CollateralTypesGridItem>
-                <Typography className="white">{`$0`}</Typography>
-                <Typography className="grey">{`$0`}</Typography>
+                <Typography className="white">{`$${collateralType.loanTaken.toFormat(0)}`}</Typography>
+                <Typography className="grey">{`$${collateralType.loanAvailable.toFormat(0)}`}</Typography>
               </CollateralTypesGridItem>
             </CollateralTypesGrid>
           );

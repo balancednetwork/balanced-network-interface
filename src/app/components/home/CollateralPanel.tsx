@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { addresses } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
@@ -17,6 +17,8 @@ import Modal from 'app/components/Modal';
 import { BoxPanel, BoxPanelWrap } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
+import { ReactComponent as IconUnstakeSICX } from 'assets/icons/timer-color.svg';
+import { ReactComponent as IconKeepSICX } from 'assets/icons/wallet-tick-color.svg';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
@@ -27,11 +29,11 @@ import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
   useCollateralActionHandlers,
-  useIcxDisplayType,
   useCollateralType,
   useDepositedCollateral,
   useTotalCollateral,
   useSupportedCollateralTokens,
+  useIsHandlingICX,
 } from 'store/collateral/hooks';
 import { useLoanActionHandlers, useLockedCollateralAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -84,13 +86,36 @@ export const PanelInfoItem = styled(Box)`
   }
 `;
 
+const UnstakingOption = styled(Flex)<{ isActive: boolean }>`
+  padding: 10px 20px;
+  margin: 15px;
+  transition: all ease 0.2s;
+  border-radius: 10px;
+  flex-flow: column;
+  align-items: center;
+  background: ${({ theme, isActive }) => (isActive ? theme.colors.bg3 : 'transparent')};
+  min-height: 110px;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.bg3};
+  }
+`;
+
+enum ICXWithdrawOptions {
+  KEEPSICX = 'keep',
+  UNSTAKE = 'unstake',
+  EMPTY = '',
+}
+
 const CollateralPanel = () => {
   const { account } = useIconReact();
-  const icxDisplayType = useIcxDisplayType();
   const ratio = useRatio();
   const locale = useActiveLocale();
   const collateralType = useCollateralType();
+  const isHandlingICX = useIsHandlingICX();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
+  const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
 
   const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '359px'})`);
 
@@ -118,8 +143,6 @@ const CollateralPanel = () => {
 
   const collateralDeposit = useDepositedCollateral();
   const collateralTotal = useTotalCollateral();
-
-  const shouldDisplayICXValues = collateralType === 'sICX' && icxDisplayType === 'ICX';
 
   //  calculate dependentField value
   const parsedAmount = useMemo(() => {
@@ -164,7 +187,7 @@ const CollateralPanel = () => {
 
     if (shouldDeposit) {
       try {
-        if (shouldDisplayICXValues) {
+        if (isHandlingICX) {
           const { result: hash } = await bnJs
             .inject({ account })
             .Loans.depositAndBorrow(parseUnits(collateralDifference.toFixed()));
@@ -210,27 +233,49 @@ const CollateralPanel = () => {
       }
     } else {
       try {
-        const collateralAmountInSICX =
-          icxDisplayType === 'ICX'
-            ? collateralDifference.div(ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio)
-            : collateralDifference;
+        if (isHandlingICX) {
+          const collateralDifferenceInSICX = collateralDifference.div(
+            ratio.sICXICXratio.isZero() ? 1 : ratio.sICXICXratio,
+          );
+          if (ICXWithdrawOption === ICXWithdrawOptions.UNSTAKE) {
+            const { result: hash } = await bnJs
+              .inject({ account })
+              .Loans.withdrawAndUnstake(parseUnits(collateralDifferenceInSICX.toFixed()));
 
-        const { result: hash } = await bnJs
-          .inject({ account })
-          .Loans.withdrawCollateral(parseUnits(collateralAmountInSICX.toFixed()), collateralType);
+            addTransaction(
+              { hash },
+              {
+                pending: t`Withdrawing collateral...`,
+                summary: t`${collateralDifference.dp(2).toFormat()} ICX is unstaking.`,
+              },
+            );
+          } else {
+            const { result: hash } = await bnJs
+              .inject({ account })
+              .Loans.withdrawCollateral(parseUnits(collateralDifferenceInSICX.toFixed()));
 
-        addTransaction(
-          { hash },
-          {
-            pending: t`Withdrawing collateral...`,
-            summary: t`${collateralAmountInSICX.dp(2).toFormat()} ${collateralType} added to your wallet.`,
-          },
-        );
+            addTransaction(
+              { hash },
+              {
+                pending: t`Withdrawing collateral...`,
+                summary: t`${collateralDifferenceInSICX.dp(2).toFormat()} ${collateralType} added to your wallet.`,
+              },
+            );
+          }
+        } else {
+          const { result: hash } = await bnJs
+            .inject({ account })
+            .Loans.withdrawCollateral(parseUnits(collateralDifference.toFixed()), collateralType);
 
-        // close modal
+          addTransaction(
+            { hash },
+            {
+              pending: t`Withdrawing collateral...`,
+              summary: t`${collateralDifference.dp(2).toFormat()} ${collateralType} added to your wallet.`,
+            },
+          );
+        }
         toggleOpen();
-
-        // reset collateral panel values
         adjust(false);
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
@@ -257,20 +302,14 @@ const CollateralPanel = () => {
     }
   }, [afterAmount, inputType]);
 
-  // display locked sICX for borrowed bnUSD
-  //TODOXX
-  // const lockedICXAmount = useLockedICXAmount();
-  // const lockedSICXAmount = useLockedSICXAmount();
-
   const lockedCollateral = useLockedCollateralAmount();
-
   const shouldShowLock = !lockedCollateral.isZero();
 
   // add one more ICX to the locked marker if user has debt to remove insufficient error.
   //TODOXX
   const tLockedAmount = React.useMemo(
-    () => BigNumber.min(lockedCollateral.plus(shouldShowLock ? 1 : 0), collateralTotal),
-    [lockedCollateral, collateralTotal, shouldShowLock],
+    () => BigNumber.min(lockedCollateral.plus(shouldShowLock && isHandlingICX ? 1 : 0), collateralTotal),
+    [lockedCollateral, collateralTotal, shouldShowLock, isHandlingICX],
   );
 
   const percent = collateralTotal.isZero() ? 0 : tLockedAmount.div(collateralTotal).times(100).toNumber();
@@ -339,7 +378,7 @@ const CollateralPanel = () => {
                 label="Deposited"
                 tooltip={false}
                 value={formattedAmounts[Field.LEFT]}
-                currency={shouldDisplayICXValues ? 'ICX' : collateralType}
+                currency={isHandlingICX ? 'ICX' : collateralType}
                 maxValue={collateralTotal}
                 onUserInput={onFieldAInput}
               />
@@ -352,7 +391,7 @@ const CollateralPanel = () => {
                 label="Wallet"
                 tooltipText={collateralType === 'sICX' && 'The amount of ICX available to deposit from your wallet.'}
                 value={formattedAmounts[Field.RIGHT]}
-                currency={shouldDisplayICXValues ? 'ICX' : collateralType}
+                currency={isHandlingICX ? 'ICX' : collateralType}
                 maxValue={collateralTotal}
                 onUserInput={onFieldBInput}
               />
@@ -365,15 +404,17 @@ const CollateralPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            {shouldDeposit ? t`Deposit collateral?` : t`Withdraw collateral?`}
+            {shouldDeposit ? t`Deposit ${collateralType} collateral?` : t`Withdraw ${collateralType} collateral?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.dp(2).toFormat() + (shouldDisplayICXValues ? ' ICX' : ` ${collateralType}`)}
+            {differenceAmount.dp(2).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
           </Typography>
 
-          {!shouldDeposit && shouldDisplayICXValues && (
-            <Typography textAlign="center">{collateralDifference.dp(2).toFormat() + ' sICX'}</Typography>
+          {!shouldDeposit && isHandlingICX && (
+            <Typography textAlign="center">
+              {ratio.sICXICXratio && collateralDifference.dividedBy(ratio.sICXICXratio).dp(2).toFormat() + ' sICX'}
+            </Typography>
           )}
 
           <Flex my={5}>
@@ -382,7 +423,7 @@ const CollateralPanel = () => {
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(2).toFormat() + (shouldDisplayICXValues ? ' ICX' : ` ${collateralType}`)}
+                {beforeAmount.dp(2).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
               </Typography>
             </Box>
 
@@ -391,12 +432,12 @@ const CollateralPanel = () => {
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(2).toFormat() + (shouldDisplayICXValues ? ' ICX' : ` ${collateralType}`)}
+                {afterAmount.dp(2).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
               </Typography>
             </Box>
           </Flex>
 
-          {shouldDisplayICXValues && (
+          {isHandlingICX && (
             <Typography textAlign="center">
               {shouldDeposit ? (
                 <>
@@ -405,19 +446,64 @@ const CollateralPanel = () => {
                   {t`You’ll receive sICX when you withdraw, which you can unstake or swap for ICX on the Trade page.`}
                 </>
               ) : (
-                t`You'll receive sICX (Staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page.`
+                t`Your ICX is staked (sICX). Choose what to do with it:`
+              )}
+              {!shouldDeposit && (
+                <>
+                  <Flex justifyContent="space-around">
+                    <UnstakingOption
+                      isActive={ICXWithdrawOption === ICXWithdrawOptions.UNSTAKE}
+                      onClick={() => setICXWithdrawOption(ICXWithdrawOptions.UNSTAKE)}
+                    >
+                      <IconUnstakeSICX width="50px" />
+                      <Typography fontWeight="bold" mt="auto">
+                        Unstake
+                      </Typography>
+                      <Typography>{`${ratio.sICXICXratio && differenceAmount.times(-1).toFormat(2)} ICX`}</Typography>
+                    </UnstakingOption>
+                    <UnstakingOption
+                      isActive={ICXWithdrawOption === ICXWithdrawOptions.KEEPSICX}
+                      onClick={() => setICXWithdrawOption(ICXWithdrawOptions.KEEPSICX)}
+                    >
+                      <IconKeepSICX width="50px" />
+                      <Typography fontWeight="bold" mt="auto">
+                        Keep sICX
+                      </Typography>
+                      <Typography>{`${
+                        ratio.sICXICXratio && differenceAmount.dividedBy(ratio.sICXICXratio).times(-1).toFormat(2)
+                      } sICX`}</Typography>
+                    </UnstakingOption>
+                  </Flex>
+
+                  {ICXWithdrawOption === ICXWithdrawOptions.KEEPSICX && (
+                    <Typography textAlign="center">
+                      <Trans>
+                        Takes up to 7 days. When it's ready, you can claim your ICX from the wallet section.
+                      </Trans>
+                    </Typography>
+                  )}
+                  {ICXWithdrawOption === ICXWithdrawOptions.UNSTAKE && (
+                    <Typography textAlign="center">
+                      <Trans>Recieve sICX, which you can trade or unstake from the wallet section later.</Trans>
+                    </Typography>
+                  )}
+                </>
               )}
             </Typography>
           )}
 
-          <Flex justifyContent="center" mt={shouldDisplayICXValues ? 4 : 0} pt={4} className="border-top">
+          <Flex justifyContent="center" mt={isHandlingICX ? 4 : 0} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={toggleOpen} fontSize={14}>
                   <Trans>Cancel</Trans>
                 </TextButton>
-                <Button onClick={handleCollateralConfirm} fontSize={14} disabled={!hasEnoughICX}>
+                <Button
+                  onClick={handleCollateralConfirm}
+                  fontSize={14}
+                  disabled={!hasEnoughICX || (isHandlingICX && ICXWithdrawOption === ICXWithdrawOptions.EMPTY)}
+                >
                   {shouldDeposit ? t`Deposit` : t`Withdraw`}
                 </Button>
               </>

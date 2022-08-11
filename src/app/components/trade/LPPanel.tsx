@@ -5,6 +5,7 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -20,6 +21,7 @@ import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/m
 import { maxAmountSpend } from 'utils';
 
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
+import Tooltip from '../Tooltip';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
@@ -58,8 +60,12 @@ function WalletSection() {
 
   const formattedRemains: { [field in Field]?: string } = React.useMemo(
     () => ({
-      [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
-      [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
+      [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.lessThan(BIGINT_ZERO)
+        ? '0.0000'
+        : remains[Field.CURRENCY_A]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
+      [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.lessThan(BIGINT_ZERO)
+        ? '0.0000'
+        : remains[Field.CURRENCY_B]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
     }),
     [remains],
   );
@@ -220,6 +226,25 @@ export default function LPPanel() {
 
   const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
 
+  const remains: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
+    () => ({
+      [Field.CURRENCY_A]: subtract(currencyBalances[Field.CURRENCY_A], parsedAmounts[Field.CURRENCY_A]),
+      [Field.CURRENCY_B]: subtract(currencyBalances[Field.CURRENCY_B], parsedAmounts[Field.CURRENCY_B]),
+    }),
+    [currencyBalances, parsedAmounts],
+  );
+
+  const getMessage = (field: string) => {
+    return {
+      isVisible: remains[field]?.lessThan(BIGINT_ZERO),
+      message: `Your balance wallet only has ${currencyBalances[field]?.toFixed(2, { groupSeparator: ',' })} ${
+        currencies[field]?.symbol || '-'
+      }. Please enter less or equal to the available balance!`,
+    };
+  };
+
+  const isSmall = useMedia('(max-width: 810px)');
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -233,29 +258,47 @@ export default function LPPanel() {
 
             <AutoColumn gap="md">
               <Flex>
-                <CurrencyInputPanel
-                  account={account}
-                  value={formattedAmounts[Field.CURRENCY_A]}
-                  currencySelectionType={CurrencySelectionType.TRADE_MINT_BASE}
-                  currency={currencies[Field.CURRENCY_A]}
-                  onUserInput={onFieldAInput}
-                  onCurrencySelect={handleCurrencyASelect}
-                  onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
-                />
+                <Tooltip
+                  key={Field.CURRENCY_A}
+                  containerStyle={{ width: 'auto' }}
+                  refStyle={{ display: 'block' }}
+                  placement={isSmall ? 'top' : 'right'}
+                  text={getMessage(Field.CURRENCY_A).message}
+                  show={getMessage(Field.CURRENCY_A).isVisible}
+                >
+                  <CurrencyInputPanel
+                    account={account}
+                    value={formattedAmounts[Field.CURRENCY_A]}
+                    currencySelectionType={CurrencySelectionType.TRADE_MINT_BASE}
+                    currency={currencies[Field.CURRENCY_A]}
+                    onUserInput={onFieldAInput}
+                    onCurrencySelect={handleCurrencyASelect}
+                    onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
+                  />
+                </Tooltip>
               </Flex>
             </AutoColumn>
 
             <AutoColumn gap="md" hidden={isQueue}>
               <Flex>
-                <CurrencyInputPanel
-                  account={account}
-                  value={formattedAmounts[Field.CURRENCY_B]}
-                  currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
-                  currency={currencies[Field.CURRENCY_B]}
-                  onUserInput={onFieldBInput}
-                  onCurrencySelect={handleCurrencyBSelect}
-                  onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
-                />
+                <Tooltip
+                  key={Field.CURRENCY_B}
+                  containerStyle={{ width: 'auto' }}
+                  refStyle={{ display: 'block' }}
+                  placement={isSmall ? 'top' : 'right'}
+                  text={getMessage(Field.CURRENCY_B).message}
+                  show={getMessage(Field.CURRENCY_B).isVisible}
+                >
+                  <CurrencyInputPanel
+                    account={account}
+                    value={formattedAmounts[Field.CURRENCY_B]}
+                    currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
+                    currency={currencies[Field.CURRENCY_B]}
+                    onUserInput={onFieldBInput}
+                    onCurrencySelect={handleCurrencyBSelect}
+                    onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
+                  />
+                </Tooltip>
               </Flex>
             </AutoColumn>
           </AutoColumn>

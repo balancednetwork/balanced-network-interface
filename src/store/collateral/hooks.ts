@@ -7,8 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
 import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { useBorrowedAmounts, useLockingRatio } from 'store/loan/hooks';
-import { useOraclePrices } from 'store/oracle/hooks';
+import { useBorrowedAmounts, useLockingRatios } from 'store/loan/hooks';
+import { useOraclePrice, useOraclePrices } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -250,13 +250,11 @@ export function useCollateralInputAmountInSICX() {
 
 export function useCollateralInputAmountInUSD() {
   const collateralInputAmount = useCollateralInputAmountAbsolute();
-  const oraclePrices = useOraclePrices();
-  const collateralType = useCollateralType();
+  const oraclePrice = useOraclePrice();
 
   return React.useMemo(() => {
-    if (oraclePrices && collateralInputAmount && oraclePrices[collateralType])
-      return collateralInputAmount.multipliedBy(oraclePrices[collateralType]);
-  }, [collateralInputAmount, oraclePrices, collateralType]);
+    if (oraclePrice && collateralInputAmount) return collateralInputAmount.multipliedBy(oraclePrice);
+  }, [collateralInputAmount, oraclePrice]);
 }
 
 type CollateralInfo = {
@@ -273,7 +271,7 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
   const { data: collateralTokens } = useSupportedCollateralTokens();
   const depositedAmounts = useCollateralAmounts();
   const borrowedAmounts = useBorrowedAmounts();
-  const lockingRatio = useLockingRatio();
+  const lockingRatios = useLockingRatios();
   const oraclePrices = useOraclePrices();
   const balances = useWalletBalances();
 
@@ -299,7 +297,13 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
           borrowedAmounts && borrowedAmounts[token.symbol!] ? borrowedAmounts[token.symbol!] : new BigNumber(0);
 
         const loanAvailable =
-          lockingRatio && availableCollateral ? availableCollateral.div(lockingRatio) : new BigNumber(0);
+          (lockingRatios[token.symbol!] &&
+            depositedAmounts[token.symbol!] &&
+            depositedAmounts[token.symbol!]
+              .multipliedBy(oraclePrices[token.symbol!])
+              .div(lockingRatios[token.symbol!])
+              .minus(loanTaken)) ||
+          new BigNumber(0);
 
         return {
           symbol: token.symbol!,
@@ -312,7 +316,7 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
         };
       });
     return allCollateralInfo;
-  }, [collateralTokens, depositedAmounts, borrowedAmounts, oraclePrices, balances, lockingRatio]);
+  }, [collateralTokens, depositedAmounts, borrowedAmounts, oraclePrices, balances, lockingRatios]);
 }
 
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {

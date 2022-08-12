@@ -1,7 +1,16 @@
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, adjust, cancel, type, Field } from './actions';
+import {
+  changeBorrowedAmount,
+  changeBadDebt,
+  changeTotalSupply,
+  adjust,
+  cancel,
+  type,
+  Field,
+  setLockingRatio,
+} from './actions';
 
 export interface LoanState {
   badDebt: BigNumber;
@@ -10,6 +19,9 @@ export interface LoanState {
   totalCollateralSold: BigNumber;
   borrowedAmounts: {
     [key in string]: BigNumber;
+  };
+  lockingRatios: {
+    [key in string]: number;
   };
 
   // loan panel UI state
@@ -27,6 +39,7 @@ const initialState: LoanState = {
   totalRepaid: new BigNumber(0),
   totalCollateralSold: new BigNumber(0),
   borrowedAmounts: {},
+  lockingRatios: {},
 
   // loan panel UI state
   state: {
@@ -61,5 +74,10 @@ export default createReducer(initialState, builder =>
     })
     .addCase(changeTotalSupply, (state, { payload: { totalSupply } }) => {
       state.totalSupply = totalSupply;
+    })
+    .addCase(setLockingRatio, (state, { payload: { lockingRatio, collateralType } }) => {
+      const updatedRatios = { ...state.lockingRatios };
+      updatedRatios[collateralType] = lockingRatio;
+      state.lockingRatios = updatedRatios;
     }),
 );

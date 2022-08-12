@@ -15,7 +15,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import '@reach/tabs/styles.css';
 import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
-import { useRatesQuery } from 'queries/reward';
+import { useRatesWithOracle } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
@@ -52,7 +52,7 @@ const WalletPanel = () => {
   const balnAddress = bnJs.BALN.address;
 
   // rates: using symbol as key?
-  const { data: rates } = useRatesQuery();
+  const rates = useRatesWithOracle();
   const rateFracs = React.useMemo(() => {
     if (rates) {
       return Object.keys(rates).reduce((acc, key) => {

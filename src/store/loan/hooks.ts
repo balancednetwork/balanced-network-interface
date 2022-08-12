@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
+import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
 import { ZERO } from 'constants/index';
 import { useBnJsContractQuery } from 'queries/utils';
 import {
@@ -13,6 +14,7 @@ import {
   useCollateralInputAmountAbsolute,
   useCollateralType,
   useIsHandlingICX,
+  useSupportedCollateralTokens,
 } from 'store/collateral/hooks';
 import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -22,7 +24,16 @@ import { useWalletBalances } from 'store/wallet/hooks';
 import { formatUnits, toBigNumber } from 'utils';
 
 import { AppState } from '..';
-import { changeBorrowedAmount, changeBadDebt, changeTotalSupply, Field, adjust, cancel, type } from './actions';
+import {
+  changeBorrowedAmount,
+  changeBadDebt,
+  changeTotalSupply,
+  Field,
+  adjust,
+  cancel,
+  type,
+  setLockingRatio,
+} from './actions';
 
 export function useLoanBorrowedAmount(): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();
@@ -32,6 +43,10 @@ export function useLoanBorrowedAmount(): BigNumber {
 
 export function useBorrowedAmounts(): AppState['loan']['borrowedAmounts'] {
   return useSelector((state: AppState) => state.loan.borrowedAmounts);
+}
+
+export function useLockingRatios(): AppState['loan']['lockingRatios'] {
+  return useSelector((state: AppState) => state.loan.lockingRatios);
 }
 
 export function useLoanBadDebt(): AppState['loan']['badDebt'] {
@@ -73,9 +88,12 @@ export function useLoanChangeTotalSupply(): (totalSupply: BigNumber) => void {
 }
 
 export function useLoanFetchInfo(account?: string | null) {
+  const dispatch = useDispatch();
   const changeBorrowedAmount = useLoanChangeBorrowedAmount();
   const changeBadDebt = useLoanChangeBadDebt();
   const changeTotalSupply = useLoanChangeTotalSupply();
+  const { data: collateralTokens } = useSupportedCollateralTokens();
+  const supportedSymbols = React.useMemo(() => collateralTokens && Object.keys(collateralTokens), [collateralTokens]);
 
   const transactions = useAllTransactions();
 
@@ -111,6 +129,32 @@ export function useLoanFetchInfo(account?: string | null) {
       fetchLoanInfo(account);
     }
   }, [fetchLoanInfo, account, transactions]);
+
+  React.useEffect(() => {
+    (async function () {
+      if (account && supportedSymbols) {
+        const cds: CallData[] = supportedSymbols.map(symbol => {
+          return {
+            target: addresses[NETWORK_ID].loans,
+            method: 'getLockingRatio',
+            params: [symbol],
+          };
+        });
+
+        const data: string[] = await bnJs.Multicall.getAggregateData(cds);
+
+        data.forEach((ratio, index) => {
+          ratio != null &&
+            dispatch(
+              setLockingRatio({
+                lockingRatio: Number(formatUnits(ratio, 4, 6)),
+                collateralType: supportedSymbols[index],
+              }),
+            );
+        });
+      }
+    })();
+  }, [supportedSymbols, dispatch, account]);
 }
 
 export function useLoanState() {
@@ -281,17 +325,10 @@ export function useLoanAPY(): BigNumber | undefined {
   }, [totalLoanDailyRewards, ratio.BALNbnUSDratio, totalbnUSDDebt]);
 }
 
-function useLockingRatioRaw() {
-  const collateralType = useCollateralType();
-  return useQuery(`${collateralType}LockingRatio`, async () => {
-    const data = await bnJs.Loans.getLockingRatio(collateralType);
-    return data;
-  });
-}
-
 export function useLockingRatio() {
-  const { data: rawRatio } = useLockingRatioRaw();
-  return rawRatio && Number(formatUnits(rawRatio, 4, 6));
+  const collateralType = useCollateralType();
+  const ratios = useLockingRatios();
+  return ratios && ratios[collateralType];
 }
 
 function useLiquidationRatioRaw() {
@@ -328,17 +365,24 @@ export const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const loanInputAmount = useLoanInputAmount();
   const lockingRatio = useLockingRatio();
   const liquidationRatio = useLiquidationRatio();
+  const collateralType = useCollateralType();
+  const ratio = useRatio();
 
   return React.useMemo(() => {
-    if (collateralInputAmount && !collateralInputAmount.isZero() && lockingRatio && liquidationRatio) {
-      return [
-        loanInputAmount.div(collateralInputAmount).times(lockingRatio),
-        loanInputAmount.div(collateralInputAmount).times(liquidationRatio),
-      ];
+    if (collateralInputAmount && !collateralInputAmount.isZero() && lockingRatio && liquidationRatio && ratio) {
+      return collateralType === 'sICX'
+        ? [
+            loanInputAmount.div(collateralInputAmount).times(lockingRatio).dividedBy(ratio.sICXICXratio),
+            loanInputAmount.div(collateralInputAmount).times(liquidationRatio).dividedBy(ratio.sICXICXratio),
+          ]
+        : [
+            loanInputAmount.div(collateralInputAmount).times(lockingRatio),
+            loanInputAmount.div(collateralInputAmount).times(liquidationRatio),
+          ];
     }
 
     return [new BigNumber(0), new BigNumber(0)];
-  }, [collateralInputAmount, loanInputAmount, lockingRatio, liquidationRatio]);
+  }, [collateralInputAmount, loanInputAmount, lockingRatio, liquidationRatio, ratio, collateralType]);
 };
 
 //TODOXX: refactor for other collateral types

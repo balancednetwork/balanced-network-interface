@@ -26,6 +26,11 @@ export function useOraclePrice(): BigNumber | undefined {
   }, [oraclePrices, collateralType]);
 }
 
+export function useBnUSDOraclePrice(): BigNumber | undefined {
+  const oraclePrices = useOraclePrices();
+  return oraclePrices['bnUSD'];
+}
+
 // fetch price data every 5 secs
 const PERIOD = 5 * 1000;
 
@@ -46,12 +51,23 @@ export function useFetchOraclePrices() {
         };
       });
 
+      cds.push({
+        target: addresses[NETWORK_ID].balancedOracle,
+        method: 'getLastPriceInLoop',
+        params: ['bnUSD'],
+      });
+
       const data: string[] = await bnJs.Multicall.getAggregateData(cds);
       data.forEach((price, index) => {
-        price != null &&
-          dispatch(
-            changeOraclePrice({ symbol: supportedSymbols[index], price: new BigNumber(formatUnits(price, 18, 6)) }),
-          );
+        if (index < data.length - 1) {
+          price != null &&
+            dispatch(
+              changeOraclePrice({ symbol: supportedSymbols[index], price: new BigNumber(formatUnits(price, 18, 6)) }),
+            );
+        } else {
+          price != null &&
+            dispatch(changeOraclePrice({ symbol: 'bnUSD', price: new BigNumber(formatUnits(price, 18, 6)) }));
+        }
       });
     }
   }, PERIOD);

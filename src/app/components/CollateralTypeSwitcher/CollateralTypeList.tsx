@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback } from 'react';
 
 import { useMedia } from 'react-use';
 import { Box } from 'rebass';
@@ -6,46 +6,13 @@ import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { Typography } from 'app/theme';
-import { ReactComponent as SearchIcon } from 'assets/icons/search.svg';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
-import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
-import { useCollateralChangeCollateralType, useAllCollateralData } from 'store/collateral/hooks';
-
-const SearchField = styled.input`
-  background-color: ${({ theme }) => theme.colors.bg5};
-  border: 2px solid ${({ theme }) => theme.colors.bg5};
-  border-radius: 10px;
-  height: 40px;
-  width: 100%;
-  outline: none;
-  appearance: none;
-  color: ${({ theme }) => theme.colors.text};
-  font-size: 14px;
-  padding-left: 45px;
-  padding-right: 20px;
-
-  &::placeholder {
-    opacity: 0.8;
-  }
-
-  &:focus {
-    outline: none;
-    border: 2px solid ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const SearchWrap = styled.div<{ width?: number }>`
-  position: relative;
-  margin-bottom: 15px;
-  width: 100%;
-  padding: 0 25px;
-
-  svg {
-    position: absolute;
-    left: 42px;
-  }
-`;
+import {
+  useCollateralChangeCollateralType,
+  useAllCollateralData,
+  useCollateralActionHandlers,
+} from 'store/collateral/hooks';
 
 const CollateralTypesGrid = styled.div<{
   border?: boolean;
@@ -72,8 +39,7 @@ const CollateralTypesGrid = styled.div<{
     color: #d5d7db;
   }
 
-  &.active {
-    transform: translate3d(4px, 0, 0);
+  &:hover {
     .white,
     .grey {
       color: ${({ theme }) => theme.colors.primaryBright};
@@ -133,47 +99,19 @@ const GridWrap = styled.div`
 
 const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   const changeCollateralType = useCollateralChangeCollateralType();
-  const [searchQuery, setSearchQuery] = useState('');
   const allCollateralData = useAllCollateralData();
   const hideCollateralInfoColumn = useMedia('(max-width: 500px)');
-  const enter = useKeyPress('Enter');
   const escape = useKeyPress('Escape');
-
-  const filteredCollateralTypes = useMemo(
-    () =>
-      allCollateralData?.filter(
-        collateralType =>
-          collateralType.symbol.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0 ||
-          collateralType.name.toLowerCase().indexOf(searchQuery.toLowerCase()) >= 0,
-      ),
-    [allCollateralData, searchQuery],
-  );
-
-  const { activeIndex, setActiveIndex } = useArrowControl(!!anchor, filteredCollateralTypes?.length || 0);
+  const { onAdjust: adjust } = useCollateralActionHandlers();
 
   const handleCollateralTypeChange = useCallback(
     symbol => {
       setAnchor(null);
       changeCollateralType(symbol);
+      adjust(false);
     },
-    [changeCollateralType, setAnchor],
+    [changeCollateralType, setAnchor, adjust],
   );
-
-  //on enter press
-  useEffect(() => {
-    if (anchor && filteredCollateralTypes?.length && enter) {
-      setAnchor(null);
-      activeIndex !== undefined && changeCollateralType(filteredCollateralTypes[activeIndex].symbol);
-    }
-  }, [
-    anchor,
-    activeIndex,
-    enter,
-    filteredCollateralTypes,
-    filteredCollateralTypes?.length,
-    changeCollateralType,
-    setAnchor,
-  ]);
 
   useEffect(() => {
     if (anchor && escape) {
@@ -183,22 +121,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
 
   return (
     <Box p={'25px 0 5px'} width={width}>
-      <SearchWrap>
-        <SearchIcon width="18px" />
-        <SearchField
-          type="text"
-          autoFocus
-          className="search-field"
-          onChange={e => {
-            setSearchQuery(e.target.value);
-            activeIndex === undefined && setActiveIndex(0);
-          }}
-          placeholder="Search assets"
-          value={searchQuery}
-        />
-      </SearchWrap>
-
-      {filteredCollateralTypes?.length ? (
+      {allCollateralData?.length ? (
         <GridWrap>
           <CollateralTypesGrid hideCollateralInfoColumn={hideCollateralInfoColumn}>
             <CollateralTypesGridHeader>Asset</CollateralTypesGridHeader>
@@ -209,7 +132,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
       ) : null}
 
       <GridWrap>
-        {filteredCollateralTypes?.map((collateralType, i, { length }) => {
+        {allCollateralData?.map((collateralType, i, { length }) => {
           const isLast = length - 1 === i;
           const isFirst = 0 === i;
 
@@ -220,8 +143,6 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
               negativeMargin={isFirst}
               hideCollateralInfoColumn={hideCollateralInfoColumn}
               onClick={() => handleCollateralTypeChange(collateralType.symbol)}
-              onMouseEnter={() => setActiveIndex(i)}
-              className={i === activeIndex ? 'active' : ''}
             >
               <CollateralTypesGridItem>
                 <AssetInfo>
@@ -252,12 +173,6 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
             </CollateralTypesGrid>
           );
         })}
-
-        {filteredCollateralTypes?.length === 0 ? (
-          <Typography padding={'10px 0 20px'} width={'100%'} textAlign={'center'}>
-            No asset found for <strong>'{searchQuery}'</strong>
-          </Typography>
-        ) : null}
       </GridWrap>
     </Box>
   );

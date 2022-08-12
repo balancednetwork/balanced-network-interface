@@ -10,6 +10,8 @@ export const changeBorrowedAmount = createAction<{ borrowedAmount: BigNumber; co
   'loan/changeBorrowedAmount',
 );
 
+export const setLockingRatio = createAction<{ lockingRatio: number; collateralType: string }>('loan/setLockingRatio');
+
 export const changeBadDebt = createAction<{ badDebt: BigNumber }>('loan/changeBadDebt');
 
 export const changeTotalSupply = createAction<{ totalSupply: BigNumber }>('loan/changeTotalSupply');

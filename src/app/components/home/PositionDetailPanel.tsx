@@ -20,7 +20,6 @@ import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
-import { useRatesQuery } from 'queries/reward';
 import { useCollateralInputAmountInUSD, useCollateralType, useIcxDisplayType } from 'store/collateral/hooks';
 import {
   useLoanInputAmount,
@@ -29,7 +28,7 @@ import {
   useThresholdPrices,
   useCollateralLockedSliderPos,
 } from 'store/loan/hooks';
-import { useOraclePrice } from 'store/oracle/hooks';
+import { useBnUSDOraclePrice, useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useHasRewardableLoan, useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
@@ -51,6 +50,7 @@ const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
   const oraclePrice = useOraclePrice();
+  const bnUSDPrice = useBnUSDOraclePrice();
   const collateralType = useCollateralType();
   const locale = useActiveLocale();
   const hasRewardableCollateral = useHasRewardableLoan();
@@ -61,7 +61,6 @@ const PositionDetailPanel = () => {
     `(min-width: ${'pl-PL,fr-FR'.indexOf(locale) >= 0 ? '400px' : '360px'})`,
   );
   const [show, setShow] = React.useState<boolean>(false);
-  const { data: rates } = useRatesQuery();
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
   const icxDisplayType = useIcxDisplayType();
@@ -158,7 +157,7 @@ const PositionDetailPanel = () => {
             </Typography>
             <Typography variant="p" fontSize={18}>
               {collateralInputAmountInUSD ? (
-                `${collateralInputAmountInUSD.dp(2).toFormat()}`
+                `$${collateralInputAmountInUSD.dp(2).toFormat()}`
               ) : (
                 <StyledSkeleton width={90} animation="wave" />
               )}
@@ -178,11 +177,18 @@ const PositionDetailPanel = () => {
         </Flex>
         <Divider my={4} />
         <Typography mb={2}>
-          {t`The current ${collateralType} price is`} <span className="white">${oraclePrice?.dp(4).toFormat()}</span>.
+          {t`The current ${collateralType === 'sICX' ? 'ICX' : collateralType} price is`}{' '}
+          <span className="white">
+            $
+            {collateralType === 'sICX' && ratio.ICXUSDratio
+              ? ratio.ICXUSDratio.dp(4).toFormat()
+              : oraclePrice?.dp(4).toFormat()}
+          </span>
+          .
         </Typography>
         <Typography mb={2}>
           <Trans>The current bnUSD price is</Trans>{' '}
-          <span className="white">{rates && `$${rates['bnUSD']?.dp(4).toFormat()}`}</span>.
+          <span className="white">{bnUSDPrice && `$${bnUSDPrice.dp(4).toFormat()}`}</span>.
         </Typography>
       </BoxPanel>
 
@@ -259,9 +265,9 @@ const PositionDetailPanel = () => {
           <Tooltip
             text={
               <Typography variant="body">
-                {t`If the ${collateralType} price reaches ${liquidationThresholdPrice.toFixed(
-                  3,
-                )}, all your collateral will be
+                {t`If the ${
+                  collateralType === 'sICX' ? 'ICX' : collateralType
+                } price reaches ${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
                   liquidated.`}
                 <br />
                 <Typography as="small" fontSize={12} color="text1">

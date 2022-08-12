@@ -215,7 +215,7 @@ const CollateralPanel = () => {
             { hash },
             {
               pending: t`Depositing collateral...`,
-              summary: t`Deposited ${collateralDifference.toFixed(2)} sICX as collateral.`,
+              summary: t`Deposited ${collateralDifference.toFixed(2)} ${collateralType} as collateral.`,
             },
           );
         }
@@ -240,7 +240,7 @@ const CollateralPanel = () => {
           if (ICXWithdrawOption === ICXWithdrawOptions.UNSTAKE) {
             const { result: hash } = await bnJs
               .inject({ account })
-              .Loans.withdrawAndUnstake(parseUnits(collateralDifferenceInSICX.toFixed()));
+              .Loans.withdrawAndUnstake(parseUnits(collateralDifferenceInSICX.dp(2).toFixed()));
 
             addTransaction(
               { hash },
@@ -252,7 +252,7 @@ const CollateralPanel = () => {
           } else {
             const { result: hash } = await bnJs
               .inject({ account })
-              .Loans.withdrawCollateral(parseUnits(collateralDifferenceInSICX.toFixed()));
+              .Loans.withdrawCollateral(parseUnits(collateralDifferenceInSICX.dp(2).toFixed()));
 
             addTransaction(
               { hash },

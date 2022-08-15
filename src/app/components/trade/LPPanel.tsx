@@ -5,7 +5,6 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
-import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -21,7 +20,6 @@ import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/m
 import { maxAmountSpend } from 'utils';
 
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
-import Tooltip from '../Tooltip';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
@@ -218,6 +216,23 @@ export default function LPPanel() {
     {},
   );
 
+  const handleTypeAInput = React.useCallback(
+    (typed: string) => {
+      if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_A]?.toFixed() || 0) || typed === '') {
+        onFieldAInput(typed);
+      }
+    },
+    [maxAmounts, onFieldAInput],
+  );
+  const handleTypeBInput = React.useCallback(
+    (typed: string) => {
+      if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_B]?.toFixed() || 0) || typed === '') {
+        onFieldBInput(typed);
+      }
+    },
+    [maxAmounts, onFieldBInput],
+  );
+
   const handlePercentSelect = (field: Field) => (percent: number) => {
     field === Field.CURRENCY_A
       ? onFieldAInput(maxAmounts[Field.CURRENCY_A]?.multiply(percent).divide(100)?.toExact() ?? '')
@@ -225,25 +240,6 @@ export default function LPPanel() {
   };
 
   const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
-
-  const remains: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
-    () => ({
-      [Field.CURRENCY_A]: subtract(currencyBalances[Field.CURRENCY_A], parsedAmounts[Field.CURRENCY_A]),
-      [Field.CURRENCY_B]: subtract(currencyBalances[Field.CURRENCY_B], parsedAmounts[Field.CURRENCY_B]),
-    }),
-    [currencyBalances, parsedAmounts],
-  );
-
-  const getMessage = (field: string) => {
-    return {
-      isVisible: remains[field]?.lessThan(BIGINT_ZERO),
-      message: `Your balance wallet only has ${currencyBalances[field]?.toFixed(2, { groupSeparator: ',' })} ${
-        currencies[field]?.symbol || '-'
-      }. Please enter less or equal to the available balance!`,
-    };
-  };
-
-  const isSmall = useMedia('(max-width: 810px)');
 
   return (
     <>
@@ -258,47 +254,29 @@ export default function LPPanel() {
 
             <AutoColumn gap="md">
               <Flex>
-                <Tooltip
-                  key={Field.CURRENCY_A}
-                  containerStyle={{ width: 'auto' }}
-                  refStyle={{ display: 'block' }}
-                  placement={isSmall ? 'top' : 'right'}
-                  text={getMessage(Field.CURRENCY_A).message}
-                  show={getMessage(Field.CURRENCY_A).isVisible}
-                >
-                  <CurrencyInputPanel
-                    account={account}
-                    value={formattedAmounts[Field.CURRENCY_A]}
-                    currencySelectionType={CurrencySelectionType.TRADE_MINT_BASE}
-                    currency={currencies[Field.CURRENCY_A]}
-                    onUserInput={onFieldAInput}
-                    onCurrencySelect={handleCurrencyASelect}
-                    onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
-                  />
-                </Tooltip>
+                <CurrencyInputPanel
+                  account={account}
+                  value={formattedAmounts[Field.CURRENCY_A]}
+                  currencySelectionType={CurrencySelectionType.TRADE_MINT_BASE}
+                  currency={currencies[Field.CURRENCY_A]}
+                  onUserInput={handleTypeAInput}
+                  onCurrencySelect={handleCurrencyASelect}
+                  onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
+                />
               </Flex>
             </AutoColumn>
 
             <AutoColumn gap="md" hidden={isQueue}>
               <Flex>
-                <Tooltip
-                  key={Field.CURRENCY_B}
-                  containerStyle={{ width: 'auto' }}
-                  refStyle={{ display: 'block' }}
-                  placement={isSmall ? 'top' : 'right'}
-                  text={getMessage(Field.CURRENCY_B).message}
-                  show={getMessage(Field.CURRENCY_B).isVisible}
-                >
-                  <CurrencyInputPanel
-                    account={account}
-                    value={formattedAmounts[Field.CURRENCY_B]}
-                    currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
-                    currency={currencies[Field.CURRENCY_B]}
-                    onUserInput={onFieldBInput}
-                    onCurrencySelect={handleCurrencyBSelect}
-                    onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
-                  />
-                </Tooltip>
+                <CurrencyInputPanel
+                  account={account}
+                  value={formattedAmounts[Field.CURRENCY_B]}
+                  currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
+                  currency={currencies[Field.CURRENCY_B]}
+                  onUserInput={handleTypeBInput}
+                  onCurrencySelect={handleCurrencyBSelect}
+                  onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
+                />
               </Flex>
             </AutoColumn>
           </AutoColumn>

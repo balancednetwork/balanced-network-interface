@@ -62,17 +62,15 @@ export default function LiquidityPoolsPanel() {
           <Trans>Liquidity pools</Trans>
         </Typography>
 
-        {account && (
+        {account && hasLiquidity && (
           <ChartControlGroup>
-            {hasLiquidity && (
-              <ChartControlButton
-                type="button"
-                onClick={() => handleSwitch(PanelType.YourPools)}
-                active={panelType === PanelType.YourPools}
-              >
-                <Trans>Your pools</Trans>
-              </ChartControlButton>
-            )}
+            <ChartControlButton
+              type="button"
+              onClick={() => handleSwitch(PanelType.YourPools)}
+              active={panelType === PanelType.YourPools}
+            >
+              <Trans>Your pools</Trans>
+            </ChartControlButton>
             <ChartControlButton
               type="button"
               onClick={() => handleSwitch(PanelType.AllPools)}

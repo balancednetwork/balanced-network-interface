@@ -22,7 +22,6 @@ import { ReactComponent as IconKeepSICX } from 'assets/icons/wallet-tick-color.s
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
-import { useActiveLocale } from 'hooks/useActiveLocale';
 import useWidth from 'hooks/useWidth';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
@@ -111,13 +110,12 @@ enum ICXWithdrawOptions {
 const CollateralPanel = () => {
   const { account } = useIconReact();
   const ratio = useRatio();
-  const locale = useActiveLocale();
   const collateralType = useCollateralType();
   const isHandlingICX = useIsHandlingICX();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
 
-  const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '359px'})`);
+  const isSuperSmall = useMedia(`(max-width: 450px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -322,7 +320,12 @@ const CollateralPanel = () => {
     <>
       <BoxPanelWrap>
         <BoxPanel bg="bg3" sx={{ position: 'relative' }}>
-          <Flex justifyContent="space-between" alignItems={isSuperSmall ? 'flex-start' : 'center'} ref={ref}>
+          <Flex
+            flexWrap="wrap"
+            alignItems={isSuperSmall ? 'flex-start' : 'center'}
+            ref={ref}
+            paddingBottom={isSuperSmall ? 2 : 0}
+          >
             <CollateralTypeSwitcherWrap>
               <Typography variant="h2" paddingRight={'7px'}>
                 <Trans>Collateral</Trans>:
@@ -330,7 +333,7 @@ const CollateralPanel = () => {
               <CollateralTypeSwitcher width={width} containerRef={ref.current} />
             </CollateralTypeSwitcherWrap>
 
-            <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
+            <Flex flexDirection={isSuperSmall ? 'column' : 'row'} ml="auto" paddingTop={isSuperSmall ? '4px' : '0'}>
               {isAdjusting ? (
                 <>
                   <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>

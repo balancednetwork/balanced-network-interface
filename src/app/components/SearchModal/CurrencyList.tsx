@@ -12,7 +12,7 @@ import { ListItem, DashGrid, HeaderText, DataText, List1 } from 'app/components/
 import { Typography } from 'app/theme';
 import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
-import { useRatesQuery } from 'queries/reward';
+import { useRatesWithOracle } from 'queries/reward';
 import { useIsUserAddedToken } from 'store/user/hooks';
 import { useCurrencyBalance } from 'store/wallet/hooks';
 import { toFraction } from 'utils';
@@ -170,7 +170,7 @@ export default function CurrencyList({
   const escape = useKeyPress('Escape');
   const { activeIndex, setActiveIndex } = useArrowControl(isOpen, currencies?.length || 0);
 
-  const { data: rates } = useRatesQuery();
+  const rates = useRatesWithOracle();
   const rateFracs = React.useMemo(() => {
     if (rates) {
       return Object.keys(rates).reduce((acc, key) => {

@@ -28,7 +28,6 @@ const Wrapper = styled(Flex)`
   ${({ theme }) => theme.mediaWidth.up500`
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
   `}
 `;
 
@@ -58,7 +57,7 @@ export default function LiquidityPoolsPanel() {
   return (
     <BoxPanel bg="bg2" mb={10}>
       <Wrapper>
-        <Typography variant="h2">
+        <Typography variant="h2" mr={2}>
           <Trans>Liquidity pools</Trans>
         </Typography>
 

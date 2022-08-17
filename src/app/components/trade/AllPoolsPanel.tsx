@@ -26,7 +26,10 @@ const DashGrid = styled(Box)`
   display: grid;
   gap: 1em;
   align-items: center;
-  grid-template-columns: 2fr repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    grid-template-columns: 2fr repeat(4, 1fr);
+  `}
   ${({ theme }) => theme.mediaWidth.upLarge`
     grid-template-columns: 1.2fr repeat(4, 1fr);
   `}

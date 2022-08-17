@@ -17,6 +17,8 @@ import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { BalanceData, useSuppliedTokens } from 'hooks/useV2Pairs';
+import { Field } from 'store/mint/actions';
+import { useMintActionHandlers } from 'store/mint/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
 
@@ -243,9 +245,16 @@ const PoolRecord = ({
 
   const stakedFractionValue = stakedFraction(stakedLPPercent);
 
+  const { onCurrencySelection } = useMintActionHandlers(false);
+
+  const handlePoolClick = () => {
+    onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency);
+    onCurrencySelection(Field.CURRENCY_B, pair.reserve1.currency);
+  };
+
   return (
     <>
-      <ListItem>
+      <ListItem onClick={handlePoolClick}>
         <StyledDataText>
           <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
           <StyledArrowDownIcon />
@@ -287,8 +296,15 @@ const PoolRecordQ = ({ balance, pair, totalReward }: { balance: BalanceData; pai
 
   const { share, reward } = getShareReward(pair, balance, totalReward);
 
+  const { onCurrencySelection } = useMintActionHandlers(false);
+
+  const handlePoolClick = () => {
+    onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency);
+    onCurrencySelection(Field.CURRENCY_B, pair.reserve1.currency);
+  };
+
   return (
-    <ListItem>
+    <ListItem onClick={handlePoolClick}>
       <StyledDataText>
         <DataText>{`${balance.balance.currency.symbol || '...'} / ${
           balance.balance1?.currency.symbol || '...'

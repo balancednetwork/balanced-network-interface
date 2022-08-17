@@ -72,7 +72,9 @@ export function TradePage() {
           </TabPanel>
 
           <TabPanel value={value} index={1}>
-            <LPPanel />
+            <PoolPanelContext.Provider value={data}>
+              <LPPanel />
+            </PoolPanelContext.Provider>
           </TabPanel>
         </Flex>
 

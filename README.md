@@ -53,6 +53,28 @@ REACT_APP_NETWORK_ID=1
 **Please open all pull requests against the `master` branch.**
 CI checks will run against all PRs.
 
+Pull Request Review Guidelines
+
+Cosmetic Fixes & small bugs
+
+- Set PR to main net
+- Review: UX team
+
+Large bug fixes (i.e. issue with transaction router)
+
+- Set PR to main net
+- Review: UX team & separate FE dev
+
+New Features (smart contracts on testnet)
+
+- Set PR to test net
+- Review: UX team & separate FE dev
+
+New Features (smart contracts on main net)
+
+- Set PR to main net
+- Review: UX team & separate FE dev
+
 ### Code Style/Convention
 
 The Balanced frontend repo uses the Airbnb Code style.

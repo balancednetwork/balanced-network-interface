@@ -238,7 +238,7 @@ const CollateralPanel = () => {
           if (ICXWithdrawOption === ICXWithdrawOptions.UNSTAKE) {
             const { result: hash } = await bnJs
               .inject({ account })
-              .Loans.withdrawAndUnstake(parseUnits(collateralDifferenceInSICX.dp(2).toFixed()));
+              .Loans.withdrawAndUnstake(parseUnits(collateralDifferenceInSICX.toFixed()));
 
             addTransaction(
               { hash },
@@ -250,7 +250,7 @@ const CollateralPanel = () => {
           } else {
             const { result: hash } = await bnJs
               .inject({ account })
-              .Loans.withdrawCollateral(parseUnits(collateralDifferenceInSICX.dp(2).toFixed()));
+              .Loans.withdrawCollateral(parseUnits(collateralDifferenceInSICX.toFixed()), collateralType);
 
             addTransaction(
               { hash },
@@ -407,7 +407,9 @@ const CollateralPanel = () => {
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb="5px">
-            {shouldDeposit ? t`Deposit ${collateralType} collateral?` : t`Withdraw ${collateralType} collateral?`}
+            {shouldDeposit
+              ? t`Deposit ${isHandlingICX ? 'ICX' : collateralType} collateral?`
+              : t`Withdraw ${isHandlingICX ? 'ICX' : collateralType} collateral?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -505,7 +507,9 @@ const CollateralPanel = () => {
                 <Button
                   onClick={handleCollateralConfirm}
                   fontSize={14}
-                  disabled={!hasEnoughICX || (isHandlingICX && ICXWithdrawOption === ICXWithdrawOptions.EMPTY)}
+                  disabled={
+                    !hasEnoughICX || (isHandlingICX && !shouldDeposit && ICXWithdrawOption === ICXWithdrawOptions.EMPTY)
+                  }
                 >
                   {shouldDeposit ? t`Deposit` : t`Withdraw`}
                 </Button>

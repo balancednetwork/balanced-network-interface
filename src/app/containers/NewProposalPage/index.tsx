@@ -26,6 +26,7 @@ import { useBALNDetails, useHasEnoughICX, useWalletFetchBalances } from 'store/w
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import FundingInput, { CurrencyValue } from '../../components/newproposal/FundingInput';
+import CollateralProposalFields from './CollateralProposalFields';
 
 const NewProposalContainer = styled(Box)`
   flex: 1;
@@ -45,7 +46,7 @@ const FieldContainer = styled(Box)`
   flex-direction: row;
 `;
 
-const FieldInput = styled.input`
+export const FieldInput = styled.input`
   margin-top: 10px;
   margin-bottom: 20px;
   border-radius: 10px;
@@ -55,11 +56,19 @@ const FieldInput = styled.input`
   caret-color: white;
   color: white;
   padding: 3px 20px;
+  border: 2px solid ${({ theme }) => theme.colors.bg5};
   background-color: ${({ theme }) => theme.colors.bg5};
+  transition: all ease 0.3s;
   :hover,
   :focus {
     border: 2px solid ${({ theme }) => theme.colors.primaryBright};
     outline: none;
+  }
+  ::-webkit-inner-spin-button,
+  ::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   }
 `;
 
@@ -89,6 +98,20 @@ interface ErrorItem {
   ratio: boolean;
 }
 
+export enum ORACLE_TYPE {
+  DEX = 'dex',
+  BAND = 'band',
+}
+
+export interface CollateralProposal {
+  address: string;
+  oracleType: ORACLE_TYPE;
+  oracleValue: string;
+  debtCeiling: string;
+  borrowLTV: string;
+  liquidationLTV: string;
+}
+
 export function NewProposalPage() {
   const theme = useTheme();
   const details = useBALNDetails();
@@ -105,6 +128,14 @@ export function NewProposalPage() {
   const [currencyInputValue, setCurrencyInputValue] = React.useState<CurrencyValue>({
     recipient: '',
     amounts: [],
+  });
+  const [newCollateral, setNewCollateral] = useState<CollateralProposal>({
+    address: '',
+    oracleType: ORACLE_TYPE.BAND,
+    oracleValue: '',
+    debtCeiling: '',
+    borrowLTV: '',
+    liquidationLTV: '',
   });
 
   const [showError, setShowError] = useState<ErrorItem>({
@@ -129,6 +160,7 @@ export function NewProposalPage() {
   //Form
   const isTextProposal = selectedProposalType === PROPOSAL_TYPE.TEXT;
   const isFundingProposal = selectedProposalType === PROPOSAL_TYPE.FUNDING;
+  const isCollateralProposal = selectedProposalType === PROPOSAL_TYPE.NEW_COLLATERAL_TYPE;
 
   const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
   const stakedBalance: BigNumber = details['Staked balance'] || new BigNumber(0);
@@ -164,6 +196,10 @@ export function NewProposalPage() {
 
     return !!validate && validate(totalRatio);
   };
+
+  // const validateNewCollateralType = () => {
+
+  // }
 
   const isFormValid =
     title.trim() &&
@@ -237,6 +273,27 @@ export function NewProposalPage() {
       recipient: '',
       amounts: [{ item: CurrencyAmount.fromRawAmount(balanceList[0].currency, 0) }],
     });
+    setNewCollateral({
+      address: '',
+      oracleType: ORACLE_TYPE.BAND,
+      oracleValue: '',
+      debtCeiling: '',
+      borrowLTV: '',
+      liquidationLTV: '',
+    });
+  };
+
+  const getActions = (): string => {
+    switch (selectedProposalType) {
+      case PROPOSAL_TYPE.TEXT:
+        return '[]';
+      case PROPOSAL_TYPE.FUNDING:
+        return JSON.stringify(submitParams(currencyInputValue));
+      case PROPOSAL_TYPE.NEW_COLLATERAL_TYPE:
+        return JSON.stringify(submitParams(newCollateral));
+      default:
+        return JSON.stringify(submitParams(ratioInputValue));
+    }
   };
 
   const modalSubmit = () => {
@@ -246,16 +303,10 @@ export function NewProposalPage() {
       changeShouldLedgerSign(true);
     }
 
-    const actions = isTextProposal
-      ? '[]'
-      : isFundingProposal
-      ? JSON.stringify(submitParams(currencyInputValue))
-      : JSON.stringify(submitParams(ratioInputValue));
-
     platformDay &&
       bnJs
         .inject({ account })
-        .Governance.defineVote(title, description, platformDay + 1, platformDay, actions)
+        .Governance.defineVote(title, description, platformDay + 1, platformDay, getActions())
         .then(res => {
           if (res.result) {
             const label = t({ id: PROPOSAL_TYPE_LABELS[selectedProposalType].id });
@@ -321,7 +372,7 @@ export function NewProposalPage() {
             </Typography>
           </FieldContainer>
           <FieldTextArea onChange={onTextAreaInputChange} value={description} maxLength={500} />
-          {!(isTextProposal || isFundingProposal) && (
+          {!(isTextProposal || isFundingProposal || isCollateralProposal) && (
             <RatioInput
               onRatioChange={onRatioInputChange}
               showErrorMessage={showError.ratio}
@@ -337,6 +388,9 @@ export function NewProposalPage() {
               setCurrencyValue={setCurrencyInputValue}
               balanceList={balanceList}
             />
+          )}
+          {isCollateralProposal && (
+            <CollateralProposalFields newCollateral={newCollateral} setNewCollateral={setNewCollateral} />
           )}
           <Typography variant="content" mt="25px" mb="25px" textAlign="center">
             <Trans>It costs 100 bnUSD to submit a proposal.</Trans>

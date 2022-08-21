@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import bnJs from 'bnJs';
 import { FUNDING_TOKENS_LIST } from 'constants/tokens';
 
+import { ORACLE_TYPE, CollateralProposal } from '.';
 import { CurrencyValue } from '../../components/newproposal/FundingInput';
 
 export const MAX_RATIO_VALUE = 100;
@@ -30,6 +31,7 @@ export const PROPOSAL_MAPPING = {
 
 export enum PROPOSAL_TYPE {
   TEXT = 'Text',
+  NEW_COLLATERAL_TYPE = 'New collateral type',
   BALN_ALLOCATION = 'BALN allocation',
   NETWORK_FEE_ALLOCATION = 'Network fee allocation',
   LOAN_FEE = 'Loan fee',
@@ -46,6 +48,7 @@ export const PROPOSAL_TYPE_LABELS = {
   [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: defineMessage({ message: 'Loan to value ratio' }),
   [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: defineMessage({ message: 'Rebalancing threshold' }),
   [PROPOSAL_TYPE.FUNDING]: defineMessage({ message: 'Funding' }),
+  [PROPOSAL_TYPE.NEW_COLLATERAL_TYPE]: defineMessage({ message: 'New collateral type' }),
 };
 
 export const ACTIONS_MAPPING = {
@@ -55,6 +58,7 @@ export const ACTIONS_MAPPING = {
   [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: ['setLockingRatio', 'update_locking_ratio'],
   [PROPOSAL_TYPE.REBALANCING_THRESHOLD]: ['setRebalancingThreshold'],
   [PROPOSAL_TYPE.FUNDING]: ['daoDisburse'],
+  [PROPOSAL_TYPE.NEW_COLLATERAL_TYPE]: ['addDexPricedCollateral', 'addCollateral'],
 };
 
 export const PERCENT_MAPPING = {
@@ -210,6 +214,48 @@ export const PROPOSAL_CONFIG = {
         )
         .filter(value => value);
       return [['daoDisburse', { _recipient: currencyValue.recipient, _amounts: amounts }]];
+    },
+  },
+  [PROPOSAL_TYPE.NEW_COLLATERAL_TYPE]: {
+    fetchInputData: () => [],
+    validate: () => ({
+      isValid: true,
+      message: 'TO DO',
+    }),
+    submitParams: ({
+      address,
+      oracleType,
+      oracleValue,
+      debtCeiling,
+      borrowLTV,
+      liquidationLTV,
+    }: CollateralProposal) => {
+      return oracleType === ORACLE_TYPE.BAND
+        ? [
+            [
+              'addCollateral',
+              {
+                _token_address: address,
+                _active: false,
+                _lockingRatio: borrowLTV,
+                _liquidationRatio: liquidationLTV,
+                _debtCeiling: debtCeiling,
+              },
+            ],
+          ]
+        : [
+            [
+              'addDexPricedCollateral',
+              {
+                _token_address: address,
+                _active: false,
+                _peg: oracleValue,
+                _lockingRatio: borrowLTV,
+                _liquidationRatio: liquidationLTV,
+                _debtCeiling: debtCeiling,
+              },
+            ],
+          ];
     },
   },
 };

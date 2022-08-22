@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 
 import bnJs from 'bnJs';
 import { FUNDING_TOKENS_LIST } from 'constants/tokens';
+import { parseUnits } from 'utils';
 
 import { ORACLE_TYPE, CollateralProposal } from '.';
 import { CurrencyValue } from '../../components/newproposal/FundingInput';
@@ -230,32 +231,17 @@ export const PROPOSAL_CONFIG = {
       borrowLTV,
       liquidationLTV,
     }: CollateralProposal) => {
+      const params = {
+        _token_address: address,
+        _active: false,
+        _lockingRatio: Math.round(1000000 / Number(borrowLTV || 1)),
+        _liquidationRatio: Math.round(1000000 / Number(liquidationLTV || 1)),
+        _debtCeiling: parseUnits(debtCeiling),
+      };
+
       return oracleType === ORACLE_TYPE.BAND
-        ? [
-            [
-              'addCollateral',
-              {
-                _token_address: address,
-                _active: false,
-                _lockingRatio: borrowLTV,
-                _liquidationRatio: liquidationLTV,
-                _debtCeiling: debtCeiling,
-              },
-            ],
-          ]
-        : [
-            [
-              'addDexPricedCollateral',
-              {
-                _token_address: address,
-                _active: false,
-                _peg: oracleValue,
-                _lockingRatio: borrowLTV,
-                _liquidationRatio: liquidationLTV,
-                _debtCeiling: debtCeiling,
-              },
-            ],
-          ];
+        ? [['addCollateral', { ...params, _peg: oracleValue }]]
+        : [['addDexPricedCollateral', params]];
     },
   },
 };

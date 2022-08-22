@@ -101,8 +101,17 @@ const ChangeVoteButton = styled(Typography)`
 `;
 
 const CollateralProposalInfoItem = styled(Box)`
-  flex: 1;
-  text-align: center;
+  max-width: 230px;
+  padding: 0 30px 0 0;
+  margin-bottom: 15px;
+
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    width: auto;
+    text-align: center;
+    padding: 0;
+    margin-bottom: 0;
+    flex: 1
+  `};
 `;
 
 export function ProposalPage() {
@@ -388,7 +397,7 @@ export function ProposalPage() {
                 <Typography variant="h2" mb="20px">
                   <Trans>New collateral type</Trans>
                 </Typography>
-                <Flex>
+                <Flex flexWrap={['wrap', 'wrap', 'nowrap']}>
                   <CollateralProposalInfoItem>
                     <Typography opacity={0.75} fontSize={16}>
                       Token address

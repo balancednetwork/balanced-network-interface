@@ -70,6 +70,10 @@ export const FieldInput = styled.input`
     -moz-appearance: none;
     appearance: none;
   }
+  :disabled {
+    opacity: 0.5;
+    border: 2px solid ${({ theme }) => theme.colors.bg5};
+  }
 `;
 
 const FieldTextArea = styled.textarea`

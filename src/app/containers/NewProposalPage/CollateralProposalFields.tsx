@@ -76,7 +76,11 @@ const CollateralProposalFields = ({
   };
 
   const onOracleTypeChange = (type: ORACLE_TYPE) => {
-    setNewCollateral({ ...newCollateral, oracleType: type });
+    const collateralInfo = { ...newCollateral, oracleType: type };
+    if (type === ORACLE_TYPE.DEX) {
+      collateralInfo.oracleValue = '';
+    }
+    setNewCollateral(collateralInfo);
   };
 
   const onOracleValueChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -147,9 +151,10 @@ const CollateralProposalFields = ({
           </OracleTypeButton>
           <FieldInput
             type="text"
+            disabled={newCollateral.oracleType === ORACLE_TYPE.DEX}
             onChange={onOracleValueChange}
             value={newCollateral.oracleValue}
-            placeholder={newCollateral.oracleType === ORACLE_TYPE.BAND ? 'Symbol' : 'Pool ID'}
+            placeholder="Symbol"
           ></FieldInput>
         </Flex>
       </Field>

@@ -26,6 +26,7 @@ import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import bnJs from 'bnJs';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
@@ -397,14 +398,12 @@ export function ProposalPage() {
                 </Typography>
                 <Flex flexWrap={['wrap', 'wrap', 'nowrap']}>
                   <CollateralProposalInfoItem>
-                    <Typography opacity={0.75} fontSize={16}>
-                      Token address
-                    </Typography>
+                    <Typography opacity={0.75}>Token address</Typography>
                     <Typography color="text">{collateralInfo['_token_address']}</Typography>
                   </CollateralProposalInfoItem>
                   <CollateralProposalInfoItem>
                     <CollateralProposalInfoItem>
-                      <Typography opacity={0.75} fontSize={16} marginRight="-20px">
+                      <Typography opacity={0.75} marginRight="-20px">
                         <Trans>Oracle type</Trans>{' '}
                         <QuestionHelper
                           text={
@@ -428,45 +427,42 @@ export function ProposalPage() {
                           }
                         ></QuestionHelper>
                       </Typography>
-                      <Typography color="text" fontSize={16}>
-                        {collateralInfo['_peg'] ? `Band: ${collateralInfo['_peg']}` : 'DEX: '}
+                      <Typography color="text">
+                        {collateralInfo['_peg']
+                          ? `Band: ${collateralInfo['_peg']}`
+                          : `DEX: ${SUPPORTED_TOKENS_MAP_BY_ADDRESS[collateralInfo['_token_address']].symbol!}/bnUSD`}
                       </Typography>
-                      {!collateralInfo['_peg'] && (
-                        <Typography opacity={0.75} fontSize={16}>
-                          TODO: Pool name
-                        </Typography>
-                      )}
                     </CollateralProposalInfoItem>
                   </CollateralProposalInfoItem>
                   <CollateralProposalInfoItem>
                     <CollateralProposalInfoItem>
-                      <Typography opacity={0.75} fontSize={16} marginRight="-20px">
+                      <Typography opacity={0.75} marginRight="-20px">
                         <Trans>Debt ceiling</Trans>{' '}
                         <QuestionHelper text="The maximum amount of bnUSD that can be minted with this collateral type."></QuestionHelper>
                       </Typography>
-                      <Typography color="text" fontSize={16}>
+                      <Typography color="text">
                         {`${new BigNumber(formatUnits(collateralInfo['_debtCeiling'])).toFormat(0)} bnUSD`}
                       </Typography>
                     </CollateralProposalInfoItem>
                   </CollateralProposalInfoItem>
                   <CollateralProposalInfoItem>
                     <CollateralProposalInfoItem>
-                      <Typography opacity={0.75} fontSize={16} marginRight="-20px">
+                      <Typography opacity={0.75} marginRight="-20px">
                         <Trans>Borrow LTV</Trans>{' '}
                         <QuestionHelper text="The maximum percentage that people can borrow against the value of this collateral type."></QuestionHelper>
                       </Typography>
-                      <Typography color="text" fontSize={16}>
+                      <Typography color="text">
                         {`${formatPercent(new BigNumber(1000000 / Number(collateralInfo['_lockingRatio'])))}`}
                       </Typography>
                     </CollateralProposalInfoItem>
                   </CollateralProposalInfoItem>
                   <CollateralProposalInfoItem>
                     <CollateralProposalInfoItem>
-                      <Typography opacity={0.75} fontSize={16} marginRight="-20px">
+                      <Typography opacity={0.75} marginRight="-20px">
                         <Trans>Liquidation LTV</Trans>{' '}
                         <QuestionHelper text="The percentage of debt required to trigger liquidation for this collateral type."></QuestionHelper>
                       </Typography>
-                      <Typography color="text" fontSize={16}>
+                      <Typography color="text">
                         {`${formatPercent(new BigNumber(1000000 / Number(collateralInfo['_liquidationRatio'])))}`}
                       </Typography>
                     </CollateralProposalInfoItem>

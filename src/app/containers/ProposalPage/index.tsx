@@ -139,8 +139,6 @@ export function ProposalPage() {
     ACTIONS_MAPPING[PROPOSAL_TYPE.NEW_COLLATERAL_TYPE].indexOf(JSON.parse(proposal?.actions || '[[]]')[0][0]) >= 0;
   const collateralInfo = proposal && isNewCollateralProposal && JSON.parse(proposal.actions)[0][1];
 
-  console.log(collateralInfo);
-
   const isActive =
     proposal && proposal.status === 'Active' && !formatTimeStr(proposal.startDay) && !!formatTimeStr(proposal.endDay);
 

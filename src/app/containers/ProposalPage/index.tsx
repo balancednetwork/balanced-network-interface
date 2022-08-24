@@ -421,7 +421,7 @@ export function ProposalPage() {
                                 type.
                               </Typography>
                               <Typography>
-                                <strong>Band:</strong> Use the price of an asset tracked via the Band oracle.
+                                <strong>Band:</strong> Uses the price of an asset tracked via the Band oracle.
                               </Typography>
                             </>
                           }

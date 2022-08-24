@@ -23,6 +23,14 @@ export function shortenAddress(address: string, chars = 7): string {
   return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
 }
 
+export function shortenSCOREAddress(address: string, chars = 7): string {
+  if (!isScoreAddress(address)) {
+    console.error(`Invalid 'address' parameter '${address}'.`);
+    return '';
+  }
+  return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
+}
+
 export function getTrackerLink(
   networkId: NetworkId,
   data: string,

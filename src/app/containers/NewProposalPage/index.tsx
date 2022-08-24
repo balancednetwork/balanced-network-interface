@@ -71,8 +71,9 @@ export const FieldInput = styled.input`
     appearance: none;
   }
   :disabled {
-    opacity: 0.5;
+    opacity: 0;
     border: 2px solid ${({ theme }) => theme.colors.bg5};
+    cursor: default;
   }
 `;
 

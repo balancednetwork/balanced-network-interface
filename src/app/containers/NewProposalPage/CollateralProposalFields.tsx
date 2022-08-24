@@ -1,13 +1,44 @@
 import React from 'react';
 
-import { Trans } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
+import { isMobile } from 'react-device-detect';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { StyledAddress } from 'app/components/Header';
 import QuestionHelper from 'app/components/QuestionHelper';
+import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
+import { shortenSCOREAddress } from 'utils';
 
 import { CollateralProposal, FieldInput, ORACLE_TYPE } from '.';
+
+export const CopyableSCORE = ({ score }: { score: string | undefined }) => {
+  const [isCopied, updateCopyState] = React.useState(false);
+  const copyAddress = React.useCallback(async (score: string) => {
+    await navigator.clipboard.writeText(score);
+    updateCopyState(true);
+  }, []);
+
+  return score ? (
+    <MouseoverTooltip
+      text={<div style={{ width: '100px', textAlign: 'center' }}>{isCopied ? t`Copied` : t`Copy address`}</div>}
+      placement={'bottom'}
+      noArrowAndBorder
+      closeAfterDelay={isMobile ? 3000 : undefined}
+    >
+      <StyledAddress
+        onMouseLeave={() => {
+          setTimeout(() => updateCopyState(false), 250);
+        }}
+        onClick={() => copyAddress(score)}
+        fontSize={16}
+      >
+        {shortenSCOREAddress(score, 5)}
+      </StyledAddress>
+    </MouseoverTooltip>
+  ) : null;
+};
 
 const OracleTypeButton = styled.button<{ isActive: boolean }>`
   cursor: pointer;
@@ -124,7 +155,7 @@ const CollateralProposalFields = ({
                 <Typography mb={4}>
                   <strong>DEX:</strong> Use the price from a liquidity pool on Balanced.
                   <br />
-                  <span style={{ opacity: 0.75 }}>Requires a pool ID number, i.e. '1' for sICX/bnUSD.</span>
+                  <span style={{ opacity: 0.75 }}>Requires a bnUSD liquidity pool for this collateral type.</span>
                 </Typography>
                 <Typography mb={4}>
                   <strong>Band:</strong> Use the price of an asset tracked via the Band oracle.

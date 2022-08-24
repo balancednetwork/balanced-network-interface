@@ -132,47 +132,49 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
       ) : null}
 
       <GridWrap>
-        {allCollateralData?.map((collateralType, i, { length }) => {
-          const isLast = length - 1 === i;
-          const isFirst = 0 === i;
+        {allCollateralData
+          ?.sort((a, b) => b.collateralDeposit.toNumber() - a.collateralDeposit.toNumber())
+          .map((collateralType, i, { length }) => {
+            const isLast = length - 1 === i;
+            const isFirst = 0 === i;
 
-          return (
-            <CollateralTypesGrid
-              key={i}
-              border={!isLast}
-              negativeMargin={isFirst}
-              hideCollateralInfoColumn={hideCollateralInfoColumn}
-              onClick={() => handleCollateralTypeChange(collateralType.symbol)}
-            >
-              <CollateralTypesGridItem>
-                <AssetInfo>
-                  <CurrencyLogo
-                    size={'26px'}
-                    currency={SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType.symbol)}
-                  />
-                  <Box>
-                    <Typography className="white" fontWeight={700}>
-                      {collateralType.displayName ? collateralType.displayName : collateralType.symbol}
-                    </Typography>
-                    <Typography className="grey">{'Available:'}</Typography>
-                  </Box>
-                </AssetInfo>
-              </CollateralTypesGridItem>
-
-              {!hideCollateralInfoColumn && (
+            return (
+              <CollateralTypesGrid
+                key={i}
+                border={!isLast}
+                negativeMargin={isFirst}
+                hideCollateralInfoColumn={hideCollateralInfoColumn}
+                onClick={() => handleCollateralTypeChange(collateralType.symbol)}
+              >
                 <CollateralTypesGridItem>
-                  <Typography className="white">{`$${collateralType.collateralDeposit.toFormat(0)}`}</Typography>
-                  <Typography className="grey">{`$${collateralType.collateralAvailable.toFormat(0)}`}</Typography>
+                  <AssetInfo>
+                    <CurrencyLogo
+                      size={'26px'}
+                      currency={SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType.symbol)}
+                    />
+                    <Box>
+                      <Typography className="white" fontWeight={700}>
+                        {collateralType.displayName ? collateralType.displayName : collateralType.symbol}
+                      </Typography>
+                      <Typography className="grey">{'Available:'}</Typography>
+                    </Box>
+                  </AssetInfo>
                 </CollateralTypesGridItem>
-              )}
 
-              <CollateralTypesGridItem>
-                <Typography className="white">{`$${collateralType.loanTaken.toFormat(0)}`}</Typography>
-                <Typography className="grey">{`$${collateralType.loanAvailable.toFormat(0)}`}</Typography>
-              </CollateralTypesGridItem>
-            </CollateralTypesGrid>
-          );
-        })}
+                {!hideCollateralInfoColumn && (
+                  <CollateralTypesGridItem>
+                    <Typography className="white">{`$${collateralType.collateralDeposit.toFormat(0)}`}</Typography>
+                    <Typography className="grey">{`$${collateralType.collateralAvailable.toFormat(0)}`}</Typography>
+                  </CollateralTypesGridItem>
+                )}
+
+                <CollateralTypesGridItem>
+                  <Typography className="white">{`$${collateralType.loanTaken.toFormat(0)}`}</Typography>
+                  <Typography className="grey">{`$${collateralType.loanAvailable.toFormat(0)}`}</Typography>
+                </CollateralTypesGridItem>
+              </CollateralTypesGrid>
+            );
+          })}
       </GridWrap>
     </Box>
   );

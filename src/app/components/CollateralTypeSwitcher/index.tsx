@@ -46,7 +46,7 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
   return (
     <>
       <Wrap onClick={handleToggle} style={{ position: 'relative' }}>
-        <UnderlineText>{collateralType}</UnderlineText>
+        <UnderlineText>{collateralType === 'sICX' ? 'ICX' : collateralType}</UnderlineText>
         <div ref={arrowRef} style={{ display: 'inline-block' }}>
           <StyledArrowDownIcon />
         </div>

@@ -55,6 +55,12 @@ export function getTrackerLink(
   }
 }
 
+export function getCXLink(chain, cx): string {
+  const prefix =
+    chain === 1 ? 'https://tracker.icon.community/contract/' : 'https://tracker.berlin.icon.community/contract/';
+  return `${prefix}${cx}`;
+}
+
 export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }

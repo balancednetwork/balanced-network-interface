@@ -401,6 +401,8 @@ const LoanPanel = () => {
 };
 
 export const RebalancingInfo = () => {
+  const collateralType = useCollateralType();
+
   return (
     <RebalancingInfoWrap flexDirection="row" flexWrap="wrap" alignItems="stretch" width="100%">
       <Typography
@@ -434,10 +436,8 @@ export const RebalancingInfo = () => {
         </Typography>
       </RebalancingColumn>
       <Typography marginTop="25px">
-        <Trans>
-          You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD
-          pool. The smaller your loan, the less rebalancing affects you.
-        </Trans>
+        {t`You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the ${`${collateralType}/bnUSD`}
+          pool. The smaller your loan, the less rebalancing affects you.`}
       </Typography>
     </RebalancingInfoWrap>
   );

@@ -163,14 +163,14 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
 
                 {!hideCollateralInfoColumn && (
                   <CollateralTypesGridItem>
-                    <Typography className="white">{`$${collateralType.collateralDeposit.toFormat(0)}`}</Typography>
-                    <Typography className="grey">{`$${collateralType.collateralAvailable.toFormat(0)}`}</Typography>
+                    <Typography className="white">{`$${collateralType.collateralDeposit.toFormat(2)}`}</Typography>
+                    <Typography className="grey">{`$${collateralType.collateralAvailable.toFormat(2)}`}</Typography>
                   </CollateralTypesGridItem>
                 )}
 
                 <CollateralTypesGridItem>
-                  <Typography className="white">{`$${collateralType.loanTaken.toFormat(0)}`}</Typography>
-                  <Typography className="grey">{`$${collateralType.loanAvailable.toFormat(0)}`}</Typography>
+                  <Typography className="white">{`$${collateralType.loanTaken.toFormat(2)}`}</Typography>
+                  <Typography className="grey">{`$${collateralType.loanAvailable.toFormat(2)}`}</Typography>
                 </CollateralTypesGridItem>
               </CollateralTypesGrid>
             );

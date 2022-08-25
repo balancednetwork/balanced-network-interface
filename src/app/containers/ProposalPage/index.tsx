@@ -20,17 +20,19 @@ import { StyledSkeleton } from 'app/components/ProposalInfo';
 import { VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
 import QuestionHelper from 'app/components/QuestionHelper';
+import { ExternalLink } from 'app/components/SearchModal/components';
 import { PROPOSAL_TYPE, PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
-import { formatPercent, formatUnits, getTrackerLink } from 'utils';
+import { formatPercent, formatUnits, getCXLink, getTrackerLink } from 'utils';
 import { formatTimeStr } from 'utils/timeformat';
 
 import { CopyableSCORE } from '../NewProposalPage/CollateralProposalFields';
@@ -401,6 +403,13 @@ export function ProposalPage() {
                   <CollateralProposalInfoItem>
                     <Typography opacity={0.75} fontSize={16}>
                       Token address
+                      <ExternalLink href={getCXLink(NETWORK_ID, collateralInfo['_token_address'])}>
+                        <ExternalIcon
+                          width="15"
+                          height="15"
+                          style={{ marginLeft: 7, marginRight: -22, marginTop: -3 }}
+                        />
+                      </ExternalLink>
                     </Typography>
                     <Typography color="text" fontSize={16} style={{ wordBreak: 'keep-all' }}>
                       <CopyableSCORE score={collateralInfo['_token_address']} />

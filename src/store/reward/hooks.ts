@@ -10,7 +10,7 @@ import bnJs from 'bnJs';
 import { PLUS_INFINITY } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useCollateralInputAmountAbsolute } from 'store/collateral/hooks';
-import { useLoanInputAmount, useLoanParameters } from 'store/loan/hooks';
+import { useLoanInputAmount } from 'store/loan/hooks';
 import { useOraclePrice } from 'store/oracle/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
@@ -83,23 +83,6 @@ export const useCurrentCollateralRatio = (): BigNumber => {
 
     return collateralInputAmount.times(oraclePrice).dividedBy(loanInputAmount).multipliedBy(100);
   }, [collateralInputAmount, loanInputAmount, oraclePrice]);
-};
-
-export const useHasRewardableLoan = () => {
-  const loanInputAmount = useLoanInputAmount();
-  const collateralRatio = useCurrentCollateralRatio();
-  const loanParameters = useLoanParameters();
-  const { lockingRatio } = loanParameters || {};
-
-  if (
-    loanInputAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
-    lockingRatio &&
-    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(lockingRatio * 100))
-  ) {
-    return true;
-  }
-
-  return false;
 };
 
 export const useHasNetworkFees = () => {

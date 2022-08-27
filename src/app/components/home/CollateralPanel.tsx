@@ -178,6 +178,9 @@ const CollateralPanel = () => {
 
   const handleCollateralConfirm = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+    const collateralTokenAddress = supportedCollateralTokens && supportedCollateralTokens[collateralType];
+    const cx = bnJs.inject({ account }).getContract(collateralTokenAddress!);
+    const decimals: string = await cx.decimals();
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
@@ -198,16 +201,12 @@ const CollateralPanel = () => {
             },
           );
         } else {
-          const collateralTokenAddress = supportedCollateralTokens && supportedCollateralTokens[collateralType];
           const transferData = { _asset: '', _amount: 0 };
-          const { result: hash } = await bnJs
-            .inject({ account })
-            .getContract(collateralTokenAddress!)
-            .transfer(
-              addresses[NETWORK_ID].loans,
-              parseUnits(collateralDifference.toFixed()),
-              JSON.stringify(transferData),
-            );
+          const { result: hash } = await cx.transfer(
+            addresses[NETWORK_ID].loans,
+            parseUnits(collateralDifference.toFixed(), Number(decimals)),
+            JSON.stringify(transferData),
+          );
 
           addTransaction(
             { hash },
@@ -263,7 +262,7 @@ const CollateralPanel = () => {
         } else {
           const { result: hash } = await bnJs
             .inject({ account })
-            .Loans.withdrawCollateral(parseUnits(collateralDifference.toFixed()), collateralType);
+            .Loans.withdrawCollateral(parseUnits(collateralDifference.toFixed(), Number(decimals)), collateralType);
 
           addTransaction(
             { hash },

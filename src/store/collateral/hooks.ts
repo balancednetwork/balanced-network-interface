@@ -96,18 +96,21 @@ export function useCollateralAmounts(): { [key in string]: BigNumber } {
 export function useCollateralFetchInfo(account?: string | null) {
   const changeDepositedAmount = useCollateralChangeDepositedAmount();
   const transactions = useAllTransactions();
+  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
 
   const fetchCollateralInfo = React.useCallback(
     async (account: string) => {
       const res = await bnJs.Loans.getAccountPositions(account);
 
-      res.holdings &&
-        Object.keys(res.holdings).forEach(token => {
-          const depositedAmount = new BigNumber(formatUnits(res.holdings[token][token] || 0, 18, 4));
-          changeDepositedAmount(depositedAmount, token);
+      supportedCollateralTokens &&
+        res.holdings &&
+        Object.keys(res.holdings).forEach(async symbol => {
+          const decimals: string = await bnJs.getContract(supportedCollateralTokens[symbol]).decimals();
+          const depositedAmount = new BigNumber(formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 4));
+          changeDepositedAmount(depositedAmount, symbol);
         });
     },
-    [changeDepositedAmount],
+    [changeDepositedAmount, supportedCollateralTokens],
   );
 
   React.useEffect(() => {
@@ -291,7 +294,7 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
             ? toBigNumber(balances[address])
                 .plus(toBigNumber(balances[NULL_CONTRACT_ADDRESS]))
                 .multipliedBy(oraclePrices[token.symbol!])
-            : toBigNumber(balances[address]).multipliedBy(oraclePrices[token.symbol!]);
+            : toBigNumber(balances[address]).multipliedBy(oraclePrices[token.symbol!] || 1);
 
         const loanTaken =
           borrowedAmounts && borrowedAmounts[token.symbol!] ? borrowedAmounts[token.symbol!] : new BigNumber(0);

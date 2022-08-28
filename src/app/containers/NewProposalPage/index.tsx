@@ -247,7 +247,7 @@ export function NewProposalPage() {
     }
 
     const actions = isTextProposal
-      ? '{}'
+      ? '[]'
       : isFundingProposal
       ? JSON.stringify(submitParams(currencyInputValue))
       : JSON.stringify(submitParams(ratioInputValue));

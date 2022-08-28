@@ -13,6 +13,21 @@ const initialState: StabilityFundState = {
 
 export default createReducer(initialState, builder =>
   builder.addCase(setBalances, (state, { payload: { balances } }) => {
-    state.balances = balances || state.balances;
+    if (Object.keys(state.balances).length === 0) {
+      if (balances) {
+        state.balances = balances;
+      }
+    } else if (balances) {
+      const isBalanceEqual =
+        Object.keys(state.balances).length === Object.keys(balances).length
+          ? Object.keys(state.balances).every(key => {
+              return state.balances[key].equalTo(balances[key]);
+            })
+          : false;
+
+      if (!isBalanceEqual) {
+        state.balances = balances;
+      }
+    }
   }),
 );

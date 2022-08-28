@@ -58,8 +58,12 @@ function WalletSection() {
 
   const formattedRemains: { [field in Field]?: string } = React.useMemo(
     () => ({
-      [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
-      [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
+      [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.lessThan(BIGINT_ZERO)
+        ? '0.0000'
+        : remains[Field.CURRENCY_A]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
+      [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.lessThan(BIGINT_ZERO)
+        ? '0.0000'
+        : remains[Field.CURRENCY_B]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
     }),
     [remains],
   );
@@ -212,6 +216,23 @@ export default function LPPanel() {
     {},
   );
 
+  const handleTypeAInput = React.useCallback(
+    (typed: string) => {
+      if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_A]?.toFixed() || 0) || typed === '') {
+        onFieldAInput(typed);
+      }
+    },
+    [maxAmounts, onFieldAInput],
+  );
+  const handleTypeBInput = React.useCallback(
+    (typed: string) => {
+      if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_B]?.toFixed() || 0) || typed === '') {
+        onFieldBInput(typed);
+      }
+    },
+    [maxAmounts, onFieldBInput],
+  );
+
   const handlePercentSelect = (field: Field) => (percent: number) => {
     field === Field.CURRENCY_A
       ? onFieldAInput(maxAmounts[Field.CURRENCY_A]?.multiply(percent).divide(100)?.toExact() ?? '')
@@ -238,7 +259,7 @@ export default function LPPanel() {
                   value={formattedAmounts[Field.CURRENCY_A]}
                   currencySelectionType={CurrencySelectionType.TRADE_MINT_BASE}
                   currency={currencies[Field.CURRENCY_A]}
-                  onUserInput={onFieldAInput}
+                  onUserInput={handleTypeAInput}
                   onCurrencySelect={handleCurrencyASelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
                 />
@@ -252,7 +273,7 @@ export default function LPPanel() {
                   value={formattedAmounts[Field.CURRENCY_B]}
                   currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
                   currency={currencies[Field.CURRENCY_B]}
-                  onUserInput={onFieldBInput}
+                  onUserInput={handleTypeBInput}
                   onCurrencySelect={handleCurrencyBSelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
                 />

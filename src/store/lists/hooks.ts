@@ -1,7 +1,23 @@
-import { TokenList } from '@uniswap/token-lists';
+import { useMemo, useCallback } from 'react';
 
+import { TokenList } from '@uniswap/token-lists';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { AppState } from 'store';
+
+import { changeConfig } from './actions';
+import COMMUNITY_TOKEN_LIST from './communitylist.json';
 import DEFAULT_TOKEN_LIST from './tokenlist.json';
 import { WrappedTokenInfo } from './wrappedTokenInfo';
+
+export function useTokenListConfig(): AppState['lists'] {
+  return useSelector((state: AppState) => state.lists);
+}
+
+export function useChangeCommunityConfig() {
+  const dispatch = useDispatch();
+  return useCallback((value: boolean) => dispatch(changeConfig({ community: value })), [dispatch]);
+}
 
 export type TokenAddressMap = Readonly<{
   [chainId: number]: Readonly<{
@@ -38,8 +54,23 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
 }
 
 export const TRANSFORMED_DEFAULT_TOKEN_LIST = listToTokenMap(DEFAULT_TOKEN_LIST);
+export const TRANSFORMED_COMMUNITY_TOKEN_LIST = listToTokenMap(COMMUNITY_TOKEN_LIST);
 
 // get all the tokens from active lists, combine with local default tokens
 export function useCombinedActiveList(): TokenAddressMap {
-  return TRANSFORMED_DEFAULT_TOKEN_LIST;
+  const tokenListConfig = useTokenListConfig();
+
+  return useMemo(() => {
+    const combinedList = { ...TRANSFORMED_DEFAULT_TOKEN_LIST };
+
+    if (tokenListConfig.community) {
+      Object.keys(TRANSFORMED_COMMUNITY_TOKEN_LIST).forEach(chain => {
+        Object.keys(TRANSFORMED_COMMUNITY_TOKEN_LIST[chain]).forEach(cx => {
+          if (!combinedList[chain][cx]) combinedList[chain][cx] = TRANSFORMED_COMMUNITY_TOKEN_LIST[chain][cx];
+        });
+      });
+    }
+
+    return combinedList;
+  }, [tokenListConfig]);
 }

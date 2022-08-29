@@ -10,6 +10,7 @@ import createSagaMiddleware from 'redux-saga';
 import application from './application/reducer';
 import collateral from './collateral/reducer';
 import fees from './fees/reducer';
+import lists from './lists/reducer';
 import loan from './loan/reducer';
 import mint from './mint/reducer';
 import ratio from './ratio/reducer';
@@ -54,6 +55,7 @@ export function configureAppStore() {
       stakedLP,
       user,
       fees,
+      lists,
     }),
     middleware: [
       ...getDefaultMiddleware({

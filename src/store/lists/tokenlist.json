@@ -161,6 +161,14 @@
       "symbol": "CROWN",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/crown.png"
+    },
+    {
+      "address": "cx13b52d9f24db8d64d93a31926e3c69d44fbe8f9a",
+      "chainId": 1,
+      "name": "CLAW Token",
+      "symbol": "CLAW",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/claw.png"
     }
   ]
 }

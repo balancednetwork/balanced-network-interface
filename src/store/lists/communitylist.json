@@ -41,6 +41,14 @@
       "symbol": "CLAW",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/claw.png"
+    },
+    {
+      "address": "cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2",
+      "chainId": 1,
+      "name": "Metanyx",
+      "symbol": "METX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/metx.png"
     }
   ]
 }

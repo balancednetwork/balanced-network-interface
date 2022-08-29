@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 
+import { NETWORK_ID } from 'constants/config';
 import { canBeQueue } from 'constants/currency';
 import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
@@ -18,6 +19,14 @@ const { isEoaAddress, isScoreAddress } = Validator;
 export function shortenAddress(address: string, chars = 7): string {
   if (!isEoaAddress(address)) {
     throw Error(`Invalid 'address' parameter '${address}'.`);
+  }
+  return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
+}
+
+export function shortenSCOREAddress(address: string, chars = 7): string {
+  if (!isScoreAddress(address)) {
+    console.error(`Invalid 'address' parameter '${address}'.`);
+    return '';
   }
   return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
 }
@@ -44,6 +53,12 @@ export function getTrackerLink(
       return `${prefix}/address/${data}`;
     }
   }
+}
+
+export function getCXLink(chain, cx): string {
+  const prefix =
+    chain === 1 ? 'https://tracker.icon.community/contract/' : 'https://tracker.berlin.icon.community/contract/';
+  return `${prefix}${cx}`;
 }
 
 export function escapeRegExp(string: string): string {
@@ -115,7 +130,7 @@ export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export const LAUNCH_DAY = 1619366400000;
+export const LAUNCH_DAY = NETWORK_ID === 1 ? 1619366400000 : 1648742400000;
 export const ONE_DAY_DURATION = 86400000;
 
 export const generateChartData = (rate: BigNumber, currencies: { [field in Field]?: Currency }) => {

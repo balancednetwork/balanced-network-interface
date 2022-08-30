@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Trans } from '@lingui/macro';
@@ -14,8 +14,9 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import '@reach/tabs/styles.css';
-import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST, COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { useRatesQuery } from 'queries/reward';
+import { useTokenListConfig } from 'store/lists/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
@@ -32,12 +33,24 @@ const WalletUIs = {
   BALN: BALNWallet,
 };
 
-const ADDRESSES = SUPPORTED_TOKENS_LIST.map(currency => currency.address);
-const icxAddressIndex = ADDRESSES.indexOf(NULL_CONTRACT_ADDRESS);
-const icxAddress = ADDRESSES.splice(icxAddressIndex, 1)[0];
-ADDRESSES.splice(0, 0, icxAddress);
+function useAddresses() {
+  const tokenListConfig = useTokenListConfig();
+  const addresses = useMemo(() => {
+    return tokenListConfig.community
+      ? COMBINED_TOKENS_LIST.map(currency => currency.address)
+      : SUPPORTED_TOKENS_LIST.map(currency => currency.address);
+  }, [tokenListConfig]);
+
+  return useMemo(() => {
+    const icxAddressIndex = addresses.indexOf(NULL_CONTRACT_ADDRESS);
+    const icxAddress = addresses.splice(icxAddressIndex, 1)[0];
+    addresses.splice(0, 0, icxAddress);
+    return addresses;
+  }, [addresses]);
+}
 
 const WalletPanel = () => {
+  const addresses = useAddresses();
   const balances = useWalletBalances();
   const { account } = useIconReact();
   const transactions = useAllTransactions();
@@ -103,73 +116,77 @@ const WalletPanel = () => {
 
           <List>
             <Accordion collapsible>
-              {ADDRESSES.filter(address => {
-                if (address === balnAddress) {
-                  return !totalBALN.dp(2).isZero();
-                }
-                return !isDPZeroCA(balances[address], 2);
-              }).map((address, index, arr) => {
-                const currency = balances[address].currency;
-                const symbol = currency.symbol;
-                const WalletUI = symbol ? WalletUIs[symbol] ?? SendPanel : SendPanel;
-                return (
-                  <AccordionItem key={symbol}>
-                    <StyledAccordionButton currency={symbol}>
-                      <ListItem border={index !== arr.length - 1}>
-                        <AssetSymbol>
-                          <CurrencyLogo currency={currency} />
-                          <Typography fontSize={16} fontWeight="bold">
-                            {symbol}
-                          </Typography>
-                        </AssetSymbol>
+              {addresses
+                .filter(address => {
+                  if (address === balnAddress) {
+                    return !totalBALN.dp(2).isZero();
+                  }
+                  return !isDPZeroCA(balances[address], 2);
+                })
+                .map((address, index, arr) => {
+                  const currency = balances[address].currency;
+                  const symbol = currency.symbol;
+                  const WalletUI = symbol ? WalletUIs[symbol] ?? SendPanel : SendPanel;
+                  return (
+                    <AccordionItem key={symbol}>
+                      <StyledAccordionButton currency={symbol}>
+                        <ListItem border={index !== arr.length - 1}>
+                          <AssetSymbol>
+                            <CurrencyLogo currency={currency} />
+                            <Typography fontSize={16} fontWeight="bold">
+                              {symbol}
+                            </Typography>
+                          </AssetSymbol>
 
-                        <BalanceAndValueWrap>
-                          <DataText as="div">
-                            {!account
-                              ? '-'
-                              : address === balnAddress
-                              ? totalBALN.dp(2).toFormat()
-                              : balances[address].toFixed(2, { groupSeparator: ',' })}
-                            {address === balnAddress && isAvailable && !isSmallScreen && <>{availableBALN}</>}
-                          </DataText>
+                          <BalanceAndValueWrap>
+                            <DataText as="div">
+                              {!account
+                                ? '-'
+                                : address === balnAddress
+                                ? totalBALN.dp(2).toFormat()
+                                : balances[address].toFixed(2, { groupSeparator: ',' })}
+                              {address === balnAddress && isAvailable && !isSmallScreen && <>{availableBALN}</>}
+                            </DataText>
 
-                          <StyledDataText
-                            as="div"
-                            hasNotification={address === bnJs.ICX.address && claimableICX.isGreaterThan(0)}
-                          >
-                            {!account || !rates || !symbol || !rates[symbol] || !rateFracs
-                              ? '-'
-                              : address === balnAddress
-                              ? `$${totalBALN.multipliedBy(rates[symbol]).dp(2).toFormat()}`
-                              : `$${balances[address].multiply(rateFracs[symbol]).toFixed(2, { groupSeparator: ',' })}`}
-                            {address === balnAddress && isAvailable && isSmallScreen && <>{availableBALN}</>}
-                            {address === balnAddress && isAvailable && !isSmallScreen && rateFracs && symbol && (
-                              <>
-                                <Typography color="rgba(255,255,255,0.75)">
-                                  $
-                                  {balances[balnAddress]
+                            <StyledDataText
+                              as="div"
+                              hasNotification={address === bnJs.ICX.address && claimableICX.isGreaterThan(0)}
+                            >
+                              {!account || !rates || !symbol || !rates[symbol] || !rateFracs
+                                ? '-'
+                                : address === balnAddress
+                                ? `$${totalBALN.multipliedBy(rates[symbol]).dp(2).toFormat()}`
+                                : `$${balances[address]
                                     .multiply(rateFracs[symbol])
-                                    .toFixed(2, { groupSeparator: ',' })}
-                                </Typography>
-                              </>
-                            )}
-                          </StyledDataText>
-                        </BalanceAndValueWrap>
-                      </ListItem>
-                    </StyledAccordionButton>
+                                    .toFixed(2, { groupSeparator: ',' })}`}
+                              {address === balnAddress && isAvailable && isSmallScreen && <>{availableBALN}</>}
+                              {address === balnAddress && isAvailable && !isSmallScreen && rateFracs && symbol && (
+                                <>
+                                  <Typography color="rgba(255,255,255,0.75)">
+                                    $
+                                    {balances[balnAddress]
+                                      .multiply(rateFracs[symbol])
+                                      .toFixed(2, { groupSeparator: ',' })}
+                                  </Typography>
+                                </>
+                              )}
+                            </StyledDataText>
+                          </BalanceAndValueWrap>
+                        </ListItem>
+                      </StyledAccordionButton>
 
-                    <StyledAccordionPanel hidden={false}>
-                      <BoxPanel bg="bg3">
-                        {address === bnJs.ICX.address ? (
-                          <WalletUI currency={currency} claimableICX={claimableICX} />
-                        ) : (
-                          <WalletUI currency={currency} />
-                        )}
-                      </BoxPanel>
-                    </StyledAccordionPanel>
-                  </AccordionItem>
-                );
-              })}
+                      <StyledAccordionPanel hidden={false}>
+                        <BoxPanel bg="bg3">
+                          {address === bnJs.ICX.address ? (
+                            <WalletUI currency={currency} claimableICX={claimableICX} />
+                          ) : (
+                            <WalletUI currency={currency} />
+                          )}
+                        </BoxPanel>
+                      </StyledAccordionPanel>
+                    </AccordionItem>
+                  );
+                })}
             </Accordion>
           </List>
         </Wrapper>

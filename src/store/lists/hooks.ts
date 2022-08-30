@@ -52,25 +52,21 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
   listCache?.set(list, map);
   return map;
 }
-
 export const TRANSFORMED_DEFAULT_TOKEN_LIST = listToTokenMap(DEFAULT_TOKEN_LIST);
-export const TRANSFORMED_COMMUNITY_TOKEN_LIST = listToTokenMap(COMMUNITY_TOKEN_LIST);
+export const TRANSFORMED_COMBINED_TOKEN_LIST = listToTokenMap(COMMUNITY_TOKEN_LIST);
+
+Object.keys(TRANSFORMED_DEFAULT_TOKEN_LIST).forEach(chain => {
+  if (!TRANSFORMED_COMBINED_TOKEN_LIST[chain]) TRANSFORMED_COMBINED_TOKEN_LIST[chain] = {};
+  Object.keys(TRANSFORMED_DEFAULT_TOKEN_LIST[chain]).forEach(cx => {
+    TRANSFORMED_COMBINED_TOKEN_LIST[chain][cx] = { ...TRANSFORMED_DEFAULT_TOKEN_LIST[chain][cx] };
+  });
+});
 
 // get all the tokens from active lists, combine with local default tokens
 export function useCombinedActiveList(): TokenAddressMap {
   const tokenListConfig = useTokenListConfig();
 
   return useMemo(() => {
-    const combinedList = { ...TRANSFORMED_DEFAULT_TOKEN_LIST };
-
-    if (tokenListConfig.community) {
-      Object.keys(TRANSFORMED_COMMUNITY_TOKEN_LIST).forEach(chain => {
-        Object.keys(TRANSFORMED_COMMUNITY_TOKEN_LIST[chain]).forEach(cx => {
-          if (!combinedList[chain][cx]) combinedList[chain][cx] = TRANSFORMED_COMMUNITY_TOKEN_LIST[chain][cx];
-        });
-      });
-    }
-
-    return combinedList;
+    return tokenListConfig.community ? TRANSFORMED_COMBINED_TOKEN_LIST : TRANSFORMED_DEFAULT_TOKEN_LIST;
   }, [tokenListConfig]);
 }

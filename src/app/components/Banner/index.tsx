@@ -3,13 +3,13 @@ import React, { ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { ReactComponent as CrossIcon } from 'assets/icons/cross.svg';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { PageLocation } from 'utils';
 
-const BannerContainer = styled(motion(Box))`
+const BannerContainer = styled(motion(Box))<{ embedded?: boolean }>`
   margin: 0 0 25px;
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
     margin: 25px 16px 0;
@@ -22,6 +22,23 @@ const BannerContainer = styled(motion(Box))`
    max-width: 1280px;
    padding: 0 40px;
   `}
+
+   ${({ embedded }) =>
+    embedded &&
+    css`
+      margin: 20px 0;
+      ${({ theme }) => theme.mediaWidth.upExtraSmall`
+        margin: 25px 16px 25px;
+      `}
+      ${({ theme }) => theme.mediaWidth.upMedium`
+        margin: 25px 40px 25px;
+      `}
+      ${({ theme }) => theme.mediaWidth.upLarge`
+        margin: 25px auto 25px;
+        max-width: 1280px;
+        padding: 0;
+      `}
+    `};
 `;
 
 const BannerStyled = styled(Flex)<{ close?: boolean }>`
@@ -66,10 +83,12 @@ export const Banner = ({
   children,
   messageID,
   location,
+  embedded,
 }: {
   children: ReactNode;
   messageID: string;
   location?: PageLocation;
+  embedded?: boolean;
 }) => {
   const [bannerClosed, setBannerClosed] = useLocalStorage(`banner_${messageID}`, BannerStatus.ACTIVE);
   const userLocation = useLocation();
@@ -86,6 +105,7 @@ export const Banner = ({
           initial={{ y: 10 }}
           animate={{ y: 0, height: 'auto', transition: { type: 'spring', stiffness: 750 } }}
           exit={{ y: -30, opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
+          embedded
         >
           <BannerStyled>
             <Box flex="1">{children}</Box>

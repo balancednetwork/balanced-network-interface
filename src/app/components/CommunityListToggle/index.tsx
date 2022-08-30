@@ -28,41 +28,64 @@ export default function CommunityListToggle() {
     setOpen(false);
   };
 
+  const handleRemove = () => {
+    changeTokenCommunityConfig(false);
+    setOpen(false);
+  };
+
   return (
     <>
-      {!tokenListConfig.community && (
-        <Flex justifyContent="center" paddingBottom="10px">
-          <Typography color={theme.colors.primary} onClick={() => setOpen(true)}>
-            <UnderlineText>
-              <Trans>Add community token list</Trans>
-            </UnderlineText>
-          </Typography>
-        </Flex>
-      )}
+      <Typography variant={'span'} color={theme.colors.primary} onClick={() => setOpen(true)}>
+        <UnderlineText>
+          {tokenListConfig.community ? (
+            <Trans>Remove community token list</Trans>
+          ) : (
+            <Trans>Add community token list</Trans>
+          )}
+        </UnderlineText>
+      </Typography>
 
-      <Modal isOpen={isOpen} onDismiss={() => setOpen(false)}>
+      <Modal isOpen={isOpen} onDismiss={() => setOpen(false)} maxWidth={400}>
         <ModalContent noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" fontSize={14} color="text2">
-            <Trans>Add community token list?</Trans>
+            {tokenListConfig.community ? (
+              <Trans>Remove community token list?</Trans>
+            ) : (
+              <Trans>Add community token list?</Trans>
+            )}
           </Typography>
-          <Typography textAlign="center" padding="5px 0 10px">
-            <Trans>The community list contains all popular assets that aren't listed in the app by default.</Trans>
+          <Typography textAlign="center" padding={tokenListConfig.community ? '5px 0 0' : '5px 0 10px'} fontSize={16}>
+            {tokenListConfig.community ? (
+              <Trans>You'll only be able to interact with the default assets listed on Balanced.</Trans>
+            ) : (
+              <Trans>The community list contains all popular assets that aren't listed in the app by default.</Trans>
+            )}
           </Typography>
-          <Box fontSize={14} sx={{ textAlign: 'center' }}>
-            <ExternalLink target="_blank" href={COMMUNITY_TOKEN_LIST_URL}>
-              <UnderlineText>
-                <Trans>Review the community token list on GitHub.</Trans>
-              </UnderlineText>
-            </ExternalLink>
-          </Box>
+
+          {!tokenListConfig.community && (
+            <Box fontSize={14} sx={{ textAlign: 'center' }}>
+              <ExternalLink target="_blank" href={COMMUNITY_TOKEN_LIST_URL}>
+                <UnderlineText>
+                  <Trans>Review the community token list on GitHub.</Trans>
+                </UnderlineText>
+              </ExternalLink>
+            </Box>
+          )}
+
           <Divider my={4}></Divider>
           <Flex justifyContent="center">
             <TextButton onClick={() => setOpen(false)}>
               <Trans>Cancel</Trans>
             </TextButton>
-            <Button onClick={() => handleConfirm()}>
-              <Trans>Add token list</Trans>
-            </Button>
+            {tokenListConfig.community ? (
+              <Button onClick={() => handleRemove()}>
+                <Trans>Remove token list</Trans>
+              </Button>
+            ) : (
+              <Button onClick={() => handleConfirm()}>
+                <Trans>Add token list</Trans>
+              </Button>
+            )}
           </Flex>
         </ModalContent>
       </Modal>

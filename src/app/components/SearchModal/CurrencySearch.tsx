@@ -172,7 +172,9 @@ export function CurrencySearch({
 
   return (
     <Wrapper width={width}>
-      <CommunityListToggle></CommunityListToggle>
+      <Flex justifyContent="center" paddingBottom="10px">
+        <CommunityListToggle></CommunityListToggle>
+      </Flex>
       <Flex>
         <SearchInput
           type="text"

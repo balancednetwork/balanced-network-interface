@@ -49,6 +49,30 @@
       "symbol": "METX",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/metx.png"
+    },
+    {
+      "address": "cx32d5b6c3eff488b058feff88acec824abe7ed8ca",
+      "chainId": 1,
+      "name": "Void Token",
+      "symbol": "VOID",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/void.png"
+    },
+    {
+      "address": "cxc0b5b52c9f8b4251a47e91dda3bd61e5512cd782",
+      "chainId": 1,
+      "name": "TAP Token",
+      "symbol": "TAP",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/tap.png"
+    },
+    {
+      "address": "cxe7c05b43b3832c04735e7f109409ebcb9c19e664",
+      "chainId": 1,
+      "name": "IAM Token",
+      "symbol": "IAM",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iam.png"
     }
   ]
 }

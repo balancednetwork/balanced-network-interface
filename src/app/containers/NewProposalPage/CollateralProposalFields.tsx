@@ -162,7 +162,7 @@ const CollateralProposalFields = ({
                   <strong>
                     <Trans>DEX</Trans>:
                   </strong>{' '}
-                  <Trans>Use the price from a liquidity pool on Balanced.</Trans>
+                  <Trans>Use the price from Balanced.</Trans>
                   <br />
                   <span style={{ opacity: 0.75 }}>
                     <Trans>Requires a bnUSD liquidity pool for this collateral type.</Trans>
@@ -209,7 +209,7 @@ const CollateralProposalFields = ({
         <Typography variant="h3">
           <Trans>Debt ceiling</Trans>{' '}
           <QuestionHelper
-            text={t`The maximum percentage that people can borrow against the value of this collateral type.`}
+            text={t`The maximum amount of bnUSD that can be minted with this collateral type.`}
           ></QuestionHelper>
         </Typography>
         <FieldInput

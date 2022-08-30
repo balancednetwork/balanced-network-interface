@@ -105,7 +105,7 @@ const ChangeVoteButton = styled(Typography)`
 `;
 
 const CollateralProposalInfoItem = styled(Box)`
-  max-width: 230px;
+  width: 180px;
   padding: 0 30px 0 0;
   margin-bottom: 15px;
 
@@ -399,7 +399,7 @@ export function ProposalPage() {
                 <Typography variant="h2" mb="20px">
                   <Trans>New collateral type</Trans>
                 </Typography>
-                <Flex flexWrap={['wrap', 'wrap', 'nowrap']}>
+                <Flex flexWrap={['wrap', 'wrap', 'nowrap']} justifyContent={['space-between', 'start']}>
                   <CollateralProposalInfoItem>
                     <Typography opacity={0.75} fontSize={16}>
                       Token address
@@ -456,7 +456,7 @@ export function ProposalPage() {
                           text={t`The maximum amount of bnUSD that can be minted with this collateral type.`}
                         ></QuestionHelper>
                       </Typography>
-                      <Typography color="text" fontSize={16}>
+                      <Typography color="text" fontSize={16} sx={{ whiteSpace: 'nowrap' }}>
                         {`${new BigNumber(formatUnits(collateralInfo['_debtCeiling'])).toFormat(0)} bnUSD`}
                       </Typography>
                     </CollateralProposalInfoItem>

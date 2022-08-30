@@ -171,7 +171,7 @@ export default function LPDescription() {
                           formattedAmounts[Field.CURRENCY_A]
                             ? new BigNumber(token0Deposited?.toFixed() || 0)
                                 .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
-                                .toFixed()
+                                .dp(2).toFormat() 
                             : token0Deposited?.toSignificant(2, {
                                 groupSeparator: ',',
                               }) || 0
@@ -205,7 +205,7 @@ export default function LPDescription() {
                         </Typography>
                       )}
                     </Box>
-                  )}
+                  )}  
                 </>
               )}
             </Box>

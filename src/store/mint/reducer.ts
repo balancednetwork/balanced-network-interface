@@ -25,7 +25,7 @@ const initialState: MintState = {
   otherTypedValue: '',
   inputType: 'text',
   [Field.CURRENCY_A]: {
-    currency: SUPPORTED_TOKENS_LIST[3],
+    currency: SUPPORTED_TOKENS_LIST[0],
     percent: 0,
   },
   [Field.CURRENCY_B]: {

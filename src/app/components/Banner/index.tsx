@@ -28,10 +28,10 @@ const BannerContainer = styled(motion(Box))<{ embedded?: boolean }>`
     css`
       margin: 20px 0;
       ${({ theme }) => theme.mediaWidth.upExtraSmall`
-        margin: 25px 16px 25px;
+        margin: 25px 0 25px;
       `}
       ${({ theme }) => theme.mediaWidth.upMedium`
-        margin: 25px 40px 25px;
+        margin: 25px 0 25px;
       `}
       ${({ theme }) => theme.mediaWidth.upLarge`
         margin: 25px auto 25px;
@@ -41,7 +41,7 @@ const BannerContainer = styled(motion(Box))<{ embedded?: boolean }>`
     `};
 `;
 
-const BannerStyled = styled(Flex)<{ close?: boolean }>`
+const BannerStyled = styled(Flex)<{ close?: boolean; embedded?: boolean }>`
   padding: 10px 15px;
   border-radius: 0 0 10px 10px;
   background: #0b284c;
@@ -59,6 +59,12 @@ const BannerStyled = styled(Flex)<{ close?: boolean }>`
     flex-direction: row;
     align-items: center;
   `};
+
+  ${({ embedded }) =>
+    embedded &&
+    css`
+      border-radius: 10px;
+    `};
 `;
 
 const IconButton = styled.button`
@@ -107,7 +113,7 @@ export const Banner = ({
           exit={{ y: -30, opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
           embedded
         >
-          <BannerStyled>
+          <BannerStyled embedded>
             <Box flex="1">{children}</Box>
             <IconButton onClick={handleClose}>
               <CrossIcon width="25px" height="25px" />

@@ -7,7 +7,8 @@ import CommunityListToggle from './components/CommunityListToggle';
 export const Message = () => (
   <>
     <Typography as="span">
-      Missing a liquidity pool? <CommunityListToggle /> to see details for all pools you've participated in.
+      Missing a liquidity pool? <CommunityListToggle onMessage="Add the community token list" /> to see details for all
+      pools you've participated in.
     </Typography>
   </>
 );

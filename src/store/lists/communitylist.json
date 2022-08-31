@@ -59,6 +59,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/void.png"
     },
     {
+      "address": "cxc2faf30ef79327f8a177f4b236ee3a1db8de81ec1",
+      "chainId": 7,
+      "name": "Void Token",
+      "symbol": "VOID",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/void.png"
+    },
+    {
       "address": "cxc0b5b52c9f8b4251a47e91dda3bd61e5512cd782",
       "chainId": 1,
       "name": "TAP Token",

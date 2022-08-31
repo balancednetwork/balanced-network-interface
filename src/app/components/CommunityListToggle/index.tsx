@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Trans } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
 
@@ -17,7 +17,13 @@ import { ExternalLink } from '../SearchModal/components';
 const COMMUNITY_TOKEN_LIST_URL =
   'https://github.com/balancednetwork/balanced-network-interface/blob/master/src/store/lists/communitylist.json';
 
-export default function CommunityListToggle() {
+export default function CommunityListToggle({
+  onMessage = t`Add community token list`,
+  offMessage = t`Remove community token list`,
+}: {
+  onMessage?: string;
+  offMessage?: string;
+}) {
   const tokenListConfig = useTokenListConfig();
   const changeTokenCommunityConfig = useChangeCommunityConfig();
   const [isOpen, setOpen] = useState(false);
@@ -36,13 +42,7 @@ export default function CommunityListToggle() {
   return (
     <>
       <Typography variant={'span'} color={theme.colors.primary} onClick={() => setOpen(true)}>
-        <UnderlineText>
-          {tokenListConfig.community ? (
-            <Trans>Remove community token list</Trans>
-          ) : (
-            <Trans>Add community token list</Trans>
-          )}
-        </UnderlineText>
+        <UnderlineText>{tokenListConfig.community ? offMessage : onMessage}</UnderlineText>
       </Typography>
 
       <Modal isOpen={isOpen} onDismiss={() => setOpen(false)} maxWidth={400}>

@@ -153,6 +153,7 @@ const CollateralProposalFields = ({
         <Typography variant="h3">
           <Trans>Oracle type</Trans>{' '}
           <QuestionHelper
+            width={270}
             text={
               <>
                 <Typography mb={4}>

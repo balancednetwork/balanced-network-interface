@@ -6,6 +6,7 @@ import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import { useIconReact } from 'packages/icon-react';
+import { useHistory } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
@@ -124,6 +125,7 @@ export function NewProposalPage() {
   const { account } = useIconReact();
   useWalletFetchBalances(account);
   const [selectedProposalType, setProposalType] = React.useState<PROPOSAL_TYPE>(PROPOSAL_TYPE.TEXT);
+  const history = useHistory();
 
   //Form
   const [title, setTitle] = useState('');
@@ -329,6 +331,7 @@ export function NewProposalPage() {
               },
             );
             toggleOpen();
+            history.push('/vote');
           } else {
             console.error(res);
           }

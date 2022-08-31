@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
 import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
@@ -41,9 +42,17 @@ export function VotePage() {
           proposals
             .sort((a, b) => b?.id - a?.id)
             .map(proposal => (
-              <Link key={proposal.id} to={`/vote/proposal/${proposal?.id}`} style={{ textDecoration: 'none' }}>
-                <ProposalInfo proposal={proposal} showNotification={shouldShowNotification(proposal)} />
-              </Link>
+              <AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'tween' }}
+                >
+                  <Link key={proposal.id} to={`/vote/proposal/${proposal?.id}`} style={{ textDecoration: 'none' }}>
+                    <ProposalInfo proposal={proposal} showNotification={shouldShowNotification(proposal)} />
+                  </Link>
+                </motion.div>
+              </AnimatePresence>
             ))
         ) : (
           <>

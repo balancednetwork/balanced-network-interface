@@ -25,7 +25,7 @@ Upload the token logo to make sure it's easy to recognise in the app. Tokens tha
 
 1. Go to https://github.com/balancednetwork/icons and create a new branch.
 2. Upload a PNG with the dimensions 512 x 512. The file name should be the token symbol in lowercase, i.e. `baln.png`.
-3. Submit a pull request to merge your changes into the main branch.
+3. Submit a pull request to merge your changes into the `main` branch.
 
 ### 2. Add a token to the community token list
 
@@ -37,7 +37,7 @@ Upload the token logo to make sure it's easy to recognise in the app. Tokens tha
 	- token symbol
 	- decimals (18 is standard)
 	- URI for the logo you've uploaded (https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/ticker.png)
-3. Open a pull request to merge your changes into the master branch. Make sure to reference the token logo PR.
+3. Open a pull request to merge your changes into the `master` branch. Make sure to reference the token logo PR.
 
 ---
 
@@ -84,7 +84,27 @@ REACT_APP_NETWORK_ID=1
 **Open all pull requests against the `master` branch.**
 CI checks will run against all PRs.
 
+
 ### Code style/convention
 
 The Balanced frontend repo uses the Airbnb code style.
 https://github.com/airbnb/javascript#naming-conventions
+
+
+### Pull request review guidelines
+
+Cosmetic fixes & small bugs
+- Set PR to mainnet
+- Review: UX team
+
+Large bug fixes (i.e. issue with transaction router)
+- Set PR to mainnet
+- Review: UX team & separate FE dev
+
+New features (smart contracts on testnet)
+- Set PR to testnet
+- Review: UX team & separate FE dev
+
+New features (smart contracts on mainnet)
+- Set PR to mainnet
+- Review: UX team & separate FE dev

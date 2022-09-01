@@ -153,6 +153,14 @@
       "symbol": "OMM",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"
+    },
+    {
+      "address": "cx28b2ec885b50c8a93da752f2d0467a67127a70e8",
+      "chainId": 1,
+      "name": "CROWN Token",
+      "symbol": "CROWN",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/crown.png"
     }
   ]
 }

@@ -1243,10 +1243,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@balancednetwork/balanced-js@1.0.15":
-  version "1.0.15"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.0.15.tgz#b102653143d458097a3c36be783b59d4c5853770"
-  integrity sha512-YJuH7gnAqV6Z8+umUg10JBwYqcSObiP8RKAr0y3Y+sHGNon8VL1esEpoXArlNykNAMIMlFX8ndjf+m5FLpk/bw==
+"@balancednetwork/balanced-js@1.0.16":
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.0.16.tgz#30102de783404a6b32ae1af04e1cf37ee1cdcde7"
+  integrity sha512-DGARmZHk/Po7bDu9XrPrvjyw4W4qZFLXL74dEWKmVvfIz8bjsiY3Y5CCP3AMvc1tEgAUeel4xzh56hUz+hoJGg==
   dependencies:
     "@balancednetwork/hw-app-icx" "^1.0.6"
     bignumber.js "9.0.1"
@@ -1272,10 +1272,10 @@
     tiny-invariant "^1.1.0"
     toformat "^2.0.0"
 
-"@balancednetwork/v1-sdk@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.1.tgz#87423a047594d6c2a00ac805e0777b4d8c2b9096"
-  integrity sha512-m6gFb5oIKa2UAC02CzeoiSRhCmJhYj9GDMPFThqdQ9H9EfvJOrf5/8UneYhZ4CQ8c6v0ZTqjACyQYza/iAjEFA==
+"@balancednetwork/v1-sdk@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.2.tgz#fd586004e8ba6dc5e0b889da28cdd93bfb9f4cfb"
+  integrity sha512-67ipVvzG63jHB0uMc1fJAwwrlCP+OGxcB1Wa+LRUEAT+slyE5MLDADOwqwf5E1j6T3qW3lAqAawK4jRwsPXY+A==
   dependencies:
     "@balancednetwork/sdk-core" "^1.0.1"
     "@ethersproject/address" "^5.0.0"

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Fraction } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
@@ -117,7 +116,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       return (
         <>
           <Typography variant="p">
-            {`${reward?.dp(2).toFormat()} `}
+            {`${reward?.toFormat(2)} `}
             <Typography as="span" color="text1">
               BALN
             </Typography>
@@ -260,7 +259,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
           {fees &&
             Object.keys(fees).map(key => (
               <Typography key={key} variant="p">
-                {`${fees[key].lessThan(new Fraction(1, 100)) ? '0' : fees[key].toFixed(2)}`}{' '}
+                {`${fees[key].toFixed(2)}`}{' '}
                 <Typography key={key} as="span" color="text1">
                   {fees[key].currency.symbol}
                 </Typography>

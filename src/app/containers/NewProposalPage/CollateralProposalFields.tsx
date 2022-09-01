@@ -169,7 +169,7 @@ const CollateralProposalFields = ({
                     <Trans>Requires a bnUSD liquidity pool for this collateral type.</Trans>
                   </span>
                 </Typography>
-                <Typography mb={4}>
+                <Typography>
                   <strong>
                     <Trans>Band</Trans>:
                   </strong>{' '}

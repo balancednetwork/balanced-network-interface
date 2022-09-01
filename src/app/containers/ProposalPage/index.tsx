@@ -140,7 +140,10 @@ export function ProposalPage() {
   const oldProposalType = oldActionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
 
   const isNewCollateralProposal =
-    ACTIONS_MAPPING[PROPOSAL_TYPE.NEW_COLLATERAL_TYPE].indexOf(JSON.parse(proposal?.actions || '[[]]')[0][0]) >= 0;
+    proposal &&
+    proposal.actions !== '[]' &&
+    !proposal.actions.startsWith('{') &&
+    ACTIONS_MAPPING[PROPOSAL_TYPE.NEW_COLLATERAL_TYPE].indexOf(JSON.parse(proposal.actions || '[[]]')[0][0]) >= 0;
   const collateralInfo = proposal && isNewCollateralProposal && JSON.parse(proposal.actions)[0][1];
 
   const isActive =

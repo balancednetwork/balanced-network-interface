@@ -42,13 +42,14 @@ export function VotePage() {
           proposals
             .sort((a, b) => b?.id - a?.id)
             .map(proposal => (
-              <AnimatePresence>
+              <AnimatePresence key={`wrap${proposal.id}`}>
                 <motion.div
+                  key={proposal.id}
                   initial={{ opacity: 0, scale: 1.05 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ type: 'tween' }}
                 >
-                  <Link key={proposal.id} to={`/vote/proposal/${proposal?.id}`} style={{ textDecoration: 'none' }}>
+                  <Link to={`/vote/proposal/${proposal?.id}`} style={{ textDecoration: 'none' }}>
                     <ProposalInfo proposal={proposal} showNotification={shouldShowNotification(proposal)} />
                   </Link>
                 </motion.div>

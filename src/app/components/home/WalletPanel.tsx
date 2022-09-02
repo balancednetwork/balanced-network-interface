@@ -14,7 +14,12 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import '@reach/tabs/styles.css';
-import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST, COMBINED_TOKENS_LIST } from 'constants/tokens';
+import {
+  NULL_CONTRACT_ADDRESS,
+  SUPPORTED_TOKENS_LIST,
+  COMBINED_TOKENS_LIST,
+  COMBINED_TOKENS_MAP_BY_ADDRESS,
+} from 'constants/tokens';
 import { useRatesQuery } from 'queries/reward';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -123,6 +128,11 @@ const WalletPanel = () => {
                   }
                   return !isDPZeroCA(balances[address], 2);
                 })
+                .sort((a, b) =>
+                  a !== NULL_CONTRACT_ADDRESS && b !== NULL_CONTRACT_ADDRESS
+                    ? COMBINED_TOKENS_MAP_BY_ADDRESS[a].symbol!.localeCompare(COMBINED_TOKENS_MAP_BY_ADDRESS[b].symbol!)
+                    : 1,
+                )
                 .map((address, index, arr) => {
                   const currency = balances[address].currency;
                   const symbol = currency.symbol;

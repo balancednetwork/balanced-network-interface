@@ -16,14 +16,16 @@ export function useUnclaimedFees(): { [key: string]: CurrencyAmount<Token> } {
 export function useFetchUnclaimedDividends(): void {
   const dispatch = useDispatch();
   const { account } = useIconReact();
+  const feesDistributedIn = [bnJs.sICX.address, bnJs.bnUSD.address, bnJs.BALN.address];
 
   useInterval(async () => {
     if (account) {
       const data = await bnJs.Dividends.getUnclaimedDividends(account);
-      const fees: { [address in string]: CurrencyAmount<Token> } = Object.keys(data).reduce((prev, address) => {
+
+      const fees: { [address in string]: CurrencyAmount<Token> } = feesDistributedIn.reduce((fees, address) => {
         const currency = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
-        prev[address] = CurrencyAmount.fromRawAmount(currency, data[address]);
-        return prev;
+        fees[address] = CurrencyAmount.fromRawAmount(currency, data[address]);
+        return fees;
       }, {});
 
       dispatch(setFees({ fees }));

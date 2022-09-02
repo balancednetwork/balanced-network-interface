@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-07-20 21:23\n"
+"PO-Revision-Date: 2022-09-02 07:31\n"
 "Last-Translator: \n"
 "Language: pl_PL\n"
 "Language-Team: Polish\n"
@@ -638,8 +638,6 @@ msgid "Pay"
 msgstr "Zapłać"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
-#: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr "W oczekiwaniu"
 

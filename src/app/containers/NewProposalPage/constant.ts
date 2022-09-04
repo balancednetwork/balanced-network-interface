@@ -219,10 +219,6 @@ export const PROPOSAL_CONFIG = {
   },
   [PROPOSAL_TYPE.NEW_COLLATERAL_TYPE]: {
     fetchInputData: () => [],
-    validate: () => ({
-      isValid: true,
-      message: 'TO DO',
-    }),
     submitParams: ({
       address,
       oracleType,
@@ -233,7 +229,7 @@ export const PROPOSAL_CONFIG = {
     }: CollateralProposal) => {
       const params = {
         _token_address: address,
-        _active: false,
+        _active: true,
         _lockingRatio: Math.round(1000000 / Number(borrowLTV || 1)),
         _liquidationRatio: Math.round(1000000 / Number(liquidationLTV || 1)),
         _debtCeiling: parseUnits(debtCeiling),

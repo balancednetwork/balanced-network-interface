@@ -64,7 +64,12 @@ export default function Updater(): null {
               if (receipt.status === 1) {
                 toast.update(receipt.txHash, {
                   ...toastProps,
-                  render: <NotificationSuccess summary={transactions[hash]?.summary} />,
+                  render: (
+                    <NotificationSuccess
+                      summary={transactions[hash]?.summary}
+                      redirectOnSuccess={transactions[hash]?.redirectOnSuccess}
+                    />
+                  ),
                   autoClose: 5000,
                 });
               }

@@ -126,11 +126,15 @@ const CollateralProposalFields = ({
   };
 
   const onBorrowLTVChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setNewCollateral({ ...newCollateral, borrowLTV: event.currentTarget.value });
+    if (Number(event.currentTarget.value) <= 100) {
+      setNewCollateral({ ...newCollateral, borrowLTV: event.currentTarget.value });
+    }
   };
 
   const onLiquidationLTVChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setNewCollateral({ ...newCollateral, liquidationLTV: event.currentTarget.value });
+    if (Number(event.currentTarget.value) <= 100) {
+      setNewCollateral({ ...newCollateral, liquidationLTV: event.currentTarget.value });
+    }
   };
   return (
     <CollateralTypeGrid>
@@ -149,18 +153,31 @@ const CollateralProposalFields = ({
         <Typography variant="h3">
           <Trans>Oracle type</Trans>{' '}
           <QuestionHelper
+            width={270}
             text={
               <>
-                <Typography mb={4}>Where Balanced will get the price data for this collateral type.</Typography>
                 <Typography mb={4}>
-                  <strong>DEX:</strong> Use the price from a liquidity pool on Balanced.
-                  <br />
-                  <span style={{ opacity: 0.75 }}>Requires a bnUSD liquidity pool for this collateral type.</span>
+                  <Trans>Where Balanced will get the price data for this collateral type.</Trans>
                 </Typography>
                 <Typography mb={4}>
-                  <strong>Band:</strong> Use the price of an asset tracked via the Band oracle.
+                  <strong>
+                    <Trans>DEX</Trans>:
+                  </strong>{' '}
+                  <Trans>Use the price from Balanced.</Trans>
                   <br />
-                  <span style={{ opacity: 0.75 }}>Requires the token ticker, i.e. ICX.</span>
+                  <span style={{ opacity: 0.75 }}>
+                    <Trans>Requires a bnUSD liquidity pool for this collateral type.</Trans>
+                  </span>
+                </Typography>
+                <Typography>
+                  <strong>
+                    <Trans>Band</Trans>:
+                  </strong>{' '}
+                  <Trans>Use the price of an asset tracked via the Band oracle.</Trans>
+                  <br />
+                  <span style={{ opacity: 0.75 }}>
+                    <Trans>Requires the token ticker, i.e. ICX.</Trans>
+                  </span>
                 </Typography>
               </>
             }
@@ -171,14 +188,14 @@ const CollateralProposalFields = ({
             onClick={() => onOracleTypeChange(ORACLE_TYPE.DEX)}
             isActive={newCollateral.oracleType === ORACLE_TYPE.DEX}
           >
-            DEX
+            <Trans>DEX</Trans>
           </OracleTypeButton>
           <OracleTypeButton
             onClick={() => onOracleTypeChange(ORACLE_TYPE.BAND)}
             isActive={newCollateral.oracleType === ORACLE_TYPE.BAND}
             style={{ marginRight: '20px' }}
           >
-            Band
+            <Trans>Band</Trans>
           </OracleTypeButton>
           <FieldInput
             type="text"
@@ -192,7 +209,9 @@ const CollateralProposalFields = ({
       <Field className="ceiling">
         <Typography variant="h3">
           <Trans>Debt ceiling</Trans>{' '}
-          <QuestionHelper text="The maximum amount of bnUSD that can be minted with this collateral type."></QuestionHelper>
+          <QuestionHelper
+            text={t`The maximum amount of bnUSD that can be minted with this collateral type.`}
+          ></QuestionHelper>
         </Typography>
         <FieldInput
           type="number"
@@ -204,7 +223,9 @@ const CollateralProposalFields = ({
       <Field className="borrow">
         <Typography variant="h3">
           <Trans>Borrow LTV</Trans>{' '}
-          <QuestionHelper text="The maximum percentage that people can borrow against the value of this collateral type."></QuestionHelper>
+          <QuestionHelper
+            text={t`The maximum percentage that people can borrow against the value of this collateral type.`}
+          ></QuestionHelper>
         </Typography>
         <FieldInput
           type="number"
@@ -216,7 +237,9 @@ const CollateralProposalFields = ({
       <Field className="liquidation">
         <Typography variant="h3">
           <Trans>Liquidation LTV</Trans>{' '}
-          <QuestionHelper text="The percentage of debt required to trigger liquidation for this collateral type."></QuestionHelper>
+          <QuestionHelper
+            text={t`The percentage of debt required to trigger liquidation for this collateral type.`}
+          ></QuestionHelper>
         </Typography>
         <FieldInput
           type="number"

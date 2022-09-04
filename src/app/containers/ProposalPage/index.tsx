@@ -105,7 +105,7 @@ const ChangeVoteButton = styled(Typography)`
 `;
 
 const CollateralProposalInfoItem = styled(Box)`
-  max-width: 230px;
+  width: 180px;
   padding: 0 30px 0 0;
   margin-bottom: 15px;
 
@@ -140,7 +140,10 @@ export function ProposalPage() {
   const oldProposalType = oldActionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
 
   const isNewCollateralProposal =
-    ACTIONS_MAPPING[PROPOSAL_TYPE.NEW_COLLATERAL_TYPE].indexOf(JSON.parse(proposal?.actions || '[[]]')[0][0]) >= 0;
+    proposal &&
+    proposal.actions !== '[]' &&
+    !proposal.actions.startsWith('{') &&
+    ACTIONS_MAPPING[PROPOSAL_TYPE.NEW_COLLATERAL_TYPE].indexOf(JSON.parse(proposal.actions || '[[]]')[0][0]) >= 0;
   const collateralInfo = proposal && isNewCollateralProposal && JSON.parse(proposal.actions)[0][1];
 
   const isActive =
@@ -399,7 +402,7 @@ export function ProposalPage() {
                 <Typography variant="h2" mb="20px">
                   <Trans>New collateral type</Trans>
                 </Typography>
-                <Flex flexWrap={['wrap', 'wrap', 'nowrap']}>
+                <Flex flexWrap={['wrap', 'wrap', 'nowrap']} justifyContent={['space-between', 'start']}>
                   <CollateralProposalInfoItem>
                     <Typography opacity={0.75} fontSize={16}>
                       Token address
@@ -423,14 +426,19 @@ export function ProposalPage() {
                           text={
                             <>
                               <Typography mb={4}>
-                                Where Balanced will get the price data for this collateral type.
+                                <Trans>Where Balanced will get the price data for this collateral type.</Trans>
                               </Typography>
                               <Typography mb={4}>
-                                <strong>DEX:</strong> Uses the price from the bnUSD liquidity pool for this collateral
-                                type.
+                                <strong>
+                                  <Trans>DEX</Trans>:
+                                </strong>{' '}
+                                <Trans>Uses the price from the bnUSD liquidity pool for this collateral type.</Trans>
                               </Typography>
                               <Typography>
-                                <strong>Band:</strong> Uses the price of an asset tracked via the Band oracle.
+                                <strong>
+                                  <Trans>Band</Trans>:
+                                </strong>{' '}
+                                <Trans>Uses the price of an asset tracked via the Band oracle.</Trans>
                               </Typography>
                             </>
                           }
@@ -447,9 +455,11 @@ export function ProposalPage() {
                     <CollateralProposalInfoItem>
                       <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
                         <Trans>Debt ceiling</Trans>{' '}
-                        <QuestionHelper text="The maximum amount of bnUSD that can be minted with this collateral type."></QuestionHelper>
+                        <QuestionHelper
+                          text={t`The maximum amount of bnUSD that can be minted with this collateral type.`}
+                        ></QuestionHelper>
                       </Typography>
-                      <Typography color="text" fontSize={16}>
+                      <Typography color="text" fontSize={16} sx={{ whiteSpace: 'nowrap' }}>
                         {`${new BigNumber(formatUnits(collateralInfo['_debtCeiling'])).toFormat(0)} bnUSD`}
                       </Typography>
                     </CollateralProposalInfoItem>
@@ -458,7 +468,9 @@ export function ProposalPage() {
                     <CollateralProposalInfoItem>
                       <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
                         <Trans>Borrow LTV</Trans>{' '}
-                        <QuestionHelper text="The maximum percentage that people can borrow against the value of this collateral type."></QuestionHelper>
+                        <QuestionHelper
+                          text={t`The maximum percentage that people can borrow against the value of this collateral type.`}
+                        ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16}>
                         {`${formatPercent(new BigNumber(1000000 / Number(collateralInfo['_lockingRatio'])))}`}
@@ -469,7 +481,9 @@ export function ProposalPage() {
                     <CollateralProposalInfoItem>
                       <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
                         <Trans>Liquidation LTV</Trans>{' '}
-                        <QuestionHelper text="The percentage of debt required to trigger liquidation for this collateral type."></QuestionHelper>
+                        <QuestionHelper
+                          text={t`The percentage of debt required to trigger liquidation for this collateral type.`}
+                        ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16}>
                         {`${formatPercent(new BigNumber(1000000 / Number(collateralInfo['_liquidationRatio'])))}`}

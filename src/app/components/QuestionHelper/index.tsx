@@ -22,10 +22,12 @@ export default function QuestionHelper({
   text,
   placement = 'top',
   containerStyle,
+  width,
 }: {
   text: React.ReactNode;
   placement?: Placement;
   containerStyle?: React.CSSProperties;
+  width?: number;
 }) {
   const [show, setShow] = useState<boolean>(false);
 
@@ -36,7 +38,7 @@ export default function QuestionHelper({
 
   return (
     <span style={{ marginLeft: 4, verticalAlign: 'top' }}>
-      <Tooltip text={text} show={show} placement={placement} containerStyle={containerStyle}>
+      <Tooltip text={text} show={show} placement={placement} containerStyle={containerStyle} width={width}>
         {!smallSp && (
           <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
             <QuestionIcon width={14} />

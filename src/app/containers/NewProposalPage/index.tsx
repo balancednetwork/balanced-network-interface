@@ -4,6 +4,7 @@ import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
+import { Validator } from 'icon-sdk-js';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
@@ -166,6 +167,7 @@ export function NewProposalPage() {
   const isTextProposal = selectedProposalType === PROPOSAL_TYPE.TEXT;
   const isFundingProposal = selectedProposalType === PROPOSAL_TYPE.FUNDING;
   const isCollateralProposal = selectedProposalType === PROPOSAL_TYPE.NEW_COLLATERAL_TYPE;
+  const { isScoreAddress } = Validator;
 
   const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
   const stakedBalance: BigNumber = details['Staked balance'] || new BigNumber(0);
@@ -202,10 +204,6 @@ export function NewProposalPage() {
     return !!validate && validate(totalRatio);
   };
 
-  // const validateNewCollateralType = () => {
-
-  // }
-
   const isFormValid =
     title.trim() &&
     description.trim() &&
@@ -215,7 +213,13 @@ export function NewProposalPage() {
       (isFundingProposal &&
         !!currencyInputValue.recipient.trim() &&
         currencyInputValue.amounts.some(amount => amount.inputDisplayValue)) ||
-      isCollateralProposal);
+      (isCollateralProposal &&
+        isScoreAddress(newCollateral.address) &&
+        newCollateral.borrowLTV &&
+        newCollateral.liquidationLTV &&
+        newCollateral.debtCeiling &&
+        newCollateral.oracleType === ORACLE_TYPE.DEX) ||
+      newCollateral.oracleValue);
 
   const canSubmit = account && isStakeValid && isFormValid;
 
@@ -322,6 +326,7 @@ export function NewProposalPage() {
               {
                 pending: t`Submitting a proposal...`,
                 summary: t`${label} proposal submitted.`,
+                redirectOnSuccess: '/vote',
               },
             );
             toggleOpen();

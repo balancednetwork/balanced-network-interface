@@ -303,7 +303,6 @@ const CollateralPanel = () => {
   const shouldShowLock = !lockedCollateral.isZero();
 
   // add one more ICX to the locked marker if user has debt to remove insufficient error.
-  //TODOXX
   const tLockedAmount = React.useMemo(
     () => BigNumber.min(lockedCollateral.plus(shouldShowLock && isHandlingICX ? 1 : 0), collateralTotal),
     [lockedCollateral, collateralTotal, shouldShowLock, isHandlingICX],

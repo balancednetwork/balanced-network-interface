@@ -385,7 +385,6 @@ export const useThresholdPrices = (): [BigNumber, BigNumber] => {
   }, [collateralInputAmount, loanInputAmount, lockingRatio, liquidationRatio, ratio, collateralType]);
 };
 
-//TODOXX: refactor for other collateral types
 export const useOwnDailyRewards = (): BigNumber => {
   const debtHoldShare = useLoanDebtHoldingShare();
 

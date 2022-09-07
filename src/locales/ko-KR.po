@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-07-20 21:23\n"
+"PO-Revision-Date: 2022-09-07 08:35\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -68,6 +68,18 @@ msgstr "활성화"
 #: src/app/components/home/TransactionPanel.tsx
 msgid "Activity history"
 msgstr "활동 내역"
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add community token list"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add community token list?"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add token list"
+msgstr ""
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
@@ -190,6 +202,7 @@ msgstr "{0} bnUSD 대출됨."
 msgid "Borrowing bnUSD..."
 msgstr "대출 중인 bnUSD..."
 
+#: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -638,8 +651,6 @@ msgid "Pay"
 msgstr "지불"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
-#: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr "보류 중"
 
@@ -726,6 +737,18 @@ msgstr "거부됨"
 msgid "Remove"
 msgstr "제거"
 
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove community token list"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove community token list?"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove token list"
+msgstr ""
+
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
 msgstr "이 거래를 취소하려면 자산을 제거하십시오."
@@ -749,6 +772,10 @@ msgstr "Balanced 달러를 상환하겠습니까?"
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
 msgstr "bnUSD 상환중..."
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Review the community token list on GitHub."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Rewards"
@@ -962,6 +989,10 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 msgid "The amount of ICX available to deposit from your wallet."
 msgstr "지갑에서 예치 가능한 ICX의 양."
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "The community list contains all popular assets that aren't listed in the app by default."
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current ICX price is"
@@ -1230,6 +1261,10 @@ msgstr "이 거래를 완료하려면 지갑에 최소 {MINIMUM_ICX_FOR_TX} ICX�
 #: src/app/containers/ProposalPage/index.tsx
 msgid "You rejected"
 msgstr "반려되었습니다."
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "You'll only be able to interact with the default assets listed on Balanced."
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD pool. The smaller your loan, the less rebalancing affects you."

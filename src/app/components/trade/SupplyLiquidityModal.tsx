@@ -271,7 +271,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                   {UIStatus[field].shouldSend ? (
                     <>
                       <Typography variant="p" fontWeight="bold" textAlign="center">
-                        {parsedAmounts[field]?.toSignificant(4)} {currencies[field]?.symbol}
+                        {parsedAmounts[field]?.toSignificant(6)} {currencies[field]?.symbol}
                       </Typography>
                       {shouldAddAssets[field] && (
                         <>

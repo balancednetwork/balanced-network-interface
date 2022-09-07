@@ -16,6 +16,7 @@ import useToggle from 'hooks/useToggle';
 import { isAddress } from 'utils';
 
 import Column from '../Column';
+import CommunityListToggle from '../CommunityListToggle';
 import CurrencyList from './CurrencyList';
 import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';
@@ -171,6 +172,9 @@ export function CurrencySearch({
 
   return (
     <Wrapper width={width}>
+      <Flex justifyContent="center" paddingBottom="10px">
+        <CommunityListToggle></CommunityListToggle>
+      </Flex>
       <Flex>
         <SearchInput
           type="text"

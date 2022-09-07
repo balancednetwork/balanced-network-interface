@@ -12,16 +12,19 @@ import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import Message from 'app/Message';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { BalanceData, useSuppliedTokens } from 'hooks/useV2Pairs';
+import { useTokenListConfig } from 'store/lists/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintActionHandlers } from 'store/mint/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
 
+import { Banner } from '../Banner';
 import { StyledSkeleton } from '../ProposalInfo/components';
 import Spinner from '../Spinner';
 import { StyledAccordionButton, StyledAccordionPanel, StyledAccordionItem } from './LiquidityDetails/Accordion';
@@ -33,6 +36,7 @@ import { getFormattedPoolShare, getFormattedRewards, stakedFraction, totalSupply
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
+  const tokenListConfig = useTokenListConfig();
 
   const { pairs, balances } = usePoolPanelContext();
 
@@ -81,6 +85,12 @@ export default function LiquidityDetails() {
 
   return (
     <>
+      {!tokenListConfig.community && (
+        <Banner messageID={'communityList'} embedded>
+          <Message />
+        </Banner>
+      )}
+
       <AnimatePresence>
         {isLiquidityInfoLoading && (
           <motion.div

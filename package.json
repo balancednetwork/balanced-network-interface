@@ -6,7 +6,7 @@
     "@balancednetwork/balanced-js": "1.0.16",
     "@balancednetwork/hw-app-icx": "1.0.6",
     "@balancednetwork/sdk-core": "1.0.1",
-    "@balancednetwork/v1-sdk": "1.0.1",
+    "@balancednetwork/v1-sdk": "1.0.2",
     "@ethersproject/address": "5.4.0",
     "@ethersproject/solidity": "5.4.0",
     "@ledgerhq/hw-transport": "5.48.0",

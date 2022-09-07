@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-07-20 21:23\n"
+"PO-Revision-Date: 2022-09-07 08:35\n"
 "Last-Translator: \n"
 "Language: de_DE\n"
 "Language-Team: German\n"
@@ -68,6 +68,18 @@ msgstr "aktiv"
 #: src/app/components/home/TransactionPanel.tsx
 msgid "Activity history"
 msgstr "Aktivitätsverlauf"
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add community token list"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add community token list?"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add token list"
+msgstr ""
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
@@ -190,6 +202,7 @@ msgstr "Ausgeliehene {0} bnUSD."
 msgid "Borrowing bnUSD..."
 msgstr "Ausleihen von bnUSD..."
 
+#: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -638,8 +651,6 @@ msgid "Pay"
 msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
-#: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr ""
 
@@ -726,6 +737,18 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove community token list"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove community token list?"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove token list"
+msgstr ""
+
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
 msgstr ""
@@ -748,6 +771,10 @@ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Review the community token list on GitHub."
 msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
@@ -961,6 +988,10 @@ msgstr ""
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "The amount of ICX available to deposit from your wallet."
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "The community list contains all popular assets that aren't listed in the app by default."
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -1228,6 +1259,10 @@ msgstr ""
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "You rejected"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "You'll only be able to interact with the default assets listed on Balanced."
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx

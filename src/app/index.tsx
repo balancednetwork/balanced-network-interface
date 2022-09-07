@@ -35,9 +35,6 @@ export function App() {
         <NotificationContainer />
         <WalletModal />
         {/* Add message for community */}
-        {/* <Banner messageID={'continuousFees'} location={PageLocation.HOME}>
-          <Message />
-        </Banner> */}
 
         <Helmet
           titleTemplate="%s | Balanced"

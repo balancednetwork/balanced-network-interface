@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-09-02 07:31\n"
+"PO-Revision-Date: 2022-09-07 08:35\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -68,6 +68,18 @@ msgstr "Actief"
 #: src/app/components/home/TransactionPanel.tsx
 msgid "Activity history"
 msgstr "Activiteitengeschiedenis"
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add community token list"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add community token list?"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add token list"
+msgstr ""
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
@@ -190,6 +202,7 @@ msgstr "{0} bnUSD geleend."
 msgid "Borrowing bnUSD..."
 msgstr "bnUSD lenen..."
 
+#: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -724,6 +737,18 @@ msgstr "Afgewezen"
 msgid "Remove"
 msgstr "Verwijderen"
 
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove community token list"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove community token list?"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove token list"
+msgstr ""
+
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
 msgstr "Verwijder je activa om deze transactie te annuleren."
@@ -747,6 +772,10 @@ msgstr "Balanced Dollars aflossen?"
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
 msgstr "bnUSD aan het aflossen..."
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Review the community token list on GitHub."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Rewards"
@@ -960,6 +989,10 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 msgid "The amount of ICX available to deposit from your wallet."
 msgstr "De hoeveelheid ICX die beschikbaar is om te storten uit je portemonnee."
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "The community list contains all popular assets that aren't listed in the app by default."
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current ICX price is"
@@ -1229,6 +1262,10 @@ msgstr "Je hebt minstens {MINIMUM_ICX_FOR_TX} ICX in je wallet nodig om deze tra
 #: src/app/containers/ProposalPage/index.tsx
 msgid "You rejected"
 msgstr "Je hebt geweigerd"
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "You'll only be able to interact with the default assets listed on Balanced."
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD pool. The smaller your loan, the less rebalancing affects you."

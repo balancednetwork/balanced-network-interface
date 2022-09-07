@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-09-02 07:31\n"
+"PO-Revision-Date: 2022-09-07 08:35\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -68,6 +68,18 @@ msgstr "Kích hoạt"
 #: src/app/components/home/TransactionPanel.tsx
 msgid "Activity history"
 msgstr "Lịch sử hoạt động"
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add community token list"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add community token list?"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add token list"
+msgstr ""
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
@@ -190,6 +202,7 @@ msgstr "Đã vay {0} bnUSD."
 msgid "Borrowing bnUSD..."
 msgstr "Đang vay bnUSD..."
 
+#: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -724,6 +737,18 @@ msgstr "Đã từ chối"
 msgid "Remove"
 msgstr "Loại bỏ"
 
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove community token list"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove community token list?"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove token list"
+msgstr ""
+
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
 msgstr "Rút lại tài sản để hủy giao dịch này."
@@ -747,6 +772,10 @@ msgstr "Trả lại đồng usd của balanced?"
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
 msgstr "Đang trả lại bnUSD..."
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Review the community token list on GitHub."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Rewards"
@@ -960,6 +989,10 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 msgid "The amount of ICX available to deposit from your wallet."
 msgstr "Số lượng ICX có sẵn để nạp từ ví của bạn."
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "The community list contains all popular assets that aren't listed in the app by default."
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current ICX price is"
@@ -1228,6 +1261,10 @@ msgstr "Bạn cần ít nhất {MINIMUM_ICX_FOR_TX} ICX trong ví để hoàn t�
 #: src/app/containers/ProposalPage/index.tsx
 msgid "You rejected"
 msgstr "Bạn đã phản đối"
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "You'll only be able to interact with the default assets listed on Balanced."
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD pool. The smaller your loan, the less rebalancing affects you."

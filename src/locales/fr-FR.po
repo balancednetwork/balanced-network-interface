@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-09-07 08:35\n"
+"PO-Revision-Date: 2022-09-07 20:33\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -169,6 +169,12 @@ msgstr "Balanced augmente votre prêt pour acheter plus de garanties à prix ré
 msgid "Balanced sells collateral at a premium to repay some of your loan."
 msgstr "Balanced vend des garanties à un prix intéressant pour rembourser une partie de votre prêt."
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Band"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -188,6 +194,11 @@ msgstr "Emprunter"
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow Balanced Dollars?"
 msgstr "Emprunter Balanced Dollar ?"
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Borrow LTV"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -334,10 +345,12 @@ msgid "Connect Wallet"
 msgstr "Connecter le portefeuille"
 
 #: src/app/components/Header/index.tsx
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 msgid "Copied"
 msgstr "Copié"
 
 #: src/app/components/Header/index.tsx
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 msgid "Copy address"
 msgstr "Copier l'adresse"
 
@@ -386,11 +399,22 @@ msgstr "Actuel"
 msgid "DATE"
 msgstr "DATE"
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "DEX"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/StakeLPPanel.tsx
 msgid "Daily rewards"
 msgstr "Récompenses quotidiennes"
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Debt ceiling"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -558,6 +582,11 @@ msgstr "Ligne"
 msgid "Liquidated"
 msgstr "Liquidé"
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Liquidation LTV"
+msgstr ""
+
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Liquidity details"
 msgstr "Détails de la liquidité"
@@ -597,6 +626,11 @@ msgstr "Allocation des frais de réseau"
 msgid "Network fees"
 msgstr "Frais de réseau"
 
+#: src/app/containers/NewProposalPage/constant.ts
+#: src/app/containers/ProposalPage/index.tsx
+msgid "New collateral type"
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/VotePage/index.tsx
 msgid "New proposal"
@@ -632,6 +666,11 @@ msgstr "Plus tard"
 #: src/app/components/StabilityFund/index.tsx
 msgid "Or"
 msgstr "Ou"
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Oracle type"
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
@@ -772,6 +811,14 @@ msgstr "Rembourser Balanced Dollar ?"
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
 msgstr "Remboursement de bnUSD..."
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+msgid "Requires a bnUSD liquidity pool for this collateral type."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+msgid "Requires the token ticker, i.e. ICX."
+msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Review the community token list on GitHub."
@@ -1002,6 +1049,21 @@ msgstr "Le prix actuel de l'ICX est"
 msgid "The current bnUSD price is"
 msgstr "Le prix actuel du bnUSD est"
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "The maximum amount of bnUSD that can be minted with this collateral type."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "The maximum percentage that people can borrow against the value of this collateral type."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "The percentage of debt required to trigger liquidation for this collateral type."
+msgstr ""
+
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "There's no BALN unstaking."
 msgstr "Il n'y a pas de déstaking de BALN."
@@ -1042,6 +1104,10 @@ msgstr "Pour gagner les frais de réseau, stakez BALN depuis votre portefeuille.
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
 msgstr "Pour contracter un prêt, déposez une garantie."
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+msgid "Token contract address"
+msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total daily rewards"
@@ -1122,9 +1188,25 @@ msgstr "Utilisez le Fond de Stabilité pour échanger un maximum de"
 msgid "Use the Stability Fund to swap {0} for {1}"
 msgstr "Utilisez le Fond de Stabilité pour échanger {0} contre {1}"
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+msgid "Use the price from Balanced."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+msgid "Use the price of an asset tracked via the Band oracle."
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
 msgstr "Utilisé"
+
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Uses the price from the bnUSD liquidity pool for this collateral type."
+msgstr ""
+
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Uses the price of an asset tracked via the Band oracle."
+msgstr ""
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "Value"
@@ -1191,6 +1273,11 @@ msgstr "Portefeuille : {0} {1}"
 msgid "Wallet: {0} {1} /\n"
 "{2} {3}"
 msgstr "Portefeuille : {0} {1} / {2} {3}"
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Where Balanced will get the price data for this collateral type."
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "While you borrow bnUSD, your collateral is used to keep its value stable"

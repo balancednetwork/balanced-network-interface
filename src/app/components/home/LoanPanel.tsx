@@ -160,7 +160,7 @@ const LoanPanel = () => {
     } else {
       bnJs
         .inject({ account })
-        .Loans.returnAsset('bnUSD', parseUnits(differenceAmount.abs().toFixed()), 1)
+        .Loans.returnAsset('bnUSD', parseUnits(differenceAmount.abs().toFixed()))
         .then(res => {
           addTransaction(
             { hash: res.result },

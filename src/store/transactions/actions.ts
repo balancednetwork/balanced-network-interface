@@ -19,6 +19,7 @@ export const addTransaction = createAction<{
   approval?: { tokenAddress: string; spender: string };
   claim?: { recipient: string };
   summary?: string;
+  redirectOnSuccess?: string;
 }>('transactions/addTransaction');
 export const clearAllTransactions = createAction<{ networkId: NetworkId }>('transactions/clearAllTransactions');
 export const finalizeTransaction = createAction<{

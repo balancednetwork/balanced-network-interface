@@ -2,7 +2,7 @@ import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balance
 import { Token, Currency } from '@balancednetwork/sdk-core';
 import { useIconReact } from 'packages/icon-react';
 
-import { TRANSFORMED_DEFAULT_TOKEN_LIST } from 'store/lists/hooks';
+import { TRANSFORMED_DEFAULT_TOKEN_LIST, TRANSFORMED_COMBINED_TOKEN_LIST } from 'store/lists/hooks';
 
 import { NETWORK_ID } from './config';
 
@@ -112,7 +112,16 @@ export const SUPPORTED_TOKENS_MAP_BY_ADDRESS = Object.keys(TRANSFORMED_DEFAULT_T
 }, {});
 SUPPORTED_TOKENS_MAP_BY_ADDRESS[NULL_CONTRACT_ADDRESS] = ICX[chainId];
 
+export const COMBINED_TOKENS_MAP_BY_ADDRESS = Object.keys(TRANSFORMED_COMBINED_TOKEN_LIST[chainId] ?? {}).reduce<{
+  [address: string]: Token;
+}>((newMap, address) => {
+  newMap[address] = TRANSFORMED_COMBINED_TOKEN_LIST[chainId][address].token;
+  return newMap;
+}, {});
+COMBINED_TOKENS_MAP_BY_ADDRESS[NULL_CONTRACT_ADDRESS] = ICX[chainId];
+
 export const SUPPORTED_TOKENS_LIST: Token[] = Object.values(SUPPORTED_TOKENS_MAP_BY_ADDRESS);
+export const COMBINED_TOKENS_LIST: Token[] = Object.values(COMBINED_TOKENS_MAP_BY_ADDRESS);
 
 export const FUNDING_TOKENS: { [chainId: number]: Token[] } = {
   [ChainId.MAINNET]: [sICX[ChainId.MAINNET], bnUSD[ChainId.MAINNET], BALN[ChainId.MAINNET]],

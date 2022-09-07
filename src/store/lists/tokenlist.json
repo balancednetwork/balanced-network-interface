@@ -67,36 +67,12 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/cft.png"
     },
     {
-      "address": "cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2",
-      "chainId": 1,
-      "name": "Metanyx",
-      "symbol": "METX",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/metx.png"
-    },
-    {
       "address": "cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88",
       "chainId": 1,
       "name": "ICON Tether",
       "symbol": "IUSDT",
       "decimals": 6,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdt.png"
-    },
-    {
-      "address": "cx6139a27c15f1653471ffba0b4b88dc15de7e3267",
-      "chainId": 1,
-      "name": "GangstaBet Token",
-      "symbol": "GBET",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/gbet.png"
-    },
-    {
-      "address": "cx2aa9b28a657e3121b75d3d4fe65e569398645d56",
-      "chainId": 1,
-      "name": "FRAMD Token",
-      "symbol": "FRMD",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/frmd.png"
     },
     {
       "address": "cx785d504f44b5d2c8dac04c5a1ecd75f18ee57d16",
@@ -153,14 +129,6 @@
       "symbol": "OMM",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"
-    },
-    {
-      "address": "cx28b2ec885b50c8a93da752f2d0467a67127a70e8",
-      "chainId": 1,
-      "name": "CROWN Token",
-      "symbol": "CROWN",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/crown.png"
     }
   ]
 }

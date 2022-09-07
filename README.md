@@ -12,7 +12,6 @@ An open-source interface for Balanced: a decentralised exchange and stablecoin p
 - Twitter: [@BalancedDAO](https://twitter.com/BalancedDAO)
 - Discord: [Link](https://discord.com/invite/7nBMr963SU)
 
-
 ---
 
 ## List a token
@@ -29,14 +28,14 @@ Upload the token logo to make sure it's easy to recognise in the app. Tokens tha
 
 ### 2. Add a token to the community token list
 
-1. Go to https://github.com/balancednetwork/balanced-network-interface/blob/master/src/store/lists/tokenlist.json and create a new branch.
+1. Go to https://github.com/balancednetwork/balanced-network-interface/blob/master/src/store/lists/communitylist.json and create a new branch.
 2. Add the details for your token to the bottom of the list. You'll need to provide the:
-	- contract address
-	- chain ID (1 for mainnet, 7 for testnet)
-	- token name
-	- token symbol
-	- decimals (18 is standard)
-	- URI for the logo you've uploaded (https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/ticker.png)
+   - contract address
+   - chain ID (1 for mainnet, 7 for testnet)
+   - token name
+   - token symbol
+   - decimals (18 is standard)
+   - URI for the logo you've uploaded (https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/ticker.png)
 3. Open a pull request to merge your changes into the `master` branch. Make sure to reference the token logo PR.
 
 ---
@@ -84,27 +83,29 @@ REACT_APP_NETWORK_ID=1
 **Open all pull requests against the `master` branch.**
 CI checks will run against all PRs.
 
-
 ### Code style/convention
 
 The Balanced frontend repo uses the Airbnb code style.
 https://github.com/airbnb/javascript#naming-conventions
 
-
 ### Pull request review guidelines
 
 Cosmetic fixes & small bugs
+
 - Set PR to mainnet
 - Review: UX team
 
 Large bug fixes (i.e. issue with transaction router)
+
 - Set PR to mainnet
 - Review: UX team & separate FE dev
 
 New features (smart contracts on testnet)
+
 - Set PR to testnet
 - Review: UX team & separate FE dev
 
 New features (smart contracts on mainnet)
+
 - Set PR to mainnet
 - Review: UX team & separate FE dev

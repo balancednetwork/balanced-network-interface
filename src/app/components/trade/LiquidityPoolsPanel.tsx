@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { Trans } from '@lingui/macro';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -75,7 +76,7 @@ export default function LiquidityPoolsPanel() {
               onClick={() => handleSwitch(PanelType.AllPools)}
               active={panelType === PanelType.AllPools}
             >
-              <Trans>All pools</Trans>
+              <Trans>Incentivised pools</Trans>
             </ChartControlButton>
           </ChartControlGroup>
         )}
@@ -92,7 +93,27 @@ export default function LiquidityPoolsPanel() {
         /> */}
       </Wrapper>
 
-      {panelType === PanelType.YourPools ? <LiquidityDetails /> : <AllPoolsPanel />}
+      <AnimatePresence>
+        {panelType === PanelType.YourPools ? (
+          <motion.div
+            key="LPDetails"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ type: 'just', delay: 0.005 }}
+          >
+            <LiquidityDetails />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="IncentiviesPools"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ type: 'just' }}
+          >
+            <AllPoolsPanel />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </BoxPanel>
   );
 }

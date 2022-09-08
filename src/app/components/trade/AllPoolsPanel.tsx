@@ -276,8 +276,12 @@ export default function AllPoolsPanel() {
   const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
 
   const handlePoolLick = (pair: PairInfo) => {
-    onCurrencySelection(Field.CURRENCY_A, pair.baseToken);
-    onCurrencySelection(Field.CURRENCY_B, pair.quoteToken);
+    if (pair.id === 1) {
+      onCurrencySelection(Field.CURRENCY_A, pair.quoteToken);
+    } else {
+      onCurrencySelection(Field.CURRENCY_A, pair.baseToken);
+      onCurrencySelection(Field.CURRENCY_B, pair.quoteToken);
+    }
   };
 
   return (
@@ -365,14 +369,6 @@ export default function AllPoolsPanel() {
           sortData(Object.values(allPairs)).map(pair => <PairItem pair={pair} onClick={handlePoolLick} />)
         ) : (
           <>
-            <SkeletonPairPlaceholder />
-            <Divider />
-            <SkeletonPairPlaceholder />
-            <Divider />
-            <SkeletonPairPlaceholder />
-            <Divider />
-            <SkeletonPairPlaceholder />
-            <Divider />
             <SkeletonPairPlaceholder />
             <Divider />
             <SkeletonPairPlaceholder />

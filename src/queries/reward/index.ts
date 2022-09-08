@@ -13,6 +13,8 @@ import QUERY_KEYS from 'queries/queryKeys';
 import { API_ENDPOINT } from '../constants';
 import { useBnJsContractQuery } from '../utils';
 
+const INCENTIVISED_PAIRS = SUPPORTED_PAIRS.filter(pair => pair.rewards);
+
 export const BATCH_SIZE = 10;
 
 export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) => {
@@ -90,7 +92,7 @@ export const useAllPairsAPY = (): { [key: number]: BigNumber } | undefined => {
   if (tvls && rates && dailyDistributionQuery.isSuccess) {
     const dailyDistribution = BalancedJs.utils.toIcx(dailyDistributionQuery.data);
     const t = {};
-    SUPPORTED_PAIRS.forEach(pair => {
+    INCENTIVISED_PAIRS.forEach(pair => {
       t[pair.id] =
         pair.rewards && dailyDistribution.times(pair.rewards).times(365).times(rates['BALN']).div(tvls[pair.id]);
     });
@@ -105,14 +107,14 @@ export const useAllPairsTVLQuery = () => {
     'useAllPairsTVLQuery',
     async () => {
       const res: Array<any> = await Promise.all(
-        SUPPORTED_PAIRS.map(async pair => {
+        INCENTIVISED_PAIRS.map(async pair => {
           const { data } = await axios.get(`${API_ENDPOINT}/dex/stats/${pair.id}`);
           return data;
         }),
       );
 
       const t = {};
-      SUPPORTED_PAIRS.forEach((pair, index) => {
+      INCENTIVISED_PAIRS.forEach((pair, index) => {
         const item = res[index];
         t[pair.id] = {
           ...item,
@@ -136,7 +138,7 @@ export const useAllPairsTVL = () => {
     const tvls = tvlQuery.data || {};
 
     const t: { [key in string]: number } = {};
-    SUPPORTED_PAIRS.forEach(pair => {
+    INCENTIVISED_PAIRS.forEach(pair => {
       const baseTVL = tvls[pair.id].base.times(rates[pair.baseCurrencyKey]);
       const quoteTVL = tvls[pair.id].quote.times(rates[pair.quoteCurrencyKey]);
       t[pair.id] = baseTVL.plus(quoteTVL).integerValue().toNumber();
@@ -157,7 +159,7 @@ export const useAllPairsDataQuery = (period: DataPeriod = '24h') => {
       const { data } = await axios.get(`${API_ENDPOINT}/stats/dex-pool-stats-${period}`);
       const t = {};
 
-      SUPPORTED_PAIRS.forEach(pair => {
+      INCENTIVISED_PAIRS.forEach(pair => {
         const key = `0x${pair.id.toString(16)}`;
 
         const baseAddress = pair.baseToken.address;
@@ -218,7 +220,7 @@ export const useAllPairsData = (
 
     const t: { [key in string]: { volume: number; fees: number } } = {};
 
-    SUPPORTED_PAIRS.filter(pair => data[pair.id]).forEach(pair => {
+    INCENTIVISED_PAIRS.filter(pair => data[pair.id]).forEach(pair => {
       // volume
       const baseVol = data[pair.id]['volume'][pair.baseCurrencyKey].times(rates[pair.baseCurrencyKey]);
       const quoteVol = data[pair.id]['volume'][pair.quoteCurrencyKey].times(rates[pair.quoteCurrencyKey]);
@@ -249,10 +251,10 @@ export const useAllPairsData = (
 
 export const useAllPairsParticipantQuery = () => {
   return useQuery<{ [key: string]: number }>('useAllPairsParticipantQuery', async () => {
-    const res: Array<string> = await Promise.all(SUPPORTED_PAIRS.map(pair => bnJs.Dex.totalDexAddresses(pair.id)));
+    const res: Array<string> = await Promise.all(INCENTIVISED_PAIRS.map(pair => bnJs.Dex.totalDexAddresses(pair.id)));
 
     const t = {};
-    SUPPORTED_PAIRS.forEach((pair, index) => {
+    INCENTIVISED_PAIRS.forEach((pair, index) => {
       t[pair.id] = parseInt(res[index]);
     });
 
@@ -282,7 +284,7 @@ export const useAllPairs = () => {
   if (apys && participantQuery.isSuccess && tvls && data && data30day) {
     const participants = participantQuery.data;
 
-    SUPPORTED_PAIRS.forEach(pair => {
+    INCENTIVISED_PAIRS.forEach(pair => {
       const feesApyConstant = pair.id === 1 ? 0.7 : 0.5;
 
       t[pair.id] = {

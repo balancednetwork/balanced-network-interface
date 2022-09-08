@@ -103,76 +103,63 @@ export default function LiquidityDetails() {
           </motion.div>
         )}
       </AnimatePresence>
-      <AnimatePresence>
-        {hasLiquidity && (
-          <motion.div
-            key="LPDetails"
-            initial={{ opacity: 0, y: -100 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-          >
-            <TableWrapper>
-              <DashGrid>
-                <HeaderText>
-                  <Trans>Pool</Trans>
-                </HeaderText>
-                <HeaderText>
-                  <Trans>Your supply</Trans>
-                </HeaderText>
-                {upSmall && (
-                  <HeaderText>
-                    <Trans>Pool share</Trans>
-                  </HeaderText>
-                )}
-                {upSmall && (
-                  <HeaderText>
-                    <Trans>Daily rewards</Trans>
-                  </HeaderText>
-                )}
-                <HeaderText></HeaderText>
-              </DashGrid>
+      {hasLiquidity && (
+        <TableWrapper>
+          <DashGrid>
+            <HeaderText>
+              <Trans>Pool</Trans>
+            </HeaderText>
+            <HeaderText>
+              <Trans>Your supply</Trans>
+            </HeaderText>
+            {upSmall && (
+              <HeaderText>
+                <Trans>Pool share</Trans>
+              </HeaderText>
+            )}
+            {upSmall && (
+              <HeaderText>
+                <Trans>Daily rewards</Trans>
+              </HeaderText>
+            )}
+            <HeaderText></HeaderText>
+          </DashGrid>
 
-              <Accordion collapsible>
-                {shouldShowQueue && (
-                  <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
-                    <StyledAccordionButton onClick={() => setIsHided(false)}>
-                      <PoolRecordQ balance={queueBalance} pair={queuePair} totalReward={queueReward} />
-                    </StyledAccordionButton>
-                    <StyledAccordionPanel hidden={isHided}>
-                      <StyledBoxPanel bg="bg3">
-                        <WithdrawPanelQ balance={queueBalance} pair={queuePair} />
-                      </StyledBoxPanel>
-                    </StyledAccordionPanel>
-                  </StyledAccordionItem>
-                )}
-                {balancesWithoutQ &&
-                  userPools.map((poolId, index, arr) => (
-                    <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
-                      <StyledAccordionButton onClick={() => setIsHided(false)}>
-                        <PoolRecord
-                          poolId={parseInt(poolId)}
-                          balance={balances[poolId]}
-                          pair={sortedPairs[poolId]}
-                          totalReward={rewards[poolId]}
-                        />
-                      </StyledAccordionButton>
-                      <StyledAccordionPanel hidden={isHided}>
-                        <StyledBoxPanel bg="bg3">
-                          <StakeLPPanel pair={sortedPairs[poolId]} />
-                          <WithdrawPanel
-                            poolId={parseInt(poolId)}
-                            balance={balances[poolId]}
-                            pair={sortedPairs[poolId]}
-                          />
-                        </StyledBoxPanel>
-                      </StyledAccordionPanel>
-                    </StyledAccordionItem>
-                  ))}
-              </Accordion>
-            </TableWrapper>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <Accordion collapsible>
+            {shouldShowQueue && (
+              <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
+                <StyledAccordionButton onClick={() => setIsHided(false)}>
+                  <PoolRecordQ balance={queueBalance} pair={queuePair} totalReward={queueReward} />
+                </StyledAccordionButton>
+                <StyledAccordionPanel hidden={isHided}>
+                  <StyledBoxPanel bg="bg3">
+                    <WithdrawPanelQ balance={queueBalance} pair={queuePair} />
+                  </StyledBoxPanel>
+                </StyledAccordionPanel>
+              </StyledAccordionItem>
+            )}
+            {balancesWithoutQ &&
+              userPools.map((poolId, index, arr) => (
+                <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
+                  <StyledAccordionButton onClick={() => setIsHided(false)}>
+                    <PoolRecord
+                      poolId={parseInt(poolId)}
+                      balance={balances[poolId]}
+                      pair={sortedPairs[poolId]}
+                      totalReward={rewards[poolId]}
+                    />
+                  </StyledAccordionButton>
+                  <StyledAccordionPanel hidden={isHided}>
+                    <StyledBoxPanel bg="bg3">
+                      <StakeLPPanel pair={sortedPairs[poolId]} />
+                      <WithdrawPanel poolId={parseInt(poolId)} balance={balances[poolId]} pair={sortedPairs[poolId]} />
+                    </StyledBoxPanel>
+                  </StyledAccordionPanel>
+                </StyledAccordionItem>
+              ))}
+          </Accordion>
+        </TableWrapper>
+      )}
     </>
   );
 }

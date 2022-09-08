@@ -22,13 +22,17 @@ export function useTransactionAdder(): (
   customData?: {
     summary?: string;
     pending?: string;
+    redirectOnSuccess?: string;
   },
 ) => void {
   const { networkId, account } = useIconReact();
   const dispatch = useDispatch<AppDispatch>();
 
   return useCallback(
-    (response: TransactionResponse, { summary, pending }: { summary?: string; pending?: string } = {}) => {
+    (
+      response: TransactionResponse,
+      { summary, pending, redirectOnSuccess }: { summary?: string; pending?: string; redirectOnSuccess?: string } = {},
+    ) => {
       if (!account) return;
       if (!networkId) return;
 
@@ -56,7 +60,7 @@ export function useTransactionAdder(): (
         toastId: hash,
       });
 
-      dispatch(addTransaction({ hash, from: account, networkId, summary }));
+      dispatch(addTransaction({ hash, from: account, networkId, summary, redirectOnSuccess }));
     },
     [dispatch, networkId, account],
   );

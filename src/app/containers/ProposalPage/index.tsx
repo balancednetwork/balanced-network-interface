@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 
 import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
 import { useParams } from 'react-router-dom';
 import { useMedia } from 'react-use';
@@ -17,18 +19,23 @@ import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton } from 'app/components/ProposalInfo';
 import { VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
-import { PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
+import QuestionHelper from 'app/components/QuestionHelper';
+import { ExternalLink } from 'app/components/SearchModal/components';
+import { PROPOSAL_TYPE, PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
-import { getTrackerLink } from 'utils';
+import { formatPercent, formatUnits, getCXLink, getTrackerLink } from 'utils';
 import { formatTimeStr } from 'utils/timeformat';
 
+import { CopyableSCORE } from '../NewProposalPage/CollateralProposalFields';
 import { ACTIONS_MAPPING, RATIO_VALUE_FORMATTER } from '../NewProposalPage/constant';
 import Funding from './Funding';
 import Ratio from './Ratio';
@@ -87,6 +94,20 @@ const ChangeVoteButton = styled(Typography)`
   }
 `;
 
+const CollateralProposalInfoItem = styled(Box)`
+  width: 180px;
+  padding: 0 30px 0 0;
+  margin-bottom: 15px;
+
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    width: auto;
+    text-align: center;
+    padding: 0;
+    margin-bottom: 0;
+    flex: 1
+  `};
+`;
+
 export function ProposalPage() {
   const [modalStatus, setModalStatus] = useState(ModalStatus.None);
   const { id: pId } = useParams<{ id: string }>();
@@ -98,15 +119,22 @@ export function ProposalPage() {
   const isSmallScreen = useMedia('(max-width: 600px)');
 
   const actions = JSON.parse(proposal?.actions || '{}');
-  const actionKeyList = Object.keys(actions);
+  const oldActionKeyList = Object.keys(actions);
 
   const getKeyByValue = value => {
     return Object.keys(ACTIONS_MAPPING).find(key => ACTIONS_MAPPING[key].includes(value));
   };
 
-  const actionKey = actionKeyList.find(actionKey => getKeyByValue(actionKey));
+  const actionKey = oldActionKeyList.find(actionKey => getKeyByValue(actionKey));
 
-  const proposalType = actionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
+  const oldProposalType = oldActionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
+
+  const isNewCollateralProposal =
+    proposal &&
+    proposal.actions !== '[]' &&
+    !proposal.actions.startsWith('{') &&
+    ACTIONS_MAPPING[PROPOSAL_TYPE.NEW_COLLATERAL_TYPE].indexOf(JSON.parse(proposal.actions || '[[]]')[0][0]) >= 0;
+  const collateralInfo = proposal && isNewCollateralProposal && JSON.parse(proposal.actions)[0][1];
 
   const isActive =
     proposal && proposal.status === 'Active' && !formatTimeStr(proposal.startDay) && !!formatTimeStr(proposal.endDay);
@@ -340,22 +368,123 @@ export function ProposalPage() {
           />
         </BoxPanel>
 
-        {proposalType && actionKey && (
+        {oldProposalType && actionKey && (
           <BoxPanel bg="bg2" my={10}>
             <Typography variant="h2" mb="20px">
-              <Trans id={PROPOSAL_TYPE_LABELS[proposalType].id} />
+              <Trans id={PROPOSAL_TYPE_LABELS[oldProposalType].id} />
             </Typography>
             {actionKey === ACTIONS_MAPPING.Funding[0] ? (
               <Funding recipient={actions[actionKey]._recipient} amounts={actions[actionKey]._amounts} />
             ) : (
               <Ratio
                 proposalStatus={proposal?.status}
-                proposalType={proposalType}
-                proposedList={RATIO_VALUE_FORMATTER[proposalType](Object.values(actions[actionKey])[0])}
+                proposalType={oldProposalType}
+                proposedList={RATIO_VALUE_FORMATTER[oldProposalType](Object.values(actions[actionKey])[0])}
               />
             )}
           </BoxPanel>
         )}
+
+        <AnimatePresence>
+          {isNewCollateralProposal && collateralInfo && (
+            <motion.div initial={{ opacity: 0, height: 0, y: -30 }} animate={{ opacity: 1, height: 'auto', y: 0 }}>
+              <BoxPanel bg="bg2" my={10}>
+                <Typography variant="h2" mb="20px">
+                  <Trans>New collateral type</Trans>
+                </Typography>
+                <Flex flexWrap={['wrap', 'wrap', 'nowrap']} justifyContent={['space-between', 'start']}>
+                  <CollateralProposalInfoItem>
+                    <Typography opacity={0.75} fontSize={16}>
+                      Token address
+                      <ExternalLink href={getCXLink(NETWORK_ID, collateralInfo['_token_address'])}>
+                        <ExternalIcon
+                          width="15"
+                          height="15"
+                          style={{ marginLeft: 7, marginRight: -22, marginTop: -3 }}
+                        />
+                      </ExternalLink>
+                    </Typography>
+                    <Typography color="text" fontSize={16} style={{ wordBreak: 'keep-all' }}>
+                      <CopyableSCORE score={collateralInfo['_token_address']} />
+                    </Typography>
+                  </CollateralProposalInfoItem>
+                  <CollateralProposalInfoItem>
+                    <CollateralProposalInfoItem>
+                      <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
+                        <Trans>Oracle type</Trans>{' '}
+                        <QuestionHelper
+                          text={
+                            <>
+                              <Typography mb={4}>
+                                <Trans>Where Balanced will get the price data for this collateral type.</Trans>
+                              </Typography>
+                              <Typography mb={4}>
+                                <strong>
+                                  <Trans>DEX</Trans>:
+                                </strong>{' '}
+                                <Trans>Uses the price from the bnUSD liquidity pool for this collateral type.</Trans>
+                              </Typography>
+                              <Typography>
+                                <strong>
+                                  <Trans>Band</Trans>:
+                                </strong>{' '}
+                                <Trans>Uses the price of an asset tracked via the Band oracle.</Trans>
+                              </Typography>
+                            </>
+                          }
+                        ></QuestionHelper>
+                      </Typography>
+                      <Typography color="text" fontSize={16}>
+                        {collateralInfo['_peg']
+                          ? `Band: ${collateralInfo['_peg']}`
+                          : `DEX: ${SUPPORTED_TOKENS_MAP_BY_ADDRESS[collateralInfo['_token_address']].symbol!}/bnUSD`}
+                      </Typography>
+                    </CollateralProposalInfoItem>
+                  </CollateralProposalInfoItem>
+                  <CollateralProposalInfoItem>
+                    <CollateralProposalInfoItem>
+                      <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
+                        <Trans>Debt ceiling</Trans>{' '}
+                        <QuestionHelper
+                          text={t`The maximum amount of bnUSD that can be minted with this collateral type.`}
+                        ></QuestionHelper>
+                      </Typography>
+                      <Typography color="text" fontSize={16} sx={{ whiteSpace: 'nowrap' }}>
+                        {`${new BigNumber(formatUnits(collateralInfo['_debtCeiling'])).toFormat(0)} bnUSD`}
+                      </Typography>
+                    </CollateralProposalInfoItem>
+                  </CollateralProposalInfoItem>
+                  <CollateralProposalInfoItem>
+                    <CollateralProposalInfoItem>
+                      <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
+                        <Trans>Borrow LTV</Trans>{' '}
+                        <QuestionHelper
+                          text={t`The maximum percentage that people can borrow against the value of this collateral type.`}
+                        ></QuestionHelper>
+                      </Typography>
+                      <Typography color="text" fontSize={16}>
+                        {`${formatPercent(new BigNumber(1000000 / Number(collateralInfo['_lockingRatio'])))}`}
+                      </Typography>
+                    </CollateralProposalInfoItem>
+                  </CollateralProposalInfoItem>
+                  <CollateralProposalInfoItem>
+                    <CollateralProposalInfoItem>
+                      <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
+                        <Trans>Liquidation LTV</Trans>{' '}
+                        <QuestionHelper
+                          text={t`The percentage of debt required to trigger liquidation for this collateral type.`}
+                        ></QuestionHelper>
+                      </Typography>
+                      <Typography color="text" fontSize={16}>
+                        {`${formatPercent(new BigNumber(1000000 / Number(collateralInfo['_liquidationRatio'])))}`}
+                      </Typography>
+                    </CollateralProposalInfoItem>
+                  </CollateralProposalInfoItem>
+                </Flex>
+              </BoxPanel>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <BoxPanel bg="bg2" my={10}>
           <Typography variant="h2" mb="20px">

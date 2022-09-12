@@ -20,7 +20,7 @@ export default function useSort(initialState: SortingType) {
   const sortData = data => {
     const dataToSort = [...data];
 
-    if (Object.keys(dataToSort[0]).indexOf(sortBy.key) < 0) {
+    if (dataToSort[0] && Object.keys(dataToSort[0]).indexOf(sortBy.key) < 0) {
       console.error("sorting key doesn't match any key in sorting items");
       return dataToSort;
     }

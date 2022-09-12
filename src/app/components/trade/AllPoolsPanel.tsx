@@ -186,6 +186,11 @@ const QuestionWrapper = styled(Box)`
   margin: 0 5px 0 5px;
 `;
 
+const TooltipWrapper = styled.span`
+  display: inline-block;
+  line-height: 0.8;
+`;
+
 const SkeletonPairPlaceholder = () => {
   return (
     <DashGrid my={2}>
@@ -309,26 +314,28 @@ export default function AllPoolsPanel() {
               })
             }
           >
-            <MouseoverTooltip
-              width={330}
-              text={
-                <>
-                  The BALN APY is calculated from the USD value of BALN rewards available for a pool.
-                  <br />
-                  <br />
-                  The fee APY is calculated from the swap fees earned by a pool in the last 30 days.
-                  <Typography marginTop={'20px'} color="text1" fontSize={14}>
-                    Impermanent loss is not factored in.
-                  </Typography>
-                </>
-              }
-              placement="top"
-              strategy="absolute"
-            >
-              <QuestionWrapper onClick={e => e.stopPropagation()}>
-                <QuestionIcon className="header-tooltip" width={14} />
-              </QuestionWrapper>
-            </MouseoverTooltip>
+            <TooltipWrapper onClick={e => e.stopPropagation()}>
+              <MouseoverTooltip
+                width={330}
+                text={
+                  <>
+                    The BALN APY is calculated from the USD value of BALN rewards available for a pool.
+                    <br />
+                    <br />
+                    The fee APY is calculated from the swap fees earned by a pool in the last 30 days.
+                    <Typography marginTop={'20px'} color="text1" fontSize={14}>
+                      Impermanent loss is not factored in.
+                    </Typography>
+                  </>
+                }
+                placement="top"
+                strategy="absolute"
+              >
+                <QuestionWrapper>
+                  <QuestionIcon className="header-tooltip" width={14} />
+                </QuestionWrapper>
+              </MouseoverTooltip>
+            </TooltipWrapper>
             APY
           </HeaderText>
           <HeaderText

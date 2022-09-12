@@ -85,12 +85,6 @@ export default function LiquidityDetails() {
 
   return (
     <>
-      {!tokenListConfig.community && (
-        <Banner messageID={'communityList'} embedded>
-          <Message />
-        </Banner>
-      )}
-
       <AnimatePresence>
         {isLiquidityInfoLoading && (
           <motion.div
@@ -159,6 +153,12 @@ export default function LiquidityDetails() {
               ))}
           </Accordion>
         </TableWrapper>
+      )}
+
+      {!tokenListConfig.community && (
+        <Banner messageID={'communityList'} embedded>
+          <Message />
+        </Banner>
       )}
     </>
   );

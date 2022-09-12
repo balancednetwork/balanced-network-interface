@@ -323,6 +323,7 @@ export default function AllPoolsPanel() {
                 </>
               }
               placement="top"
+              strategy="absolute"
             >
               <QuestionWrapper onClick={e => e.stopPropagation()}>
                 <QuestionIcon className="header-tooltip" width={14} />

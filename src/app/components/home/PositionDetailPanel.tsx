@@ -25,7 +25,7 @@ import { useRatesQuery } from 'queries/reward';
 import { useCollateralInputAmount, useCollateralInputAmountInUSD } from 'store/collateral/hooks';
 import { useLoanInputAmount, useLoanDebtHoldingShare, useLoanAPY, useLoanParameters } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
-import { useHasRewardableLoan, useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
+import { useRewards, useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
 
 import { DropdownPopper } from '../Popover';
@@ -85,7 +85,6 @@ const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
   const locale = useActiveLocale();
-  const hasRewardableCollateral = useHasRewardableLoan();
   const upLarge = useMedia('(min-width: 1200px)');
   const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
@@ -396,16 +395,14 @@ const PositionDetailPanel = () => {
             </Flex>
             <Flex>
               <Box width={1 / 2}>
-                <Typography variant="p">
-                  {hasRewardableCollateral ? `~ ${dailyRewards.dp(2).toFormat()} BALN` : '-'}
-                </Typography>
+                <Typography variant="p">{`~ ${dailyRewards.dp(2).toFormat()} BALN`}</Typography>
                 <Typography mt={1}>
                   <Trans>Daily rewards</Trans>
                 </Typography>
               </Box>
               {!upMedium && <VerticalDivider mr={8} />}
               <Box width={1 / 2}>
-                <Typography variant="p" color={hasRewardableCollateral ? 'white' : 'alert'}>
+                <Typography variant="p" color="white">
                   {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
                 </Typography>
                 <Typography mt={1}>APY</Typography>

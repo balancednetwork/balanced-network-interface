@@ -8,7 +8,6 @@ import styled from 'styled-components';
 
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-// import SearchInput from '../SearchModal/SearchInput';
 
 import AllPoolsPanel from './AllPoolsPanel';
 import LiquidityDetails from './LiquidityDetails';
@@ -34,12 +33,6 @@ const Wrapper = styled(Flex)`
 
 export default function LiquidityPoolsPanel() {
   const { account } = useIconReact();
-  // const [searchQuery, setSearchQuery] = useState<string>('');
-
-  // const handleInput = useCallback(event => {
-  //   setSearchQuery(event.target.value);
-  // }, []);
-
   const [panelType, setPanelType] = useState<PanelType>(PanelType.AllPools);
   const handleSwitch = (v: PanelType) => {
     setPanelType(v);
@@ -80,17 +73,6 @@ export default function LiquidityPoolsPanel() {
             </ChartControlButton>
           </ChartControlGroup>
         )}
-
-        {/* !todo: implement search box  */}
-        {/* <SearchInput
-          type="text"
-          id="pool-search-input"
-          placeholder={t`Search pools...`}
-          autoComplete="off"
-          value={searchQuery}
-          onChange={handleInput}
-          style={{ maxWidth: '400px' }}
-        /> */}
       </Wrapper>
 
       <AnimatePresence>

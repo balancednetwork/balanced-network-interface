@@ -26,10 +26,10 @@ function PoolLogo({ baseCurrency, quoteCurrency }: { baseCurrency: Currency; quo
   return (
     <PoolLogoWrapper>
       <IconWrapper>
-        <CurrencyLogo currency={baseCurrency} /*width={25} height={25}*/ />
+        <CurrencyLogo currency={baseCurrency} />
       </IconWrapper>
       <IconWrapper ml={-2}>
-        <CurrencyLogo currency={quoteCurrency} /*width={25} height={25}*/ />
+        <CurrencyLogo currency={quoteCurrency} />
       </IconWrapper>
     </PoolLogoWrapper>
   );

@@ -1,5 +1,6 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 
+import { Trans } from '@lingui/macro';
 import { Skeleton } from '@material-ui/lab';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
@@ -234,9 +235,9 @@ type PairItemProps = {
   onClick: (pair: PairInfo) => void;
 };
 
-const PairItem = forwardRef(({ pair, onClick }: PairItemProps, ref) => (
+const PairItem = ({ pair, onClick }: PairItemProps) => (
   <>
-    <PairGrid my={2} ref={ref} onClick={() => onClick(pair)}>
+    <PairGrid my={2} onClick={() => onClick(pair)}>
       <DataText minWidth={'220px'}>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px' }}>
@@ -258,7 +259,7 @@ const PairItem = forwardRef(({ pair, onClick }: PairItemProps, ref) => (
           {pair.feesApy !== 0 && (
             <APYItem>
               <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                Fees:
+                <Trans>Fees:</Trans>
               </Typography>
               {getFormattedNumber(pair.feesApy, 'percent2')}
             </APYItem>
@@ -272,7 +273,7 @@ const PairItem = forwardRef(({ pair, onClick }: PairItemProps, ref) => (
     </PairGrid>
     <Divider />
   </>
-));
+);
 
 export default function AllPoolsPanel() {
   const allPairs = useAllPairs();
@@ -302,7 +303,9 @@ export default function AllPoolsPanel() {
               })
             }
           >
-            <span>POOL</span>
+            <span>
+              <Trans>POOL</Trans>
+            </span>
           </HeaderText>
           <HeaderText
             minWidth={'135px'}
@@ -319,12 +322,12 @@ export default function AllPoolsPanel() {
                 width={330}
                 text={
                   <>
-                    The BALN APY is calculated from the USD value of BALN rewards available for a pool.
+                    <Trans>The BALN APY is calculated from the USD value of BALN rewards available for a pool.</Trans>
                     <br />
                     <br />
-                    The fee APY is calculated from the swap fees earned by a pool in the last 30 days.
+                    <Trans>The fee APY is calculated from the swap fees earned by a pool in the last 30 days.</Trans>
                     <Typography marginTop={'20px'} color="text1" fontSize={14}>
-                      Impermanent loss is not factored in.
+                      <Trans>Impermanent loss is not factored in.</Trans>
                     </Typography>
                   </>
                 }
@@ -336,7 +339,7 @@ export default function AllPoolsPanel() {
                 </QuestionWrapper>
               </MouseoverTooltip>
             </TooltipWrapper>
-            APY
+            <Trans>APY</Trans>
           </HeaderText>
           <HeaderText
             role="button"
@@ -347,7 +350,7 @@ export default function AllPoolsPanel() {
               })
             }
           >
-            LIQUIDITY
+            <Trans>LIQUIDITY</Trans>
           </HeaderText>
           <HeaderText
             role="button"
@@ -358,7 +361,7 @@ export default function AllPoolsPanel() {
               })
             }
           >
-            VOLUME (24H)
+            <Trans>VOLUME (24H)</Trans>
           </HeaderText>
           <HeaderText
             role="button"
@@ -369,7 +372,7 @@ export default function AllPoolsPanel() {
               })
             }
           >
-            FEES (24H)
+            <Trans>FEES (24H)</Trans>
           </HeaderText>
         </DashGrid>
 

@@ -432,6 +432,7 @@ export function ProposalPage() {
                               </Typography>
                             </>
                           }
+                          strategy={'absolute'}
                         ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16}>

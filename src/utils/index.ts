@@ -117,7 +117,7 @@ export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): Curre
 export function formatPercent(percent: BigNumber | undefined) {
   if (!percent) return '0%';
   if (percent.isZero()) return '0%';
-  else return percent.isLessThan(0.01) ? '<0.01%' : `${percent.dp(2).toFixed()}%`;
+  else return percent.isLessThan(0.01) ? '<0.01%' : `${percent.dp(2, BigNumber.ROUND_HALF_UP).toFixed()}%`;
 }
 
 export function sleep(ms: number) {

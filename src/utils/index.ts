@@ -34,7 +34,7 @@ export function shortenSCOREAddress(address: string, chars = 7): string {
 export function getTrackerLink(
   networkId: NetworkId,
   data: string,
-  type: 'transaction' | 'token' | 'address' | 'block',
+  type: 'transaction' | 'address' | 'block' | 'contract',
 ): string {
   const prefix = CHAIN_INFO[networkId].tracker;
 
@@ -42,15 +42,15 @@ export function getTrackerLink(
     case 'transaction': {
       return `${prefix}/transaction/${data}`;
     }
-    case 'token': {
-      return `${prefix}/token/${data}`;
+    case 'address': {
+      return `${prefix}/address/${data}`;
     }
     case 'block': {
       return `${prefix}/block/${data}`;
     }
-    case 'address':
+    case 'contract':
     default: {
-      return `${prefix}/address/${data}`;
+      return `${prefix}/contract/${data}`;
     }
   }
 }

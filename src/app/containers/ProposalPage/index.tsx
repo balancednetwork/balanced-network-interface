@@ -396,7 +396,7 @@ export function ProposalPage() {
                   <CollateralProposalInfoItem>
                     <Typography opacity={0.75} fontSize={16}>
                       Token address
-                      <ExternalLink href={getTrackerLink(NETWORK_ID, collateralInfo['_token_address'], 'token')}>
+                      <ExternalLink href={getTrackerLink(NETWORK_ID, collateralInfo['_token_address'], 'contract')}>
                         <ExternalIcon
                           width="15"
                           height="15"

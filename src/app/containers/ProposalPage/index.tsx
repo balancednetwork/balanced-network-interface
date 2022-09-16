@@ -432,6 +432,7 @@ export function ProposalPage() {
                               </Typography>
                             </>
                           }
+                          strategy={'absolute'}
                         ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16}>
@@ -447,6 +448,7 @@ export function ProposalPage() {
                         <Trans>Debt ceiling</Trans>{' '}
                         <QuestionHelper
                           text={t`The maximum amount of bnUSD that can be minted with this collateral type.`}
+                          strategy={'absolute'}
                         ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16} sx={{ whiteSpace: 'nowrap' }}>
@@ -460,6 +462,7 @@ export function ProposalPage() {
                         <Trans>Borrow LTV</Trans>{' '}
                         <QuestionHelper
                           text={t`The maximum percentage that people can borrow against the value of this collateral type.`}
+                          strategy={'absolute'}
                         ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16}>
@@ -473,6 +476,7 @@ export function ProposalPage() {
                         <Trans>Liquidation LTV</Trans>{' '}
                         <QuestionHelper
                           text={t`The percentage of debt required to trigger liquidation for this collateral type.`}
+                          strategy={'absolute'}
                         ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16}>

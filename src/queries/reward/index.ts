@@ -7,7 +7,7 @@ import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
 import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { COMBINED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import QUERY_KEYS from 'queries/queryKeys';
 
 import { API_ENDPOINT } from '../constants';
@@ -36,7 +36,7 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
         if (!Object.values(fees).find(value => !BalancedJs.utils.toIcx(value as string).isZero())) return null;
 
         const t = Object.keys(fees).reduce((prev, address) => {
-          const currency = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
+          const currency = COMBINED_TOKENS_MAP_BY_ADDRESS[address];
           prev[address] = CurrencyAmount.fromFractionalAmount(currency, fees[address], 1);
           return prev;
         }, {});

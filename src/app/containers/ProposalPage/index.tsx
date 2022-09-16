@@ -32,7 +32,7 @@ import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
-import { formatPercent, formatUnits, getCXLink, getTrackerLink } from 'utils';
+import { formatPercent, formatUnits, getTrackerLink } from 'utils';
 import { formatTimeStr } from 'utils/timeformat';
 
 import { CopyableSCORE } from '../NewProposalPage/CollateralProposalFields';
@@ -396,7 +396,7 @@ export function ProposalPage() {
                   <CollateralProposalInfoItem>
                     <Typography opacity={0.75} fontSize={16}>
                       Token address
-                      <ExternalLink href={getCXLink(NETWORK_ID, collateralInfo['_token_address'])}>
+                      <ExternalLink href={getTrackerLink(NETWORK_ID, collateralInfo['_token_address'], 'token')}>
                         <ExternalIcon
                           width="15"
                           height="15"

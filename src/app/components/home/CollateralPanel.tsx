@@ -187,7 +187,7 @@ const CollateralPanel = () => {
 
         const { result: hash } = await bnJs
           .inject({ account })
-          .Loans.withdrawCollateral(parseUnits(collateralAmountInSICX.toFixed()));
+          .Loans.withdrawCollateral(parseUnits(collateralAmountInSICX.toFixed()), 'sICX');
 
         addTransaction(
           { hash }, //

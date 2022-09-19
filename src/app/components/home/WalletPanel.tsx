@@ -19,6 +19,7 @@ import {
   SUPPORTED_TOKENS_LIST,
   COMBINED_TOKENS_LIST,
   COMBINED_TOKENS_MAP_BY_ADDRESS,
+  HIGH_PRICE_ASSET_DP,
 } from 'constants/tokens';
 import { useRatesWithOracle } from 'queries/reward';
 import { useTokenListConfig } from 'store/lists/hooks';
@@ -126,7 +127,7 @@ const WalletPanel = () => {
                   if (address === balnAddress) {
                     return !totalBALN.dp(2).isZero();
                   }
-                  return !isDPZeroCA(balances[address], 2);
+                  return !isDPZeroCA(balances[address], HIGH_PRICE_ASSET_DP[address] || 2);
                 })
                 .sort((a, b) =>
                   a !== NULL_CONTRACT_ADDRESS && b !== NULL_CONTRACT_ADDRESS
@@ -154,7 +155,7 @@ const WalletPanel = () => {
                                 ? '-'
                                 : address === balnAddress
                                 ? totalBALN.dp(2).toFormat()
-                                : balances[address].toFixed(2, { groupSeparator: ',' })}
+                                : balances[address].toFixed(HIGH_PRICE_ASSET_DP[address] || 2, { groupSeparator: ',' })}
                               {address === balnAddress && isAvailable && !isSmallScreen && <>{availableBALN}</>}
                             </DataText>
 
@@ -170,16 +171,21 @@ const WalletPanel = () => {
                                     .multiply(rateFracs[symbol])
                                     .toFixed(2, { groupSeparator: ',' })}`}
                               {address === balnAddress && isAvailable && isSmallScreen && <>{availableBALN}</>}
-                              {address === balnAddress && isAvailable && !isSmallScreen && rateFracs && symbol && (
-                                <>
-                                  <Typography color="rgba(255,255,255,0.75)">
-                                    $
-                                    {balances[balnAddress]
-                                      .multiply(rateFracs[symbol])
-                                      .toFixed(2, { groupSeparator: ',' })}
-                                  </Typography>
-                                </>
-                              )}
+                              {address === balnAddress &&
+                                isAvailable &&
+                                !isSmallScreen &&
+                                rateFracs &&
+                                symbol &&
+                                rateFracs[symbol] && (
+                                  <>
+                                    <Typography color="rgba(255,255,255,0.75)">
+                                      $
+                                      {balances[balnAddress]
+                                        .multiply(rateFracs[symbol])
+                                        .toFixed(2, { groupSeparator: ',' })}
+                                    </Typography>
+                                  </>
+                                )}
                             </StyledDataText>
                           </BalanceAndValueWrap>
                         </ListItem>

@@ -21,6 +21,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
+import { useRatesQuery } from 'queries/reward';
 import { useCollateralInputAmountInUSD, useCollateralType, useIsHandlingICX } from 'store/collateral/hooks';
 import {
   useLoanInputAmount,
@@ -29,7 +30,7 @@ import {
   useThresholdPrices,
   useCollateralLockedSliderPos,
 } from 'store/loan/hooks';
-import { useBnUSDOraclePrice, useOraclePrice } from 'store/oracle/hooks';
+import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useCurrentCollateralRatio } from 'store/reward/hooks';
 import { formatBigNumber } from 'utils';
@@ -51,7 +52,7 @@ const PositionDetailPanel = () => {
   const dailyRewards = useOwnDailyRewards();
   const rewardsAPY = useLoanAPY();
   const oraclePrice = useOraclePrice();
-  const bnUSDPrice = useBnUSDOraclePrice();
+  const { data: rates } = useRatesQuery();
   const collateralType = useCollateralType();
   const locale = useActiveLocale();
   const upLarge = useMedia('(min-width: 1200px)');
@@ -191,7 +192,7 @@ const PositionDetailPanel = () => {
             </Typography>
             <Typography mb={2}>
               <Trans>The current bnUSD price is</Trans>{' '}
-              <span className="white">{bnUSDPrice && `$${bnUSDPrice.dp(4).toFormat()}`}</span>.
+              <span className="white">{rates && `$${rates['bnUSD'].dp(4).toFormat()}`}</span>.
             </Typography>
           </BoxPanel>
 

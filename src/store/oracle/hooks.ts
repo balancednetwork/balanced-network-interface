@@ -26,11 +26,6 @@ export function useOraclePrice(): BigNumber | undefined {
   }, [oraclePrices, collateralType]);
 }
 
-export function useBnUSDOraclePrice(): BigNumber | undefined {
-  const oraclePrices = useOraclePrices();
-  return oraclePrices['bnUSD'];
-}
-
 // fetch price data every 5 secs
 const PERIOD = 5 * 1000;
 
@@ -54,19 +49,35 @@ export function useFetchOraclePrices() {
       cds.push({
         target: addresses[NETWORK_ID].balancedOracle,
         method: 'getLastPriceInLoop',
-        params: ['bnUSD'],
+        params: ['ICX'],
+      });
+
+      cds.push({
+        target: addresses[NETWORK_ID].balancedOracle,
+        method: 'getLastPriceInLoop',
+        params: ['USD'],
       });
 
       const data: string[] = await bnJs.Multicall.getAggregateData(cds);
+      const USDloop = data.pop() || '';
+
       data.forEach((price, index) => {
         if (index < data.length - 1) {
           price != null &&
             dispatch(
-              changeOraclePrice({ symbol: supportedSymbols[index], price: new BigNumber(formatUnits(price, 18, 6)) }),
+              changeOraclePrice({
+                symbol: supportedSymbols[index],
+                price: new BigNumber(formatUnits(price, 18, 6)).dividedBy(new BigNumber(formatUnits(USDloop, 18, 6))),
+              }),
             );
         } else {
           price != null &&
-            dispatch(changeOraclePrice({ symbol: 'bnUSD', price: new BigNumber(formatUnits(price, 18, 6)) }));
+            dispatch(
+              changeOraclePrice({
+                symbol: 'ICX',
+                price: new BigNumber(formatUnits(price, 18, 6)).dividedBy(new BigNumber(formatUnits(USDloop, 18, 6))),
+              }),
+            );
         }
       });
     }

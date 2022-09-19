@@ -12,7 +12,6 @@ import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import QUERY_KEYS from 'queries/queryKeys';
 import { useOraclePrices } from 'store/oracle/hooks';
-import { useRatio } from 'store/ratio/hooks';
 
 import { API_ENDPOINT } from '../constants';
 import { useBnJsContractQuery } from '../utils';
@@ -89,16 +88,12 @@ export const useRatesQuery = () => {
 export const useRatesWithOracle = () => {
   const { data: rates } = useRatesQuery();
   const oraclePrices = useOraclePrices();
-  const ratio = useRatio();
 
   return useMemo(() => {
     const updatedRates = { ...rates };
     oraclePrices && Object.keys(oraclePrices).forEach(token => (updatedRates[token] = oraclePrices[token]));
-    if (ratio.ICXUSDratio) {
-      updatedRates['ICX'] = ratio.ICXUSDratio;
-    }
     if (oraclePrices) return updatedRates;
-  }, [rates, oraclePrices, ratio]);
+  }, [rates, oraclePrices]);
 };
 
 export const useAllPairsAPY = (): { [key: number]: BigNumber } | undefined => {

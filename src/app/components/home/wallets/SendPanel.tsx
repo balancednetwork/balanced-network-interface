@@ -18,6 +18,7 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { BIGINT_ZERO } from 'constants/misc';
+import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
@@ -95,9 +96,9 @@ export default function SendPanel({ currency }: { currency: Currency }) {
             { hash: res.result },
             {
               pending: t`Sending ${currency.symbol}...`,
-              summary: t`Sent ${differenceAmount.toFixed(2, { groupSeparator: ',' })} ${
-                currency.symbol
-              } to ${address}.`,
+              summary: t`Sent ${differenceAmount.toFixed(HIGH_PRICE_ASSET_DP[currency?.wrapped.address] || 2, {
+                groupSeparator: ',',
+              })} ${currency.symbol} to ${address}.`,
             },
           );
           toggleOpen();
@@ -157,7 +158,9 @@ export default function SendPanel({ currency }: { currency: Currency }) {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${differenceAmount.toFixed(2, { groupSeparator: ',' })} ${currency?.symbol}`}
+            {`${differenceAmount.toFixed(HIGH_PRICE_ASSET_DP[currency?.wrapped.address] || 2, {
+              groupSeparator: ',',
+            })} ${currency?.symbol}`}
           </Typography>
 
           <Typography textAlign="center" mb="2px" mt="20px">
@@ -174,7 +177,9 @@ export default function SendPanel({ currency }: { currency: Currency }) {
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {`${beforeAmount.toFixed(2, { groupSeparator: ',' })} ${currency?.symbol}`}
+                {`${beforeAmount.toFixed(HIGH_PRICE_ASSET_DP[currency?.wrapped.address] || 2, {
+                  groupSeparator: ',',
+                })} ${currency?.symbol}`}
               </Typography>
             </Box>
 
@@ -183,7 +188,9 @@ export default function SendPanel({ currency }: { currency: Currency }) {
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {`${afterAmount.toFixed(2, { groupSeparator: ',' })} ${currency?.symbol}`}
+                {`${afterAmount.toFixed(HIGH_PRICE_ASSET_DP[currency?.wrapped.address] || 2, {
+                  groupSeparator: ',',
+                })} ${currency?.symbol}`}
               </Typography>
             </Box>
           </Flex>

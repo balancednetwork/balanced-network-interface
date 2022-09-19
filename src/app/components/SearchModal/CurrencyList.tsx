@@ -10,6 +10,7 @@ import { useTheme } from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { ListItem, DashGrid, HeaderText, DataText, List1 } from 'app/components/List';
 import { Typography } from 'app/theme';
+import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
@@ -74,7 +75,9 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {balance && balance.greaterThan(0) ? balance.toFixed(2, { groupSeparator: ',' }) : 0}
+            {balance && balance.greaterThan(0)
+              ? balance.toFixed(HIGH_PRICE_ASSET_DP[balance.currency.wrapped.address] || 2, { groupSeparator: ',' })
+              : 0}
 
             {balance?.greaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
               <Typography variant="span" fontSize={14} color="text2" display="block">

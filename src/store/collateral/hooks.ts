@@ -337,14 +337,14 @@ export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]
     const debtCeilingsData = await bnJs.Multicall.getAggregateData(cds);
     const debtCeilings = debtCeilingsData.map(ceiling => parseInt(formatUnits(ceiling)));
 
-    const suportedTokens = {};
+    const supportedTokens = {};
     Object.keys(data).forEach((symbol, index) => {
       if (debtCeilings[index] > 0) {
-        suportedTokens[symbol] = data[symbol];
+        supportedTokens[symbol] = data[symbol];
       }
     });
 
-    return NETWORK_ID === 1 ? suportedTokens : data;
+    return supportedTokens;
   });
 }
 

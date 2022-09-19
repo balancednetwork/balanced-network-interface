@@ -2,21 +2,14 @@ import React from 'react';
 
 import { Typography } from 'app/theme';
 
-import { Link } from './components/Link';
+import CommunityListToggle from './components/CommunityListToggle';
 
 export const Message = () => (
   <>
     <Typography as="span">
-      Balanced now distributes network fees as you earn them, instead of once every 24 hours.{' '}
-      <Typography as="span" fontWeight="bold" color="white">
-        Unclaimed fees have not been migrated.{' '}
-      </Typography>
-      To check for and claim any outstanding fees, go to{' '}
+      Missing a liquidity pool? <CommunityListToggle onMessage="Add the community token list" /> to see details for all
+      pools you've participated in.
     </Typography>
-    <Link href="https://app.balanced.network/claim" noBorder>
-      app.balanced.network/claim
-    </Link>
-    .
   </>
 );
 

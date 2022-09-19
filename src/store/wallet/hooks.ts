@@ -19,8 +19,10 @@ import {
   SUPPORTED_TOKENS_MAP_BY_ADDRESS,
   isBALN,
   isFIN,
+  COMBINED_TOKENS_LIST,
 } from 'constants/tokens';
 import { useBnJsContractQuery } from 'queries/utils';
+import { useTokenListConfig } from 'store/lists/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useUserAddedTokens } from 'store/user/hooks';
 
@@ -55,12 +57,14 @@ export function useAvailableBalances(
 
 export function useWalletFetchBalances(account?: string | null) {
   const dispatch = useDispatch();
-
+  const tokenListConfig = useTokenListConfig();
   const userAddedTokens = useUserAddedTokens();
 
   const tokens = useMemo(() => {
-    return [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
-  }, [userAddedTokens]);
+    return tokenListConfig.community
+      ? [...COMBINED_TOKENS_LIST, ...userAddedTokens]
+      : [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
+  }, [userAddedTokens, tokenListConfig]);
 
   const balances = useAvailableBalances(account || undefined, tokens);
 

@@ -32,7 +32,7 @@ const TokenImportCard = ({ token }: TokenImportCardProps) => {
           </Typography>
         </AutoColumn>
         {chainId && (
-          <ExternalLink href={getTrackerLink(chainId, token.address, 'token')}>
+          <ExternalLink href={getTrackerLink(chainId, token.address, 'contract')}>
             <AddressText fontSize={14} width={180} textAlign="center">
               {token.address}
             </AddressText>

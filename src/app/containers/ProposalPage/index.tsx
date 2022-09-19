@@ -9,7 +9,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useParams } from 'react-router-dom';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled, { useTheme, keyframes } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
@@ -32,7 +32,7 @@ import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
-import { formatPercent, formatUnits, getCXLink, getTrackerLink } from 'utils';
+import { formatPercent, formatUnits, getTrackerLink } from 'utils';
 import { formatTimeStr } from 'utils/timeformat';
 
 import { CopyableSCORE } from '../NewProposalPage/CollateralProposalFields';
@@ -55,15 +55,6 @@ const Progress = styled(Flex)`
   border-radius: 5px;
 `;
 
-const setBarWidth = (width: string) => keyframes`
-    0% {
-        width : 3px; 
-    }
-    100% {
-        width : ${width}%;
-    }
-`;
-
 const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   background: ${props =>
     (props.type === 'Approve' && props.theme.colors.primary) || (props.type === 'Reject' && props.theme.colors.alert)};
@@ -71,8 +62,7 @@ const ProgressBar = styled(Flex)<{ percentage: string; type: string }>`
   border-radius: ${props => (props.percentage === '100' ? '5px' : '5px 0 0 5px')};
   transition: width 0.2s ease-in;
   justify-content: center;
-  animation: ${({ percentage }) => percentage !== '0' && percentage !== 'undefined' && setBarWidth(percentage)} 2s
-    ease-in-out forwards;
+  width: ${({ percentage }) => `${percentage}%`};
 `;
 
 const ResultPanel = styled(Flex)`
@@ -149,7 +139,7 @@ export function ProposalPage() {
   const isActive =
     proposal && proposal.status === 'Active' && !formatTimeStr(proposal.startDay) && !!formatTimeStr(proposal.endDay);
 
-  const hasUserVoted = isActive && userStatus?.hasVoted;
+  const hasUserVoted = userStatus?.hasVoted;
 
   const { account } = useIconReact();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -406,7 +396,7 @@ export function ProposalPage() {
                   <CollateralProposalInfoItem>
                     <Typography opacity={0.75} fontSize={16}>
                       Token address
-                      <ExternalLink href={getCXLink(NETWORK_ID, collateralInfo['_token_address'])}>
+                      <ExternalLink href={getTrackerLink(NETWORK_ID, collateralInfo['_token_address'], 'contract')}>
                         <ExternalIcon
                           width="15"
                           height="15"
@@ -442,6 +432,7 @@ export function ProposalPage() {
                               </Typography>
                             </>
                           }
+                          strategy={'absolute'}
                         ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16}>
@@ -457,6 +448,7 @@ export function ProposalPage() {
                         <Trans>Debt ceiling</Trans>{' '}
                         <QuestionHelper
                           text={t`The maximum amount of bnUSD that can be minted with this collateral type.`}
+                          strategy={'absolute'}
                         ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16} sx={{ whiteSpace: 'nowrap' }}>
@@ -470,6 +462,7 @@ export function ProposalPage() {
                         <Trans>Borrow LTV</Trans>{' '}
                         <QuestionHelper
                           text={t`The maximum percentage that people can borrow against the value of this collateral type.`}
+                          strategy={'absolute'}
                         ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16}>
@@ -483,6 +476,7 @@ export function ProposalPage() {
                         <Trans>Liquidation LTV</Trans>{' '}
                         <QuestionHelper
                           text={t`The percentage of debt required to trigger liquidation for this collateral type.`}
+                          strategy={'absolute'}
                         ></QuestionHelper>
                       </Typography>
                       <Typography color="text" fontSize={16}>

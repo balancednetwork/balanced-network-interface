@@ -10,6 +10,7 @@ import createSagaMiddleware from 'redux-saga';
 import application from './application/reducer';
 import collateral from './collateral/reducer';
 import fees from './fees/reducer';
+import lists from './lists/reducer';
 import loan from './loan/reducer';
 import mint from './mint/reducer';
 import oracle from './oracle/reducer';
@@ -56,6 +57,7 @@ export function configureAppStore() {
       user,
       fees,
       oracle,
+      lists,
     }),
     middleware: [
       ...getDefaultMiddleware({

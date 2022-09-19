@@ -7,6 +7,7 @@
 import { ApplicationState } from 'store/application/reducer';
 import { CollateralState } from 'store/collateral/reducer';
 import { FeesState } from 'store/fees/reducer';
+import { TokenListState } from 'store/lists/reducer';
 import { LoanState } from 'store/loan/reducer';
 import { MintState } from 'store/mint/reducer';
 import { OracleState } from 'store/oracle/reducer';
@@ -36,4 +37,5 @@ export interface RootState {
   user: UserState;
   fees: FeesState;
   oracle: OracleState;
+  lists: TokenListState;
 }

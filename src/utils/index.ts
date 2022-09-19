@@ -34,7 +34,7 @@ export function shortenSCOREAddress(address: string, chars = 7): string {
 export function getTrackerLink(
   networkId: NetworkId,
   data: string,
-  type: 'transaction' | 'token' | 'address' | 'block',
+  type: 'transaction' | 'address' | 'block' | 'contract',
 ): string {
   const prefix = CHAIN_INFO[networkId].tracker;
 
@@ -42,23 +42,17 @@ export function getTrackerLink(
     case 'transaction': {
       return `${prefix}/transaction/${data}`;
     }
-    case 'token': {
-      return `${prefix}/token/${data}`;
+    case 'address': {
+      return `${prefix}/address/${data}`;
     }
     case 'block': {
       return `${prefix}/block/${data}`;
     }
-    case 'address':
+    case 'contract':
     default: {
-      return `${prefix}/address/${data}`;
+      return `${prefix}/contract/${data}`;
     }
   }
-}
-
-export function getCXLink(chain, cx): string {
-  const prefix =
-    chain === 1 ? 'https://tracker.icon.community/contract/' : 'https://tracker.berlin.icon.community/contract/';
-  return `${prefix}${cx}`;
 }
 
 export function escapeRegExp(string: string): string {
@@ -123,7 +117,7 @@ export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): Curre
 export function formatPercent(percent: BigNumber | undefined) {
   if (!percent) return '0%';
   if (percent.isZero()) return '0%';
-  else return percent.isLessThan(0.01) ? '<0.01%' : `${percent.dp(2).toFixed()}%`;
+  else return percent.isLessThan(0.01) ? '<0.01%' : `${percent.dp(2, BigNumber.ROUND_HALF_UP).toFixed()}%`;
 }
 
 export function sleep(ms: number) {

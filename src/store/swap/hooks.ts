@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { TradeType, Currency, CurrencyAmount, Percent, Token, Price } from '@balancednetwork/sdk-core';
+import { TradeType, Currency, CurrencyAmount, Token, Price } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import JSBI from 'jsbi';
@@ -168,11 +168,7 @@ export function useDerivedSwapInfo(): {
   // compare input balance to max input based on version
   const allowedSlippage = useSwapSlippageTolerance();
 
-  // !todo need to change the slippage data type
-  const [balanceIn, amountIn] = [
-    currencyBalances[Field.INPUT],
-    trade?.maximumAmountIn(new Percent(allowedSlippage, 1000)),
-  ];
+  const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
     inputError = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;

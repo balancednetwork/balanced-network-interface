@@ -16,6 +16,7 @@ import { getPair } from 'utils';
 import useLastCount from './useLastCount';
 
 const NON_EXISTENT_POOL_ID = 0;
+const MULTI_CALL_BATCH_SIZE = 25;
 
 export enum PairState {
   LOADING,
@@ -67,7 +68,19 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
           }
         });
 
-        const data: any[] = await bnJs.Multicall.getAggregateData(cds);
+        const chunks = cds.reduce((resultArray, item, index) => {
+          const chunkIndex = Math.floor(index / MULTI_CALL_BATCH_SIZE);
+          if (!resultArray[chunkIndex]) {
+            //@ts-ignore
+            resultArray[chunkIndex] = [];
+          }
+          //@ts-ignore
+          resultArray[chunkIndex].push(item);
+          return resultArray;
+        }, []);
+
+        const chunkedData = await Promise.all(chunks.map(async chunk => await bnJs.Multicall.getAggregateData(chunk)));
+        const data: any[] = chunkedData.flat();
 
         const ps = data.map(
           (stats, idx): PairData => {

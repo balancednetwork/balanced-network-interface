@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
@@ -13,7 +12,6 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRewardQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -21,16 +19,10 @@ import { useFetchUnclaimedDividends, useUnclaimedFees } from 'store/fees/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
-import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
-
-//show only fees greater then 0.01
-const MIN_AMOUNT_TO_SHOW =
-  SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address] &&
-  CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], parseUnits('1', 16));
 
 const RewardsPanel = () => {
   useFetchUnclaimedDividends();
@@ -120,11 +112,11 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
           </Typography>
         </>
       );
-    } else if (reward?.isGreaterThan(0.01)) {
+    } else {
       return (
         <>
           <Typography variant="p">
-            {`${reward?.dp(2).toFormat()} `}
+            {`${reward?.toFormat(2)} `}
             <Typography as="span" color="text1">
               BALN
             </Typography>
@@ -133,12 +125,6 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
             <Trans>Claim</Trans>
           </Button>
         </>
-      );
-    } else {
-      return (
-        <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
-          <Trans>Pending</Trans>
-        </Typography>
       );
     }
   };
@@ -271,26 +257,18 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
       return (
         <>
           {fees &&
-            Object.keys(fees)
-              .filter(key => fees[key].greaterThan(MIN_AMOUNT_TO_SHOW))
-              .map(key => (
-                <Typography key={key} variant="p">
-                  {`${fees[key].toFixed(2)}`}{' '}
-                  <Typography key={key} as="span" color="text1">
-                    {fees[key].currency.symbol}
-                  </Typography>
+            Object.keys(fees).map(key => (
+              <Typography key={key} variant="p">
+                {`${fees[key].toFixed(2)}`}{' '}
+                <Typography key={key} as="span" color="text1">
+                  {fees[key].currency.symbol}
                 </Typography>
-              ))}
+              </Typography>
+            ))}
 
-          {fees && Object.keys(fees).filter(key => fees[key].greaterThan(MIN_AMOUNT_TO_SHOW)).length ? (
-            <Button mt={2} onClick={toggleOpen}>
-              <Trans>Claim</Trans>
-            </Button>
-          ) : (
-            <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
-              <Trans>Pending</Trans>
-            </Typography>
-          )}
+          <Button mt={2} onClick={toggleOpen}>
+            <Trans>Claim</Trans>
+          </Button>
         </>
       );
     } else {
@@ -318,16 +296,14 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
 
           <Flex flexDirection="column" alignItems="center" mt={2}>
             {fees &&
-              Object.keys(fees)
-                .filter(key => fees[key].greaterThan(MIN_AMOUNT_TO_SHOW))
-                .map(key => (
-                  <Typography key={key} variant="p">
-                    {`${fees[key].toFixed(2)}`}{' '}
-                    <Typography key={key} as="span" color="text1">
-                      {fees[key].currency.symbol}
-                    </Typography>
+              Object.keys(fees).map(key => (
+                <Typography key={key} variant="p">
+                  {`${fees[key].toFixed(2)}`}{' '}
+                  <Typography key={key} as="span" color="text1">
+                    {fees[key].currency.symbol}
                   </Typography>
-                ))}
+                </Typography>
+              ))}
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

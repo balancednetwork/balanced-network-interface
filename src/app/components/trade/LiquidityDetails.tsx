@@ -20,6 +20,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import Modal from 'app/components/Modal';
 import { BoxPanel } from 'app/components/Panel';
+import Message from 'app/Message';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import bnJs from 'bnJs';
@@ -27,6 +28,7 @@ import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { BalanceData, useAvailablePairs, useBalances, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useTokenListConfig } from 'store/lists/hooks';
 import { Field } from 'store/mint/actions';
 import { useRewards } from 'store/reward/hooks';
 import { useChangeWithdrawnValue, useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
@@ -37,6 +39,7 @@ import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
 import { multiplyCABN, toFraction, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import { Banner } from '../Banner';
 import ModalContent from '../ModalContent';
 import { StyledSkeleton } from '../ProposalInfo/components';
 import Spinner from '../Spinner';
@@ -74,6 +77,7 @@ const MotionBoxPanel = motion(BoxPanel);
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
+  const tokenListConfig = useTokenListConfig();
 
   const { account } = useIconReact();
 
@@ -132,6 +136,12 @@ export default function LiquidityDetails() {
 
   return (
     <>
+      {!tokenListConfig.community && (
+        <Banner messageID={'communityList'} embedded>
+          <Message />
+        </Banner>
+      )}
+
       <AnimatePresence>
         {isLiquidityInfoLoading && (
           <motion.div

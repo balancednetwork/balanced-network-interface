@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-07-20 21:23\n"
+"PO-Revision-Date: 2022-09-07 20:33\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -68,6 +68,18 @@ msgstr "활성화"
 #: src/app/components/home/TransactionPanel.tsx
 msgid "Activity history"
 msgstr "활동 내역"
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add community token list"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add community token list?"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Add token list"
+msgstr ""
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
@@ -157,6 +169,12 @@ msgstr "Balanced는 당신의 대출금을 늘려서 더 많은 담보를 할인
 msgid "Balanced sells collateral at a premium to repay some of your loan."
 msgstr "Balanced는 당신의 대출금 일부를 상환하기 위해 담보를 프리미엄 가격에 판매합니다."
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Band"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -177,6 +195,11 @@ msgstr "대출"
 msgid "Borrow Balanced Dollars?"
 msgstr "Balanced 달러를 대출 하겠습니까?"
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Borrow LTV"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed"
@@ -190,6 +213,7 @@ msgstr "{0} bnUSD 대출됨."
 msgid "Borrowing bnUSD..."
 msgstr "대출 중인 bnUSD..."
 
+#: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -321,10 +345,12 @@ msgid "Connect Wallet"
 msgstr "지갑 연결"
 
 #: src/app/components/Header/index.tsx
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 msgid "Copied"
 msgstr "복사 됨"
 
 #: src/app/components/Header/index.tsx
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 msgid "Copy address"
 msgstr "주소 복사"
 
@@ -373,11 +399,22 @@ msgstr "현재"
 msgid "DATE"
 msgstr "일자"
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "DEX"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 #: src/app/components/trade/StakeLPPanel.tsx
 msgid "Daily rewards"
 msgstr "1일 보상"
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Debt ceiling"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -545,6 +582,11 @@ msgstr "선"
 msgid "Liquidated"
 msgstr "청산 됨"
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Liquidation LTV"
+msgstr ""
+
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Liquidity details"
 msgstr "유동성 현황"
@@ -584,6 +626,11 @@ msgstr "네트워크 수수료 할당"
 msgid "Network fees"
 msgstr "네트워크 수수료"
 
+#: src/app/containers/NewProposalPage/constant.ts
+#: src/app/containers/ProposalPage/index.tsx
+msgid "New collateral type"
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/VotePage/index.tsx
 msgid "New proposal"
@@ -620,6 +667,11 @@ msgstr "지금은 안됩니다"
 msgid "Or"
 msgstr ""
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Oracle type"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
 msgstr "하루 동안"
@@ -638,8 +690,6 @@ msgid "Pay"
 msgstr "지불"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
-#: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
 msgid "Pending"
 msgstr "보류 중"
 
@@ -726,6 +776,18 @@ msgstr "거부됨"
 msgid "Remove"
 msgstr "제거"
 
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove community token list"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove community token list?"
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Remove token list"
+msgstr ""
+
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
 msgstr "이 거래를 취소하려면 자산을 제거하십시오."
@@ -749,6 +811,18 @@ msgstr "Balanced 달러를 상환하겠습니까?"
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
 msgstr "bnUSD 상환중..."
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+msgid "Requires a bnUSD liquidity pool for this collateral type."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+msgid "Requires the token ticker, i.e. ICX."
+msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "Review the community token list on GitHub."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Rewards"
@@ -963,6 +1037,10 @@ msgstr ""
 msgid "The amount of ICX available to deposit from your wallet."
 msgstr "지갑에서 예치 가능한 ICX의 양."
 
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "The community list contains all popular assets that aren't listed in the app by default."
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current ICX price is"
 msgstr "현재 ICX 가격은"
@@ -970,6 +1048,21 @@ msgstr "현재 ICX 가격은"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current bnUSD price is"
 msgstr "현재 bnUSD 가격은"
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "The maximum amount of bnUSD that can be minted with this collateral type."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "The maximum percentage that people can borrow against the value of this collateral type."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "The percentage of debt required to trigger liquidation for this collateral type."
+msgstr ""
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "There's no BALN unstaking."
@@ -1011,6 +1104,10 @@ msgstr "네트워크 수수료를 얻으려면, 지갑에서 BALN을 스테이�
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
 msgstr "대출을 받으려면, 담보를 예치하십시오."
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+msgid "Token contract address"
+msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total daily rewards"
@@ -1091,9 +1188,25 @@ msgstr ""
 msgid "Use the Stability Fund to swap {0} for {1}"
 msgstr ""
 
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+msgid "Use the price from Balanced."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+msgid "Use the price of an asset tracked via the Band oracle."
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
 msgstr "사용 됨"
+
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Uses the price from the bnUSD liquidity pool for this collateral type."
+msgstr ""
+
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Uses the price of an asset tracked via the Band oracle."
+msgstr ""
 
 #: src/app/components/home/WalletPanel.tsx
 msgid "Value"
@@ -1161,6 +1274,11 @@ msgid "Wallet: {0} {1} /\n"
 "{2} {3}"
 msgstr "지갑: {0} {1} /\n"
 "{2} {3}"
+
+#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Where Balanced will get the price data for this collateral type."
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
@@ -1230,6 +1348,10 @@ msgstr "이 거래를 완료하려면 지갑에 최소 {MINIMUM_ICX_FOR_TX} ICX�
 #: src/app/containers/ProposalPage/index.tsx
 msgid "You rejected"
 msgstr "반려되었습니다."
+
+#: src/app/components/CommunityListToggle/index.tsx
+msgid "You'll only be able to interact with the default assets listed on Balanced."
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD pool. The smaller your loan, the less rebalancing affects you."

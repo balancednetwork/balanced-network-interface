@@ -73,14 +73,6 @@
       "symbol": "IAM",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iam.png"
-    },
-    {
-      "address": "cx5b5a03cb525a1845d0af3a872d525b18a810acb0",
-      "chainId": 1,
-      "name": "Binance BTC",
-      "symbol": "BTCB",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
     }
   ]
 }

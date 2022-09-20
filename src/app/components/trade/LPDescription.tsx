@@ -114,7 +114,7 @@ export default function LPDescription() {
                     liquidity pool${upSmall ? ': ' : ''}`
                   : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
-                  {apy?.times(100).dp(2).toFixed() ?? '-'}% APY
+                  {apy?.times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed() ?? '-'}% APY
                 </Typography>
               </Typography>
             ) : (
@@ -196,14 +196,14 @@ export default function LPDescription() {
                             {userRewards?.isEqualTo(0)
                               ? 'N/A'
                               : userRewards
-                              ? `~ ${userRewards.dp(2, BigNumber.ROUND_UP).toFormat()} BALN`
+                              ? `~ ${userRewards.dp(2, BigNumber.ROUND_HALF_UP).toFormat()} BALN`
                               : 'N/A'}
                           </Typography>
                         ) : (
                           <Typography textAlign="center" variant="p">
                             {suppliedReward?.isEqualTo(0) || suppliedReward?.isNaN()
                               ? 'N/A'
-                              : `~ ${suppliedReward?.dp(2).toFormat() || '...'} BALN`}
+                              : `~ ${suppliedReward?.dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'} BALN`}
                           </Typography>
                         )}
                       </Box>

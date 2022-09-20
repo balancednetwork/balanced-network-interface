@@ -13,13 +13,13 @@ import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMess
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
-import { getABBalance, getShareReward } from 'app/components/trade/LiquidityDetails';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useBalance, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useRewards } from 'store/reward/hooks';
 import {
   useChangeStakedLPPercent,
   useStakedLPPercent,
@@ -31,15 +31,13 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { StyledSkeleton } from '../ProposalInfo/components';
-import { getFormattedPoolShare, getFormattedRewards, stakedFraction, totalSupply } from './utils';
+import { StyledSkeleton } from '../../ProposalInfo/components';
+import { getFormattedPoolShare, getFormattedRewards, stakedFraction, totalSupply } from '../utils';
+import { getABBalance, getShareReward } from './WithdrawPanel';
 
-export default React.memo(function StakeLPPanel({ pair, totalReward }: { pair: Pair; totalReward: BigNumber }) {
+export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const { account } = useIconReact();
   const poolId = pair.poolId!;
-
-  // const poolData = usePoolData(poolId);
-  const stakedLPPercent = useStakedLPPercent(poolId);
   const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -170,11 +168,13 @@ export default React.memo(function StakeLPPanel({ pair, totalReward }: { pair: P
 
   const upSmall = useMedia('(min-width: 800px)');
 
+  const rewards = useRewards();
+  const totalReward = rewards[poolId];
   const [aBalance, bBalance] = getABBalance(pair, balance);
   const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
   const baseCurrencyTotalSupply = totalSupply(baseValue, lpBalance?.base);
   const { share, reward } = getShareReward(pair, balance, totalReward);
-  const stakedFractionValue = stakedFraction(stakedLPPercent);
+  const stakedFractionValue = stakedFraction(stakedPercent);
 
   const RespoRewardsInfo = () => {
     return (
@@ -311,4 +311,4 @@ export default React.memo(function StakeLPPanel({ pair, totalReward }: { pair: P
       )}
     </Box>
   );
-});
+}

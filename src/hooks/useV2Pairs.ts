@@ -5,12 +5,11 @@ import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
-import { useIconReact } from 'packages/icon-react';
 
+import { usePoolPanelContext } from 'app/components/trade/PoolPanelContext';
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
 import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
-import { useTrackedTokenPairs } from 'store/user/hooks';
 import { getPair } from 'utils';
 
 import useLastCount from './useLastCount';
@@ -307,14 +306,6 @@ export function useSuppliedTokens(poolId: number, tokenA?: Currency, tokenB?: Cu
 }
 
 export function useBalance(poolId: number) {
-  const { account } = useIconReact();
-
-  const trackedTokenPairs = useTrackedTokenPairs();
-
-  // fetch the reserves for all V2 pools
-  const pairs = useAvailablePairs(trackedTokenPairs);
-
-  // fetch the user's balances of all tracked V2 LP tokens
-  const balances = useBalances(account, pairs);
+  const { balances } = usePoolPanelContext();
   return balances[poolId];
 }

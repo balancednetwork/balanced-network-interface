@@ -59,11 +59,11 @@ function WalletSection() {
   const formattedRemains: { [field in Field]?: string } = React.useMemo(
     () => ({
       [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.lessThan(BIGINT_ZERO)
-        ? '0.0000'
-        : remains[Field.CURRENCY_A]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
+        ? '0.00'
+        : remains[Field.CURRENCY_A]?.toFixed(2, { groupSeparator: ',' }) ?? '-',
       [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.lessThan(BIGINT_ZERO)
-        ? '0.0000'
-        : remains[Field.CURRENCY_B]?.toFixed(4, { groupSeparator: ',' }) ?? '-',
+        ? '0.00'
+        : remains[Field.CURRENCY_B]?.toFixed(2, { groupSeparator: ',' }) ?? '-',
     }),
     [remains],
   );
@@ -83,7 +83,7 @@ function WalletSection() {
   } else {
     return (
       <Flex flexDirection="row" justifyContent="center" alignItems="center">
-        <Typography>
+        <Typography sx={{ whiteSpace: 'nowrap' }}>
           {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol} /
                       ${formattedRemains[Field.CURRENCY_B]} ${currencies[Field.CURRENCY_B]?.symbol}`}
         </Typography>
@@ -244,7 +244,14 @@ export default function LPPanel() {
   return (
     <>
       <SectionPanel bg="bg2">
-        <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
+        <BrightPanel
+          bg="bg3"
+          p={[3, 7]}
+          flexDirection="column"
+          alignItems="stretch"
+          flex={1}
+          minHeight={account && [325, 365, 'auto']}
+        >
           <AutoColumn gap="md">
             <AutoColumn gap="md">
               <Typography variant="h2">

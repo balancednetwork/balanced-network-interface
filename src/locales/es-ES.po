@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-09-07 20:33\n"
+"PO-Revision-Date: 2022-09-20 08:41\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -60,6 +60,10 @@ msgstr "ACTIVIDAD"
 #: src/app/components/home/TransactionPanel.tsx
 msgid "AMOUNT"
 msgstr "CANTIDAD"
+
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "APY"
+msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
@@ -225,8 +229,8 @@ msgstr "Prestando bnUSD..."
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Cancel"
@@ -406,8 +410,8 @@ msgid "DEX"
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Daily rewards"
 msgstr "Recompensas diarias"
 
@@ -486,6 +490,10 @@ msgstr "Ingresa una cantidad"
 msgid "Exchange rate"
 msgstr "Tasa de cambio"
 
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "FEES (24H)"
+msgstr ""
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Failed to enact"
 msgstr "Ejecución fallida"
@@ -493,6 +501,10 @@ msgstr "Ejecución fallida"
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"
 msgstr "Comisión"
+
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "Fees:"
+msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "For"
@@ -531,9 +543,17 @@ msgstr "Si el precio de ICX llega a ${0}, todo tu colateral será liquidado."
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "Si el precio se pasa de esta cantidad, tu swap fallará."
 
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "Impermanent loss is not factored in."
+msgstr ""
+
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "In contract"
 msgstr "En el contrato"
+
+#: src/app/components/trade/LiquidityPoolsPanel.tsx
+msgid "Incentivised pools"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Includes a fee of {0} bnUSD."
@@ -574,6 +594,10 @@ msgstr "Hacer una propuesta cuesta 100 bnUSD."
 msgid "Keep a close eye on this number, as rebalancing may cause it to fluctuate."
 msgstr "Vigila bien este número, ya que el rebalancing puede hacer que fluctúe."
 
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "LIQUIDITY"
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 msgid "Line"
 msgstr "Línea"
@@ -587,9 +611,9 @@ msgstr "Liquidado"
 msgid "Liquidation LTV"
 msgstr ""
 
-#: src/app/components/trade/LiquidityDetails.tsx
-msgid "Liquidity details"
-msgstr "Detalles de la liquidez"
+#: src/app/components/trade/LiquidityPoolsPanel.tsx
+msgid "Liquidity pools"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -672,6 +696,10 @@ msgstr ""
 msgid "Oracle type"
 msgstr ""
 
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "POOL"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
 msgstr "Ayer"
@@ -697,8 +725,8 @@ msgstr "Pendiente"
 msgid "Pool"
 msgstr "Pool"
 
+#: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Pool share"
 msgstr "Parte del pool"
 
@@ -1027,6 +1055,10 @@ msgstr "Tarda hasta 7 días. Cuando esté listo, vaya a ICX > Unstaking en la se
 msgid "Text"
 msgstr "Texto"
 
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "The BALN APY is calculated from the USD value of BALN rewards available for a pool."
+msgstr ""
+
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
 msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
@@ -1048,6 +1080,10 @@ msgstr "El precio actual de ICX es"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current bnUSD price is"
 msgstr "El precio actual de bnUSD es"
+
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
+msgstr ""
 
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -1208,6 +1244,10 @@ msgstr ""
 msgid "Uses the price of an asset tracked via the Band oracle."
 msgstr ""
 
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "VOLUME (24H)"
+msgstr ""
+
 #: src/app/components/home/WalletPanel.tsx
 msgid "Value"
 msgstr "Valor"
@@ -1285,9 +1325,9 @@ msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
 msgstr "Mientras tomas prestado bnUSD, tu colateral se usa para mantener su valor estable"
 
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw"
 msgstr "Retirar"
 
@@ -1295,25 +1335,25 @@ msgstr "Retirar"
 msgid "Withdraw ICON collateral?"
 msgstr "¿Retirar colateral ICON?"
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw liquidity"
 msgstr "Retirar liquidez"
 
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw liquidity?"
 msgstr "¿Retirar liquidez?"
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw sICX?"
 msgstr "¿Retirar sICX?"
 
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw:"
 msgstr "Retirar:"
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdrawing ICX..."
 msgstr "Retirando ICX..."
 
@@ -1321,7 +1361,7 @@ msgstr "Retirando ICX..."
 msgid "Withdrawing collateral..."
 msgstr "Retirando colateral..."
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdrawing sICX..."
 msgstr "Retirando sICX..."
 
@@ -1383,6 +1423,10 @@ msgstr "Tu saldo de colateral es <0>{0} sICX</0> (staked ICX). El valor en ICX d
 #: src/app/components/home/LoanPanel.tsx
 msgid "Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
 msgstr "Tu saldo de colateral. Gana intereses por staking, pero también se vende con el tiempo para pagar tu préstamo."
+
+#: src/app/components/trade/LiquidityPoolsPanel.tsx
+msgid "Your pools"
+msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -1451,7 +1495,7 @@ msgstr "{0} BALN haciendo unstaking"
 msgid "{0} ICX"
 msgstr "{0} ICX"
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "{0} ICX added to your wallet."
 msgstr "{0} ICX añadido a tu billetera."
 
@@ -1472,7 +1516,7 @@ msgid "{0} liquidity pool{1}"
 msgstr "{0} pool de liquidez{1}"
 
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "{0} sICX added to your wallet."
 msgstr "{0} sICX añadidos a tu billetera."
 

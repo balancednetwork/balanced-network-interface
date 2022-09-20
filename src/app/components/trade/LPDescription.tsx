@@ -196,7 +196,7 @@ export default function LPDescription() {
                             {userRewards?.isEqualTo(0)
                               ? 'N/A'
                               : userRewards
-                              ? `~ ${userRewards.dp(2).toFormat()} BALN`
+                              ? `~ ${userRewards.dp(2, BigNumber.ROUND_UP).toFormat()} BALN`
                               : 'N/A'}
                           </Typography>
                         ) : (

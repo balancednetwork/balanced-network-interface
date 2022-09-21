@@ -18,8 +18,7 @@ export interface PairInfo {
 
 // this information contains the pairs the balanced supports
 // eventually this information will saved in json file.
-
-export const SUPPORTED_PAIRS_INFO: { [ChainId: number]: PairInfo[] } = {
+const SUPPORTED_PAIRS_INFO: { [ChainId: number]: PairInfo[] } = {
   [ChainId.MAINNET]: [
     {
       chainId: 1,

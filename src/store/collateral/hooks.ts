@@ -108,7 +108,7 @@ export function useCollateralFetchInfo(account?: string | null) {
         res.holdings &&
         Object.keys(res.holdings).forEach(async symbol => {
           const decimals: string = await bnJs.getContract(supportedCollateralTokens[symbol]).decimals();
-          const depositedAmount = new BigNumber(formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 4));
+          const depositedAmount = new BigNumber(formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 8));
           changeDepositedAmount(depositedAmount, symbol);
         });
     },
@@ -212,8 +212,11 @@ export function useCollateralInputAmount() {
   const { independentField, typedValue } = useCollateralState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
   const collateralTotal = useTotalCollateral() || new BigNumber(0);
+  const collateralDecimalPlaces = useCollateralDecimalPlaces();
 
-  const roundedTypedValue = Math.round(new BigNumber(typedValue || '0').times(100).toNumber()) / 100;
+  const roundedTypedValue =
+    Math.round(new BigNumber(typedValue || '0').times(10 ** collateralDecimalPlaces).toNumber()) /
+    10 ** collateralDecimalPlaces;
 
   const currentAmount = collateralTotal.minus(new BigNumber(roundedTypedValue));
 

@@ -73,11 +73,12 @@ const LoanPanel = () => {
   //
   const borrowedAmount = useLoanBorrowedAmount();
   const totalBorrowableAmount = useLoanTotalBorrowableAmount();
+  const _totalBorrowableAmount = BigNumber.max(totalBorrowableAmount.times(0.99).minus(1), borrowedAmount);
 
   //  calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: totalBorrowableAmount.minus(new BigNumber(typedValue || '0')),
+    [dependentField]: _totalBorrowableAmount.minus(new BigNumber(typedValue || '0')),
   };
 
   const formattedAmounts = {
@@ -201,8 +202,6 @@ const LoanPanel = () => {
   }, [afterAmount, inputType]);
 
   const usedAmount = useLoanUsedAmount();
-
-  const _totalBorrowableAmount = BigNumber.max(totalBorrowableAmount.times(0.99), borrowedAmount);
   const percent = _totalBorrowableAmount.isZero() ? 0 : usedAmount.div(_totalBorrowableAmount).times(100).toNumber();
 
   const shouldShowLock = !usedAmount.isZero();

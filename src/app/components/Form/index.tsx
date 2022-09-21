@@ -80,6 +80,7 @@ export const CurrencyField: React.FC<{
   tooltipWider?: boolean;
   minValue?: BigNumber;
   maxValue?: BigNumber;
+  decimalPlaces?: number;
   onUserInput?: (value: string) => void;
 }> = function (props) {
   const {
@@ -95,6 +96,7 @@ export const CurrencyField: React.FC<{
     editable,
     minValue = MINUS_INFINITY,
     maxValue = PLUS_INFINITY,
+    decimalPlaces = 2,
     onUserInput,
   } = props;
   const smallSp = useMedia('(max-width: 359px)');
@@ -108,9 +110,9 @@ export const CurrencyField: React.FC<{
       const value = new BigNumber(nextUserInput || '0');
 
       if (value.isGreaterThan(maxValue)) {
-        nextInput = maxValue.dp(2).toFixed();
+        nextInput = maxValue.dp(decimalPlaces).toFixed();
       } else if (value.isLessThan(minValue)) {
-        nextInput = minValue.dp(2).toFixed();
+        nextInput = minValue.dp(decimalPlaces).toFixed();
       }
 
       onUserInput && onUserInput(nextInput);
@@ -140,7 +142,7 @@ export const CurrencyField: React.FC<{
       {!editable && (
         <Typography variant="p" ml={isSmall ? 0 : 6} mt={1} fontSize={[16, 16, 16, 18]}>
           {value !== 'NaN' ? (
-            `${BigNumber.max(new BigNumber(value), ZERO).dp(2).toFormat()} ${currency}`
+            `${BigNumber.max(new BigNumber(value), ZERO).dp(decimalPlaces).toFormat()} ${currency}`
           ) : (
             <StyledSkeleton width={80} animation="wave" />
           )}

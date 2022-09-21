@@ -33,6 +33,7 @@ import {
   useTotalCollateral,
   useSupportedCollateralTokens,
   useIsHandlingICX,
+  useCollateralDecimalPlaces,
 } from 'store/collateral/hooks';
 import { useLoanActionHandlers, useLockedCollateralAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -114,6 +115,7 @@ const CollateralPanel = () => {
   const isHandlingICX = useIsHandlingICX();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
+  const collateralDecimalPlaces = useCollateralDecimalPlaces();
 
   const isSuperSmall = useMedia(`(max-width: 450px)`);
 
@@ -153,9 +155,11 @@ const CollateralPanel = () => {
   const formattedAmounts = useMemo(() => {
     return {
       [independentField]: typedValue,
-      [dependentField]: parsedAmount[dependentField].isZero() ? '0' : parsedAmount[dependentField].toFixed(2),
+      [dependentField]: parsedAmount[dependentField].isZero()
+        ? '0'
+        : parsedAmount[dependentField].toFixed(collateralDecimalPlaces),
     };
-  }, [independentField, dependentField, typedValue, parsedAmount]);
+  }, [independentField, dependentField, typedValue, parsedAmount, collateralDecimalPlaces]);
 
   const buttonText = collateralDeposit.isZero() ? t`Deposit` : t`Adjust`;
 
@@ -212,7 +216,9 @@ const CollateralPanel = () => {
             { hash },
             {
               pending: t`Depositing collateral...`,
-              summary: t`Deposited ${collateralDifference.toFixed(2)} ${collateralType} as collateral.`,
+              summary: t`Deposited ${collateralDifference.toFixed(
+                collateralDecimalPlaces,
+              )} ${collateralType} as collateral.`,
             },
           );
         }
@@ -255,7 +261,9 @@ const CollateralPanel = () => {
               { hash },
               {
                 pending: t`Withdrawing collateral...`,
-                summary: t`${collateralDifferenceInSICX.dp(2).toFormat()} ${collateralType} added to your wallet.`,
+                summary: t`${collateralDifferenceInSICX
+                  .dp(collateralDecimalPlaces)
+                  .toFormat()} ${collateralType} added to your wallet.`,
               },
             );
           }
@@ -268,7 +276,9 @@ const CollateralPanel = () => {
             { hash },
             {
               pending: t`Withdrawing collateral...`,
-              summary: t`${collateralDifference.dp(2).toFormat()} ${collateralType} added to your wallet.`,
+              summary: t`${collateralDifference
+                .dp(collateralDecimalPlaces)
+                .toFormat()} ${collateralType} added to your wallet.`,
             },
           );
         }
@@ -287,9 +297,9 @@ const CollateralPanel = () => {
   // change typedValue if sICX and ratio changes
   React.useEffect(() => {
     if (!isAdjusting) {
-      onFieldAInput(collateralDeposit.isZero() ? '0' : collateralDeposit.toFixed(2));
+      onFieldAInput(collateralDeposit.isZero() ? '0' : collateralDeposit.toFixed(collateralDecimalPlaces));
     }
-  }, [onFieldAInput, collateralDeposit, isAdjusting]);
+  }, [onFieldAInput, collateralDeposit, isAdjusting, collateralDecimalPlaces]);
 
   // optimize slider performance
   // change slider value if only a user types
@@ -298,6 +308,18 @@ const CollateralPanel = () => {
       sliderInstance.current.noUiSlider.set(afterAmount.toNumber());
     }
   }, [afterAmount, inputType]);
+
+  React.useEffect(() => {
+    sliderInstance.current.noUiSlider.updateOptions(
+      {
+        format: {
+          to: (value: Number) => value.toFixed(collateralDecimalPlaces),
+          from: (value: string) => Number(value),
+        },
+      },
+      false,
+    );
+  }, [collateralDecimalPlaces]);
 
   const lockedCollateral = useLockedCollateralAmount();
   const shouldShowLock = !lockedCollateral.isZero();
@@ -356,11 +378,15 @@ const CollateralPanel = () => {
               id="slider-collateral"
               disabled={!isAdjusting}
               start={collateralDeposit.toNumber()}
-              padding={[Math.max(tLockedAmount.dp(2).toNumber(), 0), 0]}
+              padding={[Math.max(tLockedAmount.dp(collateralDecimalPlaces).toNumber(), 0), 0]}
               connect={[true, false]}
               range={{
                 min: [0],
-                max: [collateralTotal.isZero() ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD : collateralTotal.dp(2).toNumber()],
+                max: [
+                  collateralTotal.isZero()
+                    ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
+                    : collateralTotal.dp(collateralDecimalPlaces).toNumber(),
+                ],
               }}
               instanceRef={instance => {
                 if (instance) {
@@ -379,6 +405,7 @@ const CollateralPanel = () => {
                 label="Deposited"
                 tooltip={false}
                 value={formattedAmounts[Field.LEFT]}
+                decimalPlaces={collateralDecimalPlaces}
                 currency={isHandlingICX ? 'ICX' : collateralType}
                 maxValue={collateralTotal}
                 onUserInput={onFieldAInput}
@@ -392,6 +419,7 @@ const CollateralPanel = () => {
                 label="Wallet"
                 tooltipText={collateralType === 'sICX' && 'The amount of ICX available to deposit from your wallet.'}
                 value={formattedAmounts[Field.RIGHT]}
+                decimalPlaces={collateralDecimalPlaces}
                 currency={isHandlingICX ? 'ICX' : collateralType}
                 maxValue={collateralTotal}
                 onUserInput={onFieldBInput}
@@ -411,7 +439,7 @@ const CollateralPanel = () => {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceAmount.dp(2).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
+            {differenceAmount.dp(collateralDecimalPlaces).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
           </Typography>
 
           {!shouldDeposit && isHandlingICX && (
@@ -426,7 +454,7 @@ const CollateralPanel = () => {
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(2).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
+                {beforeAmount.dp(collateralDecimalPlaces).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
               </Typography>
             </Box>
 
@@ -435,7 +463,7 @@ const CollateralPanel = () => {
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(2).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
+                {afterAmount.dp(collateralDecimalPlaces).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
               </Typography>
             </Box>
           </Flex>

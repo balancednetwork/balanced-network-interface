@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
-import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { HIGH_PRICE_ASSET_DP, NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useBorrowedAmounts, useLockingRatios } from 'store/loan/hooks';
 import { useOraclePrice, useOraclePrices } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -403,4 +403,13 @@ export function useIsHandlingICX() {
   const icxDisplayType = useIcxDisplayType();
 
   return collateralType === 'sICX' && icxDisplayType === 'ICX';
+}
+
+export function useCollateralDecimalPlaces() {
+  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
+  const collateralType = useCollateralType();
+
+  return supportedCollateralTokens && HIGH_PRICE_ASSET_DP[supportedCollateralTokens[collateralType]]
+    ? HIGH_PRICE_ASSET_DP[supportedCollateralTokens[collateralType]]
+    : 2;
 }

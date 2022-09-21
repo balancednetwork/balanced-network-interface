@@ -480,14 +480,14 @@ const CollateralPanel = () => {
 
                   {ICXWithdrawOption === ICXWithdrawOptions.KEEPSICX && (
                     <Typography textAlign="center">
-                      <Trans>
-                        Takes up to 7 days. When it's ready, you can claim your ICX from the wallet section.
-                      </Trans>
+                      <Trans>Recieve sICX, which you can trade or unstake from the wallet section later.</Trans>
                     </Typography>
                   )}
                   {ICXWithdrawOption === ICXWithdrawOptions.UNSTAKE && (
                     <Typography textAlign="center">
-                      <Trans>Recieve sICX, which you can trade or unstake from the wallet section later.</Trans>
+                      <Trans>
+                        Takes up to 7 days. When it's ready, you can claim your ICX from the wallet section.
+                      </Trans>
                     </Typography>
                   )}
                 </>

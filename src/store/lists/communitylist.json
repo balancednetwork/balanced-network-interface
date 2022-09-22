@@ -81,6 +81,14 @@
       "symbol": "IAM",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iam.png"
+    },
+    {
+      "address": "cxd1f08a2967de6374f52408396bfe2fe8183b2800",
+      "chainId": 1,
+      "name": "CODE Token",
+      "symbol": "CODE",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/code.png"
     }
   ]
 }

@@ -15,6 +15,8 @@ import {
 } from 'store/collateral/hooks';
 import { useLoanActionHandlers } from 'store/loan/hooks';
 
+import { StyledSkeleton as Skeleton } from '../ProposalInfo';
+
 const CollateralTypesGrid = styled.div<{
   border?: boolean;
   negativeMargin?: boolean;
@@ -46,6 +48,10 @@ const CollateralTypesGrid = styled.div<{
       color: ${({ theme }) => theme.colors.primaryBright};
     }
   }
+`;
+
+const StyledSkeleton = styled(Skeleton)`
+  margin-left: auto;
 `;
 
 const CollateralTypesGridHeader = styled.div`
@@ -166,8 +172,20 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
 
                 {!hideCollateralInfoColumn && (
                   <CollateralTypesGridItem>
-                    <Typography className="white">{`$${collateralType.collateralDeposit.toFormat(0)}`}</Typography>
-                    <Typography className="grey">{`$${collateralType.collateralAvailable.toFormat(0)}`}</Typography>
+                    <Typography className="white">
+                      {collateralType.collateralDeposit.isNaN() ? (
+                        <StyledSkeleton width={50} animation="wave" />
+                      ) : (
+                        `$${collateralType.collateralDeposit.toFormat(0)}`
+                      )}
+                    </Typography>
+                    <Typography className="grey">
+                      {collateralType.collateralAvailable.isNaN() ? (
+                        <StyledSkeleton width={50} animation="wave" />
+                      ) : (
+                        `$${collateralType.collateralAvailable.toFormat(0)}`
+                      )}
+                    </Typography>
                   </CollateralTypesGridItem>
                 )}
 

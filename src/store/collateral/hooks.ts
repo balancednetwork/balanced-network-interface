@@ -108,7 +108,7 @@ export function useCollateralFetchInfo(account?: string | null) {
         res.holdings &&
         Object.keys(res.holdings).forEach(async symbol => {
           const decimals: string = await bnJs.getContract(supportedCollateralTokens[symbol]).decimals();
-          const depositedAmount = new BigNumber(formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 8));
+          const depositedAmount = new BigNumber(formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 18));
           changeDepositedAmount(depositedAmount, symbol);
         });
     },
@@ -310,7 +310,9 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
             depositedAmounts[token.symbol!]
               .multipliedBy(oraclePrices[token.symbol!])
               .div(lockingRatios[token.symbol!])
-              .minus(loanTaken)) ||
+              .times(0.99)
+              .minus(loanTaken)
+              .minus(1)) ||
           new BigNumber(0);
 
         return {
@@ -320,7 +322,7 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
           collateralDeposit: collateralDepositUSDValue,
           collateralAvailable: availableCollateral,
           loanTaken: loanTaken,
-          loanAvailable: loanAvailable,
+          loanAvailable: loanAvailable.isGreaterThan(0) ? loanAvailable : new BigNumber(0),
         };
       });
     return allCollateralInfo;

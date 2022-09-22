@@ -234,7 +234,7 @@ const PositionDetailPanel = () => {
                         <Trans>All collateral locked</Trans>
                       </dt>
                     </Tooltip>
-                    <dd>${lockThresholdPrice.toFixed(3)}</dd>
+                    <dd>${lockThresholdPrice.dp(3).toFormat()}</dd>
                   </MetaData>
                 </Locked>
                 <Liquidated heightened={heightenBars}>

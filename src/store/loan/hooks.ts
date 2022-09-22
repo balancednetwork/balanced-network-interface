@@ -112,7 +112,7 @@ export function useLoanFetchInfo(account?: string | null) {
 
           resultDebt.holdings &&
             Object.keys(resultDebt.holdings).forEach(token => {
-              const depositedAmount = new BigNumber(formatUnits(resultDebt.holdings[token]['bnUSD'] || 0));
+              const depositedAmount = new BigNumber(formatUnits(resultDebt.holdings[token]['bnUSD'] || 0, 18, 18));
               changeBorrowedAmount(depositedAmount, token);
             });
 
@@ -222,13 +222,12 @@ export function useLoanTotalBorrowableAmount() {
 export function useLoanInputAmount() {
   const { independentField, typedValue } = useLoanState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
-
-  const totalBorrowableAmount = useLoanTotalBorrowableAmount();
+  const borrowableAmountWithReserve = useBorrowableAmountWithReserve();
 
   //  calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: totalBorrowableAmount.minus(new BigNumber(typedValue || '0')),
+    [dependentField]: borrowableAmountWithReserve.minus(new BigNumber(typedValue || '0')),
   };
 
   return parsedAmount[Field.LEFT];
@@ -407,3 +406,10 @@ export const useCollateralLockedSliderPos = () => {
     return 0;
   }, [lockingRatio, liquidationRatio]);
 };
+
+export function useBorrowableAmountWithReserve() {
+  const borrowedAmount = useLoanBorrowedAmount();
+  const totalBorrowableAmount = useLoanTotalBorrowableAmount();
+
+  return BigNumber.max(totalBorrowableAmount.times(0.99).minus(1), borrowedAmount);
+}

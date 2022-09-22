@@ -13,6 +13,7 @@ import {
   useAllCollateralData,
   useCollateralActionHandlers,
 } from 'store/collateral/hooks';
+import { useLoanActionHandlers } from 'store/loan/hooks';
 
 const CollateralTypesGrid = styled.div<{
   border?: boolean;
@@ -103,14 +104,16 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   const hideCollateralInfoColumn = useMedia('(max-width: 500px)');
   const escape = useKeyPress('Escape');
   const { onAdjust: adjust } = useCollateralActionHandlers();
+  const { onAdjust: adjustLoan } = useLoanActionHandlers();
 
   const handleCollateralTypeChange = useCallback(
     symbol => {
       setAnchor(null);
       changeCollateralType(symbol);
       adjust(false);
+      adjustLoan(false);
     },
-    [changeCollateralType, setAnchor, adjust],
+    [changeCollateralType, setAnchor, adjust, adjustLoan],
   );
 
   useEffect(() => {

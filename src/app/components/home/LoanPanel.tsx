@@ -20,6 +20,7 @@ import { ReactComponent as InfoBelow } from 'assets/images/rebalancing-below.svg
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
+import useInterval from 'hooks/useInterval';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useCollateralActionHandlers, useCollateralType } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
@@ -30,6 +31,7 @@ import {
   useLoanActionHandlers,
   useLoanUsedAmount,
   useLoanParameters,
+  useBorrowableAmountWithReserve,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -73,12 +75,12 @@ const LoanPanel = () => {
   //
   const borrowedAmount = useLoanBorrowedAmount();
   const totalBorrowableAmount = useLoanTotalBorrowableAmount();
-  const _totalBorrowableAmount = BigNumber.max(totalBorrowableAmount.times(0.99).minus(1), borrowedAmount);
+  const borrowableAmountWithReserve = useBorrowableAmountWithReserve();
 
   //  calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: _totalBorrowableAmount.minus(new BigNumber(typedValue || '0')),
+    [dependentField]: borrowableAmountWithReserve.minus(new BigNumber(typedValue || '0')),
   };
 
   const formattedAmounts = {
@@ -91,20 +93,21 @@ const LoanPanel = () => {
 
   const buttonText = borrowedAmount.isZero() ? t`Borrow` : t`Adjust`;
 
+  const currentValue = parseFloat(formattedAmounts[Field.LEFT]);
+
+  const [isLessThanMinimum, setLessThanMinimum] = React.useState(false);
+  useInterval(() => {
+    if (currentValue > 0 && currentValue < 10 !== isLessThanMinimum) {
+      setLessThanMinimum(currentValue > 0 && currentValue < 10);
+    }
+  }, 2000);
+
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
-  const [rebalancingModalOpen, setRebalancingModalOpen] = React.useState(false);
 
   const toggleOpen = () => {
     if (shouldLedgerSign) return;
     setOpen(!open);
-  };
-
-  const toggleRebalancingModalOpen = (shouldUpdateLoan: boolean = false) => {
-    setRebalancingModalOpen(!rebalancingModalOpen);
-    if (shouldUpdateLoan) {
-      toggleOpen();
-    }
   };
 
   //before
@@ -121,10 +124,6 @@ const LoanPanel = () => {
   //borrow fee
   const fee = differenceAmount.times(originationFee);
   const addTransaction = useTransactionAdder();
-
-  const handleLoanUpdate = () => {
-    borrowedAmount.isLessThanOrEqualTo(0) ? toggleRebalancingModalOpen() : toggleOpen();
-  };
 
   const handleLoanConfirm = () => {
     if (!account) return;
@@ -159,15 +158,17 @@ const LoanPanel = () => {
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     } else {
+      const repayAmount = parsedAmount[Field.LEFT].isEqualTo(0) ? borrowedAmount : differenceAmount.abs();
+
       bnJs
         .inject({ account })
-        .Loans.returnAsset('bnUSD', parseUnits(differenceAmount.abs().toFixed()), collateralType)
+        .Loans.returnAsset('bnUSD', parseUnits(repayAmount.toFixed()), collateralType)
         .then(res => {
           addTransaction(
             { hash: res.result },
             {
               pending: t`Repaying bnUSD...`,
-              summary: t`Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,
+              summary: t`Repaid ${repayAmount.dp(2).toFormat()} bnUSD.`,
             },
           );
           // close modal
@@ -202,7 +203,9 @@ const LoanPanel = () => {
   }, [afterAmount, inputType]);
 
   const usedAmount = useLoanUsedAmount();
-  const percent = _totalBorrowableAmount.isZero() ? 0 : usedAmount.div(_totalBorrowableAmount).times(100).toNumber();
+  const percent = borrowableAmountWithReserve.isZero()
+    ? 0
+    : usedAmount.div(borrowableAmountWithReserve).times(100).toNumber();
 
   const shouldShowLock = !usedAmount.isZero();
 
@@ -226,10 +229,6 @@ const LoanPanel = () => {
     );
   }
 
-  const currentValue = parseFloat(formattedAmounts[Field.LEFT]);
-
-  const isLessThanMinimum = currentValue > 0 && currentValue < 10;
-
   return (
     <>
       <BoxPanelWrap>
@@ -248,7 +247,7 @@ const LoanPanel = () => {
                     disabled={
                       borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
                     }
-                    onClick={handleLoanUpdate}
+                    onClick={toggleOpen}
                     fontSize={14}
                   >
                     <Trans>Confirm</Trans>
@@ -269,15 +268,18 @@ const LoanPanel = () => {
               disabled={!isAdjusting}
               id="slider-loan"
               start={[borrowedAmount.dp(2).toNumber()]}
-              padding={[Math.max(Math.min(usedAmount.dp(2).toNumber(), _totalBorrowableAmount.dp(2).toNumber()), 0), 0]}
+              padding={[
+                Math.max(Math.min(usedAmount.dp(2).toNumber(), borrowableAmountWithReserve.dp(2).toNumber()), 0),
+                0,
+              ]}
               connect={[true, false]}
               range={{
                 min: [0],
                 // https://github.com/balancednetwork/balanced-network-interface/issues/50
                 max: [
-                  isNaN(_totalBorrowableAmount.dp(2).toNumber()) || _totalBorrowableAmount.dp(2).isZero()
+                  isNaN(borrowableAmountWithReserve.dp(2).toNumber()) || borrowableAmountWithReserve.dp(2).isZero()
                     ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                    : _totalBorrowableAmount.dp(2).toNumber(),
+                    : borrowableAmountWithReserve.dp(2).toNumber(),
                 ],
               }}
               instanceRef={instance => {
@@ -381,20 +383,6 @@ const LoanPanel = () => {
           </Flex>
         </ModalContent>
       </Modal>
-
-      <Modal isOpen={rebalancingModalOpen} onDismiss={() => toggleRebalancingModalOpen(false)} maxWidth={450}>
-        <ModalContent noMessages>
-          <Typography textAlign="center">
-            <Trans>Rebalancing</Trans>
-          </Typography>
-          <RebalancingInfo />
-          <BoxWithBorderTop>
-            <Button onClick={() => toggleRebalancingModalOpen(true)}>
-              <Trans>Understood</Trans>
-            </Button>
-          </BoxWithBorderTop>
-        </ModalContent>
-      </Modal>
     </>
   );
 };
@@ -441,14 +429,6 @@ export const RebalancingInfo = () => {
     </RebalancingInfoWrap>
   );
 };
-
-const BoxWithBorderTop = styled(Box)`
-  padding-top: 25px;
-  margin-top: 25px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  width: 100%;
-  text-align: center;
-`;
 
 const RebalancingColumn = styled(Box)<{ borderRight?: boolean }>`
   width: 50%;

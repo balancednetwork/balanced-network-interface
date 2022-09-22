@@ -69,7 +69,9 @@ function CurrencyRow({
           <DataText variant="p" fontWeight="bold">
             {currency?.symbol}
             <Typography variant="span" fontSize={14} fontWeight={400} color="text2" display="block">
-              {rateFracs && rateFracs[currency.symbol!] && `$${rateFracs[currency.symbol!].toSignificant(3)}`}
+              {rateFracs &&
+                rateFracs[currency.symbol!] &&
+                `$${rateFracs[currency.symbol!].toFixed(2, { groupSeparator: ',' })}`}
             </Typography>
           </DataText>
         </Flex>
@@ -112,7 +114,9 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {rateFracs && rateFracs[currency.symbol!] && `$${rateFracs[currency.symbol!].toSignificant(3)}`}
+            {rateFracs &&
+              rateFracs[currency.symbol!] &&
+              `$${rateFracs[currency.symbol!].toFixed(2, { groupSeparator: ',' })}`}
           </DataText>
           {isUserAddedToken && (isMobile || show) && (
             <MinusCircle

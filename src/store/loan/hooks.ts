@@ -410,6 +410,7 @@ export const useCollateralLockedSliderPos = () => {
 export function useBorrowableAmountWithReserve() {
   const borrowedAmount = useLoanBorrowedAmount();
   const totalBorrowableAmount = useLoanTotalBorrowableAmount();
+  const { originationFee = 0 } = useLoanParameters() || {};
 
-  return BigNumber.max(totalBorrowableAmount.times(0.99).minus(1), borrowedAmount);
+  return BigNumber.max(totalBorrowableAmount.dividedBy(1 + originationFee), borrowedAmount);
 }

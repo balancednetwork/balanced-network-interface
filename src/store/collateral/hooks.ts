@@ -9,7 +9,7 @@ import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
 import { HIGH_PRICE_ASSET_DP, NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { useBorrowedAmounts, useLockingRatios } from 'store/loan/hooks';
+import { useBorrowedAmounts, useLoanParameters, useLockingRatios } from 'store/loan/hooks';
 import { useOraclePrice, useOraclePrices } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -282,6 +282,7 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
   const lockingRatios = useLockingRatios();
   const oraclePrices = useOraclePrices();
   const balances = useWalletBalances();
+  const { originationFee = 0 } = useLoanParameters() || {};
 
   return useMemo(() => {
     const allCollateralInfo: CollateralInfo[] | undefined =
@@ -310,9 +311,8 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
             depositedAmounts[token.symbol!]
               .multipliedBy(oraclePrices[token.symbol!])
               .div(lockingRatios[token.symbol!])
-              .times(0.99)
-              .minus(loanTaken)
-              .minus(1)) ||
+              .dividedBy(1 + originationFee)
+              .minus(loanTaken)) ||
           new BigNumber(0);
 
         return {
@@ -326,7 +326,7 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
         };
       });
     return allCollateralInfo;
-  }, [collateralTokens, depositedAmounts, borrowedAmounts, oraclePrices, balances, lockingRatios]);
+  }, [collateralTokens, depositedAmounts, borrowedAmounts, oraclePrices, balances, lockingRatios, originationFee]);
 }
 
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {

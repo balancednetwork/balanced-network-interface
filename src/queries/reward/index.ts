@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import axios from 'axios';
@@ -9,6 +11,7 @@ import bnJs from 'bnJs';
 import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import QUERY_KEYS from 'queries/queryKeys';
+import { useOraclePrices } from 'store/oracle/hooks';
 
 import { API_ENDPOINT } from '../constants';
 import { useBnJsContractQuery } from '../utils';
@@ -82,6 +85,17 @@ export const useRatesQuery = () => {
   };
 
   return useQuery<{ [key in string]: BigNumber }>('useRatesQuery', fetch);
+};
+
+export const useRatesWithOracle = () => {
+  const { data: rates } = useRatesQuery();
+  const oraclePrices = useOraclePrices();
+
+  return useMemo(() => {
+    const updatedRates = { ...rates };
+    oraclePrices && Object.keys(oraclePrices).forEach(token => (updatedRates[token] = oraclePrices[token]));
+    if (oraclePrices) return updatedRates;
+  }, [rates, oraclePrices]);
 };
 
 export const useAllPairsAPY = (): { [key: number]: BigNumber } | undefined => {

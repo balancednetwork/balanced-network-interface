@@ -131,3 +131,7 @@ export const FUNDING_TOKENS: { [chainId: number]: Token[] } = {
 };
 
 export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
+
+export const HIGH_PRICE_ASSET_DP: { [key in string]: number } = {
+  cx5b5a03cb525a1845d0af3a872d525b18a810acb0: 6,
+};

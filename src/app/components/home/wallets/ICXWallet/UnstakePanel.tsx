@@ -90,7 +90,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
       {!unstakingAmount.isZero() ? (
         <>
           <Typography mb="1">
-            <Trans>Your ICX will be unstaked as more collateral is deposited into Balanced.</Trans>
+            <Trans>Your ICX will be unstaked as more ICX collateral is deposited into Balanced.</Trans>
           </Typography>
 
           <Typography variant="p">

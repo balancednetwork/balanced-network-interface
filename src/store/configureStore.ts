@@ -13,6 +13,7 @@ import fees from './fees/reducer';
 import lists from './lists/reducer';
 import loan from './loan/reducer';
 import mint from './mint/reducer';
+import oracle from './oracle/reducer';
 import ratio from './ratio/reducer';
 import { createReducer } from './reducers';
 import reward from './reward/reducer';
@@ -55,6 +56,7 @@ export function configureAppStore() {
       stakedLP,
       user,
       fees,
+      oracle,
       lists,
     }),
     middleware: [

@@ -10,6 +10,7 @@ import { FeesState } from 'store/fees/reducer';
 import { TokenListState } from 'store/lists/reducer';
 import { LoanState } from 'store/loan/reducer';
 import { MintState } from 'store/mint/reducer';
+import { OracleState } from 'store/oracle/reducer';
 import { RatioState } from 'store/ratio/reducer';
 import { RewardState } from 'store/reward/reducer';
 import { StabilityFundState } from 'store/stabilityFund/reducer';
@@ -35,5 +36,6 @@ export interface RootState {
   stakedLP: StakedLPState;
   user: UserState;
   fees: FeesState;
+  oracle: OracleState;
   lists: TokenListState;
 }

@@ -26,15 +26,9 @@ const BannerContainer = styled(motion(Box))<{ embedded?: boolean }>`
    ${({ embedded }) =>
     embedded &&
     css`
-      margin: 20px 0;
-      ${({ theme }) => theme.mediaWidth.upExtraSmall`
-        margin: 25px 0 25px;
-      `}
-      ${({ theme }) => theme.mediaWidth.upMedium`
-        margin: 25px 0 25px;
-      `}
+      margin: 15px 0;
       ${({ theme }) => theme.mediaWidth.upLarge`
-        margin: 25px auto 25px;
+        margin: 15px auto;
         max-width: 1280px;
         padding: 0;
       `}

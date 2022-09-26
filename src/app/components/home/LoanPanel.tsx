@@ -12,16 +12,17 @@ import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
-import { BoxPanel, FlexPanel } from 'app/components/Panel';
+import { BoxPanel, FlexPanel, BoxPanelWrap } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as InfoAbove } from 'assets/images/rebalancing-above.svg';
 import { ReactComponent as InfoBelow } from 'assets/images/rebalancing-below.svg';
 import bnJs from 'bnJs';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
+import useInterval from 'hooks/useInterval';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useCollateralActionHandlers } from 'store/collateral/hooks';
+import { useCollateralActionHandlers, useCollateralType } from 'store/collateral/hooks';
 import { Field } from 'store/loan/actions';
 import {
   useLoanBorrowedAmount,
@@ -30,6 +31,7 @@ import {
   useLoanActionHandlers,
   useLoanUsedAmount,
   useLoanParameters,
+  useBorrowableAmountWithReserve,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -41,6 +43,7 @@ import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
+  const collateralType = useCollateralType();
   const locale = useActiveLocale();
 
   const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '300px'})`);
@@ -71,13 +74,13 @@ const LoanPanel = () => {
 
   //
   const borrowedAmount = useLoanBorrowedAmount();
-
   const totalBorrowableAmount = useLoanTotalBorrowableAmount();
+  const borrowableAmountWithReserve = useBorrowableAmountWithReserve();
 
   //  calculate dependentField value
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: totalBorrowableAmount.minus(new BigNumber(typedValue || '0')),
+    [dependentField]: borrowableAmountWithReserve.minus(new BigNumber(typedValue || '0')),
   };
 
   const formattedAmounts = {
@@ -90,20 +93,21 @@ const LoanPanel = () => {
 
   const buttonText = borrowedAmount.isZero() ? t`Borrow` : t`Adjust`;
 
+  const currentValue = parseFloat(formattedAmounts[Field.LEFT]);
+
+  const [isLessThanMinimum, setLessThanMinimum] = React.useState(false);
+  useInterval(() => {
+    if (currentValue > 0 && currentValue < 10 !== isLessThanMinimum) {
+      setLessThanMinimum(currentValue > 0 && currentValue < 10);
+    }
+  }, 2000);
+
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
-  const [rebalancingModalOpen, setRebalancingModalOpen] = React.useState(false);
 
   const toggleOpen = () => {
     if (shouldLedgerSign) return;
     setOpen(!open);
-  };
-
-  const toggleRebalancingModalOpen = (shouldUpdateLoan: boolean = false) => {
-    setRebalancingModalOpen(!rebalancingModalOpen);
-    if (shouldUpdateLoan) {
-      toggleOpen();
-    }
   };
 
   //before
@@ -121,10 +125,6 @@ const LoanPanel = () => {
   const fee = differenceAmount.times(originationFee);
   const addTransaction = useTransactionAdder();
 
-  const handleLoanUpdate = () => {
-    borrowedAmount.isLessThanOrEqualTo(0) ? toggleRebalancingModalOpen() : toggleOpen();
-  };
-
   const handleLoanConfirm = () => {
     if (!account) return;
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -136,7 +136,7 @@ const LoanPanel = () => {
     if (shouldBorrow) {
       bnJs
         .inject({ account })
-        .Loans.depositAndBorrow(ZERO.toFixed(), { asset: 'bnUSD', amount: parseUnits(differenceAmount.toFixed()) })
+        .Loans.borrow(parseUnits(differenceAmount.toFixed()), collateralType)
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
@@ -158,15 +158,17 @@ const LoanPanel = () => {
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     } else {
+      const repayAmount = parsedAmount[Field.LEFT].isEqualTo(0) ? borrowedAmount : differenceAmount.abs();
+
       bnJs
         .inject({ account })
-        .Loans.returnAsset('bnUSD', parseUnits(differenceAmount.abs().toFixed()))
+        .Loans.returnAsset('bnUSD', parseUnits(repayAmount.toFixed()), collateralType)
         .then(res => {
           addTransaction(
             { hash: res.result },
             {
               pending: t`Repaying bnUSD...`,
-              summary: t`Repaid ${differenceAmount.abs().dp(2).toFormat()} bnUSD.`,
+              summary: t`Repaid ${repayAmount.dp(2).toFormat()} bnUSD.`,
             },
           );
           // close modal
@@ -201,9 +203,9 @@ const LoanPanel = () => {
   }, [afterAmount, inputType]);
 
   const usedAmount = useLoanUsedAmount();
-
-  const _totalBorrowableAmount = BigNumber.max(totalBorrowableAmount.times(0.99), borrowedAmount);
-  const percent = _totalBorrowableAmount.isZero() ? 0 : usedAmount.div(_totalBorrowableAmount).times(100).toNumber();
+  const percent = borrowableAmountWithReserve.isZero()
+    ? 0
+    : usedAmount.div(borrowableAmountWithReserve).times(100).toNumber();
 
   const shouldShowLock = !usedAmount.isZero();
 
@@ -227,109 +229,108 @@ const LoanPanel = () => {
     );
   }
 
-  const currentValue = parseFloat(formattedAmounts[Field.LEFT]);
-
-  const isLessThanMinimum = currentValue > 0 && currentValue < 10;
-
   return (
     <>
-      <BoxPanel bg="bg3">
-        <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">
-            <Trans>Loan</Trans>
-          </Typography>
-
-          <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
-            {isAdjusting ? (
-              <>
-                <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button
-                  disabled={
-                    borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
-                  }
-                  onClick={handleLoanUpdate}
-                  fontSize={14}
-                >
-                  <Trans>Confirm</Trans>
+      <BoxPanelWrap>
+        <BoxPanel bg="bg3">
+          <Flex justifyContent="space-between" alignItems="center">
+            <Typography variant="h2">
+              <Trans>Loan</Trans>
+            </Typography>
+            <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
+              {isAdjusting ? (
+                <>
+                  <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
+                    <Trans>Cancel</Trans>
+                  </TextButton>
+                  <Button
+                    disabled={
+                      borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
+                    }
+                    onClick={toggleOpen}
+                    fontSize={14}
+                  >
+                    <Trans>Confirm</Trans>
+                  </Button>
+                </>
+              ) : (
+                <Button onClick={handleEnableAdjusting} fontSize={14}>
+                  {buttonText}
                 </Button>
-              </>
-            ) : (
-              <Button onClick={handleEnableAdjusting} fontSize={14}>
-                {buttonText}
-              </Button>
-            )}
+              )}
+            </Flex>
           </Flex>
-        </Flex>
 
-        {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Used`} />}
+          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Used`} />}
 
-        <Box marginY={6}>
-          <Nouislider
-            disabled={!isAdjusting}
-            id="slider-loan"
-            start={[borrowedAmount.dp(2).toNumber()]}
-            padding={[Math.max(Math.min(usedAmount.dp(2).toNumber(), _totalBorrowableAmount.dp(2).toNumber()), 0), 0]}
-            connect={[true, false]}
-            range={{
-              min: [0],
-              // https://github.com/balancednetwork/balanced-network-interface/issues/50
-              max: [
-                isNaN(_totalBorrowableAmount.dp(2).toNumber()) || _totalBorrowableAmount.dp(2).isZero()
-                  ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                  : _totalBorrowableAmount.dp(2).toNumber(),
-              ],
-            }}
-            instanceRef={instance => {
-              if (instance) {
-                sliderInstance.current = instance;
-              }
-            }}
-            onSlide={onSlide}
-          />
-        </Box>
-
-        <PanelInfoWrap>
-          <PanelInfoItem>
-            {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
-              <CurrencyField
-                editable={isAdjusting}
-                isActive
-                label={t`Borrowed`}
-                tooltipText={t`Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan.`}
-                noticeShow={isLessThanMinimum}
-                noticeText={t`10 bnUSD minimum`}
-                value={formattedAmounts[Field.LEFT]}
-                currency={'bnUSD'}
-                onUserInput={onFieldAInput}
-              />
-            ) : (
-              <CurrencyField
-                editable={isAdjusting}
-                isActive
-                label={t`Borrowed`}
-                tooltipText={t`Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan.`}
-                value={formattedAmounts[Field.LEFT]}
-                currency={'bnUSD'}
-                onUserInput={onFieldAInput}
-              />
-            )}
-          </PanelInfoItem>
-
-          <PanelInfoItem>
-            <CurrencyField
-              editable={isAdjusting}
-              isActive={false}
-              label={t`Available`}
-              tooltipText={t`The amount of ICX available to deposit from your wallet.`}
-              value={formattedAmounts[Field.RIGHT]}
-              currency={'bnUSD'}
-              onUserInput={onFieldBInput}
+          <Box marginY={6}>
+            <Nouislider
+              disabled={!isAdjusting}
+              id="slider-loan"
+              start={[borrowedAmount.dp(2).toNumber()]}
+              padding={[
+                Math.max(Math.min(usedAmount.dp(2).toNumber(), borrowableAmountWithReserve.dp(2).toNumber()), 0),
+                0,
+              ]}
+              connect={[true, false]}
+              range={{
+                min: [0],
+                // https://github.com/balancednetwork/balanced-network-interface/issues/50
+                max: [
+                  isNaN(borrowableAmountWithReserve.dp(2).toNumber()) || borrowableAmountWithReserve.dp(2).isZero()
+                    ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
+                    : borrowableAmountWithReserve.dp(2).toNumber(),
+                ],
+              }}
+              instanceRef={instance => {
+                if (instance) {
+                  sliderInstance.current = instance;
+                }
+              }}
+              onSlide={onSlide}
             />
-          </PanelInfoItem>
-        </PanelInfoWrap>
-      </BoxPanel>
+          </Box>
+          <PanelInfoWrap>
+            <PanelInfoItem>
+              {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
+                <CurrencyField
+                  editable={isAdjusting}
+                  isActive
+                  label="Borrowed"
+                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                  noticeShow={isLessThanMinimum}
+                  noticeText={'10 bnUSD minimum'}
+                  value={formattedAmounts[Field.LEFT]}
+                  currency={'bnUSD'}
+                  onUserInput={onFieldAInput}
+                />
+              ) : (
+                <CurrencyField
+                  editable={isAdjusting}
+                  isActive
+                  label="Borrowed"
+                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
+                  value={formattedAmounts[Field.LEFT]}
+                  currency={'bnUSD'}
+                  onUserInput={onFieldAInput}
+                />
+              )}
+            </PanelInfoItem>
+
+            <PanelInfoItem>
+              <CurrencyField
+                editable={isAdjusting}
+                isActive={false}
+                label="Available"
+                tooltipText="The amount of ICX available to deposit from your wallet."
+                value={formattedAmounts[Field.RIGHT]}
+                currency={'bnUSD'}
+                onUserInput={onFieldBInput}
+              />
+            </PanelInfoItem>
+          </PanelInfoWrap>
+        </BoxPanel>
+      </BoxPanelWrap>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
@@ -382,25 +383,13 @@ const LoanPanel = () => {
           </Flex>
         </ModalContent>
       </Modal>
-
-      <Modal isOpen={rebalancingModalOpen} onDismiss={() => toggleRebalancingModalOpen(false)} maxWidth={450}>
-        <ModalContent noMessages>
-          <Typography textAlign="center">
-            <Trans>Rebalancing</Trans>
-          </Typography>
-          <RebalancingInfo />
-          <BoxWithBorderTop>
-            <Button onClick={() => toggleRebalancingModalOpen(true)}>
-              <Trans>Understood</Trans>
-            </Button>
-          </BoxWithBorderTop>
-        </ModalContent>
-      </Modal>
     </>
   );
 };
 
 export const RebalancingInfo = () => {
+  const collateralType = useCollateralType();
+
   return (
     <RebalancingInfoWrap flexDirection="row" flexWrap="wrap" alignItems="stretch" width="100%">
       <Typography
@@ -434,22 +423,12 @@ export const RebalancingInfo = () => {
         </Typography>
       </RebalancingColumn>
       <Typography marginTop="25px">
-        <Trans>
-          You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD
-          pool. The smaller your loan, the less rebalancing affects you.
-        </Trans>
+        {t`You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the ${`${collateralType}/bnUSD`}
+          pool. The smaller your loan, the less rebalancing affects you.`}
       </Typography>
     </RebalancingInfoWrap>
   );
 };
-
-const BoxWithBorderTop = styled(Box)`
-  padding-top: 25px;
-  margin-top: 25px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  width: 100%;
-  text-align: center;
-`;
 
 const RebalancingColumn = styled(Box)<{ borderRight?: boolean }>`
   width: 50%;

@@ -152,6 +152,8 @@ type OffsetModifier = [number, number];
 
 export interface PopperProps {
   anchorEl: HTMLElement | null;
+  arrowEl?: HTMLElement | null;
+  containerOffset?: number;
   show: boolean;
   children: React.ReactNode;
   placement?: Placement;
@@ -181,13 +183,22 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
   );
 }
 
-export function DropdownPopper({ show, children, placement = 'auto', anchorEl, zIndex }: PopperProps) {
+export function DropdownPopper({
+  show,
+  children,
+  arrowEl,
+  containerOffset,
+  offset,
+  placement = 'auto',
+  anchorEl,
+  zIndex,
+}: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
   const customModifier = React.useMemo(
     () => [
-      { name: 'offset', options: { offset: [20, 12] } },
+      { name: 'offset', options: { offset: offset ? offset : [20, 12] } },
       {
         name: 'arrow',
         options: {
@@ -195,7 +206,7 @@ export function DropdownPopper({ show, children, placement = 'auto', anchorEl, z
         },
       },
     ],
-    [arrowElement],
+    [arrowElement, offset],
   );
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
@@ -208,6 +219,13 @@ export function DropdownPopper({ show, children, placement = 'auto', anchorEl, z
     update && update();
   }, [update]);
   useInterval(updateCallback, show ? 100 : null);
+
+  if (containerOffset) {
+    const arrowX = arrowEl?.getBoundingClientRect().x || 0;
+    if (styles.arrow) {
+      styles.arrow.transform = `translate3d(${arrowX - containerOffset + 6}px,0,0)`;
+    }
+  }
 
   return (
     <Portal>

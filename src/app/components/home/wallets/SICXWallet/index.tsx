@@ -8,7 +8,6 @@ import Divider from 'app/components/Divider';
 
 import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';
-import DepositPanel from './DepositPanel';
 import UnstakePanel from './UnstakePanel';
 
 export default function SICXWallet({ currency }: { currency: Currency }) {
@@ -20,9 +19,6 @@ export default function SICXWallet({ currency }: { currency: Currency }) {
             <Trans>Send</Trans>
           </StyledTab>
           <StyledTab>
-            <Trans>Deposit</Trans>
-          </StyledTab>
-          <StyledTab>
             <Trans>Unstake</Trans>
           </StyledTab>
         </StyledTabList>
@@ -30,10 +26,6 @@ export default function SICXWallet({ currency }: { currency: Currency }) {
         <TabPanels>
           <TabPanel>
             <SendPanel currency={currency} />
-          </TabPanel>
-
-          <TabPanel>
-            <DepositPanel />
           </TabPanel>
           <TabPanel>
             <UnstakePanel />

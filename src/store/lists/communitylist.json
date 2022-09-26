@@ -59,14 +59,6 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/void.png"
     },
     {
-      "address": "cxc2faf30ef79327f8a177f4b236ee3a1db8de81ec1",
-      "chainId": 7,
-      "name": "Void Token",
-      "symbol": "VOID",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/void.png"
-    },
-    {
       "address": "cxc0b5b52c9f8b4251a47e91dda3bd61e5512cd782",
       "chainId": 1,
       "name": "TAP Token",
@@ -81,6 +73,14 @@
       "symbol": "IAM",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iam.png"
+    },
+    {
+      "address": "cxd1f08a2967de6374f52408396bfe2fe8183b2800",
+      "chainId": 1,
+      "name": "CODE Token",
+      "symbol": "CODE",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/code.png"
     }
   ]
 }

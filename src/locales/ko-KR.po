@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-09-07 20:33\n"
+"PO-Revision-Date: 2022-09-23 09:31\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -24,10 +24,6 @@ msgstr "({0}% 필요)"
 #: src/app/components/StabilityFund/index.tsx
 msgid "1 {sendSymbol} per {0}"
 msgstr ""
-
-#: src/app/components/home/LoanPanel.tsx
-msgid "10 bnUSD minimum"
-msgstr "최소 10 bnUSD"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "100 bnUSD"
@@ -60,6 +56,10 @@ msgstr "활동"
 #: src/app/components/home/TransactionPanel.tsx
 msgid "AMOUNT"
 msgstr "수량"
+
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "APY"
+msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
@@ -140,7 +140,6 @@ msgstr "자산"
 msgid "Assets to send"
 msgstr "송금할 자산"
 
-#: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/WalletPanel.tsx
 msgid "Available"
 msgstr "이용 가능"
@@ -201,11 +200,6 @@ msgid "Borrow LTV"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
-msgid "Borrowed"
-msgstr "대출됨"
-
-#: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed {0} bnUSD."
 msgstr "{0} bnUSD 대출됨."
 
@@ -225,8 +219,8 @@ msgstr "대출 중인 bnUSD..."
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/wallets/SendPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Cancel"
@@ -406,8 +400,8 @@ msgid "DEX"
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Daily rewards"
 msgstr "1일 보상"
 
@@ -419,13 +413,8 @@ msgstr ""
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/home/wallets/SICXWallet/index.tsx
 msgid "Deposit"
 msgstr "예치"
-
-#: src/app/components/home/CollateralPanel.tsx
-msgid "Deposit ICON collateral?"
-msgstr "ICON을 담보로 예치하겠습니까?"
 
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit as collateral"
@@ -440,8 +429,8 @@ msgid "Deposit sICX collateral?"
 msgstr "sICX를 담보로 예치하시겠습니까?"
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "Deposited"
-msgstr "예치"
+msgid "Deposit {0} collateral?"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited {0} ICX as collateral."
@@ -451,6 +440,11 @@ msgstr "{0} ICX를 담보로 예치했습니다."
 msgid "Deposited {0} sICX as collateral."
 msgstr "{0} sICX를 담보로 예치했습니다."
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Deposited {0} {collateralType} as collateral."
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Depositing collateral..."
@@ -486,6 +480,10 @@ msgstr "수량을 입력하세요."
 msgid "Exchange rate"
 msgstr "거래 비율"
 
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "FEES (24H)"
+msgstr ""
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Failed to enact"
 msgstr "제정 실패"
@@ -493,6 +491,10 @@ msgstr "제정 실패"
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"
 msgstr "수수료"
+
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "Fees:"
+msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "For"
@@ -523,17 +525,26 @@ msgstr "bnUSD가 $1 이상일 경우"
 msgid "If bnUSD is below $1"
 msgstr "bnUSD가 $1 미만인 경우"
 
-#: src/app/components/home/PositionDetailPanel.tsx
-msgid "If the ICX price reaches ${0}, all your collateral will be liquidated."
-msgstr "ICX 가격이 ${0} 에 도달하면 모든 담보가 청산됩니다."
-
 #: src/app/components/trade/SwapPanel.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "이 금액보다 가격이 차이가 많이 나는 경우 스왑이 실패합니다."
 
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "If the {0} price reaches {1}, all your collateral will be\n"
+"liquidated."
+msgstr ""
+
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "Impermanent loss is not factored in."
+msgstr ""
+
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "In contract"
 msgstr "계약중"
+
+#: src/app/components/trade/LiquidityPoolsPanel.tsx
+msgid "Incentivised pools"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Includes a fee of {0} bnUSD."
@@ -574,6 +585,10 @@ msgstr "제안서를 제출하는 데 100 bnUSD 가 필요합니다."
 msgid "Keep a close eye on this number, as rebalancing may cause it to fluctuate."
 msgstr "재조정으로 인해 수치가 변동될 수 있으므로, 이 수치를 주의 깊게 관찰하십시오."
 
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "LIQUIDITY"
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 msgid "Line"
 msgstr "선"
@@ -587,9 +602,9 @@ msgstr "청산 됨"
 msgid "Liquidation LTV"
 msgstr ""
 
-#: src/app/components/trade/LiquidityDetails.tsx
-msgid "Liquidity details"
-msgstr "유동성 현황"
+#: src/app/components/trade/LiquidityPoolsPanel.tsx
+msgid "Liquidity pools"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -672,6 +687,10 @@ msgstr ""
 msgid "Oracle type"
 msgstr ""
 
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "POOL"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past day"
 msgstr "하루 동안"
@@ -697,8 +716,8 @@ msgstr "보류 중"
 msgid "Pool"
 msgstr "풀"
 
+#: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/StakeLPPanel.tsx
 msgid "Pool share"
 msgstr "풀 공유"
 
@@ -738,7 +757,6 @@ msgstr "제안"
 msgid "Quorum not reached"
 msgstr "정족수에 도달하지 못했습니다"
 
-#: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Rebalancing"
 msgstr "재조정"
@@ -759,6 +777,10 @@ msgstr "재조정 임계값"
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Receive"
 msgstr "송금받기"
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
+msgstr ""
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -1023,31 +1045,42 @@ msgstr "{inputCurrency} 을 {outputCurrency} 으로 스왑하는 중..."
 msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
 msgstr "최대 7일이 소요될 수 있습니다. 진행을 원하시면 '지갑' 메뉴 > '스테이킹 해제'를 선택하고 실행하세요."
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Takes up to 7 days. When it's ready, you can claim your ICX from the wallet section."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Text"
 msgstr "글"
+
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "The BALN APY is calculated from the USD value of BALN rewards available for a pool."
+msgstr ""
+
+#: src/app/components/ICXDisplayTypeSwitcher/index.tsx
+msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
+msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
 msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
-msgid "The amount of ICX available to deposit from your wallet."
-msgstr "지갑에서 예치 가능한 ICX의 양."
-
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "The community list contains all popular assets that aren't listed in the app by default."
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
-msgid "The current ICX price is"
-msgstr "현재 ICX 가격은"
-
-#: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current bnUSD price is"
 msgstr "현재 bnUSD 가격은"
+
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "The current {0} price is"
+msgstr ""
+
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
+msgstr ""
 
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -1125,10 +1158,6 @@ msgstr "거래"
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Transaction"
 msgstr "거래"
-
-#: src/app/components/home/LoanPanel.tsx
-msgid "Understood"
-msgstr "동의함"
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 #: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
@@ -1208,9 +1237,17 @@ msgstr ""
 msgid "Uses the price of an asset tracked via the Band oracle."
 msgstr ""
 
+#: src/app/components/trade/AllPoolsPanel.tsx
+msgid "VOLUME (24H)"
+msgstr ""
+
 #: src/app/components/home/WalletPanel.tsx
 msgid "Value"
 msgstr "가치"
+
+#: src/app/components/ICXDisplayTypeSwitcher/index.tsx
+msgid "View and manage your collateral as ICX or sICX (Staked ICX)."
+msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 msgid "View disclaimer"
@@ -1255,7 +1292,6 @@ msgstr "투표는 오전 2시부터 시작됩니다."
 
 #: src/app/components/Header/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
-#: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/WalletPanel.tsx
 msgid "Wallet"
 msgstr "지갑"
@@ -1285,43 +1321,45 @@ msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
 msgstr "당신이 bnUSD를 빌리는 동안, 담보는 bnUSD의 가치를 안정적으로 유지하는 데 사용됩니다."
 
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw"
 msgstr "회수하기"
 
-#: src/app/components/home/CollateralPanel.tsx
-msgid "Withdraw ICON collateral?"
-msgstr "ICON 담보물를 회수하겠습니까?"
-
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw liquidity"
 msgstr "유동성 물량 인출"
 
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw liquidity?"
 msgstr "유동성 물량을 회수하겠습니까?"
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw sICX?"
 msgstr "sICX를 회수하겠습니까?"
 
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Withdraw {0} collateral?"
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw:"
 msgstr "회수하기:"
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdrawing ICX..."
 msgstr "ICX 회수하는 중..."
 
 #: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
 msgid "Withdrawing collateral..."
 msgstr "담보를 회수 중"
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdrawing sICX..."
 msgstr "sICX 회수하는 중..."
 
@@ -1354,12 +1392,9 @@ msgid "You'll only be able to interact with the default assets listed on Balance
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the sICX/bnUSD pool. The smaller your loan, the less rebalancing affects you."
-msgstr "보상으로 BALN을 받게 되며, sICX/bnUSD 풀에 유동성을 공급하여 변동을 완화할 수 있습니다. 대출 규모가 작을수록 재조정이 영향을 덜 받습니다."
-
-#: src/app/components/home/CollateralPanel.tsx
-msgid "You'll receive sICX (staked ICX). Unstake it from your wallet, or swap it for ICX on the Trade page."
-msgstr "당신은 sICX(스테이킹된 ICX)를 받게 됩니다. 지갑 > sICX 메뉴에서 '스테이킹 해제'하거나 '거래' 페이지에서 ICX로 스왑할 수 있습니다."
+msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the {0}\n"
+"pool. The smaller your loan, the less rebalancing affects you."
+msgstr ""
 
 #: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
 msgid "Your BALN will unstake on {0} at\n"
@@ -1368,26 +1403,29 @@ msgstr "당신의 BALN는 {0} 에서 스테이킹 해제됩니다.\n"
 "{1}."
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "Your ICX will be staked, so your collateral value will increase over time."
-msgstr "당신의 담보 ICX는 스테이킹됨으로 인해, 시간이 지남에 따라 수량이 증가할 것입니다."
-
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
-msgid "Your ICX will be unstaked as more collateral is deposited into Balanced."
-msgstr "Balanced에 더 많은 담보가 예치됨에 따라 당신의 ICX는 스테이킹 해제되었습니다."
+msgid "Your ICX is staked (sICX). Choose what to do with it:"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "Your collateral balance is <0>{0} sICX</0> (staked ICX). The ICX value of your sICX is displayed, and will increase over time from staking rewards. You can't use it unless you withdraw it."
-msgstr "당신의 담보 잔액은 <0>{0} sICX</0> (스테이킹 된 ICX)입니다. sICX의 ICX 값이 표시되며, 시간이 지남에 따라 스테이킹 보상으로 수량이 증가하며. 인출하지 않으면 사용할 수 없습니다."
+msgid "Your ICX will be converted to sICX (Staked ICX)."
+msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
-msgid "Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-msgstr "당신의 담보 잔액. 스테이킹을 통해 이자를 받지만, 상황에 따라 대출 상환을 위해 판매될 수도 있습니다."
+#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+msgid "Your ICX will be unstaked as more ICX collateral is deposited into Balanced."
+msgstr ""
+
+#: src/app/components/trade/LiquidityPoolsPanel.tsx
+msgid "Your pools"
+msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Your supply"
 msgstr "당신의 공급량"
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "You’ll receive sICX when you withdraw, which you can unstake or swap for ICX on the Trade page."
+msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "and ends after 5 days."
@@ -1451,13 +1489,17 @@ msgstr "{0} BALN 스테이킹 해제"
 msgid "{0} ICX"
 msgstr "{0} ICX"
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "{0} ICX added to your wallet."
 msgstr "{0} ICX가 지갑에 추가되었습니다."
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"
 msgstr "{0} ICX를 청구할 수 있습니다."
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "{0} ICX is unstaking."
+msgstr ""
 
 #: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX unstaking"
@@ -1471,8 +1513,7 @@ msgstr "{0} 유동성 풀"
 msgid "{0} liquidity pool{1}"
 msgstr "{0} 유동성 풀 {1}"
 
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "{0} sICX added to your wallet."
 msgstr "{0} sICX가 지갑에 추가되었습니다."
 
@@ -1489,6 +1530,11 @@ msgstr "{0} {1} 이 지갑에 추가되었습니다."
 #: src/app/components/trade/SwapPanel.tsx
 msgid "{0} {1} per {2}"
 msgstr "{2} 당 {0} {1}"
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+msgid "{0} {collateralType} added to your wallet."
+msgstr ""
 
 #: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "{0}% staked"

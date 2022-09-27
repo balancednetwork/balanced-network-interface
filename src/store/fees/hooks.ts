@@ -13,6 +13,11 @@ export function useUnclaimedFees(): { [key: string]: CurrencyAmount<Token> } {
   return useSelector((state: AppState) => state.fees.fees);
 }
 
+export function useHasUnclaimedFees(): boolean {
+  const unclaimedFees = useUnclaimedFees();
+  return unclaimedFees && Object.values(unclaimedFees).some(amount => amount.greaterThan(0));
+}
+
 export function useFetchUnclaimedDividends(): void {
   const dispatch = useDispatch();
   const { account } = useIconReact();

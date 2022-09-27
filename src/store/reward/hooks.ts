@@ -10,6 +10,7 @@ import bnJs from 'bnJs';
 import { PLUS_INFINITY } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useCollateralInputAmountAbsolute } from 'store/collateral/hooks';
+import { useHasUnclaimedFees } from 'store/fees/hooks';
 import { useLoanInputAmount } from 'store/loan/hooks';
 import { useOraclePrice } from 'store/oracle/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -87,6 +88,7 @@ export const useCurrentCollateralRatio = (): BigNumber => {
 
 export const useHasNetworkFees = () => {
   const { account } = useIconReact();
+  const hasUnclaimedFees = useHasUnclaimedFees();
   const transactions = useAllTransactions();
   const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
 
@@ -94,13 +96,13 @@ export const useHasNetworkFees = () => {
     const checkIfHasNetworkFees = async () => {
       if (account) {
         const balnDetails = await bnJs.BALN.detailsBalanceOf(account);
-        if (Number(balnDetails['Staked balance'])) setHasNetworkFees(true);
+        if (Number(balnDetails['Staked balance']) || hasUnclaimedFees) setHasNetworkFees(true);
         else setHasNetworkFees(false);
       }
     };
 
     checkIfHasNetworkFees();
-  }, [account, transactions]);
+  }, [account, transactions, hasUnclaimedFees]);
 
   return hasNetworkFees;
 };

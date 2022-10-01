@@ -26,8 +26,8 @@ import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
-import { SearchInput } from '../SearchModal/CurrencySearch';
 import { filterTokens, useSortedTokensByQuery } from '../SearchModal/filtering';
+import SearchInput from '../SearchModal/SearchInput';
 import { useTokenComparator } from '../SearchModal/sorting';
 import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';

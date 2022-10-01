@@ -2,9 +2,11 @@ import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { Flex } from 'rebass/styled-components';
+import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { Button } from 'app/components/Button';
+import { HEIGHT } from 'app/components/TradingViewChart';
 import { ZERO } from 'constants/index';
 import { FRACTION_ZERO } from 'constants/misc';
 
@@ -66,6 +68,43 @@ export function withdrawMessage(
   return { pendingMessage, successMessage, failureMessage };
 }
 
+export const ChartContainer = styled(Box)`
+  position: relative;
+  height: ${HEIGHT}px;
+`;
+
+export const ChartControlGroup = styled(Box)`
+  text-align: left;
+
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    text-align: right;
+  `}
+
+  & button {
+    margin-right: 5px;
+  }
+
+  & button:last-child {
+    margin-right: 0;
+  }
+`;
+
+export const ChartControlButton = styled(Button)<{ active?: boolean }>`
+  padding: 1px 12px;
+  border-radius: 100px;
+  color: #ffffff;
+  font-size: 14px;
+  background-color: ${({ theme, active }) => (active ? theme.colors.primary : theme.colors.bg3)};
+  transition: background-color 0.3s ease;
+
+  :hover {
+    background-color: ${({ theme }) => theme.colors.primary};
+  }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 1px 12px;
+  `}
+`;
 export const stakedFraction = stakedLPPercent => {
   const [stakedNumerator, stakedDenominator] = stakedLPPercent ? stakedLPPercent.toFraction() : [0, 1];
   const stakedFraction = new Fraction(stakedNumerator.toFixed(), stakedDenominator.toFixed());

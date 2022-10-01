@@ -14,8 +14,9 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
-import { useUserCollectedFeesQuery, useRewardQuery, usePlatformDayQuery, BATCH_SIZE } from 'queries/reward';
+import { useRewardQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useFetchUnclaimedDividends, useUnclaimedFees } from 'store/fees/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
@@ -61,7 +62,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       .Rewards.claimRewards()
       .then(res => {
         addTransaction(
-          { hash: res.result }, //
+          { hash: res.result },
           {
             summary: t`Claimed ${reward?.dp(2).toFormat()} BALN.`,
             pending: t`Claiming rewards...`,
@@ -109,7 +110,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       return (
         <>
           <Typography variant="p">
-            {`${reward?.dp(2).toFormat()} `}
+            {`${reward?.toFormat(2)} `}
             <Typography as="span" color="text1">
               BALN
             </Typography>
@@ -202,7 +203,6 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
 
 const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }) => {
   const { account } = useIconReact();
-  const [feeTx, setFeeTx] = React.useState('');
   const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -214,21 +214,18 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
     if (bnJs.contractSettings.ledgerSettings.actived) {
       changeShouldLedgerSign(true);
     }
-    const end = platformDay - feesIndex * BATCH_SIZE;
-    const start = end - BATCH_SIZE > 0 ? end - BATCH_SIZE : 0;
 
     bnJs
       .inject({ account })
-      .Dividends.claim(start, end)
+      .Dividends.claimDividends()
       .then(res => {
         addTransaction(
-          { hash: res.result }, //
+          { hash: res.result },
           {
             summary: t`Claimed fees.`,
             pending: t`Claiming fees...`,
           },
         );
-        setFeeTx(res.result);
         toggleOpen();
       })
       .catch(e => {
@@ -240,18 +237,8 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
       });
   };
 
-  const feeTxStatus = useTransactionStatus(feeTx);
-
   const hasNetworkFees = useHasNetworkFees();
-  const { data: platformDay = 0 } = usePlatformDayQuery();
-  const { data: feesArr, refetch } = useUserCollectedFeesQuery(1, platformDay);
-  const fees = feesArr?.find(fees => fees);
-  const feesIndex = feesArr?.findIndex(fees => fees) || 0;
-  const hasFee = !!fees;
-  const count = feesArr?.reduce((c, v) => (v ? ++c : c), 0);
-  React.useEffect(() => {
-    if (feeTxStatus === TransactionStatus.success) refetch();
-  }, [feeTxStatus, refetch]);
+  const fees = useUnclaimedFees();
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
@@ -263,30 +250,21 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
   const hasEnoughICX = useHasEnoughICX();
 
   const getNetworkFeesUI = () => {
-    if (hasNetworkFees && !hasFee) {
-      return (
-        <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
-          <Trans>Pending</Trans>
-          <QuestionHelper text={t`To earn network fees, stake BALN from your wallet.`} />
-        </Typography>
-      );
-    } else if (hasFee) {
+    if (hasNetworkFees) {
       return (
         <>
           {fees &&
-            Object.keys(fees)
-              .filter(key => fees[key].greaterThan(0))
-              .map(key => (
-                <Typography key={key} variant="p">
-                  {`${fees[key].toFixed(2)}`}{' '}
-                  <Typography key={key} as="span" color="text1">
-                    {fees[key].currency.symbol}
-                  </Typography>
+            Object.keys(fees).map(key => (
+              <Typography key={key} variant="p">
+                {`${fees[key].toFixed(2)}`}{' '}
+                <Typography key={key} as="span" color="text1">
+                  {fees[key].currency.symbol}
                 </Typography>
-              ))}
+              </Typography>
+            ))}
 
-          <Button mt={3} mx={shouldBreakOnMobile ? 0 : 2} onClick={toggleOpen} fontSize={14}>
-            {count && count > 1 ? t`Claim (1 of ${count})` : t`Claim`}
+          <Button mt={2} mx={shouldBreakOnMobile ? 0 : 2} onClick={toggleOpen}>
+            <Trans>Claim</Trans>
           </Button>
         </>
       );
@@ -323,16 +301,14 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
 
           <Flex flexDirection="column" alignItems="center" mt={2}>
             {fees &&
-              Object.keys(fees)
-                .filter(key => fees[key].greaterThan(0))
-                .map(key => (
-                  <Typography key={key} variant="p">
-                    {`${fees[key].toFixed(2)}`}{' '}
-                    <Typography key={key} as="span" color="text1">
-                      {fees[key].currency.symbol}
-                    </Typography>
+              Object.keys(fees).map(key => (
+                <Typography key={key} variant="p">
+                  {`${fees[key].toFixed(2)}`}{' '}
+                  <Typography key={key} as="span" color="text1">
+                    {fees[key].currency.symbol}
                   </Typography>
-                ))}
+                </Typography>
+              ))}
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
@@ -355,6 +331,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
 };
 
 const RewardsPanel = () => {
+  useFetchUnclaimedDividends();
   const locale = useActiveLocale();
   const shouldBreakOnMobile = useMedia('(max-width: 499px)') && 'en-US,ko-KR'.indexOf(locale) < 0;
   return (

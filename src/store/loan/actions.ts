@@ -6,7 +6,11 @@ export enum Field {
   RIGHT = 'RIGHT',
 }
 
-export const changeBorrowedAmount = createAction<{ borrowedAmount: BigNumber }>('loan/changeBorrowedAmount');
+export const changeBorrowedAmount = createAction<{ borrowedAmount: BigNumber; collateralType: string }>(
+  'loan/changeBorrowedAmount',
+);
+
+export const setLockingRatio = createAction<{ lockingRatio: number; collateralType: string }>('loan/setLockingRatio');
 
 export const changeBadDebt = createAction<{ badDebt: BigNumber }>('loan/changeBadDebt');
 

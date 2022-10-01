@@ -9,22 +9,23 @@ import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { TVChartContainer } from 'app/components/TradingViewAdvanced/TVChartContainer';
-import TradingViewChart, { CHART_TYPES, CHART_PERIODS, HEIGHT } from 'app/components/TradingViewChart';
+import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from 'app/components/TradingViewChart';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { getTradePair, isQueue } from 'constants/currency';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useActiveLocale } from 'hooks/useActiveLocale';
+import { useV2Pair } from 'hooks/useV2Pairs';
 import useWidth from 'hooks/useWidth';
 import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers } from 'store/swap/hooks';
 import { generateChartData, toFraction } from 'utils';
+
+import { ChartContainer, ChartControlGroup, ChartControlButton } from './utils';
 
 const CHART_TYPES_LABELS = {
   [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),
@@ -81,7 +82,7 @@ export default function SwapDescription() {
           );
   }
 
-  const [pair] = getTradePair(currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol);
+  const [, pair] = useV2Pair(currencies[Field.INPUT], currencies[Field.OUTPUT]);
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
@@ -156,7 +157,7 @@ export default function SwapDescription() {
             </>
           )}
         </Box>
-        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair || isQueue(pair)}>
+        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair || pair.poolId === 1}>
           <ChartControlGroup mb={2}>
             {Object.keys(CHART_PERIODS).map(key => (
               <ChartControlButton
@@ -202,8 +203,8 @@ export default function SwapDescription() {
               <>
                 {chartOption.type === CHART_TYPES.AREA && (
                   <TradingViewChart
-                    data={isQueue(pair) ? queueData : data}
-                    volumeData={isQueue(pair) ? queueData : data}
+                    data={pair.poolId === 1 ? queueData : data}
+                    volumeData={pair.poolId === 1 ? queueData : data}
                     width={width}
                     type={CHART_TYPES.AREA}
                   />
@@ -255,42 +256,4 @@ const TVChartContainerWrap = styled(Flex)`
     width: 100%;
     height: 100%;
   }
-`;
-
-const ChartControlButton = styled(Button)<{ active: boolean }>`
-  padding: 1px 12px;
-  border-radius: 100px;
-  color: #ffffff;
-  font-size: 14px;
-  background-color: ${({ theme, active }) => (active ? theme.colors.primary : theme.colors.bg3)};
-  transition: background-color 0.3s ease;
-
-  :hover {
-    background-color: ${({ theme }) => theme.colors.primary};
-  }
-
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 1px 12px;
-  `}
-`;
-
-const ChartControlGroup = styled(Box)`
-  text-align: left;
-
-  ${({ theme }) => theme.mediaWidth.upSmall`
-    text-align: right;
-  `}
-
-  & button {
-    margin-right: 5px;
-  }
-
-  & button:last-child {
-    margin-right: 0;
-  }
-`;
-
-const ChartContainer = styled(Box)`
-  position: relative;
-  height: ${HEIGHT}px;
 `;

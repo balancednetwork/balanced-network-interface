@@ -57,7 +57,7 @@ const WalletButtons = styled(Flex)`
   align-items: center;
 `;
 
-const StyledAddress = styled(Typography)`
+export const StyledAddress = styled(Typography)`
   :hover {
     color: #2fccdc;
     cursor: pointer;

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
+import { useHistory } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -13,6 +14,7 @@ type NotificationProps = {
   closeToast?: Function;
   summary?: string;
   failureReason?: string;
+  redirectOnSuccess?: string;
 };
 
 const NotificationPending = ({ summary }: NotificationProps) => {
@@ -31,7 +33,10 @@ const NotificationPending = ({ summary }: NotificationProps) => {
   );
 };
 
-const NotificationSuccess = ({ summary }: NotificationProps) => {
+const NotificationSuccess = ({ summary, redirectOnSuccess }: NotificationProps) => {
+  const history = useHistory();
+  redirectOnSuccess && history.push(redirectOnSuccess);
+
   return (
     <NotificationContainer>
       <TransactionStatus>

@@ -10,9 +10,7 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
-import { Banner } from './components/Banner';
-import { Airdrip } from './containers/Airdrip/Loadable';
-import Message from './Message';
+import { Claim } from './containers/Claim/Loadable';
 import Routes from './Routes';
 
 function Updaters() {
@@ -37,9 +35,6 @@ export function App() {
         <NotificationContainer />
         <WalletModal />
         {/* Add message for community */}
-        <Banner messageID={'stakingLP'}>
-          <Message />
-        </Banner>
 
         <Helmet
           titleTemplate="%s | Balanced"
@@ -47,7 +42,7 @@ export function App() {
           htmlAttributes={{ lang: i18n.language }}
         />
         <Switch>
-          <Route exact path="/claim" component={Airdrip} />
+          <Route exact path="/claim" component={Claim} />
           <Route component={Routes} />
         </Switch>
       </ThemeProvider>

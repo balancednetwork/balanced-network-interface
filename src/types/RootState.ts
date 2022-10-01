@@ -7,8 +7,11 @@
 import { ApplicationState } from 'store/application/reducer';
 import { BBalnState } from 'store/bbaln/reducer';
 import { CollateralState } from 'store/collateral/reducer';
+import { FeesState } from 'store/fees/reducer';
+import { TokenListState } from 'store/lists/reducer';
 import { LoanState } from 'store/loan/reducer';
 import { MintState } from 'store/mint/reducer';
+import { OracleState } from 'store/oracle/reducer';
 import { RatioState } from 'store/ratio/reducer';
 import { RewardState } from 'store/reward/reducer';
 import { StabilityFundState } from 'store/stabilityFund/reducer';
@@ -34,4 +37,7 @@ export interface RootState {
   stabilityFund: StabilityFundState;
   stakedLP: StakedLPState;
   user: UserState;
+  fees: FeesState;
+  oracle: OracleState;
+  lists: TokenListState;
 }

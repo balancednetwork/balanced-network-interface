@@ -90,6 +90,7 @@ export interface PopoverProps {
   refStyle?: React.CSSProperties;
   zIndex?: number;
   fallbackPlacements?: Placement[];
+  strategy?: 'fixed' | 'absolute';
 }
 
 export default function Popover({
@@ -102,13 +103,14 @@ export default function Popover({
   forcePlacement,
   zIndex,
   fallbackPlacements,
+  strategy,
 }: PopoverProps) {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
   const { styles, update, attributes } = usePopper(referenceElement, popperElement, {
     placement,
-    strategy: 'fixed',
+    strategy: strategy ? strategy : 'fixed',
     modifiers: [
       { name: 'offset', options: { offset: [skidding[placement] || 0, 12] } },
       { name: 'arrow', options: { element: arrowElement } },
@@ -263,7 +265,7 @@ export function SelectorPopover({ show, children, placement = 'auto', anchorEl }
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
     placement,
-    strategy: 'fixed',
+    strategy: 'absolute',
     modifiers: [{ name: 'offset', options: { offset: [0, 1] } }],
   });
   const updateCallback = useCallback(() => {

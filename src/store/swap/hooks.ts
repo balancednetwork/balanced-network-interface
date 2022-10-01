@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { TradeType, Currency, CurrencyAmount, Percent, Token, Price } from '@balancednetwork/sdk-core';
+import { TradeType, Currency, CurrencyAmount, Token, Price } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import JSBI from 'jsbi';
@@ -121,15 +121,19 @@ export function useDerivedSwapInfo(): {
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
 
-  const currencyBalances = {
-    [Field.INPUT]: relevantTokenBalances[0],
-    [Field.OUTPUT]: relevantTokenBalances[1],
-  };
+  const currencyBalances = useMemo(() => {
+    return {
+      [Field.INPUT]: relevantTokenBalances[0],
+      [Field.OUTPUT]: relevantTokenBalances[1],
+    };
+  }, [relevantTokenBalances]);
 
-  const currencies: { [field in Field]?: Currency } = {
-    [Field.INPUT]: inputCurrency ?? undefined,
-    [Field.OUTPUT]: outputCurrency ?? undefined,
-  };
+  const currencies: { [field in Field]?: Currency } = useMemo(() => {
+    return {
+      [Field.INPUT]: inputCurrency ?? undefined,
+      [Field.OUTPUT]: outputCurrency ?? undefined,
+    };
+  }, [inputCurrency, outputCurrency]);
 
   const percents: { [field in Field]?: number } = React.useMemo(
     () => ({
@@ -164,11 +168,7 @@ export function useDerivedSwapInfo(): {
   // compare input balance to max input based on version
   const allowedSlippage = useSwapSlippageTolerance();
 
-  // !todo need to change the slippage data type
-  const [balanceIn, amountIn] = [
-    currencyBalances[Field.INPUT],
-    trade?.maximumAmountIn(new Percent(allowedSlippage, 1000)),
-  ];
+  const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
     inputError = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;

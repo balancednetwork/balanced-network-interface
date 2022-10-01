@@ -12,6 +12,7 @@ import RewardsPanel from 'app/components/home/RewardsPanel';
 import TransactionPanel from 'app/components/home/TransactionPanel';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useLoanFetchInfo } from 'store/loan/hooks';
+import { useFetchOraclePrices } from 'store/oracle/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
@@ -42,6 +43,7 @@ export function HomePage() {
   const { account } = useIconReact();
 
   useFetchPrice();
+  useFetchOraclePrices();
   useWalletFetchBalances(account);
   useCollateralFetchInfo(account);
   useLoanFetchInfo(account);

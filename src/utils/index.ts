@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 
+import { NETWORK_ID } from 'constants/config';
 import { canBeQueue } from 'constants/currency';
 import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
@@ -22,10 +23,18 @@ export function shortenAddress(address: string, chars = 7): string {
   return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
 }
 
+export function shortenSCOREAddress(address: string, chars = 7): string {
+  if (!isScoreAddress(address)) {
+    console.error(`Invalid 'address' parameter '${address}'.`);
+    return '';
+  }
+  return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
+}
+
 export function getTrackerLink(
   networkId: NetworkId,
   data: string,
-  type: 'transaction' | 'token' | 'address' | 'block',
+  type: 'transaction' | 'address' | 'block' | 'contract',
 ): string {
   const prefix = CHAIN_INFO[networkId].tracker;
 
@@ -33,15 +42,15 @@ export function getTrackerLink(
     case 'transaction': {
       return `${prefix}/transaction/${data}`;
     }
-    case 'token': {
-      return `${prefix}/token/${data}`;
+    case 'address': {
+      return `${prefix}/address/${data}`;
     }
     case 'block': {
       return `${prefix}/block/${data}`;
     }
-    case 'address':
+    case 'contract':
     default: {
-      return `${prefix}/address/${data}`;
+      return `${prefix}/contract/${data}`;
     }
   }
 }
@@ -108,14 +117,14 @@ export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): Curre
 export function formatPercent(percent: BigNumber | undefined) {
   if (!percent) return '0%';
   if (percent.isZero()) return '0%';
-  else return percent.isLessThan(0.01) ? '<0.01%' : `${percent.dp(2).toFixed()}%`;
+  else return percent.isLessThan(0.01) ? '<0.01%' : `${percent.dp(2, BigNumber.ROUND_HALF_UP).toFixed()}%`;
 }
 
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export const LAUNCH_DAY = 1619366400000;
+export const LAUNCH_DAY = NETWORK_ID === 1 ? 1619366400000 : 1648742400000;
 export const ONE_DAY_DURATION = 86400000;
 
 export const generateChartData = (rate: BigNumber, currencies: { [field in Field]?: Currency }) => {
@@ -278,4 +287,10 @@ export function isDPZeroCA(ca: CurrencyAmount<Currency> | undefined, decimalPlac
   if (!ca) return true;
   if (decimalPlaces === 0) return isZeroCA(ca);
   return ca.toFixed(decimalPlaces) === `0.${'0'.repeat(decimalPlaces)}`;
+}
+
+export enum PageLocation {
+  HOME = '/',
+  TRADE = '/trade',
+  VOTE = '/vote',
 }

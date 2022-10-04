@@ -1,16 +1,16 @@
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
 import { LockedPeriod } from 'app/components/home/BBaln/types';
 
 import { Field } from '../loan/actions';
-import { adjust, cancel, type, setBoost } from './actions';
+import { adjust, cancel, type, changeData } from './actions';
 
 export interface BBalnState {
   bbalnAmount: BigNumber;
-  lockedBaln: BigNumber;
+  lockedBaln: undefined | CurrencyAmount<Token>;
   lockedUntil: Date | undefined;
-  lockedOn: Date | undefined;
   lockedPeriod: LockedPeriod | undefined;
 
   state: {
@@ -23,9 +23,8 @@ export interface BBalnState {
 
 const initialState: BBalnState = {
   bbalnAmount: new BigNumber(0),
-  lockedBaln: new BigNumber(0),
+  lockedBaln: undefined,
   lockedUntil: undefined,
-  lockedOn: undefined,
   lockedPeriod: undefined,
 
   state: {
@@ -38,6 +37,15 @@ const initialState: BBalnState = {
 
 export default createReducer(initialState, builder =>
   builder
+    .addCase(changeData, (state, { payload }) => {
+      state.bbalnAmount = payload.bbalnAmount;
+      if (!state.lockedBaln?.equalTo(payload.lockedBaln)) {
+        state.lockedBaln = payload.lockedBaln;
+      }
+      if (state.lockedUntil?.getTime() !== payload.lockEnd.getTime()) {
+        state.lockedUntil = payload.lockEnd;
+      }
+    })
     .addCase(adjust, (state, { payload }) => {
       state.state.isAdjusting = true;
     })
@@ -48,13 +56,5 @@ export default createReducer(initialState, builder =>
       state.state.independentField = independentField || state.state.independentField;
       state.state.typedValue = typedValue ?? state.state.typedValue;
       state.state.inputType = inputType || state.state.inputType;
-    })
-    .addCase(setBoost, (state, { payload: { bbalnAmount, lockedBaln, lockedUntil, lockedOn, lockedPeriod } }) => {
-      state.state.isAdjusting = false;
-      state.bbalnAmount = bbalnAmount ? bbalnAmount : state.bbalnAmount;
-      state.lockedBaln = lockedBaln ? lockedBaln : state.lockedBaln;
-      state.lockedUntil = lockedUntil ? lockedUntil : state.lockedUntil;
-      state.lockedOn = lockedOn ? lockedOn : state.lockedOn;
-      state.lockedPeriod = lockedPeriod ? lockedPeriod : state.lockedPeriod;
     }),
 );

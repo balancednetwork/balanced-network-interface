@@ -1,7 +1,6 @@
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { createAction } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
-
-import { LockedPeriod } from 'app/components/home/BBaln/types';
 
 import { Field } from '../loan/actions';
 
@@ -13,10 +12,6 @@ export const type = createAction<{ independentField?: Field; typedValue?: string
   'bbaln/type',
 );
 
-export const setBoost = createAction<{
-  bbalnAmount?: BigNumber;
-  lockedUntil?: Date;
-  lockedOn?: Date;
-  lockedBaln?: BigNumber;
-  lockedPeriod?: LockedPeriod;
-}>('bbaln/setBoost');
+export const changeData = createAction<{ lockedBaln: CurrencyAmount<Token>; lockEnd: Date; bbalnAmount: BigNumber }>(
+  'bbaln/changeData',
+);

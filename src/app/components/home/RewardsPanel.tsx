@@ -272,7 +272,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
       return (
         <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
           <Trans>Ineligible</Trans>
-          <QuestionHelper text={t`To earn network fees, stake BALN from your wallet.`} />
+          <QuestionHelper text={t`To earn network fees, boost BALN.`} />
         </Typography>
       );
     }

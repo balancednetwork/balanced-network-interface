@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { LockedPeriod } from 'app/components/home/BBaln/types';
+import bnJs from 'bnJs';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
 import { Field } from '../loan/actions';
-import { adjust, cancel, type, setBoost } from './actions';
+import { adjust, cancel, type, changeData } from './actions';
 
 export function useBBalnAmount(): AppState['bbaln']['bbalnAmount'] {
   return useSelector((state: AppState) => state.bbaln.bbalnAmount);
@@ -15,10 +18,6 @@ export function useBBalnAmount(): AppState['bbaln']['bbalnAmount'] {
 
 export function useLockedUntil(): AppState['bbaln']['lockedUntil'] {
   return useSelector((state: AppState) => state.bbaln.lockedUntil);
-}
-
-export function useLockedOn(): AppState['bbaln']['lockedOn'] {
-  return useSelector((state: AppState) => state.bbaln.lockedOn);
 }
 
 export function useLockedBaln(): AppState['bbaln']['lockedBaln'] {
@@ -31,6 +30,55 @@ export function useLockedPeriod(): AppState['bbaln']['lockedPeriod'] {
 
 export function useBBalnSliderState(): AppState['bbaln']['state'] {
   return useSelector((state: AppState) => state.bbaln.state);
+}
+
+export function useBBalnChangeData(): (
+  lockedBaln: CurrencyAmount<Token>,
+  lockEnd: Date,
+  bbalnAmount: BigNumber,
+) => void {
+  const dispatch = useDispatch();
+  return useCallback(
+    (lockedBaln: CurrencyAmount<Token>, lockEnd: Date, bbalnAmount: BigNumber) => {
+      dispatch(changeData({ lockedBaln, lockEnd, bbalnAmount }));
+    },
+    [dispatch],
+  );
+}
+
+export function useFetchBBalnInfo(account?: string | null) {
+  const transactions = useAllTransactions();
+  const changeData = useBBalnChangeData();
+
+  const fetchBBalnInfo = useCallback(
+    account => {
+      if (account) {
+        Promise.all([bnJs.BBALN.getLocked(account), bnJs.BBALN.balanceOf(account)]).then(
+          ([locked, bbaln]: [{ amount: string; end: string }, number]) => {
+            try {
+              const lockedBaln = CurrencyAmount.fromRawAmount(
+                SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.BALN.address],
+                locked.amount,
+              );
+              const lockEnd = new Date(parseInt(locked.end, 16) / 1000);
+              const bbalnAmount = new BigNumber(bbaln).div(10 ** 18);
+
+              changeData(lockedBaln, lockEnd, bbalnAmount);
+            } catch (e) {
+              console.error(e);
+            }
+          },
+        );
+      }
+    },
+    [changeData],
+  );
+
+  useEffect(() => {
+    if (account) {
+      fetchBBalnInfo(account);
+    }
+  }, [transactions, account, fetchBBalnInfo]);
 }
 
 export function useBBalnSliderActionHandlers() {
@@ -66,20 +114,4 @@ export function useBBalnSliderActionHandlers() {
     onSlide,
     onAdjust,
   };
-}
-
-export function useSetBoost(): (
-  bbalnAmount: BigNumber,
-  lockedOn: Date,
-  lockedPeriod: LockedPeriod,
-  lockedBaln: BigNumber,
-) => void {
-  const dispatch = useDispatch();
-  return React.useCallback(
-    (bbalnAmount: BigNumber, lockedOn: Date, lockedPeriod: LockedPeriod, lockedBaln: BigNumber) => {
-      const lockedUntil = new Date(new Date().setDate(lockedOn.getDate() + lockedPeriod.days));
-      dispatch(setBoost({ bbalnAmount, lockedOn, lockedUntil, lockedPeriod, lockedBaln }));
-    },
-    [dispatch],
-  );
 }

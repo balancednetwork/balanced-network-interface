@@ -1,6 +1,6 @@
 export type LockedPeriod = {
   name: string;
-  days: number;
+  weeks: number;
 };
 
 export type DateOptions = {

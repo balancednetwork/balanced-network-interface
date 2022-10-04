@@ -1,6 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
+import { addresses } from '@balancednetwork/balanced-js';
+import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
+import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -17,26 +20,34 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
+import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import {
   useBBalnAmount,
+  useLockedBaln,
   useBBalnSliderState,
   useBBalnSliderActionHandlers,
-  useLockedPeriod,
   useLockedUntil,
-  useSetBoost,
 } from 'store/bbaln/hooks';
-import { Field } from 'store/loan/actions';
-// import { useTransactionAdder } from 'store/transactions/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
-import { escapeRegExp } from 'utils'; // match escaped "." characters via in a non-capturing group
+import { escapeRegExp, parseUnits } from 'utils'; // match escaped "." characters via in a non-capturing group
+import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { BoxPanel } from '../../Panel';
 import { DropdownPopper } from '../../Popover';
 import QuestionHelper from '../../QuestionHelper';
 import { MetaData } from '../PositionDetailPanel';
 import { LockedPeriod } from './types';
-import { lockingPeriods, formatDate } from './utils';
+import {
+  WEEK_IN_MS,
+  lockingPeriods,
+  formatDate,
+  getClosestUnixWeekStart,
+  getWeekOffsetTimestamp,
+  getBbalnAmount,
+} from './utils';
 
 const ButtonsWrap = styled(Flex)`
   margin-left: auto;
@@ -257,14 +268,12 @@ const MaxRewardsReachedNotice = styled(Box)<{ show?: boolean }>`
 `;
 
 export default function BBalnPanel() {
+  const { account } = useIconReact();
   const bBalnAmount = useBBalnAmount();
-  //const lockedBaln = useLockedBaln();
+  const lockedBalnAmount = useLockedBaln();
   const lockedUntil = useLockedUntil();
-  //const lockedOn = useLockedOn();
-  const lockedPeriod = useLockedPeriod();
-  const { independentField, typedValue, isAdjusting, inputType } = useBBalnSliderState();
+  const { typedValue, isAdjusting, inputType } = useBBalnSliderState();
   const { onFieldAInput, onSlide, onAdjust: adjust } = useBBalnSliderActionHandlers();
-  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
   const sliderInstance = React.useRef<any>(null);
   const [showLiquidityTooltip, setShowLiquidityTooltip] = useState(false);
   const arrowRef = React.useRef(null);
@@ -275,9 +284,10 @@ export default function BBalnPanel() {
   const periodArrowRef = useRef(null);
   const balnDetails = useBALNDetails();
   const hasEnoughICX = useHasEnoughICX();
-  const setBoost = useSetBoost();
   const isSmallScreen = useMedia('(max-width: 540px)');
   const isSuperSmallScreen = useMedia('(max-width: 400px)');
+
+  const addTransaction = useTransactionAdder();
 
   const balnBalanceAvailable =
     balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0);
@@ -301,8 +311,76 @@ export default function BBalnPanel() {
     setShowLiquidityTooltip(false || isAdjusting);
   };
 
-  const handleBoostUpdate = () => {
-    setBoost(new BigNumber(typedValue), new Date(), selectedLockedPeriod, new BigNumber(typedValue));
+  const handleBoostUpdate = async () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
+    const lockTimestamp = selectedLockedPeriod.weeks * WEEK_IN_MS + new Date().getTime();
+
+    try {
+      if (shouldBoost) {
+        if (bBalnAmount && bBalnAmount.isGreaterThan(0)) {
+          if (differenceBalnAmount.isEqualTo(0)) {
+            const { result: hash } = await bnJs.inject({ account }).BBALN.increaseUnlockTime(lockTimestamp);
+
+            addTransaction(
+              { hash },
+              {
+                pending: t`Increasing lock duration...`,
+                summary: t`Lock duration increased`,
+              },
+            );
+          } else {
+            const { result: hash } = await bnJs
+              .inject({ account })
+              .BALN.increaseAmount(
+                addresses[NETWORK_ID].bbaln,
+                parseUnits(differenceBalnAmount.toFixed()),
+                isPeriodChanged ? lockTimestamp : 0,
+              );
+
+            addTransaction(
+              { hash },
+              {
+                pending: t`Locking BALN...`,
+                summary: t`${differenceBalnAmount.toFixed()} BALN locked.`,
+              },
+            );
+          }
+        } else {
+          const { result: hash } = await bnJs
+            .inject({ account })
+            .BALN.createLock(addresses[NETWORK_ID].bbaln, parseUnits(differenceBalnAmount.toFixed()), lockTimestamp);
+
+          addTransaction(
+            { hash },
+            {
+              pending: t`Locking BALN...`,
+              summary: t`${differenceBalnAmount.toFixed()} BALN locked.`,
+            },
+          );
+        }
+      } else {
+        const { result: hash } = await bnJs.inject({ account }).BBALN.withdrawEarly();
+
+        addTransaction(
+          { hash },
+          {
+            pending: t`Withdrawing BALN...`,
+            summary: t`${lockedBalnAmount?.divide(2).toFixed(0, { groupSeparator: ',' })} BALN withdrawn.`,
+          },
+        );
+      }
+      adjust(false);
+    } catch (error) {
+      console.error('creating lock: ', error);
+    } finally {
+      changeShouldLedgerSign(false);
+      window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+    }
+
     setConfirmationModalOpen(false);
   };
 
@@ -313,44 +391,50 @@ export default function BBalnPanel() {
     setConfirmationModalOpen(!confirmationModalOpen);
   };
 
-  const parsedBBalnAmount = {
-    [independentField]: new BigNumber(typedValue || '0'),
-    // total Baln
-    [dependentField]: new BigNumber(4000).minus(new BigNumber(typedValue || '0')),
-  };
-
-  // bbaln > 0
+  const balnSliderAmount = useMemo(() => new BigNumber(typedValue), [typedValue]);
   const buttonText = bBalnAmount?.isZero() ? 'Boost' : 'Adjust';
+  const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
+  const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
+  const shouldBoost = differenceBalnAmount.isPositive();
 
-  //before
-  const beforeBBalnAmount = bBalnAmount;
-  //after
-  const afterBBalnAmount = parsedBBalnAmount[Field.LEFT];
-  //difference = after-before
-  const differenceBBalnAmount = afterBBalnAmount.minus(beforeBBalnAmount || new BigNumber(0));
+  const isPeriodChanged = useMemo(() => {
+    const lockTimestamp = getWeekOffsetTimestamp(selectedLockedPeriod.weeks);
+    return getClosestUnixWeekStart(lockTimestamp).getTime() !== lockedUntil?.getTime();
+  }, [lockedUntil, selectedLockedPeriod]);
 
-  const shouldBoost = differenceBBalnAmount.isPositive();
-
-  // const addTransaction = useTransactionAdder();
+  const availablePeriods = useMemo(() => {
+    if (lockedUntil) {
+      const availablePeriods = lockingPeriods.filter(period => {
+        return lockedUntil ? lockedUntil < new Date(new Date().setDate(new Date().getDate() + period.weeks * 7)) : true;
+      });
+      return availablePeriods.length ? availablePeriods : [lockingPeriods[lockingPeriods.length - 1]];
+    } else {
+      return lockingPeriods;
+    }
+  }, [lockedUntil]);
 
   // reset loan ui state if cancel adjusting
-  // change typedValue if sICX and ratio changes
   React.useEffect(() => {
     if (!isAdjusting) {
-      onFieldAInput(bBalnAmount !== undefined ? (bBalnAmount.isZero() ? '0' : bBalnAmount?.toFixed(2)) : '0');
+      onFieldAInput(
+        lockedBalnAmount !== undefined ? (lockedBalnAmount.greaterThan(0) ? lockedBalnAmount?.toFixed(0) : '0') : '0',
+      );
+      setSelectedLockedPeriod(availablePeriods[0]);
     }
-  }, [onFieldAInput, bBalnAmount, isAdjusting]);
+  }, [onFieldAInput, lockedBalnAmount, isAdjusting, availablePeriods]);
 
   // optimize slider performance
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current?.noUiSlider.set(afterBBalnAmount.toNumber());
+      sliderInstance.current?.noUiSlider.set(balnSliderAmount.toNumber());
     }
-  }, [afterBBalnAmount, inputType]);
+  }, [balnSliderAmount, inputType]);
 
-  const shouldShowLock = bBalnAmount && !bBalnAmount.isZero();
-  const lockbarPercentPosition = bBalnAmount.times(100).div(balnBalanceAvailable).toNumber();
+  const shouldShowLock = lockedBalnAmount && lockedBalnAmount.greaterThan(0);
+  const lockbarPercentPosition = lockedBalnAmount
+    ? new BigNumber(lockedBalnAmount.toFixed(0)).times(100).div(balnBalanceAvailable).toNumber()
+    : 0;
 
   const handleLockingPeriodChange = period => {
     setSelectedLockedPeriod(period);
@@ -382,7 +466,7 @@ export default function BBalnPanel() {
   };
 
   //temporary
-  const isMaxRewardsReached = parsedBBalnAmount[Field.LEFT].isGreaterThan(balnBalanceAvailable.times(0.8));
+  const isMaxRewardsReached = balnSliderAmount.isGreaterThan(balnBalanceAvailable.times(0.8));
 
   return (
     <BoxPanel bg="bg2" flex={1}>
@@ -397,7 +481,10 @@ export default function BBalnPanel() {
                 Boost rewards{' '}
               </Typography>
               <Typography padding="0 3px 2px 0">
-                {parsedBBalnAmount[Field.LEFT].toFormat()} bBALN
+                {isAdjusting
+                  ? getBbalnAmount(balnSliderAmount, selectedLockedPeriod).dp(2).toFormat()
+                  : bBalnAmount.dp(2).toFormat()}{' '}
+                bBALN
                 <QuestionHelper text="Lock BALN to boost your earning potential. The longer you lock it, the more bBALN (boosted BALN) you'll receive, which determines your earning and voting power." />
               </Typography>
             </Flex>
@@ -410,8 +497,9 @@ export default function BBalnPanel() {
                   </TextButton>
                   <Button
                     disabled={
-                      differenceBBalnAmount.isZero() &&
-                      (lockedPeriod === undefined || selectedLockedPeriod.days === lockedPeriod?.days)
+                      bBalnAmount.isGreaterThan(0)
+                        ? differenceBalnAmount.isZero() && !isPeriodChanged
+                        : differenceBalnAmount.isZero()
                     }
                     onClick={toggleConfirmationModalOpen}
                     fontSize={14}
@@ -445,12 +533,12 @@ export default function BBalnPanel() {
               <Nouislider
                 disabled={!isAdjusting}
                 id="slider-bbaln"
-                start={[bBalnAmount?.dp(2).toNumber() || 0]}
+                start={[Number(lockedBalnAmount?.toFixed(0) || 0)]}
                 connect={[true, false]}
                 step={1}
                 range={{
                   min: [0],
-                  max: [balnBalanceAvailable.toNumber()], //baln balance - max SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, boostableAmount
+                  max: [balnBalanceAvailable.dp(0).toNumber()], //baln balance - max SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, boostableAmount
                 }}
                 instanceRef={instance => {
                   if (instance) {
@@ -467,14 +555,17 @@ export default function BBalnPanel() {
                   <BalnPreviewInput
                     type="text"
                     disabled={!isAdjusting}
-                    value={parsedBBalnAmount[Field.LEFT].toNumber()}
+                    value={balnSliderAmount.toNumber()}
                     onChange={handleBBalnInputChange}
                   />
                 ) : (
-                  <Typography paddingRight={'5px'}>{parsedBBalnAmount[Field.LEFT].toFormat()}</Typography>
+                  <Typography paddingRight={'5px'}>{balnSliderAmount.toFormat()}</Typography>
                 )}
 
-                <Typography paddingRight={'15px'}> / {balnBalanceAvailable.toFormat(2)} BALN</Typography>
+                <Typography paddingRight={'15px'}>
+                  {' '}
+                  / {balnBalanceAvailable.toFormat(0, BigNumber.ROUND_DOWN)} BALN
+                </Typography>
               </Flex>
 
               {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
@@ -488,7 +579,11 @@ export default function BBalnPanel() {
                             <UnderlineTextWithArrow
                               onClick={handlePeriodDropdownToggle}
                               text={formatDate(
-                                new Date(new Date().setDate(new Date().getDate() + selectedLockedPeriod.days)),
+                                getClosestUnixWeekStart(
+                                  new Date(
+                                    new Date().setDate(new Date().getDate() + (selectedLockedPeriod.weeks * 7 - 7)),
+                                  ).getTime(),
+                                ),
                               )}
                               arrowRef={periodArrowRef}
                             />
@@ -499,21 +594,11 @@ export default function BBalnPanel() {
                             placement="bottom-end"
                           >
                             <MenuList>
-                              {lockingPeriods
-                                .filter(period => {
-                                  return lockedUntil
-                                    ? lockedUntil < new Date(new Date().setDate(new Date().getDate() + period.days))
-                                    : true;
-                                })
-                                .map(
-                                  period => (
-                                    // lockingPeriods[period].days !== timePeriod.days && (
-                                    <MenuItem key={period.days} onClick={() => handleLockingPeriodChange(period)}>
-                                      {period.name}
-                                    </MenuItem>
-                                  ),
-                                  // ),
-                                )}
+                              {availablePeriods.map(period => (
+                                <MenuItem key={period.weeks} onClick={() => handleLockingPeriodChange(period)}>
+                                  {period.name}
+                                </MenuItem>
+                              ))}
                             </MenuList>
                           </DropdownPopper>
                         </>
@@ -522,15 +607,17 @@ export default function BBalnPanel() {
                       )}
                     </>
                   ) : (
-                    <Typography fontSize={14} color="#fb6a6a">
-                      You'll need to pay a 50% fee to unlock BALN early.
-                    </Typography>
+                    isAdjusting && (
+                      <Typography fontSize={14} color="#fb6a6a">
+                        You'll need to pay a 50% fee to unlock BALN early.
+                      </Typography>
+                    )
                   )}
                 </Typography>
               )}
             </Flex>
           </SliderWrap>
-          {parsedBBalnAmount[Field.LEFT].isGreaterThan(0) && (
+          {balnSliderAmount.isGreaterThan(0) && (
             <BoostedInfo>
               <BoostedBox>
                 <Typography fontSize={16} color="#FFF">
@@ -615,11 +702,11 @@ export default function BBalnPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceBBalnAmount.abs().toFormat(2)} BALN
+            {differenceBalnAmount.abs().toFormat(2)} BALN
           </Typography>
           {!shouldBoost && (
             <Typography textAlign="center" fontSize={14} color="#fb6a6a">
-              Minus 50% fee: {differenceBBalnAmount.div(2).abs().toFormat(2)} BALN
+              Minus 50% fee: {differenceBalnAmount.div(2).abs().toFormat(2)} BALN
             </Typography>
           )}
 
@@ -636,7 +723,7 @@ export default function BBalnPanel() {
               <Typography variant="p" textAlign="center">
                 {balnBalanceAvailable
                   .minus(bBalnAmount)
-                  .minus(shouldBoost ? differenceBBalnAmount : differenceBBalnAmount.div(2))
+                  .minus(shouldBoost ? differenceBalnAmount : differenceBalnAmount.div(2))
                   .toFormat(2)}{' '}
                 BALN
               </Typography>
@@ -646,9 +733,7 @@ export default function BBalnPanel() {
           {shouldBoost && (
             <Typography textAlign="center">
               Your BALN will be locked until{' '}
-              <strong>
-                {formatDate(new Date(new Date().setDate(new Date().getDate() + selectedLockedPeriod.days)))}
-              </strong>
+              <strong>{formatDate(getClosestUnixWeekStart(getWeekOffsetTimestamp(selectedLockedPeriod.weeks)))}</strong>
             </Typography>
           )}
 

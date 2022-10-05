@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -114,4 +115,13 @@ export function useBBalnSliderActionHandlers() {
     onSlide,
     onAdjust,
   };
+}
+
+export function useHasLockExpired() {
+  const lockedUntil = useLockedUntil();
+  const now = new Date();
+
+  return useQuery<boolean | undefined>('hasLockExpired', () => {
+    return lockedUntil && now.getTime() > lockedUntil.getTime();
+  });
 }

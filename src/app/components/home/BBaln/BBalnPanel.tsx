@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 
 import { addresses } from '@balancednetwork/balanced-js';
-import { t } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
@@ -29,6 +29,7 @@ import {
   useBBalnSliderState,
   useBBalnSliderActionHandlers,
   useLockedUntil,
+  useHasLockExpired,
 } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
@@ -272,6 +273,7 @@ export default function BBalnPanel() {
   const bBalnAmount = useBBalnAmount();
   const lockedBalnAmount = useLockedBaln();
   const lockedUntil = useLockedUntil();
+  const { data: hasLockExpired } = useHasLockExpired();
   const { typedValue, isAdjusting, inputType } = useBBalnSliderState();
   const { onFieldAInput, onSlide, onAdjust: adjust } = useBBalnSliderActionHandlers();
   const sliderInstance = React.useRef<any>(null);
@@ -294,6 +296,31 @@ export default function BBalnPanel() {
 
   const handleEnableAdjusting = () => {
     adjust(true);
+  };
+
+  const handleWithdraw = async () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
+    try {
+      const { result: hash } = await bnJs.inject({ account }).BBALN.withdraw();
+
+      addTransaction(
+        { hash },
+        {
+          pending: t`Withdrawing BALN...`,
+          summary: t`${lockedBalnAmount?.toFixed(2, { groupSeparator: ',' })} BALN withdrawn`,
+        },
+      );
+    } catch (e) {
+      console.error(e);
+    } finally {
+      changeShouldLedgerSign(false);
+      window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+    }
+    setWithdrawModalOpen(false);
   };
 
   const handleCancelAdjusting = () => {
@@ -380,19 +407,24 @@ export default function BBalnPanel() {
       changeShouldLedgerSign(false);
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
     }
-
     setConfirmationModalOpen(false);
   };
 
   const [confirmationModalOpen, setConfirmationModalOpen] = React.useState(false);
+  const [withdrawModalOpen, setWithdrawModalOpen] = React.useState(false);
 
   const toggleConfirmationModalOpen = () => {
     if (shouldLedgerSign) return;
     setConfirmationModalOpen(!confirmationModalOpen);
   };
 
+  const toggleWithdrawModalOpen = () => {
+    if (shouldLedgerSign) return;
+    setWithdrawModalOpen(!withdrawModalOpen);
+  };
+
   const balnSliderAmount = useMemo(() => new BigNumber(typedValue), [typedValue]);
-  const buttonText = bBalnAmount?.isZero() ? 'Boost' : 'Adjust';
+  const buttonText = hasLockExpired ? t`Withdraw BALN` : bBalnAmount?.isZero() ? t`Boost` : t`Adjust`;
   const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
   const shouldBoost = differenceBalnAmount.isPositive();
@@ -508,7 +540,7 @@ export default function BBalnPanel() {
                   </Button>
                 </>
               ) : (
-                <Button onClick={handleEnableAdjusting} fontSize={14}>
+                <Button onClick={hasLockExpired ? toggleWithdrawModalOpen : handleEnableAdjusting} fontSize={14}>
                   {buttonText}
                 </Button>
               )}
@@ -570,9 +602,11 @@ export default function BBalnPanel() {
 
               {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
                 <Typography paddingTop={isAdjusting ? '6px' : '0'}>
-                  {shouldBoost ? (
+                  {hasLockExpired ? (
+                    t`Unlocked on ${formatDate(lockedUntil)}`
+                  ) : shouldBoost ? (
                     <>
-                      Locked until{' '}
+                      {t`Locked until`}{' '}
                       {isAdjusting ? (
                         <>
                           <ClickAwayListener onClickAway={closeDropdown}>
@@ -609,7 +643,7 @@ export default function BBalnPanel() {
                   ) : (
                     isAdjusting && (
                       <Typography fontSize={14} color="#fb6a6a">
-                        You'll need to pay a 50% fee to unlock BALN early.
+                        <Trans>You'll need to pay a 50% fee to unlock BALN early.</Trans>
                       </Typography>
                     )
                   )}
@@ -695,6 +729,7 @@ export default function BBalnPanel() {
         </>
       )}
 
+      {/* Adjust Modal */}
       <Modal isOpen={confirmationModalOpen} onDismiss={toggleConfirmationModalOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb="5px">
@@ -746,6 +781,46 @@ export default function BBalnPanel() {
                 </TextButton>
                 <Button disabled={!hasEnoughICX} onClick={handleBoostUpdate} fontSize={14} warning={!shouldBoost}>
                   {shouldBoost ? 'Lock up BALN' : 'Unlock BALN for a 50% fee'}
+                </Button>
+              </>
+            )}
+          </Flex>
+
+          <LedgerConfirmMessage />
+
+          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
+        </Flex>
+      </Modal>
+
+      {/* Withdraw Modal */}
+      <Modal isOpen={withdrawModalOpen} onDismiss={toggleWithdrawModalOpen}>
+        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+          <Typography textAlign="center" mb="5px">
+            <Trans>Withdraw</Trans>
+          </Typography>
+
+          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20} mb={2}>
+            {lockedBalnAmount?.toFixed(0)} BALN
+          </Typography>
+          <Typography textAlign="center" fontSize={14} mb={1}>
+            <Trans>You must withdraw to be able to lock BALN again.</Trans>
+          </Typography>
+
+          {shouldBoost && (
+            <Typography textAlign="center">
+              <Trans>Your BALN was unlocked on</Trans> <strong>{formatDate(lockedUntil)}</strong>.
+            </Typography>
+          )}
+
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top" flexWrap={'wrap'}>
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={toggleWithdrawModalOpen} fontSize={14}>
+                  Cancel
+                </TextButton>
+                <Button disabled={!hasEnoughICX} onClick={handleWithdraw} fontSize={14}>
+                  {t`Withdraw BALN`}
                 </Button>
               </>
             )}

@@ -4,10 +4,11 @@ import { Currency } from '@balancednetwork/sdk-core';
 import styled from 'styled-components';
 
 import ICONLogo from 'assets/images/icon-logo.png';
+import { WrappedTokenInfo } from 'store/lists/wrappedTokenInfo';
 
 import Logo from '../Logo1';
 
-export const getTokenLogoURL = (address: string): string | void => {
+export const getTokenLogoURL = (address: string): string => {
   return `https://raw.githubusercontent.com/balancednetwork/assets/master/blockchains/icon/assets/${address}/logo.png`;
 };
 
@@ -33,19 +34,22 @@ export default function CurrencyLogo({
   size?: string;
   style?: React.CSSProperties;
 }) {
+  const uriLocation = currency instanceof WrappedTokenInfo ? currency.logoURI || currency.tokenInfo.logoURI : undefined;
+
   const srcs: string[] = useMemo(() => {
     if (!currency || currency.isNative) return [];
 
-    if (currency.isToken) {
-      const defaultUrls: string[] = [];
-      const url = getTokenLogoURL(currency.address);
-      if (url) {
-        defaultUrls.push(url);
+    if (currency?.isToken) {
+      const defaultUrls = [getTokenLogoURL(currency.address)];
+
+      if (currency instanceof WrappedTokenInfo) {
+        return uriLocation ? [uriLocation, ...defaultUrls] : [...defaultUrls];
       }
       return defaultUrls;
     }
+
     return [];
-  }, [currency]);
+  }, [uriLocation, currency]);
 
   if (currency?.isNative || currency?.symbol === 'ICX') {
     return <StyledICONLogo src={ICONLogo} alt="icon logo" size={size} style={style} {...rest} />;

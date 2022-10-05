@@ -5,9 +5,10 @@ import { wallets } from '../utils/constants';
 // import * as NEARServices from 'connectors/NEARWallet';
 
 export const getCurrentTransferService = () => (curentWallet, currentNetwork) => {
+  //console.log('ssss', window.accountInfo);
   const { wallet, currentNetwork: network } = window.accountInfo;
-  if (!wallet && !curentWallet) throw new Error('Missing wallet');
-  if (!network && !currentNetwork) throw new Error('Missing network');
+  //if (!wallet && !curentWallet) throw new Error('Missing wallet');
+  //if (!network && !currentNetwork) throw new Error('Missing network');
 
   switch (wallet || curentWallet) {
     case wallets.metamask:

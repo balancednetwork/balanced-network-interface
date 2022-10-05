@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Box } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const Divider = styled(Box)`
   height: 1px;
@@ -16,7 +16,7 @@ const StyledHr = styled.div`
   background-color: ${({ theme }) => theme.colors.divider};
 `;
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.div<{ horizontal?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,7 +24,35 @@ const StyledWrapper = styled.div`
   span {
     white-space: nowrap;
   }
+
+  ${({ horizontal }) =>
+    horizontal &&
+    css`
+      flex-direction: row;
+
+      span {
+        display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        padding: 0 10px;
+      }
+
+      ${StyledHr} {
+        width: 100%;
+        height: 1px;
+      }
+    `};
 `;
+
+export const HorizontalDivider = ({ text, ...rest }: { text: string }) => {
+  return (
+    <StyledWrapper horizontal>
+      <StyledHr />
+      <span>{text}</span>
+      <StyledHr />
+    </StyledWrapper>
+  );
+};
 
 export const VerticalDivider = ({ text, ...rest }: { text: string }) => {
   return (
@@ -35,3 +63,10 @@ export const VerticalDivider = ({ text, ...rest }: { text: string }) => {
     </StyledWrapper>
   );
 };
+
+export const LineBreak = () => (
+  <>
+    <br />
+    <br />
+  </>
+);

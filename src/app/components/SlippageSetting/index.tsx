@@ -4,6 +4,7 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
+import { escapeRegExp } from 'utils';
 
 // enum SlippageError {
 //   InvalidInput = 'InvalidInput',
@@ -55,7 +56,7 @@ export interface SlippageSettingsProps {
   rawSlippage: number;
   setRawSlippage: (rawSlippage: number) => void;
 }
-
+const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`);
 export default function SlippageSettings({ rawSlippage, setRawSlippage }: SlippageSettingsProps) {
   const [slippageInput, setSlippageInput] = React.useState('');
   // const [deadlineInput, setDeadlineInput] = React.useState('');
@@ -74,6 +75,11 @@ export default function SlippageSettings({ rawSlippage, setRawSlippage }: Slippa
   // } else {
   //   slippageError = undefined;
   // }
+  const handleSlippageInput = (value: string) => {
+    if (value === '' || inputRegex.test(escapeRegExp(value))) {
+      parseCustomSlippage(value);
+    }
+  };
 
   function parseCustomSlippage(value: string) {
     setSlippageInput(value);
@@ -95,7 +101,9 @@ export default function SlippageSettings({ rawSlippage, setRawSlippage }: Slippa
           onBlur={() => {
             parseCustomSlippage((rawSlippage / 100).toFixed(2));
           }}
-          onChange={e => parseCustomSlippage(e.target.value)}
+          onChange={e => {
+            handleSlippageInput(e.target.value.replace(/,/g, '.'));
+          }}
           color={!slippageInputIsValid ? '#fb6a6a' : ''}
         />
         %

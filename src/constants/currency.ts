@@ -1,25 +1,8 @@
 import { Currency } from '@balancednetwork/sdk-core';
 
-import { CurrencyKey, Pool } from 'types';
+import { Pool } from 'types';
 
-import { PairInfo, SUPPORTED_PAIRS } from './pairs';
-
-export const getTradePair = (
-  baseKey?: CurrencyKey,
-  quoteKey?: CurrencyKey,
-): [PairInfo | undefined, boolean | undefined] => {
-  if (baseKey && quoteKey) {
-    const pair1 = SUPPORTED_PAIRS.find(pair => pair.baseCurrencyKey === baseKey && pair.quoteCurrencyKey === quoteKey);
-    const pair2 = SUPPORTED_PAIRS.find(pair => pair.baseCurrencyKey === quoteKey && pair.quoteCurrencyKey === baseKey);
-
-    if (pair1) {
-      return [pair1, false];
-    } else if (pair2) {
-      return [pair2, true];
-    }
-  }
-  return [undefined, undefined];
-};
+import { PairInfo } from './pairs';
 
 export const isQueue = (t: Pool | PairInfo) => {
   if (

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { NavLink } from 'react-router-dom';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -9,6 +10,7 @@ import { ReactComponent as HomeIcon } from 'assets/icons/home.svg';
 import { ReactComponent as TradeIcon } from 'assets/icons/trade.svg';
 import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
 import { useActiveProposals } from 'queries/vote';
+import { useBALNDetails } from 'store/wallet/hooks';
 
 import { notificationCSS } from '../home/wallets/utils';
 
@@ -139,6 +141,8 @@ const StyledNavLinkWithNotification = styled(({ hasNotification, ...rest }) => <
 export default React.memo(function AppBar() {
   const useActiveProposalsQuery = useActiveProposals();
   const { data: activeProposals } = useActiveProposalsQuery;
+  const details = useBALNDetails();
+  const stakedBALN: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
 
   return (
     <Navigation>
@@ -160,7 +164,10 @@ export default React.memo(function AppBar() {
           </StyledNavLink>
         </ListItem>
         <ListItem>
-          <StyledNavLinkWithNotification to="/vote" hasNotification={activeProposals && activeProposals.length}>
+          <StyledNavLinkWithNotification
+            to="/vote"
+            hasNotification={activeProposals && activeProposals.length && stakedBALN.isGreaterThan(0)}
+          >
             <VoteIcon width="35" height="33" />
             <Text>
               <Trans>Vote</Trans>

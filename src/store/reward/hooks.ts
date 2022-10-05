@@ -9,9 +9,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { PLUS_INFINITY } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
-import { useCollateralInputAmount } from 'store/collateral/hooks';
-import { useLoanInputAmount, useLoanParameters } from 'store/loan/hooks';
-import { useRatio } from 'store/ratio/hooks';
+import { useCollateralInputAmountAbsolute } from 'store/collateral/hooks';
+import { useHasUnclaimedFees } from 'store/fees/hooks';
+import { useLoanInputAmount } from 'store/loan/hooks';
+import { useOraclePrice } from 'store/oracle/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -74,69 +75,20 @@ export function useFetchRewardsInfo() {
 }
 
 export const useCurrentCollateralRatio = (): BigNumber => {
-  const collateralInputAmount = useCollateralInputAmount();
+  const collateralInputAmount = useCollateralInputAmountAbsolute();
   const loanInputAmount = useLoanInputAmount();
-  const ratio = useRatio();
+  const oraclePrice = useOraclePrice();
 
   return React.useMemo(() => {
-    if (loanInputAmount.isZero()) return PLUS_INFINITY;
+    if (loanInputAmount.isZero() || !collateralInputAmount || !oraclePrice) return PLUS_INFINITY;
 
-    return collateralInputAmount.times(ratio.ICXUSDratio).dividedBy(loanInputAmount).multipliedBy(100);
-  }, [collateralInputAmount, loanInputAmount, ratio.ICXUSDratio]);
-};
-
-export const useHasRewardableLoan = () => {
-  const loanInputAmount = useLoanInputAmount();
-  const collateralRatio = useCurrentCollateralRatio();
-  const loanParameters = useLoanParameters();
-  const { lockingRatio } = loanParameters || {};
-
-  if (
-    loanInputAmount.isGreaterThanOrEqualTo(new BigNumber(50)) &&
-    lockingRatio &&
-    collateralRatio.isGreaterThanOrEqualTo(new BigNumber(lockingRatio * 100))
-  ) {
-    return true;
-  }
-
-  return false;
-};
-
-export const useHasRewardableLiquidity = () => {
-  const { account } = useIconReact();
-
-  const [hasRewardableLiquidity, setHasRewardableLiquidity] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkIfRewardable = async () => {
-      if (account) {
-        // Question: isEarningRewards exists?
-        const result = await Promise.all([
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNsICX),
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.BALNbnUSD),
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXbnUSD),
-          bnJs.Dex.isEarningRewards(account, BalancedJs.utils.POOL_IDS.sICXICX),
-        ]);
-
-        if (result.find(pool => Number(pool))) setHasRewardableLiquidity(true);
-        else setHasRewardableLiquidity(false);
-      }
-    };
-
-    checkIfRewardable();
-  }, [account]);
-
-  return hasRewardableLiquidity;
-};
-
-export const useHasRewardable = () => {
-  const hasRewardableLiquidity = useHasRewardableLiquidity();
-  const hasRewardableLoan = useHasRewardableLoan();
-  return hasRewardableLiquidity || hasRewardableLoan;
+    return collateralInputAmount.times(oraclePrice).dividedBy(loanInputAmount).multipliedBy(100);
+  }, [collateralInputAmount, loanInputAmount, oraclePrice]);
 };
 
 export const useHasNetworkFees = () => {
   const { account } = useIconReact();
+  const hasUnclaimedFees = useHasUnclaimedFees();
   const transactions = useAllTransactions();
   const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
 
@@ -144,13 +96,13 @@ export const useHasNetworkFees = () => {
     const checkIfHasNetworkFees = async () => {
       if (account) {
         const balnDetails = await bnJs.BALN.detailsBalanceOf(account);
-        if (Number(balnDetails['Staked balance'])) setHasNetworkFees(true);
+        if (Number(balnDetails['Staked balance']) || hasUnclaimedFees) setHasNetworkFees(true);
         else setHasNetworkFees(false);
       }
     };
 
     checkIfHasNetworkFees();
-  }, [account, transactions]);
+  }, [account, transactions, hasUnclaimedFees]);
 
   return hasNetworkFees;
 };

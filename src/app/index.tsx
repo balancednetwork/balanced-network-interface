@@ -11,9 +11,9 @@ import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
 import { Banner } from './components/Banner';
-import TransferAssetsModal from './components/BTP';
-import BridgeWalletModal from './components/BTP/BridgeWalletModal';
-import { Airdrip } from './containers/Airdrip/Loadable';
+import BridgeWalletModal from './components/BTP/BridgeWalletModal/index';
+import TransferAssetsModal from './components/BTP/index';
+import { Claim } from './containers/Claim/Loadable';
 import Message from './Message';
 import Routes from './Routes';
 
@@ -41,18 +41,14 @@ export function App() {
         <TransferAssetsModal />
         <BridgeWalletModal />
         {/* Add message for community */}
-        {false && (
-          <Banner>
-            <Message />
-          </Banner>
-        )}
+
         <Helmet
           titleTemplate="%s | Balanced"
           defaultTitle="Balanced Network"
           htmlAttributes={{ lang: i18n.language }}
         />
         <Switch>
-          <Route exact path="/claim" component={Airdrip} />
+          <Route exact path="/claim" component={Claim} />
           <Route component={Routes} />
         </Switch>
       </ThemeProvider>

@@ -5,7 +5,7 @@ import { ADDRESS_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { addICONexListener } from 'btp/src/connectors/ICONex';
 import { requestHasAddress } from 'btp/src/connectors/ICONex/events';
 import { toCheckAddress } from 'btp/src/connectors/MetaMask/utils';
-import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
+//import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -189,8 +189,8 @@ const BTP = () => {
     };
   });
   const coinNames: string[] = [...coins];
-  const balanceOf = useTokenBalance(coinNames);
-
+  //const balanceOf = useTokenBalance(coinNames);
+  const balanceOf = 0;
   const onChangeAsset = asset => {
     setAssetName(asset.value);
     setBalanceOfAssetName(asset.balance);

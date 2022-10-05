@@ -1,0 +1,86 @@
+{
+  "name": "Balanced Community Tokens",
+  "timestamp": "2022-08-29T11:21:27.276Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png",
+  "keywords": ["balanced", "community"],
+  "tokens": [
+    {
+      "address": "cx6139a27c15f1653471ffba0b4b88dc15de7e3267",
+      "chainId": 1,
+      "name": "GangstaBet Token",
+      "symbol": "GBET",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/gbet.png"
+    },
+    {
+      "address": "cx2aa9b28a657e3121b75d3d4fe65e569398645d56",
+      "chainId": 1,
+      "name": "FRAMD Token",
+      "symbol": "FRMD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/frmd.png"
+    },
+    {
+      "address": "cx28b2ec885b50c8a93da752f2d0467a67127a70e8",
+      "chainId": 1,
+      "name": "CROWN Token",
+      "symbol": "CROWN",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/crown.png"
+    },
+    {
+      "address": "cx13b52d9f24db8d64d93a31926e3c69d44fbe8f9a",
+      "chainId": 1,
+      "name": "CLAW Token",
+      "symbol": "CLAW",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/claw.png"
+    },
+    {
+      "address": "cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2",
+      "chainId": 1,
+      "name": "Metanyx",
+      "symbol": "METX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/metx.png"
+    },
+    {
+      "address": "cx32d5b6c3eff488b058feff88acec824abe7ed8ca",
+      "chainId": 1,
+      "name": "Void Token",
+      "symbol": "VOID",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/void.png"
+    },
+    {
+      "address": "cxc0b5b52c9f8b4251a47e91dda3bd61e5512cd782",
+      "chainId": 1,
+      "name": "TAP Token",
+      "symbol": "TAP",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/tap.png"
+    },
+    {
+      "address": "cxe7c05b43b3832c04735e7f109409ebcb9c19e664",
+      "chainId": 1,
+      "name": "IAM Token",
+      "symbol": "IAM",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iam.png"
+    },
+    {
+      "address": "cxd1f08a2967de6374f52408396bfe2fe8183b2800",
+      "chainId": 1,
+      "name": "CODE Token",
+      "symbol": "CODE",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/code.png"
+    }
+  ]
+}

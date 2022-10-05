@@ -5,11 +5,12 @@ import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 
+import { NETWORK_ID } from 'constants/config';
 import { canBeQueue } from 'constants/currency';
 import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { PairInfo } from 'constants/pairs';
-import { PairState } from 'hooks/useV2Pairs';
+import { PairData, PairState } from 'hooks/useV2Pairs';
 import { Field } from 'store/swap/actions';
 
 const { isEoaAddress, isScoreAddress } = Validator;
@@ -22,10 +23,18 @@ export function shortenAddress(address: string, chars = 7): string {
   return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
 }
 
+export function shortenSCOREAddress(address: string, chars = 7): string {
+  if (!isScoreAddress(address)) {
+    console.error(`Invalid 'address' parameter '${address}'.`);
+    return '';
+  }
+  return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
+}
+
 export function getTrackerLink(
   networkId: NetworkId,
   data: string,
-  type: 'transaction' | 'token' | 'address' | 'block',
+  type: 'transaction' | 'address' | 'block' | 'contract',
 ): string {
   const prefix = CHAIN_INFO[networkId].tracker;
 
@@ -33,15 +42,15 @@ export function getTrackerLink(
     case 'transaction': {
       return `${prefix}/transaction/${data}`;
     }
-    case 'token': {
-      return `${prefix}/token/${data}`;
+    case 'address': {
+      return `${prefix}/address/${data}`;
     }
     case 'block': {
       return `${prefix}/block/${data}`;
     }
-    case 'address':
+    case 'contract':
     default: {
-      return `${prefix}/address/${data}`;
+      return `${prefix}/contract/${data}`;
     }
   }
 }
@@ -108,14 +117,14 @@ export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): Curre
 export function formatPercent(percent: BigNumber | undefined) {
   if (!percent) return '0%';
   if (percent.isZero()) return '0%';
-  else return percent.isLessThan(0.01) ? '<0.01%' : `${percent.dp(2).toFixed()}%`;
+  else return percent.isLessThan(0.01) ? '<0.01%' : `${percent.dp(2, BigNumber.ROUND_HALF_UP).toFixed()}%`;
 }
 
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export const LAUNCH_DAY = 1619366400000;
+export const LAUNCH_DAY = NETWORK_ID === 1 ? 1619366400000 : 1648742400000;
 export const ONE_DAY_DURATION = 86400000;
 
 export const generateChartData = (rate: BigNumber, currencies: { [field in Field]?: Currency }) => {
@@ -181,8 +190,10 @@ export function getQueuePair(stats, tokenA: Token, tokenB: Token) {
 
   const [ICX, sICX] = tokenA.symbol === 'ICX' ? [tokenA, tokenB] : [tokenB, tokenA];
 
+  const minQuoteTokenAmount = BalancedJs.utils.toFormat(new BigNumber(stats['min_quote'], 16), stats['quote_decimals']);
+
   // ICX/sICX
-  const pair: [PairState, Pair] = [
+  const pair: [PairState, Pair, BigNumber] = [
     PairState.EXISTS,
     new Pair(
       CurrencyAmount.fromRawAmount(ICX, totalSupply),
@@ -192,20 +203,22 @@ export function getQueuePair(stats, tokenA: Token, tokenB: Token) {
         totalSupply,
       },
     ),
+    minQuoteTokenAmount,
   ];
 
   return pair;
 }
 
-export function getPair(stats, tokenA: Token, tokenB: Token): [PairState, Pair | null] {
+export function getPair(stats, tokenA: Token, tokenB: Token): PairData {
   if (canBeQueue(tokenA, tokenB)) return getQueuePair(stats, tokenA, tokenB);
 
   const poolId = parseInt(stats['id'], 16);
-  if (poolId === 0) return [PairState.NOT_EXISTS, null];
+  if (poolId === 0) return [PairState.NOT_EXISTS, null, null];
 
   const baseReserve = new BigNumber(stats['base'], 16).toFixed();
   const quoteReserve = new BigNumber(stats['quote'], 16).toFixed();
   const totalSupply = new BigNumber(stats['total_supply'], 16).toFixed();
+  const minQuoteTokenAmount = BalancedJs.utils.toFormat(new BigNumber(stats['min_quote'], 16), stats['quote_decimals']);
 
   const [reserveA, reserveB] =
     stats['base_token'] === tokenA.address ? [baseReserve, quoteReserve] : [quoteReserve, baseReserve];
@@ -217,6 +230,7 @@ export function getPair(stats, tokenA: Token, tokenB: Token): [PairState, Pair |
       totalSupply,
       baseAddress: stats['base_token'],
     }),
+    minQuoteTokenAmount,
   ];
 }
 
@@ -273,4 +287,10 @@ export function isDPZeroCA(ca: CurrencyAmount<Currency> | undefined, decimalPlac
   if (!ca) return true;
   if (decimalPlaces === 0) return isZeroCA(ca);
   return ca.toFixed(decimalPlaces) === `0.${'0'.repeat(decimalPlaces)}`;
+}
+
+export enum PageLocation {
+  HOME = '/',
+  TRADE = '/trade',
+  VOTE = '/vote',
 }

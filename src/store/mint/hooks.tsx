@@ -3,6 +3,7 @@ import React, { useCallback, ReactNode } from 'react';
 import { Currency, CurrencyAmount, Token, Percent, Price } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -113,6 +114,7 @@ export function useDerivedMintInfo(): {
   mintableLiquidity?: CurrencyAmount<Token>;
   poolTokenPercentage?: Percent;
   error?: ReactNode;
+  minQuoteTokenAmount?: BigNumber | null;
 } {
   const { account } = useIconReact();
 
@@ -159,8 +161,8 @@ export function useDerivedMintInfo(): {
   const balances = useCurrencyBalances(account ?? undefined, currencyArr);
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
     () => ({
-      [Field.CURRENCY_A]: balances[0],
-      [Field.CURRENCY_B]: balances[1],
+      [Field.CURRENCY_A]: balances[0], // base token
+      [Field.CURRENCY_B]: balances[1], // quote token
     }),
     [balances],
   );

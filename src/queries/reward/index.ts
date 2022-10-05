@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import axios from 'axios';
@@ -6,12 +8,15 @@ import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 
 import bnJs from 'bnJs';
-import { SUPPORTED_PAIRS } from 'constants/pairs';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
+import { COMBINED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import QUERY_KEYS from 'queries/queryKeys';
+import { useOraclePrices } from 'store/oracle/hooks';
 
 import { API_ENDPOINT } from '../constants';
 import { useBnJsContractQuery } from '../utils';
+
+const INCENTIVISED_PAIRS = SUPPORTED_PAIRS.filter(pair => pair.rewards);
 
 export const BATCH_SIZE = 10;
 
@@ -22,7 +27,7 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
     QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
     async () => {
       const promises: Promise<any>[] = [];
-      for (let i = end; i > 1; i -= BATCH_SIZE + 1) {
+      for (let i = end; i > 1; i -= BATCH_SIZE) {
         const startValue = i - BATCH_SIZE;
         promises.push(bnJs.Dividends.getUserDividends(account!, startValue > 0 ? startValue : 0, i));
       }
@@ -34,7 +39,7 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
         if (!Object.values(fees).find(value => !BalancedJs.utils.toIcx(value as string).isZero())) return null;
 
         const t = Object.keys(fees).reduce((prev, address) => {
-          const currency = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
+          const currency = COMBINED_TOKENS_MAP_BY_ADDRESS[address];
           prev[address] = CurrencyAmount.fromFractionalAmount(currency, fees[address], 1);
           return prev;
         }, {});
@@ -82,6 +87,17 @@ export const useRatesQuery = () => {
   return useQuery<{ [key in string]: BigNumber }>('useRatesQuery', fetch);
 };
 
+export const useRatesWithOracle = () => {
+  const { data: rates } = useRatesQuery();
+  const oraclePrices = useOraclePrices();
+
+  return useMemo(() => {
+    const updatedRates = { ...rates };
+    oraclePrices && Object.keys(oraclePrices).forEach(token => (updatedRates[token] = oraclePrices[token]));
+    if (oraclePrices) return updatedRates;
+  }, [rates, oraclePrices]);
+};
+
 export const useAllPairsAPY = (): { [key: number]: BigNumber } | undefined => {
   const tvls = useAllPairsTVL();
   const { data: rates } = useRatesQuery();
@@ -90,7 +106,7 @@ export const useAllPairsAPY = (): { [key: number]: BigNumber } | undefined => {
   if (tvls && rates && dailyDistributionQuery.isSuccess) {
     const dailyDistribution = BalancedJs.utils.toIcx(dailyDistributionQuery.data);
     const t = {};
-    SUPPORTED_PAIRS.forEach(pair => {
+    INCENTIVISED_PAIRS.forEach(pair => {
       t[pair.id] =
         pair.rewards && dailyDistribution.times(pair.rewards).times(365).times(rates['BALN']).div(tvls[pair.id]);
     });
@@ -105,14 +121,14 @@ export const useAllPairsTVLQuery = () => {
     'useAllPairsTVLQuery',
     async () => {
       const res: Array<any> = await Promise.all(
-        SUPPORTED_PAIRS.map(async pair => {
+        INCENTIVISED_PAIRS.map(async pair => {
           const { data } = await axios.get(`${API_ENDPOINT}/dex/stats/${pair.id}`);
           return data;
         }),
       );
 
       const t = {};
-      SUPPORTED_PAIRS.forEach((pair, index) => {
+      INCENTIVISED_PAIRS.forEach((pair, index) => {
         const item = res[index];
         t[pair.id] = {
           ...item,
@@ -136,13 +152,193 @@ export const useAllPairsTVL = () => {
     const tvls = tvlQuery.data || {};
 
     const t: { [key in string]: number } = {};
-    SUPPORTED_PAIRS.forEach(pair => {
+    INCENTIVISED_PAIRS.forEach(pair => {
       const baseTVL = tvls[pair.id].base.times(rates[pair.baseCurrencyKey]);
       const quoteTVL = tvls[pair.id].quote.times(rates[pair.quoteCurrencyKey]);
       t[pair.id] = baseTVL.plus(quoteTVL).integerValue().toNumber();
     });
 
     return t;
+  }
+
+  return;
+};
+
+type DataPeriod = '24h' | '30d';
+
+export const useAllPairsDataQuery = (period: DataPeriod = '24h') => {
+  return useQuery<{ [key: string]: { base: BigNumber; quote: BigNumber } }>(
+    `useAllPairs${period}DataQuery`,
+    async () => {
+      const { data } = await axios.get(`${API_ENDPOINT}/stats/dex-pool-stats-${period}`);
+      const t = {};
+
+      INCENTIVISED_PAIRS.forEach(pair => {
+        const key = `0x${pair.id.toString(16)}`;
+
+        const baseAddress = pair.baseToken.address;
+        const quoteAddress = pair.quoteToken.address;
+
+        if (data[key]) {
+          t[pair.id] = {};
+          // volume
+          const _volume = data[key]['volume'];
+
+          t[pair.id]['volume'] = {
+            [pair.baseCurrencyKey]: BalancedJs.utils.toIcx(_volume[baseAddress], pair.baseCurrencyKey),
+            [pair.quoteCurrencyKey]: BalancedJs.utils.toIcx(_volume[quoteAddress], pair.quoteCurrencyKey),
+          };
+
+          // fees
+          const _fees = data[key]['fees'];
+          if (_fees[baseAddress]) {
+            t[pair.id]['fees'] = {
+              [pair.baseCurrencyKey]: {
+                lp_fees: BalancedJs.utils.toIcx(_fees[baseAddress]['lp_fees'], pair.baseCurrencyKey),
+                baln_fees: BalancedJs.utils.toIcx(_fees[baseAddress]['baln_fees'], pair.baseCurrencyKey),
+              },
+            };
+          }
+          if (_fees[quoteAddress]) {
+            t[pair.id]['fees'] = t[pair.id]['fees']
+              ? {
+                  ...t[pair.id]['fees'],
+                  [pair.quoteCurrencyKey]: {
+                    lp_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['lp_fees'], pair.quoteCurrencyKey),
+                    baln_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['baln_fees'], pair.quoteCurrencyKey),
+                  },
+                }
+              : {
+                  [pair.quoteCurrencyKey]: {
+                    lp_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['lp_fees'], pair.quoteCurrencyKey),
+                    baln_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['baln_fees'], pair.quoteCurrencyKey),
+                  },
+                };
+          }
+        }
+      });
+      return t;
+    },
+  );
+};
+
+export const useAllPairsData = (
+  period: DataPeriod = '24h',
+): { [key in string]: { volume: number; fees: number } } | undefined => {
+  const dataQuery = useAllPairsDataQuery(period);
+  const ratesQuery = useRatesQuery();
+
+  if (dataQuery.isSuccess && ratesQuery.isSuccess) {
+    const rates = ratesQuery.data || {};
+    const data = dataQuery.data || {};
+
+    const t: { [key in string]: { volume: number; fees: number } } = {};
+
+    INCENTIVISED_PAIRS.filter(pair => data[pair.id]).forEach(pair => {
+      // volume
+      const baseVol = data[pair.id]['volume'][pair.baseCurrencyKey].times(rates[pair.baseCurrencyKey]);
+      const quoteVol = data[pair.id]['volume'][pair.quoteCurrencyKey].times(rates[pair.quoteCurrencyKey]);
+      const volume = baseVol.plus(quoteVol).integerValue().toNumber();
+
+      // fees
+      const baseFees = data[pair.id]['fees'][pair.baseCurrencyKey]
+        ? data[pair.id]['fees'][pair.baseCurrencyKey]['lp_fees']
+            .plus(data[pair.id]['fees'][pair.baseCurrencyKey]['baln_fees'])
+            .times(rates[pair.baseCurrencyKey])
+        : new BigNumber(0);
+
+      const quoteFees = data[pair.id]['fees'][pair.quoteCurrencyKey]
+        ? data[pair.id]['fees'][pair.quoteCurrencyKey]['lp_fees']
+            .plus(data[pair.id]['fees'][pair.quoteCurrencyKey]['baln_fees'])
+            .times(rates[pair.quoteCurrencyKey])
+        : new BigNumber(0);
+      const fees = baseFees.plus(quoteFees).integerValue().toNumber();
+
+      t[pair.id] = { volume, fees };
+    });
+
+    return t;
+  }
+
+  return;
+};
+
+export const useAllPairsParticipantQuery = () => {
+  return useQuery<{ [key: string]: number }>('useAllPairsParticipantQuery', async () => {
+    const res: Array<string> = await Promise.all(INCENTIVISED_PAIRS.map(pair => bnJs.Dex.totalDexAddresses(pair.id)));
+
+    const t = {};
+    INCENTIVISED_PAIRS.forEach((pair, index) => {
+      t[pair.id] = parseInt(res[index]);
+    });
+
+    return t;
+  });
+};
+
+export const useAllPairs = () => {
+  const apys = useAllPairsAPY();
+  const tvls = useAllPairsTVL();
+  const data = useAllPairsData();
+  const data30day = useAllPairsData('30d');
+  const participantQuery = useAllPairsParticipantQuery();
+
+  const t: {
+    [key: string]: PairInfo & {
+      tvl: number;
+      apy: number;
+      feesApy: number;
+      apyTotal: number;
+      participant: number;
+      volume?: number;
+      fees?: number;
+    };
+  } = {};
+
+  if (apys && participantQuery.isSuccess && tvls && data && data30day) {
+    const participants = participantQuery.data;
+
+    INCENTIVISED_PAIRS.forEach(pair => {
+      const feesApyConstant = pair.id === 1 ? 0.7 : 0.5;
+
+      t[pair.id] = {
+        ...pair,
+        tvl: tvls[pair.id],
+        apy: apys[pair.id]?.toNumber(),
+        feesApy: (data30day[pair.id]['fees'] * 12 * feesApyConstant) / tvls[pair.id],
+        participant: participants[pair.id],
+        apyTotal: new BigNumber(apys[pair.id] || 0)
+          .plus(
+            new BigNumber(data30day[pair.id]['fees'] * 12 * feesApyConstant || 0).div(
+              new BigNumber(tvls[pair.id]) || 1,
+            ),
+          )
+          .toNumber(),
+      };
+
+      if (data[pair.id]) {
+        t[pair.id].volume = data[pair.id]['volume'];
+        t[pair.id].fees = data[pair.id]['fees'];
+      }
+    });
+    return t;
+  } else return null;
+};
+
+export const useAllPairsTotal = () => {
+  const allPairs = useAllPairs();
+
+  if (allPairs) {
+    return Object.values(allPairs).reduce(
+      (total, pair) => {
+        total.participant += pair.participant;
+        total.tvl += pair.tvl;
+        total.volume += pair.volume ? pair.volume : 0;
+        total.fees += pair.fees ? pair.fees : 0;
+        return total;
+      },
+      { participant: 0, tvl: 0, volume: 0, fees: 0 },
+    );
   }
 
   return;

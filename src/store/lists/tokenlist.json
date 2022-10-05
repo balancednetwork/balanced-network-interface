@@ -1,0 +1,142 @@
+{
+  "name": "Balanced Tokens",
+  "timestamp": "2022-07-01T08:37:27.276Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png",
+  "keywords": ["balanced", "default"],
+  "tokens": [
+    {
+      "address": "cx2609b924e33ef00b648a409245c7ea394c467824",
+      "chainId": 1,
+      "name": "Staked ICX",
+      "symbol": "sICX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sicx.png"
+    },
+    {
+      "address": "cx88fd7df7ddff82f7cc735c871dc519838cb235bb",
+      "chainId": 1,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "cxf61cd5a45dc9f91c15aa65831a30a90d59a09619",
+      "chainId": 1,
+      "name": "Balance Token",
+      "symbol": "BALN",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png"
+    },
+    {
+      "address": "cxae3034235540b924dfcc1b45836c293dcc82bfb7",
+      "chainId": 1,
+      "name": "ICON USD Coin",
+      "symbol": "IUSDC",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
+    },
+    {
+      "address": "cxbb2871f468a3008f80b08fdde5b8b951583acf06",
+      "chainId": 1,
+      "name": "Stably USD",
+      "symbol": "USDS",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/usds.png"
+    },
+    {
+      "address": "cx1a29259a59f463a67bb2ef84398b30ca56b5830a",
+      "chainId": 1,
+      "name": "Omm Token",
+      "symbol": "OMM",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"
+    },
+    {
+      "address": "cx2e6d0fc0eca04965d06038c8406093337f085fcf",
+      "chainId": 1,
+      "name": "Craft",
+      "symbol": "CFT",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/cft.png"
+    },
+    {
+      "address": "cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88",
+      "chainId": 1,
+      "name": "ICON Tether",
+      "symbol": "IUSDT",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdt.png"
+    },
+    {
+      "address": "cx785d504f44b5d2c8dac04c5a1ecd75f18ee57d16",
+      "chainId": 1,
+      "name": "Fin Token",
+      "symbol": "FIN",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/fin.png"
+    },
+    {
+      "address": "cxdd89d7a425b8f0b6448a8c80136727c517e64033",
+      "chainId": 7,
+      "name": "Staked ICX",
+      "symbol": "sICX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sicx.png"
+    },
+    {
+      "address": "cx1cd2da25f9942fda5144e139bbda3e5108d3c083",
+      "chainId": 7,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "cx9eefbe346b17328e2265573f6e166f6bc4a13cc4",
+      "chainId": 7,
+      "name": "Balance Token",
+      "symbol": "BALN",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png"
+    },
+    {
+      "address": "cx538a925f49427d4f1078aed638c8cb525071fc68",
+      "chainId": 7,
+      "name": "ICON USD Coin",
+      "symbol": "IUSDC",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
+    },
+    {
+      "address": "cx91a9327ca44e78983e143b1cfb18e8024a1f31d9",
+      "chainId": 7,
+      "name": "Stably USD",
+      "symbol": "USDS",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/usds.png"
+    },
+    {
+      "address": "cx0fa7815de5b2be6e51dc52caa0dc556012ae0f98",
+      "chainId": 7,
+      "name": "Omm Token",
+      "symbol": "OMM",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"
+    },
+    {
+      "address": "cx5b5a03cb525a1845d0af3a872d525b18a810acb0",
+      "chainId": 1,
+      "name": "Binance BTC",
+      "symbol": "BTCB",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
+    }
+  ]
+}

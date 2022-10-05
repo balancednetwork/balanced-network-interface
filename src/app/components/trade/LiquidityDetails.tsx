@@ -1,89 +1,49 @@
-import React, { useMemo } from 'react';
+import React, { useState } from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
-import { t, Trans } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
+import { Accordion } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
+import { AnimatePresence, motion } from 'framer-motion';
 import JSBI from 'jsbi';
 import { omit } from 'lodash-es';
-import { useIconReact } from 'packages/icon-react';
-import Nouislider from 'packages/nouislider-react';
-import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
-import { Flex, Box } from 'rebass/styled-components';
+import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import CurrencyLogo from 'app/components/CurrencyLogo';
-import { UnderlineTextWithArrow } from 'app/components/DropdownText';
-import Modal from 'app/components/Modal';
-import { BoxPanel } from 'app/components/Panel';
-import { DropdownPopper } from 'app/components/Popover';
+import Message from 'app/Message';
 import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
+import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
-import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
-import { BalanceData, useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { BIGINT_ZERO } from 'constants/misc';
+import { BalanceData, useSuppliedTokens } from 'hooks/useV2Pairs';
+import { useTokenListConfig } from 'store/lists/hooks';
 import { Field } from 'store/mint/actions';
+import { useMintActionHandlers } from 'store/mint/hooks';
 import { useRewards } from 'store/reward/hooks';
-import { tryParseAmount } from 'store/swap/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useTrackedTokenPairs } from 'store/user/hooks';
-import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
-import { multiplyCABN, toFraction, toDec } from 'utils';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+import { useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
 
-import ModalContent from '../ModalContent';
+import { Banner } from '../Banner';
+import { StyledSkeleton } from '../ProposalInfo/components';
 import Spinner from '../Spinner';
-import { withdrawMessage } from './utils';
-
-function getRate(pair: Pair, balance: BalanceData): Fraction {
-  if (
-    pair.totalSupply &&
-    JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO) &&
-    balance &&
-    JSBI.greaterThan(balance.balance.quotient, BIGINT_ZERO)
-  ) {
-    const amount = balance.balance.divide(pair.totalSupply);
-    return new Fraction(amount.numerator, amount.denominator);
-  }
-  return FRACTION_ZERO;
-}
-
-function getABBalance(pair: Pair, balance: BalanceData) {
-  const rate = getRate(pair, balance);
-
-  return [pair.reserve0.multiply(rate), pair.reserve1.multiply(rate)];
-}
-
-function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber) {
-  const rate = getRate(pair, balance);
-
-  const totalRewardFrac = totalReward ? toFraction(totalReward) : FRACTION_ZERO;
-
-  return {
-    share: rate,
-    reward: totalRewardFrac.multiply(rate),
-  };
-}
+import { StyledAccordionButton, StyledAccordionPanel, StyledAccordionItem } from './LiquidityDetails/Accordion';
+import { StyledBoxPanel } from './LiquidityDetails/shared';
+import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
+import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './LiquidityDetails/WithdrawPanel';
+import { usePoolPanelContext } from './PoolPanelContext';
+import { getFormattedPoolShare, getFormattedRewards, stakedFraction, totalSupply } from './utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
+  const tokenListConfig = useTokenListConfig();
 
-  const { account } = useIconReact();
-
-  const trackedTokenPairs = useTrackedTokenPairs();
-
-  // fetch the reserves for all V2 pools
-  const pairs = useAvailablePairs(trackedTokenPairs);
-
-  // fetch the user's balances of all tracked V2 LP tokens
-  const balances = useBalances(account, pairs);
+  const { pairs, balances } = usePoolPanelContext();
 
   const rewards = useRewards();
+
+  // prevent accordion expanded on mounted
+  const [isHided, setIsHided] = useState(true);
 
   const queuePair = pairs[BalancedJs.utils.POOL_IDS.sICXICX];
   const queueBalance = balances[BalancedJs.utils.POOL_IDS.sICXICX];
@@ -95,15 +55,16 @@ export default function LiquidityDetails() {
     (JSBI.greaterThan(queueBalance.balance.quotient, BIGINT_ZERO) ||
       (queueBalance.balance1 && JSBI.greaterThan(queueBalance.balance1.quotient, BIGINT_ZERO)));
 
-  if (!account || Object.keys(pairs).length === 0) return null;
-
   const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const userPools = Object.keys(pairsWithoutQ).filter(
-    poolId => balances[poolId] && JSBI.greaterThan(balances[poolId].balance.quotient, BIGINT_ZERO),
+    poolId =>
+      balances[poolId] &&
+      (Number(balances[poolId].balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
+        Number(balances[poolId].stakedLPBalance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL),
   );
 
-  const sortedPairs = userPools
+  const sortedPairs: { [key: string]: Pair } = userPools
     .map(poolId => {
       const pair: Pair = pairsWithoutQ[poolId];
 
@@ -119,63 +80,95 @@ export default function LiquidityDetails() {
       return acc;
     }, {});
 
-  return shouldShowQueue || userPools.length ? (
-    <BoxPanel bg="bg2" mb={10}>
-      <Typography variant="h2" mb={5}>
-        <Trans>Liquidity details</Trans>
-      </Typography>
+  const hasLiquidity = shouldShowQueue || userPools.length;
+  const isLiquidityInfoLoading = shouldShowQueue === undefined;
 
-      <TableWrapper>
-        <DashGrid>
-          <HeaderText>
-            <Trans>Pool</Trans>
-          </HeaderText>
-          <HeaderText>
-            <Trans>Your supply</Trans>
-          </HeaderText>
-          {upSmall && (
-            <HeaderText>
-              <Trans>Pool share</Trans>
-            </HeaderText>
-          )}
-          {upSmall && (
-            <HeaderText>
-              <Trans>Daily rewards</Trans>
-            </HeaderText>
-          )}
-          <HeaderText></HeaderText>
-        </DashGrid>
-
-        {shouldShowQueue && (
-          <PoolRecordQ
-            balance={queueBalance}
-            pair={queuePair}
-            totalReward={queueReward}
-            border={userPools.length !== 0}
-          />
+  return (
+    <>
+      <AnimatePresence>
+        {isLiquidityInfoLoading && (
+          <motion.div
+            key="spinner"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{ height: '100px', position: 'relative' }}
+          >
+            <Spinner size={75} centered></Spinner>
+          </motion.div>
         )}
+      </AnimatePresence>
+      {hasLiquidity && (
+        <TableWrapper>
+          <DashGrid>
+            <HeaderText>
+              <Trans>Pool</Trans>
+            </HeaderText>
+            <HeaderText>
+              <Trans>Your supply</Trans>
+            </HeaderText>
+            {upSmall && (
+              <HeaderText>
+                <Trans>Pool share</Trans>
+              </HeaderText>
+            )}
+            {upSmall && (
+              <HeaderText>
+                <Trans>Daily rewards</Trans>
+              </HeaderText>
+            )}
+            <HeaderText></HeaderText>
+          </DashGrid>
 
-        {balancesWithoutQ &&
-          userPools.map((poolId, index, arr) => (
-            <PoolRecord
-              key={poolId}
-              poolId={parseInt(poolId)}
-              balance={balances[poolId]}
-              pair={sortedPairs[poolId]}
-              totalReward={rewards[poolId]}
-              border={index !== arr.length - 1}
-            />
-          ))}
-      </TableWrapper>
-    </BoxPanel>
-  ) : null;
+          <Accordion collapsible>
+            {shouldShowQueue && (
+              <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
+                <StyledAccordionButton onClick={() => setIsHided(false)}>
+                  <PoolRecordQ balance={queueBalance} pair={queuePair} totalReward={queueReward} />
+                </StyledAccordionButton>
+                <StyledAccordionPanel hidden={isHided}>
+                  <StyledBoxPanel bg="bg3">
+                    <WithdrawPanelQ balance={queueBalance} pair={queuePair} />
+                  </StyledBoxPanel>
+                </StyledAccordionPanel>
+              </StyledAccordionItem>
+            )}
+            {balancesWithoutQ &&
+              userPools.map((poolId, index, arr) => (
+                <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
+                  <StyledAccordionButton onClick={() => setIsHided(false)}>
+                    <PoolRecord
+                      poolId={parseInt(poolId)}
+                      balance={balances[poolId]}
+                      pair={sortedPairs[poolId]}
+                      totalReward={rewards[poolId]}
+                    />
+                  </StyledAccordionButton>
+                  <StyledAccordionPanel hidden={isHided}>
+                    <StyledBoxPanel bg="bg3">
+                      <StakeLPPanel pair={sortedPairs[poolId]} />
+                      <WithdrawPanel poolId={parseInt(poolId)} balance={balances[poolId]} pair={sortedPairs[poolId]} />
+                    </StyledBoxPanel>
+                  </StyledAccordionPanel>
+                </StyledAccordionItem>
+              ))}
+          </Accordion>
+        </TableWrapper>
+      )}
+
+      {!tokenListConfig.community && (
+        <Banner messageID={'communityList'} embedded>
+          <Message />
+        </Banner>
+      )}
+    </>
+  );
 }
 
 const TableWrapper = styled.div``;
 
 const DashGrid = styled.div`
   display: grid;
-  grid-template-columns: 4fr 5fr 3fr;
+  grid-template-columns: 4fr 5fr;
   gap: 10px;
   grid-template-areas: 'name supply action';
   align-items: center;
@@ -191,7 +184,7 @@ const DashGrid = styled.div`
   }
 
   ${({ theme }) => theme.mediaWidth.upSmall`
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-areas: 'name supply share rewards action';
   `}
 `;
@@ -202,19 +195,31 @@ const HeaderText = styled(Typography)`
   letter-spacing: 3px;
 `;
 
-const DataText = styled(Box)`
+const DataText = styled(Flex)`
   font-size: 16px;
+  justify-content: center;
+  align-items: end;
+  flex-direction: column;
 `;
 
-const ListItem = styled(DashGrid)<{ border?: boolean }>`
+const StyledArrowDownIcon = styled(ArrowDownIcon)`
+  width: 10px;
+  margin-left: 10px;
+  margin-top: 10px;
+  transition: transform 0.3s ease;
+`;
+
+const StyledDataText = styled(Flex)`
+  font-weight: bold;
+`;
+
+const ListItem = styled(DashGrid)`
   padding: 20px 0;
   color: #ffffff;
-  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
 `;
 
 const PoolRecord = ({
   poolId,
-  border,
   pair,
   balance,
   totalReward,
@@ -222,86 +227,88 @@ const PoolRecord = ({
   pair: Pair;
   balance: BalanceData;
   poolId: number;
-  border: boolean;
   totalReward: BigNumber;
 }) => {
   const upSmall = useMedia('(min-width: 800px)');
+  const stakedLPPercent = useStakedLPPercent(poolId);
 
-  const [aBalance, bBalance] = getABBalance(pair, balance);
+  const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
   const { share, reward } = getShareReward(pair, balance, totalReward);
+  const [aBalance, bBalance] = getABBalance(pair, balance);
+  const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
+
+  const baseCurrencyTotalSupply = totalSupply(baseValue, lpBalance?.base);
+  const quoteCurrencyTotalSupply = totalSupply(quoteValue, lpBalance?.quote);
+
+  const stakedFractionValue = stakedFraction(stakedLPPercent);
+
+  const { onCurrencySelection } = useMintActionHandlers(false);
+
+  const handlePoolClick = () => {
+    onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency);
+    onCurrencySelection(Field.CURRENCY_B, pair.reserve1.currency);
+  };
 
   return (
     <>
-      {Number(bBalance.toFixed(2)) > MINIMUM_B_BALANCE_TO_SHOW_POOL ? (
-        <ListItem border={border}>
+      <ListItem onClick={handlePoolClick}>
+        <StyledDataText>
           <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
+          <StyledArrowDownIcon />
+        </StyledDataText>
+        <DataText>
+          {baseCurrencyTotalSupply ? (
+            <Typography fontSize={16}>{`${baseCurrencyTotalSupply.toFixed(2, { groupSeparator: ',' })} ${
+              aBalance.currency.symbol
+            }`}</Typography>
+          ) : (
+            <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+          )}
+          {quoteCurrencyTotalSupply ? (
+            <Typography fontSize={16}>{`${quoteCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' })} ${
+              bBalance.currency.symbol
+            }`}</Typography>
+          ) : (
+            <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+          )}
+        </DataText>
+
+        {upSmall && (
           <DataText>
-            {`${aBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${aBalance.currency.symbol || '...'}`}
-            <br />
-            {`${bBalance.toFixed(2, { groupSeparator: ',' }) || '...'} ${bBalance.currency.symbol || '...'}`}
+            {!baseCurrencyTotalSupply && baseValue?.equalTo(0) ? (
+              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            ) : (
+              getFormattedPoolShare(baseValue, quoteValue, percent, share, baseCurrencyTotalSupply, pair)
+            )}
           </DataText>
-          {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
-          {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
-          <DataText>
-            <WithdrawText pair={pair} balance={balance} poolId={poolId} />
-          </DataText>
-        </ListItem>
-      ) : (
-        <></>
-      )}
+        )}
+        {upSmall && <DataText>{getFormattedRewards(reward, stakedFractionValue)}</DataText>}
+      </ListItem>
     </>
   );
 };
 
-const WithdrawText = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
-  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
-  const arrowRef = React.useRef(null);
-
-  const toggle = () => {
-    setAnchor(anchor ? null : arrowRef.current);
-  };
-
-  const close = () => {
-    setAnchor(null);
-  };
-
-  return (
-    <ClickAwayListener onClickAway={close}>
-      <div>
-        <UnderlineTextWithArrow onClick={toggle} text={t`Withdraw`} arrowRef={arrowRef} />
-        <DropdownPopper show={Boolean(anchor)} anchorEl={anchor}>
-          {poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
-            <WithdrawModalQ balance={balance} pair={pair} onClose={close} />
-          ) : (
-            <WithdrawModal balance={balance} pair={pair} poolId={poolId} onClose={close} />
-          )}
-        </DropdownPopper>
-      </div>
-    </ClickAwayListener>
-  );
-};
-
-const PoolRecordQ = ({
-  border,
-  balance,
-  pair,
-  totalReward,
-}: {
-  border: boolean;
-  balance: BalanceData;
-  pair: Pair;
-  totalReward: BigNumber;
-}) => {
+const PoolRecordQ = ({ balance, pair, totalReward }: { balance: BalanceData; pair: Pair; totalReward: BigNumber }) => {
   const upSmall = useMedia('(min-width: 800px)');
 
   const { share, reward } = getShareReward(pair, balance, totalReward);
 
+  const { onCurrencySelection } = useMintActionHandlers(false);
+
+  const handlePoolClick = () => {
+    onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency);
+    onCurrencySelection(Field.CURRENCY_B, pair.reserve1.currency);
+  };
+
   return (
-    <ListItem border={border}>
-      <DataText>{`${balance.balance.currency.symbol || '...'} / ${
-        balance.balance1?.currency.symbol || '...'
-      }`}</DataText>
+    <ListItem onClick={handlePoolClick}>
+      <StyledDataText>
+        <DataText>{`${balance.balance.currency.symbol || '...'} / ${
+          balance.balance1?.currency.symbol || '...'
+        }`}</DataText>
+        <StyledArrowDownIcon />
+      </StyledDataText>
+
       <DataText>
         <Typography fontSize={16}>{`${balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ${
           balance.balance.currency.symbol || '...'
@@ -310,477 +317,8 @@ const PoolRecordQ = ({
           balance.balance1?.currency.symbol || '...'
         }`}</Typography>
       </DataText>
-      {upSmall && <DataText>{`${share.multiply(100).toFixed(4) || '---'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${reward.toFixed(4, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
-      <DataText>
-        <WithdrawText pair={pair} balance={balance} poolId={BalancedJs.utils.POOL_IDS.sICXICX} />
-      </DataText>
+      {upSmall && <DataText>{`${share.multiply(100).toFixed(2) || '---'}%`}</DataText>}
+      {upSmall && <DataText>{`~ ${reward.toFixed(2, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
     </ListItem>
-  );
-};
-
-const WithdrawModalQ = ({ onClose, balance, pair }: { pair: Pair; balance: BalanceData; onClose: () => void }) => {
-  const { account } = useIconReact();
-  const addTransaction = useTransactionAdder();
-
-  const shouldLedgerSign = useShouldLedgerSign();
-
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-
-  const handleCancelOrder = () => {
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
-
-    bnJs
-      .inject({ account })
-      .Dex.cancelSicxIcxOrder()
-      .then(res => {
-        addTransaction(
-          { hash: res.result },
-          {
-            pending: t`Withdrawing ICX...`,
-            summary: t`${balance.balance?.toFixed(2, { groupSeparator: ',' }) || '...'} ICX added to your wallet.`,
-          },
-        );
-        toggleOpen1();
-      })
-      .catch(e => {
-        console.error('error', e);
-      })
-      .finally(() => {
-        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-
-        changeShouldLedgerSign(false);
-      });
-  };
-
-  const handleWithdrawEarnings = () => {
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
-    bnJs
-      .inject({ account })
-      .Dex.withdrawSicxEarnings()
-      .then(res => {
-        addTransaction(
-          { hash: res.result },
-          {
-            pending: t`Withdrawing sICX...`,
-            summary: t`${balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX added to your wallet.`,
-          },
-        );
-        toggleOpen2();
-      })
-      .catch(e => {
-        console.error('error', e);
-      })
-      .finally(() => {
-        changeShouldLedgerSign(false);
-        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-      });
-  };
-
-  const [open1, setOpen1] = React.useState(false);
-  const toggleOpen1 = () => {
-    if (shouldLedgerSign) return;
-
-    setOpen1(!open1);
-  };
-  const handleOption1 = () => {
-    toggleOpen1();
-    onClose();
-  };
-
-  const [open2, setOpen2] = React.useState(false);
-  const toggleOpen2 = () => {
-    if (shouldLedgerSign) return;
-
-    setOpen2(!open2);
-  };
-  const handleOption2 = () => {
-    toggleOpen2();
-    onClose();
-  };
-
-  const hasEnoughICX = useHasEnoughICX();
-
-  return (
-    <>
-      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
-        <Typography variant="h3" mb={3}>
-          <Trans>Withdraw:</Trans>&nbsp;
-          <Typography as="span">{`${pair.token0.symbol || '...'} / ${pair.token1.symbol || '...'}`}</Typography>
-        </Typography>
-
-        <Flex alignItems="center" justifyContent="space-between">
-          <OptionButton
-            disabled={JSBI.equal(balance.balance1?.quotient || BIGINT_ZERO, BIGINT_ZERO)}
-            onClick={handleOption2}
-            mr={2}
-          >
-            <CurrencyLogo currency={balance.balance1?.currency} size={'35px'} />
-            <Typography>{balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'} sICX</Typography>
-          </OptionButton>
-
-          <OptionButton
-            disabled={JSBI.equal(balance.balance.quotient || BIGINT_ZERO, BIGINT_ZERO)}
-            onClick={handleOption1}
-          >
-            <CurrencyLogo currency={balance.balance.currency} size={'35px'} />
-            <Typography>{balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} ICX</Typography>
-          </OptionButton>
-        </Flex>
-      </Flex>
-
-      <Modal isOpen={open1} onDismiss={toggleOpen1}>
-        <ModalContent>
-          <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
-            <Trans>Withdraw liquidity?</Trans>
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center">
-            {balance.balance.toFixed(2, { groupSeparator: ',' }) || '...'} {balance.balance.currency.symbol || '...'}
-          </Typography>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen1}>Cancel</TextButton>
-                <Button onClick={handleCancelOrder} disabled={!hasEnoughICX}>
-                  <Trans>Withdraw</Trans>
-                </Button>
-              </>
-            )}
-          </Flex>
-        </ModalContent>
-      </Modal>
-
-      <Modal isOpen={open2} onDismiss={toggleOpen2}>
-        <ModalContent>
-          <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
-            <Trans>Withdraw sICX?</Trans>
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center">
-            {balance.balance1?.toFixed(2, { groupSeparator: ',' }) || '...'}{' '}
-            {balance.balance1?.currency.symbol || '...'}
-          </Typography>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen2}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button onClick={handleWithdrawEarnings} disabled={!hasEnoughICX}>
-                  <Trans>Withdraw</Trans>
-                </Button>
-              </>
-            )}
-          </Flex>
-        </ModalContent>
-      </Modal>
-    </>
-  );
-};
-
-const OptionButton = styled(Box)`
-  width: 96px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  border-radius: 10px;
-  text-decoration: none;
-  color: white;
-  user-select: none;
-  text-align: center;
-  background-color: ${({ theme }) => theme.colors.bg3};
-  border: 2px solid #144a68;
-  transition: border 0.3s ease;
-  padding: 10px;
-  transition: border 0.3s ease;
-
-  &[disabled] {
-    background: rgba(255, 255, 255, 0.15);
-    cursor: default;
-    pointer-events: none;
-  }
-
-  :hover {
-    border: 2px solid ${({ theme }) => theme.colors.primary};
-    transition: border 0.2s ease;
-  }
-
-  > svg {
-    margin-bottom: 10px;
-  }
-`;
-
-const WithdrawModal = ({
-  pair,
-  balance,
-  poolId,
-  onClose,
-}: {
-  pair: Pair;
-  balance: BalanceData;
-  poolId: number;
-  onClose: () => void;
-}) => {
-  const { account } = useIconReact();
-  const balances = useCurrencyBalances(
-    account ?? undefined,
-    useMemo(() => [pair.token0, pair.token1], [pair]),
-  );
-
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-
-  const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
-    typedValue: string;
-    independentField: Field;
-    inputType: 'slider' | 'text';
-    portion: number;
-  }>({
-    typedValue: '',
-    independentField: Field.CURRENCY_A,
-    inputType: 'text',
-    portion: 0,
-  });
-  const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
-  const price =
-    independentField === Field.CURRENCY_A ? pair.token0Price || FRACTION_ONE : pair.token1Price || FRACTION_ONE;
-
-  let parsedAmount: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
-
-  const percent = new Percent(Math.floor(portion * 100), 10_000);
-
-  const [aBalance, bBalance] = getABBalance(pair, balance);
-
-  if (inputType === 'slider') {
-    parsedAmount = {
-      [Field.CURRENCY_A]: aBalance.multiply(percent),
-      [Field.CURRENCY_B]: bBalance.multiply(percent),
-    };
-
-    formattedAmounts = {
-      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A]?.toSignificant(6) ?? '',
-      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B]?.toSignificant(6) ?? '',
-    };
-  } else {
-    const [independentToken, dependentToken] =
-      independentField === Field.CURRENCY_A ? [pair.token0, pair.token1] : [pair.token1, pair.token0];
-
-    const independentAmount = tryParseAmount(typedValue, independentToken);
-    const dependentAmountFrac = independentAmount?.multiply(price);
-
-    parsedAmount = {
-      [independentField]: independentAmount,
-      [dependentField]:
-        dependentAmountFrac &&
-        CurrencyAmount.fromFractionalAmount(
-          dependentToken,
-          dependentAmountFrac.numerator,
-          dependentAmountFrac.denominator,
-        ),
-    };
-
-    formattedAmounts = {
-      [independentField]: typedValue,
-      [dependentField]: parsedAmount[dependentField]?.toFixed(6) ?? '',
-    };
-  }
-
-  const handleFieldAInput = (value: string) => {
-    if (aBalance) {
-      const valueBN = new BigNumber(value || '0');
-      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(aBalance.toFixed()).multipliedBy(100).toNumber(), 100);
-      setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
-    }
-  };
-
-  const handleFieldBInput = (value: string) => {
-    if (bBalance) {
-      const valueBN = new BigNumber(value || '0');
-      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(bBalance.toFixed()).multipliedBy(100).toNumber(), 100);
-      setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
-    }
-  };
-
-  const handleSlide = (values: string[], handle: number) => {
-    setState({
-      typedValue,
-      independentField,
-      inputType: 'slider',
-      portion: parseFloat(values[handle]),
-    });
-  };
-
-  const sliderInstance = React.useRef<any>(null);
-
-  React.useEffect(() => {
-    if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(portion);
-    }
-  }, [sliderInstance, inputType, portion]);
-
-  const [open, setOpen] = React.useState(false);
-
-  const toggleOpen = () => {
-    if (shouldLedgerSign) return;
-    setOpen(!open);
-  };
-
-  const addTransaction = useTransactionAdder();
-
-  const handleWithdraw = () => {
-    if (!account) return;
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
-
-    const numPortion = new BigNumber(portion / 100);
-
-    const t = multiplyCABN(balance.balance, numPortion);
-
-    const aT = multiplyCABN(aBalance, numPortion);
-    const bT = multiplyCABN(bBalance, numPortion);
-
-    bnJs
-      .inject({ account })
-      .Dex.remove(poolId, toDec(t))
-      .then(result => {
-        addTransaction(
-          { hash: result.result },
-          {
-            pending: withdrawMessage(
-              aT.toFixed(2, { groupSeparator: ',' }),
-              aT.currency.symbol ?? '',
-              bT.toFixed(2, { groupSeparator: ',' }),
-              bT.currency.symbol ?? '',
-            ).pendingMessage,
-            summary: withdrawMessage(
-              aT.toFixed(2, { groupSeparator: ',' }),
-              aT.currency.symbol ?? '',
-              bT.toFixed(2, { groupSeparator: ',' }),
-              bT.currency.symbol ?? '',
-            ).successMessage,
-          },
-        );
-        toggleOpen();
-      })
-      .catch(e => {
-        console.error('error', e);
-      })
-      .finally(() => {
-        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-
-        changeShouldLedgerSign(false);
-      });
-  };
-
-  const handleShowConfirm = () => {
-    toggleOpen();
-    onClose();
-  };
-
-  const hasEnoughICX = useHasEnoughICX();
-
-  return (
-    <>
-      <Flex padding={5} bg="bg4" maxWidth={320} flexDirection="column">
-        <Typography variant="h3" mb={3}>
-          <Trans>Withdraw:</Trans>&nbsp;
-          <Typography as="span">{`${aBalance.currency.symbol || '...'} / ${
-            bBalance.currency.symbol || '...'
-          }`}</Typography>
-        </Typography>
-        <Box mb={3}>
-          <CurrencyInputPanel
-            value={formattedAmounts[Field.CURRENCY_A]}
-            currency={aBalance.currency}
-            onUserInput={handleFieldAInput}
-            bg="bg5"
-          />
-        </Box>
-        <Box mb={3}>
-          <CurrencyInputPanel
-            value={formattedAmounts[Field.CURRENCY_B]}
-            currency={bBalance.currency}
-            onUserInput={handleFieldBInput}
-            bg="bg5"
-          />
-        </Box>
-        <Typography mb={5} textAlign="right">
-          {t`Wallet:
-            ${balances[0]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[0]?.currency.symbol || '...'} /
-            ${balances[1]?.toFixed(2, { groupSeparator: ',' }) || '...'} ${balances[1]?.currency.symbol || '...'}`}
-        </Typography>
-        <Box mb={5}>
-          <Nouislider
-            start={[0]}
-            connect={[true, false]}
-            range={{
-              min: [0],
-              max: [100],
-            }}
-            step={0.01}
-            onSlide={handleSlide}
-            instanceRef={instance => {
-              if (instance && !sliderInstance.current) {
-                sliderInstance.current = instance;
-              }
-            }}
-          />
-        </Box>
-        <Flex alignItems="center" justifyContent="center">
-          <Button onClick={handleShowConfirm}>
-            <Trans>Withdraw liquidity</Trans>
-          </Button>
-        </Flex>
-      </Flex>
-
-      <Modal isOpen={open} onDismiss={toggleOpen}>
-        <ModalContent>
-          <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
-            <Trans>Withdraw liquidity?</Trans>
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_A]?.toFixed(2, { groupSeparator: ',' })}{' '}
-            {parsedAmount[Field.CURRENCY_A]?.currency.symbol || '...'}
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_B]?.toFixed(2, { groupSeparator: ',' })}{' '}
-            {parsedAmount[Field.CURRENCY_B]?.currency.symbol || '...'}
-          </Typography>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
-                  <Trans>Withdraw</Trans>
-                </Button>
-              </>
-            )}
-          </Flex>
-        </ModalContent>
-      </Modal>
-    </>
   );
 };

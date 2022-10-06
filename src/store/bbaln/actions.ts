@@ -12,6 +12,9 @@ export const type = createAction<{ independentField?: Field; typedValue?: string
   'bbaln/type',
 );
 
-export const changeData = createAction<{ lockedBaln: CurrencyAmount<Token>; lockEnd: Date; bbalnAmount: BigNumber }>(
-  'bbaln/changeData',
-);
+export const changeData = createAction<{
+  lockedBaln: CurrencyAmount<Token>;
+  lockEnd: Date;
+  bbalnAmount: BigNumber;
+  totalSupply: BigNumber;
+}>('bbaln/changeData');

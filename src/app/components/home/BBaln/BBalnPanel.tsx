@@ -30,6 +30,8 @@ import {
   useBBalnSliderActionHandlers,
   useLockedUntil,
   useHasLockExpired,
+  // useBoostData,
+  // useTotalSuply,
 } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
@@ -273,6 +275,8 @@ export default function BBalnPanel() {
   const bBalnAmount = useBBalnAmount();
   const lockedBalnAmount = useLockedBaln();
   const lockedUntil = useLockedUntil();
+  // const totalSupplyBBaln = useTotalSuply();
+  // const { data: boostData } = useBoostData();
   const { data: hasLockExpired } = useHasLockExpired();
   const { typedValue, isAdjusting, inputType } = useBBalnSliderState();
   const { onFieldAInput, onSlide, onAdjust: adjust } = useBBalnSliderActionHandlers();
@@ -424,7 +428,13 @@ export default function BBalnPanel() {
   };
 
   const balnSliderAmount = useMemo(() => new BigNumber(typedValue), [typedValue]);
-  const buttonText = hasLockExpired ? t`Withdraw BALN` : bBalnAmount?.isZero() ? t`Boost` : t`Adjust`;
+  const buttonText = hasLockExpired
+    ? lockedBalnAmount?.greaterThan(0)
+      ? t`Withdraw BALN`
+      : t`Boost`
+    : bBalnAmount?.isZero()
+    ? t`Boost`
+    : t`Adjust`;
   const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
   const shouldBoost = differenceBalnAmount.isPositive();
@@ -540,7 +550,12 @@ export default function BBalnPanel() {
                   </Button>
                 </>
               ) : (
-                <Button onClick={hasLockExpired ? toggleWithdrawModalOpen : handleEnableAdjusting} fontSize={14}>
+                <Button
+                  onClick={
+                    hasLockExpired && lockedBalnAmount?.greaterThan(0) ? toggleWithdrawModalOpen : handleEnableAdjusting
+                  }
+                  fontSize={14}
+                >
                   {buttonText}
                 </Button>
               )}

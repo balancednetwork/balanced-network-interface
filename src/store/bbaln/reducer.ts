@@ -12,6 +12,7 @@ export interface BBalnState {
   lockedBaln: undefined | CurrencyAmount<Token>;
   lockedUntil: Date | undefined;
   lockedPeriod: LockedPeriod | undefined;
+  totalSupply: BigNumber | undefined;
 
   state: {
     isAdjusting: boolean;
@@ -26,6 +27,7 @@ const initialState: BBalnState = {
   lockedBaln: undefined,
   lockedUntil: undefined,
   lockedPeriod: undefined,
+  totalSupply: undefined,
 
   state: {
     isAdjusting: false,
@@ -39,6 +41,7 @@ export default createReducer(initialState, builder =>
   builder
     .addCase(changeData, (state, { payload }) => {
       state.bbalnAmount = payload.bbalnAmount;
+      state.totalSupply = payload.totalSupply;
       if (!state.lockedBaln?.equalTo(payload.lockedBaln)) {
         state.lockedBaln = payload.lockedBaln;
       }

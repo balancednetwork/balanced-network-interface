@@ -52,7 +52,7 @@ export const TransferAssetModal = ({ isOpen, setIsOpen, sendingAddress, balance,
     <Modal isOpen={isOpen} onDismiss={toggleOpen}>
       <StyledModalContent>
         <Typography textAlign="center" mb={1}>
-          <Trans>Transfer Asset?</Trans>
+          <Trans>Transfer asset?</Trans>
         </Typography>
 
         <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>

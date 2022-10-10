@@ -34,7 +34,6 @@ export let ABI = [
     outputs: [],
     stateMutability: 'payable',
     type: 'function',
-    payable: true,
   },
   {
     inputs: [
@@ -61,27 +60,7 @@ export let ABI = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
     name: 'balanceOf',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-    constant: true,
-  },
-  {
-    name: 'getBalanceOf',
     inputs: [
       {
         internalType: 'address',
@@ -113,7 +92,25 @@ export let ABI = [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_coinName',
+        type: 'string',
+      },
+    ],
+    name: 'coinId',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
@@ -127,13 +124,8 @@ export let ABI = [
         name: '_value',
         type: 'uint256',
       },
-      {
-        internalType: 'string',
-        name: '_to',
-        type: 'string',
-      },
     ],
-    name: 'transferWrappedCoin',
+    name: 'reclaim',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

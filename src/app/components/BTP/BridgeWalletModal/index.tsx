@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-// import * as HwUtils from '@ledgerhq/hw-app-icx/lib/utils';
-import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { Trans } from '@lingui/macro';
 import { CONNECTED_WALLET_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { requestAddress } from 'btp/src/connectors/ICONex/events';
@@ -19,7 +17,6 @@ import { Typography } from 'app/theme';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import { ReactComponent as MetamaskIcon } from 'assets/icons/metamask.svg';
-import bnJs from 'bnJs';
 import {
   useTransferAssetsModalToggle,
   useBridgeWalletModalToggle,
@@ -95,16 +92,16 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
 `;
 
 const WalletOption = styled(Box)`
-display: flex;
-flex-direction: column;
-align-items: center;
-cursor: pointer;
-padding: 5px 20px;
-margin: 0px 10px;
-border-radius: 10px;
-text-decoration: none;
-color: white;
-user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 20px;
+  margin: 0px 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: white;
+  user-select: none;
 
   ${({ theme }) => theme.mediaWidth.up420`
     width: 140px;
@@ -153,6 +150,7 @@ export default function BridgeWalletModal() {
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
   const fromNetwork = useFromNetwork();
+
   const [networkSelected, setNetworkSelected] = useState(fromNetwork);
 
   const [{ offset, limit }, updatePaging] = useState({
@@ -175,7 +173,7 @@ export default function BridgeWalletModal() {
         const isConnected = await EthereumInstance.connectMetaMaskWallet();
         console.log('isConnected', isConnected);
         if (isConnected) {
-          await EthereumInstance.getEthereumAccounts();
+          const data = await EthereumInstance.getEthereumAccounts();
         }
         setLoading(false);
         toggleWalletModal();
@@ -227,43 +225,40 @@ export default function BridgeWalletModal() {
   // };
 
   const handleOpenLedger = async () => {
-  //   setLedgerLoading(true);
-  //   setIsLedgerErr(false);
-  //   updateAddressList([]);
-  //   updatePaging({
-  //     offset: 0,
-  //     limit: LIMIT_PAGING_LEDGER,
-  //   });
-
-  //   const timeout = setTimeout(() => {
-  //     setIsLedgerErr(true);
-  //   }, 3 * 1000);
-
-  //   try {
-  //     if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-  //       bnJs.contractSettings.ledgerSettings.transport.close();
-  //     }
-  //     const transport = await TransportWebHID.create();
-  //     transport.setDebugMode && transport.setDebugMode(false);
-  //     bnJs.inject({
-  //       legerSettings: {
-  //         transport,
-  //       },
-  //     });
-  //     updateShowledgerAddress(true);
-
-  //     await updateLedgerAddress({ offset, limit });
-  //     clearTimeout(timeout);
-  //   } catch (err: any) {
-  //     clearTimeout(timeout);
-  //     if (err.id === 'InvalidChannel') {
-  //       await bnJs.contractSettings.ledgerSettings.transport.close();
-  //       return setTimeout(() => {
-  //         handleOpenLedger();
-  //       }, 0);
-  //     }
-  //     alert('Insert your ledger device, then enter your password and try again.');
-  //   }
+    //   setLedgerLoading(true);
+    //   setIsLedgerErr(false);
+    //   updateAddressList([]);
+    //   updatePaging({
+    //     offset: 0,
+    //     limit: LIMIT_PAGING_LEDGER,
+    //   });
+    //   const timeout = setTimeout(() => {
+    //     setIsLedgerErr(true);
+    //   }, 3 * 1000);
+    //   try {
+    //     if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+    //       bnJs.contractSettings.ledgerSettings.transport.close();
+    //     }
+    //     const transport = await TransportWebHID.create();
+    //     transport.setDebugMode && transport.setDebugMode(false);
+    //     bnJs.inject({
+    //       legerSettings: {
+    //         transport,
+    //       },
+    //     });
+    //     updateShowledgerAddress(true);
+    //     await updateLedgerAddress({ offset, limit });
+    //     clearTimeout(timeout);
+    //   } catch (err: any) {
+    //     clearTimeout(timeout);
+    //     if (err.id === 'InvalidChannel') {
+    //       await bnJs.contractSettings.ledgerSettings.transport.close();
+    //       return setTimeout(() => {
+    //         handleOpenLedger();
+    //       }, 0);
+    //     }
+    //     alert('Insert your ledger device, then enter your password and try again.');
+    //   }
   };
 
   // const getLedgerPage = React.useCallback(
@@ -334,10 +329,10 @@ export default function BridgeWalletModal() {
 
           <Flex alignItems="stretch" justifyContent="space-between">
             {networkSelected.value === 'ICON' ? (
-                <WalletOption onClick={() => handleOpenWallet('iconex')}>
-                  <IconWalletIcon width="50" height="50" />
-                  <Text textAlign="center">ICON</Text>
-                </WalletOption>
+              <WalletOption onClick={() => handleOpenWallet('iconex')}>
+                <IconWalletIcon width="50" height="50" />
+                <Text textAlign="center">ICON</Text>
+              </WalletOption>
             ) : (
               <WalletOption onClick={() => handleOpenWallet('metamask')}>
                 <MetamaskIcon width="50" height="50" />

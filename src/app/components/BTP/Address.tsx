@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 
-import { Flex } from 'rebass/styled-components';
-
 import { AssetName as AddressLabel, AssetInput as AddressInput, AssetInfo as AddressInfo } from './AssetToTransfer';
-import { Label } from './NetworkSelector';
 
 const Address = ({ onChange }) => {
   const [address, setAddress] = useState('');

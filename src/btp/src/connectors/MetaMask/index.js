@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { t } from '@lingui/macro';
-import { ethers } from 'ethers';
+import { ethers, utils } from 'ethers';
 import { toast } from 'react-toastify';
 
 import {
@@ -11,10 +11,11 @@ import {
 } from '../../../../app/components/Notification/TransactionNotification';
 import { transferAssetMessage } from '../../../../app/components/trade/utils';
 import { wallets } from '../../utils/constants';
-import { chainList, customzeChain } from '../chainConfigs';
-import { ADDRESS_LOCAL_STORAGE, CONNECTED_WALLET_LOCAL_STORAGE, signingActions, transactionInfo } from '../constants';
+import { chainConfigs, chainList } from '../chainConfigs';
+import { ADDRESS_LOCAL_STORAGE, CONNECTED_WALLET_LOCAL_STORAGE, transactionInfo } from '../constants';
 import { ABI } from './ABI';
-import { sendNoneNativeCoin } from './services';
+import { findReplacementTx } from './findReplacementTx';
+import { handleSuccessTx } from './handleNotification';
 import { toChecksumAddress } from './utils';
 
 const metamaskURL = 'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn';
@@ -25,8 +26,6 @@ class Ethereum {
     this.provider = this.ethereum && new ethers.providers.Web3Provider(this.ethereum);
     this.ABI = new ethers.utils.Interface(ABI);
     this.contract = null;
-    this.BEP20Contract = null;
-    this.PROXYContract = null;
   }
 
   get getEthereum() {
@@ -61,19 +60,53 @@ class Ethereum {
     return this.ethereum && this.ethereum.isConnected();
   }
 
-  isAllowedNetwork() {
+  async switchChainInMetamask() {
+    const { NETWORK_ADDRESS, EXPLORE_URL, RPC_URL, COIN_SYMBOL, CHAIN_NAME } = chainConfigs['BSC'] || {}; // HARD CODE BSC HERE
+    const chainId = NETWORK_ADDRESS?.split('.')[0];
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId }],
+      });
+      return chainId;
+    } catch (error) {
+      // Error Code 4902 means the network we're trying to switch is not available so we have to add it first
+      if (error.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId,
+                chainName: CHAIN_NAME + ' ' + process.env.REACT_APP_ENV,
+                rpcUrls: [RPC_URL],
+                // iconUrls: [logoUrl],
+                blockExplorerUrls: [EXPLORE_URL],
+                nativeCurrency: {
+                  name: COIN_SYMBOL,
+                  symbol: COIN_SYMBOL,
+                  decimals: 18,
+                },
+              },
+            ],
+          });
+          return chainId;
+        } catch (error) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+  }
+
+  isAllowedNetwork(chainId) {
     if (
       this.ethereum.chainId &&
-      !chainList.map(chain => chain.NETWORK_ADDRESS?.split('.')[0]).includes(this.ethereum.chainId)
+      !chainList
+        .map(chain => (chain.id === chainConfigs.ICON.id ? '' : chain.NETWORK_ADDRESS?.split('.')[0]))
+        .includes(chainId || this.ethereum.chainId)
     ) {
-      // modal.openModal({
-      //   desc:
-      //     'The connected wallet is conflicted with your Source or Destination blockchain. Please change your blockchain option or reconnect a new wallet.',
-      //   button: {
-      //     text: 'Okay',
-      //     onClick: () => modal.setDisplay(false),
-      //   },
-      // });
       console.log(
         'The connected wallet is conflicted with your Source or Destination blockchain. Please change your blockchain option or reconnect a new wallet.',
       );
@@ -90,12 +123,15 @@ class Ethereum {
       return;
     }
     try {
-      const isAllowedNetwork = this.isAllowedNetwork();
-
-      if (isAllowedNetwork) {
+      const chainId = await this.switchChainInMetamask();
+      if (chainId) {
         await this.getEthereum.request({ method: 'eth_requestAccounts' });
-        return true;
+      } else {
+        window.accountInfo = null;
+        return false;
       }
+
+      return chainId;
     } catch (error) {
       console.log(error);
     }
@@ -112,33 +148,27 @@ class Ethereum {
     }
   }
 
-  async getEthereumAccounts() {
+  async getEthereumAccounts(chainId) {
     try {
-      const isAllowedNetwork = this.isAllowedNetwork();
+      const accounts = await this.getEthereum.request({ method: 'eth_accounts' });
+      const isAllowed = this.isAllowedNetwork();
 
-      if (isAllowedNetwork) {
-        const wallet = wallets.metamask;
-        const accounts = await this.getEthereum.request({ method: 'eth_accounts' });
-        const address = toChecksumAddress(accounts[0]);
-        localStorage.setItem(ADDRESS_LOCAL_STORAGE, address);
-        const balance = await this.getProvider.getBalance(address);
-        const currentNetwork = chainList.find(chain => chain.NETWORK_ADDRESS.startsWith(this.getEthereum.chainId));
+      if (isAllowed) {
+        const currentNetwork = chainList.find(chain =>
+          chain.NETWORK_ADDRESS.startsWith(chainId || this.getEthereum.chainId),
+        );
 
         if (!currentNetwork) throw new Error('not found chain config');
 
-        const { CHAIN_NAME, id, COIN_SYMBOL, BSH_CORE, BEP20, BSH_PROXY } = currentNetwork;
-
-        this.contract = new ethers.Contract(BSH_CORE, ABI, this.provider);
-        if (BEP20 && BSH_PROXY) {
-          this.BEP20Contract = new ethers.Contract(BEP20, ABI, this.provider);
-          this.PROXYContract = new ethers.Contract(BSH_PROXY, ABI, this.provider);
-        }
-
-        customzeChain(id);
+        const address = toChecksumAddress(accounts[0]);
+        localStorage.setItem(ADDRESS_LOCAL_STORAGE, address);
+        const balance = await this.getProvider.getBalance(address);
+        const { CHAIN_NAME, id, COIN_SYMBOL, BTS_CORE } = currentNetwork;
+        this.contract = new ethers.Contract(BTS_CORE, ABI, this.provider);
         const accountInfo = {
           address,
           balance: ethers.utils.formatEther(balance),
-          wallet,
+          wallet: wallets.metamask,
           symbol: COIN_SYMBOL,
           currentNetwork: CHAIN_NAME,
           id,
@@ -148,6 +178,7 @@ class Ethereum {
       }
     } catch (error) {
       console.log(error);
+      window.accountInfo = null;
     }
   }
 
@@ -160,122 +191,94 @@ class Ethereum {
 
   async sendTransaction(txParams) {
     try {
-      // modal.openModal({
-      //   icon: 'loader',
-      //   desc: 'Waiting for confirmation in your wallet.',
-      // });
-      debugger;
-
       const transInfo = window[transactionInfo];
       let message = null;
       transInfo &&
         (message = transferAssetMessage(transInfo.value, transInfo.coinName, transInfo.to, transInfo.networkDst));
+      const gasPrice = utils.hexValue(Math.round((await this.provider.getGasPrice()) * 1.04));
       const txHash = await this.ethereum.request({
         method: 'eth_sendTransaction',
-        params: [txParams],
+        params: [{ ...txParams, gasPrice }],
       });
+      let txInPoolIntervalTrigger = await this.provider.getTransaction(txHash);
+      let txInPoolData = null;
+
+      const safeReorgHeight = (await this.getProvider.getBlockNumber()) - 20;
+      let minedTx = null;
+      let replacementTx = null;
       let link = '';
-
-      transInfo.networkSrc === 'BSC'
-        ? (link = `https://testnet.bscscan.com/tx/${txHash}`)
-        : (link = `https://explorer.pops.one/tx/${txHash}`);
-
+      const currentNetworkConfig = chainConfigs[transInfo.networkSrc];
+      transInfo.networkSrc === 'BSC' &&
+        (link = `${currentNetworkConfig.EXPLORE_URL}/${currentNetworkConfig.exploreSuffix?.transaction}/${txHash}`);
       toast(<NotificationPending summary={message.pendingMessage || t`Processing transaction...`} />, {
         onClick: () => window.open(link, '_blank'),
         toastId: txHash,
-        autoClose: 10000,
+        autoClose: 3000,
       });
 
-      let result = null;
+      // For checking replacement tx by speeding up or cancelling tx from MetaMask
       const checkTxRs = setInterval(async () => {
-        if (result) {
-          if (result.status === 1) {
-            switch (window[signingActions.globalName]) {
-              case signingActions.approve:
-                // modal.openModal({
-                //   icon: 'checkIcon',
-                //   desc: `You've approved to tranfer your token! Please click the Transfer button to continue.`,
-                //   button: {
-                //     text: 'Transfer',
-                //     onClick: sendNoneNativeCoin,
-                //   },
-                // });
-                console.log("You've approved to tranfer your token! Please click the Transfer button to continue.");
-                break;
+        if (txInPoolIntervalTrigger) {
+          txInPoolData = txInPoolIntervalTrigger;
+        }
 
-              default:
-                this.refreshBalance();
-                // sendLog({
-                //   txHash,
-                //   network: getCurrentChain()?.NETWORK_ADDRESS?.split('.')[0],
-                // });
-
-                // modal.openModal({
-                //   icon: 'checkIcon',
-                //   children: <SuccessSubmittedTxContent />,
-                //   button: {
-                //     text: 'Continue transfer',
-                //     onClick: () => {
-                //       // back to transfer box
-                //       resetTransferStep();
-                //       modal.setDisplay(false);
-                //     },
-                //   },
-                // });
-                toast(<NotificationSuccess summary={message.successMessage || t`Transfer Success!`} />, {
-                  onClick: () => window.open(process, '_blank'),
-                  toastId: txHash,
-                  autoClose: 5000,
-                });
-                console.log('Transfer Success');
-                break;
-            }
-          } else {
+        if (!txInPoolIntervalTrigger && !minedTx && !replacementTx) {
+          if (!txInPoolData) {
+            console.error('No current transaction information.');
             clearInterval(checkTxRs);
-            // modal.openModal({
-            //   icon: 'xIcon',
-            //   desc: 'Transaction failed',
-            //   button: {
-            //     text: 'Back to transfer',
-            //     onClick: () => modal.setDisplay(false),
-            //   },
-            // });
-            toast(<NotificationError summary={message.failureMessage || t`Transaction failed!`} />, {
+            return;
+          }
+          try {
+            replacementTx = await findReplacementTx(this.provider, safeReorgHeight, {
+              nonce: txInPoolData.nonce,
+              from: txInPoolData.from,
+              to: txInPoolData.to,
+              data: txInPoolData.data,
+            });
+          } catch (error) {
+            clearInterval(checkTxRs);
+
+            toast(<NotificationError summary={error?.message || t`Transaction failed!`} />, {
               onClick: () => window.open(link, '_blank'),
               toastId: txHash,
-              autoClose: 5000,
+              autoClose: 3000,
             });
-            console.log('Transaction failed');
           }
-
-          clearInterval(checkTxRs);
         } else {
-          result = await this.provider.getTransactionReceipt(txHash);
+          txInPoolIntervalTrigger = await this.provider.getTransaction(txHash);
         }
-      }, 4000);
+
+        if (replacementTx) {
+          clearInterval(checkTxRs);
+          toast(<NotificationSuccess summary={message.successMessage || t`Transfer Success!`} />, {
+            onClick: () => window.open(process, '_blank'),
+            toastId: replacementTx.hash,
+            autoClose: 3000,
+          });
+          handleSuccessTx(replacementTx.hash);
+        }
+      }, 3000);
+      // Emitted when the transaction has been mined
+      this.provider.once(txHash, transaction => {
+        clearInterval(checkTxRs);
+        minedTx = transaction;
+        if (transaction.status === 1) {
+          toast(<NotificationSuccess summary={message.successMessage || t`Transfer Success!`} />, {
+            onClick: () => window.open(process, '_blank'),
+            toastId: txHash,
+            autoClose: 3000,
+          });
+          handleSuccessTx(txHash, message.successMessage);
+        } else {
+          toast(<NotificationError summary={message.failureMessage || t`Transaction failed!`} />, {
+            onClick: () => window.open(link, '_blank'),
+            toastId: txHash,
+            autoClose: 3000,
+          });
+        }
+      });
     } catch (error) {
-      if (error.code === 4001) {
-        // modal.openModal({
-        //   icon: 'exclamationPointIcon',
-        //   desc: 'Transaction rejected.',
-        //   button: {
-        //     text: 'Dismiss',
-        //     onClick: () => modal.setDisplay(false),
-        //   },
-        // });
-        console.log('Transaction rejected.');
-        return;
-      } else {
-        // modal.openModal({
-        //   icon: 'xIcon',
-        //   desc: error.message,
-        //   button: {
-        //     text: 'Back to transfer',
-        //     onClick: () => modal.setDisplay(false),
-        //   },
-        // });
-        console.log(error.message);
-      }
+      console.log(error.message);
     }
   }
 }

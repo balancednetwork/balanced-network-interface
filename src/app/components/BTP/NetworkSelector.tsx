@@ -151,7 +151,6 @@ const NetworkSelector = ({ label, data, onChange, toggleWallet }: NetworkSelecto
     if ('From' === label) {
       setNetworkSrc(network);
     } else {
-      // debugger;
       setNetworkDst(network);
     }
   };

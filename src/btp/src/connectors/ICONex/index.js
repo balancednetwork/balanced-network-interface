@@ -19,7 +19,7 @@ import {
   transactionInfo,
 } from '../constants';
 import { requestHasAddress } from './events';
-import { getBalance, sendTransaction, getTxResult, sendNonNativeCoin, transferIRC2 } from './ICONServices';
+import { getBalance, sendTransaction, getTxResult, sendNonNativeCoin } from './ICONServices';
 import { resetTransferStep } from './utils';
 
 const eventHandler = async event => {
@@ -46,6 +46,7 @@ const eventHandler = async event => {
 
     // check if the wallet includes the current address
     case TYPES.RESPONSE_HAS_ADDRESS:
+      console.info('%cICONex event', 'color: green;', payload);
       if (payload.hasAddress) {
         getAccountInfo(address);
       }
@@ -63,11 +64,9 @@ const eventHandler = async event => {
         //   desc: 'Please wait a moment.',
         // });
         console.log('Please wait a moment.');
-
         const txHash = payload.result || (await sendTransaction(payload));
         transInfo.txhash = txHash;
-
-        const link = getTrackerLink(transInfo.nid, txHash, 'transaction');
+        const link = `${chainConfigs[[window['accountInfo'].currentNetwork]].EXPLORE_URL}transaction/${txHash}`;
         const toastProps = {
           onClick: () => window.open(link, '_blank'),
         };
@@ -104,6 +103,19 @@ const eventHandler = async event => {
                 case signingActions.approve:
                 case signingActions.approveIRC2:
                   console.log("You've approved to tranfer your token! Please click the Transfer button to continue.");
+                  await toast(
+                    <NotificationSuccess
+                      summary={
+                        message.successMessage ||
+                        t`You've approved to tranfer your token! Please click the Approve button on your wallet to perform transfer`
+                      }
+                    />,
+                    {
+                      toastId: txHash,
+                      autoClose: 3000,
+                    },
+                  );
+                  sendNonNativeCoin();
                   // modal.openModal({
                   //   icon: 'checkIcon',
                   //   desc: `You've approved to tranfer your token! Please click the Transfer button to continue.`,
@@ -129,11 +141,10 @@ const eventHandler = async event => {
                   //   txHash,
                   //   network: getCurrentChain()?.NETWORK_ADDRESS?.split('.')[0],
                   // });
-                  debugger;
                   toast(<NotificationSuccess summary={message.successMessage || t`Successfully transfer!`} />, {
                     ...toastProps,
                     toastId: txHash,
-                    autoClose: 5000,
+                    autoClose: 3000,
                   });
 
                   // latency time fo fetching new balance
@@ -226,16 +237,6 @@ const getAccountInfo = async address => {
       id,
     };
     window.accountInfo = accountInfo;
-
-    console.log(window.accountInfo);
-    // await account.setAccountInfo({
-    //   address,
-    //   balance,
-    //   wallet,
-    //   symbol: 'ICX',
-    //   currentNetwork: chainConfigs.ICON?.CHAIN_NAME,
-    //   id,
-    // });
   } catch (err) {
     console.log('Err: ', err);
     window.accountInfo = null;

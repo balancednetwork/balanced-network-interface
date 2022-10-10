@@ -194,7 +194,6 @@ export default function WalletModal() {
         });
       }),
     );
-
     updateAddressList(data);
     setLedgerLoading(false);
   };

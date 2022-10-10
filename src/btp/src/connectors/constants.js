@@ -1,5 +1,7 @@
 import IconService from 'icon-sdk-js';
 
+import store from 'store';
+
 import { chainConfigs } from './chainConfigs';
 
 // https://www.icondev.io/iconex-connect/chrome-extension#methods
@@ -18,6 +20,16 @@ export const TYPES = {
   CANCEL_JSON_RPC: 'CANCEL_JSON-RPC',
 };
 
+// export const NEAR_NODE = {
+//   networkId: chainConfigs.NEAR?.NETWORK_ADDRESS,
+//   contractId: chainConfigs.NEAR?.BTS_CORE,
+//   nodeUrl: chainConfigs.NEAR?.RPC_URL,
+//   walletUrl: chainConfigs.NEAR?.WALLET_URL,
+//   helperUrl: chainConfigs.NEAR?.HELPER_URL,
+//   explorerUrl: chainConfigs.NEAR?.EXPLORER_URL,
+//   ICXNEP141Address: chainConfigs.NEAR?.ICX_NEP141_ADDRESS,
+// };
+
 export const ADDRESS_LOCAL_STORAGE = 'address';
 export const CONNECTED_WALLET_LOCAL_STORAGE = 'connected-wallet';
 
@@ -35,6 +47,6 @@ export const rawTransaction = 'rawTransaction';
 export const transactionInfo = 'transactionInfo';
 export const txPayload = 'txPayload';
 export const serverEndpoint = process.env.REACT_APP_BTP_ENDPOINT;
-export const httpProvider = new IconService.HttpProvider(chainConfigs.ICON?.RPC_URL + '/v3');
+export const httpProvider = new IconService.HttpProvider(chainConfigs.ICON?.RPC_URL);
 export const iconService = new IconService(httpProvider);
-export const getCurrentChain = () => chainConfigs[window.accountInfo.id] || {};
+export const getCurrentChain = () => chainConfigs[window?.accountInfo?.id] || {};

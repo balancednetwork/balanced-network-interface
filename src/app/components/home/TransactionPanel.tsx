@@ -346,7 +346,6 @@ const ClaimRowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
   return null;
 };
 const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
-  const { networkId } = useIconReact();
   const locale = useActiveLocale();
   const languageCode = locale.split('-')[0];
 
@@ -413,7 +412,8 @@ const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
           {content}
         </Typography>
         <Link
-          href={getTrackerLink(networkId, hash, 'transaction')}
+          // TODO
+          href={getTrackerLink(0x7, hash, 'transaction')}
           target="_blank"
           rel="noreferrer noopener"
           sx={{

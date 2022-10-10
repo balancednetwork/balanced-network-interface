@@ -1,13 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
 import { inputRegex } from 'app/components/CurrencyInputPanel';
 import { UnderlineText } from 'app/components/DropdownText';
 import { SelectorPopover } from 'app/components/Popover';
-import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
 import useWidth from 'hooks/useWidth';
 import { COMMON_PERCENTS } from 'store/swap/actions';
 // import { Currency } from 'types/balanced-sdk-core';
@@ -111,16 +109,21 @@ const AssetToTransfer = ({
 }) => {
   const [inputAmount, setInputAmount] = React.useState('');
   const [isActive, setIsActive] = React.useState(false);
+  useEffect(() => {
+    setInputAmount('');
+  }, [balanceOfAssetName]);
 
   const onUserInput = (input: string) => {
     setInputAmount(input);
     setBalance(input);
   };
 
-  const [ref, width] = useWidth();
+  const [ref] = useWidth();
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
-    onPercentSelect && onPercentSelect(instant);
+    const amount = ((balanceOfAssetName * instant) / 100).toFixed(2).toString();
+    setBalance(amount);
+    setInputAmount(amount);
   };
 
   const enforcer = (nextUserInput: string) => {
@@ -136,7 +139,7 @@ const AssetToTransfer = ({
           <Label>
             Wallet:{' '}
             <WalletAmount color={'red'}>
-              {balanceOfAssetName == 0 ? balanceOfAssetName : balanceOfAssetName.toFixed(2)} {assetName}
+              {!balanceOfAssetName ? 0 : Number(balanceOfAssetName).toFixed(2)} {assetName}
             </WalletAmount>
           </Label>
         </Flex>

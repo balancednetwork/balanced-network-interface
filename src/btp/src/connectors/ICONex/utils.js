@@ -1,7 +1,7 @@
 import IconService from 'icon-sdk-js';
 
 import { SUCCESS_TRANSACTION } from '../../utils/constants';
-import { chainList } from '../chainConfigs';
+import { findChainbySymbol } from '../chainConfigs';
 import { httpProvider } from '../constants';
 
 const { IconAmount, IconUtil } = IconService;
@@ -49,13 +49,11 @@ export const resetTransferStep = () => {
   document.dispatchEvent(event);
 };
 
-export const getICONBSHAddressforEachChain = coinName => {
-  const chain = chainList.find(({ COIN_SYMBOL, id }) => COIN_SYMBOL === coinName || coinName.endsWith(id));
-
-  if (!chain) {
-    console.error('relevant chain not found');
-    return null;
-  }
-
-  return chain.ICON_BSH_ADDRESS;
+/**
+ * Get BSH address
+ * @param {string} coinName
+ * @returns {string} BSH address on ICON side for that coin OR token from other chains
+ */
+export const getICONBSHAddressforEachChain = symbol => {
+  return findChainbySymbol(symbol)?.ICON_BTS_CORE;
 };

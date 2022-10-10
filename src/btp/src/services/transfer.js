@@ -1,18 +1,16 @@
 import * as ICONServices from '../connectors/ICONex/ICONServices';
-import * as MoonbeamServices from '../connectors/MetaMask/services';
+import * as Web3Services from '../connectors/MetaMask/services';
 import { wallets } from '../utils/constants';
-
-// import * as NEARServices from 'connectors/NEARWallet';
+// import * as NEARServices from '../connectors/NearWallet';
 
 export const getCurrentTransferService = () => (curentWallet, currentNetwork) => {
-  //console.log('ssss', window.accountInfo);
   const { wallet, currentNetwork: network } = window.accountInfo;
-  //if (!wallet && !curentWallet) throw new Error('Missing wallet');
-  //if (!network && !currentNetwork) throw new Error('Missing network');
+  if (!wallet && !curentWallet) throw new Error('Missing wallet');
+  if (!network && !currentNetwork) throw new Error('Missing network');
 
   switch (wallet || curentWallet) {
     case wallets.metamask:
-      return MoonbeamServices;
+      return Web3Services;
 
     case wallets.iconex:
     case wallets.hana:

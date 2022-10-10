@@ -36,7 +36,6 @@ export const TransferAssetModal = ({ isOpen, setIsOpen, sendingAddress, balance,
       coinName: tokenSymbol,
       network: networkDst.value,
     };
-    debugger;
     window[transactionInfo] = {
       networkDst: networkDst.value,
       networkSrc: networkSrc.value,

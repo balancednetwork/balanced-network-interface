@@ -1,20 +1,12 @@
 import { useState, useEffect } from 'react';
 
-import { useSelect } from 'btp/src/hooks/useRematch';
 import { getService } from 'btp/src/services/transfer';
 
 export const useTokenBalance = coinNames => {
   const [balances, setBalance] = useState([]);
-  // const {
-  //   accountInfo: { address, balance, unit, currentNetwork },
-  // } = useSelect(({ account: { selectAccountInfo } }) => ({
-  //   accountInfo: selectAccountInfo,
-  // }));
-
-  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (window['accountInfo'] != null) {
-      const { address, balance, symbol, currentNetwork } = window['accountInfo'];
+      const { address, balance, symbol } = window['accountInfo'];
       const fetchBalances = async () => {
         const result = await Promise.all(
           coinNames.map(async coin => {

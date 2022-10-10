@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-import { chainConfigs, chainList, getTokenList } from 'btp/src/connectors/chainConfigs';
+import { chainConfigs, chainList, getCustomizedChainList, getTokenList } from 'btp/src/connectors/chainConfigs';
 import { ADDRESS_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { addICONexListener } from 'btp/src/connectors/ICONex';
 import { requestHasAddress } from 'btp/src/connectors/ICONex/events';
 import { toCheckAddress } from 'btp/src/connectors/MetaMask/utils';
-//import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
+import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -73,17 +73,17 @@ addICONexListener();
 const BTP = () => {
   const [isOpenConfirm, setIsOpenConfirm] = useState(false);
   const walletModalOpen = useModalOpen(ApplicationModal.TRANSFER_ASSETS);
-  const [nativeCoin, setNativeCoin] = useState('ICX');
+  const [nativeCoin, setNativeCoin] = useState('');
   const [assetName, setAssetName] = useState('');
   const [balanceOfAssetName, setBalanceOfAssetName] = useState(0);
   const [sendingAddress, setSendingAddress] = useState('');
-  const [balance, setBalance] = useState(0);
-  const [networkId, setNetworkId] = useState('0x7');
+  const [sendingBalance, setSendingBalance] = useState(0);
+  const [networkId, setNetworkId] = useState('');
   const [isOpenAssetOptions, setIsOpenAssetOptions] = useState(false);
   const toggleTransferAssetsModal = useTransferAssetsModalToggle();
   const toggleWalletModal = useBridgeWalletModalToggle();
-  const [sendingInfo, setSendingInfo] = useState({ token: '', network: '' });
-  const [assetOptions, setAssetOptions] = useState([]);
+  const [, setSendingInfo] = useState({ token: '', network: '' });
+  const [percent, setPercent] = React.useState<number>(0);
 
   const onSendingInfoChange = (info = {}) => {
     setSendingInfo(sendingInfo => ({ ...sendingInfo, ...info }));
@@ -104,9 +104,11 @@ const BTP = () => {
 
   useEffect(() => {
     if (window['accountInfo'] != null) {
-      const { balance, symbol } = window['accountInfo'];
+      const { balance, symbol, id } = window['accountInfo'];
       setAssetName(symbol);
-      setBalanceOfAssetName(balance);
+      setNetworkId(id);
+      setNativeCoin(symbol);
+      setBalanceOfAssetName(balance || 0);
     }
   }, [window['accountInfo']]);
 
@@ -120,84 +122,53 @@ const BTP = () => {
   };
 
   const chainInfo = () => {
-    const lala = chainList.map(({ CHAIN_NAME, id, ...others }) => ({
+    return chainList.map(({ CHAIN_NAME, id, ...others }) => ({
       value: id,
       label: CHAIN_NAME,
       ...others,
     }));
-    return lala;
   };
 
-  const getTartgetChains = () => {
-    /*
-    We have 8 transfer cases supported for now => explain the options of dropdowns
-
-    [From ICON]
-    Transfer ICX to BSC
-    Transfer BNB to BSC
-    Transfer ICX to Harmony
-    Transfer ONE to Harmony
-
-    [From BSC]
-    Transfer BNB to ICON
-    Transfer ICX to ICON
-
-    [From Harmony]
-    Transfer ONE to ICON
-    Transfer ICX to ICON
-    */
+  const getTargetChains = () => {
     const targetChains = chainInfo();
 
     if (!nativeCoin) return targetChains;
     if (nativeCoin !== chainConfigs.ICON.COIN_SYMBOL) {
       return targetChains.filter(({ value }) => value === chainConfigs.ICON.id);
     }
-    // if (nativeCoin === chainConfigs.ICON.COIN_SYMBOL && sendingInfo.token === chainConfigs.ICON.COIN_SYMBOL) {
-    //   return targetChains.filter(({ value }) => value !== chainConfigs.ICON.id);
-    // } else {
-    //   return targetChains.filter(({ COIN_SYMBOL }) => sendingInfo.token === COIN_SYMBOL);
-    // }
     return targetChains;
   };
 
-  const getAssetOptions = () => {
-    const options = [...chainList, ...getTokenList()].map(({ CHAIN_NAME, COIN_SYMBOL, symbol, chain, ...others }) => {
-      const tokenSymbol = COIN_SYMBOL || symbol;
-      return {
-        value: tokenSymbol,
-        label: tokenSymbol,
-        ...others,
-      };
-    });
+  const getOptions = () => {
+    const options = [...getCustomizedChainList(), ...getTokenList()].map(
+      ({ CHAIN_NAME, COIN_SYMBOL, symbol, tokenOf, ...others }) => {
+        const tokenSymbol = COIN_SYMBOL || symbol;
 
-    // if (!nativeCoin || networkId === chainConfigs.ICON.id) {
-    //   return options;
-    // }
+        return {
+          value: tokenSymbol,
+          label: tokenSymbol,
+          balance: 0,
+          ...others,
+        };
+      },
+    );
 
-    // return options.filter(
-    //   option => option.id === networkId || option.id === chainConfigs.ICON.id || networkId === option.chainId,
-    // );
-    return options;
+    if (!nativeCoin || networkId === chainConfigs.ICON.id) {
+      return options;
+    }
+
+    return options.filter(
+      option => option.id === networkId || option.id === chainConfigs.ICON.id || networkId === option.chainId,
+    );
   };
 
-  const coins = [...chainList, ...getTokenList()].map(({ CHAIN_NAME, COIN_SYMBOL, symbol, chain, ...others }) => {
-    const tokenSymbol = COIN_SYMBOL || symbol;
-    return {
-      value: tokenSymbol,
-      label: tokenSymbol,
-      ...others,
-    };
-  });
-  const coinNames: string[] = [...coins];
-  //const balanceOf = useTokenBalance(coinNames);
-  const balanceOf = 0;
+  const userAssets = useTokenBalance(getOptions());
   const onChangeAsset = asset => {
     setAssetName(asset.value);
     setBalanceOfAssetName(asset.balance);
   };
 
-  const [percent, setPercent] = React.useState<number>(0);
-  const handlePercentSelect = (field: string, percent: number) => {
+  const handlePercentSelect = (percent: number) => {
     setPercent(percent);
   };
   return (
@@ -217,7 +188,7 @@ const BTP = () => {
               <Box className="content">
                 <NetworkSelector
                   label="To"
-                  data={getTartgetChains()}
+                  data={getTargetChains()}
                   onChange={onChange}
                   setSendingInfo={onSendingInfoChange}
                 />
@@ -232,18 +203,18 @@ const BTP = () => {
                     setIsOpenAssetOptions(prevState => !prevState);
                   }}
                   closeDropdown={() => setIsOpenAssetOptions(false)}
-                  setBalance={setBalance}
-                  onPercentSelect={(percent: number) => handlePercentSelect(assetName, percent)}
+                  setBalance={setSendingBalance}
+                  onPercentSelect={(percent: number) => handlePercentSelect(percent)}
                   percent={percent}
                 />
               </Box>
 
-              {isOpenAssetOptions && <AssetModal data={balanceOf} onChange={onChangeAsset} />}
+              {isOpenAssetOptions && <AssetModal data={userAssets} onChange={onChangeAsset} />}
               <TransferAssetModal
                 isOpen={isOpenConfirm}
                 setIsOpen={setIsOpenConfirm}
                 sendingAddress={sendingAddress}
-                balance={balance}
+                balance={sendingBalance}
                 tokenSymbol={assetName}
               />
               <Box className="full-width">
@@ -254,7 +225,7 @@ const BTP = () => {
             <Divider margin={'20px 0'} />
             <Flex justifyContent={'center'}>
               <TextButton onClick={toggleTransferAssetsModal}>Cancel</TextButton>
-              <Button disabled={!balance || !toCheckAddress(sendingAddress)} onClick={() => handleTransfer()}>
+              <Button disabled={!sendingBalance || !toCheckAddress(sendingAddress)} onClick={() => handleTransfer()}>
                 Transfer
               </Button>
             </Flex>

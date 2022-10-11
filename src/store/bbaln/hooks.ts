@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
@@ -14,7 +14,7 @@ import { AppState } from '..';
 import { Field } from '../loan/actions';
 import { adjust, cancel, type, changeData } from './actions';
 
-type Source = {
+export type Source = {
   balance: BigNumber;
   supply: BigNumber;
   workingBalance: BigNumber;
@@ -98,6 +98,10 @@ export function useFetchBBalnInfo(account?: string | null) {
 
 export function useBBalnSliderActionHandlers() {
   const dispatch = useDispatch();
+  const lockedBaln = useLockedBaln();
+  const lockedAmount = useMemo(() => {
+    return new BigNumber(lockedBaln ? lockedBaln.toFixed() : 0);
+  }, [lockedBaln]);
 
   const onFieldAInput = React.useCallback(
     (value: string) => {
@@ -108,9 +112,16 @@ export function useBBalnSliderActionHandlers() {
 
   const onSlide = React.useCallback(
     (values: string[], handle: number) => {
-      dispatch(type({ independentField: Field.LEFT, typedValue: values[handle], inputType: 'slider' }));
+      const value = new BigNumber(values[handle]);
+      dispatch(
+        type({
+          independentField: Field.LEFT,
+          typedValue: value.isLessThan(lockedAmount) ? '0' : value.toFixed(),
+          inputType: 'slider',
+        }),
+      );
     },
-    [dispatch],
+    [dispatch, lockedAmount],
   );
 
   const onAdjust = React.useCallback(
@@ -148,10 +159,14 @@ export function useBoostData(
   }
 > {
   const { account } = useIconReact();
+  const transactions = useAllTransactions();
+  const txCount = transactions ? Object.keys(transactions).length : 0;
 
-  return useQuery('boostData', async () => {
+  return useQuery(`boostDataAt${txCount}`, async () => {
     if (account) {
       const data = await bnJs.Rewards.getBoostData(account, sources);
+
+      // console.log(data);
 
       return Object.keys(data).reduce((sources, sourceName) => {
         sources[sourceName] = {

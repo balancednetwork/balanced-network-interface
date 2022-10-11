@@ -398,17 +398,15 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
               {filteredSortedTokensWithICX.map((currency, index, arr) => {
                 const symbol = currency.symbol;
                 return (
-                  <>
-                    <ListItem
-                      className={index === activeIndex ? 'active' : ''}
-                      key={symbol}
-                      border={index !== arr.length - 1}
-                      onMouseEnter={() => setActiveIndex(index)}
-                      onClick={showModal}
-                    >
-                      <TokenInfo currency={currency} />
-                    </ListItem>
-                  </>
+                  <ListItem
+                    className={index === activeIndex ? 'active' : ''}
+                    key={symbol}
+                    border={index !== arr.length - 1}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    onClick={showModal}
+                  >
+                    <TokenInfo currency={currency} />
+                  </ListItem>
                 );
               })}
             </List>

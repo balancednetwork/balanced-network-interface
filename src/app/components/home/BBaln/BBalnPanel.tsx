@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { addresses } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
@@ -30,8 +30,9 @@ import {
   useBBalnSliderActionHandlers,
   useLockedUntil,
   useHasLockExpired,
-  // useBoostData,
-  // useTotalSuply,
+  useBoostData,
+  useTotalSuply,
+  Source,
 } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
@@ -50,6 +51,8 @@ import {
   getClosestUnixWeekStart,
   getWeekOffsetTimestamp,
   getBbalnAmount,
+  EXA,
+  WEIGHT,
 } from './utils';
 
 const ButtonsWrap = styled(Flex)`
@@ -275,8 +278,8 @@ export default function BBalnPanel() {
   const bBalnAmount = useBBalnAmount();
   const lockedBalnAmount = useLockedBaln();
   const lockedUntil = useLockedUntil();
-  // const totalSupplyBBaln = useTotalSuply();
-  // const { data: boostData } = useBoostData();
+  const totalSupplyBBaln = useTotalSuply();
+  const { data: boostData } = useBoostData();
   const { data: hasLockExpired } = useHasLockExpired();
   const { typedValue, isAdjusting, inputType } = useBBalnSliderState();
   const { onFieldAInput, onSlide, onAdjust: adjust } = useBBalnSliderActionHandlers();
@@ -507,8 +510,71 @@ export default function BBalnPanel() {
     }
   };
 
-  //temporary
-  const isMaxRewardsReached = balnSliderAmount.isGreaterThan(balnBalanceAvailable.times(0.8));
+  const dynamicBBalnAmount = useMemo(() => getBbalnAmount(balnSliderAmount, selectedLockedPeriod), [
+    balnSliderAmount,
+    selectedLockedPeriod,
+  ]);
+
+  const isMaxRewardReached = (bBaln: BigNumber, source: string): boolean => {
+    if (totalSupplyBBaln && boostData) {
+      return bBaln.isGreaterThanOrEqualTo(
+        boostData[source].balance.times(totalSupplyBBaln).dividedBy(boostData[source].supply),
+      );
+    }
+    return false;
+  };
+
+  const boostedLPs = useMemo(() => {
+    if (boostData) {
+      return Object.keys(boostData).reduce((LPs, sourceName) => {
+        if (sourceName !== 'Loans' && boostData[sourceName].balance.isGreaterThan(0)) {
+          LPs[sourceName] = { ...boostData[sourceName] };
+        }
+        return LPs;
+      }, {} as { [key in string]: Source });
+    }
+  }, [boostData]);
+
+  const getWorkingBalance = useCallback(
+    (balance: BigNumber, supply: BigNumber): BigNumber => {
+      if (totalSupplyBBaln) {
+        const limit = balance.times(EXA).dividedBy(WEIGHT);
+        const workingBalance = balance.plus(
+          supply.times(dynamicBBalnAmount).times(EXA.minus(WEIGHT)).dividedBy(totalSupplyBBaln).dividedBy(WEIGHT),
+        );
+        return BigNumber.min(limit, workingBalance);
+      }
+
+      return new BigNumber(0);
+    },
+    [totalSupplyBBaln, dynamicBBalnAmount],
+  );
+
+  const boostedLPNumbers = useMemo(() => {
+    if (isAdjusting) {
+      return (
+        boostedLPs &&
+        Object.values(boostedLPs).map(boostedLP =>
+          getWorkingBalance(boostedLP.balance, boostedLP.supply).dividedBy(boostedLP.balance).dp(2).toNumber(),
+        )
+      );
+    } else {
+      return (
+        boostedLPs &&
+        Object.values(boostedLPs).map(boostedLP =>
+          boostedLP.workingBalance.dividedBy(boostedLP.balance).dp(2).toNumber(),
+        )
+      );
+    }
+  }, [isAdjusting, boostedLPs, getWorkingBalance]);
+
+  const differenceBBalnAmount = useMemo(() => {
+    if (isAdjusting) {
+      return getBbalnAmount(differenceBalnAmount.abs(), selectedLockedPeriod);
+    } else {
+      return new BigNumber(0);
+    }
+  }, [isAdjusting, differenceBalnAmount, selectedLockedPeriod]);
 
   return (
     <BoxPanel bg="bg2" flex={1}>
@@ -523,10 +589,7 @@ export default function BBalnPanel() {
                 Boost rewards{' '}
               </Typography>
               <Typography padding="0 3px 2px 0">
-                {isAdjusting
-                  ? getBbalnAmount(balnSliderAmount, selectedLockedPeriod).dp(2).toFormat()
-                  : bBalnAmount.dp(2).toFormat()}{' '}
-                bBALN
+                {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()} bBALN
                 <QuestionHelper text="Lock BALN to boost your earning potential. The longer you lock it, the more bBALN (boosted BALN) you'll receive, which determines your earning and voting power." />
               </Typography>
             </Flex>
@@ -617,7 +680,7 @@ export default function BBalnPanel() {
 
               {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
                 <Typography paddingTop={isAdjusting ? '6px' : '0'}>
-                  {hasLockExpired ? (
+                  {hasLockExpired && !isAdjusting ? (
                     t`Unlocked on ${formatDate(lockedUntil)}`
                   ) : shouldBoost ? (
                     <>
@@ -670,20 +733,44 @@ export default function BBalnPanel() {
             <BoostedInfo>
               <BoostedBox>
                 <Typography fontSize={16} color="#FFF">
-                  0.03 %
+                  {totalSupplyBBaln
+                    ? isAdjusting
+                      ? differenceBalnAmount.isGreaterThanOrEqualTo(0)
+                        ? `${bBalnAmount
+                            .plus(differenceBBalnAmount)
+                            .dividedBy(totalSupplyBBaln.plus(differenceBBalnAmount))
+                            .times(100)
+                            .toFixed(2)} %`
+                        : `${bBalnAmount
+                            .minus(differenceBBalnAmount)
+                            .dividedBy(totalSupplyBBaln.minus(differenceBBalnAmount))
+                            .times(100)
+                            .toFixed(2)} %`
+                      : `${bBalnAmount.dividedBy(totalSupplyBBaln).times(100).toFixed(2)} %`
+                    : '-'}
                 </Typography>
                 <Typography>Network fees</Typography>
               </BoostedBox>
               <BoostedBox>
-                <MaxRewardsReachedNotice show={isAdjusting && isMaxRewardsReached}>Max rewards</MaxRewardsReachedNotice>
+                <MaxRewardsReachedNotice show={isAdjusting && isMaxRewardReached(dynamicBBalnAmount, 'Loans')}>
+                  Max rewards
+                </MaxRewardsReachedNotice>
                 <Typography fontSize={16} color="#FFF">
-                  1.88 x
+                  {isAdjusting
+                    ? boostData && totalSupplyBBaln
+                      ? `${getWorkingBalance(boostData.Loans.balance, boostData.Loans.supply)
+                          .dividedBy(boostData.Loans.balance)
+                          .toFixed(2)} x`
+                      : '-'
+                    : boostData
+                    ? `${boostData.Loans.workingBalance.dividedBy(boostData.Loans.balance).toFixed(2)} x`
+                    : '-'}
                 </Typography>
                 <Typography>Loan rewards</Typography>
               </BoostedBox>
               <BoostedBox className="no-border">
                 <Typography fontSize={16} color="#FFF">
-                  1.72 x 0 1.85 x
+                  {boostedLPNumbers ? `${Math.min(...boostedLPNumbers)} x - ${Math.max(...boostedLPNumbers)} x` : '-'}
                 </Typography>
                 <StyledTypography ref={arrowRef}>
                   Liquidity rewards{' '}
@@ -692,42 +779,25 @@ export default function BBalnPanel() {
               </BoostedBox>
               <LiquidityDetailsWrap show={showLiquidityTooltip || isAdjusting}>
                 <LiquidityDetails>
-                  <PoolItem>
-                    <Typography fontSize={16} color="#FFF">
-                      1.73 x
-                    </Typography>
-                    <Typography fontSize={14}>bnUSD / sICX</Typography>
-                  </PoolItem>
-                  <PoolItem>
-                    <Typography fontSize={16} color="#FFF">
-                      1.73 x
-                    </Typography>
-                    <Typography fontSize={14}>bnUSD / sICX</Typography>
-                  </PoolItem>
-                  <PoolItem>
-                    <Typography fontSize={16} color="#FFF">
-                      1.73 x
-                    </Typography>
-                    <Typography fontSize={14}>bnUSD / sICX</Typography>
-                  </PoolItem>
-                  <PoolItem>
-                    <Typography fontSize={16} color="#FFF">
-                      1.73 x
-                    </Typography>
-                    <Typography fontSize={14}>bnUSD / sICX</Typography>
-                  </PoolItem>
-                  <PoolItem>
-                    <Typography fontSize={16} color="#FFF">
-                      1.73 x
-                    </Typography>
-                    <Typography fontSize={14}>bnUSD / sICX</Typography>
-                  </PoolItem>
-                  <PoolItem>
-                    <Typography fontSize={16} color="#FFF">
-                      1.73 x
-                    </Typography>
-                    <Typography fontSize={14}>bnUSD / sICX</Typography>
-                  </PoolItem>
+                  {boostedLPs &&
+                    Object.keys(boostedLPs).map(boostedLP => {
+                      return (
+                        <PoolItem key={boostedLP}>
+                          <Typography fontSize={16} color="#FFF">
+                            {`${
+                              isAdjusting
+                                ? getWorkingBalance(boostedLPs[boostedLP].balance, boostedLPs[boostedLP].supply)
+                                    .dividedBy(boostedLPs[boostedLP].balance)
+                                    .toFixed(2)
+                                : boostedLPs[boostedLP].workingBalance
+                                    .dividedBy(boostedLPs[boostedLP].balance)
+                                    .toFixed(2)
+                            } x`}
+                          </Typography>
+                          <Typography fontSize={14}>{boostedLP}</Typography>
+                        </PoolItem>
+                      );
+                    })}
                 </LiquidityDetails>
               </LiquidityDetailsWrap>
             </BoostedInfo>

@@ -9,6 +9,7 @@ import { Button } from 'app/components/Button';
 import { HEIGHT } from 'app/components/TradingViewChart';
 import { ZERO } from 'constants/index';
 import { FRACTION_ZERO } from 'constants/misc';
+import { Source } from 'store/bbaln/hooks';
 
 export const Panel = styled(Flex)`
   overflow: hidden;
@@ -128,9 +129,21 @@ export const getFormattedPoolShare = (
       : ((Number(baseCurrencyTotalSupply?.toFixed()) * 100) / Number(pair?.reserve0.toFixed())).toFixed(4)
   }%`;
 
-export const getFormattedRewards = (reward: Fraction, stakedFractionValue: Fraction): string =>
-  reward?.equalTo(FRACTION_ZERO)
-    ? 'N/A'
+export const getFormattedRewards = (reward: Fraction, stakedFractionValue: Fraction, boostSource?: Source): string => {
+  const boostFraction = boostSource
+    ? new Fraction(boostSource.workingBalance.toFixed(), boostSource.balance.toFixed())
+    : new Fraction(1);
+  return !boostSource
+    ? reward?.equalTo(FRACTION_ZERO)
+      ? 'N/A'
+      : stakedFractionValue.greaterThan(0)
+      ? `~ ${reward.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
+      : 'N/A'
     : stakedFractionValue.greaterThan(0)
-    ? `~ ${reward.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
+    ? `~ ${reward
+        .multiply(stakedFractionValue)
+        .multiply(boostFraction)
+        .divide(100)
+        .toFixed(2, { groupSeparator: ',' })} BALN`
     : 'N/A';
+};

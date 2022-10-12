@@ -12,6 +12,7 @@ import { Flex, Box } from 'rebass/styled-components';
 import { Typography } from 'app/theme';
 import { PairState, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
+import { useBoostData } from 'store/bbaln/hooks';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
 import { useReward } from 'store/reward/hooks';
@@ -23,7 +24,7 @@ import { formatBigNumber } from 'utils';
 export default function LPDescription() {
   const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();
   const { independentField, typedValue, otherTypedValue } = useMintState();
-
+  const { data: boostData } = useBoostData();
   const { account } = useIconReact();
   const upSmall = useMedia('(min-width: 600px)');
   const userPoolBalance = useLiquidityTokenBalance(account, pair);
@@ -85,6 +86,16 @@ export default function LPDescription() {
     [baseCurrencyTotalSupply, formattedAmounts[Field.CURRENCY_A]?.toFixed(), poolRewards],
   );
 
+  const boost = useMemo(() => {
+    const pairName = pair ? `${pair.token0.symbol}/${pair.token1.symbol}` : '';
+    console.log(pairName);
+    if (boostData && boostData[pairName] && boostData[pairName].balance.isGreaterThan(0)) {
+      return boostData[pairName].workingBalance.dividedBy(boostData[pairName].balance);
+    } else {
+      return new BigNumber(1);
+    }
+  }, [boostData, pair]);
+
   return (
     <>
       <Flex bg="bg2" flex={1} flexDirection="column" minHeight={account ? [505, 350] : [355, 320]}>
@@ -114,7 +125,8 @@ export default function LPDescription() {
                     liquidity pool${upSmall ? ': ' : ''}`
                   : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
-                  {apy?.times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed() ?? '-'}% APY
+                  {apy?.times(boost).times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed() ?? '-'}
+                  {`% APY${boost.isGreaterThan(1) ? ' (boosted)' : ''}`}
                 </Typography>
               </Typography>
             ) : (
@@ -196,14 +208,16 @@ export default function LPDescription() {
                             {userRewards?.isEqualTo(0)
                               ? 'N/A'
                               : userRewards
-                              ? `~ ${userRewards.dp(2, BigNumber.ROUND_HALF_UP).toFormat()} BALN`
+                              ? `~ ${userRewards.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat()} BALN`
                               : 'N/A'}
                           </Typography>
                         ) : (
                           <Typography textAlign="center" variant="p">
                             {suppliedReward?.isEqualTo(0) || suppliedReward?.isNaN()
                               ? 'N/A'
-                              : `~ ${suppliedReward?.dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'} BALN`}
+                              : `~ ${
+                                  suppliedReward?.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'
+                                } BALN`}
                           </Typography>
                         )}
                       </Box>

@@ -182,10 +182,10 @@ export function useBoostData(
 
       return Object.keys(data).reduce((sources, sourceName) => {
         sources[sourceName] = {
-          balance: new BigNumber(data[sourceName].balance).div(10 ** 18),
-          supply: new BigNumber(data[sourceName].supply).div(10 ** 18),
-          workingBalance: new BigNumber(data[sourceName].workingBalance).div(10 ** 18),
-          workingSupply: new BigNumber(data[sourceName].workingSupply).div(10 ** 18),
+          balance: new BigNumber(data[sourceName].balance),
+          supply: new BigNumber(data[sourceName].supply),
+          workingBalance: new BigNumber(data[sourceName].workingBalance),
+          workingSupply: new BigNumber(data[sourceName].workingSupply),
         } as Source;
         return sources;
       }, {});

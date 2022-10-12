@@ -19,6 +19,7 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useBalance, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useBoostData } from 'store/bbaln/hooks';
 import { useRewards } from 'store/reward/hooks';
 import {
   useChangeStakedLPPercent,
@@ -39,6 +40,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const { account } = useIconReact();
   const poolId = pair.poolId!;
   const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
+  const { data: boostData } = useBoostData();
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -189,7 +191,11 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
             <Trans>Daily rewards</Trans>
           </Typography>
           <Typography color="text" fontSize={16}>
-            {getFormattedRewards(reward, stakedFractionValue)}
+            {getFormattedRewards(
+              reward,
+              stakedFractionValue,
+              boostData && boostData[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`],
+            )}
           </Typography>
         </Box>
 

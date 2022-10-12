@@ -6,13 +6,15 @@ import { useIconReact } from 'packages/icon-react';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { LockedPeriod } from 'app/components/home/BBaln/types';
+import { EXA, getBbalnAmount, WEIGHT } from 'app/components/home/BBaln/utils';
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
 import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeData } from './actions';
+import { adjust, cancel, type, changeData, changePeriod } from './actions';
 
 export type Source = {
   balance: BigNumber;
@@ -43,6 +45,16 @@ export function useBBalnSliderState(): AppState['bbaln']['state'] {
 
 export function useTotalSuply(): AppState['bbaln']['totalSupply'] {
   return useSelector((state: AppState) => state.bbaln.totalSupply);
+}
+
+export function useSelectedPeriod(): AppState['bbaln']['state']['selectedPeriod'] {
+  return useSelector((state: AppState) => state.bbaln.state.selectedPeriod);
+}
+
+export function useBBalnChangeSelectedPeriod(): (period: LockedPeriod) => void {
+  const dispatch = useDispatch();
+
+  return useCallback((period: LockedPeriod) => dispatch(changePeriod({ period })), [dispatch]);
 }
 
 export function useBBalnChangeData(): (
@@ -179,4 +191,32 @@ export function useBoostData(
       }, {});
     }
   });
+}
+
+export function useDynamicBBalnAmount() {
+  const { typedValue } = useBBalnSliderState();
+  const selectedPeriod = useSelectedPeriod();
+  const balnSliderAmount = useMemo(() => new BigNumber(typedValue), [typedValue]);
+
+  return useMemo(() => getBbalnAmount(balnSliderAmount, selectedPeriod), [balnSliderAmount, selectedPeriod]);
+}
+
+export function useWorkingBalance() {
+  const totalSupplyBBaln = useTotalSuply();
+  const dynamicBBalnAmount = useDynamicBBalnAmount();
+
+  return useCallback(
+    (balance: BigNumber, supply: BigNumber): BigNumber => {
+      if (totalSupplyBBaln) {
+        const limit = balance.times(EXA).dividedBy(WEIGHT);
+        const workingBalance = balance.plus(
+          supply.times(dynamicBBalnAmount).times(EXA.minus(WEIGHT)).dividedBy(totalSupplyBBaln).dividedBy(WEIGHT),
+        );
+        return BigNumber.min(limit, workingBalance);
+      }
+
+      return new BigNumber(0);
+    },
+    [totalSupplyBBaln, dynamicBBalnAmount],
+  );
 }

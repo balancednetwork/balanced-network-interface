@@ -3,9 +3,10 @@ import { createReducer } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
 import { LockedPeriod } from 'app/components/home/BBaln/types';
+import { lockingPeriods } from 'app/components/home/BBaln/utils';
 
 import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeData } from './actions';
+import { adjust, cancel, type, changeData, changePeriod } from './actions';
 
 export interface BBalnState {
   bbalnAmount: BigNumber;
@@ -19,6 +20,7 @@ export interface BBalnState {
     typedValue: string;
     independentField: Field;
     inputType: 'slider' | 'text';
+    selectedPeriod: LockedPeriod;
   };
 }
 
@@ -34,6 +36,7 @@ const initialState: BBalnState = {
     typedValue: '',
     independentField: Field.LEFT,
     inputType: 'text',
+    selectedPeriod: lockingPeriods[0],
   },
 };
 
@@ -54,6 +57,9 @@ export default createReducer(initialState, builder =>
     })
     .addCase(cancel, (state, { payload }) => {
       state.state.isAdjusting = false;
+    })
+    .addCase(changePeriod, (state, { payload }) => {
+      state.state.selectedPeriod = payload.period;
     })
     .addCase(type, (state, { payload: { independentField, typedValue, inputType } }) => {
       state.state.independentField = independentField || state.state.independentField;

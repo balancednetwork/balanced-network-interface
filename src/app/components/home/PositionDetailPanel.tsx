@@ -22,6 +22,7 @@ import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useRatesQuery } from 'queries/reward';
+import { useBBalnSliderState, useBoostData, useWorkingBalance } from 'store/bbaln/hooks';
 import { useCollateralInputAmountInUSD, useCollateralType, useIsHandlingICX } from 'store/collateral/hooks';
 import {
   useLoanInputAmount,
@@ -53,8 +54,11 @@ const PositionDetailPanel = () => {
   const rewardsAPY = useLoanAPY();
   const oraclePrice = useOraclePrice();
   const { data: rates } = useRatesQuery();
+  const { data: boostData } = useBoostData();
   const collateralType = useCollateralType();
   const locale = useActiveLocale();
+  const getWorkingBalance = useWorkingBalance();
+  const { isAdjusting: isBBalnAdjusting } = useBBalnSliderState();
   const upLarge = useMedia('(min-width: 1200px)');
   const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
@@ -394,7 +398,23 @@ const PositionDetailPanel = () => {
                 </Flex>
                 <Flex>
                   <Box width={1 / 2}>
-                    <Typography variant="p">{`~ ${dailyRewards.dp(2).toFormat()} BALN`}</Typography>
+                    <Typography variant="p">{`~ ${
+                      boostData
+                        ? isBBalnAdjusting
+                          ? dailyRewards
+                              .times(
+                                getWorkingBalance(boostData.Loans.balance, boostData.Loans.supply).dividedBy(
+                                  boostData.Loans.balance,
+                                ),
+                              )
+                              .dp(2)
+                              .toFormat()
+                          : dailyRewards
+                              .times(boostData.Loans.workingBalance.dividedBy(boostData.Loans.balance))
+                              .dp(2)
+                              .toFormat()
+                        : dailyRewards.dp(2).toFormat()
+                    } BALN`}</Typography>
                     <Typography mt={1}>
                       <Trans>Daily rewards</Trans>
                     </Typography>
@@ -402,7 +422,26 @@ const PositionDetailPanel = () => {
                   {!upMedium && <VerticalDivider mr={8} />}
                   <Box width={1 / 2}>
                     <Typography variant="p" color="white">
-                      {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
+                      {rewardsAPY
+                        ? boostData
+                          ? isBBalnAdjusting
+                            ? rewardsAPY
+                                .times(100)
+                                .times(
+                                  getWorkingBalance(boostData.Loans.balance, boostData.Loans.supply).dividedBy(
+                                    boostData.Loans.balance,
+                                  ),
+                                )
+                                .dp(2)
+                                .toFormat()
+                            : rewardsAPY
+                                .times(100)
+                                .times(boostData.Loans.workingBalance.dividedBy(boostData.Loans.balance))
+                                .dp(2)
+                                .toFormat()
+                          : rewardsAPY.times(100).dp(2).toFormat()
+                        : '-'}
+                      %
                     </Typography>
                     <Typography mt={1}>APY</Typography>
                   </Box>

@@ -338,7 +338,9 @@ const RewardsPanel = () => {
     <RewardsPanelLayout bg="bg2">
       <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 'initial', 350]}>
         <Flex alignItems="center" justifyContent="space-between" mb={5}>
-          <Trans>Rewards</Trans>
+          <Typography variant="h2">
+            <Trans>Rewards</Trans>
+          </Typography>
         </Flex>
 
         <Flex flexDirection={shouldBreakOnMobile ? 'column' : 'row'}>

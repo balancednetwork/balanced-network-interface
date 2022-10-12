@@ -568,6 +568,8 @@ export default function BBalnPanel() {
     }
   }, [isAdjusting, boostedLPs, getWorkingBalance]);
 
+  console.log(boostedLPNumbers);
+
   const differenceBBalnAmount = useMemo(() => {
     if (isAdjusting) {
       return getBbalnAmount(differenceBalnAmount.abs(), selectedLockedPeriod);
@@ -770,7 +772,11 @@ export default function BBalnPanel() {
               </BoostedBox>
               <BoostedBox className="no-border">
                 <Typography fontSize={16} color="#FFF">
-                  {boostedLPNumbers ? `${Math.min(...boostedLPNumbers)} x - ${Math.max(...boostedLPNumbers)} x` : '-'}
+                  {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0
+                    ? boostedLPNumbers.length === 1
+                      ? `${boostedLPNumbers[0]} x`
+                      : `${Math.min(...boostedLPNumbers)} x - ${Math.max(...boostedLPNumbers)} x`
+                    : '-'}
                 </Typography>
                 <StyledTypography ref={arrowRef}>
                   Liquidity rewards{' '}
@@ -779,7 +785,8 @@ export default function BBalnPanel() {
               </BoostedBox>
               <LiquidityDetailsWrap show={showLiquidityTooltip || isAdjusting}>
                 <LiquidityDetails>
-                  {boostedLPs &&
+                  {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0 ? (
+                    boostedLPs &&
                     Object.keys(boostedLPs).map(boostedLP => {
                       return (
                         <PoolItem key={boostedLP}>
@@ -797,7 +804,12 @@ export default function BBalnPanel() {
                           <Typography fontSize={14}>{boostedLP}</Typography>
                         </PoolItem>
                       );
-                    })}
+                    })
+                  ) : (
+                    <Typography paddingTop="10px" marginBottom="-5px" maxWidth={250} textAlign="left">
+                      <Trans>You must have supplied liquidity in any of BALN incentivised pools.</Trans>
+                    </Typography>
+                  )}
                 </LiquidityDetails>
               </LiquidityDetailsWrap>
             </BoostedInfo>

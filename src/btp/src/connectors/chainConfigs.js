@@ -4,7 +4,47 @@ import { custom } from './chainCustomization';
 import { ABI as currentABI } from './MetaMask/ABI';
 
 const config = {
-  mainnet: {},
+  mainnet: {
+    // --------------------------------------------------------
+    REACT_APP_VERSION: '$npm_package_version',
+    REACT_APP_BTP_ENDPOINT: 'https://backend.nexusportal.io/v1',
+    REACT_APP_ENV: 'mainnet',
+
+    // --------------------------------------------------------
+    // ICON
+    REACT_APP_CHAIN_ICON_RPC_URL: 'https://ctz.solidwallet.io/api/v3/icon_dex',
+    REACT_APP_CHAIN_ICON_EXPLORE_URL: 'https://tracker.icon.community/',
+    REACT_APP_CHAIN_ICON_NETWORK_ADDRESS: '0x1.icon',
+    REACT_APP_CHAIN_ICON_CHAIN_NAME: 'ICON',
+    REACT_APP_CHAIN_ICON_COIN_SYMBOL: 'ICX',
+    REACT_APP_CHAIN_ICON_STEP_LIMIT: '2500000',
+
+    // --------------------------------------------------------
+    // BSC
+    REACT_APP_CHAIN_BSC_RPC_URL: 'https://bsc-dataseed.binance.org/',
+    REACT_APP_CHAIN_BSC_EXPLORE_URL: 'https://bscscan.com/',
+    REACT_APP_CHAIN_BSC_NETWORK_ADDRESS: '0x38.bsc',
+    REACT_APP_CHAIN_BSC_CHAIN_NAME: 'BNB Smart Chain',
+    REACT_APP_CHAIN_BSC_COIN_SYMBOL: 'BNB',
+    REACT_APP_CHAIN_BSC_GAS_LIMIT: '6691B7',
+
+    REACT_APP_CHAIN_BSC_ICON_BTS_CORE: 'cxcef70e92b89f2d8191a0582de966280358713c32',
+    REACT_APP_CHAIN_BSC_BTS_CORE: '0x7A4341Af4995884546Bcf7e09eB98beD3eD26D28',
+
+    // NEAR
+    REACT_APP_CHAIN_NEAR_RPC_URL: 'https://rpc.testnet.near.org',
+    REACT_APP_CHAIN_NEAR_EXPLORE_URL: 'https://explorer.testnet.near.org/',
+    REACT_APP_CHAIN_NEAR_WALLET_URL: 'https://wallet.testnet.near.org',
+    REACT_APP_CHAIN_NEAR_HELPER_URL: 'https://helper.testnet.near.org',
+    REACT_APP_CHAIN_NEAR_NETWORK_ADDRESS: '0x1.near',
+    REACT_APP_CHAIN_NEAR_CHAIN_NAME: 'NEAR',
+    REACT_APP_CHAIN_NEAR_COIN_SYMBOL: 'NEAR',
+    REACT_APP_CHAIN_NEAR_GAS_LIMIT: '300000000000000',
+
+    REACT_APP_CHAIN_NEAR_ICON_BTS_CORE: 'cx95882bb6a0fda402afc09a52a0141738de8fa133',
+    REACT_APP_CHAIN_NEAR_BTS_CORE: 'bts.iconbridge.testnet',
+    REACT_APP_CHAIN_NEAR_ICX_NEP141_ADDRESS: 'btp-icx.bts.iconbridge.testnet ',
+  },
   testnet: {
     //--------------------------------------------------------
     REACT_APP_VERSION: '$npm_package_version',

@@ -17,6 +17,8 @@ import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { getFormattedNumber } from 'utils/formatter';
 
+import { MAX_BOOST } from '../home/BBaln/utils';
+
 const List = styled(Box)`
   -webkit-overflow-scrolling: touch;
   min-width: 930px;
@@ -246,14 +248,17 @@ const PairItem = ({ pair, onClick }: PairItemProps) => (
           <Text ml={2}>{`${pair.baseCurrencyKey} / ${pair.quoteCurrencyKey}`}</Text>
         </Flex>
       </DataText>
-      <DataText>
+      <DataText minWidth={'200px'}>
         <Flex flexDirection="column" py={2} alignItems="flex-end">
           {pair.apy && (
             <APYItem>
               <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
                 BALN:
               </Typography>
-              {getFormattedNumber(pair.apy, 'percent2')}
+              {`${getFormattedNumber(pair.apy, 'percent2')} - ${getFormattedNumber(
+                MAX_BOOST.times(pair.apy).toNumber(),
+                'percent2',
+              )}`}
             </APYItem>
           )}
           {pair.feesApy !== 0 && (
@@ -296,6 +301,7 @@ export default function AllPoolsPanel() {
         <DashGrid>
           <HeaderText
             role="button"
+            minWidth="220px"
             className={sortBy.key === 'baseCurrencyKey' ? sortBy.order : ''}
             onClick={() =>
               handleSortSelect({
@@ -308,7 +314,7 @@ export default function AllPoolsPanel() {
             </span>
           </HeaderText>
           <HeaderText
-            minWidth={'135px'}
+            minWidth="200px"
             role="button"
             className={sortBy.key === 'apyTotal' ? sortBy.order : ''}
             onClick={() =>
@@ -322,7 +328,10 @@ export default function AllPoolsPanel() {
                 width={330}
                 text={
                   <>
-                    <Trans>The BALN APY is calculated from the USD value of BALN rewards available for a pool.</Trans>
+                    <Trans>
+                      The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will
+                      vary based on the amount of bBALN you hold.
+                    </Trans>
                     <br />
                     <br />
                     <Trans>The fee APY is calculated from the swap fees earned by a pool in the last 30 days.</Trans>

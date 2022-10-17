@@ -87,7 +87,7 @@ export default function LiquidityPoolsPanel() {
           </motion.div>
         ) : (
           <motion.div
-            key="IncentiviesPools"
+            key="IncentivisedPools"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ type: 'just' }}

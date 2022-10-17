@@ -21,6 +21,8 @@ import { tryParseAmount } from 'store/swap/hooks';
 import { useLiquidityTokenBalance } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
+import { MAX_BOOST } from '../home/BBaln/utils';
+
 export default function LPDescription() {
   const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();
   const { independentField, typedValue, otherTypedValue } = useMintState();
@@ -88,7 +90,6 @@ export default function LPDescription() {
 
   const boost = useMemo(() => {
     const pairName = pair ? `${pair.token0.symbol}/${pair.token1.symbol}` : '';
-    console.log(pairName);
     if (sources && sources[pairName] && sources[pairName].balance.isGreaterThan(0)) {
       return sources[pairName].workingBalance.dividedBy(sources[pairName].balance);
     } else {
@@ -125,8 +126,14 @@ export default function LPDescription() {
                     liquidity pool${upSmall ? ': ' : ''}`
                   : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
-                  {apy?.times(boost).times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed() ?? '-'}
-                  {`% APY${boost.isGreaterThan(1) ? ' (boosted)' : ''}`}
+                  {apy
+                    ? `${apy.times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed()}% - ${apy
+                        .times(MAX_BOOST)
+                        .times(100)
+                        .dp(2)
+                        .toFixed()}%`
+                    : '-'}
+                  {' APY'}
                 </Typography>
               </Typography>
             ) : (

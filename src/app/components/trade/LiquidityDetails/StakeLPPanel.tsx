@@ -17,30 +17,26 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
-import { useBalance, useSuppliedTokens } from 'hooks/useV2Pairs';
+import { useBalance } from 'hooks/useV2Pairs';
+import { useAllPairs } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useSources } from 'store/bbaln/hooks';
 import { useRewards } from 'store/reward/hooks';
-import {
-  useChangeStakedLPPercent,
-  useStakedLPPercent,
-  useTotalStaked,
-  useWithdrawnPercent,
-} from 'store/stakedLP/hooks';
+import { useChangeStakedLPPercent, useStakedLPPercent, useTotalStaked } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { StyledSkeleton } from '../../ProposalInfo/components';
-import { getFormattedPoolShare, getFormattedRewards, stakedFraction, totalSupply } from '../utils';
+import { getFormattedRewards, stakedFraction } from '../utils';
 import { getABBalance, getShareReward } from './WithdrawPanel';
 
 export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const { account } = useIconReact();
   const poolId = pair.poolId!;
-  const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
   const sources = useSources();
+  const allPairs = useAllPairs();
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -173,9 +169,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const rewards = useRewards();
   const totalReward = rewards[poolId];
   const [aBalance, bBalance] = getABBalance(pair, balance);
-  const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
-  const baseCurrencyTotalSupply = totalSupply(baseValue, lpBalance?.base);
-  const { share, reward } = getShareReward(pair, balance, totalReward);
+  const { reward } = getShareReward(pair, balance, totalReward);
   const stakedFractionValue = stakedFraction(stakedPercent);
 
   const RespoRewardsInfo = () => {
@@ -201,13 +195,22 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
 
         <Box sx={{ textAlign: 'right' }}>
           <Typography color="text2">
-            <Trans>Pool share</Trans>
+            <Trans>APY</Trans>
           </Typography>
           <Typography color="text" fontSize={16}>
-            {!baseCurrencyTotalSupply && baseValue?.equalTo(0) ? (
+            {!allPairs || !sources ? (
               <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            ) : sources[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`] ? (
+              `${new BigNumber(allPairs[pair.poolId!].apy)
+                .times(
+                  sources[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`].workingBalance.dividedBy(
+                    sources[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`].balance,
+                  ),
+                )
+                .times(100)
+                .toFormat(2)}%`
             ) : (
-              getFormattedPoolShare(baseValue, quoteValue, percent, share, baseCurrencyTotalSupply, pair)
+              '-'
             )}
           </Typography>
         </Box>

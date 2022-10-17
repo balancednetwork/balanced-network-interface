@@ -7,6 +7,7 @@ export const WEEK_IN_MS = 604800000;
 export const MAX_LOCK_MS = 126144000000;
 export const EXA = new BigNumber(10 ** 18);
 export const WEIGHT = EXA.times(40).dividedBy(100);
+export const MAX_BOOST = new BigNumber(2.5);
 
 export const lockingPeriods: LockedPeriod[] = [
   {

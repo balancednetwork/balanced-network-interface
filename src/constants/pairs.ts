@@ -321,6 +321,7 @@ const SUPPORTED_PAIRS_INFO: { [ChainId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'ICX',
       baseToken: sICX[ChainId.BERLIN],
       quoteToken: ICX[ChainId.BERLIN],
+      rewards: 0.03,
     },
     {
       chainId: 7,

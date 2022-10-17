@@ -639,6 +639,16 @@ export const ThemedGlobalStyle = createGlobalStyle`
     transition: opacity 0.3s ease;
   }
 
+/* Slider Warning */
+  .withdraw-warning .noUi-connect {
+    background: #fb6a6a;
+  }
+
+  .withdraw-warning .noUi-horizontal .noUi-handle {
+    border: 3px solid #fb6a6a;
+  }
+
+
 /* Risk */
 
   #slider-risk {

@@ -334,17 +334,19 @@ export default function BBalnPanel() {
     }
   }, [isAdjusting, boostedLPs, getWorkingBalance]);
 
-  // const maxRewardThreshold = useMemo(() => {
-  //   if (sources && totalSupplyBBaln) {
-  //     return BigNumber.max(
-  //       ...Object.values(sources).map(source =>
-  //         source.supply.isGreaterThan(0)
-  //           ? source.balance.times(totalSupplyBBaln.plus(bbalnAmountDiff)).dividedBy(source.supply)
-  //           : new BigNumber(0),
-  //       ),
-  //     );
-  //   }
-  // }, [sources, totalSupplyBBaln, bbalnAmountDiff]);
+  const maxRewardThreshold = useMemo(() => {
+    if (sources && totalSupplyBBaln) {
+      return BigNumber.max(
+        ...Object.values(sources).map(source =>
+          source.supply.isGreaterThan(0)
+            ? source.balance.times(totalSupplyBBaln.plus(bbalnAmountDiff)).dividedBy(source.supply)
+            : new BigNumber(0),
+        ),
+      );
+    }
+  }, [sources, totalSupplyBBaln, bbalnAmountDiff]);
+
+  const maxRewardNoticeContent = `${maxRewardThreshold?.toFormat(2)} bBALN required for maximum rewards.`;
 
   // console.log(maxRewardThreshold?.toFixed(2));
 
@@ -432,7 +434,10 @@ export default function BBalnPanel() {
                   </Box>
                 )}
 
-                <Box margin="10px 0">
+                <Box
+                  margin="10px 0"
+                  className={balnSliderAmount.isLessThan(beforeBalnAmount) ? 'withdraw-warning' : ''}
+                >
                   <Nouislider
                     disabled={!isAdjusting}
                     id="slider-bbaln"
@@ -514,13 +519,19 @@ export default function BBalnPanel() {
                       ) : (
                         isAdjusting && (
                           <Typography fontSize={14} color="#fb6a6a">
-                            <Trans>You'll need to pay a 50% fee to unlock BALN early.</Trans>
+                            <Trans>Pay a 50% fee to unlock your BALN early.</Trans>
                           </Typography>
                         )
                       )}
                     </Typography>
                   )}
                 </Flex>
+
+                {isAdjusting && (
+                  <Typography fontSize={14} mt={2}>
+                    {maxRewardNoticeContent}
+                  </Typography>
+                )}
               </SliderWrap>
               <BoostedInfo>
                 <BoostedBox>
@@ -624,12 +635,12 @@ export default function BBalnPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {shouldBoost ? balnSliderAmount.toFormat(0) : lockedBalnAmount?.toFixed(2, { groupSeparator: ',' })}
+            {shouldBoost ? balnSliderAmount.toFormat(0) : lockedBalnAmount?.toFixed(0, { groupSeparator: ',' })}
             {' BALN'}
           </Typography>
           {!shouldBoost && (
             <Typography textAlign="center" fontSize={14} color="#fb6a6a">
-              {t`Minus 50% fee: ${lockedBalnAmount?.divide(2).toFixed(2, { groupSeparator: ',' })} BALN`}
+              {t`Minus 50% fee: ${lockedBalnAmount?.divide(2).toFixed(0, { groupSeparator: ',' })} BALN`}
             </Typography>
           )}
 
@@ -668,7 +679,7 @@ export default function BBalnPanel() {
                   Cancel
                 </TextButton>
                 <Button disabled={!hasEnoughICX} onClick={handleBoostUpdate} fontSize={14} warning={!shouldBoost}>
-                  {shouldBoost ? 'Lock up BALN' : 'Unlock BALN for a 50% fee'}
+                  {shouldBoost ? 'Lock up BALN' : 'Unlock all BALN for a 50% fee'}
                 </Button>
               </>
             )}

@@ -112,7 +112,7 @@ export default function LiquidityDetails() {
             </HeaderText>
             {upSmall && (
               <HeaderText>
-                <Trans>APY</Trans>
+                <Trans>BALN APY</Trans>
               </HeaderText>
             )}
             {upSmall && (

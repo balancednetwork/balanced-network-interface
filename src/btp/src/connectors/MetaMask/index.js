@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { SupportedChainId } from '@balancednetwork/balanced-js';
 import { t } from '@lingui/macro';
 import { ethers, utils } from 'ethers';
 import { toast } from 'react-toastify';
@@ -78,7 +79,10 @@ class Ethereum {
             params: [
               {
                 chainId,
-                chainName: CHAIN_NAME + ' ' + process.env.REACT_APP_ENV,
+                chainName:
+                  CHAIN_NAME +
+                  ' ' +
+                  (process.env.REACT_APP_NETWORK_ID === SupportedChainId.MAINNET.toString() ? 'Mainnet' : 'Testnet'),
                 rpcUrls: [RPC_URL],
                 // iconUrls: [logoUrl],
                 blockExplorerUrls: [EXPLORE_URL],

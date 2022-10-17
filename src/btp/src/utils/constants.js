@@ -2,7 +2,7 @@ export const wallets = {
   metamask: 'metamask',
   iconex: 'iconex',
   hana: 'hana',
-  near: 'NEAR',
+  // near: 'NEAR',
 };
 
 export const txStatus = {

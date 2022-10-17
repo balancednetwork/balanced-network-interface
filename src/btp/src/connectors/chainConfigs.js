@@ -1,3 +1,4 @@
+import { SupportedChainId } from '@balancednetwork/balanced-js';
 import { ethers } from 'ethers';
 
 import { custom } from './chainCustomization';
@@ -32,18 +33,18 @@ const config = {
     REACT_APP_CHAIN_BSC_BTS_CORE: '0x7A4341Af4995884546Bcf7e09eB98beD3eD26D28',
 
     // NEAR
-    REACT_APP_CHAIN_NEAR_RPC_URL: 'https://rpc.testnet.near.org',
-    REACT_APP_CHAIN_NEAR_EXPLORE_URL: 'https://explorer.testnet.near.org/',
-    REACT_APP_CHAIN_NEAR_WALLET_URL: 'https://wallet.testnet.near.org',
-    REACT_APP_CHAIN_NEAR_HELPER_URL: 'https://helper.testnet.near.org',
-    REACT_APP_CHAIN_NEAR_NETWORK_ADDRESS: '0x1.near',
-    REACT_APP_CHAIN_NEAR_CHAIN_NAME: 'NEAR',
-    REACT_APP_CHAIN_NEAR_COIN_SYMBOL: 'NEAR',
-    REACT_APP_CHAIN_NEAR_GAS_LIMIT: '300000000000000',
+    // REACT_APP_CHAIN_NEAR_RPC_URL: 'https://rpc.testnet.near.org',
+    // REACT_APP_CHAIN_NEAR_EXPLORE_URL: 'https://explorer.testnet.near.org/',
+    // REACT_APP_CHAIN_NEAR_WALLET_URL: 'https://wallet.testnet.near.org',
+    // REACT_APP_CHAIN_NEAR_HELPER_URL: 'https://helper.testnet.near.org',
+    // REACT_APP_CHAIN_NEAR_NETWORK_ADDRESS: '0x1.near',
+    // REACT_APP_CHAIN_NEAR_CHAIN_NAME: 'NEAR',
+    // REACT_APP_CHAIN_NEAR_COIN_SYMBOL: 'NEAR',
+    // REACT_APP_CHAIN_NEAR_GAS_LIMIT: '300000000000000',
 
-    REACT_APP_CHAIN_NEAR_ICON_BTS_CORE: 'cx95882bb6a0fda402afc09a52a0141738de8fa133',
-    REACT_APP_CHAIN_NEAR_BTS_CORE: 'bts.iconbridge.testnet',
-    REACT_APP_CHAIN_NEAR_ICX_NEP141_ADDRESS: 'btp-icx.bts.iconbridge.testnet ',
+    // REACT_APP_CHAIN_NEAR_ICON_BTS_CORE: 'cx95882bb6a0fda402afc09a52a0141738de8fa133',
+    // REACT_APP_CHAIN_NEAR_BTS_CORE: 'bts.iconbridge.testnet',
+    // REACT_APP_CHAIN_NEAR_ICX_NEP141_ADDRESS: 'btp-icx.bts.iconbridge.testnet ',
   },
   testnet: {
     //--------------------------------------------------------
@@ -70,22 +71,22 @@ const config = {
     REACT_APP_CHAIN_BSC_BTS_CORE: '0x1a2aDf985D6c2700fdAf72A9c1e2b39e3B647F7e',
     //--------------------------------------------------------
     // NEAR
-    REACT_APP_CHAIN_NEAR_RPC_URL: 'https://rpc.testnet.near.org',
-    REACT_APP_CHAIN_NEAR_EXPLORE_URL: 'https://explorer.testnet.near.org/',
-    REACT_APP_CHAIN_NEAR_WALLET_URL: 'https://wallet.testnet.near.org',
-    REACT_APP_CHAIN_NEAR_HELPER_URL: 'https://helper.testnet.near.org',
-    REACT_APP_CHAIN_NEAR_NETWORK_ADDRESS: '0x1.near',
-    REACT_APP_CHAIN_NEAR_CHAIN_NAME: 'NEAR Network',
-    REACT_APP_CHAIN_NEAR_COIN_SYMBOL: 'NEAR',
-    REACT_APP_CHAIN_NEAR_GAS_LIMIT: '300000000000000',
-    REACT_APP_CHAIN_NEAR_ICON_BTS_CORE: 'cx95882bb6a0fda402afc09a52a0141738de8fa133',
-    REACT_APP_CHAIN_NEAR_BTS_CORE: 'bts.iconbridge.testnet',
-    REACT_APP_CHAIN_NEAR_ICX_NEP141_ADDRESS: 'btp-icx.bts.iconbridge.testnet',
+    //   REACT_APP_CHAIN_NEAR_RPC_URL: 'https://rpc.testnet.near.org',
+    //   REACT_APP_CHAIN_NEAR_EXPLORE_URL: 'https://explorer.testnet.near.org/',
+    //   REACT_APP_CHAIN_NEAR_WALLET_URL: 'https://wallet.testnet.near.org',
+    //   REACT_APP_CHAIN_NEAR_HELPER_URL: 'https://helper.testnet.near.org',
+    //   REACT_APP_CHAIN_NEAR_NETWORK_ADDRESS: '0x1.near',
+    //   REACT_APP_CHAIN_NEAR_CHAIN_NAME: 'NEAR Network',
+    //   REACT_APP_CHAIN_NEAR_COIN_SYMBOL: 'NEAR',
+    //   REACT_APP_CHAIN_NEAR_GAS_LIMIT: '300000000000000',
+    //   REACT_APP_CHAIN_NEAR_ICON_BTS_CORE: 'cx95882bb6a0fda402afc09a52a0141738de8fa133',
+    //   REACT_APP_CHAIN_NEAR_BTS_CORE: 'bts.iconbridge.testnet',
+    //   REACT_APP_CHAIN_NEAR_ICX_NEP141_ADDRESS: 'btp-icx.bts.iconbridge.testnet',
   },
 };
 export const chainConfigs = {};
-
-const networkConfig = config[process.env.REACT_APP_NETWORK_ID === 1 ? 'mainnet' : 'testnet'];
+const networkConfig =
+  config[process.env.REACT_APP_NETWORK_ID === SupportedChainId.MAINNET.toString() ? 'mainnet' : 'testnet'];
 Object.keys(networkConfig).forEach(e => {
   if (e.startsWith('REACT_APP_CHAIN')) {
     const chainName = e.split('_')[3];

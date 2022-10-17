@@ -51,11 +51,11 @@ const mockWallets = {
     title: 'Hana Wallet',
     icon: Hana,
   },
-  [wallets.near]: {
-    id: 'near',
-    title: 'NEAR Wallet',
-    icon: NEAR,
-  },
+  // [wallets.near]: {
+  //   id: 'near',
+  //   title: 'NEAR Wallet',
+  //   icon: NEAR,
+  // },
 };
 
 const WalletConnect = () => {
@@ -143,9 +143,9 @@ const WalletConnect = () => {
   const handleSelectWallet = wallet => {
     if (wallet) setSelectedWallet(wallet);
 
-    if (wallet === wallets.near) {
-      onChangePairedNetworks({ target: { value: pairedNetworks['ICON-NEAR'] } });
-    }
+    // if (wallet === wallets.near) {
+    //   onChangePairedNetworks({ target: { value: pairedNetworks['ICON-NEAR'] } });
+    // }
   };
 
   const onDisconnectWallet = () => {

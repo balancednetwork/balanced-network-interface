@@ -58,7 +58,7 @@ export const Icon = memo(({ icon = 'metamask', width = '25.67px', size, iconURL,
     btc: btcIcon,
     bch: bchIcon,
     DEV: MBIcon,
-    NEAR: nearIcon,
+    // NEAR: nearIcon,
   };
 
   const MySource = SVGComp || (!iconURL && icons[icon]) || iconURL || icons.ICX;
@@ -104,7 +104,7 @@ Icon.propTypes = {
     'btc',
     'bch',
     'DEV',
-    'NEAR',
+    // 'NEAR',
   ]),
   /** Display icon with URL */
   iconURL: PropTypes.string,

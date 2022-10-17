@@ -117,7 +117,6 @@ const SelectItem = styled(Box)`
 const NetworkSelector = ({ label, data, onChange, toggleWallet }: NetworkSelectorProps) => {
   const [showItems, setShowItems] = useState(false);
   data = data.filter(network => !network.disabled);
-  debugger;
   let initialNetwork = data[0];
   const setNetworkSrc = useSelectNetworkSrc();
   const setNetworkDst = useSelectNetworkDst();

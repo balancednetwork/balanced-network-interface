@@ -121,7 +121,7 @@ export const icons = {
   [wallets.hana]: hanaIcon,
   BNB: binanceIcon,
   ETH: ethIcon,
-  NEAR: nearIcon,
+  // NEAR: nearIcon,
 };
 
 export const Details = memo(

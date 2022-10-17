@@ -78,7 +78,7 @@ export const Icon = memo(
       BNB: binanceIcon,
       btc: btcIcon,
       bch: bchIcon,
-      NEAR: nearIcon,
+      // NEAR: nearIcon,
       ONE: HamornyICon,
       bnUSD: bnUSDIcon,
       BTCB: BTCBIcon,

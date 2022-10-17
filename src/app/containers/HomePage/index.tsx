@@ -10,7 +10,7 @@ import LoanPanel from 'app/components/home/LoanPanel';
 import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
 import RewardsPanel from 'app/components/home/RewardsPanel';
 import TransactionPanel from 'app/components/home/TransactionPanel';
-import { useFetchBBalnInfo } from 'store/bbaln/hooks';
+import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useLoanFetchInfo } from 'store/loan/hooks';
 import { useFetchOraclePrices } from 'store/oracle/hooks';
@@ -45,6 +45,7 @@ export function HomePage() {
 
   useFetchPrice();
   useFetchOraclePrices();
+  useFetchBBalnSources();
   useFetchBBalnInfo(account);
   useWalletFetchBalances(account);
   useCollateralFetchInfo(account);

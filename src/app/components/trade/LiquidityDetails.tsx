@@ -18,7 +18,7 @@ import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { BalanceData, useSuppliedTokens } from 'hooks/useV2Pairs';
-import { Source, useBoostData } from 'store/bbaln/hooks';
+import { Source, useSources } from 'store/bbaln/hooks';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintActionHandlers } from 'store/mint/hooks';
@@ -38,7 +38,7 @@ import { getFormattedPoolShare, getFormattedRewards, stakedFraction, totalSupply
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
   const tokenListConfig = useTokenListConfig();
-  const { data: boostData } = useBoostData();
+  const sources = useSources();
 
   const { pairs, balances } = usePoolPanelContext();
 
@@ -129,7 +129,7 @@ export default function LiquidityDetails() {
                     balance={queueBalance}
                     pair={queuePair}
                     totalReward={queueReward}
-                    boost={boostData && boostData['sICX/ICX'].workingBalance.dividedBy(boostData['sICX/ICX'].balance)}
+                    boost={sources && sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance)}
                   />
                 </StyledAccordionButton>
                 <StyledAccordionPanel hidden={isHided}>
@@ -148,7 +148,7 @@ export default function LiquidityDetails() {
                       balance={balances[poolId]}
                       pair={sortedPairs[poolId]}
                       totalReward={rewards[poolId]}
-                      boostData={boostData}
+                      boostData={sources}
                     />
                   </StyledAccordionButton>
                   <StyledAccordionPanel hidden={isHided}>

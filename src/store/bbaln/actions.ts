@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 import { LockedPeriod } from 'app/components/home/BBaln/types';
 
 import { Field } from '../loan/actions';
+import { Source } from './hooks';
 
 export const adjust = createAction('bbaln/adjust');
 
@@ -22,3 +23,7 @@ export const changeData = createAction<{
   bbalnAmount: BigNumber;
   totalSupply: BigNumber;
 }>('bbaln/changeData');
+
+export const changeSources = createAction<{
+  sources: { [key in string]: Source };
+}>('bbaln/changeSources');

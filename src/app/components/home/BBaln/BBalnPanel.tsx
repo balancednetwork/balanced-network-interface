@@ -11,6 +11,7 @@ import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
+import { LineBreak } from 'app/components/Divider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { inputRegex } from 'app/components/Form';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
@@ -29,13 +30,14 @@ import {
   useBBalnSliderActionHandlers,
   useLockedUntil,
   useHasLockExpired,
-  useBoostData,
   useTotalSuply,
   Source,
   useBBalnChangeSelectedPeriod,
   useSelectedPeriod,
   useDynamicBBalnAmount,
   useWorkingBalance,
+  useSources,
+  useDBBalnAmountDiff,
 } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
@@ -53,20 +55,13 @@ import {
   ButtonsWrap,
   LiquidityDetails,
   LiquidityDetailsWrap,
-  MaxRewardsReachedNotice,
   PoolItem,
   SliderWrap,
   StyledTypography,
   Threshold,
 } from './styledComponents';
-import {
-  WEEK_IN_MS,
-  lockingPeriods,
-  formatDate,
-  getClosestUnixWeekStart,
-  getWeekOffsetTimestamp,
-  getBbalnAmount,
-} from './utils';
+import UnstakePrompt from './UnstakePrompt';
+import { WEEK_IN_MS, lockingPeriods, formatDate, getClosestUnixWeekStart, getWeekOffsetTimestamp } from './utils';
 
 export default function BBalnPanel() {
   const { account } = useIconReact();
@@ -75,7 +70,8 @@ export default function BBalnPanel() {
   const lockedUntil = useLockedUntil();
   const totalSupplyBBaln = useTotalSuply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
-  const { data: boostData } = useBoostData();
+  const bbalnAmountDiff = useDBBalnAmountDiff();
+  const sources = useSources();
   const { data: hasLockExpired } = useHasLockExpired();
   const { typedValue, isAdjusting, inputType } = useBBalnSliderState();
   const { onFieldAInput, onSlide, onAdjust: adjust } = useBBalnSliderActionHandlers();
@@ -93,11 +89,12 @@ export default function BBalnPanel() {
   const hasEnoughICX = useHasEnoughICX();
   const isSmallScreen = useMedia('(max-width: 540px)');
   const isSuperSmallScreen = useMedia('(max-width: 400px)');
-
   const addTransaction = useTransactionAdder();
 
   const balnBalanceAvailable =
     balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0);
+
+  const stakedBalance = balnDetails && balnDetails['Staked balance'];
 
   const handleEnableAdjusting = () => {
     adjust(true);
@@ -232,9 +229,9 @@ export default function BBalnPanel() {
   const buttonText = hasLockExpired
     ? lockedBalnAmount?.greaterThan(0)
       ? t`Withdraw BALN`
-      : t`Boost`
+      : t`Lock up BALN`
     : bBalnAmount?.isZero()
-    ? t`Boost`
+    ? t`Lock up BALN`
     : t`Adjust`;
   const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
@@ -308,25 +305,16 @@ export default function BBalnPanel() {
     }
   };
 
-  const isMaxRewardReached = (bBaln: BigNumber, source: string): boolean => {
-    if (totalSupplyBBaln && boostData) {
-      return bBaln.isGreaterThanOrEqualTo(
-        boostData[source].balance.times(totalSupplyBBaln).dividedBy(boostData[source].supply),
-      );
-    }
-    return false;
-  };
-
   const boostedLPs = useMemo(() => {
-    if (boostData) {
-      return Object.keys(boostData).reduce((LPs, sourceName) => {
-        if (sourceName !== 'Loans' && boostData[sourceName].balance.isGreaterThan(0)) {
-          LPs[sourceName] = { ...boostData[sourceName] };
+    if (sources) {
+      return Object.keys(sources).reduce((LPs, sourceName) => {
+        if (sourceName !== 'Loans' && sources[sourceName].balance.isGreaterThan(0)) {
+          LPs[sourceName] = { ...sources[sourceName] };
         }
         return LPs;
       }, {} as { [key in string]: Source });
     }
-  }, [boostData]);
+  }, [sources]);
 
   const boostedLPNumbers = useMemo(() => {
     if (isAdjusting) {
@@ -346,13 +334,19 @@ export default function BBalnPanel() {
     }
   }, [isAdjusting, boostedLPs, getWorkingBalance]);
 
-  const differenceBBalnAmount = useMemo(() => {
-    if (isAdjusting) {
-      return getBbalnAmount(balnSliderAmount, selectedPeriod).minus(bBalnAmount).abs();
-    } else {
-      return new BigNumber(0);
-    }
-  }, [isAdjusting, selectedPeriod, bBalnAmount, balnSliderAmount]);
+  // const maxRewardThreshold = useMemo(() => {
+  //   if (sources && totalSupplyBBaln) {
+  //     return BigNumber.max(
+  //       ...Object.values(sources).map(source =>
+  //         source.supply.isGreaterThan(0)
+  //           ? source.balance.times(totalSupplyBBaln.plus(bbalnAmountDiff)).dividedBy(source.supply)
+  //           : new BigNumber(0),
+  //       ),
+  //     );
+  //   }
+  // }, [sources, totalSupplyBBaln, bbalnAmountDiff]);
+
+  // console.log(maxRewardThreshold?.toFixed(2));
 
   return (
     <BoxPanel bg="bg2" flex={1}>
@@ -368,227 +362,247 @@ export default function BBalnPanel() {
               </Typography>
               <Typography padding="0 3px 2px 0">
                 {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()} bBALN
-                <QuestionHelper text="Lock BALN to boost your earning potential. The longer you lock it, the more bBALN (boosted BALN) you'll receive, which determines your earning and voting power." />
+                <QuestionHelper
+                  text={
+                    <>
+                      <Trans>Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x.</Trans>
+                      <LineBreak />
+                      <Typography color="text1">
+                        <Trans>
+                          The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will
+                          decrease over time.
+                        </Trans>
+                      </Typography>
+                    </>
+                  }
+                />
               </Typography>
             </Flex>
 
-            <ButtonsWrap>
-              {isAdjusting ? (
-                <>
-                  <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmallScreen ? '5px' : 0}>
-                    Cancel
-                  </TextButton>
+            {stakedBalance?.isEqualTo(0) && (
+              <ButtonsWrap>
+                {isAdjusting ? (
+                  <>
+                    <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmallScreen ? '5px' : 0}>
+                      Cancel
+                    </TextButton>
+                    <Button
+                      disabled={
+                        bBalnAmount.isGreaterThan(0)
+                          ? differenceBalnAmount.isZero() && !isPeriodChanged
+                          : differenceBalnAmount.isZero()
+                      }
+                      onClick={toggleConfirmationModalOpen}
+                      fontSize={14}
+                    >
+                      Confirm
+                    </Button>
+                  </>
+                ) : (
                   <Button
-                    disabled={
-                      bBalnAmount.isGreaterThan(0)
-                        ? differenceBalnAmount.isZero() && !isPeriodChanged
-                        : differenceBalnAmount.isZero()
+                    onClick={
+                      hasLockExpired && lockedBalnAmount?.greaterThan(0)
+                        ? toggleWithdrawModalOpen
+                        : handleEnableAdjusting
                     }
-                    onClick={toggleConfirmationModalOpen}
                     fontSize={14}
                   >
-                    Confirm
+                    {buttonText}
                   </Button>
-                </>
-              ) : (
-                <Button
-                  onClick={
-                    hasLockExpired && lockedBalnAmount?.greaterThan(0) ? toggleWithdrawModalOpen : handleEnableAdjusting
-                  }
-                  fontSize={14}
-                >
-                  {buttonText}
-                </Button>
-              )}
-            </ButtonsWrap>
-          </Flex>
-          <SliderWrap>
-            <Typography className={`lockup-notice${isAdjusting ? '' : ' show'}`}>
-              Lock up BALN to boost your earning potential.
-            </Typography>
-
-            {shouldShowLock && isAdjusting && (
-              <Box style={{ position: 'relative' }}>
-                <Threshold position={lockbarPercentPosition}>
-                  <MetaData as="dl" style={{ textAlign: 'right' }}>
-                    <dd>Locked</dd>
-                  </MetaData>
-                </Threshold>
-              </Box>
+                )}
+              </ButtonsWrap>
             )}
+          </Flex>
 
-            <Box margin="10px 0">
-              <Nouislider
-                disabled={!isAdjusting}
-                id="slider-bbaln"
-                start={[Number(lockedBalnAmount?.toFixed(0) || 0)]}
-                connect={[true, false]}
-                step={1}
-                range={{
-                  min: [0],
-                  max: [balnBalanceAvailable.dp(0).toNumber()], //baln balance - max SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, boostableAmount
-                }}
-                instanceRef={instance => {
-                  if (instance) {
-                    sliderInstance.current = instance;
-                  }
-                }}
-                onSlide={onSlide}
-              />
-            </Box>
-
-            <Flex justifyContent="space-between" flexWrap={'wrap'}>
-              <Flex alignItems="center">
-                {isAdjusting ? (
-                  <BalnPreviewInput
-                    type="text"
-                    disabled={!isAdjusting}
-                    value={balnSliderAmount.toNumber()}
-                    onChange={handleBBalnInputChange}
-                  />
-                ) : (
-                  <Typography paddingRight={'5px'}>{balnSliderAmount.toFormat()}</Typography>
+          {stakedBalance?.isGreaterThan(0) ? (
+            <UnstakePrompt stakedBalance={stakedBalance} availableBalance={balnBalanceAvailable} />
+          ) : (
+            <>
+              <SliderWrap>
+                <Typography className={`lockup-notice${isAdjusting ? '' : ' show'}`}>
+                  Lock up BALN to boost your earning potential.
+                </Typography>
+                {shouldShowLock && isAdjusting && (
+                  <Box style={{ position: 'relative' }}>
+                    <Threshold position={lockbarPercentPosition}>
+                      <MetaData as="dl" style={{ textAlign: 'right' }}>
+                        <dd>Locked</dd>
+                      </MetaData>
+                    </Threshold>
+                  </Box>
                 )}
 
-                <Typography paddingRight={'15px'}>
-                  {' '}
-                  / {balnBalanceAvailable.toFormat(0, BigNumber.ROUND_DOWN)} BALN
-                </Typography>
-              </Flex>
+                <Box margin="10px 0">
+                  <Nouislider
+                    disabled={!isAdjusting}
+                    id="slider-bbaln"
+                    start={[Number(lockedBalnAmount?.toFixed(0) || 0)]}
+                    connect={[true, false]}
+                    step={1}
+                    range={{
+                      min: [0],
+                      max: [balnBalanceAvailable.dp(0).toNumber()], //baln balance - max SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, boostableAmount
+                    }}
+                    instanceRef={instance => {
+                      if (instance) {
+                        sliderInstance.current = instance;
+                      }
+                    }}
+                    onSlide={onSlide}
+                  />
+                </Box>
 
-              {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
-                <Typography paddingTop={isAdjusting ? '6px' : '0'}>
-                  {hasLockExpired && !isAdjusting ? (
-                    t`Unlocked on ${formatDate(lockedUntil)}`
-                  ) : shouldBoost ? (
-                    <>
-                      {t`Locked until`}{' '}
-                      {isAdjusting ? (
+                <Flex justifyContent="space-between" flexWrap={'wrap'}>
+                  <Flex alignItems="center">
+                    {isAdjusting ? (
+                      <BalnPreviewInput
+                        type="text"
+                        disabled={!isAdjusting}
+                        value={balnSliderAmount.toNumber()}
+                        onChange={handleBBalnInputChange}
+                      />
+                    ) : (
+                      <Typography paddingRight={'5px'}>{balnSliderAmount.toFormat()}</Typography>
+                    )}
+
+                    <Typography paddingRight={'15px'}>
+                      {' '}
+                      / {balnBalanceAvailable.toFormat(0, BigNumber.ROUND_DOWN)} BALN
+                    </Typography>
+                  </Flex>
+
+                  {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
+                    <Typography paddingTop={isAdjusting ? '6px' : '0'}>
+                      {hasLockExpired && !isAdjusting ? (
+                        t`Unlocked on ${formatDate(lockedUntil)}`
+                      ) : shouldBoost ? (
                         <>
-                          <ClickAwayListener onClickAway={closeDropdown}>
-                            <UnderlineTextWithArrow
-                              onClick={handlePeriodDropdownToggle}
-                              text={formatDate(
-                                getClosestUnixWeekStart(
-                                  new Date(
-                                    new Date().setDate(new Date().getDate() + (selectedPeriod.weeks * 7 - 7)),
-                                  ).getTime(),
-                                ),
-                              )}
-                              arrowRef={periodArrowRef}
-                            />
-                          </ClickAwayListener>
-                          <DropdownPopper
-                            show={Boolean(periodDropdownAnchor)}
-                            anchorEl={periodDropdownAnchor}
-                            placement="bottom-end"
-                          >
-                            <MenuList>
-                              {availablePeriods.map(period => (
-                                <MenuItem key={period.weeks} onClick={() => handleLockingPeriodChange(period)}>
-                                  {period.name}
-                                </MenuItem>
-                              ))}
-                            </MenuList>
-                          </DropdownPopper>
+                          {t`Locked until`}{' '}
+                          {isAdjusting ? (
+                            <>
+                              <ClickAwayListener onClickAway={closeDropdown}>
+                                <UnderlineTextWithArrow
+                                  onClick={handlePeriodDropdownToggle}
+                                  text={formatDate(
+                                    getClosestUnixWeekStart(
+                                      new Date(
+                                        new Date().setDate(new Date().getDate() + (selectedPeriod.weeks * 7 - 7)),
+                                      ).getTime(),
+                                    ),
+                                  )}
+                                  arrowRef={periodArrowRef}
+                                />
+                              </ClickAwayListener>
+                              <DropdownPopper
+                                show={Boolean(periodDropdownAnchor)}
+                                anchorEl={periodDropdownAnchor}
+                                placement="bottom-end"
+                              >
+                                <MenuList>
+                                  {availablePeriods.map(period => (
+                                    <MenuItem key={period.weeks} onClick={() => handleLockingPeriodChange(period)}>
+                                      {period.name}
+                                    </MenuItem>
+                                  ))}
+                                </MenuList>
+                              </DropdownPopper>
+                            </>
+                          ) : (
+                            formatDate(lockedUntil)
+                          )}
                         </>
                       ) : (
-                        formatDate(lockedUntil)
-                      )}
-                    </>
-                  ) : (
-                    isAdjusting && (
-                      <Typography fontSize={14} color="#fb6a6a">
-                        <Trans>You'll need to pay a 50% fee to unlock BALN early.</Trans>
-                      </Typography>
-                    )
-                  )}
-                </Typography>
-              )}
-            </Flex>
-          </SliderWrap>
-          {balnSliderAmount.isGreaterThan(0) && (
-            <BoostedInfo>
-              <BoostedBox>
-                <Typography fontSize={16} color="#FFF">
-                  {totalSupplyBBaln
-                    ? isAdjusting
-                      ? differenceBalnAmount.isGreaterThanOrEqualTo(0)
-                        ? `${bBalnAmount
-                            .plus(differenceBBalnAmount)
-                            .dividedBy(totalSupplyBBaln.plus(differenceBBalnAmount))
-                            .times(100)
-                            .toFixed(2)} %`
-                        : `${bBalnAmount
-                            .minus(differenceBBalnAmount)
-                            .dividedBy(totalSupplyBBaln.minus(differenceBBalnAmount))
-                            .times(100)
-                            .toFixed(2)} %`
-                      : `${bBalnAmount.dividedBy(totalSupplyBBaln).times(100).toFixed(2)} %`
-                    : '-'}
-                </Typography>
-                <Typography>Network fees</Typography>
-              </BoostedBox>
-              <BoostedBox>
-                <MaxRewardsReachedNotice show={isAdjusting && isMaxRewardReached(dynamicBBalnAmount, 'Loans')}>
-                  Max rewards
-                </MaxRewardsReachedNotice>
-                <Typography fontSize={16} color="#FFF">
-                  {isAdjusting
-                    ? boostData && totalSupplyBBaln
-                      ? `${getWorkingBalance(boostData.Loans.balance, boostData.Loans.supply)
-                          .dividedBy(boostData.Loans.balance)
-                          .toFixed(2)} x`
-                      : '-'
-                    : boostData
-                    ? `${boostData.Loans.workingBalance.dividedBy(boostData.Loans.balance).toFixed(2)} x`
-                    : '-'}
-                </Typography>
-                <Typography>Loan rewards</Typography>
-              </BoostedBox>
-              <BoostedBox className="no-border">
-                <Typography fontSize={16} color="#FFF">
-                  {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0
-                    ? boostedLPNumbers.length === 1
-                      ? `${boostedLPNumbers[0]} x`
-                      : `${Math.min(...boostedLPNumbers)} x - ${Math.max(...boostedLPNumbers)} x`
-                    : '-'}
-                </Typography>
-                <StyledTypography ref={arrowRef}>
-                  Liquidity rewards{' '}
-                  <QuestionIcon width={14} onMouseEnter={showLPTooltip} onMouseLeave={hideLPTooltip} />
-                </StyledTypography>
-              </BoostedBox>
-              <LiquidityDetailsWrap show={showLiquidityTooltip || isAdjusting}>
-                <LiquidityDetails>
-                  {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0 ? (
-                    boostedLPs &&
-                    Object.keys(boostedLPs).map(boostedLP => {
-                      return (
-                        <PoolItem key={boostedLP}>
-                          <Typography fontSize={16} color="#FFF">
-                            {`${
-                              isAdjusting
-                                ? getWorkingBalance(boostedLPs[boostedLP].balance, boostedLPs[boostedLP].supply)
-                                    .dividedBy(boostedLPs[boostedLP].balance)
-                                    .toFixed(2)
-                                : boostedLPs[boostedLP].workingBalance
-                                    .dividedBy(boostedLPs[boostedLP].balance)
-                                    .toFixed(2)
-                            } x`}
+                        isAdjusting && (
+                          <Typography fontSize={14} color="#fb6a6a">
+                            <Trans>You'll need to pay a 50% fee to unlock BALN early.</Trans>
                           </Typography>
-                          <Typography fontSize={14}>{boostedLP}</Typography>
-                        </PoolItem>
-                      );
-                    })
-                  ) : (
-                    <Typography paddingTop="10px" marginBottom="-5px" maxWidth={250} textAlign="left">
-                      <Trans>You must have supplied liquidity in any of BALN incentivised pools.</Trans>
+                        )
+                      )}
                     </Typography>
                   )}
-                </LiquidityDetails>
-              </LiquidityDetailsWrap>
-            </BoostedInfo>
+                </Flex>
+              </SliderWrap>
+              <BoostedInfo>
+                <BoostedBox>
+                  <Typography fontSize={16} color="#FFF">
+                    {totalSupplyBBaln
+                      ? isAdjusting
+                        ? differenceBalnAmount.isGreaterThanOrEqualTo(0)
+                          ? `${bBalnAmount
+                              .plus(bbalnAmountDiff)
+                              .dividedBy(totalSupplyBBaln.plus(bbalnAmountDiff))
+                              .times(100)
+                              .toPrecision(3)} %`
+                          : `${bBalnAmount
+                              .minus(bbalnAmountDiff)
+                              .dividedBy(totalSupplyBBaln.minus(bbalnAmountDiff))
+                              .times(100)
+                              .toPrecision(3)} %`
+                        : `${bBalnAmount.dividedBy(totalSupplyBBaln).times(100).toPrecision(3)} %`
+                      : '-'}
+                  </Typography>
+                  <Typography>Network fees</Typography>
+                </BoostedBox>
+                <BoostedBox>
+                  <Typography fontSize={16} color="#FFF">
+                    {isAdjusting
+                      ? sources && totalSupplyBBaln
+                        ? `${getWorkingBalance(sources.Loans.balance, sources.Loans.supply)
+                            .dividedBy(sources.Loans.balance)
+                            .toFixed(2)} x`
+                        : '-'
+                      : sources
+                      ? `${sources.Loans.workingBalance.dividedBy(sources.Loans.balance).toFixed(2)} x`
+                      : '-'}
+                  </Typography>
+                  <Typography>Loan rewards</Typography>
+                </BoostedBox>
+                <BoostedBox className="no-border">
+                  <Typography fontSize={16} color="#FFF">
+                    {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0
+                      ? boostedLPNumbers.length === 1 || Math.min(...boostedLPNumbers) === Math.max(...boostedLPNumbers)
+                        ? `${boostedLPNumbers[0].toFixed(2)} x`
+                        : `${Math.min(...boostedLPNumbers).toFixed(2)} x - ${Math.max(...boostedLPNumbers).toFixed(
+                            2,
+                          )} x`
+                      : '-'}
+                  </Typography>
+                  <StyledTypography ref={arrowRef}>
+                    Liquidity rewards{' '}
+                    <QuestionIcon width={14} onMouseEnter={showLPTooltip} onMouseLeave={hideLPTooltip} />
+                  </StyledTypography>
+                </BoostedBox>
+                <LiquidityDetailsWrap show={showLiquidityTooltip || isAdjusting}>
+                  <LiquidityDetails>
+                    {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0 ? (
+                      boostedLPs &&
+                      Object.keys(boostedLPs).map(boostedLP => {
+                        return (
+                          <PoolItem key={boostedLP}>
+                            <Typography fontSize={16} color="#FFF">
+                              {`${
+                                isAdjusting
+                                  ? getWorkingBalance(boostedLPs[boostedLP].balance, boostedLPs[boostedLP].supply)
+                                      .dividedBy(boostedLPs[boostedLP].balance)
+                                      .toFixed(2)
+                                  : boostedLPs[boostedLP].workingBalance
+                                      .dividedBy(boostedLPs[boostedLP].balance)
+                                      .toFixed(2)
+                              } x`}
+                            </Typography>
+                            <Typography fontSize={14}>{boostedLP}</Typography>
+                          </PoolItem>
+                        );
+                      })
+                    ) : (
+                      <Typography paddingTop="10px" marginBottom="-5px" maxWidth={250} textAlign="left">
+                        <Trans>You must have supplied liquidity in any of BALN incentivised pools.</Trans>
+                      </Typography>
+                    )}
+                  </LiquidityDetails>
+                </LiquidityDetailsWrap>
+              </BoostedInfo>
+            </>
           )}
         </>
       ) : (
@@ -606,15 +620,16 @@ export default function BBalnPanel() {
       <Modal isOpen={confirmationModalOpen} onDismiss={toggleConfirmationModalOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb="5px">
-            {shouldBoost ? 'Lock up Balance Tokens?' : 'Unlock Balance Tokens?'}
+            {shouldBoost ? t`Lock up Balance Tokens?` : t`Unlock Balance Tokens?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {differenceBalnAmount.abs().toFormat(2)} BALN
+            {shouldBoost ? balnSliderAmount.toFormat(0) : lockedBalnAmount?.toFixed(2, { groupSeparator: ',' })}
+            {' BALN'}
           </Typography>
           {!shouldBoost && (
             <Typography textAlign="center" fontSize={14} color="#fb6a6a">
-              Minus 50% fee: {differenceBalnAmount.div(2).abs().toFormat(2)} BALN
+              {t`Minus 50% fee: ${lockedBalnAmount?.divide(2).toFixed(2, { groupSeparator: ',' })} BALN`}
             </Typography>
           )}
 
@@ -622,17 +637,16 @@ export default function BBalnPanel() {
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {balnBalanceAvailable.minus(bBalnAmount).toFormat(2)} BALN
+                {balnBalanceAvailable.toFormat(0)} BALN
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {balnBalanceAvailable
-                  .minus(bBalnAmount)
-                  .minus(shouldBoost ? differenceBalnAmount : differenceBalnAmount.div(2))
-                  .toFormat(2)}{' '}
+                {shouldBoost
+                  ? balnBalanceAvailable.minus(differenceBalnAmount).toFormat(0)
+                  : balnBalanceAvailable.plus(new BigNumber(lockedBalnAmount?.toFixed() || 0).div(2)).toFormat(0)}{' '}
                 BALN
               </Typography>
             </Box>
@@ -641,7 +655,8 @@ export default function BBalnPanel() {
           {shouldBoost && (
             <Typography textAlign="center">
               Your BALN will be locked until{' '}
-              <strong>{formatDate(getClosestUnixWeekStart(getWeekOffsetTimestamp(selectedPeriod.weeks)))}</strong>
+              <strong>{formatDate(getClosestUnixWeekStart(getWeekOffsetTimestamp(selectedPeriod.weeks)), true)}</strong>
+              .
             </Typography>
           )}
 

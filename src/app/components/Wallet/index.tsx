@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
-import { Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
@@ -26,6 +26,7 @@ import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
+import Divider from '../Divider';
 import { filterTokens, useSortedTokensByQuery } from '../SearchModal/filtering';
 import SearchInput from '../SearchModal/SearchInput';
 import { useTokenComparator } from '../SearchModal/sorting';
@@ -178,6 +179,11 @@ const BoxPanelWithArrow = styled(BoxPanel)`
 
 const Wrapper = styled.div``;
 
+const WalletTotal = styled(Flex)`
+  justify-content: space-between;
+  padding: 20px 0;
+`;
+
 const ADDRESSES = SUPPORTED_TOKENS_LIST.map(currency => currency.address);
 
 const WalletUI = ({ currency }: { currency: Currency }) => {
@@ -215,6 +221,7 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
   const { account } = useIconReact();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>();
+  const [modalAsset, setModalAsset] = useState<string | undefined>();
 
   const debouncedQuery = useDebounce(searchQuery, 200);
   const enter = useKeyPress('Enter');
@@ -270,6 +277,24 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
     }
   }, [rates]);
 
+  const totalBalance = useMemo(
+    () =>
+      filteredSortedTokensWithICX.reduce((total, token) => {
+        const { address, symbol } = token.wrapped;
+        const tokenValue =
+          rateFracs && rateFracs[symbol!] && balances
+            ? new BigNumber(balances[address].multiply(rateFracs[symbol!]).toFixed(2))
+            : new BigNumber(0);
+        return total.plus(tokenValue);
+      }, new BigNumber(0)),
+    [filteredSortedTokensWithICX, balances, rateFracs],
+  );
+
+  const handleAssetClick = (asset: string) => {
+    setModalAsset(asset);
+    showModal();
+  };
+
   useEffect(() => {
     (async () => {
       if (account) {
@@ -280,9 +305,8 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
   }, [account, transactions]);
 
   const showModal = useCallback(() => {
-    setAnchor(null);
     setOpen(true);
-  }, [setAnchor, setOpen]);
+  }, [setOpen]);
 
   useEffect(() => {
     if (escape) {
@@ -396,20 +420,29 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
 
             <List>
               {filteredSortedTokensWithICX.map((currency, index, arr) => {
-                const symbol = currency.symbol;
+                const symbol = currency.symbol!;
                 return (
                   <ListItem
                     className={index === activeIndex ? 'active' : ''}
                     key={symbol}
                     border={index !== arr.length - 1}
                     onMouseEnter={() => setActiveIndex(index)}
-                    onClick={showModal}
+                    onClick={() => handleAssetClick(symbol)}
                   >
                     <TokenInfo currency={currency} />
                   </ListItem>
                 );
               })}
             </List>
+            <Divider />
+            <WalletTotal>
+              <HeaderText>
+                <Trans>Total</Trans>
+              </HeaderText>
+              <Typography color="text" fontWeight={700}>
+                ${totalBalance.toFormat(2)}
+              </Typography>
+            </WalletTotal>
 
             <Modal isOpen={isOpen} onDismiss={() => setOpen(false)}>
               <ModalContent>
@@ -429,10 +462,20 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
                   </BalanceAndValueWrap>
                 </DashGrid>
                 <ListItem border={false}>
-                  <TokenInfo currency={filteredSortedTokensWithICX[activeIndex || 0]} />
+                  <TokenInfo
+                    currency={
+                      filteredSortedTokensWithICX.find(currency => currency.wrapped.symbol === modalAsset) ||
+                      filteredSortedTokensWithICX[0]
+                    }
+                  />
                 </ListItem>
                 <BoxPanelWithArrow bg="bg3">
-                  <WalletUI currency={filteredSortedTokensWithICX[activeIndex || 0]} />
+                  <WalletUI
+                    currency={
+                      filteredSortedTokensWithICX.find(currency => currency.wrapped.symbol === modalAsset) ||
+                      filteredSortedTokensWithICX[0]
+                    }
+                  />
                 </BoxPanelWithArrow>
               </ModalContent>
             </Modal>

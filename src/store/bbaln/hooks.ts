@@ -3,18 +3,19 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { LockedPeriod } from 'app/components/home/BBaln/types';
 import { EXA, getBbalnAmount, WEIGHT } from 'app/components/home/BBaln/utils';
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import useInterval from 'hooks/useInterval';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
 import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeData, changePeriod } from './actions';
+import { adjust, cancel, type, changeData, changePeriod, changeSources } from './actions';
 
 export type Source = {
   balance: BigNumber;
@@ -53,8 +54,16 @@ export function useSelectedPeriod(): AppState['bbaln']['state']['selectedPeriod'
 
 export function useBBalnChangeSelectedPeriod(): (period: LockedPeriod) => void {
   const dispatch = useDispatch();
-
   return useCallback((period: LockedPeriod) => dispatch(changePeriod({ period })), [dispatch]);
+}
+
+export function useSources(): AppState['bbaln']['sources'] {
+  return useSelector((state: AppState) => state.bbaln.sources);
+}
+
+export function useBBalnChangeSources(): (sources: { [key in string]: Source }) => void {
+  const dispatch = useDispatch();
+  return useCallback((sources: { [key in string]: Source }) => dispatch(changeSources({ sources })), [dispatch]);
 }
 
 export function useBBalnChangeData(): (
@@ -158,39 +167,35 @@ export function useHasLockExpired() {
   const lockedUntil = useLockedUntil();
   const now = new Date();
 
-  return useQuery<boolean | undefined>('hasLockExpired', () => {
+  return useQuery<boolean | undefined>(`hasLockExpired${lockedUntil}`, () => {
     return lockedUntil && now.getTime() > lockedUntil.getTime();
   });
 }
 
-export function useBoostData(
-  sources?: string[],
-): UseQueryResult<
-  {
-    [key in string]: Source;
-  }
-> {
+export function useFetchBBalnSources(interval?: number, omitImmediateCall?: boolean) {
   const { account } = useIconReact();
-  const transactions = useAllTransactions();
-  const txCount = transactions ? Object.keys(transactions).length : 0;
+  const changeSources = useBBalnChangeSources();
 
-  return useQuery(`boostDataAt${txCount}`, async () => {
+  const fetchSources = async () => {
     if (account) {
-      const data = await bnJs.Rewards.getBoostData(account, sources);
+      const data = await bnJs.Rewards.getBoostData(account);
 
-      // console.log(data);
-
-      return Object.keys(data).reduce((sources, sourceName) => {
-        sources[sourceName] = {
-          balance: new BigNumber(data[sourceName].balance),
-          supply: new BigNumber(data[sourceName].supply),
-          workingBalance: new BigNumber(data[sourceName].workingBalance),
-          workingSupply: new BigNumber(data[sourceName].workingSupply),
-        } as Source;
-        return sources;
-      }, {});
+      changeSources(
+        Object.keys(data).reduce((sources, sourceName) => {
+          sources[sourceName] = {
+            balance: new BigNumber(data[sourceName].balance),
+            supply: new BigNumber(data[sourceName].supply),
+            workingBalance: new BigNumber(data[sourceName].workingBalance),
+            workingSupply: new BigNumber(data[sourceName].workingSupply),
+          } as Source;
+          return sources;
+        }, {}),
+      );
     }
-  });
+  };
+
+  useInterval(fetchSources, interval || 3000);
+  !omitImmediateCall && fetchSources();
 }
 
 export function useDynamicBBalnAmount() {
@@ -201,8 +206,25 @@ export function useDynamicBBalnAmount() {
   return useMemo(() => getBbalnAmount(balnSliderAmount, selectedPeriod), [balnSliderAmount, selectedPeriod]);
 }
 
+export function useDBBalnAmountDiff() {
+  const { isAdjusting } = useBBalnSliderState();
+  const selectedPeriod = useSelectedPeriod();
+  const { typedValue } = useBBalnSliderState();
+  const bBalnAmount = useBBalnAmount();
+  const balnSliderAmount = useMemo(() => new BigNumber(typedValue), [typedValue]);
+
+  return useMemo(() => {
+    if (isAdjusting) {
+      return getBbalnAmount(balnSliderAmount, selectedPeriod).minus(bBalnAmount).abs();
+    } else {
+      return new BigNumber(0);
+    }
+  }, [isAdjusting, selectedPeriod, bBalnAmount, balnSliderAmount]);
+}
+
 export function useWorkingBalance() {
   const totalSupplyBBaln = useTotalSuply();
+  const bbalnAmountDiff = useDBBalnAmountDiff();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
 
   return useCallback(
@@ -210,13 +232,17 @@ export function useWorkingBalance() {
       if (totalSupplyBBaln) {
         const limit = balance.times(EXA).dividedBy(WEIGHT);
         const workingBalance = balance.plus(
-          supply.times(dynamicBBalnAmount).times(EXA.minus(WEIGHT)).dividedBy(totalSupplyBBaln).dividedBy(WEIGHT),
+          supply
+            .times(dynamicBBalnAmount)
+            .times(EXA.minus(WEIGHT))
+            .dividedBy(totalSupplyBBaln.plus(bbalnAmountDiff))
+            .dividedBy(WEIGHT),
         );
         return BigNumber.min(limit, workingBalance);
       }
 
       return new BigNumber(0);
     },
-    [totalSupplyBBaln, dynamicBBalnAmount],
+    [totalSupplyBBaln, dynamicBBalnAmount, bbalnAmountDiff],
   );
 }

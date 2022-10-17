@@ -9,7 +9,6 @@ import Divider from 'app/components/Divider';
 import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';
 import StakePanel from './StakePanel';
-import UnstakePanel from './UnstakePanel';
 
 export default function BALNWallet({ currency }: { currency: Currency }) {
   return (
@@ -22,9 +21,6 @@ export default function BALNWallet({ currency }: { currency: Currency }) {
           <StyledTab>
             <Trans>Send</Trans>
           </StyledTab>
-          <StyledTab>
-            <Trans>Unstaking</Trans>
-          </StyledTab>
         </StyledTabList>
         <Divider mb={3} />
         <TabPanels>
@@ -34,10 +30,6 @@ export default function BALNWallet({ currency }: { currency: Currency }) {
 
           <TabPanel>
             <SendPanel currency={currency} />
-          </TabPanel>
-
-          <TabPanel>
-            <UnstakePanel />
           </TabPanel>
         </TabPanels>
       </Tabs>

@@ -129,6 +129,12 @@ export default function Header(props: { title?: string; className?: string }) {
     }
   };
 
+  const handleWalletClose = e => {
+    if (!e.target.closest('[data-reach-dialog-overlay]')) {
+      setAnchor(null);
+    }
+  };
+
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
@@ -164,7 +170,7 @@ export default function Header(props: { title?: string; className?: string }) {
             </WalletInfo>
 
             <WalletButtonWrapper>
-              <ClickAwayListener onClickAway={closeWalletMenu}>
+              <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
                   <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
                     <WalletIcon />

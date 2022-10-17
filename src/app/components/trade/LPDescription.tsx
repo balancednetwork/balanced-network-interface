@@ -12,7 +12,7 @@ import { Flex, Box } from 'rebass/styled-components';
 import { Typography } from 'app/theme';
 import { PairState, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
-import { useBoostData } from 'store/bbaln/hooks';
+import { useSources } from 'store/bbaln/hooks';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
 import { useReward } from 'store/reward/hooks';
@@ -24,7 +24,7 @@ import { formatBigNumber } from 'utils';
 export default function LPDescription() {
   const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();
   const { independentField, typedValue, otherTypedValue } = useMintState();
-  const { data: boostData } = useBoostData();
+  const sources = useSources();
   const { account } = useIconReact();
   const upSmall = useMedia('(min-width: 600px)');
   const userPoolBalance = useLiquidityTokenBalance(account, pair);
@@ -89,12 +89,12 @@ export default function LPDescription() {
   const boost = useMemo(() => {
     const pairName = pair ? `${pair.token0.symbol}/${pair.token1.symbol}` : '';
     console.log(pairName);
-    if (boostData && boostData[pairName] && boostData[pairName].balance.isGreaterThan(0)) {
-      return boostData[pairName].workingBalance.dividedBy(boostData[pairName].balance);
+    if (sources && sources[pairName] && sources[pairName].balance.isGreaterThan(0)) {
+      return sources[pairName].workingBalance.dividedBy(sources[pairName].balance);
     } else {
       return new BigNumber(1);
     }
-  }, [boostData, pair]);
+  }, [sources, pair]);
 
   return (
     <>

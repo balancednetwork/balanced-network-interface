@@ -45,8 +45,18 @@ export const dateOptionLong: DateOptions = {
   year: 'numeric',
 };
 
-export const formatDate = (date: Date | undefined) =>
-  date ? date.toLocaleDateString('en-US', dateOptionLong).replace(',', '') : '';
+export const dateOptionFullMonth: DateOptions = {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+};
+
+export const formatDate = (date: Date | undefined, fullMonth?: boolean) =>
+  date
+    ? date
+        .toLocaleDateString(fullMonth ? 'en-GB' : 'en-US', fullMonth ? dateOptionFullMonth : dateOptionLong)
+        .replace(',', '')
+    : '';
 
 export const getClosestUnixWeekStart = (timestamp: number): Date => {
   const utcTime = dayjs(timestamp).utc();

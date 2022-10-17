@@ -101,7 +101,7 @@ export default React.memo(function StakePanel() {
               { hash: res.result },
               {
                 pending: t`Unstaking BALN...`,
-                summary: t`Unstaked ${differenceAmount.abs().dp(2).toFormat()} BALN.`,
+                summary: t`${differenceAmount.abs().dp(2).toFormat()} BALN added to your wallet.`,
               },
             );
           }

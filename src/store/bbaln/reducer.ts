@@ -6,7 +6,8 @@ import { LockedPeriod } from 'app/components/home/BBaln/types';
 import { lockingPeriods } from 'app/components/home/BBaln/utils';
 
 import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeData, changePeriod } from './actions';
+import { adjust, cancel, type, changeData, changePeriod, changeSources } from './actions';
+import { Source } from './hooks';
 
 export interface BBalnState {
   bbalnAmount: BigNumber;
@@ -14,6 +15,7 @@ export interface BBalnState {
   lockedUntil: Date | undefined;
   lockedPeriod: LockedPeriod | undefined;
   totalSupply: BigNumber | undefined;
+  sources: { [key in string]: Source } | undefined;
 
   state: {
     isAdjusting: boolean;
@@ -30,6 +32,7 @@ const initialState: BBalnState = {
   lockedUntil: undefined,
   lockedPeriod: undefined,
   totalSupply: undefined,
+  sources: undefined,
 
   state: {
     isAdjusting: false,
@@ -51,6 +54,9 @@ export default createReducer(initialState, builder =>
       if (state.lockedUntil?.getTime() !== payload.lockEnd.getTime()) {
         state.lockedUntil = payload.lockEnd;
       }
+    })
+    .addCase(changeSources, (state, { payload }) => {
+      state.sources = payload.sources;
     })
     .addCase(adjust, (state, { payload }) => {
       state.state.isAdjusting = true;

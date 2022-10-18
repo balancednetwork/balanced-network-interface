@@ -112,7 +112,7 @@ export const BalnPreviewInput = styled.input`
   }
 `;
 
-export const Threshold = styled(Box)<{ position: number }>`
+export const Threshold = styled(Box)<{ position: number; flipTextDirection?: boolean }>`
   left: ${({ position }) => position + '%'};
   position: absolute;
   width: 1px;
@@ -136,6 +136,18 @@ export const Threshold = styled(Box)<{ position: number }>`
       color: rgba(255, 255, 255, 1);
     }
   }
+
+  ${({ flipTextDirection }) =>
+    flipTextDirection &&
+    css`
+      ::after {
+        margin-left: 0;
+      }
+
+      ${MetaData} {
+        margin-left: 5px;
+      }
+    `};
 `;
 
 export const LiquidityDetailsWrap = styled(Box)<{ show?: boolean }>`

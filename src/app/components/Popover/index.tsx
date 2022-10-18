@@ -91,6 +91,7 @@ export interface PopoverProps {
   zIndex?: number;
   fallbackPlacements?: Placement[];
   strategy?: 'fixed' | 'absolute';
+  offset?: [number, number];
 }
 
 export default function Popover({
@@ -104,6 +105,7 @@ export default function Popover({
   zIndex,
   fallbackPlacements,
   strategy,
+  offset,
 }: PopoverProps) {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -112,7 +114,7 @@ export default function Popover({
     placement,
     strategy: strategy ? strategy : 'fixed',
     modifiers: [
-      { name: 'offset', options: { offset: [skidding[placement] || 0, 12] } },
+      { name: 'offset', options: { offset: offset || [skidding[placement] || 0, 12] } },
       { name: 'arrow', options: { element: arrowElement } },
       { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : fallbackPlacements } },
     ],

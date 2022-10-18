@@ -11,13 +11,13 @@ import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
-import { LineBreak } from 'app/components/Divider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { inputRegex } from 'app/components/Form';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import { MenuItem, MenuList } from 'app/components/Menu';
 import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
+import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import bnJs from 'bnJs';
@@ -335,20 +335,25 @@ export default function BBalnPanel() {
   }, [isAdjusting, boostedLPs, getWorkingBalance]);
 
   const maxRewardThreshold = useMemo(() => {
-    if (sources && totalSupplyBBaln) {
+    if (sources && totalSupplyBBaln && bBalnAmount) {
       return BigNumber.max(
         ...Object.values(sources).map(source =>
           source.supply.isGreaterThan(0)
-            ? source.balance.times(totalSupplyBBaln.plus(bbalnAmountDiff)).dividedBy(source.supply)
+            ? source.balance
+                .times(totalSupplyBBaln)
+                .minus(bBalnAmount.times(source.supply))
+                .dividedBy(source.supply.minus(source.balance))
             : new BigNumber(0),
         ),
       );
+    } else {
+      return new BigNumber(0);
     }
-  }, [sources, totalSupplyBBaln, bbalnAmountDiff]);
+  }, [sources, totalSupplyBBaln, bBalnAmount]);
 
-  const maxRewardNoticeContent = `${maxRewardThreshold?.toFormat(2)} bBALN required for maximum rewards.`;
-
-  // console.log(maxRewardThreshold?.toFixed(2));
+  const maxRewardNoticeContent = `${bBalnAmount
+    ?.plus(maxRewardThreshold)
+    .toFormat(2)} bBALN required for maximum rewards.`;
 
   return (
     <BoxPanel bg="bg2" flex={1}>
@@ -363,18 +368,29 @@ export default function BBalnPanel() {
                 Boost rewards{' '}
               </Typography>
               <Typography padding="0 3px 2px 0">
-                {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()} bBALN
+                <Tooltip
+                  text={maxRewardNoticeContent}
+                  width={200}
+                  show={isAdjusting}
+                  placement="top-start"
+                  forcePlacement={true}
+                  strategy="absolute"
+                  offset={[0, 20]}
+                >
+                  {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()}
+                </Tooltip>
+                {' bBALN'}
                 <QuestionHelper
                   text={
                     <>
                       <Trans>Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x.</Trans>
-                      <LineBreak />
-                      <Typography color="text1">
+                      <Typography mt={2} color="text1">
                         <Trans>
                           The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will
                           decrease over time.
                         </Trans>
                       </Typography>
+                      {!isAdjusting && <Typography mt={2}>{maxRewardNoticeContent}</Typography>}
                     </>
                   }
                 />
@@ -426,7 +442,7 @@ export default function BBalnPanel() {
                 </Typography>
                 {shouldShowLock && isAdjusting && (
                   <Box style={{ position: 'relative' }}>
-                    <Threshold position={lockbarPercentPosition}>
+                    <Threshold position={lockbarPercentPosition} flipTextDirection={lockbarPercentPosition < 50}>
                       <MetaData as="dl" style={{ textAlign: 'right' }}>
                         <dd>Locked</dd>
                       </MetaData>
@@ -446,7 +462,7 @@ export default function BBalnPanel() {
                     step={1}
                     range={{
                       min: [0],
-                      max: [balnBalanceAvailable.dp(0).toNumber()], //baln balance - max SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, boostableAmount
+                      max: [balnBalanceAvailable.dp(0).toNumber()],
                     }}
                     instanceRef={instance => {
                       if (instance) {
@@ -526,12 +542,6 @@ export default function BBalnPanel() {
                     </Typography>
                   )}
                 </Flex>
-
-                {isAdjusting && (
-                  <Typography fontSize={14} mt={2}>
-                    {maxRewardNoticeContent}
-                  </Typography>
-                )}
               </SliderWrap>
               <BoostedInfo>
                 <BoostedBox>

@@ -301,7 +301,7 @@ export default function BBalnPanel() {
         nextInput = '0';
       }
 
-      onFieldAInput(nextInput);
+      onFieldAInput(nextInput || '0');
     }
   };
 
@@ -375,7 +375,7 @@ export default function BBalnPanel() {
                   placement="top-start"
                   forcePlacement={true}
                   strategy="absolute"
-                  offset={[0, 20]}
+                  offset={[-18, 20]}
                 >
                   {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()}
                 </Tooltip>
@@ -412,6 +412,7 @@ export default function BBalnPanel() {
                       }
                       onClick={toggleConfirmationModalOpen}
                       fontSize={14}
+                      warning={balnSliderAmount.isLessThan(beforeBalnAmount)}
                     >
                       Confirm
                     </Button>

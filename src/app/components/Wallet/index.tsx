@@ -97,7 +97,7 @@ const BalanceAndValueWrap = styled.div`
 `;
 
 const List = styled(Box)`
-  max-height: 260px;
+  max-height: 259px;
   overflow-y: auto;
   padding: 0 25px;
   margin: 0 -25px;

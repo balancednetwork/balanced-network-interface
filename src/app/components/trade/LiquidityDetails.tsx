@@ -152,7 +152,7 @@ export default function LiquidityDetails() {
                       pair={sortedPairs[poolId]}
                       totalReward={rewards[poolId]}
                       boostData={sources}
-                      apy={allPairs && allPairs[parseInt(poolId)].apy}
+                      apy={allPairs && allPairs[parseInt(poolId)] && allPairs[parseInt(poolId)].apy}
                     />
                   </StyledAccordionButton>
                   <StyledAccordionPanel hidden={isHided}>

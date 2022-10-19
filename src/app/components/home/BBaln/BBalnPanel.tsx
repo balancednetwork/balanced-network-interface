@@ -390,7 +390,11 @@ export default function BBalnPanel() {
                           decrease over time.
                         </Trans>
                       </Typography>
-                      {!isAdjusting && <Typography mt={2}>{maxRewardNoticeContent}</Typography>}
+                      {!isAdjusting && (
+                        <Typography mt={2} fontWeight={700}>
+                          {maxRewardNoticeContent}
+                        </Typography>
+                      )}
                     </>
                   }
                 />

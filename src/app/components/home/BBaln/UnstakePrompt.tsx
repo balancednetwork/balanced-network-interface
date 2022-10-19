@@ -67,7 +67,14 @@ const UnstakePrompt = ({
 
   return (
     <>
-      <Typography textAlign={['left', 'left', 'left', 'center']} color="text" fontWeight={700} fontSize={16} mt={6}>
+      <Typography
+        textAlign={['left', 'left', 'left', 'center']}
+        color="text"
+        fontWeight={700}
+        fontSize={16}
+        mt={6}
+        mb={2}
+      >
         <Trans>BALN staking has been upgraded to a lock-up model called Boosted BALN.</Trans>
       </Typography>
       <Typography textAlign={['left', 'left', 'left', 'center']} color="text2">

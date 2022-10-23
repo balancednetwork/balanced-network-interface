@@ -11,7 +11,10 @@ import { EXA, getBbalnAmount, WEIGHT } from 'app/components/home/BBaln/utils';
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import useInterval from 'hooks/useInterval';
+import { useRatesQuery } from 'queries/reward';
+import { useBlockDetails } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { formatUnits } from 'utils';
 
 import { AppState } from '..';
 import { Field } from '../loan/actions';
@@ -246,3 +249,56 @@ export function useWorkingBalance() {
     [totalSupplyBBaln, dynamicBBalnAmount, bbalnAmountDiff],
   );
 }
+
+export const usePastMonthFeesDistributed = () => {
+  const fiveMinPeriod = 1000 * 300;
+  const now = Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod;
+  const { data: blockThen } = useBlockDetails(new Date(now).setDate(new Date().getDate() - 30));
+  const { data: rates } = useRatesQuery();
+
+  return useQuery(
+    `PastMonthFeesDistributed${blockThen && blockThen.number}${rates && Object.keys(rates).length}`,
+    async () => {
+      if (blockThen?.number && rates) {
+        try {
+          console.log('running fees query');
+
+          const loanFeesNow = await bnJs.FeeHandler.getLoanFeesAccrued();
+          const loanFeesThen = await bnJs.FeeHandler.getLoanFeesAccrued(blockThen.number);
+
+          const fundFeesNow = await bnJs.FeeHandler.getStabilityFundFeesAccrued();
+          const fundFeesThen = await bnJs.FeeHandler.getStabilityFundFeesAccrued(blockThen.number);
+
+          //swap fees
+          const bnUSDFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.bnUSD.address);
+          const bnUSDFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.bnUSD.address, blockThen.number);
+
+          const sICXFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.sICX.address);
+          const sICXFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.sICX.address, blockThen.number);
+
+          const balnFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.BALN.address);
+          const balnFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.BALN.address, blockThen.number);
+
+          const bnUSDFees = new BigNumber(formatUnits(bnUSDFeesNow)).minus(new BigNumber(formatUnits(bnUSDFeesThen)));
+          const sICXFees = new BigNumber(formatUnits(sICXFeesNow))
+            .minus(new BigNumber(formatUnits(sICXFeesThen)))
+            .times(rates['sICX']);
+          const balnFees = new BigNumber(formatUnits(balnFeesNow))
+            .minus(new BigNumber(formatUnits(balnFeesThen)))
+            .times(rates['BALN']);
+
+          return {
+            loans: new BigNumber(formatUnits(loanFeesNow)).minus(new BigNumber(formatUnits(loanFeesThen))).times(0.6),
+            fund: new BigNumber(formatUnits(fundFeesNow)).minus(new BigNumber(formatUnits(fundFeesThen))).times(0.6),
+            swapsBALN: balnFees.times(0.6),
+            swapsSICX: sICXFees.times(0.6),
+            swapsBnUSD: bnUSDFees.times(0.6),
+          };
+        } catch (e) {
+          console.error('Error calculating distributed fees: ', e);
+        }
+      }
+    },
+    { keepPreviousData: true },
+  );
+};

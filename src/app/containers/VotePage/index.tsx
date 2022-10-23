@@ -11,10 +11,12 @@ import { BoxPanel } from 'app/components/Panel';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
 import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
+import { useFetchBBalnInfo } from 'store/bbaln/hooks';
 
 export function VotePage() {
   const { data: proposals } = useTotalProposalQuery();
   const { account } = useIconReact();
+  useFetchBBalnInfo(account);
   const useActiveProposalsQuery = useActiveProposals();
   const { data: activeProposals } = useActiveProposalsQuery;
 

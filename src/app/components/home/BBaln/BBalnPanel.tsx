@@ -38,6 +38,7 @@ import {
   useWorkingBalance,
   useSources,
   useDBBalnAmountDiff,
+  // usePastMonthFeesDistributed,
 } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
@@ -90,6 +91,7 @@ export default function BBalnPanel() {
   const isSmallScreen = useMedia('(max-width: 540px)');
   const isSuperSmallScreen = useMedia('(max-width: 400px)');
   const addTransaction = useTransactionAdder();
+  // const { data: pastMonthFees } = usePastMonthFeesDistributed();
 
   const balnBalanceAvailable =
     balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0);

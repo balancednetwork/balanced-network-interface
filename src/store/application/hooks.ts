@@ -1,7 +1,12 @@
 import { useCallback } from 'react';
 
+import { CHAIN_INFO } from '@balancednetwork/balanced-js';
+import axios from 'axios';
 import { useIconReact } from 'packages/icon-react';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { NETWORK_ID } from 'constants/config';
 
 import { AppDispatch, AppState } from '../index';
 import {
@@ -11,6 +16,11 @@ import {
   setOpenModal,
   updateSlippageTolerance,
 } from './reducer';
+
+type BlockDetails = {
+  timestamp: number;
+  number: number;
+};
 
 export function useBlockNumber(): number | undefined {
   const { networkId: chainId } = useIconReact();
@@ -76,3 +86,11 @@ export function useSetSlippageTolerance() {
     [dispatch],
   );
 }
+
+export const useBlockDetails = (timestamp: number) => {
+  const getBlock = async (): Promise<BlockDetails> => {
+    const { data } = await axios.get(`${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/blocks/timestamp/${timestamp * 1000}`);
+    return data;
+  };
+  return useQuery<BlockDetails>(`getBlock${timestamp}`, getBlock);
+};

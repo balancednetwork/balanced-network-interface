@@ -31,6 +31,7 @@ import { NETWORK_ID } from 'constants/config';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useFetchBBalnInfo } from 'store/bbaln/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { formatPercent, formatUnits, getTrackerLink } from 'utils';
 import { formatTimeStr } from 'utils/timeformat';
@@ -142,6 +143,7 @@ export function ProposalPage() {
   const hasUserVoted = userStatus?.hasVoted;
 
   const { account } = useIconReact();
+  useFetchBBalnInfo(account);
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const [txHash, setTxHash] = useState('');

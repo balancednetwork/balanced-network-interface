@@ -199,3 +199,10 @@ export const useActiveProposals = () => {
     }
   });
 };
+
+export const useMinBBalnPercentageToSubmit = () => {
+  return useQuery<BigNumber, Error>('minBbalnRequired', async () => {
+    const points = await bnJs.Governance.getBalnVoteDefinitionCriterion();
+    return new BigNumber(points || 0).div(10000);
+  });
+};

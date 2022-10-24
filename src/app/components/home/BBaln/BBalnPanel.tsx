@@ -38,7 +38,7 @@ import {
   useWorkingBalance,
   useSources,
   useDBBalnAmountDiff,
-  // usePastMonthFeesDistributed,
+  usePastMonthFeesDistributed,
 } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
@@ -91,7 +91,7 @@ export default function BBalnPanel() {
   const isSmallScreen = useMedia('(max-width: 540px)');
   const isSuperSmallScreen = useMedia('(max-width: 400px)');
   const addTransaction = useTransactionAdder();
-  // const { data: pastMonthFees } = usePastMonthFeesDistributed();
+  const { data: pastMonthFees } = usePastMonthFeesDistributed();
 
   const balnBalanceAvailable =
     balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0);
@@ -569,7 +569,45 @@ export default function BBalnPanel() {
                         : `${bBalnAmount.dividedBy(totalSupplyBBaln).times(100).toPrecision(3)} %`
                       : '-'}
                   </Typography>
-                  <Typography>Network fees</Typography>
+                  <Typography marginLeft={pastMonthFees ? '14px' : ''}>
+                    Network fees
+                    {pastMonthFees && (
+                      <QuestionHelper
+                        iconStyle={{ position: 'relative', transform: 'translate3d(1px, 2px, 0)' }}
+                        strategy="absolute"
+                        placement="bottom"
+                        offset={[0, 15]}
+                        text={
+                          <>
+                            <Trans>
+                              The percentage of network fees you’re entitled to, calculated with Your bBALN ÷ Total
+                              bBALN.
+                            </Trans>
+                            <Typography mt={2} color="text1">
+                              <>
+                                {t`$${pastMonthFees.total.toFormat(0)} of fees were distributed over the last 30 days`}
+                              </>
+                              {totalSupplyBBaln && bBalnAmount && bbalnAmountDiff && bBalnAmount.isGreaterThan(0) ? (
+                                <>
+                                  {t`, so it’s about`}{' '}
+                                  <strong>{t`$${pastMonthFees?.total
+                                    .times(
+                                      bBalnAmount
+                                        .plus(bbalnAmountDiff)
+                                        .dividedBy(totalSupplyBBaln.plus(bbalnAmountDiff)),
+                                    )
+                                    .dividedBy(30)
+                                    .toFormat(2)} a day`}</strong>
+                                </>
+                              ) : (
+                                '.'
+                              )}
+                            </Typography>
+                          </>
+                        }
+                      />
+                    )}
+                  </Typography>
                 </BoostedBox>
                 <BoostedBox>
                   <Typography fontSize={16} color="#FFF">
@@ -636,10 +674,10 @@ export default function BBalnPanel() {
       ) : (
         <>
           <Typography variant="h3" marginBottom={6}>
-            Boost rewards
+            <Trans>Boost rewards</Trans>
           </Typography>
           <Typography fontSize={14} opacity={0.75}>
-            Earn or buy BALN, then lock it up here to boost your earning potential and voting power.
+            <Trans>Earn or buy BALN, then lock it up here to boost your earning potential and voting power.</Trans>
           </Typography>
         </>
       )}

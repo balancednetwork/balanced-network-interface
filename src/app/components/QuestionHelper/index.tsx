@@ -24,12 +24,16 @@ export default function QuestionHelper({
   containerStyle,
   width,
   strategy,
+  iconStyle,
+  offset,
 }: {
   text: React.ReactNode;
   placement?: Placement;
   containerStyle?: React.CSSProperties;
+  iconStyle?: React.CSSProperties;
   width?: number;
   strategy?: 'fixed' | 'absolute';
+  offset?: [number, number];
 }) {
   const [show, setShow] = useState<boolean>(false);
 
@@ -47,9 +51,10 @@ export default function QuestionHelper({
         containerStyle={containerStyle}
         width={width}
         strategy={strategy}
+        offset={offset}
       >
         {!smallSp && (
-          <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
+          <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close} style={iconStyle}>
             <QuestionIcon width={14} />
           </QuestionWrapper>
         )}

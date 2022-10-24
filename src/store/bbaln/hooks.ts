@@ -279,20 +279,31 @@ export const usePastMonthFeesDistributed = () => {
           const balnFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.BALN.address);
           const balnFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.BALN.address, blockThen.number);
 
-          const bnUSDFees = new BigNumber(formatUnits(bnUSDFeesNow)).minus(new BigNumber(formatUnits(bnUSDFeesThen)));
+          const bnUSDFees = new BigNumber(formatUnits(bnUSDFeesNow))
+            .minus(new BigNumber(formatUnits(bnUSDFeesThen)))
+            .times(0.6);
           const sICXFees = new BigNumber(formatUnits(sICXFeesNow))
             .minus(new BigNumber(formatUnits(sICXFeesThen)))
-            .times(rates['sICX']);
+            .times(rates['sICX'])
+            .times(0.6);
           const balnFees = new BigNumber(formatUnits(balnFeesNow))
             .minus(new BigNumber(formatUnits(balnFeesThen)))
-            .times(rates['BALN']);
+            .times(rates['BALN'])
+            .times(0.6);
+          const loansFees = new BigNumber(formatUnits(loanFeesNow))
+            .minus(new BigNumber(formatUnits(loanFeesThen)))
+            .times(0.6);
+          const fundFees = new BigNumber(formatUnits(fundFeesNow))
+            .minus(new BigNumber(formatUnits(fundFeesThen)))
+            .times(0.6);
 
           return {
-            loans: new BigNumber(formatUnits(loanFeesNow)).minus(new BigNumber(formatUnits(loanFeesThen))).times(0.6),
-            fund: new BigNumber(formatUnits(fundFeesNow)).minus(new BigNumber(formatUnits(fundFeesThen))).times(0.6),
-            swapsBALN: balnFees.times(0.6),
-            swapsSICX: sICXFees.times(0.6),
-            swapsBnUSD: bnUSDFees.times(0.6),
+            loans: loansFees,
+            fund: fundFees,
+            swapsBALN: balnFees,
+            swapsSICX: sICXFees,
+            swapsBnUSD: bnUSDFees,
+            total: loansFees.plus(fundFees).plus(balnFees).plus(sICXFees).plus(bnUSDFees),
           };
         } catch (e) {
           console.error('Error calculating distributed fees: ', e);

@@ -18,7 +18,7 @@ import { useRewardQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useFetchUnclaimedDividends, useUnclaimedFees } from 'store/fees/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
-import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
+import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -68,7 +68,6 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
             pending: t`Claiming rewards...`,
           },
         );
-        setRewardTx(res.result);
         toggleOpen();
       })
       .catch(e => {
@@ -80,13 +79,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       });
   };
 
-  const { data: reward, refetch } = useRewardQuery();
-
-  const [rewardTx, setRewardTx] = React.useState('');
-  const rewardTxStatus = useTransactionStatus(rewardTx);
-  React.useEffect(() => {
-    if (rewardTxStatus === TransactionStatus.success) refetch();
-  }, [rewardTxStatus, refetch]);
+  const { data: reward } = useRewardQuery();
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
@@ -272,7 +265,7 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
       return (
         <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
           <Trans>Ineligible</Trans>
-          <QuestionHelper text={t`To earn network fees, boost BALN.`} />
+          <QuestionHelper text={t`Lock up BALN to earn network fees.`} />
         </Typography>
       );
     }

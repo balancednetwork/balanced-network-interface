@@ -176,7 +176,13 @@ export default function Header(props: { title?: string; className?: string }) {
                     <WalletIcon />
                   </IconButton>
 
-                  <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" offset={[0, 15]}>
+                  <DropdownPopper
+                    show={Boolean(anchor)}
+                    anchorEl={anchor}
+                    placement="bottom-end"
+                    offset={[0, 15]}
+                    zIndex={9999}
+                  >
                     <WalletWrap>
                       <WalletMenu>
                         <Typography variant="h2" mr={'auto'}>

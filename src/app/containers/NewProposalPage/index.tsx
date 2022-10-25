@@ -13,6 +13,7 @@ import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect';
 import RatioInput from 'app/components/newproposal/RatioInput';
+import QuestionHelper from 'app/components/QuestionHelper';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { PROPOSAL_CONFIG, PROPOSAL_TYPE, PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
@@ -391,14 +392,28 @@ export function NewProposalPage() {
             <Box>
               <FieldContainer>
                 <Typography variant="h3" flex="1" alignSelf="center">
-                  <Trans>Duration</Trans>
+                  <Trans>Duration</Trans>{' '}
+                  <QuestionHelper
+                    width={240}
+                    text={
+                      <>
+                        <Typography mb={2}>
+                          <Trans>How long the vote should last (1 – 14 days).</Trans>
+                        </Typography>
+                        <Typography>
+                          <Trans>
+                            5 days is standard. Use less for an emergency vote, more for maximum participation.
+                          </Trans>
+                        </Typography>
+                      </>
+                    }
+                  ></QuestionHelper>
                 </Typography>
               </FieldContainer>
               <FieldInput
                 type="number"
                 onChange={onDurationInputChange}
                 value={duration}
-                placeholder="1 - 14 days"
                 style={{ minWidth: '180px' }}
               />
             </Box>

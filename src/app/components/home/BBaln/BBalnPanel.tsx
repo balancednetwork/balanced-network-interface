@@ -11,6 +11,7 @@ import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
+import Divider from 'app/components/Divider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { inputRegex } from 'app/components/Form';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
@@ -176,7 +177,10 @@ export default function BBalnPanel() {
               { hash },
               {
                 pending: t`Locking BALN...`,
-                summary: t`${differenceBalnAmount.toFixed()} BALN locked.`,
+                summary: t`${balnSliderAmount.toFormat()} BALN locked until ${formatDate(
+                  getClosestUnixWeekStart(getWeekOffsetTimestamp(selectedPeriod.weeks)),
+                  true,
+                )}.`,
               },
             );
           }
@@ -189,7 +193,10 @@ export default function BBalnPanel() {
             { hash },
             {
               pending: t`Locking BALN...`,
-              summary: t`${differenceBalnAmount.toFixed()} BALN locked.`,
+              summary: t`${balnSliderAmount.toFormat()} BALN locked until ${formatDate(
+                getClosestUnixWeekStart(getWeekOffsetTimestamp(selectedPeriod.weeks)),
+                true,
+              )}.`,
             },
           );
         }
@@ -386,16 +393,17 @@ export default function BBalnPanel() {
                   text={
                     <>
                       <Trans>Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x.</Trans>
-                      <Typography mt={2} color="text1">
+                      <Typography mt={2}>
                         <Trans>
                           The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will
                           decrease over time.
                         </Trans>
                       </Typography>
                       {!isAdjusting && (
-                        <Typography mt={2} fontWeight={700}>
-                          {maxRewardNoticeContent}
-                        </Typography>
+                        <>
+                          <Divider my={2} />
+                          <Typography fontWeight={700}>{maxRewardNoticeContent}</Typography>
+                        </>
                       )}
                     </>
                   }
@@ -611,7 +619,9 @@ export default function BBalnPanel() {
                 </BoostedBox>
                 <BoostedBox>
                   <Typography fontSize={16} color="#FFF">
-                    {isAdjusting
+                    {sources && sources.Loans.balance.isEqualTo(0)
+                      ? 'N/A'
+                      : isAdjusting
                       ? sources && totalSupplyBBaln
                         ? `${getWorkingBalance(sources.Loans.balance, sources.Loans.supply)
                             .dividedBy(sources.Loans.balance)
@@ -625,12 +635,15 @@ export default function BBalnPanel() {
                 </BoostedBox>
                 <BoostedBox className="no-border">
                   <Typography fontSize={16} color="#FFF">
-                    {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0
-                      ? boostedLPNumbers.length === 1 || Math.min(...boostedLPNumbers) === Math.max(...boostedLPNumbers)
-                        ? `${boostedLPNumbers[0].toFixed(2)} x`
-                        : `${Math.min(...boostedLPNumbers).toFixed(2)} x - ${Math.max(...boostedLPNumbers).toFixed(
-                            2,
-                          )} x`
+                    {boostedLPNumbers
+                      ? boostedLPNumbers.length !== 0
+                        ? boostedLPNumbers.length === 1 ||
+                          Math.min(...boostedLPNumbers) === Math.max(...boostedLPNumbers)
+                          ? `${boostedLPNumbers[0].toFixed(2)} x`
+                          : `${Math.min(...boostedLPNumbers).toFixed(2)} x - ${Math.max(...boostedLPNumbers).toFixed(
+                              2,
+                            )} x`
+                        : 'N/A'
                       : '-'}
                   </Typography>
                   <StyledTypography ref={arrowRef}>

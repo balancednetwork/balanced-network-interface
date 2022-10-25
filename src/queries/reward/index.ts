@@ -11,6 +11,7 @@ import bnJs from 'bnJs';
 import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import QUERY_KEYS from 'queries/queryKeys';
+import { useBlockNumber } from 'store/application/hooks';
 import { useOraclePrices } from 'store/oracle/hooks';
 
 import { API_ENDPOINT } from '../constants';
@@ -64,11 +65,16 @@ export const usePlatformDayQuery = () => {
 
 export const useRewardQuery = () => {
   const { account } = useIconReact();
+  const blockNumber = useBlockNumber();
 
-  return useQuery<BigNumber>(QUERY_KEYS.Reward.UserReward(account ?? ''), async () => {
-    const res = await bnJs.Rewards.getBalnHolding(account!);
-    return BalancedJs.utils.toIcx(res);
-  });
+  return useQuery<BigNumber>(
+    `${QUERY_KEYS.Reward.UserReward(account ?? '')}-${blockNumber}`,
+    async () => {
+      const res = await bnJs.Rewards.getBalnHolding(account!);
+      return BalancedJs.utils.toIcx(res);
+    },
+    { keepPreviousData: true },
+  );
 };
 
 export const useRatesQuery = () => {

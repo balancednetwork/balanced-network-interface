@@ -99,6 +99,12 @@ export default function BBalnPanel() {
     [balnDetails],
   );
 
+  const balnTotal = useMemo(() => {
+    if (balnBalanceAvailable && lockedBalnAmount) {
+      return balnBalanceAvailable.plus(new BigNumber(lockedBalnAmount.toFixed()));
+    }
+  }, [balnBalanceAvailable, lockedBalnAmount]);
+
   const stakedBalance = balnDetails && balnDetails['Staked balance'];
 
   const handleEnableAdjusting = () => {
@@ -286,9 +292,8 @@ export default function BBalnPanel() {
   }, [balnSliderAmount, inputType]);
 
   const shouldShowLock = lockedBalnAmount && lockedBalnAmount.greaterThan(0);
-  const lockbarPercentPosition = lockedBalnAmount
-    ? new BigNumber(lockedBalnAmount.toFixed(0)).times(100).div(balnBalanceAvailable).toNumber()
-    : 0;
+  const lockbarPercentPosition =
+    lockedBalnAmount && balnTotal ? new BigNumber(lockedBalnAmount.toFixed(0)).times(100).div(balnTotal).toNumber() : 0;
 
   const handleLockingPeriodChange = period => {
     changePeriod(period);
@@ -347,12 +352,6 @@ export default function BBalnPanel() {
       );
     }
   }, [isAdjusting, boostedLPs, getWorkingBalance]);
-
-  const balnTotal = useMemo(() => {
-    if (balnBalanceAvailable && lockedBalnAmount) {
-      return balnBalanceAvailable.plus(new BigNumber(lockedBalnAmount.toFixed()));
-    }
-  }, [balnBalanceAvailable, lockedBalnAmount]);
 
   const maxRewardThreshold = useMemo(() => {
     if (sources && totalSupplyBBaln && bBalnAmount) {

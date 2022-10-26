@@ -124,7 +124,7 @@ export default function BBalnPanel() {
         { hash },
         {
           pending: t`Withdrawing BALN...`,
-          summary: t`${lockedBalnAmount?.toFixed(2, { groupSeparator: ',' })} BALN withdrawn`,
+          summary: t`${lockedBalnAmount?.toFixed(0, { groupSeparator: ',' })} BALN withdrawn.`,
         },
       );
     } catch (e) {

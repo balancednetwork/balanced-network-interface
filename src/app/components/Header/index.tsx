@@ -181,7 +181,7 @@ export default function Header(props: { title?: string; className?: string }) {
                     anchorEl={anchor}
                     placement="bottom-end"
                     offset={[0, 15]}
-                    zIndex={9999}
+                    zIndex={5050}
                   >
                     <WalletWrap>
                       <WalletMenu>

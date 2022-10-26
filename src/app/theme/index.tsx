@@ -97,7 +97,7 @@ export function theme(): DefaultTheme {
     zIndices: {
       appBar: 1100,
       drawer: 1200,
-      modal: 1600,
+      modal: 5600,
       snackbar: 1400,
       tooltip: 1500,
     },

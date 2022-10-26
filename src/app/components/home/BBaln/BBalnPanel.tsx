@@ -94,8 +94,10 @@ export default function BBalnPanel() {
   const addTransaction = useTransactionAdder();
   const { data: pastMonthFees } = usePastMonthFeesDistributed();
 
-  const balnBalanceAvailable =
-    balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0);
+  const balnBalanceAvailable = useMemo(
+    () => (balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0)),
+    [balnDetails],
+  );
 
   const stakedBalance = balnDetails && balnDetails['Staked balance'];
 
@@ -161,7 +163,10 @@ export default function BBalnPanel() {
               { hash },
               {
                 pending: t`Increasing lock duration...`,
-                summary: t`Lock duration increased`,
+                summary: t`Lock duration increased  until ${formatDate(
+                  getClosestUnixWeekStart(getWeekOffsetTimestamp(selectedPeriod.weeks)),
+                  true,
+                )}.`,
               },
             );
           } else {
@@ -343,6 +348,12 @@ export default function BBalnPanel() {
     }
   }, [isAdjusting, boostedLPs, getWorkingBalance]);
 
+  const balnTotal = useMemo(() => {
+    if (balnBalanceAvailable && lockedBalnAmount) {
+      return balnBalanceAvailable.plus(new BigNumber(lockedBalnAmount.toFixed()));
+    }
+  }, [balnBalanceAvailable, lockedBalnAmount]);
+
   const maxRewardThreshold = useMemo(() => {
     if (sources && totalSupplyBBaln && bBalnAmount) {
       return BigNumber.max(
@@ -366,7 +377,7 @@ export default function BBalnPanel() {
 
   return (
     <BoxPanel bg="bg2" flex={1}>
-      {balnBalanceAvailable.isGreaterThan(0) ? (
+      {balnBalanceAvailable.isGreaterThan(0) || stakedBalance?.isGreaterThan(0) ? (
         <>
           <Flex alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}>
             <Flex
@@ -477,7 +488,7 @@ export default function BBalnPanel() {
                     step={1}
                     range={{
                       min: [0],
-                      max: [balnBalanceAvailable.dp(0).toNumber()],
+                      max: [balnTotal ? balnTotal.dp(0).toNumber() : 1],
                     }}
                     instanceRef={instance => {
                       if (instance) {
@@ -503,7 +514,7 @@ export default function BBalnPanel() {
 
                     <Typography paddingRight={'15px'}>
                       {' '}
-                      / {balnBalanceAvailable.toFormat(0, BigNumber.ROUND_DOWN)} BALN
+                      / {balnTotal ? balnTotal.toFormat(0, BigNumber.ROUND_DOWN) : '-'} BALN
                     </Typography>
                   </Flex>
 

@@ -589,42 +589,39 @@ export default function BBalnPanel() {
                   </Typography>
                   <Typography marginLeft={pastMonthFees ? '14px' : ''}>
                     Network fees
-                    {pastMonthFees && (
-                      <QuestionHelper
-                        iconStyle={{ position: 'relative', transform: 'translate3d(1px, 2px, 0)' }}
-                        strategy="absolute"
-                        placement="bottom"
-                        offset={[0, 15]}
-                        text={
-                          <>
-                            <Trans>
-                              The percentage of network fees you’re entitled to, calculated with Your bBALN ÷ Total
-                              bBALN.
-                            </Trans>
+                    <QuestionHelper
+                      iconStyle={{ position: 'relative', transform: 'translate3d(1px, 2px, 0)' }}
+                      strategy="absolute"
+                      placement="bottom"
+                      offset={[0, 15]}
+                      text={
+                        <>
+                          <Trans>
+                            Your share of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total
+                            bBALN.
+                          </Trans>
+                          {pastMonthFees && (
                             <Typography mt={2} color="text1">
-                              <>
-                                {t`$${pastMonthFees.total.toFormat(0)} of fees were distributed over the last 30 days`}
-                              </>
+                              <>{t`$${pastMonthFees.total.toFormat(0)} was distributed over the last 30 days`}</>
                               {totalSupplyBBaln && bBalnAmount && bbalnAmountDiff && bBalnAmount.isGreaterThan(0) ? (
                                 <>
-                                  {t`, so it’s about`}{' '}
+                                  {t`, so you would have received`}{' '}
                                   <strong>{t`$${pastMonthFees?.total
                                     .times(
                                       bBalnAmount
                                         .plus(bbalnAmountDiff)
                                         .dividedBy(totalSupplyBBaln.plus(bbalnAmountDiff)),
                                     )
-                                    .dividedBy(30)
-                                    .toFormat(2)} a day`}</strong>
+                                    .toFormat(2)}.`}</strong>
                                 </>
                               ) : (
                                 '.'
                               )}
                             </Typography>
-                          </>
-                        }
-                      />
-                    )}
+                          )}
+                        </>
+                      }
+                    />
                   </Typography>
                 </BoostedBox>
                 <BoostedBox>

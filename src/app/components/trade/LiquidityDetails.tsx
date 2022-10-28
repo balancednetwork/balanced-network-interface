@@ -137,7 +137,13 @@ export default function LiquidityDetails() {
                 </StyledAccordionButton>
                 <StyledAccordionPanel hidden={isHided}>
                   <StyledBoxPanel bg="bg3">
-                    <WithdrawPanelQ balance={queueBalance} pair={queuePair} />
+                    <WithdrawPanelQ
+                      balance={queueBalance}
+                      pair={queuePair}
+                      totalReward={queueReward}
+                      apy={allPairs && allPairs[1].apy}
+                      boost={sources && sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance)}
+                    />
                   </StyledBoxPanel>
                 </StyledAccordionPanel>
               </StyledAccordionItem>
@@ -365,7 +371,11 @@ const PoolRecordQ = ({
             : '-'
         }%`}</DataText>
       )}
-      {upSmall && <DataText>{`~ ${new BigNumber(reward.toFixed(4)).toFormat(2) || '---'} BALN`}</DataText>}
+      {upSmall && (
+        <DataText>{`~ ${
+          new BigNumber(reward.toFixed(4)).times(boost || 1).toFormat(2, BigNumber.ROUND_HALF_UP) || '---'
+        } BALN`}</DataText>
+      )}
     </ListItem>
   );
 };

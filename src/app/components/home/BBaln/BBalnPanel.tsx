@@ -661,7 +661,12 @@ export default function BBalnPanel() {
                   </Typography>
                   <StyledTypography ref={arrowRef}>
                     Liquidity rewards{' '}
-                    <QuestionIcon width={14} onMouseEnter={showLPTooltip} onMouseLeave={hideLPTooltip} />
+                    <QuestionIcon
+                      width={14}
+                      onMouseEnter={showLPTooltip}
+                      onMouseLeave={hideLPTooltip}
+                      onTouchStart={showLPTooltip}
+                    />
                   </StyledTypography>
                 </BoostedBox>
                 <LiquidityDetailsWrap show={showLiquidityTooltip || isAdjusting}>

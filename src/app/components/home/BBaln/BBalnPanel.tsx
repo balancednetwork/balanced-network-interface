@@ -774,7 +774,7 @@ export default function BBalnPanel() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20} mb={2}>
-            {lockedBalnAmount?.toFixed(0)} BALN
+            {lockedBalnAmount?.toFixed(0, { groupSeparator: ',' })} BALN
           </Typography>
           <Typography textAlign="center" fontSize={14} mb={1}>
             <Trans>You must withdraw to be able to lock BALN again.</Trans>

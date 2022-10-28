@@ -23,14 +23,13 @@ import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesQuery } from 'queries/reward';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useWalletBalances, useBALNDetails } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import Divider from '../Divider';
 import { filterTokens, useSortedTokensByQuery } from '../SearchModal/filtering';
 import SearchInput from '../SearchModal/SearchInput';
 import { useTokenComparator } from '../SearchModal/sorting';
-import BALNWallet from './wallets/BALNWallet';
 import ICXWallet from './wallets/ICXWallet';
 import SendPanel from './wallets/SendPanel';
 import SICXWallet from './wallets/SICXWallet';
@@ -39,7 +38,6 @@ import { notificationCSS } from './wallets/utils';
 const WalletUIs = {
   ICX: ICXWallet,
   sICX: SICXWallet,
-  BALN: BALNWallet,
 };
 
 const walletBreakpoint = '499px';
@@ -213,11 +211,6 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
   const balances = useWalletBalances();
   const transactions = useAllTransactions();
   const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
-  const details = useBALNDetails();
-  const stakedBALN: BigNumber = React.useMemo(() => details['Staked balance'] || new BigNumber(0), [details]);
-  const unstakingBALN: BigNumber = React.useMemo(() => details['Unstaking balance'] || new BigNumber(0), [details]);
-  const totalBALN: BigNumber = React.useMemo(() => details['Total balance'] || new BigNumber(0), [details]);
-  const isAvailable = stakedBALN.isGreaterThan(new BigNumber(0)) || unstakingBALN.isGreaterThan(new BigNumber(0));
   const { account } = useIconReact();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>();
@@ -232,15 +225,9 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
 
   const tokenComparator = useTokenComparator(account, false);
 
-  const balnAddress = bnJs.BALN.address;
   const icxAddress = bnJs.ICX.address;
 
-  const addressesWithAmount = ADDRESSES.filter(address => {
-    if (address === balnAddress) {
-      return !totalBALN.dp(2).isZero();
-    }
-    return !isDPZeroCA(balances[address], 2);
-  });
+  const addressesWithAmount = ADDRESSES.filter(address => !isDPZeroCA(balances[address], 2));
 
   const filteredTokens: Token[] = useMemo(() => {
     return filterTokens(Object.values(allTokens), debouncedQuery).filter(
@@ -349,40 +336,17 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
           </Typography>
         </AssetSymbol>
         <BalanceAndValueWrap>
-          <DataText as="div">
-            {!account
-              ? '-'
-              : address === balnAddress
-              ? totalBALN.dp(2).toFormat()
-              : balances[address]?.toFixed(2, { groupSeparator: ',' })}
-            {address === balnAddress && isAvailable && !isSmallScreen && <>{availableBALN}</>}
-          </DataText>
+          <DataText as="div">{!account ? '-' : balances[address]?.toFixed(2, { groupSeparator: ',' })}</DataText>
 
           <DataText as="div">
             {!account || !rates || !symbol || !rates[symbol] || !rateFracs
               ? '-'
-              : address === balnAddress
-              ? `$${totalBALN.multipliedBy(rates[symbol]).dp(2).toFormat()}`
               : `$${balances[address]?.multiply(rateFracs[symbol]).toFixed(2, { groupSeparator: ',' })}`}
-            {address === balnAddress && isAvailable && isSmallScreen && <>{availableBALN}</>}
-            {address === balnAddress && isAvailable && !isSmallScreen && rateFracs && symbol && (
-              <>
-                <Typography color="rgba(255,255,255,0.75)">
-                  ${balances[balnAddress].multiply(rateFracs[symbol]).toFixed(2, { groupSeparator: ',' })}
-                </Typography>
-              </>
-            )}
           </DataText>
         </BalanceAndValueWrap>
       </>
     );
   };
-
-  const availableBALN = balances && balances[balnAddress] && (
-    <Typography color="rgba(255,255,255,0.75)">
-      <Trans>Available</Trans>: {balances[balnAddress].toFixed(2, { groupSeparator: ',' })}
-    </Typography>
-  );
 
   return (
     <>

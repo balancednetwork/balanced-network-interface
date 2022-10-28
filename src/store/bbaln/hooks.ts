@@ -172,7 +172,7 @@ export function useHasLockExpired() {
   const lockedUntil = useLockedUntil();
   const now = new Date();
 
-  return useQuery<boolean | undefined>(`hasLockExpired${lockedUntil}`, () => {
+  return useQuery<boolean | undefined>(`hasLockExpired${lockedUntil?.getTime()}`, () => {
     return lockedUntil && now.getTime() > lockedUntil.getTime();
   });
 }

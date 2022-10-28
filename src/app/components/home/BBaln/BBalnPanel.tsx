@@ -217,8 +217,8 @@ export default function BBalnPanel() {
         addTransaction(
           { hash },
           {
-            pending: t`Withdrawing BALN...`,
-            summary: t`${lockedBalnAmount?.divide(2).toFixed(0, { groupSeparator: ',' })} BALN withdrawn.`,
+            pending: t`Unlocking BALN early...`,
+            summary: t`Unlocked ${lockedBalnAmount?.divide(2).toFixed(0, { groupSeparator: ',' })} BALN.`,
           },
         );
       }
@@ -517,11 +517,15 @@ export default function BBalnPanel() {
                     </Typography>
                   </Flex>
 
+                  {/* Show unlocked date */}
+                  {hasLockExpired && lockedBalnAmount?.greaterThan(0) && !isAdjusting && (
+                    <Typography>{t`Available since ${formatDate(lockedUntil)}`}</Typography>
+                  )}
+
+                  {/* Show selected or locked time period */}
                   {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
                     <Typography paddingTop={isAdjusting ? '6px' : '0'}>
-                      {hasLockExpired && !isAdjusting ? (
-                        t`Unlocked on ${formatDate(lockedUntil)}`
-                      ) : shouldBoost ? (
+                      {shouldBoost ? (
                         <>
                           {t`Locked until`}{' '}
                           {isAdjusting ? (
@@ -571,7 +575,9 @@ export default function BBalnPanel() {
               <BoostedInfo>
                 <BoostedBox>
                   <Typography fontSize={16} color="#FFF">
-                    {totalSupplyBBaln
+                    {bBalnAmount.isEqualTo(0) && !isAdjusting
+                      ? 'N/A'
+                      : totalSupplyBBaln
                       ? isAdjusting
                         ? differenceBalnAmount.isGreaterThanOrEqualTo(0)
                           ? `${bBalnAmount
@@ -770,21 +776,15 @@ export default function BBalnPanel() {
       <Modal isOpen={withdrawModalOpen} onDismiss={toggleWithdrawModalOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
           <Typography textAlign="center" mb="5px">
-            <Trans>Withdraw</Trans>
+            <Trans>Withdraw Balance Tokens</Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20} mb={2}>
             {lockedBalnAmount?.toFixed(0, { groupSeparator: ',' })} BALN
           </Typography>
           <Typography textAlign="center" fontSize={14} mb={1}>
-            <Trans>You must withdraw to be able to lock BALN again.</Trans>
+            <Trans>You'll need to relock BALN to hold voting power and boost your earning potential.</Trans>
           </Typography>
-
-          {shouldBoost && (
-            <Typography textAlign="center">
-              <Trans>Your BALN was unlocked on</Trans> <strong>{formatDate(lockedUntil)}</strong>.
-            </Typography>
-          )}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top" flexWrap={'wrap'}>
             {shouldLedgerSign && <Spinner></Spinner>}

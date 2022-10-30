@@ -88,6 +88,7 @@ export const AssetInput = styled.input`
   font-size: 100%;
   line-height: 1.15;
   margin: 0;
+  height: 43px;
   :hover,
   :focus {
     border: 2px solid #2ca9b7;
@@ -138,7 +139,7 @@ const AssetToTransfer = ({
         <Flex justifyContent={'end'}>
           <Label>
             Wallet:{' '}
-            <WalletAmount color={'red'}>
+            <WalletAmount>
               {!balanceOfAssetName ? 0 : Number(balanceOfAssetName).toFixed(2)} {assetName}
             </WalletAmount>
           </Label>

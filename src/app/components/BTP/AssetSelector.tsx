@@ -4,12 +4,8 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDown } from 'assets/icons/arrow-down.svg';
 
-export const Label = styled(Typography)`
-  margin-bottom: 10px;
-`;
 const Select = styled(Flex)`
   z-index: 3;
 `;

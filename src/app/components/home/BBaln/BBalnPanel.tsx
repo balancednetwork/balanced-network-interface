@@ -13,7 +13,6 @@ import { Button, TextButton } from 'app/components/Button';
 import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
 import Divider from 'app/components/Divider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
-import { inputRegex } from 'app/components/Form';
 import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import { MenuItem, MenuList } from 'app/components/Menu';
 import Modal from 'app/components/Modal';
@@ -43,7 +42,7 @@ import {
 } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
-import { escapeRegExp, parseUnits } from 'utils'; // match escaped "." characters via in a non-capturing group
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { BoxPanel } from '../../Panel';
@@ -308,19 +307,15 @@ export default function BBalnPanel() {
   };
 
   const handleBBalnInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const nextUserInput = event.target.value.replace(/,/g, '.');
+    const userInput = event.target.value;
+    const value = new BigNumber(parseInt(userInput));
 
-    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-      let nextInput = nextUserInput;
-      const value = new BigNumber(nextUserInput || '0');
-
-      if (value.isGreaterThan(balnBalanceAvailable)) {
-        nextInput = balnBalanceAvailable.dp(2).toFixed();
-      } else if (value.isLessThan(0)) {
-        nextInput = '0';
-      }
-
-      onFieldAInput(nextInput || '0');
+    if (userInput === '' || value.isLessThan(0)) {
+      onFieldAInput('0');
+    } else if (value.isGreaterThan(balnBalanceAvailable)) {
+      onFieldAInput(balnBalanceAvailable.toFixed(0));
+    } else if (!value.isNaN()) {
+      onFieldAInput(value.toFixed(0));
     }
   };
 
@@ -372,7 +367,7 @@ export default function BBalnPanel() {
 
   const maxRewardNoticeContent = `${bBalnAmount
     ?.plus(maxRewardThreshold)
-    .toFormat(2)} bBALN required for maximum rewards.`;
+    .toFormat(2)} bBALN required for maximum BALN rewards.`;
 
   return (
     <BoxPanel bg="bg2" flex={1}>
@@ -389,7 +384,7 @@ export default function BBalnPanel() {
               <Typography padding="0 3px 2px 0">
                 <Tooltip
                   text={maxRewardNoticeContent}
-                  width={200}
+                  width={215}
                   show={isAdjusting}
                   placement="top-start"
                   forcePlacement={true}

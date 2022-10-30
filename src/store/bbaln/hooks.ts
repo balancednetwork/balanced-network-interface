@@ -263,8 +263,6 @@ export const usePastMonthFeesDistributed = () => {
     async () => {
       if (blockThen?.number && rates) {
         try {
-          console.log('running fees query');
-
           const loanFeesNow = await bnJs.FeeHandler.getLoanFeesAccrued();
           const loanFeesThen = await bnJs.FeeHandler.getLoanFeesAccrued(blockThen.number);
 

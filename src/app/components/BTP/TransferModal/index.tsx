@@ -1,3 +1,3 @@
-import { TransferAssetModal } from './TranserModal';
+import { TransferAssetModal } from './TransferModal';
 
 export { TransferAssetModal };

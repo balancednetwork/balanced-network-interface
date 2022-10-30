@@ -17,7 +17,7 @@ import Request, { convertToICX, convertToLoopUnit, makeICXCall, getICONBSHAddres
 const { IconUtil, IconBuilder, IconConverter } = IconService;
 const { serialize } = IconUtil;
 
-export { transfer } from './transfer';
+export { transfer, approve } from './transfer';
 
 const ICONchain = chainConfigs.ICON || {};
 export const serviceName = ICONchain.id;

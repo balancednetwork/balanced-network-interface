@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
+import BigNumber from 'bignumber.js';
 import { chainConfigs, chainList, getCustomizedChainList, getTokenList } from 'btp/src/connectors/chainConfigs';
 import { ADDRESS_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { addICONexListener } from 'btp/src/connectors/ICONex';
 import { requestHasAddress } from 'btp/src/connectors/ICONex/events';
+import { getBTPfee } from 'btp/src/connectors/ICONex/ICONServices';
 import { toCheckAddress } from 'btp/src/connectors/MetaMask/utils';
 import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
+import { Trans } from 'react-i18next';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -17,10 +20,11 @@ import { ReactComponent as ArrowIcon } from 'assets/icons/arrow.svg';
 import { useModalOpen, useTransferAssetsModalToggle, useBridgeWalletModalToggle } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
 
+import { ExternalLink } from '../SearchModal/components';
 import Address from './Address';
 import { AssetModal } from './AssetModal';
 import AssetToTransfer from './AssetToTransfer';
-import NetworkSelector from './NetworkSelector';
+import NetworkSelector, { Label } from './NetworkSelector';
 import { TransferAssetModal } from './TransferModal';
 
 const Grid = styled(Box)`
@@ -68,6 +72,13 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
     `}
   }
 `;
+
+const BetaText = styled(Typography)`
+  color: #fc6a6a;
+`;
+const FeeAmount = styled(Typography)`
+  color: #c0c9d2;
+`;
 addICONexListener();
 
 const BTP = () => {
@@ -84,6 +95,7 @@ const BTP = () => {
   const toggleWalletModal = useBridgeWalletModalToggle();
   const [, setSendingInfo] = useState({ token: '', network: '' });
   const [percent, setPercent] = React.useState<number>(0);
+  const [fee, setFee] = useState('0');
 
   const onSendingInfoChange = (info = {}) => {
     setSendingInfo(sendingInfo => ({ ...sendingInfo, ...info }));
@@ -102,6 +114,11 @@ const BTP = () => {
     }
   }, []);
 
+  const getFee = async tokenSymbol => {
+    const BTPFee = await getBTPfee(tokenSymbol);
+    setFee(BTPFee);
+  };
+
   useEffect(() => {
     if (window['accountInfo'] != null) {
       const { balance, symbol, id } = window['accountInfo'];
@@ -109,7 +126,9 @@ const BTP = () => {
       setNetworkId(id);
       setNativeCoin(symbol);
       setBalanceOfAssetName(balance || 0);
+      getFee(symbol);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window['accountInfo']]);
 
   const onChange = values => {
@@ -163,21 +182,37 @@ const BTP = () => {
   };
 
   const userAssets = useTokenBalance(getOptions());
-  const onChangeAsset = asset => {
+  const onChangeAsset = async asset => {
     setAssetName(asset.value);
     setBalanceOfAssetName(asset.balance);
+    getFee(asset.value);
   };
 
   const handlePercentSelect = (percent: number) => {
     setPercent(percent);
   };
+
+  const isInsufficient = new BigNumber(fee).plus(sendingBalance).isGreaterThan(balanceOfAssetName);
+  const isEmpty = !sendingAddress || !balanceOfAssetName;
+
   return (
     <>
       <StyledModal isOpen={walletModalOpen} onDismiss={toggleTransferAssetsModal} maxWidth={525}>
         <Wrapper>
           <Flex flexDirection={'column'} width={'100%'}>
-            <Typography variant={'h2'}>Transfer assets</Typography>
-            <Typography padding={'10px 0'}>Move assets between ICON and other blockchains</Typography>
+            <Typography variant={'h2'}>
+              Transfer assets{' '}
+              <BetaText variant="span">
+                <strong>Beta</strong>
+              </BetaText>
+            </Typography>
+            <Typography padding={'10px 0'}>
+              Move assets between ICON and other blockchains.{' '}
+              <ExternalLink href="#" target="_blank">
+                <Trans>Learn more.</Trans>
+              </ExternalLink>
+            </Typography>
+
             <FlexSelector width={'100%'}>
               <Box className="content">
                 <NetworkSelector label="From" data={chainInfo()} onChange={onChange} toggleWallet={toggleWalletModal} />
@@ -216,17 +251,31 @@ const BTP = () => {
                 sendingAddress={sendingAddress}
                 balance={sendingBalance}
                 tokenSymbol={assetName}
+                fee={fee}
               />
               <Box className="full-width">
                 <Address onChange={setSendingAddress} />
+                <Flex justifyContent={'end'}>
+                  <Label atBottom>
+                    Transfer fee:{' '}
+                    <FeeAmount variant="span">
+                      <strong>
+                        {fee} {assetName}
+                      </strong>
+                    </FeeAmount>
+                  </Label>
+                </Flex>
               </Box>
             </Grid>
 
             <Divider margin={'20px 0'} />
             <Flex justifyContent={'center'}>
               <TextButton onClick={toggleTransferAssetsModal}>Cancel</TextButton>
-              <Button disabled={!sendingBalance || !toCheckAddress(sendingAddress)} onClick={() => handleTransfer()}>
-                Transfer
+              <Button
+                disabled={!sendingBalance || isEmpty || !toCheckAddress(sendingAddress) || isInsufficient}
+                onClick={() => handleTransfer()}
+              >
+                {isInsufficient ? `Insufficient ${assetName}` : 'Transfer'}
               </Button>
             </Flex>
           </Flex>

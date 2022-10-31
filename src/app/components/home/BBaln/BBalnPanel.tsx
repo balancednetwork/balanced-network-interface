@@ -310,12 +310,14 @@ export default function BBalnPanel() {
     const userInput = event.target.value;
     const value = new BigNumber(parseInt(userInput));
 
-    if (userInput === '' || value.isLessThan(0)) {
-      onFieldAInput('0');
-    } else if (value.isGreaterThan(balnBalanceAvailable)) {
-      onFieldAInput(balnBalanceAvailable.toFixed(0));
-    } else if (!value.isNaN()) {
-      onFieldAInput(value.toFixed(0));
+    if (balnTotal) {
+      if (userInput === '' || value.isLessThan(0)) {
+        onFieldAInput('0');
+      } else if (value.isGreaterThan(balnTotal)) {
+        onFieldAInput(balnTotal.dp(0, BigNumber.ROUND_DOWN).toFixed(0));
+      } else if (!value.isNaN()) {
+        onFieldAInput(value.toFixed(0));
+      }
     }
   };
 
@@ -510,7 +512,7 @@ export default function BBalnPanel() {
 
                     <Typography paddingRight={'15px'}>
                       {' '}
-                      / {balnTotal ? balnTotal.toFormat(0, BigNumber.ROUND_DOWN) : '-'} BALN
+                      / {balnTotal ? balnTotal.dp(0, BigNumber.ROUND_DOWN).toFormat(0) : '-'} BALN
                     </Typography>
                   </Flex>
 
@@ -731,7 +733,7 @@ export default function BBalnPanel() {
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {balnBalanceAvailable.toFormat(0)} BALN
+                {balnBalanceAvailable.dp(0, BigNumber.ROUND_DOWN).toFormat(0)} BALN
               </Typography>
             </Box>
 
@@ -739,8 +741,11 @@ export default function BBalnPanel() {
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
                 {shouldBoost
-                  ? balnBalanceAvailable.minus(differenceBalnAmount).toFormat(0)
-                  : balnBalanceAvailable.plus(new BigNumber(lockedBalnAmount?.toFixed() || 0).div(2)).toFormat(0)}{' '}
+                  ? balnBalanceAvailable.minus(differenceBalnAmount).dp(0, BigNumber.ROUND_DOWN).toFormat(0)
+                  : balnBalanceAvailable
+                      .plus(new BigNumber(lockedBalnAmount?.toFixed() || 0).div(2))
+                      .dp(0, BigNumber.ROUND_DOWN)
+                      .toFormat(0)}{' '}
                 BALN
               </Typography>
             </Box>

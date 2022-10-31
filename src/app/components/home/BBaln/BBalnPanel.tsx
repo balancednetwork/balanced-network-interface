@@ -375,7 +375,7 @@ export default function BBalnPanel() {
 
   return (
     <BoxPanel bg="bg2" flex={1}>
-      {balnBalanceAvailable.isGreaterThan(0) || stakedBalance?.isGreaterThan(0) ? (
+      {balnBalanceAvailable.isGreaterThan(0) || bBalnAmount.isGreaterThan(0) || stakedBalance?.isGreaterThan(0) ? (
         <>
           <Flex alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}>
             <Flex

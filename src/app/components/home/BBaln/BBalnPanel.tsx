@@ -692,7 +692,7 @@ export default function BBalnPanel() {
                       })
                     ) : (
                       <Typography paddingTop="10px" marginBottom="-5px" maxWidth={250} textAlign="left">
-                        <Trans>You must have supplied liquidity in any of BALN incentivised pools.</Trans>
+                        <Trans>To earn liquidity rewards, supply liquidity to a BALN-incentivised pool.</Trans>
                       </Typography>
                     )}
                   </LiquidityDetails>

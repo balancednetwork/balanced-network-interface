@@ -182,8 +182,11 @@ const eventHandler = async event => {
             //     onClick: () => modal.setDisplay(false),
             //   },
             // });
-
-            const link = getTrackerLink(transInfo.nid, transInfo.txhash, 'transaction');
+            let link = '';
+            const currentNetworkConfig = chainConfigs[transInfo.networkSrc];
+            transInfo.networkSrc === 'BSC' &&
+              (link = `${currentNetworkConfig.EXPLORE_URL}/${currentNetworkConfig.exploreSuffix?.transaction}/${transInfo.txHash}`);
+            // const link = getTrackerLink(transInfo.nid, transInfo.txhash, 'transaction');
             const toastProps = {
               onClick: () => window.open(link, '_blank'),
             };

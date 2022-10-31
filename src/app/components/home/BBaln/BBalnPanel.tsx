@@ -484,7 +484,7 @@ export default function BBalnPanel() {
                     step={1}
                     range={{
                       min: [0],
-                      max: [balnTotal ? balnTotal.dp(0).toNumber() : 1],
+                      max: [balnTotal ? balnTotal.dp(0, BigNumber.ROUND_DOWN).toNumber() : 1],
                     }}
                     instanceRef={instance => {
                       if (instance) {

@@ -16,12 +16,13 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import '@reach/tabs/styles.css';
-import { SUPPORTED_TOKENS_LIST, useICX } from 'constants/tokens';
+import { SUPPORTED_TOKENS_LIST, COMBINED_TOKENS_LIST, useICX } from 'constants/tokens';
 import { useAllTokens } from 'hooks/Tokens';
 import useArrowControl from 'hooks/useArrowControl';
 import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesQuery } from 'queries/reward';
+import { useTokenListConfig } from 'store/lists/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
@@ -183,6 +184,7 @@ const WalletTotal = styled(Flex)`
 `;
 
 const ADDRESSES = SUPPORTED_TOKENS_LIST.map(currency => currency.address);
+const COMBINED_ADDRESSES = COMBINED_TOKENS_LIST.map(currency => currency.address);
 
 const WalletUI = ({ currency }: { currency: Currency }) => {
   const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
@@ -215,6 +217,7 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>();
   const [modalAsset, setModalAsset] = useState<string | undefined>();
+  const tokenListConfig = useTokenListConfig();
 
   const debouncedQuery = useDebounce(searchQuery, 200);
   const enter = useKeyPress('Enter');
@@ -227,7 +230,13 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
 
   const icxAddress = bnJs.ICX.address;
 
-  const addressesWithAmount = ADDRESSES.filter(address => !isDPZeroCA(balances[address], 2));
+  const addressesWithAmount = useMemo(
+    () =>
+      tokenListConfig.community
+        ? COMBINED_ADDRESSES.filter(address => !isDPZeroCA(balances[address], 2))
+        : ADDRESSES.filter(address => !isDPZeroCA(balances[address], 2)),
+    [tokenListConfig, balances],
+  );
 
   const filteredTokens: Token[] = useMemo(() => {
     return filterTokens(Object.values(allTokens), debouncedQuery).filter(

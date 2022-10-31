@@ -14,6 +14,7 @@ import Logo from 'app/components/Logo';
 import { DropdownPopper } from 'app/components/Popover';
 import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
+import { ReactComponent as CopyIcon } from 'assets/icons/copy.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
 import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
@@ -69,9 +70,11 @@ const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 const CopyableAddress = ({
   account,
   closeAfterDelay,
+  copyIcon,
 }: {
   account: string | null | undefined;
   closeAfterDelay?: number;
+  copyIcon?: boolean;
 }) => {
   const [isCopied, updateCopyState] = React.useState(false);
   const copyAddress = React.useCallback(async (account: string) => {
@@ -85,6 +88,7 @@ const CopyableAddress = ({
       placement={'left'}
       noArrowAndBorder
       closeAfterDelay={closeAfterDelay}
+      zIndex={9999}
     >
       <StyledAddress
         onMouseLeave={() => {
@@ -93,6 +97,7 @@ const CopyableAddress = ({
         onClick={() => copyAddress(account)}
       >
         {shortenAddress(account)}
+        {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
       </StyledAddress>
     </MouseoverTooltip>
   ) : null;
@@ -200,7 +205,7 @@ export default function Header(props: { title?: string; className?: string }) {
                       </WalletMenu>
                       {!upSmall && (
                         <Flex justifyContent={'flex-end'} width={'100%'} padding={'2px 25px 25px'}>
-                          <CopyableAddress account={account} closeAfterDelay={1000} />
+                          <CopyableAddress account={account} closeAfterDelay={1000} copyIcon />
                         </Flex>
                       )}
                       <Wallet anchor={anchor} setAnchor={setAnchor} />

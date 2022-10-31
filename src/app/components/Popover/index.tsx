@@ -287,9 +287,10 @@ export interface Props {
   children: React.ReactNode;
   placement?: Placement;
   content: React.ReactNode;
+  zIndex?: number;
 }
 
-export function PopperWithoutArrowAndBorder({ content, show, children, placement = 'auto' }: Props) {
+export function PopperWithoutArrowAndBorder({ content, show, children, zIndex, placement = 'auto' }: Props) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
 
@@ -307,7 +308,13 @@ export function PopperWithoutArrowAndBorder({ content, show, children, placement
     <>
       <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
       <Portal>
-        <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+        <PopoverContainer
+          show={show}
+          ref={setPopperElement as any}
+          style={styles.popper}
+          {...attributes.popper}
+          zIndex={zIndex}
+        >
           <ContentWrapper style={{ border: 'none' }}>{content}</ContentWrapper>
         </PopoverContainer>
       </Portal>

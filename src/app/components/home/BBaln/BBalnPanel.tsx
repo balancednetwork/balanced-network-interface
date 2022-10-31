@@ -369,6 +369,8 @@ export default function BBalnPanel() {
     ?.plus(maxRewardThreshold)
     .toFormat(2)} bBALN required for maximum BALN rewards.`;
 
+  const hasLPOrLoan = sources && boostedLPs && (sources.Loans.balance.isGreaterThan(0) || boostedLPs.length);
+
   return (
     <BoxPanel bg="bg2" flex={1}>
       {balnBalanceAvailable.isGreaterThan(0) || stakedBalance?.isGreaterThan(0) ? (
@@ -385,7 +387,7 @@ export default function BBalnPanel() {
                 <Tooltip
                   text={maxRewardNoticeContent}
                   width={215}
-                  show={isAdjusting}
+                  show={!!hasLPOrLoan && isAdjusting}
                   placement="top-start"
                   forcePlacement={true}
                   strategy="absolute"
@@ -404,7 +406,7 @@ export default function BBalnPanel() {
                           decrease over time.
                         </Trans>
                       </Typography>
-                      {!isAdjusting && (
+                      {!isAdjusting && hasLPOrLoan && (
                         <>
                           <Divider my={2} />
                           <Typography fontWeight={700}>{maxRewardNoticeContent}</Typography>

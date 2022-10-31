@@ -25,7 +25,7 @@ const Wrapper = styled(Flex)`
   margin-bottom: 30px;
   gap: 12px;
 
-  ${({ theme }) => theme.mediaWidth.up500`
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
     flex-direction: row;
     align-items: center;
   `}

@@ -5,6 +5,7 @@
   You have to declare them here manually
 */
 import { ApplicationState } from 'store/application/reducer';
+import { BBalnState } from 'store/bbaln/reducer';
 import { CollateralState } from 'store/collateral/reducer';
 import { FeesState } from 'store/fees/reducer';
 import { TokenListState } from 'store/lists/reducer';
@@ -24,6 +25,7 @@ import { WalletState } from 'store/wallet/reducer';
 export interface RootState {
   // [INSERT NEW REDUCER KEY ABOVE] < Needed for generating containers seamlessly
   application: ApplicationState;
+  bbaln: BBalnState;
   collateral: CollateralState;
   loan: LoanState;
   reward: RewardState;

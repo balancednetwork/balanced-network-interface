@@ -10,7 +10,7 @@ import { Typography } from 'app/theme';
 import { ProposalInterface } from 'types';
 import { normalizeContent } from 'utils';
 
-import { notificationCSS } from '../home/wallets/utils';
+import { notificationCSS } from '../Wallet/wallets/utils';
 import { ApprovalLabel, RejectionLabel, VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from './components';
 
 dayjs.extend(duration);

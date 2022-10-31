@@ -8,6 +8,7 @@ import { save, load } from 'redux-localstorage-simple';
 import createSagaMiddleware from 'redux-saga';
 
 import application from './application/reducer';
+import bbaln from './bbaln/reducer';
 import collateral from './collateral/reducer';
 import fees from './fees/reducer';
 import lists from './lists/reducer';
@@ -44,6 +45,7 @@ export function configureAppStore() {
   const store = configureStore({
     reducer: createReducer({
       application,
+      bbaln,
       reward,
       collateral,
       loan,

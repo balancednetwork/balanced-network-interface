@@ -7,6 +7,7 @@ import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
+import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -368,9 +369,22 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
   );
 };
 
-export const WithdrawPanelQ = ({ balance, pair }: { pair: Pair; balance: BalanceData }) => {
+export const WithdrawPanelQ = ({
+  balance,
+  pair,
+  totalReward,
+  apy,
+  boost,
+}: {
+  pair: Pair;
+  balance: BalanceData;
+  totalReward: BigNumber;
+  apy: number | null;
+  boost?: BigNumber | undefined;
+}) => {
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
+  const upSmall = useMedia('(min-width: 800px)');
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -456,8 +470,48 @@ export const WithdrawPanelQ = ({ balance, pair }: { pair: Pair; balance: Balance
 
   const hasEnoughICX = useHasEnoughICX();
 
+  const RespoRewardsInfo = () => {
+    const { reward } = getShareReward(pair, balance, totalReward);
+
+    return (
+      <Flex
+        marginBottom={4}
+        justifyContent="space-between"
+        paddingBottom={4}
+        sx={{ borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}
+        width="100%"
+      >
+        <Box>
+          <Typography color="text2">
+            <Trans>Daily rewards</Trans>
+          </Typography>
+          <Typography color="text" fontSize={16}>
+            {`~ ${new BigNumber(reward.toFixed(8)).times(boost || 1).toFormat(2, BigNumber.ROUND_HALF_UP) || '-'} BALN`}
+          </Typography>
+        </Box>
+
+        <Box sx={{ textAlign: 'right' }}>
+          <Typography color="text2">
+            <Trans>APY</Trans>
+          </Typography>
+          <Typography color="text" fontSize={16}>
+            {`${
+              apy
+                ? new BigNumber(apy)
+                    .times(100)
+                    .times(boost || 1)
+                    .toFormat(2)
+                : '-'
+            }%`}
+          </Typography>
+        </Box>
+      </Flex>
+    );
+  };
+
   return (
     <>
+      {!upSmall && <RespoRewardsInfo />}
       <Flex flexDirection="column" alignItems="center" margin="0 auto">
         <Typography variant="h3" mb={3}>
           <Trans>Withdraw:</Trans>&nbsp;

@@ -12,7 +12,7 @@ import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
 import { useActiveProposals } from 'queries/vote';
 import { useBALNDetails } from 'store/wallet/hooks';
 
-import { notificationCSS } from '../home/wallets/utils';
+import { notificationCSS } from '../Wallet/wallets/utils';
 
 const Navigation = styled.nav`
   display: inline-block;

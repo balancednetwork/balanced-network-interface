@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { PLUS_INFINITY } from 'constants/index';
 import { SUPPORTED_PAIRS } from 'constants/pairs';
+import { useBBalnAmount } from 'store/bbaln/hooks';
 import { useCollateralInputAmountAbsolute } from 'store/collateral/hooks';
 import { useHasUnclaimedFees } from 'store/fees/hooks';
 import { useLoanInputAmount } from 'store/loan/hooks';
@@ -89,20 +90,20 @@ export const useCurrentCollateralRatio = (): BigNumber => {
 export const useHasNetworkFees = () => {
   const { account } = useIconReact();
   const hasUnclaimedFees = useHasUnclaimedFees();
+  const bbalnAmount = useBBalnAmount();
   const transactions = useAllTransactions();
   const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
 
   React.useEffect(() => {
     const checkIfHasNetworkFees = async () => {
-      if (account) {
-        const balnDetails = await bnJs.BALN.detailsBalanceOf(account);
-        if (Number(balnDetails['Staked balance']) || hasUnclaimedFees) setHasNetworkFees(true);
+      if (account && bbalnAmount) {
+        if (bbalnAmount.isGreaterThan(0) || hasUnclaimedFees) setHasNetworkFees(true);
         else setHasNetworkFees(false);
       }
     };
 
     checkIfHasNetworkFees();
-  }, [account, transactions, hasUnclaimedFees]);
+  }, [account, transactions, hasUnclaimedFees, bbalnAmount]);
 
   return hasNetworkFees;
 };

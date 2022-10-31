@@ -321,6 +321,7 @@ const SUPPORTED_PAIRS_INFO: { [ChainId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'ICX',
       baseToken: sICX[ChainId.BERLIN],
       quoteToken: ICX[ChainId.BERLIN],
+      rewards: 0.03,
     },
     {
       chainId: 7,
@@ -330,6 +331,7 @@ const SUPPORTED_PAIRS_INFO: { [ChainId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: sICX[ChainId.BERLIN],
       quoteToken: bnUSD[ChainId.BERLIN],
+      rewards: 0.12,
     },
     {
       chainId: 7,
@@ -339,6 +341,7 @@ const SUPPORTED_PAIRS_INFO: { [ChainId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'bnUSD',
       baseToken: BALN[ChainId.BERLIN],
       quoteToken: bnUSD[ChainId.BERLIN],
+      rewards: 0.12,
     },
     {
       chainId: 7,

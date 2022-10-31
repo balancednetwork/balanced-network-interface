@@ -31,7 +31,9 @@ import { NETWORK_ID } from 'constants/config';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useFetchBBalnInfo } from 'store/bbaln/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
+import { useWalletFetchBalances } from 'store/wallet/hooks';
 import { formatPercent, formatUnits, getTrackerLink } from 'utils';
 import { formatTimeStr } from 'utils/timeformat';
 
@@ -109,11 +111,14 @@ const CollateralProposalInfoItem = styled(Box)`
 `;
 
 export function ProposalPage() {
+  const { account } = useIconReact();
+  useWalletFetchBalances(account);
+  useFetchBBalnInfo(account);
   const [modalStatus, setModalStatus] = useState(ModalStatus.None);
   const { id: pId } = useParams<{ id: string }>();
   const proposalQuery = useProposalInfoQuery(parseInt(pId));
   const { data: proposal } = proposalQuery;
-  const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotDay);
+  const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotBlock);
   const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);
   const { data: userStatus } = voteStatusQuery;
   const isSmallScreen = useMedia('(max-width: 600px)');
@@ -141,7 +146,6 @@ export function ProposalPage() {
 
   const hasUserVoted = userStatus?.hasVoted;
 
-  const { account } = useIconReact();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const [txHash, setTxHash] = useState('');
@@ -269,7 +273,7 @@ export function ProposalPage() {
                       )}
                     </Flex>
                     <Typography>
-                      <Trans>{`Voting weight: ${userStatus?.approval.dp(2).toFormat()} BALN`}</Trans>
+                      <Trans>{`Voting weight: ${userStatus?.approval.dp(2).toFormat()} bBALN`}</Trans>
                     </Typography>
                   </Flex>
                 </ResultPanel>
@@ -291,7 +295,7 @@ export function ProposalPage() {
                     </Flex>
 
                     <Typography>
-                      <Trans>{`Voting weight: ${userStatus?.reject.dp(2).toFormat()} BALN`}</Trans>
+                      <Trans>{`Voting weight: ${userStatus?.reject.dp(2).toFormat()} bBALN`}</Trans>
                     </Typography>
                   </Flex>
                 </ResultPanel>

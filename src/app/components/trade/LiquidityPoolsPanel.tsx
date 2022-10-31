@@ -25,7 +25,7 @@ const Wrapper = styled(Flex)`
   margin-bottom: 30px;
   gap: 12px;
 
-  ${({ theme }) => theme.mediaWidth.up500`
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
     flex-direction: row;
     align-items: center;
   `}
@@ -87,7 +87,7 @@ export default function LiquidityPoolsPanel() {
           </motion.div>
         ) : (
           <motion.div
-            key="IncentiviesPools"
+            key="IncentivisedPools"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ type: 'just' }}

@@ -11,6 +11,7 @@ import bnJs from 'bnJs';
 import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import QUERY_KEYS from 'queries/queryKeys';
+import { useBlockNumber } from 'store/application/hooks';
 import { useOraclePrices } from 'store/oracle/hooks';
 
 import { API_ENDPOINT } from '../constants';
@@ -64,11 +65,16 @@ export const usePlatformDayQuery = () => {
 
 export const useRewardQuery = () => {
   const { account } = useIconReact();
+  const blockNumber = useBlockNumber();
 
-  return useQuery<BigNumber>(QUERY_KEYS.Reward.UserReward(account ?? ''), async () => {
-    const res = await bnJs.Rewards.getBalnHolding(account!);
-    return BalancedJs.utils.toIcx(res);
-  });
+  return useQuery<BigNumber>(
+    `${QUERY_KEYS.Reward.UserReward(account ?? '')}-${blockNumber}`,
+    async () => {
+      const res = await bnJs.Rewards.getBalnHolding(account!);
+      return BalancedJs.utils.toIcx(res);
+    },
+    { keepPreviousData: true },
+  );
 };
 
 export const useRatesQuery = () => {
@@ -153,8 +159,8 @@ export const useAllPairsTVL = () => {
 
     const t: { [key in string]: number } = {};
     INCENTIVISED_PAIRS.forEach(pair => {
-      const baseTVL = tvls[pair.id].base.times(rates[pair.baseCurrencyKey]);
-      const quoteTVL = tvls[pair.id].quote.times(rates[pair.quoteCurrencyKey]);
+      const baseTVL = tvls[pair.id] ? tvls[pair.id].base.times(rates[pair.baseCurrencyKey]) : new BigNumber(0);
+      const quoteTVL = tvls[pair.id] ? tvls[pair.id].quote.times(rates[pair.quoteCurrencyKey]) : new BigNumber(0);
       t[pair.id] = baseTVL.plus(quoteTVL).integerValue().toNumber();
     });
 
@@ -234,28 +240,32 @@ export const useAllPairsData = (
 
     const t: { [key in string]: { volume: number; fees: number } } = {};
 
-    INCENTIVISED_PAIRS.filter(pair => data[pair.id]).forEach(pair => {
-      // volume
-      const baseVol = data[pair.id]['volume'][pair.baseCurrencyKey].times(rates[pair.baseCurrencyKey]);
-      const quoteVol = data[pair.id]['volume'][pair.quoteCurrencyKey].times(rates[pair.quoteCurrencyKey]);
-      const volume = baseVol.plus(quoteVol).integerValue().toNumber();
+    try {
+      INCENTIVISED_PAIRS.filter(pair => data[pair.id]).forEach(pair => {
+        // volume
+        const baseVol = data[pair.id]['volume'][pair.baseCurrencyKey].times(rates[pair.baseCurrencyKey]);
+        const quoteVol = data[pair.id]['volume'][pair.quoteCurrencyKey].times(rates[pair.quoteCurrencyKey]);
+        const volume = baseVol.plus(quoteVol).integerValue().toNumber();
 
-      // fees
-      const baseFees = data[pair.id]['fees'][pair.baseCurrencyKey]
-        ? data[pair.id]['fees'][pair.baseCurrencyKey]['lp_fees']
-            .plus(data[pair.id]['fees'][pair.baseCurrencyKey]['baln_fees'])
-            .times(rates[pair.baseCurrencyKey])
-        : new BigNumber(0);
+        // fees
+        const baseFees = data[pair.id]['fees'][pair.baseCurrencyKey]
+          ? data[pair.id]['fees'][pair.baseCurrencyKey]['lp_fees']
+              .plus(data[pair.id]['fees'][pair.baseCurrencyKey]['baln_fees'])
+              .times(rates[pair.baseCurrencyKey])
+          : new BigNumber(0);
 
-      const quoteFees = data[pair.id]['fees'][pair.quoteCurrencyKey]
-        ? data[pair.id]['fees'][pair.quoteCurrencyKey]['lp_fees']
-            .plus(data[pair.id]['fees'][pair.quoteCurrencyKey]['baln_fees'])
-            .times(rates[pair.quoteCurrencyKey])
-        : new BigNumber(0);
-      const fees = baseFees.plus(quoteFees).integerValue().toNumber();
+        const quoteFees = data[pair.id]['fees'][pair.quoteCurrencyKey]
+          ? data[pair.id]['fees'][pair.quoteCurrencyKey]['lp_fees']
+              .plus(data[pair.id]['fees'][pair.quoteCurrencyKey]['baln_fees'])
+              .times(rates[pair.quoteCurrencyKey])
+          : new BigNumber(0);
+        const fees = baseFees.plus(quoteFees).integerValue().toNumber();
 
-      t[pair.id] = { volume, fees };
-    });
+        t[pair.id] = { volume, fees };
+      });
+    } catch (e) {
+      console.error(e);
+    }
 
     return t;
   }
@@ -305,15 +315,17 @@ export const useAllPairs = () => {
         ...pair,
         tvl: tvls[pair.id],
         apy: apys[pair.id]?.toNumber(),
-        feesApy: (data30day[pair.id]['fees'] * 12 * feesApyConstant) / tvls[pair.id],
+        feesApy: data30day[pair.id] && (data30day[pair.id]['fees'] * 12 * feesApyConstant) / tvls[pair.id],
         participant: participants[pair.id],
-        apyTotal: new BigNumber(apys[pair.id] || 0)
-          .plus(
-            new BigNumber(data30day[pair.id]['fees'] * 12 * feesApyConstant || 0).div(
-              new BigNumber(tvls[pair.id]) || 1,
-            ),
-          )
-          .toNumber(),
+        apyTotal:
+          data30day[pair.id] &&
+          new BigNumber(apys[pair.id] || 0)
+            .plus(
+              new BigNumber(data30day[pair.id]['fees'] * 12 * feesApyConstant || 0).div(
+                new BigNumber(tvls[pair.id]) || 1,
+              ),
+            )
+            .toNumber(),
       };
 
       if (data[pair.id]) {

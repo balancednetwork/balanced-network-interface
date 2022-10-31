@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-10-31 17:42\n"
+"PO-Revision-Date: 2022-10-31 18:36\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -1187,6 +1187,10 @@ msgstr "À"
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Pour gagner des récompenses Balanced (BALN), contractez un prêt ou fournissez de la liquidité sur la page \"Trade\"."
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "To earn liquidity rewards, supply liquidity to a BALN-incentivised pool."
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
 msgstr "Pour contracter un prêt, déposez une garantie."
@@ -1457,10 +1461,6 @@ msgstr "Vous avez approuvé"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "You can't withdraw any collateral if you go beyond this threshold."
 msgstr "Vous ne pouvez pas retirer de garantie si vous dépassez ce seuil."
-
-#: src/app/components/home/BBaln/BBalnPanel.tsx
-msgid "You must have supplied liquidity in any of BALN incentivised pools."
-msgstr ""
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."

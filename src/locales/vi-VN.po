@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-10-31 17:42\n"
+"PO-Revision-Date: 2022-10-31 18:36\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -1187,6 +1187,10 @@ msgstr "Tới"
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Để nhận phần thưởng, mượn tiền hoặc cung cấp thanh khoản khu giao dịch."
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "To earn liquidity rewards, supply liquidity to a BALN-incentivised pool."
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
 msgstr "Để vay tiền, nạp tài sản thế cháp."
@@ -1458,10 +1462,6 @@ msgstr "Bạn đã phê duyệt"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "You can't withdraw any collateral if you go beyond this threshold."
 msgstr "Nếu bạn vượt qua ngưỡng này, tài sản thế chấp sẽ bị khóa và ko thể rút ra."
-
-#: src/app/components/home/BBaln/BBalnPanel.tsx
-msgid "You must have supplied liquidity in any of BALN incentivised pools."
-msgstr ""
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."

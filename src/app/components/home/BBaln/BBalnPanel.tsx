@@ -686,7 +686,9 @@ export default function BBalnPanel() {
                                       .toFixed(2)
                               } x`}
                             </Typography>
-                            <Typography fontSize={14}>{boostedLP}</Typography>
+                            <Typography fontSize={14} style={{ whiteSpace: 'nowrap' }}>
+                              {boostedLP}
+                            </Typography>
                           </PoolItem>
                         );
                       })

@@ -332,23 +332,14 @@ export default function BBalnPanel() {
     }
   }, [sources]);
 
-  const boostedLPNumbers = useMemo(() => {
-    if (isAdjusting) {
-      return (
-        boostedLPs &&
-        Object.values(boostedLPs).map(boostedLP =>
-          getWorkingBalance(boostedLP.balance, boostedLP.supply).dividedBy(boostedLP.balance).dp(2).toNumber(),
-        )
-      );
-    } else {
-      return (
-        boostedLPs &&
-        Object.values(boostedLPs).map(boostedLP =>
-          boostedLP.workingBalance.dividedBy(boostedLP.balance).dp(2).toNumber(),
-        )
-      );
-    }
-  }, [isAdjusting, boostedLPs, getWorkingBalance]);
+  const boostedLPNumbers = useMemo(
+    () =>
+      boostedLPs &&
+      Object.values(boostedLPs).map(boostedLP =>
+        getWorkingBalance(boostedLP.balance, boostedLP.supply).dividedBy(boostedLP.balance).dp(2).toNumber(),
+      ),
+    [boostedLPs, getWorkingBalance],
+  );
 
   const maxRewardThreshold = useMemo(() => {
     if (sources && totalSupplyBBaln && bBalnAmount) {
@@ -592,7 +583,7 @@ export default function BBalnPanel() {
                         : `${bBalnAmount.dividedBy(totalSupplyBBaln).times(100).toPrecision(3)} %`
                       : '-'}
                   </Typography>
-                  <Typography marginLeft={pastMonthFees ? '14px' : ''}>
+                  <Typography marginLeft="14px">
                     Network fees
                     <QuestionHelper
                       iconStyle={{ position: 'relative', transform: 'translate3d(1px, 2px, 0)' }}
@@ -672,26 +663,18 @@ export default function BBalnPanel() {
                   <LiquidityDetails>
                     {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0 ? (
                       boostedLPs &&
-                      Object.keys(boostedLPs).map(boostedLP => {
-                        return (
-                          <PoolItem key={boostedLP}>
-                            <Typography fontSize={16} color="#FFF">
-                              {`${
-                                isAdjusting
-                                  ? getWorkingBalance(boostedLPs[boostedLP].balance, boostedLPs[boostedLP].supply)
-                                      .dividedBy(boostedLPs[boostedLP].balance)
-                                      .toFixed(2)
-                                  : boostedLPs[boostedLP].workingBalance
-                                      .dividedBy(boostedLPs[boostedLP].balance)
-                                      .toFixed(2)
-                              } x`}
-                            </Typography>
-                            <Typography fontSize={14} style={{ whiteSpace: 'nowrap' }}>
-                              {boostedLP}
-                            </Typography>
-                          </PoolItem>
-                        );
-                      })
+                      Object.keys(boostedLPs).map(boostedLP => (
+                        <PoolItem key={boostedLP}>
+                          <Typography fontSize={16} color="#FFF">
+                            {`${getWorkingBalance(boostedLPs[boostedLP].balance, boostedLPs[boostedLP].supply)
+                              .dividedBy(boostedLPs[boostedLP].balance)
+                              .toFixed(2)} x`}
+                          </Typography>
+                          <Typography fontSize={14} style={{ whiteSpace: 'nowrap' }}>
+                            {boostedLP}
+                          </Typography>
+                        </PoolItem>
+                      ))
                     ) : (
                       <Typography paddingTop="10px" marginBottom="-5px" maxWidth={250} textAlign="left">
                         <Trans>To earn liquidity rewards, supply liquidity to a BALN-incentivised pool.</Trans>

@@ -39,6 +39,7 @@ import {
   useSources,
   useDBBalnAmountDiff,
   usePastMonthFeesDistributed,
+  useTimeRemaining,
 } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
@@ -61,6 +62,7 @@ import {
   StyledTypography,
   Threshold,
 } from './styledComponents';
+import { LockedPeriod } from './types';
 import UnstakePrompt from './UnstakePrompt';
 import { WEEK_IN_MS, lockingPeriods, formatDate, getClosestUnixWeekStart, getWeekOffsetTimestamp } from './utils';
 
@@ -69,6 +71,7 @@ export default function BBalnPanel() {
   const bBalnAmount = useBBalnAmount();
   const lockedBalnAmount = useLockedBaln();
   const lockedUntil = useLockedUntil();
+  const timeRemaining = useTimeRemaining();
   const totalSupplyBBaln = useTotalSuply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const bbalnAmountDiff = useDBBalnAmountDiff();
@@ -256,6 +259,15 @@ export default function BBalnPanel() {
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
   const shouldBoost = differenceBalnAmount.isPositive();
 
+  const samePeriod: LockedPeriod | undefined = useMemo(() => {
+    return timeRemaining
+      ? {
+          name: t`Keep the lock`,
+          weeks: Math.ceil(timeRemaining / WEEK_IN_MS),
+        }
+      : undefined;
+  }, [timeRemaining]);
+
   const isPeriodChanged = useMemo(() => {
     const lockTimestamp = getWeekOffsetTimestamp(selectedPeriod.weeks);
     return getClosestUnixWeekStart(lockTimestamp).getTime() !== lockedUntil?.getTime();
@@ -266,11 +278,15 @@ export default function BBalnPanel() {
       const availablePeriods = lockingPeriods.filter(period => {
         return lockedUntil ? lockedUntil < new Date(new Date().setDate(new Date().getDate() + period.weeks * 7)) : true;
       });
-      return availablePeriods.length ? availablePeriods : [lockingPeriods[lockingPeriods.length - 1]];
+      return samePeriod
+        ? [samePeriod, ...(availablePeriods.length ? availablePeriods : [lockingPeriods[lockingPeriods.length - 1]])]
+        : availablePeriods.length
+        ? availablePeriods
+        : [lockingPeriods[lockingPeriods.length - 1]];
     } else {
       return lockingPeriods;
     }
-  }, [lockedUntil]);
+  }, [lockedUntil, samePeriod]);
 
   // reset loan ui state if cancel adjusting
   React.useEffect(() => {
@@ -524,11 +540,13 @@ export default function BBalnPanel() {
                                 <UnderlineTextWithArrow
                                   onClick={handlePeriodDropdownToggle}
                                   text={formatDate(
-                                    getClosestUnixWeekStart(
-                                      new Date(
-                                        new Date().setDate(new Date().getDate() + (selectedPeriod.weeks * 7 - 7)),
-                                      ).getTime(),
-                                    ),
+                                    selectedPeriod.weeks
+                                      ? getClosestUnixWeekStart(
+                                          new Date(
+                                            new Date().setDate(new Date().getDate() + (selectedPeriod.weeks * 7 - 7)),
+                                          ).getTime(),
+                                        )
+                                      : lockedUntil,
                                   )}
                                   arrowRef={periodArrowRef}
                                 />

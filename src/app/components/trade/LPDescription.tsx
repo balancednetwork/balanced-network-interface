@@ -12,6 +12,7 @@ import { Flex, Box } from 'rebass/styled-components';
 import { Typography } from 'app/theme';
 import { PairState, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
+import { useSources } from 'store/bbaln/hooks';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
 import { useReward } from 'store/reward/hooks';
@@ -20,10 +21,12 @@ import { tryParseAmount } from 'store/swap/hooks';
 import { useLiquidityTokenBalance } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
+import { MAX_BOOST } from '../home/BBaln/utils';
+
 export default function LPDescription() {
   const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();
   const { independentField, typedValue, otherTypedValue } = useMintState();
-
+  const sources = useSources();
   const { account } = useIconReact();
   const upSmall = useMedia('(min-width: 600px)');
   const userPoolBalance = useLiquidityTokenBalance(account, pair);
@@ -85,6 +88,17 @@ export default function LPDescription() {
     [baseCurrencyTotalSupply, formattedAmounts[Field.CURRENCY_A]?.toFixed(), poolRewards],
   );
 
+  const boost = useMemo(() => {
+    const pairName = pair ? `${pair.token0.symbol}/${pair.token1.symbol}` : '';
+    if (sources && sources[pairName] && sources[pairName].balance.isGreaterThan(0)) {
+      return sources[pairName].workingBalance.dividedBy(sources[pairName].balance);
+    } else if (sources && pairName === 'ICX/sICX') {
+      return sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance);
+    } else {
+      return new BigNumber(1);
+    }
+  }, [sources, pair]);
+
   return (
     <>
       <Flex bg="bg2" flex={1} flexDirection="column" minHeight={account ? [505, 350] : [355, 320]}>
@@ -114,7 +128,14 @@ export default function LPDescription() {
                     liquidity pool${upSmall ? ': ' : ''}`
                   : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
-                  {apy?.times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed() ?? '-'}% APY
+                  {apy
+                    ? `${apy.times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed()}% - ${apy
+                        .times(MAX_BOOST)
+                        .times(100)
+                        .dp(2)
+                        .toFixed()}%`
+                    : '-'}
+                  {' APY'}
                 </Typography>
               </Typography>
             ) : (
@@ -196,14 +217,16 @@ export default function LPDescription() {
                             {userRewards?.isEqualTo(0)
                               ? 'N/A'
                               : userRewards
-                              ? `~ ${userRewards.dp(2, BigNumber.ROUND_HALF_UP).toFormat()} BALN`
+                              ? `~ ${userRewards.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat()} BALN`
                               : 'N/A'}
                           </Typography>
                         ) : (
                           <Typography textAlign="center" variant="p">
                             {suppliedReward?.isEqualTo(0) || suppliedReward?.isNaN()
                               ? 'N/A'
-                              : `~ ${suppliedReward?.dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'} BALN`}
+                              : `~ ${
+                                  suppliedReward?.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'
+                                } BALN`}
                           </Typography>
                         )}
                       </Box>

@@ -91,6 +91,7 @@ export interface PopoverProps {
   zIndex?: number;
   fallbackPlacements?: Placement[];
   strategy?: 'fixed' | 'absolute';
+  offset?: [number, number];
 }
 
 export default function Popover({
@@ -104,6 +105,7 @@ export default function Popover({
   zIndex,
   fallbackPlacements,
   strategy,
+  offset,
 }: PopoverProps) {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -112,7 +114,7 @@ export default function Popover({
     placement,
     strategy: strategy ? strategy : 'fixed',
     modifiers: [
-      { name: 'offset', options: { offset: [skidding[placement] || 0, 12] } },
+      { name: 'offset', options: { offset: offset || [skidding[placement] || 0, 12] } },
       { name: 'arrow', options: { element: arrowElement } },
       { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : fallbackPlacements } },
     ],
@@ -153,6 +155,7 @@ type OffsetModifier = [number, number];
 export interface PopperProps {
   anchorEl: HTMLElement | null;
   arrowEl?: HTMLElement | null;
+  customArrowStyle?: React.CSSProperties;
   containerOffset?: number;
   show: boolean;
   children: React.ReactNode;
@@ -186,11 +189,12 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
 export function DropdownPopper({
   show,
   children,
-  arrowEl,
-  containerOffset,
-  offset,
   placement = 'auto',
   anchorEl,
+  arrowEl,
+  customArrowStyle,
+  containerOffset,
+  offset,
   zIndex,
 }: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -220,11 +224,13 @@ export function DropdownPopper({
   }, [update]);
   useInterval(updateCallback, show ? 100 : null);
 
-  if (containerOffset) {
+  if (containerOffset && styles.arrow) {
     const arrowX = arrowEl?.getBoundingClientRect().x || 0;
-    if (styles.arrow) {
-      styles.arrow.transform = `translate3d(${arrowX - containerOffset + 6}px,0,0)`;
-    }
+    styles.arrow.transform = `translate3d(${arrowX - containerOffset + 6}px,0,0)`;
+  }
+
+  if (customArrowStyle && styles.arrow) {
+    styles.arrow = { ...styles.arrow, ...customArrowStyle };
   }
 
   return (
@@ -281,9 +287,10 @@ export interface Props {
   children: React.ReactNode;
   placement?: Placement;
   content: React.ReactNode;
+  zIndex?: number;
 }
 
-export function PopperWithoutArrowAndBorder({ content, show, children, placement = 'auto' }: Props) {
+export function PopperWithoutArrowAndBorder({ content, show, children, zIndex, placement = 'auto' }: Props) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
 
@@ -301,7 +308,13 @@ export function PopperWithoutArrowAndBorder({ content, show, children, placement
     <>
       <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
       <Portal>
-        <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+        <PopoverContainer
+          show={show}
+          ref={setPopperElement as any}
+          style={styles.popper}
+          {...attributes.popper}
+          zIndex={zIndex}
+        >
           <ContentWrapper style={{ border: 'none' }}>{content}</ContentWrapper>
         </PopoverContainer>
       </Portal>

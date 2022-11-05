@@ -25,7 +25,7 @@ export interface ProposalInterface {
   proposer: string;
   description: string;
   majority: number;
-  snapshotDay: number;
+  snapshotBlock: number;
   startDay: number;
   endDay: number;
   quorum: number;

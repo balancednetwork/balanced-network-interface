@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
@@ -15,15 +13,18 @@ import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect';
 import RatioInput from 'app/components/newproposal/RatioInput';
+import QuestionHelper from 'app/components/QuestionHelper';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { PROPOSAL_CONFIG, PROPOSAL_TYPE, PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
+import { useMinBBalnPercentageToSubmit } from 'queries/vote';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useBBalnAmount, useFetchBBalnInfo, useTotalSuply } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useBALNDetails, useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import FundingInput, { CurrencyValue } from '../../components/newproposal/FundingInput';
@@ -120,14 +121,17 @@ export interface CollateralProposal {
 
 export function NewProposalPage() {
   const theme = useTheme();
-  const details = useBALNDetails();
   const { account } = useIconReact();
+  useFetchBBalnInfo(account);
   useWalletFetchBalances(account);
   const [selectedProposalType, setProposalType] = React.useState<PROPOSAL_TYPE>(PROPOSAL_TYPE.TEXT);
+  const bBalnAmount = useBBalnAmount();
+  const { data: minPercentage } = useMinBBalnPercentageToSubmit();
 
   //Form
   const [title, setTitle] = useState('');
   const [forumLink, setForumLink] = useState('');
+  const [duration, setDuration] = useState('');
   const [description, setDescription] = useState('');
   const [ratioInputValue, setRatioInputValue] = useState<{ [key: string]: string }>({});
   const [balanceList, setBalanceList] = useState<CurrencyAmount<Currency>[]>([]);
@@ -169,17 +173,14 @@ export function NewProposalPage() {
   const isCollateralProposal = selectedProposalType === PROPOSAL_TYPE.NEW_COLLATERAL_TYPE;
   const { isScoreAddress } = Validator;
 
-  const [totalSupply, setTotalSupply] = useState(new BigNumber(0));
-  const stakedBalance: BigNumber = details['Staked balance'] || new BigNumber(0);
-  const minimumStakeBalance = BalancedJs.utils.toIcx(totalSupply).times(0.1 / 100);
-  const isStakeValid = stakedBalance.isGreaterThanOrEqualTo(minimumStakeBalance);
+  const totalSupply = useTotalSuply();
+  const minimumBBalnAmount = totalSupply && minPercentage && totalSupply.times(minPercentage);
+  const isBBalnValid = minimumBBalnAmount && bBalnAmount.isGreaterThanOrEqualTo(minimumBBalnAmount);
 
   useEffect(() => {
     (async () => {
-      const totalSupply = await bnJs.BALN.totalSupply();
       const fundingRes = await PROPOSAL_CONFIG.Funding.fetchInputData();
       setBalanceList(fundingRes);
-      setTotalSupply(totalSupply);
       if (fundingRes)
         setCurrencyInputValue({
           recipient: '',
@@ -208,6 +209,7 @@ export function NewProposalPage() {
     title.trim() &&
     description.trim() &&
     forumLink.trim() &&
+    duration.trim() &&
     (isTextProposal ||
       (Object.values(ratioInputValue).length > 0 && Object.values(ratioInputValue).every(ratio => !!ratio.trim())) ||
       (isFundingProposal &&
@@ -221,7 +223,7 @@ export function NewProposalPage() {
         newCollateral.oracleType === ORACLE_TYPE.DEX) ||
       newCollateral.oracleValue);
 
-  const canSubmit = account && isStakeValid && isFormValid;
+  const canSubmit = account && isBBalnValid && isFormValid;
 
   const { isValid, message } = validateRatioInput();
   const isForumLinkValid =
@@ -229,6 +231,15 @@ export function NewProposalPage() {
 
   const onTitleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
     setTitle(event.currentTarget.value);
+  };
+
+  const onDurationInputChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const value = parseInt(event.currentTarget.value);
+    if (0 < value && value < 15) {
+      setDuration(event.currentTarget.value);
+    } else if (isNaN(value)) {
+      setDuration('');
+    }
   };
 
   const onForumInputChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -277,6 +288,7 @@ export function NewProposalPage() {
   const resetForm = () => {
     setTitle('');
     setForumLink('');
+    setDuration('');
     setDescription('');
     setRatioInputValue({});
     setCurrencyInputValue({
@@ -316,7 +328,7 @@ export function NewProposalPage() {
     platformDay &&
       bnJs
         .inject({ account })
-        .Governance.defineVote(title, description, platformDay + 1, platformDay, getActions())
+        .Governance.defineVote(title, description, platformDay + 1, parseInt(duration), forumLink, getActions())
         .then(res => {
           if (res.result) {
             const label = t({ id: PROPOSAL_TYPE_LABELS[selectedProposalType].id });
@@ -360,20 +372,52 @@ export function NewProposalPage() {
             </Typography>
           </FieldContainer>
           <FieldInput type="text" onChange={onTitleInputChange} value={title} maxLength={100} />
-          <FieldContainer>
-            <Typography variant="h3" flex="1" alignSelf="center">
-              <Trans>Forum link</Trans>
-            </Typography>
-          </FieldContainer>
-          <Tooltip
-            containerStyle={{ width: 'auto' }}
-            refStyle={{ display: 'block' }}
-            placement="bottom"
-            text="Must link to a discussion on gov.balanced.network."
-            show={showError.forumLink}
-          >
-            <FieldInput type="text" onChange={onForumInputChange} value={forumLink} />
-          </Tooltip>
+          <Flex flexDirection={['column', 'column', 'row']}>
+            <Box style={{ flexGrow: 1 }} mr={[0, 0, 6]}>
+              <FieldContainer>
+                <Typography variant="h3" flex="1" alignSelf="center">
+                  <Trans>Forum link</Trans>
+                </Typography>
+              </FieldContainer>
+              <Tooltip
+                containerStyle={{ width: 'auto' }}
+                refStyle={{ display: 'block' }}
+                placement="bottom"
+                text="Must link to a discussion on gov.balanced.network."
+                show={showError.forumLink}
+              >
+                <FieldInput type="text" onChange={onForumInputChange} value={forumLink} />
+              </Tooltip>
+            </Box>
+            <Box>
+              <FieldContainer>
+                <Typography variant="h3" flex="1" alignSelf="center">
+                  <Trans>Duration</Trans>{' '}
+                  <QuestionHelper
+                    width={240}
+                    text={
+                      <>
+                        <Typography mb={2}>
+                          <Trans>How long the vote should last (1 – 14 days).</Trans>
+                        </Typography>
+                        <Typography>
+                          <Trans>
+                            5 days is standard. Use less for an emergency vote, more for maximum participation.
+                          </Trans>
+                        </Typography>
+                      </>
+                    }
+                  ></QuestionHelper>
+                </Typography>
+              </FieldContainer>
+              <FieldInput
+                type="number"
+                onChange={onDurationInputChange}
+                value={duration}
+                style={{ minWidth: '180px' }}
+              />
+            </Box>
+          </Flex>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
               <Trans>Description</Trans>
@@ -411,9 +455,9 @@ export function NewProposalPage() {
               <Trans>Submit</Trans>
             </Button>
           </div>
-          {account && !isStakeValid && minimumStakeBalance && (
+          {account && !isBBalnValid && minimumBBalnAmount && (
             <Typography variant="content" mt="25px" mb="25px" textAlign="center" color={theme.colors.alert}>
-              <Trans>Stake at least {minimumStakeBalance.dp(2).toFormat()} BALN if you want to propose a change.</Trans>
+              <Trans>Have at least {minimumBBalnAmount.dp(2).toFormat()} bBALN if you want to propose a change.</Trans>
             </Typography>
           )}
         </ProposalDetailContainer>

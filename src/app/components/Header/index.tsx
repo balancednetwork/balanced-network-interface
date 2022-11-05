@@ -14,10 +14,13 @@ import Logo from 'app/components/Logo';
 import { DropdownPopper } from 'app/components/Popover';
 import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
+import { ReactComponent as CopyIcon } from 'assets/icons/copy.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
 import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
+
+import Wallet from '../Wallet';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -35,22 +38,24 @@ const WalletInfo = styled(Box)`
 
 const WalletButtonWrapper = styled.div``;
 
-const WalletMenu = styled.div`
-  max-width: 240px;
-  font-size: 14px;
-  padding: 25px;
-  display: grid;
-  grid-template-rows: auto;
-  justify-items: center;
-  grid-gap: 20px;
-`;
-
-const WalletMenuButton = styled(Button)`
-  padding: 7px 25px;
-`;
-
-const ChangeWalletButton = styled(Link)`
+const WalletButton = styled(Link)`
   cursor: pointer;
+`;
+
+const WalletWrap = styled(Box)`
+  width: 400px;
+  max-width: calc(100vw - 4px);
+`;
+const WalletMenu = styled.div`
+  font-size: 14px;
+  padding: 25px 25px 15px 25px;
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const WalletButtons = styled(Flex)`
+  display: flex;
+  align-items: center;
 `;
 
 export const StyledAddress = styled(Typography)`
@@ -65,9 +70,11 @@ const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 const CopyableAddress = ({
   account,
   closeAfterDelay,
+  copyIcon,
 }: {
   account: string | null | undefined;
   closeAfterDelay?: number;
+  copyIcon?: boolean;
 }) => {
   const [isCopied, updateCopyState] = React.useState(false);
   const copyAddress = React.useCallback(async (account: string) => {
@@ -81,6 +88,7 @@ const CopyableAddress = ({
       placement={'left'}
       noArrowAndBorder
       closeAfterDelay={closeAfterDelay}
+      zIndex={9999}
     >
       <StyledAddress
         onMouseLeave={() => {
@@ -89,6 +97,7 @@ const CopyableAddress = ({
         onClick={() => copyAddress(account)}
       >
         {shortenAddress(account)}
+        {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
       </StyledAddress>
     </MouseoverTooltip>
   ) : null;
@@ -96,7 +105,7 @@ const CopyableAddress = ({
 
 export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
-
+  const upSmall = useMedia('(min-width: 600px)');
   const { account, disconnect } = useIconReact();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -125,7 +134,11 @@ export default function Header(props: { title?: string; className?: string }) {
     }
   };
 
-  const upSmall = useMedia('(min-width: 800px)');
+  const handleWalletClose = e => {
+    if (!e.target.closest('[data-reach-dialog-overlay]')) {
+      setAnchor(null);
+    }
+  };
 
   return (
     <header className={className}>
@@ -136,7 +149,7 @@ export default function Header(props: { title?: string; className?: string }) {
             <Trans id={title} />
           </Typography>
           {NETWORK_ID !== NetworkId.MAINNET && (
-            <Typography variant="h3" color="alert">
+            <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
               {CHAIN_INFO[NETWORK_ID].name}
             </Typography>
           )}
@@ -155,29 +168,48 @@ export default function Header(props: { title?: string; className?: string }) {
             <WalletInfo>
               {upSmall && (
                 <Typography variant="p" textAlign="right">
-                  <Trans>Wallet</Trans>
+                  <Trans>ICON wallet</Trans>
                 </Typography>
               )}
               {account && upSmall && <CopyableAddress account={account} />}
             </WalletInfo>
 
             <WalletButtonWrapper>
-              <ClickAwayListener onClickAway={closeWalletMenu}>
+              <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
                   <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
                     <WalletIcon />
                   </IconButton>
 
-                  <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
-                    <WalletMenu>
-                      {!upSmall && <CopyableAddress account={account} closeAfterDelay={1000} />}
-                      <ChangeWalletButton onClick={handleChangeWallet}>
-                        <Trans>Change wallet</Trans>
-                      </ChangeWalletButton>
-                      <WalletMenuButton onClick={handleDisconnectWallet}>
-                        <Trans>Sign out</Trans>
-                      </WalletMenuButton>
-                    </WalletMenu>
+                  <DropdownPopper
+                    show={Boolean(anchor)}
+                    anchorEl={anchor}
+                    placement="bottom-end"
+                    offset={[0, 15]}
+                    zIndex={5050}
+                  >
+                    <WalletWrap>
+                      <WalletMenu>
+                        <Typography variant="h2" mr={'auto'}>
+                          <Trans>Wallet</Trans>
+                        </Typography>
+                        <WalletButtons>
+                          <WalletButton onClick={handleChangeWallet}>
+                            <Trans>Change wallet</Trans>
+                          </WalletButton>
+                          <Typography padding={'0px 5px'}>{' | '}</Typography>
+                          <WalletButton onClick={handleDisconnectWallet}>
+                            <Trans>Sign out</Trans>
+                          </WalletButton>
+                        </WalletButtons>
+                      </WalletMenu>
+                      {!upSmall && (
+                        <Flex justifyContent={'flex-end'} width={'100%'} padding={'2px 25px 25px'}>
+                          <CopyableAddress account={account} closeAfterDelay={1000} copyIcon />
+                        </Flex>
+                      )}
+                      <Wallet anchor={anchor} setAnchor={setAnchor} />
+                    </WalletWrap>
                   </DropdownPopper>
                 </div>
               </ClickAwayListener>

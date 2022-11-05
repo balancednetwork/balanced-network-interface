@@ -274,7 +274,7 @@ export default function BBalnPanel() {
   }, [lockedUntil, selectedPeriod]);
 
   const availablePeriods = useMemo(() => {
-    if (lockedUntil) {
+    if (lockedUntil && lockedUntil > new Date()) {
       const availablePeriods = lockingPeriods.filter(period => {
         return lockedUntil ? lockedUntil < new Date(new Date().setDate(new Date().getDate() + period.weeks * 7)) : true;
       });

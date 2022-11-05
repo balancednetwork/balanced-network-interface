@@ -26,7 +26,7 @@ export const useProposalInfoQuery = (pId: number) => {
       proposer: res['proposer'],
       against: _against1,
       for: _for1,
-      snapshotDay: parseInt(res['vote snapshot'], 16),
+      snapshotBlock: parseInt(res['vote snapshot'], 16),
       startDay: parseInt(res['start day'], 16),
       endDay: parseInt(res['end day'], 16),
       majority: BalancedJs.utils.toIcx(res['majority']).times(100).dp(2).toNumber(),
@@ -67,17 +67,17 @@ export const useUserVoteStatusQuery = (pId?: number) => {
   );
 };
 
-export const useUserWeightQuery = (day?: number) => {
+export const useUserWeightQuery = (block?: number) => {
   const { account } = useIconReact();
 
   return useQuery<BigNumber>(
     QUERY_KEYS.Vote.UserWeight(account ?? ''),
     async () => {
-      const res = await bnJs.Governance.myVotingWeight(account!, day!);
+      const res = await bnJs.Governance.myVotingWeight(account!, block!);
       return BalancedJs.utils.toIcx(res);
     },
     {
-      enabled: !!account && !!day,
+      enabled: !!account && !!block,
     },
   );
 };
@@ -197,5 +197,12 @@ export const useActiveProposals = () => {
         }),
       ).then(results => proposals.filter((_proposal, index) => results[index]));
     }
+  });
+};
+
+export const useMinBBalnPercentageToSubmit = () => {
+  return useQuery<BigNumber, Error>('minBbalnRequired', async () => {
+    const points = await bnJs.Governance.getBalnVoteDefinitionCriterion();
+    return new BigNumber(points || 0).div(10000);
   });
 };

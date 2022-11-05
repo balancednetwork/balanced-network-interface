@@ -18,6 +18,8 @@ import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { BalanceData, useSuppliedTokens } from 'hooks/useV2Pairs';
+import { useAllPairs } from 'queries/reward';
+import { Source, useSources } from 'store/bbaln/hooks';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintActionHandlers } from 'store/mint/hooks';
@@ -32,11 +34,13 @@ import { StyledBoxPanel } from './LiquidityDetails/shared';
 import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
 import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './LiquidityDetails/WithdrawPanel';
 import { usePoolPanelContext } from './PoolPanelContext';
-import { getFormattedPoolShare, getFormattedRewards, stakedFraction, totalSupply } from './utils';
+import { getFormattedRewards, stakedFraction, totalSupply } from './utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
   const tokenListConfig = useTokenListConfig();
+  const allPairs = useAllPairs();
+  const sources = useSources();
 
   const { pairs, balances } = usePoolPanelContext();
 
@@ -108,7 +112,7 @@ export default function LiquidityDetails() {
             </HeaderText>
             {upSmall && (
               <HeaderText>
-                <Trans>Pool share</Trans>
+                <Trans>BALN APY</Trans>
               </HeaderText>
             )}
             {upSmall && (
@@ -123,11 +127,23 @@ export default function LiquidityDetails() {
             {shouldShowQueue && (
               <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
                 <StyledAccordionButton onClick={() => setIsHided(false)}>
-                  <PoolRecordQ balance={queueBalance} pair={queuePair} totalReward={queueReward} />
+                  <PoolRecordQ
+                    balance={queueBalance}
+                    pair={queuePair}
+                    totalReward={queueReward}
+                    boost={sources && sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance)}
+                    apy={allPairs && allPairs[1].apy}
+                  />
                 </StyledAccordionButton>
                 <StyledAccordionPanel hidden={isHided}>
                   <StyledBoxPanel bg="bg3">
-                    <WithdrawPanelQ balance={queueBalance} pair={queuePair} />
+                    <WithdrawPanelQ
+                      balance={queueBalance}
+                      pair={queuePair}
+                      totalReward={queueReward}
+                      apy={allPairs && allPairs[1].apy}
+                      boost={sources && sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance)}
+                    />
                   </StyledBoxPanel>
                 </StyledAccordionPanel>
               </StyledAccordionItem>
@@ -141,6 +157,8 @@ export default function LiquidityDetails() {
                       balance={balances[poolId]}
                       pair={sortedPairs[poolId]}
                       totalReward={rewards[poolId]}
+                      boostData={sources}
+                      apy={allPairs && allPairs[parseInt(poolId)] && allPairs[parseInt(poolId)].apy}
                     />
                   </StyledAccordionButton>
                   <StyledAccordionPanel hidden={isHided}>
@@ -223,18 +241,23 @@ const PoolRecord = ({
   pair,
   balance,
   totalReward,
+  boostData,
+  apy,
 }: {
   pair: Pair;
   balance: BalanceData;
   poolId: number;
   totalReward: BigNumber;
+  boostData: { [key in string]: Source } | undefined;
+  apy: number | null;
 }) => {
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
 
-  const { percent, baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
-  const { share, reward } = getShareReward(pair, balance, totalReward);
+  const { baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
+  const { reward } = getShareReward(pair, balance, totalReward);
   const [aBalance, bBalance] = getABBalance(pair, balance);
+  const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
   const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
 
   const baseCurrencyTotalSupply = totalSupply(baseValue, lpBalance?.base);
@@ -253,7 +276,7 @@ const PoolRecord = ({
     <>
       <ListItem onClick={handlePoolClick}>
         <StyledDataText>
-          <DataText>{`${aBalance.currency.symbol || '...'} / ${bBalance.currency.symbol || '...'}`}</DataText>
+          <DataText>{pairName}</DataText>
           <StyledArrowDownIcon />
         </StyledDataText>
         <DataText>
@@ -275,23 +298,44 @@ const PoolRecord = ({
 
         {upSmall && (
           <DataText>
-            {!baseCurrencyTotalSupply && baseValue?.equalTo(0) ? (
-              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            {boostData ? (
+              apy ? (
+                `${new BigNumber(apy)
+                  .times(boostData[pairName].workingBalance.dividedBy(boostData[pairName].balance))
+                  .times(100)
+                  .toFormat(2)}%`
+              ) : (
+                '-'
+              )
             ) : (
-              getFormattedPoolShare(baseValue, quoteValue, percent, share, baseCurrencyTotalSupply, pair)
+              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
             )}
           </DataText>
         )}
-        {upSmall && <DataText>{getFormattedRewards(reward, stakedFractionValue)}</DataText>}
+        {upSmall && (
+          <DataText>{getFormattedRewards(reward, stakedFractionValue, boostData && boostData[pairName])}</DataText>
+        )}
       </ListItem>
     </>
   );
 };
 
-const PoolRecordQ = ({ balance, pair, totalReward }: { balance: BalanceData; pair: Pair; totalReward: BigNumber }) => {
+const PoolRecordQ = ({
+  balance,
+  pair,
+  totalReward,
+  boost,
+  apy,
+}: {
+  balance: BalanceData;
+  pair: Pair;
+  totalReward: BigNumber;
+  boost?: BigNumber | undefined;
+  apy: number | null;
+}) => {
   const upSmall = useMedia('(min-width: 800px)');
 
-  const { share, reward } = getShareReward(pair, balance, totalReward);
+  const { reward } = getShareReward(pair, balance, totalReward);
 
   const { onCurrencySelection } = useMintActionHandlers(false);
 
@@ -303,7 +347,7 @@ const PoolRecordQ = ({ balance, pair, totalReward }: { balance: BalanceData; pai
   return (
     <ListItem onClick={handlePoolClick}>
       <StyledDataText>
-        <DataText>{`${balance.balance.currency.symbol || '...'} / ${
+        <DataText>{`${balance.balance.currency.symbol || '...'}/${
           balance.balance1?.currency.symbol || '...'
         }`}</DataText>
         <StyledArrowDownIcon />
@@ -317,8 +361,21 @@ const PoolRecordQ = ({ balance, pair, totalReward }: { balance: BalanceData; pai
           balance.balance1?.currency.symbol || '...'
         }`}</Typography>
       </DataText>
-      {upSmall && <DataText>{`${share.multiply(100).toFixed(2) || '---'}%`}</DataText>}
-      {upSmall && <DataText>{`~ ${reward.toFixed(2, { groupSeparator: ',' }) || '---'} BALN`}</DataText>}
+      {upSmall && (
+        <DataText>{`${
+          apy
+            ? new BigNumber(apy)
+                .times(100)
+                .times(boost || 1)
+                .toFormat(2)
+            : '-'
+        }%`}</DataText>
+      )}
+      {upSmall && (
+        <DataText>{`~ ${
+          new BigNumber(reward.toFixed(4)).times(boost || 1).toFormat(2, BigNumber.ROUND_HALF_UP) || '---'
+        } BALN`}</DataText>
+      )}
     </ListItem>
   );
 };

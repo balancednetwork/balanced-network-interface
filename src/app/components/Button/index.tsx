@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Button as RebassButton } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Button = styled(RebassButton)`
+export const Button = styled(RebassButton)<{ warning?: boolean }>`
   display: inline-block;
   border-radius: 10px;
   padding: 5px 15px;
@@ -28,6 +28,15 @@ export const Button = styled(RebassButton)`
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
     padding: 7px 25px;
   `}
+
+  ${({ warning }) =>
+    warning &&
+    css`
+      background: #fb6a6a;
+      &:hover {
+        background: #a94141;
+      }
+    `}
 `;
 
 export const ButtonLink = styled(Link)`

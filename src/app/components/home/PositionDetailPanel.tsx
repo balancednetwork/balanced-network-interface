@@ -22,6 +22,7 @@ import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
 import { useRatesQuery } from 'queries/reward';
+import { useBBalnSliderState, useSources, useWorkingBalance } from 'store/bbaln/hooks';
 import { useCollateralInputAmountInUSD, useCollateralType, useIsHandlingICX } from 'store/collateral/hooks';
 import {
   useLoanInputAmount,
@@ -53,8 +54,11 @@ const PositionDetailPanel = () => {
   const rewardsAPY = useLoanAPY();
   const oraclePrice = useOraclePrice();
   const { data: rates } = useRatesQuery();
+  const sources = useSources();
   const collateralType = useCollateralType();
   const locale = useActiveLocale();
+  const getWorkingBalance = useWorkingBalance();
+  const { isAdjusting: isBBalnAdjusting } = useBBalnSliderState();
   const upLarge = useMedia('(min-width: 1200px)');
   const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
@@ -394,7 +398,23 @@ const PositionDetailPanel = () => {
                 </Flex>
                 <Flex>
                   <Box width={1 / 2}>
-                    <Typography variant="p">{`~ ${dailyRewards.dp(2).toFormat()} BALN`}</Typography>
+                    <Typography variant="p">{`~ ${
+                      sources
+                        ? isBBalnAdjusting
+                          ? dailyRewards
+                              .times(
+                                getWorkingBalance(sources.Loans.balance, sources.Loans.supply).dividedBy(
+                                  sources.Loans.balance,
+                                ),
+                              )
+                              .dp(2)
+                              .toFormat()
+                          : dailyRewards
+                              .times(sources.Loans.workingBalance.dividedBy(sources.Loans.balance))
+                              .dp(2)
+                              .toFormat()
+                        : dailyRewards.dp(2).toFormat()
+                    } BALN`}</Typography>
                     <Typography mt={1}>
                       <Trans>Daily rewards</Trans>
                     </Typography>
@@ -402,7 +422,26 @@ const PositionDetailPanel = () => {
                   {!upMedium && <VerticalDivider mr={8} />}
                   <Box width={1 / 2}>
                     <Typography variant="p" color="white">
-                      {rewardsAPY ? rewardsAPY.times(100).dp(2).toFormat() : '-'}%
+                      {rewardsAPY
+                        ? sources
+                          ? isBBalnAdjusting
+                            ? rewardsAPY
+                                .times(100)
+                                .times(
+                                  getWorkingBalance(sources.Loans.balance, sources.Loans.supply).dividedBy(
+                                    sources.Loans.balance,
+                                  ),
+                                )
+                                .dp(2)
+                                .toFormat()
+                            : rewardsAPY
+                                .times(100)
+                                .times(sources.Loans.workingBalance.dividedBy(sources.Loans.balance))
+                                .dp(2)
+                                .toFormat()
+                          : rewardsAPY.times(100).dp(2).toFormat()
+                        : '-'}
+                      %
                     </Typography>
                     <Typography mt={1}>APY</Typography>
                   </Box>
@@ -418,7 +457,7 @@ const PositionDetailPanel = () => {
 
 export default PositionDetailPanel;
 
-const ActivityPanel = styled(FlexPanel)`
+export const ActivityPanel = styled(FlexPanel)`
   padding: 0;
   grid-area: initial;
   flex-direction: column;
@@ -484,7 +523,7 @@ const Threshold = styled(Box)<{ warned?: boolean; heightened?: boolean }>`
   }
 `;
 
-const MetaData = styled(Box)`
+export const MetaData = styled(Box)`
   font-size: 14px;
   margin-top: -10px;
 
@@ -495,11 +534,13 @@ const MetaData = styled(Box)`
   & dd {
     margin-inline: 0px;
     color: rgba(255, 255, 255, 0.75);
+    white-space: nowrap;
   }
 `;
 
 const Locked = styled(Threshold)<{ pos: number }>`
   left: ${({ pos }) => (1 - pos) * 100}%;
+  transition: left ease 0.5s;
 
   ${MetaData} {
     width: 155px;

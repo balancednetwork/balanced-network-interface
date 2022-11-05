@@ -97,7 +97,7 @@ export function theme(): DefaultTheme {
     zIndices: {
       appBar: 1100,
       drawer: 1200,
-      modal: 1600,
+      modal: 5600,
       snackbar: 1400,
       tooltip: 1500,
     },
@@ -638,6 +638,16 @@ export const ThemedGlobalStyle = createGlobalStyle`
     opacity: 1;
     transition: opacity 0.3s ease;
   }
+
+/* Slider Warning */
+  .withdraw-warning .noUi-connect {
+    background: #fb6a6a;
+  }
+
+  .withdraw-warning .noUi-horizontal .noUi-handle {
+    border: 3px solid #fb6a6a;
+  }
+
 
 /* Risk */
 

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-09-23 09:31\n"
+"PO-Revision-Date: 2022-10-31 18:36\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -16,10 +16,22 @@ msgstr ""
 "X-Crowdin-File: en-US.po\n"
 "X-Crowdin-File-ID: 12\n"
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "${0} was distributed over the last 30 days"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "${0}."
+msgstr ""
+
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "({0}% required)"
 msgstr "({0}% requis)"
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid ", so you would have received"
+msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 msgid "1 {sendSymbol} per {0}"
@@ -49,6 +61,10 @@ msgstr "1S"
 msgid "4H"
 msgstr "4H"
 
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "5 days is standard. Use less for an emergency vote, more for maximum participation."
+msgstr ""
+
 #: src/app/components/home/TransactionPanel.tsx
 msgid "ACTIVITY"
 msgstr "ACTIVITÉ"
@@ -58,6 +74,8 @@ msgid "AMOUNT"
 msgstr "MONTANT"
 
 #: src/app/components/trade/AllPoolsPanel.tsx
+#: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "APY"
 msgstr ""
 
@@ -81,29 +99,29 @@ msgstr ""
 msgid "Add token list"
 msgstr ""
 
-#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
 msgstr "Ajoutez vos sICX à la réserve de garanties."
 
 #: src/app/components/AddressInputPanel/index.tsx
-#: src/app/components/home/wallets/SendPanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
 msgid "Address"
 msgstr "Adresse"
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Adjust"
 msgstr "Ajuster"
 
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
-#: src/app/components/home/wallets/SendPanel.tsx
 msgid "After"
 msgstr "Après"
 
@@ -132,7 +150,8 @@ msgid "Approved"
 msgstr "Approuvé"
 
 #: src/app/components/SearchModal/CurrencyList.tsx
-#: src/app/components/home/WalletPanel.tsx
+#: src/app/components/Wallet/index.tsx
+#: src/app/components/Wallet/index.tsx
 msgid "Asset"
 msgstr "Actif"
 
@@ -140,19 +159,28 @@ msgstr "Actif"
 msgid "Assets to send"
 msgstr "Actifs à envoyer"
 
-#: src/app/components/home/WalletPanel.tsx
-msgid "Available"
-msgstr "Disponible"
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Available since {0}"
+msgstr ""
+
+#: src/app/components/trade/LiquidityDetails.tsx
+msgid "BALN APY"
+msgstr ""
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "BALN allocation"
 msgstr "Allocation BALN"
 
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+msgid "BALN staking has been upgraded to a lock-up model called Boosted BALN."
+msgstr ""
+
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
 msgstr "Retour sur le site de Balanced"
 
-#: src/app/components/home/WalletPanel.tsx
+#: src/app/components/Wallet/index.tsx
+#: src/app/components/Wallet/index.tsx
 msgid "Balance"
 msgstr "Solde"
 
@@ -174,16 +202,20 @@ msgstr "Balanced vend des garanties à un prix intéressant pour rembourser une 
 msgid "Band"
 msgstr ""
 
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
-#: src/app/components/home/wallets/SendPanel.tsx
 msgid "Before"
 msgstr "Avant"
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Boost rewards"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -210,15 +242,14 @@ msgstr "Emprunt de bnUSD..."
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
-#: src/app/components/home/wallets/SendPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
@@ -276,12 +307,12 @@ msgstr "Réclamer (1 sur )"
 msgid "Claim Balance Tokens?"
 msgstr "Réclamer les jetons Balance ?"
 
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX"
 msgstr "Réclamer ICX"
 
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX?"
 msgstr "Réclamer ICX ?"
 
@@ -298,11 +329,11 @@ msgstr "Frais réclamés."
 msgid "Claimed {0} BALN."
 msgstr "{0} BALN réclamé."
 
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claimed {0} ICX."
 msgstr "{0} ICX réclamé."
 
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claiming ICX..."
 msgstr "Réclamation d'ICX..."
 
@@ -323,7 +354,6 @@ msgstr "Garantie"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
 msgid "Confirm"
 msgstr "Valider"
 
@@ -401,6 +431,7 @@ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
+#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Daily rewards"
 msgstr "Récompenses quotidiennes"
@@ -410,21 +441,21 @@ msgstr "Récompenses quotidiennes"
 msgid "Debt ceiling"
 msgstr ""
 
+#: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit"
 msgstr "Déposer"
 
-#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit as collateral"
 msgstr "Dépôt en garantie"
 
-#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX"
 msgstr "Déposer sICX"
 
-#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX collateral?"
 msgstr "Déposer sICX en garantie ?"
 
@@ -436,7 +467,7 @@ msgstr ""
 msgid "Deposited {0} ICX as collateral."
 msgstr "{0} ICX déposés comme garantie."
 
-#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposited {0} sICX as collateral."
 msgstr "{0} sICX déposés comme garantie."
 
@@ -444,9 +475,9 @@ msgstr "{0} sICX déposés comme garantie."
 msgid "Deposited {0} {collateralType} as collateral."
 msgstr ""
 
+#: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/wallets/SICXWallet/DepositPanel.tsx
 msgid "Depositing collateral..."
 msgstr "Dépôt en garantie..."
 
@@ -459,9 +490,17 @@ msgstr "Description"
 msgid "Discussion"
 msgstr "Discussion"
 
-#: src/app/components/home/wallets/SendPanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
 msgstr "Ne pas envoyer sICX vers un exchange."
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Duration"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Earn or buy BALN, then lock it up here to boost your earning potential and voting power."
+msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
@@ -512,10 +551,22 @@ msgstr "Financement"
 msgid "Go back"
 msgstr "Retour"
 
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Have at least {0} bBALN if you want to propose a change."
+msgstr ""
+
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
 msgid "Home"
 msgstr "Accueil"
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "How long the vote should last (1 – 14 days)."
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "ICON wallet"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "If bnUSD is above $1"
@@ -554,6 +605,10 @@ msgstr "Comprend des frais de {0} bnUSD."
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Includes a fee of {0} {1}."
 msgstr "Comprend des frais de {0} {1}."
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Increasing lock duration..."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
@@ -625,13 +680,47 @@ msgstr "Récompenses du prêt"
 msgid "Loan to value ratio"
 msgstr "Ratio prêt - valeur"
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Lock duration increased  until {0}."
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Lock up BALN"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel.tsx
+msgid "Lock up BALN to earn network fees."
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Lock up Balance Tokens?"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
 msgstr "Verrouillé"
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Locked until"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Locking BALN..."
+msgstr ""
+
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Minimum to receive"
 msgstr "Minimum à recevoir"
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Minus 50% fee: {0} BALN"
+msgstr ""
 
 #: src/app/containers/NewProposalPage/constant.ts
 msgid "Network fee allocation"
@@ -655,7 +744,7 @@ msgstr "Nouvelle proposition"
 msgid "No activity yet."
 msgstr "Aucune activité pour l'instant."
 
-#: src/app/components/home/WalletPanel.tsx
+#: src/app/components/Wallet/index.tsx
 msgid "No assets available."
 msgstr "Pas d'actifs disponibles."
 
@@ -671,9 +760,9 @@ msgstr "Aucun graphique de prix n'est disponible pour cette paire."
 msgid "No results found."
 msgstr "Aucun résultat."
 
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Not now"
 msgstr "Plus tard"
 
@@ -708,6 +797,10 @@ msgstr "Semaine dernière"
 msgid "Pay"
 msgstr "Payer"
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Pay a 50% fee to unlock your BALN early."
+msgstr ""
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Pending"
 msgstr "En attente"
@@ -716,16 +809,11 @@ msgstr "En attente"
 msgid "Pool"
 msgstr "Pool"
 
-#: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
-#: src/app/components/trade/LiquidityDetails.tsx
-msgid "Pool share"
-msgstr "Part de la pool"
-
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Position details"
 msgstr "Détails de la position"
 
-#: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
 msgstr "Préparation à déstaker sICX..."
 
@@ -858,6 +946,10 @@ msgstr "Ratio de risque"
 msgid "Route"
 msgstr "Itinéraire"
 
+#: src/app/components/Wallet/index.tsx
+msgid "Search assets"
+msgstr ""
+
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "Search name or contract"
 msgstr "Rechercher un nom ou un contrat"
@@ -866,17 +958,16 @@ msgstr "Rechercher un nom ou un contrat"
 msgid "Select a token"
 msgstr "Sélectionner un jeton"
 
-#: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
-#: src/app/components/home/wallets/ICXWallet/index.tsx
-#: src/app/components/home/wallets/SICXWallet/index.tsx
-#: src/app/components/home/wallets/SendPanel.tsx
-#: src/app/components/home/wallets/SendPanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/index.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/index.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/containers/ProposalPage/Funding.tsx
 msgid "Send"
 msgstr "Envoyer"
 
-#: src/app/components/home/wallets/SendPanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
 msgid "Send asset?"
 msgstr "Envoyer un actif ?"
 
@@ -884,11 +975,11 @@ msgstr "Envoyer un actif ?"
 msgid "Send each asset to the contract"
 msgstr "Envoyez chaque actif au contrat"
 
-#: src/app/components/home/wallets/SendPanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
 msgid "Send max"
 msgstr "Envoyer le maximum"
 
-#: src/app/components/home/wallets/SendPanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
 msgid "Send {0}"
 msgstr "Envoyer {0}"
 
@@ -896,7 +987,7 @@ msgstr "Envoyer {0}"
 msgid "Sending"
 msgstr "Envoi en cours"
 
-#: src/app/components/home/wallets/SendPanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
 msgid "Sending {0}..."
 msgstr "Envoi en cours {0}..."
 
@@ -904,7 +995,7 @@ msgstr "Envoi en cours {0}..."
 msgid "Sending {currency} to the {pair} pool..."
 msgstr "Envoi de {currency} dans le pool {pair}..."
 
-#: src/app/components/home/wallets/SendPanel.tsx
+#: src/app/components/Wallet/wallets/SendPanel.tsx
 msgid "Sent {0} {1} to {address}."
 msgstr "Envoyé {0} {1} à {address}."
 
@@ -931,35 +1022,6 @@ msgstr "Se déconnecter"
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Slippage tolerance"
 msgstr "Tolérance de \"glissement\""
-
-#: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "Stake"
-msgstr "Staking"
-
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "Stake Balance Tokens"
-msgstr "Stakez les jetons Balance"
-
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "Stake Balance Tokens?"
-msgstr "Stakez les jetons Balance ?"
-
-#: src/app/containers/NewProposalPage/index.tsx
-msgid "Stake at least {0} BALN if you want to propose a change."
-msgstr "Stakez au moins {0} BALN si vous voulez proposer un changement."
-
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "Stake your Balance Tokens to earn network fees."
-msgstr "Stakez vos jetons Balance pour gagner les frais de réseau."
-
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "Staked {0} BALN."
-msgstr "{0} BALN stakés."
-
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "Staking BALN..."
-msgstr "Staking de BALN..."
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Submit"
@@ -1041,7 +1103,7 @@ msgstr "{inputAmount} {inputCurrency} échangé contre {outputAmount} {outputCur
 msgid "Swapping {inputCurrency} for {outputCurrency}..."
 msgstr "Échange de {inputCurrency} contre {outputCurrency}..."
 
-#: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
 msgstr "Cela peut prendre jusqu'à 7 jours. Lorsque c'est prêt, allez dans ICX > Déstaking dans la section Portefeuille pour le réclamer."
 
@@ -1054,7 +1116,7 @@ msgid "Text"
 msgstr "Texte"
 
 #: src/app/components/trade/AllPoolsPanel.tsx
-msgid "The BALN APY is calculated from the USD value of BALN rewards available for a pool."
+msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
 msgstr ""
 
 #: src/app/components/ICXDisplayTypeSwitcher/index.tsx
@@ -1082,6 +1144,10 @@ msgstr ""
 msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
 msgstr ""
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will decrease over time."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "The maximum amount of bnUSD that can be minted with this collateral type."
@@ -1097,21 +1163,13 @@ msgstr ""
 msgid "The percentage of debt required to trigger liquidation for this collateral type."
 msgstr ""
 
-#: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
-msgid "There's no BALN unstaking."
-msgstr "Il n'y a pas de déstaking de BALN."
-
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "There's no ICX unstaking."
 msgstr "Il n'y a pas de déstaking d'ICX."
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "There's no liquidity pool for this pair yet."
 msgstr "Il n'y a pas encore de pool de liquidité pour cette paire."
-
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "They'll unstake on {0}, around {1}."
-msgstr "Ils se déstakeront sur {0}, autour de {1}."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
@@ -1129,10 +1187,9 @@ msgstr "À"
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Pour gagner des récompenses Balanced (BALN), contractez un prêt ou fournissez de la liquidité sur la page \"Trade\"."
 
-#: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
-msgid "To earn network fees, stake BALN from your wallet."
-msgstr "Pour gagner les frais de réseau, stakez BALN depuis votre portefeuille."
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "To earn liquidity rewards, supply liquidity to a BALN-incentivised pool."
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
@@ -1140,6 +1197,10 @@ msgstr "Pour contracter un prêt, déposez une garantie."
 
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 msgid "Token contract address"
+msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+msgid "Total"
 msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
@@ -1159,45 +1220,55 @@ msgstr "Échanger"
 msgid "Transaction"
 msgstr "Transaction"
 
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-#: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
-#: src/app/components/home/wallets/SICXWallet/index.tsx
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Unlock Balance Tokens?"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Unlocked {0} BALN."
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Unlocking BALN early..."
+msgstr ""
+
+#: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/index.tsx
 msgid "Unstake"
 msgstr "Déstaker"
 
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "Unstake Balance Tokens?"
-msgstr "Déstaker les jetons Balance ?"
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+msgid "Unstake BALN"
+msgstr ""
 
-#: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
-#: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+msgid "Unstake BALN?"
+msgstr ""
+
+#: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX"
 msgstr "Déstaker sICX"
 
-#: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX?"
 msgstr "Déstaker sICX ?"
 
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "Unstaked {0} BALN."
-msgstr "{0} BALN déstakés."
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+msgid "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."
+msgstr ""
 
-#: src/app/components/home/wallets/BALNWallet/BALNWallet.tsx
-#: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/home/wallets/ICXWallet/index.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/index.tsx
 msgid "Unstaking"
 msgstr "Déstaking"
 
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstaking BALN..."
 msgstr "Déstaking de BALN..."
 
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "Unstaking takes 3 days."
-msgstr "Le déstaking prend 3 jours."
-
-#: src/app/components/home/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
 msgstr "Déstaking {0} sICX. Vérifiez l'entrée d'ICX dans votre portefeuille pour plus de détails."
 
@@ -1241,7 +1312,8 @@ msgstr ""
 msgid "VOLUME (24H)"
 msgstr ""
 
-#: src/app/components/home/WalletPanel.tsx
+#: src/app/components/Wallet/index.tsx
+#: src/app/components/Wallet/index.tsx
 msgid "Value"
 msgstr "Valeur"
 
@@ -1283,8 +1355,8 @@ msgstr "Poids du vote"
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
-msgid "Voting weight: {0} BALN"
-msgstr "Poids du vote : {0} BALN"
+msgid "Voting weight: {0} bBALN"
+msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Voting will begin at 5pm UTC,"
@@ -1292,7 +1364,6 @@ msgstr "Le vote commencera à 5:00 pm UTC,"
 
 #: src/app/components/Header/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
-#: src/app/components/home/WalletPanel.tsx
 msgid "Wallet"
 msgstr "Portefeuille"
 
@@ -1326,6 +1397,15 @@ msgstr "Lorsque que vous empruntez du bnUSD, votre garantie est utilisée pour m
 msgid "Withdraw"
 msgstr "Retrait"
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Withdraw BALN"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Withdraw Balance Tokens"
+msgstr ""
+
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw liquidity"
 msgstr "Retirer des liquidités"
@@ -1347,6 +1427,10 @@ msgstr ""
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw:"
 msgstr "Retrait :"
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Withdrawing BALN..."
+msgstr ""
 
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdrawing ICX..."
@@ -1386,6 +1470,10 @@ msgstr "Vous avez besoin d'au moins {MINIMUM_ICX_FOR_TX} ICX dans votre portefeu
 msgid "You rejected"
 msgstr "Vous avez rejeté"
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "You'll need to relock BALN to hold voting power and boost your earning potential."
+msgstr ""
+
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "You'll only be able to interact with the default assets listed on Balanced."
 msgstr ""
@@ -1395,10 +1483,9 @@ msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by sup
 "pool. The smaller your loan, the less rebalancing affects you."
 msgstr ""
 
-#: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
-msgid "Your BALN will unstake on {0} at\n"
-"{1}."
-msgstr "Vos BALN seront déstakés sur {0} à {1}."
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+msgid "You'll receive BALN in your wallet immediately"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX is staked (sICX). Choose what to do with it:"
@@ -1408,12 +1495,16 @@ msgstr ""
 msgid "Your ICX will be converted to sICX (Staked ICX)."
 msgstr ""
 
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Your ICX will be unstaked as more ICX collateral is deposited into Balanced."
 msgstr ""
 
 #: src/app/components/trade/LiquidityPoolsPanel.tsx
 msgid "Your pools"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Your share of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN."
 msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
@@ -1479,11 +1570,20 @@ msgstr "{0} / {1} pool de liquidité {2}"
 msgid "{0} / {1} liquidity pool"
 msgstr "{0} / {1} pool de liquidité"
 
-#: src/app/components/home/wallets/BALNWallet/UnstakePanel.tsx
-msgid "{0} BALN unstaking"
-msgstr "{0} déstaking de BALN"
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+msgid "{0} BALN added to your wallet."
+msgstr ""
 
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "{0} BALN locked until {1}."
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "{0} BALN withdrawn."
+msgstr ""
+
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX"
 msgstr "{0} ICX"
 
@@ -1491,7 +1591,7 @@ msgstr "{0} ICX"
 msgid "{0} ICX added to your wallet."
 msgstr "{0} ICX ajouté à votre portefeuille."
 
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"
 msgstr "{0} ICX est prêt à être réclamé"
 
@@ -1499,7 +1599,7 @@ msgstr "{0} ICX est prêt à être réclamé"
 msgid "{0} ICX is unstaking."
 msgstr ""
 
-#: src/app/components/home/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX unstaking"
 msgstr "{0} déstaking d'ICX"
 
@@ -1533,10 +1633,6 @@ msgstr "{0} {1} par {2}"
 #: src/app/components/home/CollateralPanel.tsx
 msgid "{0} {collateralType} added to your wallet."
 msgstr ""
-
-#: src/app/components/home/wallets/BALNWallet/StakePanel.tsx
-msgid "{0}% staked"
-msgstr "{0}% stackés"
 
 #: src/app/components/trade/utils.tsx
 msgid "{currency} sent to the {pair} pool."

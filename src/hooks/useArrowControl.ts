@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import useKeyPress from './useKeyPress';
 
-export default function useArrowControlControl(
+export default function useArrowControl(
   active: boolean,
   count: number,
   initialIndex?: number,

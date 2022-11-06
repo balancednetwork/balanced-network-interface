@@ -56,6 +56,7 @@ export const AssetName = styled(Flex)`
   align-items: center;
   padding: 3px 20px;
   font-size: 14px;
+  width: 145px;
   ${({ theme }) =>
     css`
       &:hover {
@@ -105,17 +106,17 @@ const AssetToTransfer = ({
   toggleDropdown,
   closeDropdown,
   setBalance,
+  balance,
   onPercentSelect,
   percent,
 }) => {
-  const [inputAmount, setInputAmount] = React.useState('');
   const [isActive, setIsActive] = React.useState(false);
+
   useEffect(() => {
-    setInputAmount('');
-  }, [balanceOfAssetName]);
+    setBalance('');
+  }, [balanceOfAssetName, setBalance]);
 
   const onUserInput = (input: string) => {
-    setInputAmount(input);
     setBalance(input);
   };
 
@@ -124,7 +125,6 @@ const AssetToTransfer = ({
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
     const amount = ((balanceOfAssetName * instant) / 100).toFixed(2).toString();
     setBalance(amount);
-    setInputAmount(amount);
   };
 
   const enforcer = (nextUserInput: string) => {
@@ -152,7 +152,7 @@ const AssetToTransfer = ({
         </AssetName>
         <NumberInput
           placeholder="0"
-          value={inputAmount}
+          value={balance}
           onClick={() => setIsActive(!isActive)}
           onBlur={() => setIsActive(false)}
           onChange={event => {

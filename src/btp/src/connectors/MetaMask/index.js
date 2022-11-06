@@ -10,10 +10,9 @@ import {
   NotificationError,
   NotificationSuccess,
 } from '../../../../app/components/Notification/TransactionNotification';
-import { transferAssetMessage } from '../../../../app/components/trade/utils';
 import { wallets } from '../../utils/constants';
 import { chainConfigs, chainList } from '../chainConfigs';
-import { ADDRESS_LOCAL_STORAGE, CONNECTED_WALLET_LOCAL_STORAGE, transactionInfo } from '../constants';
+import { ADDRESS_LOCAL_STORAGE, CONNECTED_WALLET_LOCAL_STORAGE, signingActions, transactionInfo } from '../constants';
 import { ABI } from './ABI';
 import { findReplacementTx } from './findReplacementTx';
 import { handleSuccessTx } from './handleNotification';
@@ -196,9 +195,6 @@ class Ethereum {
   async sendTransaction(txParams) {
     try {
       const transInfo = window[transactionInfo];
-      let message = null;
-      transInfo &&
-        (message = transferAssetMessage(transInfo.value, transInfo.coinName, transInfo.to, transInfo.networkDst));
       const gasPrice = utils.hexValue(Math.round((await this.provider.getGasPrice()) * 1.04));
       const txHash = await this.ethereum.request({
         method: 'eth_sendTransaction',
@@ -214,11 +210,47 @@ class Ethereum {
       const currentNetworkConfig = chainConfigs[transInfo.networkSrc];
       transInfo.networkSrc === 'BSC' &&
         (link = `${currentNetworkConfig.EXPLORE_URL}/${currentNetworkConfig.exploreSuffix?.transaction}/${txHash}`);
-      toast(<NotificationPending summary={message.pendingMessage || t`Processing transaction...`} />, {
+      // toast(<NotificationPending summary={message.pendingMessage || t`Processing transaction...`} />, {
+      //   onClick: () => window.open(link, '_blank'),
+      //   toastId: txHash,
+      //   autoClose: 3000,
+      // });
+
+      let transferMessage = null;
+      let approveMessage = null;
+
+      if (transInfo) {
+        console.log('transInfo', transInfo);
+        transferMessage = {
+          pendingMessage: t`Transferring ${transInfo.coinName} from ${transInfo.networkSrc} to ${transInfo.networkDst}...`,
+          successMessage: t`Transferred ${transInfo.value} ${transInfo.coinName} to ${transInfo.networkDst}.`,
+          failureMessage: t`Couldn't transfer ${transInfo.coinName} to ${transInfo.networkDst}. Try again.`,
+        };
+        approveMessage = {
+          pendingMessage: t`Approving ${transInfo.coinName} for cross-chain transfers...`,
+          successMessage: t`Approved ${transInfo.coinName} for cross-chain transfers.`,
+          failureMessage: t`Couldn't approve ${transInfo.coinName} for cross-chain transfers.`,
+        };
+      }
+
+      const toastProps = {
         onClick: () => window.open(link, '_blank'),
-        toastId: txHash,
-        autoClose: 3000,
-      });
+      };
+
+      if (
+        window[signingActions.globalName] === signingActions.approve ||
+        window[signingActions.globalName] === signingActions.approveIRC2
+      ) {
+        toast(<NotificationPending summary={approveMessage.pendingMessage || t`Processing transaction...`} />, {
+          ...toastProps,
+          toastId: txHash,
+        });
+      } else {
+        toast(<NotificationPending summary={transferMessage.pendingMessage || t`Processing transaction...`} />, {
+          ...toastProps,
+          toastId: txHash,
+        });
+      }
 
       // For checking replacement tx by speeding up or cancelling tx from MetaMask
       const checkTxRs = setInterval(async () => {
@@ -254,12 +286,35 @@ class Ethereum {
 
         if (replacementTx) {
           clearInterval(checkTxRs);
-          toast(<NotificationSuccess summary={message.successMessage || t`Transfer Success!`} />, {
-            onClick: () => window.open(process, '_blank'),
-            toastId: replacementTx.hash,
-            autoClose: 3000,
-          });
+          // toast(<NotificationSuccess summary={message.successMessage || t`Transfer Success!`} />, {
+          //   onClick: () => window.open(process, '_blank'),
+          //   toastId: replacementTx.hash,
+          //   autoClose: 3000,
+          // });
           handleSuccessTx(replacementTx.hash);
+          if (
+            window[signingActions.globalName] === signingActions.approve ||
+            window[signingActions.globalName] === signingActions.approveIRC2
+          ) {
+            toast.update(txHash, {
+              ...toastProps,
+              render: (
+                <NotificationSuccess
+                  summary={
+                    approveMessage.successMessage ||
+                    t`You've approved to tranfer your token! Please click the Approve button on your wallet to perform transfer`
+                  }
+                />
+              ),
+              autoClose: 3000,
+            });
+          } else {
+            toast.update(txHash, {
+              ...toastProps,
+              render: <NotificationSuccess summary={transferMessage.successMessage || t`Successfully transfer!`} />,
+              autoClose: 3000,
+            });
+          }
         }
       }, 3000);
       // Emitted when the transaction has been mined
@@ -267,18 +322,69 @@ class Ethereum {
         clearInterval(checkTxRs);
         minedTx = transaction;
         if (transaction.status === 1) {
-          toast(<NotificationSuccess summary={message.successMessage || t`Transfer Success!`} />, {
-            onClick: () => window.open(process, '_blank'),
-            toastId: txHash,
-            autoClose: 3000,
-          });
-          handleSuccessTx(txHash, message.successMessage);
+          // toast(<NotificationSuccess summary={message.successMessage || t`Transfer Success!`} />, {
+          //   onClick: () => window.open(process, '_blank'),
+          //   toastId: txHash,
+          //   autoClose: 3000,
+          // });
+          if (
+            window[signingActions.globalName] === signingActions.approve ||
+            window[signingActions.globalName] === signingActions.approveIRC2
+          ) {
+            toast.update(txHash, {
+              ...toastProps,
+              render: (
+                <NotificationSuccess
+                  summary={
+                    approveMessage.successMessage ||
+                    t`You've approved to tranfer your token! Please click the Approve button on your wallet to perform transfer`
+                  }
+                />
+              ),
+              autoClose: 3000,
+            });
+          } else {
+            toast.update(txHash, {
+              ...toastProps,
+              render: <NotificationSuccess summary={transferMessage.successMessage || t`Successfully transfer!`} />,
+              autoClose: 3000,
+            });
+          }
+          handleSuccessTx(txHash);
         } else {
-          toast(<NotificationError summary={message.failureMessage || t`Transaction failed!`} />, {
-            onClick: () => window.open(link, '_blank'),
-            toastId: txHash,
-            autoClose: 3000,
-          });
+          // toast(<NotificationError summary={message.failureMessage || t`Transaction failed!`} />, {
+          //   onClick: () => window.open(link, '_blank'),
+          //   toastId: txHash,
+          //   autoClose: 3000,
+          // });
+          if (
+            window[signingActions.globalName] === signingActions.approve ||
+            window[signingActions.globalName] === signingActions.approveIRC2
+          ) {
+            toast.update(transInfo.txHash, {
+              ...toastProps,
+              render: (
+                <NotificationError
+                  summary={
+                    approveMessage.failureMessage || t`Your transaction has failed. Please go back and try again.`
+                  }
+                />
+              ),
+              autoClose: 5000,
+            });
+          } else {
+            toast.update(transInfo.txHash, {
+              ...toastProps,
+              render: (
+                <NotificationError
+                  summary={
+                    transferMessage.failureMessage || t`Your transaction has failed. Please go back and try again.`
+                  }
+                />
+              ),
+              autoClose: 5000,
+            });
+          }
         }
       });
     } catch (error) {

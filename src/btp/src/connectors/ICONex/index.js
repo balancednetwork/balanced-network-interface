@@ -3,13 +3,14 @@ import React from 'react';
 import { t } from '@lingui/macro';
 import { toast } from 'react-toastify';
 
+import { TransactionStatus } from 'store/transactions/hooks';
+
 import {
   NotificationPending,
   NotificationError,
   NotificationSuccess,
 } from '../../../../app/components/Notification/TransactionNotification';
-import { transferAssetMessage } from '../../../../app/components/trade/utils';
-import { getTrackerLink } from '../../../../utils';
+import { EVENTS, trigger } from '../../../../utils/customEvent';
 import { chainConfigs, customzeChain } from '../chainConfigs';
 import {
   TYPES,
@@ -19,7 +20,7 @@ import {
   transactionInfo,
 } from '../constants';
 import { requestHasAddress } from './events';
-import { getBalance, sendTransaction, getTxResult, sendNonNativeCoin } from './ICONServices';
+import { getBalance, sendTransaction, getTxResult } from './ICONServices';
 import { resetTransferStep } from './utils';
 
 const eventHandler = async event => {
@@ -29,14 +30,28 @@ const eventHandler = async event => {
   console.info('%cICONex event', 'color: green;', event.detail);
 
   if (payload.error) {
-    console.log(payload.error.message);
+    console.log(payload.error.transferMessage);
     return;
   }
 
   const transInfo = window[transactionInfo];
-  let message = null;
-  transInfo &&
-    (message = transferAssetMessage(transInfo.value, transInfo.coinName, transInfo.to, transInfo.networkDst));
+  let transferMessage = null;
+  let approveMessage = null;
+
+  if (transInfo) {
+    console.log('transInfo', transInfo);
+    transferMessage = {
+      pendingMessage: t`Transferring ${transInfo.coinName} from ${transInfo.networkSrc} to ${transInfo.networkDst}...`,
+      successMessage: t`Transferred ${transInfo.value} ${transInfo.coinName} to ${transInfo.networkDst}.`,
+      failureMessage: t`Couldn't transfer ${transInfo.coinName} to ${transInfo.networkDst}. Try again.`,
+    };
+    approveMessage = {
+      pendingMessage: t`Approving ${transInfo.coinName} for cross-chain transfers...`,
+      successMessage: t`Approved ${transInfo.coinName} for cross-chain transfers.`,
+      failureMessage: t`Couldn't approve ${transInfo.coinName} for cross-chain transfers.`,
+    };
+  }
+
   switch (type) {
     // request for wallet address confirm
     case TYPES.RESPONSE_ADDRESS:
@@ -66,16 +81,25 @@ const eventHandler = async event => {
         console.log('Please wait a moment.');
         const txHash = payload.result || (await sendTransaction(payload));
         transInfo.txhash = txHash;
-        const link = `${chainConfigs[[window['accountInfo'].currentNetwork]].EXPLORE_URL}transaction/${txHash}`;
+        const link = `${chainConfigs[window['accountInfo'].id].EXPLORE_URL}transaction/${txHash}`;
         const toastProps = {
           onClick: () => window.open(link, '_blank'),
         };
 
-        toast(<NotificationPending summary={message.pendingMessage || t`Processing transaction...`} />, {
-          ...toastProps,
-          toastId: txHash,
-          autoClose: 3000,
-        });
+        if (
+          window[signingActions.globalName] === signingActions.approve ||
+          window[signingActions.globalName] === signingActions.approveIRC2
+        ) {
+          toast(<NotificationPending summary={approveMessage.pendingMessage || t`Processing transaction...`} />, {
+            ...toastProps,
+            toastId: txHash,
+          });
+        } else {
+          toast(<NotificationPending summary={transferMessage.pendingMessage || t`Processing transaction...`} />, {
+            ...toastProps,
+            toastId: txHash,
+          });
+        }
 
         await new Promise((resolve, reject) => {
           const checkTxRs = setInterval(async () => {
@@ -84,7 +108,7 @@ const eventHandler = async event => {
               // https://www.icondev.io/docs/icon-json-rpc-v3#icx_gettransactionresult
               if (!result.status || result.status === '0x0') {
                 clearInterval(checkTxRs);
-                throw new Error(result.failure.message);
+                throw new Error(result.failure.transferMessage);
               }
 
               switch (window[signingActions.globalName]) {
@@ -103,19 +127,22 @@ const eventHandler = async event => {
                 case signingActions.approve:
                 case signingActions.approveIRC2:
                   console.log("You've approved to tranfer your token! Please click the Transfer button to continue.");
-                  await toast(
-                    <NotificationSuccess
-                      summary={
-                        message.successMessage ||
-                        t`You've approved to tranfer your token! Please click the Approve button on your wallet to perform transfer`
-                      }
-                    />,
-                    {
-                      toastId: txHash,
-                      autoClose: 3000,
-                    },
-                  );
-                  sendNonNativeCoin();
+
+                  toast.update(txHash, {
+                    ...toastProps,
+                    render: (
+                      <NotificationSuccess
+                        summary={
+                          approveMessage.successMessage ||
+                          t`You've approved to tranfer your token! Please click the Approve button on your wallet to perform transfer`
+                        }
+                      />
+                    ),
+                    autoClose: 3000,
+                  });
+                  trigger(EVENTS.APPROVE, { txHash, status: TransactionStatus.success });
+
+                  // sendNonNativeCoin();
                   // modal.openModal({
                   //   icon: 'checkIcon',
                   //   desc: `You've approved to tranfer your token! Please click the Transfer button to continue.`,
@@ -137,15 +164,23 @@ const eventHandler = async event => {
                   //   },
                   // });
                   console.log('Successfully transfer');
+                  trigger(EVENTS.TRANSFER, { status: TransactionStatus.success });
                   // sendLog({
                   //   txHash,
                   //   network: getCurrentChain()?.NETWORK_ADDRESS?.split('.')[0],
                   // });
-                  toast(<NotificationSuccess summary={message.successMessage || t`Successfully transfer!`} />, {
+                  toast.update(txHash, {
                     ...toastProps,
-                    toastId: txHash,
+                    render: (
+                      <NotificationSuccess summary={transferMessage.successMessage || t`Successfully transfer!`} />
+                    ),
                     autoClose: 3000,
                   });
+                  // toast(<NotificationSuccess summary={transferMessage.successMessage || t`Successfully transfer!`} />, {
+                  //   ...toastProps,
+                  //   toastId: txHash,
+                  //   autoClose: 3000,
+                  // });
 
                   // latency time fo fetching new balance
                   setTimeout(async () => {
@@ -168,8 +203,28 @@ const eventHandler = async event => {
       } catch (err) {
         switch (window[signingActions.globalName]) {
           case signingActions.bid:
-            console.log(err.message);
+            console.log(err.transferMessage);
             break;
+          case signingActions.approve:
+          case signingActions.approveIRC2: {
+            const link = `${chainConfigs[window['accountInfo'].id].EXPLORE_URL}transaction/${transInfo.txHash}`;
+            const toastProps = {
+              onClick: () => window.open(link, '_blank'),
+            };
+            trigger(EVENTS.APPROVE, { status: TransactionStatus.failure });
+            toast.update(transInfo.txHash, {
+              ...toastProps,
+              render: (
+                <NotificationError
+                  summary={
+                    approveMessage.failureMessage || t`Your transaction has failed. Please go back and try again.`
+                  }
+                />
+              ),
+              autoClose: 5000,
+            });
+            break;
+          }
           case signingActions.transfer:
           default:
             console.log(err);
@@ -182,6 +237,9 @@ const eventHandler = async event => {
             //     onClick: () => modal.setDisplay(false),
             //   },
             // });
+            if (signingActions.transfer === window[signingActions.globalName]) {
+              trigger(EVENTS.TRANSFER, { status: TransactionStatus.failure });
+            }
             let link = '';
             const currentNetworkConfig = chainConfigs[transInfo.networkSrc];
             transInfo.networkSrc === 'BSC' &&
@@ -190,22 +248,33 @@ const eventHandler = async event => {
             const toastProps = {
               onClick: () => window.open(link, '_blank'),
             };
-            toast(
-              <NotificationError
-                summary={message.failureMessage || t`Your transaction has failed. Please go back and try again.`}
-              />,
-              {
-                ...toastProps,
-                toastId: transInfo.txhash,
-                autoClose: 5000,
-              },
-            );
+            toast.update(transInfo.txHash, {
+              ...toastProps,
+              render: (
+                <NotificationError
+                  summary={
+                    transferMessage.failureMessage || t`Your transaction has failed. Please go back and try again.`
+                  }
+                />
+              ),
+              autoClose: 5000,
+            });
+            // toast(
+            //   <NotificationError
+            //     summary={transferMessage.failureMessage || t`Your transaction has failed. Please go back and try again.`}
+            //   />,
+            //   {
+            //     ...toastProps,
+            //     toastId: transInfo.txhash,
+            //     autoClose: 5000,
+            //   },
+            // );
             break;
         }
       }
       break;
     case TYPES.CANCEL_SIGNING:
-    case TYPES.CANCEL_JSON_RPC:
+    case TYPES.CANCEL_JSON_RPC: {
       console.log('Transaction rejected');
       // modal.openModal({
       //   icon: 'exclamationPointIcon',
@@ -215,8 +284,21 @@ const eventHandler = async event => {
       //     onClick: () => modal.setDisplay(false),
       //   },
       // });
+      switch (window[signingActions.globalName]) {
+        case signingActions.approve:
+        case signingActions.approveIRC2: {
+          trigger(EVENTS.APPROVE, { status: TransactionStatus.failure });
+          break;
+        }
+        case signingActions.transfer: {
+          trigger(EVENTS.TRANSFER, { status: TransactionStatus.failure });
+          break;
+        }
+        default:
+          break;
+      }
       break;
-
+    }
     case 'CANCEL':
       window.accountInfo.cancelConfirmation = false;
       break;

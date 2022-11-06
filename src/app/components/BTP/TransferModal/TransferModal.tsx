@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { transactionInfo } from 'btp/src/connectors/constants';
 import { toChecksumAddress } from 'btp/src/connectors/MetaMask/utils';
 import { getService } from 'btp/src/services/transfer';
@@ -13,6 +14,8 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
 import { useFromNetwork, useToNetwork } from 'store/bridge/hooks';
+import { TransactionStatus } from 'store/transactions/hooks';
+import { EVENTS, on, off } from 'utils/customEvent';
 
 const StyledModalContent = styled(Flex)`
   width: 100%;
@@ -26,10 +29,22 @@ const CheckIconWrapper = styled.div`
   width: 32px;
 `;
 
-export const TransferAssetModal = ({ isOpen, setIsOpen, sendingAddress, balance, tokenSymbol, fee }) => {
+export const TransferAssetModal = ({
+  isOpen,
+  setIsOpen,
+  handleResetForm,
+  sendingAddress,
+  balance,
+  tokenSymbol,
+  fee,
+}) => {
   const networkSrc = useFromNetwork();
   const networkDst = useToNetwork();
-  const [isApproved, setIsApproved] = React.useState<boolean>(false);
+  const [approveStatus, setApproveStatus] = React.useState<TransactionStatus | ''>('');
+  const [transferStatus, setTransferStatus] = React.useState<TransactionStatus | ''>('');
+  const isApproved = approveStatus === TransactionStatus.success;
+  const isApproving = approveStatus === TransactionStatus.pending;
+  const isTranferring = transferStatus === TransactionStatus.pending;
 
   const symbol = window['accountInfo'].symbol;
   const isSendingNativeCoin = symbol === tokenSymbol;
@@ -37,10 +52,11 @@ export const TransferAssetModal = ({ isOpen, setIsOpen, sendingAddress, balance,
   const toggleOpen = () => {
     setIsOpen(!isOpen);
   };
-  const createTransactionInfo = () => {
+
+  const transferNativeToken = async () => {
     const tx = {
       to: toChecksumAddress(sendingAddress),
-      value: balance,
+      value: new BigNumber(balance).plus(fee).toFixed(),
       coinName: tokenSymbol,
       network: networkDst.value,
     };
@@ -52,27 +68,53 @@ export const TransferAssetModal = ({ isOpen, setIsOpen, sendingAddress, balance,
       coinName: tx.coinName,
       nid: IconConverter.toNumber(networkSrc.NETWORK_ADDRESS.split('.')[0]),
     };
-    return tx;
+    getService()?.transfer(tx, isSendingNativeCoin, tokenSymbol);
+  };
+  const approveNonNativeToken = () => {
+    setApproveStatus(TransactionStatus.pending);
+    transferNativeToken();
   };
 
-  const approve = async () => {
-    const tx = createTransactionInfo();
-    await getService()?.approve(tx, tokenSymbol);
-
-    if (window['transactionInfo']?.txHash) {
-      setIsApproved(true);
+  const transfer = () => {
+    setTransferStatus(TransactionStatus.pending);
+    if (isSendingNativeCoin) {
+      transferNativeToken();
+      return;
     }
-  };
-
-  const transfer = async () => {
-    const tx = createTransactionInfo();
-    getService()?.transfer(tx, tokenSymbol, isApproved);
-    setIsOpen(!isOpen);
+    getService()?.sendNonNativeCoin();
   };
 
   useEffect(() => {
-    isOpen && setIsApproved(false);
-  }, [isOpen]);
+    const approveSucces = ({ detail }) => {
+      setApproveStatus(detail.status);
+      if (detail.status === TransactionStatus.failure) {
+        setIsOpen(!isOpen);
+      }
+    };
+    const transferSuccess = ({ detail }) => {
+      setTransferStatus(detail.status);
+      if (detail.status === TransactionStatus.success) {
+        handleResetForm();
+        setIsOpen(!isOpen);
+      }
+      if (detail.status === TransactionStatus.failure) {
+        setIsOpen(!isOpen);
+      }
+    };
+    if (isOpen) {
+      setApproveStatus('');
+      setTransferStatus('');
+      on(EVENTS.APPROVE, approveSucces);
+      on(EVENTS.TRANSFER, transferSuccess);
+    }
+
+    return () => {
+      if (isOpen) {
+        off(EVENTS.APPROVE, approveSucces);
+        off(EVENTS.TRANSFER, transferSuccess);
+      }
+    };
+  }, [handleResetForm, isOpen, setIsOpen]);
 
   return (
     <Modal isOpen={isOpen} onDismiss={toggleOpen}>
@@ -92,8 +134,8 @@ export const TransferAssetModal = ({ isOpen, setIsOpen, sendingAddress, balance,
         {!isSendingNativeCoin && (
           <Flex justifyContent="center" mt={2}>
             {!isApproved ? (
-              <Button onClick={approve} fontSize={14}>
-                <Trans>Approve asset</Trans>
+              <Button fontSize={14} onClick={approveNonNativeToken} disabled={isApproving}>
+                <Trans>{isApproving ? 'Approving asset' : 'Approve asset'}</Trans>
               </Button>
             ) : (
               <CheckIconWrapper>
@@ -125,8 +167,8 @@ export const TransferAssetModal = ({ isOpen, setIsOpen, sendingAddress, balance,
 
         <Typography textAlign="center" width={'55%'} margin={'0 auto'}>
           <Trans>Address</Trans>
-          <Typography variant="p" textAlign="center">
-            <Trans>{sendingAddress}</Trans>
+          <Typography variant="p" textAlign="center" color="white">
+            {sendingAddress}
           </Typography>
         </Typography>
 
@@ -135,8 +177,8 @@ export const TransferAssetModal = ({ isOpen, setIsOpen, sendingAddress, balance,
             <TextButton onClick={toggleOpen} fontSize={14}>
               <Trans> Cancel </Trans>
             </TextButton>
-            <Button onClick={transfer} fontSize={14}>
-              <Trans>Transfer</Trans>
+            <Button onClick={transfer} fontSize={14} disabled={(!isSendingNativeCoin && !isApproved) || isTranferring}>
+              <Trans>{isTranferring ? 'Transferring' : 'Transfer'}</Trans>
             </Button>
           </>
         </Flex>

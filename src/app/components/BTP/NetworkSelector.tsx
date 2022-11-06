@@ -25,8 +25,8 @@ interface NetworkItem {
   label: string;
 }
 
-export const Label = styled(Typography)`
-  margin-bottom: 10px;
+export const Label = styled(Typography)<{ atBottom?: boolean }>`
+  margin: ${({ atBottom }) => (atBottom ? '10px 0 0' : '0 0 10px')};
 `;
 
 const Select = styled(Flex)`

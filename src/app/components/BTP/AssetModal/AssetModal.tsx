@@ -33,7 +33,7 @@ const Assets = styled(motion(Flex))`
       display: inline-block;
       position: absolute;
       bottom: 100%;
-      right: 20px;
+      left: 20px;
     }
   `};
 `;

@@ -114,7 +114,7 @@ export const setApproveForSendNonNativeCoin = async tx => {
 /**
  * Send non-native token which was approved
  */
-export const sendNonNativeCoin = () => {
+export const sendNonNativeCoin = async () => {
   const { coinName, value, to, network } = window[txPayload];
   const { NETWORK_ADDRESS, ICON_BTS_CORE } = chainConfigs[network];
 

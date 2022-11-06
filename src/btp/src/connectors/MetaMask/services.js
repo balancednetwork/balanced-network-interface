@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 
 import { EthereumInstance } from '.';
 import { roundNumber } from '../../utils/app';
-import { chainConfigs, checkIsToken, formatSymbol } from '../chainConfigs';
+import { chainConfigs, formatSymbol } from '../chainConfigs';
 import { signingActions, rawTransaction, getCurrentChain } from '../constants';
 import { convertToICX } from '../ICONex/utils';
 import { ABI } from './ABI';
@@ -98,7 +98,7 @@ export const transfer = async (tx, sendNativeCoin, token) => {
   return txParams;
 };
 
-export const sendNoneNativeCoin = async () => {
+export const sendNonNativeCoin = async () => {
   const { BTS_CORE, GAS_LIMIT } = getCurrentChain();
 
   const { value, to, coinName } = window[rawTransaction];

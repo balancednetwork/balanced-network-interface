@@ -46,10 +46,10 @@ const Wrapper = styled.div`
   gap: 15px;
 `;
 
-const FlexSelector = styled(Box)`
+const FlexSelector = styled(Flex)`
   gap: 20px;
-  display: flex;
   margin-top: 30px;
+  align-items: center;
   .content {
     flex: 1;
   }
@@ -88,7 +88,7 @@ const BTP = () => {
   const [assetName, setAssetName] = useState('');
   const [balanceOfAssetName, setBalanceOfAssetName] = useState(0);
   const [sendingAddress, setSendingAddress] = useState('');
-  const [sendingBalance, setSendingBalance] = useState(0);
+  const [sendingBalance, setSendingBalance] = useState('');
   const [networkId, setNetworkId] = useState('');
   const [isOpenAssetOptions, setIsOpenAssetOptions] = useState(false);
   const toggleTransferAssetsModal = useTransferAssetsModalToggle();
@@ -131,6 +131,12 @@ const BTP = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window['accountInfo']]);
 
+  useEffect(() => {
+    if (!walletModalOpen) {
+      resetForm();
+    }
+  }, [walletModalOpen]);
+
   const onChange = values => {
     // const {
     //   target: { value, name },
@@ -138,6 +144,11 @@ const BTP = () => {
     // if (name) {
     //   setSendingInfo({ [name]: value } as any);
     // }
+  };
+
+  const resetForm = () => {
+    setSendingAddress('');
+    setSendingBalance('');
   };
 
   const chainInfo = () => {
@@ -194,6 +205,7 @@ const BTP = () => {
 
   const isInsufficient = new BigNumber(fee).plus(sendingBalance).isGreaterThan(balanceOfAssetName);
   const isEmpty = !sendingAddress || !balanceOfAssetName;
+  const isLessThanFee = new BigNumber(sendingBalance).isLessThan(new BigNumber(fee));
 
   return (
     <>
@@ -217,9 +229,7 @@ const BTP = () => {
               <Box className="content">
                 <NetworkSelector label="From" data={chainInfo()} onChange={onChange} toggleWallet={toggleWalletModal} />
               </Box>
-              <Box>
-                <ArrowIcon width="20" height="18" />
-              </Box>
+              <ArrowIcon width="20" height="18" />
               <Box className="content">
                 <NetworkSelector
                   label="To"
@@ -239,6 +249,7 @@ const BTP = () => {
                   }}
                   closeDropdown={() => setIsOpenAssetOptions(false)}
                   setBalance={setSendingBalance}
+                  balance={sendingBalance}
                   onPercentSelect={(percent: number) => handlePercentSelect(percent)}
                   percent={percent}
                 />
@@ -248,13 +259,14 @@ const BTP = () => {
               <TransferAssetModal
                 isOpen={isOpenConfirm}
                 setIsOpen={setIsOpenConfirm}
+                handleResetForm={resetForm}
                 sendingAddress={sendingAddress}
                 balance={sendingBalance}
                 tokenSymbol={assetName}
                 fee={fee}
               />
               <Box className="full-width">
-                <Address onChange={setSendingAddress} />
+                <Address address={sendingAddress} onChange={setSendingAddress} />
                 <Flex justifyContent={'end'}>
                   <Label atBottom>
                     Transfer fee:{' '}
@@ -272,12 +284,23 @@ const BTP = () => {
             <Flex justifyContent={'center'}>
               <TextButton onClick={toggleTransferAssetsModal}>Cancel</TextButton>
               <Button
-                disabled={!sendingBalance || isEmpty || !toCheckAddress(sendingAddress) || isInsufficient}
+                disabled={
+                  !sendingBalance || isEmpty || !toCheckAddress(sendingAddress) || isInsufficient || isLessThanFee
+                }
                 onClick={() => handleTransfer()}
               >
                 {isInsufficient ? `Insufficient ${assetName}` : 'Transfer'}
               </Button>
             </Flex>
+            {isLessThanFee && (
+              <Typography textAlign="center" paddingTop={'10px'} color="#F05365">
+                Transfer amount must be greater than {fee} for the token fee.
+              </Typography>
+            )}
+
+            <Typography textAlign="center" paddingTop={'10px'}>
+              ICON Bridge is undergoing a security audit. Use at your own risk.
+            </Typography>
           </Flex>
         </Wrapper>
       </StyledModal>

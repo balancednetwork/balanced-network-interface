@@ -55,49 +55,32 @@ export const reclaim = async ({ coinName, value }) => {
   });
 };
 
-export const approve = async (tx, token) => {
-  const symbol = window['accountInfo'].symbol;
-  const isSendingNativeCoin = symbol === token;
-  const { BTS_CORE } = getCurrentChain();
-  const { to } = tx;
-  const value = ethers.utils.parseEther(tx.value)._hex;
-  let data = null;
-  if (isSendingNativeCoin) {
-    window[signingActions.globalName] = signingActions.transfer;
-    data = await EthereumInstance.ABI.encodeFunctionData('transferNativeCoin', [
-      `btp://${ICONchain.NETWORK_ADDRESS}/${to}`,
-    ]);
-  } else {
-    window[rawTransaction] = tx;
-    window[signingActions.globalName] = signingActions.approve;
-    data = await EthereumInstance.ABI.encodeFunctionData('approve', [BTS_CORE, value]);
-  }
-  return data;
-};
-
-export const transfer = async (tx, token, isApproved) => {
+export const transfer = async (tx, sendNativeCoin, token) => {
   const { BTS_CORE, GAS_LIMIT } = getCurrentChain();
-  const symbol = window['accountInfo'].symbol;
-  const isSendingNativeCoin = symbol === token;
+
   // https://docs.metamask.io/guide/sending-transactions.html#example
   const value = ethers.utils.parseEther(tx.value)._hex;
+  const { to } = tx;
   let txParams = {
     from: toChecksumAddress(EthereumInstance.ethereum.selectedAddress),
     value,
   };
 
   let data = null;
-  if (isSendingNativeCoin) {
-    data = await approve(tx, token);
+  if (sendNativeCoin) {
+    window[signingActions.globalName] = signingActions.transfer;
+
+    data = EthereumInstance.ABI.encodeFunctionData('transferNativeCoin', [`btp://${ICONchain.NETWORK_ADDRESS}/${to}`]);
     txParams = {
       ...txParams,
       to: BTS_CORE,
     };
   } else {
-    if (!isApproved) {
-      //handle error
-      return;
-    }
+    window[rawTransaction] = tx;
+    window[signingActions.globalName] = signingActions.approve;
+
+    data = EthereumInstance.ABI.encodeFunctionData('approve', [BTS_CORE, value]);
+
     txParams = {
       ...txParams,
       to: await getCoinId(formatSymbol(token)),
@@ -115,7 +98,7 @@ export const transfer = async (tx, token, isApproved) => {
   return txParams;
 };
 
-export const sendNoneNativeCoin = async () => {
+export const sendNonNativeCoin = async () => {
   const { BTS_CORE, GAS_LIMIT } = getCurrentChain();
 
   const { value, to, coinName } = window[rawTransaction];

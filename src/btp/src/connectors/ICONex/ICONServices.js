@@ -17,7 +17,7 @@ import Request, { convertToICX, convertToLoopUnit, makeICXCall, getICONBSHAddres
 const { IconUtil, IconBuilder, IconConverter } = IconService;
 const { serialize } = IconUtil;
 
-export { transfer, approve } from './transfer';
+export { transfer } from './transfer';
 
 const ICONchain = chainConfigs.ICON || {};
 export const serviceName = ICONchain.id;
@@ -114,7 +114,7 @@ export const setApproveForSendNonNativeCoin = async tx => {
 /**
  * Send non-native token which was approved
  */
-export const sendNonNativeCoin = () => {
+export const sendNonNativeCoin = async () => {
   const { coinName, value, to, network } = window[txPayload];
   const { NETWORK_ADDRESS, ICON_BTS_CORE } = chainConfigs[network];
 

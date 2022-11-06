@@ -64,7 +64,14 @@ import {
 } from './styledComponents';
 import { LockedPeriod } from './types';
 import UnstakePrompt from './UnstakePrompt';
-import { WEEK_IN_MS, lockingPeriods, formatDate, getClosestUnixWeekStart, getWeekOffsetTimestamp } from './utils';
+import {
+  WEEK_IN_MS,
+  lockingPeriods,
+  formatDate,
+  getClosestUnixWeekStart,
+  getWeekOffsetTimestamp,
+  comparePeriods,
+} from './utils';
 
 export default function BBalnPanel() {
   const { account } = useIconReact();
@@ -150,7 +157,7 @@ export default function BBalnPanel() {
   };
 
   const hideLPTooltip = () => {
-    setShowLiquidityTooltip(false || isAdjusting);
+    setShowLiquidityTooltip(false);
   };
 
   const handleBoostUpdate = async () => {
@@ -262,7 +269,7 @@ export default function BBalnPanel() {
   const samePeriod: LockedPeriod | undefined = useMemo(() => {
     return timeRemaining
       ? {
-          name: t`Keep the lock`,
+          name: t`Current unlock date`,
           weeks: Math.ceil(timeRemaining / WEEK_IN_MS),
         }
       : undefined;
@@ -288,7 +295,7 @@ export default function BBalnPanel() {
     }
   }, [lockedUntil, samePeriod]);
 
-  // reset loan ui state if cancel adjusting
+  // reset ui state if cancel adjusting or locked Baln change
   React.useEffect(() => {
     if (!isAdjusting) {
       onFieldAInput(
@@ -540,13 +547,11 @@ export default function BBalnPanel() {
                                 <UnderlineTextWithArrow
                                   onClick={handlePeriodDropdownToggle}
                                   text={formatDate(
-                                    selectedPeriod.weeks
-                                      ? getClosestUnixWeekStart(
-                                          new Date(
-                                            new Date().setDate(new Date().getDate() + (selectedPeriod.weeks * 7 - 7)),
-                                          ).getTime(),
-                                        )
-                                      : lockedUntil,
+                                    getClosestUnixWeekStart(
+                                      new Date(
+                                        new Date().setDate(new Date().getDate() + (selectedPeriod.weeks * 7 - 7)),
+                                      ).getTime(),
+                                    ),
                                   )}
                                   arrowRef={periodArrowRef}
                                 />
@@ -557,11 +562,16 @@ export default function BBalnPanel() {
                                 placement="bottom-end"
                               >
                                 <MenuList>
-                                  {availablePeriods.map(period => (
-                                    <MenuItem key={period.weeks} onClick={() => handleLockingPeriodChange(period)}>
-                                      {period.name}
-                                    </MenuItem>
-                                  ))}
+                                  {availablePeriods
+                                    .filter(
+                                      (period, index) =>
+                                        index === 0 || comparePeriods(period, availablePeriods[index - 1]) !== 0,
+                                    )
+                                    .map(period => (
+                                      <MenuItem key={period.weeks} onClick={() => handleLockingPeriodChange(period)}>
+                                        {period.name}
+                                      </MenuItem>
+                                    ))}
                                 </MenuList>
                               </DropdownPopper>
                             </>
@@ -677,7 +687,12 @@ export default function BBalnPanel() {
                     />
                   </StyledTypography>
                 </BoostedBox>
-                <LiquidityDetailsWrap show={showLiquidityTooltip || isAdjusting}>
+                <LiquidityDetailsWrap
+                  show={
+                    showLiquidityTooltip ||
+                    (isAdjusting && boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0)
+                  }
+                >
                   <LiquidityDetails>
                     {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0 ? (
                       boostedLPs &&

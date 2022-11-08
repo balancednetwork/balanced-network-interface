@@ -313,3 +313,11 @@ export const usePastMonthFeesDistributed = () => {
     { keepPreviousData: true },
   );
 };
+
+export const useTimeRemaining = () => {
+  const lockedUntil = useLockedUntil();
+  const fiveMinPeriod = 1000 * 300;
+  const now = Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod;
+
+  return lockedUntil && lockedUntil.getTime() - now;
+};

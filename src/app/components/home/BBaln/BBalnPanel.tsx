@@ -39,6 +39,7 @@ import {
   useSources,
   useDBBalnAmountDiff,
   usePastMonthFeesDistributed,
+  useTimeRemaining,
 } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
@@ -61,14 +62,23 @@ import {
   StyledTypography,
   Threshold,
 } from './styledComponents';
+import { LockedPeriod } from './types';
 import UnstakePrompt from './UnstakePrompt';
-import { WEEK_IN_MS, lockingPeriods, formatDate, getClosestUnixWeekStart, getWeekOffsetTimestamp } from './utils';
+import {
+  WEEK_IN_MS,
+  lockingPeriods,
+  formatDate,
+  getClosestUnixWeekStart,
+  getWeekOffsetTimestamp,
+  comparePeriods,
+} from './utils';
 
 export default function BBalnPanel() {
   const { account } = useIconReact();
   const bBalnAmount = useBBalnAmount();
   const lockedBalnAmount = useLockedBaln();
   const lockedUntil = useLockedUntil();
+  const timeRemaining = useTimeRemaining();
   const totalSupplyBBaln = useTotalSuply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const bbalnAmountDiff = useDBBalnAmountDiff();
@@ -147,7 +157,7 @@ export default function BBalnPanel() {
   };
 
   const hideLPTooltip = () => {
-    setShowLiquidityTooltip(false || isAdjusting);
+    setShowLiquidityTooltip(false);
   };
 
   const handleBoostUpdate = async () => {
@@ -256,23 +266,36 @@ export default function BBalnPanel() {
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
   const shouldBoost = differenceBalnAmount.isPositive();
 
+  const samePeriod: LockedPeriod | undefined = useMemo(() => {
+    return timeRemaining
+      ? {
+          name: t`Current unlock date`,
+          weeks: Math.ceil(timeRemaining / WEEK_IN_MS),
+        }
+      : undefined;
+  }, [timeRemaining]);
+
   const isPeriodChanged = useMemo(() => {
     const lockTimestamp = getWeekOffsetTimestamp(selectedPeriod.weeks);
     return getClosestUnixWeekStart(lockTimestamp).getTime() !== lockedUntil?.getTime();
   }, [lockedUntil, selectedPeriod]);
 
   const availablePeriods = useMemo(() => {
-    if (lockedUntil) {
+    if (lockedUntil && lockedUntil > new Date()) {
       const availablePeriods = lockingPeriods.filter(period => {
         return lockedUntil ? lockedUntil < new Date(new Date().setDate(new Date().getDate() + period.weeks * 7)) : true;
       });
-      return availablePeriods.length ? availablePeriods : [lockingPeriods[lockingPeriods.length - 1]];
+      return samePeriod
+        ? [samePeriod, ...(availablePeriods.length ? availablePeriods : [lockingPeriods[lockingPeriods.length - 1]])]
+        : availablePeriods.length
+        ? availablePeriods
+        : [lockingPeriods[lockingPeriods.length - 1]];
     } else {
       return lockingPeriods;
     }
-  }, [lockedUntil]);
+  }, [lockedUntil, samePeriod]);
 
-  // reset loan ui state if cancel adjusting
+  // reset ui state if cancel adjusting or locked Baln change
   React.useEffect(() => {
     if (!isAdjusting) {
       onFieldAInput(
@@ -539,11 +562,16 @@ export default function BBalnPanel() {
                                 placement="bottom-end"
                               >
                                 <MenuList>
-                                  {availablePeriods.map(period => (
-                                    <MenuItem key={period.weeks} onClick={() => handleLockingPeriodChange(period)}>
-                                      {period.name}
-                                    </MenuItem>
-                                  ))}
+                                  {availablePeriods
+                                    .filter(
+                                      (period, index) =>
+                                        index === 0 || comparePeriods(period, availablePeriods[index - 1]) !== 0,
+                                    )
+                                    .map(period => (
+                                      <MenuItem key={period.weeks} onClick={() => handleLockingPeriodChange(period)}>
+                                        {period.name}
+                                      </MenuItem>
+                                    ))}
                                 </MenuList>
                               </DropdownPopper>
                             </>
@@ -659,7 +687,12 @@ export default function BBalnPanel() {
                     />
                   </StyledTypography>
                 </BoostedBox>
-                <LiquidityDetailsWrap show={showLiquidityTooltip || isAdjusting}>
+                <LiquidityDetailsWrap
+                  show={
+                    showLiquidityTooltip ||
+                    (isAdjusting && boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0)
+                  }
+                >
                   <LiquidityDetails>
                     {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0 ? (
                       boostedLPs &&

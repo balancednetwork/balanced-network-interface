@@ -45,10 +45,12 @@ export const UnderlineText = styled.span`
     transition: width 0.3s ease, background-color 0.3s ease;
   }
 
-  &:hover:after {
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    &:hover:after {
     width: 100%;
     background: #2fccdc;
   }
+  `};
 `;
 
 type UnderlineTextWithArrowProps = {

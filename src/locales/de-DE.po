@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-10-31 18:36\n"
+"PO-Revision-Date: 2022-11-08 09:27\n"
 "Last-Translator: \n"
 "Language: de_DE\n"
 "Language-Team: German\n"
@@ -417,6 +417,10 @@ msgstr ""
 
 #: src/app/containers/ProposalPage/Ratio.tsx
 msgid "Current"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Current unlock date"
 msgstr ""
 
 #: src/app/components/home/TransactionPanel.tsx

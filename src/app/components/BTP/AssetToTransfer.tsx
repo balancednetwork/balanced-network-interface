@@ -124,10 +124,11 @@ const AssetToTransfer = ({
   const [ref] = useWidth();
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
-    const amount = ((balanceOfAssetName * instant) / 100).toFixed(2).toString();
-    if (instant === 100 && Number(amount) > fee) {
-      setBalance((Number(amount) - fee).toString());
+    if (instant === 100 && balanceOfAssetName > fee) {
+      const amount = (((balanceOfAssetName - fee) * instant) / 100).toFixed(2).toString();
+      setBalance(amount);
     } else {
+      const amount = ((balanceOfAssetName * instant) / 100).toFixed(2).toString();
       setBalance(amount);
     }
   };

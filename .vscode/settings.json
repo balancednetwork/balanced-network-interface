@@ -22,5 +22,8 @@
   "cSpell.words": [
     "BALN",
     "BNUSD"
+  ],
+  "i18n-ally.localesPaths": [
+    "src/locales"
   ]
 }

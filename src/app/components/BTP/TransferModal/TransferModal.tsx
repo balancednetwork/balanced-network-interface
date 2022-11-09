@@ -46,7 +46,7 @@ export const TransferAssetModal = ({
   const isApproving = approveStatus === TransactionStatus.pending;
   const isTranferring = transferStatus === TransactionStatus.pending;
 
-  const symbol = window['accountInfo'].symbol;
+  const symbol = window['accountInfo']?.symbol;
   const isSendingNativeCoin = symbol === tokenSymbol;
 
   const toggleOpen = () => {

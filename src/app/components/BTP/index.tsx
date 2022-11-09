@@ -193,6 +193,7 @@ const BTP = () => {
   };
 
   const userAssets = useTokenBalance(getOptions());
+
   const onChangeAsset = async asset => {
     setAssetName(asset.value);
     setBalanceOfAssetName(asset.balance);
@@ -242,6 +243,7 @@ const BTP = () => {
             <Grid>
               <Box className="full-width">
                 <AssetToTransfer
+                  fee={fee}
                   assetName={assetName}
                   balanceOfAssetName={balanceOfAssetName}
                   toggleDropdown={() => {

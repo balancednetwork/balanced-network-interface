@@ -101,6 +101,7 @@ const ItemList = styled(Option)<{ selected: boolean }>`
 `;
 
 const AssetToTransfer = ({
+  fee,
   assetName,
   balanceOfAssetName,
   toggleDropdown,
@@ -124,7 +125,11 @@ const AssetToTransfer = ({
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
     const amount = ((balanceOfAssetName * instant) / 100).toFixed(2).toString();
-    setBalance(amount);
+    if (instant === 100) {
+      setBalance((Number(amount) - fee).toString());
+    } else {
+      setBalance(amount);
+    }
   };
 
   const enforcer = (nextUserInput: string) => {

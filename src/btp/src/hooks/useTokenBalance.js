@@ -15,7 +15,7 @@ export const useTokenBalance = coinNames => {
               return { ...coin, balance };
             } else {
               return getService()
-                .getBalanceOf({ address, symbol: coin.label })
+                ?.getBalanceOf({ address, symbol: coin.label })
                 .then(result => {
                   return { ...coin, balance: result };
                 });

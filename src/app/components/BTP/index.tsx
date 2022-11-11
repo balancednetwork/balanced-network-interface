@@ -138,12 +138,7 @@ const BTP = () => {
   }, [walletModalOpen]);
 
   const onChange = values => {
-    // const {
-    //   target: { value, name },
-    // } = values;
-    // if (name) {
-    //   setSendingInfo({ [name]: value } as any);
-    // }
+    setAssetName(values.COIN_SYMBOL);
   };
 
   const resetForm = () => {
@@ -157,16 +152,6 @@ const BTP = () => {
       label: CHAIN_NAME,
       ...others,
     }));
-  };
-
-  const getTargetChains = () => {
-    const targetChains = chainInfo();
-
-    if (!nativeCoin) return targetChains;
-    if (nativeCoin !== chainConfigs.ICON.COIN_SYMBOL) {
-      return targetChains.filter(({ value }) => value === chainConfigs.ICON.id);
-    }
-    return targetChains;
   };
 
   const getOptions = () => {
@@ -233,7 +218,7 @@ const BTP = () => {
               <Box className="content">
                 <NetworkSelector
                   label="To"
-                  data={getTargetChains()}
+                  data={chainInfo()}
                   onChange={onChange}
                   setSendingInfo={onSendingInfoChange}
                 />

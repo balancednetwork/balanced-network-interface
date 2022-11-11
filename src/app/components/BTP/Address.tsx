@@ -7,7 +7,7 @@ const Address = ({ onChange, address }) => {
     onChange(input);
   };
 
-  const { wallet } = window['accountInfo'];
+  const wallet = window['accountInfo']?.wallet;
 
   return (
     <AddressInfo>

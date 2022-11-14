@@ -214,7 +214,7 @@ export default function LPDescription() {
                         </Typography>
                         {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
                           <Typography textAlign="center" variant="p">
-                            {userRewards?.isEqualTo(0)
+                            {userRewards?.isEqualTo(0) || userRewards.times(boost).isNaN()
                               ? 'N/A'
                               : userRewards
                               ? `~ ${userRewards.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat()} BALN`

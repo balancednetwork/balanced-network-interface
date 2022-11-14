@@ -66,6 +66,7 @@ export const IUSDC: TokenMap = {
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cx65f639254090820361da483df233f6d0e69af9b7', 6, 'IUSDC', 'ICON USD Coin'),
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cx599d58885e5b1736c934fca7e53e04c797ab05be', 6, 'IUSDC', 'ICON USD Coin'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx538a925f49427d4f1078aed638c8cb525071fc68', 6, 'IUSDC', 'ICON USD Coin'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, 'cx9634be155fc77754c4b2e1bceddc1c63d973f1f3', 6, 'IUSDC', 'ICON USD Coin'),
 };
 
 // disable prettier printWidth rule

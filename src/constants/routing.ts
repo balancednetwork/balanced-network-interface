@@ -11,7 +11,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
   [ChainId.YEOUIDO]: [sICX[ChainId.YEOUIDO], bnUSD[ChainId.YEOUIDO], IUSDC[ChainId.YEOUIDO], USDS[ChainId.YEOUIDO]],
   [ChainId.SEJONG]: [sICX[ChainId.SEJONG], bnUSD[ChainId.SEJONG]],
   [ChainId.BERLIN]: [sICX[ChainId.BERLIN], bnUSD[ChainId.BERLIN], IUSDC[ChainId.BERLIN], USDS[ChainId.BERLIN]],
-  [ChainId.LISBON]: [sICX[ChainId.LISBON], bnUSD[ChainId.LISBON], IUSDC[ChainId.LISBON], USDS[ChainId.LISBON]],
+  [ChainId.LISBON]: [sICX[ChainId.LISBON], bnUSD[ChainId.LISBON], IUSDC[ChainId.LISBON]],
 };
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
   [ChainId.MAINNET]: {

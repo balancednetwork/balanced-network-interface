@@ -161,6 +161,14 @@
       "symbol": "sICX",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sicx.png"
+    },
+    {
+      "address": "cx9634be155fc77754c4b2e1bceddc1c63d973f1f3",
+      "chainId": 2,
+      "name": "ICON Tether",
+      "symbol": "IUSDT",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdt.png"
     }
   ]
 }

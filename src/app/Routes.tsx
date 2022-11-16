@@ -12,6 +12,7 @@ import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 import { ProposalPage } from './containers/ProposalPage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
 import { VotePage } from './containers/VotePage/Loadable';
+import { ProposalList } from './containers/VotePage/ProposalList';
 
 const routeTexts: [string, MessageDescriptor][] = [
   ['/vote', defineMessage({ message: 'Vote' })],
@@ -32,6 +33,7 @@ export default function Routes() {
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route exact path="/vote" component={VotePage} />
+        <Route exact path="/vote/proposal-list" component={ProposalList} />
         <Route exact path="/trade" component={TradePage} />
         <Route path="/vote/new-proposal" component={NewProposalPage} />
         <Route path="/vote/proposal/:id" component={ProposalPage} />

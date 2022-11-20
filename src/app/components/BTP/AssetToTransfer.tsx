@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 
+import BigNumber from 'bignumber.js';
 import { Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
@@ -110,6 +111,7 @@ const AssetToTransfer = ({
   balance,
   onPercentSelect,
   percent,
+  fee,
 }) => {
   const [isActive, setIsActive] = React.useState(false);
 
@@ -124,8 +126,13 @@ const AssetToTransfer = ({
   const [ref] = useWidth();
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
-    const amount = ((balanceOfAssetName * instant) / 100).toFixed(2).toString();
-    setBalance(amount);
+    const amount = new BigNumber(balanceOfAssetName).times(instant).div(100);
+    const leftAmount = new BigNumber(balanceOfAssetName).minus(amount);
+
+    const result = new BigNumber(fee).isLessThanOrEqualTo(leftAmount)
+      ? amount.toFixed().toString()
+      : amount.minus(new BigNumber(fee)).toFixed().toString();
+    setBalance(result);
   };
 
   const enforcer = (nextUserInput: string) => {
@@ -140,8 +147,8 @@ const AssetToTransfer = ({
         <Flex justifyContent={'end'}>
           <Label>
             Wallet:{' '}
-            <WalletAmount>
-              {!balanceOfAssetName ? 0 : Number(balanceOfAssetName).toFixed(2)} {assetName}
+            <WalletAmount onClick={handlePercentSelect(100)}>
+              {!balanceOfAssetName ? 0 : new BigNumber(balanceOfAssetName).toFixed(2)} {assetName}
             </WalletAmount>
           </Label>
         </Flex>

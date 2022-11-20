@@ -61,8 +61,8 @@ export const TransferAssetModal = ({
       network: networkDst.value,
     };
     window[transactionInfo] = {
-      networkDst: networkDst.value,
-      networkSrc: networkSrc.value,
+      networkDst: networkDst.label,
+      networkSrc: networkSrc.label,
       to: tx.to,
       value: tx.value,
       coinName: tx.coinName,

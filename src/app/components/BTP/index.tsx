@@ -163,6 +163,7 @@ const BTP = () => {
   }, [window['accountInfo']]);
 
   const fromNetwork = useFromNetwork();
+  const toNetwork = useToNetwork();
   useEffect(() => {
     if (!fromNetwork) setAssetName(getOptions()[0].value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -268,6 +269,7 @@ const BTP = () => {
                   balance={sendingBalance}
                   onPercentSelect={(percent: number) => handlePercentSelect(percent)}
                   percent={percent}
+                  fee={fee}
                 />
                 {isOpenAssetOptions && (
                   <AssetModal data={userAssets.length > 0 ? userAssets : getOptions()} onChange={onChangeAsset} />
@@ -302,7 +304,13 @@ const BTP = () => {
               <TextButton onClick={toggleTransferAssetsModal}>Cancel</TextButton>
               <Button
                 disabled={
-                  !sendingBalance || isEmpty || !toCheckAddress(sendingAddress) || isInsufficient || isLessThanFee
+                  !sendingBalance ||
+                  isEmpty ||
+                  !toCheckAddress(sendingAddress) ||
+                  isInsufficient ||
+                  isLessThanFee ||
+                  !fromNetwork ||
+                  !toNetwork
                 }
                 onClick={() => handleTransfer()}
               >

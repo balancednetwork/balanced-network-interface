@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
@@ -73,6 +73,7 @@ const SelectItems = styled(motion(Flex))`
   flex-direction: column;
   margin-top: 5px;
   z-index: 5;
+  overflow: hidden;
 
   ${({ theme }) => css`
     background-color: ${theme.colors.bg2};
@@ -105,14 +106,6 @@ const SelectItem = styled(Box)`
       background-color: ${theme.colors.primary};
     }
   `}
-
-  &:first-of-type {
-    border-radius: 5px 5px 0 0;
-  }
-
-  &:last-of-type {
-    border-radius: 0 0 5px 5px;
-  }
 `;
 
 const NetworkSelector = ({ placeholder, label, data, onChange, toggleWallet }: NetworkSelectorProps) => {

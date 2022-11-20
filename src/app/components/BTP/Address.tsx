@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useToNetwork } from 'store/bridge/hooks';
+
 import { AssetName as AddressLabel, AssetInput as AddressInput, AssetInfo as AddressInfo } from './AssetToTransfer';
 
 const Address = ({ onChange, address }) => {
@@ -7,13 +9,13 @@ const Address = ({ onChange, address }) => {
     onChange(input);
   };
 
-  const wallet = window['accountInfo']?.wallet;
+  const toNetwork = useToNetwork();
 
   return (
     <AddressInfo>
-      <AddressLabel>Address</AddressLabel>
+      <AddressLabel isDisabled>Address</AddressLabel>
       <AddressInput
-        placeholder={wallet === 'iconex' ? '0x00000...' : 'hx00000...'}
+        placeholder={`${toNetwork.label || ''} address`}
         value={address}
         // onClick={() => setIsActive(!isActive)}
         // onBlur={() => setIsActive(false)}

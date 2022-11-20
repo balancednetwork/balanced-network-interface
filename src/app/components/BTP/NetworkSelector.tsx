@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
@@ -16,6 +16,7 @@ interface NetworkSelectorProps {
   onChange: Function;
   setSendingInfo?: Function;
   toggleWallet?: Function;
+  placeholder?: string;
 }
 
 interface NetworkItem {
@@ -114,31 +115,19 @@ const SelectItem = styled(Box)`
   }
 `;
 
-const NetworkSelector = ({ label, data, onChange, toggleWallet }: NetworkSelectorProps) => {
+const NetworkSelector = ({ placeholder, label, data, onChange, toggleWallet }: NetworkSelectorProps) => {
   const [showItems, setShowItems] = useState(false);
-  data = data.filter(network => !network.disabled);
-  let initialNetwork = data[0];
   const setNetworkSrc = useSelectNetworkSrc();
   const setNetworkDst = useSelectNetworkDst();
   const fromNetwork = useFromNetwork();
   const toNetwork = useToNetwork();
-
-  if ('From' === label) {
-    initialNetwork = fromNetwork ? fromNetwork : initialNetwork;
-    setNetworkSrc(initialNetwork);
-  } else {
-    data = data.filter(item => item.value !== fromNetwork.value);
-    initialNetwork = toNetwork && toNetwork.value !== fromNetwork.value ? toNetwork : data[0];
-    setNetworkDst(initialNetwork);
-  }
-
-  const [selectedValue, setSelectedValue] = useState(initialNetwork || {});
+  data = data.filter(network => !network.disabled && network.value !== fromNetwork?.value);
 
   const toggleDropdown = () => {
     setShowItems(prevState => !prevState);
   };
 
-  const closeDropdown = item => {
+  const closeDropdown = () => {
     setShowItems(false);
   };
 
@@ -148,14 +137,16 @@ const NetworkSelector = ({ label, data, onChange, toggleWallet }: NetworkSelecto
     if (toggleWallet) {
       toggleWallet();
     }
-    onChange(network);
-    setSelectedValue(network);
-    if ('From' === label) {
+    if (label === 'From') {
+      onChange(network);
       setNetworkSrc(network);
+      setNetworkDst('');
     } else {
       setNetworkDst(network);
     }
   };
+
+  const selectedValue = label === 'From' ? fromNetwork : toNetwork;
 
   return (
     <>
@@ -164,7 +155,7 @@ const NetworkSelector = ({ label, data, onChange, toggleWallet }: NetworkSelecto
         <ClickAwayListener onClickAway={closeDropdown}>
           <Select>
             <Selected onClick={toggleDropdown}>
-              {selectedValue?.label}
+              {selectedValue?.label || placeholder}
               <StyledArrowDown />
             </Selected>
             <AnimatePresence>

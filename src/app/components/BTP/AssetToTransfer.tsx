@@ -47,7 +47,7 @@ const NumberInput = styled.input<{ bg?: string; active?: boolean }>`
   ${props => props.active && 'border-bottom-right-radius: 0;'}
 `;
 
-export const AssetName = styled(Flex)`
+export const AssetName = styled(Flex)<{ isDisabled?: boolean }>`
   font-weight: 700;
   color: #fff;
   border: 2px solid #021338;
@@ -57,7 +57,8 @@ export const AssetName = styled(Flex)`
   padding: 3px 20px;
   font-size: 14px;
   width: 145px;
-  ${({ theme }) =>
+  ${props =>
+    !props.isDisabled &&
     css`
       &:hover {
         border: 2px solid #2ca9b7;

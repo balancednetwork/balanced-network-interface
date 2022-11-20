@@ -56,7 +56,7 @@ const config = {
     REACT_APP_CHAIN_ICON_RPC_URL: 'https://lisbon.net.solidwallet.io/api/v3/icon_dex',
     REACT_APP_CHAIN_ICON_EXPLORE_URL: 'https://tracker.lisbon.icon.community/',
     REACT_APP_CHAIN_ICON_NETWORK_ADDRESS: '0x2.icon',
-    REACT_APP_CHAIN_ICON_CHAIN_NAME: 'ICON Network',
+    REACT_APP_CHAIN_ICON_CHAIN_NAME: 'ICON',
     REACT_APP_CHAIN_ICON_COIN_SYMBOL: 'ICX',
     REACT_APP_CHAIN_ICON_STEP_LIMIT: '2500000',
     //--------------------------------------------------------

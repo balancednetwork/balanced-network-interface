@@ -17,13 +17,15 @@ import Divider from 'app/components/Divider';
 import Modal, { ModalProps } from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowIcon } from 'assets/icons/arrow.svg';
-import { useModalOpen, useTransferAssetsModalToggle, useBridgeWalletModalToggle } from 'store/application/hooks';
+import { useModalOpen, useTransferAssetsModalToggle } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
+import { useFromNetwork, useToNetwork } from 'store/bridge/hooks';
 
 import { ExternalLink } from '../SearchModal/components';
 import Address from './Address';
 import { AssetModal } from './AssetModal';
 import AssetToTransfer from './AssetToTransfer';
+import BridgeWalletModal from './BridgeWalletModal';
 import NetworkSelector, { Label } from './NetworkSelector';
 import { TransferAssetModal } from './TransferModal';
 
@@ -68,6 +70,7 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
         width: 100%;
         max-width: 525px;
         z-index: 1500;
+        overflow: initial;
       }
     `}
   }
@@ -83,7 +86,7 @@ addICONexListener();
 
 const BTP = () => {
   const [isOpenConfirm, setIsOpenConfirm] = useState(false);
-  const walletModalOpen = useModalOpen(ApplicationModal.TRANSFER_ASSETS);
+  const isOpenTransferAssetsModal = useModalOpen(ApplicationModal.TRANSFER_ASSETS);
   const [nativeCoin, setNativeCoin] = useState('');
   const [assetName, setAssetName] = useState('');
   const [balanceOfAssetName, setBalanceOfAssetName] = useState(0);
@@ -91,11 +94,16 @@ const BTP = () => {
   const [sendingBalance, setSendingBalance] = useState('');
   const [networkId, setNetworkId] = useState('');
   const [isOpenAssetOptions, setIsOpenAssetOptions] = useState(false);
+  const [walletModalOpen, setOpenWalletModal] = useState(false);
+
   const toggleTransferAssetsModal = useTransferAssetsModalToggle();
-  const toggleWalletModal = useBridgeWalletModalToggle();
   const [, setSendingInfo] = useState({ token: '', network: '' });
   const [percent, setPercent] = React.useState<number>(0);
   const [fee, setFee] = useState('0');
+
+  const toggleWalletModalOpen = () => {
+    setOpenWalletModal(!walletModalOpen);
+  };
 
   const onSendingInfoChange = (info = {}) => {
     setSendingInfo(sendingInfo => ({ ...sendingInfo, ...info }));
@@ -117,41 +125,6 @@ const BTP = () => {
   const getFee = async tokenSymbol => {
     const BTPFee = await getBTPfee(tokenSymbol);
     setFee(BTPFee);
-  };
-
-  useEffect(() => {
-    if (window['accountInfo'] != null) {
-      const { balance, symbol, id } = window['accountInfo'];
-      setAssetName(symbol);
-      setNetworkId(id);
-      setNativeCoin(symbol);
-      setBalanceOfAssetName(balance || 0);
-      getFee(symbol);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window['accountInfo']]);
-
-  useEffect(() => {
-    if (!walletModalOpen) {
-      resetForm();
-    }
-  }, [walletModalOpen]);
-
-  const onChange = values => {
-    setAssetName(values.COIN_SYMBOL);
-  };
-
-  const resetForm = () => {
-    setSendingAddress('');
-    setSendingBalance('');
-  };
-
-  const chainInfo = () => {
-    return chainList.map(({ CHAIN_NAME, id, ...others }) => ({
-      value: id,
-      label: CHAIN_NAME,
-      ...others,
-    }));
   };
 
   const getOptions = () => {
@@ -177,7 +150,56 @@ const BTP = () => {
     );
   };
 
-  const userAssets = useTokenBalance(getOptions());
+  useEffect(() => {
+    if (window['accountInfo'] != null) {
+      const { balance, symbol, id } = window['accountInfo'];
+      setAssetName(symbol);
+      setNetworkId(id);
+      setNativeCoin(symbol);
+      setBalanceOfAssetName(balance || 0);
+      getFee(symbol);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [window['accountInfo']]);
+
+  const fromNetwork = useFromNetwork();
+  useEffect(() => {
+    if (!fromNetwork) setAssetName(getOptions()[0].value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromNetwork]);
+
+  useEffect(() => {
+    if (!walletModalOpen) {
+      resetForm();
+    }
+  }, [walletModalOpen]);
+
+  const onChange = values => {
+    setAssetName(values.COIN_SYMBOL);
+  };
+
+  const resetForm = () => {
+    setSendingAddress('');
+    setSendingBalance('');
+  };
+
+  const chainInfo = () => {
+    return chainList.map(({ CHAIN_NAME, id, ...others }) => ({
+      value: id,
+      label: CHAIN_NAME,
+      ...others,
+    }));
+  };
+
+  const userAssets = useTokenBalance(getOptions())
+    .filter((asset: any) => asset?.balance !== 0)
+    .reduce((accumulator: any, value: any) => {
+      const nextIndex = accumulator.findIndex((i: any) => value?.balance > i?.balance);
+      const index = nextIndex > -1 ? nextIndex : accumulator.length;
+      accumulator.splice(index, 0, value);
+      return accumulator;
+    }, []);
+
   const onChangeAsset = async asset => {
     setAssetName(asset.value);
     setBalanceOfAssetName(asset.balance);
@@ -194,17 +216,19 @@ const BTP = () => {
 
   return (
     <>
-      <StyledModal isOpen={walletModalOpen} onDismiss={toggleTransferAssetsModal} maxWidth={525}>
+      <StyledModal isOpen={isOpenTransferAssetsModal} onDismiss={toggleTransferAssetsModal} maxWidth={525}>
         <Wrapper>
           <Flex flexDirection={'column'} width={'100%'}>
             <Typography variant={'h2'}>
-              Transfer assets{' '}
+              <Trans>Transfer assets </Trans>
               <BetaText variant="span">
-                <strong>Beta</strong>
+                <strong>
+                  <Trans>Beta </Trans>
+                </strong>
               </BetaText>
             </Typography>
             <Typography padding={'10px 0'}>
-              Move assets between ICON and other blockchains.{' '}
+              <Trans> Move assets between ICON and other blockchains. </Trans>
               <ExternalLink href="#" target="_blank">
                 <Trans>Learn more.</Trans>
               </ExternalLink>
@@ -212,11 +236,18 @@ const BTP = () => {
 
             <FlexSelector width={'100%'}>
               <Box className="content">
-                <NetworkSelector label="From" data={chainInfo()} onChange={onChange} toggleWallet={toggleWalletModal} />
+                <NetworkSelector
+                  placeholder="From blockchain"
+                  label="From"
+                  data={chainInfo()}
+                  onChange={onChange}
+                  toggleWallet={toggleWalletModalOpen}
+                />
               </Box>
               <ArrowIcon width="20" height="18" />
               <Box className="content">
                 <NetworkSelector
+                  placeholder="To blockchain"
                   label="To"
                   data={chainInfo()}
                   onChange={onChange}
@@ -238,9 +269,11 @@ const BTP = () => {
                   onPercentSelect={(percent: number) => handlePercentSelect(percent)}
                   percent={percent}
                 />
+                {isOpenAssetOptions && (
+                  <AssetModal data={userAssets.length > 0 ? userAssets : getOptions()} onChange={onChangeAsset} />
+                )}
               </Box>
 
-              {isOpenAssetOptions && <AssetModal data={userAssets} onChange={onChangeAsset} />}
               <TransferAssetModal
                 isOpen={isOpenConfirm}
                 setIsOpen={setIsOpenConfirm}
@@ -264,7 +297,6 @@ const BTP = () => {
                 </Flex>
               </Box>
             </Grid>
-
             <Divider margin={'20px 0'} />
             <Flex justifyContent={'center'}>
               <TextButton onClick={toggleTransferAssetsModal}>Cancel</TextButton>
@@ -282,12 +314,12 @@ const BTP = () => {
                 Transfer amount must be greater than {fee} for the token fee.
               </Typography>
             )}
-
             <Typography textAlign="center" paddingTop={'10px'}>
               ICON Bridge is undergoing a security audit. Use at your own risk.
             </Typography>
           </Flex>
         </Wrapper>
+        <BridgeWalletModal walletModalOpen={walletModalOpen} setOpenWalletModal={toggleWalletModalOpen} />
       </StyledModal>
     </>
   );

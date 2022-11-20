@@ -17,14 +17,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import { ReactComponent as MetamaskIcon } from 'assets/icons/metamask.svg';
-import {
-  useTransferAssetsModalToggle,
-  useBridgeWalletModalToggle,
-  useChangeCurrentLedgerAddressPage,
-  useCurrentLedgerAddressPage,
-  useModalOpen,
-} from 'store/application/hooks';
-import { ApplicationModal } from 'store/application/reducer';
+import { useChangeCurrentLedgerAddressPage, useCurrentLedgerAddressPage } from 'store/application/hooks';
 import { useFromNetwork } from 'store/bridge/hooks';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
@@ -140,11 +133,8 @@ const Wrapper = styled.div`
   gap: 15px;
 `;
 
-export default function BridgeWalletModal() {
+export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal }) {
   const [loading, setLoading] = useState(false);
-  const walletModalOpen = useModalOpen(ApplicationModal.BRIDGE_WALLET);
-  const toggleWalletModal = useBridgeWalletModalToggle();
-  const toggleTransferAssetsModal = useTransferAssetsModalToggle();
   const [showLedgerAddress, updateShowledgerAddress] = useState(false);
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
@@ -176,15 +166,13 @@ export default function BridgeWalletModal() {
           const data = await EthereumInstance.getEthereumAccounts();
         }
         setLoading(false);
-        toggleWalletModal();
-        toggleTransferAssetsModal();
+        setOpenWalletModal();
         break;
       case wallets.iconex:
       case wallets.hana:
         requestAddress();
         setLoading(false);
-        toggleWalletModal();
-        toggleTransferAssetsModal();
+        setOpenWalletModal();
         break;
       default:
         break;
@@ -321,7 +309,7 @@ export default function BridgeWalletModal() {
 
   return (
     <>
-      <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} maxWidth={430}>
+      <StyledModal isOpen={walletModalOpen} onDismiss={setOpenWalletModal} maxWidth={430}>
         <Wrapper>
           <Typography textAlign="center" mb={1}>
             <Trans>Choose wallet</Trans>:

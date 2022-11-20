@@ -43,10 +43,6 @@ export function useWalletModalToggle(): () => void {
   return useToggleModal(ApplicationModal.WALLET);
 }
 
-export function useBridgeWalletModalToggle(): () => void {
-  return useToggleModal(ApplicationModal.BRIDGE_WALLET);
-}
-
 export function useTransferAssetsModalToggle(): () => void {
   return useToggleModal(ApplicationModal.TRANSFER_ASSETS);
 }

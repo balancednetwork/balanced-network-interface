@@ -144,7 +144,7 @@ class Ethereum {
     try {
       this.getEthereum.on('chainChanged', chainId => {
         console.log('Change Network', chainId);
-        window.location.reload();
+        // window.location.reload();
       });
     } catch (err) {
       console.log(err);

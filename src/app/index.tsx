@@ -37,7 +37,6 @@ export function App() {
         <NotificationContainer />
         <WalletModal />
         <TransferAssetsModal />
-        <BridgeWalletModal />
         {/* Add message for community */}
 
         <Helmet

@@ -6,7 +6,7 @@ import { LockedPeriod } from 'app/components/home/BBaln/types';
 import { lockingPeriods } from 'app/components/home/BBaln/utils';
 
 import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeData, changePeriod, changeSources } from './actions';
+import { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } from './actions';
 import { Source } from './hooks';
 
 export interface BBalnState {
@@ -54,6 +54,9 @@ export default createReducer(initialState, builder =>
       if (state.lockedUntil?.getTime() !== payload.lockEnd.getTime()) {
         state.lockedUntil = payload.lockEnd;
       }
+    })
+    .addCase(changeTotalSupply, (state, { payload }) => {
+      state.totalSupply = payload.totalSupply;
     })
     .addCase(changeSources, (state, { payload }) => {
       state.sources = payload.sources;

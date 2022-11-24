@@ -9,7 +9,7 @@ import {
   useBBalnAmount,
   useLockedBaln,
   useBBalnSliderState,
-  useTotalSuply,
+  useTotalSupply,
   Source,
   useWorkingBalance,
   useSources,
@@ -33,7 +33,7 @@ import {
 export default function BBalnPanel() {
   const bBalnAmount = useBBalnAmount();
   const lockedBalnAmount = useLockedBaln();
-  const totalSupplyBBaln = useTotalSuply();
+  const totalSupplyBBaln = useTotalSupply();
   const bbalnAmountDiff = useDBBalnAmountDiff();
   const sources = useSources();
   const { typedValue, isAdjusting } = useBBalnSliderState();

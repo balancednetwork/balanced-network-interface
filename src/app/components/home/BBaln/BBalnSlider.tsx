@@ -29,7 +29,7 @@ import {
   useBBalnSliderActionHandlers,
   useLockedUntil,
   useHasLockExpired,
-  useTotalSuply,
+  useTotalSupply,
   Source,
   useBBalnChangeSelectedPeriod,
   useSelectedPeriod,
@@ -73,7 +73,7 @@ export default function BBalnSlider({
   const lockedBalnAmount = useLockedBaln();
   const lockedUntil = useLockedUntil();
   const timeRemaining = useTimeRemaining();
-  const totalSupplyBBaln = useTotalSuply();
+  const totalSupplyBBaln = useTotalSupply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const sources = useSources();
   const { data: hasLockExpired } = useHasLockExpired();

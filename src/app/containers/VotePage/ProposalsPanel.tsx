@@ -10,7 +10,7 @@ import { ButtonLink } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import { UnderlineText } from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
-import { VoteStatusLabel } from 'app/components/ProposalInfo/components';
+import { StyledSkeleton, VoteStatusLabel } from 'app/components/ProposalInfo/components';
 import { Typography } from 'app/theme';
 import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
 import { normalizeContent } from 'utils';
@@ -50,35 +50,104 @@ export default function ProposalsPanel() {
         )}
       </Flex>
       <Grid>
-        {proposals
-          ? proposals
-              .sort((a, b) => b?.id - a?.id)
-              .map((proposal, index) => {
-                return (
-                  index < 3 && (
-                    <Link key={proposal.id} to={`/vote/proposal/${proposal?.id}`} style={{ textDecoration: 'none' }}>
-                      <ProposalPreview bg="bg3" flexDirection="column">
-                        <StyledTypography
-                          variant="h3"
-                          fontSize={16}
-                          mt={-1}
-                          notification={shouldShowNotification(proposal)}
-                        >
-                          {proposal.name}
-                        </StyledTypography>
-                        <Typography fontSize={14} color="text1" mt={2}>
-                          {proposal.description && normalizeContent(proposal.description)}
-                        </Typography>
-                        <Divider mt={3} mb={2}></Divider>
-                        <Flex sx={{ rowGap: '10px' }} flexWrap="wrap" alignItems="center" mb={-2}>
-                          <VoteStatusLabel proposal={proposal} />
-                        </Flex>
-                      </ProposalPreview>
-                    </Link>
-                  )
-                );
-              })
-          : 'loader'}
+        {proposals ? (
+          proposals
+            .sort((a, b) => b?.id - a?.id)
+            .map((proposal, index) => {
+              return (
+                index < 3 && (
+                  <Link key={proposal.id} to={`/vote/proposal/${proposal?.id}`} style={{ textDecoration: 'none' }}>
+                    <ProposalPreview bg="bg3" flexDirection="column">
+                      <StyledTypography
+                        variant="h3"
+                        fontSize={16}
+                        mt={-1}
+                        notification={shouldShowNotification(proposal)}
+                      >
+                        {proposal.name}
+                      </StyledTypography>
+                      <Typography fontSize={14} color="text1" mt={2} mb="auto">
+                        {proposal.description && normalizeContent(proposal.description, true)}
+                      </Typography>
+                      <Divider mt={3} mb={2}></Divider>
+                      <Flex sx={{ rowGap: '10px' }} flexWrap="wrap" alignItems="center" mb={-2}>
+                        <VoteStatusLabel proposal={proposal} />
+                      </Flex>
+                    </ProposalPreview>
+                  </Link>
+                )
+              );
+            })
+        ) : (
+          <>
+            <ProposalPreview bg="bg3" flexDirection="column" noHover>
+              <Typography variant="h3" fontSize={16} mt={-1}>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1" mt={2}>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1">
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1">
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1" mb="auto">
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Divider mt={3} mb={2}></Divider>
+              <Typography fontSize={14} color="text1" mb={-2}>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+            </ProposalPreview>
+            <ProposalPreview bg="bg3" flexDirection="column" noHover>
+              <Typography variant="h3" fontSize={16} mt={-1}>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1" mt={2}>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1">
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1">
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1" mb="auto">
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Divider mt={3} mb={2}></Divider>
+              <Typography fontSize={14} color="text1" mb={-2}>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+            </ProposalPreview>
+            <ProposalPreview bg="bg3" flexDirection="column" noHover>
+              <Typography variant="h3" fontSize={16} mt={-1}>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1" mt={2}>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1">
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1">
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Typography fontSize={14} color="text1" mb="auto">
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+              <Divider mt={3} mb={2}></Divider>
+              <Typography fontSize={14} color="text1" mb={-2}>
+                <StyledSkeleton animation="wave"></StyledSkeleton>
+              </Typography>
+            </ProposalPreview>
+          </>
+        )}
       </Grid>
     </BoxPanel>
   );

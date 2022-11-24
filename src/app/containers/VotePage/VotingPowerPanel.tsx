@@ -9,6 +9,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { useTotalBalnLocked, useTotalSupply } from 'store/bbaln/hooks';
 
+import { LoaderComponent } from './styledComponents';
 import { maxYearsLocked } from './utils';
 
 export default function VotingPowerPanel() {
@@ -24,7 +25,7 @@ export default function VotingPowerPanel() {
       <BoostedInfo showBorder={!!account}>
         <BoostedBox>
           <Typography fontSize={16} color="#FFF">
-            {totalSupply ? `${totalSupply.toFormat(0)} bBALN` : '-'}
+            {totalSupply ? `${totalSupply.toFormat(0)} bBALN` : <LoaderComponent />}
           </Typography>
           <Typography>
             <Trans>Total voting power</Trans>
@@ -32,7 +33,7 @@ export default function VotingPowerPanel() {
         </BoostedBox>
         <BoostedBox>
           <Typography fontSize={16} color="#FFF">
-            {totalLocked ? `${totalLocked.toFormat(0)} BALN` : '-'}
+            {totalLocked ? `${totalLocked.toFormat(0)} BALN` : <LoaderComponent />}
           </Typography>
           <Typography>
             <Trans>Total locked</Trans>
@@ -40,7 +41,7 @@ export default function VotingPowerPanel() {
         </BoostedBox>
         <BoostedBox className="no-border">
           <Typography fontSize={16} color="#FFF">
-            {averageLockTime ? `${averageLockTime.toFixed(2)} years` : '-'}
+            {averageLockTime ? `${averageLockTime.toFixed(2)} years` : <LoaderComponent />}
           </Typography>
           <Typography>
             <Trans>Average lock-up time</Trans>

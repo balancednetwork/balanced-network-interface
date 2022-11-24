@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
@@ -11,11 +13,15 @@ export const Grid = styled(Box)`
   display: grid;
   grid-gap: 35px;
   grid-template-columns: 1fr 1fr 1fr;
+  justify-items: stretch;
 `;
 
-export const ProposalPreview = styled(FlexPanel)`
-  ${({ theme }) => css`
+export const ProposalPreview = styled(FlexPanel)<{ noHover?: boolean }>`
+  ${({ theme, noHover }) => css`
     position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 
     &:before {
       content: '';
@@ -31,12 +37,15 @@ export const ProposalPreview = styled(FlexPanel)`
       opacity: 0;
     }
 
-    &:hover {
-      &:before {
-        transform: scale(1);
-        opacity: 1;
+    ${!noHover &&
+    css`
+      &:hover {
+        &:before {
+          transform: scale(1);
+          opacity: 1;
+        }
       }
-    }
+    `}
   `};
 `;
 
@@ -120,3 +129,48 @@ export const VotingButtons = styled(Flex)`
     }
   }
 `;
+
+const Loader = styled.span`
+  @keyframes blink {
+    0% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+  }
+
+  span {
+    animation: blink 2s infinite;
+    display: inline-flex;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #ffffff;
+    margin-left: 3px;
+  }
+
+  span:nth-of-type(1) {
+    animation-delay: 100ms;
+  }
+  span:nth-of-type(2) {
+    animation-delay: 250ms;
+  }
+  span:nth-of-type(3) {
+    animation-delay: 400ms;
+  }
+`;
+
+export const LoaderComponent = () => (
+  <Loader>
+    <span></span>
+    <span></span>
+    <span></span>
+  </Loader>
+);

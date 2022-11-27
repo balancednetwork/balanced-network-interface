@@ -3,6 +3,7 @@
 const EVENTS = {
   APPROVE: 'APPROVE',
   TRANSFER: 'TRANSFER',
+  DISPATCH: 'DISPATCH',
 };
 
 function on(eventType: any, listener: any) {

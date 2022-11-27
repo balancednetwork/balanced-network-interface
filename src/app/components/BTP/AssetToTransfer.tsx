@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import BigNumber from 'bignumber.js';
+import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
@@ -58,6 +59,7 @@ export const AssetName = styled(Flex)<{ isDisabled?: boolean }>`
   padding: 3px 20px;
   font-size: 14px;
   width: 145px;
+  cursor: pointer;
   ${props =>
     !props.isDisabled &&
     css`
@@ -154,10 +156,12 @@ const AssetToTransfer = ({
         </Flex>
       )}
       <AssetInfo ref={ref}>
-        <AssetName>
-          <Icon icon={assetName} margin={'0 8px 0 0'} />
-          <AssetSelector assetName={assetName} toggleDropdown={toggleDropdown} closeDropdown={closeDropdown} />
-        </AssetName>
+        <ClickAwayListener onClickAway={closeDropdown}>
+          <AssetName onClick={toggleDropdown}>
+            <Icon icon={assetName} margin={'0 8px 0 0'} />
+            <AssetSelector assetName={assetName} />
+          </AssetName>
+        </ClickAwayListener>
         <NumberInput
           placeholder="0"
           value={balance}

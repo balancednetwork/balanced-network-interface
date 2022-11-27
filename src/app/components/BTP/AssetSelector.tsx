@@ -1,6 +1,5 @@
 import React from 'react';
 
-import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
@@ -34,18 +33,14 @@ const Selected = styled(Flex)`
   `};
 `;
 
-const AssetSelector = ({ assetName, toggleDropdown, closeDropdown }) => {
+const AssetSelector = ({ assetName }) => {
   return (
-    <>
-      <ClickAwayListener onClickAway={closeDropdown}>
-        <Select>
-          <Selected onClick={toggleDropdown}>
-            {assetName}
-            <StyledArrowDown />
-          </Selected>
-        </Select>
-      </ClickAwayListener>
-    </>
+    <Select>
+      <Selected>
+        {assetName}
+        <StyledArrowDown />
+      </Selected>
+    </Select>
   );
 };
 

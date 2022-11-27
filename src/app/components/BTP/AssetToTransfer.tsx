@@ -132,12 +132,11 @@ const AssetToTransfer = ({
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
     const amount = new BigNumber(balanceOfAssetName).times(instant).div(100);
-    const leftAmount = new BigNumber(balanceOfAssetName).minus(amount);
+    const totalAmount = amount.plus(new BigNumber(fee));
+    const isInsufficientAmount = totalAmount.isGreaterThan(balanceOfAssetName);
 
-    const result = new BigNumber(fee).isLessThanOrEqualTo(leftAmount)
-      ? amount.toFixed().toString()
-      : amount.minus(new BigNumber(fee)).toFixed().toString();
-    setBalance(result);
+    const result = isInsufficientAmount ? new BigNumber(balanceOfAssetName).minus(new BigNumber(fee)) : amount;
+    setBalance(result.dp(6).toFormat());
   };
 
   const enforcer = (nextUserInput: string) => {

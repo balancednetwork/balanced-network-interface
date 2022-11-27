@@ -136,7 +136,7 @@ const AssetToTransfer = ({
     const isInsufficientAmount = totalAmount.isGreaterThan(balanceOfAssetName);
 
     const result = isInsufficientAmount ? new BigNumber(balanceOfAssetName).minus(new BigNumber(fee)) : amount;
-    setBalance(result.dp(6).toFormat());
+    setBalance(result.dp(4).toFormat());
   };
 
   const enforcer = (nextUserInput: string) => {
@@ -152,7 +152,7 @@ const AssetToTransfer = ({
           <Label>
             Wallet:{' '}
             <WalletAmount onClick={handlePercentSelect(100)}>
-              {!balanceOfAssetName ? 0 : new BigNumber(balanceOfAssetName).toFixed(2)} {assetName}
+              {!balanceOfAssetName ? 0 : new BigNumber(balanceOfAssetName).toFixed(4)} {assetName}
             </WalletAmount>
           </Label>
         </Flex>

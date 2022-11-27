@@ -1,7 +1,5 @@
 import IconService from 'icon-sdk-js';
 
-import store from 'store';
-
 import { chainConfigs } from './chainConfigs';
 
 // https://www.icondev.io/iconex-connect/chrome-extension#methods
@@ -33,14 +31,14 @@ export const TYPES = {
 export const ADDRESS_LOCAL_STORAGE = 'address';
 export const CONNECTED_WALLET_LOCAL_STORAGE = 'connected-wallet';
 
-export const signingActions = {
-  globalName: 'signingActions',
-  transfer: 'transfer',
-  bid: 'bid',
-  deposit: 'deposit',
-  receiver: 'receiver',
-  approve: 'approve',
-  approveIRC2: 'approveIRC2',
+export const SIGNING_ACTIONS = {
+  GLOBAL_NAME: 'signingActions',
+  TRANSFER: 'transfer',
+  BID: 'bid',
+  DEPOSIT: 'deposit',
+  RECEIVER: 'receiver',
+  APPROVE: 'approve',
+  APPROVE_IRC2: 'approveIRC2',
 };
 
 export const rawTransaction = 'rawTransaction';
@@ -49,4 +47,4 @@ export const txPayload = 'txPayload';
 export const serverEndpoint = process.env.REACT_APP_BTP_ENDPOINT;
 export const httpProvider = new IconService.HttpProvider(chainConfigs.ICON?.RPC_URL);
 export const iconService = new IconService(httpProvider);
-export const getCurrentChain = () => chainConfigs[window?.accountInfo?.id] || {};
+export const getCurrentChain = () => chainConfigs[window['accountInfo']?.id] || {};

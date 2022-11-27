@@ -224,7 +224,13 @@ const BTPContent = () => {
 
   return (
     <>
-      <StyledModal isOpen={isOpenTransferAssetsModal} onDismiss={() => {}} maxWidth={525}>
+      <StyledModal
+        isOpen={isOpenTransferAssetsModal}
+        onDismiss={() => {
+          !fromNetwork && toggleTransferAssetsModal();
+        }}
+        maxWidth={525}
+      >
         <Wrapper>
           <Flex flexDirection={'column'} width={'100%'}>
             <Typography variant={'h2'}>

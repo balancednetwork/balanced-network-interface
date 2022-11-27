@@ -15,7 +15,7 @@ const Address = ({ onChange, address }) => {
     <AddressInfo>
       <AddressLabel isDisabled>Address</AddressLabel>
       <AddressInput
-        placeholder={`${toNetwork.label || ''} address`}
+        placeholder={`${toNetwork.label || 'Recipient'} address`}
         value={address}
         // onClick={() => setIsActive(!isActive)}
         // onBlur={() => setIsActive(false)}

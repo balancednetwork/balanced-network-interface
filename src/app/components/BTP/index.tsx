@@ -230,7 +230,7 @@ const BTP = () => {
             </Typography>
             <Typography padding={'10px 0'}>
               <Trans> Move assets between ICON and other blockchains. </Trans>
-              <ExternalLink href="#" target="_blank">
+              <ExternalLink href="https://docs.balanced.network/user-guide/transfer-cross-chain" target="_blank">
                 <Trans>Learn more.</Trans>
               </ExternalLink>
             </Typography>

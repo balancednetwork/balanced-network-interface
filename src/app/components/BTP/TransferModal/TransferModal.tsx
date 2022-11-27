@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 
-import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
+// import { transactionInfo } from 'btp/src/connectors/constants';
 import { transactionInfo } from 'btp/src/connectors/constants';
 import { toChecksumAddress } from 'btp/src/connectors/MetaMask/utils';
-import { getService } from 'btp/src/services/transfer';
+import { useGetBTPService } from 'btp/src/hooks/useService';
+import { useFromNetwork, useToNetwork } from 'btp/src/store/bridge/hooks';
 import { Converter as IconConverter } from 'icon-sdk-js';
+import { Trans } from 'react-i18next';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -13,9 +15,7 @@ import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
-import { useFromNetwork, useToNetwork } from 'store/bridge/hooks';
 import { TransactionStatus } from 'store/transactions/hooks';
-import { EVENTS, on, off } from 'utils/customEvent';
 
 const StyledModalContent = styled(Flex)`
   width: 100%;
@@ -48,6 +48,7 @@ export const TransferAssetModal = ({
 
   const symbol = window['accountInfo']?.symbol;
   const isSendingNativeCoin = symbol === tokenSymbol;
+  const getBTPService = useGetBTPService();
 
   const toggleOpen = () => {
     setIsOpen(!isOpen);
@@ -68,53 +69,43 @@ export const TransferAssetModal = ({
       coinName: tx.coinName,
       nid: IconConverter.toNumber(networkSrc.NETWORK_ADDRESS.split('.')[0]),
     };
-    getService()?.transfer(tx, isSendingNativeCoin, tokenSymbol);
+    return getBTPService()?.transfer(tx, isSendingNativeCoin, tokenSymbol);
   };
-  const approveNonNativeToken = () => {
+  const approveNonNativeToken = async () => {
     setApproveStatus(TransactionStatus.pending);
-    transferNativeToken();
-  };
-
-  const transfer = () => {
-    setTransferStatus(TransactionStatus.pending);
-    if (isSendingNativeCoin) {
-      transferNativeToken();
+    const res = await transferNativeToken();
+    setApproveStatus(res?.transactionStatus || '');
+    if (res?.transactionStatus === TransactionStatus.failure) {
+      setIsOpen(!isOpen);
       return;
     }
-    getService()?.sendNonNativeCoin();
+  };
+
+  const transfer = async () => {
+    setTransferStatus(TransactionStatus.pending);
+    let res;
+    if (isSendingNativeCoin) {
+      res = await transferNativeToken();
+    } else {
+      res = await getBTPService()?.sendNonNativeCoin();
+    }
+    setTransferStatus(res?.transactionStatus || '');
+    if (res?.transactionStatus === TransactionStatus.failure) {
+      setIsOpen(!isOpen);
+      return;
+    }
+    if (res?.transactionStatus === TransactionStatus.success) {
+      handleResetForm();
+      setIsOpen(!isOpen);
+    }
   };
 
   useEffect(() => {
-    const approveSucces = ({ detail }) => {
-      setApproveStatus(detail.status);
-      if (detail.status === TransactionStatus.failure) {
-        setIsOpen(!isOpen);
-      }
-    };
-    const transferSuccess = ({ detail }) => {
-      setTransferStatus(detail.status);
-      if (detail.status === TransactionStatus.success) {
-        handleResetForm();
-        setIsOpen(!isOpen);
-      }
-      if (detail.status === TransactionStatus.failure) {
-        setIsOpen(!isOpen);
-      }
-    };
     if (isOpen) {
       setApproveStatus('');
       setTransferStatus('');
-      on(EVENTS.APPROVE, approveSucces);
-      on(EVENTS.TRANSFER, transferSuccess);
     }
-
-    return () => {
-      if (isOpen) {
-        off(EVENTS.APPROVE, approveSucces);
-        off(EVENTS.TRANSFER, transferSuccess);
-      }
-    };
-  }, [handleResetForm, isOpen, setIsOpen]);
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onDismiss={toggleOpen}>

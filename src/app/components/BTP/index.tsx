@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
+import { Action } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 import { chainConfigs, chainList, getCustomizedChainList, getTokenList } from 'btp/src/connectors/chainConfigs';
 import { ADDRESS_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { addICONexListener } from 'btp/src/connectors/ICONex';
-import { requestHasAddress } from 'btp/src/connectors/ICONex/events';
 import { getBTPfee } from 'btp/src/connectors/ICONex/ICONServices';
 import { toCheckAddress } from 'btp/src/connectors/MetaMask/utils';
 import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
+import store, { BTPAppDispatch, BTPContext, useBTPDispatch, useBTPSelector } from 'btp/src/store';
+import { useFromNetwork, useSelectNetworkDst, useSelectNetworkSrc, useToNetwork } from 'btp/src/store/bridge/hooks';
+import { accountSelector, setAccountInfo } from 'btp/src/store/models/account';
 import { Trans } from 'react-i18next';
+import { Provider } from 'react-redux';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -19,7 +23,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as ArrowIcon } from 'assets/icons/arrow.svg';
 import { useModalOpen, useTransferAssetsModalToggle } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
-import { useFromNetwork, useToNetwork } from 'store/bridge/hooks';
+import { EVENTS, on, off } from 'utils/customEvent';
 
 import { ExternalLink } from '../SearchModal/components';
 import Address from './Address';
@@ -84,7 +88,7 @@ const FeeAmount = styled(Typography)`
 `;
 addICONexListener();
 
-const BTP = () => {
+const BTPContent = () => {
   const [isOpenConfirm, setIsOpenConfirm] = useState(false);
   const isOpenTransferAssetsModal = useModalOpen(ApplicationModal.TRANSFER_ASSETS);
   const [nativeCoin, setNativeCoin] = useState('');
@@ -100,6 +104,10 @@ const BTP = () => {
   const [, setSendingInfo] = useState({ token: '', network: '' });
   const [percent, setPercent] = React.useState<number>(0);
   const [fee, setFee] = useState('0');
+  const { accountInfo } = useBTPSelector(accountSelector);
+  const setNetworkSrc = useSelectNetworkSrc();
+  const setNetworkDst = useSelectNetworkDst();
+  const dispatch = useBTPDispatch<BTPAppDispatch>();
 
   const toggleWalletModalOpen = () => {
     setOpenWalletModal(!walletModalOpen);
@@ -114,13 +122,15 @@ const BTP = () => {
   };
 
   useEffect(() => {
-    const address = localStorage.getItem(ADDRESS_LOCAL_STORAGE);
-    if (address) {
-      setTimeout(() => {
-        requestHasAddress(address);
-      }, 2000);
+    if (isOpenTransferAssetsModal) {
+      localStorage.removeItem(ADDRESS_LOCAL_STORAGE);
+      resetForm();
+      setNetworkDst('');
+      setNetworkSrc('');
+      dispatch(setAccountInfo(null));
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpenTransferAssetsModal]);
 
   const getFee = async tokenSymbol => {
     const BTPFee = await getBTPfee(tokenSymbol);
@@ -151,16 +161,16 @@ const BTP = () => {
   };
 
   useEffect(() => {
-    if (window['accountInfo'] != null) {
-      const { balance, symbol, id } = window['accountInfo'];
-      setAssetName(symbol);
-      setNetworkId(id);
-      setNativeCoin(symbol);
-      setBalanceOfAssetName(balance || 0);
-      getFee(symbol);
-    }
+    const { balance = 0, symbol = '', id = '' } = accountInfo || {};
+
+    const assestName = symbol || getOptions()[0].label;
+    setAssetName(assestName);
+    setNetworkId(id);
+    setNativeCoin(symbol);
+    setBalanceOfAssetName(Number(balance));
+    getFee(symbol);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [window['accountInfo']]);
+  }, [accountInfo?.symbol, accountInfo?.id, accountInfo?.balance]);
 
   const fromNetwork = useFromNetwork();
   const toNetwork = useToNetwork();
@@ -173,11 +183,8 @@ const BTP = () => {
     if (!walletModalOpen) {
       resetForm();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletModalOpen]);
-
-  const onChange = values => {
-    setAssetName(values.COIN_SYMBOL);
-  };
 
   const resetForm = () => {
     setSendingAddress('');
@@ -241,7 +248,6 @@ const BTP = () => {
                   placeholder="From blockchain"
                   label="From"
                   data={chainInfo()}
-                  onChange={onChange}
                   toggleWallet={toggleWalletModalOpen}
                 />
               </Box>
@@ -251,7 +257,6 @@ const BTP = () => {
                   placeholder="To blockchain"
                   label="To"
                   data={chainInfo()}
-                  onChange={onChange}
                   setSendingInfo={onSendingInfoChange}
                 />
               </Box>
@@ -330,6 +335,36 @@ const BTP = () => {
         <BridgeWalletModal walletModalOpen={walletModalOpen} setOpenWalletModal={toggleWalletModalOpen} />
       </StyledModal>
     </>
+  );
+};
+
+const BTP = () => {
+  const dispatch = useBTPDispatch<BTPAppDispatch>();
+  useEffect(() => {
+    const dispatchFnc = ({ detail }: { detail: { action: Action } }) => {
+      console.log(detail.action);
+      dispatch(detail.action);
+    };
+    dispatch(
+      setAccountInfo({
+        address: 'hx1b57ca63337d35f7880612a7f08b03d3bc2bf565',
+        balance: 0,
+        wallet: 'iconex',
+        symbol: 'ICX',
+        currentNetwork: 'ICON',
+        id: 'ICON',
+      }),
+    );
+    on(EVENTS.DISPATCH, dispatchFnc);
+    return () => {
+      off(EVENTS.DISPATCH, dispatchFnc);
+    };
+  }, [dispatch]);
+
+  return (
+    <Provider store={store} context={BTPContext}>
+      <BTPContent />
+    </Provider>
   );
 };
 

@@ -9,9 +9,9 @@ import { colors } from 'btp/src/components/Styles/Colors';
 import { media } from 'btp/src/components/Styles/Media';
 import { Text, Header } from 'btp/src/components/Typography';
 import { TextMixin } from 'btp/src/components/Typography/Text';
+import { useGetBTPService } from 'btp/src/hooks/useService';
 import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
 import { useTokenToUsd } from 'btp/src/hooks/useTokenToUsd';
-import { getService } from 'btp/src/services/transfer';
 import { toSeparatedNumberString } from 'btp/src/utils/app';
 import { getBalanceToken } from 'btp/src/utils/constants';
 import PropTypes from 'prop-types';
@@ -163,6 +163,7 @@ export const WalletDetails = ({ networkName, unit, address, shortedAddress, onDi
   const [refund, setRefund] = useState(0);
   const [currentBalance, currentSymbol] = useTokenBalance(selectedToken);
   const usdBalance = useTokenToUsd(currentSymbol, currentBalance);
+  const getBTPService = useGetBTPService();
 
   const tokens = [
     { label: unit, value: unit },
@@ -178,7 +179,7 @@ export const WalletDetails = ({ networkName, unit, address, shortedAddress, onDi
   const onChangeRefundSelect = async e => {
     const { value } = e.target;
     setSelectedRefundToken(value);
-    getService()
+    getBTPService()
       ?.getBalanceOf({
         address,
         refundable: true,
@@ -209,7 +210,7 @@ export const WalletDetails = ({ networkName, unit, address, shortedAddress, onDi
         <ActionBtn
           onClick={() => {
             if (refund > 0)
-              getService().reclaim({
+              getBTPService().reclaim({
                 coinName: selectedRefundToken,
                 value: refund,
               });

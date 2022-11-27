@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { useFromNetwork, useSelectNetworkDst, useSelectNextNetworkSrc, useToNetwork } from 'btp/src/store/bridge/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { Box, Flex } from 'rebass/styled-components';
@@ -7,13 +8,11 @@ import styled, { css } from 'styled-components';
 
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDown } from 'assets/icons/arrow-down.svg';
-import { useFromNetwork, useSelectNetworkDst, useSelectNetworkSrc, useToNetwork } from 'store/bridge/hooks';
 
 interface NetworkSelectorProps {
   label?: string;
   data: Array<NetworkItem>;
   dependInput?: string;
-  onChange: Function;
   setSendingInfo?: Function;
   toggleWallet?: Function;
   placeholder?: string;
@@ -108,9 +107,9 @@ const SelectItem = styled(Box)`
   `}
 `;
 
-const NetworkSelector = ({ placeholder, label, data, onChange, toggleWallet }: NetworkSelectorProps) => {
+const NetworkSelector = ({ placeholder, label, data, toggleWallet }: NetworkSelectorProps) => {
   const [showItems, setShowItems] = useState(false);
-  const setNetworkSrc = useSelectNetworkSrc();
+  const setNextNetworkSrc = useSelectNextNetworkSrc();
   const setNetworkDst = useSelectNetworkDst();
   const fromNetwork = useFromNetwork();
   const toNetwork = useToNetwork();
@@ -131,9 +130,7 @@ const NetworkSelector = ({ placeholder, label, data, onChange, toggleWallet }: N
       toggleWallet();
     }
     if (label === 'From') {
-      onChange(network);
-      setNetworkSrc(network);
-      setNetworkDst('');
+      setNextNetworkSrc(network);
     } else {
       setNetworkDst(network);
     }

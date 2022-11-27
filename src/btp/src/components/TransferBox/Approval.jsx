@@ -7,7 +7,7 @@ import { getBTPfee } from 'btp/src/connectors/ICONex/ICONServices';
 import { toChecksumAddress } from 'btp/src/connectors/MetaMask/utils';
 import { useListenForSuccessTransaction } from 'btp/src/hooks/useListenForSuccessTransaction';
 import { useDispatch } from 'btp/src/hooks/useRematch';
-import { getService } from 'btp/src/services/transfer';
+import { useGetBTPService } from 'btp/src/hooks/useService';
 import { hashShortener, toSeparatedNumberString } from 'btp/src/utils/app';
 import PropTypes from 'prop-types';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -117,6 +117,8 @@ export const Approval = memo(({ setStep, values, sendingInfo, account, form, isC
   const { token, network } = sendingInfo;
   const { currentNetwork, unit } = account;
 
+  const getBTPService = useGetBTPService();
+
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (isCurrent)
@@ -142,7 +144,7 @@ export const Approval = memo(({ setStep, values, sendingInfo, account, form, isC
       desc: 'Waiting for confirmation in your wallet.',
     });
 
-    getService()?.transfer(tx, isSendingNativeCoin, token, network);
+    getBTPService()?.transfer(tx, isSendingNativeCoin, token, network);
   };
 
   return (

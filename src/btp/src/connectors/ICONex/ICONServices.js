@@ -1,3 +1,4 @@
+import { ICX_METHOD } from 'btp/src/utils/constants';
 import { ethers } from 'ethers';
 import IconService from 'icon-sdk-js';
 
@@ -5,7 +6,7 @@ import { roundNumber } from '../../utils/app';
 import { chainConfigs, formatSymbol } from '../chainConfigs';
 import {
   ADDRESS_LOCAL_STORAGE,
-  signingActions,
+  SIGNING_ACTIONS,
   rawTransaction,
   txPayload,
   iconService,
@@ -45,7 +46,7 @@ export const sendTransaction = async signature => {
   try {
     if (!signature || !window[rawTransaction]) throw new Error('invalid send transaction params');
 
-    const request = new Request('icx_sendTransaction', {
+    const request = new Request(ICX_METHOD.SEND_TRANSACTION, {
       ...window[rawTransaction],
       signature,
     });
@@ -106,9 +107,9 @@ export const setApproveForSendNonNativeCoin = async tx => {
   };
 
   window[txPayload] = tx;
-  window[signingActions.globalName] = signingActions.approve;
-  signTx(transaction, options);
-  return { transaction, options };
+  window[SIGNING_ACTIONS.GLOBAL_NAME] = SIGNING_ACTIONS.APPROVE;
+  return signTx(transaction, options);
+  // return { transaction, options };
 };
 
 /**
@@ -132,9 +133,9 @@ export const sendNonNativeCoin = async () => {
     },
   };
 
-  window[signingActions.globalName] = signingActions.transfer;
-  signTx(transaction, options);
-  return { transaction, options };
+  window[SIGNING_ACTIONS.GLOBAL_NAME] = SIGNING_ACTIONS.TRANSFER;
+  return signTx(transaction, options);
+  // return { transaction, options };
 };
 
 export const sendNativeCoin = tx => {
@@ -152,8 +153,9 @@ export const sendNativeCoin = tx => {
     },
   };
 
-  signTx(transaction, options);
-  return { transaction, options };
+  window[SIGNING_ACTIONS.GLOBAL_NAME] = SIGNING_ACTIONS.TRANSFER;
+  return signTx(transaction, options);
+  // return { transaction, options };
 };
 
 /**
@@ -174,7 +176,7 @@ export const reclaim = async ({ coinName, value }) => {
     },
   };
 
-  signTx(transaction, options);
+  return signTx(transaction, options);
 };
 
 /**
@@ -217,10 +219,9 @@ export const signTx = (transaction = {}, options = {}) => {
   tx = tx.build();
   const rawTx = IconConverter.toRawTransaction(tx);
   window[rawTransaction] = rawTx;
-  const transactionHash = serialize(rawTx);
+  // const transactionHash = serialize(rawTx);
 
-  requestSigning(rawTx);
-  return transactionHash;
+  return requestSigning(rawTx);
 };
 
 /**
@@ -322,8 +323,7 @@ export const approveIRC2 = async tx => {
   };
 
   window[txPayload] = tx;
-  window[signingActions.globalName] = signingActions.approveIRC2;
+  window[SIGNING_ACTIONS.GLOBAL_NAME] = SIGNING_ACTIONS.APPROVE_IRC2;
 
-  signTx(transaction, options);
-  return { transaction, options };
+  return signTx(transaction, options);
 };

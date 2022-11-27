@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { EthereumInstance } from '.';
 import { roundNumber } from '../../utils/app';
 import { chainConfigs, formatSymbol } from '../chainConfigs';
-import { signingActions, rawTransaction, getCurrentChain } from '../constants';
+import { SIGNING_ACTIONS, rawTransaction, getCurrentChain } from '../constants';
 import { convertToICX } from '../ICONex/utils';
 import { ABI } from './ABI';
 import { ABIOfToken } from './ABIOfToken';
@@ -29,7 +29,7 @@ export const getBalanceOf = async ({ address, refundable = false, symbol = 'ICX'
 
     return roundNumber(convertToICX(refundable ? balance._refundableBalance._hex : balance._hex || balance[0]._hex), 6);
   } catch (err) {
-    console.error('Err: ', err);
+    console.error('getBalanceOf err: ', err);
     return 0;
   }
 };
@@ -47,7 +47,7 @@ export const reclaim = async ({ coinName, value }) => {
 
   const data = EthereumInstance.ABI.encodeFunctionData('reclaim', [coinName, value]);
 
-  await EthereumInstance.sendTransaction({
+  return EthereumInstance.sendTransaction({
     from: EthereumInstance.ethereum.selectedAddress,
     to: BTS_CORE,
     gas: GAS_LIMIT,
@@ -68,7 +68,7 @@ export const transfer = async (tx, sendNativeCoin, token) => {
 
   let data = null;
   if (sendNativeCoin) {
-    window[signingActions.globalName] = signingActions.transfer;
+    window[SIGNING_ACTIONS.GLOBAL_NAME] = SIGNING_ACTIONS.TRANSFER;
 
     data = EthereumInstance.ABI.encodeFunctionData('transferNativeCoin', [`btp://${ICONchain.NETWORK_ADDRESS}/${to}`]);
     txParams = {
@@ -77,7 +77,7 @@ export const transfer = async (tx, sendNativeCoin, token) => {
     };
   } else {
     window[rawTransaction] = tx;
-    window[signingActions.globalName] = signingActions.approve;
+    window[SIGNING_ACTIONS.GLOBAL_NAME] = SIGNING_ACTIONS.APPROVE;
 
     data = EthereumInstance.ABI.encodeFunctionData('approve', [BTS_CORE, value]);
 
@@ -94,8 +94,8 @@ export const transfer = async (tx, sendNativeCoin, token) => {
     data,
   };
 
-  await EthereumInstance.sendTransaction(txParams);
-  return txParams;
+  return EthereumInstance.sendTransaction(txParams);
+  // return txParams;
 };
 
 export const sendNonNativeCoin = async () => {
@@ -110,7 +110,7 @@ export const sendNonNativeCoin = async () => {
     `btp://${ICONchain.NETWORK_ADDRESS}/${to}`,
   ]);
 
-  window[signingActions.globalName] = signingActions.transfer;
+  window[SIGNING_ACTIONS.GLOBAL_NAME] = SIGNING_ACTIONS.TRANSFER;
   const params = {
     from: EthereumInstance.ethereum.selectedAddress,
     to: BTS_CORE,
@@ -118,6 +118,6 @@ export const sendNonNativeCoin = async () => {
     data,
   };
 
-  await EthereumInstance.sendTransaction(params);
-  return params;
+  return EthereumInstance.sendTransaction(params);
+  // return params;
 };

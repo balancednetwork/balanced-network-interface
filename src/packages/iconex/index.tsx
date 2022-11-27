@@ -32,12 +32,6 @@ export interface ICONexResponseEvent {
 export type ICONexEvent = ICONexRequestEvent | ICONexResponseEvent;
 
 export const request = (event: ICONexRequestEvent): Promise<ICONexResponseEvent> => {
-  window.dispatchEvent(
-    new CustomEvent(ICONEX_RELAY_REQUEST, {
-      detail: event,
-    }),
-  );
-
   return new Promise((resolve, reject) => {
     const handler = evt => {
       window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
@@ -45,5 +39,10 @@ export const request = (event: ICONexRequestEvent): Promise<ICONexResponseEvent>
     };
 
     window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
+    window.dispatchEvent(
+      new CustomEvent(ICONEX_RELAY_REQUEST, {
+        detail: event,
+      }),
+    );
   });
 };

@@ -1,13 +1,13 @@
 import IconService from 'icon-sdk-js';
 
-import { SUCCESS_TRANSACTION } from '../../utils/constants';
+import { ICX_METHOD, JSON_RPC, SUCCESS_TRANSACTION } from '../../utils/constants';
 import { findChainbySymbol } from '../chainConfigs';
 import { httpProvider } from '../constants';
 
 const { IconAmount, IconUtil } = IconService;
 export default class Request {
   constructor(method, params) {
-    this.jsonrpc = '2.0';
+    this.jsonrpc = JSON_RPC;
     this.id = IconUtil.getCurrentTime();
     this.method = method;
     this.params = params;
@@ -34,7 +34,7 @@ export const convertToLoopUnit = value => {
 
 export const makeICXCall = async payload => {
   try {
-    return await httpProvider.request(new Request('icx_call', payload)).execute();
+    return await httpProvider.request(new Request(ICX_METHOD.CALL, payload)).execute();
   } catch (err) {
     console.log('makeICXCall err', err);
     return 0;

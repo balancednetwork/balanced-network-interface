@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import { Trans } from '@lingui/macro';
 import { CONNECTED_WALLET_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { requestAddress } from 'btp/src/connectors/ICONex/events';
 import { EthereumInstance } from 'btp/src/connectors/MetaMask';
+import { useNextFromNetwork, useSelectNetworkDst, useSelectNetworkSrc } from 'btp/src/store/bridge/hooks';
 import { wallets } from 'btp/src/utils/constants';
 // import { BalancedJs } from 'packages/BalancedJs';
 // import { LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
+import { Trans } from 'react-i18next';
 import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -18,7 +19,6 @@ import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import { ReactComponent as MetamaskIcon } from 'assets/icons/metamask.svg';
 import { useChangeCurrentLedgerAddressPage, useCurrentLedgerAddressPage } from 'store/application/hooks';
-import { useFromNetwork } from 'store/bridge/hooks';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -139,44 +139,48 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
-  const fromNetwork = useFromNetwork();
+  const nextFromNetwork = useNextFromNetwork();
+  const setSelectNetworkSrc = useSelectNetworkSrc();
+  const setNetworkDst = useSelectNetworkDst();
 
-  const [networkSelected, setNetworkSelected] = useState(fromNetwork);
-
-  const [{ offset, limit }, updatePaging] = useState({
-    offset: 0,
-    limit: LIMIT_PAGING_LEDGER,
-  });
-  const currentLedgerAddressPage = useCurrentLedgerAddressPage();
-  const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
-
-  useEffect(() => {
-    setNetworkSelected(fromNetwork);
-  }, [fromNetwork]);
+  // const [{ offset, limit }, updatePaging] = useState({
+  //   offset: 0,
+  //   limit: LIMIT_PAGING_LEDGER,
+  // });
+  // const currentLedgerAddressPage = useCurrentLedgerAddressPage();
+  // const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
 
   const handleOpenWallet = async (type: string) => {
     setLoading(true);
-    window['accountInfo'] = null;
+    // window['accountInfo'] = null;
     localStorage.setItem(CONNECTED_WALLET_LOCAL_STORAGE, type);
-    switch (type) {
-      case wallets.metamask:
-        const isConnected = await EthereumInstance.connectMetaMaskWallet();
-        console.log('isConnected', isConnected);
-        if (isConnected) {
-          const data = await EthereumInstance.getEthereumAccounts();
-        }
-        setLoading(false);
-        setOpenWalletModal();
-        break;
-      case wallets.iconex:
-      case wallets.hana:
-        requestAddress();
-        setLoading(false);
-        setOpenWalletModal();
-        break;
-      default:
-        break;
-    }
+
+    try {
+      switch (type) {
+        case wallets.metamask:
+          const isConnected = await EthereumInstance.connectMetaMaskWallet();
+          console.log('isConnected', isConnected);
+          if (isConnected) {
+            const data = await EthereumInstance.getEthereumAccounts();
+          }
+          console.log('nextFromNetwork', nextFromNetwork);
+          setSelectNetworkSrc(nextFromNetwork);
+          setNetworkDst('');
+          setLoading(false);
+          setOpenWalletModal();
+          break;
+        case wallets.iconex:
+        case wallets.hana:
+          await requestAddress();
+          setSelectNetworkSrc(nextFromNetwork);
+          setNetworkDst('');
+          setLoading(false);
+          setOpenWalletModal();
+          break;
+        default:
+          break;
+      }
+    } catch {}
   };
 
   // const updateLedgerAddress = React.useCallback(async ({ offset, limit }) => {
@@ -303,9 +307,9 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
   //   toggleWalletModal();
   // };
 
-  function getPageNumbers(index: number) {
-    return index - 1 <= 0 ? [1, 2, 3] : [index - 1, index, index + 1];
-  }
+  // function getPageNumbers(index: number) {
+  //   return index - 1 <= 0 ? [1, 2, 3] : [index - 1, index, index + 1];
+  // }
 
   return (
     <>
@@ -316,7 +320,7 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
           </Typography>
 
           <Flex alignItems="stretch" justifyContent="space-between">
-            {networkSelected.value === 'ICON' ? (
+            {nextFromNetwork.value === 'ICON' ? (
               <WalletOption onClick={() => handleOpenWallet('iconex')}>
                 <IconWalletIcon width="50" height="50" />
                 <Text textAlign="center">ICON</Text>

@@ -1,16 +1,16 @@
 import { checkIsToken } from '../chainConfigs';
-import { signingActions } from '../constants';
+import { SIGNING_ACTIONS } from '../constants';
 import { sendNativeCoin, setApproveForSendNonNativeCoin, approveIRC2 } from './ICONServices';
 
 export const transfer = (tx, isSendingNativeCoin, token) => {
-  window[signingActions.globalName] = signingActions.transfer;
+  window[SIGNING_ACTIONS.GLOBAL_NAME] = SIGNING_ACTIONS.TRANSFER;
   const isToken = checkIsToken(token);
 
   if (isSendingNativeCoin) {
-    sendNativeCoin(tx);
+    return sendNativeCoin(tx);
   } else if (isToken) {
-    approveIRC2(tx);
+    return approveIRC2(tx);
   } else {
-    setApproveForSendNonNativeCoin(tx);
+    return setApproveForSendNonNativeCoin(tx);
   }
 };

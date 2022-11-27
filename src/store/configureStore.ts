@@ -9,7 +9,6 @@ import createSagaMiddleware from 'redux-saga';
 
 import application from './application/reducer';
 import bbaln from './bbaln/reducer';
-import bridge from './bridge/reducer';
 import collateral from './collateral/reducer';
 import fees from './fees/reducer';
 import lists from './lists/reducer';
@@ -58,7 +57,6 @@ export function configureAppStore() {
       stabilityFund,
       stakedLP,
       user,
-      bridge,
       fees,
       oracle,
       lists,

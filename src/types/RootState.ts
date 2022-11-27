@@ -6,7 +6,6 @@
 */
 import { ApplicationState } from 'store/application/reducer';
 import { BBalnState } from 'store/bbaln/reducer';
-import { BridgeState } from 'store/bridge/reducer';
 import { CollateralState } from 'store/collateral/reducer';
 import { FeesState } from 'store/fees/reducer';
 import { TokenListState } from 'store/lists/reducer';
@@ -38,7 +37,6 @@ export interface RootState {
   stabilityFund: StabilityFundState;
   stakedLP: StakedLPState;
   user: UserState;
-  bridge: BridgeState;
   fees: FeesState;
   oracle: OracleState;
   lists: TokenListState;

@@ -3,8 +3,8 @@ import * as Web3Services from '../connectors/MetaMask/services';
 import { wallets } from '../utils/constants';
 // import * as NEARServices from '../connectors/NearWallet';
 
-export const getCurrentTransferService = () => (curentWallet, currentNetwork) => {
-  const { wallet, currentNetwork: network } = window.accountInfo;
+export const getCurrentTransferService = () => (accountInfo, curentWallet, currentNetwork) => {
+  const { wallet, currentNetwork: network } = accountInfo;
   if (!wallet && !curentWallet) throw new Error('Missing wallet');
   if (!network && !currentNetwork) throw new Error('Missing network');
 

@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 
-import { getService } from 'btp/src/services/transfer';
+import { useBTPSelector } from '../store';
+import { accountSelector } from '../store/models/account';
+import { useGetBTPService } from './useService';
 
 export const useTokenBalance = coinNames => {
   const [balances, setBalance] = useState([]);
+  const getBTPService = useGetBTPService();
+  const { accountInfo } = useBTPSelector(accountSelector);
   useEffect(() => {
-    if (window['accountInfo'] != null) {
-      const { address, balance, symbol } = window['accountInfo'];
+    if (accountInfo != null) {
+      const { address, balance, symbol } = accountInfo;
       const fetchBalances = async () => {
         const result = await Promise.all(
           coinNames.map(async coin => {
@@ -14,7 +18,7 @@ export const useTokenBalance = coinNames => {
             if (isNativeCoin) {
               return { ...coin, balance };
             } else {
-              return getService()
+              return getBTPService()
                 .getBalanceOf({ address, symbol: coin.label })
                 .then(result => {
                   return { ...coin, balance: result };
@@ -27,6 +31,7 @@ export const useTokenBalance = coinNames => {
 
       fetchBalances();
     }
-  }, [window['accountInfo']]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountInfo, getBTPService]);
   return balances;
 };

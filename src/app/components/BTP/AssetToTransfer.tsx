@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import BigNumber from 'bignumber.js';
+import { useFromNetwork } from 'btp/src/store/bridge/hooks';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
@@ -117,6 +118,8 @@ const AssetToTransfer = ({
 }) => {
   const [isActive, setIsActive] = React.useState(false);
 
+  const fromNetwork = useFromNetwork();
+
   useEffect(() => {
     setBalance('');
   }, [balanceOfAssetName, setBalance]);
@@ -145,7 +148,7 @@ const AssetToTransfer = ({
 
   return (
     <>
-      {assetName && (
+      {fromNetwork && (
         <Flex justifyContent={'end'}>
           <Label>
             Wallet:{' '}

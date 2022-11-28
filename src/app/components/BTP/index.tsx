@@ -298,16 +298,18 @@ const BTPContent = () => {
               />
               <Box className="full-width">
                 <Address address={sendingAddress} onChange={setSendingAddress} />
-                <Flex justifyContent={'end'}>
-                  <Label atBottom>
-                    Transfer fee:{' '}
-                    <FeeAmount variant="span">
-                      <strong>
-                        {fee} {assetName}
-                      </strong>
-                    </FeeAmount>
-                  </Label>
-                </Flex>
+                {fromNetwork && (
+                  <Flex justifyContent={'end'}>
+                    <Label atBottom>
+                      Transfer fee:{' '}
+                      <FeeAmount variant="span">
+                        <strong>
+                          {fee} {assetName}
+                        </strong>
+                      </FeeAmount>
+                    </Label>
+                  </Flex>
+                )}
               </Box>
             </Grid>
             <Divider margin={'20px 0'} />

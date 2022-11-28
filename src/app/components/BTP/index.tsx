@@ -220,7 +220,9 @@ const BTPContent = () => {
 
   const isInsufficient = new BigNumber(fee).plus(sendingBalance).isGreaterThan(balanceOfAssetName);
   const isEmpty = !sendingAddress || !balanceOfAssetName;
-  const isLessThanFee = new BigNumber(sendingBalance).isLessThan(new BigNumber(fee));
+
+  const maxTransferAmount = new BigNumber(balanceOfAssetName).minus(new BigNumber(fee));
+  const isGreaterThanMaxTransferAmount = new BigNumber(sendingBalance).isGreaterThan(maxTransferAmount);
 
   return (
     <>
@@ -321,7 +323,7 @@ const BTPContent = () => {
                   isEmpty ||
                   !toCheckAddress(sendingAddress) ||
                   isInsufficient ||
-                  isLessThanFee ||
+                  isGreaterThanMaxTransferAmount ||
                   !fromNetwork ||
                   !toNetwork
                 }
@@ -330,9 +332,9 @@ const BTPContent = () => {
                 {isInsufficient ? `Insufficient ${assetName}` : 'Transfer'}
               </Button>
             </Flex>
-            {isLessThanFee && (
+            {isGreaterThanMaxTransferAmount && (
               <Typography textAlign="center" paddingTop={'10px'} color="#F05365">
-                Transfer amount must be greater than {fee} for the token fee.
+                The maximum amount you can transfer is {maxTransferAmount.dp(6).toFixed()} {assetName}.
               </Typography>
             )}
             <Typography textAlign="center" paddingTop={'10px'}>

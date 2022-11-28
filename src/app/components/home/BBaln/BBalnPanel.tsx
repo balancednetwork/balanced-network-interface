@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
+import { useIncentivisedPairs } from 'queries/reward';
 import {
   useBBalnAmount,
   useLockedBaln,
@@ -42,6 +43,7 @@ export default function BBalnPanel() {
   const arrowRef = React.useRef(null);
   const balnDetails = useBALNDetails();
   const { data: pastMonthFees } = usePastMonthFeesDistributed();
+  const { data: incentivisedPairs } = useIncentivisedPairs();
 
   const balnBalanceAvailable = useMemo(
     () => (balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0)),
@@ -63,15 +65,16 @@ export default function BBalnPanel() {
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
 
   const boostedLPs = useMemo(() => {
-    if (sources) {
+    if (sources && incentivisedPairs) {
+      const pairNames = incentivisedPairs.map(pair => pair.name);
       return Object.keys(sources).reduce((LPs, sourceName) => {
-        if (sourceName !== 'Loans' && sources[sourceName].balance.isGreaterThan(0)) {
+        if (pairNames.indexOf(sourceName) >= 0 && sources[sourceName].balance.isGreaterThan(0)) {
           LPs[sourceName] = { ...sources[sourceName] };
         }
         return LPs;
       }, {} as { [key in string]: Source });
     }
-  }, [sources]);
+  }, [sources, incentivisedPairs]);
 
   const boostedLPNumbers = useMemo(
     () =>

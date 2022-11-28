@@ -10,7 +10,7 @@ import PoolLogo from 'app/components/PoolLogo';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import { COMBINED_TOKENS_LIST } from 'constants/tokens';
-import { useCombinedVoteData, useTotalBBalnAllocated } from 'store/liveVoting/hooks';
+import { useCombinedVoteData, useTotalBBalnAllocated, useUserVoteData } from 'store/liveVoting/hooks';
 import { VoteSource } from 'store/liveVoting/types';
 import { useRewards } from 'store/reward/hooks';
 
@@ -26,6 +26,7 @@ export default function LiveVotingPanel() {
   const { data: voteData } = useCombinedVoteData();
   const rewards = useRewards();
   const { data: totalBBAlnAllocation } = useTotalBBalnAllocated();
+  const userVoteData = useUserVoteData();
 
   const VoteItem = ({
     name,
@@ -75,7 +76,7 @@ export default function LiveVotingPanel() {
               </Flex>
             </Flex>
 
-            {auth && <MemoizedVotingComponent name={name} />}
+            {account && userVoteData && <MemoizedVotingComponent name={name} />}
 
             <Flex justifyContent="flex-end" flexDirection="column">
               <Typography color="text" fontSize={16}>
@@ -123,15 +124,21 @@ export default function LiveVotingPanel() {
         </Flex>
         <PowerLeftComponent />
       </Flex>
-      <VotingGrid auth={!!account}>
+      <VotingGrid auth={!!account && !!userVoteData}>
         <GirdHeaderItem>Pool</GirdHeaderItem>
-        {!!account && <GirdHeaderItem>Your allocation</GirdHeaderItem>}
+        {!!account && !!userVoteData && <GirdHeaderItem>Your allocation</GirdHeaderItem>}
         <GirdHeaderItem>Current allocation</GirdHeaderItem>
         <GirdHeaderItem>Daily incentive</GirdHeaderItem>
       </VotingGrid>
       {voteData &&
         Object.keys(voteData).map((item, index, array) => (
-          <VoteItem key={item} name={item} vote={voteData[item]} auth={!!account} border={index + 1 !== array.length} />
+          <VoteItem
+            key={item}
+            name={item}
+            vote={voteData[item]}
+            auth={!!account && !!userVoteData}
+            border={index + 1 !== array.length}
+          />
         ))}
     </BoxPanel>
   );

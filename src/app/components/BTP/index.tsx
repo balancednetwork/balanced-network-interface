@@ -285,7 +285,10 @@ const BTPContent = () => {
                   fee={fee}
                 />
                 {isOpenAssetOptions && (
-                  <AssetModal data={userAssets.length > 0 ? userAssets : getOptions()} onChange={onChangeAsset} />
+                  <AssetModal
+                    data={userAssets.length > 0 && fromNetwork ? userAssets : getOptions()}
+                    onChange={onChangeAsset}
+                  />
                 )}
               </Box>
 

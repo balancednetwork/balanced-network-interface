@@ -3,6 +3,7 @@ import React from 'react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
+import Divider from 'app/components/Divider';
 import { FlexPanel } from 'app/components/Panel';
 import { HeaderText } from 'app/components/trade/LiquidityDetails';
 import { notificationCSS } from 'app/components/Wallet/wallets/utils';
@@ -12,8 +13,12 @@ import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 export const Grid = styled(Box)`
   display: grid;
   grid-gap: 35px;
-  grid-template-columns: 1fr 1fr 1fr;
   justify-items: stretch;
+  grid-template-columns: 1fr;
+
+  ${({ theme }) => theme.mediaWidth.upMedium`
+    grid-template-columns: 1fr 1fr 1fr;
+  `};
 `;
 
 export const ProposalPreview = styled(FlexPanel)<{ noHover?: boolean }>`
@@ -61,13 +66,24 @@ export const StyledTypography = styled(Typography)<{ notification: boolean }>`
 
 export const VotingGrid = styled(Flex)<{ auth: boolean }>`
   display: grid;
-  ${({ auth }) =>
+  min-width: 600px;
+
+  @media (min-width: 395px) {
+    min-width: 700px;
+  }
+
+  ${({ auth, theme }) =>
     auth
       ? css`
-          grid-template-columns: 5fr 4fr 4fr 3fr;
+          grid-template-columns: 1fr 1fr 1fr 1fr;
+          ${theme.mediaWidth.upMedium`grid-template-columns: 5fr 4fr 4fr 3fr;`}
         `
       : css`
-          grid-template-columns: 5fr 8fr 3fr;
+          grid-template-columns: 4fr 4fr 9fr;
+          ${theme.mediaWidth.up420`grid-template-columns: 1fr 3fr 3fr;`}
+          ${theme.mediaWidth.upExtraSmall`grid-template-columns: 5fr 7fr 4fr;`}
+          ${theme.mediaWidth
+            .upMedium`grid-template-columns: 5fr 7fr 4fr;`}
         `};
 
   grid-column-gap: 35px;
@@ -88,7 +104,8 @@ export const StyledQuestionIcon = styled(QuestionIcon)`
 `;
 
 export const VoteItemWrap = styled(Box)`
-  padding: 20px 0;
+  padding: 15px 0;
+  ${({ theme }) => theme.mediaWidth.upMedium`padding: 20px 0;`};
 `;
 
 export const AllocationInput = styled.input<{ valid: boolean }>`
@@ -174,3 +191,18 @@ export const LoaderComponent = () => (
     <span></span>
   </Loader>
 );
+
+export const ScrollHelper = styled(Box)`
+  max-width: 100%;
+  overflow-x: auto;
+
+  ${Divider} {
+    min-width: 600px;
+  }
+
+  @media (min-width: 395px) {
+    ${Divider} {
+      min-width: 700px;
+    }
+  }
+`;

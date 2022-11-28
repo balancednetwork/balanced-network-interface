@@ -31,8 +31,8 @@ export default function ProposalsPanel() {
 
   return (
     <BoxPanel bg="bg2" width="100%" mt={10}>
-      <Flex justifyContent="space-between" mb={5}>
-        <Flex alignItems="center">
+      <Flex justifyContent="space-between" mb={5} alignItems="start">
+        <Flex alignItems={['start', 'center']} flexDirection={['column', 'row']}>
           <Typography variant="h2" mr={2}>
             <Trans>Proposals</Trans>
           </Typography>
@@ -44,9 +44,11 @@ export default function ProposalsPanel() {
           </Link>
         </Flex>
         {account && (
-          <ButtonLink to="/vote/new-proposal/">
-            <Trans>New proposal</Trans>
-          </ButtonLink>
+          <Typography mt={['5px', '0']}>
+            <ButtonLink to="/vote/new-proposal/">
+              <Trans>New proposal</Trans>
+            </ButtonLink>
+          </Typography>
         )}
       </Flex>
       <Grid>

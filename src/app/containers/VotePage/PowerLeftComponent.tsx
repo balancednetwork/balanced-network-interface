@@ -35,7 +35,7 @@ export default function PowerLeftComponent() {
   return (
     <>
       {account && powerLeft && (
-        <Typography fontSize={14}>
+        <Typography fontSize={14} mt={2}>
           <Trans>
             Voting power available:{' '}
             <strong

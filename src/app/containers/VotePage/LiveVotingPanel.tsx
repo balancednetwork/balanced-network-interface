@@ -15,7 +15,7 @@ import { VoteSource } from 'store/liveVoting/types';
 import { useRewards } from 'store/reward/hooks';
 
 import PowerLeftComponent from './PowerLeftComponent';
-import { GirdHeaderItem, VoteItemWrap, VotingGrid } from './styledComponents';
+import { GirdHeaderItem, ScrollHelper, VoteItemWrap, VotingGrid } from './styledComponents';
 import { formatFraction, formatFractionAmount } from './utils';
 import VotingComponent from './VotingComponent';
 
@@ -59,15 +59,20 @@ export default function LiveVotingPanel() {
             <Flex alignItems="center">
               <Flex sx={{ minWidth: '95px' }} alignItems="center">
                 {baseCurrency && quoteCurrency ? (
-                  <>
-                    <PoolLogo baseCurrency={baseCurrency} quoteCurrency={quoteCurrency} />
+                  <Flex
+                    alignItems={['start', 'start', 'start', 'center']}
+                    flexDirection={['column', 'column', 'column', 'row']}
+                  >
+                    <PoolLogo baseCurrency={baseCurrency} quoteCurrency={quoteCurrency} respoVersion={true} />
                     <Typography
                       color="text"
                       fontSize={16}
                       fontWeight="bold"
-                      ml={2}
+                      style={{ whiteSpace: 'nowrap' }}
+                      ml={[0, 0, 0, 2]}
+                      mt={[1, 1, 1, 0]}
                     >{`${baseCurrency.symbol}/${quoteCurrency.symbol}`}</Typography>
-                  </>
+                  </Flex>
                 ) : (
                   <Typography color="text" fontSize={16} fontWeight="bold">
                     {name}
@@ -78,7 +83,7 @@ export default function LiveVotingPanel() {
 
             {account && userVoteData && <MemoizedVotingComponent name={name} />}
 
-            <Flex justifyContent="flex-end" flexDirection="column">
+            <Flex justifyContent="flex-end" my={'auto'} flexDirection="column">
               <Typography color="text" fontSize={16}>
                 {formatFraction(weight)}
               </Typography>
@@ -100,8 +105,8 @@ export default function LiveVotingPanel() {
 
   return (
     <BoxPanel bg="bg2" width="100%" my={10}>
-      <Flex justifyContent="space-between" mb={5}>
-        <Flex alignItems="center">
+      <Flex justifyContent="space-between" mb={5} flexWrap="wrap">
+        <Flex alignItems="center" mr={3}>
           <Typography variant="h2" mr={1}>
             <Trans>Liquidity incentives</Trans>
           </Typography>
@@ -124,22 +129,24 @@ export default function LiveVotingPanel() {
         </Flex>
         <PowerLeftComponent />
       </Flex>
-      <VotingGrid auth={!!account && !!userVoteData}>
-        <GirdHeaderItem>Pool</GirdHeaderItem>
-        {!!account && !!userVoteData && <GirdHeaderItem>Your allocation</GirdHeaderItem>}
-        <GirdHeaderItem>Current allocation</GirdHeaderItem>
-        <GirdHeaderItem>Daily incentive</GirdHeaderItem>
-      </VotingGrid>
-      {voteData &&
-        Object.keys(voteData).map((item, index, array) => (
-          <VoteItem
-            key={item}
-            name={item}
-            vote={voteData[item]}
-            auth={!!account && !!userVoteData}
-            border={index + 1 !== array.length}
-          />
-        ))}
+      <ScrollHelper>
+        <VotingGrid auth={!!account && !!userVoteData}>
+          <GirdHeaderItem>Pool</GirdHeaderItem>
+          {!!account && !!userVoteData && <GirdHeaderItem>Your allocation</GirdHeaderItem>}
+          <GirdHeaderItem>Current allocation</GirdHeaderItem>
+          <GirdHeaderItem>Daily incentive</GirdHeaderItem>
+        </VotingGrid>
+        {voteData &&
+          Object.keys(voteData).map((item, index, array) => (
+            <VoteItem
+              key={item}
+              name={item}
+              vote={voteData[item]}
+              auth={!!account && !!userVoteData}
+              border={index + 1 !== array.length}
+            />
+          ))}
+      </ScrollHelper>
     </BoxPanel>
   );
 }

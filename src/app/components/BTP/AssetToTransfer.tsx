@@ -131,6 +131,7 @@ const AssetToTransfer = ({
   const [ref] = useWidth();
 
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
+    if (!balanceOfAssetName) return;
     const amount = new BigNumber(balanceOfAssetName).times(instant).div(100);
     const totalAmount = amount.plus(new BigNumber(fee));
     const isInsufficientAmount = totalAmount.isGreaterThan(balanceOfAssetName);

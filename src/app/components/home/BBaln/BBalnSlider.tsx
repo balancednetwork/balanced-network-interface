@@ -132,6 +132,7 @@ export default function BBalnSlider({
       changeShouldLedgerSign(false);
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
     }
+    handleCancelAdjusting();
     setWithdrawModalOpen(false);
   };
 
@@ -354,9 +355,9 @@ export default function BBalnSlider({
     }
   }, [sources, totalSupplyBBaln, bBalnAmount]);
 
-  const maxRewardNoticeContent = `${bBalnAmount
-    ?.plus(maxRewardThreshold)
-    .toFormat(2)} bBALN required for maximum BALN rewards.`;
+  const maxRewardNoticeContent = maxRewardThreshold.isGreaterThan(0)
+    ? `${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN required for maximum BALN rewards.`
+    : 'You have reached maximum BALN rewards.';
 
   const hasLPOrLoan = sources && boostedLPs && (sources.Loans.balance.isGreaterThan(0) || boostedLPs.length);
 
@@ -371,7 +372,7 @@ export default function BBalnSlider({
             <Tooltip
               text={maxRewardNoticeContent}
               width={215}
-              show={!!showMaxRewardsNotice && !!hasLPOrLoan && isAdjusting}
+              show={!!showMaxRewardsNotice && !!hasLPOrLoan && isAdjusting && maxRewardThreshold.isGreaterThan(0)}
               placement="top-start"
               forcePlacement={true}
               strategy="absolute"

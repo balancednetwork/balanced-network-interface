@@ -137,15 +137,25 @@ export default function LiveVotingPanel() {
           <GirdHeaderItem>Daily incentive</GirdHeaderItem>
         </VotingGrid>
         {voteData &&
-          Object.keys(voteData).map((item, index, array) => (
-            <VoteItem
-              key={item}
-              name={item}
-              vote={voteData[item]}
-              auth={!!account && !!userVoteData}
-              border={index + 1 !== array.length}
-            />
-          ))}
+          Object.keys(voteData)
+            .sort((a, b) => {
+              if (userVoteData && userVoteData[a] && userVoteData[b]) {
+                if (userVoteData[a].power.lessThan(userVoteData[b].power)) return 1;
+                if (userVoteData[b].power.lessThan(userVoteData[a].power)) return -1;
+                return 0;
+              } else {
+                return 0;
+              }
+            })
+            .map((item, index, array) => (
+              <VoteItem
+                key={item}
+                name={item}
+                vote={voteData[item]}
+                auth={!!account && !!userVoteData}
+                border={index + 1 !== array.length}
+              />
+            ))}
       </ScrollHelper>
     </BoxPanel>
   );

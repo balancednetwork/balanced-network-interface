@@ -14,7 +14,7 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
-import { ReactComponent as EditIcon } from 'assets/icons/timer-color.svg';
+import { ReactComponent as EditIcon } from 'assets/icons/edit.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useBBalnAmount } from 'store/bbaln/hooks';
@@ -99,7 +99,9 @@ export default function VotingComponent({ name }: VotingComponentProps) {
 
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-      (nextUserInput === '' || parseFloat(nextUserInput) <= 100) && changeInputValue(nextUserInput);
+      (nextUserInput === '' || parseFloat(nextUserInput) <= 100) &&
+        (!nextUserInput.split('.')[1] || nextUserInput.split('.')[1].length <= 2) &&
+        changeInputValue(nextUserInput);
     }
   };
 
@@ -125,7 +127,10 @@ export default function VotingComponent({ name }: VotingComponentProps) {
               <TextButton onClick={() => handleEditToggle('')}>
                 <Trans>Cancel</Trans>
               </TextButton>
-              <Button disabled={!isInputValid} onClick={() => changeShowConfirmation(true)}>
+              <Button
+                disabled={!isInputValid || !inputValue || '0.00000000000'.indexOf(inputValue) >= 0}
+                onClick={() => changeShowConfirmation(true)}
+              >
                 <Trans>Confirm</Trans>
               </Button>
             </VotingButtons>

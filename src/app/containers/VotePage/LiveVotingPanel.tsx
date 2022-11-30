@@ -169,6 +169,13 @@ export default function LiveVotingPanel() {
         {voteData &&
           Object.keys(voteData)
             .sort((a, b) => {
+              if (userVoteData && userVoteData[a]) {
+                return -1;
+              } else {
+                return 1;
+              }
+            })
+            .sort((a, b) => {
               if (userVoteData && userVoteData[a] && userVoteData[b]) {
                 if (userVoteData[a].power.lessThan(userVoteData[b].power)) return 1;
                 if (userVoteData[b].power.lessThan(userVoteData[a].power)) return -1;

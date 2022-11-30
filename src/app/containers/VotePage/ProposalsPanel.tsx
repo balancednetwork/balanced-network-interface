@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
 import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
@@ -13,6 +12,7 @@ import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton, VoteStatusLabel } from 'app/components/ProposalInfo/components';
 import { Typography } from 'app/theme';
 import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
+import { useBBalnAmount } from 'store/bbaln/hooks';
 import { normalizeContent } from 'utils';
 
 import { Grid, ProposalPreview, StyledTypography } from './styledComponents';
@@ -20,8 +20,8 @@ import { Grid, ProposalPreview, StyledTypography } from './styledComponents';
 export default function ProposalsPanel() {
   const { data: proposals } = useTotalProposalQuery();
   const { data: activeProposals } = useActiveProposals();
-  const { account } = useIconReact();
   const theme = useTheme();
+  const bBalnAmount = useBBalnAmount();
 
   const shouldShowNotification = currentProposal => {
     return (
@@ -43,7 +43,7 @@ export default function ProposalsPanel() {
             <UnderlineText>View all</UnderlineText>
           </Link>
         </Flex>
-        {account && (
+        {bBalnAmount.isGreaterThan(0) && (
           <Typography mt={['5px', '0']}>
             <ButtonLink to="/vote/new-proposal/">
               <Trans>New proposal</Trans>

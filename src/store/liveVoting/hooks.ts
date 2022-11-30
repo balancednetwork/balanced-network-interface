@@ -6,6 +6,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
 import bnJs from 'bnJs';
 import { AppState } from 'store';
 import { useRewardsPercentDistribution } from 'store/reward/hooks';
@@ -205,6 +206,13 @@ export function useUnlockDateToBeSet(): UseQueryResult<string, Error> {
   return useQuery('unlockDate', async () => {
     return unlockDate.toLocaleDateString('en-US', { month: 'long', day: '2-digit' });
   });
+}
+
+export function useNextUpdateDate(): Date {
+  const oneMinPeriod = 1000 * 60;
+  const now = Math.floor(new Date().getTime() / oneMinPeriod) * oneMinPeriod;
+
+  return getClosestUnixWeekStart(now);
 }
 
 export function useTotalBBalnAllocated(): UseQueryResult<BigNumber | undefined, Error> {

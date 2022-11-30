@@ -215,7 +215,7 @@ export default function VotingComponent({ name }: VotingComponentProps) {
           </Flex>
 
           <Typography textAlign="center" fontSize={14} mb={1}>
-            {t`You'll be able to readjust your allocation for this pool on`} <strong>{unlockDateToBeSet}</strong>
+            {t`You'll be able to readjust your allocation for this pool on`} <strong>{unlockDateToBeSet}</strong>.
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top" flexWrap={'wrap'}>

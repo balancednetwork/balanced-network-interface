@@ -59,11 +59,15 @@ import {
 
 export default function BBalnSlider({
   title,
+  titleVariant = 'h3',
   showMaxRewardsNotice,
+  lockupNotice,
   onActiveSlider,
   onDisabledSlider,
 }: {
   title: string;
+  lockupNotice: string;
+  titleVariant?: 'h3' | 'h2';
   showMaxRewardsNotice?: boolean;
   onActiveSlider?: () => void;
   onDisabledSlider?: () => void;
@@ -363,197 +367,216 @@ export default function BBalnSlider({
 
   return (
     <>
-      <Flex alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}>
-        <Flex flexDirection={isSmallScreen ? 'column' : 'row'} alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}>
-          <Typography variant="h3" paddingRight={'10px'} paddingBottom={isSmallScreen ? '5px' : '0'}>
-            {title}{' '}
-          </Typography>
-          <Typography padding="0 3px 2px 0">
-            <Tooltip
-              text={maxRewardNoticeContent}
-              width={215}
-              show={!!showMaxRewardsNotice && !!hasLPOrLoan && isAdjusting && maxRewardThreshold.isGreaterThan(0)}
-              placement="top-start"
-              forcePlacement={true}
-              strategy="absolute"
-              offset={[-18, 20]}
-            >
-              {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()}
-            </Tooltip>
-            {' bBALN'}
-            <QuestionHelper
-              text={
-                <>
-                  <Trans>Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x.</Trans>
-                  <Typography mt={2}>
-                    <Trans>
-                      The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will
-                      decrease over time.
-                    </Trans>
-                  </Typography>
-                  {showMaxRewardsNotice && !isAdjusting && hasLPOrLoan && (
-                    <>
-                      <Divider my={2} />
-                      <Typography fontWeight={700}>{maxRewardNoticeContent}</Typography>
-                    </>
-                  )}
-                </>
-              }
-            />
-          </Typography>
-        </Flex>
-
-        {stakedBalance?.isEqualTo(0) && (
-          <ButtonsWrap>
-            {isAdjusting ? (
-              <>
-                <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmallScreen ? '5px' : 0}>
-                  Cancel
-                </TextButton>
-                <Button
-                  disabled={
-                    bBalnAmount.isGreaterThan(0)
-                      ? differenceBalnAmount.isZero() && !isPeriodChanged
-                      : differenceBalnAmount.isZero()
-                  }
-                  onClick={toggleConfirmationModalOpen}
-                  fontSize={14}
-                  warning={balnSliderAmount.isLessThan(beforeBalnAmount)}
-                >
-                  Confirm
-                </Button>
-              </>
-            ) : (
-              <Button
-                onClick={
-                  hasLockExpired && lockedBalnAmount?.greaterThan(0) ? toggleWithdrawModalOpen : handleEnableAdjusting
-                }
-                fontSize={14}
-              >
-                {buttonText}
-              </Button>
-            )}
-          </ButtonsWrap>
-        )}
-      </Flex>
-
-      {stakedBalance?.isGreaterThan(0) ? (
-        <UnstakePrompt stakedBalance={stakedBalance} availableBalance={balnBalanceAvailable} />
-      ) : (
+      {balnBalanceAvailable.isGreaterThan(0) || bBalnAmount.isGreaterThan(0) || stakedBalance?.isGreaterThan(0) ? (
         <>
-          <SliderWrap>
-            <Typography className={`lockup-notice${isAdjusting ? '' : ' show'}`}>
-              Lock up BALN to boost your earning potential.
-            </Typography>
-            {shouldShowLock && isAdjusting && (
-              <Box style={{ position: 'relative' }}>
-                <Threshold position={lockbarPercentPosition} flipTextDirection={lockbarPercentPosition < 50}>
-                  <MetaData as="dl" style={{ textAlign: 'right' }}>
-                    <dd>Locked</dd>
-                  </MetaData>
-                </Threshold>
-              </Box>
-            )}
-
-            <Box margin="10px 0" className={balnSliderAmount.isLessThan(beforeBalnAmount) ? 'withdraw-warning' : ''}>
-              <Nouislider
-                disabled={!isAdjusting}
-                id="slider-bbaln"
-                start={[Number(lockedBalnAmount?.toFixed(0) || 0)]}
-                connect={[true, false]}
-                step={1}
-                range={{
-                  min: [0],
-                  max: [balnTotal ? balnTotal.dp(0, BigNumber.ROUND_DOWN).toNumber() : 1],
-                }}
-                instanceRef={instance => {
-                  if (instance) {
-                    sliderInstance.current = instance;
-                  }
-                }}
-                onSlide={onSlide}
-              />
-            </Box>
-
-            <Flex justifyContent="space-between" flexWrap={'wrap'}>
-              <Flex alignItems="center">
-                {isAdjusting ? (
-                  <BalnPreviewInput
-                    type="text"
-                    disabled={!isAdjusting}
-                    value={balnSliderAmount.toNumber()}
-                    onChange={handleBBalnInputChange}
-                  />
-                ) : (
-                  <Typography paddingRight={'5px'}>{balnSliderAmount.toFormat()}</Typography>
-                )}
-
-                <Typography paddingRight={'15px'}>
-                  {' '}
-                  / {balnTotal ? balnTotal.dp(0, BigNumber.ROUND_DOWN).toFormat(0) : '-'} BALN
-                </Typography>
-              </Flex>
-
-              {/* Show unlocked date */}
-              {hasLockExpired && lockedBalnAmount?.greaterThan(0) && !isAdjusting && (
-                <Typography>{t`Available since ${formatDate(lockedUntil)}`}</Typography>
-              )}
-
-              {/* Show selected or locked time period */}
-              {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
-                <Typography paddingTop={isAdjusting ? '6px' : '0'}>
-                  {shouldBoost ? (
+          <Flex alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}>
+            <Flex
+              flexDirection={isSmallScreen ? 'column' : 'row'}
+              alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}
+            >
+              <Typography variant={titleVariant} paddingRight={'10px'} paddingBottom={isSmallScreen ? '5px' : '0'}>
+                {title}{' '}
+              </Typography>
+              <Typography padding="0 3px 2px 0">
+                <Tooltip
+                  text={maxRewardNoticeContent}
+                  width={215}
+                  show={!!showMaxRewardsNotice && !!hasLPOrLoan && isAdjusting && maxRewardThreshold.isGreaterThan(0)}
+                  placement="top-start"
+                  forcePlacement={true}
+                  strategy="absolute"
+                  offset={[-18, 20]}
+                >
+                  {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()}
+                </Tooltip>
+                {' bBALN'}
+                <QuestionHelper
+                  text={
                     <>
-                      {t`Locked until`}{' '}
-                      {isAdjusting ? (
+                      <Trans>Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x.</Trans>
+                      <Typography mt={2}>
+                        <Trans>
+                          The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will
+                          decrease over time.
+                        </Trans>
+                      </Typography>
+                      {showMaxRewardsNotice && !isAdjusting && hasLPOrLoan && (
                         <>
-                          <ClickAwayListener onClickAway={closeDropdown}>
-                            <UnderlineTextWithArrow
-                              onClick={handlePeriodDropdownToggle}
-                              text={formatDate(
-                                getClosestUnixWeekStart(
-                                  new Date(
-                                    new Date().setDate(new Date().getDate() + (selectedPeriod.weeks * 7 - 7)),
-                                  ).getTime(),
-                                ),
-                              )}
-                              arrowRef={periodArrowRef}
-                            />
-                          </ClickAwayListener>
-                          <DropdownPopper
-                            show={Boolean(periodDropdownAnchor)}
-                            anchorEl={periodDropdownAnchor}
-                            placement="bottom-end"
-                          >
-                            <MenuList>
-                              {availablePeriods
-                                .filter(
-                                  (period, index) =>
-                                    index === 0 || comparePeriods(period, availablePeriods[index - 1]) !== 0,
-                                )
-                                .map(period => (
-                                  <MenuItem key={period.weeks} onClick={() => handleLockingPeriodChange(period)}>
-                                    {period.name}
-                                  </MenuItem>
-                                ))}
-                            </MenuList>
-                          </DropdownPopper>
+                          <Divider my={2} />
+                          <Typography fontWeight={700}>{maxRewardNoticeContent}</Typography>
                         </>
-                      ) : (
-                        formatDate(lockedUntil)
                       )}
                     </>
-                  ) : (
-                    isAdjusting && (
-                      <Typography fontSize={14} color="#fb6a6a">
-                        <Trans>Pay a 50% fee to unlock your BALN early.</Trans>
-                      </Typography>
-                    )
-                  )}
-                </Typography>
-              )}
+                  }
+                />
+              </Typography>
             </Flex>
-          </SliderWrap>
+
+            {stakedBalance?.isEqualTo(0) && (
+              <ButtonsWrap>
+                {isAdjusting ? (
+                  <>
+                    <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmallScreen ? '5px' : 0}>
+                      Cancel
+                    </TextButton>
+                    <Button
+                      disabled={
+                        bBalnAmount.isGreaterThan(0)
+                          ? differenceBalnAmount.isZero() && !isPeriodChanged
+                          : differenceBalnAmount.isZero()
+                      }
+                      onClick={toggleConfirmationModalOpen}
+                      fontSize={14}
+                      warning={balnSliderAmount.isLessThan(beforeBalnAmount)}
+                    >
+                      Confirm
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={
+                      hasLockExpired && lockedBalnAmount?.greaterThan(0)
+                        ? toggleWithdrawModalOpen
+                        : handleEnableAdjusting
+                    }
+                    fontSize={14}
+                  >
+                    {buttonText}
+                  </Button>
+                )}
+              </ButtonsWrap>
+            )}
+          </Flex>
+
+          {stakedBalance?.isGreaterThan(0) ? (
+            <UnstakePrompt stakedBalance={stakedBalance} availableBalance={balnBalanceAvailable} />
+          ) : (
+            <>
+              <SliderWrap>
+                <Typography className={`lockup-notice${isAdjusting ? '' : ' show'}`}>{lockupNotice}</Typography>
+                {shouldShowLock && isAdjusting && (
+                  <Box style={{ position: 'relative' }}>
+                    <Threshold position={lockbarPercentPosition} flipTextDirection={lockbarPercentPosition < 50}>
+                      <MetaData as="dl" style={{ textAlign: 'right' }}>
+                        <dd>Locked</dd>
+                      </MetaData>
+                    </Threshold>
+                  </Box>
+                )}
+
+                <Box
+                  margin="10px 0"
+                  className={balnSliderAmount.isLessThan(beforeBalnAmount) ? 'withdraw-warning' : ''}
+                >
+                  <Nouislider
+                    disabled={!isAdjusting}
+                    id="slider-bbaln"
+                    start={[Number(lockedBalnAmount?.toFixed(0) || 0)]}
+                    connect={[true, false]}
+                    step={1}
+                    range={{
+                      min: [0],
+                      max: [balnTotal ? balnTotal.dp(0, BigNumber.ROUND_DOWN).toNumber() : 1],
+                    }}
+                    instanceRef={instance => {
+                      if (instance) {
+                        sliderInstance.current = instance;
+                      }
+                    }}
+                    onSlide={onSlide}
+                  />
+                </Box>
+
+                <Flex justifyContent="space-between" flexWrap={'wrap'}>
+                  <Flex alignItems="center">
+                    {isAdjusting ? (
+                      <BalnPreviewInput
+                        type="text"
+                        disabled={!isAdjusting}
+                        value={balnSliderAmount.toNumber()}
+                        onChange={handleBBalnInputChange}
+                      />
+                    ) : (
+                      <Typography paddingRight={'5px'}>{balnSliderAmount.toFormat()}</Typography>
+                    )}
+
+                    <Typography paddingRight={'15px'}>
+                      {' '}
+                      / {balnTotal ? balnTotal.dp(0, BigNumber.ROUND_DOWN).toFormat(0) : '-'} BALN
+                    </Typography>
+                  </Flex>
+
+                  {/* Show unlocked date */}
+                  {hasLockExpired && lockedBalnAmount?.greaterThan(0) && !isAdjusting && (
+                    <Typography>{t`Available since ${formatDate(lockedUntil)}`}</Typography>
+                  )}
+
+                  {/* Show selected or locked time period */}
+                  {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
+                    <Typography paddingTop={isAdjusting ? '6px' : '0'}>
+                      {shouldBoost ? (
+                        <>
+                          {t`Locked until`}{' '}
+                          {isAdjusting ? (
+                            <>
+                              <ClickAwayListener onClickAway={closeDropdown}>
+                                <UnderlineTextWithArrow
+                                  onClick={handlePeriodDropdownToggle}
+                                  text={formatDate(
+                                    getClosestUnixWeekStart(
+                                      new Date(
+                                        new Date().setDate(new Date().getDate() + (selectedPeriod.weeks * 7 - 7)),
+                                      ).getTime(),
+                                    ),
+                                  )}
+                                  arrowRef={periodArrowRef}
+                                />
+                              </ClickAwayListener>
+                              <DropdownPopper
+                                show={Boolean(periodDropdownAnchor)}
+                                anchorEl={periodDropdownAnchor}
+                                placement="bottom-end"
+                              >
+                                <MenuList>
+                                  {availablePeriods
+                                    .filter(
+                                      (period, index) =>
+                                        index === 0 || comparePeriods(period, availablePeriods[index - 1]) !== 0,
+                                    )
+                                    .map(period => (
+                                      <MenuItem key={period.weeks} onClick={() => handleLockingPeriodChange(period)}>
+                                        {period.name}
+                                      </MenuItem>
+                                    ))}
+                                </MenuList>
+                              </DropdownPopper>
+                            </>
+                          ) : (
+                            formatDate(lockedUntil)
+                          )}
+                        </>
+                      ) : (
+                        isAdjusting && (
+                          <Typography fontSize={14} color="#fb6a6a">
+                            <Trans>Pay a 50% fee to unlock your BALN early.</Trans>
+                          </Typography>
+                        )
+                      )}
+                    </Typography>
+                  )}
+                </Flex>
+              </SliderWrap>
+            </>
+          )}
+        </>
+      ) : (
+        <>
+          <Typography variant={titleVariant} marginBottom={6}>
+            <Trans>{title}</Trans>
+          </Typography>
+          <Typography fontSize={14} opacity={0.75}>
+            <Trans>Earn or buy BALN, then lock it up here to boost your earning potential and voting power.</Trans>
+          </Typography>
         </>
       )}
 

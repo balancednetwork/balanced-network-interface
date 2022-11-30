@@ -10,13 +10,19 @@ import PoolLogo from 'app/components/PoolLogo';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import { COMBINED_TOKENS_LIST } from 'constants/tokens';
-import { useCombinedVoteData, useTotalBBalnAllocated, useUserVoteData } from 'store/liveVoting/hooks';
+import { useBBalnAmount } from 'store/bbaln/hooks';
+import {
+  useCombinedVoteData,
+  useNextUpdateDate,
+  useTotalBBalnAllocated,
+  useUserVoteData,
+} from 'store/liveVoting/hooks';
 import { VoteSource } from 'store/liveVoting/types';
 import { useRewards } from 'store/reward/hooks';
 
 import PowerLeftComponent from './PowerLeftComponent';
 import { GirdHeaderItem, ScrollHelper, VoteItemWrap, VotingGrid } from './styledComponents';
-import { formatFraction, formatFractionAmount } from './utils';
+import { formatFraction, formatFractionAmount, formatTimeLeft } from './utils';
 import VotingComponent from './VotingComponent';
 
 const MemoizedVotingComponent = React.memo(VotingComponent);
@@ -27,6 +33,8 @@ export default function LiveVotingPanel() {
   const rewards = useRewards();
   const { data: totalBBAlnAllocation } = useTotalBBalnAllocated();
   const userVoteData = useUserVoteData();
+  const bBalnAmount = useBBalnAmount();
+  const nextUpdateDate = useNextUpdateDate();
 
   const VoteItem = ({
     name,
@@ -81,7 +89,7 @@ export default function LiveVotingPanel() {
               </Flex>
             </Flex>
 
-            {account && userVoteData && <MemoizedVotingComponent name={name} />}
+            {bBalnAmount.isGreaterThan(0) && userVoteData && <MemoizedVotingComponent name={name} />}
 
             <Flex justifyContent="flex-end" my={'auto'} flexDirection="column">
               <Typography color="text" fontSize={16}>
@@ -113,6 +121,7 @@ export default function LiveVotingPanel() {
           <Box marginTop="9px">
             <QuestionHelper
               width={300}
+              hideOnSmall={false}
               text={
                 <>
                   <Typography>
@@ -129,11 +138,32 @@ export default function LiveVotingPanel() {
         </Flex>
         <PowerLeftComponent />
       </Flex>
-      <ScrollHelper>
-        <VotingGrid auth={!!account && !!userVoteData}>
+      <ScrollHelper auth={!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData}>
+        <VotingGrid auth={!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData}>
           <GirdHeaderItem>Pool</GirdHeaderItem>
-          {!!account && !!userVoteData && <GirdHeaderItem>Your allocation</GirdHeaderItem>}
-          <GirdHeaderItem>Current allocation</GirdHeaderItem>
+          {!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData && (
+            <GirdHeaderItem>Your allocation</GirdHeaderItem>
+          )}
+          <Flex width="100%" style={{ transform: 'translateX(20px)' }}>
+            <GirdHeaderItem ml="auto" textAlign="right">
+              Current allocation
+            </GirdHeaderItem>
+            <QuestionHelper
+              width={300}
+              hideOnSmall={false}
+              text={
+                <>
+                  <Typography>
+                    The current distribution of liquidity incentives, based on the total bBAlN allocation. Updated once
+                    a week.
+                  </Typography>
+                  <Typography mt={3}>
+                    The next update is in <strong>{formatTimeLeft(nextUpdateDate)}</strong>.
+                  </Typography>
+                </>
+              }
+            />
+          </Flex>
           <GirdHeaderItem>Daily incentive</GirdHeaderItem>
         </VotingGrid>
         {voteData &&
@@ -152,7 +182,7 @@ export default function LiveVotingPanel() {
                 key={item}
                 name={item}
                 vote={voteData[item]}
-                auth={!!account && !!userVoteData}
+                auth={!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData}
                 border={index + 1 !== array.length}
               />
             ))}

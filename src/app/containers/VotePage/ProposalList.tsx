@@ -12,7 +12,7 @@ import { BoxPanel } from 'app/components/Panel';
 import ProposalInfo from 'app/components/ProposalInfo';
 import { Typography } from 'app/theme';
 import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
-import { useFetchBBalnInfo } from 'store/bbaln/hooks';
+import { useBBalnAmount, useFetchBBalnInfo } from 'store/bbaln/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 export function ProposalList() {
@@ -22,6 +22,7 @@ export function ProposalList() {
   useWalletFetchBalances(account);
   const useActiveProposalsQuery = useActiveProposals();
   const { data: activeProposals } = useActiveProposalsQuery;
+  const bBalnAmount = useBBalnAmount();
 
   const shouldShowNotification = currentProposal => {
     return (
@@ -37,7 +38,7 @@ export function ProposalList() {
           <Typography variant="h2">
             <Trans>Proposals</Trans>
           </Typography>
-          {account && (
+          {bBalnAmount.isGreaterThan(0) && (
             <ButtonLink to="/vote/new-proposal/">
               <Trans>New proposal</Trans>
             </ButtonLink>

@@ -21,7 +21,9 @@ export default function VotingPowerPanel() {
 
   return (
     <BoxPanel bg="bg2" width="100%">
-      {account && <BBalnSlider title="Voting power" />}
+      {account && (
+        <BBalnSlider title="Voting power" titleVariant="h2" lockupNotice="Lock up BALN to hold voting power." />
+      )}
       <BoostedInfo showBorder={!!account}>
         <BoostedBox>
           <Typography fontSize={16} color="#FFF">

@@ -89,7 +89,7 @@ export default function LiveVotingPanel() {
               </Flex>
             </Flex>
 
-            {bBalnAmount.isGreaterThan(0) && userVoteData && <MemoizedVotingComponent name={name} />}
+            {auth && <MemoizedVotingComponent name={name} />}
 
             <Flex justifyContent="flex-end" my={'auto'} flexDirection="column">
               <Typography color="text" fontSize={16}>

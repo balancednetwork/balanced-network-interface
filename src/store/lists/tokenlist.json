@@ -150,7 +150,7 @@
       "address": "cx99c79fd6dee53335f686c7f2cb513745622634f2",
       "chainId": 2,
       "name": "Binance ETH",
-      "symbol": "ETH",
+      "symbol": "TETH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
     }

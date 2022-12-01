@@ -137,6 +137,22 @@
       "symbol": "BTCB",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
+    },
+    {
+      "address": "cx288d13e1b63563459a2ac6179f237711f6851cb5",
+      "chainId": 1,
+      "name": "Binance ETH",
+      "symbol": "ETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
+    },
+    {
+      "address": "cx99c79fd6dee53335f686c7f2cb513745622634f2",
+      "chainId": 2,
+      "name": "Binance ETH",
+      "symbol": "ETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
     }
   ]
 }

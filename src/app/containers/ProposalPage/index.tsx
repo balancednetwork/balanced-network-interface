@@ -136,9 +136,8 @@ export function ProposalPage() {
   const isSmallScreen = useMedia('(max-width: 600px)');
 
   const actions = JSON.parse(proposal?.actions || '{}');
+  const stringifiedActions = JSON.stringify(actions);
   const oldActionKeyList = Object.keys(actions);
-
-  console.log(actions);
 
   const getKeyByValue = value => {
     return Object.keys(ACTIONS_MAPPING).find(key => ACTIONS_MAPPING[key].includes(value));
@@ -546,12 +545,12 @@ export function ProposalPage() {
           </Flex>
         </BoxPanel>
 
-        {proposal?.actions && (
+        {proposal?.actions && stringifiedActions.indexOf('[') === 0 && stringifiedActions !== '[]' && (
           <BoxPanel bg="bg2" my={10}>
             <Typography variant="h2" mb="20px">
               <Trans>Actions</Trans>
             </Typography>
-            <StyledCode>{prettier.format(JSON.stringify(actions), { plugins: [babelParser] })}</StyledCode>
+            <StyledCode>{prettier.format(stringifiedActions, { plugins: [babelParser] })}</StyledCode>
           </BoxPanel>
         )}
       </ProposalContainer>

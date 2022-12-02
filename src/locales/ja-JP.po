@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-11-08 09:27\n"
+"PO-Revision-Date: 2022-12-02 21:20\n"
 "Last-Translator: \n"
 "Language: ja_JP\n"
 "Language-Team: Japanese\n"
@@ -1025,6 +1025,10 @@ msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Slippage tolerance"
+msgstr ""
+
+#: src/app/containers/ProposalPage/index.tsx
+msgid "Smart contract details"
 msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx

@@ -6,10 +6,12 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
+import babelParser from 'prettier/parser-babel';
+import prettier from 'prettier/standalone';
 import { useParams } from 'react-router-dom';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled, { useTheme } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
@@ -110,6 +112,16 @@ const CollateralProposalInfoItem = styled(Box)`
   `};
 `;
 
+const StyledCode = styled.pre`
+  font-size: 14px;
+  border-radius: 5px 10px 10px 5px;
+  padding: 20px;
+  ${({ theme }) => css`
+    background-color: ${theme.colors.bg5};
+    border-left: 2px solid ${theme.colors.primary};
+  `};
+`;
+
 export function ProposalPage() {
   const { account } = useIconReact();
   useWalletFetchBalances(account);
@@ -124,6 +136,7 @@ export function ProposalPage() {
   const isSmallScreen = useMedia('(max-width: 600px)');
 
   const actions = JSON.parse(proposal?.actions || '{}');
+  const stringifiedActions = JSON.stringify(actions);
   const oldActionKeyList = Object.keys(actions);
 
   const getKeyByValue = value => {
@@ -531,6 +544,15 @@ export function ProposalPage() {
             )}
           </Flex>
         </BoxPanel>
+
+        {proposal?.actions && stringifiedActions.indexOf('[') === 0 && stringifiedActions !== '[]' && (
+          <BoxPanel bg="bg2" my={10}>
+            <Typography variant="h2" mb="20px">
+              <Trans>Smart contract details</Trans>
+            </Typography>
+            <StyledCode>{prettier.format(stringifiedActions, { plugins: [babelParser] })}</StyledCode>
+          </BoxPanel>
+        )}
       </ProposalContainer>
     </>
   );

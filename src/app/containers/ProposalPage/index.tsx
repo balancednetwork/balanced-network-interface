@@ -548,7 +548,7 @@ export function ProposalPage() {
         {proposal?.actions && stringifiedActions.indexOf('[') === 0 && stringifiedActions !== '[]' && (
           <BoxPanel bg="bg2" my={10}>
             <Typography variant="h2" mb="20px">
-              <Trans>Actions</Trans>
+              <Trans>Smart contract details</Trans>
             </Typography>
             <StyledCode>{prettier.format(stringifiedActions, { plugins: [babelParser] })}</StyledCode>
           </BoxPanel>

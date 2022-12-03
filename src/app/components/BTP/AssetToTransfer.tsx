@@ -60,10 +60,10 @@ export const AssetName = styled(Flex)<{ isDisabled?: boolean }>`
   padding: 3px 20px;
   font-size: 14px;
   width: 145px;
-  cursor: pointer;
   ${props =>
     !props.isDisabled &&
     css`
+      cursor: pointer;
       &:hover {
         border: 2px solid #2ca9b7;
       }

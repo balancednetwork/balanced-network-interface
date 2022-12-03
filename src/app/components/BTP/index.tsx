@@ -337,7 +337,7 @@ const BTPContent = () => {
             </Flex>
             {isGreaterThanMaxTransferAmount && (
               <Typography textAlign="center" paddingTop={'10px'} color="#F05365">
-                The maximum amount you can transfer is {maxTransferAmount.dp(6).toFixed()} {assetName}.
+                You can transfer a maximum of {maxTransferAmount.toFixed(2)} {assetName}.
               </Typography>
             )}
             <Typography textAlign="center" paddingTop={'10px'}>

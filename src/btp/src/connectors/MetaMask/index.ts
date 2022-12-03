@@ -9,6 +9,7 @@ import { wallets } from '../../utils/constants';
 import { chainConfigs, chainList } from '../chainConfigs';
 import { ADDRESS_LOCAL_STORAGE, CONNECTED_WALLET_LOCAL_STORAGE, SIGNING_ACTIONS, transactionInfo } from '../constants';
 import { getTransactionMessages, triggerSetAccountInfo } from '../helper';
+import { resetTransferStep } from '../ICONex/utils';
 import { openToast } from '../transactionToast';
 import { ABI } from './ABI';
 import { findReplacementTx } from './findReplacementTx';
@@ -193,6 +194,11 @@ class Ethereum {
     }
   }
 
+  handleSuccessTx() {
+    this.refreshBalance();
+    resetTransferStep();
+  }
+
   async sendTransaction(txParams) {
     return new Promise<TransactionResponse>(async (resolve, reject) => {
       const transInfo = window[transactionInfo];
@@ -270,6 +276,7 @@ class Ethereum {
               transactionStatus: TransactionStatus.success,
               options: toastProps,
             });
+            this.handleSuccessTx();
             resolve({
               message: transactionMessages.success,
               txHash: replacementTx.hash,
@@ -284,6 +291,7 @@ class Ethereum {
           clearInterval(checkTxRs);
           minedTx = transaction;
           if (transaction.status === 1) {
+            this.handleSuccessTx();
             openToast({
               message: transactionMessages.success,
               id: toastId,

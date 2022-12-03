@@ -18,7 +18,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import { ReactComponent as MetamaskIcon } from 'assets/icons/metamask.svg';
-import { useChangeCurrentLedgerAddressPage, useCurrentLedgerAddressPage } from 'store/application/hooks';
+// import { useChangeCurrentLedgerAddressPage, useCurrentLedgerAddressPage } from 'store/application/hooks';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -163,7 +163,6 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
           if (isConnected) {
             const data = await EthereumInstance.getEthereumAccounts();
           }
-          console.log('nextFromNetwork', nextFromNetwork);
           setSelectNetworkSrc(nextFromNetwork);
           setNetworkDst('');
           setLoading(false);

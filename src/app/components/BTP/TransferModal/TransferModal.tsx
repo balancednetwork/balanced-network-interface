@@ -54,6 +54,12 @@ export const TransferAssetModal = ({
     setIsOpen(!isOpen);
   };
 
+  const onDismiss = () => {
+    if (!isApproved && !isApproving) {
+      setIsOpen(!isOpen);
+    }
+  };
+
   const transferNativeToken = async () => {
     const tx = {
       to: toChecksumAddress(sendingAddress),
@@ -108,7 +114,7 @@ export const TransferAssetModal = ({
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen} onDismiss={toggleOpen}>
+    <Modal isOpen={isOpen} onDismiss={onDismiss}>
       <StyledModalContent>
         <Typography textAlign="center" mb={1}>
           <Trans>Transfer asset?</Trans>

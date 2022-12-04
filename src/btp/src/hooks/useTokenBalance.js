@@ -32,6 +32,6 @@ export const useTokenBalance = coinNames => {
       fetchBalances();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountInfo, getBTPService]);
+  }, [accountInfo?.balance, accountInfo?.id, getBTPService]);
   return balances;
 };

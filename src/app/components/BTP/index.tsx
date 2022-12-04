@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Action } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
@@ -91,12 +91,10 @@ addICONexListener();
 const BTPContent = () => {
   const [isOpenConfirm, setIsOpenConfirm] = useState(false);
   const isOpenTransferAssetsModal = useModalOpen(ApplicationModal.TRANSFER_ASSETS);
-  const [nativeCoin, setNativeCoin] = useState('');
   const [assetName, setAssetName] = useState('');
   const [balanceOfAssetName, setBalanceOfAssetName] = useState(0);
   const [sendingAddress, setSendingAddress] = useState('');
   const [sendingBalance, setSendingBalance] = useState('');
-  const [networkId, setNetworkId] = useState('');
   const [isOpenAssetOptions, setIsOpenAssetOptions] = useState(false);
   const [walletModalOpen, setOpenWalletModal] = useState(false);
 
@@ -105,8 +103,11 @@ const BTPContent = () => {
   const [percent, setPercent] = React.useState<number>(0);
   const [fee, setFee] = useState('0');
   const { accountInfo } = useBTPSelector(accountSelector);
+  const { id: networkId, symbol: nativeCoin } = accountInfo || {};
   const setNetworkSrc = useSelectNetworkSrc();
   const setNetworkDst = useSelectNetworkDst();
+  const fromNetwork = useFromNetwork();
+  const toNetwork = useToNetwork();
   const dispatch = useBTPDispatch<BTPAppDispatch>();
 
   const toggleWalletModalOpen = () => {
@@ -137,7 +138,7 @@ const BTPContent = () => {
     setFee(BTPFee);
   };
 
-  const getOptions = () => {
+  const defaultOptions = useMemo(() => {
     const options = [...getCustomizedChainList(), ...getTokenList()].map(
       ({ CHAIN_NAME, COIN_SYMBOL, symbol, tokenOf, ...others }) => {
         const tokenSymbol = COIN_SYMBOL || symbol;
@@ -158,24 +159,42 @@ const BTPContent = () => {
     return options.filter(
       option => option.id === networkId || option.id === chainConfigs.ICON.id || networkId === option.chainId,
     );
-  };
+  }, [nativeCoin, networkId]);
 
-  useEffect(() => {
-    const { balance = 0, symbol = '', id = '' } = accountInfo || {};
+  const userAssets = useTokenBalance(defaultOptions);
 
-    const assestName = symbol || getOptions()[0].label;
-    setAssetName(assestName);
-    setNetworkId(id);
-    setNativeCoin(symbol);
-    setBalanceOfAssetName(Number(balance));
-    getFee(symbol);
+  const tokenList = useMemo(() => {
+    // NOTE: it should update after userAssets update, userAssets should be updated after wallet was changed or completed transfer transaction
+    if (userAssets.length > 0 && fromNetwork) {
+      const assets: any[] = userAssets
+        .filter((asset: any) => asset?.balance !== 0)
+        .reduce((accumulator: any, value: any) => {
+          const nextIndex = accumulator.findIndex((i: any) => value?.balance > i?.balance);
+          const index = nextIndex > -1 ? nextIndex : accumulator.length;
+          accumulator.splice(index, 0, value);
+          return accumulator;
+        }, []);
+
+      const newBalanceOfSelectedAsset = assets.find(({ value }) => value === assetName)?.balance;
+      setBalanceOfAssetName(Number(newBalanceOfSelectedAsset || 0));
+      return assets;
+    }
+    return defaultOptions;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountInfo?.symbol, accountInfo?.id, accountInfo?.balance]);
+  }, [userAssets, fromNetwork]);
 
-  const fromNetwork = useFromNetwork();
-  const toNetwork = useToNetwork();
   useEffect(() => {
-    if (!fromNetwork) setAssetName(getOptions()[0].value);
+    // NOTE: this effect should only run when wallet was changed
+    const assestName = nativeCoin || defaultOptions[0].label;
+    setAssetName(assestName);
+    setBalanceOfAssetName(Number(accountInfo?.balance || 0));
+    getFee(nativeCoin);
+    // NOTE: remove accountInfo?.balance from dept to prevent reset assetName and balanceOfAssetName after complete a transfer transition.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [networkId, nativeCoin]);
+
+  useEffect(() => {
+    if (!fromNetwork) setAssetName(defaultOptions[0].value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromNetwork]);
 
@@ -198,15 +217,6 @@ const BTPContent = () => {
       ...others,
     }));
   };
-
-  const userAssets = useTokenBalance(getOptions())
-    .filter((asset: any) => asset?.balance !== 0)
-    .reduce((accumulator: any, value: any) => {
-      const nextIndex = accumulator.findIndex((i: any) => value?.balance > i?.balance);
-      const index = nextIndex > -1 ? nextIndex : accumulator.length;
-      accumulator.splice(index, 0, value);
-      return accumulator;
-    }, []);
 
   const onChangeAsset = async asset => {
     setAssetName(asset.value);
@@ -284,12 +294,7 @@ const BTPContent = () => {
                   percent={percent}
                   fee={fee}
                 />
-                {isOpenAssetOptions && (
-                  <AssetModal
-                    data={userAssets.length > 0 && fromNetwork ? userAssets : getOptions()}
-                    onChange={onChangeAsset}
-                  />
-                )}
+                {isOpenAssetOptions && <AssetModal data={tokenList} onChange={onChangeAsset} />}
               </Box>
 
               <TransferAssetModal

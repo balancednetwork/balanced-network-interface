@@ -3,7 +3,6 @@ import React from 'react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import Divider from 'app/components/Divider';
 import { FlexPanel } from 'app/components/Panel';
 import { HeaderText } from 'app/components/trade/LiquidityDetails';
 import { notificationCSS } from 'app/components/Wallet/wallets/utils';
@@ -67,26 +66,16 @@ export const StyledTypography = styled(Typography)<{ notification: boolean }>`
 export const VotingGrid = styled(Flex)<{ auth: boolean }>`
   display: grid;
 
-  ${({ auth }) => css`
-    min-width: ${auth ? '600px' : '500px'};
-
-    @media (min-width: 395px) {
-      min-width: ${auth ? '700px' : '500px'};
-    }
-  `};
-
   ${({ auth, theme }) =>
     auth
       ? css`
-          grid-template-columns: 1fr 1fr 1fr 1fr;
-          ${theme.mediaWidth.upMedium`grid-template-columns: 9fr 6fr 8fr 6fr;`}
+          grid-template-columns: 1fr;
+          ${theme.mediaWidth.upSmall`grid-template-columns: 9fr 8fr 8fr 6fr;`}
+          ${theme.mediaWidth.upLarge`grid-template-columns: 9fr 6fr 8fr 6fr;`}
         `
       : css`
-          grid-template-columns: 10fr 9fr 9fr;
-          ${theme.mediaWidth.up420`grid-template-columns: 1fr 3fr 3fr;`}
-          ${theme.mediaWidth.upExtraSmall`grid-template-columns: 5fr 7fr 4fr;`}
-          ${theme.mediaWidth
-            .upMedium`grid-template-columns: 5fr 7fr 4fr;`}
+          grid-template-columns: 1fr;
+          ${theme.mediaWidth.upSmall`grid-template-columns: 5fr 7fr 4fr;`}
         `};
 
   grid-column-gap: 35px;
@@ -126,7 +115,6 @@ export const AllocationInput = styled.input<{ valid: boolean }>`
     &:focus,
     &:hover {
       outline: none;
-      /* border: 2px solid ${theme.colors.primary}; */
     }
 
     ::placeholder {
@@ -195,19 +183,10 @@ export const LoaderComponent = () => (
   </Loader>
 );
 
-export const ScrollHelper = styled(Box)<{ auth: boolean }>`
-  max-width: 100%;
-  overflow-x: auto;
-
-  ${({ auth }) => css`
-    ${Divider} {
-      min-width: ${auth ? '600px' : '500px'};
-    }
-
-    @media (min-width: 395px) {
-      ${Divider} {
-        min-width: ${auth ? '700px' : '500px'};
-      }
-    }
-  `};
+export const RespoLabel = styled.label`
+  font-size: 14px;
+  margin-right: auto;
+  color: ${({ theme }) => theme.colors.text2};
+  white-space: 'nowrap';
+  text-align: left;
 `;

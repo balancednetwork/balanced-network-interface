@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
 import Divider from 'app/components/Divider';
@@ -21,7 +22,7 @@ import { VoteSource } from 'store/liveVoting/types';
 import { useRewards } from 'store/reward/hooks';
 
 import PowerLeftComponent from './PowerLeftComponent';
-import { GirdHeaderItem, ScrollHelper, VoteItemWrap, VotingGrid } from './styledComponents';
+import { GirdHeaderItem, RespoLabel, VoteItemWrap, VotingGrid } from './styledComponents';
 import { formatFraction, formatFractionAmount, formatTimeLeft } from './utils';
 import VotingComponent from './VotingComponent';
 
@@ -35,6 +36,7 @@ export default function LiveVotingPanel() {
   const userVoteData = useUserVoteData();
   const bBalnAmount = useBBalnAmount();
   const nextUpdateDate = useNextUpdateDate();
+  const isRespoLayout = !useMedia('(min-width: 800px)');
 
   const VoteItem = ({
     name,
@@ -64,21 +66,17 @@ export default function LiveVotingPanel() {
       <>
         <VoteItemWrap>
           <VotingGrid auth={auth}>
-            <Flex alignItems="center">
+            <Flex alignItems="center" mb={isRespoLayout ? 4 : 0}>
               <Flex sx={{ minWidth: '95px' }} alignItems="center">
                 {baseCurrency && quoteCurrency ? (
-                  <Flex
-                    alignItems={['start', 'start', 'start', 'center']}
-                    flexDirection={['column', 'column', 'column', 'row']}
-                  >
-                    <PoolLogo baseCurrency={baseCurrency} quoteCurrency={quoteCurrency} respoVersion={true} />
+                  <Flex alignItems="center">
+                    <PoolLogo baseCurrency={baseCurrency} quoteCurrency={quoteCurrency} respoVersion={false} />
                     <Typography
                       color="text"
                       fontSize={16}
                       fontWeight="bold"
                       style={{ whiteSpace: 'nowrap' }}
-                      ml={[0, 0, 0, 2]}
-                      mt={[1, 1, 1, 0]}
+                      ml={2}
                     >{`${baseCurrency.symbol}/${quoteCurrency.symbol}`}</Typography>
                   </Flex>
                 ) : (
@@ -89,17 +87,35 @@ export default function LiveVotingPanel() {
               </Flex>
             </Flex>
 
-            {auth && <MemoizedVotingComponent name={name} />}
+            {auth && <MemoizedVotingComponent name={name} respoLayout={isRespoLayout} />}
 
-            <Flex justifyContent="flex-end" my={'auto'} flexDirection="column">
-              <Typography color="text" fontSize={16}>
-                {formatFraction(weight)}
-              </Typography>
-              <Typography color="text1" fontSize={14}>
-                {totalBBAlnAllocation ? `${formatFractionAmount(weight, totalBBAlnAllocation)} bBALN` : '-'}
-              </Typography>
+            <Flex alignItems={isRespoLayout ? 'center' : 'end'} mb={isRespoLayout ? 4 : 0}>
+              {isRespoLayout && (
+                <RespoLabel>
+                  <Trans>Current allocation</Trans>
+                </RespoLabel>
+              )}
+              <Flex
+                justifyContent="flex-end"
+                my={'auto'}
+                width={isRespoLayout ? 'auto' : '100%'}
+                flexDirection="column"
+              >
+                <Typography color="text" fontSize={16}>
+                  {formatFraction(weight)}
+                </Typography>
+                <Typography color="text1" fontSize={14}>
+                  {totalBBAlnAllocation ? `${formatFractionAmount(weight, totalBBAlnAllocation)} bBALN` : '-'}
+                </Typography>
+              </Flex>
             </Flex>
             <Flex justifyContent="flex-end" alignItems="center">
+              {isRespoLayout && (
+                <RespoLabel>
+                  <Trans>Daily incentives</Trans>
+                </RespoLabel>
+              )}
+
               <Typography color="text" fontSize={16}>
                 {rewards && rewards[name] ? `${rewards[name].toFormat(0)} BALN` : '-'}
               </Typography>
@@ -125,11 +141,15 @@ export default function LiveVotingPanel() {
               text={
                 <>
                   <Typography>
-                    47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the
-                    amount allocated to each liquidity pool via "live" voting.
+                    <Trans>
+                      47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the
+                      amount allocated to each liquidity pool via "live" voting.
+                    </Trans>
                   </Typography>
                   <Typography mt={3}>
-                    Incentives are recalculated every week. You can adjust your allocation once every 10 days.
+                    <Trans>
+                      Incentives are recalculated every week. You can adjust your allocation once every 10 days.
+                    </Trans>
                   </Typography>
                 </>
               }
@@ -138,15 +158,23 @@ export default function LiveVotingPanel() {
         </Flex>
         <PowerLeftComponent />
       </Flex>
-      <ScrollHelper auth={!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData}>
+      {isRespoLayout && (
+        <Typography fontSize={14} mt={-2} mb={3}>
+          <Trans>Current bBALN allocation will be updated in </Trans>{' '}
+          <strong style={{ whiteSpace: 'nowrap' }}>{formatTimeLeft(nextUpdateDate)}</strong>.
+        </Typography>
+      )}
+      {!isRespoLayout && (
         <VotingGrid auth={!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData}>
           <GirdHeaderItem>Pool</GirdHeaderItem>
           {!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData && (
-            <GirdHeaderItem>Your allocation</GirdHeaderItem>
+            <GirdHeaderItem>
+              <Trans>Your allocation</Trans>
+            </GirdHeaderItem>
           )}
           <Flex width="100%" style={{ transform: 'translateX(20px)' }}>
             <GirdHeaderItem ml="auto" textAlign="right">
-              Current allocation
+              <Trans>Current allocation</Trans>
             </GirdHeaderItem>
             <QuestionHelper
               width={300}
@@ -154,46 +182,53 @@ export default function LiveVotingPanel() {
               text={
                 <>
                   <Typography>
-                    The current distribution of liquidity incentives, based on the total bBAlN allocation. Updated once
-                    a week.
+                    <Trans>
+                      The current distribution of liquidity incentives, based on the total bBAlN allocation. Updated
+                      once a week.
+                    </Trans>
                   </Typography>
                   <Typography mt={3}>
-                    The next update is in <strong>{formatTimeLeft(nextUpdateDate)}</strong>.
+                    <Trans>The next update is in</Trans>
+                    {''}
+                    <strong>{formatTimeLeft(nextUpdateDate)}</strong>.
                   </Typography>
                 </>
               }
             />
           </Flex>
-          <GirdHeaderItem>Daily incentive</GirdHeaderItem>
+          <GirdHeaderItem>
+            <Trans>Daily incentive</Trans>
+          </GirdHeaderItem>
         </VotingGrid>
-        {voteData &&
-          Object.keys(voteData)
-            .sort((a, b) => {
-              if (userVoteData && userVoteData[a]) {
-                return -1;
-              } else {
-                return 1;
-              }
-            })
-            .sort((a, b) => {
-              if (userVoteData && userVoteData[a] && userVoteData[b]) {
-                if (userVoteData[a].power.lessThan(userVoteData[b].power)) return 1;
-                if (userVoteData[b].power.lessThan(userVoteData[a].power)) return -1;
-                return 0;
-              } else {
-                return 0;
-              }
-            })
-            .map((item, index, array) => (
-              <VoteItem
-                key={item}
-                name={item}
-                vote={voteData[item]}
-                auth={!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData}
-                border={index + 1 !== array.length}
-              />
-            ))}
-      </ScrollHelper>
+      )}
+
+      {voteData &&
+        Object.keys(voteData)
+          .sort((a, b) => {
+            if (userVoteData && userVoteData[a]) {
+              return -1;
+            } else {
+              return 1;
+            }
+          })
+          .sort((a, b) => {
+            if (userVoteData && userVoteData[a] && userVoteData[b]) {
+              if (userVoteData[a].power.lessThan(userVoteData[b].power)) return 1;
+              if (userVoteData[b].power.lessThan(userVoteData[a].power)) return -1;
+              return 0;
+            } else {
+              return 0;
+            }
+          })
+          .map((item, index, array) => (
+            <VoteItem
+              key={item}
+              name={item}
+              vote={voteData[item]}
+              auth={!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData}
+              border={index + 1 !== array.length}
+            />
+          ))}
     </BoxPanel>
   );
 }

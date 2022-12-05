@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import { t, Trans } from '@lingui/macro';
-// import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -32,14 +31,15 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { escapeRegExp, ONE_DAY_DURATION } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { AllocationInput, StyledQuestionIcon, VotingButtons } from './styledComponents';
+import { AllocationInput, RespoLabel, StyledQuestionIcon, VotingButtons } from './styledComponents';
 import { formatFraction, formatFractionAmount, formatTimeLeft, formatVoteWeight } from './utils';
 
 interface VotingComponentProps {
   name: string;
+  respoLayout: boolean;
 }
 
-export default function VotingComponent({ name }: VotingComponentProps) {
+export default function VotingComponent({ name, respoLayout }: VotingComponentProps) {
   const userVoteData = useUserVoteData();
   const bBalnAmount = useBBalnAmount();
   const changeShowConfirmation = useChangeShowConfirmation();
@@ -112,80 +112,94 @@ export default function VotingComponent({ name }: VotingComponentProps) {
 
   return (
     <>
-      <Flex alignItems="flex-end" flexDirection="column" justifyContent="center">
-        {editing === name ? (
-          <Flex flexDirection="column" width={155}>
-            <AllocationInput
-              type="text"
-              value={inputValue}
-              onChange={handleAllocationInputChange}
-              autoFocus={true}
-              placeholder="%"
-              valid={isInputValid}
-            />
-            <VotingButtons>
-              <TextButton onClick={() => handleEditToggle('')}>
-                <Trans>Cancel</Trans>
-              </TextButton>
-              <Button
-                disabled={!isInputValid || !inputValue || '0.00000000000'.indexOf(inputValue) >= 0}
-                onClick={() => changeShowConfirmation(true)}
-              >
-                <Trans>Confirm</Trans>
-              </Button>
-            </VotingButtons>
-          </Flex>
-        ) : hasVoted ? (
-          <>
-            <Flex alignItems="center">
-              {voteExpiry && (
-                <Tooltip
-                  show={show}
-                  text={
-                    <Typography>
-                      <strong>{formatTimeLeft(voteExpiry)}</strong>{' '}
-                      <Trans>left until you can adjust your allocation.</Trans>
-                    </Typography>
-                  }
-                  strategy="fixed"
-                  placement="top"
-                  offset={[0, 18]}
-                  width={220}
-                >
-                  <>
-                    <Typography fontSize={16} color="text">
-                      {userVoteData && userVoteData[name] ? formatFraction(userVoteData[name].power) : '-'}
-                    </Typography>
-                  </>
-                </Tooltip>
-              )}
-              {hasActiveLock ? (
-                voteExpiry && (
-                  <StyledQuestionIcon
-                    width={14}
-                    style={{ margin: '4px 0px 5px 7px' }}
-                    onMouseOver={() => setShow(true)}
-                    onMouseLeave={() => setShow(false)}
-                  />
-                )
-              ) : (
-                <Flex onClick={() => handleEditToggle(name)} sx={{ margin: '4px 0px 4px 6px', cursor: 'pointer' }}>
-                  <EditIcon width={15} />
-                </Flex>
-              )}
-            </Flex>
-            <Typography fontSize={14} color="text1">
-              {bBalnAmount &&
-                userVoteData &&
-                userVoteData[name] &&
-                `${formatFractionAmount(userVoteData[name].power, bBalnAmount)} bBALN`}
-            </Typography>
-          </>
-        ) : (
-          <UnderlineText onClick={() => handleEditToggle(name)}>
-            <Typography color="primaryBright">Add</Typography>
-          </UnderlineText>
+      <Flex alignItems={respoLayout ? 'center' : 'end'} mb={respoLayout ? 4 : 0}>
+        {respoLayout && (
+          <RespoLabel>
+            <Trans>Your allocation</Trans>
+          </RespoLabel>
         )}
+
+        <Flex
+          alignItems="flex-end"
+          width={respoLayout ? 'auto' : '100%'}
+          flexDirection="column"
+          justifyContent="center"
+          alignSelf="center"
+        >
+          {editing === name ? (
+            <Flex flexDirection="column" width={155}>
+              <AllocationInput
+                type="text"
+                value={inputValue}
+                onChange={handleAllocationInputChange}
+                autoFocus={true}
+                placeholder="%"
+                valid={isInputValid}
+              />
+              <VotingButtons>
+                <TextButton onClick={() => handleEditToggle('')}>
+                  <Trans>Cancel</Trans>
+                </TextButton>
+                <Button
+                  disabled={!isInputValid || !inputValue || '0.00000000000'.indexOf(inputValue) >= 0}
+                  onClick={() => changeShowConfirmation(true)}
+                >
+                  <Trans>Confirm</Trans>
+                </Button>
+              </VotingButtons>
+            </Flex>
+          ) : hasVoted ? (
+            <>
+              <Flex alignItems="center">
+                {voteExpiry && (
+                  <Tooltip
+                    show={show}
+                    text={
+                      <Typography>
+                        <strong>{formatTimeLeft(voteExpiry)}</strong>{' '}
+                        <Trans>left until you can adjust your allocation.</Trans>
+                      </Typography>
+                    }
+                    strategy="fixed"
+                    placement="top"
+                    offset={[0, 18]}
+                    width={220}
+                  >
+                    <>
+                      <Typography fontSize={16} color="text">
+                        {userVoteData && userVoteData[name] ? formatFraction(userVoteData[name].power) : '-'}
+                      </Typography>
+                    </>
+                  </Tooltip>
+                )}
+                {hasActiveLock ? (
+                  voteExpiry && (
+                    <StyledQuestionIcon
+                      width={14}
+                      style={{ margin: '4px 0px 5px 7px' }}
+                      onMouseOver={() => setShow(true)}
+                      onMouseLeave={() => setShow(false)}
+                    />
+                  )
+                ) : (
+                  <Flex onClick={() => handleEditToggle(name)} sx={{ margin: '4px 0px 4px 6px', cursor: 'pointer' }}>
+                    <EditIcon width={15} />
+                  </Flex>
+                )}
+              </Flex>
+              <Typography fontSize={14} color="text1">
+                {bBalnAmount &&
+                  userVoteData &&
+                  userVoteData[name] &&
+                  `${formatFractionAmount(userVoteData[name].power, bBalnAmount)} bBALN`}
+              </Typography>
+            </>
+          ) : (
+            <UnderlineText onClick={() => handleEditToggle(name)}>
+              <Typography color="primaryBright">Add</Typography>
+            </UnderlineText>
+          )}
+        </Flex>
       </Flex>
 
       <Modal isOpen={showConfirmation && editing === name} onDismiss={() => changeShowConfirmation(false)}>

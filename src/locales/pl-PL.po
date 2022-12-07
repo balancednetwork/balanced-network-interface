@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-02 21:20\n"
+"PO-Revision-Date: 2022-12-07 09:22\n"
 "Last-Translator: \n"
 "Language: pl_PL\n"
 "Language-Team: Polish\n"
@@ -57,6 +57,10 @@ msgstr "1G"
 msgid "1W"
 msgstr "1T"
 
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 msgid "4H"
 msgstr "4G"
@@ -108,11 +112,19 @@ msgstr "Dodaj swoje sICX do puli zabezpieczeń."
 msgid "Address"
 msgstr "Adres"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Adjust"
 msgstr "Dostosuj"
+
+#: src/app/containers/VotePage/VotingComponent.tsx
+msgid "Adjust allocation"
+msgstr ""
+
+#: src/app/containers/VotePage/VotingComponent.tsx
+msgid "Adjust liquidity allocation?"
+msgstr ""
 
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
@@ -133,9 +145,17 @@ msgstr "Całe zabezpieczenie zablokowane"
 msgid "All fees claimed"
 msgstr ""
 
+#: src/app/containers/VotePage/ProposalList.tsx
+msgid "All proposals"
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All time"
 msgstr "Od początku"
+
+#: src/app/containers/VotePage/VotingComponent.tsx
+msgid "Allocating bBALN..."
+msgstr ""
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -159,17 +179,17 @@ msgstr "Aktywo"
 msgid "Assets to send"
 msgstr "Aktywa do wysłania"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Available since {0}"
+msgstr ""
+
+#: src/app/containers/VotePage/VotingPowerPanel.tsx
+msgid "Average lock-up time"
 msgstr ""
 
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "BALN APY"
 msgstr ""
-
-#: src/app/containers/NewProposalPage/constant.ts
-msgid "BALN allocation"
-msgstr "Przydział BALN"
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "BALN staking has been upgraded to a lock-up model called Boosted BALN."
@@ -254,6 +274,7 @@ msgstr "Pożyczanie bnUSD..."
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SwapPanel.tsx
+#: src/app/containers/VotePage/VotingComponent.tsx
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -354,6 +375,7 @@ msgstr "Zabezpieczenie"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
+#: src/app/containers/VotePage/VotingComponent.tsx
 msgid "Confirm"
 msgstr "Zatwierdź"
 
@@ -419,7 +441,16 @@ msgstr "Tworzenie puli"
 msgid "Current"
 msgstr "Obecnie"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "Current allocation"
+msgstr ""
+
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "Current bBALN allocation will be updated in"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Current unlock date"
 msgstr ""
 
@@ -431,6 +462,14 @@ msgstr "DATA"
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "DEX"
+msgstr ""
+
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "Daily incentive"
+msgstr ""
+
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "Daily incentives"
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -502,7 +541,7 @@ msgstr "Nie wysyłaj sICX na giełdę."
 msgid "Duration"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Earn or buy BALN, then lock it up here to boost your earning potential and voting power."
 msgstr ""
 
@@ -597,6 +636,10 @@ msgstr ""
 msgid "In contract"
 msgstr "W kontrakcie"
 
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
+msgstr ""
+
 #: src/app/components/trade/LiquidityPoolsPanel.tsx
 msgid "Incentivised pools"
 msgstr ""
@@ -610,7 +653,7 @@ msgstr "Zawiera prowizję w wysokości {0} bnUSD."
 msgid "Includes a fee of {0} {1}."
 msgstr "Zawiera prowizję w wysokości {0} {1}."
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Increasing lock duration..."
 msgstr ""
 
@@ -661,6 +704,10 @@ msgstr "Likwidacja"
 msgid "Liquidation LTV"
 msgstr ""
 
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "Liquidity incentives"
+msgstr ""
+
 #: src/app/components/trade/LiquidityPoolsPanel.tsx
 msgid "Liquidity pools"
 msgstr ""
@@ -684,12 +731,12 @@ msgstr "Nagrody za zaciągniętą pożyczkę"
 msgid "Loan to value ratio"
 msgstr "Stosunek pożyczki do wartości zabezpieczenia"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock duration increased  until {0}."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN"
 msgstr ""
 
@@ -697,11 +744,11 @@ msgstr ""
 msgid "Lock up BALN to earn network fees."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up Balance Tokens?"
 msgstr ""
 
@@ -709,12 +756,12 @@ msgstr ""
 msgid "Locked"
 msgstr "Zablokowane"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Locked until"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Locking BALN..."
 msgstr ""
 
@@ -722,7 +769,7 @@ msgstr ""
 msgid "Minimum to receive"
 msgstr "Minimum do otrzymania"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Minus 50% fee: {0} BALN"
 msgstr ""
 
@@ -740,7 +787,8 @@ msgid "New collateral type"
 msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
-#: src/app/containers/VotePage/index.tsx
+#: src/app/containers/VotePage/ProposalList.tsx
+#: src/app/containers/VotePage/ProposalsPanel.tsx
 msgid "New proposal"
 msgstr "Nowa propozycja"
 
@@ -801,7 +849,7 @@ msgstr "Ostatni tydzień"
 msgid "Pay"
 msgstr "Zapłać"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Pay a 50% fee to unlock your BALN early."
 msgstr ""
 
@@ -837,7 +885,8 @@ msgstr "Przetwarzanie transakcji..."
 msgid "Proposal type"
 msgstr "Typ propozycji"
 
-#: src/app/containers/VotePage/index.tsx
+#: src/app/containers/VotePage/ProposalList.tsx
+#: src/app/containers/VotePage/ProposalsPanel.tsx
 msgid "Proposals"
 msgstr "Propozycje"
 
@@ -1144,6 +1193,10 @@ msgstr ""
 msgid "The current bnUSD price is"
 msgstr "Obecna cena bnUSD wynosi"
 
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "The current distribution of liquidity incentives, based on the total bBALN allocation. Updated once a week."
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current {0} price is"
 msgstr ""
@@ -1152,7 +1205,7 @@ msgstr ""
 msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will decrease over time."
 msgstr ""
 
@@ -1164,6 +1217,10 @@ msgstr ""
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "The maximum percentage that people can borrow against the value of this collateral type."
+msgstr ""
+
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "The next update is in"
 msgstr ""
 
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
@@ -1215,9 +1272,17 @@ msgstr ""
 msgid "Total daily rewards"
 msgstr "Całkowite dzienne nagrody"
 
+#: src/app/containers/VotePage/VotingPowerPanel.tsx
+msgid "Total locked"
+msgstr ""
+
 #: src/app/components/trade/LPDescription.tsx
 msgid "Total supply"
 msgstr "Całkowita podaż"
+
+#: src/app/containers/VotePage/VotingPowerPanel.tsx
+msgid "Total voting power"
+msgstr ""
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
@@ -1228,15 +1293,15 @@ msgstr "Handluj"
 msgid "Transaction"
 msgstr "Transakcja"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlock Balance Tokens?"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlocked {0} BALN."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlocking BALN early..."
 msgstr ""
 
@@ -1337,6 +1402,7 @@ msgstr "Wyświetl wyłączenie odpowiedzialności"
 #: src/app/components/AppBar/index.tsx
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
+#: src/app/containers/VotePage/ProposalList.tsx
 msgid "Vote"
 msgstr "Głosuj"
 
@@ -1351,6 +1417,10 @@ msgstr "Głosowanie zakończy się za {endTimeStr}"
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting has ended"
 msgstr "Głosowanie zakończone"
+
+#: src/app/containers/VotePage/PowerLeftComponent.tsx
+msgid "Voting power available: {0}"
+msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #: src/app/components/ProposalStatusIcon/index.tsx
@@ -1406,12 +1476,12 @@ msgstr "Gdy pożyczasz bnUSD, Twoje zabezpieczenie jest wykorzystywane do utrzym
 msgid "Withdraw"
 msgstr "Wycofaj"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Withdraw BALN"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Withdraw Balance Tokens"
 msgstr ""
 
@@ -1437,7 +1507,7 @@ msgstr ""
 msgid "Withdraw:"
 msgstr "Wycofaj:"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Withdrawing BALN..."
 msgstr ""
 
@@ -1479,7 +1549,11 @@ msgstr "Potrzebujesz co najmniej {MINIMUM_ICX_FOR_TX} ICX w swoim portfelu, aby 
 msgid "You rejected"
 msgstr "Zagłosowałeś przeciw"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/containers/VotePage/VotingComponent.tsx
+msgid "You'll be able to readjust your allocation for this pool on"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "You'll need to relock BALN to hold voting power and boost your earning potential."
 msgstr ""
 
@@ -1508,6 +1582,11 @@ msgstr ""
 msgid "Your ICX will be unstaked as more ICX collateral is deposited into Balanced."
 msgstr ""
 
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/VotingComponent.tsx
+msgid "Your allocation"
+msgstr ""
+
 #: src/app/components/trade/LiquidityPoolsPanel.tsx
 msgid "Your pools"
 msgstr ""
@@ -1529,6 +1608,7 @@ msgstr ""
 msgid "and ends after 5 days."
 msgstr "i kończy się po 5 dniach."
 
+#: src/app/containers/VotePage/utils.ts
 #: src/utils/timeformat.ts
 msgid "d"
 msgstr "d"
@@ -1537,10 +1617,16 @@ msgstr "d"
 msgid "for"
 msgstr ""
 
+#: src/app/containers/VotePage/utils.ts
 #: src/utils/timeformat.ts
 msgid "h"
 msgstr "godz."
 
+#: src/app/containers/VotePage/VotingComponent.tsx
+msgid "left until you can adjust your allocation."
+msgstr ""
+
+#: src/app/containers/VotePage/utils.ts
 #: src/utils/timeformat.ts
 msgid "less then a minute"
 msgstr "mniej niż minutę"
@@ -1549,6 +1635,7 @@ msgstr "mniej niż minutę"
 msgid "liquidity pool"
 msgstr "pula płynności"
 
+#: src/app/containers/VotePage/utils.ts
 #: src/utils/timeformat.ts
 msgid "m"
 msgstr "min"
@@ -1583,12 +1670,12 @@ msgstr "{0} / {1} pula płynności"
 msgid "{0} BALN added to your wallet."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "{0} BALN locked until {1}."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "{0} BALN withdrawn."
 msgstr ""
 
@@ -1651,6 +1738,10 @@ msgstr "{currency} wysłano do puli {pair}."
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
 msgstr "Dodano {inputAmount} {inputCurrency} i {outputAmount} {outputCurrency} do Twojego portfela."
 
+#: src/app/containers/VotePage/VotingComponent.tsx
+msgid "{inputValue}% of bBALN allocated to {editing}."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "{label} proposal submitted."
 msgstr "Propozycja {label} została zgłoszona."
@@ -1658,6 +1749,10 @@ msgstr "Propozycja {label} została zgłoszona."
 #: src/app/components/trade/utils.tsx
 msgid "{outputAmount} {outputCurrency} added to your wallet."
 msgstr "Dodano {outputAmount} {outputCurrency} do Twojego portfela."
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "{title}"
+msgstr ""
 
 #: src/app/components/ProposalInfo/components.tsx
 msgid "{value}% voted"

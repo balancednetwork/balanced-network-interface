@@ -22,7 +22,7 @@ import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
 import { useMinBBalnPercentageToSubmit } from 'queries/vote';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useBBalnAmount, useFetchBBalnInfo, useTotalSuply } from 'store/bbaln/hooks';
+import { useBBalnAmount, useFetchBBalnInfo, useTotalSupply } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -72,6 +72,7 @@ export const FieldInput = styled.input`
     -moz-appearance: none;
     appearance: none;
   }
+  -moz-appearance: textfield;
   :disabled {
     opacity: 0;
     border: 2px solid ${({ theme }) => theme.colors.bg5};
@@ -173,7 +174,7 @@ export function NewProposalPage() {
   const isCollateralProposal = selectedProposalType === PROPOSAL_TYPE.NEW_COLLATERAL_TYPE;
   const { isScoreAddress } = Validator;
 
-  const totalSupply = useTotalSuply();
+  const totalSupply = useTotalSupply();
   const minimumBBalnAmount = totalSupply && minPercentage && totalSupply.times(minPercentage);
   const isBBalnValid = minimumBBalnAmount && bBalnAmount.isGreaterThanOrEqualTo(minimumBBalnAmount);
 

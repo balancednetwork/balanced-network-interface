@@ -683,4 +683,18 @@ export const ThemedGlobalStyle = createGlobalStyle`
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
     background-color: #2ca9b7; 
   }
+
+  .error-anim {
+    @keyframes wiggle {
+        0% { transform: translate3d(0, 0, 0); }
+      10% { transform:translate3d(-3px, 0, 0); }
+      30% { transform: translate3d(3px, 0, 0); }
+      50% { transform: translate3d(-2px, 0, 0); }
+      70% { transform: translate3d(2px, 0, 0); }
+      90% { transform: translate3d(-1px, 0, 0); }
+      100% { transform: translate3d(0, 0, 0); }
+    }
+    display: inline-block;
+    animation: wiggle 0.5s forwards;
+  }
 `;

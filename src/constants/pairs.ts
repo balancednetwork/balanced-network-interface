@@ -389,6 +389,47 @@ const SUPPORTED_PAIRS_INFO: { [ChainId: number]: PairInfo[] } = {
       quoteToken: sICX[ChainId.BERLIN],
     },
   ],
+  [ChainId.LISBON]: [
+    {
+      chainId: 2,
+      id: 1,
+      name: 'sICX/ICX',
+      baseCurrencyKey: 'sICX',
+      quoteCurrencyKey: 'ICX',
+      baseToken: sICX[ChainId.LISBON],
+      quoteToken: ICX[ChainId.LISBON],
+      rewards: 0.03,
+    },
+    {
+      chainId: 2,
+      id: 2,
+      name: 'sICX/bnUSD',
+      baseCurrencyKey: 'sICX',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: sICX[ChainId.LISBON],
+      quoteToken: bnUSD[ChainId.LISBON],
+      rewards: 0.12,
+    },
+    {
+      chainId: 2,
+      id: 3,
+      name: 'BALN/bnUSD',
+      baseCurrencyKey: 'BALN',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: BALN[ChainId.LISBON],
+      quoteToken: bnUSD[ChainId.LISBON],
+      rewards: 0.12,
+    },
+    {
+      chainId: 2,
+      id: 5,
+      name: 'BALN/sICX',
+      baseCurrencyKey: 'BALN',
+      quoteCurrencyKey: 'sICX',
+      baseToken: BALN[ChainId.LISBON],
+      quoteToken: sICX[ChainId.LISBON],
+    },
+  ],
 };
 
 export const SUPPORTED_PAIRS = SUPPORTED_PAIRS_INFO[NETWORK_ID];

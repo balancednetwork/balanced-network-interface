@@ -137,6 +137,54 @@
       "symbol": "BTCB",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
+    },
+    {
+      "address": "cx288d13e1b63563459a2ac6179f237711f6851cb5",
+      "chainId": 1,
+      "name": "Binance ETH",
+      "symbol": "ETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
+    },
+    {
+      "address": "cxc3c552054ba6823107b56086134c2afc26ab1dfa",
+      "chainId": 2,
+      "name": "Balance Token",
+      "symbol": "BALN",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png"
+    },
+    {
+      "address": "cx87f7f8ceaa054d46ba7343a2ecd21208e12913c6",
+      "chainId": 2,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "cx2d013cb55781fb54b81d629aa4b611be2daec564",
+      "chainId": 2,
+      "name": "Staked ICX",
+      "symbol": "sICX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sicx.png"
+    },
+    {
+      "address": "cx9634be155fc77754c4b2e1bceddc1c63d973f1f3",
+      "chainId": 2,
+      "name": "ICON Tether",
+      "symbol": "IUSDT",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdt.png"
+    },
+    {
+      "address": "cx99c79fd6dee53335f686c7f2cb513745622634f2",
+      "chainId": 2,
+      "name": "Binance ETH",
+      "symbol": "TETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
     }
   ]
 }

@@ -75,7 +75,7 @@ export default function VotingComponent({ name, respoLayout }: VotingComponentPr
         { hash },
         {
           pending: t`Allocating bBALN...`,
-          summary: t`${inputValue}% bBALN allocated to ${editing}.`,
+          summary: t`${inputValue}% of bBALN allocated to ${editing}.`,
         },
       );
     } catch (e) {

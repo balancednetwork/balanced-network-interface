@@ -188,14 +188,12 @@ export default function LiveVotingPanel() {
                 <>
                   <Typography>
                     <Trans>
-                      The current distribution of liquidity incentives, based on the total bBAlN allocation. Updated
+                      The current distribution of liquidity incentives, based on the total bBALN allocation. Updated
                       once a week.
                     </Trans>
                   </Typography>
                   <Typography mt={3}>
-                    <Trans>The next update is in</Trans>
-                    {''}
-                    <strong>{formatTimeLeft(nextUpdateDate)}</strong>.
+                    <Trans>The next update is in</Trans> <strong>{formatTimeLeft(nextUpdateDate)}</strong>.
                   </Typography>
                 </>
               }

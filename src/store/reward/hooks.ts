@@ -1,16 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Fraction } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { forOwn } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { PLUS_INFINITY } from 'constants/index';
-import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useBBalnAmount } from 'store/bbaln/hooks';
 import { useCollateralInputAmountAbsolute } from 'store/collateral/hooks';
 import { useHasUnclaimedFees } from 'store/fees/hooks';
@@ -58,58 +55,22 @@ export function useEmissions() {
   );
 }
 
-// export function useFetchRewardsInfo() {
-//   const { data: emission } = useEmissions();
-//   const { data: distribution } = useFlattenedRewardsDistribution();
-//   const changeReward = useChangeReward();
-
-//   useEffect(() => {
-//     if (distribution && emission) {
-//       Object.keys(distribution).forEach(rewardName => {
-//         try {
-//           changeReward(rewardName, emission.times(new BigNumber(distribution[rewardName].toFixed(18))));
-//         } catch (e) {
-//           console.error(e);
-//         }
-//       });
-//     }
-//   }, [distribution, emission, changeReward]);
-// }
-
 export function useFetchRewardsInfo() {
-  // fetch rewards rule
-  const [rules, setRules] = React.useState({});
-  const [emission, setEmission] = React.useState(new BigNumber(0));
-  React.useEffect(() => {
-    const fetchRewardsRule = async () => {
-      let result = await Promise.all([bnJs.Rewards.getRecipientsSplit(), bnJs.Rewards.getEmission()]);
-      const [_rules, _emission] = result;
-      const a = {};
-      forOwn(_rules, function (value, key) {
-        a[key] = BalancedJs.utils.toIcx(value);
-      });
-
-      setRules(a);
-      setEmission(BalancedJs.utils.toIcx(_emission));
-    };
-    fetchRewardsRule();
-  }, []);
-
+  const { data: emission } = useEmissions();
+  const { data: distribution } = useFlattenedRewardsDistribution();
   const changeReward = useChangeReward();
-  // calculate rewards
-  React.useEffect(() => {
-    // calculate rewards per pool
-    SUPPORTED_PAIRS.forEach(pair => {
-      if (pair.rewards) {
-        const rewardShare = rules[`${pair.baseCurrencyKey}/${pair.quoteCurrencyKey}`];
-        changeReward(pair.id.toString(), emission.times(rewardShare));
-      }
-    });
 
-    //calculate loan rewards
-    const rewardShare = rules['Loans'];
-    changeReward('Loans', emission.times(rewardShare));
-  }, [rules, emission, changeReward]);
+  useEffect(() => {
+    if (distribution && emission) {
+      Object.keys(distribution).forEach(rewardName => {
+        try {
+          changeReward(rewardName, emission.times(new BigNumber(distribution[rewardName].toFixed(18))));
+        } catch (e) {
+          console.error(e);
+        }
+      });
+    }
+  }, [distribution, emission, changeReward]);
 }
 
 export const useCurrentCollateralRatio = (): BigNumber => {

@@ -61,7 +61,7 @@ export function useCombinedVoteData(): UseQueryResult<Map<string, VoteSource>, E
   const { data: distribution } = useRewardsPercentDistribution();
 
   return useQuery(
-    [voteData, distribution],
+    `combinedVoteData${voteData && Object.keys(voteData).length}${distribution && Object.keys(distribution).length}`,
     () => {
       if (voteData && distribution) {
         const distributionFixedSources = Object.keys(distribution.Fixed);

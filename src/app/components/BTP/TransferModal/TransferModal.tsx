@@ -71,7 +71,7 @@ export const TransferAssetModal = ({
       networkDst: networkDst.label,
       networkSrc: networkSrc.label,
       to: tx.to,
-      value: tx.value,
+      value: balance,
       coinName: tx.coinName,
       nid: IconConverter.toNumber(networkSrc.NETWORK_ADDRESS.split('.')[0]),
     };

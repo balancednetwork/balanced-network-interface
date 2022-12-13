@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { CONNECTED_WALLET_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { requestAddress } from 'btp/src/connectors/ICONex/events';
@@ -13,14 +13,14 @@ import styled from 'styled-components';
 
 import { VerticalDivider } from 'app/components/Divider';
 import Modal, { ModalProps } from 'app/components/Modal';
-import Spinner from 'app/components/Spinner';
+// import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import { ReactComponent as MetamaskIcon } from 'assets/icons/metamask.svg';
-import { useChangeCurrentLedgerAddressPage, useCurrentLedgerAddressPage } from 'store/application/hooks';
+// import { useChangeCurrentLedgerAddressPage, useCurrentLedgerAddressPage } from 'store/application/hooks';
 
-const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
+// const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
 // const generatePaths = (point: number) => {
 //   const paths = HwUtils.splitPath(`${LEDGER_BASE_PATH}/${point}'`);
@@ -61,11 +61,11 @@ const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.
 //   return addressFromLedger;
 // };
 
-const LIMIT_PAGING_LEDGER = 5;
+// const LIMIT_PAGING_LEDGER = 5;
 
-const LedgerAddressList = styled(Modal)`
-  width: 500px;
-`;
+// const LedgerAddressList = styled(Modal)`
+//   width: 500px;
+// `;
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />).attrs({
   'aria-label': 'dialog',
@@ -134,11 +134,11 @@ const Wrapper = styled.div`
 `;
 
 export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal }) {
-  const [loading, setLoading] = useState(false);
-  const [showLedgerAddress, updateShowledgerAddress] = useState(false);
-  const [addressList, updateAddressList] = useState<any>([]);
-  const [isLedgerLoading, setLedgerLoading] = useState(false);
-  const [isLedgerErr, setIsLedgerErr] = useState(false);
+  // const [loading, setLoading] = useState(false);
+  // const [showLedgerAddress, updateShowledgerAddress] = useState(false);
+  // const [addressList, updateAddressList] = useState<any>([]);
+  // const [isLedgerLoading, setLedgerLoading] = useState(false);
+  // const [isLedgerErr, setIsLedgerErr] = useState(false);
   const nextFromNetwork = useNextFromNetwork();
   const setSelectNetworkSrc = useSelectNetworkSrc();
   const setNetworkDst = useSelectNetworkDst();
@@ -151,7 +151,7 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
   // const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
 
   const handleOpenWallet = async (type: string) => {
-    setLoading(true);
+    // setLoading(true);
     // window['accountInfo'] = null;
     localStorage.setItem(CONNECTED_WALLET_LOCAL_STORAGE, type);
 
@@ -161,12 +161,12 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
           const isConnected = await EthereumInstance.connectMetaMaskWallet();
           console.log('isConnected', isConnected);
           if (isConnected) {
-            const data = await EthereumInstance.getEthereumAccounts();
+            await EthereumInstance.getEthereumAccounts();
           }
           console.log('nextFromNetwork', nextFromNetwork);
           setSelectNetworkSrc(nextFromNetwork);
           setNetworkDst('');
-          setLoading(false);
+          // setLoading(false);
           setOpenWalletModal();
           break;
         case wallets.iconex:
@@ -174,7 +174,7 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
           await requestAddress();
           setSelectNetworkSrc(nextFromNetwork);
           setNetworkDst('');
-          setLoading(false);
+          // setLoading(false);
           setOpenWalletModal();
           break;
         default:
@@ -312,114 +312,114 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
   // }
 
   return (
-    <>
-      <StyledModal isOpen={walletModalOpen} onDismiss={setOpenWalletModal} maxWidth={430}>
-        <Wrapper>
-          <Typography textAlign="center" mb={1}>
-            <Trans>Choose wallet</Trans>:
-          </Typography>
+    // <>
+    <StyledModal isOpen={walletModalOpen} onDismiss={setOpenWalletModal} maxWidth={430}>
+      <Wrapper>
+        <Typography textAlign="center" mb={1}>
+          <Trans>Choose wallet</Trans>:
+        </Typography>
 
-          <Flex alignItems="stretch" justifyContent="space-between">
-            {nextFromNetwork.value === 'ICON' ? (
-              <WalletOption onClick={() => handleOpenWallet('iconex')}>
-                <IconWalletIcon width="50" height="50" />
-                <Text textAlign="center">ICON</Text>
-              </WalletOption>
-            ) : (
-              <WalletOption onClick={() => handleOpenWallet('metamask')}>
-                <MetamaskIcon width="50" height="50" />
-                <Text textAlign="center">Metamask</Text>
-              </WalletOption>
-            )}
-            <VerticalDivider text="or"></VerticalDivider>
-            <WalletOption onClick={handleOpenLedger}>
-              <LedgerIcon width="50" height="50" />
-              <Text textAlign="center">Ledger</Text>
+        <Flex alignItems="stretch" justifyContent="space-between">
+          {nextFromNetwork.value === 'ICON' ? (
+            <WalletOption onClick={() => handleOpenWallet('iconex')}>
+              <IconWalletIcon width="50" height="50" />
+              <Text textAlign="center">ICON</Text>
             </WalletOption>
-          </Flex>
-        </Wrapper>
-      </StyledModal>
-      <LedgerAddressList
-        isOpen={showLedgerAddress}
-        onDismiss={() => {
-          if (isLedgerLoading) return;
-
-          updateShowledgerAddress(false);
-        }}
-      >
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
-          <Typography textAlign="center" mb={3}>
-            <Trans>Choose a wallet from your Ledger:</Trans>
-          </Typography>
-          {isLedgerLoading && (
-            <Flex justifyContent="center">
-              <Spinner></Spinner>
-            </Flex>
+          ) : (
+            <WalletOption onClick={() => handleOpenWallet('metamask')}>
+              <MetamaskIcon width="50" height="50" />
+              <Text textAlign="center">Metamask</Text>
+            </WalletOption>
           )}
-          {isLedgerErr && (
-            <Flex justifyContent="center" mt={4} mb={4}>
-              <Typography>
-                <Trans>Cancel any pending transactions on your Ledger, or give Chrome permission to use it.</Trans>
-              </Typography>
-            </Flex>
-          )}
-          {!isLedgerErr && (
-            <>
-              <table className="wallet">
-                <tbody>
-                  {addressList.map((address: any) => {
-                    return (
-                      <tr
-                        key={address.point}
-                        // onClick={() => {
-                        //   chooseLedgerAddress({
-                        //     address: address.address,
-                        //     point: address.point,
-                        //   });
-                        // }}
-                      >
-                        <td style={{ textAlign: 'left' }}>{displayAddress(address.address)}</td>
-                        <td style={{ textAlign: 'right' }}>{address.balance} ICX</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              {/* {!isLedgerLoading && (
-                <ul className="pagination">
-                  <li
-                    onClick={async () => {
-                      await getLedgerPage(currentLedgerAddressPage - 1);
-                    }}
-                  >
-                    ˂
-                  </li>
-                  {getPageNumbers(currentLedgerAddressPage).map(value => {
-                    return (
-                      <li
-                        key={Date.now() + Math.random()}
-                        className={value === currentLedgerAddressPage ? 'actived' : ''}
-                        onClick={async () => {
-                          await getLedgerPage(value);
-                        }}
-                      >
-                        {value}
-                      </li>
-                    );
-                  })}
-                  <li
-                    onClick={async () => {
-                      await getLedgerPage(currentLedgerAddressPage + 1);
-                    }}
-                  >
-                    ˃
-                  </li>
-                </ul>
-              )} */}
-            </>
-          )}
+          <VerticalDivider text="or"></VerticalDivider>
+          <WalletOption onClick={handleOpenLedger}>
+            <LedgerIcon width="50" height="50" />
+            <Text textAlign="center">Ledger</Text>
+          </WalletOption>
         </Flex>
-      </LedgerAddressList>
-    </>
+      </Wrapper>
+    </StyledModal>
+    // <LedgerAddressList
+    //   isOpen={showLedgerAddress}
+    //   onDismiss={() => {
+    //     if (isLedgerLoading) return;
+
+    //     updateShowledgerAddress(false);
+    //   }}
+    // >
+    //   <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+    //     <Typography textAlign="center" mb={3}>
+    //       <Trans>Choose a wallet from your Ledger:</Trans>
+    //     </Typography>
+    //     {isLedgerLoading && (
+    //       <Flex justifyContent="center">
+    //         <Spinner></Spinner>
+    //       </Flex>
+    //     )}
+    //     {isLedgerErr && (
+    //       <Flex justifyContent="center" mt={4} mb={4}>
+    //         <Typography>
+    //           <Trans>Cancel any pending transactions on your Ledger, or give Chrome permission to use it.</Trans>
+    //         </Typography>
+    //       </Flex>
+    //     )}
+    //     {!isLedgerErr && (
+    //       <>
+    //         <table className="wallet">
+    //           <tbody>
+    //             {addressList.map((address: any) => {
+    //               return (
+    //                 <tr
+    //                   key={address.point}
+    //                   // onClick={() => {
+    //                   //   chooseLedgerAddress({
+    //                   //     address: address.address,
+    //                   //     point: address.point,
+    //                   //   });
+    //                   // }}
+    //                 >
+    //                   <td style={{ textAlign: 'left' }}>{displayAddress(address.address)}</td>
+    //                   <td style={{ textAlign: 'right' }}>{address.balance} ICX</td>
+    //                 </tr>
+    //               );
+    //             })}
+    //           </tbody>
+    //         </table>
+    //         {/* {!isLedgerLoading && (
+    //           <ul className="pagination">
+    //             <li
+    //               onClick={async () => {
+    //                 await getLedgerPage(currentLedgerAddressPage - 1);
+    //               }}
+    //             >
+    //               ˂
+    //             </li>
+    //             {getPageNumbers(currentLedgerAddressPage).map(value => {
+    //               return (
+    //                 <li
+    //                   key={Date.now() + Math.random()}
+    //                   className={value === currentLedgerAddressPage ? 'actived' : ''}
+    //                   onClick={async () => {
+    //                     await getLedgerPage(value);
+    //                   }}
+    //                 >
+    //                   {value}
+    //                 </li>
+    //               );
+    //             })}
+    //             <li
+    //               onClick={async () => {
+    //                 await getLedgerPage(currentLedgerAddressPage + 1);
+    //               }}
+    //             >
+    //               ˃
+    //             </li>
+    //           </ul>
+    //         )} */}
+    //       </>
+    //     )}
+    //   </Flex>
+    // </LedgerAddressList>
+    //  </>
   );
 }

@@ -26,6 +26,7 @@ export default function QuestionHelper({
   strategy,
   iconStyle,
   offset,
+  hideOnSmall = true,
 }: {
   text: React.ReactNode;
   placement?: Placement;
@@ -34,6 +35,7 @@ export default function QuestionHelper({
   width?: number;
   strategy?: 'fixed' | 'absolute';
   offset?: [number, number];
+  hideOnSmall?: boolean;
 }) {
   const [show, setShow] = useState<boolean>(false);
 
@@ -41,6 +43,7 @@ export default function QuestionHelper({
   const close = useCallback(() => setShow(false), [setShow]);
 
   const smallSp = useMedia('(max-width: 360px)');
+  const shouldShow = hideOnSmall ? !smallSp : true;
 
   return (
     <span style={{ marginLeft: 4, verticalAlign: 'top' }}>
@@ -53,7 +56,7 @@ export default function QuestionHelper({
         strategy={strategy}
         offset={offset}
       >
-        {!smallSp && (
+        {shouldShow && (
           <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close} style={iconStyle}>
             <QuestionIcon width={14} />
           </QuestionWrapper>

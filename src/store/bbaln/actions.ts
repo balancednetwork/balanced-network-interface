@@ -17,6 +17,8 @@ export const type = createAction<{ independentField?: Field; typedValue?: string
 
 export const changePeriod = createAction<{ period: LockedPeriod }>('bbaln/changePeriod');
 
+export const changeTotalSupply = createAction<{ totalSupply: BigNumber }>('bbaln/changeTotalSupply');
+
 export const changeData = createAction<{
   lockedBaln: CurrencyAmount<Token>;
   lockEnd: Date;

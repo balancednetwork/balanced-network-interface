@@ -30,10 +30,15 @@ export const SliderWrap = styled(Box)`
   }
 `;
 
-export const BoostedInfo = styled(Flex)`
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+export const BoostedInfo = styled(Flex)<{ showBorder?: boolean }>`
+  ${({ showBorder }) =>
+    showBorder &&
+    css`
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+    `};
+
   width: 100%;
   position: relative;
   flex-wrap: wrap;

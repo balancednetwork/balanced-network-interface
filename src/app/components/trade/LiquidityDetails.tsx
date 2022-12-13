@@ -207,7 +207,7 @@ const DashGrid = styled.div`
   `}
 `;
 
-const HeaderText = styled(Typography)`
+export const HeaderText = styled(Typography)`
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 3px;

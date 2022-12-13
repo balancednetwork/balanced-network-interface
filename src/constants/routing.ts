@@ -11,6 +11,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
   [ChainId.YEOUIDO]: [sICX[ChainId.YEOUIDO], bnUSD[ChainId.YEOUIDO], IUSDC[ChainId.YEOUIDO], USDS[ChainId.YEOUIDO]],
   [ChainId.SEJONG]: [sICX[ChainId.SEJONG], bnUSD[ChainId.SEJONG]],
   [ChainId.BERLIN]: [sICX[ChainId.BERLIN], bnUSD[ChainId.BERLIN], IUSDC[ChainId.BERLIN], USDS[ChainId.BERLIN]],
+  [ChainId.LISBON]: [sICX[ChainId.LISBON], bnUSD[ChainId.LISBON], IUSDC[ChainId.LISBON]],
 };
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
   [ChainId.MAINNET]: {
@@ -36,10 +37,12 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [ChainId.YEOUIDO]: [sICX[ChainId.YEOUIDO], bnUSD[ChainId.YEOUIDO], IUSDC[ChainId.YEOUIDO], USDS[ChainId.YEOUIDO]],
   [ChainId.SEJONG]: [sICX[ChainId.SEJONG], bnUSD[ChainId.SEJONG]],
   [ChainId.BERLIN]: [sICX[ChainId.BERLIN], bnUSD[ChainId.BERLIN]],
+  [ChainId.LISBON]: [sICX[ChainId.LISBON], bnUSD[ChainId.LISBON]],
 };
 export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
   [ChainId.MAINNET]: [[ICX[ChainId.MAINNET], sICX[ChainId.MAINNET]]],
   [ChainId.YEOUIDO]: [[ICX[ChainId.YEOUIDO], sICX[ChainId.YEOUIDO]]],
   [ChainId.SEJONG]: [[ICX[ChainId.SEJONG], sICX[ChainId.SEJONG]]],
   [ChainId.BERLIN]: [[ICX[ChainId.BERLIN], sICX[ChainId.BERLIN]]],
+  [ChainId.LISBON]: [[ICX[ChainId.LISBON], sICX[ChainId.LISBON]]],
 };

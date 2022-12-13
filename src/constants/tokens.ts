@@ -32,6 +32,7 @@ export const ICX: TokenMap = {
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX'),
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX'),
 };
 
 export const sICX: TokenMap = {
@@ -39,6 +40,7 @@ export const sICX: TokenMap = {
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].sicx, 18, 'sICX', 'Staked ICX'),
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].sicx, 18, 'sICX', 'Staked ICX'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].sicx, 18, 'sICX', 'Staked ICX'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, addresses[ChainId.LISBON].sicx, 18, 'sICX', 'Staked ICX'),
 };
 
 export const bnUSD: TokenMap = {
@@ -46,6 +48,7 @@ export const bnUSD: TokenMap = {
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, addresses[ChainId.LISBON].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
 };
 
 export const BALN: TokenMap = {
@@ -53,6 +56,7 @@ export const BALN: TokenMap = {
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].baln, 18, 'BALN', 'Balance Token'),
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].baln, 18, 'BALN', 'Balance Token'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].baln, 18, 'BALN', 'Balance Token'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, addresses[ChainId.LISBON].baln, 18, 'BALN', 'Balance Token'),
 };
 
 // disable prettier printWidth rule
@@ -62,6 +66,7 @@ export const IUSDC: TokenMap = {
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cx65f639254090820361da483df233f6d0e69af9b7', 6, 'IUSDC', 'ICON USD Coin'),
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cx599d58885e5b1736c934fca7e53e04c797ab05be', 6, 'IUSDC', 'ICON USD Coin'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx538a925f49427d4f1078aed638c8cb525071fc68', 6, 'IUSDC', 'ICON USD Coin'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, 'cx9634be155fc77754c4b2e1bceddc1c63d973f1f3', 6, 'IUSDC', 'ICON USD Coin'),
 };
 
 // disable prettier printWidth rule
@@ -128,10 +133,13 @@ export const FUNDING_TOKENS: { [chainId: number]: Token[] } = {
   [ChainId.YEOUIDO]: [sICX[ChainId.YEOUIDO], bnUSD[ChainId.YEOUIDO], BALN[ChainId.YEOUIDO]],
   [ChainId.SEJONG]: [sICX[ChainId.SEJONG], bnUSD[ChainId.SEJONG], BALN[ChainId.SEJONG]],
   [ChainId.BERLIN]: [sICX[ChainId.BERLIN], bnUSD[ChainId.BERLIN], BALN[ChainId.BERLIN]],
+  [ChainId.LISBON]: [sICX[ChainId.LISBON], bnUSD[ChainId.LISBON], BALN[ChainId.LISBON]],
 };
 
 export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 
 export const HIGH_PRICE_ASSET_DP: { [key in string]: number } = {
   cx5b5a03cb525a1845d0af3a872d525b18a810acb0: 6,
+  cx99c79fd6dee53335f686c7f2cb513745622634f2: 5,
+  cx288d13e1b63563459a2ac6179f237711f6851cb5: 5,
 };

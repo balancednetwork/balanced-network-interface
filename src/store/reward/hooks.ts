@@ -26,7 +26,7 @@ export function useRewards(): AppState['reward'] {
 
 export function useReward(rewardName: string): BigNumber | undefined {
   const rewards = useRewards();
-  if (rewardName && rewards[rewardName].isGreaterThan(0)) {
+  if (rewardName && rewards[rewardName] && rewards[rewardName].isGreaterThan(0)) {
     return rewards[rewardName];
   }
 }

@@ -386,7 +386,9 @@ export default function AllPoolsPanel() {
         </DashGrid>
 
         {allPairs ? (
-          sortData(Object.values(allPairs)).map(pair => <PairItem pair={pair} onClick={handlePoolLick} />)
+          sortData(Object.values(allPairs)).map((pair, index) => (
+            <PairItem key={index} pair={pair} onClick={handlePoolLick} />
+          ))
         ) : (
           <>
             <SkeletonPairPlaceholder />

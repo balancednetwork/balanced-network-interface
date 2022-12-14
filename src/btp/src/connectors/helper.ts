@@ -10,7 +10,7 @@ export const triggerSetAccountInfo = (accountInfo: AccountState | null) => {
   if (accountInfo !== null) {
     trigger(EVENTS.DISPATCH, { action: setAccountInfo(accountInfo) });
   }
-  window['accountInfo'] = accountInfo;
+  window['accountInfo'] = { ...window['accountInfo'], ...accountInfo };
 };
 
 export const triggerApproveEvent = (status: TransactionStatus, txHash?: string) => {

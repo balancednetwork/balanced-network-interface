@@ -167,8 +167,9 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const upSmall = useMedia('(min-width: 800px)');
 
   const rewards = useRewards();
-  const totalReward = rewards[poolId];
   const [aBalance, bBalance] = getABBalance(pair, balance);
+  const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
+  const totalReward = rewards[pairName];
   const { reward } = getShareReward(pair, balance, totalReward);
   const stakedFractionValue = stakedFraction(stakedPercent);
 

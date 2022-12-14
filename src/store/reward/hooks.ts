@@ -24,9 +24,11 @@ export function useRewards(): AppState['reward'] {
   return useSelector((state: AppState) => state.reward);
 }
 
-export function useReward(poolId: number): BigNumber | undefined {
+export function useReward(rewardName: string): BigNumber | undefined {
   const rewards = useRewards();
-  return rewards[poolId];
+  if (rewardName && rewards[rewardName].isGreaterThan(0)) {
+    return rewards[rewardName];
+  }
 }
 
 export function useChangeReward(): (poolId: string, reward: BigNumber) => void {

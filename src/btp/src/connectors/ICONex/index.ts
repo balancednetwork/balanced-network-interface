@@ -189,6 +189,13 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
       case SIGNING_ACTIONS.APPROVE:
       case SIGNING_ACTIONS.APPROVE_IRC2: {
         console.log(err);
+        toastProps.onClick = () => {
+          const currentNetworkConfig = chainConfigs[window['accountInfo'].id];
+          const link = `${currentNetworkConfig.EXPLORE_URL}${currentNetworkConfig.exploreSuffix?.transaction}${transInfo.txHash}`;
+          if (link) {
+            window.open(link, '_blank');
+          }
+        };
         break;
       }
       case SIGNING_ACTIONS.TRANSFER:

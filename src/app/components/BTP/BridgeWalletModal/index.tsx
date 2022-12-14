@@ -11,12 +11,12 @@ import { Trans } from 'react-i18next';
 import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { VerticalDivider } from 'app/components/Divider';
+// import { VerticalDivider } from 'app/components/Divider';
 import Modal, { ModalProps } from 'app/components/Modal';
 // import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
-import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
+// import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import { ReactComponent as MetamaskIcon } from 'assets/icons/metamask.svg';
 // import { useChangeCurrentLedgerAddressPage, useCurrentLedgerAddressPage } from 'store/application/hooks';
 
@@ -90,7 +90,7 @@ const WalletOption = styled(Box)`
   align-items: center;
   cursor: pointer;
   padding: 5px 20px;
-  margin: 0px 10px;
+  margin: 0px auto;
   border-radius: 10px;
   text-decoration: none;
   color: white;
@@ -123,6 +123,20 @@ const WalletOption = styled(Box)`
     width: 70%;
     background: #2fccdc;
   }
+
+  ${({ disabled }) =>
+    disabled &&
+    `
+      cursor: initial;
+      opacity: 0.5;
+      pointer-events: none;
+      :hover {
+        background-color: transparent;
+        &:after {
+          background: transparent;
+        }
+      }
+    `};
 `;
 
 const Wrapper = styled.div`
@@ -216,42 +230,42 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
   //   setLedgerLoading(false);
   // };
 
-  const handleOpenLedger = async () => {
-    //   setLedgerLoading(true);
-    //   setIsLedgerErr(false);
-    //   updateAddressList([]);
-    //   updatePaging({
-    //     offset: 0,
-    //     limit: LIMIT_PAGING_LEDGER,
-    //   });
-    //   const timeout = setTimeout(() => {
-    //     setIsLedgerErr(true);
-    //   }, 3 * 1000);
-    //   try {
-    //     if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-    //       bnJs.contractSettings.ledgerSettings.transport.close();
-    //     }
-    //     const transport = await TransportWebHID.create();
-    //     transport.setDebugMode && transport.setDebugMode(false);
-    //     bnJs.inject({
-    //       legerSettings: {
-    //         transport,
-    //       },
-    //     });
-    //     updateShowledgerAddress(true);
-    //     await updateLedgerAddress({ offset, limit });
-    //     clearTimeout(timeout);
-    //   } catch (err: any) {
-    //     clearTimeout(timeout);
-    //     if (err.id === 'InvalidChannel') {
-    //       await bnJs.contractSettings.ledgerSettings.transport.close();
-    //       return setTimeout(() => {
-    //         handleOpenLedger();
-    //       }, 0);
-    //     }
-    //     alert('Insert your ledger device, then enter your password and try again.');
-    //   }
-  };
+  // const handleOpenLedger = async () => {
+  //   setLedgerLoading(true);
+  //   setIsLedgerErr(false);
+  //   updateAddressList([]);
+  //   updatePaging({
+  //     offset: 0,
+  //     limit: LIMIT_PAGING_LEDGER,
+  //   });
+  //   const timeout = setTimeout(() => {
+  //     setIsLedgerErr(true);
+  //   }, 3 * 1000);
+  //   try {
+  //     if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+  //       bnJs.contractSettings.ledgerSettings.transport.close();
+  //     }
+  //     const transport = await TransportWebHID.create();
+  //     transport.setDebugMode && transport.setDebugMode(false);
+  //     bnJs.inject({
+  //       legerSettings: {
+  //         transport,
+  //       },
+  //     });
+  //     updateShowledgerAddress(true);
+  //     await updateLedgerAddress({ offset, limit });
+  //     clearTimeout(timeout);
+  //   } catch (err: any) {
+  //     clearTimeout(timeout);
+  //     if (err.id === 'InvalidChannel') {
+  //       await bnJs.contractSettings.ledgerSettings.transport.close();
+  //       return setTimeout(() => {
+  //         handleOpenLedger();
+  //       }, 0);
+  //     }
+  //     alert('Insert your ledger device, then enter your password and try again.');
+  //   }
+  // };
 
   // const getLedgerPage = React.useCallback(
   //   async (pageNum: number) => {
@@ -316,7 +330,7 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
     <StyledModal isOpen={walletModalOpen} onDismiss={setOpenWalletModal} maxWidth={430}>
       <Wrapper>
         <Typography textAlign="center" mb={1}>
-          <Trans>Choose wallet</Trans>:
+          <Trans>Connect with</Trans>:
         </Typography>
 
         <Flex alignItems="stretch" justifyContent="space-between">
@@ -331,11 +345,11 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
               <Text textAlign="center">Metamask</Text>
             </WalletOption>
           )}
-          <VerticalDivider text="or"></VerticalDivider>
-          <WalletOption onClick={handleOpenLedger}>
+          {/* <VerticalDivider text="or"></VerticalDivider>
+          <WalletOption onClick={handleOpenLedger} disabled>
             <LedgerIcon width="50" height="50" />
             <Text textAlign="center">Ledger</Text>
-          </WalletOption>
+          </WalletOption> */}
         </Flex>
       </Wrapper>
     </StyledModal>

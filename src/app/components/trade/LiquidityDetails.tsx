@@ -156,7 +156,7 @@ export default function LiquidityDetails() {
                       poolId={parseInt(poolId)}
                       balance={balances[poolId]}
                       pair={sortedPairs[poolId]}
-                      totalReward={allPairs ? rewards[allPairs[poolId].name] : new BigNumber(0)}
+                      totalReward={allPairs ? allPairs[poolId] && rewards[allPairs[poolId].name] : new BigNumber(0)}
                       boostData={sources}
                       apy={allPairs && allPairs[parseInt(poolId)] && allPairs[parseInt(poolId)].apy}
                     />

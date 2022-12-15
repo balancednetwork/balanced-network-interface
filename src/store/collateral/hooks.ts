@@ -99,9 +99,6 @@ export function useCollateralFetchInfo(account?: string | null) {
   const changeDepositedAmount = useCollateralChangeDepositedAmount();
   const transactions = useAllTransactions();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
-  const supportedSymbols = React.useMemo(() => supportedCollateralTokens && Object.keys(supportedCollateralTokens), [
-    supportedCollateralTokens,
-  ]);
 
   const fetchCollateralInfo = React.useCallback(
     async (account: string) => {
@@ -119,11 +116,12 @@ export function useCollateralFetchInfo(account?: string | null) {
         })
         .catch(e => {
           if (e.toString().indexOf('does not have a position')) {
-            supportedSymbols?.forEach(symbol => changeDepositedAmount(new BigNumber(0), symbol));
+            supportedCollateralTokens &&
+              Object.keys(supportedCollateralTokens).forEach(symbol => changeDepositedAmount(new BigNumber(0), symbol));
           }
         });
     },
-    [changeDepositedAmount, supportedCollateralTokens, supportedSymbols],
+    [changeDepositedAmount, supportedCollateralTokens],
   );
 
   React.useEffect(() => {

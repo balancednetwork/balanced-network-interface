@@ -10,7 +10,6 @@ import { BoxPanel } from 'app/components/Panel';
 import PoolLogo from 'app/components/PoolLogo';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
-import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { useBBalnAmount } from 'store/bbaln/hooks';
 import {
@@ -62,10 +61,6 @@ export default function LiveVotingPanel() {
       () => (tokens.length === 2 ? COMBINED_TOKENS_LIST.find(token => token.symbol === tokens[1]) : undefined),
       [tokens],
     );
-
-    //temporary
-    const pair = SUPPORTED_PAIRS.find(pair => pair.name === name);
-    const pairID = pair && pair.id;
 
     return (
       <>
@@ -122,7 +117,7 @@ export default function LiveVotingPanel() {
               )}
 
               <Typography color="text" fontSize={16}>
-                {rewards && pairID && rewards[pairID] ? `${rewards[pairID].toFormat(0)} BALN` : '-'}
+                {rewards && rewards[name] ? `${rewards[name].toFormat(0)} BALN` : '-'}
               </Typography>
             </Flex>
           </VotingGrid>

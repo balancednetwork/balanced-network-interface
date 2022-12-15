@@ -17,7 +17,7 @@ type BarType = { time: number; open: number; close: number; high: number; low: n
 
 export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency }, period: CHART_PERIODS) => {
   return useQuery<BarType[]>(QUERY_KEYS.Swap.PriceChart(currencies, period), async () => {
-    const data = await bnJs.Multicall.getPoolStatsForPair(
+    const data = await bnJs.Dex.getPoolStatsForPair(
       (currencies[Field.INPUT] as Token)?.address,
       (currencies[Field.OUTPUT] as Token)?.address,
     );

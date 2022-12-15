@@ -31,7 +31,7 @@ const getPairTokens = (pairName: string): { base: Token; quote: Token } | undefi
 export const getSymbolInfo = async (name: string): Promise<BalancedLibrarySymbolInfo> => {
   const pairTokens = getPairTokens(name);
   const poolData =
-    pairTokens && (await bnJs.Multicall.getPoolStatsForPair(pairTokens.base.address, pairTokens.quote.address));
+    pairTokens && (await bnJs.Dex.getPoolStatsForPair(pairTokens.base.address, pairTokens.quote.address));
   const inverse = poolData.base_token !== pairTokens?.base.address;
   let decimal = 18;
   let pairID = -1;

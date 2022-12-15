@@ -99,20 +99,31 @@ export function useCollateralFetchInfo(account?: string | null) {
   const changeDepositedAmount = useCollateralChangeDepositedAmount();
   const transactions = useAllTransactions();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
+  const supportedSymbols = React.useMemo(() => supportedCollateralTokens && Object.keys(supportedCollateralTokens), [
+    supportedCollateralTokens,
+  ]);
 
   const fetchCollateralInfo = React.useCallback(
     async (account: string) => {
-      const res = await bnJs.Loans.getAccountPositions(account);
-
-      supportedCollateralTokens &&
-        res.holdings &&
-        Object.keys(res.holdings).forEach(async symbol => {
-          const decimals: string = await bnJs.getContract(supportedCollateralTokens[symbol]).decimals();
-          const depositedAmount = new BigNumber(formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 18));
-          changeDepositedAmount(depositedAmount, symbol);
+      bnJs.Loans.getAccountPositions(account)
+        .then(res => {
+          supportedCollateralTokens &&
+            res.holdings &&
+            Object.keys(res.holdings).forEach(async symbol => {
+              const decimals: string = await bnJs.getContract(supportedCollateralTokens[symbol]).decimals();
+              const depositedAmount = new BigNumber(
+                formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 18),
+              );
+              changeDepositedAmount(depositedAmount, symbol);
+            });
+        })
+        .catch(e => {
+          if (e.toString().indexOf('does not have a position')) {
+            supportedSymbols?.forEach(symbol => changeDepositedAmount(new BigNumber(0), symbol));
+          }
         });
     },
-    [changeDepositedAmount, supportedCollateralTokens],
+    [changeDepositedAmount, supportedCollateralTokens, supportedSymbols],
   );
 
   React.useEffect(() => {

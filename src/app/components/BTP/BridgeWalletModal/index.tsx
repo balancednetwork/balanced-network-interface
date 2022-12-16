@@ -78,7 +78,7 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
 
       @media (min-width: 360px) {
         width: 100%;
-        max-width: 360px;
+        max-width: 300px;
       }
     `}
   }
@@ -330,7 +330,7 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
     <StyledModal isOpen={walletModalOpen} onDismiss={setOpenWalletModal} maxWidth={430}>
       <Wrapper>
         <Typography textAlign="center" mb={1}>
-          <Trans>Connect with</Trans>:
+          <Trans>Connect your wallet</Trans>:
         </Typography>
 
         <Flex alignItems="stretch" justifyContent="space-between">
@@ -342,7 +342,7 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
           ) : (
             <WalletOption onClick={() => handleOpenWallet('metamask')}>
               <MetamaskIcon width="50" height="50" />
-              <Text textAlign="center">Metamask</Text>
+              <Text textAlign="center">MetaMask</Text>
             </WalletOption>
           )}
           {/* <VerticalDivider text="or"></VerticalDivider>

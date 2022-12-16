@@ -6,7 +6,7 @@ import { ToastOptions, UpdateOptions } from 'react-toastify';
 
 import { TransactionStatus } from '../../../../store/transactions/hooks';
 import { wallets } from '../../utils/constants';
-import { chainConfigs, chainList } from '../chainConfigs';
+import { chainConfigs, chainList, customzeChain } from '../chainConfigs';
 import { ADDRESS_LOCAL_STORAGE, CONNECTED_WALLET_LOCAL_STORAGE, SIGNING_ACTIONS, transactionInfo } from '../constants';
 import { getTransactionMessages, triggerSetAccountInfo } from '../helper';
 import { resetTransferStep } from '../ICONex/utils';
@@ -170,6 +170,7 @@ class Ethereum {
         const balance = await this.getProvider.getBalance(address);
         const { CHAIN_NAME, id, COIN_SYMBOL, BTS_CORE } = currentNetwork;
         this.contract = new ethers.Contract(BTS_CORE, ABI, this.provider);
+        customzeChain(id);
         const accountInfo = {
           address,
           balance: ethers.utils.formatEther(balance),
@@ -220,9 +221,10 @@ class Ethereum {
         let minedTx = null;
         let replacementTx: any = null;
         let link = '';
-        const currentNetworkConfig = chainConfigs[transInfo.networkSrc];
-        transInfo.networkSrc === 'BSC' &&
-          (link = `${currentNetworkConfig.EXPLORE_URL}/${currentNetworkConfig.exploreSuffix?.transaction}/${txHash}`);
+        const currentNetworkConfig = chainConfigs[window['accountInfo'].id];
+        if (transInfo.networkSrc === 'BNB Smart Chain') {
+          link = `${currentNetworkConfig.EXPLORE_URL}${currentNetworkConfig.exploreSuffix?.transaction}${txHash}`;
+        }
         toastProps = {
           onClick: () => window.open(link, '_blank'),
         };

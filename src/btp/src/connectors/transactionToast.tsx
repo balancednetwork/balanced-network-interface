@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { t } from '@lingui/macro';
 import { toast, ToastOptions, UpdateOptions } from 'react-toastify';
 
 import {
@@ -32,11 +33,24 @@ export const openToast = ({
       break;
     }
     case TransactionStatus.failure: {
-      toast.update(id, {
-        render: <NotificationError summary={message} />,
-        autoClose: 5000,
-        ...options,
-      });
+      if (id) {
+        toast.update(id, {
+          render: <NotificationError summary={message} />,
+          autoClose: 5000,
+          ...options,
+        });
+      } else {
+        toast(
+          <NotificationError
+            failureReason={t`Couldn't complete the transaction. Make sure your wallet is set to the right network.`}
+          />,
+          {
+            toastId: 'possibleWrongNetwork',
+            autoClose: 5000,
+          },
+        );
+      }
+
       break;
     }
     default: {

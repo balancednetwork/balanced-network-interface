@@ -15,8 +15,7 @@ import {
 import { requestSigning } from './events';
 import Request, { convertToICX, convertToLoopUnit, makeICXCall, getICONBSHAddressforEachChain } from './utils';
 
-const { IconUtil, IconBuilder, IconConverter } = IconService;
-const { serialize } = IconUtil;
+const { IconBuilder, IconConverter } = IconService;
 
 export { transfer } from './transfer';
 
@@ -219,7 +218,6 @@ export const signTx = (transaction = {}, options = {}) => {
   tx = tx.build();
   const rawTx = IconConverter.toRawTransaction(tx);
   window[rawTransaction] = rawTx;
-  // const transactionHash = serialize(rawTx);
 
   return requestSigning(rawTx);
 };

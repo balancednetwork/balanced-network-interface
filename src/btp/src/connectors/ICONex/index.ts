@@ -93,7 +93,6 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
   const transInfo = window[transactionInfo];
   const transactionMessages = getTransactionMessages(transInfo, window[SIGNING_ACTIONS.GLOBAL_NAME]);
   let toastProps: ToastOptions | UpdateOptions = {};
-  let toastId: string = '';
   const txParams = event.detail;
   if (payload.error) {
     console.log(payload.error.transferMessage);
@@ -110,8 +109,8 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
       case TYPES.RESPONSE_JSON_RPC:
         console.log('Please wait a moment.');
         const txHash = payload.result || (await sendTransaction(payload));
-        const link = `${chainConfigs[window['accountInfo'].id].EXPLORE_URL}transaction/${txHash}`;
-        toastId = txHash;
+        const currentNetworkConfig = chainConfigs[window['accountInfo'].id];
+        const link = `${currentNetworkConfig.EXPLORE_URL}${currentNetworkConfig.exploreSuffix?.transaction}${txHash}`;
         toastProps = {
           onClick: () => {
             window.open(link, '_blank');
@@ -190,15 +189,20 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
       case SIGNING_ACTIONS.APPROVE:
       case SIGNING_ACTIONS.APPROVE_IRC2: {
         console.log(err);
+        toastProps.onClick = () => {
+          const currentNetworkConfig = chainConfigs[window['accountInfo'].id];
+          const link = `${currentNetworkConfig.EXPLORE_URL}${currentNetworkConfig.exploreSuffix?.transaction}${transInfo.txHash}`;
+          if (link) {
+            window.open(link, '_blank');
+          }
+        };
         break;
       }
       case SIGNING_ACTIONS.TRANSFER:
       default:
         toastProps.onClick = () => {
-          const currentNetworkConfig = chainConfigs[transInfo.networkSrc];
-          const link =
-            transInfo.networkSrc === 'BSC' &&
-            `${currentNetworkConfig.EXPLORE_URL}/${currentNetworkConfig.exploreSuffix?.transaction}/${transInfo.txHash}`;
+          const currentNetworkConfig = chainConfigs[window['accountInfo'].id];
+          const link = `${currentNetworkConfig.EXPLORE_URL}${currentNetworkConfig.exploreSuffix?.transaction}${transInfo.txHash}`;
           if (link) {
             window.open(link, '_blank');
           }
@@ -206,14 +210,14 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
         break;
     }
     openToast({
-      id: toastId,
+      id: transInfo.txHash,
       options: toastProps,
       message: transactionMessages.failure,
       transactionStatus: TransactionStatus.failure,
     });
     return {
       message: transactionMessages.failure,
-      txHash: toastId,
+      txHash: transInfo.txHash,
       transactionStatus: TransactionStatus.failure,
       txParams,
     };

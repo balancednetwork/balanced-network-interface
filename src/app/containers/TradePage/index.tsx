@@ -29,6 +29,7 @@ const BTPButton = styled(UnderlineText)`
   padding-bottom: 5px;
   margin: 5px 0 20px;
   width: 250px;
+  display: none;
 
   ${({ theme }) => theme.mediaWidth.upSmall`
     position: absolute;
@@ -37,6 +38,7 @@ const BTPButton = styled(UnderlineText)`
     padding-bottom: 0;
     margin: 0;
     width: auto;
+    display: block;
   `};
 
   ${({ theme }) =>

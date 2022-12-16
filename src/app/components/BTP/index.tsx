@@ -86,6 +86,10 @@ const BetaText = styled(Typography)`
 const FeeAmount = styled(Typography)`
   color: #c0c9d2;
 `;
+
+const StyledExternalLink = styled(ExternalLink)`
+  color: rgb(47, 204, 220);
+`;
 addICONexListener();
 
 const BTPContent = () => {
@@ -255,9 +259,9 @@ const BTPContent = () => {
             </Typography>
             <Typography padding={'10px 0'}>
               <Trans> Move assets between ICON and other blockchains. </Trans>
-              <ExternalLink href="https://docs.balanced.network/user-guide/transfer-cross-chain" target="_blank">
+              <StyledExternalLink href="https://docs.balanced.network/user-guide/transfer-cross-chain" target="_blank">
                 <Trans>Learn more.</Trans>
-              </ExternalLink>
+              </StyledExternalLink>
             </Typography>
 
             <FlexSelector width={'100%'}>

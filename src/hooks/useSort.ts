@@ -26,21 +26,37 @@ export default function useSort(initialState: SortingType) {
     }
 
     if (sortBy.order === 'DESC') {
-      dataToSort.sort((a, b) => {
-        if (sortBy.key === 'holders' && a.name === 'ICON') return 1;
-        if (sortBy.key === 'holders' && b.name === 'ICON') return -1;
-        if (a[sortBy.key] > b[sortBy.key]) return -1;
-        if (a[sortBy.key] < b[sortBy.key]) return 1;
-        return 0;
-      });
+      if (sortBy.key === 'apyTotal') {
+        dataToSort.sort((a, b) => {
+          if (a['feesApy'] + (a['apy'] || 0) * 2.5 > b['feesApy'] + (b['apy'] || 0) * 2.5) return -1;
+          if (a['feesApy'] + (a['apy'] || 0) * 2.5 < b['feesApy'] + (b['apy'] || 0) * 2.5) return 1;
+          return 0;
+        });
+      } else {
+        dataToSort.sort((a, b) => {
+          if (sortBy.key === 'holders' && a.name === 'ICON') return 1;
+          if (sortBy.key === 'holders' && b.name === 'ICON') return -1;
+          if (a[sortBy.key] > b[sortBy.key]) return -1;
+          if (a[sortBy.key] < b[sortBy.key]) return 1;
+          return 0;
+        });
+      }
     } else {
-      dataToSort.sort((a, b) => {
-        if (sortBy.key === 'holders' && a.name === 'ICON') return 1;
-        if (sortBy.key === 'holders' && b.name === 'ICON') return -1;
-        if (a[sortBy.key] < b[sortBy.key]) return -1;
-        if (a[sortBy.key] > b[sortBy.key]) return 1;
-        return 0;
-      });
+      if (sortBy.key === 'apyTotal') {
+        dataToSort.sort((a, b) => {
+          if (a['feesApy'] + (a['apy'] || 0) * 2.5 < b['feesApy'] + (b['apy'] || 0) * 2.5) return -1;
+          if (a['feesApy'] + (a['apy'] || 0) * 2.5 > b['feesApy'] + (b['apy'] || 0) * 2.5) return 1;
+          return 0;
+        });
+      } else {
+        dataToSort.sort((a, b) => {
+          if (sortBy.key === 'holders' && a.name === 'ICON') return 1;
+          if (sortBy.key === 'holders' && b.name === 'ICON') return -1;
+          if (a[sortBy.key] < b[sortBy.key]) return -1;
+          if (a[sortBy.key] > b[sortBy.key]) return 1;
+          return 0;
+        });
+      }
     }
 
     return dataToSort;

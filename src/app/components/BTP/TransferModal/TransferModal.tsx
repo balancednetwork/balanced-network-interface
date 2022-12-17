@@ -53,7 +53,7 @@ export const TransferAssetModal = ({
   const getBTPService = useGetBTPService();
 
   const onClose = () => {
-    handleCloseTransferModal(true);
+    handleCloseTransferModal(approveStatus !== TransactionStatus.success);
   };
   const onDismiss = () => {
     if (!isApproved && !isApproving && !isTranferring) {
@@ -89,7 +89,7 @@ export const TransferAssetModal = ({
     const res = await transferNativeToken();
     setApproveStatus(res?.transactionStatus || '');
     if (res?.transactionStatus === TransactionStatus.failure) {
-      handleCloseTransferModal();
+      onClose();
       return;
     }
   };
@@ -105,7 +105,7 @@ export const TransferAssetModal = ({
     }
     setTransferStatus(res?.transactionStatus || '');
     if (res?.transactionStatus === TransactionStatus.failure) {
-      handleCloseTransferModal();
+      onClose();
       return;
     }
     if (res?.transactionStatus === TransactionStatus.success) {
@@ -181,7 +181,7 @@ export const TransferAssetModal = ({
 
         <Flex justifyContent="center" mt={4} pt={4} className="border-top">
           <>
-            <TextButton onClick={() => handleCloseTransferModal()} fontSize={14}>
+            <TextButton onClick={onClose} fontSize={14}>
               <Trans> Cancel </Trans>
             </TextButton>
             <Button onClick={transfer} fontSize={14} disabled={(!isSendingNativeCoin && !isApproved) || isTranferring}>

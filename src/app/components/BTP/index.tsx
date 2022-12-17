@@ -11,8 +11,8 @@ import {
 } from 'btp/src/connectors/chainConfigs';
 import { CHAIN_NAME } from 'btp/src/connectors/chainCustomization';
 import { ADDRESS_LOCAL_STORAGE } from 'btp/src/connectors/constants';
-import { addICONexListener } from 'btp/src/connectors/ICONex';
-import { getBTPfee } from 'btp/src/connectors/ICONex/ICONServices';
+import { addICONexListener, setBalance } from 'btp/src/connectors/ICONex';
+import { getBalance, getBTPfee } from 'btp/src/connectors/ICONex/ICONServices';
 import { toCheckAddress } from 'btp/src/connectors/MetaMask/utils';
 import { useGetBTPService } from 'btp/src/hooks/useService';
 import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
@@ -168,9 +168,8 @@ const BTPContent = () => {
       symbol: assetName,
       approved: true,
     })) as string;
-    if (result && result !== '0') {
-      setApprovedBalance(result);
-    }
+
+    setApprovedBalance(result === '0' ? '' : result);
   };
 
   const defaultOptions = useMemo(() => {
@@ -269,9 +268,11 @@ const BTPContent = () => {
     setPercent(percent);
   };
 
-  const handleCloseTransferModal = (isDismiss: boolean) => {
+  const handleCloseTransferModal = async (isDismiss: boolean) => {
     if (shouldCheckIRC2Token && !isDismiss) {
       checkApprovedBalance();
+      const balance = await getBalance(accountInfo?.address);
+      setBalance(+balance);
     }
     setIsOpenConfirm(false);
   };

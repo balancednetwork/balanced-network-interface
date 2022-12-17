@@ -103,6 +103,8 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
     };
   }
 
+  console.log('event', event);
+
   try {
     switch (type) {
       case TYPES.RESPONSE_SIGNING:
@@ -132,15 +134,17 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
                 throw new Error((result.failure as any)?.['transferMessage']);
               }
 
-              if (window[SIGNING_ACTIONS.GLOBAL_NAME] === SIGNING_ACTIONS.TRANSFER) {
-                setTimeout(async () => {
-                  if (address) {
-                    const balance = await getBalance(address);
-                    console.log('balance', balance);
-                    setBalance(+balance);
-                  }
-                }, 2000);
-              }
+              // if (
+              //   [SIGNING_ACTIONS.TRANSFER, SIGNING_ACTIONS.APPROVE_IRC2].includes(window[SIGNING_ACTIONS.GLOBAL_NAME])
+              // ) {
+              setTimeout(async () => {
+                if (address) {
+                  const balance = await getBalance(address);
+                  console.log('balance', balance);
+                  setBalance(+balance);
+                }
+              }, 2000);
+              // }
               clearInterval(checkTxRs);
               openToast({
                 id: txHash,

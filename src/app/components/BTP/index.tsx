@@ -2,11 +2,19 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { Action } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
-import { chainConfigs, chainList, getCustomizedChainList, getTokenList } from 'btp/src/connectors/chainConfigs';
+import {
+  chainConfigs,
+  chainList,
+  checkIRC2Token,
+  getCustomizedChainList,
+  getTokenList,
+} from 'btp/src/connectors/chainConfigs';
+import { CHAIN_NAME } from 'btp/src/connectors/chainCustomization';
 import { ADDRESS_LOCAL_STORAGE } from 'btp/src/connectors/constants';
 import { addICONexListener } from 'btp/src/connectors/ICONex';
 import { getBTPfee } from 'btp/src/connectors/ICONex/ICONServices';
 import { toCheckAddress } from 'btp/src/connectors/MetaMask/utils';
+import { useGetBTPService } from 'btp/src/hooks/useService';
 import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
 import store, { BTPAppDispatch, BTPContext, useBTPDispatch, useBTPSelector } from 'btp/src/store';
 import { useFromNetwork, useSelectNetworkDst, useSelectNetworkSrc, useToNetwork } from 'btp/src/store/bridge/hooks';
@@ -41,6 +49,7 @@ const Grid = styled(Box)`
 
   .full-width {
     grid-column: span 2;
+    position: relative;
   }
 `;
 
@@ -65,16 +74,16 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
   'aria-label': 'dialog',
 })`
   &[data-reach-dialog-content] {
-    ${({ mobile, theme }) =>
+    ${({ mobile }) =>
       !mobile &&
       `
+      overflow: initial;
       width: 320px;
 
       @media (min-width: 360px) {
         width: 100%;
         max-width: 525px;
         z-index: 1500;
-        overflow: initial;
       }
     `}
   }
@@ -114,6 +123,12 @@ const BTPContent = () => {
   const toNetwork = useToNetwork();
   const dispatch = useBTPDispatch<BTPAppDispatch>();
 
+  const getBTPService = useGetBTPService();
+
+  const [appovedBalance, setApprovedBalance] = useState('');
+  const isICONNetwork = fromNetwork.label === CHAIN_NAME.ICON;
+  const shouldCheckIRC2Token = isICONNetwork && checkIRC2Token(assetName);
+
   const toggleWalletModalOpen = () => {
     setOpenWalletModal(!walletModalOpen);
   };
@@ -139,7 +154,23 @@ const BTPContent = () => {
 
   const getFee = async tokenSymbol => {
     const BTPFee = await getBTPfee(tokenSymbol);
-    setFee(BTPFee);
+    setFee(BTPFee ? `${BTPFee}` : '0');
+  };
+
+  const checkApprovedBalance = async () => {
+    console.log(shouldCheckIRC2Token);
+    if (!shouldCheckIRC2Token || !accountInfo?.address) {
+      setApprovedBalance('');
+      return;
+    }
+    const result = (await getBTPService()?.getBalanceOf({
+      address: accountInfo?.address,
+      symbol: assetName,
+      approved: true,
+    })) as string;
+    if (result && result !== '0') {
+      setApprovedBalance(result);
+    }
   };
 
   const defaultOptions = useMemo(() => {
@@ -188,6 +219,11 @@ const BTPContent = () => {
   }, [userAssets, fromNetwork]);
 
   useEffect(() => {
+    checkApprovedBalance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assetName]);
+
+  useEffect(() => {
     // NOTE: this effect should only run when wallet was changed
     const assestName = nativeCoin || defaultOptions[0].label;
     setAssetName(assestName);
@@ -212,6 +248,7 @@ const BTPContent = () => {
   const resetForm = () => {
     setSendingAddress('');
     setSendingBalance('');
+    setApprovedBalance('');
   };
 
   const chainInfo = () => {
@@ -232,11 +269,22 @@ const BTPContent = () => {
     setPercent(percent);
   };
 
+  const handleCloseTransferModal = (isDismiss: boolean) => {
+    if (shouldCheckIRC2Token && !isDismiss) {
+      checkApprovedBalance();
+    }
+    setIsOpenConfirm(false);
+  };
+
   const isInsufficient = new BigNumber(fee).plus(sendingBalance).isGreaterThan(balanceOfAssetName);
-  const isEmpty = !sendingAddress || !balanceOfAssetName;
+  const isEmpty = !sendingAddress || !accountInfo?.address;
 
   const maxTransferAmount = new BigNumber(balanceOfAssetName).minus(new BigNumber(fee));
   const isGreaterThanMaxTransferAmount = new BigNumber(sendingBalance).isGreaterThan(maxTransferAmount);
+
+  const isApproved = !!appovedBalance;
+
+  const balanceInputValue = isApproved ? new BigNumber(appovedBalance).minus(fee).toFixed() : sendingBalance;
 
   return (
     <>
@@ -293,22 +341,24 @@ const BTPContent = () => {
                   }}
                   closeDropdown={() => setIsOpenAssetOptions(false)}
                   setBalance={setSendingBalance}
-                  balance={sendingBalance}
+                  balance={balanceInputValue}
                   onPercentSelect={(percent: number) => handlePercentSelect(percent)}
                   percent={percent}
                   fee={fee}
+                  disabled={isApproved}
                 />
                 {isOpenAssetOptions && <AssetModal data={tokenList} onChange={onChangeAsset} />}
               </Box>
 
               <TransferAssetModal
                 isOpen={isOpenConfirm}
-                setIsOpen={setIsOpenConfirm}
+                handleCloseTransferModal={handleCloseTransferModal}
                 handleResetForm={resetForm}
                 sendingAddress={sendingAddress}
-                balance={sendingBalance}
+                balance={balanceInputValue}
                 tokenSymbol={assetName}
                 fee={fee}
+                hasAlreadyApproved={isApproved}
               />
               <Box className="full-width">
                 <Address address={sendingAddress} onChange={setSendingAddress} />
@@ -331,7 +381,7 @@ const BTPContent = () => {
               <TextButton onClick={toggleTransferAssetsModal}>Cancel</TextButton>
               <Button
                 disabled={
-                  !sendingBalance ||
+                  !balanceInputValue ||
                   isEmpty ||
                   !toCheckAddress(sendingAddress) ||
                   isInsufficient ||
@@ -339,11 +389,18 @@ const BTPContent = () => {
                   !fromNetwork ||
                   !toNetwork
                 }
-                onClick={() => handleTransfer()}
+                onClick={handleTransfer}
               >
                 {isInsufficient ? `Insufficient ${assetName}` : 'Transfer'}
               </Button>
             </Flex>
+            {isApproved && (
+              <Typography textAlign="center" paddingTop={'10px'} color="#F05365">
+                You have approved {appovedBalance} {assetName}, but have not been transferred yet.
+                <br />
+                Please transfer them before making a new transaction.
+              </Typography>
+            )}
             {isGreaterThanMaxTransferAmount && (
               <Typography textAlign="center" paddingTop={'10px'} color="#F05365">
                 You can transfer a maximum of {maxTransferAmount.toFixed(2)} {assetName}.

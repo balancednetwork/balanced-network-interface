@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
 // import { transactionInfo } from 'btp/src/connectors/constants';
@@ -15,6 +15,7 @@ import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
+import { MODAL_FADE_DURATION } from 'constants/index';
 import { TransactionStatus } from 'store/transactions/hooks';
 
 const StyledModalContent = styled(Flex)`
@@ -31,18 +32,19 @@ const CheckIconWrapper = styled.div`
 
 export const TransferAssetModal = ({
   isOpen,
-  setIsOpen,
+  handleCloseTransferModal,
   handleResetForm,
   sendingAddress,
   balance,
   tokenSymbol,
   fee,
+  hasAlreadyApproved,
 }) => {
   const networkSrc = useFromNetwork();
   const networkDst = useToNetwork();
-  const [approveStatus, setApproveStatus] = React.useState<TransactionStatus | ''>('');
-  const [transferStatus, setTransferStatus] = React.useState<TransactionStatus | ''>('');
-  const isApproved = approveStatus === TransactionStatus.success;
+  const [approveStatus, setApproveStatus] = useState<TransactionStatus | ''>();
+  const [transferStatus, setTransferStatus] = useState<TransactionStatus | ''>('');
+  const isApproved = hasAlreadyApproved || approveStatus === TransactionStatus.success;
   const isApproving = approveStatus === TransactionStatus.pending;
   const isTranferring = transferStatus === TransactionStatus.pending;
 
@@ -50,17 +52,16 @@ export const TransferAssetModal = ({
   const isSendingNativeCoin = symbol === tokenSymbol;
   const getBTPService = useGetBTPService();
 
-  const toggleOpen = () => {
-    setIsOpen(!isOpen);
+  const onClose = () => {
+    handleCloseTransferModal(true);
   };
-
   const onDismiss = () => {
-    if (!isApproved && !isApproving) {
-      setIsOpen(!isOpen);
+    if (!isApproved && !isApproving && !isTranferring) {
+      onClose();
     }
   };
 
-  const transferNativeToken = async () => {
+  const createTransactionParams = () => {
     const tx = {
       to: toChecksumAddress(sendingAddress),
       value: new BigNumber(balance).plus(fee).toFixed(),
@@ -75,14 +76,20 @@ export const TransferAssetModal = ({
       coinName: tx.coinName,
       nid: IconConverter.toNumber(networkSrc.NETWORK_ADDRESS.split('.')[0]),
     };
+    return tx;
+  };
+
+  const transferNativeToken = async () => {
+    const tx = createTransactionParams();
     return getBTPService()?.transfer(tx, isSendingNativeCoin, tokenSymbol);
   };
+
   const approveNonNativeToken = async () => {
     setApproveStatus(TransactionStatus.pending);
     const res = await transferNativeToken();
     setApproveStatus(res?.transactionStatus || '');
     if (res?.transactionStatus === TransactionStatus.failure) {
-      setIsOpen(!isOpen);
+      handleCloseTransferModal();
       return;
     }
   };
@@ -93,16 +100,19 @@ export const TransferAssetModal = ({
     if (isSendingNativeCoin) {
       res = await transferNativeToken();
     } else {
-      res = await getBTPService()?.sendNonNativeCoin();
+      const tx = hasAlreadyApproved ? createTransactionParams() : undefined;
+      res = await getBTPService()?.sendNonNativeCoin(tx);
     }
     setTransferStatus(res?.transactionStatus || '');
     if (res?.transactionStatus === TransactionStatus.failure) {
-      setIsOpen(!isOpen);
+      handleCloseTransferModal();
       return;
     }
     if (res?.transactionStatus === TransactionStatus.success) {
-      handleResetForm();
-      setIsOpen(!isOpen);
+      handleCloseTransferModal();
+      setTimeout(() => {
+        handleResetForm();
+      }, MODAL_FADE_DURATION);
     }
   };
 
@@ -128,7 +138,7 @@ export const TransferAssetModal = ({
             + {fee} {tokenSymbol} transfer fee
           </Trans>
         </Typography>
-        {!isSendingNativeCoin && (
+        {!isSendingNativeCoin && !hasAlreadyApproved && (
           <Flex justifyContent="center" mt={2}>
             {!isApproved ? (
               <Button fontSize={14} onClick={approveNonNativeToken} disabled={isApproving}>
@@ -171,7 +181,7 @@ export const TransferAssetModal = ({
 
         <Flex justifyContent="center" mt={4} pt={4} className="border-top">
           <>
-            <TextButton onClick={toggleOpen} fontSize={14}>
+            <TextButton onClick={() => handleCloseTransferModal()} fontSize={14}>
               <Trans> Cancel </Trans>
             </TextButton>
             <Button onClick={transfer} fontSize={14} disabled={(!isSendingNativeCoin && !isApproved) || isTranferring}>

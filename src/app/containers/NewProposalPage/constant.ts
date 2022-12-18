@@ -33,7 +33,6 @@ export const PROPOSAL_MAPPING = {
 export enum PROPOSAL_TYPE {
   TEXT = 'Text',
   NEW_COLLATERAL_TYPE = 'New collateral type',
-  BALN_ALLOCATION = 'BALN allocation',
   NETWORK_FEE_ALLOCATION = 'Network fee allocation',
   LOAN_FEE = 'Loan fee',
   LOAN_TO_VALUE_RATIO = 'Loan to value ratio',
@@ -43,7 +42,6 @@ export enum PROPOSAL_TYPE {
 
 export const PROPOSAL_TYPE_LABELS = {
   [PROPOSAL_TYPE.TEXT]: defineMessage({ message: 'Text' }),
-  [PROPOSAL_TYPE.BALN_ALLOCATION]: defineMessage({ message: 'BALN allocation' }),
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: defineMessage({ message: 'Network fee allocation' }),
   [PROPOSAL_TYPE.LOAN_FEE]: defineMessage({ message: 'Loan fee' }),
   [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: defineMessage({ message: 'Loan to value ratio' }),
@@ -53,7 +51,6 @@ export const PROPOSAL_TYPE_LABELS = {
 };
 
 export const ACTIONS_MAPPING = {
-  [PROPOSAL_TYPE.BALN_ALLOCATION]: ['updateBalTokenDistPercentage', 'updateDistPercent'],
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: ['setDividendsCategoryPercentage'],
   [PROPOSAL_TYPE.LOAN_FEE]: ['setOriginationFee', 'update_origination_fee'],
   [PROPOSAL_TYPE.LOAN_TO_VALUE_RATIO]: ['setLockingRatio', 'update_locking_ratio'],
@@ -63,8 +60,6 @@ export const ACTIONS_MAPPING = {
 };
 
 export const PERCENT_MAPPING = {
-  [PROPOSAL_TYPE.BALN_ALLOCATION]: percent =>
-    Number((Math.round(Number(BalancedJs.utils.toIcx(percent).times(10000))) / 100).toFixed(2)),
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: percent =>
     Number((Math.round(Number(BalancedJs.utils.toIcx(percent).times(10000))) / 100).toFixed(2)),
   [PROPOSAL_TYPE.LOAN_FEE]: percent => Number((percent / 100).toFixed(2)),
@@ -73,19 +68,6 @@ export const PERCENT_MAPPING = {
 };
 
 export const RATIO_VALUE_FORMATTER = {
-  [PROPOSAL_TYPE.BALN_ALLOCATION]: data => {
-    const t: any[] = [];
-    Object.keys(PROPOSAL_MAPPING).forEach(key => {
-      const p = data.find(item => item.recipient_name === key);
-      if (p) {
-        t.push({
-          name: p.recipient_name,
-          percent: PERCENT_MAPPING[PROPOSAL_TYPE.BALN_ALLOCATION](p.dist_percent),
-        });
-      }
-    });
-    return t;
-  },
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: data => {
     return data.map((item: { [key: string]: number }) => {
       const _item = Object.entries(item)[0];
@@ -110,25 +92,6 @@ export const RATIO_VALUE_FORMATTER = {
 };
 
 export const PROPOSAL_CONFIG = {
-  [PROPOSAL_TYPE.BALN_ALLOCATION]: {
-    fetchInputData: async () => {
-      const res = await bnJs.Rewards.getRecipientsSplit();
-      return Object.keys(PROPOSAL_MAPPING)
-        .filter(key => res[key])
-        .map(key => ({
-          name: key,
-          percent: PERCENT_MAPPING[PROPOSAL_TYPE.BALN_ALLOCATION](res[key]),
-        }));
-    },
-    submitParams: ratioInputValue => {
-      const recipientList = Object.entries(ratioInputValue).map(item => ({
-        recipient_name: item[0],
-        dist_percent: BalancedJs.utils.toLoop(new BigNumber(item[1] as string).div(100)).toNumber(),
-      }));
-      return [['updateBalTokenDistPercentage', { _recipient_list: recipientList }]];
-    },
-    validate: sum => ({ isValid: sum === 100, message: 'Allocation must equal 100%.' }),
-  },
   [PROPOSAL_TYPE.NETWORK_FEE_ALLOCATION]: {
     fetchInputData: async () => {
       const res = await bnJs.Dividends.getDividendsPercentage();

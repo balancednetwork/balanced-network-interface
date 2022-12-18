@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
 import { Skeleton } from '@material-ui/lab';
@@ -235,9 +235,10 @@ type PairItemProps = {
     fees: number;
   };
   onClick: (pair: PairInfo) => void;
+  isLast: boolean;
 };
 
-const PairItem = ({ pair, onClick }: PairItemProps) => (
+const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
   <>
     <PairGrid my={2} onClick={() => onClick(pair)}>
       <DataText minWidth={'220px'}>
@@ -276,7 +277,7 @@ const PairItem = ({ pair, onClick }: PairItemProps) => (
       <DataText>{pair.volume ? getFormattedNumber(pair.volume, 'currency0') : '-'}</DataText>
       <DataText>{pair.fees ? getFormattedNumber(pair.fees, 'currency0') : '-'}</DataText>
     </PairGrid>
-    <Divider />
+    {!isLast && <Divider />}
   </>
 );
 
@@ -285,6 +286,18 @@ export default function AllPoolsPanel() {
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
   const { noLiquidity } = useDerivedMintInfo();
   const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
+
+  const incentivisedPairs = useMemo(
+    () =>
+      allPairs &&
+      Object.keys(allPairs).reduce((pairs, pairID) => {
+        if (allPairs && allPairs[pairID].apy > 0) {
+          pairs[pairID] = allPairs[pairID];
+        }
+        return pairs;
+      }, {}),
+    [allPairs],
+  );
 
   const handlePoolLick = (pair: PairInfo) => {
     if (pair.id === 1) {
@@ -385,8 +398,10 @@ export default function AllPoolsPanel() {
           </HeaderText>
         </DashGrid>
 
-        {allPairs ? (
-          sortData(Object.values(allPairs)).map(pair => <PairItem pair={pair} onClick={handlePoolLick} />)
+        {incentivisedPairs ? (
+          sortData(Object.values(incentivisedPairs)).map((pair, index, array) => (
+            <PairItem key={index} pair={pair} onClick={handlePoolLick} isLast={array.length - 1 === index} />
+          ))
         ) : (
           <>
             <SkeletonPairPlaceholder />

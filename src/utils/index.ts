@@ -124,7 +124,8 @@ export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export const LAUNCH_DAY = NETWORK_ID === 1 ? 1619366400000 : 1648742400000;
+// export const LAUNCH_DAY = NETWORK_ID === 1 ? 1619366400000 : 1648742400000;
+export const LAUNCH_DAY = NETWORK_ID === 1 ? 1619366400000 : 1667145600000;
 export const ONE_DAY_DURATION = 86400000;
 
 export const generateChartData = (rate: BigNumber, currencies: { [field in Field]?: Currency }) => {
@@ -155,10 +156,10 @@ export const generateChartData = (rate: BigNumber, currencies: { [field in Field
   return _data;
 };
 
-export const normalizeContent = (text: string): string => {
+export const normalizeContent = (text: string, short: boolean = false): string => {
   const regex = /[\n\r]/g;
   const t = text.replaceAll(regex, ' ');
-  return t.substring(0, 248) + '...';
+  return t.substring(0, short ? 100 : 248) + '...';
 };
 
 const TEN = new BigNumber(10);

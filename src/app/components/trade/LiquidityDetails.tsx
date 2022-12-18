@@ -51,7 +51,7 @@ export default function LiquidityDetails() {
 
   const queuePair = pairs[BalancedJs.utils.POOL_IDS.sICXICX];
   const queueBalance = balances[BalancedJs.utils.POOL_IDS.sICXICX];
-  const queueReward = rewards[BalancedJs.utils.POOL_IDS.sICXICX];
+  const queueReward = rewards['sICX/ICX'];
 
   const shouldShowQueue =
     queuePair &&
@@ -156,7 +156,7 @@ export default function LiquidityDetails() {
                       poolId={parseInt(poolId)}
                       balance={balances[poolId]}
                       pair={sortedPairs[poolId]}
-                      totalReward={rewards[poolId]}
+                      totalReward={allPairs ? allPairs[poolId] && rewards[allPairs[poolId].name] : new BigNumber(0)}
                       boostData={sources}
                       apy={allPairs && allPairs[parseInt(poolId)] && allPairs[parseInt(poolId)].apy}
                     />
@@ -207,7 +207,7 @@ const DashGrid = styled.div`
   `}
 `;
 
-const HeaderText = styled(Typography)`
+export const HeaderText = styled(Typography)`
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 3px;

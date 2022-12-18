@@ -39,9 +39,17 @@ export default function LPDescription() {
     JSBI.greaterThanOrEqual(totalPoolTokens.quotient, userPoolBalance.quotient)
       ? pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false)
       : undefined;
+  const pairName = useMemo(() => {
+    if (currencies && currencies.CURRENCY_A && currencies.CURRENCY_B) {
+      const name = `${currencies.CURRENCY_A.symbol}/${currencies.CURRENCY_B.symbol}`;
+      return name === 'ICX/sICX' ? 'sICX/ICX' : name;
+    } else {
+      return '';
+    }
+  }, [currencies]);
 
   const apys = useAllPairsAPY();
-  const apy = apys && apys[pair?.poolId ?? -1];
+  const apy = apys && apys[pairName];
 
   const balances = useSuppliedTokens(pair?.poolId ?? -1, currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
   //calulate Your supply temporary value  and Your daily reward temporary value
@@ -52,7 +60,7 @@ export default function LPDescription() {
       : parsedAmounts[dependentField],
   };
 
-  const poolRewards = useReward(pair?.poolId ?? -1);
+  const poolRewards = useReward(pairName);
   const tempTotalPoolTokens = new BigNumber(totalPoolTokens?.toFixed() || 0).plus(
     formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0,
   );
@@ -214,7 +222,7 @@ export default function LPDescription() {
                         </Typography>
                         {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
                           <Typography textAlign="center" variant="p">
-                            {userRewards?.isEqualTo(0)
+                            {userRewards?.isEqualTo(0) || userRewards.times(boost).isNaN()
                               ? 'N/A'
                               : userRewards
                               ? `~ ${userRewards.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat()} BALN`

@@ -18,7 +18,7 @@ import { formatUnits } from 'utils';
 
 import { AppState } from '..';
 import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeData, changePeriod, changeSources } from './actions';
+import { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } from './actions';
 
 const PERCENTAGE_DISTRIBUTED = new BigNumber(0.6);
 
@@ -49,7 +49,7 @@ export function useBBalnSliderState(): AppState['bbaln']['state'] {
   return useSelector((state: AppState) => state.bbaln.state);
 }
 
-export function useTotalSuply(): AppState['bbaln']['totalSupply'] {
+export function useTotalSupply(): AppState['bbaln']['totalSupply'] {
   return useSelector((state: AppState) => state.bbaln.totalSupply);
 }
 
@@ -86,9 +86,20 @@ export function useBBalnChangeData(): (
   );
 }
 
+export function useBBalnChangeTotalSupply(): (totalSupply: BigNumber) => void {
+  const dispatch = useDispatch();
+  return useCallback(
+    totalSupply => {
+      dispatch(changeTotalSupply({ totalSupply }));
+    },
+    [dispatch],
+  );
+}
+
 export function useFetchBBalnInfo(account?: string | null) {
   const transactions = useAllTransactions();
   const changeData = useBBalnChangeData();
+  const changeTotalSupply = useBBalnChangeTotalSupply();
 
   const fetchBBalnInfo = useCallback(
     account => {
@@ -115,11 +126,23 @@ export function useFetchBBalnInfo(account?: string | null) {
     [changeData],
   );
 
+  const fetchBBalnTotalSupply = useCallback(async () => {
+    const data = await bnJs.BBALN.totalSupply();
+    try {
+      const totalSupply = new BigNumber(data).div(10 ** 18);
+      changeTotalSupply(totalSupply);
+    } catch (e) {
+      console.log(e);
+    }
+  }, [changeTotalSupply]);
+
   useEffect(() => {
     if (account) {
       fetchBBalnInfo(account);
+    } else {
+      fetchBBalnTotalSupply();
     }
-  }, [transactions, account, fetchBBalnInfo]);
+  }, [transactions, account, fetchBBalnInfo, fetchBBalnTotalSupply]);
 }
 
 export function useBBalnSliderActionHandlers() {
@@ -228,7 +251,7 @@ export function useDBBalnAmountDiff() {
 }
 
 export function useWorkingBalance() {
-  const totalSupplyBBaln = useTotalSuply();
+  const totalSupplyBBaln = useTotalSupply();
   const bbalnAmountDiff = useDBBalnAmountDiff();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
 
@@ -312,4 +335,23 @@ export const usePastMonthFeesDistributed = () => {
     },
     { keepPreviousData: true },
   );
+};
+
+export const useTimeRemaining = () => {
+  const lockedUntil = useLockedUntil();
+  const fiveMinPeriod = 1000 * 300;
+  const now = Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod;
+
+  return lockedUntil && lockedUntil.getTime() - now;
+};
+
+export const useTotalBalnLocked = () => {
+  return useQuery('totalBalnLocked', async () => {
+    const data = await bnJs.BBALN.getTotalLocked();
+    return new BigNumber(formatUnits(data));
+  });
+};
+
+export const useTotalBBalnSupply = () => {
+  return useQuery('bbalnTotalSupply', async () => {});
 };

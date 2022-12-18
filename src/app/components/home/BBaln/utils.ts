@@ -74,6 +74,24 @@ export const getClosestUnixWeekStart = (timestamp: number): Date => {
   }
 };
 
+export const comparePeriods = (period1: LockedPeriod, period2: LockedPeriod): number => {
+  if (
+    getClosestUnixWeekStart(new Date(new Date().setDate(new Date().getDate() + (period1.weeks * 7 - 7))).getTime()) ===
+    getClosestUnixWeekStart(new Date(new Date().setDate(new Date().getDate() + (period2.weeks * 7 - 7))).getTime())
+  ) {
+    return 0;
+  } else {
+    return (
+      getClosestUnixWeekStart(
+        new Date(new Date().setDate(new Date().getDate() + (period1.weeks * 7 - 7))).getTime(),
+      ).getTime() -
+      getClosestUnixWeekStart(
+        new Date(new Date().setDate(new Date().getDate() + (period2.weeks * 7 - 7))).getTime(),
+      ).getTime()
+    );
+  }
+};
+
 export const getWeekOffsetTimestamp = (weeks: number): number =>
   new Date(new Date().setDate(new Date().getDate() + (weeks * 7 - 7))).getTime();
 

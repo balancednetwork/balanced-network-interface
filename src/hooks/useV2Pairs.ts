@@ -52,7 +52,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
               };
             } else {
               return {
-                target: bnJs.Multicall.address,
+                target: bnJs.Dex.address,
                 method: 'getPoolStatsForPair',
                 params: [tokenA.address, tokenB.address],
               };

@@ -1,3 +1,4 @@
+import { Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 
 import { RootState } from './RootState';
@@ -17,6 +18,15 @@ export interface Pool {
   rewards: BigNumber;
   rate: BigNumber;
   inverseRate: BigNumber;
+}
+
+export interface PoolInfo {
+  id: number;
+  name: string;
+  baseCurrencyKey: string;
+  quoteCurrencyKey: string;
+  baseToken: Token;
+  quoteToken: Token;
 }
 
 export interface ProposalInterface {

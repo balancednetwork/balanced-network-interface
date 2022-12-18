@@ -377,6 +377,7 @@ export const useAllPairs = () => {
       const pool = getPoolFromName(pair.name);
 
       if (pool) {
+        const feesApy = data30day[pair.id] && (data30day[pair.id]['fees'] * 12 * feesApyConstant) / tvls[pair.id];
         t[pair.id] = {
           id: pair.id,
           name: pair.name,
@@ -386,13 +387,13 @@ export const useAllPairs = () => {
           quoteToken: pool.quote,
           tvl: tvls[pair.id],
           apy: apys[pair.name]?.toNumber(),
-          feesApy: data30day[pair.id] && (data30day[pair.id]['fees'] * 12 * feesApyConstant) / tvls[pair.id],
+          feesApy: feesApy < 10000 ? feesApy : 0,
           participant: participants && participants[pair.id],
           apyTotal:
             data30day[pair.id] &&
             new BigNumber(apys[pair.name] || 0)
               .plus(
-                new BigNumber(data30day[pair.id]['fees'] * 12 * feesApyConstant || 0).div(
+                new BigNumber(feesApy < 10000 ? data30day[pair.id]['fees'] * 12 * feesApyConstant : 0).div(
                   new BigNumber(tvls[pair.id]) || 1,
                 ),
               )

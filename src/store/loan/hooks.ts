@@ -104,24 +104,30 @@ export function useLoanFetchInfo(account?: string | null) {
           bnJs.Loans.getAvailableAssets(),
           bnJs.bnUSD.totalSupply(),
           bnJs.Loans.getAccountPositions(account),
-        ]).then(([resultAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
-          const bnUSDbadDebt = resultAvailableAssets['bnUSD']
-            ? BalancedJs.utils.toIcx(resultAvailableAssets['bnUSD']['bad_debt'] || '0')
-            : new BigNumber(0);
-          const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
+        ])
+          .then(([resultAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
+            const bnUSDbadDebt = resultAvailableAssets['bnUSD']
+              ? BalancedJs.utils.toIcx(resultAvailableAssets['bnUSD']['bad_debt'] || '0')
+              : new BigNumber(0);
+            const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
 
-          resultDebt.holdings &&
-            Object.keys(resultDebt.holdings).forEach(token => {
-              const depositedAmount = new BigNumber(formatUnits(resultDebt.holdings[token]['bnUSD'] || 0, 18, 18));
-              changeBorrowedAmount(depositedAmount, token);
-            });
+            resultDebt.holdings &&
+              Object.keys(resultDebt.holdings).forEach(token => {
+                const depositedAmount = new BigNumber(formatUnits(resultDebt.holdings[token]['bnUSD'] || 0, 18, 18));
+                changeBorrowedAmount(depositedAmount, token);
+              });
 
-          changeBadDebt(bnUSDbadDebt);
-          changeTotalSupply(bnUSDTotalSupply);
-        });
+            changeBadDebt(bnUSDbadDebt);
+            changeTotalSupply(bnUSDTotalSupply);
+          })
+          .catch(e => {
+            if (e.toString().indexOf('does not have a position')) {
+              supportedSymbols?.forEach(token => changeBorrowedAmount(new BigNumber(0), token));
+            }
+          });
       }
     },
-    [changeBadDebt, changeTotalSupply, changeBorrowedAmount],
+    [changeBadDebt, changeTotalSupply, changeBorrowedAmount, supportedSymbols],
   );
 
   React.useEffect(() => {

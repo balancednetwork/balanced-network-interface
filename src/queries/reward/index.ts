@@ -99,7 +99,10 @@ export const useRatesWithOracle = () => {
 
   return useMemo(() => {
     const updatedRates = { ...rates };
-    oraclePrices && Object.keys(oraclePrices).forEach(token => (updatedRates[token] = oraclePrices[token]));
+    oraclePrices &&
+      Object.keys(oraclePrices).forEach(token => {
+        if (!updatedRates[token]) updatedRates[token] = oraclePrices[token];
+      });
     if (oraclePrices) return updatedRates;
   }, [rates, oraclePrices]);
 };
@@ -157,6 +160,7 @@ export const useAllPairsAPY = (): { [key: number]: BigNumber } | undefined => {
 
 export const useAllPairsTVLQuery = () => {
   const { data: incentivisedPairs } = useIncentivisedPairs();
+
   return useQuery<{ [key: string]: { base: BigNumber; quote: BigNumber; total_supply: BigNumber } } | undefined>(
     ['useAllPairsTVLQuery', incentivisedPairs],
     async () => {
@@ -190,11 +194,10 @@ export const useAllPairsTVLQuery = () => {
 
 export const useAllPairsTVL = () => {
   const tvlQuery = useAllPairsTVLQuery();
-  const ratesQuery = useRatesQuery();
+  const rates = useRatesWithOracle() || {};
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
-  if (tvlQuery.isSuccess && ratesQuery.isSuccess && incentivisedPairs) {
-    const rates = ratesQuery.data || {};
+  if (tvlQuery.isSuccess && rates && incentivisedPairs) {
     const tvls = tvlQuery.data || {};
 
     const t: { [key in string]: number } = {};

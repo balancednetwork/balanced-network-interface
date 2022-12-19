@@ -1,7 +1,7 @@
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { Token } from '@balancednetwork/sdk-core';
 
-import { sICX, ICX, bnUSD, BALN, IUSDC, USDS, OMM, IUSDT, FIN, CFT, METX, GBET } from 'constants/tokens';
+import { sICX, ICX, bnUSD, BALN, IUSDC, USDS, OMM, IUSDT, FIN, CFT, METX, GBET, ETH, BTCB } from 'constants/tokens';
 
 import { NETWORK_ID } from './config';
 
@@ -178,6 +178,24 @@ const SUPPORTED_PAIRS_INFO: { [ChainId: number]: PairInfo[] } = {
       baseCurrencyKey: 'FIN',
       quoteCurrencyKey: 'bnUSD',
       baseToken: FIN[ChainId.MAINNET],
+      quoteToken: bnUSD[ChainId.MAINNET],
+    },
+    {
+      chainId: 1,
+      id: 58,
+      name: 'BTCB/bnUSD',
+      baseCurrencyKey: 'BTCB',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: BTCB[ChainId.MAINNET],
+      quoteToken: bnUSD[ChainId.MAINNET],
+    },
+    {
+      chainId: 1,
+      id: 59,
+      name: 'ETH/bnUSD',
+      baseCurrencyKey: 'ETH',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: ETH[ChainId.MAINNET],
       quoteToken: bnUSD[ChainId.MAINNET],
     },
   ],
@@ -428,6 +446,15 @@ const SUPPORTED_PAIRS_INFO: { [ChainId: number]: PairInfo[] } = {
       quoteCurrencyKey: 'sICX',
       baseToken: BALN[ChainId.LISBON],
       quoteToken: sICX[ChainId.LISBON],
+    },
+    {
+      chainId: 2,
+      id: 12,
+      name: 'TETH/bnUSD',
+      baseCurrencyKey: 'TETH',
+      quoteCurrencyKey: 'bnUSD',
+      baseToken: ETH[ChainId.LISBON],
+      quoteToken: bnUSD[ChainId.LISBON],
     },
   ],
 };

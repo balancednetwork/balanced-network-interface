@@ -21,7 +21,7 @@ import { useAllTokens } from 'hooks/Tokens';
 import useArrowControl from 'hooks/useArrowControl';
 import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';
-import { useRatesQuery } from 'queries/reward';
+import { useRatesWithOracle } from 'queries/reward';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -263,7 +263,7 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
   const { activeIndex, setActiveIndex } = useArrowControl(anchor !== null, filteredSortedTokensWithICX.length);
 
   // rates: using symbol as key?
-  const { data: rates } = useRatesQuery();
+  const rates = useRatesWithOracle();
   const rateFracs = React.useMemo(() => {
     if (rates) {
       return Object.keys(rates).reduce((acc, key) => {

@@ -140,10 +140,7 @@ export default function VotingComponent({ name, respoLayout }: VotingComponentPr
                 <TextButton onClick={() => handleEditToggle('')}>
                   <Trans>Cancel</Trans>
                 </TextButton>
-                <Button
-                  disabled={!isInputValid || !inputValue || '0.00000000000'.indexOf(inputValue) >= 0}
-                  onClick={() => changeShowConfirmation(true)}
-                >
+                <Button disabled={!isInputValid || !inputValue} onClick={() => changeShowConfirmation(true)}>
                   <Trans>Confirm</Trans>
                 </Button>
               </VotingButtons>

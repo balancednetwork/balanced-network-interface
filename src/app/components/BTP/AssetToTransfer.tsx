@@ -48,6 +48,11 @@ const NumberInput = styled.input<{ bg?: string; active?: boolean }>`
     border: 2px solid #2ca9b7;
   }
   ${props => props.active && 'border-bottom-right-radius: 0;'}
+  :disabled {
+    border-color: rgb(6 9 56 / 30%);
+    background: rgb(62 63 84 / 20%);
+    color: #b1b1b1;
+  }
 `;
 
 export const AssetName = styled(Flex)<{ isDisabled?: boolean }>`
@@ -95,6 +100,7 @@ export const AssetInput = styled.input`
   line-height: 1.15;
   margin: 0;
   height: 43px;
+  width: 100%;
   :hover,
   :focus {
     border: 2px solid #2ca9b7;
@@ -115,6 +121,7 @@ const AssetToTransfer = ({
   onPercentSelect,
   percent,
   fee,
+  disabled,
 }) => {
   const [isActive, setIsActive] = React.useState(false);
 
@@ -183,6 +190,7 @@ const AssetToTransfer = ({
           maxLength={79}
           spellCheck="false"
           active={onPercentSelect && isActive}
+          disabled={disabled}
         />
         {onPercentSelect && (
           <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">

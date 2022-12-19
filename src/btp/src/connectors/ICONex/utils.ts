@@ -1,3 +1,4 @@
+import { ICXCallPayload } from 'btp/src/type/transaction';
 import IconService from 'icon-sdk-js';
 
 import { ICX_METHOD, JSON_RPC, SUCCESS_TRANSACTION } from '../../utils/constants';
@@ -6,11 +7,15 @@ import { httpProvider } from '../constants';
 
 const { IconAmount, IconUtil } = IconService;
 export default class Request {
+  jsonrpc: string;
+  id: number;
+  method: string;
+  params: any;
   constructor(method, params) {
-    this.jsonrpc = JSON_RPC;
     this.id = IconUtil.getCurrentTime();
     this.method = method;
     this.params = params;
+    this.jsonrpc = JSON_RPC;
   }
 }
 
@@ -32,12 +37,12 @@ export const convertToLoopUnit = value => {
   return IconAmount.of(value, IconAmount.Unit.ICX).toLoop();
 };
 
-export const makeICXCall = async payload => {
+export const makeICXCall = async <T = any>(payload: ICXCallPayload) => {
   try {
-    return await httpProvider.request(new Request(ICX_METHOD.CALL, payload)).execute();
+    return await httpProvider.request<T>(new Request(ICX_METHOD.CALL, payload)).execute();
   } catch (err) {
     console.log('makeICXCall err', err);
-    return 0;
+    return;
   }
 };
 

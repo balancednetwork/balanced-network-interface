@@ -4,12 +4,17 @@ import { tokenTypes } from '../utils/constants';
  * disabled: boolean - Disable a chain
  */
 
+export enum CHAIN_NAME {
+  ICON = 'ICON',
+  BSC = 'BSC',
+}
+
 export const custom = {
-  ICON: {
+  [CHAIN_NAME.ICON]: {
     exploreSuffix: { transaction: 'transaction/' },
     decimals: 18,
   },
-  BSC: {
+  [CHAIN_NAME.BSC]: {
     // disabled: true,
     tokens: [
       {

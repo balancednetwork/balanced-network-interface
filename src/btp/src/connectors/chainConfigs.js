@@ -1,6 +1,7 @@
 import { SupportedChainId } from '@balancednetwork/balanced-js';
 import { ethers } from 'ethers';
 
+import { tokenTypes } from '../utils/constants';
 import { custom } from './chainCustomization';
 import { ABI as currentABI } from './MetaMask/ABI';
 
@@ -145,6 +146,11 @@ export const getTokenList = () => {
   return tokenList;
 };
 export const checkIsToken = token => getTokenList().find(t => t.symbol === token);
+
+export const checkIRC2Token = token => {
+  const isToken = checkIsToken(token);
+  return isToken?.type === tokenTypes.IRC2;
+};
 
 export const findChainbySymbol = symbol => {
   let chain = chainList.find(chain => symbol === chain.COIN_SYMBOL);

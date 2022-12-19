@@ -83,7 +83,7 @@ const getAccountInfo = async (address: string) => {
   }
 };
 
-const setBalance = balance => {
+export const setBalance = balance => {
   triggerSetAccountInfo({ balance });
 };
 
@@ -102,6 +102,8 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
       txParams,
     };
   }
+
+  console.log('event', event);
 
   try {
     switch (type) {
@@ -132,7 +134,7 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
                 throw new Error((result.failure as any)?.['transferMessage']);
               }
 
-              if (window[SIGNING_ACTIONS.GLOBAL_NAME] === SIGNING_ACTIONS.TRANSFER) {
+              if ([SIGNING_ACTIONS.TRANSFER].includes(window[SIGNING_ACTIONS.GLOBAL_NAME])) {
                 setTimeout(async () => {
                   if (address) {
                     const balance = await getBalance(address);

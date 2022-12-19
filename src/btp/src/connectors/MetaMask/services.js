@@ -98,10 +98,10 @@ export const transfer = async (tx, sendNativeCoin, token) => {
   // return txParams;
 };
 
-export const sendNonNativeCoin = async () => {
+export const sendNonNativeCoin = async tx => {
   const { BTS_CORE, GAS_LIMIT } = getCurrentChain();
 
-  const { value, to, coinName } = window[rawTransaction];
+  const { value, to, coinName } = tx || window[rawTransaction];
   const hexValue = ethers.utils.parseEther(value)._hex;
 
   const data = EthereumInstance.ABI.encodeFunctionData('transfer', [

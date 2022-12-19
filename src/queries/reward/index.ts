@@ -194,10 +194,11 @@ export const useAllPairsTVLQuery = () => {
 
 export const useAllPairsTVL = () => {
   const tvlQuery = useAllPairsTVLQuery();
-  const rates = useRatesWithOracle() || {};
+  const ratesWithOracle = useRatesWithOracle();
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
-  if (tvlQuery.isSuccess && rates && incentivisedPairs) {
+  if (tvlQuery.isSuccess && ratesWithOracle && incentivisedPairs) {
+    const rates = ratesWithOracle || {};
     const tvls = tvlQuery.data || {};
 
     const t: { [key in string]: number } = {};

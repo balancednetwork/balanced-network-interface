@@ -20,6 +20,8 @@ export enum ApplicationModal {
   MENU,
   DELEGATE,
   VOTE,
+  BRIDGE_WALLET,
+  TRANSFER_ASSETS,
 }
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>;

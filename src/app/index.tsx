@@ -10,6 +10,7 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
+import TransferAssetsModal from './components/BTP/index';
 import { Claim } from './containers/Claim/Loadable';
 import Routes from './Routes';
 
@@ -34,6 +35,7 @@ export function App() {
         <ThemedGlobalStyle />
         <NotificationContainer />
         <WalletModal />
+        <TransferAssetsModal />
         {/* Add message for community */}
 
         <Helmet

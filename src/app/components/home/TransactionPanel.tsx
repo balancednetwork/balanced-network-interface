@@ -346,8 +346,9 @@ const ClaimRowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
   return null;
 };
 const RowItem: React.FC<{ tx: Transaction }> = ({ tx }) => {
-  const { networkId } = useIconReact();
   const locale = useActiveLocale();
+  const { networkId } = useIconReact();
+
   const languageCode = locale.split('-')[0];
 
   const method = tx.method as keyof typeof METHOD_CONTENT;

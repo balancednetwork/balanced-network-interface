@@ -6,13 +6,15 @@ import { isMobile } from 'react-device-detect';
 import { animated, useTransition, useSpring } from 'react-spring';
 import { useGesture } from 'react-use-gesture';
 import styled, { css } from 'styled-components';
+
 import '@reach/dialog/styles.css';
+import { MODAL_FADE_DURATION } from 'constants/index';
 
 const AnimatedDialogOverlay = animated(DialogOverlay);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
   &[data-reach-dialog-overlay] {
-    z-index: ${({ theme }) => theme.zIndices.modal};
+    z-index: 1500;
     background-color: transparent;
     overflow: hidden;
 
@@ -127,7 +129,7 @@ export default function Modal({
   fullscreen,
 }: ModalProps) {
   const fadeTransition = useTransition(isOpen, null, {
-    config: { duration: 200 },
+    config: { duration: MODAL_FADE_DURATION },
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },

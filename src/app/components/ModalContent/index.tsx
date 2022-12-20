@@ -12,7 +12,7 @@ interface Props extends FlexProps {
   noCurrencyBalanceErrorMessage?: boolean;
   noMessages?: boolean;
 }
-const ModalContentWrapper = styled(Flex)`
+export const ModalContentWrapper = styled(Flex)`
   width: 100%;
   align-items: stretch;
   flex-direction: column;

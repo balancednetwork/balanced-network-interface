@@ -37,6 +37,13 @@ export function swapMessage(inputAmount: string, inputCurrency: string, outputAm
   return { pendingMessage, successMessage, failureMessage };
 }
 
+export function transferAssetMessage(inputAmount: string, inputCurrency: string, address: string, network: string) {
+  const pendingMessage = t`Transfer ${inputCurrency} to ${network}...`;
+  const successMessage = t`Transfer ${inputAmount} ${inputCurrency} to ${network} with ${address}.`;
+  const failureMessage = t`Couldn't transfer ${inputCurrency} to ${network}. Try again.`;
+  return { pendingMessage, successMessage, failureMessage };
+}
+
 export function depositMessage(currency: string, pair: string) {
   const pendingMessage = t`Sending ${currency} to the ${pair} pool...`;
   const successMessage = t`${currency} sent to the ${pair} pool.`;

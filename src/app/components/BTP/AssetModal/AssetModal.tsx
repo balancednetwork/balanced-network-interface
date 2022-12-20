@@ -16,7 +16,8 @@ const Assets = styled(motion(Flex))`
   z-index: 5;
   max-width: initial;
   width: 380px;
-  top: 53%;
+  top: 100%;
+  margin-top: 15px;
   padding: 25px;
 
   ${({ theme }) => css`

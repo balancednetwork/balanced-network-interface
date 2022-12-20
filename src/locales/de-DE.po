@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-07 09:22\n"
+"PO-Revision-Date: 2022-12-20 09:22\n"
 "Last-Translator: \n"
 "Language: de_DE\n"
 "Language-Team: German\n"
@@ -168,6 +168,14 @@ msgstr "Genehmigen"
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
 msgstr "Genehmigt"
+
+#: src/btp/src/connectors/helper.ts
+msgid "Approved {0} for cross-chain transfers."
+msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+msgid "Approving {0} for cross-chain transfers..."
+msgstr ""
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/Wallet/index.tsx
@@ -400,6 +408,11 @@ msgstr ""
 msgid "Copy address"
 msgstr ""
 
+#: src/btp/src/connectors/helper.ts
+msgid "Couldn't APPROVE {0} for cross-chain transfers."
+msgstr ""
+
+#: src/btp/src/connectors/transactionToast.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Couldn't complete the transaction. Make sure your wallet is set to the right network."
 msgstr ""
@@ -418,6 +431,14 @@ msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
+msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+msgid "Couldn't transfer {0} to {1}. Try again."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
 msgstr ""
 
 #: src/app/components/trade/utils.tsx
@@ -877,6 +898,7 @@ msgstr ""
 msgid "Price impact"
 msgstr ""
 
+#: src/btp/src/connectors/helper.ts
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr ""
@@ -1293,6 +1315,27 @@ msgstr "Handeln"
 msgid "Transaction"
 msgstr "Transaktion"
 
+#: src/btp/src/connectors/MetaMask/index.ts
+#: src/btp/src/connectors/MetaMask/index.ts
+msgid "Transaction failed!"
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Transfer {inputCurrency} to {network}..."
+msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+msgid "Transferred {0} {1} to {2}."
+msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+msgid "Transferring {0} from {1} to {2}..."
+msgstr ""
+
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlock Balance Tokens?"
 msgstr ""
@@ -1597,6 +1640,16 @@ msgstr ""
 #: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Your supply"
+msgstr ""
+
+#: src/btp/src/connectors/MetaMask/index.ts
+#: src/btp/src/connectors/MetaMask/index.ts
+#: src/btp/src/connectors/helper.ts
+msgid "Your transaction has failed. Please go back and try again."
+msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+msgid "Your transaction has successed."
 msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx

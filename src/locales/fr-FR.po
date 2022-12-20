@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-07 09:22\n"
+"PO-Revision-Date: 2022-12-20 09:22\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -168,6 +168,14 @@ msgstr "Approuver"
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
 msgstr "Approuvé"
+
+#: src/btp/src/connectors/helper.ts
+msgid "Approved {0} for cross-chain transfers."
+msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+msgid "Approving {0} for cross-chain transfers..."
+msgstr ""
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/Wallet/index.tsx
@@ -400,6 +408,11 @@ msgstr "Copié"
 msgid "Copy address"
 msgstr "Copier l'adresse"
 
+#: src/btp/src/connectors/helper.ts
+msgid "Couldn't APPROVE {0} for cross-chain transfers."
+msgstr ""
+
+#: src/btp/src/connectors/transactionToast.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Couldn't complete the transaction. Make sure your wallet is set to the right network."
 msgstr "Impossible de terminer la transaction. Assurez-vous que votre portefeuille est défini sur le bon réseau."
@@ -419,6 +432,14 @@ msgstr "Impossible de fournir la liquidité {pair}. Réessayez."
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
 msgstr "Impossible d'échanger {inputCurrency} contre {outputCurrency}. Réessayez."
+
+#: src/btp/src/connectors/helper.ts
+msgid "Couldn't transfer {0} to {1}. Try again."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
+msgstr ""
 
 #: src/app/components/trade/utils.tsx
 msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
@@ -877,6 +898,7 @@ msgstr "Prix"
 msgid "Price impact"
 msgstr "Impact sur le prix"
 
+#: src/btp/src/connectors/helper.ts
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "Transaction en cours..."
@@ -1293,6 +1315,27 @@ msgstr "Échanger"
 msgid "Transaction"
 msgstr "Transaction"
 
+#: src/btp/src/connectors/MetaMask/index.ts
+#: src/btp/src/connectors/MetaMask/index.ts
+msgid "Transaction failed!"
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
+msgstr ""
+
+#: src/app/components/trade/utils.tsx
+msgid "Transfer {inputCurrency} to {network}..."
+msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+msgid "Transferred {0} {1} to {2}."
+msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+msgid "Transferring {0} from {1} to {2}..."
+msgstr ""
+
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlock Balance Tokens?"
 msgstr ""
@@ -1598,6 +1641,16 @@ msgstr ""
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Your supply"
 msgstr "Votre apport"
+
+#: src/btp/src/connectors/MetaMask/index.ts
+#: src/btp/src/connectors/MetaMask/index.ts
+#: src/btp/src/connectors/helper.ts
+msgid "Your transaction has failed. Please go back and try again."
+msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+msgid "Your transaction has successed."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "You’ll receive sICX when you withdraw, which you can unstake or swap for ICX on the Trade page."

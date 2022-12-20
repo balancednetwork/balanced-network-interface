@@ -9,12 +9,13 @@ import { useQuery, UseQueryResult } from 'react-query';
 
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
-import { PairInfo, SUPPORTED_PAIRS } from 'constants/pairs';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import QUERY_KEYS from 'queries/queryKeys';
 import { useBlockNumber } from 'store/application/hooks';
 import { useOraclePrices } from 'store/oracle/hooks';
 import { useEmissions, useFlattenedRewardsDistribution } from 'store/reward/hooks';
+import { PoolInfo } from 'types';
+import { getPoolFromName } from 'utils';
 
 import { API_ENDPOINT } from '../constants';
 
@@ -98,7 +99,10 @@ export const useRatesWithOracle = () => {
 
   return useMemo(() => {
     const updatedRates = { ...rates };
-    oraclePrices && Object.keys(oraclePrices).forEach(token => (updatedRates[token] = oraclePrices[token]));
+    oraclePrices &&
+      Object.keys(oraclePrices).forEach(token => {
+        if (!updatedRates[token]) updatedRates[token] = oraclePrices[token];
+      });
     if (oraclePrices) return updatedRates;
   }, [rates, oraclePrices]);
 };
@@ -156,6 +160,7 @@ export const useAllPairsAPY = (): { [key: number]: BigNumber } | undefined => {
 
 export const useAllPairsTVLQuery = () => {
   const { data: incentivisedPairs } = useIncentivisedPairs();
+
   return useQuery<{ [key: string]: { base: BigNumber; quote: BigNumber; total_supply: BigNumber } } | undefined>(
     ['useAllPairsTVLQuery', incentivisedPairs],
     async () => {
@@ -169,13 +174,13 @@ export const useAllPairsTVLQuery = () => {
 
         const t = {};
         incentivisedPairs.forEach((pair, index) => {
-          const _pair = SUPPORTED_PAIRS.find(spair => spair.id === pair.id);
-          if (_pair) {
+          const pool = getPoolFromName(pair.name);
+          if (pool) {
             const item = res[index];
             t[pair.id] = {
               ...item,
-              base: BalancedJs.utils.toIcx(item.base, _pair.baseCurrencyKey),
-              quote: BalancedJs.utils.toIcx(item.quote, _pair.quoteCurrencyKey),
+              base: BalancedJs.utils.toIcx(item.base, pool.base.symbol),
+              quote: BalancedJs.utils.toIcx(item.quote, pool.quote.symbol),
               total_supply: BalancedJs.utils.toIcx(item.total_supply),
             };
           }
@@ -189,19 +194,19 @@ export const useAllPairsTVLQuery = () => {
 
 export const useAllPairsTVL = () => {
   const tvlQuery = useAllPairsTVLQuery();
-  const ratesQuery = useRatesQuery();
+  const ratesWithOracle = useRatesWithOracle();
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
-  if (tvlQuery.isSuccess && ratesQuery.isSuccess && incentivisedPairs) {
-    const rates = ratesQuery.data || {};
+  if (tvlQuery.isSuccess && ratesWithOracle && incentivisedPairs) {
+    const rates = ratesWithOracle || {};
     const tvls = tvlQuery.data || {};
 
     const t: { [key in string]: number } = {};
     incentivisedPairs.forEach(pair => {
-      const _pair = SUPPORTED_PAIRS.find(spair => spair.id === pair.id);
-      if (_pair) {
-        const baseTVL = tvls[pair.id] ? tvls[pair.id].base.times(rates[_pair.baseCurrencyKey]) : new BigNumber(0);
-        const quoteTVL = tvls[pair.id] ? tvls[pair.id].quote.times(rates[_pair.quoteCurrencyKey]) : new BigNumber(0);
+      const pool = getPoolFromName(pair.name);
+      if (pool) {
+        const baseTVL = tvls[pair.id] ? tvls[pair.id].base.times(rates[pool.base.symbol!]) : new BigNumber(0);
+        const quoteTVL = tvls[pair.id] ? tvls[pair.id].quote.times(rates[pool.quote.symbol!]) : new BigNumber(0);
         t[pair.id] = baseTVL.plus(quoteTVL).integerValue().toNumber();
       }
     });
@@ -224,12 +229,12 @@ export const useAllPairsDataQuery = (period: DataPeriod = '24h') => {
         const t = {};
 
         incentivisedPairs.forEach(pair => {
-          const _pair = SUPPORTED_PAIRS.find(spair => spair.id === pair.id);
-          if (_pair) {
+          const pool = getPoolFromName(pair.name);
+          if (pool) {
             const key = `0x${pair.id.toString(16)}`;
 
-            const baseAddress = _pair.baseToken.address;
-            const quoteAddress = _pair.quoteToken.address;
+            const baseAddress = pool.base.address;
+            const quoteAddress = pool.quote.address;
 
             if (data[key]) {
               t[pair.id] = {};
@@ -237,17 +242,17 @@ export const useAllPairsDataQuery = (period: DataPeriod = '24h') => {
               const _volume = data[key]['volume'];
 
               t[pair.id]['volume'] = {
-                [_pair.baseCurrencyKey]: BalancedJs.utils.toIcx(_volume[baseAddress], _pair.baseCurrencyKey),
-                [_pair.quoteCurrencyKey]: BalancedJs.utils.toIcx(_volume[quoteAddress], _pair.quoteCurrencyKey),
+                [pool.base.symbol!]: BalancedJs.utils.toIcx(_volume[baseAddress], pool.base.symbol),
+                [pool.quote.symbol!]: BalancedJs.utils.toIcx(_volume[quoteAddress], pool.quote.symbol),
               };
 
               // fees
               const _fees = data[key]['fees'];
               if (_fees[baseAddress]) {
                 t[pair.id]['fees'] = {
-                  [_pair.baseCurrencyKey]: {
-                    lp_fees: BalancedJs.utils.toIcx(_fees[baseAddress]['lp_fees'], _pair.baseCurrencyKey),
-                    baln_fees: BalancedJs.utils.toIcx(_fees[baseAddress]['baln_fees'], _pair.baseCurrencyKey),
+                  [pool.base.symbol!]: {
+                    lp_fees: BalancedJs.utils.toIcx(_fees[baseAddress]['lp_fees'], pool.base.symbol!),
+                    baln_fees: BalancedJs.utils.toIcx(_fees[baseAddress]['baln_fees'], pool.base.symbol!),
                   },
                 };
               }
@@ -255,15 +260,15 @@ export const useAllPairsDataQuery = (period: DataPeriod = '24h') => {
                 t[pair.id]['fees'] = t[pair.id]['fees']
                   ? {
                       ...t[pair.id]['fees'],
-                      [_pair.quoteCurrencyKey]: {
-                        lp_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['lp_fees'], _pair.quoteCurrencyKey),
-                        baln_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['baln_fees'], _pair.quoteCurrencyKey),
+                      [pool.quote.symbol!]: {
+                        lp_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['lp_fees'], pool.quote.symbol),
+                        baln_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['baln_fees'], pool.quote.symbol),
                       },
                     }
                   : {
-                      [_pair.quoteCurrencyKey]: {
-                        lp_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['lp_fees'], _pair.quoteCurrencyKey),
-                        baln_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['baln_fees'], _pair.quoteCurrencyKey),
+                      [pool.quote.symbol!]: {
+                        lp_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['lp_fees'], pool.quote.symbol),
+                        baln_fees: BalancedJs.utils.toIcx(_fees[quoteAddress]['baln_fees'], pool.quote.symbol),
                       },
                     };
               }
@@ -293,24 +298,24 @@ export const useAllPairsData = (
       incentivisedPairs
         .filter(pair => data[pair.id])
         .forEach(pair => {
-          const _pair = SUPPORTED_PAIRS.find(spair => spair.id === pair.id);
-          if (_pair) {
+          const pool = getPoolFromName(pair.name);
+          if (pool) {
             // volume
-            const baseVol = data[pair.id]['volume'][_pair.baseCurrencyKey].times(rates[_pair.baseCurrencyKey]);
-            const quoteVol = data[pair.id]['volume'][_pair.quoteCurrencyKey].times(rates[_pair.quoteCurrencyKey]);
+            const baseVol = data[pair.id]['volume'][pool.base.symbol].times(rates[pool.base.symbol!]);
+            const quoteVol = data[pair.id]['volume'][pool.quote.symbol].times(rates[pool.quote.symbol!]);
             const volume = baseVol.plus(quoteVol).integerValue().toNumber();
 
             // fees
-            const baseFees = data[pair.id]['fees'][_pair.baseCurrencyKey]
-              ? data[pair.id]['fees'][_pair.baseCurrencyKey]['lp_fees']
-                  .plus(data[pair.id]['fees'][_pair.baseCurrencyKey]['baln_fees'])
-                  .times(rates[_pair.baseCurrencyKey])
+            const baseFees = data[pair.id]['fees'][pool.base.symbol]
+              ? data[pair.id]['fees'][pool.base.symbol]['lp_fees']
+                  .plus(data[pair.id]['fees'][pool.base.symbol]['baln_fees'])
+                  .times(rates[pool.base.symbol!])
               : new BigNumber(0);
 
-            const quoteFees = data[pair.id]['fees'][_pair.quoteCurrencyKey]
-              ? data[pair.id]['fees'][_pair.quoteCurrencyKey]['lp_fees']
-                  .plus(data[pair.id]['fees'][_pair.quoteCurrencyKey]['baln_fees'])
-                  .times(rates[_pair.quoteCurrencyKey])
+            const quoteFees = data[pair.id]['fees'][pool.quote.symbol]
+              ? data[pair.id]['fees'][pool.quote.symbol]['lp_fees']
+                  .plus(data[pair.id]['fees'][pool.quote.symbol]['baln_fees'])
+                  .times(rates[pool.quote.symbol!])
               : new BigNumber(0);
             const fees = baseFees.plus(quoteFees).integerValue().toNumber();
 
@@ -357,7 +362,7 @@ export const useAllPairs = () => {
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
   const t: {
-    [key: string]: PairInfo & {
+    [key: string]: PoolInfo & {
       tvl: number;
       apy: number;
       feesApy: number;
@@ -373,12 +378,17 @@ export const useAllPairs = () => {
 
     incentivisedPairs.forEach(pair => {
       const feesApyConstant = pair.id === 1 ? 0.7 : 0.5;
-      const _pair = SUPPORTED_PAIRS.find(spair => spair.id === pair.id);
+      const pool = getPoolFromName(pair.name);
 
-      if (_pair) {
+      if (pool) {
         const feesApy = data30day[pair.id] && (data30day[pair.id]['fees'] * 12 * feesApyConstant) / tvls[pair.id];
         t[pair.id] = {
-          ..._pair,
+          id: pair.id,
+          name: pair.name,
+          baseCurrencyKey: pool.base.symbol!,
+          quoteCurrencyKey: pool.quote.symbol!,
+          baseToken: pool.base,
+          quoteToken: pool.quote,
           tvl: tvls[pair.id],
           apy: apys[pair.name]?.toNumber(),
           feesApy: feesApy < 10000 ? feesApy : 0,

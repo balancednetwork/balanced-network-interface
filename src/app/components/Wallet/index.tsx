@@ -16,12 +16,12 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import '@reach/tabs/styles.css';
-import { SUPPORTED_TOKENS_LIST, COMBINED_TOKENS_LIST, useICX } from 'constants/tokens';
+import { SUPPORTED_TOKENS_LIST, COMBINED_TOKENS_LIST, useICX, HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { useAllTokens } from 'hooks/Tokens';
 import useArrowControl from 'hooks/useArrowControl';
 import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';
-import { useRatesQuery } from 'queries/reward';
+import { useRatesWithOracle } from 'queries/reward';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
@@ -233,8 +233,8 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
   const addressesWithAmount = useMemo(
     () =>
       tokenListConfig.community
-        ? COMBINED_ADDRESSES.filter(address => !isDPZeroCA(balances[address], 2))
-        : ADDRESSES.filter(address => !isDPZeroCA(balances[address], 2)),
+        ? COMBINED_ADDRESSES.filter(address => !isDPZeroCA(balances[address], HIGH_PRICE_ASSET_DP[address] || 2))
+        : ADDRESSES.filter(address => !isDPZeroCA(balances[address], HIGH_PRICE_ASSET_DP[address] || 2)),
     [tokenListConfig, balances],
   );
 
@@ -263,7 +263,7 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
   const { activeIndex, setActiveIndex } = useArrowControl(anchor !== null, filteredSortedTokensWithICX.length);
 
   // rates: using symbol as key?
-  const { data: rates } = useRatesQuery();
+  const rates = useRatesWithOracle();
   const rateFracs = React.useMemo(() => {
     if (rates) {
       return Object.keys(rates).reduce((acc, key) => {
@@ -345,7 +345,9 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
           </Typography>
         </AssetSymbol>
         <BalanceAndValueWrap>
-          <DataText as="div">{!account ? '-' : balances[address]?.toFixed(2, { groupSeparator: ',' })}</DataText>
+          <DataText as="div">
+            {!account ? '-' : balances[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 2, { groupSeparator: ',' })}
+          </DataText>
 
           <DataText as="div">
             {!account || !rates || !symbol || !rates[symbol] || !rateFracs

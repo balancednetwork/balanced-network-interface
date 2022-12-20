@@ -648,6 +648,10 @@ export const ThemedGlobalStyle = createGlobalStyle`
     border: 3px solid #fb6a6a;
   }
 
+  .slider-warning-true .noUi-connects {
+    background-color: #fb6a6a;
+  }
+
 
 /* Risk */
 

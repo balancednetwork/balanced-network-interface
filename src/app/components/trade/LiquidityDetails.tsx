@@ -17,6 +17,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
+import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { BalanceData, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useAllPairs } from 'queries/reward';
 import { Source, useSources } from 'store/bbaln/hooks';
@@ -156,7 +157,7 @@ export default function LiquidityDetails() {
                       poolId={parseInt(poolId)}
                       balance={balances[poolId]}
                       pair={sortedPairs[poolId]}
-                      totalReward={allPairs ? allPairs[poolId] && rewards[allPairs[poolId].name] : new BigNumber(0)}
+                      totalReward={allPairs && allPairs[poolId] ? rewards[allPairs[poolId].name] : new BigNumber(0)}
                       boostData={sources}
                       apy={allPairs && allPairs[parseInt(poolId)] && allPairs[parseInt(poolId)].apy}
                     />
@@ -281,16 +282,18 @@ const PoolRecord = ({
         </StyledDataText>
         <DataText>
           {baseCurrencyTotalSupply ? (
-            <Typography fontSize={16}>{`${baseCurrencyTotalSupply.toFixed(2, { groupSeparator: ',' })} ${
-              aBalance.currency.symbol
-            }`}</Typography>
+            <Typography fontSize={16}>{`${baseCurrencyTotalSupply.toFixed(
+              HIGH_PRICE_ASSET_DP[aBalance.currency.address] || 2,
+              { groupSeparator: ',' },
+            )} ${aBalance.currency.symbol}`}</Typography>
           ) : (
             <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
           )}
           {quoteCurrencyTotalSupply ? (
-            <Typography fontSize={16}>{`${quoteCurrencyTotalSupply?.toFixed(2, { groupSeparator: ',' })} ${
-              bBalance.currency.symbol
-            }`}</Typography>
+            <Typography fontSize={16}>{`${quoteCurrencyTotalSupply?.toFixed(
+              HIGH_PRICE_ASSET_DP[bBalance.currency.address] || 2,
+              { groupSeparator: ',' },
+            )} ${bBalance.currency.symbol}`}</Typography>
           ) : (
             <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
           )}

@@ -225,7 +225,7 @@ const PositionDetailPanel = () => {
                 }}
               />
 
-              <Box flex={1} style={{ position: 'relative' }}>
+              <Box flex={1} style={{ position: 'relative' }} className={`slider-warning-${isPassAllCollateralLocked}`}>
                 <Locked warned={isLockWarning} pos={pos} heightened={heightenBars}>
                   <MetaData as="dl" style={{ textAlign: 'right' }}>
                     <Tooltip
@@ -266,7 +266,7 @@ const PositionDetailPanel = () => {
                       sliderInstance.current = instance;
                     }
                   }}
-                  style={{ height: 16, backgroundColor: isPassAllCollateralLocked ? '#fb6a6a' : '' }}
+                  style={{ height: 16 }}
                 />
               </Box>
 

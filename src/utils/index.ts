@@ -10,6 +10,7 @@ import { canBeQueue } from 'constants/currency';
 import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { PairInfo } from 'constants/pairs';
+import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { PairData, PairState } from 'hooks/useV2Pairs';
 import { Field } from 'store/swap/actions';
 
@@ -294,4 +295,11 @@ export enum PageLocation {
   HOME = '/',
   TRADE = '/trade',
   VOTE = '/vote',
+}
+
+export function getPoolFromName(name: string): { base: Token; quote: Token } | undefined {
+  const token1 = COMBINED_TOKENS_LIST.find(token => token.symbol === name.split('/')[0]);
+  const token2 = COMBINED_TOKENS_LIST.find(token => token.symbol === name.split('/')[1]);
+
+  if (token1 && token2) return { base: token1, quote: token2 };
 }

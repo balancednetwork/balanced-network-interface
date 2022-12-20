@@ -1,7 +1,7 @@
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { Token } from '@balancednetwork/sdk-core';
 
-import { ICX, sICX, bnUSD, IUSDC, USDS, OMM, IUSDT } from './tokens';
+import { ICX, sICX, bnUSD, IUSDC, USDS, OMM, IUSDT, BTCB } from './tokens';
 
 export const MAX_HOPS = 4;
 
@@ -33,7 +33,13 @@ type ChainTokenList = {
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
-  [ChainId.MAINNET]: [sICX[ChainId.MAINNET], bnUSD[ChainId.MAINNET], IUSDC[ChainId.MAINNET], USDS[ChainId.MAINNET]],
+  [ChainId.MAINNET]: [
+    sICX[ChainId.MAINNET],
+    bnUSD[ChainId.MAINNET],
+    IUSDC[ChainId.MAINNET],
+    USDS[ChainId.MAINNET],
+    BTCB[ChainId.MAINNET],
+  ],
   [ChainId.YEOUIDO]: [sICX[ChainId.YEOUIDO], bnUSD[ChainId.YEOUIDO], IUSDC[ChainId.YEOUIDO], USDS[ChainId.YEOUIDO]],
   [ChainId.SEJONG]: [sICX[ChainId.SEJONG], bnUSD[ChainId.SEJONG]],
   [ChainId.BERLIN]: [sICX[ChainId.BERLIN], bnUSD[ChainId.BERLIN]],

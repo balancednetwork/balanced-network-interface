@@ -108,6 +108,19 @@ export const GBET: TokenMap = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx6139a27c15f1653471ffba0b4b88dc15de7e3267', 18, 'BET', 'GangstaBet Token'),
 };
 
+// disable prettier printWidth rule
+// prettier-ignore
+export const ETH: TokenMap = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx288d13e1b63563459a2ac6179f237711f6851cb5', 18, 'ETH', 'Binance Ethereum'),
+  [ChainId.LISBON]: new Token(ChainId.MAINNET, 'cx99c79fd6dee53335f686c7f2cb513745622634f2', 18, 'TETH', 'Binance Ethereum'),
+};
+
+// disable prettier printWidth rule
+// prettier-ignore
+export const BTCB: TokenMap = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx5b5a03cb525a1845d0af3a872d525b18a810acb0', 18, 'BTCB', 'Binance Bitcoin'),
+};
+
 const chainId = NETWORK_ID;
 export const SUPPORTED_TOKENS_MAP_BY_ADDRESS = Object.keys(TRANSFORMED_DEFAULT_TOKEN_LIST[chainId] ?? {}).reduce<{
   [address: string]: Token;

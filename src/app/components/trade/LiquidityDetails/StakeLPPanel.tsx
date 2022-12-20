@@ -16,9 +16,8 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
-import { SUPPORTED_PAIRS } from 'constants/pairs';
 import { useBalance } from 'hooks/useV2Pairs';
-import { useAllPairs } from 'queries/reward';
+import { useAllPairs, useIncentivisedPairs } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useSources } from 'store/bbaln/hooks';
 import { useRewards } from 'store/reward/hooks';
@@ -37,6 +36,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const poolId = pair.poolId!;
   const sources = useSources();
   const allPairs = useAllPairs();
+  const { data: incentivisedPairs } = useIncentivisedPairs();
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -162,8 +162,6 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
 
   const hasEnoughICX = useHasEnoughICX();
 
-  const hasReward = !!SUPPORTED_PAIRS.find(pair => pair.id === poolId)?.rewards?.toString();
-
   const upSmall = useMedia('(min-width: 800px)');
 
   const rewards = useRewards();
@@ -172,6 +170,10 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const totalReward = rewards[pairName];
   const { reward } = getShareReward(pair, balance, totalReward);
   const stakedFractionValue = stakedFraction(stakedPercent);
+  const isIncentivised = useMemo(() => incentivisedPairs && !!incentivisedPairs.find(pair => pair.name === pairName), [
+    incentivisedPairs,
+    pairName,
+  ]);
 
   const RespoRewardsInfo = () => {
     return (
@@ -225,7 +227,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
       <Typography variant="h3" marginBottom="15px">
         Stake LP tokens
       </Typography>
-      {hasReward ? (
+      {isIncentivised ? (
         <>
           <Typography my={1}>Stake your LP tokens to earn BALN from this liquidity pool.</Typography>
 

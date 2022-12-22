@@ -21,6 +21,7 @@ import SlippageSetting from 'app/components/SlippageSetting';
 import { Typography } from 'app/theme';
 import { ReactComponent as FlipIcon } from 'assets/icons/flip.svg';
 import bnJs from 'bnJs';
+import { SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
 import {
   useSwapSlippageTolerance,
   useWalletModalToggle,
@@ -56,6 +57,7 @@ export default function SwapPanel() {
   );
   const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
   const showFundOption = isSwapEligibleForStabilityFund && fundMaxSwap?.greaterThan(0);
+  const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
 
   const parsedAmounts = React.useMemo(
     () => ({
@@ -304,7 +306,12 @@ export default function SwapPanel() {
               <Trans>Price impact</Trans>
             </Typography>
 
-            <Typography>{priceImpact}</Typography>
+            <Typography
+              className={showSlippageWarning ? 'error-anim' : ''}
+              color={showSlippageWarning ? 'alert' : 'text'}
+            >
+              {priceImpact}
+            </Typography>
           </Flex>
 
           <Flex alignItems="center" justifyContent="space-between">

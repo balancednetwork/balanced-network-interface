@@ -10,6 +10,7 @@ import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
+import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { PairState, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useAllPairsAPY } from 'queries/reward';
 import { useSources } from 'store/bbaln/hooks';
@@ -183,9 +184,11 @@ export default function LPDescription() {
                             {formattedAmounts[Field.CURRENCY_A]
                               ? new BigNumber(baseCurrencyTotalSupply)
                                   .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
-                                  .dp(2)
+                                  .dp(HIGH_PRICE_ASSET_DP[pair.reserve0.currency?.address || ''] || 2)
                                   .toFormat() || '...'
-                              : baseCurrencyTotalSupply?.dp(2).toFormat() || '...'}{' '}
+                              : baseCurrencyTotalSupply
+                                  ?.dp(HIGH_PRICE_ASSET_DP[pair.reserve0.currency?.address || ''] || 2)
+                                  .toFormat() || '...'}{' '}
                             {pair?.reserve0.currency?.symbol}
                             <br />
                             {formattedAmounts[Field.CURRENCY_B]
@@ -252,9 +255,15 @@ export default function LPDescription() {
                     <Typography textAlign="center" variant="p">
                       {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                         <>
-                          {pair?.reserve0.toFixed(0, { groupSeparator: ',' })} {pair?.reserve0.currency?.symbol}
+                          {pair?.reserve0.toFixed(HIGH_PRICE_ASSET_DP[pair.reserve0.currency?.address || ''] ? 3 : 0, {
+                            groupSeparator: ',',
+                          })}{' '}
+                          {pair?.reserve0.currency?.symbol}
                           <br />
-                          {pair?.reserve1.toFixed(0, { groupSeparator: ',' })} {pair?.reserve1.currency?.symbol}
+                          {pair?.reserve1.toFixed(HIGH_PRICE_ASSET_DP[pair.reserve1.currency?.address || ''] ? 3 : 0, {
+                            groupSeparator: ',',
+                          })}{' '}
+                          {pair?.reserve1.currency?.symbol}
                         </>
                       ) : (
                         `${pair?.reserve0.toFixed(0, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`

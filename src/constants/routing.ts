@@ -7,7 +7,13 @@ export const MAX_HOPS = 4;
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
-  [ChainId.MAINNET]: [sICX[ChainId.MAINNET], bnUSD[ChainId.MAINNET], IUSDC[ChainId.MAINNET], USDS[ChainId.MAINNET]],
+  [ChainId.MAINNET]: [
+    sICX[ChainId.MAINNET],
+    bnUSD[ChainId.MAINNET],
+    IUSDC[ChainId.MAINNET],
+    USDS[ChainId.MAINNET],
+    BTCB[ChainId.MAINNET],
+  ],
   [ChainId.YEOUIDO]: [sICX[ChainId.YEOUIDO], bnUSD[ChainId.YEOUIDO], IUSDC[ChainId.YEOUIDO], USDS[ChainId.YEOUIDO]],
   [ChainId.SEJONG]: [sICX[ChainId.SEJONG], bnUSD[ChainId.SEJONG]],
   [ChainId.BERLIN]: [sICX[ChainId.BERLIN], bnUSD[ChainId.BERLIN], IUSDC[ChainId.BERLIN], USDS[ChainId.BERLIN]],

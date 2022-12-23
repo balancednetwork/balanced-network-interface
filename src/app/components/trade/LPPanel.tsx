@@ -12,7 +12,7 @@ import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Typography } from 'app/theme';
 import { BIGINT_ZERO } from 'constants/misc';
-import { isNativeCurrency } from 'constants/tokens';
+import { HIGH_PRICE_ASSET_DP, isNativeCurrency } from 'constants/tokens';
 import { PairState } from 'hooks/useV2Pairs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
@@ -60,10 +60,16 @@ function WalletSection() {
     () => ({
       [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.lessThan(BIGINT_ZERO)
         ? '0.00'
-        : remains[Field.CURRENCY_A]?.toFixed(2, { groupSeparator: ',' }) ?? '-',
+        : remains[Field.CURRENCY_A]?.toFixed(
+            HIGH_PRICE_ASSET_DP[remains[Field.CURRENCY_A]?.currency.wrapped.address || ''] || 2,
+            { groupSeparator: ',' },
+          ) ?? '-',
       [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.lessThan(BIGINT_ZERO)
         ? '0.00'
-        : remains[Field.CURRENCY_B]?.toFixed(2, { groupSeparator: ',' }) ?? '-',
+        : remains[Field.CURRENCY_B]?.toFixed(
+            HIGH_PRICE_ASSET_DP[remains[Field.CURRENCY_B]?.currency.wrapped.address || ''] || 2,
+            { groupSeparator: ',' },
+          ) ?? '-',
     }),
     [remains],
   );

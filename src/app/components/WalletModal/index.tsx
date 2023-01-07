@@ -345,7 +345,7 @@ export default function WalletModal() {
             <ClickAwayListener onClickAway={closeMenu}>
               <div>
                 <UnderlineTextWithArrow onClick={toggleMenu} text={LOCALE_LABEL[activeLocale]} arrowRef={arrowRef} />
-                <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" zIndex={2000}>
+                <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" zIndex={6001}>
                   <MenuList>
                     {SUPPORTED_LOCALES.map((locale: SupportedLocale) => (
                       <LanguageMenuItem

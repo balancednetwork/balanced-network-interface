@@ -5,11 +5,17 @@ export type VoteSourceRaw = {
   type: string;
   votable: string;
   weight: string;
+  currentWeight: string;
+  currentBias: string;
+  currentSlope: string;
 };
 
 export type VoteSource = {
   type: number;
   weight: Fraction;
+  currentWeight: Fraction;
+  currentBias: BigNumber;
+  currentSlope: BigNumber;
 };
 
 export type RewardDistributionRaw = {

@@ -3,6 +3,9 @@ import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 
+import { getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
+import { VoteItemInfo, VoteSource } from 'store/liveVoting/types';
+
 export const maxYearsLocked = new BigNumber(4);
 
 export const formatFraction = (fraction: Fraction, unit: string = '%'): string =>
@@ -37,5 +40,28 @@ export const formatTimeLeft = (date: Date): string => {
     return formattedString || t`less then a minute`;
   } else {
     return '';
+  }
+};
+
+export const getUserCurrentAllocationFormatted = (item: VoteItemInfo): string => {
+  if (item.slope && item.end) {
+    return `${item.slope
+      .times(item.end.getTime() - new Date().getTime())
+      .times(1000)
+      .div(10 ** 18)
+      .toFormat(0)} bBALN`;
+  } else {
+    return '0 bBALN';
+  }
+};
+
+export const getSourceCurrentAllocationFormatted = (item: VoteSource): string => {
+  if (item.currentBias && item.currentSlope) {
+    return `${item.currentBias
+      .plus(item.currentSlope.times(getClosestUnixWeekStart(new Date().getTime()).getTime() - new Date().getTime()))
+      .div(10 ** 18)
+      .toFormat(0)} bBALN`;
+  } else {
+    return '0 bBALN';
   }
 };

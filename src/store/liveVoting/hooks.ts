@@ -44,6 +44,9 @@ export function useSourceVoteData(): UseQueryResult<Map<string, VoteSource>, Err
             sources[source] = {
               type: parseInt(data[source].type, 16),
               weight: new Fraction(data[source].weight, WEIGHT_CONST),
+              currentWeight: new Fraction(data[source].currentWeight, WEIGHT_CONST),
+              currentBias: new BigNumber(data[source].currentBias),
+              currentSlope: new BigNumber(data[source].currentSlope),
             };
         } catch (e) {
           console.error(e);

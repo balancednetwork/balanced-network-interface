@@ -12,18 +12,13 @@ import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { useBBalnAmount } from 'store/bbaln/hooks';
-import {
-  useCombinedVoteData,
-  useNextUpdateDate,
-  useTotalBBalnAllocated,
-  useUserVoteData,
-} from 'store/liveVoting/hooks';
+import { useCombinedVoteData, useNextUpdateDate, useUserVoteData } from 'store/liveVoting/hooks';
 import { VoteSource } from 'store/liveVoting/types';
 import { useRewards } from 'store/reward/hooks';
 
 import PowerLeftComponent from './PowerLeftComponent';
 import { GirdHeaderItem, RespoLabel, VoteItemWrap, VotingGrid } from './styledComponents';
-import { formatFraction, formatFractionAmount, formatTimeLeft } from './utils';
+import { formatFraction, formatTimeLeft, getSourceCurrentAllocationFormatted } from './utils';
 import VotingComponent from './VotingComponent';
 
 const MemoizedVotingComponent = React.memo(VotingComponent);
@@ -32,7 +27,6 @@ export default function LiveVotingPanel() {
   const { account } = useIconReact();
   const { data: voteData } = useCombinedVoteData();
   const rewards = useRewards();
-  const { data: totalBBAlnAllocation } = useTotalBBalnAllocated();
   const userVoteData = useUserVoteData();
   const bBalnAmount = useBBalnAmount();
   const nextUpdateDate = useNextUpdateDate();
@@ -40,7 +34,7 @@ export default function LiveVotingPanel() {
 
   const VoteItem = ({
     name,
-    vote,
+    vote: source,
     auth,
     border,
   }: {
@@ -49,7 +43,7 @@ export default function LiveVotingPanel() {
     auth: boolean;
     border: boolean;
   }) => {
-    const { weight } = vote;
+    const { weight, currentWeight } = source;
     const tokens = name.split('/');
 
     const baseCurrency = useMemo(
@@ -102,23 +96,32 @@ export default function LiveVotingPanel() {
                 flexDirection="column"
               >
                 <Typography color="text" fontSize={16}>
-                  {formatFraction(weight)}
+                  {formatFraction(currentWeight)}
                 </Typography>
                 <Typography color="text1" fontSize={14}>
-                  {totalBBAlnAllocation ? `${formatFractionAmount(weight, totalBBAlnAllocation)} bBALN` : '-'}
+                  {getSourceCurrentAllocationFormatted(source)}
                 </Typography>
               </Flex>
             </Flex>
-            <Flex justifyContent="flex-end" alignItems="center">
+            <Flex alignItems={isRespoLayout ? 'center' : 'end'}>
               {isRespoLayout && (
                 <RespoLabel>
                   <Trans>Daily incentives</Trans>
                 </RespoLabel>
               )}
-
-              <Typography color="text" fontSize={16}>
-                {rewards && rewards[name] ? `${rewards[name].toFormat(0)} BALN` : '-'}
-              </Typography>
+              <Flex
+                justifyContent="flex-end"
+                my={'auto'}
+                width={isRespoLayout ? 'auto' : '100%'}
+                flexDirection="column"
+              >
+                <Typography color="text" fontSize={16}>
+                  {rewards && rewards[name] ? `${rewards[name].toFormat(0)} BALN` : '-'}
+                </Typography>
+                <Typography color="text1" fontSize={14}>
+                  {formatFraction(weight)}
+                </Typography>
+              </Flex>
             </Flex>
           </VotingGrid>
         </VoteItemWrap>
@@ -160,7 +163,7 @@ export default function LiveVotingPanel() {
       </Flex>
       {isRespoLayout && (
         <Typography fontSize={14} mt={-2} mb={3}>
-          <Trans>Current bBALN allocation will be updated in </Trans>{' '}
+          <Trans>bBALN allocation will be updated in </Trans>{' '}
           <strong style={{ whiteSpace: 'nowrap' }}>{formatTimeLeft(nextUpdateDate)}</strong>.
         </Typography>
       )}
@@ -182,13 +185,11 @@ export default function LiveVotingPanel() {
               text={
                 <>
                   <Typography>
-                    <Trans>
-                      The current distribution of liquidity incentives, based on the total bBALN allocation. Updated
-                      once a week.
-                    </Trans>
+                    <Trans>Where bBALN holders have allocated their voting power.</Trans>
                   </Typography>
                   <Typography mt={3}>
-                    <Trans>The next update is in</Trans> <strong>{formatTimeLeft(nextUpdateDate)}</strong>.
+                    <Trans>In</Trans> <strong>{formatTimeLeft(nextUpdateDate)}</strong>
+                    <Trans>, the daily incentives will be adjusted to reflect this allocation.</Trans>
                   </Typography>
                 </>
               }

@@ -305,8 +305,6 @@ export const getBalanceOf = async ({ address, refundable = false, symbol, approv
 
     const balance = await makeICXCall<any>(payload);
 
-    console.log('balance', balance);
-
     return refundable
       ? convertToICX(balance.refundable)
       : approved

@@ -158,7 +158,6 @@ const BTPContent = () => {
   };
 
   const checkApprovedBalance = async () => {
-    console.log(shouldCheckIRC2Token);
     if (!shouldCheckIRC2Token || !accountInfo?.address) {
       setApprovedBalance('');
       return;

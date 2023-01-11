@@ -19,10 +19,7 @@ import { resetTransferStep } from './utils';
 
 const eventHandler = async event => {
   const { type, payload = {} } = event.detail;
-  console.log('eventHandler', event);
   const address = localStorage.getItem(ADDRESS_LOCAL_STORAGE);
-
-  console.info('%cICONex event', 'color: green;', event.detail);
 
   if (payload.error) {
     console.log(payload.error.transferMessage);

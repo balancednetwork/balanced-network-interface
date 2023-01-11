@@ -16,7 +16,6 @@ import { Typography } from 'app/theme';
 import { ReactComponent as EditIcon } from 'assets/icons/edit.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useBBalnAmount } from 'store/bbaln/hooks';
 import {
   useChangeEditing,
   useChangeInputValue,
@@ -32,7 +31,7 @@ import { escapeRegExp, ONE_DAY_DURATION } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { AllocationInput, RespoLabel, StyledQuestionIcon, VotingButtons } from './styledComponents';
-import { formatFraction, formatFractionAmount, formatTimeLeft, formatVoteWeight } from './utils';
+import { formatFraction, formatTimeLeft, formatVoteWeight, getUserCurrentAllocationFormatted } from './utils';
 
 interface VotingComponentProps {
   name: string;
@@ -41,7 +40,6 @@ interface VotingComponentProps {
 
 export default function VotingComponent({ name, respoLayout }: VotingComponentProps) {
   const userVoteData = useUserVoteData();
-  const bBalnAmount = useBBalnAmount();
   const changeShowConfirmation = useChangeShowConfirmation();
   const changeEditing = useChangeEditing();
   const changeInputValue = useChangeInputValue();
@@ -185,10 +183,7 @@ export default function VotingComponent({ name, respoLayout }: VotingComponentPr
                 )}
               </Flex>
               <Typography fontSize={14} color="text1">
-                {bBalnAmount &&
-                  userVoteData &&
-                  userVoteData[name] &&
-                  `${formatFractionAmount(userVoteData[name].power, bBalnAmount)} bBALN`}
+                {userVoteData && getUserCurrentAllocationFormatted(userVoteData[name])}
               </Typography>
             </>
           ) : (

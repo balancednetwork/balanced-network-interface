@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-12-20 09:22\n"
+"PO-Revision-Date: 2023-01-11 20:24\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -31,6 +31,10 @@ msgstr "({0}% necesario)"
 
 #: src/app/components/home/BBaln/BBalnPanel.tsx
 msgid ", so you would have received"
+msgstr ""
+
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid ", the daily incentives will be adjusted to reflect this allocation."
 msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
@@ -467,10 +471,6 @@ msgstr "Actual"
 msgid "Current allocation"
 msgstr ""
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-msgid "Current bBALN allocation will be updated in"
-msgstr ""
-
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Current unlock date"
 msgstr ""
@@ -651,6 +651,10 @@ msgstr ""
 
 #: src/app/components/trade/AllPoolsPanel.tsx
 msgid "Impermanent loss is not factored in."
+msgstr ""
+
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "In"
 msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
@@ -1215,10 +1219,6 @@ msgstr ""
 msgid "The current bnUSD price is"
 msgstr "El precio actual de bnUSD es"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-msgid "The current distribution of liquidity incentives, based on the total bBALN allocation. Updated once a week."
-msgstr ""
-
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current {0} price is"
 msgstr ""
@@ -1239,10 +1239,6 @@ msgstr ""
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "The maximum percentage that people can borrow against the value of this collateral type."
-msgstr ""
-
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-msgid "The next update is in"
 msgstr ""
 
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
@@ -1508,6 +1504,10 @@ msgstr "Billetera: {0} {1} /\n"
 msgid "Where Balanced will get the price data for this collateral type."
 msgstr ""
 
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "Where bBALN holders have allocated their voting power."
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
 msgstr "Mientras tomas prestado bnUSD, tu colateral se usa para mantener su valor estable"
@@ -1660,6 +1660,10 @@ msgstr ""
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "and ends after 5 days."
 msgstr "y termina después de 5 días."
+
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "bBALN allocation will be updated in"
+msgstr ""
 
 #: src/app/containers/VotePage/utils.ts
 #: src/utils/timeformat.ts

@@ -96,7 +96,7 @@ export default function LiveVotingPanel() {
                 flexDirection="column"
               >
                 <Typography color="text" fontSize={16}>
-                  {formatFraction(currentWeight)}
+                  {formatFraction(currentWeight.greaterThan(0) ? currentWeight : weight)}
                 </Typography>
                 <Typography color="text1" fontSize={14}>
                   {getSourceCurrentAllocationFormatted(source)}

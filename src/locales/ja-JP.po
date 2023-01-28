@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-11 20:25\n"
+"PO-Revision-Date: 2023-01-28 10:22\n"
 "Last-Translator: \n"
 "Language: ja_JP\n"
 "Language-Team: Japanese\n"
@@ -1621,7 +1621,7 @@ msgid "Your ICX will be converted to sICX (Staked ICX)."
 msgstr ""
 
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
-msgid "Your ICX will be unstaked as more ICX collateral is deposited into Balanced."
+msgid "Your ICX will be ready to claim in ~7 days, but it may unstake sooner based on the volume of ICX converted to sICX."
 msgstr ""
 
 #: src/app/containers/VotePage/LiveVotingPanel.tsx

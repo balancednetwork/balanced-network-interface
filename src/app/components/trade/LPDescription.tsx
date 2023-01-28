@@ -39,7 +39,7 @@ export default function LPDescription() {
     // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
     JSBI.greaterThanOrEqual(totalPoolTokens.quotient, userPoolBalance.quotient) &&
     totalPoolTokens.greaterThan(0)
-      ? pair.getLiquidityValue(pair.token0, totalPoolTokens || 1, userPoolBalance, false)
+      ? pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false)
       : undefined;
   const pairName = useMemo(() => {
     if (currencies && currencies.CURRENCY_A && currencies.CURRENCY_B) {

@@ -207,7 +207,7 @@ export default function LPDescription() {
                                   .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
                                   .dp(2)
                                   .toFormat()
-                              : token0Deposited?.toSignificant(2, {
+                              : token0Deposited?.toFixed(2, {
                                   groupSeparator: ',',
                                 }) || 0
                           } ${pair?.reserve0.currency?.symbol}`

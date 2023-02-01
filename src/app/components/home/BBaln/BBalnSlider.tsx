@@ -252,6 +252,7 @@ export default function BBalnSlider({
   const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
   const shouldBoost = differenceBalnAmount.isPositive();
+  const increasingAmount = shouldBoost && lockedBalnAmount && lockedBalnAmount.greaterThan(0);
 
   const samePeriod: LockedPeriod | undefined = useMemo(() => {
     return timeRemaining
@@ -621,9 +622,17 @@ export default function BBalnSlider({
 
           {shouldBoost && (
             <Typography textAlign="center">
-              Your BALN will be locked until{' '}
+              <Trans>Your BALN will be locked until</Trans>{' '}
               <strong>{formatDate(getClosestUnixWeekStart(getWeekOffsetTimestamp(selectedPeriod.weeks)), true)}</strong>
               .
+            </Typography>
+          )}
+
+          {increasingAmount && (
+            <Typography textAlign="center" mt="15px">
+              <Trans>
+                To use your increased voting power to influence liquidity incentives, update your allocation.
+              </Trans>
             </Typography>
           )}
 

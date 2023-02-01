@@ -71,7 +71,7 @@ export const VotingGrid = styled(Flex)<{ auth: boolean }>`
       ? css`
           grid-template-columns: 1fr;
           ${theme.mediaWidth.upSmall`grid-template-columns: 9fr 8fr 8fr 6fr;`}
-          ${theme.mediaWidth.upLarge`grid-template-columns: 9fr 6fr 8fr 6fr;`}
+          ${theme.mediaWidth.upLarge`grid-template-columns: 16fr 12fr 15fr 15fr;`}
         `
       : css`
           grid-template-columns: 1fr;

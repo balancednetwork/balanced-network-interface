@@ -432,3 +432,15 @@ export const useAllPairsTotal = () => {
 
   return;
 };
+
+export const useICXConversionFee = () => {
+  return useQuery('icxConversionFee', async () => {
+    try {
+      const feesRaw = await bnJs.Dex.getFees();
+      const fee = new Fraction(feesRaw['icx_conversion_fee'], 100);
+      return fee;
+    } catch (e) {
+      console.error(e);
+    }
+  });
+};

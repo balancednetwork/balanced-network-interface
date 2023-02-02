@@ -12,7 +12,7 @@ import { Flex, Box } from 'rebass/styled-components';
 import { Typography } from 'app/theme';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { PairState, useSuppliedTokens } from 'hooks/useV2Pairs';
-import { useAllPairsAPY } from 'queries/reward';
+import { useAllPairsAPY, useICXConversionFee } from 'queries/reward';
 import { useSources } from 'store/bbaln/hooks';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
@@ -23,6 +23,7 @@ import { useLiquidityTokenBalance } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
 import { MAX_BOOST } from '../home/BBaln/utils';
+import QuestionHelper, { QuestionWrapper } from '../QuestionHelper';
 
 export default function LPDescription() {
   const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();
@@ -30,6 +31,7 @@ export default function LPDescription() {
   const sources = useSources();
   const { account } = useIconReact();
   const upSmall = useMedia('(min-width: 600px)');
+  const { data: icxConversionFee } = useICXConversionFee();
   const userPoolBalance = useLiquidityTokenBalance(account, pair);
   const totalPoolTokens = pair?.totalSupply;
   const token0Deposited =
@@ -44,7 +46,7 @@ export default function LPDescription() {
   const pairName = useMemo(() => {
     if (currencies && currencies.CURRENCY_A && currencies.CURRENCY_B) {
       const name = `${currencies.CURRENCY_A.symbol}/${currencies.CURRENCY_B.symbol}`;
-      return name === 'ICX/sICX' ? 'sICX/ICX' : name;
+      return name.startsWith('ICX/') ? 'sICX/ICX' : name;
     } else {
       return '';
     }
@@ -136,7 +138,7 @@ export default function LPDescription() {
                 {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
                   ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}
                     liquidity pool${upSmall ? ': ' : ''}`
-                  : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall ? ': ' : ''}`}{' '}
+                  : t`${currencies[Field.CURRENCY_A]?.symbol} queue${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
                   {apy
                     ? `${apy.times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed()}% - ${apy
@@ -146,13 +148,32 @@ export default function LPDescription() {
                         .toFixed()}%`
                     : '-'}
                   {' APY'}
+                  {pair?.poolId === BalancedJs.utils.POOL_IDS.sICXICX && (
+                    <QuestionWrapper style={{ marginLeft: '3px' }}>
+                      <QuestionHelper
+                        width={350}
+                        text={
+                          <>
+                            <Typography mb={3}>The ICX queue facilitates "instant unstaking".</Typography>
+                            <Typography mb={3}>
+                              You'll earn BALN while your ICX is in the queue. When you get to the front, your ICX will
+                              be exchanged for sICX, plus an extra {`${icxConversionFee?.toSignificant(3) || '...'}%`}.
+                            </Typography>
+                            <Typography>
+                              You'll need to claim and unstake your sICX before you can supply it again.
+                            </Typography>
+                          </>
+                        }
+                      ></QuestionHelper>
+                    </QuestionWrapper>
+                  )}
                 </Typography>
               </Typography>
             ) : (
               <Typography variant="h3" mb={2} marginBottom={40}>
                 {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
                   ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
-                  : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}
+                  : t`${currencies[Field.CURRENCY_A]?.symbol} queue`}
               </Typography>
             )}
 

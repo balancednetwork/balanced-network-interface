@@ -98,16 +98,14 @@ export default function LiveVotingPanel() {
               >
                 <Typography color="text" fontSize={16}>
                   {rewards && rewards[name]
-                    ? `~ ${currentWeight
-                        .divide(
-                          weight.greaterThan(0)
-                            ? weight
-                            : currentWeight.greaterThan(0)
-                            ? currentWeight
-                            : new Fraction(1),
-                        )
-                        .multiply(new Fraction(rewards[name].toFormat(0)))
-                        .toFixed(0)} BALN`
+                    ? `~ ${
+                        currentWeight.greaterThan(0)
+                          ? currentWeight
+                              .divide(weight.greaterThan(0) ? weight : currentWeight)
+                              .multiply(new Fraction(rewards[name].toFormat(0)))
+                              .toFixed(0)
+                          : rewards[name].toFormat(0)
+                      } BALN`
                     : '-'}
                 </Typography>
                 <Typography color="text1" fontSize={14}>
@@ -177,7 +175,7 @@ export default function LiveVotingPanel() {
       </Flex>
       {isRespoLayout && (
         <Typography fontSize={14} mt={-2} mb={3}>
-          <Trans>bBALN allocation will be updated in </Trans>{' '}
+          <Trans>Incentives will be updated in </Trans>{' '}
           <strong style={{ whiteSpace: 'nowrap' }}>{formatTimeLeft(nextUpdateDate)}</strong>.
         </Typography>
       )}

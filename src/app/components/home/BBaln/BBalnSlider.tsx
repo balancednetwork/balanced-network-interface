@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 
 import { addresses } from '@balancednetwork/balanced-js';
+import { Fraction } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
@@ -37,6 +38,7 @@ import {
   useSources,
   useTimeRemaining,
 } from 'store/bbaln/hooks';
+import { usePowerLeft } from 'store/liveVoting/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
@@ -79,6 +81,7 @@ export default function BBalnSlider({
   const timeRemaining = useTimeRemaining();
   const totalSupplyBBaln = useTotalSupply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
+  const powerLeft = usePowerLeft();
   const sources = useSources();
   const { data: hasLockExpired } = useHasLockExpired();
   const { typedValue, isAdjusting, inputType } = useBBalnSliderState();
@@ -252,7 +255,10 @@ export default function BBalnSlider({
   const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
   const shouldBoost = differenceBalnAmount.isPositive();
-  const increasingAmount = shouldBoost && lockedBalnAmount && lockedBalnAmount.greaterThan(0);
+  const shouldNotifyOfVotingPower = useMemo(
+    () => shouldBoost && lockedBalnAmount && lockedBalnAmount.greaterThan(0) && powerLeft?.lessThan(new Fraction(100)),
+    [shouldBoost, lockedBalnAmount, powerLeft],
+  );
 
   const samePeriod: LockedPeriod | undefined = useMemo(() => {
     return timeRemaining
@@ -368,7 +374,10 @@ export default function BBalnSlider({
 
   return (
     <>
-      {balnBalanceAvailable.isGreaterThan(0) || bBalnAmount.isGreaterThan(0) || stakedBalance?.isGreaterThan(0) ? (
+      {balnBalanceAvailable.isGreaterThan(0) ||
+      bBalnAmount.isGreaterThan(0) ||
+      lockedBalnAmount?.greaterThan(0) ||
+      stakedBalance?.isGreaterThan(0) ? (
         <>
           <Flex alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}>
             <Flex
@@ -602,20 +611,14 @@ export default function BBalnSlider({
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {balnBalanceAvailable.dp(0, BigNumber.ROUND_DOWN).toFormat(0)} BALN
+                {lockedBalnAmount?.toFixed(0, { groupSeparator: ',' })} BALN
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {shouldBoost
-                  ? balnBalanceAvailable.minus(differenceBalnAmount).dp(0, BigNumber.ROUND_DOWN).toFormat(0)
-                  : balnBalanceAvailable
-                      .plus(new BigNumber(lockedBalnAmount?.toFixed() || 0).div(2))
-                      .dp(0, BigNumber.ROUND_DOWN)
-                      .toFormat(0)}{' '}
-                BALN
+                {shouldBoost ? balnSliderAmount.toFormat(0) : '0'} BALN
               </Typography>
             </Box>
           </Flex>
@@ -628,10 +631,10 @@ export default function BBalnSlider({
             </Typography>
           )}
 
-          {increasingAmount && (
+          {shouldNotifyOfVotingPower && (
             <Typography textAlign="center" mt="15px">
               <Trans>
-                To use your increased voting power to influence liquidity incentives, update your allocation.
+                To apply your increased voting power to liquidity incentives, update your allocation for each pool.
               </Trans>
             </Typography>
           )}

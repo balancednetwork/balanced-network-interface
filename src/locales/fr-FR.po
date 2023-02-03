@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-01-28 10:22\n"
+"PO-Revision-Date: 2023-02-03 21:19\n"
 "Last-Translator: \n"
 "Language: fr_FR\n"
 "Language-Team: French\n"
@@ -34,7 +34,7 @@ msgid ", so you would have received"
 msgstr ""
 
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
-msgid ", the daily incentives will be adjusted to reflect this allocation."
+msgid ", the current incentives will be adjusted to reflect this allocation."
 msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
@@ -468,7 +468,7 @@ msgstr "Actuel"
 
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
-msgid "Current allocation"
+msgid "Current incentives"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
@@ -483,14 +483,6 @@ msgstr "DATE"
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "DEX"
-msgstr ""
-
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-msgid "Daily incentive"
-msgstr ""
-
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-msgid "Daily incentives"
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -611,6 +603,11 @@ msgstr "Lien du forum"
 msgid "Funding"
 msgstr "Financement"
 
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "Future incentives"
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Go back"
 msgstr "Retour"
@@ -663,6 +660,10 @@ msgstr "Dans le contrat"
 
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
+msgstr ""
+
+#: src/app/containers/VotePage/LiveVotingPanel.tsx
+msgid "Incentives will be updated in"
 msgstr ""
 
 #: src/app/components/trade/LiquidityPoolsPanel.tsx
@@ -1266,6 +1267,10 @@ msgstr "Titre"
 msgid "To"
 msgstr "À"
 
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "To apply your increased voting power to liquidity incentives, update your allocation for each pool."
+msgstr ""
+
 #: src/app/components/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Pour gagner des récompenses Balanced (BALN), contractez un prêt ou fournissez de la liquidité sur la page \"Trade\"."
@@ -1504,7 +1509,7 @@ msgid "Where Balanced will get the price data for this collateral type."
 msgstr ""
 
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
-msgid "Where bBALN holders have allocated their voting power."
+msgid "Where bBALN holders have allocated their voting power, updated live."
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
@@ -1612,6 +1617,10 @@ msgstr ""
 msgid "You'll receive BALN in your wallet immediately"
 msgstr ""
 
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "Your BALN will be locked until"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX is staked (sICX). Choose what to do with it:"
 msgstr ""
@@ -1659,10 +1668,6 @@ msgstr ""
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "and ends after 5 days."
 msgstr "et se termine arpès 5 jours."
-
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-msgid "bBALN allocation will be updated in"
-msgstr ""
 
 #: src/app/containers/VotePage/utils.ts
 #: src/utils/timeformat.ts
@@ -1756,12 +1761,12 @@ msgid "{0} ICX unstaking"
 msgstr "{0} déstaking d'ICX"
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "{0} liquidity pool"
-msgstr "{0} pool de liquidité"
+msgid "{0} queue"
+msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
-msgid "{0} liquidity pool{1}"
-msgstr "{0} pool de liquidité {1}"
+msgid "{0} queue{1}"
+msgstr ""
 
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "{0} sICX added to your wallet."

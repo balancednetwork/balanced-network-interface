@@ -55,14 +55,21 @@ export default function LPDescription() {
   const apys = useAllPairsAPY();
   const apy = apys && apys[pairName];
 
-  const balances = useSuppliedTokens(pair?.poolId ?? -1, currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
+  const balances = useSuppliedTokens(
+    pair?.poolId ?? -1,
+    currencies[Field.CURRENCY_A],
+    pair?.isQueue ? pair?.token1 : currencies[Field.CURRENCY_B],
+  );
   //calulate Your supply temporary value  and Your daily reward temporary value
-  const formattedAmounts = {
-    [independentField]: tryParseAmount(typedValue, currencies[independentField]),
-    [dependentField]: noLiquidity
-      ? tryParseAmount(otherTypedValue, currencies[dependentField])
-      : parsedAmounts[dependentField],
-  };
+  const formattedAmounts = useMemo(
+    () => ({
+      [independentField]: tryParseAmount(typedValue, currencies[independentField]),
+      [dependentField]: noLiquidity
+        ? tryParseAmount(otherTypedValue, currencies[dependentField])
+        : parsedAmounts[dependentField],
+    }),
+    [currencies, typedValue, noLiquidity, otherTypedValue, dependentField, parsedAmounts, independentField],
+  );
 
   const poolRewards = useReward(pairName);
   const tempTotalPoolTokens = new BigNumber(totalPoolTokens?.toFixed() || 0).plus(
@@ -84,7 +91,10 @@ export default function LPDescription() {
   const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
     !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
 
-  const baseCurrencyTotalSupply = new BigNumber(totalSupply(baseValue, balances?.base)?.toFixed() || '0');
+  const baseCurrencyTotalSupply = useMemo(
+    () => new BigNumber(totalSupply(baseValue, balances?.base)?.toFixed() || '0'),
+    [baseValue, balances],
+  );
   const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, balances?.quote)?.toFixed() || '0');
 
   const tempTotalSupplyValue = new BigNumber(pair?.reserve0.toFixed() || 0).plus(
@@ -96,15 +106,14 @@ export default function LPDescription() {
       poolRewards
         ?.times(new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0).plus(baseCurrencyTotalSupply))
         .div(tempTotalSupplyValue.isZero() ? 1 : tempTotalSupplyValue),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [baseCurrencyTotalSupply, formattedAmounts[Field.CURRENCY_A]?.toFixed(), poolRewards],
+    [baseCurrencyTotalSupply, formattedAmounts, tempTotalSupplyValue, poolRewards],
   );
 
   const boost = useMemo(() => {
     const pairName = pair ? `${pair.token0.symbol}/${pair.token1.symbol}` : '';
     if (sources && sources[pairName] && sources[pairName].balance.isGreaterThan(0)) {
       return sources[pairName].workingBalance.dividedBy(sources[pairName].balance);
-    } else if (sources && pairName === 'ICX/sICX') {
+    } else if (sources && pairName === 'ICX/sICX' && sources['sICX/ICX'].balance.isGreaterThan(0)) {
       return sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance);
     } else {
       return new BigNumber(1);
@@ -245,7 +254,15 @@ export default function LPDescription() {
                               : 'Your potential rewards'}
                           </Trans>
                         </Typography>
-                        {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
+
+                        <Typography textAlign="center" variant="p">
+                          {suppliedReward?.isEqualTo(0) || suppliedReward?.isNaN()
+                            ? 'N/A'
+                            : `~ ${
+                                suppliedReward?.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'
+                              } BALN`}
+                        </Typography>
+                        {/* {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
                           <Typography textAlign="center" variant="p">
                             {userRewards?.isEqualTo(0) || userRewards.times(boost).isNaN()
                               ? 'N/A'
@@ -261,7 +278,7 @@ export default function LPDescription() {
                                   suppliedReward?.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'
                                 } BALN`}
                           </Typography>
-                        )}
+                        )} */}
                       </Box>
                     )}
                   </>

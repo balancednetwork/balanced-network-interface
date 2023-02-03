@@ -262,23 +262,6 @@ export default function LPDescription() {
                                 suppliedReward?.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'
                               } BALN`}
                         </Typography>
-                        {/* {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
-                          <Typography textAlign="center" variant="p">
-                            {userRewards?.isEqualTo(0) || userRewards.times(boost).isNaN()
-                              ? 'N/A'
-                              : userRewards
-                              ? `~ ${userRewards.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat()} BALN`
-                              : 'N/A'}
-                          </Typography>
-                        ) : (
-                          <Typography textAlign="center" variant="p">
-                            {suppliedReward?.isEqualTo(0) || suppliedReward?.isNaN()
-                              ? 'N/A'
-                              : `~ ${
-                                  suppliedReward?.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'
-                                } BALN`}
-                          </Typography>
-                        )} */}
                       </Box>
                     )}
                   </>

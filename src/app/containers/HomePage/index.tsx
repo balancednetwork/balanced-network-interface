@@ -12,6 +12,7 @@ import RewardsPanel from 'app/components/home/RewardsPanel';
 import TransactionPanel from 'app/components/home/TransactionPanel';
 import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
+import { useFetchUserVoteData } from 'store/liveVoting/hooks';
 import { useLoanFetchInfo } from 'store/loan/hooks';
 import { useFetchOraclePrices } from 'store/oracle/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
@@ -51,6 +52,7 @@ export function HomePage() {
   useCollateralFetchInfo(account);
   useLoanFetchInfo(account);
   useFetchRewardsInfo();
+  useFetchUserVoteData();
 
   return (
     <>

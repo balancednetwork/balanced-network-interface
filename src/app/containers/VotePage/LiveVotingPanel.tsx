@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 
+import { Fraction } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
@@ -86,7 +87,7 @@ export default function LiveVotingPanel() {
             <Flex alignItems={isRespoLayout ? 'center' : 'end'} mb={isRespoLayout ? 4 : 0}>
               {isRespoLayout && (
                 <RespoLabel>
-                  <Trans>Current allocation</Trans>
+                  <Trans>Future incentives</Trans>
                 </RespoLabel>
               )}
               <Flex
@@ -96,17 +97,28 @@ export default function LiveVotingPanel() {
                 flexDirection="column"
               >
                 <Typography color="text" fontSize={16}>
-                  {formatFraction(currentWeight.greaterThan(0) ? currentWeight : weight)}
+                  {rewards && rewards[name]
+                    ? `~ ${
+                        currentWeight.greaterThan(0)
+                          ? currentWeight
+                              .divide(weight.greaterThan(0) ? weight : currentWeight)
+                              .multiply(new Fraction(rewards[name].toFormat(0)))
+                              .toFixed(0)
+                          : rewards[name].toFormat(0)
+                      } BALN`
+                    : '-'}
                 </Typography>
                 <Typography color="text1" fontSize={14}>
-                  {getSourceCurrentAllocationFormatted(source)}
+                  {`${getSourceCurrentAllocationFormatted(source)} (${formatFraction(
+                    currentWeight.greaterThan(0) ? currentWeight : weight,
+                  )})`}
                 </Typography>
               </Flex>
             </Flex>
             <Flex alignItems={isRespoLayout ? 'center' : 'end'}>
               {isRespoLayout && (
                 <RespoLabel>
-                  <Trans>Daily incentives</Trans>
+                  <Trans>Current incentives</Trans>
                 </RespoLabel>
               )}
               <Flex
@@ -116,7 +128,7 @@ export default function LiveVotingPanel() {
                 flexDirection="column"
               >
                 <Typography color="text" fontSize={16}>
-                  {rewards && rewards[name] ? `${rewards[name].toFormat(0)} BALN` : '-'}
+                  {rewards && rewards[name] ? `~ ${rewards[name].toFormat(0)} BALN` : '-'}
                 </Typography>
                 <Typography color="text1" fontSize={14}>
                   {formatFraction(weight)}
@@ -163,7 +175,7 @@ export default function LiveVotingPanel() {
       </Flex>
       {isRespoLayout && (
         <Typography fontSize={14} mt={-2} mb={3}>
-          <Trans>bBALN allocation will be updated in </Trans>{' '}
+          <Trans>Incentives will be updated in </Trans>{' '}
           <strong style={{ whiteSpace: 'nowrap' }}>{formatTimeLeft(nextUpdateDate)}</strong>.
         </Typography>
       )}
@@ -177,7 +189,7 @@ export default function LiveVotingPanel() {
           )}
           <Flex width="100%" style={{ transform: 'translateX(20px)' }}>
             <GirdHeaderItem ml="auto" textAlign="right">
-              <Trans>Current allocation</Trans>
+              <Trans>Future incentives</Trans>
             </GirdHeaderItem>
             <QuestionHelper
               width={300}
@@ -185,18 +197,18 @@ export default function LiveVotingPanel() {
               text={
                 <>
                   <Typography>
-                    <Trans>Where bBALN holders have allocated their voting power.</Trans>
+                    <Trans>Where bBALN holders have allocated their voting power, updated live.</Trans>
                   </Typography>
                   <Typography mt={3}>
                     <Trans>In</Trans> <strong>{formatTimeLeft(nextUpdateDate)}</strong>
-                    <Trans>, the daily incentives will be adjusted to reflect this allocation.</Trans>
+                    <Trans>, the current incentives will be adjusted to reflect this allocation.</Trans>
                   </Typography>
                 </>
               }
             />
           </Flex>
           <GirdHeaderItem>
-            <Trans>Daily incentive</Trans>
+            <Trans>Current incentives</Trans>
           </GirdHeaderItem>
         </VotingGrid>
       )}

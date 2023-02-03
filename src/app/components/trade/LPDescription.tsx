@@ -12,7 +12,7 @@ import { Flex, Box } from 'rebass/styled-components';
 import { Typography } from 'app/theme';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { PairState, useSuppliedTokens } from 'hooks/useV2Pairs';
-import { useAllPairsAPY } from 'queries/reward';
+import { useAllPairsAPY, useICXConversionFee } from 'queries/reward';
 import { useSources } from 'store/bbaln/hooks';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
@@ -23,6 +23,7 @@ import { useLiquidityTokenBalance } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
 import { MAX_BOOST } from '../home/BBaln/utils';
+import QuestionHelper, { QuestionWrapper } from '../QuestionHelper';
 
 export default function LPDescription() {
   const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();
@@ -30,6 +31,7 @@ export default function LPDescription() {
   const sources = useSources();
   const { account } = useIconReact();
   const upSmall = useMedia('(min-width: 600px)');
+  const { data: icxConversionFee } = useICXConversionFee();
   const userPoolBalance = useLiquidityTokenBalance(account, pair);
   const totalPoolTokens = pair?.totalSupply;
   const token0Deposited =
@@ -44,7 +46,7 @@ export default function LPDescription() {
   const pairName = useMemo(() => {
     if (currencies && currencies.CURRENCY_A && currencies.CURRENCY_B) {
       const name = `${currencies.CURRENCY_A.symbol}/${currencies.CURRENCY_B.symbol}`;
-      return name === 'ICX/sICX' ? 'sICX/ICX' : name;
+      return name.startsWith('ICX/') ? 'sICX/ICX' : name;
     } else {
       return '';
     }
@@ -53,14 +55,21 @@ export default function LPDescription() {
   const apys = useAllPairsAPY();
   const apy = apys && apys[pairName];
 
-  const balances = useSuppliedTokens(pair?.poolId ?? -1, currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
+  const balances = useSuppliedTokens(
+    pair?.poolId ?? -1,
+    currencies[Field.CURRENCY_A],
+    pair?.isQueue ? pair?.token1 : currencies[Field.CURRENCY_B],
+  );
   //calulate Your supply temporary value  and Your daily reward temporary value
-  const formattedAmounts = {
-    [independentField]: tryParseAmount(typedValue, currencies[independentField]),
-    [dependentField]: noLiquidity
-      ? tryParseAmount(otherTypedValue, currencies[dependentField])
-      : parsedAmounts[dependentField],
-  };
+  const formattedAmounts = useMemo(
+    () => ({
+      [independentField]: tryParseAmount(typedValue, currencies[independentField]),
+      [dependentField]: noLiquidity
+        ? tryParseAmount(otherTypedValue, currencies[dependentField])
+        : parsedAmounts[dependentField],
+    }),
+    [currencies, typedValue, noLiquidity, otherTypedValue, dependentField, parsedAmounts, independentField],
+  );
 
   const poolRewards = useReward(pairName);
   const tempTotalPoolTokens = new BigNumber(totalPoolTokens?.toFixed() || 0).plus(
@@ -82,7 +91,10 @@ export default function LPDescription() {
   const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
     !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
 
-  const baseCurrencyTotalSupply = new BigNumber(totalSupply(baseValue, balances?.base)?.toFixed() || '0');
+  const baseCurrencyTotalSupply = useMemo(
+    () => new BigNumber(totalSupply(baseValue, balances?.base)?.toFixed() || '0'),
+    [baseValue, balances],
+  );
   const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, balances?.quote)?.toFixed() || '0');
 
   const tempTotalSupplyValue = new BigNumber(pair?.reserve0.toFixed() || 0).plus(
@@ -94,15 +106,14 @@ export default function LPDescription() {
       poolRewards
         ?.times(new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0).plus(baseCurrencyTotalSupply))
         .div(tempTotalSupplyValue.isZero() ? 1 : tempTotalSupplyValue),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [baseCurrencyTotalSupply, formattedAmounts[Field.CURRENCY_A]?.toFixed(), poolRewards],
+    [baseCurrencyTotalSupply, formattedAmounts, tempTotalSupplyValue, poolRewards],
   );
 
   const boost = useMemo(() => {
     const pairName = pair ? `${pair.token0.symbol}/${pair.token1.symbol}` : '';
     if (sources && sources[pairName] && sources[pairName].balance.isGreaterThan(0)) {
       return sources[pairName].workingBalance.dividedBy(sources[pairName].balance);
-    } else if (sources && pairName === 'ICX/sICX') {
+    } else if (sources && pairName === 'ICX/sICX' && sources['sICX/ICX'].balance.isGreaterThan(0)) {
       return sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance);
     } else {
       return new BigNumber(1);
@@ -136,7 +147,7 @@ export default function LPDescription() {
                 {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
                   ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}
                     liquidity pool${upSmall ? ': ' : ''}`
-                  : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool${upSmall ? ': ' : ''}`}{' '}
+                  : t`${currencies[Field.CURRENCY_A]?.symbol} queue${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
                   {apy
                     ? `${apy.times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed()}% - ${apy
@@ -146,13 +157,32 @@ export default function LPDescription() {
                         .toFixed()}%`
                     : '-'}
                   {' APY'}
+                  {pair?.poolId === BalancedJs.utils.POOL_IDS.sICXICX && (
+                    <QuestionWrapper style={{ marginLeft: '3px' }}>
+                      <QuestionHelper
+                        width={350}
+                        text={
+                          <>
+                            <Typography mb={3}>The ICX queue facilitates "instant unstaking".</Typography>
+                            <Typography mb={3}>
+                              You'll earn BALN while your ICX is in the queue. When you get to the front, your ICX will
+                              be exchanged for sICX, plus an extra {`${icxConversionFee?.toSignificant(3) || '...'}%`}.
+                            </Typography>
+                            <Typography>
+                              You'll need to claim and unstake your sICX before you can supply it again.
+                            </Typography>
+                          </>
+                        }
+                      ></QuestionHelper>
+                    </QuestionWrapper>
+                  )}
                 </Typography>
               </Typography>
             ) : (
               <Typography variant="h3" mb={2} marginBottom={40}>
                 {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
                   ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
-                  : t`${currencies[Field.CURRENCY_A]?.symbol} liquidity pool`}
+                  : t`${currencies[Field.CURRENCY_A]?.symbol} queue`}
               </Typography>
             )}
 
@@ -224,23 +254,14 @@ export default function LPDescription() {
                               : 'Your potential rewards'}
                           </Trans>
                         </Typography>
-                        {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX ? (
-                          <Typography textAlign="center" variant="p">
-                            {userRewards?.isEqualTo(0) || userRewards.times(boost).isNaN()
-                              ? 'N/A'
-                              : userRewards
-                              ? `~ ${userRewards.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat()} BALN`
-                              : 'N/A'}
-                          </Typography>
-                        ) : (
-                          <Typography textAlign="center" variant="p">
-                            {suppliedReward?.isEqualTo(0) || suppliedReward?.isNaN()
-                              ? 'N/A'
-                              : `~ ${
-                                  suppliedReward?.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'
-                                } BALN`}
-                          </Typography>
-                        )}
+
+                        <Typography textAlign="center" variant="p">
+                          {suppliedReward?.isEqualTo(0) || suppliedReward?.isNaN()
+                            ? 'N/A'
+                            : `~ ${
+                                suppliedReward?.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'
+                              } BALN`}
+                        </Typography>
                       </Box>
                     )}
                   </>

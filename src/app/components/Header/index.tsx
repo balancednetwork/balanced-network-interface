@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
+import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
@@ -21,6 +22,7 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { shortenAddress } from 'utils';
 
 import Wallet from '../Wallet';
+import { notificationCSS } from '../Wallet/wallets/utils';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -36,7 +38,15 @@ const WalletInfo = styled(Box)`
   min-height: 42px;
 `;
 
-const WalletButtonWrapper = styled.div``;
+const WalletButtonWrapper = styled(Box)<{ hasnotification?: boolean }>`
+  position: relative;
+  ${({ hasnotification }) => (hasnotification ? notificationCSS : '')}
+  &::before, &:after {
+    left: 7px;
+    top: 13px;
+    ${({ theme }) => `background-color: ${theme.colors.bg5}`};
+  }
+`;
 
 const WalletButton = styled(Link)`
   cursor: pointer;
@@ -107,6 +117,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
   const upSmall = useMedia('(min-width: 600px)');
   const { account, disconnect } = useIconReact();
+  const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const walletButtonRef = React.useRef<HTMLElement>(null);
@@ -139,6 +150,15 @@ export default function Header(props: { title?: string; className?: string }) {
       setAnchor(null);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      if (account) {
+        const result = await bnJs.Staking.getClaimableICX(account);
+        setClaimableICX(BalancedJs.utils.toIcx(result));
+      }
+    })();
+  }, [account]);
 
   return (
     <header className={className}>
@@ -174,7 +194,7 @@ export default function Header(props: { title?: string; className?: string }) {
               {account && upSmall && <CopyableAddress account={account} />}
             </WalletInfo>
 
-            <WalletButtonWrapper>
+            <WalletButtonWrapper hasnotification={claimableICX.isGreaterThan(0)}>
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
                   <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>

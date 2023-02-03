@@ -324,8 +324,10 @@ export default function LPPanel() {
             )}
           {pairState === PairState.EXISTS &&
             account &&
-            maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO) &&
-            maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(BIGINT_ZERO) && (
+            ((currencyBalances[Field.CURRENCY_A]?.currency.symbol === 'ICX' &&
+              maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO)) ||
+              (maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO) &&
+                maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(BIGINT_ZERO))) && (
               <Slider mt={5}>
                 <Nouislider
                   start={[0]}

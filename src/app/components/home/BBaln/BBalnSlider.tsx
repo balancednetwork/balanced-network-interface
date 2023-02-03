@@ -256,7 +256,7 @@ export default function BBalnSlider({
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
   const shouldBoost = differenceBalnAmount.isPositive();
   const shouldNotifyOfVotingPower = useMemo(
-    () => shouldBoost && lockedBalnAmount && lockedBalnAmount.greaterThan(0) && powerLeft?.lessThan(new Fraction(100)),
+    () => shouldBoost && lockedBalnAmount && lockedBalnAmount.greaterThan(0) && powerLeft?.lessThan(new Fraction(1)),
     [shouldBoost, lockedBalnAmount, powerLeft],
   );
 

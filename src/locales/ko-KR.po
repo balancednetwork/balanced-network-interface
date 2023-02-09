@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-03 21:19\n"
+"PO-Revision-Date: 2023-02-09 09:24\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -18,11 +18,11 @@ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnPanel.tsx
 msgid "${0} was distributed over the last 30 days"
-msgstr ""
+msgstr "지난 30일 동안 ${0} 가 분배되었습니다"
 
 #: src/app/components/home/BBaln/BBalnPanel.tsx
 msgid "${0}."
-msgstr ""
+msgstr "${0}."
 
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -31,15 +31,15 @@ msgstr "({0}% 필요)"
 
 #: src/app/components/home/BBaln/BBalnPanel.tsx
 msgid ", so you would have received"
-msgstr ""
+msgstr ", 로 인해서 당신이 받았을 것입니다"
 
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 msgid ", the current incentives will be adjusted to reflect this allocation."
-msgstr ""
+msgstr ", 현재 인센티브는 이 할당을 반영하도록 조정될 것이다."
 
 #: src/app/components/StabilityFund/index.tsx
 msgid "1 {sendSymbol} per {0}"
-msgstr ""
+msgstr "{0} 당 1 {sendSymbol} 개"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "100 bnUSD"
@@ -63,7 +63,7 @@ msgstr "1주"
 
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
-msgstr ""
+msgstr "일일 BALN 인플레이션의 47%는 유동성을 장려하기 위해 사용됩니다. bBALN 보유자는 \"라이브 보팅\"를 통해 각 유동성 풀에 할당된 금액을 조정할 수 있습니다."
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "4H"
@@ -71,7 +71,7 @@ msgstr "4시간"
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "5 days is standard. Use less for an emergency vote, more for maximum participation."
-msgstr ""
+msgstr "5일을 기본으로 하고 있으며. 긴급 투표에는 적게, 최대 참여에는 더 많이 사용하세요."
 
 #: src/app/components/home/TransactionPanel.tsx
 msgid "ACTIVITY"
@@ -85,7 +85,7 @@ msgstr "수량"
 #: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "APY"
-msgstr ""
+msgstr "APY"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
@@ -97,15 +97,15 @@ msgstr "활동 내역"
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add community token list"
-msgstr ""
+msgstr "커뮤니티 토큰 목록 추가"
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add community token list?"
-msgstr ""
+msgstr "커뮤니티 토큰 목록 추가?"
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add token list"
-msgstr ""
+msgstr "Add token list"
 
 #: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."

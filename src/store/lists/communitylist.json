@@ -81,6 +81,78 @@
       "symbol": "CODE",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/code.png"
+    },
+    {
+      "address": "cx66f2ed0663d5aa7efe92ab41b1e0e19ac73007a4",
+      "chainId": 1,
+      "name": "LambdaX",
+      "symbol": "LDX",
+      "decimals": 18,
+      "logoURI": ""
+    },
+    {
+      "address": "cx924b9d3acf963bf7ae82cd45cd84c4b3484f8b1f",
+      "chainId": 1,
+      "name": "ICON Ethereum",
+      "symbol": "IETH",
+      "decimals": 18,
+      "logoURI": ""
+    },
+    {
+      "address": "cxcf5424ca2acae98db83ee5a6a5fe8e8575474167",
+      "chainId": 1,
+      "name": "Coda Governance Token",
+      "symbol": "CODA",
+      "decimals": 18,
+      "logoURI": ""
+    },
+    {
+      "address": "cx77d798a899a5103c2d389c5ba04a4cfa624425ba",
+      "chainId": 1,
+      "name": "Chicken",
+      "symbol": "CHKN",
+      "decimals": 18,
+      "logoURI": ""
+    },
+    {
+      "address": "cx3fd4769e413657304d4928b95b88fd6eb53f9a8b",
+      "chainId": 1,
+      "name": "iDoge",
+      "symbol": "IDOGE",
+      "decimals": 18,
+      "logoURI": ""
+    },
+    {
+      "address": "cx1aee86144612387ef8f9c11dccad4ba578dd42ed",
+      "chainId": 1,
+      "name": "Not Mirai Token",
+      "symbol": "NOTMIRAI",
+      "decimals": 18,
+      "logoURI": ""
+    },
+    {
+      "address": "cx0bb718a35e7fc8faffe6faf82b32f6f7cb5e7c81",
+      "chainId": 1,
+      "name": "Chihua Inu",
+      "symbol": "CHIU",
+      "decimals": 18,
+      "logoURI": ""
+    },
+    {
+      "address": "cx4a0b86b7bb250b174aeecd844f3216b16554548d",
+      "chainId": 1,
+      "name": "GORILLA TOKEN",
+      "symbol": "GORILA",
+      "decimals": 6,
+      "logoURI": ""
+    },
+    {
+      "address": "cx19a23e850bf736387cd90d0b6e88ce9af76a8d41",
+      "chainId": 1,
+      "name": "Velic Token",
+      "symbol": "VELT",
+      "decimals": 8,
+      "logoURI": ""
     }
   ]
 }

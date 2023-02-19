@@ -51,6 +51,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/usds.png"
     },
     {
+      "address": "cx313388571690e0f77546cf3885d37da1d40ff207",
+      "chainId": 2,
+      "name": "Stably USD",
+      "symbol": "USDS",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/usds.png"
+    },
+    {
       "address": "cx1a29259a59f463a67bb2ef84398b30ca56b5830a",
       "chainId": 1,
       "name": "Omm Token",
@@ -131,6 +139,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"
     },
     {
+      "address": "cx60d6cd6f54514eef43f5160dd60fc25c8a00f430",
+      "chainId": 2,
+      "name": "Omm Token",
+      "symbol": "OMM",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"
+    },
+    {
       "address": "cx5b5a03cb525a1845d0af3a872d525b18a810acb0",
       "chainId": 1,
       "name": "Binance BTC",
@@ -181,10 +197,10 @@
     {
       "address": "cx9634be155fc77754c4b2e1bceddc1c63d973f1f3",
       "chainId": 2,
-      "name": "ICON Tether",
-      "symbol": "IUSDT",
+      "name": "ICON USD Coin",
+      "symbol": "IUSDC",
       "decimals": 6,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdt.png"
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
     },
     {
       "address": "cx99c79fd6dee53335f686c7f2cb513745622634f2",

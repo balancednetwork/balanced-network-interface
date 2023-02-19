@@ -76,6 +76,7 @@ export const USDS: TokenMap = {
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cxc0666df567a6e0b49342648e98ccbe5362b264ea', 18, 'USDS', 'Stably USD'),
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cxc0dbb2eb24719f8355a7ec3c1aaa93826669ab8e', 18, 'USDS', 'Stably USD'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx91a9327ca44e78983e143b1cfb18e8024a1f31d9', 18, 'USDS', 'Stably USD'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, 'cx313388571690e0f77546cf3885d37da1d40ff207', 18, 'USDS', 'Stably USD'),
 };
 
 // disable prettier printWidth rule

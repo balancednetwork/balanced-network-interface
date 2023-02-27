@@ -15,12 +15,10 @@ import {
   useWorkingBalance,
   useSources,
   useDBBalnAmountDiff,
-  usePastMonthFeesDistributed,
 } from 'store/bbaln/hooks';
 import { useBALNDetails } from 'store/wallet/hooks';
 
 import { BoxPanel } from '../../Panel';
-import QuestionHelper from '../../QuestionHelper';
 import BBalnSlider from './BBalnSlider';
 import {
   BoostedBox,
@@ -42,7 +40,7 @@ export default function BBalnPanel() {
   const [showLiquidityTooltip, setShowLiquidityTooltip] = useState(false);
   const arrowRef = React.useRef(null);
   const balnDetails = useBALNDetails();
-  const { data: pastMonthFees } = usePastMonthFeesDistributed();
+  // const { data: pastMonthFees } = usePastMonthFeesDistributed();
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
   const balnBalanceAvailable = useMemo(
@@ -116,9 +114,10 @@ export default function BBalnPanel() {
                   : `${bBalnAmount.dividedBy(totalSupplyBBaln).times(100).toPrecision(3)} %`
                 : '-'}
             </Typography>
-            <Typography marginLeft="14px">
+            {/* <Typography marginLeft="14px"> */}
+            <Typography>
               Network fees
-              <QuestionHelper
+              {/* <QuestionHelper
                 iconStyle={{ position: 'relative', transform: 'translate3d(1px, 2px, 0)' }}
                 strategy="absolute"
                 placement="bottom"
@@ -147,7 +146,7 @@ export default function BBalnPanel() {
                     )}
                   </>
                 }
-              />
+              /> */}
             </Typography>
           </BoostedBox>
           <BoostedBox>

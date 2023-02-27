@@ -20,7 +20,7 @@ import { AppState } from '..';
 import { Field } from '../loan/actions';
 import { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } from './actions';
 
-const PERCENTAGE_DISTRIBUTED = new BigNumber(0.6);
+const PERCENTAGE_DISTRIBUTED = new BigNumber(0.3);
 
 export type Source = {
   balance: BigNumber;

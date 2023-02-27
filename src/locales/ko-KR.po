@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-09 09:24\n"
+"PO-Revision-Date: 2023-02-27 17:22\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -16,22 +16,10 @@ msgstr ""
 "X-Crowdin-File: en-US.po\n"
 "X-Crowdin-File-ID: 12\n"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
-msgid "${0} was distributed over the last 30 days"
-msgstr "지난 30일 동안 ${0} 가 분배되었습니다"
-
-#: src/app/components/home/BBaln/BBalnPanel.tsx
-msgid "${0}."
-msgstr "${0}."
-
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "({0}% required)"
 msgstr "({0}% 필요)"
-
-#: src/app/components/home/BBaln/BBalnPanel.tsx
-msgid ", so you would have received"
-msgstr ", 로 인해서 당신이 받았을 것입니다"
 
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 msgid ", the current incentives will be adjusted to reflect this allocation."
@@ -1641,10 +1629,6 @@ msgstr ""
 
 #: src/app/components/trade/LiquidityPoolsPanel.tsx
 msgid "Your pools"
-msgstr ""
-
-#: src/app/components/home/BBaln/BBalnPanel.tsx
-msgid "Your share of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN."
 msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx

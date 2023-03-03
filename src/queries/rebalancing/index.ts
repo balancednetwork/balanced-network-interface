@@ -12,37 +12,11 @@ export enum Period {
   'all' = 'all',
 }
 
-// const getTimestamp = (period: Period) => {
-//   let timestamp = 0; // all
-//   switch (period) {
-//     case Period.day:
-//       timestamp = dayjs().subtract(1, 'day').valueOf();
-//       break;
-//     case Period.week:
-//       timestamp = dayjs().subtract(1, 'week').valueOf();
-//       break;
-//     case Period.month:
-//       timestamp = dayjs().subtract(1, 'month').valueOf();
-//       break;
-//     default:
-//   }
-
-//   return timestamp * 1000; // convert to microsecond
-// };
-
 export function useRebalancingDataQuery_DEPRECATED(period: Period) {
   const { account } = useIconReact();
   return useQuery<{ totalCollateralSold: BigNumber; totalRepaid: BigNumber }>(
     QUERY_KEYS.PositionDetails.Rebalancing(account ?? '', period),
-    async () => {
-      // const params = {
-      //   address: account,
-      //   token_symbol: 'bnUSD',
-      //   from_timestamp: getTimestamp(period),
-      // };
-
-      // const res = await axios.get(`${API_ENDPOINT}/stats/rebalanced?${stringify(params)}`);
-
+    () => {
       return {
         totalCollateralSold: new BigNumber(0),
         totalRepaid: new BigNumber(0),

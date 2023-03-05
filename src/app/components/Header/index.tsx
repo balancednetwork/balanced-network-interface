@@ -19,6 +19,7 @@ import { ReactComponent as CopyIcon } from 'assets/icons/copy.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
 import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
+import { useAllTransactions } from 'store/transactions/hooks';
 import { shortenAddress } from 'utils';
 
 import Wallet from '../Wallet';
@@ -117,6 +118,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
   const upSmall = useMedia('(min-width: 600px)');
   const { account, disconnect } = useIconReact();
+  const transactions = useAllTransactions();
   const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -158,7 +160,7 @@ export default function Header(props: { title?: string; className?: string }) {
         setClaimableICX(BalancedJs.utils.toIcx(result));
       }
     })();
-  }, [account]);
+  }, [account, transactions]);
 
   return (
     <header className={className}>

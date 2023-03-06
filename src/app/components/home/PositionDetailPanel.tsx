@@ -275,7 +275,7 @@ const PositionDetailPanel = () => {
                   <Typography variant="body">
                     {t`If the ${
                       collateralType === 'sICX' ? 'ICX' : collateralType
-                    } price reaches ${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
+                    } price reaches $${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
                   liquidated.`}
                   </Typography>
                 }
@@ -308,7 +308,7 @@ const PositionDetailPanel = () => {
                       bottom={false}
                       isActive={shouldShowRebalancingTooltipAnchor}
                     >
-                      <TooltipContainer width={400} className="rebalancing-modal">
+                      <TooltipContainer width={340} className="rebalancing-modal">
                         <RebalancingInfo />
                         {shouldShowSeparateTooltip ? null : shouldShowRebalancingAveragePrice ? (
                           <>
@@ -632,25 +632,25 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean; isActiv
     margin-left: -173px;
     
     &:before {
-      margin-left: -44px;
+      margin-left: -14px;
     }
   `};
 
   ${({ theme }) => theme.mediaWidth.upMedium`
-    margin-left: -193px;
+    margin-left: -178px;
 
     &:before {
-      margin-left: -24px;
+      margin-left: -9px;
     }
   `};
 
   ${({ theme }) => theme.mediaWidth.upLarge`
     ${({ bottom }) => (bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
     left: ${({ bottom }) => (bottom ? `50%` : `100%`)};
-    margin-left: ${({ bottom }) => (bottom ? `-160px` : `-215px`)};
+    margin-left: ${({ bottom }) => (bottom ? `-160px` : `-178px`)};
 
     &:before {
-      margin-left: -2px;
+      margin-left: -9px;
     }
   `};
 `;

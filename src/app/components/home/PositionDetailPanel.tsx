@@ -20,7 +20,7 @@ import Tooltip, { TooltipContainer } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useActiveLocale } from 'hooks/useActiveLocale';
-import { useRebalancingDataQuery, Period } from 'queries/rebalancing';
+import { useRebalancingDataQuery_DEPRECATED, Period } from 'queries/rebalancing';
 import { useRatesQuery } from 'queries/reward';
 import { useBBalnSliderState, useSources, useWorkingBalance } from 'store/bbaln/hooks';
 import { useCollateralInputAmountInUSD, useCollateralType, useIsHandlingICX } from 'store/collateral/hooks';
@@ -79,7 +79,7 @@ const PositionDetailPanel = () => {
   const ratio = useRatio();
 
   // Rebalancing section
-  const { data } = useRebalancingDataQuery(period);
+  const { data } = useRebalancingDataQuery_DEPRECATED(period);
   const totalCollateralSold = React.useMemo(() => {
     return data?.totalCollateralSold || new BigNumber(0);
   }, [data]);
@@ -131,7 +131,7 @@ const PositionDetailPanel = () => {
     totalCollateralSold && totalCollateralSold.isZero() ? new BigNumber(0) : rebalancingTotal.div(totalCollateralSold);
   const averageRebalancingPriceText = (
     <>
-      Your average rebalancing price was{' '}
+      Your average redemption price was{' '}
       <strong>
         {'$'}
         {averageSoldICXPrice.toFixed(2)}
@@ -275,12 +275,8 @@ const PositionDetailPanel = () => {
                   <Typography variant="body">
                     {t`If the ${
                       collateralType === 'sICX' ? 'ICX' : collateralType
-                    } price reaches ${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
+                    } price reaches $${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
                   liquidated.`}
-                    <br />
-                    <Typography as="small" fontSize={12} color="text1">
-                      <Trans>Keep a close eye on this number, as rebalancing may cause it to fluctuate.</Trans>
-                    </Typography>
                   </Typography>
                 }
                 show={show}
@@ -297,7 +293,7 @@ const PositionDetailPanel = () => {
               <Box flex={1} my={2}>
                 <Flex alignItems="center" mb={3}>
                   <Typography variant="h3" mr={15} sx={{ position: 'relative' }}>
-                    <Trans>Rebalancing</Trans>{' '}
+                    <Trans>Redemptions</Trans>{' '}
                     {shouldShowRebalancingTooltipAnchor && (
                       <QuestionWrapper
                         onClick={openRebalancing}
@@ -312,7 +308,7 @@ const PositionDetailPanel = () => {
                       bottom={false}
                       isActive={shouldShowRebalancingTooltipAnchor}
                     >
-                      <TooltipContainer width={435} className="rebalancing-modal">
+                      <TooltipContainer width={340} className="rebalancing-modal">
                         <RebalancingInfo />
                         {shouldShowSeparateTooltip ? null : shouldShowRebalancingAveragePrice ? (
                           <>
@@ -636,25 +632,25 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean; isActiv
     margin-left: -173px;
     
     &:before {
-      margin-left: -62px;
+      margin-left: -14px;
     }
   `};
 
   ${({ theme }) => theme.mediaWidth.upMedium`
-    margin-left: -193px;
+    margin-left: -178px;
 
     &:before {
-      margin-left: -42px;
+      margin-left: -9px;
     }
   `};
 
   ${({ theme }) => theme.mediaWidth.upLarge`
     ${({ bottom }) => (bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
     left: ${({ bottom }) => (bottom ? `50%` : `100%`)};
-    margin-left: ${({ bottom }) => (bottom ? `-160px` : `-225px`)};
+    margin-left: ${({ bottom }) => (bottom ? `-160px` : `-178px`)};
 
     &:before {
-      margin-left: -10px;
+      margin-left: -9px;
     }
   `};
 `;

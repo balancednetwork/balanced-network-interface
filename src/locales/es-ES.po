@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-27 17:22\n"
+"PO-Revision-Date: 2023-03-06 08:30\n"
 "Last-Translator: \n"
 "Language: es_ES\n"
 "Language-Team: Spanish\n"
@@ -207,14 +207,6 @@ msgstr "Balance"
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Balance Tokens"
 msgstr "Monedas Balance"
-
-#: src/app/components/home/LoanPanel.tsx
-msgid "Balanced increases your loan to buy more collateral at a discount."
-msgstr "Balanced aumenta tu préstamo para comprar más colateral a un precio menor al de mercado."
-
-#: src/app/components/home/LoanPanel.tsx
-msgid "Balanced sells collateral at a premium to repay some of your loan."
-msgstr "Balanced vende tu colateral a un precio mayor al del mercado para pagar parte de tu préstamo."
 
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
@@ -542,6 +534,10 @@ msgstr "No envíes sICX a un exchange."
 msgid "Duration"
 msgstr ""
 
+#: src/app/components/home/LoanPanel.tsx
+msgid "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
+msgstr ""
+
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Earn or buy BALN, then lock it up here to boost your earning potential and voting power."
 msgstr ""
@@ -583,6 +579,10 @@ msgstr ""
 msgid "For"
 msgstr "Por"
 
+#: src/app/components/home/LoanPanel.tsx
+msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
+msgstr ""
+
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Forum link"
 msgstr "Enlace al foro"
@@ -618,19 +618,15 @@ msgid "ICON wallet"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-msgid "If bnUSD is above $1"
-msgstr "Si bnUSD es superior a $1"
-
-#: src/app/components/home/LoanPanel.tsx
-msgid "If bnUSD is below $1"
-msgstr "Si bnUSD está por debajo de $1"
+msgid "If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral."
+msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "Si el precio se pasa de esta cantidad, tu swap fallará."
 
 #: src/app/components/home/PositionDetailPanel.tsx
-msgid "If the {0} price reaches {1}, all your collateral will be\n"
+msgid "If the {0} price reaches ${1}, all your collateral will be\n"
 "liquidated."
 msgstr ""
 
@@ -696,10 +692,6 @@ msgstr "Par inválido"
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "It costs 100 bnUSD to submit a proposal."
 msgstr "Hacer una propuesta cuesta 100 bnUSD."
-
-#: src/app/components/home/PositionDetailPanel.tsx
-msgid "Keep a close eye on this number, as rebalancing may cause it to fluctuate."
-msgstr "Vigila bien este número, ya que el rebalancing puede hacer que fluctúe."
 
 #: src/app/components/trade/AllPoolsPanel.tsx
 msgid "LIQUIDITY"
@@ -913,10 +905,6 @@ msgstr "Propuesto"
 msgid "Quorum not reached"
 msgstr "Quórum no alcanzado"
 
-#: src/app/components/home/PositionDetailPanel.tsx
-msgid "Rebalancing"
-msgstr "Rebalancing"
-
 #: src/app/components/trade/RebalanceButton.tsx
 msgid "Rebalancing complete."
 msgstr "Rebalancing completado."
@@ -936,6 +924,10 @@ msgstr "Recibir"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
+msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "Redemptions"
 msgstr ""
 
 #: src/app/components/ProposalModal/index.tsx
@@ -1501,10 +1493,6 @@ msgstr ""
 msgid "Where bBALN holders have allocated their voting power, updated live."
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
-msgid "While you borrow bnUSD, your collateral is used to keep its value stable"
-msgstr "Mientras tomas prestado bnUSD, tu colateral se usa para mantener su valor estable"
-
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
@@ -1595,11 +1583,6 @@ msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "You'll only be able to interact with the default assets listed on Balanced."
-msgstr ""
-
-#: src/app/components/home/LoanPanel.tsx
-msgid "You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the {0}\n"
-"pool. The smaller your loan, the less rebalancing affects you."
 msgstr ""
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx

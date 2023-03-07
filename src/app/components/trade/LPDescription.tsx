@@ -12,7 +12,8 @@ import { Flex, Box } from 'rebass/styled-components';
 import { Typography } from 'app/theme';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { PairState, useSuppliedTokens } from 'hooks/useV2Pairs';
-import { useAllPairsAPY, useICXConversionFee } from 'queries/reward';
+import { useAllPairsByName } from 'queries/backendv2';
+import { useICXConversionFee } from 'queries/reward';
 import { useSources } from 'store/bbaln/hooks';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
@@ -52,8 +53,8 @@ export default function LPDescription() {
     }
   }, [currencies]);
 
-  const apys = useAllPairsAPY();
-  const apy = apys && apys[pairName];
+  const { data: allPairs } = useAllPairsByName();
+  const apy = useMemo(() => allPairs && new BigNumber(allPairs[pairName].balnApy), [allPairs, pairName]);
 
   const balances = useSuppliedTokens(
     pair?.poolId ?? -1,

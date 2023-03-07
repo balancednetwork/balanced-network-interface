@@ -17,7 +17,8 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from 'constants/index';
 import { useBalance } from 'hooks/useV2Pairs';
-import { useAllPairs, useIncentivisedPairs } from 'queries/reward';
+import { useAllPairsById } from 'queries/backendv2';
+import { useIncentivisedPairs } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useSources } from 'store/bbaln/hooks';
 import { useRewards } from 'store/reward/hooks';
@@ -35,7 +36,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const { account } = useIconReact();
   const poolId = pair.poolId!;
   const sources = useSources();
-  const allPairs = useAllPairs();
+  const { data: allPairs } = useAllPairsById();
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -204,7 +205,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
             {!allPairs || !sources ? (
               <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
             ) : sources[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`] ? (
-              `${new BigNumber(allPairs[pair.poolId!].apy)
+              `${new BigNumber(allPairs[pair.poolId!].balnApy)
                 .times(
                   sources[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`].workingBalance.dividedBy(
                     sources[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`].balance,

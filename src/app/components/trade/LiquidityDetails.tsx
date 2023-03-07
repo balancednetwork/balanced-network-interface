@@ -19,7 +19,7 @@ import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { BalanceData, useSuppliedTokens } from 'hooks/useV2Pairs';
-import { useAllPairs } from 'queries/reward';
+import { useAllPairsById } from 'queries/backendv2';
 import { Source, useSources } from 'store/bbaln/hooks';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { Field } from 'store/mint/actions';
@@ -40,7 +40,7 @@ import { getFormattedRewards, stakedFraction, totalSupply } from './utils';
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
   const tokenListConfig = useTokenListConfig();
-  const allPairs = useAllPairs();
+  const { data: allPairs } = useAllPairsById();
   const sources = useSources();
 
   const { pairs, balances } = usePoolPanelContext();
@@ -133,7 +133,7 @@ export default function LiquidityDetails() {
                     pair={queuePair}
                     totalReward={queueReward}
                     boost={sources && sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance)}
-                    apy={allPairs && allPairs[1].apy}
+                    apy={allPairs ? allPairs[1].balnApy : 0}
                   />
                 </StyledAccordionButton>
                 <StyledAccordionPanel hidden={isHided}>
@@ -142,7 +142,7 @@ export default function LiquidityDetails() {
                       balance={queueBalance}
                       pair={queuePair}
                       totalReward={queueReward}
-                      apy={allPairs && allPairs[1].apy}
+                      apy={allPairs ? allPairs[1].balnApy : 0}
                       boost={sources && sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance)}
                     />
                   </StyledBoxPanel>
@@ -159,7 +159,7 @@ export default function LiquidityDetails() {
                       pair={sortedPairs[poolId]}
                       totalReward={allPairs && allPairs[poolId] ? rewards[allPairs[poolId].name] : new BigNumber(0)}
                       boostData={sources}
-                      apy={allPairs && allPairs[parseInt(poolId)] && allPairs[parseInt(poolId)].apy}
+                      apy={allPairs && allPairs[parseInt(poolId)] ? allPairs[parseInt(poolId)].balnApy : 0}
                     />
                   </StyledAccordionButton>
                   <StyledAccordionPanel hidden={isHided}>

@@ -27,12 +27,14 @@ export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency
 
     // the first pair is sICX/ICX pair
     if (data && data.id > 1) {
-      const day = new Date().valueOf() * 1_000;
+      const day = Math.floor(new Date().valueOf() / 1000);
       const {
         data: result,
       }: {
         data: BarType[];
-      } = await axios.get(`${API_ENDPOINT}/dex/swap-chart/${pairId}/${period.toLowerCase()}/${LAUNCH_DAY}/${day}`);
+      } = await axios.get(
+        `${API_ENDPOINT}/pools/series/${pairId}/${period.toLowerCase()}/${LAUNCH_DAY / 1_000_000}/${day}`,
+      );
 
       const baseToken = inverse ? currencies[Field.OUTPUT] : currencies[Field.INPUT];
       const quoteToken = inverse ? currencies[Field.INPUT] : currencies[Field.OUTPUT];

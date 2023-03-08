@@ -9,7 +9,7 @@ export const getHistoryBars = (
   to: number,
 ): Promise<AxiosResponse<any>> => {
   return axios.get(
-    `${API_ENDPOINT}/dex/swap-chart/${pair}/${getTimeResolutionForBalancedBE(resolution).toLowerCase()}/${from}/${to}`,
+    `${API_ENDPOINT}/pools/series/${pair}/${getTimeResolutionForBalancedBE(resolution).toLowerCase()}/${from}/${to}`,
   );
 };
 

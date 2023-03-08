@@ -328,7 +328,7 @@ const RewardsPanel = () => {
   const locale = useActiveLocale();
   const shouldBreakOnMobile = useMedia('(max-width: 499px)') && 'en-US,ko-KR'.indexOf(locale) < 0;
   return (
-    <RewardsPanelLayout bg="bg2">
+    <RewardsPanelLayout bg="bg2" mb={'100px'}>
       <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 'initial', 350]}>
         <Flex alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h2">

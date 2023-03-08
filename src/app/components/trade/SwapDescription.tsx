@@ -19,7 +19,6 @@ import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, SUPPORTED_TOKENS_LIST } from 'constant
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useV2Pair } from 'hooks/useV2Pairs';
 import useWidth from 'hooks/useWidth';
-import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useSwapActionHandlers } from 'store/swap/hooks';
@@ -51,9 +50,10 @@ export default function SwapDescription() {
 
   const [ref, width] = useWidth();
 
-  const priceChartQuery = usePriceChartDataQuery(currencies, chartOption.period);
-  const data = priceChartQuery.data;
-  const loading = priceChartQuery.isLoading;
+  // const priceChartQuery = usePriceChartDataQuery(currencies, chartOption.period);
+  // const data = priceChartQuery.data;
+  const data = undefined;
+  const loading = true;
 
   const ratio = useRatio();
   const queueData: any = React.useMemo(

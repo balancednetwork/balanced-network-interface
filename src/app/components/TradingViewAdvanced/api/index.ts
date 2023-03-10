@@ -43,8 +43,6 @@ export const defaultConfig: DatafeedConfiguration = {
     '480' as ResolutionString,
     '1D' as ResolutionString,
     '2D' as ResolutionString,
-    '4D' as ResolutionString,
-    '1W' as ResolutionString,
   ],
 };
 
@@ -78,23 +76,21 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
   ): void {
     const { countBack } = periodParams;
 
-    getHistoryBars(symbolInfo.pairID, resolution, periodParams.from * 1_000_000, periodParams.to * 1_000_000).then(
-      response => {
-        if (response.status === 200) {
-          const { data } = response;
-          const meta: { noData?: boolean } = {};
-          const dataMapped = data.map(item =>
-            formatBarItem(item, symbolInfo.decimal, symbolInfo.isPairInverted, TIME_FORMAT_CONSTATNT),
-          );
+    getHistoryBars(symbolInfo.pairID, resolution, periodParams.from, periodParams.to).then(response => {
+      if (response.status === 200) {
+        const { data } = response;
+        const meta: { noData?: boolean } = {};
+        const dataMapped = data.map(item =>
+          formatBarItem(item, symbolInfo.decimal, symbolInfo.isPairInverted, TIME_FORMAT_CONSTATNT),
+        );
 
-          if (countBack && countBack > data.length) {
-            meta.noData = true;
-          }
-
-          onResult(dataMapped, meta);
+        if (countBack && countBack > data.length) {
+          meta.noData = true;
         }
-      },
-    );
+
+        onResult(dataMapped, meta);
+      }
+    });
   }
 
   public subscribeBars(

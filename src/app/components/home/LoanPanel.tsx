@@ -6,7 +6,7 @@ import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
@@ -15,8 +15,6 @@ import Modal from 'app/components/Modal';
 import { BoxPanel, FlexPanel, BoxPanelWrap } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
-import { ReactComponent as InfoAbove } from 'assets/images/rebalancing-above.svg';
-import { ReactComponent as InfoBelow } from 'assets/images/rebalancing-below.svg';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
@@ -388,72 +386,30 @@ const LoanPanel = () => {
 };
 
 export const RebalancingInfo = () => {
-  const collateralType = useCollateralType();
-
   return (
-    <RebalancingInfoWrap flexDirection="row" flexWrap="wrap" alignItems="stretch" width="100%">
-      <Typography
-        textAlign="center"
-        mb="5px"
-        width="100%"
-        maxWidth="320px"
-        margin="10px auto 35px"
-        fontSize="16"
-        fontWeight="bold"
-        color="#FFF"
-      >
-        <Trans>While you borrow bnUSD, your collateral is used to keep its value stable</Trans>
+    <RebalancingInfoWrap width="100%">
+      <Typography mb={3}>
+        <Trans>
+          If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral.
+        </Trans>
       </Typography>
-      <RebalancingColumn borderRight={true}>
-        <InfoBelow />
-        <Typography fontWeight="bold" color="#FFF">
-          <Trans>If bnUSD is below $1</Trans>
-        </Typography>
-        <Typography>
-          <Trans>Balanced sells collateral at a premium to repay some of your loan.</Trans>
-        </Typography>
-      </RebalancingColumn>
-      <RebalancingColumn>
-        <InfoAbove />
-        <Typography fontWeight="bold" color="#FFF" marginTop="19px">
-          <Trans>If bnUSD is above $1</Trans>
-        </Typography>
-        <Typography>
-          <Trans>Balanced increases your loan to buy more collateral at a discount.</Trans>
-        </Typography>
-      </RebalancingColumn>
-      <Typography marginTop="25px">
-        {t`You'll receive BALN as a reward, and can mitigate the fluctuations by supplying liquidity to the ${`${collateralType}/bnUSD`}
-          pool. The smaller your loan, the less rebalancing affects you.`}
+      <Typography mb={3}>
+        <Trans>
+          For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of
+          borrower debt repaid.
+        </Trans>
+      </Typography>
+      <Typography>
+        <Trans>
+          Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less
+          it will affect you.
+        </Trans>
       </Typography>
     </RebalancingInfoWrap>
   );
 };
 
-const RebalancingColumn = styled(Box)<{ borderRight?: boolean }>`
-  width: 50%;
-  padding-left: 10px;
-  margin-top: -19px;
-
-  ${({ theme }) => theme.mediaWidth.up500`
-    padding-left: 25px;
-  `};
-
-  ${props =>
-    props.borderRight &&
-    css`
-      padding-left: 0;
-      padding-right: 10px;
-      margin-top: 0;
-      ${props.theme.mediaWidth.up500`
-      padding-left: 0;
-      padding-right: 25px;
-      border-right: 1px solid rgba(255, 255, 255, 0.15);
-    `}
-    `};
-`;
-
-const RebalancingInfoWrap = styled(Flex)`
+const RebalancingInfoWrap = styled(Box)`
   color: '#D5D7DB';
   svg {
     height: auto;

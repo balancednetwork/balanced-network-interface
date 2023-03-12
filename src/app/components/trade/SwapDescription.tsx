@@ -52,8 +52,8 @@ export default function SwapDescription() {
   const [ref, width] = useWidth();
 
   const priceChartQuery = usePriceChartDataQuery(currencies, chartOption.period);
+  const isChartLoading = priceChartQuery?.isLoading;
   const data = priceChartQuery.data;
-  const loading = priceChartQuery.isLoading;
 
   const ratio = useRatio();
   const queueData: any = React.useMemo(
@@ -197,7 +197,7 @@ export default function SwapDescription() {
       <ChartContainer ref={ref}>
         {pair ? (
           <>
-            {loading ? (
+            {isChartLoading ? (
               <Spinner size={75} centered />
             ) : (
               <>

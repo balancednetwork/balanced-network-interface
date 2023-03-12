@@ -12,7 +12,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { PairInfo } from 'constants/pairs';
 import useSort from 'hooks/useSort';
-import { useAllPairs } from 'queries/reward';
+import { Pair, useAllPairsById } from 'queries/backendv2';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { getFormattedNumber } from 'utils/formatter';
@@ -225,39 +225,31 @@ const SkeletonPairPlaceholder = () => {
 };
 
 type PairItemProps = {
-  pair: PairInfo & {
-    tvl: number;
-    apy: number;
-    feesApy: number;
-    apyTotal: number;
-    participant: number;
-    volume: number;
-    fees: number;
-  };
+  pair: Pair;
   onClick: (pair: PairInfo) => void;
   isLast: boolean;
 };
 
 const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
   <>
-    <PairGrid my={2} onClick={() => onClick(pair)}>
+    <PairGrid my={2} onClick={() => onClick(pair.info)}>
       <DataText minWidth={'220px'}>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px' }}>
-            <PoolLogo baseCurrency={pair.baseToken} quoteCurrency={pair.quoteToken} />
+            <PoolLogo baseCurrency={pair.info.baseToken} quoteCurrency={pair.info.quoteToken} />
           </Box>
-          <Text ml={2}>{`${pair.baseCurrencyKey} / ${pair.quoteCurrencyKey}`}</Text>
+          <Text ml={2}>{`${pair.info.baseCurrencyKey} / ${pair.info.quoteCurrencyKey}`}</Text>
         </Flex>
       </DataText>
       <DataText minWidth={'200px'}>
         <Flex flexDirection="column" py={2} alignItems="flex-end">
-          {pair.apy && (
+          {pair.balnApy && (
             <APYItem>
               <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
                 BALN:
               </Typography>
-              {`${getFormattedNumber(pair.apy, 'percent2')} - ${getFormattedNumber(
-                MAX_BOOST.times(pair.apy).toNumber(),
+              {`${getFormattedNumber(pair.balnApy, 'percent2')} - ${getFormattedNumber(
+                MAX_BOOST.times(pair.balnApy).toNumber(),
                 'percent2',
               )}`}
             </APYItem>
@@ -270,19 +262,19 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
               {getFormattedNumber(pair.feesApy, 'percent2')}
             </APYItem>
           )}
-          {!pair.feesApy && !pair.apy && '-'}
+          {!pair.feesApy && !pair.balnApy && '-'}
         </Flex>
       </DataText>
-      <DataText>{getFormattedNumber(pair.tvl, 'currency0')}</DataText>
-      <DataText>{pair.volume ? getFormattedNumber(pair.volume, 'currency0') : '-'}</DataText>
-      <DataText>{pair.fees ? getFormattedNumber(pair.fees, 'currency0') : '-'}</DataText>
+      <DataText>{getFormattedNumber(pair.liquidity, 'currency0')}</DataText>
+      <DataText>{pair.volume24h ? getFormattedNumber(pair.volume24h, 'currency0') : '-'}</DataText>
+      <DataText>{pair.fees24h ? getFormattedNumber(pair.fees24h, 'currency0') : '-'}</DataText>
     </PairGrid>
     {!isLast && <Divider />}
   </>
 );
 
 export default function AllPoolsPanel() {
-  const allPairs = useAllPairs();
+  const { data: allPairs } = useAllPairsById();
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
   const { noLiquidity } = useDerivedMintInfo();
   const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
@@ -291,7 +283,7 @@ export default function AllPoolsPanel() {
     () =>
       allPairs &&
       Object.keys(allPairs).reduce((pairs, pairID) => {
-        if (allPairs && allPairs[pairID].apy > 0) {
+        if (allPairs && allPairs[pairID].balnApy) {
           pairs[pairID] = allPairs[pairID];
         }
         return pairs;
@@ -315,10 +307,10 @@ export default function AllPoolsPanel() {
           <HeaderText
             role="button"
             minWidth="220px"
-            className={sortBy.key === 'baseCurrencyKey' ? sortBy.order : ''}
+            className={sortBy.key === 'name' ? sortBy.order : ''}
             onClick={() =>
               handleSortSelect({
-                key: 'baseCurrencyKey',
+                key: 'name',
               })
             }
           >
@@ -365,10 +357,10 @@ export default function AllPoolsPanel() {
           </HeaderText>
           <HeaderText
             role="button"
-            className={sortBy.key === 'tvl' ? sortBy.order : ''}
+            className={sortBy.key === 'liquidity' ? sortBy.order : ''}
             onClick={() =>
               handleSortSelect({
-                key: 'tvl',
+                key: 'liquidity',
               })
             }
           >
@@ -376,10 +368,10 @@ export default function AllPoolsPanel() {
           </HeaderText>
           <HeaderText
             role="button"
-            className={sortBy.key === 'volume' ? sortBy.order : ''}
+            className={sortBy.key === 'volume24h' ? sortBy.order : ''}
             onClick={() =>
               handleSortSelect({
-                key: 'volume',
+                key: 'volume24h',
               })
             }
           >
@@ -387,10 +379,10 @@ export default function AllPoolsPanel() {
           </HeaderText>
           <HeaderText
             role="button"
-            className={sortBy.key === 'fees' ? sortBy.order : ''}
+            className={sortBy.key === 'fees24h' ? sortBy.order : ''}
             onClick={() =>
               handleSortSelect({
-                key: 'fees',
+                key: 'fees24h',
               })
             }
           >

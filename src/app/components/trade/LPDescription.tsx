@@ -54,7 +54,10 @@ export default function LPDescription() {
   }, [currencies]);
 
   const { data: allPairs } = useAllPairsByName();
-  const apy = useMemo(() => allPairs && new BigNumber(allPairs[pairName].balnApy), [allPairs, pairName]);
+  const apy = useMemo(() => allPairs && allPairs[pairName] && new BigNumber(allPairs[pairName].balnApy), [
+    allPairs,
+    pairName,
+  ]);
 
   const balances = useSuppliedTokens(
     pair?.poolId ?? -1,

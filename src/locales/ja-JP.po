@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-06 08:30\n"
+"PO-Revision-Date: 2023-03-15 19:20\n"
 "Last-Translator: \n"
 "Language: ja_JP\n"
 "Language-Team: Japanese\n"
@@ -61,14 +61,6 @@ msgstr ""
 msgid "5 days is standard. Use less for an emergency vote, more for maximum participation."
 msgstr ""
 
-#: src/app/components/home/TransactionPanel.tsx
-msgid "ACTIVITY"
-msgstr ""
-
-#: src/app/components/home/TransactionPanel.tsx
-msgid "AMOUNT"
-msgstr ""
-
 #: src/app/components/trade/AllPoolsPanel.tsx
 #: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
@@ -77,10 +69,6 @@ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
-msgstr ""
-
-#: src/app/components/home/TransactionPanel.tsx
-msgid "Activity history"
 msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
@@ -455,10 +443,6 @@ msgstr ""
 msgid "Current unlock date"
 msgstr ""
 
-#: src/app/components/home/TransactionPanel.tsx
-msgid "DATE"
-msgstr ""
-
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -796,10 +780,6 @@ msgstr ""
 #: src/app/containers/VotePage/ProposalList.tsx
 #: src/app/containers/VotePage/ProposalsPanel.tsx
 msgid "New proposal"
-msgstr ""
-
-#: src/app/components/home/TransactionPanel.tsx
-msgid "No activity yet."
 msgstr ""
 
 #: src/app/components/Wallet/index.tsx

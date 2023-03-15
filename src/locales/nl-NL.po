@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-06 08:30\n"
+"PO-Revision-Date: 2023-03-15 19:20\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -61,14 +61,6 @@ msgstr "4U"
 msgid "5 days is standard. Use less for an emergency vote, more for maximum participation."
 msgstr "5 dagen is standaard. Gebruik minder voor een noodstemming, meer voor maximale participatie."
 
-#: src/app/components/home/TransactionPanel.tsx
-msgid "ACTIVITY"
-msgstr "ACTIVITEIT"
-
-#: src/app/components/home/TransactionPanel.tsx
-msgid "AMOUNT"
-msgstr "AANTAL"
-
 #: src/app/components/trade/AllPoolsPanel.tsx
 #: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
@@ -78,10 +70,6 @@ msgstr "APY"
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
 msgstr "Actief"
-
-#: src/app/components/home/TransactionPanel.tsx
-msgid "Activity history"
-msgstr "Activiteitengeschiedenis"
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add community token list"
@@ -455,10 +443,6 @@ msgstr ""
 msgid "Current unlock date"
 msgstr ""
 
-#: src/app/components/home/TransactionPanel.tsx
-msgid "DATE"
-msgstr "Datum"
-
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 #: src/app/containers/ProposalPage/index.tsx
@@ -797,10 +781,6 @@ msgstr "Nieuw onderpand type"
 #: src/app/containers/VotePage/ProposalsPanel.tsx
 msgid "New proposal"
 msgstr "Nieuw voorstel"
-
-#: src/app/components/home/TransactionPanel.tsx
-msgid "No activity yet."
-msgstr "Nog geen activiteit."
 
 #: src/app/components/Wallet/index.tsx
 msgid "No assets available."

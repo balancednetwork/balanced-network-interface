@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
-import { Typography } from 'app/theme';
+import { sizes, Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useIncentivisedPairs } from 'queries/reward';
 import {
@@ -189,6 +189,13 @@ export default function BBalnPanel() {
             show={
               showLiquidityTooltip || (isAdjusting && boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0)
             }
+            ref={ref => {
+              if (window.innerWidth >= sizes.upLarge) return;
+              const rewardsPanelEl = document.querySelector('.js-rewards-panel') as HTMLDivElement;
+              if (rewardsPanelEl !== undefined && ref !== null) {
+                rewardsPanelEl.style.marginBottom = ref.offsetHeight - 20 + 'px';
+              }
+            }}
           >
             <LiquidityDetails>
               {boostedLPNumbers !== undefined && boostedLPNumbers?.length !== 0 ? (

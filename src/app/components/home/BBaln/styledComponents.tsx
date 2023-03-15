@@ -156,7 +156,7 @@ export const Threshold = styled(Box)<{ position: number; flipTextDirection?: boo
 `;
 
 export const LiquidityDetailsWrap = styled(Box)<{ show?: boolean }>`
-  display: flex;
+  display: none;
   width: 100%;
   justify-content: center;
   position: absolute;
@@ -165,19 +165,23 @@ export const LiquidityDetailsWrap = styled(Box)<{ show?: boolean }>`
   margin-top: 20px;
   width: 100%;
   text-align: right;
-  opacity: 0;
   z-index: -1;
   pointer-events: none;
   transition: all ease 0.2s;
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
     display: block;
+    opacity: 0;
   `};
   ${({ show }) =>
     show &&
     css`
-      opacity: 1;
+      display: flex;
       z-index: 1;
+      opacity: 1;
       pointer-events: all;
+      ${({ theme }) => theme.mediaWidth.upExtraSmall`
+      opacity: 1;
+    `};
     `}
   &:before {
     content: '';

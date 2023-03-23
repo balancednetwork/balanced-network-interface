@@ -75,6 +75,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/cft.png"
     },
     {
+      "address": "cx997a8aecff2ba3259fe0ac958846653c243bcb88",
+      "chainId": 2,
+      "name": "Craft",
+      "symbol": "CFT",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/cft.png"
+    },
+    {
       "address": "cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88",
       "chainId": 1,
       "name": "ICON Tether",

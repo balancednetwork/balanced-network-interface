@@ -102,7 +102,7 @@ export default function LiveVotingPanel() {
                         currentWeight.greaterThan(0)
                           ? currentWeight
                               .divide(weight.greaterThan(0) ? weight : currentWeight)
-                              .multiply(new Fraction(rewards[name].toFormat(0)))
+                              .multiply(new Fraction(rewards[name].toFixed(0)))
                               .toFixed(0)
                           : rewards[name].toFormat(0)
                       } BALN`

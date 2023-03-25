@@ -92,6 +92,7 @@ interface CurrencyInputPanelProps {
   placeholder?: string;
   className?: string;
   account?: string | null;
+  selectedCurrency?: Currency | null;
 }
 
 export const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -108,6 +109,7 @@ export default function CurrencyInputPanel({
   placeholder = '0',
   className,
   account,
+  selectedCurrency,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -157,6 +159,7 @@ export default function CurrencyInputPanel({
               showCurrencyAmount={false}
               anchorEl={ref.current}
               width={width ? width + 40 : undefined}
+              selectedCurrency={selectedCurrency}
             />
           )}
         </div>

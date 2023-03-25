@@ -269,6 +269,7 @@ export default function SwapPanel() {
               onCurrencySelect={handleInputSelect}
               onPercentSelect={!!account ? handleInputPercentSelect : undefined}
               percent={percents[Field.INPUT]}
+              selectedCurrency={currencies[Field.OUTPUT]}
             />
           </Flex>
 
@@ -296,6 +297,7 @@ export default function SwapPanel() {
               currency={currencies[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
+              selectedCurrency={currencies[Field.INPUT]}
             />
           </Flex>
         </AutoColumn>

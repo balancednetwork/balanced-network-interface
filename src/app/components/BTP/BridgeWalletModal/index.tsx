@@ -167,29 +167,34 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
   const handleOpenWallet = async (type: string) => {
     // setLoading(true);
     // window['accountInfo'] = null;
-    localStorage.setItem(CONNECTED_WALLET_LOCAL_STORAGE, type);
 
     try {
       switch (type) {
         case wallets.metamask:
+          debugger;
           const isConnected = await EthereumInstance.connectMetaMaskWallet();
           console.log('isConnected', isConnected);
           if (isConnected) {
             await EthereumInstance.getEthereumAccounts();
+            localStorage.setItem(CONNECTED_WALLET_LOCAL_STORAGE, type);
+            console.log('nextFromNetwork', nextFromNetwork);
+            setSelectNetworkSrc(nextFromNetwork);
+            setNetworkDst('');
+            // setLoading(false);
           }
-          console.log('nextFromNetwork', nextFromNetwork);
-          setSelectNetworkSrc(nextFromNetwork);
-          setNetworkDst('');
-          // setLoading(false);
           setOpenWalletModal();
           break;
         case wallets.iconex:
         case wallets.hana:
-          await requestAddress();
-          setSelectNetworkSrc(nextFromNetwork);
-          setNetworkDst('');
-          // setLoading(false);
+          const hasAccount = await requestAddress();
+          if (hasAccount) {
+            localStorage.setItem(CONNECTED_WALLET_LOCAL_STORAGE, type);
+            setSelectNetworkSrc(nextFromNetwork);
+            setNetworkDst('');
+            // setLoading(false);
+          }
           setOpenWalletModal();
+
           break;
         default:
           break;

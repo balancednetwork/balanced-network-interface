@@ -31,6 +31,7 @@ class Ethereum {
   }
 
   get getEthereum() {
+    console.log('this.isMetaMaskInstalled()', this.isMetaMaskInstalled());
     if (!this.isMetaMaskInstalled()) {
       window.open(metamaskURL);
       throw new Error('MetaMask has not been installed');
@@ -66,10 +67,11 @@ class Ethereum {
     const { NETWORK_ADDRESS, EXPLORE_URL, RPC_URL, COIN_SYMBOL, CHAIN_NAME } = chainConfigs['BSC'] || {}; // HARD CODE BSC HERE
     const chainId = NETWORK_ADDRESS?.split('.')[0];
     try {
-      await window['ethereum']?.request({
+      const res = await window['ethereum']?.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId }],
       });
+      console.log('res', res);
       return chainId;
     } catch (error: any) {
       // Error Code 4902 means the network we're trying to switch is not available so we have to add it first
@@ -122,6 +124,7 @@ class Ethereum {
   }
 
   async connectMetaMaskWallet() {
+    debugger;
     if (!this.isMetaMaskInstalled()) {
       localStorage.removeItem(CONNECTED_WALLET_LOCAL_STORAGE);
       window.open(metamaskURL);
@@ -182,7 +185,7 @@ class Ethereum {
         triggerSetAccountInfo(accountInfo);
       }
     } catch (error) {
-      console.log(error);
+      console.log('metamask', error);
       triggerSetAccountInfo(null);
     }
   }
@@ -340,7 +343,7 @@ class Ethereum {
     });
   }
 }
-
+console.log(window['ethereum']);
 const EthereumInstance = new Ethereum();
 EthereumInstance.chainChangedListener();
 

@@ -15,7 +15,7 @@ import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { useBBalnAmount } from 'store/bbaln/hooks';
 import { useCombinedVoteData, useNextUpdateDate, useUserVoteData } from 'store/liveVoting/hooks';
 import { VoteSource } from 'store/liveVoting/types';
-import { useRewards } from 'store/reward/hooks';
+import { useRewards, useTotalLPRewards } from 'store/reward/hooks';
 
 import PowerLeftComponent from './PowerLeftComponent';
 import { GirdHeaderItem, RespoLabel, VoteItemWrap, VotingGrid } from './styledComponents';
@@ -28,6 +28,7 @@ export default function LiveVotingPanel() {
   const { account } = useIconReact();
   const { data: voteData } = useCombinedVoteData();
   const rewards = useRewards();
+  const totalLPRewards = useTotalLPRewards();
   const userVoteData = useUserVoteData();
   const bBalnAmount = useBBalnAmount();
   const nextUpdateDate = useNextUpdateDate();
@@ -97,14 +98,11 @@ export default function LiveVotingPanel() {
                 flexDirection="column"
               >
                 <Typography color="text" fontSize={16}>
-                  {rewards && rewards[name]
+                  {totalLPRewards
                     ? `~ ${
                         currentWeight.greaterThan(0)
-                          ? currentWeight
-                              .divide(weight.greaterThan(0) ? weight : currentWeight)
-                              .multiply(new Fraction(rewards[name].toFixed(0)))
-                              .toFixed(0)
-                          : rewards[name].toFormat(0)
+                          ? currentWeight.multiply(new Fraction(totalLPRewards.toFixed(0))).toFixed(0)
+                          : weight.multiply(new Fraction(totalLPRewards.toFixed(0))).toFixed(0)
                       } BALN`
                     : '-'}
                 </Typography>

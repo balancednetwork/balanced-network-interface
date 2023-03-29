@@ -24,6 +24,21 @@ export function useRewards(): AppState['reward'] {
   return useSelector((state: AppState) => state.reward);
 }
 
+export function useTotalLPRewards(): BigNumber {
+  const rewards = useRewards();
+  return Object.keys(rewards).reduce((total, rewardId) => {
+    try {
+      if (rewardId.indexOf('/') > 0) {
+        total = total.plus(rewards[rewardId]);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      return total;
+    }
+  }, new BigNumber(0));
+}
+
 export function useReward(rewardName: string): BigNumber | undefined {
   const rewards = useRewards();
   if (rewardName && rewards[rewardName] && rewards[rewardName].isGreaterThan(0)) {

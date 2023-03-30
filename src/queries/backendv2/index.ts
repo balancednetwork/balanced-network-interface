@@ -137,7 +137,7 @@ export function useAllPairs() {
             const fees30d = fees30dProviders + fees30dBaln;
             const feesApy = liquidity > 0 ? (fees30dProviders * 12) / liquidity : 0;
 
-            const incentivisedPair = incentivisedPairs.find(incentivisedPair => incentivisedPair.name === item.name);
+            const incentivisedPair = incentivisedPairs.find(incentivisedPair => incentivisedPair.id === item.pool_id);
 
             const pair: Pair = {
               info: {

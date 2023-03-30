@@ -142,17 +142,6 @@ class Ethereum {
     }
   }
 
-  chainChangedListener() {
-    try {
-      this.getEthereum.on('chainChanged', chainId => {
-        console.log('Change Network', chainId);
-        window.location.reload();
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   async getEthereumAccounts(chainId?: string) {
     try {
       const accounts = await this.getEthereum.request({ method: 'eth_accounts' });
@@ -342,6 +331,5 @@ class Ethereum {
 }
 
 const EthereumInstance = new Ethereum();
-EthereumInstance.chainChangedListener();
 
 export { EthereumInstance };

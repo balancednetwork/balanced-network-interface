@@ -38,10 +38,11 @@ export const requestAddress = async () => {
     // handle if the ICONex extension is not installed
     // https://github.com/icon-project/icon-sdk-js/issues/12#issuecomment-781446159
     localStorage.removeItem(CONNECTED_WALLET_LOCAL_STORAGE);
-    //window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl');
-    //return;
+    window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl');
+    return false;
   }
-  return createICONexEvent('REQUEST_ADDRESS');
+  createICONexEvent('REQUEST_ADDRESS');
+  return true;
 };
 
 export const requestHasAddress = address => {

@@ -19,7 +19,7 @@ import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { BalanceData, useSuppliedTokens } from 'hooks/useV2Pairs';
-import { useAllPairsById } from 'queries/backendv2';
+import { PairData, useAllPairsById } from 'queries/backendv2';
 import { Source, useSources } from 'store/bbaln/hooks';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { Field } from 'store/mint/actions';
@@ -157,7 +157,13 @@ export default function LiquidityDetails() {
                       poolId={parseInt(poolId)}
                       balance={balances[poolId]}
                       pair={sortedPairs[poolId]}
-                      totalReward={allPairs && allPairs[poolId] ? rewards[allPairs[poolId].name] : new BigNumber(0)}
+                      pairData={allPairs && allPairs[poolId]}
+                      //hotfix due to the fact that sICX/BTCB pair has wrong name on contract side
+                      totalReward={
+                        allPairs && allPairs[poolId]
+                          ? rewards[allPairs[poolId].name === 'sICX/BTCB' ? 'BTCB/sICX' : allPairs[poolId].name]
+                          : new BigNumber(0)
+                      }
                       boostData={sources}
                       apy={allPairs && allPairs[parseInt(poolId)] ? allPairs[parseInt(poolId)].balnApy : 0}
                     />
@@ -240,12 +246,14 @@ const ListItem = styled(DashGrid)`
 const PoolRecord = ({
   poolId,
   pair,
+  pairData,
   balance,
   totalReward,
   boostData,
   apy,
 }: {
   pair: Pair;
+  pairData?: PairData;
   balance: BalanceData;
   poolId: number;
   totalReward: BigNumber;
@@ -258,7 +266,7 @@ const PoolRecord = ({
   const { baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
   const { reward } = getShareReward(pair, balance, totalReward);
   const [aBalance, bBalance] = getABBalance(pair, balance);
-  const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
+  const pairName = pairData ? pairData.name : `${aBalance.currency.symbol}/${bBalance.currency.symbol}`;
   const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
 
   const baseCurrencyTotalSupply = totalSupply(baseValue, lpBalance?.base);
@@ -269,8 +277,15 @@ const PoolRecord = ({
   const { onCurrencySelection } = useMintActionHandlers(false);
 
   const handlePoolClick = () => {
-    onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency);
-    onCurrencySelection(Field.CURRENCY_B, pair.reserve1.currency);
+    //hotfix due to some pairs not being named the wrong way on contract side
+    if (pairData) {
+      onCurrencySelection(Field.CURRENCY_A, pairData.info.baseToken);
+      onCurrencySelection(Field.CURRENCY_B, pairData.info.quoteToken);
+    } else {
+      //reserve might be in wrong order because wrong pair name on contract side
+      onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency);
+      onCurrencySelection(Field.CURRENCY_B, pair.reserve1.currency);
+    }
   };
 
   return (
@@ -304,7 +319,12 @@ const PoolRecord = ({
             {boostData ? (
               apy ? (
                 `${new BigNumber(apy)
-                  .times(boostData[pairName].workingBalance.dividedBy(boostData[pairName].balance))
+                  .times(
+                    //hotfix pairName due to wrong source name on contract side
+                    boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].workingBalance.dividedBy(
+                      boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance,
+                    ),
+                  )
                   .times(100)
                   .toFormat(2)}%`
               ) : (
@@ -316,7 +336,14 @@ const PoolRecord = ({
           </DataText>
         )}
         {upSmall && (
-          <DataText>{getFormattedRewards(reward, stakedFractionValue, boostData && boostData[pairName])}</DataText>
+          //hotfix pairName due to wrong source name on contract side
+          <DataText>
+            {getFormattedRewards(
+              reward,
+              stakedFractionValue,
+              boostData && boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName],
+            )}
+          </DataText>
         )}
       </ListItem>
     </>

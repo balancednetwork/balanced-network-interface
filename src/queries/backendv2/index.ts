@@ -90,7 +90,7 @@ export function useAllTokensByAddress() {
   );
 }
 
-export type Pair = {
+export type PairData = {
   info: PairInfo;
   name: string;
   liquidity: number;
@@ -109,7 +109,7 @@ export function useAllPairs() {
 
   const MIN_LIQUIDITY_TO_INCLUDE = 1000;
 
-  return useQuery<Pair[]>(
+  return useQuery<PairData[]>(
     `allPairs-${incentivisedPairs && incentivisedPairs.length}-${dailyDistribution?.toFixed()}`,
     async () => {
       const response = await axios.get(`${API_ENDPOINT}/pools`);
@@ -139,7 +139,7 @@ export function useAllPairs() {
 
             const incentivisedPair = incentivisedPairs.find(incentivisedPair => incentivisedPair.id === item.pool_id);
 
-            const pair: Pair = {
+            const pair: PairData = {
               info: {
                 chainId: item['chain_id'],
                 id: item['pool_id'],
@@ -197,7 +197,7 @@ export function useAllPairs() {
 export function useAllPairsById() {
   const { data: allPairs, isSuccess: allPairsSuccess } = useAllPairs();
 
-  return useQuery<{ [key in string]: Pair } | undefined>(
+  return useQuery<{ [key in string]: PairData } | undefined>(
     'allPairsById',
     () => {
       if (allPairs) {
@@ -216,7 +216,7 @@ export function useAllPairsById() {
 export function useAllPairsByName() {
   const { data: allPairs, isSuccess: allPairsSuccess } = useAllPairs();
 
-  return useQuery<{ [key in string]: Pair } | undefined>(
+  return useQuery<{ [key in string]: PairData } | undefined>(
     'allPairsByName',
     () => {
       if (allPairs) {

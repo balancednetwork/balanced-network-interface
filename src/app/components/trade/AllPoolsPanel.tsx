@@ -12,7 +12,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { PairInfo } from 'constants/pairs';
 import useSort from 'hooks/useSort';
-import { Pair, useAllPairsById } from 'queries/backendv2';
+import { PairData, useAllPairsById } from 'queries/backendv2';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { getFormattedNumber } from 'utils/formatter';
@@ -225,7 +225,7 @@ const SkeletonPairPlaceholder = () => {
 };
 
 type PairItemProps = {
-  pair: Pair;
+  pair: PairData;
   onClick: (pair: PairInfo) => void;
   isLast: boolean;
 };

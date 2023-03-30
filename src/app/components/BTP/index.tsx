@@ -89,9 +89,6 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
   }
 `;
 
-const BetaText = styled(Typography)`
-  color: #fc6a6a;
-`;
 const FeeAmount = styled(Typography)`
   color: #c0c9d2;
 `;
@@ -299,11 +296,6 @@ const BTPContent = () => {
           <Flex flexDirection={'column'} width={'100%'}>
             <Typography variant={'h2'}>
               <Trans>Transfer assets </Trans>
-              <BetaText variant="span">
-                <strong>
-                  <Trans>Beta </Trans>
-                </strong>
-              </BetaText>
             </Typography>
             <Typography padding={'10px 0'}>
               <Trans> Move assets between ICON and other blockchains. </Trans>
@@ -406,9 +398,6 @@ const BTPContent = () => {
                 You can transfer a maximum of {maxTransferAmount.toFixed(2)} {assetName}.
               </Typography>
             )}
-            <Typography textAlign="center" paddingTop={'10px'}>
-              ICON Bridge is undergoing a security audit. Use at your own risk.
-            </Typography>
           </Flex>
         </Wrapper>
         <BridgeWalletModal walletModalOpen={walletModalOpen} setOpenWalletModal={toggleWalletModalOpen} />

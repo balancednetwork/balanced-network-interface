@@ -75,7 +75,7 @@ export default function LPDescription() {
     [currencies, typedValue, noLiquidity, otherTypedValue, dependentField, parsedAmounts, independentField],
   );
 
-  const poolRewards = useReward(pairName);
+  const poolRewards = useReward(pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName);
   const tempTotalPoolTokens = new BigNumber(totalPoolTokens?.toFixed() || 0).plus(
     formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0,
   );
@@ -92,8 +92,9 @@ export default function LPDescription() {
 
   const { baseValue, quoteValue } = useWithdrawnPercent(pair?.poolId ?? -1) || {};
 
-  const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
-    !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
+  const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) => {
+    return !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
+  };
 
   const baseCurrencyTotalSupply = useMemo(
     () => new BigNumber(totalSupply(baseValue, balances?.base)?.toFixed() || '0'),

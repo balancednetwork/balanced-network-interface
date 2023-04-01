@@ -1286,19 +1286,10 @@
     tiny-invariant "^1.1.0"
     toformat "^2.0.0"
 
-"@balancednetwork/v1-sdk@../v1-sdk":
-  version "1.0.1"
-  dependencies:
-    "@balancednetwork/sdk-core" "^1.0.1"
-    "@ethersproject/address" "^5.0.0"
-    "@ethersproject/solidity" "^5.0.0"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-
-"@balancednetwork/v1-sdk@1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.2.tgz#fd586004e8ba6dc5e0b889da28cdd93bfb9f4cfb"
-  integrity sha512-67ipVvzG63jHB0uMc1fJAwwrlCP+OGxcB1Wa+LRUEAT+slyE5MLDADOwqwf5E1j6T3qW3lAqAawK4jRwsPXY+A==
+"@balancednetwork/v1-sdk@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.3.tgz#a307ada1c1feb2134aa0681697d8006d873e6468"
+  integrity sha512-hJok5KLOHPyl3D1FrNJb/ZaVZuOhn+9NjE8Zch3R6nQRDdxKRS792qeFK7RdmDP+MubK4JZfU+Pk6+2qHygmjQ==
   dependencies:
     "@balancednetwork/sdk-core" "^1.0.1"
     "@ethersproject/address" "^5.0.0"

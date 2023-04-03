@@ -277,12 +277,10 @@ const PoolRecord = ({
   const { onCurrencySelection } = useMintActionHandlers(false);
 
   const handlePoolClick = () => {
-    //hotfix due to some pairs not being named the wrong way on contract side
     if (pairData) {
       onCurrencySelection(Field.CURRENCY_A, pairData.info.baseToken);
       onCurrencySelection(Field.CURRENCY_B, pairData.info.quoteToken);
     } else {
-      //reserve might be in wrong order because wrong pair name on contract side
       onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency);
       onCurrencySelection(Field.CURRENCY_B, pair.reserve1.currency);
     }

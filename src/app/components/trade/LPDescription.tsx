@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
@@ -75,7 +75,7 @@ export default function LPDescription() {
     [currencies, typedValue, noLiquidity, otherTypedValue, dependentField, parsedAmounts, independentField],
   );
 
-  const poolRewards = useReward(pairName);
+  const poolRewards = useReward(pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName);
   const tempTotalPoolTokens = new BigNumber(totalPoolTokens?.toFixed() || 0).plus(
     formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0,
   );
@@ -92,12 +92,17 @@ export default function LPDescription() {
 
   const { baseValue, quoteValue } = useWithdrawnPercent(pair?.poolId ?? -1) || {};
 
-  const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
-    !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
+  const totalSupply = useCallback((stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) => {
+    try {
+      return !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
+    } catch (e) {
+      return;
+    }
+  }, []);
 
   const baseCurrencyTotalSupply = useMemo(
     () => new BigNumber(totalSupply(baseValue, balances?.base)?.toFixed() || '0'),
-    [baseValue, balances],
+    [totalSupply, baseValue, balances?.base],
   );
   const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, balances?.quote)?.toFixed() || '0');
 

@@ -171,10 +171,12 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const totalReward = rewards[pairName];
   const { reward } = getShareReward(pair, balance, totalReward);
   const stakedFractionValue = stakedFraction(stakedPercent);
-  const isIncentivised = useMemo(() => incentivisedPairs && !!incentivisedPairs.find(pair => pair.name === pairName), [
-    incentivisedPairs,
-    pairName,
-  ]);
+  const isIncentivised = useMemo(
+    () =>
+      incentivisedPairs &&
+      !!incentivisedPairs.find(pair => pair.name === (pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName)),
+    [incentivisedPairs, pairName],
+  );
 
   const RespoRewardsInfo = () => {
     return (

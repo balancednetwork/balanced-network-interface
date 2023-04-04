@@ -181,7 +181,7 @@ export function useAllPairs() {
             return pair;
           });
 
-          return pairs.filter(item => item.liquidity >= MIN_LIQUIDITY_TO_INCLUDE);
+          return pairs.filter(item => item.liquidity >= MIN_LIQUIDITY_TO_INCLUDE || item.name === 'sICX/ICX');
         } catch (e) {
           console.error('Error while working with fetched pools data: ', e);
         }

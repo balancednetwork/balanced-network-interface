@@ -12,7 +12,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { PairInfo } from 'constants/pairs';
 import useSort from 'hooks/useSort';
-import { PairData, useAllPairsById } from 'queries/backendv2';
+import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from 'queries/backendv2';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { getFormattedNumber } from 'utils/formatter';
@@ -243,24 +243,30 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
       </DataText>
       <DataText minWidth={'200px'}>
         <Flex flexDirection="column" py={2} alignItems="flex-end">
-          {pair.balnApy && (
-            <APYItem>
-              <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                BALN:
-              </Typography>
-              {`${getFormattedNumber(pair.balnApy, 'percent2')} - ${getFormattedNumber(
-                MAX_BOOST.times(pair.balnApy).toNumber(),
-                'percent2',
-              )}`}
-            </APYItem>
-          )}
-          {pair.feesApy !== 0 && (
-            <APYItem>
-              <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                <Trans>Fees:</Trans>
-              </Typography>
-              {getFormattedNumber(pair.feesApy, 'percent2')}
-            </APYItem>
+          {pair.liquidity > MIN_LIQUIDITY_TO_INCLUDE ? (
+            <>
+              {pair.balnApy && (
+                <APYItem>
+                  <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                    BALN:
+                  </Typography>
+                  {`${getFormattedNumber(pair.balnApy, 'percent2')} - ${getFormattedNumber(
+                    MAX_BOOST.times(pair.balnApy).toNumber(),
+                    'percent2',
+                  )}`}
+                </APYItem>
+              )}
+              {pair.feesApy !== 0 && (
+                <APYItem>
+                  <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                    <Trans>Fees:</Trans>
+                  </Typography>
+                  {getFormattedNumber(pair.feesApy, 'percent2')}
+                </APYItem>
+              )}
+            </>
+          ) : (
+            '-'
           )}
           {!pair.feesApy && !pair.balnApy && '-'}
         </Flex>

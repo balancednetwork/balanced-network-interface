@@ -102,12 +102,12 @@ export type PairData = {
   balnApy: number;
 };
 
+export const MIN_LIQUIDITY_TO_INCLUDE = 1000;
+
 export function useAllPairs() {
   const { data: allTokens, isSuccess: allTokensSuccess } = useAllTokensByAddress();
   const { data: incentivisedPairs, isSuccess: incentivisedPairsSuccess } = useIncentivisedPairs();
   const { data: dailyDistribution, isSuccess: dailyDistributionSuccess } = useEmissions();
-
-  const MIN_LIQUIDITY_TO_INCLUDE = 1000;
 
   return useQuery<PairData[]>(
     `allPairs-${incentivisedPairs && incentivisedPairs.length}-${dailyDistribution?.toFixed()}`,

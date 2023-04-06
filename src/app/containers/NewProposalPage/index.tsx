@@ -28,6 +28,7 @@ import { useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import FundingInput, { CurrencyValue } from '../../components/newproposal/FundingInput';
+import ArbitraryCallsForm from './ArbitraryCalls/ArbitraryCallsForm';
 import CollateralProposalFields from './CollateralProposalFields';
 
 const NewProposalContainer = styled(Box)`
@@ -448,6 +449,9 @@ export function NewProposalPage() {
           {isCollateralProposal && (
             <CollateralProposalFields newCollateral={newCollateral} setNewCollateral={setNewCollateral} />
           )}
+
+          <ArbitraryCallsForm />
+
           <Typography variant="content" mt="25px" mb="25px" textAlign="center">
             <Trans>It costs 100 bnUSD to submit a proposal.</Trans>
           </Typography>

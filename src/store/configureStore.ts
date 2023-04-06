@@ -8,6 +8,7 @@ import { save, load } from 'redux-localstorage-simple';
 import createSagaMiddleware from 'redux-saga';
 
 import application from './application/reducer';
+import arbitraryCalls from './arbitraryCalls/reducer';
 import bbaln from './bbaln/reducer';
 import collateral from './collateral/reducer';
 import fees from './fees/reducer';
@@ -62,6 +63,7 @@ export function configureAppStore() {
       oracle,
       lists,
       liveVoting,
+      arbitraryCalls,
     }),
     middleware: [
       ...getDefaultMiddleware({

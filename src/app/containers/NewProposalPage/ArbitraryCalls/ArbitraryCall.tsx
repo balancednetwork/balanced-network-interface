@@ -28,7 +28,7 @@ const ParamsWrap = styled.div`
   grid-gap: 30px;
 `;
 
-const RemoveButton = styled.button`
+export const RemoveButton = styled.button`
   padding: 3px 0 3px 3px;
   margin: 0;
   background: none;

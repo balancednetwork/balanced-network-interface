@@ -45,7 +45,6 @@ const ArbitraryCallsForm = () => {
       </AnimatePresence>
       <UnderlineText onClick={addCall}>
         <Typography color="primaryBright">
-          {' '}
           <Trans>Add an arbitrary call</Trans>
         </Typography>
       </UnderlineText>

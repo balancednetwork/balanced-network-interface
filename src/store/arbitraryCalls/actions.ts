@@ -8,6 +8,10 @@ export const addCallStruct = createAction<{ callIndex: number; name: string }>('
 
 export const removeCall = createAction<{ callIndex: number }>('arbitraryCalls/removeCall');
 
+export const removeCallStruct = createAction<{ callIndex: number; paramName: string; structIndex }>(
+  'arbitraryCalls/removeCallStruct',
+);
+
 export const updateCall = createAction<{ callIndex: number; event: React.ChangeEvent<HTMLInputElement> }>(
   'arbitraryCalls/updateCall',
 );

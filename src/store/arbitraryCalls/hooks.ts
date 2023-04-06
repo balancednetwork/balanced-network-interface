@@ -8,6 +8,7 @@ import {
   addCall,
   addCallStruct,
   removeCall,
+  removeCallStruct,
   updateCall,
   updateCallMethod,
   updateCallParam,
@@ -63,6 +64,22 @@ export function useRemoveCall(): (callIndex: number) => void {
       dispatch(
         removeCall({
           callIndex,
+        }),
+      );
+    },
+    [dispatch],
+  );
+}
+
+export function useRemoveCallStruct(): (callIndex: number, paramName: string, structIndex: number) => void {
+  const dispatch = useDispatch();
+  return React.useCallback(
+    (callIndex: number, paramName: string, structIndex: number) => {
+      dispatch(
+        removeCallStruct({
+          callIndex,
+          paramName,
+          structIndex,
         }),
       );
     },

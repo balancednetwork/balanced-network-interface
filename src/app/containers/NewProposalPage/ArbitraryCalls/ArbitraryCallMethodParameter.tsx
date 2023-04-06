@@ -1,11 +1,20 @@
 import * as React from 'react';
 
+import { Trans } from '@lingui/macro';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
+import { UnderlineText } from 'app/components/DropdownText';
 import { Typography } from 'app/theme';
+import { ReactComponent as RemoveIcon } from 'assets/icons/remove.svg';
 import { CxMethodInput } from 'hooks/useCxApi';
-import { useAddCallStruct, useUpdateCallMethodParam, useUpdateCallMethodStructParam } from 'store/arbitraryCalls/hooks';
+import {
+  useAddCallStruct,
+  useRemoveCallStruct,
+  useUpdateCallMethodParam,
+  useUpdateCallMethodStructParam,
+} from 'store/arbitraryCalls/hooks';
 import {
   ArbitraryCallParameter,
   ArbitraryCallParameterType,
@@ -14,6 +23,8 @@ import {
 } from 'store/arbitraryCalls/reducer';
 
 import { FieldInput } from '..';
+import { RemoveButton } from './ArbitraryCall';
+import { inputVariants } from './ArbitraryCallsForm';
 
 const ParamWrap = styled(Flex)`
   flex-direction: column;
@@ -33,6 +44,7 @@ const ArbitraryCallMethodParameter = ({
   const updateCallMethodParam = useUpdateCallMethodParam();
   const addCallStruct = useAddCallStruct();
   const updateCallMethodStructParam = useUpdateCallMethodStructParam();
+  const removeCallStruct = useRemoveCallStruct();
 
   const editableParam = call.parameters?.find(item => item.name === param.name);
   const paramValue = editableParam ? editableParam.value : '';
@@ -54,11 +66,13 @@ const ArbitraryCallMethodParameter = ({
     updateCallMethodStructParam(callIndex, param.name, structIndex, e.target.name, e.target.value, fieldType);
   };
 
+  const handleRemoveStruct = (structIndex: number) => {
+    removeCallStruct(callIndex, param.name, structIndex);
+  };
+
   return (
     <ParamWrap>
-      <Typography variant="h3" mb={isParamPrimitive ? '0' : '15px'}>
-        {param.name}
-      </Typography>
+      <Typography variant="h3">{param.name}</Typography>
       {isParamPrimitive ? (
         <FieldInput
           placeholder={param.type}
@@ -67,27 +81,41 @@ const ArbitraryCallMethodParameter = ({
           name={param.name}
         />
       ) : (
-        <>
+        <AnimatePresence>
           {paramValue &&
             (paramValue as { [key in string]: ArbitraryCallParameter }[]).map((struct, structIndex) =>
               param.fields?.map(
                 (field, index) =>
                   field.type !== '[]struct' && (
-                    <React.Fragment key={index}>
-                      <Typography variant="h4">{field.name}</Typography>
+                    <motion.div key={`${structIndex}-${index}`} {...inputVariants}>
+                      <Flex width="100%" justifyContent="space-between" marginTop={index === 0 ? '25px' : '0'}>
+                        <Typography variant="h4">{field.name}</Typography>
+                        {index === 0 && (
+                          <RemoveButton onClick={() => handleRemoveStruct(structIndex)} title="Remove struct">
+                            <RemoveIcon width={18} />
+                          </RemoveButton>
+                        )}
+                      </Flex>
                       <FieldInput
                         placeholder={field.type}
                         value={struct[field.name] ? (struct[field.name].value as string) : ''}
                         onChange={e => handleStructParamChange(e, structIndex, field.type)}
                         name={field.name}
                       />
-                    </React.Fragment>
+                    </motion.div>
                   ),
               ),
             )}
-
-          <div onClick={handleAddStruct}>Add {param.name} item</div>
-        </>
+          <div>
+            <UnderlineText onClick={handleAddStruct}>
+              <Typography color="primaryBright">
+                <Trans>
+                  Add <strong>{param.name}</strong> item
+                </Trans>
+              </Typography>
+            </UnderlineText>
+          </div>
+        </AnimatePresence>
       )}
     </ParamWrap>
   );

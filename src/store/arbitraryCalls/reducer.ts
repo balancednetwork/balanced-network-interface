@@ -4,6 +4,7 @@ import {
   addCall,
   addCallStruct,
   removeCall,
+  removeCallStruct,
   updateCall,
   updateCallMethod,
   updateCallParam,
@@ -117,6 +118,16 @@ export default createReducer(initialState, builder =>
         } else {
           editing.parameters = [...editing.parameters, { value: [{}], type: '[]struct', name }];
         }
+      }
+
+      state.editing[callIndex] = editing;
+    })
+    .addCase(removeCallStruct, (state, { payload: { callIndex, paramName, structIndex } }) => {
+      const editing = { ...state.editing[callIndex] };
+
+      const editingParam = editing.parameters?.find(param => param.name === paramName);
+      if (editingParam) {
+        (editingParam.value as { [key in string]: ArbitraryCallParameter }[]).splice(structIndex, 1);
       }
 
       state.editing[callIndex] = editing;

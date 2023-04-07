@@ -4,14 +4,15 @@ import { Trans } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
 import styled from 'styled-components';
 
+import Divider from 'app/components/Divider';
 import { DropdownPopper } from 'app/components/Popover';
 import SearchInput from 'app/components/SearchModal/SearchInput';
 import { Typography } from 'app/theme';
+import useArrowControl from 'hooks/useArrowControl';
 import { CxMethod } from 'hooks/useCxApi';
+import useKeyPress from 'hooks/useKeyPress';
 import { useUpdateCallMethod } from 'store/arbitraryCalls/hooks';
 import { EditableArbitraryCall } from 'store/arbitraryCalls/reducer';
-
-import { FieldInput } from '..';
 
 const MethodSelectorWrap = styled.div`
   width: 100%;
@@ -19,18 +20,26 @@ const MethodSelectorWrap = styled.div`
 
 const MethodList = styled.ul`
   max-height: 240px;
+  min-width: 160px;
   overflow-y: auto;
-  margin: 10px 0 0 0;
+  margin: 0;
   list-style-type: none;
   padding: 0;
 `;
 
 const MethodListItem = styled.li`
-  padding: 4px 0;
+  padding: 9px 0;
+  cursor: pointer;
+  transition: color ease 0.2s;
+
+  &.active,
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
 `;
 
 const ContentWrap = styled.div`
-  padding: 20px;
+  padding: 15px;
 `;
 
 const ArbitraryCallMethodSelector = ({
@@ -47,14 +56,6 @@ const ArbitraryCallMethodSelector = ({
   const [search, setSearch] = React.useState('');
   const updateCallMethod = useUpdateCallMethod();
 
-  const popperRef = React.useRef(null);
-  const arrowRef = React.useRef(null);
-  const searchRef = React.useRef<HTMLInputElement>();
-
-  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-  };
-
   const filteredMethods = React.useMemo(() => {
     if (!search) {
       return cxApi;
@@ -63,9 +64,25 @@ const ArbitraryCallMethodSelector = ({
     }
   }, [cxApi, search]);
 
-  const handleMethodInputClick = () => {
-    setOpen(!isOpen);
+  const enter = useKeyPress('Enter');
+  const { activeIndex, setActiveIndex } = useArrowControl(isOpen, filteredMethods?.length || 0);
+
+  const popperRef = React.useRef(null);
+  const arrowRef = React.useRef(null);
+  const searchRef = React.useRef<HTMLInputElement>();
+
+  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
   };
+
+  const handleMethodSelect = React.useCallback(
+    (method: CxMethod) => {
+      setOpen(false);
+      updateCallMethod(callIndex, method.name);
+      setSearch(method.name);
+    },
+    [callIndex, updateCallMethod],
+  );
 
   React.useEffect(() => {
     let focusTimeout;
@@ -79,46 +96,63 @@ const ArbitraryCallMethodSelector = ({
     };
   }, [isOpen]);
 
-  const handleMethodSelect = (method: CxMethod) => {
-    setOpen(false);
-    setSearch('');
-    updateCallMethod(callIndex, method.name);
-  };
+  React.useEffect(() => {
+    if (isOpen) {
+      setActiveIndex(undefined);
+    }
+  }, [isOpen, setActiveIndex]);
+
+  React.useEffect(() => {
+    if (isOpen && enter && filteredMethods?.length && activeIndex !== undefined) {
+      handleMethodSelect(filteredMethods[activeIndex]);
+      setSearch(filteredMethods[activeIndex].name);
+    }
+  }, [isOpen, activeIndex, enter, filteredMethods, handleMethodSelect]);
 
   return (
     <MethodSelectorWrap>
       <Typography variant="h3" ref={arrowRef} style={{ display: 'inline-block' }}>
         <Trans>Method</Trans>
       </Typography>
-      <FieldInput ref={popperRef} onClick={handleMethodInputClick} type="text" defaultValue={method || ''} />
-      {/* <ClickAwayListener onClickAway={() => setOpen(false)}>
-        <> */}
+      <SearchInput
+        ref={popperRef}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        value={search}
+        onChange={onSearchChange}
+        type="text"
+        defaultValue={method || ''}
+        style={{ margin: '10px 0 20px' }}
+      />
       <DropdownPopper
         show={isOpen}
         anchorEl={popperRef.current}
         arrowEl={arrowRef.current}
         placement="bottom-start"
         offset={[0, 10]}
-        customArrowStyle={{ transform: 'translateX(40px)' }}
+        customArrowStyle={{ transform: 'translateX(19px)' }}
       >
         <ContentWrap>
-          <SearchInput
-            ref={searchRef as React.RefObject<HTMLInputElement>}
-            placeholder="Search for a method"
-            value={search}
-            onChange={onSearchChange}
-          />
           <MethodList>
-            {filteredMethods.map(method => (
-              <MethodListItem key={method.name} onClick={() => handleMethodSelect(method)}>
-                {method.name}
-              </MethodListItem>
+            <Typography color="text" fontSize={18} fontWeight="bold" mt="5px" mb="10px">
+              Available contract methods
+            </Typography>
+            {filteredMethods.map((method, index) => (
+              <>
+                <MethodListItem
+                  key={method.name}
+                  onClick={() => handleMethodSelect(method)}
+                  onFocus={() => setActiveIndex(index)}
+                  className={index === activeIndex ? 'active' : ''}
+                >
+                  {method.name}
+                </MethodListItem>
+                {index !== filteredMethods.length - 1 && <Divider />}
+              </>
             ))}
           </MethodList>
         </ContentWrap>
       </DropdownPopper>
-      {/* </>
-      </ClickAwayListener> */}
     </MethodSelectorWrap>
   );
 };

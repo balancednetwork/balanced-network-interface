@@ -54,9 +54,9 @@ const ArbitraryCallMethodParameter = ({
     updateCallMethodParam(callIndex, e.target.name, e.target.value, param.type);
   };
 
-  const handleAddStruct = () => {
+  const handleAddStruct = React.useCallback(() => {
     addCallStruct(callIndex, param.name);
-  };
+  }, [addCallStruct, callIndex, param.name]);
 
   const handleStructParamChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -69,6 +69,12 @@ const ArbitraryCallMethodParameter = ({
   const handleRemoveStruct = (structIndex: number) => {
     removeCallStruct(callIndex, param.name, structIndex);
   };
+
+  React.useEffect(() => {
+    if (!isParamPrimitive && !paramValue) {
+      handleAddStruct();
+    }
+  }, [handleAddStruct, isParamPrimitive, paramValue]);
 
   return (
     <ParamWrap>

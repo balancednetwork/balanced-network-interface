@@ -96,13 +96,28 @@ export default function SwapPanel() {
 
   const maxInputAmount = React.useMemo(() => maxAmountSpend(currencyBalances[Field.INPUT]), [currencyBalances]);
 
-  const handleInputSelect = useCallback((inputCurrency: Currency) => onCurrencySelection(Field.INPUT, inputCurrency), [
-    onCurrencySelection,
-  ]);
+  const handleInputSelect = useCallback(
+    (inputCurrency: Currency) => {
+      const outputCurrencySymbol = currencies[Field.OUTPUT]?.symbol;
+      if (outputCurrencySymbol !== undefined && inputCurrency.symbol === outputCurrencySymbol) {
+        onSwitchTokens();
+        return;
+      }
+      onCurrencySelection(Field.INPUT, inputCurrency);
+    },
+    [currencies, onSwitchTokens, onCurrencySelection],
+  );
 
   const handleOutputSelect = useCallback(
-    (outputCurrency: Currency) => onCurrencySelection(Field.OUTPUT, outputCurrency),
-    [onCurrencySelection],
+    (outputCurrency: Currency) => {
+      const inputCurrencySymbol = currencies[Field.INPUT]?.symbol;
+      if (inputCurrencySymbol !== undefined && outputCurrency.symbol === inputCurrencySymbol) {
+        onSwitchTokens();
+        return;
+      }
+      onCurrencySelection(Field.OUTPUT, outputCurrency);
+    },
+    [currencies, onSwitchTokens, onCurrencySelection],
   );
 
   const handleInputPercentSelect = useCallback(

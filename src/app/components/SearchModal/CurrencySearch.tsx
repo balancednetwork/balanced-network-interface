@@ -170,11 +170,8 @@ export function CurrencySearch({
       currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
         ? filteredSortedTokensWithICX
         : filteredSortedTokens;
-    if (selectedCurrency) {
-      return currencies.filter(currency => currency.symbol !== selectedCurrency?.symbol);
-    }
     return currencies;
-  }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX, selectedCurrency]);
+  }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX]);
 
   return (
     <Wrapper width={width}>

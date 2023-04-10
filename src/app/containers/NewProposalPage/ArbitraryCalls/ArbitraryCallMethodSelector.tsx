@@ -51,7 +51,6 @@ const ArbitraryCallMethodSelector = ({
   call: EditableArbitraryCall;
   callIndex: number;
 }) => {
-  const { method } = call;
   const [isOpen, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const updateCallMethod = useUpdateCallMethod();
@@ -121,7 +120,6 @@ const ArbitraryCallMethodSelector = ({
         value={search}
         onChange={onSearchChange}
         type="text"
-        defaultValue={method || ''}
         style={{ margin: '10px 0 20px' }}
       />
       <DropdownPopper
@@ -138,7 +136,7 @@ const ArbitraryCallMethodSelector = ({
               Available contract methods
             </Typography>
             {filteredMethods.map((method, index) => (
-              <>
+              <React.Fragment key={index}>
                 <MethodListItem
                   key={method.name}
                   onClick={() => handleMethodSelect(method)}
@@ -148,7 +146,7 @@ const ArbitraryCallMethodSelector = ({
                   {method.name}
                 </MethodListItem>
                 {index !== filteredMethods.length - 1 && <Divider />}
-              </>
+              </React.Fragment>
             ))}
           </MethodList>
         </ContentWrap>

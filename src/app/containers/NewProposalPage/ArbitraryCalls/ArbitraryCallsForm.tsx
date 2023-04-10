@@ -2,13 +2,16 @@ import * as React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Flex } from 'rebass';
 
+import { Button } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import { UnderlineText } from 'app/components/DropdownText';
 import { Typography } from 'app/theme';
 import { useAddCall, useEditableContractCalls } from 'store/arbitraryCalls/hooks';
 
 import ArbitraryCall from './ArbitraryCall';
+import { getTransactionsString, tryExecuteWithTransactionsString } from './utils';
 
 export const inputVariants = {
   initial: { opacity: 0, y: -15, height: 0, width: '100%' },
@@ -19,6 +22,11 @@ export const inputVariants = {
 const ArbitraryCallsForm = () => {
   const editableCalls = useEditableContractCalls();
   const addCall = useAddCall();
+
+  const testExecution = () => {
+    const txsString = getTransactionsString(editableCalls);
+    tryExecuteWithTransactionsString(txsString);
+  };
 
   return (
     <>
@@ -48,6 +56,12 @@ const ArbitraryCallsForm = () => {
           <Trans>Add an arbitrary call</Trans>
         </Typography>
       </UnderlineText>
+
+      <Flex>
+        <Button mt={2} onClick={testExecution}>
+          Test execution
+        </Button>
+      </Flex>
     </>
   );
 };

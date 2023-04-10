@@ -6,7 +6,7 @@ import { NETWORK_ID } from 'constants/config';
 import { ArbitraryCallParameterType } from 'store/arbitraryCalls/reducer';
 
 const RPC_ENDPOINT = CHAIN_INFO[NETWORK_ID].APIEndpoint;
-// const RPC_DEBUG_ENDPOINT = CHAIN_INFO[NETWORK_ID].debugAPIEndpoint;
+export const RPC_DEBUG_ENDPOINT = CHAIN_INFO[NETWORK_ID].debugAPIEndpoint;
 
 const API_PARAMS = {
   id: new Date().getTime(),

@@ -24,10 +24,10 @@ export type EditableArbitraryCallParameter = {
   value: string | { [key in string]: ArbitraryCallParameter }[];
 };
 
-type ArbitraryCall = {
-  contract: string;
+export type ArbitraryCall = {
+  address: string;
   method: string;
-  parameters: ArbitraryCallParameter[];
+  parameters?: ArbitraryCallParameter[];
 };
 
 export type EditableArbitraryCall = {

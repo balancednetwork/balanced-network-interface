@@ -106,7 +106,7 @@ export const useTotalCollectedFeesQuery = () => {
   });
 };
 
-export const useTotalProposalQuery = (offset: number = 1, batchSize: number = 200) => {
+export const useTotalProposalQuery = (offset: number = 30, batchSize: number = 200) => {
   return useQuery<Array<ProposalInterface>>(QUERY_KEYS.Vote.TotalProposals, async () => {
     const res = await bnJs.Governance.getProposals(offset, batchSize);
     const data = res

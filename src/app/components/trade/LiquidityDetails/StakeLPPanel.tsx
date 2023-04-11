@@ -179,6 +179,8 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   );
 
   const RespoRewardsInfo = () => {
+    const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
+
     return (
       <Flex
         marginBottom={4}
@@ -191,11 +193,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
             <Trans>Daily rewards</Trans>
           </Typography>
           <Typography color="text" fontSize={16}>
-            {getFormattedRewards(
-              reward,
-              stakedFractionValue,
-              sources && sources[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`],
-            )}
+            {getFormattedRewards(reward, stakedFractionValue, sources && sources[sourceName])}
           </Typography>
         </Box>
 

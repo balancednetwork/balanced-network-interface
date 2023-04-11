@@ -9,6 +9,9 @@ import {
 } from 'store/arbitraryCalls/reducer';
 
 export function getTransactionsString(transactions: EditableArbitraryCall[]): string {
+  // if (!transactions.length) {
+  //   return null;
+  // }
   const formatted = transactions.map(transaction => {
     const formattedTx: ArbitraryCall = {
       address: transaction.contract as string,

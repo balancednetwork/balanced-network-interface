@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
-import { Validator } from 'icon-sdk-js';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
@@ -11,25 +9,22 @@ import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
-import ProposalTypesSelect from 'app/components/newproposal/ProposalTypesSelect';
-import RatioInput from 'app/components/newproposal/RatioInput';
 import QuestionHelper from 'app/components/QuestionHelper';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
-import { PROPOSAL_CONFIG, PROPOSAL_TYPE, PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
 import { useMinBBalnPercentageToSubmit } from 'queries/vote';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useEditableContractCalls } from 'store/arbitraryCalls/hooks';
 import { useBBalnAmount, useFetchBBalnInfo, useTotalSupply } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import FundingInput, { CurrencyValue } from '../../components/newproposal/FundingInput';
 import ArbitraryCallsForm from './ArbitraryCalls/ArbitraryCallsForm';
-import CollateralProposalFields from './CollateralProposalFields';
+import { getTransactionsString } from './ArbitraryCalls/utils';
 
 const NewProposalContainer = styled(Box)`
   flex: 1;
@@ -107,26 +102,11 @@ interface ErrorItem {
   ratio: boolean;
 }
 
-export enum ORACLE_TYPE {
-  DEX = 'dex',
-  BAND = 'band',
-}
-
-export interface CollateralProposal {
-  address: string;
-  oracleType: ORACLE_TYPE;
-  oracleValue: string;
-  debtCeiling: string;
-  borrowLTV: string;
-  liquidationLTV: string;
-}
-
 export function NewProposalPage() {
-  const theme = useTheme();
   const { account } = useIconReact();
   useFetchBBalnInfo(account);
   useWalletFetchBalances(account);
-  const [selectedProposalType, setProposalType] = React.useState<PROPOSAL_TYPE>(PROPOSAL_TYPE.TEXT);
+  const theme = useTheme();
   const bBalnAmount = useBBalnAmount();
   const { data: minPercentage } = useMinBBalnPercentageToSubmit();
 
@@ -135,20 +115,6 @@ export function NewProposalPage() {
   const [forumLink, setForumLink] = useState('');
   const [duration, setDuration] = useState('');
   const [description, setDescription] = useState('');
-  const [ratioInputValue, setRatioInputValue] = useState<{ [key: string]: string }>({});
-  const [balanceList, setBalanceList] = useState<CurrencyAmount<Currency>[]>([]);
-  const [currencyInputValue, setCurrencyInputValue] = React.useState<CurrencyValue>({
-    recipient: '',
-    amounts: [],
-  });
-  const [newCollateral, setNewCollateral] = useState<CollateralProposal>({
-    address: '',
-    oracleType: ORACLE_TYPE.BAND,
-    oracleValue: '',
-    debtCeiling: '',
-    borrowLTV: '',
-    liquidationLTV: '',
-  });
 
   const [showError, setShowError] = useState<ErrorItem>({
     forumLink: false,
@@ -169,67 +135,21 @@ export function NewProposalPage() {
 
   const addTransaction = useTransactionAdder();
 
-  //Form
-  const isTextProposal = selectedProposalType === PROPOSAL_TYPE.TEXT;
-  const isFundingProposal = selectedProposalType === PROPOSAL_TYPE.FUNDING;
-  const isCollateralProposal = selectedProposalType === PROPOSAL_TYPE.NEW_COLLATERAL_TYPE;
-  const { isScoreAddress } = Validator;
+  // const { isScoreAddress } = Validator;
 
   const totalSupply = useTotalSupply();
   const minimumBBalnAmount = totalSupply && minPercentage && totalSupply.times(minPercentage);
   const isBBalnValid = minimumBBalnAmount && bBalnAmount.isGreaterThanOrEqualTo(minimumBBalnAmount);
-
-  useEffect(() => {
-    (async () => {
-      const fundingRes = await PROPOSAL_CONFIG.Funding.fetchInputData();
-      setBalanceList(fundingRes);
-      if (fundingRes)
-        setCurrencyInputValue({
-          recipient: '',
-          amounts: [{ item: CurrencyAmount.fromRawAmount(fundingRes[0].currency, 0) }],
-        });
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const arbitraryCalls = useEditableContractCalls();
 
   const { data: platformDay } = usePlatformDayQuery();
 
-  // @ts-ignore
-  const { submitParams, validate } = isTextProposal ? {} : PROPOSAL_CONFIG[selectedProposalType];
-
-  //Validation
-  const validateRatioInput = () => {
-    const arrayRatioValue = Object.values(ratioInputValue);
-    const isEmpty = arrayRatioValue.every(ratio => ratio === '');
-    if (isEmpty) return { isValid: false };
-    const totalRatio = arrayRatioValue.reduce((sum: number, currentValue: string) => sum + Number(currentValue), 0);
-
-    return !!validate && validate(totalRatio);
-  };
-
-  const isFormValid =
-    title.trim() &&
-    description.trim() &&
-    forumLink.trim() &&
-    duration.trim() &&
-    (isTextProposal ||
-      (Object.values(ratioInputValue).length > 0 && Object.values(ratioInputValue).every(ratio => !!ratio.trim())) ||
-      (isFundingProposal &&
-        !!currencyInputValue.recipient.trim() &&
-        currencyInputValue.amounts.some(amount => amount.inputDisplayValue)) ||
-      (isCollateralProposal &&
-        isScoreAddress(newCollateral.address) &&
-        newCollateral.borrowLTV &&
-        newCollateral.liquidationLTV &&
-        newCollateral.debtCeiling &&
-        newCollateral.oracleType === ORACLE_TYPE.DEX) ||
-      newCollateral.oracleValue);
-
-  const canSubmit = account && isBBalnValid && isFormValid;
-
-  const { isValid, message } = validateRatioInput();
   const isForumLinkValid =
     forumLink.startsWith('https://gov.balanced.network') || forumLink.startsWith('gov.balanced.network');
+
+  const isFormValid = title.trim() && description.trim() && forumLink.trim() && isForumLinkValid && duration.trim();
+
+  const canSubmit = account && isBBalnValid && isFormValid;
 
   const onTitleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
     setTitle(event.currentTarget.value);
@@ -257,15 +177,6 @@ export function NewProposalPage() {
     setDescription(event.currentTarget.value);
   };
 
-  const onRatioInputChange = (value: string, recipent_name: string) => {
-    setRatioInputValue({ ...ratioInputValue, [recipent_name]: value });
-    showError.ratio &&
-      setShowError({
-        ...showError,
-        ratio: false,
-      });
-  };
-
   const scrollToTop = () => {
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
@@ -275,49 +186,19 @@ export function NewProposalPage() {
     scrollToTop();
     const invalidInput = {
       forumLink: !isForumLinkValid,
-      ratio: message && !isValid,
     };
-    if (invalidInput.forumLink || invalidInput.ratio) {
+    if (invalidInput.forumLink) {
       scrollToTop();
-      setShowError(invalidInput);
     } else {
       toggleOpen();
     }
   };
-
-  useEffect(() => setRatioInputValue({}), [selectedProposalType]);
 
   const resetForm = () => {
     setTitle('');
     setForumLink('');
     setDuration('');
     setDescription('');
-    setRatioInputValue({});
-    setCurrencyInputValue({
-      recipient: '',
-      amounts: [{ item: CurrencyAmount.fromRawAmount(balanceList[0].currency, 0) }],
-    });
-    setNewCollateral({
-      address: '',
-      oracleType: ORACLE_TYPE.BAND,
-      oracleValue: '',
-      debtCeiling: '',
-      borrowLTV: '',
-      liquidationLTV: '',
-    });
-  };
-
-  const getActions = (): string => {
-    switch (selectedProposalType) {
-      case PROPOSAL_TYPE.TEXT:
-        return '[]';
-      case PROPOSAL_TYPE.FUNDING:
-        return JSON.stringify(submitParams(currencyInputValue));
-      case PROPOSAL_TYPE.NEW_COLLATERAL_TYPE:
-        return JSON.stringify(submitParams(newCollateral));
-      default:
-        return JSON.stringify(submitParams(ratioInputValue));
-    }
   };
 
   const modalSubmit = () => {
@@ -330,16 +211,21 @@ export function NewProposalPage() {
     platformDay &&
       bnJs
         .inject({ account })
-        .Governance.defineVote(title, description, platformDay + 1, parseInt(duration), forumLink, getActions())
+        .Governance.defineVote(
+          title,
+          description,
+          platformDay + 1,
+          parseInt(duration),
+          forumLink,
+          getTransactionsString(arbitraryCalls),
+        )
         .then(res => {
           if (res.result) {
-            const label = t({ id: PROPOSAL_TYPE_LABELS[selectedProposalType].id });
-
             addTransaction(
               { hash: res.result },
               {
                 pending: t`Submitting a proposal...`,
-                summary: t`${label} proposal submitted.`,
+                summary: t`Proposal submitted.`,
                 redirectOnSuccess: '/vote',
               },
             );
@@ -355,15 +241,10 @@ export function NewProposalPage() {
         });
   };
 
-  const handleProposalTypeSelect = (type: PROPOSAL_TYPE) => {
-    setProposalType(type);
-  };
-
   return (
     <>
       <NewProposalContainer>
         <Breadcrumb title={t`New proposal`} locationText={t`Vote`} locationPath={'/vote'} />
-        <ProposalTypesSelect onSelect={handleProposalTypeSelect} selected={selectedProposalType} />
         <ProposalDetailContainer>
           <FieldContainer>
             <Typography variant="h3" flex="1" alignSelf="center">
@@ -429,26 +310,6 @@ export function NewProposalPage() {
             </Typography>
           </FieldContainer>
           <FieldTextArea onChange={onTextAreaInputChange} value={description} maxLength={500} />
-          {!(isTextProposal || isFundingProposal || isCollateralProposal) && (
-            <RatioInput
-              onRatioChange={onRatioInputChange}
-              showErrorMessage={showError.ratio}
-              value={ratioInputValue}
-              message={message}
-              proposalType={selectedProposalType}
-              setInitialValue={setRatioInputValue}
-            />
-          )}
-          {isFundingProposal && (
-            <FundingInput
-              currencyValue={currencyInputValue}
-              setCurrencyValue={setCurrencyInputValue}
-              balanceList={balanceList}
-            />
-          )}
-          {isCollateralProposal && (
-            <CollateralProposalFields newCollateral={newCollateral} setNewCollateral={setNewCollateral} />
-          )}
 
           <ArbitraryCallsForm />
 

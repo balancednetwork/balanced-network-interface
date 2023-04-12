@@ -2,16 +2,30 @@ import * as React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Flex } from 'rebass';
+import { Box, Flex } from 'rebass';
+import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
-import Divider from 'app/components/Divider';
 import { UnderlineText } from 'app/components/DropdownText';
 import { Typography } from 'app/theme';
 import { useAddCall, useEditableContractCalls } from 'store/arbitraryCalls/hooks';
 
 import ArbitraryCall from './ArbitraryCall';
 import { getTransactionsString } from './utils';
+
+const Divider = styled(Box)`
+  height: 1px;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: ${({ theme }) => theme.colors.divider};
+  }
+`;
 
 export const inputVariants = {
   initial: { opacity: 0, y: -15, height: 0, width: '100%' },
@@ -48,7 +62,7 @@ const ArbitraryCallsForm = () => {
         {editableCalls.map((call, index) => (
           <motion.div key={index} {...inputVariants}>
             <ArbitraryCall call={call} callIndex={index} key={index} />
-            {index !== editableCalls.length - 1 && <Divider mt="15px" mb="25px" />}
+            <Divider pt="15px" pb="25px" />
           </motion.div>
         ))}
       </AnimatePresence>

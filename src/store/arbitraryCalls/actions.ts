@@ -6,10 +6,14 @@ export const addCall = createAction<{ editableCall: {} }>('arbitraryCalls/addCal
 
 export const addCallStruct = createAction<{ callIndex: number; name: string }>('arbitraryCalls/addCallStruct');
 
+export const addCallListItem = createAction<{ callIndex: number; name: string; type: ArbitraryCallParameterType }>(
+  'arbitraryCalls/addCallListItem',
+);
+
 export const removeCall = createAction<{ callIndex: number }>('arbitraryCalls/removeCall');
 
-export const removeCallStruct = createAction<{ callIndex: number; paramName: string; structIndex }>(
-  'arbitraryCalls/removeCallStruct',
+export const removeCallListItem = createAction<{ callIndex: number; paramName: string; itemIndex: number }>(
+  'arbitraryCalls/removeCallListItem',
 );
 
 export const updateCallContract = createAction<{ callIndex: number; contract: string }>(
@@ -33,5 +37,13 @@ export const updateCallStructParam = createAction<{
   fieldValue: string;
   fieldType: ArbitraryCallParameterType;
 }>('arbitraryCalls/updateCallStructParam');
+
+export const updateCallListParam = createAction<{
+  callIndex: number;
+  paramName: string;
+  itemIndex: number;
+  value: string;
+  type: ArbitraryCallParameterType;
+}>('arbitraryCalls/updateCallListParam');
 
 export const resetArbitraryCalls = createAction('arbitraryCalls/resetArbitraryCalls');

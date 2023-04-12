@@ -3,16 +3,29 @@ import { createReducer } from '@reduxjs/toolkit';
 import {
   addCall,
   addCallStruct,
+  addCallListItem,
   removeCall,
-  removeCallStruct,
+  removeCallListItem,
   resetArbitraryCalls,
   updateCallMethod,
   updateCallParam,
   updateCallStructParam,
   updateCallContract,
+  updateCallListParam,
 } from './actions';
 
-export type ArbitraryCallParameterType = 'Address' | 'bytes' | 'str' | 'int' | 'bool' | '[]struct';
+export type ArbitraryCallParameterType =
+  | 'Address'
+  | 'bytes'
+  | 'str'
+  | 'int'
+  | 'bool'
+  | 'struct'
+  | '[]Address'
+  | '[]str'
+  | '[]int'
+  | '[]bool'
+  | '[]struct';
 
 export type ArbitraryCallParameter = {
   type: ArbitraryCallParameterType;
@@ -22,7 +35,7 @@ export type ArbitraryCallParameter = {
 export type EditableArbitraryCallParameter = {
   name?: string;
   type?: ArbitraryCallParameterType;
-  value: string | { [key in string]: ArbitraryCallParameter }[];
+  value: string | string[] | { [key in string]: ArbitraryCallParameter }[];
 };
 
 export type ArbitraryCall = {
@@ -108,6 +121,30 @@ export default createReducer(initialState, builder =>
         state.editing[callIndex] = editing;
       },
     )
+    .addCase(updateCallListParam, (state, { payload: { callIndex, paramName, itemIndex, value, type } }) => {
+      const editing = { ...state.editing[callIndex] };
+
+      if (!editing.parameters) {
+        editing.parameters = [{ value: [value], type, name: paramName }];
+      } else {
+        const editingParam = editing.parameters.find(param => param.name === paramName);
+        if (editingParam) {
+          if (editingParam.value.length >= itemIndex + 1) {
+            editingParam.value = [
+              ...(editingParam.value as string[]).slice(0, itemIndex),
+              value,
+              ...(editingParam.value as []).slice(itemIndex + 1),
+            ];
+          } else {
+            editingParam.value = [...(editingParam.value as []), value];
+          }
+        } else {
+          editing.parameters = [...editing.parameters, { value: [value], type, name: paramName }];
+        }
+      }
+
+      state.editing[callIndex] = editing;
+    })
     .addCase(addCallStruct, (state, { payload: { callIndex, name } }) => {
       const editing = { ...state.editing[callIndex] };
 
@@ -124,12 +161,28 @@ export default createReducer(initialState, builder =>
 
       state.editing[callIndex] = editing;
     })
-    .addCase(removeCallStruct, (state, { payload: { callIndex, paramName, structIndex } }) => {
+    .addCase(addCallListItem, (state, { payload: { callIndex, name, type } }) => {
+      const editing = { ...state.editing[callIndex] };
+
+      if (!editing.parameters) {
+        editing.parameters = [{ value: [''], type, name }];
+      } else {
+        const editingParam = editing.parameters.find(param => param.name === name);
+        if (editingParam) {
+          editingParam.value = [...(editingParam.value as []), ''];
+        } else {
+          editing.parameters = [...editing.parameters, { value: [''], type, name }];
+        }
+      }
+
+      state.editing[callIndex] = editing;
+    })
+    .addCase(removeCallListItem, (state, { payload: { callIndex, paramName, itemIndex } }) => {
       const editing = { ...state.editing[callIndex] };
 
       const editingParam = editing.parameters?.find(param => param.name === paramName);
       if (editingParam) {
-        (editingParam.value as { [key in string]: ArbitraryCallParameter }[]).splice(structIndex, 1);
+        (editingParam.value as { [key in string]: ArbitraryCallParameter }[] | string[]).splice(itemIndex, 1);
       }
 
       state.editing[callIndex] = editing;

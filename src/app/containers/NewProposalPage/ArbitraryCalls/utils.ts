@@ -57,6 +57,11 @@ const mappedParamTypes: { [key in ArbitraryCallParameterType]: string } = Object
   str: 'String',
   int: 'int',
   bool: 'bool',
+  struct: 'Struct',
+  '[]Address': 'Address[]',
+  '[]int': 'int[]',
+  '[]str': 'str[]',
+  '[]bool': 'bool[]',
   '[]struct': 'Struct[]',
 });
 

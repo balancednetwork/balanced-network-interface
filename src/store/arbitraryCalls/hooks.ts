@@ -7,13 +7,15 @@ import { AppState } from 'store';
 import {
   addCall,
   addCallStruct,
+  addCallListItem,
   removeCall,
-  removeCallStruct,
   resetArbitraryCalls,
   updateCallContract,
   updateCallMethod,
   updateCallParam,
   updateCallStructParam,
+  removeCallListItem,
+  updateCallListParam,
 } from './actions';
 import { ArbitraryCallParameterType, EditableArbitraryCall } from './reducer';
 
@@ -72,15 +74,15 @@ export function useRemoveCall(): (callIndex: number) => void {
   );
 }
 
-export function useRemoveCallStruct(): (callIndex: number, paramName: string, structIndex: number) => void {
+export function useRemoveCallListItem(): (callIndex: number, paramName: string, itemIndex: number) => void {
   const dispatch = useDispatch();
   return React.useCallback(
-    (callIndex: number, paramName: string, structIndex: number) => {
+    (callIndex: number, paramName: string, itemIndex: number) => {
       dispatch(
-        removeCallStruct({
+        removeCallListItem({
           callIndex,
           paramName,
-          structIndex,
+          itemIndex,
         }),
       );
     },
@@ -120,6 +122,16 @@ export function useAddCallStruct(): (callIndex: number, name: string) => void {
   );
 }
 
+export function useAddCallListItem(): (callIndex: number, paramName: string, type: ArbitraryCallParameterType) => void {
+  const dispatch = useDispatch();
+  return React.useCallback(
+    (callIndex: number, paramName: string, type: ArbitraryCallParameterType) => {
+      dispatch(addCallListItem({ callIndex, name: paramName, type: type }));
+    },
+    [dispatch],
+  );
+}
+
 export function useUpdateCallMethodStructParam(): (
   callIndex: number,
   paramName: string,
@@ -146,6 +158,30 @@ export function useUpdateCallMethodStructParam(): (
           fieldName,
           fieldValue,
           fieldType,
+        }),
+      );
+    },
+    [dispatch],
+  );
+}
+
+export function useUpdateCallMethodPrimitiveListParam(): (
+  callIndex: number,
+  paramName: string,
+  itemIndex: number,
+  value: string,
+  type: ArbitraryCallParameterType,
+) => void {
+  const dispatch = useDispatch();
+  return React.useCallback(
+    (callIndex: number, paramName: string, itemIndex: number, value: string, type: ArbitraryCallParameterType) => {
+      dispatch(
+        updateCallListParam({
+          callIndex,
+          paramName,
+          itemIndex,
+          value,
+          type,
         }),
       );
     },

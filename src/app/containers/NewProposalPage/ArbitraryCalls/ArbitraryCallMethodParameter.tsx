@@ -11,9 +11,11 @@ import { ReactComponent as RemoveIcon } from 'assets/icons/remove.svg';
 import { CxMethodInput } from 'hooks/useCxApi';
 import {
   useAddCallStruct,
-  useRemoveCallStruct,
+  useAddCallListItem,
+  useRemoveCallListItem,
   useUpdateCallMethodParam,
   useUpdateCallMethodStructParam,
+  useUpdateCallMethodPrimitiveListParam,
 } from 'store/arbitraryCalls/hooks';
 import {
   ArbitraryCallParameter,
@@ -42,12 +44,15 @@ const ArbitraryCallMethodParameter = ({
   paramValues?: EditableArbitraryCallParameter[];
 }) => {
   const updateCallMethodParam = useUpdateCallMethodParam();
+  const addCallListItem = useAddCallListItem();
   const addCallStruct = useAddCallStruct();
-  const updateCallMethodStructParam = useUpdateCallMethodStructParam();
-  const removeCallStruct = useRemoveCallStruct();
+  const updateCallMethodStructListParam = useUpdateCallMethodStructParam();
+  const updateCallMethodPrimitiveListParam = useUpdateCallMethodPrimitiveListParam();
+  const removeCallListItem = useRemoveCallListItem();
 
   const editableParam = call.parameters?.find(item => item.name === param.name);
   const paramValue = editableParam ? editableParam.value : '';
+  const isParamList = param.type.indexOf('[]') >= 0;
   const isParamPrimitive = !param.fields;
 
   const handleParamChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,28 +63,44 @@ const ArbitraryCallMethodParameter = ({
     addCallStruct(callIndex, param.name);
   }, [addCallStruct, callIndex, param.name]);
 
-  const handleStructParamChange = (
+  const handleAddItem = React.useCallback(() => {
+    addCallListItem(callIndex, param.name, param.type);
+  }, [addCallListItem, callIndex, param.name, param.type]);
+
+  const handleAddToList = React.useCallback(() => {
+    if (isParamPrimitive) {
+      handleAddItem();
+    } else {
+      handleAddStruct();
+    }
+  }, [handleAddItem, handleAddStruct, isParamPrimitive]);
+
+  const handleListItemParamChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    structIndex: number,
+    itemIndex: number,
     fieldType: ArbitraryCallParameterType,
   ) => {
-    updateCallMethodStructParam(callIndex, param.name, structIndex, e.target.name, e.target.value, fieldType);
+    if (isParamPrimitive) {
+      updateCallMethodPrimitiveListParam(callIndex, param.name, itemIndex, e.target.value, fieldType);
+    } else {
+      updateCallMethodStructListParam(callIndex, param.name, itemIndex, e.target.name, e.target.value, fieldType);
+    }
   };
 
-  const handleRemoveStruct = (structIndex: number) => {
-    removeCallStruct(callIndex, param.name, structIndex);
+  const handleRemoveCallListItem = (itemIndex: number) => {
+    removeCallListItem(callIndex, param.name, itemIndex);
   };
 
   React.useEffect(() => {
-    if (!isParamPrimitive && !paramValue) {
-      handleAddStruct();
+    if (isParamList && !paramValue) {
+      handleAddToList();
     }
-  }, [handleAddStruct, isParamPrimitive, paramValue]);
+  }, [handleAddToList, isParamList, paramValue]);
 
   return (
     <ParamWrap>
       <Typography variant="h3">{param.name}</Typography>
-      {isParamPrimitive ? (
+      {!isParamList && isParamPrimitive ? (
         <FieldInput
           placeholder={param.type}
           value={paramValue as string}
@@ -87,41 +108,63 @@ const ArbitraryCallMethodParameter = ({
           name={param.name}
         />
       ) : (
-        <AnimatePresence>
-          {paramValue &&
-            (paramValue as { [key in string]: ArbitraryCallParameter }[]).map((struct, structIndex) =>
-              param.fields?.map(
-                (field, index) =>
-                  field.type !== '[]struct' && (
-                    <motion.div key={`${structIndex}-${index}`} {...inputVariants}>
-                      <Flex width="100%" justifyContent="space-between" marginTop={index === 0 ? '25px' : '0'}>
-                        <Typography variant="h4">{field.name}</Typography>
-                        {index === 0 && (
-                          <RemoveButton onClick={() => handleRemoveStruct(structIndex)} title="Remove struct">
-                            <RemoveIcon width={18} />
-                          </RemoveButton>
-                        )}
+        <>
+          <AnimatePresence>
+            {paramValue &&
+              (isParamPrimitive
+                ? (paramValue as string[]).map((item, index) => (
+                    <motion.div key={index} {...inputVariants}>
+                      <Flex>
+                        <FieldInput
+                          placeholder={param.type.replace('[]', '')}
+                          value={item}
+                          onChange={e => handleListItemParamChange(e, index, param.type)}
+                        />
+                        <RemoveButton onClick={() => handleRemoveCallListItem(index)} title="Remove item">
+                          <RemoveIcon width={18} style={{ margin: '-15px 0 0 5px' }} />
+                        </RemoveButton>
                       </Flex>
-                      <FieldInput
-                        placeholder={field.type}
-                        value={struct[field.name] ? (struct[field.name].value as string) : ''}
-                        onChange={e => handleStructParamChange(e, structIndex, field.type)}
-                        name={field.name}
-                      />
                     </motion.div>
-                  ),
-              ),
-            )}
-          <div>
-            <UnderlineText onClick={handleAddStruct}>
-              <Typography color="primaryBright">
-                <Trans>
-                  Add <strong>{param.name}</strong> item
-                </Trans>
-              </Typography>
-            </UnderlineText>
-          </div>
-        </AnimatePresence>
+                  ))
+                : (paramValue as { [key in string]: ArbitraryCallParameter }[]).map((struct, structIndex) =>
+                    param.fields?.map(
+                      (field, index) =>
+                        field.type !== '[]struct' && (
+                          <motion.div key={`${structIndex}-${index}`} {...inputVariants}>
+                            <Flex width="100%" justifyContent="space-between" marginTop={index === 0 ? '25px' : '0'}>
+                              <Typography variant="h4">{field.name}</Typography>
+                              {index === 0 && (
+                                <RemoveButton
+                                  onClick={() => handleRemoveCallListItem(structIndex)}
+                                  title="Remove struct"
+                                >
+                                  <RemoveIcon width={18} />
+                                </RemoveButton>
+                              )}
+                            </Flex>
+                            <FieldInput
+                              placeholder={field.type}
+                              value={struct[field.name] ? (struct[field.name].value as string) : ''}
+                              onChange={e => handleListItemParamChange(e, structIndex, field.type)}
+                              name={field.name}
+                            />
+                          </motion.div>
+                        ),
+                    ),
+                  ))}
+          </AnimatePresence>
+          <AnimatePresence>
+            <motion.div {...inputVariants}>
+              <UnderlineText onClick={handleAddToList}>
+                <Typography color="primaryBright">
+                  <Trans>
+                    Add <strong>{param.name}</strong> item
+                  </Trans>
+                </Typography>
+              </UnderlineText>
+            </motion.div>
+          </AnimatePresence>
+        </>
       )}
     </ParamWrap>
   );

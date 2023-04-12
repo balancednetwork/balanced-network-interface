@@ -269,7 +269,7 @@ export function NewProposalPage() {
             addTransaction(
               { hash: res.result },
               {
-                pending: t`Testing execution...`,
+                pending: t`Verifying arbitrary calls execution...`,
                 summary: t`Executed.`,
               },
             );

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
+import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as RemoveIcon } from 'assets/icons/remove.svg';
 import { useCxApi } from 'hooks/useCxApi';
@@ -46,7 +47,7 @@ export const RemoveButton = styled.button`
 
 const ArbitraryCall = ({ call, callIndex }: { callIndex: number; call: EditableArbitraryCall }) => {
   const { contract, method } = call;
-  const { data: cxApi, isLoading } = useCxApi(contract);
+  const { data: cxApi, isLoading, isError } = useCxApi(contract);
   const updateCallContract = useUpdateCallContract();
   const removeCall = useRemoveCall();
 
@@ -80,6 +81,23 @@ const ArbitraryCall = ({ call, callIndex }: { callIndex: number; call: EditableA
         value={contract || ''}
         onChange={e => updateCallContract(callIndex, e.target.value)}
       />
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div {...inputVariants} style={{ textAlign: 'center' }}>
+            <Spinner size={25} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {isError ||
+          (!!contract && !isLoading && !cxApi && (
+            <motion.div {...inputVariants}>
+              <Typography color="alert">
+                <Trans>Wrong contract address</Trans>
+              </Typography>
+            </motion.div>
+          ))}
+      </AnimatePresence>
       <AnimatePresence>
         {!isLoading && cxApi && (
           <motion.div {...inputVariants}>

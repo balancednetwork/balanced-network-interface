@@ -46,7 +46,7 @@ export function useCxApi(cx: string | undefined) {
       }
     },
     {
-      keepPreviousData: true,
+      keepPreviousData: false,
     },
   );
 }

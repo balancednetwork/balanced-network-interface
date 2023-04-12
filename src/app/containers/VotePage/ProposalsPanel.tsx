@@ -19,7 +19,7 @@ import { Grid, ProposalPreview, StyledTypography } from './styledComponents';
 
 export default function ProposalsPanel() {
   //temporary for lisbon
-  const { data: proposals } = useTotalProposalQuery(1);
+  const { data: proposals } = useTotalProposalQuery(10);
   const { data: activeProposals } = useActiveProposals();
   const theme = useTheme();
   const bBalnAmount = useBBalnAmount();

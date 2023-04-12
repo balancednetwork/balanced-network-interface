@@ -17,7 +17,7 @@ import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 export function ProposalList() {
   //temporary for lisbon
-  const { data: proposals } = useTotalProposalQuery(1);
+  const { data: proposals } = useTotalProposalQuery(10);
   const { account } = useIconReact();
   useFetchBBalnInfo(account);
   useWalletFetchBalances(account);

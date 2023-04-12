@@ -169,35 +169,45 @@ export const useAdditionalInfoById = (id?: number) => {
   return items?.find(item => item.id === id);
 };
 
-export const useActiveProposals = () => {
+export const useActiveProposals = (offset: number = 30, batchSize: number = 200) => {
   const { account } = useIconReact();
   const { data: platformDay } = usePlatformDayQuery();
 
-  return useQuery(QUERY_KEYS.Vote.ActiveProposals(account || ''), async () => {
-    if (account) {
-      const proposals = await bnJs.Governance.getProposals(1, 200);
+  return useQuery(
+    `activeProposals-${offset}-${batchSize}`,
+    async () => {
+      if (account) {
+        const proposals = await bnJs.Governance.getProposals(offset, batchSize);
+        console.log(proposals);
 
-      return Promise.all(
-        proposals.map(async proposal => {
-          if (
-            platformDay &&
-            proposal.status === 'Active' &&
-            parseInt(proposal['start day'], 16) <= platformDay &&
-            parseInt(proposal['end day'], 16) > platformDay
-          ) {
-            const res = await bnJs.Governance.getVotesOfUser(parseInt(proposal.id), account!);
-            const approval = BalancedJs.utils.toIcx(res['for']);
-            const reject = BalancedJs.utils.toIcx(res['against']);
-            const hasVoted = !(approval.isZero() && reject.isZero());
+        const activeProposals = await Promise.all(
+          proposals.map(async proposal => {
+            if (
+              platformDay &&
+              proposal.status === 'Active' &&
+              parseInt(proposal['start day'], 16) <= platformDay &&
+              parseInt(proposal['end day'], 16) > platformDay
+            ) {
+              const res = await bnJs.Governance.getVotesOfUser(parseInt(proposal.id), account!);
+              const approval = BalancedJs.utils.toIcx(res['for']);
+              const reject = BalancedJs.utils.toIcx(res['against']);
+              const hasVoted = !(approval.isZero() && reject.isZero());
 
-            return !hasVoted;
-          } else {
-            return false;
-          }
-        }),
-      ).then(results => proposals.filter((_proposal, index) => results[index]));
-    }
-  });
+              return !hasVoted;
+            } else {
+              return false;
+            }
+          }),
+        ).then(results => proposals.filter((_proposal, index) => results[index]));
+
+        console.log('activeProposals', activeProposals);
+        return activeProposals;
+      }
+    },
+    {
+      enabled: !!account && !!platformDay,
+    },
+  );
 };
 
 export const useMinBBalnPercentageToSubmit = () => {

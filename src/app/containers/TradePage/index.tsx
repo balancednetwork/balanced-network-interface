@@ -15,7 +15,7 @@ import SwapPanel from 'app/components/trade/SwapPanel';
 import { SectionPanel } from 'app/components/trade/utils';
 import { useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
 import { useTransferAssetsModalToggle } from 'store/application/hooks';
-import { useFetchBBalnSources } from 'store/bbaln/hooks';
+import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
 import { useFetchOraclePrices } from 'store/oracle/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';
@@ -54,6 +54,7 @@ export function TradePage() {
   useFetchOraclePrices();
   useFetchBBalnSources(5000, true);
   useWalletFetchBalances(account);
+  useFetchBBalnInfo(account);
   useFetchRewardsInfo();
   useFetchStabilityFundBalances();
 

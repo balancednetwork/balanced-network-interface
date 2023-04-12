@@ -14,7 +14,7 @@ import styled, { css, useTheme } from 'styled-components';
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
 import Column from 'app/components/Column';
-import { Link } from 'app/components/Link';
+import { UnderlineText } from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton } from 'app/components/ProposalInfo';
 import { VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
@@ -24,12 +24,11 @@ import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import bnJs from 'bnJs';
-import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
+import { useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useFetchBBalnInfo } from 'store/bbaln/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
-import { getTrackerLink } from 'utils';
 import { formatTimeStr } from 'utils/timeformat';
 
 dayjs.extend(duration);
@@ -160,9 +159,6 @@ export function ProposalPage() {
   }, [proposalQuery, voteStatusQuery, txStatus]);
 
   const theme = useTheme();
-
-  const { networkId } = useIconReact();
-  const additionalInfo = useAdditionalInfoById(proposal?.id);
 
   const handleChangeVote = () => {
     if (!userStatus?.reject.isZero()) {
@@ -358,27 +354,15 @@ export function ProposalPage() {
               </>
             )}
           </Typography>
-          <Flex alignItems="center">
-            {additionalInfo?.discussionURL && (
-              <>
-                <InfoLink href={additionalInfo?.discussionURL} target="_blank">
-                  <Trans>Discussion</Trans>
-                </InfoLink>
-                <ExternalIcon width="15" height="15" style={{ marginLeft: 5, marginRight: 15 }} />
-              </>
-            )}
-            {additionalInfo?.hash && (
-              <>
-                <InfoLink
-                  href={additionalInfo?.hash && getTrackerLink(networkId, additionalInfo?.hash, 'transaction')}
-                  target="_blank"
-                >
-                  <Trans>Transaction</Trans>
-                </InfoLink>
-                <ExternalIcon width="15" height="15" style={{ marginLeft: 5 }} />
-              </>
-            )}
-          </Flex>
+          {proposal && proposal['forum link'] && (
+            <a href={proposal && proposal['forum link']}>
+              <Typography color="primary" variant="span" style={{ textDecoration: 'none' }}>
+                <UnderlineText>See related forum post</UnderlineText>
+              </Typography>
+
+              <ExternalIcon width="14" height="14" style={{ marginLeft: 5, marginRight: 15, marginTop: -4 }} />
+            </a>
+          )}
         </BoxPanel>
 
         {proposal?.actions && stringifiedActions.indexOf('[') === 0 && stringifiedActions !== '[]' && (
@@ -393,7 +377,3 @@ export function ProposalPage() {
     </>
   );
 }
-
-const InfoLink = styled(Link)`
-  font-size: 16px;
-`;

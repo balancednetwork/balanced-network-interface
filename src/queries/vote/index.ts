@@ -178,7 +178,6 @@ export const useActiveProposals = (offset: number = 30, batchSize: number = 200)
     async () => {
       if (account) {
         const proposals = await bnJs.Governance.getProposals(offset, batchSize);
-        console.log(proposals);
 
         const activeProposals = await Promise.all(
           proposals.map(async proposal => {
@@ -200,7 +199,6 @@ export const useActiveProposals = (offset: number = 30, batchSize: number = 200)
           }),
         ).then(results => proposals.filter((_proposal, index) => results[index]));
 
-        console.log('activeProposals', activeProposals);
         return activeProposals;
       }
     },

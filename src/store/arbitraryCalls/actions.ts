@@ -12,8 +12,8 @@ export const removeCallStruct = createAction<{ callIndex: number; paramName: str
   'arbitraryCalls/removeCallStruct',
 );
 
-export const updateCall = createAction<{ callIndex: number; event: React.ChangeEvent<HTMLInputElement> }>(
-  'arbitraryCalls/updateCall',
+export const updateCallContract = createAction<{ callIndex: number; contract: string }>(
+  'arbitraryCalls/updateCallContract',
 );
 
 export const updateCallMethod = createAction<{ callIndex: number; method: string }>('arbitraryCalls/updateCallMethod');
@@ -33,3 +33,5 @@ export const updateCallStructParam = createAction<{
   fieldValue: string;
   fieldType: ArbitraryCallParameterType;
 }>('arbitraryCalls/updateCallStructParam');
+
+export const resetArbitraryCalls = createAction('arbitraryCalls/resetArbitraryCalls');

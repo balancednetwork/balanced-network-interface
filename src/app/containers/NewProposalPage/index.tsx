@@ -17,7 +17,7 @@ import bnJs from 'bnJs';
 import { usePlatformDayQuery } from 'queries/reward';
 import { useMinBBalnPercentageToSubmit } from 'queries/vote';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useEditableContractCalls } from 'store/arbitraryCalls/hooks';
+import { useEditableContractCalls, useResetArbitraryCalls } from 'store/arbitraryCalls/hooks';
 import { useBBalnAmount, useFetchBBalnInfo, useTotalSupply } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
@@ -109,6 +109,7 @@ export function NewProposalPage() {
   const theme = useTheme();
   const bBalnAmount = useBBalnAmount();
   const { data: minPercentage } = useMinBBalnPercentageToSubmit();
+  const resetArbitraryCalls = useResetArbitraryCalls();
 
   //Form
   const [title, setTitle] = useState('');
@@ -199,6 +200,7 @@ export function NewProposalPage() {
     setForumLink('');
     setDuration('');
     setDescription('');
+    resetArbitraryCalls();
   };
 
   const modalSubmit = () => {

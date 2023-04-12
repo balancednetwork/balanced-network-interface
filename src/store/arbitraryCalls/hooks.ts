@@ -9,7 +9,8 @@ import {
   addCallStruct,
   removeCall,
   removeCallStruct,
-  updateCall,
+  resetArbitraryCalls,
+  updateCallContract,
   updateCallMethod,
   updateCallParam,
   updateCallStructParam,
@@ -27,14 +28,14 @@ export function useAddCall(): () => void {
   }, [dispatch]);
 }
 
-export function useUpdateCallInput(): (callIndex: number, event: React.ChangeEvent<HTMLInputElement>) => void {
+export function useUpdateCallContract(): (callIndex: number, contract: string) => void {
   const dispatch = useDispatch();
   return React.useCallback(
-    (callIndex: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    (callIndex: number, contract: string) => {
       dispatch(
-        updateCall({
+        updateCallContract({
           callIndex,
-          event,
+          contract,
         }),
       );
     },
@@ -150,4 +151,11 @@ export function useUpdateCallMethodStructParam(): (
     },
     [dispatch],
   );
+}
+
+export function useResetArbitraryCalls(): () => void {
+  const dispatch = useDispatch();
+  return React.useCallback(() => {
+    dispatch(resetArbitraryCalls());
+  }, [dispatch]);
 }

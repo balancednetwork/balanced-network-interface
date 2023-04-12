@@ -5,10 +5,11 @@ import {
   addCallStruct,
   removeCall,
   removeCallStruct,
-  updateCall,
+  resetArbitraryCalls,
   updateCallMethod,
   updateCallParam,
   updateCallStructParam,
+  updateCallContract,
 } from './actions';
 
 export type ArbitraryCallParameterType = 'Address' | 'bytes' | 'str' | 'int' | 'bool' | '[]struct';
@@ -51,17 +52,18 @@ export default createReducer(initialState, builder =>
     .addCase(addCall, (state, { payload: { editableCall } }) => {
       state.editing.push(editableCall);
     })
-    .addCase(updateCall, (state, { payload: { callIndex, event } }) => {
-      const { name, value } = event.target;
-
+    .addCase(updateCallContract, (state, { payload: { callIndex, contract } }) => {
       const editing = { ...state.editing[callIndex] };
-      editing[name] = value;
+      editing.contract = contract;
+      editing.method = undefined;
+      editing.parameters = undefined;
 
       state.editing[callIndex] = editing;
     })
     .addCase(updateCallMethod, (state, { payload: { callIndex, method } }) => {
       const editing = { ...state.editing[callIndex] };
       editing.method = method;
+      editing.parameters = undefined;
 
       state.editing[callIndex] = editing;
     })
@@ -134,5 +136,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(removeCall, (state, { payload: { callIndex } }) => {
       state.editing.splice(callIndex, 1);
+    })
+    .addCase(resetArbitraryCalls, state => {
+      state.editing = [];
     }),
 );

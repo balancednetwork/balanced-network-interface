@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { Typography } from 'app/theme';
 import { ReactComponent as RemoveIcon } from 'assets/icons/remove.svg';
 import { useCxApi } from 'hooks/useCxApi';
-import { useRemoveCall, useUpdateCallInput } from 'store/arbitraryCalls/hooks';
+import { useRemoveCall, useUpdateCallContract } from 'store/arbitraryCalls/hooks';
 import { EditableArbitraryCall } from 'store/arbitraryCalls/reducer';
 
 import { FieldInput } from '..';
@@ -47,7 +47,7 @@ export const RemoveButton = styled.button`
 const ArbitraryCall = ({ call, callIndex }: { callIndex: number; call: EditableArbitraryCall }) => {
   const { contract, method } = call;
   const { data: cxApi, isLoading } = useCxApi(contract);
-  const updateCallInput = useUpdateCallInput();
+  const updateCallContract = useUpdateCallContract();
   const removeCall = useRemoveCall();
 
   const paramsToFill = React.useMemo(() => {
@@ -75,7 +75,11 @@ const ArbitraryCall = ({ call, callIndex }: { callIndex: number; call: EditableA
           <RemoveIcon width={18} />
         </RemoveButton>
       </Flex>
-      <FieldInput name="contract" value={contract || ''} onChange={e => updateCallInput(callIndex, e)} />
+      <FieldInput
+        name="contract"
+        value={contract || ''}
+        onChange={e => updateCallContract(callIndex, e.target.value)}
+      />
       <AnimatePresence>
         {!isLoading && cxApi && (
           <motion.div {...inputVariants}>

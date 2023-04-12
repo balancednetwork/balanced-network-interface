@@ -1,5 +1,8 @@
 import axios from 'axios';
+import { Converter } from 'icon-sdk-js';
 
+import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
 import { RPC_DEBUG_ENDPOINT } from 'hooks/useCxApi';
 import {
   ArbitraryCall,
@@ -9,9 +12,6 @@ import {
 } from 'store/arbitraryCalls/reducer';
 
 export function getTransactionsString(transactions: EditableArbitraryCall[]): string {
-  // if (!transactions.length) {
-  //   return null;
-  // }
   const formatted = transactions.map(transaction => {
     const formattedTx: ArbitraryCall = {
       address: transaction.contract as string,
@@ -67,28 +67,52 @@ const mappedParamTypes: { [key in ArbitraryCallParameterType]: string } = Object
 
 const debugStepEstimateParams = {
   jsonrpc: '2.0',
-  method: 'debug_estimateStep',
-  id: 1234,
+  method: 'debug_invokeTransaction',
+  id: 1235,
   params: {
     version: '0x3',
-    from: 'hx4ec7b10509274f5fcf0593edd4d2407f0085152e',
-    to: 'cx44250a12074799e26fdeee75648ae47e2cc84219',
+    from: '',
+    to: bnJs.Governance.address,
     value: '0x0',
-    timestamp: '0x563a6cf330136',
-    nid: '0x3',
+    timestamp: '',
+    nid: Converter.toHex(NETWORK_ID),
     nonce: '0x1',
     data: {
-      method: 'tryExecuteTransactions',
-      params: {
-        transactions: '',
-      },
+      method: 'defineVote',
+      params: {},
     },
   },
 };
 
-export async function tryExecuteWithTransactionsString(txsString) {
-  const params = { ...debugStepEstimateParams };
-  params.params.data.params.transactions = txsString;
-  const response = await axios.post(RPC_DEBUG_ENDPOINT, params);
-  console.log(response);
+export async function tryExecuteWithTransactionsString(
+  account: string | null | undefined,
+  txsString: string,
+  proposalData: {
+    title: string;
+    description: string;
+    duration: string;
+    forumLink: string;
+    platformDay: number | undefined;
+  },
+) {
+  if (account && proposalData.platformDay) {
+    const params = { ...debugStepEstimateParams };
+    params.params.timestamp = Converter.toHex(new Date().getTime() * 1000);
+    params.params.data.params = {
+      name: proposalData.title,
+      description: proposalData.description,
+      vote_start: Converter.toHex(proposalData.platformDay + 1),
+      duration: Converter.toHex(parseInt(proposalData.duration)),
+      forumLink: proposalData.forumLink,
+      transactions: txsString,
+    };
+    params.params.from = account;
+    console.log('test params:', params);
+    const response = await axios.post(RPC_DEBUG_ENDPOINT, params);
+    console.log(response);
+
+    return { query: params, response };
+  } else {
+    return { error: 'Login first' };
+  }
 }

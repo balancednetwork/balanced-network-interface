@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
@@ -203,6 +203,16 @@ export function NewProposalPage() {
     resetArbitraryCalls();
   };
 
+  const proposalData = useMemo(() => {
+    return {
+      title,
+      description,
+      duration,
+      forumLink,
+      platformDay,
+    };
+  }, [title, description, duration, forumLink, platformDay]);
+
   const modalSubmit = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
@@ -239,6 +249,36 @@ export function NewProposalPage() {
         .finally(() => {
           changeShouldLedgerSign(false);
           resetForm();
+          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+        });
+  };
+
+  const tryExecute = () => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
+    if (bnJs.contractSettings.ledgerSettings.actived) {
+      changeShouldLedgerSign(true);
+    }
+
+    platformDay &&
+      bnJs
+        .inject({ account })
+        .Governance.tryExecuteTransactions(getTransactionsString(arbitraryCalls))
+        .then(res => {
+          if (res.result) {
+            addTransaction(
+              { hash: res.result },
+              {
+                pending: t`Testing execution...`,
+                summary: t`Executed.`,
+              },
+            );
+          } else {
+            console.error(res);
+          }
+        })
+        .finally(() => {
+          changeShouldLedgerSign(false);
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
   };
@@ -313,7 +353,7 @@ export function NewProposalPage() {
           </FieldContainer>
           <FieldTextArea onChange={onTextAreaInputChange} value={description} maxLength={500} />
 
-          <ArbitraryCallsForm />
+          <ArbitraryCallsForm proposalData={proposalData} tryExecute={tryExecute} />
 
           <Typography variant="content" mt="25px" mb="25px" textAlign="center">
             <Trans>It costs 100 bnUSD to submit a proposal.</Trans>

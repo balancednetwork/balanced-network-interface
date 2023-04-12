@@ -33,14 +33,33 @@ export const inputVariants = {
   exit: { opacity: 0, y: -15, height: 0 },
 };
 
-const ArbitraryCallsForm = () => {
+const ArbitraryCallsForm = ({
+  proposalData,
+  tryExecute,
+}: {
+  tryExecute: () => void;
+  proposalData: {
+    title: string;
+    description: string;
+    duration: string;
+    forumLink: string;
+    platformDay: number | undefined;
+  };
+}) => {
   const editableCalls = useEditableContractCalls();
   const addCall = useAddCall();
+  // const { account } = useIconReact();
+  // const [executionResult, setExecutionResult] = React.useState<string | undefined>();
 
-  const testExecution = () => {
+  // const testExecution = async () => {
+  //   const txsString = getTransactionsString(editableCalls);
+  //   const result = await tryExecuteWithTransactionsString(account, txsString, proposalData);
+  //   setExecutionResult(JSON.stringify(result));
+  // };
+
+  const copyString = () => {
     const txsString = getTransactionsString(editableCalls);
     return txsString;
-    // tryExecuteWithTransactionsString(txsString);
   };
 
   return (
@@ -74,13 +93,24 @@ const ArbitraryCallsForm = () => {
       <Flex>
         <Button
           mt={5}
+          mr={5}
           onClick={() => {
-            navigator.clipboard.writeText(testExecution());
+            navigator.clipboard.writeText(copyString());
           }}
         >
           Copy tx string
         </Button>
+        {/* <Button mt={5} onClick={testExecution}> */}
+        <Button mt={5} onClick={tryExecute}>
+          Test arb calls execution
+        </Button>
       </Flex>
+      {/* {executionResult && (
+        <Box mt={5}>
+          <Typography variant="h2">Execution result</Typography>
+          <Typography>{executionResult}</Typography>
+        </Box>
+      )} */}
     </>
   );
 };

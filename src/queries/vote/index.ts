@@ -169,13 +169,13 @@ export const useAdditionalInfoById = (id?: number) => {
   return items?.find(item => item.id === id);
 };
 
-export const useActiveProposals = () => {
+export const useActiveProposals = (offset: number = 30, batchSize: number = 200) => {
   const { account } = useIconReact();
   const { data: platformDay } = usePlatformDayQuery();
 
-  return useQuery(QUERY_KEYS.Vote.ActiveProposals(account || ''), async () => {
+  return useQuery(`${QUERY_KEYS.Vote.ActiveProposals(account || '')}-${offset}-${batchSize}`, async () => {
     if (account) {
-      const proposals = await bnJs.Governance.getProposals(1, 200);
+      const proposals = await bnJs.Governance.getProposals(offset, batchSize);
 
       return Promise.all(
         proposals.map(async proposal => {

@@ -16,7 +16,8 @@ import { useBBalnAmount, useFetchBBalnInfo } from 'store/bbaln/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 export function ProposalList() {
-  const { data: proposals } = useTotalProposalQuery();
+  //temporary for lisbon
+  const { data: proposals } = useTotalProposalQuery(1);
   const { account } = useIconReact();
   useFetchBBalnInfo(account);
   useWalletFetchBalances(account);

@@ -11,7 +11,7 @@ import { Typography } from 'app/theme';
 import { useAddCall, useEditableContractCalls } from 'store/arbitraryCalls/hooks';
 
 import ArbitraryCall from './ArbitraryCall';
-import { getTransactionsString, tryExecuteWithTransactionsString } from './utils';
+import { getTransactionsString } from './utils';
 
 export const inputVariants = {
   initial: { opacity: 0, y: -15, height: 0, width: '100%' },
@@ -25,7 +25,8 @@ const ArbitraryCallsForm = () => {
 
   const testExecution = () => {
     const txsString = getTransactionsString(editableCalls);
-    tryExecuteWithTransactionsString(txsString);
+    return txsString;
+    // tryExecuteWithTransactionsString(txsString);
   };
 
   return (
@@ -56,10 +57,14 @@ const ArbitraryCallsForm = () => {
           <Trans>Add an arbitrary call</Trans>
         </Typography>
       </UnderlineText>
-
       <Flex>
-        <Button mt={2} onClick={testExecution}>
-          Test execution
+        <Button
+          mt={5}
+          onClick={() => {
+            navigator.clipboard.writeText(testExecution());
+          }}
+        >
+          Copy tx string
         </Button>
       </Flex>
     </>

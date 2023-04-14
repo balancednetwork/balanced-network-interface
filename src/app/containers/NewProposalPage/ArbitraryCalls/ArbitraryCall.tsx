@@ -93,10 +93,19 @@ const ArbitraryCall = ({ call, callIndex }: { callIndex: number; call: EditableA
           (!!contract && !isLoading && !cxApi && (
             <motion.div {...inputVariants}>
               <Typography color="alert">
-                <Trans>Wrong contract address</Trans>
+                <Trans>Invalid contract address</Trans>
               </Typography>
             </motion.div>
           ))}
+      </AnimatePresence>
+      <AnimatePresence>
+        {isError && !!contract && !isLoading && !cxApi && (
+          <motion.div {...inputVariants}>
+            <Typography color="alert">
+              <Trans>Contract doesn't exist or has no available methods.</Trans>
+            </Typography>
+          </motion.div>
+        )}
       </AnimatePresence>
       <AnimatePresence>
         {!isLoading && cxApi && (

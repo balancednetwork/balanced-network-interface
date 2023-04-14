@@ -2,14 +2,14 @@ import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { Link } from 'react-router-dom';
-import { Flex } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
 
 import { ButtonLink } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import { UnderlineText } from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
-import { StyledSkeleton, VoteStatusLabel } from 'app/components/ProposalInfo/components';
+import { StyledSkeleton, VoteDateEndLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
 import { Typography } from 'app/theme';
 import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
 import { useBBalnAmount } from 'store/bbaln/hooks';
@@ -73,8 +73,11 @@ export default function ProposalsPanel() {
                         {proposal.description && normalizeContent(proposal.description, true)}
                       </Typography>
                       <Divider mt={3} mb={2}></Divider>
-                      <Flex sx={{ rowGap: '10px' }} flexWrap="wrap" alignItems="center" mb={-2}>
-                        <VoteStatusLabel proposal={proposal} />
+                      <Flex flexWrap="wrap" alignItems="center" mb={-2}>
+                        <Box mr={'17px'}>
+                          <VoteStatusLabel proposal={proposal} />
+                        </Box>
+                        <VoteDateEndLabel proposal={proposal} />
                       </Flex>
                     </ProposalPreview>
                   </Link>

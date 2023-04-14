@@ -9,9 +9,11 @@ import styled from 'styled-components';
 
 import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
+import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
 import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
 import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
 import { ProposalInterface } from 'types';
+import { getDateFromDay } from 'utils/timeformat';
 
 dayjs.extend(duration);
 
@@ -55,6 +57,23 @@ export const VoteStatusLabel = ({ proposal }: { proposal?: ProposalInterface }) 
       )}
     </div>
   );
+};
+
+export const VoteDateEndLabel = ({ proposal }: { proposal?: ProposalInterface }) => {
+  return proposal &&
+    proposal.status !== 'Active' &&
+    proposal.status !== 'Pending' &&
+    proposal.status !== 'Cancelled' &&
+    proposal.endDay ? (
+    <IconLabel
+      icon={<CalendarIcon height="22" width="22" />}
+      content={
+        <Typography lineHeight={1.4} color="text">
+          {getDateFromDay(proposal.endDay).format('MMM DD YYYY')}
+        </Typography>
+      }
+    />
+  ) : null;
 };
 
 export const VoterPercentLabel = ({ value }: { value?: number }) => {

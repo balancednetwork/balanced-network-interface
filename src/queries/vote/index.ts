@@ -36,6 +36,7 @@ export const useProposalInfoQuery = (pId: number) => {
       voters: parseInt(res['for_voter_count'], 16) + parseInt(res['against_voter_count'], 16),
       status: res['status'],
       actions: res['actions'],
+      forumLink: res['forum link'],
     };
   });
 };

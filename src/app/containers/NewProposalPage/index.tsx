@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
@@ -136,6 +136,9 @@ export function NewProposalPage() {
 
   const addTransaction = useTransactionAdder();
 
+  //verification modal
+  const [isVerificationModalOpen, setVerificationModalOpen] = React.useState(false);
+
   // const { isScoreAddress } = Validator;
 
   const totalSupply = useTotalSupply();
@@ -203,16 +206,6 @@ export function NewProposalPage() {
     resetArbitraryCalls();
   };
 
-  const proposalData = useMemo(() => {
-    return {
-      title,
-      description,
-      duration,
-      forumLink,
-      platformDay,
-    };
-  }, [title, description, duration, forumLink, platformDay]);
-
   const modalSubmit = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
@@ -253,7 +246,7 @@ export function NewProposalPage() {
         });
   };
 
-  const tryExecute = () => {
+  const tryExecute = useCallback(() => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
@@ -273,6 +266,7 @@ export function NewProposalPage() {
                 summary: t`Executed.`,
               },
             );
+            setVerificationModalOpen(false);
           } else {
             console.error(res);
           }
@@ -281,7 +275,7 @@ export function NewProposalPage() {
           changeShouldLedgerSign(false);
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
-  };
+  }, [account, addTransaction, arbitraryCalls, changeShouldLedgerSign, platformDay]);
 
   return (
     <>
@@ -353,7 +347,7 @@ export function NewProposalPage() {
           </FieldContainer>
           <FieldTextArea onChange={onTextAreaInputChange} value={description} maxLength={500} />
 
-          <ArbitraryCallsForm proposalData={proposalData} tryExecute={tryExecute} />
+          <ArbitraryCallsForm openVerificationModal={setVerificationModalOpen} />
 
           <Typography variant="content" mt="25px" mb="25px" textAlign="center">
             <Trans>It costs 100 bnUSD to submit a proposal.</Trans>
@@ -395,6 +389,36 @@ export function NewProposalPage() {
                 </TextButton>
                 <Button onClick={modalSubmit} fontSize={14} disabled={!hasEnoughICX}>
                   <Trans>Submit proposal</Trans>
+                </Button>
+              </>
+            )}
+          </Flex>
+        </ModalContent>
+      </Modal>
+
+      {/* Contract calls verification modal */}
+      <Modal isOpen={isVerificationModalOpen} onDismiss={() => setVerificationModalOpen(false)}>
+        <ModalContent>
+          <Typography fontSize={20} fontWeight="bold" textAlign="center" mb="5px">
+            <Trans>Verify setup?</Trans>
+          </Typography>
+
+          <Typography textAlign="center" marginTop="10px">
+            <Trans>
+              This will verify the current contract calls setup. This doesn't execute the call neither submits the
+              proposal.
+            </Trans>
+          </Typography>
+
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            {shouldLedgerSign && <Spinner />}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={() => setVerificationModalOpen(false)} fontSize={14}>
+                  <Trans>Go back</Trans>
+                </TextButton>
+                <Button onClick={tryExecute} fontSize={14} disabled={!hasEnoughICX}>
+                  <Trans>Verify</Trans>
                 </Button>
               </>
             )}

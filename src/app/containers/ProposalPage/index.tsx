@@ -17,7 +17,12 @@ import Column from 'app/components/Column';
 import { UnderlineText } from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton } from 'app/components/ProposalInfo';
-import { VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
+import {
+  VoteDateEndLabel,
+  VoterNumberLabel,
+  VoterPercentLabel,
+  VoteStatusLabel,
+} from 'app/components/ProposalInfo/components';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
@@ -184,6 +189,7 @@ export function ProposalPage() {
 
           <Flex alignItems="center" mb={3} flexWrap="wrap" sx={{ columnGap: '15px' }} my={1}>
             <VoteStatusLabel proposal={proposal} />
+            <VoteDateEndLabel proposal={proposal} />
             <VoterPercentLabel value={proposal?.sum} />
             <VoterNumberLabel value={proposal?.voters} />
           </Flex>
@@ -354,8 +360,8 @@ export function ProposalPage() {
               </>
             )}
           </Typography>
-          {proposal && proposal['forum link'] && (
-            <a href={proposal && proposal['forum link']}>
+          {proposal && proposal.forumLink && (
+            <a href={proposal && proposal.forumLink} target="_blank" rel="noreferrer">
               <Typography color="primary" variant="span" style={{ textDecoration: 'none' }}>
                 <UnderlineText>See related forum post</UnderlineText>
               </Typography>

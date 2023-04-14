@@ -5,9 +5,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { Button } from 'app/components/Button';
 import { UnderlineText } from 'app/components/DropdownText';
+import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
+import { ReactComponent as CopyIcon } from 'assets/icons/copy.svg';
 import { useAddCall, useEditableContractCalls } from 'store/arbitraryCalls/hooks';
 
 import ArbitraryCall from './ArbitraryCall';
@@ -33,34 +34,17 @@ export const inputVariants = {
   exit: { opacity: 0, y: -15, height: 0 },
 };
 
-const ArbitraryCallsForm = ({
-  proposalData,
-  tryExecute,
-}: {
-  tryExecute: () => void;
-  proposalData: {
-    title: string;
-    description: string;
-    duration: string;
-    forumLink: string;
-    platformDay: number | undefined;
-  };
-}) => {
+const ArbitraryCallsForm = ({ openVerificationModal }: { openVerificationModal: (bool) => void }) => {
   const editableCalls = useEditableContractCalls();
   const addCall = useAddCall();
-  // const { account } = useIconReact();
-  // const [executionResult, setExecutionResult] = React.useState<string | undefined>();
 
-  // const testExecution = async () => {
-  //   const txsString = getTransactionsString(editableCalls);
-  //   const result = await tryExecuteWithTransactionsString(account, txsString, proposalData);
-  //   setExecutionResult(JSON.stringify(result));
-  // };
-
-  const copyString = () => {
+  const [isCopied, updateCopyState] = React.useState(false);
+  const copyString = React.useCallback(async () => {
     const txsString = getTransactionsString(editableCalls);
-    return txsString;
-  };
+    await navigator.clipboard.writeText(txsString);
+    updateCopyState(true);
+    setTimeout(() => updateCopyState(false), 2000);
+  }, [editableCalls]);
 
   return (
     <>
@@ -72,7 +56,7 @@ const ArbitraryCallsForm = ({
             exit={{ opacity: 0, height: 0 }}
           >
             <Typography variant="h2" py="30px">
-              Arbitrary calls
+              <Trans>Contract calls</Trans>
             </Typography>
           </motion.div>
         )}
@@ -87,30 +71,43 @@ const ArbitraryCallsForm = ({
       </AnimatePresence>
       <UnderlineText onClick={addCall}>
         <Typography color="primaryBright">
-          <Trans>Add an arbitrary call</Trans>
+          <Trans>Add a contract call</Trans>
         </Typography>
       </UnderlineText>
-      <Flex>
-        <Button
-          mt={5}
-          mr={5}
-          onClick={() => {
-            navigator.clipboard.writeText(copyString());
-          }}
-        >
-          Copy tx string
-        </Button>
-        {/* <Button mt={5} onClick={testExecution}> */}
-        <Button mt={5} onClick={tryExecute}>
-          Test arb calls execution
-        </Button>
-      </Flex>
-      {/* {executionResult && (
-        <Box mt={5}>
-          <Typography variant="h2">Execution result</Typography>
-          <Typography>{executionResult}</Typography>
-        </Box>
-      )} */}
+      <AnimatePresence>
+        {editableCalls.length > 0 && (
+          <motion.div {...inputVariants}>
+            <Flex flexDirection="column" pt={2}>
+              <Flex pt={2} mr={3}>
+                <Typography color="primaryBright" fontSize={14} onClick={copyString} style={{ cursor: 'pointer' }}>
+                  <UnderlineText>{isCopied ? 'String copied' : 'Copy execution string'}</UnderlineText>
+                  <CopyIcon width="14" height="14" style={{ marginLeft: 7, marginRight: 0, marginTop: -1 }} />
+                </Typography>
+              </Flex>
+              <Flex pt={2}>
+                <Typography color="primaryBright" fontSize={14}>
+                  <UnderlineText onClick={() => openVerificationModal(true)}>
+                    <Trans>Verify execution string</Trans>
+                  </UnderlineText>
+                </Typography>
+                <Box ml={1} pt="1px">
+                  <QuestionHelper
+                    text={
+                      <>
+                        <strong>Hana</strong> users will see an error message before signing. If it says{' '}
+                        <em>Reverted(20)</em> in the end, contract calls are successfully verified.
+                        <Divider my={2} />
+                        <strong>Ledger</strong> users will sign a transaction and will see a result in standard
+                        transaction notification.
+                      </>
+                    }
+                  />
+                </Box>
+              </Flex>
+            </Flex>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

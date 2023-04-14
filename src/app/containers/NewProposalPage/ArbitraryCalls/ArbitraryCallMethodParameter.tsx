@@ -154,15 +154,17 @@ const ArbitraryCallMethodParameter = ({
                   ))}
           </AnimatePresence>
           <AnimatePresence>
-            <motion.div {...inputVariants}>
-              <UnderlineText onClick={handleAddToList}>
-                <Typography color="primaryBright">
-                  <Trans>
-                    Add <strong>{param.name}</strong> item
-                  </Trans>
-                </Typography>
-              </UnderlineText>
-            </motion.div>
+            {isParamList && (
+              <motion.div {...inputVariants} transition={{ delay: 0.2 }}>
+                <UnderlineText onClick={handleAddToList}>
+                  <Typography color="primaryBright">
+                    <Trans>
+                      Add <strong>{param.name}</strong> item
+                    </Trans>
+                  </Typography>
+                </UnderlineText>
+              </motion.div>
+            )}
           </AnimatePresence>
         </>
       )}

@@ -23,10 +23,12 @@ const ArbitraryCallWrap = styled(Flex)`
 `;
 
 const ParamsWrap = styled.div`
-  display: grid;
   width: 100%;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 30px;
+  @media screen and (min-width: 1000px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 30px;
+  }
 `;
 
 export const RemoveButton = styled.button`

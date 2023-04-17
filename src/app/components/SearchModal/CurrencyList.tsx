@@ -148,7 +148,6 @@ function CurrencyRow({
 
 export default function CurrencyList({
   currencies,
-  selectedCurrency,
   onCurrencySelect,
   otherCurrency,
   showImportView,
@@ -161,7 +160,6 @@ export default function CurrencyList({
   onDismiss,
 }: {
   currencies: Currency[];
-  selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency) => void;
   otherCurrency?: Currency | null;
   showImportView: () => void;

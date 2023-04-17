@@ -164,11 +164,14 @@ export function CurrencySearch({
   const node = useRef<HTMLDivElement>();
   useOnClickOutside(node, open ? toggle : undefined);
 
-  const currencies =
-    currencySelectionType === CurrencySelectionType.NORMAL ||
-    currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
-      ? filteredSortedTokensWithICX
-      : filteredSortedTokens;
+  const filterCurrencies = useMemo(() => {
+    const currencies =
+      currencySelectionType === CurrencySelectionType.NORMAL ||
+      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
+        ? filteredSortedTokensWithICX
+        : filteredSortedTokens;
+    return currencies;
+  }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX]);
 
   return (
     <Wrapper width={width}>
@@ -194,7 +197,7 @@ export function CurrencySearch({
       ) : filteredSortedTokensWithICX?.length > 0 ? (
         <CurrencyList
           account={account}
-          currencies={currencies}
+          currencies={filterCurrencies}
           onCurrencySelect={handleCurrencySelect}
           showImportView={showImportView}
           setImportToken={setImportToken}

@@ -67,7 +67,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
         <TransactionInfoBody>
           <Typography variant="p" fontWeight={500}>
             {arbitraryCallsTestExecutionPassed ? (
-              <Trans>Arbitrary calls execution successfully verified.</Trans>
+              <Trans>Contract calls execution successfully verified.</Trans>
             ) : (
               <Trans>Couldn't complete your transaction.</Trans>
             )}

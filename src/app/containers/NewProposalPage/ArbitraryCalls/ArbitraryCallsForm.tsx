@@ -77,28 +77,51 @@ const ArbitraryCallsForm = ({ openVerificationModal }: { openVerificationModal: 
       <AnimatePresence>
         {editableCalls.length > 0 && (
           <motion.div {...inputVariants}>
-            <Flex flexDirection="column" pt={2}>
-              <Flex pt={2} mr={3}>
+            <Flex flexDirection="row" pt={2} flexWrap="wrap">
+              <Flex pt={2}>
                 <Typography color="primaryBright" fontSize={14} onClick={copyString} style={{ cursor: 'pointer' }}>
-                  <UnderlineText>{isCopied ? 'String copied' : 'Copy execution string'}</UnderlineText>
+                  <UnderlineText>{isCopied ? 'Data copied' : 'Copy data'}</UnderlineText>
                   <CopyIcon width="14" height="14" style={{ marginLeft: 7, marginRight: 0, marginTop: -1 }} />
                 </Typography>
               </Flex>
+              <Typography pt="8px" pl="7px" pr="5px">
+                |
+              </Typography>
               <Flex pt={2}>
                 <Typography color="primaryBright" fontSize={14}>
                   <UnderlineText onClick={() => openVerificationModal(true)}>
-                    <Trans>Verify execution string</Trans>
+                    {editableCalls.length > 1 ? (
+                      <Trans>Verify contract calls</Trans>
+                    ) : (
+                      <Trans>Verify contract call</Trans>
+                    )}
                   </UnderlineText>
                 </Typography>
-                <Box ml={1} pt="1px">
+                <Box ml={1} pt="0">
                   <QuestionHelper
+                    width={330}
                     text={
                       <>
-                        <strong>Hana</strong> users will see an error message before signing. If it says{' '}
-                        <em>Reverted(20)</em> in the end, contract calls are successfully verified.
-                        <Divider my={2} />
-                        <strong>Ledger</strong> users will sign a transaction and will see a result in standard
-                        transaction notification.
+                        <Typography mb={3}>
+                          <Trans>Test your contract calls before you submit the proposal.</Trans>
+                        </Typography>
+                        <Typography fontWeight="700">
+                          <Trans>On Hana:</Trans>
+                        </Typography>
+                        <Typography mb={3}>
+                          <Trans>
+                            You'll see an error message before you sign the transaction. If it ends with Reverted(20),
+                            the contract calls have been verified.
+                          </Trans>
+                        </Typography>
+                        <Typography fontWeight="700">
+                          <Trans>On Ledger:</Trans>
+                        </Typography>
+                        <Typography>
+                          <Trans>
+                            Sign the transaction, then check the banner notification message for the result.
+                          </Trans>
+                        </Typography>
                       </>
                     }
                   />

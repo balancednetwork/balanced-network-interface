@@ -363,7 +363,7 @@ export function ProposalPage() {
           {proposal && proposal.forumLink && (
             <a href={proposal && proposal.forumLink} target="_blank" rel="noreferrer">
               <Typography color="primary" variant="span" style={{ textDecoration: 'none' }}>
-                <UnderlineText>See related forum post</UnderlineText>
+                <UnderlineText>View forum discussion</UnderlineText>
               </Typography>
 
               <ExternalIcon width="14" height="14" style={{ marginLeft: 5, marginRight: 15, marginTop: -4 }} />

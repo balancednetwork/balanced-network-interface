@@ -262,7 +262,7 @@ export function NewProposalPage() {
             addTransaction(
               { hash: res.result },
               {
-                pending: t`Verifying arbitrary calls execution...`,
+                pending: t`Verifying contract calls execution...`,
                 summary: t`Executed.`,
               },
             );
@@ -359,7 +359,7 @@ export function NewProposalPage() {
           </div>
           {account && !isBBalnValid && minimumBBalnAmount && (
             <Typography variant="content" mt="25px" mb="25px" textAlign="center" color={theme.colors.alert}>
-              <Trans>Have at least {minimumBBalnAmount.dp(2).toFormat()} bBALN if you want to propose a change.</Trans>
+              <Trans>You must have at least {minimumBBalnAmount.dp(2).toFormat()} bBALN to propose a change.</Trans>
             </Typography>
           )}
         </ProposalDetailContainer>
@@ -400,14 +400,11 @@ export function NewProposalPage() {
       <Modal isOpen={isVerificationModalOpen} onDismiss={() => setVerificationModalOpen(false)}>
         <ModalContent>
           <Typography fontSize={20} fontWeight="bold" textAlign="center" mb="5px">
-            <Trans>Verify setup?</Trans>
+            <Trans>Verify contract calls?</Trans>
           </Typography>
 
           <Typography textAlign="center" marginTop="10px">
-            <Trans>
-              This will verify the current contract calls setup. This doesn't execute the call neither submits the
-              proposal.
-            </Trans>
+            <Trans>Check that your contract calls are set up correctly before you submit the proposal.</Trans>
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

@@ -38,15 +38,10 @@ export function useTransactionAdder(): (
 
       const { hash } = response;
       if (!hash) {
-        toast(
-          <NotificationError
-            failureReason={t`Couldn't complete the transaction. Make sure your wallet is set to the right network.`}
-          />,
-          {
-            toastId: 'possibleWrongNetwork',
-            autoClose: 5000,
-          },
-        );
+        toast(<NotificationError failureReason={t`Learn how to resolve most transaction errors.`} generic={true} />, {
+          toastId: 'genericError',
+          autoClose: 5000,
+        });
         throw Error('No transaction hash found.');
       }
 

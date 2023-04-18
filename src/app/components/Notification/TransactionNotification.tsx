@@ -15,6 +15,7 @@ type NotificationProps = {
   summary?: string;
   failureReason?: string;
   redirectOnSuccess?: string;
+  generic?: boolean;
 };
 
 const NotificationPending = ({ summary }: NotificationProps) => {
@@ -51,9 +52,13 @@ const NotificationSuccess = ({ summary, redirectOnSuccess }: NotificationProps) 
   );
 };
 
-const NotificationError = ({ failureReason }: NotificationProps) => {
+const NotificationError = ({ failureReason, generic }: NotificationProps) => {
   return (
-    <NotificationContainer>
+    <NotificationContainer
+      onClick={() => {
+        if (generic) window.open('https://docs.balanced.network/troubleshooting#transaction-error', '_blank');
+      }}
+    >
       <TransactionStatus>
         <FailureIcon width={20} height={20} />
       </TransactionStatus>
@@ -65,7 +70,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
           </Typography>
         </TransactionInfoBody>
         <TransactionInfoBody>
-          <Typography variant="p" fontWeight={500} color="alert">
+          <Typography variant="p" fontWeight={500} color={generic ? 'primaryBright' : 'alert'}>
             {failureReason}
           </Typography>
         </TransactionInfoBody>

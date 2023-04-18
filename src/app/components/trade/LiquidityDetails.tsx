@@ -264,7 +264,7 @@ const PoolRecord = ({
   const stakedLPPercent = useStakedLPPercent(poolId);
 
   const { baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
-  const { reward } = getShareReward(pair, balance, totalReward);
+  const { reward } = getShareReward(pair, balance, totalReward, pairData?.stakedRatio);
   const [aBalance, bBalance] = getABBalance(pair, balance);
   const pairName = pairData ? pairData.name : `${aBalance.currency.symbol}/${bBalance.currency.symbol}`;
   const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);

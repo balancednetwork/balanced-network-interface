@@ -105,7 +105,10 @@ export const useRatesWithOracle = () => {
   }, [rates, oraclePrices]);
 };
 
-export const useIncentivisedPairs = (): UseQueryResult<{ name: string; id: number; rewards: Fraction }[], Error> => {
+export const useIncentivisedPairs = (): UseQueryResult<
+  { name: string; id: number; rewards: Fraction; totalStaked: number }[],
+  Error
+> => {
   const { data: rewards } = useFlattenedRewardsDistribution();
 
   return useQuery(
@@ -123,10 +126,17 @@ export const useIncentivisedPairs = (): UseQueryResult<{ name: string; id: numbe
 
         const sourceIDs = await bnJs.Multicall.getAggregateData(cds);
 
+        const sourcesTotalStaked = await Promise.all(
+          sourceIDs.map(
+            async (source, index) => await bnJs.StakedLP.totalStaked(index === 0 ? 1 : parseInt(source, 16)),
+          ),
+        );
+
         return lpSources.map((source, index) => ({
           name: source,
           id: index === 0 ? 1 : parseInt(sourceIDs[index], 16),
           rewards: rewards[source],
+          totalStaked: parseInt((sourcesTotalStaked[index] as string) ?? '0x0', 16),
         }));
       }
     },

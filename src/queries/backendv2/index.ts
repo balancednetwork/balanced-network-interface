@@ -1,4 +1,4 @@
-import { Token } from '@balancednetwork/sdk-core';
+import { Fraction, Token } from '@balancednetwork/sdk-core';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { useQuery } from 'react-query';
@@ -100,6 +100,7 @@ export type PairData = {
   volume30d: number;
   feesApy: number;
   balnApy: number;
+  stakedRatio: Fraction;
 };
 
 export const MIN_LIQUIDITY_TO_INCLUDE = 1000;
@@ -167,15 +168,21 @@ export function useAllPairs() {
               volume30d,
               feesApy: feesApy || 0,
               balnApy: 0,
+              stakedRatio: new Fraction(1),
             };
 
             if (incentivisedPair) {
+              const stakedRatio =
+                incentivisedPair.id !== 1
+                  ? new Fraction(incentivisedPair.totalStaked, item['total_supply'])
+                  : new Fraction(1);
               pair['balnApy'] = dailyDistribution
                 .times(new BigNumber(incentivisedPair.rewards.toFixed(4)))
                 .times(365)
                 .times(balnPrice)
-                .div(liquidity)
+                .div(new BigNumber(stakedRatio.toFixed(18)).times(liquidity))
                 .toNumber();
+              pair['stakedRatio'] = stakedRatio;
             }
 
             return pair;

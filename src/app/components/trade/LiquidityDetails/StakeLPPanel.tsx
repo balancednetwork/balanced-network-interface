@@ -170,7 +170,10 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
   const totalReward = rewards[sourceName];
-  const { reward } = getShareReward(pair, balance, totalReward);
+  const { reward } =
+    allPairs && poolId && allPairs[poolId]
+      ? getShareReward(pair, balance, totalReward, allPairs && allPairs[pair.poolId!].stakedRatio)
+      : getShareReward(pair, balance, totalReward);
   const stakedFractionValue = stakedFraction(stakedPercent);
   const isIncentivised = useMemo(
     () =>

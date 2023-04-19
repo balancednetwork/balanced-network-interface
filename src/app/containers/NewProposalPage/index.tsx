@@ -262,7 +262,7 @@ export function NewProposalPage() {
             addTransaction(
               { hash: res.result },
               {
-                pending: t`Verifying contract calls execution...`,
+                pending: t`Verifying contract calls...`,
                 summary: t`Executed.`,
               },
             );
@@ -399,11 +399,11 @@ export function NewProposalPage() {
       {/* Contract calls verification modal */}
       <Modal isOpen={isVerificationModalOpen} onDismiss={() => setVerificationModalOpen(false)}>
         <ModalContent>
-          <Typography fontSize={20} fontWeight="bold" textAlign="center" mb="5px">
+          <Typography color="text" fontSize={20} fontWeight="bold" textAlign="center" mb="5px">
             <Trans>Verify contract calls?</Trans>
           </Typography>
 
-          <Typography textAlign="center" marginTop="10px">
+          <Typography color="text" textAlign="center" marginTop="10px">
             <Trans>Check that your contract calls are set up correctly before you submit the proposal.</Trans>
           </Typography>
 

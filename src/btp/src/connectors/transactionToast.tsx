@@ -40,7 +40,7 @@ export const openToast = ({
           ...options,
         });
       } else {
-        toast(<NotificationError failureReason={t`Learn how to resolve most transaction errors.`} generic={true} />, {
+        toast(<NotificationError failureReason={t`Learn how to resolve common transaction errors.`} generic={true} />, {
           toastId: 'genericError',
           autoClose: 5000,
         });

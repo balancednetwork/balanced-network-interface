@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-15 19:20\n"
+"PO-Revision-Date: 2023-04-19 15:23\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -384,11 +384,6 @@ msgstr "주소 복사"
 msgid "Couldn't APPROVE {0} for cross-chain transfers."
 msgstr ""
 
-#: src/btp/src/connectors/transactionToast.tsx
-#: src/store/transactions/hooks.tsx
-msgid "Couldn't complete the transaction. Make sure your wallet is set to the right network."
-msgstr "트랜잭션을 완료할 수 없습니다. 지갑이 올바른 네트워크로 설정되어 있는지 확인하십시오."
-
 #: src/app/components/Notification/TransactionNotification.tsx
 msgid "Couldn't complete your transaction."
 msgstr "트랜잭션을 완료할 수 없습니다."
@@ -679,6 +674,11 @@ msgstr "제안서를 제출하는 데 100 bnUSD 가 필요합니다."
 
 #: src/app/components/trade/AllPoolsPanel.tsx
 msgid "LIQUIDITY"
+msgstr ""
+
+#: src/btp/src/connectors/transactionToast.tsx
+#: src/store/transactions/hooks.tsx
+msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
 #: src/app/components/trade/SwapDescription.tsx

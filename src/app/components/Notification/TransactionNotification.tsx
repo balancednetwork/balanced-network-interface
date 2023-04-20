@@ -6,6 +6,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
+import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { ReactComponent as FailureIcon } from 'assets/icons/failure.svg';
 import { ReactComponent as PendingIcon } from 'assets/icons/pending.svg';
 import { ReactComponent as SuccessIcon } from 'assets/icons/success.svg';
@@ -15,6 +16,7 @@ type NotificationProps = {
   summary?: string;
   failureReason?: string;
   redirectOnSuccess?: string;
+  generic?: boolean;
 };
 
 const NotificationPending = ({ summary }: NotificationProps) => {
@@ -51,10 +53,14 @@ const NotificationSuccess = ({ summary, redirectOnSuccess }: NotificationProps) 
   );
 };
 
-const NotificationError = ({ failureReason }: NotificationProps) => {
+const NotificationError = ({ failureReason, generic }: NotificationProps) => {
   const arbitraryCallsTestExecutionPassed = failureReason && failureReason.indexOf('everted(20)') >= 0;
   return (
-    <NotificationContainer>
+    <NotificationContainer
+      onClick={() => {
+        if (generic) window.open('https://docs.balanced.network/troubleshooting#transaction-error', '_blank');
+      }}
+    >
       <TransactionStatus>
         {arbitraryCallsTestExecutionPassed ? (
           <SuccessIcon width={20} height={20} />
@@ -74,8 +80,9 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
           </Typography>
         </TransactionInfoBody>
         <TransactionInfoBody>
-          <Typography variant="p" fontWeight={500} color="alert">
+          <Typography variant="p" fontWeight={500} color={generic ? 'primaryBright' : 'alert'}>
             {failureReason && !arbitraryCallsTestExecutionPassed && failureReason}
+            {generic && <ExternalIcon width="15" height="15" style={{ marginLeft: 7, marginTop: -3 }} />}
           </Typography>
         </TransactionInfoBody>
       </TransactionInfo>

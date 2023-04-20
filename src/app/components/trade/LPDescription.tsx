@@ -106,9 +106,12 @@ export default function LPDescription() {
   );
   const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, balances?.quote)?.toFixed() || '0');
 
-  const tempTotalSupplyValue = new BigNumber(pair?.reserve0.toFixed() || 0).plus(
-    new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0),
-  );
+  const tempTotalSupplyValue = useMemo(() => {
+    const poolStakedRatio = allPairs ? new BigNumber(allPairs[pairName]?.stakedRatio.toFixed(18)) : new BigNumber(1);
+    return new BigNumber(pair?.reserve0.toFixed() || 0)
+      .plus(new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0))
+      .times(poolStakedRatio);
+  }, [allPairs, formattedAmounts, pair?.reserve0, pairName]);
 
   const suppliedReward = useMemo(
     () =>

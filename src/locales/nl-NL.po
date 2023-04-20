@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-15 19:20\n"
+"PO-Revision-Date: 2023-04-19 15:23\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -384,11 +384,6 @@ msgstr "Kopieer adres"
 msgid "Couldn't APPROVE {0} for cross-chain transfers."
 msgstr ""
 
-#: src/btp/src/connectors/transactionToast.tsx
-#: src/store/transactions/hooks.tsx
-msgid "Couldn't complete the transaction. Make sure your wallet is set to the right network."
-msgstr "Transactie kon niet worden voltooid. Controleer of je Wallet is ingesteld op het juiste netwerk."
-
 #: src/app/components/Notification/TransactionNotification.tsx
 msgid "Couldn't complete your transaction."
 msgstr "Je transactie kon niet worden voltooid."
@@ -680,6 +675,11 @@ msgstr "Het kost 100 bnUSD om een voorstel te doen."
 #: src/app/components/trade/AllPoolsPanel.tsx
 msgid "LIQUIDITY"
 msgstr "LIQUIDITEIT"
+
+#: src/btp/src/connectors/transactionToast.tsx
+#: src/store/transactions/hooks.tsx
+msgid "Learn how to resolve common transaction errors."
+msgstr ""
 
 #: src/app/components/trade/SwapDescription.tsx
 msgid "Line"

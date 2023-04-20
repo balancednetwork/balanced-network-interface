@@ -51,11 +51,11 @@ const Wrapper = styled(Flex)`
   `}
 `;
 
-export function getRate(pair: Pair, balance: BalanceData): Fraction {
+export function getRate(pair: Pair, balance: BalanceData, stakedRatio = new Fraction(1)): Fraction {
   //When balance = 0, use stakedLPBalance to calculate rate
   if (pair.totalSupply && JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO) && balance) {
     const amount = (balance?.stakedLPBalance ? balance.balance.add(balance.stakedLPBalance) : balance.balance).divide(
-      pair.totalSupply,
+      pair.totalSupply.multiply(stakedRatio),
     );
     return new Fraction(amount.numerator, amount.denominator);
   }
@@ -68,8 +68,8 @@ export function getABBalance(pair: Pair, balance: BalanceData) {
   return [pair.reserve0.multiply(rate), pair.reserve1.multiply(rate)];
 }
 
-export function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber) {
-  const rate = getRate(pair, balance);
+export function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber, stakedRatio?: Fraction) {
+  const rate = getRate(pair, balance, stakedRatio);
   const totalRewardFrac = totalReward ? toFraction(totalReward) : FRACTION_ZERO;
 
   return {

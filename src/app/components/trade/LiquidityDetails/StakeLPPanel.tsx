@@ -168,8 +168,12 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const rewards = useRewards();
   const [aBalance, bBalance] = getABBalance(pair, balance);
   const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
-  const totalReward = rewards[pairName];
-  const { reward } = getShareReward(pair, balance, totalReward);
+  const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
+  const totalReward = rewards[sourceName];
+  const { reward } =
+    allPairs && poolId && allPairs[poolId]
+      ? getShareReward(pair, balance, totalReward, allPairs && allPairs[pair.poolId!].stakedRatio)
+      : getShareReward(pair, balance, totalReward);
   const stakedFractionValue = stakedFraction(stakedPercent);
   const isIncentivised = useMemo(
     () =>
@@ -179,8 +183,6 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   );
 
   const RespoRewardsInfo = () => {
-    const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
-
     return (
       <Flex
         marginBottom={4}
@@ -204,13 +206,9 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
           <Typography color="text" fontSize={16}>
             {!allPairs || !sources ? (
               <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
-            ) : sources[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`] ? (
+            ) : sources[sourceName] ? (
               `${new BigNumber(allPairs[pair.poolId!].balnApy)
-                .times(
-                  sources[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`].workingBalance.dividedBy(
-                    sources[`${aBalance.currency.symbol}/${bBalance.currency.symbol}`].balance,
-                  ),
-                )
+                .times(sources[sourceName].workingBalance.dividedBy(sources[sourceName].balance))
                 .times(100)
                 .toFormat(2)}%`
             ) : (

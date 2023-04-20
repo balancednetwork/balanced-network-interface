@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-19 15:23\n"
+"PO-Revision-Date: 2023-04-20 08:27\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -70,6 +70,14 @@ msgstr "APY"
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
 msgstr "Actief"
+
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallMethodParameter.tsx
+msgid "Add <0>{0}</0> item"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+msgid "Add a contract call"
+msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add community token list"
@@ -196,12 +204,6 @@ msgstr "Hoeveelheid"
 msgid "Balance Tokens"
 msgstr "Balance Tokens"
 
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/ProposalPage/index.tsx
-msgid "Band"
-msgstr "Band"
-
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
@@ -225,11 +227,6 @@ msgstr "Lenen"
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow Balanced Dollars?"
 msgstr "Balanced Dollars lenen?"
-
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/ProposalPage/index.tsx
-msgid "Borrow LTV"
-msgstr "Lening LTV"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrowed {0} bnUSD."
@@ -287,6 +284,10 @@ msgstr "Stem veranderen?"
 #: src/app/components/Header/index.tsx
 msgid "Change wallet"
 msgstr "Wijzig portemonnee"
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Check that your contract calls are set up correctly before you submit the proposal."
+msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Choose a wallet from your Ledger:"
@@ -370,13 +371,27 @@ msgstr "Bevestig de transactie op je ledger."
 msgid "Connect Wallet"
 msgstr "Koppel je wallet"
 
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCall.tsx
+msgid "Contract address"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+msgid "Contract calls"
+msgstr ""
+
+#: src/app/components/Notification/TransactionNotification.tsx
+msgid "Contract calls verified."
+msgstr ""
+
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCall.tsx
+msgid "Contract doesn't exist on this network."
+msgstr ""
+
 #: src/app/components/Header/index.tsx
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 msgid "Copied"
 msgstr "Gekopieerd"
 
 #: src/app/components/Header/index.tsx
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
 msgid "Copy address"
 msgstr "Kopieer adres"
 
@@ -425,10 +440,6 @@ msgstr "Pool aanmaken"
 msgid "Creating pool"
 msgstr "Pool aan het aanmaken"
 
-#: src/app/containers/ProposalPage/Ratio.tsx
-msgid "Current"
-msgstr "Huidig"
-
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 msgid "Current incentives"
@@ -438,23 +449,12 @@ msgstr ""
 msgid "Current unlock date"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/ProposalPage/index.tsx
-msgid "DEX"
-msgstr "DEX"
-
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
 msgid "Daily rewards"
 msgstr "Dagelijkse beloningen"
-
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/ProposalPage/index.tsx
-msgid "Debt ceiling"
-msgstr "Schuld plafond"
 
 #: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -501,10 +501,6 @@ msgstr "Onderpand aan het storten..."
 msgid "Description"
 msgstr "Omschrijving"
 
-#: src/app/containers/ProposalPage/index.tsx
-msgid "Discussion"
-msgstr "Discussie"
-
 #: src/app/components/Wallet/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
 msgstr "Stuur geen sICX naar een exchange."
@@ -538,6 +534,10 @@ msgstr "Vul bedrag in"
 msgid "Exchange rate"
 msgstr "Wisselkoers"
 
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Executed."
+msgstr ""
+
 #: src/app/components/trade/AllPoolsPanel.tsx
 msgid "FEES (24H)"
 msgstr "FEES (24U)"
@@ -566,22 +566,15 @@ msgstr ""
 msgid "Forum link"
 msgstr "Forum link"
 
-#: src/app/containers/NewProposalPage/constant.ts
-msgid "Funding"
-msgstr "Financiering"
-
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 msgid "Future incentives"
 msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
+#: src/app/containers/NewProposalPage/index.tsx
 msgid "Go back"
 msgstr "Ga terug"
-
-#: src/app/containers/NewProposalPage/index.tsx
-msgid "Have at least {0} bBALN if you want to propose a change."
-msgstr "Je hebt minimaal {0} bBALN nodig als je een verandering wilt voorstellen."
 
 #: src/app/Routes.tsx
 #: src/app/components/AppBar/index.tsx
@@ -664,6 +657,10 @@ msgstr "Onvoldoende {0}"
 msgid "Insufficient {0} balance"
 msgstr "Onvoldoende {0} saldo"
 
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCall.tsx
+msgid "Invalid contract address"
+msgstr ""
+
 #: src/store/mint/hooks.tsx
 msgid "Invalid pair"
 msgstr "Ongeldig paar"
@@ -689,11 +686,6 @@ msgstr "Lijn"
 msgid "Liquidated"
 msgstr "Geliquideerd"
 
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/ProposalPage/index.tsx
-msgid "Liquidation LTV"
-msgstr "Liquidatie LTV"
-
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 msgid "Liquidity incentives"
 msgstr ""
@@ -709,17 +701,9 @@ msgstr "Liquiditeit pools"
 msgid "Loan"
 msgstr "Lening"
 
-#: src/app/containers/NewProposalPage/constant.ts
-msgid "Loan fee"
-msgstr "Afsluitprovisie"
-
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan rewards"
 msgstr "Lening beloning"
-
-#: src/app/containers/NewProposalPage/constant.ts
-msgid "Loan to value ratio"
-msgstr "Lening waarde verhouding"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock duration increased  until {0}."
@@ -755,6 +739,10 @@ msgstr "Vergrendeld tot"
 msgid "Locking BALN..."
 msgstr "BALN vergrendelen..."
 
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallMethodSelector.tsx
+msgid "Method"
+msgstr ""
+
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Minimum to receive"
 msgstr "Minimaal te ontvangen"
@@ -763,18 +751,9 @@ msgstr "Minimaal te ontvangen"
 msgid "Minus 50% fee: {0} BALN"
 msgstr "Minus 50% kosten: {0} BALN"
 
-#: src/app/containers/NewProposalPage/constant.ts
-msgid "Network fee allocation"
-msgstr "Toewijzing van netwerkvergoeding"
-
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Network fees"
 msgstr "Netwerk vergoedingen"
-
-#: src/app/containers/NewProposalPage/constant.ts
-#: src/app/containers/ProposalPage/index.tsx
-msgid "New collateral type"
-msgstr "Nieuw onderpand type"
 
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/VotePage/ProposalList.tsx
@@ -804,15 +783,18 @@ msgstr "Geen resultaten gevonden."
 msgid "Not now"
 msgstr "Niet nu"
 
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+msgid "On Hana:"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+msgid "On Ledger:"
+msgstr ""
+
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
 msgid "Or"
 msgstr "Of"
-
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/ProposalPage/index.tsx
-msgid "Oracle type"
-msgstr "Oracle type"
 
 #: src/app/components/trade/AllPoolsPanel.tsx
 msgid "POOL"
@@ -868,18 +850,14 @@ msgstr "Prijsimpact"
 msgid "Processing transaction..."
 msgstr "Transactie verwerken..."
 
-#: src/app/components/newproposal/ProposalTypesSelect.tsx
-msgid "Proposal type"
-msgstr "Voorstel type"
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Proposal submitted."
+msgstr ""
 
 #: src/app/containers/VotePage/ProposalList.tsx
 #: src/app/containers/VotePage/ProposalsPanel.tsx
 msgid "Proposals"
 msgstr "Voorstellen"
-
-#: src/app/containers/ProposalPage/Ratio.tsx
-msgid "Proposed"
-msgstr "Voorgesteld"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"
@@ -892,10 +870,6 @@ msgstr "Rebalancing compleet."
 #: src/app/components/trade/RebalanceButton.tsx
 msgid "Rebalancing the bnUSD price..."
 msgstr "Bezig met het rebalancen van de bnUSD prijs..."
-
-#: src/app/containers/NewProposalPage/constant.ts
-msgid "Rebalancing threshold"
-msgstr "Rebalancing grenslijn"
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/trade/SwapPanel.tsx
@@ -962,14 +936,6 @@ msgstr "Balanced Dollars aflossen?"
 msgid "Repaying bnUSD..."
 msgstr "bnUSD aan het aflossen..."
 
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-msgid "Requires a bnUSD liquidity pool for this collateral type."
-msgstr ""
-
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-msgid "Requires the token ticker, i.e. ICX."
-msgstr ""
-
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Review the community token list on GitHub."
 msgstr ""
@@ -1003,7 +969,6 @@ msgstr "Selecteer een token"
 #: src/app/components/Wallet/wallets/SendPanel.tsx
 #: src/app/components/Wallet/wallets/SendPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/containers/ProposalPage/Funding.tsx
 msgid "Send"
 msgstr "Verzenden"
 
@@ -1058,6 +1023,10 @@ msgstr "Inloggen met"
 #: src/app/components/Header/index.tsx
 msgid "Sign out"
 msgstr "Log uit"
+
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+msgid "Sign the transaction, then check the banner notification message for the result."
+msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Slippage tolerance"
@@ -1155,9 +1124,9 @@ msgstr "Neemt tot 7 dagen in beslag. Wanneer het klaar is, ga dan naar ICX > Uns
 msgid "Takes up to 7 days. When it's ready, you can claim your ICX from the wallet section."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/constant.ts
-msgid "Text"
-msgstr "Tekst"
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+msgid "Test your contract calls before you submit the proposal."
+msgstr ""
 
 #: src/app/components/trade/AllPoolsPanel.tsx
 msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
@@ -1192,21 +1161,6 @@ msgstr ""
 msgid "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will decrease over time."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/ProposalPage/index.tsx
-msgid "The maximum amount of bnUSD that can be minted with this collateral type."
-msgstr ""
-
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/ProposalPage/index.tsx
-msgid "The maximum percentage that people can borrow against the value of this collateral type."
-msgstr ""
-
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/ProposalPage/index.tsx
-msgid "The percentage of debt required to trigger liquidation for this collateral type."
-msgstr ""
-
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "There's no ICX unstaking."
 msgstr "Er is geen ICX aan het unstaken."
@@ -1223,10 +1177,6 @@ msgstr ""
 msgid "Title"
 msgstr "Titel"
 
-#: src/app/containers/ProposalPage/Funding.tsx
-msgid "To"
-msgstr "Naar"
-
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "To apply your increased voting power to liquidity incentives, update your allocation for each pool."
 msgstr ""
@@ -1242,10 +1192,6 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
 msgstr "Stort onderpand om een lening af te sluiten."
-
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-msgid "Token contract address"
-msgstr ""
 
 #: src/app/components/Wallet/index.tsx
 msgid "Total"
@@ -1271,10 +1217,6 @@ msgstr ""
 #: src/app/components/AppBar/index.tsx
 msgid "Trade"
 msgstr "Handel"
-
-#: src/app/containers/ProposalPage/index.tsx
-msgid "Transaction"
-msgstr "Transactie"
 
 #: src/btp/src/connectors/MetaMask/index.ts
 #: src/btp/src/connectors/MetaMask/index.ts
@@ -1365,25 +1307,9 @@ msgstr ""
 msgid "Use the Stability Fund to swap {0} for {1}"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-msgid "Use the price from Balanced."
-msgstr ""
-
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-msgid "Use the price of an asset tracked via the Band oracle."
-msgstr ""
-
 #: src/app/components/home/LoanPanel.tsx
 msgid "Used"
 msgstr "Gebruikt"
-
-#: src/app/containers/ProposalPage/index.tsx
-msgid "Uses the price from the bnUSD liquidity pool for this collateral type."
-msgstr ""
-
-#: src/app/containers/ProposalPage/index.tsx
-msgid "Uses the price of an asset tracked via the Band oracle."
-msgstr ""
 
 #: src/app/components/trade/AllPoolsPanel.tsx
 msgid "VOLUME (24H)"
@@ -1393,6 +1319,26 @@ msgstr ""
 #: src/app/components/Wallet/index.tsx
 msgid "Value"
 msgstr "Waarde"
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Verify"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+msgid "Verify contract call"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+msgid "Verify contract calls"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Verify contract calls?"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "Verifying contract calls..."
+msgstr ""
 
 #: src/app/components/ICXDisplayTypeSwitcher/index.tsx
 msgid "View and manage your collateral as ICX or sICX (Staked ICX)."
@@ -1464,11 +1410,6 @@ msgid "Wallet: {0} {1} /\n"
 msgstr "Wallet:\n"
 "{0} {1} /\n"
 "{2} {3}"
-
-#: src/app/containers/NewProposalPage/CollateralProposalFields.tsx
-#: src/app/containers/ProposalPage/index.tsx
-msgid "Where Balanced will get the price data for this collateral type."
-msgstr ""
 
 #: src/app/containers/VotePage/LiveVotingPanel.tsx
 msgid "Where bBALN holders have allocated their voting power, updated live."
@@ -1546,6 +1487,10 @@ msgstr "Je hebt goedgekeurd"
 msgid "You can't withdraw any collateral if you go beyond this threshold."
 msgstr "Je kunt geen onderpand opnemen als je verder gaat dan deze drempel."
 
+#: src/app/containers/NewProposalPage/index.tsx
+msgid "You must have at least {0} bBALN to propose a change."
+msgstr ""
+
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
 msgstr "Je hebt minstens {MINIMUM_ICX_FOR_TX} ICX in je wallet nodig om deze transactie te voltooien."
@@ -1568,6 +1513,10 @@ msgstr ""
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "You'll receive BALN in your wallet immediately"
+msgstr ""
+
+#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+msgid "You'll see an error message before you sign the transaction. If it ends with Reverted(20), the contract calls have been verified."
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
@@ -1751,10 +1700,6 @@ msgstr "{inputAmount} {inputCurrency} en {outputAmount} {outputCurrency} zijn to
 #: src/app/containers/VotePage/VotingComponent.tsx
 msgid "{inputValue}% of bBALN allocated to {editing}."
 msgstr ""
-
-#: src/app/containers/NewProposalPage/index.tsx
-msgid "{label} proposal submitted."
-msgstr "{label} voorstel is ingediend."
 
 #: src/app/components/trade/utils.tsx
 msgid "{outputAmount} {outputCurrency} added to your wallet."

@@ -1,5 +1,4 @@
-import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
-import axios from 'axios';
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
@@ -37,6 +36,7 @@ export const useProposalInfoQuery = (pId: number) => {
       voters: parseInt(res['for_voter_count'], 16) + parseInt(res['against_voter_count'], 16),
       status: res['status'],
       actions: res['actions'],
+      forumLink: res['forum link'],
     };
   });
 };
@@ -146,27 +146,6 @@ export const useTotalProposalCountQuery = () => {
     const res = await bnJs.Governance.getTotalProposal();
     return parseInt(res, 16);
   });
-};
-
-export const useAdditionalInfoQuery = (networkId: NetworkId) => {
-  const fetch = async () => {
-    const fileName = CHAIN_INFO[networkId].name.toLowerCase();
-    const { data } = await axios.get(
-      `https://raw.githubusercontent.com/balancednetwork/BIP-info-list/main/proposals/${fileName}.json`,
-    );
-    return data;
-  };
-
-  return useQuery<[{ id: number; hash?: string; discussionURL?: string }]>('useAdditionalInfoQuery', fetch);
-};
-
-export const useAdditionalInfoById = (id?: number) => {
-  const { networkId } = useIconReact();
-  const { data: items } = useAdditionalInfoQuery(networkId);
-
-  if (!id) return;
-
-  return items?.find(item => item.id === id);
 };
 
 export const useActiveProposals = (offset: number = 30, batchSize: number = 200) => {

@@ -54,6 +54,7 @@ const NotificationSuccess = ({ summary, redirectOnSuccess }: NotificationProps) 
 };
 
 const NotificationError = ({ failureReason, generic }: NotificationProps) => {
+  const arbitraryCallsTestExecutionPassed = failureReason && failureReason.indexOf('everted(20)') >= 0;
   return (
     <NotificationContainer
       onClick={() => {
@@ -61,18 +62,26 @@ const NotificationError = ({ failureReason, generic }: NotificationProps) => {
       }}
     >
       <TransactionStatus>
-        <FailureIcon width={20} height={20} />
+        {arbitraryCallsTestExecutionPassed ? (
+          <SuccessIcon width={20} height={20} />
+        ) : (
+          <FailureIcon width={20} height={20} />
+        )}
       </TransactionStatus>
 
       <TransactionInfo flexDirection="column">
         <TransactionInfoBody>
           <Typography variant="p" fontWeight={500}>
-            <Trans>Couldn't complete your transaction.</Trans>
+            {arbitraryCallsTestExecutionPassed ? (
+              <Trans>Contract calls verified.</Trans>
+            ) : (
+              <Trans>Couldn't complete your transaction.</Trans>
+            )}
           </Typography>
         </TransactionInfoBody>
         <TransactionInfoBody>
           <Typography variant="p" fontWeight={500} color={generic ? 'primaryBright' : 'alert'}>
-            {failureReason}
+            {failureReason && !arbitraryCallsTestExecutionPassed && failureReason}
             {generic && <ExternalIcon width="15" height="15" style={{ marginLeft: 7, marginTop: -3 }} />}
           </Typography>
         </TransactionInfoBody>

@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 
 import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
 import babelParser from 'prettier/parser-babel';
 import prettier from 'prettier/standalone';
@@ -16,33 +14,27 @@ import styled, { css, useTheme } from 'styled-components';
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
 import Column from 'app/components/Column';
-import { Link } from 'app/components/Link';
+import { UnderlineText } from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
 import { StyledSkeleton } from 'app/components/ProposalInfo';
-import { VoterNumberLabel, VoterPercentLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
+import {
+  VoteDateEndLabel,
+  VoterNumberLabel,
+  VoterPercentLabel,
+  VoteStatusLabel,
+} from 'app/components/ProposalInfo/components';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
-import QuestionHelper from 'app/components/QuestionHelper';
-import { ExternalLink } from 'app/components/SearchModal/components';
-import { PROPOSAL_TYPE, PROPOSAL_TYPE_LABELS } from 'app/containers/NewProposalPage/constant';
 import { Typography } from 'app/theme';
 import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
 import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
 import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { useAdditionalInfoById, useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
+import { useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useFetchBBalnInfo } from 'store/bbaln/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
-import { formatPercent, formatUnits, getTrackerLink } from 'utils';
 import { formatTimeStr } from 'utils/timeformat';
-
-import { CopyableSCORE } from '../NewProposalPage/CollateralProposalFields';
-import { ACTIONS_MAPPING, RATIO_VALUE_FORMATTER } from '../NewProposalPage/constant';
-import Funding from './Funding';
-import Ratio from './Ratio';
 
 dayjs.extend(duration);
 
@@ -98,20 +90,6 @@ const ChangeVoteButton = styled(Typography)`
   }
 `;
 
-const CollateralProposalInfoItem = styled(Box)`
-  width: 180px;
-  padding: 0 30px 0 0;
-  margin-bottom: 15px;
-
-  ${({ theme }) => theme.mediaWidth.upSmall`
-    width: auto;
-    text-align: center;
-    padding: 0;
-    margin-bottom: 0;
-    flex: 1
-  `};
-`;
-
 const StyledCode = styled.pre`
   font-size: 14px;
   border-radius: 5px 10px 10px 5px;
@@ -137,22 +115,6 @@ export function ProposalPage() {
 
   const actions = JSON.parse(proposal?.actions || '{}');
   const stringifiedActions = JSON.stringify(actions);
-  const oldActionKeyList = Object.keys(actions);
-
-  const getKeyByValue = value => {
-    return Object.keys(ACTIONS_MAPPING).find(key => ACTIONS_MAPPING[key].includes(value));
-  };
-
-  const actionKey = oldActionKeyList.find(actionKey => getKeyByValue(actionKey));
-
-  const oldProposalType = oldActionKeyList.map(actionKey => getKeyByValue(actionKey)).filter(item => item)[0];
-
-  const isNewCollateralProposal =
-    proposal &&
-    proposal.actions !== '[]' &&
-    !proposal.actions.startsWith('{') &&
-    ACTIONS_MAPPING[PROPOSAL_TYPE.NEW_COLLATERAL_TYPE].indexOf(JSON.parse(proposal.actions || '[[]]')[0][0]) >= 0;
-  const collateralInfo = proposal && isNewCollateralProposal && JSON.parse(proposal.actions)[0][1];
 
   const isActive =
     proposal && proposal.status === 'Active' && !formatTimeStr(proposal.startDay) && !!formatTimeStr(proposal.endDay);
@@ -203,9 +165,6 @@ export function ProposalPage() {
 
   const theme = useTheme();
 
-  const { networkId } = useIconReact();
-  const additionalInfo = useAdditionalInfoById(proposal?.id);
-
   const handleChangeVote = () => {
     if (!userStatus?.reject.isZero()) {
       setModalStatus(ModalStatus.ChangeToApprove);
@@ -230,6 +189,7 @@ export function ProposalPage() {
 
           <Flex alignItems="center" mb={3} flexWrap="wrap" sx={{ columnGap: '15px' }} my={1}>
             <VoteStatusLabel proposal={proposal} />
+            <VoteDateEndLabel proposal={proposal} />
             <VoterPercentLabel value={proposal?.sum} />
             <VoterNumberLabel value={proposal?.voters} />
           </Flex>
@@ -385,128 +345,6 @@ export function ProposalPage() {
           />
         </BoxPanel>
 
-        {oldProposalType && actionKey && (
-          <BoxPanel bg="bg2" my={10}>
-            <Typography variant="h2" mb="20px">
-              <Trans id={PROPOSAL_TYPE_LABELS[oldProposalType].id} />
-            </Typography>
-            {actionKey === ACTIONS_MAPPING.Funding[0] ? (
-              <Funding recipient={actions[actionKey]._recipient} amounts={actions[actionKey]._amounts} />
-            ) : (
-              <Ratio
-                proposalStatus={proposal?.status}
-                proposalType={oldProposalType}
-                proposedList={RATIO_VALUE_FORMATTER[oldProposalType](Object.values(actions[actionKey])[0])}
-              />
-            )}
-          </BoxPanel>
-        )}
-
-        <AnimatePresence>
-          {isNewCollateralProposal && collateralInfo && (
-            <motion.div initial={{ opacity: 0, height: 0, y: -30 }} animate={{ opacity: 1, height: 'auto', y: 0 }}>
-              <BoxPanel bg="bg2" my={10}>
-                <Typography variant="h2" mb="20px">
-                  <Trans>New collateral type</Trans>
-                </Typography>
-                <Flex flexWrap={['wrap', 'wrap', 'nowrap']} justifyContent={['space-between', 'start']}>
-                  <CollateralProposalInfoItem>
-                    <Typography opacity={0.75} fontSize={16}>
-                      Token address
-                      <ExternalLink href={getTrackerLink(NETWORK_ID, collateralInfo['_token_address'], 'contract')}>
-                        <ExternalIcon
-                          width="15"
-                          height="15"
-                          style={{ marginLeft: 7, marginRight: -22, marginTop: -3 }}
-                        />
-                      </ExternalLink>
-                    </Typography>
-                    <Typography color="text" fontSize={16} style={{ wordBreak: 'keep-all' }}>
-                      <CopyableSCORE score={collateralInfo['_token_address']} />
-                    </Typography>
-                  </CollateralProposalInfoItem>
-                  <CollateralProposalInfoItem>
-                    <CollateralProposalInfoItem>
-                      <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
-                        <Trans>Oracle type</Trans>{' '}
-                        <QuestionHelper
-                          text={
-                            <>
-                              <Typography mb={4}>
-                                <Trans>Where Balanced will get the price data for this collateral type.</Trans>
-                              </Typography>
-                              <Typography mb={4}>
-                                <strong>
-                                  <Trans>DEX</Trans>:
-                                </strong>{' '}
-                                <Trans>Uses the price from the bnUSD liquidity pool for this collateral type.</Trans>
-                              </Typography>
-                              <Typography>
-                                <strong>
-                                  <Trans>Band</Trans>:
-                                </strong>{' '}
-                                <Trans>Uses the price of an asset tracked via the Band oracle.</Trans>
-                              </Typography>
-                            </>
-                          }
-                          strategy={'absolute'}
-                        ></QuestionHelper>
-                      </Typography>
-                      <Typography color="text" fontSize={16}>
-                        {collateralInfo['_peg']
-                          ? `Band: ${collateralInfo['_peg']}`
-                          : `DEX: ${SUPPORTED_TOKENS_MAP_BY_ADDRESS[collateralInfo['_token_address']].symbol!}/bnUSD`}
-                      </Typography>
-                    </CollateralProposalInfoItem>
-                  </CollateralProposalInfoItem>
-                  <CollateralProposalInfoItem>
-                    <CollateralProposalInfoItem>
-                      <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
-                        <Trans>Debt ceiling</Trans>{' '}
-                        <QuestionHelper
-                          text={t`The maximum amount of bnUSD that can be minted with this collateral type.`}
-                          strategy={'absolute'}
-                        ></QuestionHelper>
-                      </Typography>
-                      <Typography color="text" fontSize={16} sx={{ whiteSpace: 'nowrap' }}>
-                        {`${new BigNumber(formatUnits(collateralInfo['_debtCeiling'])).toFormat(0)} bnUSD`}
-                      </Typography>
-                    </CollateralProposalInfoItem>
-                  </CollateralProposalInfoItem>
-                  <CollateralProposalInfoItem>
-                    <CollateralProposalInfoItem>
-                      <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
-                        <Trans>Borrow LTV</Trans>{' '}
-                        <QuestionHelper
-                          text={t`The maximum percentage that people can borrow against the value of this collateral type.`}
-                          strategy={'absolute'}
-                        ></QuestionHelper>
-                      </Typography>
-                      <Typography color="text" fontSize={16}>
-                        {`${formatPercent(new BigNumber(1000000 / Number(collateralInfo['_lockingRatio'])))}`}
-                      </Typography>
-                    </CollateralProposalInfoItem>
-                  </CollateralProposalInfoItem>
-                  <CollateralProposalInfoItem>
-                    <CollateralProposalInfoItem>
-                      <Typography opacity={0.75} marginRight="-20px" fontSize={16}>
-                        <Trans>Liquidation LTV</Trans>{' '}
-                        <QuestionHelper
-                          text={t`The percentage of debt required to trigger liquidation for this collateral type.`}
-                          strategy={'absolute'}
-                        ></QuestionHelper>
-                      </Typography>
-                      <Typography color="text" fontSize={16}>
-                        {`${formatPercent(new BigNumber(1000000 / Number(collateralInfo['_liquidationRatio'])))}`}
-                      </Typography>
-                    </CollateralProposalInfoItem>
-                  </CollateralProposalInfoItem>
-                </Flex>
-              </BoxPanel>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         <BoxPanel bg="bg2" my={10}>
           <Typography variant="h2" mb="20px">
             <Trans>Description</Trans>
@@ -522,27 +360,15 @@ export function ProposalPage() {
               </>
             )}
           </Typography>
-          <Flex alignItems="center">
-            {additionalInfo?.discussionURL && (
-              <>
-                <InfoLink href={additionalInfo?.discussionURL} target="_blank">
-                  <Trans>Discussion</Trans>
-                </InfoLink>
-                <ExternalIcon width="15" height="15" style={{ marginLeft: 5, marginRight: 15 }} />
-              </>
-            )}
-            {additionalInfo?.hash && (
-              <>
-                <InfoLink
-                  href={additionalInfo?.hash && getTrackerLink(networkId, additionalInfo?.hash, 'transaction')}
-                  target="_blank"
-                >
-                  <Trans>Transaction</Trans>
-                </InfoLink>
-                <ExternalIcon width="15" height="15" style={{ marginLeft: 5 }} />
-              </>
-            )}
-          </Flex>
+          {proposal && proposal.forumLink && (
+            <a href={proposal && proposal.forumLink} target="_blank" rel="noreferrer">
+              <Typography color="primary" variant="span" style={{ textDecoration: 'none' }}>
+                <UnderlineText>View forum discussion</UnderlineText>
+              </Typography>
+
+              <ExternalIcon width="14" height="14" style={{ marginLeft: 5, marginRight: 15, marginTop: -4 }} />
+            </a>
+          )}
         </BoxPanel>
 
         {proposal?.actions && stringifiedActions.indexOf('[') === 0 && stringifiedActions !== '[]' && (
@@ -557,7 +383,3 @@ export function ProposalPage() {
     </>
   );
 }
-
-const InfoLink = styled(Link)`
-  font-size: 16px;
-`;

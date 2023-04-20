@@ -26,3 +26,7 @@ export const formatTimeStr = (targetDay: number) => {
     return '';
   }
 };
+
+export const getDateFromDay = (day: number) => {
+  return beginFrom.add(day, 'days').hour(17);
+};

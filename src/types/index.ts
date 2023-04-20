@@ -47,6 +47,7 @@ export interface ProposalInterface {
   sum: number;
   voters: number;
   actions: string;
+  forumLink: string;
 }
 
 export type IcxDisplayType = 'ICX' | 'sICX';

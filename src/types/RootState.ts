@@ -5,6 +5,7 @@
   You have to declare them here manually
 */
 import { ApplicationState } from 'store/application/reducer';
+import { ArbitraryCallsState } from 'store/arbitraryCalls/reducer';
 import { BBalnState } from 'store/bbaln/reducer';
 import { CollateralState } from 'store/collateral/reducer';
 import { FeesState } from 'store/fees/reducer';
@@ -42,4 +43,5 @@ export interface RootState {
   oracle: OracleState;
   lists: TokenListState;
   liveVoting: LiveVotingState;
+  arbitraryCalls: ArbitraryCallsState;
 }

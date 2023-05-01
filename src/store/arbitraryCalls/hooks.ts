@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
+import { CxMethodInput } from 'hooks/useCxApi';
 import { AppState } from 'store';
 
 import {
@@ -45,14 +46,15 @@ export function useUpdateCallContract(): (callIndex: number, contract: string) =
   );
 }
 
-export function useUpdateCallMethod(): (callIndex: number, method: string) => void {
+export function useUpdateCallMethod(): (callIndex: number, method: string, inputs: CxMethodInput[]) => void {
   const dispatch = useDispatch();
   return React.useCallback(
-    (callIndex: number, method: string) => {
+    (callIndex: number, method: string, inputs: CxMethodInput[]) => {
       dispatch(
         updateCallMethod({
           callIndex,
           method,
+          inputs,
         }),
       );
     },

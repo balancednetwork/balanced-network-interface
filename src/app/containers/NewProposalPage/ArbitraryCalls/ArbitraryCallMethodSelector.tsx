@@ -77,7 +77,7 @@ const ArbitraryCallMethodSelector = ({
   const handleMethodSelect = React.useCallback(
     (method: CxMethod) => {
       setOpen(false);
-      updateCallMethod(callIndex, method.name);
+      updateCallMethod(callIndex, method.name, method.inputs);
       setSearch(method.name);
     },
     [callIndex, updateCallMethod],

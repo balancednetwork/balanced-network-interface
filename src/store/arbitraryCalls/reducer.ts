@@ -73,10 +73,10 @@ export default createReducer(initialState, builder =>
 
       state.editing[callIndex] = editing;
     })
-    .addCase(updateCallMethod, (state, { payload: { callIndex, method } }) => {
+    .addCase(updateCallMethod, (state, { payload: { callIndex, method, inputs } }) => {
       const editing = { ...state.editing[callIndex] };
       editing.method = method;
-      editing.parameters = undefined;
+      editing.parameters = inputs?.map(input => ({ name: input.name, type: input.type, value: '' }));
 
       state.editing[callIndex] = editing;
     })

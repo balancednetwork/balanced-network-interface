@@ -1,5 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
+import { CxMethodInput } from 'hooks/useCxApi';
+
 import { ArbitraryCallParameterType } from './reducer';
 
 export const addCall = createAction<{ editableCall: {} }>('arbitraryCalls/addCall');
@@ -20,7 +22,9 @@ export const updateCallContract = createAction<{ callIndex: number; contract: st
   'arbitraryCalls/updateCallContract',
 );
 
-export const updateCallMethod = createAction<{ callIndex: number; method: string }>('arbitraryCalls/updateCallMethod');
+export const updateCallMethod = createAction<{ callIndex: number; method: string; inputs: CxMethodInput[] }>(
+  'arbitraryCalls/updateCallMethod',
+);
 
 export const updateCallParam = createAction<{
   callIndex: number;

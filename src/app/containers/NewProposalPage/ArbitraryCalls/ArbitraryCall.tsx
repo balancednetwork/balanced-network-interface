@@ -27,7 +27,7 @@ const ParamsWrap = styled.div`
   @media screen and (min-width: 1000px) {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 30px;
+    grid-column-gap: 30px;
   }
 `;
 

@@ -42,6 +42,7 @@ import { usePowerLeft } from 'store/liveVoting/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
+import { getFormattedNumber } from 'utils/formatter';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { DropdownPopper } from '../../Popover';
@@ -372,6 +373,21 @@ export default function BBalnSlider({
 
   const hasLPOrLoan = sources && boostedLPs && (sources.Loans.balance.isGreaterThan(0) || boostedLPs.length);
 
+  const balnReturnedEarly = useMemo(() => {
+    if (lockedBalnAmount && bBalnAmount) {
+      return Math.max(
+        new BigNumber(lockedBalnAmount.toFixed(0)).minus(bBalnAmount).toNumber(),
+        new BigNumber(lockedBalnAmount.toFixed(0)).div(2).toNumber(),
+      );
+    }
+  }, [lockedBalnAmount, bBalnAmount]);
+
+  const earlyWithdrawPenalty = useMemo(() => {
+    if (balnReturnedEarly && lockedBalnAmount) {
+      return new BigNumber(lockedBalnAmount.toFixed(0)).minus(balnReturnedEarly).toNumber();
+    }
+  }, [balnReturnedEarly, lockedBalnAmount]);
+
   return (
     <>
       {balnBalanceAvailable.isGreaterThan(0) ||
@@ -568,7 +584,10 @@ export default function BBalnSlider({
                       ) : (
                         isAdjusting && (
                           <Typography fontSize={14} color="#fb6a6a">
-                            <Trans>Pay a 50% fee to unlock your BALN early.</Trans>
+                            {t`Pay ${getFormattedNumber(
+                              earlyWithdrawPenalty || 0,
+                              'number',
+                            )} BALN fee to unlock the rest early.`}
                           </Typography>
                         )
                       )}
@@ -601,9 +620,9 @@ export default function BBalnSlider({
             {shouldBoost ? balnSliderAmount.toFormat(0) : lockedBalnAmount?.toFixed(0, { groupSeparator: ',' })}
             {' BALN'}
           </Typography>
-          {!shouldBoost && (
+          {!shouldBoost && earlyWithdrawPenalty && (
             <Typography textAlign="center" fontSize={14} color="#fb6a6a">
-              {t`Minus 50% fee: ${lockedBalnAmount?.divide(2).toFixed(0, { groupSeparator: ',' })} BALN`}
+              {t`Minus ${getFormattedNumber(earlyWithdrawPenalty, 'number')} BALN fee`}
             </Typography>
           )}
 
@@ -647,7 +666,9 @@ export default function BBalnSlider({
                   Cancel
                 </TextButton>
                 <Button disabled={!hasEnoughICX} onClick={handleBoostUpdate} fontSize={14} warning={!shouldBoost}>
-                  {shouldBoost ? 'Lock up BALN' : 'Unlock all BALN for a 50% fee'}
+                  {shouldBoost
+                    ? 'Lock up BALN'
+                    : t`Unlock ${getFormattedNumber(balnReturnedEarly ?? 0, 'number')} BALN`}
                 </Button>
               </>
             )}

@@ -586,7 +586,7 @@ export default function BBalnSlider({
                           <Typography fontSize={14} color="#fb6a6a">
                             {t`Pay ${getFormattedNumber(
                               earlyWithdrawPenalty || 0,
-                              'number',
+                              'number2',
                             )} BALN fee to unlock the rest early.`}
                           </Typography>
                         )
@@ -622,7 +622,7 @@ export default function BBalnSlider({
           </Typography>
           {!shouldBoost && earlyWithdrawPenalty && (
             <Typography textAlign="center" fontSize={14} color="#fb6a6a">
-              {t`Minus ${getFormattedNumber(earlyWithdrawPenalty, 'number')} BALN fee`}
+              {t`Minus ${getFormattedNumber(earlyWithdrawPenalty, 'number2')} BALN fee`}
             </Typography>
           )}
 
@@ -668,7 +668,7 @@ export default function BBalnSlider({
                 <Button disabled={!hasEnoughICX} onClick={handleBoostUpdate} fontSize={14} warning={!shouldBoost}>
                   {shouldBoost
                     ? 'Lock up BALN'
-                    : t`Unlock ${getFormattedNumber(balnReturnedEarly ?? 0, 'number')} BALN`}
+                    : t`Unlock ${getFormattedNumber(balnReturnedEarly ?? 0, 'number2')} BALN`}
                 </Button>
               </>
             )}

@@ -6,7 +6,15 @@ export type TimeSeries = '1d' | '15m';
 
 const DEFAULT_CURRENCY_DECIMALS = 2;
 
-export type NumberStyle = 'percent0' | 'percent2' | 'number' | 'number4' | 'currency0' | 'currency2' | 'price';
+export type NumberStyle =
+  | 'percent0'
+  | 'percent2'
+  | 'number'
+  | 'number2'
+  | 'number4'
+  | 'currency0'
+  | 'currency2'
+  | 'price';
 
 export const toBigNumber = (value: number | string): BigNumber => new BigNumber(value);
 
@@ -32,8 +40,8 @@ export const formatPercentage = (value: string | number, decimals: number = DEFA
   });
 };
 
-export const formatNumber = (num: number, mantissa: number = 0) =>
-  numbro(num).format({ thousandSeparated: true, mantissa });
+export const formatNumber = (num: number, mantissa: number = 0, trim = false) =>
+  numbro(num).format({ thousandSeparated: true, mantissa, trimMantissa: trim });
 
 export const formatPrice = (value: string | number) => {
   if (value !== 0 && !value) {
@@ -42,8 +50,11 @@ export const formatPrice = (value: string | number) => {
 
   let decimals = 0;
 
+  // @ts-ignore
   if (value < 0.01) {
     decimals = 6;
+
+    // @ts-ignore
   } else if (value < 10) {
     decimals = 4;
   } else {
@@ -71,6 +82,8 @@ export const getFormattedNumber = (num: number | null, numFormat: NumberStyle) =
     formattedNum = formatCurrency(num, 2);
   } else if (numFormat === 'number') {
     formattedNum = formatNumber(num);
+  } else if (numFormat === 'number2') {
+    formattedNum = formatNumber(num, 2, true);
   } else if (numFormat === 'number4') {
     formattedNum = formatNumber(num, 4);
   } else if (numFormat === 'percent2') {

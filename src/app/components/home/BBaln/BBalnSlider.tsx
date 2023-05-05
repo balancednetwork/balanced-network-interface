@@ -218,7 +218,7 @@ export default function BBalnSlider({
           { hash },
           {
             pending: t`Unlocking BALN early...`,
-            summary: t`Unlocked ${balnReturnedEarly && getFormattedNumber(balnReturnedEarly, 'number')} BALN.`,
+            summary: t`Unlocked ${balnReturnedEarly && getFormattedNumber(balnReturnedEarly, 'number2')} BALN.`,
           },
         );
       }

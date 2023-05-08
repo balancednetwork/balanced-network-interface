@@ -9,8 +9,8 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { useTotalBalnLocked, useTotalSupply } from 'store/bbaln/hooks';
 
-import { LoaderComponent } from './styledComponents';
-import { maxYearsLocked } from './utils';
+import { LoaderComponent } from '../styledComponents';
+import { maxYearsLocked } from '../utils';
 
 export default function VotingPowerPanel() {
   const { account } = useIconReact();

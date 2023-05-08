@@ -20,10 +20,10 @@ import { useCombinedVoteData, useNextUpdateDate, useUserVoteData } from 'store/l
 import { VoteSource } from 'store/liveVoting/types';
 import { useRewards, useTotalLPRewards } from 'store/reward/hooks';
 
-import BRIBE_LINKS from './bribeLinks';
+import BRIBE_LINKS from '../bribeLinks';
+import { GirdHeaderItem, RespoLabel, VoteItemWrap, VotingGrid } from '../styledComponents';
+import { formatFraction, formatTimeLeft, getSourceCurrentAllocationFormatted } from '../utils';
 import PowerLeftComponent from './PowerLeftComponent';
-import { GirdHeaderItem, RespoLabel, VoteItemWrap, VotingGrid } from './styledComponents';
-import { formatFraction, formatTimeLeft, getSourceCurrentAllocationFormatted } from './utils';
 import VotingComponent from './VotingComponent';
 
 const BribeLink = styled.a`

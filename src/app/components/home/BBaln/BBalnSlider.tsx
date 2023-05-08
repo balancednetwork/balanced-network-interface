@@ -584,10 +584,10 @@ export default function BBalnSlider({
                       ) : (
                         isAdjusting && (
                           <Typography fontSize={14} color="#fb6a6a">
-                            {t`Pay ${getFormattedNumber(
+                            {t`Pay a ${getFormattedNumber(
                               earlyWithdrawPenalty || 0,
                               'number2',
-                            )} BALN fee to unlock the rest early.`}
+                            )} BALN fee to unlock early.`}
                           </Typography>
                         )
                       )}
@@ -622,7 +622,7 @@ export default function BBalnSlider({
           </Typography>
           {!shouldBoost && earlyWithdrawPenalty && (
             <Typography textAlign="center" fontSize={14} color="#fb6a6a">
-              {t`Minus ${getFormattedNumber(earlyWithdrawPenalty, 'number2')} BALN fee`}
+              {t`Minus unlock fee of ${getFormattedNumber(earlyWithdrawPenalty, 'number2')} BALN`}
             </Typography>
           )}
 

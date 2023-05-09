@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { Link } from 'react-router-dom';
-import { Box, Flex } from 'rebass/styled-components';
-import { useTheme } from 'styled-components';
+import { Flex } from 'rebass/styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { ButtonLink } from 'app/components/Button';
 import Divider from 'app/components/Divider';
@@ -17,9 +17,23 @@ import { normalizeContent } from 'utils';
 
 import { Grid, ProposalPreview, StyledTypography } from './styledComponents';
 
+const MetaWrap = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin: -5px 0 -15px;
+
+  & > * {
+    margin-right: 15px;
+    line-height: 3;
+  }
+
+  & > div:last-of-type {
+    margin-right: 0;
+  }
+`;
+
 export default function ProposalsPanel() {
-  //temporary for lisbon
-  const { data: proposals } = useTotalProposalQuery(10);
+  const { data: proposals } = useTotalProposalQuery(30);
   const { data: activeProposals } = useActiveProposals();
   const theme = useTheme();
   const bBalnAmount = useBBalnAmount();
@@ -73,12 +87,10 @@ export default function ProposalsPanel() {
                         {proposal.description && normalizeContent(proposal.description, true)}
                       </Typography>
                       <Divider mt={3} mb={2}></Divider>
-                      <Flex flexWrap="wrap" alignItems="center" mb={-2}>
-                        <Box mr={'17px'}>
-                          <VoteStatusLabel proposal={proposal} />
-                        </Box>
+                      <MetaWrap>
+                        <VoteStatusLabel proposal={proposal} />
                         <VoteDateEndLabel proposal={proposal} />
-                      </Flex>
+                      </MetaWrap>
                     </ProposalPreview>
                   </Link>
                 )

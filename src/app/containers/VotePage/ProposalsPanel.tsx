@@ -33,8 +33,7 @@ const MetaWrap = styled.div`
 `;
 
 export default function ProposalsPanel() {
-  //temporary for lisbon
-  const { data: proposals } = useTotalProposalQuery(10);
+  const { data: proposals } = useTotalProposalQuery(30);
   const { data: activeProposals } = useActiveProposals();
   const theme = useTheme();
   const bBalnAmount = useBBalnAmount();

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-20 08:27\n"
+"PO-Revision-Date: 2023-05-09 21:18\n"
 "Last-Translator: \n"
 "Language: zh_CN\n"
 "Language-Team: Chinese Simplified\n"
@@ -748,7 +748,7 @@ msgid "Minimum to receive"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Minus 50% fee: {0} BALN"
+msgid "Minus unlock fee of {0} BALN"
 msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
@@ -818,7 +818,7 @@ msgid "Pay"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Pay a 50% fee to unlock your BALN early."
+msgid "Pay a {0} BALN fee to unlock early."
 msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
@@ -1241,6 +1241,10 @@ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlock Balance Tokens?"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "Unlock {0} BALN"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx

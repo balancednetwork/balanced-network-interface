@@ -21,9 +21,6 @@ const Bribes = styled.div`
   ${({ theme }) => theme.mediaWidth.upMedium`
     grid-template-columns: repeat(3, 1fr);
   `};
-  ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: repeat(4, 1fr);
-  `};
 `;
 
 export default function BribesPanel() {
@@ -56,7 +53,6 @@ export default function BribesPanel() {
           bribes.map((bribe, index) => <BribedSource key={index} bribe={bribe} />)
         ) : (
           <>
-            <BribeSkeleton />
             <BribeSkeleton />
             <BribeSkeleton />
             <BribeSkeleton />

@@ -184,8 +184,6 @@ export default function BribedSource({ bribe }: { bribe: Bribe }) {
 
   const apr = React.useMemo(() => {
     const source = sourcesData?.[bribe.sourceName];
-
-    console.log(source);
     if (!source || !bribeTokenPrice || !closestBribe) return;
 
     const reward = new BigNumber(closestBribe.toFixed(4)).times(bribeTokenPrice);

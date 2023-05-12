@@ -5,42 +5,22 @@ import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import Divider from 'app/components/Divider';
-import { UnderlineText } from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
 import PoolLogo from 'app/components/PoolLogo';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
-import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
 import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { useBBalnAmount } from 'store/bbaln/hooks';
 import { useCombinedVoteData, useNextUpdateDate, useUserVoteData } from 'store/liveVoting/hooks';
 import { VoteSource } from 'store/liveVoting/types';
 import { useRewards, useTotalLPRewards } from 'store/reward/hooks';
 
-import BRIBE_LINKS from '../bribeLinks';
 import { GirdHeaderItem, RespoLabel, VoteItemWrap, VotingGrid } from '../styledComponents';
 import { formatFraction, formatTimeLeft, getSourceCurrentAllocationFormatted } from '../utils';
 import PowerLeftComponent from './PowerLeftComponent';
 import VotingComponent from './VotingComponent';
-
-const BribeLink = styled.a`
-  text-decoration: none;
-  position: absolute;
-  white-space: nowrap;
-  color: ${({ theme }) => theme.colors.primaryBright};
-  font-size: 14px;
-  bottom: -6px;
-  left: 97px;
-
-  svg {
-    path {
-      stroke: ${({ theme }) => theme.colors.primaryBright};
-    }
-  }
-`;
 
 const MemoizedVotingComponent = React.memo(VotingComponent);
 
@@ -98,22 +78,12 @@ export default function LiveVotingPanel() {
                       fontWeight="bold"
                       style={{ whiteSpace: 'nowrap' }}
                       ml={2}
-                    >{`${baseCurrency.symbol}/${quoteCurrency.symbol}`}</Typography>
+                    >{`${baseCurrency.symbol} / ${quoteCurrency.symbol}`}</Typography>
                   </Flex>
                 ) : (
                   <Typography color="text" fontSize={16} fontWeight="bold">
                     {name}
                   </Typography>
-                )}
-                {BRIBE_LINKS[name] && (
-                  <BribeLink href={BRIBE_LINKS[name]} target="_blank" rel="noreferrer">
-                    <UnderlineText>View bribes</UnderlineText>
-                    <ExternalIcon
-                      width="12"
-                      height="12"
-                      style={{ marginLeft: 7, marginRight: -22, marginTop: -4 }}
-                    ></ExternalIcon>
-                  </BribeLink>
                 )}
               </Flex>
             </Flex>

@@ -4,7 +4,7 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { useIconReact } from 'packages/icon-react';
-import { Box, Flex } from 'rebass';
+import { Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
@@ -13,7 +13,6 @@ import { getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import { StyledSkeleton } from 'app/components/ProposalInfo/components';
-import QuestionHelper from 'app/components/QuestionHelper';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -185,6 +184,8 @@ export default function BribedSource({ bribe }: { bribe: Bribe }) {
 
   const apr = React.useMemo(() => {
     const source = sourcesData?.[bribe.sourceName];
+
+    console.log(source);
     if (!source || !bribeTokenPrice || !closestBribe) return;
 
     const reward = new BigNumber(closestBribe.toFixed(4)).times(bribeTokenPrice);
@@ -195,42 +196,17 @@ export default function BribedSource({ bribe }: { bribe: Bribe }) {
     return reward.times(52).div(totalBBalnVoted.times(balnPrice)).toNumber();
   }, [sourcesData, bribe.sourceName, bribeTokenPrice, closestBribe, balnPrice]);
 
-  const futureRewardShare = React.useMemo(() => {
-    if (!apr) return;
-    return (apr / 52) * 1000 * balnPrice;
-  }, [apr, balnPrice]);
-
   return (
     <BribedSourceWrap>
       <Flex width="100%" alignItems="center" justifyContent="center" mb={2}>
         <Typography mr="7px" fontWeight={700} color="text" fontSize={16} textAlign="center">
-          {bribe.sourceName}
+          {bribe.sourceName.replace('/', ' / ')}
         </Typography>
         {apr && (
           <>
             <Typography fontSize={14} pt="4px" color="text1">
               {` ~ ${getFormattedNumber(apr, 'percent0')} APR`}
             </Typography>
-            <Box p="3px 0 0 5px">
-              <QuestionHelper
-                width={230}
-                text={
-                  <>
-                    <Typography mb={2}>
-                      <Trans>Assumes the price of 1 bBALN is equivalent to 1 BALN locked for 4 years</Trans>
-                      <strong>{` ($${getFormattedNumber(balnPrice, 'number2')})`}</strong>.
-                    </Typography>
-                    {futureRewardShare && (
-                      <Typography>
-                        1,000 bBALN vote would get you around{' '}
-                        <strong>${getFormattedNumber(futureRewardShare, 'number2')}</strong> during the next
-                        distribution.
-                      </Typography>
-                    )}
-                  </>
-                }
-              />
-            </Box>
           </>
         )}
       </Flex>

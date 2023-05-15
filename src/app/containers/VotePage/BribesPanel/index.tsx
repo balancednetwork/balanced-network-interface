@@ -40,8 +40,11 @@ export default function BribesPanel() {
                 <Typography mb={2}>
                   <Trans>Vote to incentivise specific liquidity pools and earn a kickback for it.</Trans>
                 </Typography>
-                <Typography>
+                <Typography mb={2}>
                   <Trans>Bribes are released every Thursday at 12am UTC, and must be claimed within 7 days.</Trans>
+                </Typography>
+                <Typography color="text1">
+                  <Trans>APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)</Trans>
                 </Typography>
               </>
             }

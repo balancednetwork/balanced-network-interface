@@ -144,14 +144,14 @@ const UserBribeState = ({ bribe }: { bribe: Bribe }) => {
         </Typography>
       )}
 
-      <Modal isOpen={isOpen} onDismiss={closeModal}>
+      <Modal isOpen={isOpen} onDismiss={closeModal} maxWidth={300}>
         <ModalContent>
           <Typography textAlign="center" mb={1}>
-            {t`Claim ${bribe.sourceName.replace('/', ' / ')} bribe?`}
+            {t`Claim bribe?`}
           </Typography>
 
           <Flex flexDirection="column" alignItems="center" mt={2}>
-            <Typography variant="p">
+            <Typography fontSize={20} fontWeight="bold" variant="p">
               {`${bribe.claimable?.toFixed(2, { groupSeparator: ',' })} ${bribe.claimable?.currency.symbol}`}{' '}
             </Typography>
           </Flex>
@@ -179,30 +179,35 @@ export default function BribedSource({ bribe }: { bribe: Bribe }) {
   const { data: sourcesData } = useSourceVoteData();
   const { data: tokens } = useAllTokensByAddress();
   const balnPrice = tokens?.['cxf61cd5a45dc9f91c15aa65831a30a90d59a09619'].price;
-  const closestBribe = bribe.futureBribes[0].bribe;
+  const bribes = bribe.futureBribes;
   const bribeTokenPrice = tokens?.[bribe.bribeToken]?.price;
 
   const apr = React.useMemo(() => {
     const source = sourcesData?.[bribe.sourceName];
-    if (!source || !bribeTokenPrice || !closestBribe) return;
+    if (!source || !bribeTokenPrice || !bribes) return;
 
-    const reward = new BigNumber(closestBribe.toFixed(4)).times(bribeTokenPrice);
+    const nonZeroRewards = bribes.filter(bribe => bribe.bribe.greaterThan(0));
+    const avgReward = nonZeroRewards
+      .reduce((acc, bribe) => acc.plus(new BigNumber(bribe.bribe.toFixed(2))), new BigNumber(0))
+      .div(nonZeroRewards.length)
+      .times(bribeTokenPrice);
     const totalBBalnVoted = source.currentBias
       .plus(source.currentSlope.times(getClosestUnixWeekStart(new Date().getTime()).getTime() - new Date().getTime()))
       .div(10 ** 18);
 
-    return reward.times(52).div(totalBBalnVoted.times(balnPrice)).toNumber();
-  }, [sourcesData, bribe.sourceName, bribeTokenPrice, closestBribe, balnPrice]);
+    return avgReward.times(52).div(totalBBalnVoted.times(balnPrice)).toNumber();
+  }, [sourcesData, bribe.sourceName, bribeTokenPrice, bribes, balnPrice]);
 
   return (
     <BribedSourceWrap>
       <Flex width="100%" alignItems="center" justifyContent="center" mb={2}>
         <Typography mr="7px" fontWeight={700} color="text" fontSize={16} textAlign="center">
           {bribe.sourceName.replace('/', ' / ')}
+          {apr && ':'}
         </Typography>
         {apr && (
           <>
-            <Typography fontSize={14} pt="4px" color="text1">
+            <Typography fontSize={14} pt="4px" color="text">
               {` ~ ${getFormattedNumber(apr, 'percent0')} APR`}
             </Typography>
           </>

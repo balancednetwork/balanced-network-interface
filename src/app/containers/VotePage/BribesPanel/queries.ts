@@ -9,6 +9,7 @@ import { WEEK_IN_MS, getClosestUnixWeekStart } from 'app/components/home/BBaln/u
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { useCombinedVoteData } from 'store/liveVoting/hooks';
+import { useAllTransactions } from 'store/transactions/hooks';
 
 import { Bribe, BribeToken, SourceName } from './types';
 
@@ -17,6 +18,8 @@ const FUTURE_REWARDS_COUNT = 3;
 export function useBribes(): UseQueryResult<Bribe[], Error> {
   const { data: voteData } = useCombinedVoteData();
   const { account } = useIconReact();
+  const transactions = useAllTransactions();
+  const txCount = useMemo(() => (transactions ? Object.keys(transactions).length : 0), [transactions]);
 
   const sourceNames = useMemo(() => {
     if (voteData) return Object.keys(voteData);
@@ -24,7 +27,7 @@ export function useBribes(): UseQueryResult<Bribe[], Error> {
   }, [voteData]);
 
   return useQuery(
-    `bribes-${sourceNames.length}-${account}`,
+    `bribes-${sourceNames.length}-${account}-${txCount}`,
     async () => {
       const cds: CallData[] = sourceNames.map(sourceName => ({
         target: bnJs.Bribe.address,

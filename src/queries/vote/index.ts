@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
@@ -6,6 +8,7 @@ import { useQuery } from 'react-query';
 import bnJs from 'bnJs';
 import QUERY_KEYS from 'queries/queryKeys';
 import { usePlatformDayQuery } from 'queries/reward';
+import { useAllTransactions } from 'store/transactions/hooks';
 import { ProposalInterface } from 'types';
 
 export const useProposalInfoQuery = (pId: number) => {
@@ -151,9 +154,11 @@ export const useTotalProposalCountQuery = () => {
 export const useActiveProposals = (offset: number = 30, batchSize: number = 200) => {
   const { account } = useIconReact();
   const { data: platformDay } = usePlatformDayQuery();
+  const transactions = useAllTransactions();
+  const txCount = React.useMemo(() => (transactions ? Object.keys(transactions).length : 0), [transactions]);
 
   return useQuery(
-    `activeProposals-${offset}-${batchSize}`,
+    `activeProposals-${offset}-${batchSize}-${account}-${txCount}}`,
     async () => {
       if (account) {
         const proposals = await bnJs.Governance.getProposals(offset, batchSize);

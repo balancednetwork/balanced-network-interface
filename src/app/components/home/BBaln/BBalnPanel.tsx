@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
+import QuestionHelper from 'app/components/QuestionHelper';
 import { sizes, Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useIncentivisedPairs } from 'queries/reward';
@@ -15,6 +16,7 @@ import {
   useWorkingBalance,
   useSources,
   useDBBalnAmountDiff,
+  usePastMonthFeesDistributed,
 } from 'store/bbaln/hooks';
 import { useBALNDetails } from 'store/wallet/hooks';
 
@@ -40,7 +42,7 @@ export default function BBalnPanel() {
   const [showLiquidityTooltip, setShowLiquidityTooltip] = useState(false);
   const arrowRef = React.useRef(null);
   const balnDetails = useBALNDetails();
-  // const { data: pastMonthFees } = usePastMonthFeesDistributed();
+  const { data: pastMonthFees } = usePastMonthFeesDistributed();
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
   const balnBalanceAvailable = useMemo(
@@ -117,7 +119,7 @@ export default function BBalnPanel() {
             {/* <Typography marginLeft="14px"> */}
             <Typography>
               Network fees
-              {/* <QuestionHelper
+              <QuestionHelper
                 iconStyle={{ position: 'relative', transform: 'translate3d(1px, 2px, 0)' }}
                 strategy="absolute"
                 placement="bottom"
@@ -146,7 +148,7 @@ export default function BBalnPanel() {
                     )}
                   </>
                 }
-              /> */}
+              />
             </Typography>
           </BoostedBox>
           <BoostedBox>

@@ -30,8 +30,8 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { escapeRegExp, ONE_DAY_DURATION } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { AllocationInput, RespoLabel, StyledQuestionIcon, VotingButtons } from './styledComponents';
-import { formatFraction, formatTimeLeft, formatVoteWeight, getUserCurrentAllocationFormatted } from './utils';
+import { AllocationInput, RespoLabel, StyledQuestionIcon, VotingButtons } from '../styledComponents';
+import { formatFraction, formatTimeLeft, formatVoteWeight, getUserCurrentAllocationFormatted } from '../utils';
 
 interface VotingComponentProps {
   name: string;

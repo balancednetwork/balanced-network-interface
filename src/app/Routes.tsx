@@ -12,7 +12,7 @@ import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 import { ProposalPage } from './containers/ProposalPage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
 import { VotePage } from './containers/VotePage/Loadable';
-import { ProposalList } from './containers/VotePage/ProposalList';
+import { ProposalList } from './containers/VotePage/ProposalsPanel/ProposalList';
 
 const routeTexts: [string, MessageDescriptor][] = [
   ['/vote', defineMessage({ message: 'Vote' })],

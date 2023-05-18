@@ -13,7 +13,7 @@ import {
   useUserVoteData,
 } from 'store/liveVoting/hooks';
 
-import { formatFraction } from './utils';
+import { formatFraction } from '../utils';
 
 export default function PowerLeftComponent() {
   const powerLeft = usePowerLeft();

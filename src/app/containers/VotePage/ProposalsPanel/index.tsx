@@ -15,7 +15,7 @@ import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
 import { useBBalnAmount } from 'store/bbaln/hooks';
 import { normalizeContent } from 'utils';
 
-import { Grid, ProposalPreview, StyledTypography } from './styledComponents';
+import { Grid, ProposalPreview, StyledTypography } from '../styledComponents';
 
 const MetaWrap = styled.div`
   display: flex;

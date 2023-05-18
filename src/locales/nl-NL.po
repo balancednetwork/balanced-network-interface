@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-05-09 21:18\n"
+"PO-Revision-Date: 2023-05-18 09:21\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -16,12 +16,24 @@ msgstr ""
 "X-Crowdin-File: en-US.po\n"
 "X-Crowdin-File-ID: 12\n"
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "${0} was distributed over the last 30 days"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "${0}."
+msgstr ""
+
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "({0}% required)"
 msgstr "({0}% vereist)"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid ", so you would have received"
+msgstr ""
+
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid ", the current incentives will be adjusted to reflect this allocation."
 msgstr ""
 
@@ -49,7 +61,7 @@ msgstr "1U"
 msgid "1W"
 msgstr "1W"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
 msgstr ""
 
@@ -60,6 +72,10 @@ msgstr "4U"
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "5 days is standard. Use less for an emergency vote, more for maximum participation."
 msgstr "5 dagen is standaard. Gebruik minder voor een noodstemming, meer voor maximale participatie."
+
+#: src/app/containers/VotePage/BribesPanel/index.tsx
+msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
+msgstr ""
 
 #: src/app/components/trade/AllPoolsPanel.tsx
 #: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
@@ -106,11 +122,11 @@ msgstr "Adres"
 msgid "Adjust"
 msgstr "Wijzig"
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Adjust allocation"
 msgstr ""
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Adjust liquidity allocation?"
 msgstr ""
 
@@ -133,7 +149,7 @@ msgstr "Gehele onderpand vergrendeld"
 msgid "All fees claimed"
 msgstr "Alle vergoedingen claimed"
 
-#: src/app/containers/VotePage/ProposalList.tsx
+#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
 msgid "All proposals"
 msgstr ""
 
@@ -141,7 +157,7 @@ msgstr ""
 msgid "All time"
 msgstr "Altijd"
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Allocating bBALN..."
 msgstr ""
 
@@ -179,7 +195,7 @@ msgstr "Te verzenden valuta"
 msgid "Available since {0}"
 msgstr "Beschikbaar sinds {0}"
 
-#: src/app/containers/VotePage/VotingPowerPanel.tsx
+#: src/app/containers/VotePage/VotingPowerPanel/index.tsx
 msgid "Average lock-up time"
 msgstr ""
 
@@ -236,6 +252,14 @@ msgstr "{0} bnUSD geleend."
 msgid "Borrowing bnUSD..."
 msgstr "bnUSD lenen..."
 
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Bribe available in"
+msgstr ""
+
+#: src/app/containers/VotePage/BribesPanel/index.tsx
+msgid "Bribes are released every Thursday at 12am UTC, and must be claimed within 7 days."
+msgstr ""
+
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
@@ -251,7 +275,7 @@ msgstr "bnUSD lenen..."
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SwapPanel.tsx
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"
 msgstr "Annuleren"
 
@@ -298,6 +322,8 @@ msgstr "Kies een portemonnee uit je Ledger:"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/containers/Claim/index.tsx
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 msgid "Claim"
 msgstr "Claim"
 
@@ -318,6 +344,10 @@ msgstr "Claim ICX"
 msgid "Claim ICX?"
 msgstr "Claim ICX?"
 
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Claim bribe?"
+msgstr ""
+
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim network fees?"
 msgstr "Netwerkvergoedingen claimen?"
@@ -335,9 +365,17 @@ msgstr "{0} BALN geclaimd."
 msgid "Claimed {0} ICX."
 msgstr "{0} BALN geclaimd."
 
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Claimed {0} {1}."
+msgstr ""
+
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claiming ICX..."
 msgstr "ICX claimen..."
+
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Claiming bribe..."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/containers/Claim/index.tsx
@@ -356,7 +394,7 @@ msgstr "Onderpand"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Confirm"
 msgstr "Bevestigen"
 
@@ -440,8 +478,8 @@ msgstr "Pool aanmaken"
 msgid "Creating pool"
 msgstr "Pool aan het aanmaken"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Current incentives"
 msgstr ""
 
@@ -566,8 +604,8 @@ msgstr ""
 msgid "Forum link"
 msgstr "Forum link"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Future incentives"
 msgstr ""
 
@@ -606,7 +644,7 @@ msgstr ""
 msgid "Impermanent loss is not factored in."
 msgstr "Impermanent loss is niet meegenomen."
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "In"
 msgstr ""
 
@@ -614,11 +652,11 @@ msgstr ""
 msgid "In contract"
 msgstr "In contract"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
 msgstr ""
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Incentives will be updated in"
 msgstr ""
 
@@ -686,7 +724,11 @@ msgstr "Lijn"
 msgid "Liquidated"
 msgstr "Geliquideerd"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/BribesPanel/index.tsx
+msgid "Liquidity bribes"
+msgstr ""
+
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Liquidity incentives"
 msgstr ""
 
@@ -713,6 +755,10 @@ msgstr "Vergrendelingsduur verhoogd tot {0}."
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN"
 msgstr "BALN vergrendelen"
+
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Lock up BALN and vote for this pool to receive bribes."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Lock up BALN to earn network fees."
@@ -756,8 +802,8 @@ msgid "Network fees"
 msgstr "Netwerk vergoedingen"
 
 #: src/app/containers/NewProposalPage/index.tsx
-#: src/app/containers/VotePage/ProposalList.tsx
-#: src/app/containers/VotePage/ProposalsPanel.tsx
+#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
+#: src/app/containers/VotePage/ProposalsPanel/index.tsx
 msgid "New proposal"
 msgstr "Nieuw voorstel"
 
@@ -780,6 +826,7 @@ msgstr "Geen resultaten gevonden."
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 msgid "Not now"
 msgstr "Niet nu"
 
@@ -854,8 +901,8 @@ msgstr "Transactie verwerken..."
 msgid "Proposal submitted."
 msgstr ""
 
-#: src/app/containers/VotePage/ProposalList.tsx
-#: src/app/containers/VotePage/ProposalsPanel.tsx
+#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
+#: src/app/containers/VotePage/ProposalsPanel/index.tsx
 msgid "Proposals"
 msgstr "Voorstellen"
 
@@ -1161,6 +1208,10 @@ msgstr ""
 msgid "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will decrease over time."
 msgstr ""
 
+#: src/app/containers/VotePage/BribesPanel/index.tsx
+msgid "There are no bribes this week."
+msgstr ""
+
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "There's no ICX unstaking."
 msgstr "Er is geen ICX aan het unstaken."
@@ -1201,7 +1252,7 @@ msgstr ""
 msgid "Total daily rewards"
 msgstr "Totale dagelijkse beloningen"
 
-#: src/app/containers/VotePage/VotingPowerPanel.tsx
+#: src/app/containers/VotePage/VotingPowerPanel/index.tsx
 msgid "Total locked"
 msgstr ""
 
@@ -1209,7 +1260,7 @@ msgstr ""
 msgid "Total supply"
 msgstr "Totale voorraad"
 
-#: src/app/containers/VotePage/VotingPowerPanel.tsx
+#: src/app/containers/VotePage/VotingPowerPanel/index.tsx
 msgid "Total voting power"
 msgstr ""
 
@@ -1356,13 +1407,21 @@ msgstr "Bekijk disclaimer"
 #: src/app/components/AppBar/index.tsx
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/VotePage/ProposalList.tsx
+#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
 msgid "Vote"
 msgstr "Stemmen"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
 msgstr "Stem uitgebracht."
+
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Vote for this pool to receive bribes."
+msgstr ""
+
+#: src/app/containers/VotePage/BribesPanel/index.tsx
+msgid "Vote to incentivise specific liquidity pools and earn a kickback for it."
+msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting ends in {endTimeStr}"
@@ -1372,7 +1431,7 @@ msgstr "Stemmen eindigt over {endTimeStr}"
 msgid "Voting has ended"
 msgstr "De stemming is afgelopen"
 
-#: src/app/containers/VotePage/PowerLeftComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/PowerLeftComponent.tsx
 msgid "Voting power available: {0}"
 msgstr ""
 
@@ -1415,7 +1474,7 @@ msgstr "Wallet:\n"
 "{0} {1} /\n"
 "{2} {3}"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Where bBALN holders have allocated their voting power, updated live."
 msgstr ""
 
@@ -1503,7 +1562,7 @@ msgstr "Je hebt minstens {MINIMUM_ICX_FOR_TX} ICX in je wallet nodig om deze tra
 msgid "You rejected"
 msgstr "Je hebt geweigerd"
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "You'll be able to readjust your allocation for this pool on"
 msgstr ""
 
@@ -1539,13 +1598,17 @@ msgstr ""
 msgid "Your ICX will be ready to claim in ~7 days, but it may unstake sooner based on the volume of ICX converted to sICX."
 msgstr ""
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Your allocation"
 msgstr ""
 
 #: src/app/components/trade/LiquidityPoolsPanel.tsx
 msgid "Your pools"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Your share of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN."
 msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
@@ -1585,7 +1648,7 @@ msgstr ""
 msgid "h"
 msgstr "h"
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "left until you can adjust your allocation."
 msgstr ""
 
@@ -1682,6 +1745,10 @@ msgstr "{0} kiezers"
 msgid "{0} {1} added to your wallet"
 msgstr "{0} {1} toegevoegd aan uw wallet"
 
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "{0} {1} available"
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapPanel.tsx
@@ -1701,7 +1768,7 @@ msgstr "{currency} is naar de {pair} pool verzonden."
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
 msgstr "{inputAmount} {inputCurrency} en {outputAmount} {outputCurrency} zijn toegevoegd aan uw wallet."
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "{inputValue}% of bBALN allocated to {editing}."
 msgstr ""
 

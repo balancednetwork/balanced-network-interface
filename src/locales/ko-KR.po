@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-05-09 21:18\n"
+"PO-Revision-Date: 2023-05-18 09:21\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -16,12 +16,24 @@ msgstr ""
 "X-Crowdin-File: en-US.po\n"
 "X-Crowdin-File-ID: 12\n"
 
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "${0} was distributed over the last 30 days"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "${0}."
+msgstr ""
+
 #: src/app/containers/ProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
 msgid "({0}% required)"
 msgstr "({0}% 필요)"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid ", so you would have received"
+msgstr ""
+
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid ", the current incentives will be adjusted to reflect this allocation."
 msgstr ", 현재 인센티브는 이 할당을 반영하도록 조정될 것이다."
 
@@ -49,7 +61,7 @@ msgstr "1시간"
 msgid "1W"
 msgstr "1주"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
 msgstr "일일 BALN 인플레이션의 47%는 유동성을 장려하기 위해 사용됩니다. bBALN 보유자는 \"라이브 보팅\"를 통해 각 유동성 풀에 할당된 금액을 조정할 수 있습니다."
 
@@ -60,6 +72,10 @@ msgstr "4시간"
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "5 days is standard. Use less for an emergency vote, more for maximum participation."
 msgstr "5일을 기본으로 하고 있으며. 긴급 투표에는 적게, 최대 참여에는 더 많이 사용하세요."
+
+#: src/app/containers/VotePage/BribesPanel/index.tsx
+msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
+msgstr ""
 
 #: src/app/components/trade/AllPoolsPanel.tsx
 #: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
@@ -106,11 +122,11 @@ msgstr "주소"
 msgid "Adjust"
 msgstr "조정하기"
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Adjust allocation"
 msgstr ""
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Adjust liquidity allocation?"
 msgstr ""
 
@@ -133,7 +149,7 @@ msgstr "모든 담보물 잠김"
 msgid "All fees claimed"
 msgstr ""
 
-#: src/app/containers/VotePage/ProposalList.tsx
+#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
 msgid "All proposals"
 msgstr ""
 
@@ -141,7 +157,7 @@ msgstr ""
 msgid "All time"
 msgstr "모든 기간"
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Allocating bBALN..."
 msgstr ""
 
@@ -179,7 +195,7 @@ msgstr "송금할 자산"
 msgid "Available since {0}"
 msgstr ""
 
-#: src/app/containers/VotePage/VotingPowerPanel.tsx
+#: src/app/containers/VotePage/VotingPowerPanel/index.tsx
 msgid "Average lock-up time"
 msgstr ""
 
@@ -236,6 +252,14 @@ msgstr "{0} bnUSD 대출됨."
 msgid "Borrowing bnUSD..."
 msgstr "대출 중인 bnUSD..."
 
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Bribe available in"
+msgstr ""
+
+#: src/app/containers/VotePage/BribesPanel/index.tsx
+msgid "Bribes are released every Thursday at 12am UTC, and must be claimed within 7 days."
+msgstr ""
+
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
@@ -251,7 +275,7 @@ msgstr "대출 중인 bnUSD..."
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SwapPanel.tsx
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"
 msgstr "취소"
 
@@ -298,6 +322,8 @@ msgstr "Ledger에서 지갑 선택:"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/containers/Claim/index.tsx
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 msgid "Claim"
 msgstr "요구하기"
 
@@ -318,6 +344,10 @@ msgstr "ICX 요구하기"
 msgid "Claim ICX?"
 msgstr "ICX 요구하기?"
 
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Claim bribe?"
+msgstr ""
+
 #: src/app/components/home/RewardsPanel.tsx
 msgid "Claim network fees?"
 msgstr "네트워크 수수료를 요구하겠습니까?"
@@ -335,9 +365,17 @@ msgstr "청구된 {0} BALN."
 msgid "Claimed {0} ICX."
 msgstr "승인된 {0} ICX."
 
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Claimed {0} {1}."
+msgstr ""
+
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claiming ICX..."
 msgstr "ICX 승인중..."
+
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Claiming bribe..."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/containers/Claim/index.tsx
@@ -356,7 +394,7 @@ msgstr "담보"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Confirm"
 msgstr "확인"
 
@@ -440,8 +478,8 @@ msgstr "풀 생성하기"
 msgid "Creating pool"
 msgstr "풀 생성 중"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Current incentives"
 msgstr ""
 
@@ -566,8 +604,8 @@ msgstr ""
 msgid "Forum link"
 msgstr "포럼 링크"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Future incentives"
 msgstr ""
 
@@ -606,7 +644,7 @@ msgstr ""
 msgid "Impermanent loss is not factored in."
 msgstr ""
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "In"
 msgstr ""
 
@@ -614,11 +652,11 @@ msgstr ""
 msgid "In contract"
 msgstr "계약중"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
 msgstr ""
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Incentives will be updated in"
 msgstr ""
 
@@ -686,7 +724,11 @@ msgstr "선"
 msgid "Liquidated"
 msgstr "청산 됨"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/BribesPanel/index.tsx
+msgid "Liquidity bribes"
+msgstr ""
+
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Liquidity incentives"
 msgstr ""
 
@@ -712,6 +754,10 @@ msgstr ""
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN"
+msgstr ""
+
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Lock up BALN and vote for this pool to receive bribes."
 msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
@@ -756,8 +802,8 @@ msgid "Network fees"
 msgstr "네트워크 수수료"
 
 #: src/app/containers/NewProposalPage/index.tsx
-#: src/app/containers/VotePage/ProposalList.tsx
-#: src/app/containers/VotePage/ProposalsPanel.tsx
+#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
+#: src/app/containers/VotePage/ProposalsPanel/index.tsx
 msgid "New proposal"
 msgstr "새로운 제안"
 
@@ -780,6 +826,7 @@ msgstr "결과를 찾을 수 없습니다."
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 msgid "Not now"
 msgstr "지금은 안됩니다"
 
@@ -854,8 +901,8 @@ msgstr "트랜잭션 처리 중..."
 msgid "Proposal submitted."
 msgstr ""
 
-#: src/app/containers/VotePage/ProposalList.tsx
-#: src/app/containers/VotePage/ProposalsPanel.tsx
+#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
+#: src/app/containers/VotePage/ProposalsPanel/index.tsx
 msgid "Proposals"
 msgstr "제안"
 
@@ -1161,6 +1208,10 @@ msgstr ""
 msgid "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will decrease over time."
 msgstr ""
 
+#: src/app/containers/VotePage/BribesPanel/index.tsx
+msgid "There are no bribes this week."
+msgstr ""
+
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "There's no ICX unstaking."
 msgstr "스테이킹 해제 중인 ICX는 없습니다."
@@ -1201,7 +1252,7 @@ msgstr ""
 msgid "Total daily rewards"
 msgstr "1일 보상 합계"
 
-#: src/app/containers/VotePage/VotingPowerPanel.tsx
+#: src/app/containers/VotePage/VotingPowerPanel/index.tsx
 msgid "Total locked"
 msgstr ""
 
@@ -1209,7 +1260,7 @@ msgstr ""
 msgid "Total supply"
 msgstr "공급량 합계"
 
-#: src/app/containers/VotePage/VotingPowerPanel.tsx
+#: src/app/containers/VotePage/VotingPowerPanel/index.tsx
 msgid "Total voting power"
 msgstr ""
 
@@ -1356,13 +1407,21 @@ msgstr "면책조항 보기"
 #: src/app/components/AppBar/index.tsx
 #: src/app/containers/NewProposalPage/index.tsx
 #: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/VotePage/ProposalList.tsx
+#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
 msgid "Vote"
 msgstr "투표"
 
 #: src/app/containers/ProposalPage/index.tsx
 msgid "Vote cast."
 msgstr "투표 하기."
+
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "Vote for this pool to receive bribes."
+msgstr ""
+
+#: src/app/containers/VotePage/BribesPanel/index.tsx
+msgid "Vote to incentivise specific liquidity pools and earn a kickback for it."
+msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Voting ends in {endTimeStr}"
@@ -1372,7 +1431,7 @@ msgstr ""
 msgid "Voting has ended"
 msgstr ""
 
-#: src/app/containers/VotePage/PowerLeftComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/PowerLeftComponent.tsx
 msgid "Voting power available: {0}"
 msgstr ""
 
@@ -1414,7 +1473,7 @@ msgid "Wallet: {0} {1} /\n"
 msgstr "지갑: {0} {1} /\n"
 "{2} {3}"
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Where bBALN holders have allocated their voting power, updated live."
 msgstr ""
 
@@ -1502,7 +1561,7 @@ msgstr "이 거래를 완료하려면 지갑에 최소 {MINIMUM_ICX_FOR_TX} ICX�
 msgid "You rejected"
 msgstr "반려되었습니다."
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "You'll be able to readjust your allocation for this pool on"
 msgstr ""
 
@@ -1538,13 +1597,17 @@ msgstr ""
 msgid "Your ICX will be ready to claim in ~7 days, but it may unstake sooner based on the volume of ICX converted to sICX."
 msgstr ""
 
-#: src/app/containers/VotePage/LiveVotingPanel.tsx
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Your allocation"
 msgstr ""
 
 #: src/app/components/trade/LiquidityPoolsPanel.tsx
 msgid "Your pools"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnPanel.tsx
+msgid "Your share of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN."
 msgstr ""
 
 #: src/app/components/trade/LPDescription.tsx
@@ -1584,7 +1647,7 @@ msgstr ""
 msgid "h"
 msgstr ""
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "left until you can adjust your allocation."
 msgstr ""
 
@@ -1681,6 +1744,10 @@ msgstr "{0} 유권자"
 msgid "{0} {1} added to your wallet"
 msgstr "{0} {1} 이 지갑에 추가되었습니다."
 
+#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+msgid "{0} {1} available"
+msgstr ""
+
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapPanel.tsx
@@ -1700,7 +1767,7 @@ msgstr "{currency} 를 {pair} 풀로 보냈습니다."
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
 msgstr "{inputAmount} {inputCurrency} 및 {outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
 
-#: src/app/containers/VotePage/VotingComponent.tsx
+#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "{inputValue}% of bBALN allocated to {editing}."
 msgstr ""
 

@@ -94,6 +94,7 @@ export function useBribes(): UseQueryResult<Bribe[], Error> {
     },
     {
       keepPreviousData: true,
+      refetchInterval: 3000,
       enabled: sourceNames.length > 0,
     },
   );

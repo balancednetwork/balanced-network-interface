@@ -8,6 +8,7 @@ const DEFAULT_CURRENCY_DECIMALS = 2;
 
 export type NumberStyle =
   | 'percent0'
+  | 'percent1'
   | 'percent2'
   | 'number'
   | 'number2'
@@ -90,6 +91,8 @@ export const getFormattedNumber = (num: number | null, numFormat: NumberStyle) =
     formattedNum = formatPercentage(num);
   } else if (numFormat === 'percent0') {
     formattedNum = formatPercentage(num, 0);
+  } else if (numFormat === 'percent1') {
+    formattedNum = formatPercentage(num, 1);
   } else if (numFormat === 'price') {
     formattedNum = formatPrice(num);
   }

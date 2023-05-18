@@ -208,7 +208,7 @@ export default function BribedSource({ bribe }: { bribe: Bribe }) {
         {apr && (
           <>
             <Typography fontSize={14} pt="4px" color="text">
-              {` ~ ${getFormattedNumber(apr, 'percent0')} APR`}
+              {`${getFormattedNumber(apr, 'percent1')} APR`}
             </Typography>
           </>
         )}

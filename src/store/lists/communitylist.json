@@ -11,6 +11,14 @@
   "keywords": ["balanced", "community"],
   "tokens": [
     {
+      "address": "cxf14dea1cff7ceb29a46e6d04533a08f84441e41d",
+      "chainId": 1,
+      "name": "Blobble Stake Token",
+      "symbol": "BST",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bst.png"
+    },
+    {
       "address": "cx6139a27c15f1653471ffba0b4b88dc15de7e3267",
       "chainId": 1,
       "name": "GangstaBet Token",

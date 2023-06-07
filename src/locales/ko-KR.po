@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-05-18 09:21\n"
+"PO-Revision-Date: 2023-06-07 20:20\n"
 "Last-Translator: \n"
 "Language: ko_KR\n"
 "Language-Team: Korean\n"
@@ -145,7 +145,7 @@ msgstr "적용 후"
 msgid "All collateral locked"
 msgstr "모든 담보물 잠김"
 
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "All fees claimed"
 msgstr ""
 
@@ -321,13 +321,13 @@ msgstr "Ledger에서 지갑 선택:"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 #: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 #: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 msgid "Claim"
 msgstr "요구하기"
 
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claim (1 of {count})"
 msgstr "요구하기 (1 of {count})"
 
@@ -353,7 +353,7 @@ msgid "Claim network fees?"
 msgstr "네트워크 수수료를 요구하겠습니까?"
 
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claimed fees."
 msgstr "청구된 수수료."
 
@@ -378,7 +378,7 @@ msgid "Claiming bribe..."
 msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claiming fees..."
 msgstr "수수료 승인 중..."
 
@@ -811,7 +811,7 @@ msgstr "새로운 제안"
 msgid "No assets available."
 msgstr "사용 가능한 자산이 없습니다."
 
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "No fees to claim"
 msgstr ""
 

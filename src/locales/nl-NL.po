@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-05-18 09:21\n"
+"PO-Revision-Date: 2023-06-07 20:20\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -145,7 +145,7 @@ msgstr "Na"
 msgid "All collateral locked"
 msgstr "Gehele onderpand vergrendeld"
 
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "All fees claimed"
 msgstr "Alle vergoedingen claimed"
 
@@ -321,13 +321,13 @@ msgstr "Kies een portemonnee uit je Ledger:"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 #: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 #: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 msgid "Claim"
 msgstr "Claim"
 
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claim (1 of {count})"
 msgstr "Claim (1 van {count})"
 
@@ -353,7 +353,7 @@ msgid "Claim network fees?"
 msgstr "Netwerkvergoedingen claimen?"
 
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claimed fees."
 msgstr "Geclaimde vergoedingen."
 
@@ -378,7 +378,7 @@ msgid "Claiming bribe..."
 msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claiming fees..."
 msgstr "Vergoedingen claimen..."
 
@@ -811,7 +811,7 @@ msgstr "Nieuw voorstel"
 msgid "No assets available."
 msgstr "Geen activa beschikbaar."
 
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "No fees to claim"
 msgstr "Geen vergoedingen om te claimen"
 

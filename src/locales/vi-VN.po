@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-05-18 09:21\n"
+"PO-Revision-Date: 2023-06-07 20:20\n"
 "Last-Translator: \n"
 "Language: vi_VN\n"
 "Language-Team: Vietnamese\n"
@@ -145,7 +145,7 @@ msgstr "Sau"
 msgid "All collateral locked"
 msgstr "Tất cả tài sản thế chấp sẽ bị khóa"
 
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "All fees claimed"
 msgstr ""
 
@@ -321,13 +321,13 @@ msgstr "Chọn 1 ví từ Ledger:"
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 #: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 #: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 msgid "Claim"
 msgstr "Nhận"
 
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claim (1 of {count})"
 msgstr "Nhận (1 trong {count})"
 
@@ -353,7 +353,7 @@ msgid "Claim network fees?"
 msgstr "Nhận phí hoạt động từ balanced?"
 
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claimed fees."
 msgstr "Đang nhận tiền phí."
 
@@ -378,7 +378,7 @@ msgid "Claiming bribe..."
 msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claiming fees..."
 msgstr "Đang nhận tiền phí..."
 
@@ -811,7 +811,7 @@ msgstr "Đề xuất mới"
 msgid "No assets available."
 msgstr "Ko có tài sản sẵn có."
 
-#: src/app/containers/Claim/index.tsx
+#: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "No fees to claim"
 msgstr ""
 

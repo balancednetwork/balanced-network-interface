@@ -138,7 +138,7 @@ export function ClaimGoodwill() {
           <Gradient>Goodwill</Gradient> disbursement
         </Separator>
         <Typography variant="p" fontSize={20} maxWidth="500px" textAlign="center" color="text1">
-          If you were a borrower on Balanced between January 20 - 24, you’re eligible to claim sICX as a gesture of
+          If you were a borrower on Balanced between January 20–24 2022, you’re eligible to claim sICX as a gesture of
           goodwill.{' '}
           <Link
             fontSize="20px"

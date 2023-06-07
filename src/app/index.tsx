@@ -11,7 +11,8 @@ import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
 import TransferAssetsModal from './components/BTP/index';
-import { Claim } from './containers/Claim/Loadable';
+import { ClaimGoodwill } from './containers/Claim/Goodwill';
+import { Claim } from './containers/Claim/LegacyFees';
 import Routes from './Routes';
 
 function Updaters() {
@@ -45,6 +46,7 @@ export function App() {
         />
         <Switch>
           <Route exact path="/claim" component={Claim} />
+          <Route exact path="/goodwill" component={ClaimGoodwill} />
           <Route component={Routes} />
         </Switch>
       </ThemeProvider>

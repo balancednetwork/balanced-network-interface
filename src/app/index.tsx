@@ -45,8 +45,8 @@ export function App() {
           htmlAttributes={{ lang: i18n.language }}
         />
         <Switch>
-          <Route exact path="/claim" component={Claim} />
-          <Route exact path="/goodwill" component={ClaimGoodwill} />
+          <Route exact path="/claim-legacy-fees" component={Claim} />
+          <Route exact path="/claim-goodwill" component={ClaimGoodwill} />
           <Route component={Routes} />
         </Switch>
       </ThemeProvider>

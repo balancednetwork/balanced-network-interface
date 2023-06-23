@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-06-07 20:20\n"
+"PO-Revision-Date: 2023-06-23 08:29\n"
 "Last-Translator: \n"
 "Language: ja_JP\n"
 "Language-Team: Japanese\n"
@@ -1629,7 +1629,7 @@ msgid "You’ll receive sICX when you withdraw, which you can unstake or swap fo
 msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
-msgid "and ends after 5 days."
+msgid "and ends after {duration} days."
 msgstr ""
 
 #: src/app/containers/VotePage/utils.ts

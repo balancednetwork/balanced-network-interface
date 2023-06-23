@@ -377,7 +377,7 @@ export function NewProposalPage() {
           <Typography textAlign="center" marginTop="10px">
             <Trans>Voting will begin at 5pm UTC,</Trans>
             <br />
-            <Trans>and ends after 5 days.</Trans>
+            {t`and ends after ${duration} days.`}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

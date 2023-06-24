@@ -125,6 +125,8 @@ export default function LPDescription() {
     const pairName = pair ? `${pair.token0.symbol}/${pair.token1.symbol}` : '';
     if (sources && sources[pairName] && sources[pairName].balance.isGreaterThan(0)) {
       return sources[pairName].workingBalance.dividedBy(sources[pairName].balance);
+    } else if (sources && pairName === 'sICX/BTCB' && sources['BTCB/sICX'].balance.isGreaterThan(0)) {
+      return sources['BTCB/sICX'].workingBalance.dividedBy(sources['BTCB/sICX'].balance);
     } else if (sources && pairName === 'ICX/sICX' && sources['sICX/ICX'].balance.isGreaterThan(0)) {
       return sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance);
     } else {

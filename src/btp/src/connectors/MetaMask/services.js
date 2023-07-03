@@ -57,7 +57,6 @@ export const reclaim = async ({ coinName, value }) => {
 
 export const transfer = async (tx, sendNativeCoin, token) => {
   const { BTS_CORE, GAS_LIMIT } = getCurrentChain();
-  console.log('🚀 ~ file: services.js:60 ~ transfer ~ GAS_LIMIT:', GAS_LIMIT);
 
   // https://docs.metamask.io/guide/sending-transactions.html#example
   const value = ethers.utils.parseEther(tx.value)._hex;

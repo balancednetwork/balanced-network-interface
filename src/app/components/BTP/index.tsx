@@ -281,8 +281,6 @@ const BTPContent = () => {
   const isGreaterThanMaxTransferAmount = new BigNumber(sendingBalance).isGreaterThan(maxTransferAmount);
 
   const isApproved = !!appovedBalance;
-  console.log('🚀 ~ file: index.tsx:283 ~ BTPContent ~ appovedBalance:', appovedBalance);
-  console.log('🚀 ~ file: index.tsx:220 ~ BTPContent ~ assetName:', assetName);
 
   const balanceInputValue = isApproved ? new BigNumber(appovedBalance).minus(fee).toFixed() : sendingBalance;
 

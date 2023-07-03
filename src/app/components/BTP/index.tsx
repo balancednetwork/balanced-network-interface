@@ -156,10 +156,11 @@ const BTPContent = () => {
   };
 
   const checkApprovedBalance = async () => {
-    if (!shouldCheckIRC2Token || !accountInfo?.address) {
+    if (!fromNetwork || !toNetwork || !accountInfo?.address) {
       setApprovedBalance('');
       return;
     }
+
     const result = (await getBTPService()?.getBalanceOf({
       address: accountInfo?.address,
       symbol: assetName,
@@ -359,6 +360,8 @@ const BTPContent = () => {
                 tokenSymbol={assetName}
                 fee={fee}
                 hasAlreadyApproved={isApproved}
+                appovedBalance={appovedBalance}
+                setApprovedBalance={setApprovedBalance}
               />
               <Box className="full-width">
                 <Address address={sendingAddress} onChange={setSendingAddress} />

@@ -39,6 +39,7 @@ export const SIGNING_ACTIONS = {
   RECEIVER: 'receiver',
   APPROVE: 'approve',
   APPROVE_IRC2: 'approveIRC2',
+  RECLAIM: 'reclaim',
 };
 
 export const rawTransaction = 'rawTransaction';

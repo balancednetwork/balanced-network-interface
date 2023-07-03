@@ -176,11 +176,12 @@ export const reclaim = async ({ coinName, value }) => {
     builder: new IconBuilder.CallTransactionBuilder(),
     method: 'reclaim',
     params: {
-      _coinName: coinName,
+      _coinName: formatSymbol(coinName),
       _value: IconConverter.toHex(convertToLoopUnit(value)),
     },
   };
 
+  window[SIGNING_ACTIONS.GLOBAL_NAME] = SIGNING_ACTIONS.RECLAIM;
   return signTx(transaction, options);
 };
 

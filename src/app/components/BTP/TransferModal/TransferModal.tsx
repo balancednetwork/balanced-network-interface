@@ -142,7 +142,7 @@ export const TransferAssetModal = ({
           <Flex justifyContent="center" mt={2}>
             {!isApproved ? (
               <Button fontSize={14} onClick={approveNonNativeToken} disabled={isApproving}>
-                <Trans>{isApproving ? 'Approving asset' : 'Approve asset'}</Trans>
+                <Trans>{isApproving ? 'Sending to contract' : 'Send to contract'}</Trans>
               </Button>
             ) : (
               <CheckIconWrapper>

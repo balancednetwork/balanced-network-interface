@@ -49,6 +49,7 @@ export const TransferAssetModal = ({
   fee,
   hasAlreadyApproved,
   appovedBalance,
+  isICONNetwork,
 }) => {
   const networkSrc = useFromNetwork();
   const networkDst = useToNetwork();
@@ -176,7 +177,8 @@ export const TransferAssetModal = ({
           </Flex>
         )}
 
-        {(appovedBalance || isApproved) && (
+        {/* approving token does not send token to the contract on BSC chain */}
+        {(appovedBalance || isApproved) && isICONNetwork && (
           <Typography onClick={onRemoveFromContract} className="remove-btn">
             {isRemovingFromContract ? 'Removing' : 'Remove'} from contract
           </Typography>

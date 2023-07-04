@@ -47,7 +47,10 @@ export const getCoinId = async coinName => {
 export const reclaim = async ({ coinName, value }) => {
   const { BTS_CORE, GAS_LIMIT } = getCurrentChain();
 
-  const data = EthereumInstance.ABI.encodeFunctionData('reclaim', [formatSymbol(coinName), value]);
+  const data = EthereumInstance.ABI.encodeFunctionData('reclaim', [
+    formatSymbol(coinName),
+    ethers.utils.parseEther(value + '')._hex,
+  ]);
 
   return EthereumInstance.sendTransaction({
     from: EthereumInstance.ethereum.selectedAddress,

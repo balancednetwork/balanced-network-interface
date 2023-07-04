@@ -352,6 +352,7 @@ const BTPContent = () => {
                 tokenSymbol={assetName}
                 fee={fee}
                 hasAlreadyApproved={isApproved}
+                appovedBalance={appovedBalance}
               />
               <Box className="full-width">
                 <Address address={sendingAddress} onChange={setSendingAddress} />

@@ -138,7 +138,7 @@ export const TransferAssetModal = ({
   const onRemoveFromContract = async () => {
     if (isRemovingFromContract) return;
     setIsRemovingFromContract(true);
-    const res = await getBTPService()?.reclaim({ coinName: tokenSymbol, value: appovedBalance });
+    const res = await getBTPService()?.reclaim({ coinName: tokenSymbol, value: appovedBalance || +balance + +fee });
 
     if (res?.transactionStatus === TransactionStatus.success) {
       handleCloseTransferModal();
@@ -161,11 +161,7 @@ export const TransferAssetModal = ({
             + {fee} {tokenSymbol} transfer fee
           </Trans>
         </Typography>
-        {appovedBalance && (
-          <Typography onClick={onRemoveFromContract} className="remove-btn">
-            {isRemovingFromContract ? 'Removing' : 'Remove'} from contract
-          </Typography>
-        )}
+
         {!isSendingNativeCoin && !hasAlreadyApproved && (
           <Flex justifyContent="center" mt={2}>
             {!isApproved ? (
@@ -178,6 +174,12 @@ export const TransferAssetModal = ({
               </CheckIconWrapper>
             )}
           </Flex>
+        )}
+
+        {(appovedBalance || isApproved) && (
+          <Typography onClick={onRemoveFromContract} className="remove-btn">
+            {isRemovingFromContract ? 'Removing' : 'Remove'} from contract
+          </Typography>
         )}
 
         <Flex my={5}>

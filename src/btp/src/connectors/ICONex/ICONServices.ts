@@ -168,12 +168,9 @@ export const sendNativeCoin = tx => {
  * @param {object} payload
  */
 export const reclaim = async ({ coinName, value }) => {
-  console.log('🚀 ~ file: ICONServices.ts:171 ~ reclaim ~ value:', value);
-  console.log('🚀 ~ file: ICONServices.ts:171 ~ reclaim ~ coinName:', coinName);
   const transaction = {
     to: getICONBSHAddressforEachChain(coinName),
   };
-  console.log('🚀 ~ file: ICONServices.ts:176 ~ reclaim ~ transaction:', transaction);
 
   const options = {
     builder: new IconBuilder.CallTransactionBuilder(),

@@ -49,7 +49,7 @@ export const TransferAssetModal = ({
   fee,
   hasAlreadyApproved,
   appovedBalance,
-  isICONNetwork,
+  setApprovedBalance,
 }) => {
   const networkSrc = useFromNetwork();
   const networkDst = useToNetwork();
@@ -129,13 +129,6 @@ export const TransferAssetModal = ({
     }
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      setApproveStatus('');
-      setTransferStatus('');
-    }
-  }, [isOpen]);
-
   const onRemoveFromContract = async () => {
     if (isRemovingFromContract) return;
     setIsRemovingFromContract(true);
@@ -144,8 +137,16 @@ export const TransferAssetModal = ({
     if (res?.transactionStatus === TransactionStatus.success) {
       handleCloseTransferModal();
     }
+    setApprovedBalance('');
     setIsRemovingFromContract(false);
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      setApproveStatus('');
+      setTransferStatus('');
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss}>
@@ -177,8 +178,7 @@ export const TransferAssetModal = ({
           </Flex>
         )}
 
-        {/* approving token does not send token to the contract on BSC chain */}
-        {(appovedBalance || isApproved) && isICONNetwork && (
+        {(appovedBalance || isApproved) && (
           <Typography onClick={onRemoveFromContract} className="remove-btn">
             {isRemovingFromContract ? 'Removing' : 'Remove'} from contract
           </Typography>

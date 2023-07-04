@@ -353,7 +353,7 @@ const BTPContent = () => {
                 fee={fee}
                 hasAlreadyApproved={isApproved}
                 appovedBalance={appovedBalance}
-                isICONNetwork={isICONNetwork}
+                setApprovedBalance={setApprovedBalance}
               />
               <Box className="full-width">
                 <Address address={sendingAddress} onChange={setSendingAddress} />

@@ -11,23 +11,25 @@ import { toChecksumAddress } from './utils';
 
 const ICONchain = chainConfigs.ICON || {};
 
-export const getBalanceOf = async ({ address, refundable = false, symbol = 'ICX' }) => {
+export const getBalanceOf = async ({ address, refundable = false, symbol = 'ICX', approved = false }) => {
   try {
     let balance = 0;
     const fSymbol = formatSymbol(symbol);
 
-    if (refundable) {
+    if (refundable || approved) {
       balance = await new ethers.Contract(getCurrentChain().BTS_CORE, ABI, EthereumInstance.provider).balanceOf(
         address,
         fSymbol,
       );
+      balance = refundable ? balance._refundableBalance._hex : balance._usableBalance._hex;
     } else {
       balance = await new ethers.Contract(await getCoinId(fSymbol), ABIOfToken, EthereumInstance.provider).balanceOf(
         address,
       );
+      balance = balance._hex || balance[0]._hex;
     }
 
-    return roundNumber(convertToICX(refundable ? balance._refundableBalance._hex : balance._hex || balance[0]._hex), 6);
+    return roundNumber(convertToICX(balance), 6);
   } catch (err) {
     console.error('getBalanceOf err: ', err);
     return 0;
@@ -45,7 +47,7 @@ export const getCoinId = async coinName => {
 export const reclaim = async ({ coinName, value }) => {
   const { BTS_CORE, GAS_LIMIT } = getCurrentChain();
 
-  const data = EthereumInstance.ABI.encodeFunctionData('reclaim', [coinName, value]);
+  const data = EthereumInstance.ABI.encodeFunctionData('reclaim', [formatSymbol(coinName), value]);
 
   return EthereumInstance.sendTransaction({
     from: EthereumInstance.ethereum.selectedAddress,

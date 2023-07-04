@@ -166,6 +166,8 @@ const BTPContent = () => {
       approved: true,
     })) as string;
 
+    console.log('🚀 ~ file: index.tsx:168 ~ result ~ result:', result);
+
     setApprovedBalance(result === '0' ? '' : result);
   };
 

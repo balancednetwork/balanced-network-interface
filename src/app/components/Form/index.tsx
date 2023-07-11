@@ -100,7 +100,7 @@ export const CurrencyField: React.FC<{
     onUserInput,
   } = props;
   const smallSp = useMedia('(max-width: 359px)');
-  const isSmall = !useMedia('(min-width: 500px})');
+  const isSmall = !useMedia('(min-width: 500px)');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextUserInput = event.target.value.replace(/,/g, '.');

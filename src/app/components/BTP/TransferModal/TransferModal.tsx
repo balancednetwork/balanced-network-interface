@@ -132,7 +132,10 @@ export const TransferAssetModal = ({
   const onRemoveFromContract = async () => {
     if (isRemovingFromContract) return;
     setIsRemovingFromContract(true);
-    const res = await getBTPService()?.reclaim({ coinName: tokenSymbol, value: appovedBalance || +balance + +fee });
+    const res = await getBTPService()?.reclaim({
+      coinName: tokenSymbol,
+      value: appovedBalance || new BigNumber(balance).plus(fee).toFixed(),
+    });
 
     if (res?.transactionStatus === TransactionStatus.success) {
       handleCloseTransferModal();

@@ -239,6 +239,13 @@ export function useLoanInputAmount() {
   return parsedAmount[Field.LEFT];
 }
 
+export function useLoanAvailableAmount() {
+  const inputAmount = useLoanInputAmount();
+  const borrowableAmount = useBorrowableAmountWithReserve();
+
+  return borrowableAmount.minus(inputAmount).dp(2);
+}
+
 export function useLockedICXAmount() {
   const ratio = useRatio();
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { MessageDescriptor } from '@lingui/core';
 import { defineMessage, t, Trans } from '@lingui/macro';
@@ -30,6 +30,7 @@ import {
   useOwnDailyRewards,
   useThresholdPrices,
   useCollateralLockedSliderPos,
+  useLoanAvailableAmount,
 } from 'store/loan/hooks';
 import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -98,7 +99,14 @@ const PositionDetailPanel = () => {
 
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
 
-  const isLockWarning = oraclePrice && lockThresholdPrice.minus(oraclePrice).isGreaterThan(-0.01);
+  const availableLoanAmount = useLoanAvailableAmount();
+
+  const isLockWarning = useMemo(
+    () =>
+      oraclePrice &&
+      (availableLoanAmount.isGreaterThan(0.005) ? lockThresholdPrice.minus(oraclePrice).isGreaterThan(-0.01) : true),
+    [lockThresholdPrice, oraclePrice, availableLoanAmount],
+  );
 
   const isPassAllCollateralLocked = oraclePrice?.isLessThan(lockThresholdPrice);
 

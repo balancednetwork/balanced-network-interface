@@ -22,6 +22,14 @@ function currencyKey(currency: Currency): string {
   return currency.isToken ? currency.address : 'ICX';
 }
 
+function getCurrencyDecimalDisplay(price: Fraction): number {
+  const defaultDP = 2;
+  if (price.greaterThan(1000)) return 0;
+  if (price.lessThan(new Fraction(1, 100))) return 6;
+  if (price.lessThan(new Fraction(3, 2))) return 4;
+  return defaultDP;
+}
+
 function CurrencyRow({
   currency,
   onSelect,
@@ -71,7 +79,9 @@ function CurrencyRow({
             <Typography variant="span" fontSize={14} fontWeight={400} color="text2" display="block">
               {rateFracs &&
                 rateFracs[currency.symbol!] &&
-                `$${rateFracs[currency.symbol!].toFixed(2, { groupSeparator: ',' })}`}
+                `$${rateFracs[currency.symbol!].toFixed(getCurrencyDecimalDisplay(rateFracs[currency.symbol!]), {
+                  groupSeparator: ',',
+                })}`}
             </Typography>
           </DataText>
         </Flex>
@@ -116,7 +126,9 @@ function CurrencyRow({
           <DataText variant="p" textAlign="right">
             {rateFracs &&
               rateFracs[currency.symbol!] &&
-              `$${rateFracs[currency.symbol!].toFixed(2, { groupSeparator: ',' })}`}
+              `$${rateFracs[currency.symbol!].toFixed(getCurrencyDecimalDisplay(rateFracs[currency.symbol!]), {
+                groupSeparator: ',',
+              })}`}
           </DataText>
           {isUserAddedToken && (isMobile || show) && (
             <MinusCircle

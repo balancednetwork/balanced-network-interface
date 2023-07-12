@@ -198,7 +198,7 @@ const PositionDetailPanel = () => {
                 $
                 {collateralType === 'sICX' && ratio.ICXUSDratio
                   ? ratio.ICXUSDratio.dp(4).toFormat()
-                  : oraclePrice?.dp(4).toFormat()}
+                  : oraclePrice?.dp(2).toFormat()}
               </span>
               .
             </Typography>
@@ -246,7 +246,7 @@ const PositionDetailPanel = () => {
                         <Trans>All collateral locked</Trans>
                       </dt>
                     </Tooltip>
-                    <dd>${lockThresholdPrice.dp(3).toFormat()}</dd>
+                    <dd>${lockThresholdPrice.dp(collateralType === 'sICX' ? 3 : 2).toFormat()}</dd>
                   </MetaData>
                 </Locked>
                 <Liquidated heightened={heightenBars}>
@@ -254,7 +254,7 @@ const PositionDetailPanel = () => {
                     <dt>
                       <Trans>Liquidated</Trans>
                     </dt>
-                    <dd>${liquidationThresholdPrice.dp(3).toFormat()}</dd>
+                    <dd>${liquidationThresholdPrice.dp(collateralType === 'sICX' ? 3 : 2).toFormat()}</dd>
                   </MetaData>
                 </Liquidated>
 

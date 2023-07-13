@@ -39,11 +39,7 @@ export function App() {
         <TransferAssetsModal />
         {/* Add message for community */}
 
-        <Helmet
-          titleTemplate="%s | Balanced"
-          defaultTitle="Balanced Network"
-          htmlAttributes={{ lang: i18n.language }}
-        />
+        <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
         <Switch>
           <Route exact path="/claim-legacy-fees" component={Claim} />
           <Route exact path="/claim-goodwill" component={ClaimGoodwill} />

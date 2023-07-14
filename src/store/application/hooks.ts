@@ -101,26 +101,26 @@ export const useBlockDetails = (timestamp: number) => {
 };
 
 export function useICXUnstakingTime() {
-  const totalICXRequest = {
-    jsonrpc: '2.0',
-    method: 'icx_getTotalSupply',
-    id: 1234,
-  };
-  const totalStakedRequest = {
-    jsonrpc: '2.0',
-    id: 1234,
-    method: 'icx_call',
-    params: {
-      to: 'cx0000000000000000000000000000000000000000',
-      dataType: 'call',
-      data: {
-        method: 'getPReps',
-      },
-    },
-  };
   return useQuery(
     'icxUnstakingTime',
     async () => {
+      const totalICXRequest = {
+        jsonrpc: '2.0',
+        method: 'icx_getTotalSupply',
+        id: 1234,
+      };
+      const totalStakedRequest = {
+        jsonrpc: '2.0',
+        id: 1234,
+        method: 'icx_call',
+        params: {
+          to: 'cx0000000000000000000000000000000000000000',
+          dataType: 'call',
+          data: {
+            method: 'getPReps',
+          },
+        },
+      };
       try {
         const totalICXStakedResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalStakedRequest);
         const totalICXResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalICXRequest);

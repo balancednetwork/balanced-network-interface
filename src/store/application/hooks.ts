@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import axios from 'axios';
+import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -98,3 +99,44 @@ export const useBlockDetails = (timestamp: number) => {
   };
   return useQuery<BlockDetails>(`getBlock${timestamp}`, getBlock);
 };
+
+export function useICXUnstakingTime() {
+  const totalICXRequest = {
+    jsonrpc: '2.0',
+    method: 'icx_getTotalSupply',
+    id: 1234,
+  };
+  const totalStakedRequest = {
+    jsonrpc: '2.0',
+    id: 1234,
+    method: 'icx_call',
+    params: {
+      to: 'cx0000000000000000000000000000000000000000',
+      dataType: 'call',
+      data: {
+        method: 'getPReps',
+      },
+    },
+  };
+  return useQuery(
+    'icxUnstakingTime',
+    async () => {
+      try {
+        const totalICXStakedResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalStakedRequest);
+        const totalICXResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalICXRequest);
+        const totalICXStaked = new BigNumber(totalICXStakedResponse.data.result.totalStake).div(10 ** 18).toNumber();
+        const totalICX = new BigNumber(totalICXResponse.data.result).div(10 ** 18).toNumber();
+
+        //70% is threshold when unstaking time is the same
+        //20 is max unstaking time
+        //5 is min unstaking time
+        return new BigNumber(((20 - 5) / 0.7 ** 2) * (totalICXStaked / totalICX - 0.7) ** 2 + 5);
+      } catch (e) {
+        console.error('Error while fetching total ICX staked info', e);
+      }
+    },
+    {
+      keepPreviousData: true,
+    },
+  );
+}

@@ -283,7 +283,9 @@ const PositionDetailPanel = () => {
                   <Typography variant="body">
                     {t`If the ${
                       collateralType === 'sICX' ? 'ICX' : collateralType
-                    } price reaches $${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
+                    } price reaches $${liquidationThresholdPrice
+                      .dp(collateralType === 'sICX' ? 3 : 0)
+                      .toFixed()}, all your collateral will be
                   liquidated.`}
                   </Typography>
                 }

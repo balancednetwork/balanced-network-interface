@@ -142,35 +142,53 @@ export default React.memo(function AppBar() {
   const { data: activeProposals } = useActiveProposalsQuery;
   const bBalnAmount = useBBalnAmount();
 
+  const closeWalletHelper = () => {
+    const event = new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    const cb = document.getElementById('root');
+    cb?.dispatchEvent(event);
+  };
+
   return (
     <Navigation>
       <List>
         <ListItem>
-          <StyledNavLink exact to="/">
-            <HomeIcon width="35" height="33" />
-            <Text>
-              <Trans>Home</Trans>
-            </Text>
-          </StyledNavLink>
+          <div onClick={closeWalletHelper}>
+            <StyledNavLink exact to="/">
+              <HomeIcon width="35" height="33" />
+              <Text>
+                <Trans>Home</Trans>
+              </Text>
+            </StyledNavLink>
+          </div>
         </ListItem>
         <ListItem>
-          <StyledNavLink exact to="/trade">
-            <TradeIcon width="35" height="33" />
-            <Text>
-              <Trans>Trade</Trans>
-            </Text>
-          </StyledNavLink>
+          <div onClick={closeWalletHelper}>
+            <StyledNavLink exact to="/trade">
+              <TradeIcon width="35" height="33" />
+              <Text>
+                <Trans>Trade</Trans>
+              </Text>
+            </StyledNavLink>
+          </div>
         </ListItem>
         <ListItem>
-          <StyledNavLinkWithNotification
-            to="/vote"
-            hasNotification={activeProposals && activeProposals.length && bBalnAmount.isGreaterThan(0)}
-          >
-            <VoteIcon width="35" height="33" />
-            <Text>
-              <Trans>Vote</Trans>
-            </Text>
-          </StyledNavLinkWithNotification>
+          <div onClick={closeWalletHelper}>
+            <StyledNavLinkWithNotification
+              exact
+              to="/vote"
+              hasNotification={activeProposals && activeProposals.length && bBalnAmount.isGreaterThan(0)}
+            >
+              <VoteIcon width="35" height="33" />
+              <Text>
+                <Trans>Vote</Trans>
+              </Text>
+            </StyledNavLinkWithNotification>
+          </div>
         </ListItem>
       </List>
     </Navigation>

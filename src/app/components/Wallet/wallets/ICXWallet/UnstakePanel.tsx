@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -12,7 +12,7 @@ import ModalContent from 'app/components/ModalContent';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useBlockNumber, useChangeShouldLedgerSign, useICXUnstakingTime } from 'store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
 import { toCurrencyAmount } from 'utils';
@@ -30,6 +30,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
   const icxBalance = balances[icxContractAddress];
 
   const claimableICXCA = toCurrencyAmount(ICX.wrapped, claimableICX);
+  const { data: icxUnstakingTime } = useICXUnstakingTime();
 
   // to detect if transaction change and reload cliamableICX
   const transactions = useAllTransactions();
@@ -64,22 +65,26 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
     changeShouldLedgerSign(false);
   };
 
-  const [unstakingAmount, setUnstakingAmount] = React.useState<BigNumber>(new BigNumber(0));
+  const [unstakes, setUnstakes] = React.useState<{ amount: BigNumber; unstakesOn: Date }[]>([]);
+  const currentBlockHeight = useBlockNumber();
 
   React.useEffect(() => {
     const fetchUserUnstakeInfo = async () => {
-      if (account) {
-        const result: Array<{ amount: string }> = await bnJs.Staking.getUserUnstakeInfo(account);
-        setUnstakingAmount(
-          result
-            .map(record => BalancedJs.utils.toIcx(new BigNumber(record['amount'], 16)))
-            .reduce((sum, cur) => sum.plus(cur), new BigNumber(0)),
+      if (account && currentBlockHeight) {
+        const result: Array<{ amount: string; blockHeight: string }> = await bnJs.Staking.getUserUnstakeInfo(account);
+        setUnstakes(
+          result.map(record => ({
+            amount: new BigNumber(record.amount).div(10 ** 18),
+            unstakesOn: new Date(
+              new Date().getTime() + (parseInt(record.blockHeight, 16) - currentBlockHeight) * 2 * 1000,
+            ),
+          })),
         );
       }
     };
 
     fetchUserUnstakeInfo();
-  }, [account, transactions]);
+  }, [account, transactions, currentBlockHeight]);
 
   return (
     <>
@@ -87,20 +92,28 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
         <Trans>Unstaking</Trans>
       </Typography>
 
-      {!unstakingAmount.isZero() ? (
-        <>
-          <Typography mb="1">
-            <Trans>
-              Your ICX will be ready to claim in ~7 days, but it may unstake sooner based on the volume of ICX converted
-              to sICX.
-            </Trans>
-          </Typography>
+      {unstakes.map((unstake, index) => {
+        return (
+          <>
+            {index === 0 && (
+              <Typography mb="1">
+                {t`Your ICX will be ready to claim in ${
+                  icxUnstakingTime ? icxUnstakingTime.toFixed(1) : '~7'
+                } days, but it may unstake sooner based on the volume of ICX
+                  converted to sICX.`}
+              </Typography>
+            )}
+            <Flex alignItems="end" marginBottom="5px">
+              <Typography variant="p" marginRight="5px">
+                {unstake.amount.dp(2).toFormat()} ICX
+              </Typography>
+              <Typography>{t`unstakes within ${dayjs().to(unstake.unstakesOn, true)}`}</Typography>
+            </Flex>
+          </>
+        );
+      })}
 
-          <Typography variant="p">
-            <Trans>{unstakingAmount.dp(2).toFormat()} ICX unstaking</Trans>
-          </Typography>
-        </>
-      ) : (
+      {unstakes.length === 0 && (
         <Typography>
           <Trans>There's no ICX unstaking.</Trans>
         </Typography>

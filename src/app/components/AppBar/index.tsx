@@ -155,40 +155,34 @@ export default React.memo(function AppBar() {
 
   return (
     <Navigation>
-      <List>
+      <List onClick={closeWalletHelper}>
         <ListItem>
-          <div onClick={closeWalletHelper}>
-            <StyledNavLink exact to="/">
-              <HomeIcon width="35" height="33" />
-              <Text>
-                <Trans>Home</Trans>
-              </Text>
-            </StyledNavLink>
-          </div>
+          <StyledNavLink exact to="/">
+            <HomeIcon width="35" height="33" />
+            <Text>
+              <Trans>Home</Trans>
+            </Text>
+          </StyledNavLink>
         </ListItem>
         <ListItem>
-          <div onClick={closeWalletHelper}>
-            <StyledNavLink exact to="/trade">
-              <TradeIcon width="35" height="33" />
-              <Text>
-                <Trans>Trade</Trans>
-              </Text>
-            </StyledNavLink>
-          </div>
+          <StyledNavLink exact to="/trade">
+            <TradeIcon width="35" height="33" />
+            <Text>
+              <Trans>Trade</Trans>
+            </Text>
+          </StyledNavLink>
         </ListItem>
         <ListItem>
-          <div onClick={closeWalletHelper}>
-            <StyledNavLinkWithNotification
-              exact
-              to="/vote"
-              hasNotification={activeProposals && activeProposals.length && bBalnAmount.isGreaterThan(0)}
-            >
-              <VoteIcon width="35" height="33" />
-              <Text>
-                <Trans>Vote</Trans>
-              </Text>
-            </StyledNavLinkWithNotification>
-          </div>
+          <StyledNavLinkWithNotification
+            exact
+            to="/vote"
+            hasNotification={activeProposals && activeProposals.length && bBalnAmount.isGreaterThan(0)}
+          >
+            <VoteIcon width="35" height="33" />
+            <Text>
+              <Trans>Vote</Trans>
+            </Text>
+          </StyledNavLinkWithNotification>
         </ListItem>
       </List>
     </Navigation>

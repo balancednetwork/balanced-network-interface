@@ -57,7 +57,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
         { hash: res.result },
         {
           pending: t`Claiming ICX...`,
-          summary: t`Claimed ${claimableICX.toNumber()} ICX.`,
+          summary: t`Claimed ${claimableICX.dp(2).toNumber()} ICX.`,
         },
       );
     } catch (ex) {}

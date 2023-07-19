@@ -96,7 +96,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
         return (
           <>
             {index === 0 && (
-              <Typography mb="1">
+              <Typography mb="4">
                 {t`Your ICX will be ready to claim in ${
                   icxUnstakingTime ? icxUnstakingTime.toFixed(1) : '~7'
                 } days, but it may unstake sooner based on the volume of ICX

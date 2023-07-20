@@ -99,7 +99,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
               <Typography mb="4">
                 {t`The ICX unstaking period is ${
                   icxUnstakingTime ? icxUnstakingTime.toFixed(1) : '~7'
-                } days, but it may unstake sooner based on the volume of ICX
+                } days, but yours may be ready to claim sooner based on the volume of ICX
                   converted to sICX.`}
               </Typography>
             )}

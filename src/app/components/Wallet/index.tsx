@@ -252,16 +252,6 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
 
   const icx = useICX();
 
-  const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
-    const s = debouncedQuery.toLowerCase().trim();
-    if (!isDPZeroCA(balances[icxAddress], 2) && ('icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0)) {
-      return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
-    }
-    return filteredSortedTokens;
-  }, [debouncedQuery, icx, filteredSortedTokens, balances, icxAddress]);
-
-  const { activeIndex, setActiveIndex } = useArrowControl(anchor !== null, filteredSortedTokensWithICX.length);
-
   // rates: using symbol as key?
   const rates = useRatesWithOracle();
   const rateFracs = React.useMemo(() => {
@@ -272,6 +262,32 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
       }, {});
     }
   }, [rates]);
+
+  const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
+    const s = debouncedQuery.toLowerCase().trim();
+    if (!isDPZeroCA(balances[icxAddress], 2) && ('icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0)) {
+      return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
+    }
+    return filteredSortedTokens;
+  }, [debouncedQuery, icx, filteredSortedTokens, balances, icxAddress]);
+
+  const valueSortedTokens = useMemo(() => {
+    return rateFracs && Object.keys(rateFracs).length && balances && Object.keys(balances).length
+      ? filteredSortedTokensWithICX.sort((a, b) => {
+          if (a.isNative || b.isNative) return 0;
+          if (balances[a.address] && balances[b.address] && rateFracs[a.symbol!] && rateFracs[b.symbol!]) {
+            const valueA = balances[a.address].multiply(rateFracs[a.symbol!]);
+            const valueB = balances[b.address].multiply(rateFracs[b.symbol!]);
+            if (valueA.greaterThan(valueB)) return -1;
+            if (valueB.greaterThan(valueA)) return 1;
+            return 0;
+          }
+          return 0;
+        })
+      : filteredSortedTokensWithICX;
+  }, [filteredSortedTokensWithICX, balances, rateFracs]);
+
+  const { activeIndex, setActiveIndex } = useArrowControl(anchor !== null, filteredSortedTokensWithICX.length);
 
   const totalBalance = useMemo(
     () =>
@@ -394,7 +410,7 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
             </DashGrid>
 
             <List>
-              {filteredSortedTokensWithICX.map((currency, index, arr) => {
+              {valueSortedTokens.map((currency, index, arr) => {
                 const symbol = currency.symbol!;
                 return (
                   <ListItem

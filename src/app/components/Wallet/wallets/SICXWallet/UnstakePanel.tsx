@@ -13,7 +13,7 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
@@ -34,6 +34,8 @@ export default function UnstakePanel() {
   };
 
   const { account } = useIconReact();
+
+  const { data: icxUnstakingTime } = useICXUnstakingTime();
 
   const wallet = useWalletBalances();
 
@@ -171,9 +173,9 @@ export default function UnstakePanel() {
           </Flex>
 
           <Typography textAlign="center">
-            <Trans>
-              Takes up to 7 days. When it's ready, go to ICX {'>'} Unstaking in the Wallet section to claim it.
-            </Trans>
+            {t`Takes up to ${
+              icxUnstakingTime ? icxUnstakingTime.toFixed(1) : '~7'
+            } days. When it's ready, you can claim your ICX from the wallet section.`}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { MessageDescriptor } from '@lingui/core';
 import { defineMessage, t, Trans } from '@lingui/macro';
@@ -30,6 +30,7 @@ import {
   useOwnDailyRewards,
   useThresholdPrices,
   useCollateralLockedSliderPos,
+  useLoanAvailableAmount,
 } from 'store/loan/hooks';
 import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -98,7 +99,14 @@ const PositionDetailPanel = () => {
 
   var lowRisk1 = (900 * 100) / currentRatio.toNumber();
 
-  const isLockWarning = oraclePrice && lockThresholdPrice.minus(oraclePrice).isGreaterThan(-0.01);
+  const availableLoanAmount = useLoanAvailableAmount();
+
+  const isLockWarning = useMemo(
+    () =>
+      oraclePrice &&
+      (availableLoanAmount.isGreaterThan(0.005) ? lockThresholdPrice.minus(oraclePrice).isGreaterThan(-0.01) : true),
+    [lockThresholdPrice, oraclePrice, availableLoanAmount],
+  );
 
   const isPassAllCollateralLocked = oraclePrice?.isLessThan(lockThresholdPrice);
 
@@ -190,7 +198,7 @@ const PositionDetailPanel = () => {
                 $
                 {collateralType === 'sICX' && ratio.ICXUSDratio
                   ? ratio.ICXUSDratio.dp(4).toFormat()
-                  : oraclePrice?.dp(4).toFormat()}
+                  : oraclePrice?.dp(0).toFormat()}
               </span>
               .
             </Typography>
@@ -238,7 +246,7 @@ const PositionDetailPanel = () => {
                         <Trans>All collateral locked</Trans>
                       </dt>
                     </Tooltip>
-                    <dd>${lockThresholdPrice.dp(3).toFormat()}</dd>
+                    <dd>${lockThresholdPrice.dp(collateralType === 'sICX' ? 3 : 0).toFormat()}</dd>
                   </MetaData>
                 </Locked>
                 <Liquidated heightened={heightenBars}>
@@ -246,7 +254,7 @@ const PositionDetailPanel = () => {
                     <dt>
                       <Trans>Liquidated</Trans>
                     </dt>
-                    <dd>${liquidationThresholdPrice.dp(3).toFormat()}</dd>
+                    <dd>${liquidationThresholdPrice.dp(collateralType === 'sICX' ? 3 : 0).toFormat()}</dd>
                   </MetaData>
                 </Liquidated>
 
@@ -275,7 +283,9 @@ const PositionDetailPanel = () => {
                   <Typography variant="body">
                     {t`If the ${
                       collateralType === 'sICX' ? 'ICX' : collateralType
-                    } price reaches $${liquidationThresholdPrice.toFixed(3)}, all your collateral will be
+                    } price reaches $${liquidationThresholdPrice
+                      .dp(collateralType === 'sICX' ? 3 : 0)
+                      .toFixed()}, all your collateral will be
                   liquidated.`}
                   </Typography>
                 }

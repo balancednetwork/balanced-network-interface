@@ -142,9 +142,20 @@ export default React.memo(function AppBar() {
   const { data: activeProposals } = useActiveProposalsQuery;
   const bBalnAmount = useBBalnAmount();
 
+  const closeWalletHelper = () => {
+    const event = new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    const cb = document.getElementById('root');
+    cb?.dispatchEvent(event);
+  };
+
   return (
     <Navigation>
-      <List>
+      <List onClick={closeWalletHelper}>
         <ListItem>
           <StyledNavLink exact to="/">
             <HomeIcon width="35" height="33" />
@@ -163,6 +174,7 @@ export default React.memo(function AppBar() {
         </ListItem>
         <ListItem>
           <StyledNavLinkWithNotification
+            exact
             to="/vote"
             hasNotification={activeProposals && activeProposals.length && bBalnAmount.isGreaterThan(0)}
           >

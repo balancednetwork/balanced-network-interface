@@ -38,7 +38,6 @@ const StyledToastContainer = styled(ToastContainer)`
   }
   .Toastify__progress-bar {
     background: ${props => props.theme.colors.primary};
-    box-shadow: 0px 0px 15px rgb(0 209 255 / 60%);
   }
   .Toastify__close-button > svg {
     fill: white;

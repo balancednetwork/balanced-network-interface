@@ -23,7 +23,7 @@ import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import useWidth from 'hooks/useWidth';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/collateral/actions';
 import {
   useCollateralState,
@@ -116,6 +116,7 @@ const CollateralPanel = () => {
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
   const collateralDecimalPlaces = useCollateralDecimalPlaces();
+  const { data: icxUnstakingTime } = useICXUnstakingTime();
 
   const isSuperSmall = useMedia(`(max-width: 450px)`);
 
@@ -513,9 +514,9 @@ const CollateralPanel = () => {
                   )}
                   {ICXWithdrawOption === ICXWithdrawOptions.UNSTAKE && (
                     <Typography textAlign="center">
-                      <Trans>
-                        Takes up to 7 days. When it's ready, you can claim your ICX from the wallet section.
-                      </Trans>
+                      {t`Takes up to ${
+                        icxUnstakingTime ? icxUnstakingTime.toFixed(1) : '~7'
+                      } days. When it's ready, you can claim your ICX from the wallet section.`}
                     </Typography>
                   )}
                 </>

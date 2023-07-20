@@ -239,9 +239,11 @@ export default function LPDescription() {
                             {formattedAmounts[Field.CURRENCY_B]
                               ? new BigNumber(quoteCurrencyTotalSupply)
                                   .plus(formattedAmounts[Field.CURRENCY_B]?.toFixed() || 0)
-                                  .dp(2)
+                                  .dp(HIGH_PRICE_ASSET_DP[pair.reserve1.currency?.address || ''] || 2)
                                   .toFormat() || '...'
-                              : quoteCurrencyTotalSupply?.dp(2).toFormat() || '...'}{' '}
+                              : quoteCurrencyTotalSupply
+                                  ?.dp(HIGH_PRICE_ASSET_DP[pair.reserve1.currency?.address || ''] || 2)
+                                  .toFormat() || '...'}{' '}
                             {pair?.reserve1.currency?.symbol}
                           </>
                         ) : (
@@ -291,12 +293,12 @@ export default function LPDescription() {
                     <Typography textAlign="center" variant="p">
                       {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                         <>
-                          {pair?.reserve0.toFixed(HIGH_PRICE_ASSET_DP[pair.reserve0.currency?.address || ''] ? 3 : 0, {
+                          {pair?.reserve0.toFixed(HIGH_PRICE_ASSET_DP[pair.reserve0.currency?.address || ''] || 0, {
                             groupSeparator: ',',
                           })}{' '}
                           {pair?.reserve0.currency?.symbol}
                           <br />
-                          {pair?.reserve1.toFixed(HIGH_PRICE_ASSET_DP[pair.reserve1.currency?.address || ''] ? 3 : 0, {
+                          {pair?.reserve1.toFixed(HIGH_PRICE_ASSET_DP[pair.reserve1.currency?.address || ''] || 0, {
                             groupSeparator: ',',
                           })}{' '}
                           {pair?.reserve1.currency?.symbol}

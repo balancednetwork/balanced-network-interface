@@ -168,7 +168,7 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
     placement,
-    strategy: 'fixed',
+    strategy: 'absolute',
     modifiers: [{ name: 'offset', options: { offset: offset } }],
   });
 

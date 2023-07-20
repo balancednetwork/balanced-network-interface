@@ -184,13 +184,15 @@ export default function BribedSource({ bribe }: { bribe: Bribe }) {
 
   const apr = React.useMemo(() => {
     const source = sourcesData?.[bribe.sourceName];
-    if (!source || !bribeTokenPrice || !bribes) return;
+    if (!source || !bribeTokenPrice || !bribes) return 0;
 
     const nonZeroRewards = bribes.filter(bribe => bribe.bribe.greaterThan(0));
-    const avgReward = nonZeroRewards
-      .reduce((acc, bribe) => acc.plus(new BigNumber(bribe.bribe.toFixed(2))), new BigNumber(0))
-      .div(nonZeroRewards.length)
-      .times(bribeTokenPrice);
+    const avgReward = nonZeroRewards.length
+      ? nonZeroRewards
+          .reduce((acc, bribe) => acc.plus(new BigNumber(bribe.bribe.toFixed(2))), new BigNumber(0))
+          .div(nonZeroRewards.length)
+          .times(bribeTokenPrice)
+      : new BigNumber(0);
     const totalBBalnVoted = source.currentBias
       .plus(source.currentSlope.times(getClosestUnixWeekStart(new Date().getTime()).getTime() - new Date().getTime()))
       .div(10 ** 18);
@@ -203,9 +205,9 @@ export default function BribedSource({ bribe }: { bribe: Bribe }) {
       <Flex width="100%" alignItems="center" justifyContent="center" mb={2}>
         <Typography mr="7px" fontWeight={700} color="text" fontSize={16} textAlign="center">
           {bribe.sourceName.replace('/', ' / ')}
-          {apr && ':'}
+          {apr > 0 && ':'}
         </Typography>
-        {apr && (
+        {apr > 0 && (
           <>
             <Typography fontSize={14} pt="4px" color="text">
               {`${getFormattedNumber(apr, 'percent1')} APR`}

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: balancednetwork\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-06-23 08:29\n"
+"PO-Revision-Date: 2023-07-20 09:20\n"
 "Last-Translator: \n"
 "Language: nl_NL\n"
 "Language-Team: Dutch\n"
@@ -1164,11 +1164,8 @@ msgid "Swapping {inputCurrency} for {outputCurrency}..."
 msgstr "Omwisselen van {inputCurrency} voor {outputCurrency}..."
 
 #: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
-msgid "Takes up to 7 days. When it's ready, go to ICX > Unstaking in the Wallet section to claim it."
-msgstr "Neemt tot 7 dagen in beslag. Wanneer het klaar is, ga dan naar ICX > Unstaking in de Wallet sectie om het te claimen."
-
 #: src/app/components/home/CollateralPanel.tsx
-msgid "Takes up to 7 days. When it's ready, you can claim your ICX from the wallet section."
+msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 msgstr ""
 
 #: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
@@ -1177,6 +1174,11 @@ msgstr ""
 
 #: src/app/components/trade/AllPoolsPanel.tsx
 msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
+msgstr ""
+
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
+msgid "The ICX unstaking period is {0} days, but yours may be ready to claim sooner based on the volume of ICX\n"
+"converted to sICX."
 msgstr ""
 
 #: src/app/components/ICXDisplayTypeSwitcher/index.tsx
@@ -1594,10 +1596,6 @@ msgstr ""
 msgid "Your ICX will be converted to sICX (Staked ICX)."
 msgstr ""
 
-#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
-msgid "Your ICX will be ready to claim in ~7 days, but it may unstake sooner based on the volume of ICX converted to sICX."
-msgstr ""
-
 #: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 #: src/app/containers/VotePage/LieVotingPanel/index.tsx
 msgid "Your allocation"
@@ -1678,6 +1676,10 @@ msgstr "klik vervolgens op bevoorraden."
 msgid "then create the pool."
 msgstr "maak dan de pool aan."
 
+#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
+msgid "unstakes within {0}"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0}"
@@ -1720,10 +1722,6 @@ msgstr "{0} ICX is klaar om op te eisen"
 #: src/app/components/home/CollateralPanel.tsx
 msgid "{0} ICX is unstaking."
 msgstr ""
-
-#: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
-msgid "{0} ICX unstaking"
-msgstr "{0} ICX aan het unstaken"
 
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0} queue"

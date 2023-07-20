@@ -87,7 +87,9 @@ export function useBribes(): UseQueryResult<Bribe[], Error> {
       return bribes
         .filter(bribeTokens => {
           return bribeTokens.filter(
-            bribe => bribe.futureBribes.filter(futureBribe => futureBribe.bribe.greaterThan(0)).length,
+            bribe =>
+              bribe.claimable?.greaterThan(0) ||
+              bribe.futureBribes.filter(futureBribe => futureBribe.bribe.greaterThan(0)).length,
           ).length;
         })
         .flat();

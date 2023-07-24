@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
+import { useLocation, useHistory } from 'react-router-dom';
 import { Flex, Box } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
@@ -49,6 +50,8 @@ const BTPButton = styled(UnderlineText)`
 
 export function TradePage() {
   const { account } = useIconReact();
+  const location = useLocation();
+  const history = useHistory();
 
   useFetchPrice();
   useFetchOraclePrices();
@@ -58,10 +61,16 @@ export function TradePage() {
   useFetchRewardsInfo();
   useFetchStabilityFundBalances();
 
-  const [value, setValue] = React.useState<number>(0);
+  const [value, setValue] = React.useState<number>(location.pathname.includes('/supply') ? 1 : 0);
 
   const handleTabClick = (event: React.MouseEvent, value: number) => {
     setValue(value);
+    if (value === 0) {
+      history.replace('/trade');
+    }
+    if (value === 1) {
+      history.replace('/trade/supply');
+    }
   };
 
   //handle wallet modal

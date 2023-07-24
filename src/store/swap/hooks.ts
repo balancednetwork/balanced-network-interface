@@ -6,8 +6,10 @@ import { t } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { canBeQueue } from 'constants/currency';
+import { useAllTokens } from 'hooks/Tokens';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
 import { useCurrencyBalances } from 'store/wallet/hooks';
@@ -15,6 +17,7 @@ import { parseUnits } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './actions';
+import { INITIAL_SWAP } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
 
 export function useSwapState(): AppState['swap'] {
@@ -29,6 +32,8 @@ export function useSwapActionHandlers(): {
   onChangeRecipient: (recipient: string | null) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
+  const location = useLocation();
+  const history = useHistory();
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
       dispatch(
@@ -37,8 +42,16 @@ export function useSwapActionHandlers(): {
           currency: currency,
         }),
       );
+      if (field === Field.INPUT) {
+        const currentQuote = location.pathname.split('/')[3];
+        history.replace(`/trade/${currency.symbol}/${currentQuote}`);
+      }
+      if (field === Field.OUTPUT) {
+        const currentBase = location.pathname.split('/')[2];
+        history.replace(`/trade/${currentBase}/${currency.symbol}`);
+      }
     },
-    [dispatch],
+    [dispatch, history, location],
   );
 
   const onPercentSelection = useCallback(
@@ -49,8 +62,11 @@ export function useSwapActionHandlers(): {
   );
 
   const onSwitchTokens = useCallback(() => {
+    const currentQuote = location.pathname.split('/')[3];
+    const currentBase = location.pathname.split('/')[2];
+    history.replace(`/trade/${currentQuote}/${currentBase}`);
     dispatch(switchCurrencies());
-  }, [dispatch]);
+  }, [dispatch, location, history]);
 
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {
@@ -199,4 +215,35 @@ export function useDerivedSwapInfo(): {
     percents,
     price,
   };
+}
+
+export function useInitialSwapLoad(): void {
+  const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
+  const location = useLocation();
+  const history = useHistory();
+  const tokens = useAllTokens();
+  const { onCurrencySelection } = useSwapActionHandlers();
+  const { currencies } = useDerivedSwapInfo();
+
+  React.useEffect(() => {
+    if (firstLoad && Object.values(tokens).length > 0) {
+      const tokensArray = Object.values(tokens);
+      const currentBase = location.pathname.split('/')[2];
+      const currentQuote = location.pathname.split('/')[3];
+      const quote =
+        currentQuote && tokensArray.find(token => token.symbol?.toLowerCase() === currentQuote?.toLocaleLowerCase());
+      const base = currentBase && tokensArray.find(token => token.symbol?.toLowerCase() === currentBase?.toLowerCase());
+      if (quote && base) {
+        onCurrencySelection(Field.INPUT, base);
+        onCurrencySelection(Field.OUTPUT, quote);
+      } else {
+        if (currencies.INPUT && currencies.OUTPUT) {
+          history.replace(`/trade/${currencies.INPUT.symbol}/${currencies.OUTPUT.symbol}`);
+        } else {
+          history.replace(`/trade/${INITIAL_SWAP.base.symbol}/${INITIAL_SWAP.quote.symbol}`);
+        }
+      }
+      setFirstLoad(false);
+    }
+  }, [firstLoad, location, tokens, onCurrencySelection, history, currencies.INPUT, currencies.OUTPUT]);
 }

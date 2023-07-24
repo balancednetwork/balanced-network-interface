@@ -16,7 +16,7 @@ import { HIGH_PRICE_ASSET_DP, isNativeCurrency } from 'constants/tokens';
 import { PairState } from 'hooks/useV2Pairs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
-import { useMintState, useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
+import { useMintState, useDerivedMintInfo, useMintActionHandlers, useInitialSupplyLoad } from 'store/mint/hooks';
 import { maxAmountSpend } from 'utils';
 
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
@@ -99,6 +99,7 @@ function WalletSection() {
 }
 
 export default function LPPanel() {
+  useInitialSupplyLoad();
   const { account } = useIconReact();
   const toggleWalletModal = useWalletModalToggle();
 

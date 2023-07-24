@@ -35,6 +35,11 @@ export default function Routes() {
         <Route exact path="/vote" component={VotePage} />
         <Route exact path="/vote/proposal-list" component={ProposalList} />
         <Route exact path="/trade" component={TradePage} />
+        <Route exact path="/trade/:base/:quote" component={TradePage} />
+        <Route exact path="/trade/supply" component={TradePage} />
+        <Route exact path="/trade/supply/ICX" component={TradePage} />
+        <Route exact path="/trade/supply/:base/:quote" component={TradePage} />
+        <Route exact path="/trade/bridge/" component={TradePage} />
         <Route path="/vote/new-proposal" component={NewProposalPage} />
         <Route path="/vote/proposal/:id" component={ProposalPage} />
         <Route

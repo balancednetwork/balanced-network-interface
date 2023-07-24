@@ -81,10 +81,10 @@ export default function ProposalsPanel() {
                         mt={-1}
                         notification={shouldShowNotification(proposal)}
                       >
-                        {proposal.name}
+                        {normalizeContent(proposal.name, 55)}
                       </StyledTypography>
                       <Typography fontSize={14} color="text1" mt={2} mb="auto">
-                        {proposal.description && normalizeContent(proposal.description, true)}
+                        {proposal.description && normalizeContent(proposal.description, 120)}
                       </Typography>
                       <Divider mt={3} mb={2}></Divider>
                       <MetaWrap>

@@ -21,6 +21,7 @@ import { useFromNetwork, useSelectNetworkDst, useSelectNetworkSrc, useToNetwork 
 import { accountSelector, setAccountInfo } from 'btp/src/store/models/account';
 import { Trans } from 'react-i18next';
 import { Provider } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -283,12 +284,19 @@ const BTPContent = () => {
 
   const balanceInputValue = isApproved ? new BigNumber(appovedBalance).minus(fee).toFixed() : sendingBalance;
 
+  const history = useHistory();
+
+  const handleDismiss = () => {
+    history.goBack();
+    toggleTransferAssetsModal();
+  };
+
   return (
     <>
       <StyledModal
         isOpen={isOpenTransferAssetsModal}
         onDismiss={() => {
-          !fromNetwork && toggleTransferAssetsModal();
+          !fromNetwork && handleDismiss();
         }}
         maxWidth={525}
       >
@@ -370,7 +378,7 @@ const BTPContent = () => {
             </Grid>
             <Divider margin={'20px 0'} />
             <Flex justifyContent={'center'}>
-              <TextButton onClick={toggleTransferAssetsModal}>Cancel</TextButton>
+              <TextButton onClick={handleDismiss}>Cancel</TextButton>
               <Button
                 disabled={
                   !balanceInputValue ||

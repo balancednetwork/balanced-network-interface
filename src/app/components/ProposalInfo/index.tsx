@@ -77,7 +77,11 @@ export default function ProposalInfo({
         {title ? title : <StyledSkeleton animation="wave" height={30} />}
       </Typography>
       <ContentText>
-        {title ? description && normalizeContent(description) : <StyledSkeleton animation="wave" height={20} />}
+        {description ? (
+          description && normalizeContent(description, 600)
+        ) : (
+          <StyledSkeleton animation="wave" height={20} />
+        )}
       </ContentText>
       <Divider />
       <Flex alignItems="center" flexWrap="wrap" sx={{ columnGap: '15px' }}>

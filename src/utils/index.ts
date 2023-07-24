@@ -157,10 +157,10 @@ export const generateChartData = (rate: BigNumber, currencies: { [field in Field
   return _data;
 };
 
-export const normalizeContent = (text: string, short: boolean = false): string => {
+export const normalizeContent = (text: string, maxLength = 248): string => {
   const regex = /[\n\r]/g;
   const t = text.replaceAll(regex, ' ');
-  return t.substring(0, short ? 100 : 248) + '...';
+  return t.substring(0, maxLength) + (t.length > maxLength ? '...' : '');
 };
 
 const TEN = new BigNumber(10);

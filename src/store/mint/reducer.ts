@@ -1,7 +1,8 @@
 import { Currency } from '@balancednetwork/sdk-core';
 import { createReducer } from '@reduxjs/toolkit';
 
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { NETWORK_ID } from 'constants/config';
+import { bnUSD, sICX } from 'constants/tokens';
 
 import { Field, resetMintState, typeInput, selectCurrency } from './actions';
 
@@ -19,17 +20,22 @@ export interface MintState {
   };
 }
 
+export const INITIAL_MINT = {
+  currencyA: sICX[NETWORK_ID],
+  currencyB: bnUSD[NETWORK_ID],
+};
+
 const initialState: MintState = {
   independentField: Field.CURRENCY_A,
   typedValue: '',
   otherTypedValue: '',
   inputType: 'text',
   [Field.CURRENCY_A]: {
-    currency: SUPPORTED_TOKENS_LIST[0],
+    currency: INITIAL_MINT.currencyA,
     percent: 0,
   },
   [Field.CURRENCY_B]: {
-    currency: SUPPORTED_TOKENS_LIST[1],
+    currency: INITIAL_MINT.currencyB,
   },
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -141,6 +141,7 @@ export default React.memo(function AppBar() {
   const useActiveProposalsQuery = useActiveProposals();
   const { data: activeProposals } = useActiveProposalsQuery;
   const bBalnAmount = useBBalnAmount();
+  const location = useLocation();
 
   const closeWalletHelper = () => {
     const event = new MouseEvent('click', {
@@ -165,7 +166,7 @@ export default React.memo(function AppBar() {
           </StyledNavLink>
         </ListItem>
         <ListItem>
-          <StyledNavLink exact to="/trade">
+          <StyledNavLink to="/trade" onClick={e => location.pathname.startsWith('/trade') && e.preventDefault()}>
             <TradeIcon width="35" height="33" />
             <Text>
               <Trans>Trade</Trans>

@@ -31,7 +31,7 @@ import {
 } from 'store/application/hooks';
 import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/actions';
-import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
+import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { formatBigNumber, formatPercent, maxAmountSpend, toDec } from 'utils';
@@ -45,6 +45,7 @@ import { BrightPanel, swapMessage } from './utils';
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
 export default function SwapPanel() {
+  useInitialSwapLoad();
   const { account } = useIconReact();
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;

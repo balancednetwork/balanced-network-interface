@@ -7,9 +7,11 @@ import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
 
 import bnJs from 'bnJs';
-import { isNativeCurrency } from 'constants/tokens';
+import { isNativeCurrency, useICX } from 'constants/tokens';
+import { useAllTokens, useCommonBases } from 'hooks/Tokens';
 import { useQueuePair } from 'hooks/useQueuePair';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
@@ -18,6 +20,7 @@ import { useCurrencyBalances } from 'store/wallet/hooks';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, typeInput, selectCurrency } from './actions';
+import { INITIAL_MINT } from './reducer';
 
 export function useMintState(): AppState['mint'] {
   return useSelector<AppState, AppState['mint']>(state => state.mint);
@@ -32,6 +35,8 @@ export function useMintActionHandlers(
   onSlide: (field: Field, typedValue: string) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
+  const history = useHistory();
+  const { pair = '' } = useParams<{ pair: string }>();
 
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
@@ -41,8 +46,21 @@ export function useMintActionHandlers(
           currency: currency,
         }),
       );
+
+      if (field === Field.CURRENCY_A) {
+        if (currency.symbol === 'ICX') {
+          history.replace(`/trade/supply/${currency.symbol}`);
+        } else {
+          const currentQuote = pair.split('_')[1];
+          history.replace(`/trade/supply/${currency.symbol}` + (currentQuote ? `_${currentQuote}` : ''));
+        }
+      }
+      if (field === Field.CURRENCY_B) {
+        const currentBase = pair.split('_')[0];
+        history.replace(`/trade/supply/${currentBase}_${currency.symbol}`);
+      }
     },
-    [dispatch],
+    [dispatch, history, pair],
   );
 
   const onFieldAInput = useCallback(
@@ -350,4 +368,41 @@ export function useDerivedMintInfo(): {
     poolTokenPercentage,
     error,
   };
+}
+
+export function useInitialSupplyLoad(): void {
+  const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
+  const history = useHistory();
+  const tokens = useAllTokens();
+  const bases = useCommonBases();
+  const { onCurrencySelection } = useMintActionHandlers(true);
+  const { currencies } = useDerivedMintInfo();
+  const { pair = '' } = useParams<{ pair: string }>();
+  const ICX = useICX();
+
+  React.useEffect(() => {
+    if (firstLoad && Object.values(tokens).length > 0 && Object.values(bases).length > 0) {
+      const tokensArray = Object.values(tokens);
+      const basesArray = Object.values(bases);
+      const currentCurrA = pair.split('_')[0];
+      const currentCurrB = pair.split('_')[1];
+      const currencyB =
+        currentCurrB && basesArray.find(token => token.symbol?.toLowerCase() === currentCurrB?.toLocaleLowerCase());
+      const currencyA =
+        currentCurrA && tokensArray.find(token => token.symbol?.toLowerCase() === currentCurrA?.toLowerCase());
+      if (currencyB && currencyA) {
+        onCurrencySelection(Field.CURRENCY_A, currencyA);
+        onCurrencySelection(Field.CURRENCY_B, currencyB);
+      } else if (currentCurrA?.toLowerCase() === 'icx') {
+        ICX && onCurrencySelection(Field.CURRENCY_A, ICX);
+      } else {
+        if (currencies.CURRENCY_A && currencies.CURRENCY_B) {
+          history.replace(`/trade/supply/${currencies.CURRENCY_A.symbol}_${currencies.CURRENCY_B.symbol}`);
+        } else {
+          history.replace(`/trade/supply/${INITIAL_MINT.currencyA.symbol}_${INITIAL_MINT.currencyB.symbol}`);
+        }
+      }
+      setFirstLoad(false);
+    }
+  }, [firstLoad, tokens, onCurrencySelection, history, currencies.CURRENCY_A, currencies.CURRENCY_B, bases, ICX, pair]);
 }

@@ -28,15 +28,20 @@ export interface SwapState {
   readonly recipient: string | null;
 }
 
+export const INITIAL_SWAP = {
+  base: BALN[NETWORK_ID],
+  quote: bnUSD[NETWORK_ID],
+};
+
 const initialState: SwapState = {
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {
-    currency: BALN[NETWORK_ID],
+    currency: INITIAL_SWAP.base,
     percent: 0,
   },
   [Field.OUTPUT]: {
-    currency: bnUSD[NETWORK_ID],
+    currency: INITIAL_SWAP.quote,
   },
   recipient: null,
 };

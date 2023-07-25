@@ -1,4 +1,6 @@
 import { t } from '@lingui/macro';
+import { checkIRC2Token } from 'btp/src/connectors/chainConfigs';
+import { CHAIN_NAME } from 'btp/src/connectors/chainCustomization';
 
 import { TransactionStatus } from 'store/transactions/hooks';
 
@@ -36,11 +38,19 @@ export const getTransactionMessages = (
     case SIGNING_ACTIONS.APPROVE:
     case SIGNING_ACTIONS.APPROVE_IRC2: {
       if (transactionInfo) {
-        return {
-          pending: t`Approving ${transactionInfo.coinName} for cross-chain transfers...`,
-          success: t`Approved ${transactionInfo.coinName} for cross-chain transfers.`,
-          failure: t`Couldn't APPROVE ${transactionInfo.coinName} for cross-chain transfers.`,
-        };
+        if (transactionInfo?.networkSrc === CHAIN_NAME.ICON && checkIRC2Token(transactionInfo?.coinName)) {
+          return {
+            pending: t`Sending ${transactionInfo.coinName} to the bridge contract...`,
+            success: t`Sent ${transactionInfo.coinName} to the bridge contract...`,
+            failure: t`Couldn't SEND ${transactionInfo.coinName} for cross-chain transfers.`,
+          };
+        } else {
+          return {
+            pending: t`Approving ${transactionInfo.coinName} for cross-chain transfers...`,
+            success: t`Approved ${transactionInfo.coinName} for cross-chain transfers.`,
+            failure: t`Couldn't APPROVE ${transactionInfo.coinName} for cross-chain transfers.`,
+          };
+        }
       }
       break;
     }

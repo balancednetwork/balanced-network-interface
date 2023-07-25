@@ -57,8 +57,8 @@ export const getTransactionMessages = (
     case SIGNING_ACTIONS.RECLAIM: {
       if (transactionInfo) {
         return {
-          pending: t`Removing ${transactionInfo.coinName} from the contract...`,
-          success: t`Removed ${transactionInfo.value} ${transactionInfo.coinName} from the contract.`,
+          pending: t`Removing ${transactionInfo.coinName} from the bridge contract...`,
+          success: t`Removed ${transactionInfo.value} ${transactionInfo.coinName} the bridge contract...`,
           failure: t`Couldn't remove ${transactionInfo.coinName} from ${transactionInfo.networkSrc}. Try again.`,
         };
       }

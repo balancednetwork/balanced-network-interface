@@ -32,6 +32,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as ArrowIcon } from 'assets/icons/arrow.svg';
 import { useModalOpen, useTransferAssetsModalToggle } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
+import { TransactionStatus } from 'store/transactions/hooks';
 import { EVENTS, on, off } from 'utils/customEvent';
 
 import { ExternalLink } from '../SearchModal/components';
@@ -108,6 +109,7 @@ const BTPContent = () => {
   const [sendingBalance, setSendingBalance] = useState('');
   const [isOpenAssetOptions, setIsOpenAssetOptions] = useState(false);
   const [walletModalOpen, setOpenWalletModal] = useState(false);
+  const [isRemovingFromContract, setIsRemovingFromContract] = useState<boolean>(false);
 
   const toggleTransferAssetsModal = useTransferAssetsModalToggle();
   const [, setSendingInfo] = useState({ token: '', network: '' });
@@ -275,6 +277,21 @@ const BTPContent = () => {
     setIsOpenConfirm(false);
   };
 
+  const onRemoveFromContract = async () => {
+    if (isRemovingFromContract) return;
+    setIsRemovingFromContract(true);
+    const res = await getBTPService()?.reclaim({
+      coinName: assetName,
+      value: appovedBalance || new BigNumber(balanceInputValue).plus(fee).toFixed(),
+    });
+
+    if (res?.transactionStatus === TransactionStatus.success) {
+      setApprovedBalance('');
+    }
+
+    setIsRemovingFromContract(false);
+  };
+
   const isInsufficient = new BigNumber(fee).plus(sendingBalance).isGreaterThan(balanceOfAssetName);
   const isEmpty = !sendingAddress || !accountInfo?.address;
 
@@ -360,8 +377,7 @@ const BTPContent = () => {
                 tokenSymbol={assetName}
                 fee={fee}
                 hasAlreadyApproved={isApproved}
-                appovedBalance={appovedBalance}
-                setApprovedBalance={setApprovedBalance}
+                shouldCheckIRC2Token={shouldCheckIRC2Token}
               />
               <Box className="full-width">
                 <Address address={sendingAddress} onChange={setSendingAddress} />
@@ -398,11 +414,23 @@ const BTPContent = () => {
               </Button>
             </Flex>
             {isApproved && (
-              <Typography textAlign="center" paddingTop={'10px'} color="#F05365">
-                You have approved {appovedBalance} {assetName}, but have not been transferred yet.
-                <br />
-                Please transfer them before making a new transaction.
-              </Typography>
+              <>
+                <Typography textAlign="center" paddingTop={'10px'} marginBottom={'5px'} color="#fb6a6a">
+                  {appovedBalance} {assetName} is waiting transfer.
+                </Typography>
+                {isRemovingFromContract ? (
+                  <Typography textAlign="center" color="#2fccdc">
+                    Removing it from the bridge contract
+                  </Typography>
+                ) : (
+                  <Typography textAlign="center">
+                    <TextButton onClick={onRemoveFromContract} padding="0 !important" color="#2fccdc !important">
+                      Remove it from the bridge contract
+                    </TextButton>
+                    , or enter an address to complete the transaction.
+                  </Typography>
+                )}
+              </>
             )}
             {isGreaterThanMaxTransferAmount && (
               <Typography textAlign="center" paddingTop={'10px'} color="#F05365">

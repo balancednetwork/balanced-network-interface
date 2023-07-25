@@ -24,14 +24,6 @@ const StyledModalContent = styled(Flex)`
   flex-direction: column;
   margin: 25px;
   text-align: center;
-
-  > .remove-btn {
-    color: #2ca9b7;
-    width: fit-content;
-    align-self: center;
-    cursor: pointer;
-    margin-top: 15px;
-  }
 `;
 
 const CheckIconWrapper = styled.div`
@@ -48,14 +40,12 @@ export const TransferAssetModal = ({
   tokenSymbol,
   fee,
   hasAlreadyApproved,
-  appovedBalance,
-  setApprovedBalance,
+  shouldCheckIRC2Token,
 }) => {
   const networkSrc = useFromNetwork();
   const networkDst = useToNetwork();
   const [approveStatus, setApproveStatus] = useState<TransactionStatus | ''>();
   const [transferStatus, setTransferStatus] = useState<TransactionStatus | ''>('');
-  const [isRemovingFromContract, setIsRemovingFromContract] = useState<boolean>(false);
 
   const isApproved = hasAlreadyApproved || approveStatus === TransactionStatus.success;
   const isApproving = approveStatus === TransactionStatus.pending;
@@ -129,21 +119,6 @@ export const TransferAssetModal = ({
     }
   };
 
-  const onRemoveFromContract = async () => {
-    if (isRemovingFromContract) return;
-    setIsRemovingFromContract(true);
-    const res = await getBTPService()?.reclaim({
-      coinName: tokenSymbol,
-      value: appovedBalance || new BigNumber(balance).plus(fee).toFixed(),
-    });
-
-    if (res?.transactionStatus === TransactionStatus.success) {
-      handleCloseTransferModal();
-    }
-    setApprovedBalance('');
-    setIsRemovingFromContract(false);
-  };
-
   useEffect(() => {
     if (isOpen) {
       setApproveStatus('');
@@ -171,7 +146,11 @@ export const TransferAssetModal = ({
           <Flex justifyContent="center" mt={2}>
             {!isApproved ? (
               <Button fontSize={14} onClick={approveNonNativeToken} disabled={isApproving}>
-                <Trans>{isApproving ? 'Sending to contract' : 'Send to contract'}</Trans>
+                {shouldCheckIRC2Token ? (
+                  <Trans>{isApproving ? 'Sending to contract' : 'Send to contract'}</Trans>
+                ) : (
+                  <Trans>{isApproving ? 'Approving' : 'Approve'}</Trans>
+                )}
               </Button>
             ) : (
               <CheckIconWrapper>
@@ -179,12 +158,6 @@ export const TransferAssetModal = ({
               </CheckIconWrapper>
             )}
           </Flex>
-        )}
-
-        {(appovedBalance || isApproved) && (
-          <Typography onClick={onRemoveFromContract} className="remove-btn">
-            {isRemovingFromContract ? 'Removing' : 'Remove'} from contract
-          </Typography>
         )}
 
         <Flex my={5}>

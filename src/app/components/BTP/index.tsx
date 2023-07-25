@@ -156,7 +156,7 @@ const BTPContent = () => {
   };
 
   const checkApprovedBalance = async () => {
-    if (!fromNetwork || !toNetwork || !accountInfo?.address) {
+    if (!shouldCheckIRC2Token || !accountInfo?.address) {
       setApprovedBalance('');
       return;
     }

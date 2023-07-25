@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import bnJs from 'bnJs';
 import { isNativeCurrency, useICX } from 'constants/tokens';
@@ -35,8 +35,8 @@ export function useMintActionHandlers(
   onSlide: (field: Field, typedValue: string) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
-  const location = useLocation();
   const history = useHistory();
+  const { pair = '' } = useParams<{ pair: string }>();
 
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
@@ -51,16 +51,16 @@ export function useMintActionHandlers(
         if (currency.symbol === 'ICX') {
           history.replace(`/trade/supply/${currency.symbol}`);
         } else {
-          const currentQuote = location.pathname.split('/')[4];
-          history.replace(`/trade/supply/${currency.symbol}` + (currentQuote ? `/${currentQuote}` : ''));
+          const currentQuote = pair.split('_')[1];
+          history.replace(`/trade/supply/${currency.symbol}` + (currentQuote ? `_${currentQuote}` : ''));
         }
       }
       if (field === Field.CURRENCY_B) {
-        const currentBase = location.pathname.split('/')[3];
-        history.replace(`/trade/supply/${currentBase}/${currency.symbol}`);
+        const currentBase = pair.split('_')[0];
+        history.replace(`/trade/supply/${currentBase}_${currency.symbol}`);
       }
     },
-    [dispatch, history, location.pathname],
+    [dispatch, history, pair],
   );
 
   const onFieldAInput = useCallback(
@@ -372,20 +372,20 @@ export function useDerivedMintInfo(): {
 
 export function useInitialSupplyLoad(): void {
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
-  const location = useLocation();
   const history = useHistory();
   const tokens = useAllTokens();
   const bases = useCommonBases();
   const { onCurrencySelection } = useMintActionHandlers(true);
   const { currencies } = useDerivedMintInfo();
+  const { pair = '' } = useParams<{ pair: string }>();
   const ICX = useICX();
 
   React.useEffect(() => {
     if (firstLoad && Object.values(tokens).length > 0 && Object.values(bases).length > 0) {
       const tokensArray = Object.values(tokens);
       const basesArray = Object.values(bases);
-      const currentCurrA = location.pathname.split('/')[3];
-      const currentCurrB = location.pathname.split('/')[4];
+      const currentCurrA = pair.split('_')[0];
+      const currentCurrB = pair.split('_')[1];
       const currencyB =
         currentCurrB && basesArray.find(token => token.symbol?.toLowerCase() === currentCurrB?.toLocaleLowerCase());
       const currencyA =
@@ -397,22 +397,12 @@ export function useInitialSupplyLoad(): void {
         ICX && onCurrencySelection(Field.CURRENCY_A, ICX);
       } else {
         if (currencies.CURRENCY_A && currencies.CURRENCY_B) {
-          history.replace(`/trade/supply/${currencies.CURRENCY_A.symbol}/${currencies.CURRENCY_B.symbol}`);
+          history.replace(`/trade/supply/${currencies.CURRENCY_A.symbol}_${currencies.CURRENCY_B.symbol}`);
         } else {
-          history.replace(`/trade/supply/${INITIAL_MINT.currencyA.symbol}/${INITIAL_MINT.currencyB.symbol}`);
+          history.replace(`/trade/supply/${INITIAL_MINT.currencyA.symbol}_${INITIAL_MINT.currencyB.symbol}`);
         }
       }
       setFirstLoad(false);
     }
-  }, [
-    firstLoad,
-    location,
-    tokens,
-    onCurrencySelection,
-    history,
-    currencies.CURRENCY_A,
-    currencies.CURRENCY_B,
-    bases,
-    ICX,
-  ]);
+  }, [firstLoad, tokens, onCurrencySelection, history, currencies.CURRENCY_A, currencies.CURRENCY_B, bases, ICX, pair]);
 }

@@ -151,7 +151,7 @@ export function useBridgeModalURLHandler() {
 
   useEffect(() => {
     if (firstLoad && location.pathname.includes('/bridge')) {
-      history.push(`/trade/${INITIAL_SWAP.base.symbol}/${INITIAL_SWAP.quote.symbol}`);
+      history.push(`/trade/${INITIAL_SWAP.base.symbol}_${INITIAL_SWAP.quote.symbol}`);
       history.push('/trade/bridge');
       bridgeModalToggle();
     }

@@ -6,7 +6,7 @@ import { t } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { canBeQueue } from 'constants/currency';
 import { useAllTokens } from 'hooks/Tokens';
@@ -32,8 +32,8 @@ export function useSwapActionHandlers(): {
   onChangeRecipient: (recipient: string | null) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
-  const location = useLocation();
   const history = useHistory();
+  const { pair = '' } = useParams<{ pair: string }>();
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
       dispatch(
@@ -43,15 +43,15 @@ export function useSwapActionHandlers(): {
         }),
       );
       if (field === Field.INPUT) {
-        const currentQuote = location.pathname.split('/')[3];
-        history.replace(`/trade/${currency.symbol}/${currentQuote}`);
+        const currentQuote = pair.split('_')[1];
+        history.replace(`/trade/${currency.symbol}_${currentQuote}`);
       }
       if (field === Field.OUTPUT) {
-        const currentBase = location.pathname.split('/')[2];
-        history.replace(`/trade/${currentBase}/${currency.symbol}`);
+        const currentBase = pair.split('_')[0];
+        history.replace(`/trade/${currentBase}_${currency.symbol}`);
       }
     },
-    [dispatch, history, location],
+    [dispatch, history, pair],
   );
 
   const onPercentSelection = useCallback(
@@ -62,11 +62,11 @@ export function useSwapActionHandlers(): {
   );
 
   const onSwitchTokens = useCallback(() => {
-    const currentQuote = location.pathname.split('/')[3];
-    const currentBase = location.pathname.split('/')[2];
-    history.replace(`/trade/${currentQuote}/${currentBase}`);
+    const currentBase = pair.split('_')[0];
+    const currentQuote = pair.split('_')[1];
+    history.replace(`/trade/${currentQuote}_${currentBase}`);
     dispatch(switchCurrencies());
-  }, [dispatch, location, history]);
+  }, [pair, history, dispatch]);
 
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {
@@ -219,17 +219,17 @@ export function useDerivedSwapInfo(): {
 
 export function useInitialSwapLoad(): void {
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
-  const location = useLocation();
   const history = useHistory();
   const tokens = useAllTokens();
+  const { pair = '' } = useParams<{ pair: string }>();
   const { onCurrencySelection } = useSwapActionHandlers();
   const { currencies } = useDerivedSwapInfo();
 
   React.useEffect(() => {
     if (firstLoad && Object.values(tokens).length > 0) {
       const tokensArray = Object.values(tokens);
-      const currentBase = location.pathname.split('/')[2];
-      const currentQuote = location.pathname.split('/')[3];
+      const currentBase = pair.split('_')[0];
+      const currentQuote = pair.split('_')[1];
       const quote =
         currentQuote && tokensArray.find(token => token.symbol?.toLowerCase() === currentQuote?.toLocaleLowerCase());
       const base = currentBase && tokensArray.find(token => token.symbol?.toLowerCase() === currentBase?.toLowerCase());
@@ -238,12 +238,12 @@ export function useInitialSwapLoad(): void {
         onCurrencySelection(Field.OUTPUT, quote);
       } else {
         if (currencies.INPUT && currencies.OUTPUT) {
-          history.replace(`/trade/${currencies.INPUT.symbol}/${currencies.OUTPUT.symbol}`);
+          history.replace(`/trade/${currencies.INPUT.symbol}_${currencies.OUTPUT.symbol}`);
         } else {
-          history.replace(`/trade/${INITIAL_SWAP.base.symbol}/${INITIAL_SWAP.quote.symbol}`);
+          history.replace(`/trade/${INITIAL_SWAP.base.symbol}_${INITIAL_SWAP.quote.symbol}`);
         }
       }
       setFirstLoad(false);
     }
-  }, [firstLoad, location, tokens, onCurrencySelection, history, currencies.INPUT, currencies.OUTPUT]);
+  }, [firstLoad, tokens, onCurrencySelection, history, currencies.INPUT, currencies.OUTPUT, pair]);
 }

@@ -14,7 +14,6 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
 import { MODAL_FADE_DURATION } from 'constants/index';
 import { TransactionStatus } from 'store/transactions/hooks';
 
@@ -24,11 +23,6 @@ const StyledModalContent = styled(Flex)`
   flex-direction: column;
   margin: 25px;
   text-align: center;
-`;
-
-const CheckIconWrapper = styled.div`
-  display: block;
-  width: 32px;
 `;
 
 export const TransferAssetModal = ({
@@ -41,6 +35,7 @@ export const TransferAssetModal = ({
   fee,
   hasAlreadyApproved,
   shouldCheckIRC2Token,
+  onRemoveFromContract,
 }) => {
   const networkSrc = useFromNetwork();
   const networkDst = useToNetwork();
@@ -118,7 +113,10 @@ export const TransferAssetModal = ({
       }, MODAL_FADE_DURATION);
     }
   };
-
+  const removeFromContract = async () => {
+    await onRemoveFromContract();
+    setApproveStatus('');
+  };
   useEffect(() => {
     if (isOpen) {
       setApproveStatus('');
@@ -153,9 +151,11 @@ export const TransferAssetModal = ({
                 )}
               </Button>
             ) : (
-              <CheckIconWrapper>
-                <CheckIcon />
-              </CheckIconWrapper>
+              <Typography textAlign="center">
+                <TextButton onClick={removeFromContract} padding="0 !important" color="#2fccdc !important">
+                  Remove from contract
+                </TextButton>
+              </Typography>
             )}
           </Flex>
         )}

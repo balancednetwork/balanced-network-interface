@@ -97,6 +97,10 @@ const FeeAmount = styled(Typography)`
 
 const StyledExternalLink = styled(ExternalLink)`
   color: rgb(47, 204, 220);
+  text-decoration: none !important;
+  &:hover {
+    text-decoration: underline !important;
+  }
 `;
 addICONexListener();
 
@@ -309,6 +313,7 @@ const BTPContent = () => {
     toggleTransferAssetsModal();
   };
 
+  const requiredAmount = new BigNumber(fee).plus(sendingBalance).toFixed();
   return (
     <>
       <StyledModal
@@ -378,6 +383,7 @@ const BTPContent = () => {
                 fee={fee}
                 hasAlreadyApproved={isApproved}
                 shouldCheckIRC2Token={shouldCheckIRC2Token}
+                onRemoveFromContract={onRemoveFromContract}
               />
               <Box className="full-width">
                 <Address address={sendingAddress} onChange={setSendingAddress} />
@@ -434,7 +440,7 @@ const BTPContent = () => {
             )}
             {isGreaterThanMaxTransferAmount && (
               <Typography textAlign="center" paddingTop={'10px'} color="#F05365">
-                You can transfer a maximum of {maxTransferAmount.toFixed(2)} {assetName}.
+                {`${requiredAmount} ${assetName} is required to transfer`}
               </Typography>
             )}
           </Flex>

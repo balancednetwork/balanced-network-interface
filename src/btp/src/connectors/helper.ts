@@ -46,8 +46,8 @@ export const getTransactionMessages = (
           };
         } else {
           return {
-            pending: t`Approving ${transactionInfo.coinName} for cross-chain transfers...`,
-            success: t`Approved ${transactionInfo.coinName} for cross-chain transfers.`,
+            pending: t`Sending ${transactionInfo.coinName} to the bridge contract...`,
+            success: t`Sent ${transactionInfo.coinName} to the bridge contract.`,
             failure: t`Couldn't APPROVE ${transactionInfo.coinName} for cross-chain transfers.`,
           };
         }
@@ -68,7 +68,7 @@ export const getTransactionMessages = (
       if (transactionInfo) {
         return {
           pending: t`Removing ${transactionInfo.coinName} from the bridge contract...`,
-          success: t`Removed ${transactionInfo.value} ${transactionInfo.coinName} the bridge contract...`,
+          success: t`Removed ${transactionInfo.value} ${transactionInfo.coinName} the bridge contract.`,
           failure: t`Couldn't remove ${transactionInfo.coinName} from ${transactionInfo.networkSrc}. Try again.`,
         };
       }

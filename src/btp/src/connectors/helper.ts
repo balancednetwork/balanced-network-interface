@@ -68,7 +68,7 @@ export const getTransactionMessages = (
       if (transactionInfo) {
         return {
           pending: t`Removing ${transactionInfo.coinName} from the bridge contract...`,
-          success: t`Removed ${transactionInfo.value} ${transactionInfo.coinName} the bridge contract.`,
+          success: t`Removed ${transactionInfo.coinName} from the bridge contract.`,
           failure: t`Couldn't remove ${transactionInfo.coinName} from ${transactionInfo.networkSrc}. Try again.`,
         };
       }

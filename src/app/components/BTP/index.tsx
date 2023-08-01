@@ -96,12 +96,20 @@ const FeeAmount = styled(Typography)`
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
-  color: rgb(47, 204, 220);
+  color: #2fccdc;
   text-decoration: none !important;
   &:hover {
     text-decoration: underline !important;
   }
 `;
+const StyledTextButton = styled(TextButton)`
+  color: #2fccdc;
+  padding: 0 !important;
+  &:hover {
+    text-decoration: underline !important;
+  }
+`;
+
 addICONexListener();
 
 const BTPContent = () => {
@@ -312,8 +320,6 @@ const BTPContent = () => {
     history.goBack();
     toggleTransferAssetsModal();
   };
-
-  const requiredAmount = new BigNumber(fee).plus(sendingBalance).toFixed();
   return (
     <>
       <StyledModal
@@ -430,18 +436,13 @@ const BTPContent = () => {
                   </Typography>
                 ) : (
                   <Typography textAlign="center">
-                    <TextButton onClick={onRemoveFromContract} padding="0 !important" color="#2fccdc !important">
+                    <StyledTextButton onClick={onRemoveFromContract}>
                       Remove it from the bridge contract
-                    </TextButton>
+                    </StyledTextButton>
                     , or enter an address to complete the transaction.
                   </Typography>
                 )}
               </>
-            )}
-            {isGreaterThanMaxTransferAmount && (
-              <Typography textAlign="center" paddingTop={'10px'} color="#F05365">
-                {`${requiredAmount} ${assetName} is required to transfer`}
-              </Typography>
             )}
           </Flex>
         </Wrapper>

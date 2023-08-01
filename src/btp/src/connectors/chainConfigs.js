@@ -87,7 +87,7 @@ const config = {
 };
 export const chainConfigs = {};
 const networkConfig =
-  config[process.env.REACT_APP_NETWORK_ID === SupportedChainId.MAINNET.toString() ? 'mainnet' : 'testnet'];
+  config[process.env.REACT_APP_NETWORK_ID === SupportedChainId.MAINNET.toString() ? 'mainnet' : 'mainnet'];
 Object.keys(networkConfig).forEach(e => {
   if (e.startsWith('REACT_APP_CHAIN')) {
     const chainName = e.split('_')[3];

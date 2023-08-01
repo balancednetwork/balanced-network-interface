@@ -24,6 +24,13 @@ const StyledModalContent = styled(Flex)`
   margin: 25px;
   text-align: center;
 `;
+const StyledTextButton = styled(TextButton)`
+  color: #2fccdc;
+  padding: 0 !important;
+  &:hover {
+    text-decoration: underline !important;
+  }
+`;
 
 export const TransferAssetModal = ({
   isOpen,
@@ -152,9 +159,9 @@ export const TransferAssetModal = ({
               </Button>
             ) : (
               <Typography textAlign="center">
-                <TextButton onClick={removeFromContract} padding="0 !important" color="#2fccdc !important">
+                <StyledTextButton onClick={removeFromContract} padding="0 !important" color="#2fccdc !important">
                   Remove from contract
-                </TextButton>
+                </StyledTextButton>
               </Typography>
             )}
           </Flex>

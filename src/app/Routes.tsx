@@ -7,6 +7,7 @@ import { Switch, Route, useLocation } from 'react-router-dom';
 
 import { DefaultLayout } from 'app/components/Layout';
 
+import ArchwayTest from './_xcall/ArchwayTest';
 import { HomePage } from './containers/HomePage/Loadable';
 import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 import { ProposalPage } from './containers/ProposalPage/Loadable';
@@ -42,6 +43,7 @@ export default function Routes() {
         <Route exact path="/trade/bridge/" component={TradePage} />
         <Route path="/vote/new-proposal" component={NewProposalPage} />
         <Route path="/vote/proposal/:id" component={ProposalPage} />
+        <Route path="/archway" component={ArchwayTest} />
         <Route
           exact
           path="/airdrip"

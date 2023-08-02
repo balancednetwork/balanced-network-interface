@@ -5,6 +5,7 @@ import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
+import { NavLink } from 'react-router-dom';
 import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -22,6 +23,7 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { shortenAddress } from 'utils';
 
+import { UnderlineText } from '../DropdownText';
 import Wallet from '../Wallet';
 import { notificationCSS } from '../Wallet/wallets/utils';
 
@@ -179,6 +181,14 @@ export default function Header(props: { title?: string; className?: string }) {
 
         {!account && (
           <Flex alignItems="center">
+            {/* TEMPORARY */}
+            {/* TODO: REMOVE */}
+            <NavLink to={'/archway'}>
+              <Typography color="primaryBright" pr={4}>
+                <UnderlineText>Archway</UnderlineText>
+              </Typography>
+            </NavLink>
+            {/* END OF TEMPORARY */}
             <Button onClick={toggleWalletModal}>
               <Trans>Sign in</Trans>
             </Button>
@@ -187,6 +197,14 @@ export default function Header(props: { title?: string; className?: string }) {
 
         {account && (
           <Flex alignItems="center">
+            {/* TEMPORARY */}
+            {/* TODO: REMOVE */}
+            <NavLink to={'/archway'}>
+              <Typography color="primaryBright" pr={4}>
+                <UnderlineText>Archway</UnderlineText>
+              </Typography>
+            </NavLink>
+            {/* END OF TEMPORARY */}
             <WalletInfo>
               {upSmall && (
                 <Typography variant="p" textAlign="right">

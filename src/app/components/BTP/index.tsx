@@ -428,7 +428,7 @@ const BTPContent = () => {
             {isApproved && (
               <>
                 <Typography textAlign="center" paddingTop={'10px'} marginBottom={'5px'} color="#fb6a6a">
-                  {appovedBalance} {assetName} is waiting transfer.
+                  {appovedBalance} {assetName} is awaiting transfer.
                 </Typography>
                 {isRemovingFromContract ? (
                   <Typography textAlign="center" color="#2fccdc">

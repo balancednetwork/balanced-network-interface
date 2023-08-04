@@ -7,10 +7,12 @@ import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 
 import { useArchwayContext } from '../archway/ArchwayProvider';
+import { ARCHWAY_CW20_COLLATERAL } from '../archway/config';
 
 const ArchwayTest = () => {
   const [tokenAmount, setTokenAmount] = React.useState<number>();
-  const { chain_id, address, connectToWallet, signingClient, disconnect } = useArchwayContext();
+  const [cw20Amount, setCw20Amount] = React.useState<number>();
+  const { chain_id, address, connectToWallet, signingClient, disconnect, signingCosmWasmClient } = useArchwayContext();
 
   React.useEffect(() => {
     if (signingClient && address) {
@@ -23,7 +25,29 @@ const ArchwayTest = () => {
         }
       });
     }
-  }, [signingClient, address]);
+
+    if (signingCosmWasmClient && address) {
+      ARCHWAY_CW20_COLLATERAL.address
+        ? signingCosmWasmClient
+            .queryContractSmart(ARCHWAY_CW20_COLLATERAL.address, { balance: { address } })
+            .then(res => {
+              try {
+                const { balance } = res;
+                setCw20Amount(parseInt(balance || '0') / 10 ** ARCHWAY_CW20_COLLATERAL.decimals);
+              } catch (e) {
+                console.log(e);
+                setCw20Amount(0);
+              }
+            })
+        : setCw20Amount(0);
+    }
+  }, [signingClient, signingCosmWasmClient, address]);
+
+  const sendToIcon = async () => {
+    // increase allowance
+    // send to icon or deposit through asset manager
+    alert('to do');
+  };
 
   return (
     <BoxPanel bg="bg2" width="100%">
@@ -53,6 +77,17 @@ const ArchwayTest = () => {
           {address && tokenAmount?.toFixed(2)}
         </Typography>
       </Flex>
+      <Flex mt={1}>
+        <Typography mr={2}>CW20 twitter tokens: </Typography>
+        <Typography fontWeight="700" color="text">
+          {address && cw20Amount?.toFixed(2)}
+        </Typography>
+      </Flex>
+      {address && signingCosmWasmClient && (
+        <Flex mt={4}>
+          <Button onClick={sendToIcon}>Send to ICON</Button>
+        </Flex>
+      )}
     </BoxPanel>
   );
 };

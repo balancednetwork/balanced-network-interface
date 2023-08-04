@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 
 import { SupportedChainId } from '@balancednetwork/balanced-js';
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { SigningStargateClient, StargateClient } from '@cosmjs/stargate';
 import { AccountData } from '@keplr-wallet/types';
 
@@ -13,10 +14,10 @@ interface ArchwayContextType {
   address: string;
   chain_id: string;
   connectToWallet: () => void;
+  disconnect: () => void;
   client?: StargateClient;
   signingClient?: SigningStargateClient;
-  // cosmWasmClient:
-  disconnect: () => void;
+  signingCosmWasmClient?: SigningCosmWasmClient;
 }
 
 const initialContext: ArchwayContextType = {
@@ -33,6 +34,7 @@ const ArchwayProvider: React.FC = ({ children }) => {
   const [chain_id, setChainId] = useState<string>('');
   const [client, setClient] = useState<StargateClient>();
   const [signingClient, setSigningClient] = useState<SigningStargateClient>();
+  const [signingCosmWasmClient, setSigningCosmWasmClient] = useState<SigningCosmWasmClient>();
 
   useEffect(() => {
     async function connectToRPC() {
@@ -47,7 +49,7 @@ const ArchwayProvider: React.FC = ({ children }) => {
   const connectToWallet = async () => {
     const { keplr } = window as any;
     if (!keplr) {
-      alert('Please install keplr extension');
+      window.open('https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap');
       return;
     }
     if (NETWORK_ID === SupportedChainId.MAINNET) {
@@ -59,8 +61,11 @@ const ArchwayProvider: React.FC = ({ children }) => {
 
     // @ts-ignore
     const offlineSigner = window.getOfflineSigner(chain_id);
-    const signingClient = await SigningStargateClient.connectWithSigner(ARCHWAY_RPC_PROVIDER, offlineSigner);
-    setSigningClient(signingClient);
+    const signingClientObj = await SigningStargateClient.connectWithSigner(ARCHWAY_RPC_PROVIDER, offlineSigner);
+    setSigningClient(signingClientObj);
+
+    const signingCosmWasmClientObj = await SigningCosmWasmClient.connectWithSigner(ARCHWAY_RPC_PROVIDER, offlineSigner);
+    setSigningCosmWasmClient(signingCosmWasmClientObj);
 
     const account: AccountData = (await offlineSigner.getAccounts())[0];
     account.address && setAddress(account.address);
@@ -80,6 +85,7 @@ const ArchwayProvider: React.FC = ({ children }) => {
     connectToWallet,
     client,
     signingClient,
+    signingCosmWasmClient,
     disconnect,
   };
 

@@ -47,6 +47,76 @@ const ARCHWAY_RPC_PROVIDERS: { [key in SupportedChainId]: string } = {
       ?.address || DEFAULT_RPC_TESTNET,
 };
 
+type CW20_BASIC_TYPE = {
+  address: string;
+  decimals: number;
+  denom: string;
+};
+
+const ARCHWAY_CW20_COLLATERALS: { [key in SupportedChainId]: CW20_BASIC_TYPE } = {
+  [SupportedChainId.MAINNET]: {
+    address: '',
+    decimals: 6,
+    denom: 'TWITTER',
+  },
+  [SupportedChainId.BERLIN]: {
+    address: 'archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44',
+    decimals: 6,
+    denom: 'TWITTER',
+  },
+  [SupportedChainId.LISBON]: {
+    address: 'archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44',
+    decimals: 6,
+    denom: 'TWITTER',
+  },
+  [SupportedChainId.SEJONG]: {
+    address: 'archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44',
+    decimals: 6,
+    denom: 'TWITTER',
+  },
+  [SupportedChainId.YEOUIDO]: {
+    address: 'archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44',
+    decimals: 6,
+    denom: 'TWITTER',
+  },
+};
+
+type ContractSetType = {
+  xcall: string;
+  bnusd: string;
+  assetManager: string;
+};
+
+const ARCHWAY_CONTRACTS_: { [key in SupportedChainId]: ContractSetType } = {
+  [SupportedChainId.MAINNET]: {
+    xcall: '',
+    bnusd: '',
+    assetManager: '',
+  },
+  [SupportedChainId.BERLIN]: {
+    xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
+    bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
+    assetManager: 'archway1g79f9xfas2lk2u0smfmmqht3cvph7lc09jxm43was5a4m432gndsz057hj',
+  },
+  [SupportedChainId.LISBON]: {
+    xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
+    bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
+    assetManager: 'archway1g79f9xfas2lk2u0smfmmqht3cvph7lc09jxm43was5a4m432gndsz057hj',
+  },
+  [SupportedChainId.SEJONG]: {
+    xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
+    bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
+    assetManager: 'archway1g79f9xfas2lk2u0smfmmqht3cvph7lc09jxm43was5a4m432gndsz057hj',
+  },
+  [SupportedChainId.YEOUIDO]: {
+    xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
+    bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
+    assetManager: 'archway1g79f9xfas2lk2u0smfmmqht3cvph7lc09jxm43was5a4m432gndsz057hj',
+  },
+};
+
 export const ARCHWAY_CHAIN: Chain = ARCHWAY_CHAINS[NETWORK_ID];
 export const ARCHWAY_ASSET_LIST: AssetList = ARCHWAY_ASSET_LISTS[NETWORK_ID];
 export const ARCHWAY_RPC_PROVIDER: string = ARCHWAY_RPC_PROVIDERS[NETWORK_ID];
+export const ARCHWAY_CW20_COLLATERAL: CW20_BASIC_TYPE = ARCHWAY_CW20_COLLATERALS[NETWORK_ID];
+export const ARCHWAY_CONTRACTS: ContractSetType = ARCHWAY_CONTRACTS_[NETWORK_ID];

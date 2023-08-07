@@ -11,6 +11,7 @@
     "@cosmjs/cosmwasm-stargate": "0.31.0",
     "@cosmjs/stargate": "0.31.0",
     "@ethersproject/address": "5.4.0",
+    "@ethersproject/rlp": "5.7.0",
     "@ethersproject/solidity": "5.4.0",
     "@keplr-wallet/types": "0.12.18",
     "@ledgerhq/hw-transport": "5.48.0",

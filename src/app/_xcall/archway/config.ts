@@ -96,22 +96,22 @@ const ARCHWAY_CONTRACTS_: { [key in SupportedChainId]: ContractSetType } = {
   [SupportedChainId.BERLIN]: {
     xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
     bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
-    assetManager: 'archway1g79f9xfas2lk2u0smfmmqht3cvph7lc09jxm43was5a4m432gndsz057hj',
+    assetManager: 'archway1mgulqq694qrdeaz9wz5rsj220td9plpc56f3mvmkh6d7zplll2hqja6d06',
   },
   [SupportedChainId.LISBON]: {
     xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
     bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
-    assetManager: 'archway1g79f9xfas2lk2u0smfmmqht3cvph7lc09jxm43was5a4m432gndsz057hj',
+    assetManager: 'archway1mgulqq694qrdeaz9wz5rsj220td9plpc56f3mvmkh6d7zplll2hqja6d06',
   },
   [SupportedChainId.SEJONG]: {
     xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
     bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
-    assetManager: 'archway1g79f9xfas2lk2u0smfmmqht3cvph7lc09jxm43was5a4m432gndsz057hj',
+    assetManager: 'archway1mgulqq694qrdeaz9wz5rsj220td9plpc56f3mvmkh6d7zplll2hqja6d06',
   },
   [SupportedChainId.YEOUIDO]: {
     xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
     bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
-    assetManager: 'archway1g79f9xfas2lk2u0smfmmqht3cvph7lc09jxm43was5a4m432gndsz057hj',
+    assetManager: 'archway1mgulqq694qrdeaz9wz5rsj220td9plpc56f3mvmkh6d7zplll2hqja6d06',
   },
 };
 

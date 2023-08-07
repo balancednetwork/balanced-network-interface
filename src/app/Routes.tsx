@@ -7,7 +7,7 @@ import { Switch, Route, useLocation } from 'react-router-dom';
 
 import { DefaultLayout } from 'app/components/Layout';
 
-import ArchwayTest from './_xcall/ArchwayTest';
+import ArchwayTest from './_xcall/archway/ArchwayTest';
 import { HomePage } from './containers/HomePage/Loadable';
 import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 import { ProposalPage } from './containers/ProposalPage/Loadable';

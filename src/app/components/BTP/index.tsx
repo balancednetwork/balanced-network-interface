@@ -107,6 +107,7 @@ const StyledTextButton = styled(TextButton)`
   padding: 0 !important;
   &:hover {
     text-decoration: underline !important;
+    color: #2fccdc !important;
   }
 `;
 
@@ -431,9 +432,7 @@ const BTPContent = () => {
                   {appovedBalance} {assetName} is awaiting transfer.
                 </Typography>
                 {isRemovingFromContract ? (
-                  <Typography textAlign="center" color="#2fccdc">
-                    Removing it from the bridge contract
-                  </Typography>
+                  <Typography textAlign="center">{`Removing ${assetName} from the bridge contract...`}</Typography>
                 ) : (
                   <Typography textAlign="center">
                     <StyledTextButton onClick={onRemoveFromContract}>

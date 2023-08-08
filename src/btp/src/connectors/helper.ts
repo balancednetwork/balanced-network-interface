@@ -41,7 +41,7 @@ export const getTransactionMessages = (
         if (transactionInfo?.networkSrc === CHAIN_NAME.ICON && checkIRC2Token(transactionInfo?.coinName)) {
           return {
             pending: t`Sending ${transactionInfo.coinName} to the bridge contract...`,
-            success: t`Sent ${transactionInfo.coinName} to the bridge contract...`,
+            success: t`Sent ${transactionInfo.coinName} to the bridge contract.`,
             failure: t`Couldn't SEND ${transactionInfo.coinName} for cross-chain transfers.`,
           };
         } else {

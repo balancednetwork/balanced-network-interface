@@ -83,7 +83,7 @@ class Ethereum {
                 chainName:
                   CHAIN_NAME +
                   ' ' +
-                  (process.env.REACT_APP_NETWORK_ID === SupportedChainId.MAINNET.toString() ? 'Mainnet' : 'Mainnet'),
+                  (process.env.REACT_APP_NETWORK_ID === SupportedChainId.MAINNET.toString() ? 'Mainnet' : 'Testnet'),
                 rpcUrls: [RPC_URL],
                 // iconUrls: [logoUrl],
                 blockExplorerUrls: [EXPLORE_URL],

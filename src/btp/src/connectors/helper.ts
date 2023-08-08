@@ -46,8 +46,8 @@ export const getTransactionMessages = (
           };
         } else {
           return {
-            pending: t`Sending ${transactionInfo.coinName} to the bridge contract...`,
-            success: t`Sent ${transactionInfo.coinName} to the bridge contract.`,
+            pending: t`Approving ${transactionInfo.coinName} for cross-chain transfers...`,
+            success: t`Approved ${transactionInfo.coinName} for cross-chain transfers.`,
             failure: t`Couldn't APPROVE ${transactionInfo.coinName} for cross-chain transfers.`,
           };
         }

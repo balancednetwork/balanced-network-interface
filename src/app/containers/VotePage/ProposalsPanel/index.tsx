@@ -33,7 +33,7 @@ const MetaWrap = styled.div`
 `;
 
 export default function ProposalsPanel() {
-  const { data: proposals } = useTotalProposalQuery(30);
+  const { data: proposals } = useTotalProposalQuery(60);
   const { data: activeProposals } = useActiveProposals();
   const theme = useTheme();
   const bBalnAmount = useBBalnAmount();

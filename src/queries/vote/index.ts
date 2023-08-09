@@ -151,7 +151,7 @@ export const useTotalProposalCountQuery = () => {
   });
 };
 
-export const useActiveProposals = (offset: number = 30, batchSize: number = 200) => {
+export const useActiveProposals = (offset: number = 60, batchSize: number = 200) => {
   const { account } = useIconReact();
   const { data: platformDay } = usePlatformDayQuery();
   const transactions = useAllTransactions();

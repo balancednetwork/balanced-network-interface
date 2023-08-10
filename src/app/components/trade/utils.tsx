@@ -1,12 +1,12 @@
 import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import { HEIGHT } from 'app/components/TradingViewChart';
-import { FRACTION_ZERO } from 'constants/misc';
-import { Source } from 'store/bbaln/hooks';
+import { ZERO } from 'constants/misc';
 
 export const Panel = styled(Flex)`
   overflow: hidden;
@@ -119,21 +119,6 @@ export const stakedFraction = stakedLPPercent => {
 export const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
   !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
 
-export const getFormattedRewards = (reward: Fraction, stakedFractionValue: Fraction, boostSource?: Source): string => {
-  const boostFraction = boostSource
-    ? new Fraction(boostSource.workingBalance.toFixed(), boostSource.balance.toFixed())
-    : new Fraction(1);
-  return !boostSource
-    ? reward?.equalTo(FRACTION_ZERO)
-      ? 'N/A'
-      : stakedFractionValue.greaterThan(0)
-      ? `~ ${reward.multiply(stakedFractionValue).divide(100).toFixed(2, { groupSeparator: ',' })} BALN`
-      : 'N/A'
-    : stakedFractionValue.greaterThan(0)
-    ? `~ ${reward
-        .multiply(stakedFractionValue)
-        .multiply(boostFraction)
-        .divide(100)
-        .toFixed(2, { groupSeparator: ',' })} BALN`
-    : 'N/A';
+export const getFormattedRewards = (reward: BigNumber): string => {
+  return reward?.isEqualTo(ZERO) ? 'N/A' : `~ ${reward.toFormat(2)} BALN`;
 };

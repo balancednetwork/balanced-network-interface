@@ -22,12 +22,13 @@ import bnJs from 'bnJs';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { BalanceData } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { Source } from 'store/bbaln/hooks';
 import { Field } from 'store/mint/actions';
 import { useChangeWithdrawnValue, useStakedLPPercent } from 'store/stakedLP/hooks';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
-import { toFraction, multiplyCABN, toDec } from 'utils';
+import { multiplyCABN, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { withdrawMessage } from '../utils';
@@ -68,14 +69,8 @@ export function getABBalance(pair: Pair, balance: BalanceData) {
   return [pair.reserve0.multiply(rate), pair.reserve1.multiply(rate)];
 }
 
-export function getShareReward(pair: Pair, balance: BalanceData, totalReward: BigNumber, stakedRatio?: Fraction) {
-  const rate = getRate(pair, balance, stakedRatio);
-  const totalRewardFrac = totalReward ? toFraction(totalReward) : FRACTION_ZERO;
-
-  return {
-    share: rate,
-    reward: totalRewardFrac.multiply(rate),
-  };
+export function getShareReward(totalReward: BigNumber, boostData?: Source): BigNumber {
+  return boostData ? totalReward.times(boostData.workingBalance.div(boostData.workingSupply)) : new BigNumber(0);
 }
 
 export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
@@ -374,13 +369,13 @@ export const WithdrawPanelQ = ({
   pair,
   totalReward,
   apy,
-  boost,
+  source,
 }: {
   pair: Pair;
   balance: BalanceData;
   totalReward: BigNumber;
   apy: number | null;
-  boost?: BigNumber | undefined;
+  source?: Source;
 }) => {
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
@@ -471,7 +466,7 @@ export const WithdrawPanelQ = ({
   const hasEnoughICX = useHasEnoughICX();
 
   const RespoRewardsInfo = () => {
-    const { reward } = getShareReward(pair, balance, totalReward);
+    const reward = getShareReward(totalReward, source);
 
     return (
       <Flex
@@ -486,7 +481,7 @@ export const WithdrawPanelQ = ({
             <Trans>Daily rewards</Trans>
           </Typography>
           <Typography color="text" fontSize={16}>
-            {`~ ${new BigNumber(reward.toFixed(8)).times(boost || 1).toFormat(2, BigNumber.ROUND_HALF_UP) || '-'} BALN`}
+            {`~ ${reward.toFormat(2, BigNumber.ROUND_HALF_UP) || '-'} BALN`}
           </Typography>
         </Box>
 
@@ -496,10 +491,10 @@ export const WithdrawPanelQ = ({
           </Typography>
           <Typography color="text" fontSize={16}>
             {`${
-              apy
+              apy && source
                 ? new BigNumber(apy)
                     .times(100)
-                    .times(boost || 1)
+                    .times(source.workingBalance.div(source.balance) || 1)
                     .toFormat(2)
                 : '-'
             }%`}

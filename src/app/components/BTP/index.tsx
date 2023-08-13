@@ -391,6 +391,7 @@ const BTPContent = () => {
                 hasAlreadyApproved={isApproved}
                 shouldCheckIRC2Token={shouldCheckIRC2Token}
                 onRemoveFromContract={onRemoveFromContract}
+                isRemovingFromContract={isRemovingFromContract}
               />
               <Box className="full-width">
                 <Address address={sendingAddress} onChange={setSendingAddress} />

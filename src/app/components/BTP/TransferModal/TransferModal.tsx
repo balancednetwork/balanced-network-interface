@@ -43,6 +43,7 @@ export const TransferAssetModal = ({
   hasAlreadyApproved,
   shouldCheckIRC2Token,
   onRemoveFromContract,
+  isRemovingFromContract,
 }) => {
   const networkSrc = useFromNetwork();
   const networkDst = useToNetwork();
@@ -154,14 +155,20 @@ export const TransferAssetModal = ({
                 {shouldCheckIRC2Token ? (
                   <Trans>{isApproving ? 'Sending to contract' : 'Send to contract'}</Trans>
                 ) : (
-                  <Trans>{isApproving ? 'Approving' : 'Approve'}</Trans>
+                  <Trans>{isApproving ? 'Approving asset' : 'Approve asset'}</Trans>
                 )}
               </Button>
             ) : (
               <Typography textAlign="center">
-                <StyledTextButton onClick={removeFromContract} padding="0 !important" color="#2fccdc !important">
-                  Remove from contract
-                </StyledTextButton>
+                {isRemovingFromContract ? (
+                  <StyledTextButton padding="0 !important" color="#2fccdc !important">
+                    Removing from contract
+                  </StyledTextButton>
+                ) : (
+                  <StyledTextButton onClick={removeFromContract} padding="0 !important" color="#2fccdc !important">
+                    Remove from contract
+                  </StyledTextButton>
+                )}
               </Typography>
             )}
           </Flex>

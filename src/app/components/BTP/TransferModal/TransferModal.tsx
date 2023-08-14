@@ -14,9 +14,14 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
+import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
 import { MODAL_FADE_DURATION } from 'constants/index';
 import { TransactionStatus } from 'store/transactions/hooks';
 
+const CheckIconWrapper = styled.div`
+  display: block;
+  width: 32px;
+`;
 const StyledModalContent = styled(Flex)`
   width: 100%;
   align-items: stretch;
@@ -158,6 +163,10 @@ export const TransferAssetModal = ({
                   <Trans>{isApproving ? 'Approving asset' : 'Approve asset'}</Trans>
                 )}
               </Button>
+            ) : networkSrc.value === 'BSC' ? (
+              <CheckIconWrapper>
+                <CheckIcon />
+              </CheckIconWrapper>
             ) : (
               <Typography textAlign="center">
                 {isRemovingFromContract ? (

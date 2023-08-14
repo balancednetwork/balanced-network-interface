@@ -20,7 +20,7 @@ import { useBalance } from 'hooks/useV2Pairs';
 import { useAllPairsById } from 'queries/backendv2';
 import { useIncentivisedPairs } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useSources } from 'store/bbaln/hooks';
+import { useBBalnAmount, useSources, useTotalSupply } from 'store/bbaln/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useChangeStakedLPPercent, useStakedLPPercent, useTotalStaked } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -29,7 +29,7 @@ import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { StyledSkeleton } from '../../ProposalInfo/components';
-import { getFormattedRewards } from '../utils';
+import { getFormattedRewards, stakedFraction } from '../utils';
 import { getABBalance, getShareReward } from './WithdrawPanel';
 
 export default function StakeLPPanel({ pair }: { pair: Pair }) {
@@ -170,7 +170,17 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
   const totalReward = rewards[sourceName];
-  const reward = getShareReward(totalReward, sources && sources[sourceName]);
+  const stakedFractionValue = stakedFraction(stakedPercent);
+  const totalBbaln = useTotalSupply();
+  const userBbaln = useBBalnAmount();
+  const reward = getShareReward(
+    totalReward,
+    sources && sources[sourceName],
+    balance,
+    stakedFractionValue,
+    totalBbaln,
+    userBbaln,
+  );
 
   const isIncentivised = useMemo(
     () =>

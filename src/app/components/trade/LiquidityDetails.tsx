@@ -18,14 +18,14 @@ import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
-import { BalanceData, useSuppliedTokens } from 'hooks/useV2Pairs';
+import { BalanceData, useBalance, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { PairData, useAllPairsById } from 'queries/backendv2';
-import { Source, useSources } from 'store/bbaln/hooks';
+import { Source, useBBalnAmount, useSources, useTotalSupply } from 'store/bbaln/hooks';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { Field } from 'store/mint/actions';
 import { useMintActionHandlers } from 'store/mint/hooks';
 import { useRewards } from 'store/reward/hooks';
-import { useWithdrawnPercent } from 'store/stakedLP/hooks';
+import { useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
 
 import { Banner } from '../Banner';
 import { StyledSkeleton } from '../ProposalInfo/components';
@@ -35,7 +35,7 @@ import { StyledBoxPanel } from './LiquidityDetails/shared';
 import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
 import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './LiquidityDetails/WithdrawPanel';
 import { usePoolPanelContext } from './PoolPanelContext';
-import { getFormattedRewards, totalSupply } from './utils';
+import { getFormattedRewards, totalSupply, stakedFraction } from './utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -261,11 +261,23 @@ const PoolRecord = ({
   apy: number | null;
 }) => {
   const upSmall = useMedia('(min-width: 800px)');
+  const stakedLPPercent = useStakedLPPercent(poolId);
   const [aBalance, bBalance] = getABBalance(pair, balance);
   const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
   const { baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
-  const reward = getShareReward(totalReward, boostData && boostData[sourceName]);
+  const balances = useBalance(poolId);
+  const stakedFractionValue = stakedFraction(stakedLPPercent);
+  const totalbBaln = useTotalSupply();
+  const userBbaln = useBBalnAmount();
+  const reward = getShareReward(
+    totalReward,
+    boostData && boostData[sourceName],
+    balances,
+    stakedFractionValue,
+    totalbBaln,
+    userBbaln,
+  );
   const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
 
   const baseCurrencyTotalSupply = totalSupply(baseValue, lpBalance?.base);
@@ -312,7 +324,9 @@ const PoolRecord = ({
         {upSmall && (
           <DataText>
             {boostData ? (
-              apy ? (
+              apy &&
+              boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName] &&
+              boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance.isGreaterThan(0) ? (
                 `${new BigNumber(apy)
                   .times(
                     //hotfix pairName due to wrong source name on contract side

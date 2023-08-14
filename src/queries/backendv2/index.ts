@@ -1,4 +1,4 @@
-import { Fraction, Token } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { useQuery } from 'react-query';
@@ -100,6 +100,9 @@ export type PairData = {
   volume30d: number;
   feesApy: number;
   balnApy: number;
+  totalBase: CurrencyAmount<Token>;
+  totalQuote: CurrencyAmount<Token>;
+  totalSupply: BigNumber;
   stakedRatio: Fraction;
 };
 
@@ -140,6 +143,20 @@ export function useAllPairs() {
 
             const incentivisedPair = incentivisedPairs.find(incentivisedPair => incentivisedPair.id === item.pool_id);
 
+            const baseToken = new Token(
+              item['chain_id'],
+              item['base_address'] === 'ICX' ? NULL_CONTRACT_ADDRESS : item['base_address'],
+              item['base_decimals'],
+              item['base_symbol'],
+            );
+
+            const quoteToken = new Token(
+              item['chain_id'],
+              item['quote_address'] === 'ICX' ? NULL_CONTRACT_ADDRESS : item['quote_address'],
+              item['quote_decimals'],
+              item['quote_symbol'],
+            );
+
             const pair: PairData = {
               info: {
                 chainId: item['chain_id'],
@@ -147,18 +164,8 @@ export function useAllPairs() {
                 name: item['name'],
                 baseCurrencyKey: item['base_symbol'],
                 quoteCurrencyKey: item['quote_symbol'],
-                baseToken: new Token(
-                  item['chain_id'],
-                  item['base_address'] === 'ICX' ? NULL_CONTRACT_ADDRESS : item['base_address'],
-                  item['base_decimals'],
-                  item['base_symbol'],
-                ),
-                quoteToken: new Token(
-                  item['chain_id'],
-                  item['quote_address'] === 'ICX' ? NULL_CONTRACT_ADDRESS : item['quote_address'],
-                  item['quote_decimals'],
-                  item['quote_symbol'],
-                ),
+                baseToken: baseToken,
+                quoteToken: quoteToken,
               },
               name: item['name'],
               liquidity,
@@ -168,6 +175,15 @@ export function useAllPairs() {
               volume30d,
               feesApy: feesApy || 0,
               balnApy: 0,
+              totalSupply: new BigNumber(item['total_supply']),
+              totalBase: CurrencyAmount.fromRawAmount(
+                baseToken,
+                parseInt(new BigNumber(item['base_supply'] * 10 ** item['base_decimals']).toFixed(0)),
+              ),
+              totalQuote: CurrencyAmount.fromRawAmount(
+                quoteToken,
+                parseInt(new BigNumber(item['quote_supply'] * 10 ** item['quote_decimals']).toFixed(0)),
+              ),
               stakedRatio: new Fraction(1),
             };
 

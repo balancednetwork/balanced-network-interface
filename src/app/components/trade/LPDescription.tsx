@@ -11,10 +11,10 @@ import { Flex, Box } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
-import { PairState, useSuppliedTokens } from 'hooks/useV2Pairs';
+import { PairState, useBalance, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useAllPairsByName } from 'queries/backendv2';
 import { useICXConversionFee } from 'queries/reward';
-import { useSources } from 'store/bbaln/hooks';
+import { useBBalnAmount, useResponsivePoolRewardShare, useSources } from 'store/bbaln/hooks';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
 import { useReward } from 'store/reward/hooks';
@@ -30,6 +30,7 @@ export default function LPDescription() {
   const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();
   const { independentField, typedValue, otherTypedValue } = useMintState();
   const sources = useSources();
+  const getResponsiveRewardShare = useResponsivePoolRewardShare();
   const { account } = useIconReact();
   const upSmall = useMedia('(min-width: 600px)');
   const { data: icxConversionFee } = useICXConversionFee();
@@ -52,6 +53,7 @@ export default function LPDescription() {
       return '';
     }
   }, [currencies]);
+  const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
 
   const { data: allPairs } = useAllPairsByName();
   const apy = useMemo(() => allPairs && allPairs[pairName] && new BigNumber(allPairs[pairName].balnApy), [
@@ -64,6 +66,9 @@ export default function LPDescription() {
     currencies[Field.CURRENCY_A],
     pair?.isQueue ? pair?.token1 : currencies[Field.CURRENCY_B],
   );
+
+  const userPoolBalances = useBalance(pair?.poolId || -1);
+
   //calulate Your supply temporary value  and Your daily reward temporary value
   const formattedAmounts = useMemo(
     () => ({
@@ -106,33 +111,28 @@ export default function LPDescription() {
   );
   const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, balances?.quote)?.toFixed() || '0');
 
-  const tempTotalSupplyValue = useMemo(() => {
-    const poolStakedRatio = allPairs ? new BigNumber(allPairs[pairName]?.stakedRatio.toFixed(18)) : new BigNumber(1);
-    return new BigNumber(pair?.reserve0.toFixed() || 0)
-      .plus(new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0))
-      .times(poolStakedRatio);
-  }, [allPairs, formattedAmounts, pair?.reserve0, pairName]);
-
-  const suppliedReward = useMemo(
+  const responsiveRewardShare = useMemo(
     () =>
-      poolRewards
-        ?.times(new BigNumber(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0).plus(baseCurrencyTotalSupply))
-        .div(tempTotalSupplyValue.isZero() ? 1 : tempTotalSupplyValue),
-    [baseCurrencyTotalSupply, formattedAmounts, tempTotalSupplyValue, poolRewards],
+      getResponsiveRewardShare(
+        sources && sources[sourceName],
+        formattedAmounts[Field.CURRENCY_A],
+        formattedAmounts[Field.CURRENCY_B],
+        allPairs && allPairs[pairName],
+        userPoolBalances,
+      ),
+    [allPairs, formattedAmounts, getResponsiveRewardShare, pairName, sourceName, sources, userPoolBalances],
   );
 
-  const boost = useMemo(() => {
-    const pairName = pair ? `${pair.token0.symbol}/${pair.token1.symbol}` : '';
-    if (sources && sources[pairName] && sources[pairName].balance.isGreaterThan(0)) {
-      return sources[pairName].workingBalance.dividedBy(sources[pairName].balance);
-    } else if (sources && pairName === 'sICX/BTCB' && sources['BTCB/sICX'].balance.isGreaterThan(0)) {
-      return sources['BTCB/sICX'].workingBalance.dividedBy(sources['BTCB/sICX'].balance);
-    } else if (sources && pairName === 'ICX/sICX' && sources['sICX/ICX'].balance.isGreaterThan(0)) {
-      return sources['sICX/ICX'].workingBalance.dividedBy(sources['sICX/ICX'].balance);
-    } else {
-      return new BigNumber(1);
+  const userBbaln = useBBalnAmount();
+  const isInitialSupply = useMemo(() => {
+    if ((formattedAmounts[Field.CURRENCY_A] && userPoolBalances) || userPoolBalances) {
+      return (
+        userBbaln.isGreaterThan(0) &&
+        ((formattedAmounts[Field.CURRENCY_A]?.greaterThan(0) && userPoolBalances.stakedLPBalance?.equalTo(0)) ||
+          (userPoolBalances.stakedLPBalance?.equalTo(0) && userPoolBalances.balance?.greaterThan(0)))
+      );
     }
-  }, [sources, pair]);
+  }, [formattedAmounts, userBbaln, userPoolBalances]);
 
   return (
     <>
@@ -272,11 +272,14 @@ export default function LPDescription() {
                         </Typography>
 
                         <Typography textAlign="center" variant="p">
-                          {suppliedReward?.isEqualTo(0) || suppliedReward?.isNaN()
-                            ? 'N/A'
-                            : `~ ${
-                                suppliedReward?.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'
-                              } BALN`}
+                          {poolRewards
+                            ? isInitialSupply
+                              ? `${poolRewards.times(responsiveRewardShare).toFormat(2)} - ${poolRewards
+                                  .times(responsiveRewardShare)
+                                  .times(2.5)
+                                  .toFormat(2)} BALN`
+                              : `${poolRewards.times(responsiveRewardShare).toFormat(2)} BALN`
+                            : 'N/A'}
                         </Typography>
                       </Box>
                     )}

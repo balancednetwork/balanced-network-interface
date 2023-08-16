@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
@@ -11,6 +11,8 @@ import { EXA, getBbalnAmount, WEIGHT } from 'app/components/home/BBaln/utils';
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import useInterval from 'hooks/useInterval';
+import { BalanceData } from 'hooks/useV2Pairs';
+import { PairData } from 'queries/backendv2';
 import { useRatesQuery } from 'queries/reward';
 import { useBlockDetails } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -272,6 +274,73 @@ export function useWorkingBalance() {
       return new BigNumber(0);
     },
     [totalSupplyBBaln, dynamicBBalnAmount, bbalnAmountDiff],
+  );
+}
+
+export function useResponsivePoolRewardShare() {
+  const totalSupplyBBaln = useTotalSupply();
+  const bBalnAmount = useBBalnAmount();
+
+  return useCallback(
+    (
+      source?: Source,
+      currencyA?: CurrencyAmount<Currency>,
+      currencyB?: CurrencyAmount<Currency>,
+      pool?: PairData,
+      balances?: BalanceData,
+    ): BigNumber => {
+      if (totalSupplyBBaln && bBalnAmount && source && pool && balances) {
+        if (pool.name === 'sICX/ICX') {
+          let boost = new BigNumber(1);
+          if (bBalnAmount.isGreaterThan(0) && source.balance.isGreaterThan(0)) {
+            boost = source.workingBalance.div(source.balance);
+          }
+          const addedBase = currencyA
+            ? new BigNumber(currencyA.toExact()).times(10 ** currencyA.currency.decimals)
+            : new BigNumber(0);
+
+          const newLPBalance = source.balance.plus(addedBase).times(boost);
+
+          const newWorkingBalance = newLPBalance;
+
+          const newWorkingSupply = source.workingSupply.minus(source.workingBalance).plus(newWorkingBalance);
+
+          return newWorkingBalance.div(newWorkingSupply);
+        } else {
+          const max = source.balance.times(EXA).div(WEIGHT);
+          let boost = new BigNumber(0);
+          if (bBalnAmount.isGreaterThan(0) && source.balance.isGreaterThan(0)) {
+            boost = source.supply.times(bBalnAmount).times(EXA.minus(WEIGHT)).div(totalSupplyBBaln).div(WEIGHT);
+          }
+          const addedBase = currencyA
+            ? new BigNumber(currencyA.toExact()).times(10 ** currencyA.currency.decimals)
+            : new BigNumber(0);
+
+          const unStakedLPBalance = new BigNumber(balances.balance.toExact()).times(
+            10 ** balances.balance.currency.decimals,
+          );
+          let newLPBalance = source.balance.plus(unStakedLPBalance);
+
+          if (currencyA && pool.totalBase.greaterThan(0)) {
+            newLPBalance = newLPBalance.plus(
+              pool.totalSupply.times(addedBase).div(new BigNumber(pool.totalBase.numerator.toString())),
+            );
+          }
+
+          let newWorkingBalance = newLPBalance.plus(boost);
+          newWorkingBalance = source.balance.isGreaterThan(0)
+            ? BigNumber.min(newWorkingBalance, max)
+            : newWorkingBalance;
+
+          const newWorkingSupply = source.workingSupply.minus(source.workingBalance).plus(newWorkingBalance);
+
+          return newWorkingBalance.div(newWorkingSupply);
+        }
+      }
+
+      return new BigNumber(0);
+    },
+    [totalSupplyBBaln, bBalnAmount],
   );
 }
 

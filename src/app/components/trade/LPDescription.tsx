@@ -14,7 +14,7 @@ import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { PairState, useBalance, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useAllPairsByName } from 'queries/backendv2';
 import { useICXConversionFee } from 'queries/reward';
-import { useResponsivePoolRewardShare, useSources } from 'store/bbaln/hooks';
+import { useBBalnAmount, useResponsivePoolRewardShare, useSources } from 'store/bbaln/hooks';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
 import { useReward } from 'store/reward/hooks';
@@ -122,6 +122,17 @@ export default function LPDescription() {
       ),
     [allPairs, formattedAmounts, getResponsiveRewardShare, pairName, sourceName, sources, userPoolBalances],
   );
+
+  const userBbaln = useBBalnAmount();
+  const isInitialSupply = useMemo(() => {
+    if ((formattedAmounts[Field.CURRENCY_A] && userPoolBalances) || userPoolBalances) {
+      return (
+        userBbaln.isGreaterThan(0) &&
+        ((formattedAmounts[Field.CURRENCY_A]?.greaterThan(0) && userPoolBalances.stakedLPBalance?.equalTo(0)) ||
+          (userPoolBalances.stakedLPBalance?.equalTo(0) && userPoolBalances.balance?.greaterThan(0)))
+      );
+    }
+  }, [formattedAmounts, userBbaln, userPoolBalances]);
 
   return (
     <>
@@ -261,11 +272,14 @@ export default function LPDescription() {
                         </Typography>
 
                         <Typography textAlign="center" variant="p">
-                          {poolRewards ? `${poolRewards.times(responsiveRewardShare).toFormat(2)} BALN` : 'N/A'}
-                          {/* ? 'N/A'
-                            : `~ ${
-                                suppliedReward?.times(boost).dp(2, BigNumber.ROUND_HALF_UP).toFormat() || '...'
-                              } BALN`} */}
+                          {poolRewards
+                            ? isInitialSupply
+                              ? `${poolRewards.times(responsiveRewardShare).toFormat(2)} - ${poolRewards
+                                  .times(responsiveRewardShare)
+                                  .times(2.5)
+                                  .toFormat(2)} BALN`
+                              : `${poolRewards.times(responsiveRewardShare).toFormat(2)} BALN`
+                            : 'N/A'}
                         </Typography>
                       </Box>
                     )}

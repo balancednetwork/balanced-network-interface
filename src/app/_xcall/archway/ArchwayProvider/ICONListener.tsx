@@ -5,7 +5,7 @@ interface SocketState {
 }
 
 class ICONListener extends Component<{}, SocketState> {
-  socket: WebSocket;
+  // socket: WebSocket;
   pingInterval: number | null = null;
   params = {
     height: '0xbaa0fd',
@@ -25,50 +25,50 @@ class ICONListener extends Component<{}, SocketState> {
       messages: [],
     };
 
-    this.socket = new WebSocket('wss://berlin.net.solidwallet.io/api/v3/icon_dex/block');
-    this.socket = new WebSocket('wss://berlin.net.solidwallet.io/api/v3/icon_dex/block');
+    // this.socket = new WebSocket('wss://berlin.net.solidwallet.io/api/v3/icon_dex/block');
+    // this.socket = new WebSocket('wss://berlin.net.solidwallet.io/api/v3/icon_dex/block');
 
-    this.socket.onopen = () => {
-      console.log('WebSocket connection opened');
-      this.socket.send(JSON.stringify(this.params));
-      // this.startPing();
-    };
+    // this.socket.onopen = () => {
+    //   console.log('WebSocket connection opened');
+    //   this.socket.send(JSON.stringify(this.params));
+    //   // this.startPing();
+    // };
 
-    this.socket.onmessage = event => {
-      const message = JSON.parse(event.data);
-      console.log('message from socket: ', message);
-      this.setState(prevState => ({
-        messages: [...prevState.messages, message],
-      }));
-      // if (this.state.messages.length > 10) {
-      //   this.socket.close();
-      // }
-    };
+    // this.socket.onmessage = event => {
+    //   const message = JSON.parse(event.data);
+    //   console.log('message from socket: ', message);
+    //   this.setState(prevState => ({
+    //     messages: [...prevState.messages, message],
+    //   }));
+    //   // if (this.state.messages.length > 10) {
+    //   //   this.socket.close();
+    //   // }
+    // };
 
-    this.socket.onclose = () => {
-      console.log('WebSocket connection closed');
-      // this.stopPing();
-    };
+    // this.socket.onclose = () => {
+    //   console.log('WebSocket connection closed');
+    //   // this.stopPing();
+    // };
   }
 
-  startPing() {
-    this.pingInterval = setInterval(() => {
-      console.log('should ping');
-      if (this.socket.readyState === WebSocket.OPEN) {
-        // console.log('ping');
-        // this.socket.send();
-      }
-    }, 5000); // Send a ping message every 30 seconds
-  }
+  // startPing() {
+  //   this.pingInterval = setInterval(() => {
+  //     console.log('should ping');
+  //     if (this.socket.readyState === WebSocket.OPEN) {
+  //       // console.log('ping');
+  //       // this.socket.send();
+  //     }
+  //   }, 5000); // Send a ping message every 30 seconds
+  // }
 
-  stopPing() {
-    clearInterval(this.pingInterval!);
-  }
+  // stopPing() {
+  //   clearInterval(this.pingInterval!);
+  // }
 
-  componentWillUnmount() {
-    // this.stopPing();
-    this.socket.close();
-  }
+  // componentWillUnmount() {
+  //   // this.stopPing();
+  //   this.socket.close();
+  // }
 
   render() {
     return (

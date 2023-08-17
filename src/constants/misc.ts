@@ -1,4 +1,5 @@
 import { Fraction, Percent } from '@balancednetwork/sdk-core';
+import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 
 // 30 minutes, denominated in seconds
@@ -6,6 +7,7 @@ export const DEFAULT_DEADLINE_FROM_NOW = 60 * 30;
 
 export const BIGINT_ZERO = JSBI.BigInt(0);
 export const BIGINT_ONE = JSBI.BigInt(1);
+export const ZERO = new BigNumber(0);
 export const FRACTION_ZERO = new Fraction(0);
 export const FRACTION_ONE = new Fraction(1);
 

@@ -115,7 +115,7 @@
     "not op_mini all"
   ],
   "engines": {
-    "node": ">=14.0.0",
+    "node": ">=18.0.0",
     "yarn": "^1.22.10"
   },
   "lint-staged": {

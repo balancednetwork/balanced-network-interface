@@ -9,6 +9,7 @@ import { NETWORK_ID } from 'constants/config';
 
 import { ARCHWAY_RPC_PROVIDER } from '../config';
 import { CONSTANTINE_CHAIN_INFO } from '../testnetChainInfo';
+import ICONListener from './ICONListener';
 
 interface ArchwayContextType {
   address: string;
@@ -89,7 +90,13 @@ const ArchwayProvider: React.FC = ({ children }) => {
     disconnect,
   };
 
-  return <ArchwayContext.Provider value={context}>{children}</ArchwayContext.Provider>;
+  return (
+    <ArchwayContext.Provider value={context}>
+      {children}
+      <>----debug messages----</>
+      <ICONListener />
+    </ArchwayContext.Provider>
+  );
 };
 
 function useArchwayContext() {

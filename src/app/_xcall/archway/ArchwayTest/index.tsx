@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
 import { Flex } from 'rebass';
 
 import { getRlpEncodedMsg } from 'app/_xcall/utils';
@@ -11,6 +12,8 @@ import bnJs from 'bnJs';
 
 import { useArchwayContext } from '../ArchwayProvider';
 import { ARCHWAY_CONTRACTS, ARCHWAY_CW20_COLLATERAL } from '../config';
+// import { BORROW_TX } from '../testnetChainInfo';
+import { ARCHWAY_EVENT_XCALL_MSG_SENT } from '../types';
 
 const ArchwayTest = () => {
   const [tokenAmount, setTokenAmount] = React.useState<number>();
@@ -67,7 +70,6 @@ const ArchwayTest = () => {
       ? signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.bnusd, { balance: { address } }).then(res => {
           try {
             const { balance } = res;
-            console.log('bnUSD cw20 bal,', res);
             setCw20bnUSDAmount(parseInt(balance || '0') / 10 ** 18);
           } catch (e) {
             console.log(e);
@@ -82,7 +84,7 @@ const ArchwayTest = () => {
       const msg = {
         increase_allowance: {
           spender: ARCHWAY_CONTRACTS.assetManager,
-          amount: '100',
+          amount: '1000000',
         },
       };
       try {
@@ -120,21 +122,93 @@ const ArchwayTest = () => {
     }
   };
 
+  const depositToIconAndBorrow = async () => {
+    //increase allowance
+    if (signingCosmWasmClient && address) {
+      const msg = {
+        deposit: {
+          token_address: ARCHWAY_CW20_COLLATERAL.address,
+          amount: '10000',
+          to: '0x7.icon/cx501cce20fc5d5a0e322d5a600a9903f3f4832d43',
+          data: getRlpEncodedMsg(['{"_amount":"10"}']),
+        },
+      };
+      try {
+        const res = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.assetManager, msg, {
+          amount: [{ amount: '1', denom: 'uconst' }],
+          gas: '1200000',
+        });
+        console.log(res);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const data = Buffer.from([
+    48,
+    120,
+    100,
+    49,
+    57,
+    48,
+    55,
+    98,
+    50,
+    50,
+    53,
+    102,
+    54,
+    49,
+    54,
+    100,
+    54,
+    102,
+    55,
+    53,
+    54,
+    101,
+    55,
+    52,
+    50,
+    50,
+    51,
+    97,
+    50,
+    50,
+    51,
+    49,
+    51,
+    48,
+    50,
+    50,
+    55,
+    100,
+  ]).toString();
+  console.log(data);
+
   const borrowFromIcon = async () => {
     if (signingCosmWasmClient && address) {
       const msg = {
         send_call_message: {
           to: `0x7.icon/${bnJs.Loans.address}`,
-          data: getRlpEncodedMsg(['xBorrow', 'TwitterAsset', '1000']),
+          data: getRlpEncodedMsg(['xBorrow', 'TwitterAsset', '1']),
         },
       };
       console.log(msg);
       try {
-        const res = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.xcall, msg, {
+        const res: ExecuteResult = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.xcall, msg, {
           amount: [{ amount: '1', denom: 'uconst' }],
-          gas: '1000000',
+          gas: '700000',
         });
         console.log(res);
+
+        const xCallSentEvent = res.events.find(e => e.type === ARCHWAY_EVENT_XCALL_MSG_SENT);
+        const sn = xCallSentEvent && xCallSentEvent.attributes.find(a => a.key === 'sn');
+
+        if (sn) {
+          console.log('SN: ', sn);
+        }
       } catch (e) {
         console.error(e);
       }
@@ -185,15 +259,20 @@ const ArchwayTest = () => {
           <Flex alignItems="center">
             <Button onClick={increaseAllowance}>Increase Allowance</Button>
             <Typography ml={2} color="text">
-              current AM allowance: {currentAllowance}
+              current AM allowance: {parseInt(currentAllowance || '0') / 10 ** 6}
             </Typography>
           </Flex>
         </>
       )}
       {address && signingCosmWasmClient && (
-        <Flex mt={3}>
-          <Button onClick={depositToIcon}>Deposit collateral</Button>
-        </Flex>
+        <>
+          <Flex mt={3}>
+            <Button onClick={depositToIcon}>Deposit collateral</Button>
+          </Flex>
+          <Flex mt={3}>
+            <Button onClick={depositToIconAndBorrow}>Deposit collateral and borrow</Button>
+          </Flex>
+        </>
       )}
       {/* xCall token transfer */}
       {address && signingCosmWasmClient && (

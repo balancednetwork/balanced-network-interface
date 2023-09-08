@@ -1272,10 +1272,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@balancednetwork/balanced-js@1.2.17":
-  version "1.2.17"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.2.17.tgz#8d219c2bb719abb93e112e28fcdea759232b047d"
-  integrity sha512-7+IC5+i3vrdNq/td3k5lK676Y+F+en5EfMPD72eDNSTI+h4WX8IpgKuYiKVMkGJxop2qrFySrzmyXCe7qZR6Rw==
+"@balancednetwork/balanced-js@1.2.18":
+  version "1.2.18"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.2.18.tgz#b168de26447dc7c33f8b62e113da811d58826418"
+  integrity sha512-EF/xayfauncLT97/zD4+TFm7jOcENs7REVCcC9E9LKazDx356UAvhsfEfoE9ZNbCCWwUj+xw6S6bsyIyZaluTQ==
   dependencies:
     "@balancednetwork/hw-app-icx" "^1.0.6"
     bignumber.js "9.0.1"
@@ -14359,6 +14359,11 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
   dependencies:
     hash-base "^3.0.0"
     inherits "^2.0.1"
+
+rlp@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/rlp/-/rlp-3.0.0.tgz#5a60725ca4314a3a165feecca1836e4f2c1e2343"
+  integrity sha512-PD6U2PGk6Vq2spfgiWZdomLvRGDreBLxi5jv5M8EpRo3pU6VEm31KO+HFxE18Q3vgqfDrQ9pZA3FP95rkijNKw==
 
 rollup-plugin-babel@^4.3.3:
   version "4.4.0"

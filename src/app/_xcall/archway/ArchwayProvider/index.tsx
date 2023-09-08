@@ -6,6 +6,8 @@ import { SigningStargateClient, StargateClient } from '@cosmjs/stargate';
 import { AccountData } from '@keplr-wallet/types';
 
 import { NETWORK_ID } from 'constants/config';
+import { useBlockNumber } from 'store/application/hooks';
+import { useAddDestinationEvent } from 'store/xCall/hooks';
 
 import { ARCHWAY_RPC_PROVIDER } from '../config';
 import { CONSTANTINE_CHAIN_INFO } from '../testnetChainInfo';
@@ -36,6 +38,10 @@ const ArchwayProvider: React.FC = ({ children }) => {
   const [client, setClient] = useState<StargateClient>();
   const [signingClient, setSigningClient] = useState<SigningStargateClient>();
   const [signingCosmWasmClient, setSigningCosmWasmClient] = useState<SigningCosmWasmClient>();
+  const iconBlockHeight = useBlockNumber();
+  const blockHeightRef = React.useRef<string | null>(null);
+  const shouldListen = true; //TODO: should listen after tx init
+  const addDestinationEvent = useAddDestinationEvent();
 
   useEffect(() => {
     async function connectToRPC() {
@@ -46,6 +52,16 @@ const ArchwayProvider: React.FC = ({ children }) => {
     }
     connectToRPC();
   }, []);
+
+  useEffect(() => {
+    if (shouldListen && iconBlockHeight) {
+      if (!blockHeightRef.current) {
+        blockHeightRef.current = `0x${iconBlockHeight.toString(16)}`;
+      }
+    } else {
+      blockHeightRef.current = null;
+    }
+  }, [iconBlockHeight, shouldListen]);
 
   const connectToWallet = async () => {
     const { keplr } = window as any;
@@ -94,7 +110,9 @@ const ArchwayProvider: React.FC = ({ children }) => {
     <ArchwayContext.Provider value={context}>
       {children}
       <>----debug messages----</>
-      <ICONListener />
+      {shouldListen && blockHeightRef.current && (
+        <ICONListener blockHeight={blockHeightRef.current} addDestinationEvent={addDestinationEvent} />
+      )}
     </ArchwayContext.Provider>
   );
 };

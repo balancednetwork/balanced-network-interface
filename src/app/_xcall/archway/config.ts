@@ -95,23 +95,23 @@ const ARCHWAY_CONTRACTS_: { [key in SupportedChainId]: ContractSetType } = {
   },
   [SupportedChainId.BERLIN]: {
     xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
-    bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
-    assetManager: 'archway1mgulqq694qrdeaz9wz5rsj220td9plpc56f3mvmkh6d7zplll2hqja6d06',
+    bnusd: 'archway1lrxndgt8j0ycfwm8fhglq66k2akulct0ywhuukqh02t7sm4nuruqzpvfcf',
+    assetManager: 'archway1sds3xds2w67kq03n80y38syk756x5kefk3yd45k9l5mwqtswszrsj4f6q2',
   },
   [SupportedChainId.LISBON]: {
     xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
-    bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
-    assetManager: 'archway1mgulqq694qrdeaz9wz5rsj220td9plpc56f3mvmkh6d7zplll2hqja6d06',
+    bnusd: 'archway1lrxndgt8j0ycfwm8fhglq66k2akulct0ywhuukqh02t7sm4nuruqzpvfcf',
+    assetManager: 'archway1sds3xds2w67kq03n80y38syk756x5kefk3yd45k9l5mwqtswszrsj4f6q2',
   },
   [SupportedChainId.SEJONG]: {
     xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
-    bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
-    assetManager: 'archway1mgulqq694qrdeaz9wz5rsj220td9plpc56f3mvmkh6d7zplll2hqja6d06',
+    bnusd: 'archway1lrxndgt8j0ycfwm8fhglq66k2akulct0ywhuukqh02t7sm4nuruqzpvfcf',
+    assetManager: 'archway1sds3xds2w67kq03n80y38syk756x5kefk3yd45k9l5mwqtswszrsj4f6q2',
   },
   [SupportedChainId.YEOUIDO]: {
     xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
-    bnusd: 'archway1qgwf4kyw6txjys85k5v9j220k9rxl8lqmmaknt7mu4v7qaezrajsldu9j3',
-    assetManager: 'archway1mgulqq694qrdeaz9wz5rsj220td9plpc56f3mvmkh6d7zplll2hqja6d06',
+    bnusd: 'archway1lrxndgt8j0ycfwm8fhglq66k2akulct0ywhuukqh02t7sm4nuruqzpvfcf',
+    assetManager: 'archway1sds3xds2w67kq03n80y38syk756x5kefk3yd45k9l5mwqtswszrsj4f6q2',
   },
 };
 

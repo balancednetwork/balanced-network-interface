@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
+import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass';
 
 import { getRlpEncodedMsg } from 'app/_xcall/utils';
@@ -9,11 +10,12 @@ import Divider from 'app/components/Divider';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { useAddOriginEvent, useXCallDestinationEvents, useXCallOriginEvents } from 'store/xCall/hooks';
 
 import { useArchwayContext } from '../ArchwayProvider';
 import { ARCHWAY_CONTRACTS, ARCHWAY_CW20_COLLATERAL } from '../config';
 // import { BORROW_TX } from '../testnetChainInfo';
-import { ARCHWAY_EVENT_XCALL_MSG_SENT } from '../types';
+import { getXCallOriginEventDataFromArchway } from './helpers';
 
 const ArchwayTest = () => {
   const [tokenAmount, setTokenAmount] = React.useState<number>();
@@ -21,6 +23,27 @@ const ArchwayTest = () => {
   const [cw20bnUSDAmount, setCw20bnUSDAmount] = React.useState<number>();
   const [currentAllowance, setCurrentAllowance] = React.useState<string>();
   const { chain_id, address, connectToWallet, signingClient, disconnect, signingCosmWasmClient } = useArchwayContext();
+  const { account } = useIconReact();
+
+  const iconDestinationEvents = useXCallDestinationEvents('icon');
+  const archwayOriginEvents = useXCallOriginEvents('archway');
+  const addOriginEvent = useAddOriginEvent();
+
+  const xCallData = React.useMemo(() => {
+    if (iconDestinationEvents.length && archwayOriginEvents.length) {
+      return iconDestinationEvents.map(event => {
+        const { sn } = event;
+        const archwayOrigin = archwayOriginEvents.find(archwayEvent => archwayEvent.sn === sn);
+        if (archwayOrigin) {
+          return {
+            reqId: event.reqId,
+            data: archwayOrigin?.data,
+          };
+        }
+        return undefined;
+      });
+    }
+  }, [iconDestinationEvents, archwayOriginEvents]);
 
   React.useEffect(() => {
     // get fee token amount
@@ -84,12 +107,12 @@ const ArchwayTest = () => {
       const msg = {
         increase_allowance: {
           spender: ARCHWAY_CONTRACTS.assetManager,
-          amount: '1000000',
+          amount: '100000000',
         },
       };
       try {
         const res = await signingCosmWasmClient.execute(address, ARCHWAY_CW20_COLLATERAL.address, msg, {
-          amount: [{ amount: '1', denom: 'uconst' }],
+          amount: [{ amount: '1', denom: 'aconst' }],
           gas: '200000',
         });
         console.log(res);
@@ -100,22 +123,37 @@ const ArchwayTest = () => {
   };
 
   const depositToIcon = async () => {
-    //increase allowance
+    //needs allowance
     if (signingCosmWasmClient && address) {
+      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+        get_fee: { nid: '0x7.icon', rollback: false },
+      });
+
+      console.log('fee: ', fee);
+
       const msg = {
         deposit: {
           token_address: ARCHWAY_CW20_COLLATERAL.address,
-          amount: '10',
-          to: '0x7.icon/hx2cb62eb17836201c7e4df1186348859dedc018ae',
-          data: [],
+          amount: '100000',
+          to: '0x7.icon/cx501cce20fc5d5a0e322d5a600a9903f3f4832d43',
         },
       };
       try {
-        const res = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.assetManager, msg, {
-          amount: [{ amount: '1', denom: 'uconst' }],
-          gas: '1200000',
-        });
+        const res = await signingCosmWasmClient.execute(
+          address,
+          ARCHWAY_CONTRACTS.assetManager,
+          msg,
+          {
+            amount: [{ amount: '1', denom: 'aconst' }],
+            gas: '1200000',
+          },
+          undefined,
+          [{ amount: '100000', denom: 'aconst' }],
+        );
         console.log(res);
+
+        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        originEventData && addOriginEvent('archway', originEventData);
       } catch (e) {
         console.error(e);
       }
@@ -123,19 +161,18 @@ const ArchwayTest = () => {
   };
 
   const depositToIconAndBorrow = async () => {
-    //increase allowance
     if (signingCosmWasmClient && address) {
       const msg = {
         deposit: {
           token_address: ARCHWAY_CW20_COLLATERAL.address,
-          amount: '10000',
+          amount: '100000',
           to: '0x7.icon/cx501cce20fc5d5a0e322d5a600a9903f3f4832d43',
-          data: getRlpEncodedMsg(['{"_amount":"10"}']),
+          data: getRlpEncodedMsg(['{"_asset":"bnUSD","_amount":"10"}']),
         },
       };
       try {
         const res = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.assetManager, msg, {
-          amount: [{ amount: '1', denom: 'uconst' }],
+          amount: [{ amount: '1', denom: 'aconst' }],
           gas: '1200000',
         });
         console.log(res);
@@ -145,73 +182,36 @@ const ArchwayTest = () => {
     }
   };
 
-  const data = Buffer.from([
-    48,
-    120,
-    100,
-    49,
-    57,
-    48,
-    55,
-    98,
-    50,
-    50,
-    53,
-    102,
-    54,
-    49,
-    54,
-    100,
-    54,
-    102,
-    55,
-    53,
-    54,
-    101,
-    55,
-    52,
-    50,
-    50,
-    51,
-    97,
-    50,
-    50,
-    51,
-    49,
-    51,
-    48,
-    50,
-    50,
-    55,
-    100,
-  ]).toString();
-  console.log(data);
-
   const borrowFromIcon = async () => {
+    //ad get fee and pass it to transfer funds
     if (signingCosmWasmClient && address) {
       const msg = {
         send_call_message: {
           to: `0x7.icon/${bnJs.Loans.address}`,
-          data: getRlpEncodedMsg(['xBorrow', 'TwitterAsset', '1']),
+          data: getRlpEncodedMsg(['xBorrow', 'TwitterAsset', 1]),
         },
       };
       console.log(msg);
       try {
         const res: ExecuteResult = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.xcall, msg, {
-          amount: [{ amount: '1', denom: 'uconst' }],
+          amount: [{ amount: '1', denom: 'aconst' }],
           gas: '700000',
         });
         console.log(res);
 
-        const xCallSentEvent = res.events.find(e => e.type === ARCHWAY_EVENT_XCALL_MSG_SENT);
-        const sn = xCallSentEvent && xCallSentEvent.attributes.find(a => a.key === 'sn');
+        const xCallMeta = getXCallOriginEventDataFromArchway(res.events);
 
-        if (sn) {
-          console.log('SN: ', sn);
-        }
+        console.log(xCallMeta);
       } catch (e) {
         console.error(e);
       }
+    }
+  };
+
+  const handleExecuteXCall = (data: { reqId: string; data: string }) => async () => {
+    if (account) {
+      bnJs.inject({ account });
+      bnJs.XCall.executeCall(data.reqId, data.data);
     }
   };
 
@@ -254,7 +254,7 @@ const ArchwayTest = () => {
         <>
           <Divider my={5}></Divider>
           <Typography variant="h3" fontSize={18} mb={4}>
-            Asset Manager
+            Asset Manager contract
           </Typography>
           <Flex alignItems="center">
             <Button onClick={increaseAllowance}>Increase Allowance</Button>
@@ -279,7 +279,7 @@ const ArchwayTest = () => {
         <>
           <Divider my={5}></Divider>
           <Typography variant="h3" fontSize={18} mb={4}>
-            xCall
+            xCall contract
           </Typography>
         </>
       )}
@@ -291,6 +291,28 @@ const ArchwayTest = () => {
           </Typography>
         </Flex>
       )}
+      {/* Executable calls */}
+      {address && signingCosmWasmClient && (
+        <>
+          <Divider my={5}></Divider>
+          <Typography variant="h3" fontSize={18} mb={4}>
+            xCalls to execute
+          </Typography>
+        </>
+      )}
+      {address &&
+        signingCosmWasmClient &&
+        xCallData?.map(
+          data =>
+            data && (
+              <Flex alignItems="center" key={data.reqId}>
+                <Button onClick={handleExecuteXCall(data)}>Execute</Button>
+                <Typography color="text" marginLeft="30px">
+                  reqId: {data.reqId}
+                </Typography>
+              </Flex>
+            ),
+        )}
     </BoxPanel>
   );
 };

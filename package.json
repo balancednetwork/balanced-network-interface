@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@balancednetwork/balanced-js": "1.2.18",
+    "@archwayhq/arch3.js": "0.4.0",
+    "@balancednetwork/balanced-js": "1.2.19",
     "@balancednetwork/hw-app-icx": "1.0.6",
     "@balancednetwork/sdk-core": "1.0.1",
     "@balancednetwork/v1-sdk": "1.0.3",
     "@chain-registry/types": "0.16.0",
     "@cosmjs/cosmwasm-stargate": "0.31.0",
     "@cosmjs/stargate": "0.31.0",
+    "@ethereumjs/rlp": "5.0.0",
     "@ethersproject/address": "5.4.0",
     "@ethersproject/rlp": "5.7.0",
     "@ethersproject/solidity": "5.4.0",
@@ -88,7 +90,8 @@
     "shelljs": "0.8.4",
     "styled-components": "5.1.0",
     "tiny-invariant": "1.1.0",
-    "toformat": "2.0.0"
+    "toformat": "2.0.0",
+    "uuid": "9.0.0"
   },
   "scripts": {
     "start": "react-scripts --openssl-legacy-provider start",

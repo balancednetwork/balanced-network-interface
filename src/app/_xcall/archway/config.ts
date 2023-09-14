@@ -94,24 +94,24 @@ const ARCHWAY_CONTRACTS_: { [key in SupportedChainId]: ContractSetType } = {
     assetManager: '',
   },
   [SupportedChainId.BERLIN]: {
-    xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
-    bnusd: 'archway1lrxndgt8j0ycfwm8fhglq66k2akulct0ywhuukqh02t7sm4nuruqzpvfcf',
-    assetManager: 'archway1sds3xds2w67kq03n80y38syk756x5kefk3yd45k9l5mwqtswszrsj4f6q2',
+    xcall: 'archway1kenxz0wuczr04mc9q3gwjuyzd6ft4zqm5wach846gghfjupvlncshvchs2',
+    bnusd: 'archway1dxs0j8rk8yd69rdh77ndrefhjzdy3lehujx58yhfxr827nr7rutqpltd2w',
+    assetManager: 'archway18aqg8wgmhrjkdnc4ne6y004w3y4lsjc5mujypvkqn45vwne9zdjsjg3lfm',
   },
   [SupportedChainId.LISBON]: {
-    xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
-    bnusd: 'archway1lrxndgt8j0ycfwm8fhglq66k2akulct0ywhuukqh02t7sm4nuruqzpvfcf',
-    assetManager: 'archway1sds3xds2w67kq03n80y38syk756x5kefk3yd45k9l5mwqtswszrsj4f6q2',
+    xcall: 'archway1kenxz0wuczr04mc9q3gwjuyzd6ft4zqm5wach846gghfjupvlncshvchs2',
+    bnusd: 'archway1dxs0j8rk8yd69rdh77ndrefhjzdy3lehujx58yhfxr827nr7rutqpltd2w',
+    assetManager: 'archway18aqg8wgmhrjkdnc4ne6y004w3y4lsjc5mujypvkqn45vwne9zdjsjg3lfm',
   },
   [SupportedChainId.SEJONG]: {
-    xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
-    bnusd: 'archway1lrxndgt8j0ycfwm8fhglq66k2akulct0ywhuukqh02t7sm4nuruqzpvfcf',
-    assetManager: 'archway1sds3xds2w67kq03n80y38syk756x5kefk3yd45k9l5mwqtswszrsj4f6q2',
+    xcall: 'archway1kenxz0wuczr04mc9q3gwjuyzd6ft4zqm5wach846gghfjupvlncshvchs2',
+    bnusd: 'archway1dxs0j8rk8yd69rdh77ndrefhjzdy3lehujx58yhfxr827nr7rutqpltd2w',
+    assetManager: 'archway18aqg8wgmhrjkdnc4ne6y004w3y4lsjc5mujypvkqn45vwne9zdjsjg3lfm',
   },
   [SupportedChainId.YEOUIDO]: {
-    xcall: 'archway1fhhc88hmmgkeh622yegmp305qrx50hgeca35uxqtk69thke79esqa6fh8a',
-    bnusd: 'archway1lrxndgt8j0ycfwm8fhglq66k2akulct0ywhuukqh02t7sm4nuruqzpvfcf',
-    assetManager: 'archway1sds3xds2w67kq03n80y38syk756x5kefk3yd45k9l5mwqtswszrsj4f6q2',
+    xcall: 'archway1kenxz0wuczr04mc9q3gwjuyzd6ft4zqm5wach846gghfjupvlncshvchs2',
+    bnusd: 'archway1dxs0j8rk8yd69rdh77ndrefhjzdy3lehujx58yhfxr827nr7rutqpltd2w',
+    assetManager: 'archway18aqg8wgmhrjkdnc4ne6y004w3y4lsjc5mujypvkqn45vwne9zdjsjg3lfm',
   },
 };
 

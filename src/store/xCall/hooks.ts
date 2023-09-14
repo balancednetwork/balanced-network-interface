@@ -2,13 +2,14 @@ import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { OriginCallData, DestinationCallData, SupportedXCallChains, XCallChainState } from 'app/_xcall/types';
+import { OriginXCallData, DestinationXCallData, SupportedXCallChains, XCallChainState } from 'app/_xcall/types';
 import { AppState } from 'store';
 
 import {
   addXCallDestinationEvent,
   addXCallOriginEvent,
   removeXCallDestinationEvent,
+  removeXCallEvent,
   removeXCallOriginEvent,
 } from './actions';
 
@@ -16,11 +17,19 @@ export function useXCallState(): AppState['xCall'] {
   return useSelector((state: AppState) => state.xCall);
 }
 
-export function useXCallChainState(chain: SupportedXCallChains): XCallChainState {
-  return useSelector((state: AppState) => state.xCall[chain]);
+export function useCurrentXCallState(): AppState['xCall']['currentState'] {
+  return useSelector((state: AppState) => state.xCall.currentState);
 }
 
-export function useAddOriginEvent(): (chain: SupportedXCallChains, data: OriginCallData) => void {
+export function useXCallListeningTo(): AppState['xCall']['listeningTo'] {
+  return useSelector((state: AppState) => state.xCall.listeningTo);
+}
+
+export function useXCallChainState(chain: SupportedXCallChains): XCallChainState {
+  return useSelector((state: AppState) => state.xCall.events[chain]);
+}
+
+export function useAddOriginEvent(): (chain: SupportedXCallChains, data: OriginXCallData) => void {
   const dispatch = useDispatch();
   return React.useCallback(
     (chain, data) => {
@@ -30,7 +39,7 @@ export function useAddOriginEvent(): (chain: SupportedXCallChains, data: OriginC
   );
 }
 
-export function useAddDestinationEvent(): (chain: SupportedXCallChains, data: DestinationCallData) => void {
+export function useAddDestinationEvent(): (chain: SupportedXCallChains, data: DestinationXCallData) => void {
   const dispatch = useDispatch();
   return React.useCallback(
     (chain, data) => {
@@ -60,12 +69,22 @@ export function useRemoveDestinationEvent(): (chain: SupportedXCallChains, sn: n
   );
 }
 
-export function useXCallOriginEvents(chain: SupportedXCallChains): OriginCallData[] {
+export function useRemoveEvent(): (sn: number, setToIdle: boolean) => void {
+  const dispatch = useDispatch();
+  return React.useCallback(
+    (sn, setToIdle = true) => {
+      dispatch(removeXCallEvent({ sn, setToIdle }));
+    },
+    [dispatch],
+  );
+}
+
+export function useXCallOriginEvents(chain: SupportedXCallChains): OriginXCallData[] {
   const state = useXCallChainState(chain);
   return [...state.origin];
 }
 
-export function useXCallDestinationEvents(chain: SupportedXCallChains): DestinationCallData[] {
+export function useXCallDestinationEvents(chain: SupportedXCallChains): DestinationXCallData[] {
   const state = useXCallChainState(chain);
   return [...state.destination];
 }

@@ -4,15 +4,21 @@ import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass';
 
-import { getRlpEncodedMsg } from 'app/_xcall/utils';
+import { getBytesFromString, getRlpEncodedMsg } from 'app/_xcall/utils';
 import { Button } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useAddOriginEvent, useXCallDestinationEvents, useXCallOriginEvents } from 'store/xCall/hooks';
+import {
+  useAddOriginEvent,
+  useCurrentXCallState,
+  useXCallDestinationEvents,
+  useXCallOriginEvents,
+} from 'store/xCall/hooks';
 
 import { useArchwayContext } from '../ArchwayProvider';
+import { useArchwayEventListener } from '../ArchwayProvider/ArchwayListeners';
 import { ARCHWAY_CONTRACTS, ARCHWAY_CW20_COLLATERAL } from '../config';
 // import { BORROW_TX } from '../testnetChainInfo';
 import { getXCallOriginEventDataFromArchway } from './helpers';
@@ -25,20 +31,23 @@ const ArchwayTest = () => {
   const { chain_id, address, connectToWallet, signingClient, disconnect, signingCosmWasmClient } = useArchwayContext();
   const { account } = useIconReact();
 
+  const currenctXcallState = useCurrentXCallState();
+
   const iconDestinationEvents = useXCallDestinationEvents('icon');
   const archwayOriginEvents = useXCallOriginEvents('archway');
   const addOriginEvent = useAddOriginEvent();
 
+  const [shouldListen] = React.useState<boolean>(true);
+  useArchwayEventListener(shouldListen);
+
+  //probably not needed, just use destination events with data hash
   const xCallData = React.useMemo(() => {
     if (iconDestinationEvents.length && archwayOriginEvents.length) {
       return iconDestinationEvents.map(event => {
         const { sn } = event;
         const archwayOrigin = archwayOriginEvents.find(archwayEvent => archwayEvent.sn === sn);
         if (archwayOrigin) {
-          return {
-            reqId: event.reqId,
-            data: archwayOrigin?.data,
-          };
+          return event;
         }
         return undefined;
       });
@@ -48,9 +57,9 @@ const ArchwayTest = () => {
   React.useEffect(() => {
     // get fee token amount
     if (signingClient && address) {
-      signingClient.getAllBalances(address).then(res => {
+      signingClient.getBalance(address, 'aconst').then(res => {
         try {
-          setTokenAmount(parseInt(res[0].amount || '0') / 10 ** 18);
+          setTokenAmount(parseInt(res.amount || '0') / 10 ** 18);
         } catch (e) {
           console.error(e);
           setTokenAmount(0);
@@ -125,6 +134,11 @@ const ArchwayTest = () => {
   const depositToIcon = async () => {
     //needs allowance
     if (signingCosmWasmClient && address) {
+      //same on ICON with
+      // const params = {
+      //   _net: NETWORK_LABEL_DESTINATION,
+      //   _rollback: useRollback ? "0x1" : "0x0"
+      // };
       const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
         get_fee: { nid: '0x7.icon', rollback: false },
       });
@@ -136,6 +150,7 @@ const ArchwayTest = () => {
           token_address: ARCHWAY_CW20_COLLATERAL.address,
           amount: '100000',
           to: '0x7.icon/cx501cce20fc5d5a0e322d5a600a9903f3f4832d43',
+          data: getBytesFromString(JSON.stringify({ _amount: '0' })),
         },
       };
       try {
@@ -143,12 +158,9 @@ const ArchwayTest = () => {
           address,
           ARCHWAY_CONTRACTS.assetManager,
           msg,
-          {
-            amount: [{ amount: '1', denom: 'aconst' }],
-            gas: '1200000',
-          },
+          'auto',
           undefined,
-          [{ amount: '100000', denom: 'aconst' }],
+          [{ amount: fee, denom: 'aconst' }],
         );
         console.log(res);
 
@@ -160,48 +172,55 @@ const ArchwayTest = () => {
     }
   };
 
-  const depositToIconAndBorrow = async () => {
-    if (signingCosmWasmClient && address) {
-      const msg = {
-        deposit: {
-          token_address: ARCHWAY_CW20_COLLATERAL.address,
-          amount: '100000',
-          to: '0x7.icon/cx501cce20fc5d5a0e322d5a600a9903f3f4832d43',
-          data: getRlpEncodedMsg(['{"_asset":"bnUSD","_amount":"10"}']),
-        },
-      };
-      try {
-        const res = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.assetManager, msg, {
-          amount: [{ amount: '1', denom: 'aconst' }],
-          gas: '1200000',
-        });
-        console.log(res);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  };
+  // const depositToIconAndBorrow = async () => {
+  //   if (signingCosmWasmClient && address) {
+  //     const msg = {
+  //       deposit: {
+  //         token_address: ARCHWAY_CW20_COLLATERAL.address,
+  //         amount: '100000',
+  //         to: '0x7.icon/cx501cce20fc5d5a0e322d5a600a9903f3f4832d43',
+  //         data: getRlpEncodedMsg(['{"_asset":"bnUSD","_amount":"10"}']),
+  //       },
+  //     };
+  //     try {
+  //       const res = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.assetManager, msg, {
+  //         amount: [{ amount: '1', denom: 'aconst' }],
+  //         gas: '1200000',
+  //       });
+  //       console.log(res);
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   }
+  // };
 
   const borrowFromIcon = async () => {
     //ad get fee and pass it to transfer funds
     if (signingCosmWasmClient && address) {
+      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+        get_fee: { nid: '0x7.icon', rollback: false },
+      });
+
       const msg = {
         send_call_message: {
           to: `0x7.icon/${bnJs.Loans.address}`,
           data: getRlpEncodedMsg(['xBorrow', 'TwitterAsset', 1]),
         },
       };
-      console.log(msg);
+
       try {
-        const res: ExecuteResult = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.xcall, msg, {
-          amount: [{ amount: '1', denom: 'aconst' }],
-          gas: '700000',
-        });
+        const res: ExecuteResult = await signingCosmWasmClient.execute(
+          address,
+          ARCHWAY_CONTRACTS.xcall,
+          msg,
+          'auto',
+          undefined,
+          [{ amount: fee, denom: 'aconst' }],
+        );
         console.log(res);
 
-        const xCallMeta = getXCallOriginEventDataFromArchway(res.events);
-
-        console.log(xCallMeta);
+        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        originEventData && addOriginEvent('archway', originEventData);
       } catch (e) {
         console.error(e);
       }
@@ -217,7 +236,12 @@ const ArchwayTest = () => {
 
   return (
     <BoxPanel bg="bg2" width="100%">
-      <Typography variant="h2">Archway Test</Typography>
+      <Flex alignItems="center">
+        <Typography variant="h2">Archway Test</Typography>
+        <Typography variant="h3" marginLeft="auto">
+          xCall: {currenctXcallState}
+        </Typography>
+      </Flex>
       <Flex mt={4}>
         {address ? (
           <Button onClick={disconnect}>Disconnect</Button>
@@ -269,9 +293,7 @@ const ArchwayTest = () => {
           <Flex mt={3}>
             <Button onClick={depositToIcon}>Deposit collateral</Button>
           </Flex>
-          <Flex mt={3}>
-            <Button onClick={depositToIconAndBorrow}>Deposit collateral and borrow</Button>
-          </Flex>
+          <Flex mt={3}>{/* <Button onClick={depositToIconAndBorrow}>Deposit collateral and borrow</Button> */}</Flex>
         </>
       )}
       {/* xCall token transfer */}

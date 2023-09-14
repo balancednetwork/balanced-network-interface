@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { DestinationCallData, SupportedXCallChains } from 'app/_xcall/types';
+import { DestinationXCallData, SupportedXCallChains } from 'app/_xcall/types';
 import bnJs from 'bnJs';
 
 interface SocketState {
@@ -8,7 +8,7 @@ interface SocketState {
 }
 
 class ICONListener extends Component<
-  { blockHeight: string; addDestinationEvent: (chain: SupportedXCallChains, data: DestinationCallData) => void },
+  { blockHeight: string; addDestinationEvent: (chain: SupportedXCallChains, data: DestinationXCallData) => void },
   SocketState
 > {
   socket: WebSocket;
@@ -41,7 +41,7 @@ class ICONListener extends Component<
 
     this.socket.onmessage = event => {
       const message = JSON.parse(event.data);
-      console.log('message from socket: ', message);
+      console.log('ICON block: ', message);
       this.setState(prevState => ({
         messages: [...prevState.messages, message],
       }));
@@ -56,8 +56,9 @@ class ICONListener extends Component<
           const snRaw = callMessageLog.indexed[3];
           const sn = snRaw && parseInt(snRaw, 16);
           const reqId = callMessageLog.data[0];
+          const data = callMessageLog.data[1];
           if (sn && reqId) {
-            this.props.addDestinationEvent('icon', { sn, reqId });
+            this.props.addDestinationEvent('icon', { sn, reqId, data });
           }
         }
       }

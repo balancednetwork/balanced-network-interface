@@ -1,24 +1,24 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { DestinationXCallData, OriginXCallData } from 'app/_xcall/types';
+import { DestinationXCallData, OriginXCallData, SupportedXCallChains } from 'app/_xcall/types';
 
 export const addXCallOriginEvent = createAction<{
-  chain?: string;
+  chain?: SupportedXCallChains;
   data?: OriginXCallData;
 }>('xCall/addXCallOriginEvent');
 
 export const addXCallDestinationEvent = createAction<{
-  chain?: string;
+  chain?: SupportedXCallChains;
   data?: DestinationXCallData;
 }>('xCall/addXCallDestinationEvent');
 
 export const removeXCallOriginEvent = createAction<{
-  chain?: string;
+  chain?: SupportedXCallChains;
   sn?: number;
 }>('xCall/removeXCallOriginEvent');
 
 export const removeXCallDestinationEvent = createAction<{
-  chain?: string;
+  chain?: SupportedXCallChains;
   sn?: number;
 }>('xCall/removeXCallDestinationEvent');
 

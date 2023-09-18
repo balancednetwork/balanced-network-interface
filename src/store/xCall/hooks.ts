@@ -17,8 +17,8 @@ export function useXCallState(): AppState['xCall'] {
   return useSelector((state: AppState) => state.xCall);
 }
 
-export function useCurrentXCallState(): AppState['xCall']['currentState'] {
-  return useSelector((state: AppState) => state.xCall.currentState);
+export function useCurrentXCallState(): AppState['xCall']['xCall'] {
+  return useSelector((state: AppState) => state.xCall.xCall);
 }
 
 export function useXCallListeningTo(): AppState['xCall']['listeningTo'] {
@@ -69,10 +69,10 @@ export function useRemoveDestinationEvent(): (chain: SupportedXCallChains, sn: n
   );
 }
 
-export function useRemoveEvent(): (sn: number, setToIdle: boolean) => void {
+export function useRemoveEvent(): (sn: number, setToIdle?: boolean) => void {
   const dispatch = useDispatch();
   return React.useCallback(
-    (sn, setToIdle = true) => {
+    (sn, setToIdle) => {
       dispatch(removeXCallEvent({ sn, setToIdle }));
     },
     [dispatch],

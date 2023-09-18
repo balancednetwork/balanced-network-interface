@@ -1,6 +1,13 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { CurrentXCallState, CurrentXCallStateType, SupportedXCallChains, XCallChainState } from 'app/_xcall/types';
+import {
+  CurrentXCallState,
+  CurrentXCallStateType,
+  SupportedXCallChains,
+  XCallChainState,
+  XCallEventType,
+} from 'app/_xcall/types';
+import { getFollowingEvent, getOppositeChain } from 'app/_xcall/utils';
 
 import {
   addXCallOriginEvent,
@@ -11,14 +18,16 @@ import {
 } from './actions';
 
 export type XCallState = {
-  currentState: CurrentXCallStateType;
-  listeningTo: undefined | SupportedXCallChains;
+  xCall: CurrentXCallStateType;
+  listeningTo?: {
+    chain: SupportedXCallChains;
+    event: XCallEventType;
+  };
   events: { [key in SupportedXCallChains]: XCallChainState };
 };
 
 const initialState: XCallState = {
-  currentState: CurrentXCallState.IDLE,
-  listeningTo: undefined,
+  xCall: CurrentXCallState.IDLE,
   events: {
     icon: {
       origin: [],
@@ -36,7 +45,11 @@ export default createReducer(initialState, builder =>
     .addCase(addXCallOriginEvent, (state, { payload: { chain, data } }) => {
       if (chain && data) {
         state.events[chain].origin.push(data);
-        state.currentState = CurrentXCallState.AWAITING_DESTINATION_CALL_MESSAGE;
+        state.xCall = CurrentXCallState.AWAITING_DESTINATION_CALL_MESSAGE;
+        state.listeningTo = {
+          chain: getOppositeChain(chain),
+          event: getFollowingEvent(data.eventName),
+        };
       }
     })
     .addCase(addXCallDestinationEvent, (state, { payload: { chain, data } }) => {
@@ -52,7 +65,9 @@ export default createReducer(initialState, builder =>
         //   state[chain].destination.push(data);
         // }
         state.events[chain].destination.push(data);
-        state.currentState = CurrentXCallState.AWAITING_USER_CALL_EXECUTION;
+        state.xCall = CurrentXCallState.AWAITING_USER_CALL_EXECUTION;
+        state.listeningTo = undefined;
+        //then listen for call executed event;
       }
     })
     .addCase(removeXCallEvent, (state, { payload: { sn, setToIdle } }) => {
@@ -62,7 +77,7 @@ export default createReducer(initialState, builder =>
           state.events[chain].destination = state.events[chain].destination.filter(data => data.sn !== sn);
         });
         if (setToIdle) {
-          state.currentState = CurrentXCallState.IDLE;
+          state.xCall = CurrentXCallState.IDLE;
         }
       }
     })

@@ -4,6 +4,10 @@ import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass';
 
+import { ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
+import { useICONEventListener } from 'app/_xcall/_icon/eventHandlers';
+import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
+import { DestinationXCallData, XCallEvent } from 'app/_xcall/types';
 import { getBytesFromString, getRlpEncodedMsg } from 'app/_xcall/utils';
 import { Button } from 'app/components/Button';
 import Divider from 'app/components/Divider';
@@ -13,14 +17,16 @@ import bnJs from 'bnJs';
 import {
   useAddOriginEvent,
   useCurrentXCallState,
+  useRemoveEvent,
   useXCallDestinationEvents,
+  useXCallListeningTo,
   useXCallOriginEvents,
 } from 'store/xCall/hooks';
 
 import { useArchwayContext } from '../ArchwayProvider';
-import { useArchwayEventListener } from '../ArchwayProvider/ArchwayListeners';
 import { ARCHWAY_CONTRACTS, ARCHWAY_CW20_COLLATERAL } from '../config';
 // import { BORROW_TX } from '../testnetChainInfo';
+import { useArchwayEventListener } from '../eventHandler';
 import { getXCallOriginEventDataFromArchway } from './helpers';
 
 const ArchwayTest = () => {
@@ -30,15 +36,23 @@ const ArchwayTest = () => {
   const [currentAllowance, setCurrentAllowance] = React.useState<string>();
   const { chain_id, address, connectToWallet, signingClient, disconnect, signingCosmWasmClient } = useArchwayContext();
   const { account } = useIconReact();
+  const removeEvent = useRemoveEvent();
 
-  const currenctXcallState = useCurrentXCallState();
+  const archwayDestinationEvents = useXCallDestinationEvents('archway');
+
+  const currentXcallState = useCurrentXCallState();
+  const destinationEvents = useXCallDestinationEvents('icon');
 
   const iconDestinationEvents = useXCallDestinationEvents('icon');
   const archwayOriginEvents = useXCallOriginEvents('archway');
   const addOriginEvent = useAddOriginEvent();
 
-  const [shouldListen] = React.useState<boolean>(true);
-  useArchwayEventListener(shouldListen);
+  const listeningTo = useXCallListeningTo();
+  useArchwayEventListener(listeningTo?.chain === 'archway' ? listeningTo.event : null);
+  useICONEventListener(listeningTo?.chain === 'icon' ? listeningTo.event : null);
+
+  // const xCallState = useXCallState();
+  // console.log('xCallState: ', xCallState);
 
   //probably not needed, just use destination events with data hash
   const xCallData = React.useMemo(() => {
@@ -140,7 +154,7 @@ const ArchwayTest = () => {
       //   _rollback: useRollback ? "0x1" : "0x0"
       // };
       const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
-        get_fee: { nid: '0x7.icon', rollback: false },
+        get_fee: { nid: ICON_XCALL_NETWORK_ID, rollback: false },
       });
 
       console.log('fee: ', fee);
@@ -149,7 +163,7 @@ const ArchwayTest = () => {
         deposit: {
           token_address: ARCHWAY_CW20_COLLATERAL.address,
           amount: '100000',
-          to: '0x7.icon/cx501cce20fc5d5a0e322d5a600a9903f3f4832d43',
+          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
           data: getBytesFromString(JSON.stringify({ _amount: '0' })),
         },
       };
@@ -164,6 +178,7 @@ const ArchwayTest = () => {
         );
         console.log(res);
 
+        //XCALL: Step one - get sn from initial transaction
         const originEventData = getXCallOriginEventDataFromArchway(res.events);
         originEventData && addOriginEvent('archway', originEventData);
       } catch (e) {
@@ -203,7 +218,7 @@ const ArchwayTest = () => {
 
       const msg = {
         send_call_message: {
-          to: `0x7.icon/${bnJs.Loans.address}`,
+          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
           data: getRlpEncodedMsg(['xBorrow', 'TwitterAsset', 1]),
         },
       };
@@ -227,10 +242,72 @@ const ArchwayTest = () => {
     }
   };
 
-  const handleExecuteXCall = (data: { reqId: string; data: string }) => async () => {
+  const handleExecuteXCall = (data: { reqId: number; data: string }) => async () => {
     if (account) {
       bnJs.inject({ account });
-      bnJs.XCall.executeCall(data.reqId, data.data);
+      const { result: hash } = await bnJs.XCall.executeCall(`0x${data.reqId.toString(16)}`, data.data);
+      const txResult = await fetchTxResult(hash);
+      if (txResult?.status === 1 && txResult.eventLogs.length) {
+        // looking for CallExecuted event
+        // then set listener to ResponseMessage / RollbackMessage
+        const callExecutedEvent = txResult.eventLogs.find(event =>
+          event.indexed.includes(getICONEventSignature(XCallEvent.CallExecuted)),
+        );
+
+        console.log('txResult: ', txResult);
+
+        if (callExecutedEvent?.data[0] === '0x1') {
+          console.log('xCALL EXECUTED SUCCESSFULLY');
+
+          //has xCall emitted CallMessageSent event?
+          const callMessageSentEvent = txResult.eventLogs.find(event =>
+            event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
+          );
+
+          if (callMessageSentEvent) {
+            console.log('MESSAGE SENT EVENT DETECTED');
+            console.log(callMessageSentEvent);
+            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
+            originEventData && addOriginEvent('icon', originEventData);
+          }
+
+          const sn = destinationEvents.find(event => event.reqId === data.reqId)?.sn;
+          sn && removeEvent(sn, true);
+        }
+
+        if (callExecutedEvent?.data[0] === '0x0') {
+          console.log('xCALL EXECUTED WITH ERROR');
+          if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
+            console.log('xCALL EXECUTED WITH ERROR: ROLLBACK NEEDED');
+          }
+        }
+        // Find out if CallMessageSent was emitted as well
+      }
+    }
+  };
+
+  const handleArchwayExecuteXCall = (data: DestinationXCallData) => async () => {
+    if (signingCosmWasmClient && address) {
+      const msg = {
+        execute_call: {
+          request_id: `${data.reqId}`,
+          data: JSON.parse(data.data),
+        },
+      };
+
+      try {
+        const res: ExecuteResult = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.xcall, msg, {
+          amount: [{ amount: '1', denom: 'aconst' }],
+          gas: '800000',
+        });
+        console.log(res);
+
+        console.log('ARCH XCALL COMPLETED!!!', res);
+        // TODO: check if xCall was successful
+        // TODO: Remove events
+      } catch (e) {
+        console.error(e);
+      }
     }
   };
 
@@ -239,7 +316,7 @@ const ArchwayTest = () => {
       <Flex alignItems="center">
         <Typography variant="h2">Archway Test</Typography>
         <Typography variant="h3" marginLeft="auto">
-          xCall: {currenctXcallState}
+          xCall: {currentXcallState}
         </Typography>
       </Flex>
       <Flex mt={4}>
@@ -322,6 +399,7 @@ const ArchwayTest = () => {
           </Typography>
         </>
       )}
+      {xCallData ? 'ICON' : null}
       {address &&
         signingCosmWasmClient &&
         xCallData?.map(
@@ -335,6 +413,16 @@ const ArchwayTest = () => {
               </Flex>
             ),
         )}
+      {archwayDestinationEvents.length ? 'ARCHWAY' : null}
+      {address &&
+        archwayDestinationEvents.map(event => (
+          <Flex alignItems="center" key={event.reqId}>
+            <Button onClick={handleArchwayExecuteXCall(event)}>Execute</Button>
+            <Typography color="text" marginLeft="30px">
+              reqId: {event.reqId}
+            </Typography>
+          </Flex>
+        ))}
     </BoxPanel>
   );
 };

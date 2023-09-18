@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { DestinationXCallData, SupportedXCallChains } from 'app/_xcall/types';
+import { DestinationXCallData, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import bnJs from 'bnJs';
 
 interface SocketState {
@@ -15,7 +15,6 @@ class ICONListener extends Component<
   pingInterval: number | null = null;
   params = {
     height: this.props.blockHeight,
-    // height: '0xC85C64',
     eventFilters: [
       {
         event: 'CallMessage(str,str,int,int,bytes)',
@@ -58,7 +57,7 @@ class ICONListener extends Component<
           const reqId = callMessageLog.data[0];
           const data = callMessageLog.data[1];
           if (sn && reqId) {
-            this.props.addDestinationEvent('icon', { sn, reqId, data });
+            this.props.addDestinationEvent('icon', { sn, reqId, data, eventName: XCallEvent.CallMessage });
           }
         }
       }

@@ -19,7 +19,6 @@ export async function fetchTxResult(hash: string): Promise<ICONTxResultType | un
   for (let i = 0; i < 10; i++) {
     try {
       const txResult = await iconService.getTransactionResult(hash).execute();
-      console.log('awaited: ', txResult);
       return txResult as ICONTxResultType;
     } catch (e) {
       console.log(`txResult (pass ${i}):`, e);

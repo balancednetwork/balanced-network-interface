@@ -41,7 +41,6 @@ const ArchwayTest = () => {
   const archwayDestinationEvents = useXCallDestinationEvents('archway');
 
   const currentXcallState = useCurrentXCallState();
-  const destinationEvents = useXCallDestinationEvents('icon');
 
   const iconDestinationEvents = useXCallDestinationEvents('icon');
   const archwayOriginEvents = useXCallOriginEvents('archway');
@@ -187,28 +186,6 @@ const ArchwayTest = () => {
     }
   };
 
-  // const depositToIconAndBorrow = async () => {
-  //   if (signingCosmWasmClient && address) {
-  //     const msg = {
-  //       deposit: {
-  //         token_address: ARCHWAY_CW20_COLLATERAL.address,
-  //         amount: '100000',
-  //         to: '0x7.icon/cx501cce20fc5d5a0e322d5a600a9903f3f4832d43',
-  //         data: getRlpEncodedMsg(['{"_asset":"bnUSD","_amount":"10"}']),
-  //       },
-  //     };
-  //     try {
-  //       const res = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.assetManager, msg, {
-  //         amount: [{ amount: '1', denom: 'aconst' }],
-  //         gas: '1200000',
-  //       });
-  //       console.log(res);
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //   }
-  // };
-
   const borrowFromIcon = async () => {
     //ad get fee and pass it to transfer funds
     if (signingCosmWasmClient && address) {
@@ -265,13 +242,13 @@ const ArchwayTest = () => {
           );
 
           if (callMessageSentEvent) {
-            console.log('MESSAGE SENT EVENT DETECTED');
+            console.log('CALL MESSAGE SENT EVENT DETECTED');
             console.log(callMessageSentEvent);
             const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
             originEventData && addOriginEvent('icon', originEventData);
           }
 
-          const sn = destinationEvents.find(event => event.reqId === data.reqId)?.sn;
+          const sn = iconDestinationEvents.find(event => event.reqId === data.reqId)?.sn;
           sn && removeEvent(sn, true);
         }
 
@@ -298,13 +275,23 @@ const ArchwayTest = () => {
       try {
         const res: ExecuteResult = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.xcall, msg, {
           amount: [{ amount: '1', denom: 'aconst' }],
-          gas: '800000',
+          gas: '600000',
         });
         console.log(res);
 
-        console.log('ARCH XCALL COMPLETED!!!', res);
-        // TODO: check if xCall was successful
-        // TODO: Remove events
+        console.log('ARCHWAY executeCall complete', res);
+
+        const callExecuted = res.events.some(
+          e => e.type === 'wasm-CallExecuted' && e.attributes.some(a => a.key === 'code' && a.value === '1'),
+        );
+        if (callExecuted) {
+          removeEvent(data.sn, true);
+          console.log('ARCHWAY executeCall - SUCCESS');
+          //TODO: Check for wasm-CallMessageSent - low priority and probability I guess
+        } else {
+          console.log('ARCHWAY executeCall - FAIL');
+          //TODO: check for RollbackMessage on ICON
+        }
       } catch (e) {
         console.error(e);
       }

@@ -60,7 +60,7 @@ export const useICONEventListener = (eventName: XCallEventType | null) => {
 
       websocket.onmessage = event => {
         const eventData = JSON.parse(event.data);
-        console.log('ICON event: ', eventData);
+        console.log('ICON block: ', eventData);
         if (eventData) {
           switch (eventName) {
             case XCallEvent.CallMessage: {

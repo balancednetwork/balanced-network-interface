@@ -21,7 +21,8 @@ export const useArchwayEventListener = (eventName: XCallEventType | null) => {
   const [socket, setSocket] = React.useState<WebSocket | undefined>(undefined);
   const addDestinationEvent = useAddDestinationEvent();
   const iconOriginEvents = useXCallOriginEvents('icon');
-  const query = `tm.event = 'Tx' AND wasm-${eventName} EXISTS`;
+  // const query = `tm.event = 'Tx' AND wasm-${eventName} EXISTS`;
+  const query = `wasm-${eventName} EXISTS`;
 
   const disconnectFromWebsocket = React.useCallback(() => {
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
@@ -45,7 +46,7 @@ export const useArchwayEventListener = (eventName: XCallEventType | null) => {
       websocket.onmessage = event => {
         const eventData = JSON.parse(event.data);
         const events = eventData.result?.events;
-        console.log('Arch event: ', events);
+        console.log('Arch tx info: ', eventData.result);
         if (events) {
           console.log('Matching transaction found: ', events);
           switch (eventName) {
@@ -61,9 +62,11 @@ export const useArchwayEventListener = (eventName: XCallEventType | null) => {
               break;
             }
             case XCallEvent.ResponseMessage: {
+              console.log('TODO: logged event from ResponseMessage: ', events);
               break;
             }
             case XCallEvent.RollbackMessage: {
+              console.log('TODO: logged event from RollbackMessage: ', events);
               break;
             }
           }

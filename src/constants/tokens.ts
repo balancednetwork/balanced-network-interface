@@ -122,6 +122,14 @@ export const BTCB: TokenMap = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx5b5a03cb525a1845d0af3a872d525b18a810acb0', 18, 'BTCB', 'Binance Bitcoin'),
 };
 
+// disable prettier printWidth rule
+// prettier-ignore
+export const ArchwayToken: TokenMap = {
+  //TODO: Archway mainnet info
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx5b5a03cb525a1845d0af3a872d525b18a810acb0', 18, 'BTCB', 'Binance Bitcoin'),
+  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx6975cdce422307b73b753b121877960e83b3bc35', 6, 'TwitterAsset', 'Test Archway'),
+};
+
 const chainId = NETWORK_ID;
 export const SUPPORTED_TOKENS_MAP_BY_ADDRESS = Object.keys(TRANSFORMED_DEFAULT_TOKEN_LIST[chainId] ?? {}).reduce<{
   [address: string]: Token;

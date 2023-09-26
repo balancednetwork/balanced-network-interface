@@ -104,7 +104,7 @@ export function useCollateralFetchInfo(account?: string | null) {
     async (account: string) => {
       bnJs.Loans.getAccountPositions(account)
         .then(res => {
-          console.log('LOL: ', res);
+          console.log('Fetched collateral info: ', res);
           supportedCollateralTokens &&
             res.holdings &&
             Object.keys(res.holdings).forEach(async symbol => {

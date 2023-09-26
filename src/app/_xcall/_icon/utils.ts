@@ -39,10 +39,10 @@ export const getICONEventSignature = (eventName: XCallEventType) => {
       return 'CallMessageSent(Address,str,int)';
     }
     case XCallEvent.ResponseMessage: {
-      return '';
+      return 'ResponseMessage(int,int,str)';
     }
     case XCallEvent.RollbackMessage: {
-      return 'w';
+      return 'RollbackMessage(int)';
     }
     default:
       return 'none';

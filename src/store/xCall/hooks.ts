@@ -2,7 +2,13 @@ import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { OriginXCallData, DestinationXCallData, SupportedXCallChains, XCallChainState } from 'app/_xcall/types';
+import {
+  OriginXCallData,
+  DestinationXCallData,
+  SupportedXCallChains,
+  XCallChainState,
+  XCallEventType,
+} from 'app/_xcall/types';
 import { AppState } from 'store';
 
 import {
@@ -11,6 +17,8 @@ import {
   removeXCallDestinationEvent,
   removeXCallEvent,
   removeXCallOriginEvent,
+  setListeningTo,
+  stopListening,
 } from './actions';
 
 export function useXCallState(): AppState['xCall'] {
@@ -87,4 +95,16 @@ export function useXCallOriginEvents(chain: SupportedXCallChains): OriginXCallDa
 export function useXCallDestinationEvents(chain: SupportedXCallChains): DestinationXCallData[] {
   const state = useXCallChainState(chain);
   return [...state.destination];
+}
+
+export function useSetListeningTo(): (chain: SupportedXCallChains, event: XCallEventType) => void {
+  const dispatch = useDispatch();
+  return React.useCallback((chain, event) => dispatch(setListeningTo({ chain, event })), [dispatch]);
+}
+
+export function useStopListening(): () => void {
+  const dispatch = useDispatch();
+  return React.useCallback(() => {
+    dispatch(stopListening());
+  }, [dispatch]);
 }

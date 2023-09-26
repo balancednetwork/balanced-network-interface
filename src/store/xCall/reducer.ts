@@ -15,6 +15,8 @@ import {
   removeXCallDestinationEvent,
   removeXCallOriginEvent,
   removeXCallEvent,
+  stopListening,
+  setListeningTo,
 } from './actions';
 
 export type XCallState = {
@@ -90,5 +92,16 @@ export default createReducer(initialState, builder =>
       if (chain && sn) {
         state[chain].destination = state[chain].destination.filter(data => data.sn !== sn);
       }
+    })
+    .addCase(setListeningTo, (state, { payload: { chain, event } }) => {
+      if (chain && event) {
+        state.listeningTo = {
+          chain,
+          event,
+        };
+      }
+    })
+    .addCase(stopListening, state => {
+      state.listeningTo = undefined;
     }),
 );

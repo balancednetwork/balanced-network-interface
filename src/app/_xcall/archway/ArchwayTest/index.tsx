@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
+import { Converter } from 'icon-sdk-js';
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass';
 
@@ -18,6 +19,8 @@ import {
   useAddOriginEvent,
   useCurrentXCallState,
   useRemoveEvent,
+  useSetListeningTo,
+  useStopListening,
   useXCallDestinationEvents,
   useXCallListeningTo,
   useXCallOriginEvents,
@@ -37,6 +40,7 @@ const ArchwayTest = () => {
   const { chain_id, address, connectToWallet, signingClient, disconnect, signingCosmWasmClient } = useArchwayContext();
   const { account } = useIconReact();
   const removeEvent = useRemoveEvent();
+  const setListeningTo = useSetListeningTo();
 
   const archwayDestinationEvents = useXCallDestinationEvents('archway');
 
@@ -45,6 +49,21 @@ const ArchwayTest = () => {
   const iconDestinationEvents = useXCallDestinationEvents('icon');
   const archwayOriginEvents = useXCallOriginEvents('archway');
   const addOriginEvent = useAddOriginEvent();
+  const stopListening = useStopListening();
+
+  // console.log(
+  //   'kk',
+  //   Converter.toHex(
+  //     JSON.stringify({
+  //       method: '_swap',
+  //       params: {
+  //         toToken: 'cxb7d63658e3375f701af9d420ea351d0736760634',
+  //         minimumReceive: '8271133908579497044',
+  //         path: ['cxb7d63658e3375f701af9d420ea351d0736760634'],
+  //       },
+  //     }),
+  //   ),
+  // );
 
   const listeningTo = useXCallListeningTo();
   useArchwayEventListener(listeningTo?.chain === 'archway' ? listeningTo.event : null);
@@ -66,6 +85,13 @@ const ArchwayTest = () => {
       });
     }
   }, [iconDestinationEvents, archwayOriginEvents]);
+
+  React.useEffect(() => {
+    window.addEventListener('beforeunload', stopListening);
+    return () => {
+      window.removeEventListener('beforeunload', stopListening);
+    };
+  }, [stopListening]);
 
   React.useEffect(() => {
     // get fee token amount
@@ -153,7 +179,7 @@ const ArchwayTest = () => {
       //   _rollback: useRollback ? "0x1" : "0x0"
       // };
       const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
-        get_fee: { nid: ICON_XCALL_NETWORK_ID, rollback: false },
+        get_fee: { nid: ICON_XCALL_NETWORK_ID, rollback: true },
       });
 
       console.log('fee: ', fee);
@@ -190,13 +216,13 @@ const ArchwayTest = () => {
     //ad get fee and pass it to transfer funds
     if (signingCosmWasmClient && address) {
       const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
-        get_fee: { nid: '0x7.icon', rollback: false },
+        get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: false },
       });
 
       const msg = {
         send_call_message: {
           to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
-          data: getRlpEncodedMsg(['xBorrow', 'TwitterAsset', 1]),
+          data: getRlpEncodedMsg(['xBorrow', 'TwitterAsset', 50]),
         },
       };
 
@@ -206,6 +232,47 @@ const ArchwayTest = () => {
           ARCHWAY_CONTRACTS.xcall,
           msg,
           'auto',
+          undefined,
+          [{ amount: fee, denom: 'aconst' }],
+        );
+        console.log(res);
+
+        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        originEventData && addOriginEvent('archway', originEventData);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const repayDebtFromArchway = async () => {
+    if (signingCosmWasmClient && address) {
+      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+        get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
+      });
+
+      const msg = {
+        cross_transfer: {
+          amount: '1',
+          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
+          data: getBytesFromString(
+            JSON.stringify({
+              _collateral: 'TwitterAsset',
+              _withdrawAmount: 0,
+            }),
+          ),
+        },
+      };
+
+      try {
+        const res: ExecuteResult = await signingCosmWasmClient.execute(
+          address,
+          ARCHWAY_CONTRACTS.bnusd,
+          msg,
+          {
+            amount: [{ amount: '1', denom: 'aconst' }],
+            gas: '1200000',
+          },
           undefined,
           [{ amount: fee, denom: 'aconst' }],
         );
@@ -233,6 +300,11 @@ const ArchwayTest = () => {
 
         console.log('txResult: ', txResult);
 
+        if (callExecutedEvent) {
+          const sn = iconDestinationEvents.find(event => event.reqId === data.reqId)?.sn;
+          sn && removeEvent(sn, true);
+        }
+
         if (callExecutedEvent?.data[0] === '0x1') {
           console.log('xCALL EXECUTED SUCCESSFULLY');
 
@@ -247,15 +319,13 @@ const ArchwayTest = () => {
             const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
             originEventData && addOriginEvent('icon', originEventData);
           }
-
-          const sn = iconDestinationEvents.find(event => event.reqId === data.reqId)?.sn;
-          sn && removeEvent(sn, true);
         }
 
         if (callExecutedEvent?.data[0] === '0x0') {
           console.log('xCALL EXECUTED WITH ERROR');
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
             console.log('xCALL EXECUTED WITH ERROR: ROLLBACK NEEDED');
+            setListeningTo('archway', XCallEvent.ResponseMessage);
           }
         }
         // Find out if CallMessageSent was emitted as well
@@ -294,6 +364,217 @@ const ArchwayTest = () => {
         }
       } catch (e) {
         console.error(e);
+      }
+    }
+  };
+
+  const swapArchToBnUSD = async (receiver?: string) => {
+    if (signingCosmWasmClient && address) {
+      const swapParams: { path: string[]; receiver?: string } = {
+        path: ['cxd06f80e28e989a67e297799ab1fb501cdddc2b4d'],
+      };
+
+      if (receiver) {
+        swapParams.receiver = receiver;
+      }
+
+      const msg = {
+        deposit: {
+          token_address: ARCHWAY_CW20_COLLATERAL.address,
+          amount: '1000',
+          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+          data: getBytesFromString(
+            JSON.stringify({
+              method: '_swap',
+              params: swapParams,
+            }),
+          ),
+        },
+      };
+
+      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+        get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
+      });
+
+      try {
+        const res: ExecuteResult = await signingCosmWasmClient.execute(
+          address,
+          ARCHWAY_CONTRACTS.assetManager,
+          msg,
+          'auto',
+          undefined,
+          [{ amount: fee, denom: 'aconst' }],
+        );
+        console.log(res);
+
+        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        originEventData && addOriginEvent('archway', originEventData);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const swapArchBnUSDToArch = async () => {
+    if (signingCosmWasmClient && address) {
+      const swapParams: { path: string[]; receiver?: string } = {
+        path: ['cx6975cdce422307b73b753b121877960e83b3bc35'],
+      };
+
+      const msg = {
+        cross_transfer: {
+          amount: '100000000000000',
+          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+          data: getBytesFromString(
+            JSON.stringify({
+              method: '_swap',
+              params: swapParams,
+            }),
+          ),
+        },
+      };
+
+      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+        get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
+      });
+
+      try {
+        const res: ExecuteResult = await signingCosmWasmClient.execute(
+          address,
+          ARCHWAY_CONTRACTS.bnusd,
+          msg,
+          'auto',
+          undefined,
+          [{ amount: fee, denom: 'aconst' }],
+        );
+        console.log(res);
+
+        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        originEventData && addOriginEvent('archway', originEventData);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  //params for swap from icon - {"method":"_swap","params":{"toToken":"cxb7d63658e3375f701af9d420ea351d0736760634","minimumReceive":"8271133908579497044","path":["cxb7d63658e3375f701af9d420ea351d0736760634"]}}
+  // token transfer to router - _to router, _value - token amount, _data - above in hex string
+
+  const swapSICXToArch = async (receiver?: string) => {
+    if (account) {
+      const swapParams: { path: string[]; toToken?: string; minimumReceive?: string; receiver?: string } = {
+        toToken: 'cx6975cdce422307b73b753b121877960e83b3bc35',
+        path: ['cxd06f80e28e989a67e297799ab1fb501cdddc2b4d', 'cx6975cdce422307b73b753b121877960e83b3bc35'],
+      };
+
+      if (receiver) {
+        swapParams.receiver = receiver;
+      }
+
+      bnJs.inject({ account });
+      const { result: hash } = await bnJs.sICX.transfer(
+        bnJs.Router.address,
+        Converter.toHexNumber(100000000000000000),
+        Converter.toHex(
+          JSON.stringify({
+            method: '_swap',
+            params: swapParams,
+          }),
+        ),
+      );
+
+      if (receiver?.includes('archway') && hash) {
+        const txResult = await fetchTxResult(hash);
+        if (txResult?.status === 1 && txResult.eventLogs.length) {
+          const callMessageSentEvent = txResult.eventLogs.find(event =>
+            event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
+          );
+
+          if (callMessageSentEvent) {
+            console.log('CALL MESSAGE SENT EVENT DETECTED');
+            console.log(callMessageSentEvent);
+            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
+            originEventData && addOriginEvent('icon', originEventData);
+          }
+        }
+      }
+    }
+  };
+
+  const swapArchToICX = async (receiver: string) => {
+    if (signingCosmWasmClient && address) {
+      const swapParams = {
+        path: ['cxd06f80e28e989a67e297799ab1fb501cdddc2b4d', 'cxb7d63658e3375f701af9d420ea351d0736760634', null],
+        receiver: receiver,
+      };
+
+      const msg = {
+        deposit: {
+          token_address: ARCHWAY_CW20_COLLATERAL.address,
+          amount: '1000000',
+          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+          data: getBytesFromString(
+            JSON.stringify({
+              method: '_swap',
+              params: swapParams,
+            }),
+          ),
+        },
+      };
+
+      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+        get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
+      });
+
+      try {
+        const res: ExecuteResult = await signingCosmWasmClient.execute(
+          address,
+          ARCHWAY_CONTRACTS.assetManager,
+          msg,
+          'auto',
+          undefined,
+          [{ amount: fee, denom: 'aconst' }],
+        );
+        console.log(res);
+
+        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        originEventData && addOriginEvent('archway', originEventData);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const swapICXtoArch = async () => {
+    if (account) {
+      const { result: hash } = await bnJs
+        .inject({ account })
+        .Router.swapICX(
+          Converter.toHexNumber(1000000000000000000),
+          [
+            'cxb7d63658e3375f701af9d420ea351d0736760634',
+            'cxd06f80e28e989a67e297799ab1fb501cdddc2b4d',
+            'cx6975cdce422307b73b753b121877960e83b3bc35',
+          ],
+          '0x1553c',
+          `archway/archway1kyw8c9ssqtg3akaf3wn6xtyylrs0cst835gyp9`,
+        );
+
+      if (hash) {
+        const txResult = await fetchTxResult(hash);
+        console.log('to ICX tx - ', txResult);
+        if (txResult?.status === 1 && txResult.eventLogs.length) {
+          const callMessageSentEvent = txResult.eventLogs.find(event =>
+            event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
+          );
+
+          if (callMessageSentEvent) {
+            console.log('CALL MESSAGE SENT EVENT DETECTED');
+            console.log(callMessageSentEvent);
+            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
+            originEventData && addOriginEvent('icon', originEventData);
+          }
+        }
       }
     }
   };
@@ -337,6 +618,47 @@ const ArchwayTest = () => {
           {address && cw20Amount?.toFixed(6)}
         </Typography>
       </Flex>
+      {address && signingCosmWasmClient && (
+        <>
+          <Divider my={5}></Divider>
+          <Typography variant="h3" fontSize={18} mb={4}>
+            Swaps
+          </Typography>
+          <Flex alignItems="center">
+            <Button onClick={() => swapArchToBnUSD()} mr={'10px'}>
+              Arch (arch) to bnUSD (arch)
+            </Button>
+            <Button
+              onClick={() => swapArchToBnUSD(`${ICON_XCALL_NETWORK_ID}/hx2cb62eb17836201c7e4df1186348859dedc018ae`)}
+              mr={'10px'}
+            >
+              Arch (arch) to bnUSD (icon)
+            </Button>
+            <Button onClick={() => swapArchBnUSDToArch()} mr={'10px'}>
+              bnUSD (arch) to Arch (arch)
+            </Button>
+            <Button
+              onClick={() => swapSICXToArch(`archway/archway1kyw8c9ssqtg3akaf3wn6xtyylrs0cst835gyp9`)}
+              // onClick={() => swapSICXToArch()}
+              mr={'10px'}
+            >
+              sICX to arch (arch)
+            </Button>
+            <Button onClick={() => swapSICXToArch()} mr={'10px'}>
+              sICX to arch (icon)
+            </Button>
+            <Button onClick={() => swapICXtoArch()} mr={'10px'}>
+              ICX to arch
+            </Button>
+            <Button
+              onClick={() => swapArchToICX(`${ICON_XCALL_NETWORK_ID}/hx2cb62eb17836201c7e4df1186348859dedc018ae`)}
+              mr={'10px'}
+            >
+              Arch to ICX
+            </Button>
+          </Flex>
+        </>
+      )}
       {/* deposit through asset manager */}
       {address && signingCosmWasmClient && (
         <>
@@ -356,6 +678,22 @@ const ArchwayTest = () => {
         <>
           <Flex mt={3}>
             <Button onClick={depositToIcon}>Deposit collateral</Button>
+          </Flex>
+          <Flex mt={3}>{/* <Button onClick={depositToIconAndBorrow}>Deposit collateral and borrow</Button> */}</Flex>
+        </>
+      )}
+      {address && signingCosmWasmClient && (
+        <>
+          <Divider my={5}></Divider>
+          <Typography variant="h3" fontSize={18} mb={4}>
+            bnUSD contract
+          </Typography>
+        </>
+      )}
+      {address && signingCosmWasmClient && (
+        <>
+          <Flex mt={3}>
+            <Button onClick={repayDebtFromArchway}>Repay bnUSD</Button>
           </Flex>
           <Flex mt={3}>{/* <Button onClick={depositToIconAndBorrow}>Deposit collateral and borrow</Button> */}</Flex>
         </>

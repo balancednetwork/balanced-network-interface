@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { DestinationXCallData, OriginXCallData, SupportedXCallChains } from 'app/_xcall/types';
+import { DestinationXCallData, OriginXCallData, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
 
 export const addXCallOriginEvent = createAction<{
   chain?: SupportedXCallChains;
@@ -26,3 +26,10 @@ export const removeXCallEvent = createAction<{
   sn?: number;
   setToIdle?: boolean;
 }>('xCall/removeXCallEvent');
+
+export const setListeningTo = createAction<{
+  chain?: SupportedXCallChains;
+  event: XCallEventType;
+}>('xCall/setListeningTo');
+
+export const stopListening = createAction('xCall/stopListening');

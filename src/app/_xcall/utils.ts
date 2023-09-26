@@ -10,6 +10,11 @@ export function getBytesFromString(str: string) {
   return Array.from(Buffer.from(str, 'utf8'));
 }
 
+export function getStringFromBytes(bytes: number[]) {
+  const buffer = Buffer.from(bytes);
+  return buffer.toString('utf8');
+}
+
 //TODO: improve this nonsense
 export const getFollowingEvent = (event: XCallEventType): XCallEventType => {
   switch (event) {

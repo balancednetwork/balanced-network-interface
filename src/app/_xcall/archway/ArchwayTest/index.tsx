@@ -51,20 +51,6 @@ const ArchwayTest = () => {
   const addOriginEvent = useAddOriginEvent();
   const stopListening = useStopListening();
 
-  // console.log(
-  //   'kk',
-  //   Converter.toHex(
-  //     JSON.stringify({
-  //       method: '_swap',
-  //       params: {
-  //         toToken: 'cxb7d63658e3375f701af9d420ea351d0736760634',
-  //         minimumReceive: '8271133908579497044',
-  //         path: ['cxb7d63658e3375f701af9d420ea351d0736760634'],
-  //       },
-  //     }),
-  //   ),
-  // );
-
   const listeningTo = useXCallListeningTo();
   useArchwayEventListener(listeningTo?.chain === 'archway' ? listeningTo.event : null);
   useICONEventListener(listeningTo?.chain === 'icon' ? listeningTo.event : null);
@@ -155,7 +141,7 @@ const ArchwayTest = () => {
       const msg = {
         increase_allowance: {
           spender: ARCHWAY_CONTRACTS.assetManager,
-          amount: '100000000',
+          amount: '1000000000',
         },
       };
       try {
@@ -381,7 +367,7 @@ const ArchwayTest = () => {
       const msg = {
         deposit: {
           token_address: ARCHWAY_CW20_COLLATERAL.address,
-          amount: '1000',
+          amount: '5000000',
           to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
           data: getBytesFromString(
             JSON.stringify({
@@ -401,7 +387,10 @@ const ArchwayTest = () => {
           address,
           ARCHWAY_CONTRACTS.assetManager,
           msg,
-          'auto',
+          {
+            amount: [{ amount: '1', denom: 'aconst' }],
+            gas: '1200000',
+          },
           undefined,
           [{ amount: fee, denom: 'aconst' }],
         );

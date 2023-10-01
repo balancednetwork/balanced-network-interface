@@ -6,6 +6,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 import { Flex, Box } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { UnderlineText } from 'app/components/DropdownText';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import LiquidityPoolsPanel from 'app/components/trade/LiquidityPoolsPanel';
@@ -50,13 +51,14 @@ const BTPButton = styled(UnderlineText)`
 
 export function TradePage() {
   const { account } = useIconReact();
+  const { address: accountArch } = useArchwayContext();
   const location = useLocation();
   const history = useHistory();
 
   useFetchPrice();
   useFetchOraclePrices();
   useFetchBBalnSources(5000, true);
-  useWalletFetchBalances(account);
+  useWalletFetchBalances(account, accountArch);
   useFetchBBalnInfo(account);
   useFetchRewardsInfo();
   useFetchStabilityFundBalances();

@@ -3,8 +3,10 @@ import React, { createContext, useEffect, useState } from 'react';
 import { SigningArchwayClient, ArchwayClient } from '@archwayhq/arch3.js';
 import { SupportedChainId } from '@balancednetwork/balanced-js';
 import { AccountData } from '@keplr-wallet/types';
+import { LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
 
 import { NETWORK_ID } from 'constants/config';
+import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
 
 import { ARCHWAY_RPC_PROVIDER } from '../config';
 import { CONSTANTINE_CHAIN_INFO } from '../testnetChainInfo';
@@ -34,6 +36,11 @@ const ArchwayProvider: React.FC = ({ children }) => {
   const [client, setClient] = useState<ArchwayClient>();
   const [signingClient, setSigningClient] = useState<SigningArchwayClient>();
   const [signingCosmWasmClient, setSigningCosmWasmClient] = useState<SigningArchwayClient>();
+  const [addressStored, setAddressStored] = useLocalStorageWithExpiry<string | null>(
+    'archAccountWithExpiry',
+    null,
+    LOCAL_STORAGE_ADDRESS_EXPIRY,
+  );
 
   useEffect(() => {
     async function connectToRPC() {
@@ -45,10 +52,10 @@ const ArchwayProvider: React.FC = ({ children }) => {
     connectToRPC();
   }, []);
 
-  const connectToWallet = async () => {
+  const connectToWallet = React.useCallback(async () => {
     const { keplr } = window as any;
     if (!keplr) {
-      window.open('https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap');
+      window.open('https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en', '_blank');
       return;
     }
     if (NETWORK_ID === SupportedChainId.MAINNET) {
@@ -68,7 +75,8 @@ const ArchwayProvider: React.FC = ({ children }) => {
 
     const account: AccountData = (await offlineSigner.getAccounts())[0];
     account.address && setAddress(account.address);
-  };
+    account.address && setAddressStored(account.address);
+  }, [chain_id, setAddress, setAddressStored]);
 
   const disconnect = (): void => {
     signingClient?.disconnect();
@@ -76,6 +84,7 @@ const ArchwayProvider: React.FC = ({ children }) => {
     setAddress('');
     setSigningClient(undefined);
     setClient(undefined);
+    setAddressStored(null);
   };
 
   const context = {
@@ -87,6 +96,12 @@ const ArchwayProvider: React.FC = ({ children }) => {
     signingCosmWasmClient,
     disconnect,
   };
+
+  useEffect(() => {
+    if (addressStored && !signingCosmWasmClient) {
+      connectToWallet();
+    }
+  }, [signingCosmWasmClient, addressStored, connectToWallet]);
 
   return <ArchwayContext.Provider value={context}>{children}</ArchwayContext.Provider>;
 };

@@ -1,0 +1,46 @@
+{
+  "name": "Archway Tokens",
+  "timestamp": "2023-09-26T08:37:27.276Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/arch.png",
+  "keywords": ["archway", "default"],
+  "tokens": [
+    {
+      "address": "todoArch1",
+      "chainId": 1,
+      "name": "Staked Archway",
+      "symbol": "sArch",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "todoArch2",
+      "chainId": 1,
+      "name": "bnUSD",
+      "symbol": "sICX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44",
+      "chainId": 7,
+      "name": "TwitterAsset",
+      "symbol": "TwitterAsset",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/arch.png"
+    },
+    {
+      "address": "archway1dxs0j8rk8yd69rdh77ndrefhjzdy3lehujx58yhfxr827nr7rutqpltd2w",
+      "chainId": 7,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    }
+  ]
+}

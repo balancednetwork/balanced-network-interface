@@ -11,6 +11,7 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css, useTheme } from 'styled-components';
 
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
 import Column from 'app/components/Column';
@@ -102,7 +103,9 @@ const StyledCode = styled.pre`
 
 export function ProposalPage() {
   const { account } = useIconReact();
-  useWalletFetchBalances(account);
+  const { address: accountArch } = useArchwayContext();
+
+  useWalletFetchBalances(account, accountArch);
   useFetchBBalnInfo(account);
   const [modalStatus, setModalStatus] = useState(ModalStatus.None);
   const { id: pId } = useParams<{ id: string }>();

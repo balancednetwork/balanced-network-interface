@@ -1,24 +1,34 @@
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { createReducer } from '@reduxjs/toolkit';
 
+import { SupportedXCallChains } from 'app/_xcall/types';
 import { ZERO } from 'constants/index';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { ARCHWAY_SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 
-import { changeBalances, resetBalances } from './actions';
+import { changeICONBalances, changeArchwayBalances, resetBalances } from './actions';
 
-export interface WalletState {
-  [address: string]: CurrencyAmount<Currency>;
-}
+export type WalletState = {
+  [key in SupportedXCallChains]: { [address: string]: CurrencyAmount<Currency> };
+};
 
-const initialState: WalletState = SUPPORTED_TOKENS_LIST.reduce((p, t) => {
-  p[t?.symbol!] = ZERO;
-  return p;
-}, {});
+const initialState: WalletState = {
+  icon: SUPPORTED_TOKENS_LIST.reduce((p, t) => {
+    p[t?.symbol!] = ZERO;
+    return p;
+  }, {}),
+  archway: ARCHWAY_SUPPORTED_TOKENS_LIST.reduce((p, t) => {
+    p[t?.symbol!] = ZERO;
+    return p;
+  }, {}),
+};
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(changeBalances, (state, { payload }) => {
-      return payload;
+    .addCase(changeICONBalances, (state, { payload }) => {
+      state.icon = payload;
+    })
+    .addCase(changeArchwayBalances, (state, { payload }) => {
+      state.archway = payload;
     })
     .addCase(resetBalances, state => {
       return initialState;

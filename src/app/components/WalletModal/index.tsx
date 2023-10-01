@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednetwork/balanced-js';
 import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
-import { t, Trans } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
@@ -11,15 +11,18 @@ import { useMedia } from 'react-use';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { VerticalDivider } from 'app/components/Divider';
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';
 import { MenuList, LanguageMenuItem } from 'app/components/Menu';
 import Modal, { ModalProps } from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
+import { ReactComponent as ArchWalletIcon } from 'assets/icons/archway.svg';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
+import { ReactComponent as KeplrWalletIcon } from 'assets/icons/keplr.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
+import hanaIconWallet from 'assets/images/hana.png';
 import bnJs from 'bnJs';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
 import { useActiveLocale } from 'hooks/useActiveLocale';
@@ -80,9 +83,13 @@ const LedgerAddressList = styled(Modal)`
   width: 500px;
 `;
 
+const ChainIcons = styled.div``;
+const WalletIcons = styled.div``;
+
 const WalletOption = styled(Box)`
   display: flex;
   flex-direction: column;
+  position: relative;
   align-items: center;
   cursor: pointer;
   padding: 5px 20px;
@@ -91,6 +98,25 @@ const WalletOption = styled(Box)`
   text-decoration: none;
   color: white;
   user-select: none;
+  max-width: 100px;
+
+  ${ChainIcons}, ${WalletIcons} {
+    position: absolute;
+    right: 5px;
+    bottom: 38px;
+    display: flex;
+    flex-flow: column;
+    opacity: 0.6;
+
+    > * {
+      margin-top: 7px;
+    }
+
+    img {
+      width: 15px;
+      height: 15px;
+    }
+  }
 
   ${({ theme }) => theme.mediaWidth.up360`
     width: 140px;
@@ -117,7 +143,7 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
 
       @media (min-width: 360px) {
         width: 100%;
-        max-width: 360px;
+        max-width: 420px;
       }
     `}
   }
@@ -142,7 +168,8 @@ export default function WalletModal() {
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
-  const upExtraSmall = useMedia('(min-width: 360px)');
+  const upExtraSmall = useMedia('(min-width: 420px)');
+  const { connectToWallet: connectToKeplr } = useArchwayContext();
 
   const [{ offset, limit }, updatePaging] = useState({
     offset: 0,
@@ -164,6 +191,11 @@ export default function WalletModal() {
         window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
       }
     }
+  };
+
+  const handleOpenWalletArchway = () => {
+    toggleWalletModal();
+    connectToKeplr();
   };
 
   const updateLedgerAddress = React.useCallback(async ({ offset, limit }) => {
@@ -321,20 +353,33 @@ export default function WalletModal() {
       <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} mobile={isMobile}>
         <Wrapper>
           <Typography textAlign="center" mb={1}>
-            <Trans>Sign in with</Trans>:
+            <Trans>Sign in from</Trans>:
           </Typography>
 
-          <Flex alignItems="stretch" justifyContent="space-between">
+          <Flex alignItems="stretch" justifyContent="space-around" flexWrap={upExtraSmall ? 'nowrap' : 'wrap'}>
             <WalletOption onClick={handleOpenWallet}>
               <IconWalletIcon width="50" height="50" />
               <UnbrakableText>ICON</UnbrakableText>
+              <WalletIcons>
+                <img src={hanaIconWallet} alt="Hana wallet" width="15" height="15" />
+              </WalletIcons>
             </WalletOption>
 
-            {upExtraSmall && <VerticalDivider text={t`or`}></VerticalDivider>}
+            <WalletOption onClick={handleOpenWalletArchway}>
+              <ArchWalletIcon width="50" height="50" />
+              <UnbrakableText>Archway</UnbrakableText>
+              <WalletIcons>
+                <KeplrWalletIcon width="15" height="15" />
+                <img src={hanaIconWallet} alt="Hana wallet" width="15" height="15" />
+              </WalletIcons>
+            </WalletOption>
 
             <WalletOption onClick={handleOpenLedger}>
               <LedgerIcon width="50" height="50" />
               <UnbrakableText>Ledger</UnbrakableText>
+              <ChainIcons>
+                <IconWalletIcon width="15" height="15" />
+              </ChainIcons>
             </WalletOption>
           </Flex>
 

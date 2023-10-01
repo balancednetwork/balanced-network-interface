@@ -13,7 +13,7 @@ import { useBorrowedAmounts, useLoanParameters, useLockingRatios } from 'store/l
 import { useOraclePrice, useOraclePrices } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useICONWalletBalances } from 'store/wallet/hooks';
 import { CurrencyKey, IcxDisplayType } from 'types';
 import { formatUnits, toBigNumber } from 'utils';
 
@@ -73,7 +73,7 @@ export function useIcxDisplayType() {
 
 export function useCollateralAvailableAmount() {
   const icxAddress = bnJs.ICX.address;
-  const balances = useWalletBalances();
+  const balances = useICONWalletBalances();
   const ICXAmountCA = balances[icxAddress];
   const ICXAmount = toBigNumber(ICXAmountCA);
 
@@ -84,7 +84,7 @@ export function useCollateralAvailableAmount() {
 
 export function useCollateralAvailableAmountinSICX() {
   const sicxAddress = bnJs.sICX.address;
-  const balances = useWalletBalances();
+  const balances = useICONWalletBalances();
   const sICXAmountCA = balances[sicxAddress];
   const sICXAmount = toBigNumber(sICXAmountCA);
 
@@ -104,7 +104,7 @@ export function useCollateralFetchInfo(account?: string | null) {
     async (account: string) => {
       bnJs.Loans.getAccountPositions(account)
         .then(res => {
-          console.log('Fetched collateral info: ', res);
+          // console.log('Fetched collateral info: ', res);
           supportedCollateralTokens &&
             res.holdings &&
             Object.keys(res.holdings).forEach(async symbol => {
@@ -291,7 +291,7 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
   const borrowedAmounts = useBorrowedAmounts();
   const lockingRatios = useLockingRatios();
   const oraclePrices = useOraclePrices();
-  const balances = useWalletBalances();
+  const balances = useICONWalletBalances();
   const { originationFee = 0 } = useLoanParameters() || {};
 
   return useMemo(() => {
@@ -389,7 +389,7 @@ export function useAvailableCollateral() {
   const collateralType = useCollateralType();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const icxDisplayType = useIcxDisplayType();
-  const balances = useWalletBalances();
+  const balances = useICONWalletBalances();
   const shouldGetIcx = collateralType === 'sICX' && icxDisplayType === 'ICX';
   const icxAddress = bnJs.ICX.address;
   const amount = useMemo(

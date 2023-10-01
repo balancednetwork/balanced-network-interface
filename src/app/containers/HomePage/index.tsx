@@ -5,6 +5,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import CollateralPanel from 'app/components/home/CollateralPanel';
 import LoanPanel from 'app/components/home/LoanPanel';
 import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
@@ -42,12 +43,13 @@ const SignInMessage = styled(Box)`
 
 export function HomePage() {
   const { account } = useIconReact();
+  const { address: accountArch } = useArchwayContext();
 
   useFetchPrice();
   useFetchOraclePrices();
   useFetchBBalnSources();
   useFetchBBalnInfo(account);
-  useWalletFetchBalances(account);
+  useWalletFetchBalances(account, accountArch);
   useCollateralFetchInfo(account);
   useLoanFetchInfo(account);
   useFetchRewardsInfo();
@@ -64,7 +66,7 @@ export function HomePage() {
         </Grid>
       ) : (
         <SignInMessage>
-          <Trans>Sign in to use the Home page.</Trans>
+          <Trans>Sign in on ICON to use the Home page.</Trans>
         </SignInMessage>
       )}
     </>

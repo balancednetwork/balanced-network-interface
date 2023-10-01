@@ -22,12 +22,15 @@ import useArrowControl from 'hooks/useArrowControl';
 import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
+import { useWalletModalToggle } from 'store/application/hooks';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useICONWalletBalances } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import Divider from '../Divider';
+import { UnderlineText } from '../DropdownText';
+import { CopyableAddress } from '../Header';
 import { filterTokens, useSortedTokensByQuery } from '../SearchModal/filtering';
 import SearchInput from '../SearchModal/SearchInput';
 import { useTokenComparator } from '../SearchModal/sorting';
@@ -44,21 +47,21 @@ const WalletUIs = {
 const walletBreakpoint = '499px';
 const modalWalletBreakpoint = '400px';
 
-const WalletAssets = styled.div`
+export const WalletAssets = styled(Box)`
   padding: 0 25px;
   input {
     font-size: 14px;
   }
 `;
 
-const HeaderText = styled(Typography)`
+export const HeaderText = styled(Typography)`
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 3px;
   white-space: nowrap;
 `;
 
-const DashGrid = styled(Box)`
+export const DashGrid = styled(Box)`
   display: grid;
   grid-template-columns: 2fr 4fr;
   grid-template-areas: 'asset balance&value';
@@ -76,11 +79,11 @@ const DashGrid = styled(Box)`
   }
 `;
 
-const DataText = styled(Typography)`
+export const DataText = styled(Typography)`
   font-size: 14px;
 `;
 
-const BalanceAndValueWrap = styled.div`
+export const BalanceAndValueWrap = styled.div`
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -95,14 +98,14 @@ const BalanceAndValueWrap = styled.div`
   }
 `;
 
-const List = styled(Box)`
+export const List = styled(Box)`
   max-height: 259px;
   overflow-y: auto;
   padding: 0 25px;
   margin: 0 -25px;
 `;
 
-const ListItem = styled(DashGrid)<{ border?: boolean }>`
+export const ListItem = styled(DashGrid)<{ border?: boolean }>`
   padding: 20px 0;
   cursor: pointer;
   color: #ffffff;
@@ -116,7 +119,7 @@ const ListItem = styled(DashGrid)<{ border?: boolean }>`
   }
 `;
 
-const AssetSymbol = styled.div<{ hasNotification?: boolean }>`
+export const AssetSymbol = styled.div<{ hasNotification?: boolean }>`
   display: grid;
   grid-column-gap: 12px;
   grid-template-columns: auto 1fr;
@@ -129,7 +132,7 @@ const AssetSymbol = styled.div<{ hasNotification?: boolean }>`
   }
 `;
 
-const ModalContent = styled(Box)`
+export const ModalContent = styled(Box)`
   padding: 25px;
   width: 100%;
   button[role='tab'] {
@@ -148,7 +151,7 @@ const ModalContent = styled(Box)`
   }
 `;
 
-const BoxPanelWithArrow = styled(BoxPanel)`
+export const BoxPanelWithArrow = styled(BoxPanel)`
   position: relative;
   width: 100%;
   &:before {
@@ -176,9 +179,9 @@ const BoxPanelWithArrow = styled(BoxPanel)`
   }
 `;
 
-const Wrapper = styled.div``;
+export const Wrapper = styled.div``;
 
-const WalletTotal = styled(Flex)`
+export const WalletTotal = styled(Flex)`
   justify-content: space-between;
   padding: 20px 0;
 `;
@@ -208,9 +211,9 @@ const WalletUI = ({ currency }: { currency: Currency }) => {
   }
 };
 
-const Wallet = ({ setAnchor, anchor, ...rest }) => {
+const ICONWallet = ({ setAnchor, anchor, ...rest }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
-  const balances = useWalletBalances();
+  const balances = useICONWalletBalances();
   const transactions = useAllTransactions();
   const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
   const { account } = useIconReact();
@@ -218,6 +221,7 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
   const inputRef = useRef<HTMLInputElement>();
   const [modalAsset, setModalAsset] = useState<string | undefined>();
   const tokenListConfig = useTokenListConfig();
+  const toggleWalletModal = useWalletModalToggle();
 
   const debouncedQuery = useDebounce(searchQuery, 200);
   const enter = useKeyPress('Enter');
@@ -375,9 +379,29 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
     );
   };
 
+  if (!account) {
+    return (
+      <WalletAssets>
+        <Flex pb="25px">
+          <Typography mr="5px">
+            <Trans>Sign in with</Trans>
+          </Typography>
+          <Typography color="primaryBright">
+            <UnderlineText onClick={toggleWalletModal}>
+              <Trans>ICON wallet</Trans>
+            </UnderlineText>
+          </Typography>
+        </Flex>
+      </WalletAssets>
+    );
+  }
+
   return (
     <>
       <WalletAssets>
+        <Flex padding="0 0 20px">
+          <CopyableAddress account={account} closeAfterDelay={1000} copyIcon />
+        </Flex>
         <SearchInput
           type="text"
           id="token-search-input"
@@ -483,4 +507,4 @@ const Wallet = ({ setAnchor, anchor, ...rest }) => {
   );
 };
 
-export default Wallet;
+export default ICONWallet;

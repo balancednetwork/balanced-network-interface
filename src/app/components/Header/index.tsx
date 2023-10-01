@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 
 import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
-import { t, Trans } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
-import { NavLink } from 'react-router-dom';
 import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { SupportedXCallChains } from 'app/_xcall/types';
 import { IconButton, Button } from 'app/components/Button';
 import { Link } from 'app/components/Link';
 import Logo from 'app/components/Logo';
 import { DropdownPopper } from 'app/components/Popover';
-import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import { ReactComponent as CopyIcon } from 'assets/icons/copy.svg';
 import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
@@ -23,9 +23,9 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { shortenAddress } from 'utils';
 
-import { UnderlineText } from '../DropdownText';
-import Wallet from '../Wallet';
-import { notificationCSS } from '../Wallet/wallets/utils';
+import ArchwayWallet from '../ArchwayWallet';
+import ICONWallet from '../ICONWallet';
+import { notificationCSS } from '../ICONWallet/wallets/utils';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -78,9 +78,48 @@ export const StyledAddress = styled(Typography)`
   }
 `;
 
+const ConnectionStatus = styled(Flex)`
+  justify-content: flex-end;
+  align-items: end;
+
+  span {
+    opacity: 0.5;
+    line-height: 1.32;
+  }
+
+  strong,
+  span {
+    margin-left: 7px;
+  }
+`;
+
+export const ChainTabs = styled(Flex)`
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 25px 25px;
+`;
+
+export const ChainTabButton = styled(Button)<{ active?: boolean }>`
+  padding: 1px 12px;
+  border-radius: 100px;
+  color: #ffffff;
+  font-size: 14px;
+  background-color: ${({ theme, active }) => (active ? theme.colors.primary : theme.colors.bg3)};
+  transition: background-color 0.3s ease;
+  margin-right: 10px;
+
+  :hover {
+    background-color: ${({ theme }) => theme.colors.primary};
+  }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 1px 12px;
+  `}
+`;
+
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
-const CopyableAddress = ({
+export const CopyableAddress = ({
   account,
   closeAfterDelay,
   copyIcon,
@@ -89,39 +128,61 @@ const CopyableAddress = ({
   closeAfterDelay?: number;
   copyIcon?: boolean;
 }) => {
-  const [isCopied, updateCopyState] = React.useState(false);
+  // const [isCopied, updateCopyState] = React.useState(false);
   const copyAddress = React.useCallback(async (account: string) => {
     await navigator.clipboard.writeText(account);
-    updateCopyState(true);
+    // updateCopyState(true);
   }, []);
 
   return account ? (
-    <MouseoverTooltip
-      text={isCopied ? t`Copied` : t`Copy address`}
-      placement={'left'}
-      noArrowAndBorder
-      closeAfterDelay={closeAfterDelay}
-      zIndex={9999}
+    <StyledAddress
+      // onMouseLeave={() => {
+      //   setTimeout(() => updateCopyState(false), 250);
+      // }}
+      onClick={() => copyAddress(account)}
     >
-      <StyledAddress
-        onMouseLeave={() => {
-          setTimeout(() => updateCopyState(false), 250);
-        }}
-        onClick={() => copyAddress(account)}
-      >
-        {shortenAddress(account)}
-        {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
-      </StyledAddress>
-    </MouseoverTooltip>
-  ) : null;
+      {shortenAddress(account)}
+      {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
+    </StyledAddress>
+  ) : // <MouseoverTooltip
+  //   text={isCopied ? t`Copied` : t`Copy address`}
+  //   placement={'right'}
+  //   noArrowAndBorder
+  //   closeAfterDelay={closeAfterDelay}
+  //   zIndex={9999}
+  // >
+  //   <StyledAddress
+  //     onMouseLeave={() => {
+  //       setTimeout(() => updateCopyState(false), 250);
+  //     }}
+  //     onClick={() => copyAddress(account)}
+  //   >
+  //     {shortenAddress(account)}
+  //     {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
+  //   </StyledAddress>
+  // </MouseoverTooltip>
+  null;
 };
 
 export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
   const upSmall = useMedia('(min-width: 600px)');
   const { account, disconnect } = useIconReact();
+  const { address: accountArch, disconnect: disconnectKeplr } = useArchwayContext();
   const transactions = useAllTransactions();
   const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
+  const [initiallyActiveTab, setInitiallyActiveTab] = useState<SupportedXCallChains | null>(null);
+  const [activeTab, setActiveTab] = useState<SupportedXCallChains>();
+
+  useEffect(() => {
+    if (account && !initiallyActiveTab) {
+      setInitiallyActiveTab('icon');
+    } else if (!account && accountArch && !initiallyActiveTab) {
+      setInitiallyActiveTab('archway');
+    } else if (!initiallyActiveTab && account && accountArch) {
+      setActiveTab('icon');
+    }
+  }, [account, accountArch, initiallyActiveTab]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const walletButtonRef = React.useRef<HTMLElement>(null);
@@ -144,6 +205,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const handleDisconnectWallet = async () => {
     closeWalletMenu();
     disconnect();
+    disconnectKeplr();
     if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
       bnJs.contractSettings.ledgerSettings.transport.close();
     }
@@ -164,6 +226,13 @@ export default function Header(props: { title?: string; className?: string }) {
     })();
   }, [account, transactions]);
 
+  const handleChainTabClick = (chain: SupportedXCallChains) => {
+    setActiveTab(chain);
+  };
+
+  const isIconActive = activeTab === 'icon' || (!activeTab && initiallyActiveTab === 'icon');
+  const isArchwayActive = activeTab === 'archway' || (!activeTab && initiallyActiveTab === 'archway');
+
   return (
     <header className={className}>
       <Flex justifyContent="space-between">
@@ -179,39 +248,28 @@ export default function Header(props: { title?: string; className?: string }) {
           )}
         </Flex>
 
-        {!account && (
+        {!account && !accountArch && (
           <Flex alignItems="center">
-            {/* TEMPORARY */}
-            {/* TODO: REMOVE */}
-            <NavLink to={'/archway'}>
-              <Typography color="primaryBright" pr={4}>
-                <UnderlineText>Archway</UnderlineText>
-              </Typography>
-            </NavLink>
-            {/* END OF TEMPORARY */}
             <Button onClick={toggleWalletModal}>
               <Trans>Sign in</Trans>
             </Button>
           </Flex>
         )}
 
-        {account && (
+        {(account || accountArch) && (
           <Flex alignItems="center">
-            {/* TEMPORARY */}
-            {/* TODO: REMOVE */}
-            <NavLink to={'/archway'}>
-              <Typography color="primaryBright" pr={4}>
-                <UnderlineText>Archway</UnderlineText>
-              </Typography>
-            </NavLink>
-            {/* END OF TEMPORARY */}
             <WalletInfo>
               {upSmall && (
-                <Typography variant="p" textAlign="right">
-                  <Trans>ICON wallet</Trans>
-                </Typography>
+                <>
+                  <Typography variant="p" textAlign="right">
+                    <Trans>Multi-chain wallet</Trans>
+                  </Typography>
+                  <ConnectionStatus>
+                    {account ? <strong>ICON, </strong> : <span>ICON, </span>}
+                    {accountArch ? <strong>Archway</strong> : <span>Archway</span>}
+                  </ConnectionStatus>
+                </>
               )}
-              {account && upSmall && <CopyableAddress account={account} />}
             </WalletInfo>
 
             <WalletButtonWrapper hasnotification={claimableICX.isGreaterThan(0)}>
@@ -235,7 +293,7 @@ export default function Header(props: { title?: string; className?: string }) {
                         </Typography>
                         <WalletButtons>
                           <WalletButton onClick={handleChangeWallet}>
-                            <Trans>Change wallet</Trans>
+                            <Trans>Manage wallets</Trans>
                           </WalletButton>
                           <Typography padding={'0px 5px'}>{' | '}</Typography>
                           <WalletButton onClick={handleDisconnectWallet}>
@@ -243,12 +301,16 @@ export default function Header(props: { title?: string; className?: string }) {
                           </WalletButton>
                         </WalletButtons>
                       </WalletMenu>
-                      {!upSmall && (
-                        <Flex justifyContent={'flex-end'} width={'100%'} padding={'2px 25px 25px'}>
-                          <CopyableAddress account={account} closeAfterDelay={1000} copyIcon />
-                        </Flex>
-                      )}
-                      <Wallet anchor={anchor} setAnchor={setAnchor} />
+                      <ChainTabs>
+                        <ChainTabButton onClick={() => handleChainTabClick('icon')} active={isIconActive}>
+                          ICON
+                        </ChainTabButton>
+                        <ChainTabButton onClick={() => handleChainTabClick('archway')} active={isArchwayActive}>
+                          Archway
+                        </ChainTabButton>
+                      </ChainTabs>
+                      {isIconActive && <ICONWallet anchor={anchor} setAnchor={setAnchor} />}
+                      {isArchwayActive && <ArchwayWallet anchor={anchor} setAnchor={setAnchor} />}
                     </WalletWrap>
                   </DropdownPopper>
                 </div>

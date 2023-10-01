@@ -59,7 +59,7 @@ const NumberInput = styled.input<{ bg?: string; active?: boolean }>`
   color: #ffffff;
   padding: 7px 20px;
   outline: none;
-  transition: border 0.3s ease;
+  transition: all 0.3s ease;
   overflow: visible;
   font-family: inherit;
   font-size: 100%;
@@ -93,6 +93,7 @@ interface CurrencyInputPanelProps {
   className?: string;
   account?: string | null;
   selectedCurrency?: Currency | null;
+  isChainDifference?: boolean;
 }
 
 export const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -110,6 +111,7 @@ export default function CurrencyInputPanel({
   className,
   account,
   selectedCurrency,
+  isChainDifference,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -186,7 +188,7 @@ export default function CurrencyInputPanel({
         spellCheck="false"
         //style
         bg={bg}
-        active={onPercentSelect && isActive}
+        active={(onPercentSelect && isActive) || isChainDifference}
       />
 
       {onPercentSelect && (

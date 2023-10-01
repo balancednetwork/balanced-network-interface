@@ -62,10 +62,12 @@ export const useArchwayEventListener = (eventName: XCallEventType | null) => {
               break;
             }
             case XCallEvent.ResponseMessage: {
+              //TODO: handle response message
               console.log('TODO: logged event from ResponseMessage: ', events);
               break;
             }
             case XCallEvent.RollbackMessage: {
+              //TODO: handle rollback message
               console.log('TODO: logged event from RollbackMessage: ', events);
               break;
             }

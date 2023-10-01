@@ -8,8 +8,10 @@ import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 import { forEach } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
+import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
@@ -20,6 +22,7 @@ import {
   isBALN,
   isFIN,
   COMBINED_TOKENS_LIST,
+  ARCHWAY_SUPPORTED_TOKENS_LIST,
 } from 'constants/tokens';
 import { useBnJsContractQuery } from 'queries/utils';
 import { useTokenListConfig } from 'store/lists/hooks';
@@ -28,10 +31,14 @@ import { useUserAddedTokens } from 'store/user/hooks';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-import { changeBalances } from './actions';
+import { changeArchwayBalances, changeICONBalances } from './actions';
 
-export function useWalletBalances(): AppState['wallet'] {
-  return useSelector((state: AppState) => state.wallet);
+export function useICONWalletBalances(): AppState['wallet']['icon'] {
+  return useSelector((state: AppState) => state.wallet.icon);
+}
+
+export function useArchwayWalletBalances(): AppState['wallet']['archway'] {
+  return useSelector((state: AppState) => state.wallet.archway);
 }
 
 export function useAvailableBalances(
@@ -55,7 +62,44 @@ export function useAvailableBalances(
   }, [balances]);
 }
 
-export function useWalletFetchBalances(account?: string | null) {
+export function useArchwayBalances(
+  address: string | undefined,
+  tokens: Token[],
+): UseQueryResult<{
+  [key: string]: CurrencyAmount<Currency>;
+}> {
+  const { signingCosmWasmClient } = useArchwayContext();
+
+  return useQuery(
+    `archwayBalances-${!!signingCosmWasmClient}-${address}-${tokens ? tokens.length : ''}`,
+    async () => {
+      if (signingCosmWasmClient) {
+        const balances = await Promise.all(
+          tokens.map(async token => {
+            const balance = await signingCosmWasmClient.queryContractSmart(token.address, { balance: { address } });
+            return CurrencyAmount.fromRawAmount(token, balance.balance);
+          }),
+        );
+
+        return balances.reduce((acc, balance) => {
+          if (!balance) return acc;
+          if (!JSBI.greaterThan(balance.quotient, BIGINT_ZERO)) {
+            return acc;
+          }
+          acc[balance.currency.wrapped.address] = balance;
+          return acc;
+        }, {});
+      }
+    },
+    {
+      keepPreviousData: true,
+      enabled: !!signingCosmWasmClient && !!address,
+      refetchInterval: 10000,
+    },
+  );
+}
+
+export function useWalletFetchBalances(account?: string | null, accountArch?: string | null) {
   const dispatch = useDispatch();
   const tokenListConfig = useTokenListConfig();
   const userAddedTokens = useUserAddedTokens();
@@ -65,12 +109,18 @@ export function useWalletFetchBalances(account?: string | null) {
       ? [...COMBINED_TOKENS_LIST, ...userAddedTokens]
       : [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
   }, [userAddedTokens, tokenListConfig]);
+  const tokensArch = [...ARCHWAY_SUPPORTED_TOKENS_LIST];
 
   const balances = useAvailableBalances(account || undefined, tokens);
+  const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
 
   React.useEffect(() => {
-    dispatch(changeBalances(balances));
+    dispatch(changeICONBalances(balances));
   }, [balances, dispatch]);
+
+  React.useEffect(() => {
+    balancesArch && dispatch(changeArchwayBalances(balancesArch));
+  }, [balancesArch, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {
@@ -101,7 +151,7 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
 };
 
 export const useHasEnoughICX = () => {
-  const balances = useWalletBalances();
+  const balances = useICONWalletBalances();
   const icxAddress = bnJs.ICX.address;
   return balances[icxAddress] && balances[icxAddress].greaterThan(MINIMUM_ICX_FOR_TX);
 };

@@ -20,7 +20,7 @@ import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useICONWalletBalances } from 'store/wallet/hooks';
 import { formatUnits, toBigNumber } from 'utils';
 
 import { AppState } from '..';
@@ -303,7 +303,7 @@ export function useLoanDebtHoldingShare() {
 
 export function useLoanUsedAmount(): BigNumber {
   const bnusdAddress = bnJs.bnUSD.address;
-  const balances = useWalletBalances();
+  const balances = useICONWalletBalances();
   const remainingAmountCA = balances[bnusdAddress];
   const remainingAmount = toBigNumber(remainingAmountCA);
   const borrowedAmount = useLoanBorrowedAmount();

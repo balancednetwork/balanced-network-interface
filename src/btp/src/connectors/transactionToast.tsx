@@ -10,7 +10,7 @@ import {
 } from 'app/components/Notification/TransactionNotification';
 import { TransactionStatus } from 'store/transactions/hooks';
 
-interface ToastTransactionParams {
+export interface ToastTransactionParams {
   message: string;
   transactionStatus?: TransactionStatus;
   options?: UpdateOptions | ToastOptions;

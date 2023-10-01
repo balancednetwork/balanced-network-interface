@@ -5,6 +5,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
@@ -104,8 +105,9 @@ interface ErrorItem {
 
 export function NewProposalPage() {
   const { account } = useIconReact();
+  const { address: accountArch } = useArchwayContext();
   useFetchBBalnInfo(account);
-  useWalletFetchBalances(account);
+  useWalletFetchBalances(account, accountArch);
   const theme = useTheme();
   const bBalnAmount = useBBalnAmount();
   const { data: minPercentage } = useMinBBalnPercentageToSubmit();

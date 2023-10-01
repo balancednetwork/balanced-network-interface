@@ -11,7 +11,7 @@ import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
 import { useActiveProposals } from 'queries/vote';
 import { useBBalnAmount } from 'store/bbaln/hooks';
 
-import { notificationCSS } from '../Wallet/wallets/utils';
+import { notificationCSS } from '../ICONWallet/wallets/utils';
 
 const Navigation = styled.nav`
   display: inline-block;

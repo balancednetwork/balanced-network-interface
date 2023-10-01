@@ -14,7 +14,7 @@ import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useBlockNumber, useChangeShouldLedgerSign, useICXUnstakingTime } from 'store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from 'store/transactions/hooks';
-import { useWalletBalances } from 'store/wallet/hooks';
+import { useICONWalletBalances } from 'store/wallet/hooks';
 import { toCurrencyAmount } from 'utils';
 
 interface UnstakePanelProps {
@@ -23,7 +23,7 @@ interface UnstakePanelProps {
 
 export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
-  const balances = useWalletBalances();
+  const balances = useICONWalletBalances();
 
   const icxContractAddress = bnJs.ICX.address;
   const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[icxContractAddress];

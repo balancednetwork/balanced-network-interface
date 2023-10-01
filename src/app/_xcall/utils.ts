@@ -33,3 +33,13 @@ export const getOppositeChain = (chain: SupportedXCallChains): SupportedXCallCha
     return 'icon';
   }
 };
+
+export const getNetworkDisplayName = (chain: SupportedXCallChains) => {
+  if (chain === 'icon') {
+    return 'ICON';
+  }
+  if (chain === 'archway') {
+    return 'Archway';
+  }
+  return '';
+};

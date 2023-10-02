@@ -3,27 +3,32 @@ import React from 'react';
 import { Currency, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
-import { Trans } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
+import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/ArchwayTest/helpers';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
-import { useArchwayTxManager } from 'app/_xcall/archway/txManager';
 import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
-import { getBytesFromString } from 'app/_xcall/utils';
+import { getArchwayToken, getBytesFromString } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
-import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
 import { Field } from 'store/swap/actions';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import {
+  useAddTransactionResult,
+  useArchwayTransactionsState,
+  useInitTransaction,
+} from 'store/transactionsCrosschain/hooks';
 import { useAddOriginEvent, useStopListening } from 'store/xCall/hooks';
 import { formatBigNumber, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -93,6 +98,12 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const presenceVariants = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+};
+
 const XCallSwapModal = ({
   isOpen,
   currencies,
@@ -116,7 +127,14 @@ const XCallSwapModal = ({
   const addOriginEvent = useAddOriginEvent();
   // const listeningTo = useXCallListeningTo();
   const stopListening = useStopListening();
-  const archTxManager = useArchwayTxManager();
+  const initTransaction = useInitTransaction();
+  const addTransactionResult = useAddTransactionResult();
+  const { isTxPending } = useArchwayTransactionsState();
+
+  const { increaseAllowance, allowanceIncreased, isIncreaseNeeded: allowanceIncreaseNeeded } = useAllowanceHandler(
+    (originChain === 'archway' && getArchwayToken(executionTrade?.inputAmount.currency.symbol)?.address) || '',
+    executionTrade?.inputAmount.quotient.toString() || '0',
+  );
 
   const xCallReset = React.useCallback(() => {
     stopListening();
@@ -142,12 +160,6 @@ const XCallSwapModal = ({
     }
   }, [destinationChain, destinationAddress]);
 
-  const getArchwayToken = (symbol?: string) => {
-    if (symbol) {
-      return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-    }
-  };
-
   const cleanupSwap = () => {
     clearInputs();
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -171,15 +183,14 @@ const XCallSwapModal = ({
 
   const handleICONTxResult = async (hash: string) => {
     const txResult = await fetchTxResult(hash);
-    console.log('ICON tx - ', txResult);
+    console.log('xCall debug - ICON tx - ', txResult);
     if (txResult?.status === 1 && txResult.eventLogs.length) {
       const callMessageSentEvent = txResult.eventLogs.find(event =>
         event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
       );
 
       if (callMessageSentEvent) {
-        console.log('CallMessageSent event detected');
-        console.log(callMessageSentEvent);
+        console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
         const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
         originEventData && addOriginEvent('icon', originEventData);
       }
@@ -264,7 +275,7 @@ const XCallSwapModal = ({
         ...(receivingNetworkAddress && { receiver: receivingNetworkAddress }),
       };
 
-      archTxManager.initTransaction('Sending swap request to ICON network.');
+      initTransaction('archway', 'Sending swap request to ICON network.');
       setXCallInProgress(true);
       //handle icon native tokens vs spoke assets
       if (['bnUSD'].includes(archToken.symbol!)) {
@@ -294,14 +305,14 @@ const XCallSwapModal = ({
             undefined,
             [{ amount: fee, denom: 'aconst' }],
           );
-          console.log(res);
+          console.log('xCall debug - Archway swap init tx:', res);
 
           const originEventData = getXCallOriginEventDataFromArchway(res.events);
-          archTxManager.addTransactionResult(res, 'Swap request sent');
+          addTransactionResult('archway', res, 'Swap request sent');
           originEventData && addOriginEvent('archway', originEventData);
         } catch (e) {
           console.error(e);
-          archTxManager.addTransactionResult(null, 'Swap request failed');
+          addTransactionResult('archway', null, 'Swap request failed');
           setXCallInProgress(false);
         }
       } else {
@@ -332,14 +343,14 @@ const XCallSwapModal = ({
             undefined,
             [{ amount: fee, denom: 'aconst' }],
           );
-          console.log(res);
-          archTxManager.addTransactionResult(res, 'Swap request sent');
+          console.log('xCall debug - Archway swap init tx:', res);
+          addTransactionResult('archway', res, 'Swap request sent');
           setXCallInProgress(true);
           const originEventData = getXCallOriginEventDataFromArchway(res.events);
           originEventData && addOriginEvent('archway', originEventData);
         } catch (e) {
           console.error(e);
-          archTxManager.addTransactionResult(null, 'Swap request failed');
+          addTransactionResult('archway', null, 'Swap request failed');
           setXCallInProgress(false);
         }
       }
@@ -396,7 +407,29 @@ const XCallSwapModal = ({
           </Trans>
         </Typography>
 
-        <XCallEventManager xCallReset={xCallReset} executionTrade={executionTrade} msgs={eventManagerMessages} />
+        <XCallEventManager
+          xCallReset={xCallReset}
+          clearInputs={clearInputs}
+          executionTrade={executionTrade}
+          msgs={eventManagerMessages}
+        />
+
+        {/* Handle allowance */}
+        <AnimatePresence>
+          {!xCallInProgress && allowanceIncreaseNeeded && !allowanceIncreased && (
+            <motion.div key="allowance-handler" {...presenceVariants} style={{ overflow: 'hidden' }}>
+              <Box pt={3}>
+                <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
+                  <Typography pb={4}>{t`Increase ${executionTrade?.inputAmount.currency.symbol} allowance`}</Typography>
+                  {isTxPending && <Spinner></Spinner>}
+                  {!isTxPending && allowanceIncreaseNeeded && !allowanceIncreased && (
+                    <Button onClick={increaseAllowance}>Increase allowance</Button>
+                  )}
+                </Flex>
+              </Box>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <Flex justifyContent="center" mt={4} pt={4} className="border-top">
           {shouldLedgerSign && <Spinner></Spinner>}
@@ -411,9 +444,13 @@ const XCallSwapModal = ({
               >
                 <Trans>Cancel</Trans>
               </TextButton>
-              <StyledButton onClick={handleXCallSwap} disabled={xCallInProgress}>
-                {!xCallInProgress ? <Trans>Swap</Trans> : <Trans>xCall in progress</Trans>}
-              </StyledButton>
+              {allowanceIncreaseNeeded && !xCallInProgress ? (
+                <Button disabled={true}>Allowance needed</Button>
+              ) : (
+                <StyledButton onClick={handleXCallSwap} disabled={xCallInProgress}>
+                  {!xCallInProgress ? <Trans>Swap</Trans> : <Trans>xCall in progress</Trans>}
+                </StyledButton>
+              )}
             </>
           )}
         </Flex>

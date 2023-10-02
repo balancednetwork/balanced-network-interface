@@ -115,6 +115,14 @@ const ARCHWAY_CONTRACTS_: { [key in SupportedChainId]: ContractSetType } = {
   },
 };
 
+const ARCHWAY_TRACKER_LINKS: { [key in SupportedChainId]: string } = {
+  [SupportedChainId.MAINNET]: 'https://www.mintscan.io/archway/tx/',
+  [SupportedChainId.BERLIN]: 'https://testnet.mintscan.io/archway-testnet/txs/',
+  [SupportedChainId.LISBON]: 'https://testnet.mintscan.io/archway-testnet/txs/',
+  [SupportedChainId.SEJONG]: 'https://testnet.mintscan.io/archway-testnet/txs/',
+  [SupportedChainId.YEOUIDO]: 'https://testnet.mintscan.io/archway-testnet/txs/',
+};
+
 const ARCHWAY_WEBSOCKET_URLS: { [key in SupportedChainId]: string } = {
   [SupportedChainId.MAINNET]: 'wss://rpc.mainnet.archway.io:443/websocket',
   [SupportedChainId.BERLIN]: 'wss://rpc.constantine.archway.tech:443/websocket',
@@ -129,3 +137,4 @@ export const ARCHWAY_RPC_PROVIDER: string = ARCHWAY_RPC_PROVIDERS[NETWORK_ID];
 export const ARCHWAY_CW20_COLLATERAL: CW20_BASIC_TYPE = ARCHWAY_CW20_COLLATERALS[NETWORK_ID];
 export const ARCHWAY_CONTRACTS: ContractSetType = ARCHWAY_CONTRACTS_[NETWORK_ID];
 export const ARCHWAY_WEBSOCKET_URL: string = ARCHWAY_WEBSOCKET_URLS[NETWORK_ID];
+export const ARCHWAY_TRACKER_LINK: string = ARCHWAY_TRACKER_LINKS[NETWORK_ID];

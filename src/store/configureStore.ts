@@ -24,6 +24,7 @@ import stabilityFund from './stabilityFund/reducer';
 import stakedLP from './stakedLP/reducer';
 import swap from './swap/reducer';
 import transactions from './transactions/reducer';
+import transactionsCrosschain from './transactionsCrosschain/reducer';
 import user from './user/reducer';
 import wallet from './wallet/reducer';
 import xCall from './xCall/reducer';
@@ -66,6 +67,7 @@ export function configureAppStore() {
       liveVoting,
       arbitraryCalls,
       xCall,
+      transactionsCrosschain,
     }),
     middleware: [
       ...getDefaultMiddleware({

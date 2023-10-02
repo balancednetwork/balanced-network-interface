@@ -50,3 +50,7 @@ export const CurrentXCallState: { [key in CurrentXCallStateType]: CurrentXCallSt
   // raised when _rollback wasn't null and executeCall failed - revert happened in execution
   AWAITING_ORIGIN_ROLLBACK_MESSAGE: 'AWAITING_ORIGIN_ROLLBACK_MESSAGE',
 });
+
+export type CrossChainTxType = {
+  transactionHash: string;
+};

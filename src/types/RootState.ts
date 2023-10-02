@@ -20,6 +20,7 @@ import { StabilityFundState } from 'store/stabilityFund/reducer';
 import { StakedLPState } from 'store/stakedLP/reducer';
 import { SwapState } from 'store/swap/reducer';
 import { TransactionState } from 'store/transactions/reducer';
+import { TransactionsCrosschainState } from 'store/transactionsCrosschain/reducer';
 import { UserState } from 'store/user/reducer';
 import { WalletState } from 'store/wallet/reducer';
 import { XCallState } from 'store/xCall/reducer';
@@ -46,4 +47,5 @@ export interface RootState {
   liveVoting: LiveVotingState;
   arbitraryCalls: ArbitraryCallsState;
   xCall: XCallState;
+  transactionsCrosschain: TransactionsCrosschainState;
 }

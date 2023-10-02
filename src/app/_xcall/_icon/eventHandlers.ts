@@ -2,7 +2,7 @@ import React from 'react';
 
 import bnJs from 'bnJs';
 import { useBlockNumber } from 'store/application/hooks';
-import { useAddDestinationEvent } from 'store/xCall/hooks';
+import { useAddDestinationEvent, useXCallOriginEvents } from 'store/xCall/hooks';
 
 import { XCallEvent, XCallEventType } from '../types';
 import { ICON_WEBSOCKET_URL } from './config';
@@ -21,11 +21,11 @@ const QUERY_PARAMS = {
 
 export const useICONEventListener = (eventName: XCallEventType | null) => {
   const [socket, setSocket] = React.useState<WebSocket | undefined>(undefined);
-  // console.log(socket);
   const event = eventName && `${getICONEventSignature(eventName)}`;
   const iconBlockHeight = useBlockNumber();
   const blockHeightRef = React.useRef<string | null>(null);
   const addDestinationEvent = useAddDestinationEvent();
+  const archwayOriginEvents = useXCallOriginEvents('archway');
 
   React.useEffect(() => {
     if (event && iconBlockHeight) {
@@ -54,18 +54,18 @@ export const useICONEventListener = (eventName: XCallEventType | null) => {
       const websocket = new WebSocket(ICON_WEBSOCKET_URL);
 
       websocket.onopen = () => {
-        console.log('ICON ws opened');
+        console.log('xCall debug - ICON websocket opened');
         websocket.send(JSON.stringify(query.current));
       };
 
       websocket.onmessage = event => {
         const eventData = JSON.parse(event.data);
-        console.log('ICON block: ', eventData);
+        console.log('xCall debug - ICON block: ', eventData);
         if (eventData) {
           switch (eventName) {
             case XCallEvent.CallMessage: {
               if (eventData.logs) {
-                console.log('Matching transaction found: ' + eventData);
+                console.log('xCall debug - Matching event found: ' + eventData);
                 const callMessageLog =
                   eventData.logs &&
                   eventData.logs[0][0].find(log => log.indexed[0] === getICONEventSignature(XCallEvent.CallMessage));
@@ -77,9 +77,11 @@ export const useICONEventListener = (eventName: XCallEventType | null) => {
                   //todo: handle parsing from above like the line below
                   // const destinationEventData = getDestinationEventDataFromICONEvent(callMessageLog);
                   if (sn && reqId) {
-                    addDestinationEvent('icon', { sn, reqId, data, eventName: XCallEvent.CallMessage });
+                    if (archwayOriginEvents.some(e => e.sn === sn)) {
+                      addDestinationEvent('icon', { sn, reqId, data, eventName: XCallEvent.CallMessage });
+                      disconnectFromWebsocket();
+                    }
                   }
-                  disconnectFromWebsocket();
                 }
               }
               break;
@@ -100,7 +102,7 @@ export const useICONEventListener = (eventName: XCallEventType | null) => {
         disconnectFromWebsocket();
       };
       websocket.onclose = () => {
-        console.log('ICON ws closed');
+        console.log('xCall debug - ICON ws closed');
       };
       setSocket(websocket);
     } else {
@@ -108,5 +110,5 @@ export const useICONEventListener = (eventName: XCallEventType | null) => {
         disconnectFromWebsocket();
       }
     }
-  }, [socket, disconnectFromWebsocket, eventName, query, addDestinationEvent]);
+  }, [socket, disconnectFromWebsocket, eventName, query, addDestinationEvent, archwayOriginEvents]);
 };

@@ -55,9 +55,6 @@ const ArchwayTest = () => {
   useArchwayEventListener(listeningTo?.chain === 'archway' ? listeningTo.event : null);
   useICONEventListener(listeningTo?.chain === 'icon' ? listeningTo.event : null);
 
-  // const xCallState = useXCallState();
-  // console.log('xCallState: ', xCallState);
-
   //probably not needed, just use destination events with data hash
   const xCallData = React.useMemo(() => {
     if (iconDestinationEvents.length && archwayOriginEvents.length) {

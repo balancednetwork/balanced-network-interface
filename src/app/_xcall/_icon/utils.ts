@@ -21,7 +21,7 @@ export async function fetchTxResult(hash: string): Promise<ICONTxResultType | un
       const txResult = await iconService.getTransactionResult(hash).execute();
       return txResult as ICONTxResultType;
     } catch (e) {
-      console.log(`txResult (pass ${i}):`, e);
+      console.log(`xCall debug - icon tx result (pass ${i}):`, e);
     }
     await sleep(1000);
   }

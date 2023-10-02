@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { t } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
@@ -90,3 +90,13 @@ export function useTransactionStatus(transactionHash?: string): TransactionStatu
     return undefined;
   }
 }
+
+export const useIsICONTxPending = (): boolean => {
+  const transactions = useAllTransactions();
+  return useMemo(() => {
+    if (!transactions) {
+      return false;
+    }
+    return Object.values(transactions).some(tx => !tx.confirmedTime);
+  }, [transactions]);
+};

@@ -13,13 +13,17 @@ import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON }
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayEventListener } from 'app/_xcall/archway/eventHandler';
-import { useArchwayTxManager } from 'app/_xcall/archway/txManager';
 import { DestinationXCallData, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
+import { useIsICONTxPending, useTransactionAdder } from 'store/transactions/hooks';
+import {
+  useAddTransactionResult,
+  useArchwayTransactionsState,
+  useInitTransaction,
+} from 'store/transactionsCrosschain/hooks';
 import {
   useAddOriginEvent,
   useXCallDestinationEvents,
@@ -35,6 +39,7 @@ import { swapMessage } from './utils';
 
 type XCallEventManagerProps = {
   xCallReset: () => void;
+  clearInputs: () => void;
   executionTrade?: Trade<Currency, Currency, TradeType>;
   msgs: {
     [key in SupportedXCallChains]: {
@@ -44,7 +49,7 @@ type XCallEventManagerProps = {
   };
 };
 
-const XCallEventManager = ({ xCallReset, executionTrade, msgs }: XCallEventManagerProps) => {
+const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XCallEventManagerProps) => {
   const { account } = useIconReact();
   const { signingCosmWasmClient, address: accountArch } = useArchwayContext();
   const iconDestinationEvents = useXCallDestinationEvents('icon');
@@ -54,11 +59,14 @@ const XCallEventManager = ({ xCallReset, executionTrade, msgs }: XCallEventManag
   const listeningTo = useXCallListeningTo();
   // const stopListening = useStopListening();
   const removeEvent = useRemoveEvent();
-  const archTxManager = useArchwayTxManager();
+  const initTransaction = useInitTransaction();
+  const addTransactionResult = useAddTransactionResult();
+  const { isTxPending } = useArchwayTransactionsState();
   const setListeningTo = useSetListeningTo();
   const addTransaction = useTransactionAdder();
   // const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
+  const isICONTxPending = useIsICONTxPending();
 
   useArchwayEventListener(listeningTo?.chain === 'archway' ? listeningTo.event : null);
   useICONEventListener(listeningTo?.chain === 'icon' ? listeningTo.event : null);
@@ -87,7 +95,7 @@ const XCallEventManager = ({ xCallReset, executionTrade, msgs }: XCallEventManag
       // }
 
       try {
-        archTxManager.initTransaction(t`Transferring swap result to Archway network.`);
+        initTransaction('archway', t`Transferring swap result to Archway network.`);
         const res: ExecuteResult = await signingCosmWasmClient.execute(
           accountArch,
           ARCHWAY_CONTRACTS.xcall,
@@ -95,8 +103,7 @@ const XCallEventManager = ({ xCallReset, executionTrade, msgs }: XCallEventManag
           'auto',
         );
 
-        console.log(res);
-        console.log('Archway executeCall complete', res);
+        console.log('xCall debug - Archway executeCall complete', res);
 
         const callExecuted = res.events.some(
           e => e.type === 'wasm-CallExecuted' && e.attributes.some(a => a.key === 'code' && a.value === '1'),
@@ -104,17 +111,17 @@ const XCallEventManager = ({ xCallReset, executionTrade, msgs }: XCallEventManag
 
         if (callExecuted) {
           removeEvent(data.sn, true);
-          console.log('ARCHWAY executeCall - SUCCESS');
+          console.log('xCall debug - Archway executeCall - success');
           xCallReset();
-          archTxManager.addTransactionResult(res, t`Transfer complete.`);
+          addTransactionResult('archway', res, t`Transfer complete.`);
         } else {
-          console.log('ARCHWAY executeCall - FAIL');
-          archTxManager.addTransactionResult(res || null, t`Transfer failed.`);
+          console.log('xCall debug - Archway executeCall - fail');
+          addTransactionResult('archway', res || null, t`Transfer failed.`);
           //TODO: check for RollbackMessage on ICON
         }
       } catch (e) {
         console.error(e);
-        archTxManager.setTxPending(false);
+        addTransactionResult('archway', null, t`Execution failed`);
       }
     }
   };
@@ -139,7 +146,7 @@ const XCallEventManager = ({ xCallReset, executionTrade, msgs }: XCallEventManag
         const callExecutedEvent = txResult.eventLogs.find(event =>
           event.indexed.includes(getICONEventSignature(XCallEvent.CallExecuted)),
         );
-        console.log('txResult: ', txResult);
+        console.log('xCall debug - ICON executeCall tx result: ', txResult);
 
         //TODO: move to handle ICON tx result together with CallMessage
         if (callExecutedEvent) {
@@ -148,16 +155,15 @@ const XCallEventManager = ({ xCallReset, executionTrade, msgs }: XCallEventManag
         }
 
         if (callExecutedEvent?.data[0] === '0x1') {
-          console.log('xCALL EXECUTED SUCCESSFULLY');
-
+          console.log('xCall debug - xCall executed successfully');
+          clearInputs();
           //has xCall emitted CallMessageSent event?
           const callMessageSentEvent = txResult.eventLogs.find(event =>
             event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
           );
 
           if (callMessageSentEvent) {
-            console.log('CALL MESSAGE SENT EVENT DETECTED');
-            console.log(callMessageSentEvent);
+            console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
             const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
             originEventData && addOriginEvent('icon', originEventData);
           } else {
@@ -166,10 +172,10 @@ const XCallEventManager = ({ xCallReset, executionTrade, msgs }: XCallEventManag
         }
 
         if (callExecutedEvent?.data[0] === '0x0') {
-          console.log('xCALL EXECUTED WITH ERROR');
+          console.log('xCall debug - xCall executed with error');
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
             //TODO: test response messages
-            console.log('xCALL EXECUTED WITH ERROR: ROLLBACK NEEDED');
+            console.log('xCall debug - xCALL rollback needed');
             setListeningTo('archway', XCallEvent.ResponseMessage);
           }
         }
@@ -222,8 +228,8 @@ const XCallEventManager = ({ xCallReset, executionTrade, msgs }: XCallEventManag
               </Typography>
               {archwayDestinationEvents.map(event => (
                 <Flex alignItems="center" key={event.reqId}>
-                  <Button onClick={handleArchwayExecuteXCall(event)} disabled={archTxManager.isTxPending}>
-                    {archTxManager.isTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm transfer</Trans>}
+                  <Button onClick={handleArchwayExecuteXCall(event)} disabled={isTxPending}>
+                    {isTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm transfer</Trans>}
                   </Button>
                 </Flex>
               ))}
@@ -246,10 +252,8 @@ const XCallEventManager = ({ xCallReset, executionTrade, msgs }: XCallEventManag
               </Typography>
               {iconDestinationEvents.map(event => (
                 <Flex alignItems="center" key={event.reqId}>
-                  {/* //TODO: disabled for pending tx */}
-                  <Button onClick={() => handleICONExecuteXCall(event)} disabled={false}>
-                    <Trans>Confirm swap</Trans>
-                    {/* {archTxManager.isTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm swap</Trans>} */}
+                  <Button onClick={() => handleICONExecuteXCall(event)} disabled={isICONTxPending}>
+                    {isICONTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm swap</Trans>}
                   </Button>
                 </Flex>
               ))}

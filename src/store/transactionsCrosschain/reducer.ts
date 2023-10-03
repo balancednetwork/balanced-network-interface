@@ -36,6 +36,7 @@ export default createReducer(initialState, builder =>
           window.open(`${ARCHWAY_TRACKER_LINK}/${tx.transactionHash}`, '_blank');
         },
       };
+
       openToast({
         message: msg,
         transactionStatus: tx ? TransactionStatus.success : TransactionStatus.failure,

@@ -1,3 +1,5 @@
+import { Event } from '@cosmjs/cosmwasm-stargate';
+
 export type SupportedXCallChains = 'icon' | 'archway';
 
 export type XCallEventType = 'CallMessageSent' | 'CallMessage' | 'ResponseMessage' | 'RollbackMessage' | 'CallExecuted';
@@ -53,4 +55,5 @@ export const CurrentXCallState: { [key in CurrentXCallStateType]: CurrentXCallSt
 
 export type CrossChainTxType = {
   transactionHash: string;
+  events: readonly Event[];
 };

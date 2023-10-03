@@ -51,7 +51,7 @@ type XCallEventManagerProps = {
 
 const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XCallEventManagerProps) => {
   const { account } = useIconReact();
-  const { signingCosmWasmClient, address: accountArch } = useArchwayContext();
+  const { signingClient, address: accountArch } = useArchwayContext();
   const iconDestinationEvents = useXCallDestinationEvents('icon');
   // const archwayOriginEvents = useXCallOriginEvents('archway');
   const archwayDestinationEvents = useXCallDestinationEvents('archway');
@@ -81,7 +81,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
     );
 
   const handleArchwayExecuteXCall = (data: DestinationXCallData) => async () => {
-    if (signingCosmWasmClient && accountArch) {
+    if (signingClient && accountArch) {
       const msg = {
         execute_call: {
           request_id: `${data.reqId}`,
@@ -96,12 +96,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
 
       try {
         initTransaction('archway', t`Transferring swap result to Archway network.`);
-        const res: ExecuteResult = await signingCosmWasmClient.execute(
-          accountArch,
-          ARCHWAY_CONTRACTS.xcall,
-          msg,
-          'auto',
-        );
+        const res: ExecuteResult = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, 'auto');
 
         console.log('xCall debug - Archway executeCall complete', res);
 

@@ -17,7 +17,7 @@ const useAllowanceHandler = (
   amountNeeded: string,
   spenderAddress: string = ARCHWAY_CONTRACTS.assetManager,
 ) => {
-  const { address, signingCosmWasmClient } = useArchwayContext();
+  const { address, signingClient } = useArchwayContext();
   const addTransactionResult = useAddTransactionResult();
   const initTransaction = useInitTransaction();
   const { transactions } = useArchwayTransactionsState();
@@ -25,8 +25,8 @@ const useAllowanceHandler = (
   const [allowanceIncreased, setAllowanceIncreased] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    if (tokenAddress && signingCosmWasmClient) {
-      signingCosmWasmClient
+    if (tokenAddress && signingClient) {
+      signingClient
         .queryContractSmart(tokenAddress, {
           allowance: { owner: address, spender: spenderAddress },
         })
@@ -34,7 +34,7 @@ const useAllowanceHandler = (
           setAllowance(res.allowance);
         });
     }
-  }, [address, signingCosmWasmClient, spenderAddress, tokenAddress, transactions.length]);
+  }, [address, signingClient, spenderAddress, tokenAddress, transactions.length]);
 
   React.useEffect(() => {
     if (Number(allowance) < Number(amountNeeded)) {
@@ -51,7 +51,7 @@ const useAllowanceHandler = (
   }, [allowance, amountNeeded]);
 
   const increaseAllowance = async () => {
-    if (signingCosmWasmClient && address && tokenAddress) {
+    if (signingClient && address && tokenAddress) {
       const msg = {
         increase_allowance: {
           spender: spenderAddress,
@@ -63,7 +63,7 @@ const useAllowanceHandler = (
           'archway',
           t`Increasing allowance for ${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol}...`,
         );
-        const res = await signingCosmWasmClient.execute(address, tokenAddress, msg, {
+        const res = await signingClient.execute(address, tokenAddress, msg, {
           amount: [{ amount: '1', denom: 'aconst' }],
           gas: '200000',
         });

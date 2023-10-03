@@ -50,65 +50,81 @@ export const useICONEventListener = (eventName: XCallEventType | null) => {
   }, [socket]);
 
   React.useEffect(() => {
-    if (eventName && !socket) {
-      const websocket = new WebSocket(ICON_WEBSOCKET_URL);
+    if (eventName) {
+      if (!socket) {
+        const websocket = new WebSocket(ICON_WEBSOCKET_URL);
 
-      websocket.onopen = () => {
-        console.log('xCall debug - ICON websocket opened');
-        websocket.send(JSON.stringify(query.current));
-      };
+        websocket.onopen = () => {
+          console.log('xCall debug - ICON websocket opened');
+          websocket.send(JSON.stringify(query.current));
+        };
 
-      websocket.onmessage = event => {
-        const eventData = JSON.parse(event.data);
-        console.log('xCall debug - ICON block: ', eventData);
-        if (eventData) {
-          switch (eventName) {
-            case XCallEvent.CallMessage: {
-              if (eventData.logs) {
-                console.log('xCall debug - Matching event found: ' + eventData);
-                const callMessageLog =
-                  eventData.logs &&
-                  eventData.logs[0][0].find(log => log.indexed[0] === getICONEventSignature(XCallEvent.CallMessage));
-                if (callMessageLog) {
-                  const snRaw = callMessageLog.indexed[3];
-                  const sn = snRaw && parseInt(snRaw, 16);
-                  const reqId = parseInt(callMessageLog.data[0], 16);
-                  const data = callMessageLog.data[1];
-                  //todo: handle parsing from above like the line below
-                  // const destinationEventData = getDestinationEventDataFromICONEvent(callMessageLog);
-                  if (sn && reqId) {
-                    if (archwayOriginEvents.some(e => e.sn === sn)) {
-                      addDestinationEvent('icon', { sn, reqId, data, eventName: XCallEvent.CallMessage });
-                      disconnectFromWebsocket();
+        websocket.onmessage = event => {
+          const eventData = JSON.parse(event.data);
+          console.log('xCall debug - ICON block: ', eventData);
+          if (eventData) {
+            switch (eventName) {
+              case XCallEvent.CallMessage: {
+                if (eventData.logs) {
+                  console.log('xCall debug - Matching event found: ' + eventData);
+                  const callMessageLog =
+                    eventData.logs &&
+                    eventData.logs[0][0].find(log => log.indexed[0] === getICONEventSignature(XCallEvent.CallMessage));
+                  if (callMessageLog) {
+                    const snRaw = callMessageLog.indexed[3];
+                    const sn = snRaw && parseInt(snRaw, 16);
+                    const reqId = parseInt(callMessageLog.data[0], 16);
+                    const data = callMessageLog.data[1];
+                    //todo: handle parsing from above like the line below
+                    // const destinationEventData = getDestinationEventDataFromICONEvent(callMessageLog);
+                    if (sn && reqId) {
+                      if (archwayOriginEvents.some(e => e.sn === sn)) {
+                        addDestinationEvent('icon', { sn, reqId, data, eventName: XCallEvent.CallMessage });
+                        disconnectFromWebsocket();
+                      }
                     }
                   }
                 }
+                break;
               }
-              break;
-            }
-            case XCallEvent.ResponseMessage: {
-              break;
-            }
-            case XCallEvent.RollbackMessage: {
-              break;
+              case XCallEvent.ResponseMessage: {
+                break;
+              }
+              case XCallEvent.RollbackMessage: {
+                break;
+              }
             }
           }
-          disconnectFromWebsocket();
-        }
-      };
+        };
 
-      websocket.onerror = error => {
-        console.error(error);
-        disconnectFromWebsocket();
-      };
-      websocket.onclose = () => {
-        console.log('xCall debug - ICON ws closed');
-      };
-      setSocket(websocket);
-    } else {
-      if (socket) {
-        disconnectFromWebsocket();
+        websocket.onerror = error => {
+          console.error(error);
+          disconnectFromWebsocket();
+        };
+        websocket.onclose = () => {
+          console.log('xCall debug - ICON ws closed');
+        };
+        setSocket(websocket);
       }
+    } else {
+      disconnectFromWebsocket();
     }
   }, [socket, disconnectFromWebsocket, eventName, query, addDestinationEvent, archwayOriginEvents]);
 };
+
+//for this to work, also update balanced-js npm pckg to map rollback boolean to hex value
+//for now, icx fees are paid by dao fund
+// export const useIconXcallFee = (): UseQueryResult<{ noRollback: string; rollback: string }> => {
+//   return useQuery(
+//     `icon-xcall-fees`,
+//     async () => {
+//       const feeWithRollback = await bnJs.XCall.getFee('archway', true);
+//       const feeNoRollback = await bnJs.XCall.getFee('archway', false);
+//       return {
+//         noRollback: feeNoRollback,
+//         rollback: feeWithRollback,
+//       };
+//     },
+//     { keepPreviousData: true },
+//   );
+// };

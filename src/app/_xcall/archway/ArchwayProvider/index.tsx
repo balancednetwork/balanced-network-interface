@@ -18,7 +18,6 @@ interface ArchwayContextType {
   disconnect: () => void;
   client?: ArchwayClient;
   signingClient?: SigningArchwayClient;
-  signingCosmWasmClient?: SigningArchwayClient;
 }
 
 const initialContext: ArchwayContextType = {
@@ -35,7 +34,6 @@ const ArchwayProvider: React.FC = ({ children }) => {
   const [chain_id, setChainId] = useState<string>('');
   const [client, setClient] = useState<ArchwayClient>();
   const [signingClient, setSigningClient] = useState<SigningArchwayClient>();
-  const [signingCosmWasmClient, setSigningCosmWasmClient] = useState<SigningArchwayClient>();
   const [addressStored, setAddressStored] = useLocalStorageWithExpiry<string | null>(
     'archAccountWithExpiry',
     null,
@@ -70,9 +68,6 @@ const ArchwayProvider: React.FC = ({ children }) => {
     const signingClientObj = await SigningArchwayClient.connectWithSigner(ARCHWAY_RPC_PROVIDER, offlineSigner);
     setSigningClient(signingClientObj);
 
-    const signingCosmWasmClientObj = await SigningArchwayClient.connectWithSigner(ARCHWAY_RPC_PROVIDER, offlineSigner);
-    setSigningCosmWasmClient(signingCosmWasmClientObj);
-
     const account: AccountData = (await offlineSigner.getAccounts())[0];
     account.address && setAddress(account.address);
     account.address && setAddressStored(account.address);
@@ -93,15 +88,14 @@ const ArchwayProvider: React.FC = ({ children }) => {
     connectToWallet,
     client,
     signingClient,
-    signingCosmWasmClient,
     disconnect,
   };
 
   useEffect(() => {
-    if (addressStored && !signingCosmWasmClient) {
+    if (addressStored && !signingClient) {
       connectToWallet();
     }
-  }, [signingCosmWasmClient, addressStored, connectToWallet]);
+  }, [signingClient, addressStored, connectToWallet]);
 
   return <ArchwayContext.Provider value={context}>{children}</ArchwayContext.Provider>;
 };

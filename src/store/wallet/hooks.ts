@@ -68,15 +68,15 @@ export function useArchwayBalances(
 ): UseQueryResult<{
   [key: string]: CurrencyAmount<Currency>;
 }> {
-  const { signingCosmWasmClient } = useArchwayContext();
+  const { signingClient } = useArchwayContext();
 
   return useQuery(
-    `archwayBalances-${!!signingCosmWasmClient}-${address}-${tokens ? tokens.length : ''}`,
+    `archwayBalances-${!!signingClient}-${address}-${tokens ? tokens.length : ''}`,
     async () => {
-      if (signingCosmWasmClient) {
+      if (signingClient) {
         const balances = await Promise.all(
           tokens.map(async token => {
-            const balance = await signingCosmWasmClient.queryContractSmart(token.address, { balance: { address } });
+            const balance = await signingClient.queryContractSmart(token.address, { balance: { address } });
             return CurrencyAmount.fromRawAmount(token, balance.balance);
           }),
         );
@@ -93,7 +93,7 @@ export function useArchwayBalances(
     },
     {
       keepPreviousData: true,
-      enabled: !!signingCosmWasmClient && !!address,
+      enabled: !!signingClient && !!address,
       refetchInterval: 10000,
     },
   );

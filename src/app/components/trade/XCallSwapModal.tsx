@@ -16,6 +16,7 @@ import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/ArchwayTest/helpers';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
+import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getArchwayToken, getBytesFromString } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
@@ -115,7 +116,7 @@ const XCallSwapModal = ({
   onClose,
 }: XCallSwapModalProps) => {
   const { account } = useIconReact();
-  const { address: accountArch, signingCosmWasmClient } = useArchwayContext();
+  const { address: accountArch, signingClient } = useArchwayContext();
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const [modalClosable, setModalClosable] = React.useState(true);
@@ -130,6 +131,7 @@ const XCallSwapModal = ({
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
+  const { data: archwayXcallFees } = useArchwayXcallFee();
 
   const { increaseAllowance, allowanceIncreased, isIncreaseNeeded: allowanceIncreaseNeeded } = useAllowanceHandler(
     (originChain === 'archway' && getArchwayToken(executionTrade?.inputAmount.currency.symbol)?.address) || '',
@@ -266,7 +268,7 @@ const XCallSwapModal = ({
       }
     } else if (originChain === 'archway') {
       const archToken = getArchwayToken(executionTrade.inputAmount.currency.symbol);
-      if (!archToken || !(signingCosmWasmClient && accountArch)) {
+      if (!archToken || !(signingClient && accountArch)) {
         return;
       }
       // const allowanceRes = await handleAllowance();
@@ -292,18 +294,14 @@ const XCallSwapModal = ({
           },
         };
 
-        const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
-          get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
-        });
-
         try {
-          const res: ExecuteResult = await signingCosmWasmClient.execute(
+          const res: ExecuteResult = await signingClient.execute(
             accountArch,
             ARCHWAY_CONTRACTS.bnusd,
             msg,
             'auto',
             undefined,
-            [{ amount: fee, denom: 'aconst' }],
+            archwayXcallFees && [{ amount: archwayXcallFees?.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' }],
           );
           console.log('xCall debug - Archway swap init tx:', res);
 
@@ -330,12 +328,12 @@ const XCallSwapModal = ({
           },
         };
 
-        const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+        const fee = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
           get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
         });
 
         try {
-          const res: ExecuteResult = await signingCosmWasmClient.execute(
+          const res: ExecuteResult = await signingClient.execute(
             accountArch,
             ARCHWAY_CONTRACTS.assetManager,
             msg,
@@ -406,6 +404,11 @@ const XCallSwapModal = ({
             {currencies[Field.INPUT]?.symbol}.
           </Trans>
         </Typography>
+        {originChain === 'archway' && archwayXcallFees && (
+          <Typography textAlign="center">
+            Plus flat xCall fee of {(Number(archwayXcallFees.rollback) / 10 ** 6).toPrecision(1)} Arch
+          </Typography>
+        )}
 
         <XCallEventManager
           xCallReset={xCallReset}

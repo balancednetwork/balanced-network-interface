@@ -37,7 +37,7 @@ const ArchwayTest = () => {
   const [cw20Amount, setCw20Amount] = React.useState<number>();
   const [cw20bnUSDAmount, setCw20bnUSDAmount] = React.useState<number>();
   const [currentAllowance, setCurrentAllowance] = React.useState<string>();
-  const { chain_id, address, connectToWallet, signingClient, disconnect, signingCosmWasmClient } = useArchwayContext();
+  const { chain_id, address, connectToWallet, signingClient, disconnect } = useArchwayContext();
   const { account } = useIconReact();
   const removeEvent = useRemoveEvent();
   const setListeningTo = useSetListeningTo();
@@ -90,25 +90,23 @@ const ArchwayTest = () => {
     }
 
     // get collateral token amount
-    if (signingCosmWasmClient && address) {
+    if (signingClient && address) {
       ARCHWAY_CW20_COLLATERAL.address
-        ? signingCosmWasmClient
-            .queryContractSmart(ARCHWAY_CW20_COLLATERAL.address, { balance: { address } })
-            .then(res => {
-              try {
-                const { balance } = res;
-                setCw20Amount(parseInt(balance || '0') / 10 ** ARCHWAY_CW20_COLLATERAL.decimals);
-              } catch (e) {
-                console.log(e);
-                setCw20Amount(0);
-              }
-            })
+        ? signingClient.queryContractSmart(ARCHWAY_CW20_COLLATERAL.address, { balance: { address } }).then(res => {
+            try {
+              const { balance } = res;
+              setCw20Amount(parseInt(balance || '0') / 10 ** ARCHWAY_CW20_COLLATERAL.decimals);
+            } catch (e) {
+              console.log(e);
+              setCw20Amount(0);
+            }
+          })
         : setCw20Amount(0);
     }
 
     // get AM allowance
-    if (signingCosmWasmClient && address) {
-      signingCosmWasmClient
+    if (signingClient && address) {
+      signingClient
         .queryContractSmart(ARCHWAY_CW20_COLLATERAL.address, {
           allowance: { owner: address, spender: ARCHWAY_CONTRACTS.assetManager },
         })
@@ -116,12 +114,12 @@ const ArchwayTest = () => {
           setCurrentAllowance(res.allowance);
         });
     }
-  }, [signingClient, signingCosmWasmClient, address]);
+  }, [signingClient, address]);
 
   // get bnUSD cw20 token amount
-  if (signingCosmWasmClient && address) {
+  if (signingClient && address) {
     ARCHWAY_CONTRACTS.bnusd
-      ? signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.bnusd, { balance: { address } }).then(res => {
+      ? signingClient.queryContractSmart(ARCHWAY_CONTRACTS.bnusd, { balance: { address } }).then(res => {
           try {
             const { balance } = res;
             setCw20bnUSDAmount(parseInt(balance || '0') / 10 ** 18);
@@ -134,7 +132,7 @@ const ArchwayTest = () => {
   }
 
   const increaseAllowance = async () => {
-    if (signingCosmWasmClient && address) {
+    if (signingClient && address) {
       const msg = {
         increase_allowance: {
           spender: ARCHWAY_CONTRACTS.assetManager,
@@ -142,7 +140,7 @@ const ArchwayTest = () => {
         },
       };
       try {
-        const res = await signingCosmWasmClient.execute(address, ARCHWAY_CW20_COLLATERAL.address, msg, {
+        const res = await signingClient.execute(address, ARCHWAY_CW20_COLLATERAL.address, msg, {
           amount: [{ amount: '1', denom: 'aconst' }],
           gas: '200000',
         });
@@ -155,13 +153,13 @@ const ArchwayTest = () => {
 
   const depositToIcon = async () => {
     //needs allowance
-    if (signingCosmWasmClient && address) {
+    if (signingClient && address) {
       //same on ICON with
       // const params = {
       //   _net: NETWORK_LABEL_DESTINATION,
       //   _rollback: useRollback ? "0x1" : "0x0"
       // };
-      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+      const fee = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
         get_fee: { nid: ICON_XCALL_NETWORK_ID, rollback: true },
       });
 
@@ -176,14 +174,9 @@ const ArchwayTest = () => {
         },
       };
       try {
-        const res = await signingCosmWasmClient.execute(
-          address,
-          ARCHWAY_CONTRACTS.assetManager,
-          msg,
-          'auto',
-          undefined,
-          [{ amount: fee, denom: 'aconst' }],
-        );
+        const res = await signingClient.execute(address, ARCHWAY_CONTRACTS.assetManager, msg, 'auto', undefined, [
+          { amount: fee, denom: 'aconst' },
+        ]);
         console.log(res);
 
         //XCALL: Step one - get sn from initial transaction
@@ -197,8 +190,8 @@ const ArchwayTest = () => {
 
   const borrowFromIcon = async () => {
     //ad get fee and pass it to transfer funds
-    if (signingCosmWasmClient && address) {
-      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+    if (signingClient && address) {
+      const fee = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
         get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: false },
       });
 
@@ -210,7 +203,7 @@ const ArchwayTest = () => {
       };
 
       try {
-        const res: ExecuteResult = await signingCosmWasmClient.execute(
+        const res: ExecuteResult = await signingClient.execute(
           address,
           ARCHWAY_CONTRACTS.xcall,
           msg,
@@ -229,8 +222,8 @@ const ArchwayTest = () => {
   };
 
   const repayDebtFromArchway = async () => {
-    if (signingCosmWasmClient && address) {
-      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+    if (signingClient && address) {
+      const fee = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
         get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
       });
 
@@ -248,7 +241,7 @@ const ArchwayTest = () => {
       };
 
       try {
-        const res: ExecuteResult = await signingCosmWasmClient.execute(
+        const res: ExecuteResult = await signingClient.execute(
           address,
           ARCHWAY_CONTRACTS.bnusd,
           msg,
@@ -317,7 +310,7 @@ const ArchwayTest = () => {
   };
 
   const handleArchwayExecuteXCall = (data: DestinationXCallData) => async () => {
-    if (signingCosmWasmClient && address) {
+    if (signingClient && address) {
       const msg = {
         execute_call: {
           request_id: `${data.reqId}`,
@@ -326,7 +319,7 @@ const ArchwayTest = () => {
       };
 
       try {
-        const res: ExecuteResult = await signingCosmWasmClient.execute(address, ARCHWAY_CONTRACTS.xcall, msg, {
+        const res: ExecuteResult = await signingClient.execute(address, ARCHWAY_CONTRACTS.xcall, msg, {
           amount: [{ amount: '1', denom: 'aconst' }],
           gas: '600000',
         });
@@ -352,7 +345,7 @@ const ArchwayTest = () => {
   };
 
   const swapArchToBnUSD = async (receiver?: string) => {
-    if (signingCosmWasmClient && address) {
+    if (signingClient && address) {
       const swapParams: { path: string[]; receiver?: string } = {
         path: ['cxd06f80e28e989a67e297799ab1fb501cdddc2b4d'],
       };
@@ -375,12 +368,12 @@ const ArchwayTest = () => {
         },
       };
 
-      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+      const fee = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
         get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
       });
 
       try {
-        const res: ExecuteResult = await signingCosmWasmClient.execute(
+        const res: ExecuteResult = await signingClient.execute(
           address,
           ARCHWAY_CONTRACTS.assetManager,
           msg,
@@ -402,7 +395,7 @@ const ArchwayTest = () => {
   };
 
   const swapArchBnUSDToArch = async () => {
-    if (signingCosmWasmClient && address) {
+    if (signingClient && address) {
       const swapParams: { path: string[]; receiver?: string } = {
         path: ['cx6975cdce422307b73b753b121877960e83b3bc35'],
       };
@@ -420,12 +413,12 @@ const ArchwayTest = () => {
         },
       };
 
-      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+      const fee = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
         get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
       });
 
       try {
-        const res: ExecuteResult = await signingCosmWasmClient.execute(
+        const res: ExecuteResult = await signingClient.execute(
           address,
           ARCHWAY_CONTRACTS.bnusd,
           msg,
@@ -488,7 +481,7 @@ const ArchwayTest = () => {
   };
 
   const swapArchToICX = async (receiver: string) => {
-    if (signingCosmWasmClient && address) {
+    if (signingClient && address) {
       const swapParams = {
         path: ['cxd06f80e28e989a67e297799ab1fb501cdddc2b4d', 'cxb7d63658e3375f701af9d420ea351d0736760634', null],
         receiver: receiver,
@@ -508,12 +501,12 @@ const ArchwayTest = () => {
         },
       };
 
-      const fee = await signingCosmWasmClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+      const fee = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
         get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
       });
 
       try {
-        const res: ExecuteResult = await signingCosmWasmClient.execute(
+        const res: ExecuteResult = await signingClient.execute(
           address,
           ARCHWAY_CONTRACTS.assetManager,
           msg,
@@ -604,7 +597,7 @@ const ArchwayTest = () => {
           {address && cw20Amount?.toFixed(6)}
         </Typography>
       </Flex>
-      {address && signingCosmWasmClient && (
+      {address && signingClient && (
         <>
           <Divider my={5}></Divider>
           <Typography variant="h3" fontSize={18} mb={4}>
@@ -646,7 +639,7 @@ const ArchwayTest = () => {
         </>
       )}
       {/* deposit through asset manager */}
-      {address && signingCosmWasmClient && (
+      {address && signingClient && (
         <>
           <Divider my={5}></Divider>
           <Typography variant="h3" fontSize={18} mb={4}>
@@ -660,7 +653,7 @@ const ArchwayTest = () => {
           </Flex>
         </>
       )}
-      {address && signingCosmWasmClient && (
+      {address && signingClient && (
         <>
           <Flex mt={3}>
             <Button onClick={depositToIcon}>Deposit collateral</Button>
@@ -668,7 +661,7 @@ const ArchwayTest = () => {
           <Flex mt={3}>{/* <Button onClick={depositToIconAndBorrow}>Deposit collateral and borrow</Button> */}</Flex>
         </>
       )}
-      {address && signingCosmWasmClient && (
+      {address && signingClient && (
         <>
           <Divider my={5}></Divider>
           <Typography variant="h3" fontSize={18} mb={4}>
@@ -676,7 +669,7 @@ const ArchwayTest = () => {
           </Typography>
         </>
       )}
-      {address && signingCosmWasmClient && (
+      {address && signingClient && (
         <>
           <Flex mt={3}>
             <Button onClick={repayDebtFromArchway}>Repay bnUSD</Button>
@@ -685,7 +678,7 @@ const ArchwayTest = () => {
         </>
       )}
       {/* xCall token transfer */}
-      {address && signingCosmWasmClient && (
+      {address && signingClient && (
         <>
           <Divider my={5}></Divider>
           <Typography variant="h3" fontSize={18} mb={4}>
@@ -693,7 +686,7 @@ const ArchwayTest = () => {
           </Typography>
         </>
       )}
-      {address && signingCosmWasmClient && (
+      {address && signingClient && (
         <Flex mt={3} alignItems="center">
           <Button onClick={borrowFromIcon}>Borrow bnUSD</Button>
           <Typography ml={2} color="text">
@@ -702,7 +695,7 @@ const ArchwayTest = () => {
         </Flex>
       )}
       {/* Executable calls */}
-      {address && signingCosmWasmClient && (
+      {address && signingClient && (
         <>
           <Divider my={5}></Divider>
           <Typography variant="h3" fontSize={18} mb={4}>
@@ -712,7 +705,7 @@ const ArchwayTest = () => {
       )}
       {xCallData ? 'ICON' : null}
       {address &&
-        signingCosmWasmClient &&
+        signingClient &&
         xCallData?.map(
           data =>
             data && (

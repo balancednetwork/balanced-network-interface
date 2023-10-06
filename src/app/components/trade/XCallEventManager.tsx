@@ -171,7 +171,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
             //TODO: test response messages
             console.log('xCall debug - xCALL rollback needed');
-            setListeningTo('archway', XCallEvent.ResponseMessage);
+            setListeningTo('archway', XCallEvent.RollbackMessage);
           }
         }
       }

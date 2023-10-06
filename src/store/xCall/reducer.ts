@@ -56,20 +56,9 @@ export default createReducer(initialState, builder =>
     })
     .addCase(addXCallDestinationEvent, (state, { payload: { chain, data } }) => {
       if (chain && data) {
-        // const originEvents = [...state[chain].origin];
-        // console.log(
-        //   originEvents,
-        //   originEvents.find(o => o.sn === data.sn),
-        //   data,
-        // );
-        // //if there is an origin event with the same sn, add the destination event to the origin event
-        // if (originEvents.find(o => o.sn === data.sn)) {
-        //   state[chain].destination.push(data);
-        // }
         state.events[chain].destination.push(data);
         state.xCall = CurrentXCallState.AWAITING_USER_CALL_EXECUTION;
         state.listeningTo = undefined;
-        //then listen for call executed event;
       }
     })
     .addCase(removeXCallEvent, (state, { payload: { sn, setToIdle } }) => {

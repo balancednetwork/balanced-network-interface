@@ -168,28 +168,42 @@ const XCallSwapModal = ({
     changeShouldLedgerSign(false);
   };
 
-  const msgs = {
-    txMsgs: {
-      icon: {
-        pending: t`Pending icon tx message`,
-        summary: t`Summary icon tx message`,
+  //todo: extract to method to handle other chains in the future
+  const msgs = React.useMemo(() => {
+    const swapMessages =
+      executionTrade &&
+      swapMessage(
+        executionTrade.inputAmount.toFixed(2),
+        executionTrade.inputAmount.currency.symbol || 'IN',
+        executionTrade.outputAmount.toFixed(2),
+        executionTrade.outputAmount.currency.symbol || 'OUT',
+      );
+
+    return {
+      txMsgs: {
+        icon: {
+          pending: swapMessages?.pendingMessage || 'Swapping',
+          summary: swapMessages?.successMessage || 'Swapped successfully',
+        },
+        archway: {
+          pending: t`Transferring ${executionTrade?.outputAmount.currency.symbol || 'swap result'} to Archway network`,
+          summary: t`${
+            executionTrade?.outputAmount.currency.symbol || 'Swap result'
+          } successfully transferred to Archway network`,
+        },
       },
-      archway: {
-        pending: t`Pending archway tx message`,
-        summary: t`Summary archway tx message`,
+      managerMsgs: {
+        icon: {
+          awaiting: t`Awaiting message from ICON network`,
+          actionRequired: t`Confirm swap on ICON network`,
+        },
+        archway: {
+          awaiting: t`Awaiting message from Archway network`,
+          actionRequired: t`Confirm ${executionTrade?.outputAmount.currency.symbol || ''} transfer to Archway network`,
+        },
       },
-    },
-    managerMsgs: {
-      icon: {
-        awaiting: t`Awaiting icon manager message`,
-        actionRequired: t`Action required icon manager message`,
-      },
-      archway: {
-        awaiting: t`Awaiting archway manager message`,
-        actionRequired: t`Action required archway manager message`,
-      },
-    },
-  };
+    };
+  }, [executionTrade]);
 
   const handleICONTxResult = async (hash: string) => {
     const txResult = await fetchTxResult(hash);

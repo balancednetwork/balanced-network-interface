@@ -200,7 +200,9 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
         >
           <Box pt={3}>
             <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-              <Typography mb={4}>{t`Awaiting data on ${getNetworkDisplayName(listeningTo.chain)} network`}</Typography>
+              <Typography mb={4}>{t`Listening on ${getNetworkDisplayName(
+                listeningTo.chain,
+              )} network for confirmation.`}</Typography>
               <MemoizedSpinnerControl />
             </Flex>
           </Box>

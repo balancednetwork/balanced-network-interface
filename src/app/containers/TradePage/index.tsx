@@ -7,6 +7,8 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import BridgeActivity from 'app/components/bridge/BridgeActivity';
+import BridgePanel from 'app/components/bridge/BridgePanel';
 import { UnderlineText } from 'app/components/DropdownText';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
 import LiquidityPoolsPanel from 'app/components/trade/LiquidityPoolsPanel';
@@ -16,7 +18,7 @@ import SwapDescription from 'app/components/trade/SwapDescription';
 import SwapPanel from 'app/components/trade/SwapPanel';
 import { SectionPanel } from 'app/components/trade/utils';
 import { useAvailablePairs, useBalances } from 'hooks/useV2Pairs';
-import { useBridgeModalURLHandler, useTransferAssetsModalToggle } from 'store/application/hooks';
+import { useTransferAssetsModalToggle } from 'store/application/hooks';
 import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
 import { useFetchOraclePrices } from 'store/oracle/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
@@ -62,7 +64,6 @@ export function TradePage() {
   useFetchBBalnInfo(account);
   useFetchRewardsInfo();
   useFetchStabilityFundBalances();
-  useBridgeModalURLHandler();
 
   const [value, setValue] = React.useState<number>(location.pathname.includes('/supply') ? 1 : 0);
 
@@ -73,6 +74,9 @@ export function TradePage() {
     }
     if (value === 1) {
       history.replace('/trade/supply');
+    }
+    if (value === 2) {
+      history.replace('/trade/bridge');
     }
   };
 
@@ -104,14 +108,17 @@ export function TradePage() {
     <>
       <Box flex={1}>
         <Flex mb={10} flexDirection="column">
-          <BTPButton onClick={handleBTPButtonClick}>Transfer assets between blockchains</BTPButton>
+          <BTPButton onClick={handleBTPButtonClick}>Transfer assets between blockchains (Legacy)</BTPButton>
           <Flex alignItems="center" justifyContent="space-between">
             <Tabs value={value} onChange={handleTabClick}>
               <Tab>
                 <Trans>Swap</Trans>
               </Tab>
               <Tab>
-                <Trans>Supply liquidity</Trans>
+                <Trans>Supply</Trans>
+              </Tab>
+              <Tab>
+                <Trans>Bridge</Trans>
               </Tab>
             </Tabs>
           </Flex>
@@ -126,6 +133,13 @@ export function TradePage() {
             <PoolPanelContext.Provider value={data}>
               <LPPanel />
             </PoolPanelContext.Provider>
+          </TabPanel>
+
+          <TabPanel value={value} index={2}>
+            <SectionPanel bg="bg2">
+              <BridgePanel />
+              <BridgeActivity />
+            </SectionPanel>
           </TabPanel>
         </Flex>
 

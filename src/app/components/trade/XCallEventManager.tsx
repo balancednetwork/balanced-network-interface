@@ -35,16 +35,23 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Button } from '../Button';
 import Spinner from '../Spinner';
-import { swapMessage } from './utils';
 
 type XCallEventManagerProps = {
   xCallReset: () => void;
-  clearInputs: () => void;
+  clearInputs?: () => void;
   executionTrade?: Trade<Currency, Currency, TradeType>;
   msgs: {
-    [key in SupportedXCallChains]: {
-      awaiting: string;
-      actionRequired: string;
+    txMsgs: {
+      [key in SupportedXCallChains]: {
+        pending: string;
+        summary: string;
+      };
+    };
+    managerMsgs: {
+      [key in SupportedXCallChains]: {
+        awaiting: string;
+        actionRequired: string;
+      };
     };
   };
 };
@@ -71,15 +78,6 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
   useArchwayEventListener(listeningTo?.chain === 'archway' ? listeningTo.event : null);
   useICONEventListener(listeningTo?.chain === 'icon' ? listeningTo.event : null);
 
-  const swapMessages =
-    executionTrade &&
-    swapMessage(
-      executionTrade.inputAmount.toFixed(2),
-      executionTrade.inputAmount.currency.symbol || 'IN',
-      executionTrade.outputAmount.toFixed(2),
-      executionTrade.outputAmount.currency.symbol || 'OUT',
-    );
-
   const handleArchwayExecuteXCall = (data: DestinationXCallData) => async () => {
     if (signingClient && accountArch) {
       const msg = {
@@ -95,7 +93,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
       // }
 
       try {
-        initTransaction('archway', t`Transferring swap result to Archway network.`);
+        initTransaction('archway', msgs.txMsgs.archway.pending);
         const res: ExecuteResult = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, 'auto');
 
         console.log('xCall debug - Archway executeCall complete', res);
@@ -108,7 +106,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
           removeEvent(data.sn, true);
           console.log('xCall debug - Archway executeCall - success');
           xCallReset();
-          addTransactionResult('archway', res, t`Transfer complete.`);
+          addTransactionResult('archway', res, msgs.txMsgs.archway.summary);
         } else {
           console.log('xCall debug - Archway executeCall - fail');
           addTransactionResult('archway', res || null, t`Transfer failed.`);
@@ -133,7 +131,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
 
       bnJs.inject({ account });
       const { result: hash } = await bnJs.XCall.executeCall(`0x${data.reqId.toString(16)}`, data.data);
-      addTransaction({ hash }, { pending: swapMessages?.pendingMessage, summary: swapMessages?.successMessage });
+      addTransaction({ hash }, { pending: msgs.txMsgs.icon.pending, summary: msgs.txMsgs.icon.summary });
       const txResult = await fetchTxResult(hash);
       if (txResult?.status === 1 && txResult.eventLogs.length) {
         // looking for CallExecuted event
@@ -151,7 +149,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
 
         if (callExecutedEvent?.data[0] === '0x1') {
           console.log('xCall debug - xCall executed successfully');
-          clearInputs();
+          clearInputs && clearInputs();
           //has xCall emitted CallMessageSent event?
           const callMessageSentEvent = txResult.eventLogs.find(event =>
             event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
@@ -202,7 +200,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
         >
           <Box pt={3}>
             <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-              <Typography mb={4}>Awaiting confirmation on {getNetworkDisplayName(listeningTo.chain)} </Typography>
+              <Typography mb={4}>{t`Awaiting data on ${getNetworkDisplayName(listeningTo.chain)} network`}</Typography>
               <MemoizedSpinnerControl />
             </Flex>
           </Box>
@@ -219,12 +217,12 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
           <Box pt={3}>
             <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
               <Typography mb={4}>
-                <Trans>Confirm the transfer to Archway network</Trans>
+                <Trans>{msgs.managerMsgs.archway.actionRequired}</Trans>
               </Typography>
               {archwayDestinationEvents.map(event => (
                 <Flex alignItems="center" key={event.reqId}>
                   <Button onClick={handleArchwayExecuteXCall(event)} disabled={isTxPending}>
-                    {isTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm transfer</Trans>}
+                    {isTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm</Trans>}
                   </Button>
                 </Flex>
               ))}
@@ -243,12 +241,12 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
           <Box pt={3}>
             <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
               <Typography mb={4}>
-                <Trans>Confirm the swap on ICON network</Trans>
+                <Trans>{msgs.managerMsgs.icon.actionRequired}</Trans>
               </Typography>
               {iconDestinationEvents.map(event => (
                 <Flex alignItems="center" key={event.reqId}>
                   <Button onClick={() => handleICONExecuteXCall(event)} disabled={isICONTxPending}>
-                    {isICONTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm swap</Trans>}
+                    {isICONTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm</Trans>}
                   </Button>
                 </Flex>
               ))}

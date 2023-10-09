@@ -1,7 +1,6 @@
 import rlp from 'rlp';
 
-import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'constants/tokens';
-
+import { ARCHWAY_SUPPORTED_TOKENS_LIST } from './archway/tokens';
 import { SupportedXCallChains, XCallEvent, XCallEventType } from './types';
 
 export function getRlpEncodedMsg(msg: string | any[]) {
@@ -46,7 +45,7 @@ export const getNetworkDisplayName = (chain: SupportedXCallChains) => {
   return '';
 };
 
-export const getArchwayToken = (symbol?: string) => {
+export const getArchwayCounterToken = (symbol?: string) => {
   if (symbol) {
     return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
   }

@@ -2,7 +2,6 @@ import React from 'react';
 
 import { t } from '@lingui/macro';
 
-import { ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import {
   useAddTransactionResult,
   useArchwayTransactionsState,
@@ -11,6 +10,7 @@ import {
 
 import { useArchwayContext } from '../ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from '../config';
+import { ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '../tokens';
 
 const useAllowanceHandler = (
   tokenAddress: string,
@@ -25,7 +25,7 @@ const useAllowanceHandler = (
   const [allowanceIncreased, setAllowanceIncreased] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    if (tokenAddress && signingClient) {
+    if (address && tokenAddress && tokenAddress.includes('archway') && signingClient) {
       signingClient
         .queryContractSmart(tokenAddress, {
           allowance: { owner: address, spender: spenderAddress },

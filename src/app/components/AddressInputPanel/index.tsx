@@ -40,7 +40,7 @@ const AddressInput = styled.input<{ bg?: string }>`
   overflow: visible;
   font-family: inherit;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: normal;
   line-height: 1.15;
   margin: 0;
 
@@ -55,9 +55,10 @@ interface AddressInputPanelProps {
   onUserInput: (value: string) => void;
   bg?: string;
   className?: string;
+  placeholder?: string;
 }
 
-export default function AddressInputPanel({ value, onUserInput, bg, className }: AddressInputPanelProps) {
+export default function AddressInputPanel({ value, onUserInput, bg, className, placeholder }: AddressInputPanelProps) {
   return (
     <InputContainer className={className}>
       <AddressInputLabel bg={bg}>
@@ -65,7 +66,7 @@ export default function AddressInputPanel({ value, onUserInput, bg, className }:
       </AddressInputLabel>
 
       <AddressInput
-        placeholder="hx00000..."
+        placeholder={placeholder || 'hx00000...'}
         value={value}
         onChange={event => onUserInput(event.target.value)}
         bg={bg}

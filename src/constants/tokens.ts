@@ -2,11 +2,7 @@ import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balance
 import { Token, Currency } from '@balancednetwork/sdk-core';
 import { useIconReact } from 'packages/icon-react';
 
-import {
-  TRANSFORMED_DEFAULT_TOKEN_LIST,
-  TRANSFORMED_COMBINED_TOKEN_LIST,
-  ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST,
-} from 'store/lists/hooks';
+import { TRANSFORMED_DEFAULT_TOKEN_LIST, TRANSFORMED_COMBINED_TOKEN_LIST } from 'store/lists/hooks';
 
 import { NETWORK_ID } from './config';
 
@@ -29,7 +25,7 @@ export const useICX = () => {
   return ICX[chainId];
 };
 
-type TokenMap = { [key: number]: Token };
+export type TokenMap = { [key: number]: Token };
 
 export const ICX: TokenMap = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX'),
@@ -126,14 +122,6 @@ export const BTCB: TokenMap = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx5b5a03cb525a1845d0af3a872d525b18a810acb0', 18, 'BTCB', 'Binance Bitcoin'),
 };
 
-// disable prettier printWidth rule
-// prettier-ignore
-export const ArchwayToken: TokenMap = {
-  //TODO: Archway mainnet info
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx5b5a03cb525a1845d0af3a872d525b18a810acb0', 18, 'BTCB', 'Binance Bitcoin'),
-  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx6975cdce422307b73b753b121877960e83b3bc35', 6, 'TwitterAsset', 'Test Archway'),
-};
-
 const chainId = NETWORK_ID;
 export const SUPPORTED_TOKENS_MAP_BY_ADDRESS = Object.keys(TRANSFORMED_DEFAULT_TOKEN_LIST[chainId] ?? {}).reduce<{
   [address: string]: Token;
@@ -151,20 +139,8 @@ export const COMBINED_TOKENS_MAP_BY_ADDRESS = Object.keys(TRANSFORMED_COMBINED_T
 }, {});
 COMBINED_TOKENS_MAP_BY_ADDRESS[NULL_CONTRACT_ADDRESS] = ICX[chainId];
 
-export const ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS = Object.keys(
-  ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST[chainId] ?? {},
-).reduce<{
-  [address: string]: Token;
-}>((newMap, address) => {
-  newMap[address] = ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST[chainId][address].token;
-  return newMap;
-}, {});
-//TODO: Add native Arch token here
-// ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[NULL_CONTRACT_ADDRESS] = ICX[chainId];
-
 export const SUPPORTED_TOKENS_LIST: Token[] = Object.values(SUPPORTED_TOKENS_MAP_BY_ADDRESS);
 export const COMBINED_TOKENS_LIST: Token[] = Object.values(COMBINED_TOKENS_MAP_BY_ADDRESS);
-export const ARCHWAY_SUPPORTED_TOKENS_LIST: Token[] = Object.values(ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS);
 
 export const FUNDING_TOKENS: { [chainId: number]: Token[] } = {
   [ChainId.MAINNET]: [sICX[ChainId.MAINNET], bnUSD[ChainId.MAINNET], BALN[ChainId.MAINNET]],

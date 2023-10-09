@@ -18,7 +18,7 @@ import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/ArchwayTe
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
-import { getArchwayToken, getBytesFromString } from 'app/_xcall/utils';
+import { getArchwayCounterToken, getBytesFromString } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
@@ -52,7 +52,7 @@ type XCallSwapModalProps = {
   onClose: () => void;
 };
 
-const StyledButton = styled(Button)`
+export const StyledButton = styled(Button)`
   position: relative;
 
   :after,
@@ -99,7 +99,7 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const presenceVariants = {
+export const presenceVariants = {
   initial: { opacity: 0, height: 0 },
   animate: { opacity: 1, height: 'auto' },
   exit: { opacity: 0, height: 0 },
@@ -134,7 +134,7 @@ const XCallSwapModal = ({
   const { data: archwayXcallFees } = useArchwayXcallFee();
 
   const { increaseAllowance, allowanceIncreased, isIncreaseNeeded: allowanceIncreaseNeeded } = useAllowanceHandler(
-    (originChain === 'archway' && getArchwayToken(executionTrade?.inputAmount.currency.symbol)?.address) || '',
+    (originChain === 'archway' && getArchwayCounterToken(executionTrade?.inputAmount.currency.symbol)?.address) || '',
     executionTrade?.inputAmount.quotient.toString() || '0',
   );
 
@@ -168,20 +168,28 @@ const XCallSwapModal = ({
     changeShouldLedgerSign(false);
   };
 
-  const eventManagerMessages = React.useMemo(() => {
-    const messages = {
+  const msgs = {
+    txMsgs: {
       icon: {
-        awaiting: '',
-        actionRequired: '',
+        pending: t`Pending icon tx message`,
+        summary: t`Summary icon tx message`,
       },
       archway: {
-        awaiting: '',
-        actionRequired: '',
+        pending: t`Pending archway tx message`,
+        summary: t`Summary archway tx message`,
       },
-    };
-
-    return messages;
-  }, []);
+    },
+    managerMsgs: {
+      icon: {
+        awaiting: t`Awaiting icon manager message`,
+        actionRequired: t`Action required icon manager message`,
+      },
+      archway: {
+        awaiting: t`Awaiting archway manager message`,
+        actionRequired: t`Action required archway manager message`,
+      },
+    },
+  };
 
   const handleICONTxResult = async (hash: string) => {
     const txResult = await fetchTxResult(hash);
@@ -204,8 +212,6 @@ const XCallSwapModal = ({
       return;
     }
 
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
     const swapMessages = swapMessage(
       executionTrade.inputAmount.toFixed(2),
       executionTrade.inputAmount.currency.symbol || 'IN',
@@ -216,6 +222,7 @@ const XCallSwapModal = ({
     const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
     if (originChain === 'icon') {
+      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
       if (bnJs.contractSettings.ledgerSettings.actived) {
         changeShouldLedgerSign(true);
       }
@@ -267,7 +274,7 @@ const XCallSwapModal = ({
         cleanupSwap();
       }
     } else if (originChain === 'archway') {
-      const archToken = getArchwayToken(executionTrade.inputAmount.currency.symbol);
+      const archToken = getArchwayCounterToken(executionTrade.inputAmount.currency.symbol);
       if (!archToken || !(signingClient && accountArch)) {
         return;
       }
@@ -414,7 +421,7 @@ const XCallSwapModal = ({
           xCallReset={xCallReset}
           clearInputs={clearInputs}
           executionTrade={executionTrade}
-          msgs={eventManagerMessages}
+          msgs={msgs}
         />
 
         {/* Handle allowance */}

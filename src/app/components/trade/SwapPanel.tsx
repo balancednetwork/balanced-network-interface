@@ -13,6 +13,7 @@ import styled from 'styled-components';
 
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'app/_xcall/archway/tokens';
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
@@ -25,7 +26,6 @@ import { Typography } from 'app/theme';
 import { ReactComponent as FlipIcon } from 'assets/icons/flip.svg';
 import bnJs from 'bnJs';
 import { SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
-import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import {
   useSwapSlippageTolerance,
   useWalletModalToggle,
@@ -657,7 +657,7 @@ const FlipButton = styled(Box)`
   cursor: pointer;
 `;
 
-const AutoColumn = styled(Box)<{
+export const AutoColumn = styled(Box)<{
   gap?: 'sm' | 'md' | 'lg' | string;
   justify?: 'stretch' | 'center' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'space-between';
 }>`

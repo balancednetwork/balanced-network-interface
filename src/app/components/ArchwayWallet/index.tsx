@@ -10,16 +10,13 @@ import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { ARCHWAY_SUPPORTED_TOKENS_LIST, ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'app/_xcall/archway/tokens';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import '@reach/tabs/styles.css';
-import {
-  HIGH_PRICE_ASSET_DP,
-  ARCHWAY_SUPPORTED_TOKENS_LIST,
-  ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS,
-} from 'constants/tokens';
+import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import useArrowControl from 'hooks/useArrowControl';
 import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';

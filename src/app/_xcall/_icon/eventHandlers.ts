@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useQuery, UseQueryResult } from 'react-query';
+
 import bnJs from 'bnJs';
 import { useBlockNumber } from 'store/application/hooks';
 import { useAddDestinationEvent, useXCallOriginEvents } from 'store/xCall/hooks';
@@ -112,19 +114,17 @@ export const useICONEventListener = (eventName: XCallEventType | null) => {
   }, [socket, disconnectFromWebsocket, eventName, query, addDestinationEvent, archwayOriginEvents]);
 };
 
-//for this to work, also update balanced-js npm pckg to map rollback boolean to hex value
-//for now, icx fees are paid by dao fund
-// export const useIconXcallFee = (): UseQueryResult<{ noRollback: string; rollback: string }> => {
-//   return useQuery(
-//     `icon-xcall-fees`,
-//     async () => {
-//       const feeWithRollback = await bnJs.XCall.getFee('archway', true);
-//       const feeNoRollback = await bnJs.XCall.getFee('archway', false);
-//       return {
-//         noRollback: feeNoRollback,
-//         rollback: feeWithRollback,
-//       };
-//     },
-//     { keepPreviousData: true },
-//   );
-// };
+export const useIconXcallFee = (): UseQueryResult<{ noRollback: string; rollback: string }> => {
+  return useQuery(
+    `icon-xcall-fees`,
+    async () => {
+      const feeWithRollback = await bnJs.XCall.getFee('archway', true);
+      const feeNoRollback = await bnJs.XCall.getFee('archway', false);
+      return {
+        noRollback: feeNoRollback,
+        rollback: feeWithRollback,
+      };
+    },
+    { keepPreviousData: true },
+  );
+};

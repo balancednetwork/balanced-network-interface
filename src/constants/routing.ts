@@ -1,7 +1,9 @@
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { Token } from '@balancednetwork/sdk-core';
 
-import { ICX, sICX, bnUSD, IUSDC, USDS, OMM, IUSDT, BTCB, ArchwayToken } from './tokens';
+import { ArchwayToken } from 'app/_xcall/archway/tokens';
+
+import { ICX, sICX, bnUSD, IUSDC, USDS, OMM, IUSDT, BTCB } from './tokens';
 
 export const MAX_HOPS = 4;
 

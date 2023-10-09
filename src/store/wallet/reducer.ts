@@ -1,9 +1,10 @@
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { createReducer } from '@reduxjs/toolkit';
 
+import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'app/_xcall/archway/tokens';
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { ZERO } from 'constants/index';
-import { ARCHWAY_SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 
 import { changeICONBalances, changeArchwayBalances, resetBalances } from './actions';
 

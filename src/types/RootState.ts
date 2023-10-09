@@ -7,6 +7,7 @@
 import { ApplicationState } from 'store/application/reducer';
 import { ArbitraryCallsState } from 'store/arbitraryCalls/reducer';
 import { BBalnState } from 'store/bbaln/reducer';
+import { BridgeState } from 'store/bridge/reducer';
 import { CollateralState } from 'store/collateral/reducer';
 import { FeesState } from 'store/fees/reducer';
 import { TokenListState } from 'store/lists/reducer';
@@ -48,4 +49,5 @@ export interface RootState {
   arbitraryCalls: ArbitraryCallsState;
   xCall: XCallState;
   transactionsCrosschain: TransactionsCrosschainState;
+  bridge: BridgeState;
 }

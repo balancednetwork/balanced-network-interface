@@ -94,6 +94,7 @@ interface CurrencyInputPanelProps {
   account?: string | null;
   selectedCurrency?: Currency | null;
   isChainDifference?: boolean;
+  showCommunityListControl?: boolean;
 }
 
 export const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -112,6 +113,7 @@ export default function CurrencyInputPanel({
   account,
   selectedCurrency,
   isChainDifference,
+  showCommunityListControl = true,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -162,6 +164,7 @@ export default function CurrencyInputPanel({
               anchorEl={ref.current}
               width={width ? width + 40 : undefined}
               selectedCurrency={selectedCurrency}
+              showCommunityListControl={showCommunityListControl}
             />
           )}
         </div>

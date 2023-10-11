@@ -65,7 +65,9 @@ export function TradePage() {
   useFetchRewardsInfo();
   useFetchStabilityFundBalances();
 
-  const [value, setValue] = React.useState<number>(location.pathname.includes('/supply') ? 1 : 0);
+  const [value, setValue] = React.useState<number>(
+    location.pathname.includes('/supply') ? 1 : location.pathname.includes('/bridge') ? 2 : 0,
+  );
 
   const handleTabClick = (event: React.MouseEvent, value: number) => {
     setValue(value);
@@ -86,7 +88,6 @@ export function TradePage() {
 
   const handleBTPButtonClick = () => {
     toggleTransferAssetsModal();
-    history.push('/trade/bridge');
   };
 
   // fetch the reserves for all V2 pools

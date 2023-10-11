@@ -391,7 +391,14 @@ export default function BridgePanel() {
               <Trans>Fee</Trans>
             </Typography>
 
-            <Typography color="text">$2.04</Typography>
+            <Typography color="text">
+              {bridgeDirection.from === 'icon' && iconXcallFees && (
+                <>{(parseInt(iconXcallFees.rollback, 16) / 10 ** 18).toPrecision(1)} ICX</>
+              )}
+              {bridgeDirection.from === 'archway' && archwayXcallFees && (
+                <>{(Number(archwayXcallFees.rollback) / 10 ** 6).toPrecision(1)} Arch</>
+              )}
+            </Typography>
           </Flex>
           <Flex alignItems="center" justifyContent="space-between">
             <Typography>
@@ -411,17 +418,44 @@ export default function BridgePanel() {
 
       <Modal isOpen={isOpen} onDismiss={controlledClose}>
         <ModalContentWrapper>
-          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
-            {t`Bridge ${currencyAmountToBridge?.toFixed(2)} ${currencyToBridge?.symbol} from ${getNetworkDisplayName(
+          <Typography textAlign="center" mb="5px">
+            {t`Bridge ${currencyToBridge?.symbol} from ${getNetworkDisplayName(
               bridgeDirection.from,
             )} to ${getNetworkDisplayName(bridgeDirection.to)}?`}
           </Typography>
 
-          {bridgeDirection.from === 'archway' && archwayXcallFees && (
-            <Typography textAlign="center">
-              Includes a fee of {(Number(archwayXcallFees.rollback) / 10 ** 6).toPrecision(1)} Arch
-            </Typography>
-          )}
+          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
+            {`amount`}
+          </Typography>
+
+          <Typography textAlign="center" mb="2px" mt="20px">
+            {`${getNetworkDisplayName(bridgeDirection.to)} `}
+            <Trans>address</Trans>
+          </Typography>
+
+          <Typography variant="p" textAlign="center" margin={'auto'} maxWidth={200} fontSize={16}>
+            {destinationAddress}
+          </Typography>
+
+          <Flex my={5}>
+            <Box width={1 / 2} className="border-right">
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
+              <Typography variant="p" textAlign="center">
+                {`before`}
+              </Typography>
+            </Box>
+
+            <Box width={1 / 2}>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
+              <Typography variant="p" textAlign="center">
+                {`after`}
+              </Typography>
+            </Box>
+          </Flex>
 
           <XCallEventManager xCallReset={xCallReset} msgs={msgs} />
 

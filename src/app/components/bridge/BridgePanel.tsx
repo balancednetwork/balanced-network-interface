@@ -177,6 +177,7 @@ export default function BridgePanel() {
     if (!currencyAmountToBridge) return false;
     if (bridgeDirection.from === 'icon' && !account) return false;
     if (bridgeDirection.from === 'archway' && !accountArch) return false;
+    if (!currencyAmountToBridge?.greaterThan(0)) return false;
     //todo: add check for available balance
     return true;
   }, [account, accountArch, bridgeDirection.from, currencyAmountToBridge]);

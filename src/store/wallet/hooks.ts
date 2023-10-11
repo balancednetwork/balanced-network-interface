@@ -192,7 +192,7 @@ export function useTokenBalances(
           };
         });
 
-        const data: any[] = await bnJs.Multicall.getAggregateData(cds);
+        const data: any[] = await bnJs.Multicall.getAggregateData(cds.filter(cd => cd.target.startsWith('cx')));
         const result = data.map(bal => (bal === null ? undefined : bal));
 
         setBalances(result);

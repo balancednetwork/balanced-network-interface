@@ -405,7 +405,7 @@ export default function BridgePanel() {
               <Trans>Transfer time</Trans>
             </Typography>
 
-            <Typography color="text">~ 2m 30s</Typography>
+            <Typography color="text">~ 30s</Typography>
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" mt={4}>

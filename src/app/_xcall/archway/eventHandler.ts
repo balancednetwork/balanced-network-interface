@@ -98,16 +98,16 @@ export function getXcallResult(tx: CrossChainTxType): string | undefined {
 }
 
 export const useArchwayXcallFee = (): UseQueryResult<{ noRollback: string; rollback: string }> => {
-  const { signingClient } = useArchwayContext();
+  const { client } = useArchwayContext();
 
   return useQuery(
     `archway-xcall-fees`,
     async () => {
-      if (signingClient) {
-        const feeWithRollback = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+      if (client) {
+        const feeWithRollback = await client.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
           get_fee: { nid: ICON_XCALL_NETWORK_ID, rollback: true },
         });
-        const feeNoRollback = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+        const feeNoRollback = await client.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
           get_fee: { nid: ICON_XCALL_NETWORK_ID, rollback: false },
         });
         return {
@@ -116,6 +116,6 @@ export const useArchwayXcallFee = (): UseQueryResult<{ noRollback: string; rollb
         };
       }
     },
-    { enabled: !!signingClient, keepPreviousData: true },
+    { enabled: !!client, keepPreviousData: true },
   );
 };

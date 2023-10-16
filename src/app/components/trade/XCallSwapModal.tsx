@@ -18,7 +18,7 @@ import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
-import { getArchwayCounterToken, getBytesFromString } from 'app/_xcall/utils';
+import { getArchwayCounterToken, getBytesFromString, getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
@@ -186,20 +186,22 @@ const XCallSwapModal = ({
           summary: swapMessages?.successMessage || 'Swapped successfully',
         },
         archway: {
-          pending: t`Transferring ${executionTrade?.outputAmount.currency.symbol || 'swap result'} to Archway network`,
-          summary: t`${
+          pending: t`Transferring ${executionTrade?.outputAmount.currency.symbol || 'swap result'} to Archway.`,
+          summary: t`Transferred ${executionTrade?.outputAmount.toFixed(2)} ${
             executionTrade?.outputAmount.currency.symbol || 'Swap result'
-          } successfully transferred to Archway network`,
+          } to Archway.`,
         },
       },
       managerMsgs: {
         icon: {
           awaiting: t`Awaiting message from ICON network`,
-          actionRequired: t`Confirm swap on ICON network`,
+          actionRequired: t`Swap ${executionTrade?.inputAmount.currency.symbol || ''} for ${
+            executionTrade?.outputAmount.currency.symbol || ''
+          }.`,
         },
         archway: {
           awaiting: t`Awaiting message from Archway network`,
-          actionRequired: t`Confirm ${executionTrade?.outputAmount.currency.symbol || ''} transfer to Archway network`,
+          actionRequired: t`Transfer ${executionTrade?.outputAmount.currency.symbol || ''} to Archway.`,
         },
       },
     };
@@ -302,7 +304,7 @@ const XCallSwapModal = ({
         ...(receivingNetworkAddress && { receiver: receivingNetworkAddress }),
       };
 
-      initTransaction('archway', 'Sending swap request to ICON network.');
+      initTransaction('archway', t`Requesting cross-chain swap...`);
       setXCallInProgress(true);
       //handle icon native tokens vs spoke assets
       if (['bnUSD'].includes(archToken.symbol!)) {
@@ -331,7 +333,7 @@ const XCallSwapModal = ({
           console.log('xCall debug - Archway swap init tx:', res);
 
           const originEventData = getXCallOriginEventDataFromArchway(res.events, 'todo swap modal', 'todo swap modal');
-          addTransactionResult('archway', res, 'Swap request sent');
+          addTransactionResult('archway', res, t`Cross-chain swap requested.`);
           originEventData && addOriginEvent('archway', originEventData);
         } catch (e) {
           console.error(e);
@@ -367,7 +369,7 @@ const XCallSwapModal = ({
             [{ amount: fee, denom: 'aconst' }],
           );
           console.log('xCall debug - Archway swap init tx:', res);
-          addTransactionResult('archway', res, 'Swap request sent');
+          addTransactionResult('archway', res, 'Cross-chain swap requested.');
           setXCallInProgress(true);
           const originEventData = getXCallOriginEventDataFromArchway(res.events, 'todo swap modal', 'todo swap modal');
           originEventData && addOriginEvent('archway', originEventData);
@@ -385,7 +387,7 @@ const XCallSwapModal = ({
       <ModalContentWrapper>
         <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
           <Trans>
-            xCall Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
+            Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
           </Trans>
         </Typography>
 
@@ -407,6 +409,9 @@ const XCallSwapModal = ({
               {formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency')}{' '}
               {currencies[Field.INPUT]?.symbol}
             </Typography>
+            <Typography textAlign="center">
+              <Trans>{getNetworkDisplayName(originChain)}</Trans>
+            </Typography>
           </Box>
 
           <Box width={1 / 2}>
@@ -417,6 +422,9 @@ const XCallSwapModal = ({
               {formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency')}{' '}
               {currencies[Field.OUTPUT]?.symbol}
             </Typography>
+            <Typography textAlign="center">
+              <Trans>{getNetworkDisplayName(destinationChain)}</Trans>
+            </Typography>
           </Box>
         </Flex>
 
@@ -424,14 +432,18 @@ const XCallSwapModal = ({
           textAlign="center"
           hidden={currencies[Field.INPUT]?.symbol === 'ICX' && currencies[Field.OUTPUT]?.symbol === 'sICX'}
         >
-          <Trans>
-            Includes a fee of {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
-            {currencies[Field.INPUT]?.symbol}.
-          </Trans>
+          <Trans>Includes a fee of</Trans>{' '}
+          <strong>
+            {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
+            {currencies[Field.INPUT]?.symbol}
+          </strong>
+          .
         </Typography>
         {originChain === 'archway' && archwayXcallFees && (
           <Typography textAlign="center">
-            Plus flat xCall fee of {(Number(archwayXcallFees.rollback) / 10 ** 6).toPrecision(1)} Arch
+            <Trans>You'll also pay</Trans>{' '}
+            <strong>{(Number(archwayXcallFees.rollback) / 10 ** 6).toPrecision(1)} Arch</strong>{' '}
+            <Trans>to transfer cross-chain.</Trans>
           </Typography>
         )}
 
@@ -448,11 +460,13 @@ const XCallSwapModal = ({
             <motion.div key="allowance-handler" {...presenceVariants} style={{ overflow: 'hidden' }}>
               <Box pt={3}>
                 <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-                  <Typography pb={4}>{t`Increase ${executionTrade?.inputAmount.currency.symbol} allowance`}</Typography>
-                  {isTxPending && <Spinner></Spinner>}
+                  <Typography
+                    pb={4}
+                  >{t`Approve ${executionTrade?.inputAmount.currency.symbol} for cross-chain transfer.`}</Typography>
                   {!isTxPending && allowanceIncreaseNeeded && !allowanceIncreased && (
-                    <Button onClick={increaseAllowance}>Increase allowance</Button>
+                    <Button onClick={increaseAllowance}>Approve</Button>
                   )}
+                  {isTxPending && <Button disabled>Approving...</Button>}
                 </Flex>
               </Box>
             </motion.div>
@@ -473,7 +487,7 @@ const XCallSwapModal = ({
                 <Trans>Cancel</Trans>
               </TextButton>
               {allowanceIncreaseNeeded && !xCallInProgress ? (
-                <Button disabled={true}>Allowance needed</Button>
+                <Button disabled={true}>Swap</Button>
               ) : (
                 <StyledButton onClick={handleXCallSwap} disabled={xCallInProgress}>
                   {!xCallInProgress ? <Trans>Swap</Trans> : <Trans>xCall in progress</Trans>}

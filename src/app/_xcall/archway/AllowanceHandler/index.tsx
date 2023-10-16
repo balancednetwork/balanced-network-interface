@@ -61,17 +61,28 @@ const useAllowanceHandler = (
       try {
         initTransaction(
           'archway',
-          t`Increasing allowance for ${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol}...`,
+          t`Approving ${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} for cross-chain transfer.`,
         );
+
+        //todo: fee for mainnet
         const res = await signingClient.execute(address, tokenAddress, msg, {
           amount: [{ amount: '1', denom: 'aconst' }],
           gas: '200000',
         });
         setAllowanceIncreased(true);
-        addTransactionResult('archway', res, t`Allowance successfully increased.`);
+        addTransactionResult(
+          'archway',
+          res,
+          t`${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} approved for cross-chain transfer.`,
+        );
         console.log('xCall debug - increase allowance: ', res);
       } catch (e) {
         console.error(e);
+        addTransactionResult(
+          'archway',
+          null,
+          t`${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} transfer approval failed.`,
+        );
       }
     }
   };

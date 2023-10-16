@@ -208,12 +208,8 @@ export default function BridgePanel() {
   const handleBridgeConfirm = async () => {
     if (!currencyAmountToBridge) return;
     const messages = {
-      pending: `Transferring ${currencyAmountToBridge?.toFixed(2)} ${
-        currencyAmountToBridge?.currency.symbol
-      } to ${getNetworkDisplayName(bridgeDirection.to)}.`,
-      summary: `Successfully transferred ${currencyAmountToBridge?.currency.symbol} to ${getNetworkDisplayName(
-        bridgeDirection.to,
-      )}.`,
+      pending: `Requesting cross-chain transfer...`,
+      summary: `Cross-chain transfer requested.`,
     };
     if (bridgeDirection.from === 'icon' && account && iconXcallFees) {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -275,19 +271,19 @@ export default function BridgePanel() {
           },
         };
         try {
-          initTransaction('archway', `Sending bridge request to ICON network`);
+          initTransaction('archway', `Requesting cross-chain transfer...`);
           setXCallInProgress(true);
           const res = await signingClient.execute(accountArch, tokenAddress, msg, 'auto', undefined, [
             { amount: archwayXcallFees.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' },
           ]);
           console.log('xCall debug - Archway bridge init tx:', res);
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
-          addTransactionResult('archway', res, 'Bridge request sent');
+          addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
           originEventData && addOriginEvent('archway', originEventData);
           //todo: clear inputs
         } catch (e) {
           console.error(e);
-          addTransactionResult('archway', null, 'Bridge request failed');
+          addTransactionResult('archway', null, 'Cross-chain transfer request failed');
           setXCallInProgress(false);
         }
       } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
@@ -300,19 +296,19 @@ export default function BridgePanel() {
               data: [],
             },
           };
-          initTransaction('archway', `Sending bridge request to ICON network`);
+          initTransaction('archway', `Requesting cross-chain transfer...`);
           setXCallInProgress(true);
           const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.assetManager, msg, 'auto', undefined, [
             { amount: archwayXcallFees.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' },
           ]);
           console.log('xCall debug - Archway bridge init tx:', res);
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
-          addTransactionResult('archway', res, 'Bridge request sent');
+          addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
           originEventData && addOriginEvent('archway', originEventData);
           //todo: clear inputs
         } catch (e) {
           console.error(e);
-          addTransactionResult('archway', null, 'Bridge request failed');
+          addTransactionResult('archway', null, 'Cross-chain transfer request failed');
           setXCallInProgress(false);
         }
       }
@@ -322,22 +318,34 @@ export default function BridgePanel() {
   const msgs = {
     txMsgs: {
       icon: {
-        pending: t`Pending icon tx message`,
-        summary: t`Summary icon tx message`,
+        pending: t`Transferring ${currencyAmountToBridge?.currency.symbol} to ${getNetworkDisplayName(
+          bridgeDirection.to,
+        )}...`,
+        summary: t`Transferred ${currencyAmountToBridge?.toFixed(2)} ${
+          currencyAmountToBridge?.currency.symbol
+        } to ${getNetworkDisplayName(bridgeDirection.to)}.`,
       },
       archway: {
-        pending: t`Pending archway tx message`,
-        summary: t`Summary archway tx message`,
+        pending: t`Transferring ${currencyAmountToBridge?.currency.symbol} to ${getNetworkDisplayName(
+          bridgeDirection.to,
+        )}...`,
+        summary: t`Transferred ${currencyAmountToBridge?.toFixed(2)} ${
+          currencyAmountToBridge?.currency.symbol
+        } to ${getNetworkDisplayName(bridgeDirection.to)}.`,
       },
     },
     managerMsgs: {
       icon: {
         awaiting: t`Awaiting icon manager message`,
-        actionRequired: t`Action required icon manager message`,
+        actionRequired: t`Send ${currencyAmountToBridge?.currency.symbol} to ${getNetworkDisplayName(
+          bridgeDirection.to,
+        )}.`,
       },
       archway: {
         awaiting: t`Awaiting archway manager message`,
-        actionRequired: t`Action required archway manager message`,
+        actionRequired: t`Send ${currencyAmountToBridge?.currency.symbol} to ${getNetworkDisplayName(
+          bridgeDirection.to,
+        )}.`,
       },
     },
   };
@@ -426,16 +434,34 @@ export default function BridgePanel() {
       <Modal isOpen={isOpen} onDismiss={controlledClose}>
         <ModalContentWrapper>
           <Typography textAlign="center" mb="5px">
-            {t`Bridge ${currencyToBridge?.symbol} from ${getNetworkDisplayName(
-              bridgeDirection.from,
-            )} to ${getNetworkDisplayName(bridgeDirection.to)}?`}
+            {t`Transfer asset cross-chain?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`amount`}
+            {`${currencyAmountToBridge?.toFixed(2)} ${currencyAmountToBridge?.currency.symbol}`}
           </Typography>
 
-          <Typography textAlign="center" mb="2px" mt="20px">
+          <Flex my={5}>
+            <Box width={1 / 2} className="border-right">
+              <Typography textAlign="center">
+                <Trans>From</Trans>
+              </Typography>
+              <Typography variant="p" textAlign="center">
+                {getNetworkDisplayName(bridgeDirection.from)}
+              </Typography>
+            </Box>
+
+            <Box width={1 / 2}>
+              <Typography textAlign="center">
+                <Trans>To</Trans>
+              </Typography>
+              <Typography variant="p" textAlign="center">
+                {getNetworkDisplayName(bridgeDirection.to)}
+              </Typography>
+            </Box>
+          </Flex>
+
+          <Typography textAlign="center" mb="2px">
             {`${getNetworkDisplayName(bridgeDirection.to)} `}
             <Trans>address</Trans>
           </Typography>
@@ -443,26 +469,6 @@ export default function BridgePanel() {
           <Typography variant="p" textAlign="center" margin={'auto'} maxWidth={200} fontSize={16}>
             {destinationAddress}
           </Typography>
-
-          <Flex my={5}>
-            <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">
-                <Trans>Before</Trans>
-              </Typography>
-              <Typography variant="p" textAlign="center">
-                {`before`}
-              </Typography>
-            </Box>
-
-            <Box width={1 / 2}>
-              <Typography textAlign="center">
-                <Trans>After</Trans>
-              </Typography>
-              <Typography variant="p" textAlign="center">
-                {`after`}
-              </Typography>
-            </Box>
-          </Flex>
 
           <XCallEventManager xCallReset={xCallReset} msgs={msgs} />
 
@@ -478,11 +484,13 @@ export default function BridgePanel() {
                     flexDirection="column"
                     className="border-top"
                   >
-                    <Typography pb={4}>{t`Increase ${currencyAmountToBridge?.currency.symbol} allowance`}</Typography>
-                    {isTxPending && <Spinner></Spinner>}
+                    <Typography
+                      pb={4}
+                    >{t`Approve ${currencyAmountToBridge?.currency.symbol} for cross-chain transfer.`}</Typography>
                     {!isTxPending && allowanceIncreaseNeeded && !allowanceIncreased && (
-                      <Button onClick={increaseAllowance}>Increase allowance</Button>
+                      <Button onClick={increaseAllowance}>Approve</Button>
                     )}
+                    {isTxPending && <Button disabled>Approving...</Button>}
                   </Flex>
                 </Box>
               </motion.div>
@@ -503,10 +511,10 @@ export default function BridgePanel() {
                   <Trans>Cancel</Trans>
                 </TextButton>
                 {allowanceIncreaseNeeded && !xCallInProgress ? (
-                  <Button disabled={true}>Allowance needed</Button>
+                  <Button disabled>Transfer</Button>
                 ) : (
                   <StyledButton onClick={handleBridgeConfirm} disabled={xCallInProgress}>
-                    {!xCallInProgress ? <Trans>Bridge</Trans> : <Trans>xCall in progress</Trans>}
+                    {!xCallInProgress ? <Trans>Transfer</Trans> : <Trans>xCall in progress</Trans>}
                   </StyledButton>
                 )}
               </>

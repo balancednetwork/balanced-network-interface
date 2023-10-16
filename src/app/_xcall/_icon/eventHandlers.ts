@@ -81,7 +81,14 @@ export const useICONEventListener = (eventName: XCallEventType | null) => {
                     // const destinationEventData = getDestinationEventDataFromICONEvent(callMessageLog);
                     if (sn && reqId) {
                       if (archwayOriginEvents.some(e => e.sn === sn)) {
-                        addDestinationEvent('icon', { sn, reqId, data, eventName: XCallEvent.CallMessage });
+                        addDestinationEvent('icon', {
+                          sn,
+                          reqId,
+                          data,
+                          eventName: XCallEvent.CallMessage,
+                          chain: 'icon',
+                          origin: 'archway',
+                        });
                         disconnectFromWebsocket();
                       }
                     }

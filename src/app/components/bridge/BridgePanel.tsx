@@ -12,9 +12,9 @@ import { useIconXcallFee } from 'app/_xcall/_icon/eventHandlers';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/ArchwayTest/helpers';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
+import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
@@ -161,11 +161,11 @@ export default function BridgePanel() {
   }, [setDestinationAddress, bridgeDirection.to]);
 
   const xCallReset = React.useCallback(() => {
-    stopListening();
+    //stopListening();
     setXCallInProgress(false);
     setModalClosable(true);
     setOpen(false);
-  }, [stopListening]);
+  }, [setXCallInProgress, setModalClosable, setOpen]);
 
   const controlledClose = React.useCallback(() => {
     if (modalClosable && !xCallInProgress) {
@@ -182,6 +182,9 @@ export default function BridgePanel() {
     return true;
   }, [account, accountArch, bridgeDirection.from, currencyAmountToBridge]);
 
+  const descriptionAction = `Transfer ${currencyToBridge?.symbol}`;
+  const descriptionAmount = `${currencyAmountToBridge?.toFixed(2)} ${currencyAmountToBridge?.currency.symbol}`;
+
   const handleICONTxResult = async (hash: string) => {
     const txResult = await fetchTxResult(hash);
     console.log('xCall debug - ICON tx - ', txResult);
@@ -192,7 +195,11 @@ export default function BridgePanel() {
 
       if (callMessageSentEvent) {
         console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
-        const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
+        const originEventData = getXCallOriginEventDataFromICON(
+          callMessageSentEvent,
+          descriptionAction,
+          descriptionAmount,
+        );
         originEventData && addOriginEvent('icon', originEventData);
       }
     }
@@ -274,7 +281,7 @@ export default function BridgePanel() {
             { amount: archwayXcallFees.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' },
           ]);
           console.log('xCall debug - Archway bridge init tx:', res);
-          const originEventData = getXCallOriginEventDataFromArchway(res.events);
+          const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, 'Bridge request sent');
           originEventData && addOriginEvent('archway', originEventData);
           //todo: clear inputs
@@ -299,7 +306,7 @@ export default function BridgePanel() {
             { amount: archwayXcallFees.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' },
           ]);
           console.log('xCall debug - Archway bridge init tx:', res);
-          const originEventData = getXCallOriginEventDataFromArchway(res.events);
+          const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, 'Bridge request sent');
           originEventData && addOriginEvent('archway', originEventData);
           //todo: clear inputs

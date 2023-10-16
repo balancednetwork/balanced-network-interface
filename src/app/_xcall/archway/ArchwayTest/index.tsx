@@ -30,7 +30,7 @@ import { useArchwayContext } from '../ArchwayProvider';
 import { ARCHWAY_CONTRACTS, ARCHWAY_CW20_COLLATERAL } from '../config';
 // import { BORROW_TX } from '../testnetChainInfo';
 import { useArchwayEventListener } from '../eventHandler';
-import { getXCallOriginEventDataFromArchway } from './helpers';
+import { getXCallOriginEventDataFromArchway } from '../utils';
 
 const ArchwayTest = () => {
   const [tokenAmount, setTokenAmount] = React.useState<number>();
@@ -180,7 +180,7 @@ const ArchwayTest = () => {
         console.log(res);
 
         //XCALL: Step one - get sn from initial transaction
-        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        const originEventData = getXCallOriginEventDataFromArchway(res.events, 'test1', 'test2');
         originEventData && addOriginEvent('archway', originEventData);
       } catch (e) {
         console.error(e);
@@ -213,7 +213,7 @@ const ArchwayTest = () => {
         );
         console.log(res);
 
-        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        const originEventData = getXCallOriginEventDataFromArchway(res.events, 'test1', 'test2');
         originEventData && addOriginEvent('archway', originEventData);
       } catch (e) {
         console.error(e);
@@ -254,7 +254,7 @@ const ArchwayTest = () => {
         );
         console.log(res);
 
-        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        const originEventData = getXCallOriginEventDataFromArchway(res.events, 'test1', 'test2');
         originEventData && addOriginEvent('archway', originEventData);
       } catch (e) {
         console.error(e);
@@ -292,7 +292,7 @@ const ArchwayTest = () => {
           if (callMessageSentEvent) {
             console.log('CALL MESSAGE SENT EVENT DETECTED');
             console.log(callMessageSentEvent);
-            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
+            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent, 'test1', 'test2');
             originEventData && addOriginEvent('icon', originEventData);
           }
         }
@@ -386,7 +386,7 @@ const ArchwayTest = () => {
         );
         console.log(res);
 
-        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        const originEventData = getXCallOriginEventDataFromArchway(res.events, 'test1', 'test2');
         originEventData && addOriginEvent('archway', originEventData);
       } catch (e) {
         console.error(e);
@@ -396,8 +396,8 @@ const ArchwayTest = () => {
 
   const swapArchBnUSDToArch = async () => {
     if (signingClient && address) {
-      const swapParams: { path: string[]; receiver?: string } = {
-        path: ['cx6975cdce422307b73b753b121877960e83b3bc35'],
+      const swapParams: { patFUKh: string[]; receiver?: string } = {
+        patFUKh: ['cx6975cdce422307b73b753b121877960e83b3bc35'],
       };
 
       const msg = {
@@ -428,7 +428,7 @@ const ArchwayTest = () => {
         );
         console.log(res);
 
-        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        const originEventData = getXCallOriginEventDataFromArchway(res.events, 'test1', 'test2');
         originEventData && addOriginEvent('archway', originEventData);
       } catch (e) {
         console.error(e);
@@ -472,7 +472,7 @@ const ArchwayTest = () => {
           if (callMessageSentEvent) {
             console.log('CALL MESSAGE SENT EVENT DETECTED');
             console.log(callMessageSentEvent);
-            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
+            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent, 'test1', 'test2');
             originEventData && addOriginEvent('icon', originEventData);
           }
         }
@@ -516,7 +516,7 @@ const ArchwayTest = () => {
         );
         console.log(res);
 
-        const originEventData = getXCallOriginEventDataFromArchway(res.events);
+        const originEventData = getXCallOriginEventDataFromArchway(res.events, 'test1', 'test2');
         originEventData && addOriginEvent('archway', originEventData);
       } catch (e) {
         console.error(e);
@@ -550,7 +550,7 @@ const ArchwayTest = () => {
           if (callMessageSentEvent) {
             console.log('CALL MESSAGE SENT EVENT DETECTED');
             console.log(callMessageSentEvent);
-            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
+            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent, 'test1', 'test2');
             originEventData && addOriginEvent('icon', originEventData);
           }
         }
@@ -614,7 +614,7 @@ const ArchwayTest = () => {
               Arch (arch) to bnUSD (icon)
             </Button>
             <Button onClick={() => swapArchBnUSDToArch()} mr={'10px'}>
-              bnUSD (arch) to Arch (arch)
+              bnUSD (arch) to Arch (arch) FAIL
             </Button>
             <Button
               onClick={() => swapSICXToArch(`archway/archway1kyw8c9ssqtg3akaf3wn6xtyylrs0cst835gyp9`)}

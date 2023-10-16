@@ -49,9 +49,22 @@ export const getICONEventSignature = (eventName: XCallEventType) => {
   }
 };
 
-export function getXCallOriginEventDataFromICON(callMessageSentLog: ICONTxEvent): OriginXCallData {
+export function getXCallOriginEventDataFromICON(
+  callMessageSentLog: ICONTxEvent,
+  descriptionAction: string,
+  descriptionAmount: string,
+): OriginXCallData {
   const sn = parseInt(callMessageSentLog.indexed[3], 16);
   const rollback = false;
   const eventName = XCallEvent.CallMessageSent;
-  return { sn, rollback, eventName };
+  return {
+    sn,
+    rollback,
+    eventName,
+    chain: 'icon',
+    destination: 'archway',
+    timestamp: new Date().getTime(),
+    descriptionAction,
+    descriptionAmount,
+  };
 }

@@ -3,6 +3,7 @@ import { createReducer } from '@reduxjs/toolkit';
 import {
   CurrentXCallState,
   CurrentXCallStateType,
+  OriginXCallData,
   SupportedXCallChains,
   XCallChainState,
   XCallEventType,
@@ -17,6 +18,7 @@ import {
   removeXCallEvent,
   stopListening,
   setListeningTo,
+  rollBackFromOrigin,
 } from './actions';
 
 export type XCallState = {
@@ -92,5 +94,19 @@ export default createReducer(initialState, builder =>
     })
     .addCase(stopListening, state => {
       state.listeningTo = undefined;
+    })
+    .addCase(rollBackFromOrigin, (state, { payload: { chain, sn } }) => {
+      if (chain && sn) {
+        const originEvent: OriginXCallData | undefined = state.events[chain].origin.find(data => data.sn === sn);
+        if (originEvent) {
+          originEvent.rollbackRequired = true;
+          state.events[chain].origin = state.events[chain].origin.map(data => {
+            if (data.sn === originEvent.sn) {
+              return originEvent;
+            }
+            return data;
+          });
+        }
+      }
     }),
 );

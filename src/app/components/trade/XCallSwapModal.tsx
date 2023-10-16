@@ -14,9 +14,9 @@ import { ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/ArchwayTest/helpers';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
+import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getArchwayCounterToken, getBytesFromString } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
@@ -215,7 +215,11 @@ const XCallSwapModal = ({
 
       if (callMessageSentEvent) {
         console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
-        const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
+        const originEventData = getXCallOriginEventDataFromICON(
+          callMessageSentEvent,
+          'todo swap modal',
+          'todo swap modal',
+        );
         originEventData && addOriginEvent('icon', originEventData);
       }
     }
@@ -326,7 +330,7 @@ const XCallSwapModal = ({
           );
           console.log('xCall debug - Archway swap init tx:', res);
 
-          const originEventData = getXCallOriginEventDataFromArchway(res.events);
+          const originEventData = getXCallOriginEventDataFromArchway(res.events, 'todo swap modal', 'todo swap modal');
           addTransactionResult('archway', res, 'Swap request sent');
           originEventData && addOriginEvent('archway', originEventData);
         } catch (e) {
@@ -365,7 +369,7 @@ const XCallSwapModal = ({
           console.log('xCall debug - Archway swap init tx:', res);
           addTransactionResult('archway', res, 'Swap request sent');
           setXCallInProgress(true);
-          const originEventData = getXCallOriginEventDataFromArchway(res.events);
+          const originEventData = getXCallOriginEventDataFromArchway(res.events, 'todo swap modal', 'todo swap modal');
           originEventData && addOriginEvent('archway', originEventData);
         } catch (e) {
           console.error(e);

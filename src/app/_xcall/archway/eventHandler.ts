@@ -8,8 +8,8 @@ import { useAddDestinationEvent, useXCallOriginEvents } from 'store/xCall/hooks'
 import { ICON_XCALL_NETWORK_ID } from '../_icon/config';
 import { CrossChainTxType, XCallEvent, XCallEventType } from '../types';
 import { useArchwayContext } from './ArchwayProvider';
-import { getXCallDestinationEventDataFromArchwayEvent } from './ArchwayTest/helpers';
 import { ARCHWAY_CONTRACTS, ARCHWAY_WEBSOCKET_URL } from './config';
+import { getXCallDestinationEventDataFromArchwayEvent } from './utils';
 
 const ARCHWAY_SOCKET_QUERY = {
   jsonrpc: '2.0',

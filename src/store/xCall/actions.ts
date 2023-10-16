@@ -32,4 +32,9 @@ export const setListeningTo = createAction<{
   event: XCallEventType;
 }>('xCall/setListeningTo');
 
+export const rollBackFromOrigin = createAction<{
+  chain?: SupportedXCallChains;
+  sn?: number;
+}>('xCall/rollBackFromOrigin');
+
 export const stopListening = createAction('xCall/stopListening');

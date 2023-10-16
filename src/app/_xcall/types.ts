@@ -14,7 +14,13 @@ export const XCallEvent: { [key in XCallEventType]: XCallEventType } = Object.fr
 export type OriginXCallData = {
   sn: number;
   rollback?: boolean;
+  rollbackRequired?: boolean;
   eventName: XCallEventType;
+  chain: SupportedXCallChains;
+  destination: SupportedXCallChains;
+  timestamp: number;
+  descriptionAction: string;
+  descriptionAmount: string;
 };
 
 export type DestinationXCallData = {
@@ -22,6 +28,8 @@ export type DestinationXCallData = {
   reqId: number;
   data: string;
   eventName: XCallEventType;
+  chain: SupportedXCallChains;
+  origin: SupportedXCallChains;
 };
 
 export type XCallChainState = {
@@ -56,4 +64,11 @@ export const CurrentXCallState: { [key in CurrentXCallStateType]: CurrentXCallSt
 export type CrossChainTxType = {
   transactionHash: string;
   events: readonly Event[];
+};
+
+export type XCallActivityItem = {
+  chain: SupportedXCallChains;
+  originData: OriginXCallData;
+  destinationData?: DestinationXCallData;
+  status: 'pending' | 'executable' | 'failed';
 };

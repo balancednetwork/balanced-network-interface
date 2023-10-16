@@ -30,6 +30,7 @@ import {
   useXCallListeningTo,
   useRemoveEvent,
   useSetListeningTo,
+  useRollBackFromOrigin,
 } from 'store/xCall/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -74,11 +75,12 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
   // const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const isICONTxPending = useIsICONTxPending();
+  const rollBackFromOrigin = useRollBackFromOrigin();
 
   useArchwayEventListener(listeningTo?.chain === 'archway' ? listeningTo.event : null);
   useICONEventListener(listeningTo?.chain === 'icon' ? listeningTo.event : null);
 
-  const handleArchwayExecuteXCall = (data: DestinationXCallData) => async () => {
+  const handleArchwayExecuteXCall = async (data: DestinationXCallData) => {
     if (signingClient && accountArch) {
       const msg = {
         execute_call: {
@@ -110,7 +112,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
         } else {
           console.log('xCall debug - Archway executeCall - fail');
           addTransactionResult('archway', res || null, t`Transfer failed.`);
-          //TODO: check for RollbackMessage on ICON
+          rollBackFromOrigin(data.origin, data.sn);
         }
       } catch (e) {
         console.error(e);
@@ -141,14 +143,11 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
         );
         console.log('xCall debug - ICON executeCall tx result: ', txResult);
 
-        //TODO: move to handle ICON tx result together with CallMessage
-        if (callExecutedEvent) {
-          const sn = iconDestinationEvents.find(event => event.reqId === data.reqId)?.sn;
-          sn && removeEvent(sn, true);
-        }
-
         if (callExecutedEvent?.data[0] === '0x1') {
           console.log('xCall debug - xCall executed successfully');
+          const sn = iconDestinationEvents.find(event => event.reqId === data.reqId)?.sn;
+          sn && removeEvent(sn, true);
+
           clearInputs && clearInputs();
           //has xCall emitted CallMessageSent event?
           const callMessageSentEvent = txResult.eventLogs.find(event =>
@@ -157,7 +156,11 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
 
           if (callMessageSentEvent) {
             console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
-            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent);
+            const originEventData = getXCallOriginEventDataFromICON(
+              callMessageSentEvent,
+              'todo event manager',
+              'todo event manager',
+            );
             originEventData && addOriginEvent('icon', originEventData);
           } else {
             xCallReset();
@@ -167,7 +170,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
         if (callExecutedEvent?.data[0] === '0x0') {
           console.log('xCall debug - xCall executed with error');
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
-            //TODO: test response messages
+            rollBackFromOrigin(data.origin, data.sn);
             console.log('xCall debug - xCALL rollback needed');
             setListeningTo('archway', XCallEvent.RollbackMessage);
           }
@@ -223,7 +226,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
               </Typography>
               {archwayDestinationEvents.map(event => (
                 <Flex alignItems="center" key={event.reqId}>
-                  <Button onClick={handleArchwayExecuteXCall(event)} disabled={isTxPending}>
+                  <Button onClick={e => handleArchwayExecuteXCall(event)} disabled={isTxPending}>
                     {isTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm</Trans>}
                   </Button>
                 </Flex>

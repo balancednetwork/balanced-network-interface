@@ -31,6 +31,7 @@ export interface ApplicationState {
   readonly chainId: number | null;
   readonly popupList: PopupList;
   readonly openModal: ApplicationModal | null;
+  iconWalletModal: boolean;
   shouldLedgerSign: boolean;
   currentLedgerAddressPage: number;
   slippageTolerance: number;
@@ -44,6 +45,7 @@ const initialState: ApplicationState = {
   shouldLedgerSign: false,
   currentLedgerAddressPage: 1,
   slippageTolerance: DEFAULT_SLIPPAGE,
+  iconWalletModal: false,
 };
 
 const applicationSlice = createSlice({
@@ -91,6 +93,9 @@ const applicationSlice = createSlice({
     updateSlippageTolerance(state, action) {
       state.slippageTolerance = action.payload.slippageTolerance;
     },
+    toggleICONWalletModal(state, { payload: { isOpen } }) {
+      state.iconWalletModal = isOpen;
+    },
   },
 });
 
@@ -103,5 +108,6 @@ export const {
   changeShouldLedgedSignMessage,
   changeCurrentLedgerAddressPage,
   updateSlippageTolerance,
+  toggleICONWalletModal,
 } = applicationSlice.actions;
 export default applicationSlice.reducer;

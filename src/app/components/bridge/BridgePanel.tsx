@@ -355,7 +355,7 @@ export default function BridgePanel() {
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
         <AutoColumn gap="md">
           <Typography variant="h2">
-            <Trans>Bridge</Trans>
+            <Trans>Transfer</Trans>
           </Typography>
           <Flex width="100%" alignItems="flex-start" justifyContent="space-between">
             <ChainSelector label="from" chain={bridgeDirection.from} setChain={handleSetOriginChain} />
@@ -394,9 +394,28 @@ export default function BridgePanel() {
             </Typography>
 
             <Typography color="text">
-              IBC
+              IBC + xCall
               <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
-                <QuestionHelper text={t`IBC explained`}></QuestionHelper>
+                <QuestionHelper
+                  width={300}
+                  text={
+                    <>
+                      <Typography mb={3}>
+                        <Trans>
+                          <strong>IBC</strong> is an interoperability protocol that allows blockchains to connect and
+                          communicate with each other, primarily within the Cosmos ecosystem.
+                        </Trans>
+                      </Typography>
+                      <Typography>
+                        <Trans>
+                          <strong>xCall</strong> is a cross-chain messaging service that allows you to interact with
+                          smart contracts on other blockchains. While made for ICON's BTP, any interoperability solution
+                          can adopt it.
+                        </Trans>
+                      </Typography>
+                    </>
+                  }
+                ></QuestionHelper>
               </QuestionWrapper>
             </Typography>
           </Flex>

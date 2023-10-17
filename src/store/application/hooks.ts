@@ -16,6 +16,7 @@ import {
   ApplicationModal,
   setOpenModal,
   updateSlippageTolerance,
+  toggleICONWalletModal,
 } from './reducer';
 
 type BlockDetails = {
@@ -38,6 +39,19 @@ export function useToggleModal(modal: ApplicationModal): () => void {
   const open = useModalOpen(modal);
   const dispatch = useDispatch<AppDispatch>();
   return useCallback(() => dispatch(setOpenModal(open ? null : modal)), [dispatch, modal, open]);
+}
+
+export function useICONWalletModalToggle(): () => void {
+  const isOpen = useSelector((state: AppState) => state.application.iconWalletModal);
+  const dispatch = useDispatch<AppDispatch>();
+  return useCallback(() => {
+    console.log(isOpen);
+    dispatch(toggleICONWalletModal({ isOpen: !isOpen }));
+  }, [dispatch, isOpen]);
+}
+
+export function useIsICONWalletModalOpen(): boolean {
+  return useSelector((state: AppState) => state.application.iconWalletModal);
 }
 
 export function useWalletModalToggle(): () => void {

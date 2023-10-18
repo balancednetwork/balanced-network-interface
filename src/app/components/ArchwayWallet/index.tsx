@@ -23,7 +23,7 @@ import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useArchwayWalletBalances } from 'store/wallet/hooks';
+import { useArchwayWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import Divider from '../Divider';
@@ -96,6 +96,7 @@ const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
   const escape = useKeyPress('Escape');
   const [isOpen, setOpen] = useState(false);
   const toggleWalletModal = useWalletModalToggle();
+  const signedInWallets = useSignedInWallets();
 
   const tokenComparator = useTokenComparator(accountArch, false);
 
@@ -246,9 +247,11 @@ const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
   return (
     <>
       <WalletAssets>
-        <Flex padding="0 0 20px">
-          <CopyableAddress account={accountArch} closeAfterDelay={1000} copyIcon />
-        </Flex>
+        {signedInWallets.length > 1 && (
+          <Flex padding="0 0 20px">
+            <CopyableAddress account={accountArch} closeAfterDelay={1000} copyIcon />
+          </Flex>
+        )}
         <SearchInput
           type="text"
           id="token-search-input"

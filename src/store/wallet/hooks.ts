@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'app/_xcall/archway/tokens';
+import { SupportedXCallChains } from 'app/_xcall/types';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
@@ -316,4 +317,16 @@ export function useLiquidityTokenBalance(account: string | undefined | null, pai
   const query = useBnJsContractQuery<string>('Dex', 'balanceOf', [account, pair?.poolId]);
   const { data } = query;
   return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
+}
+
+export function useSignedInWallets(): { chain: SupportedXCallChains; address: string }[] {
+  const { account } = useIconReact();
+  const { address } = useArchwayContext();
+
+  return useMemo(() => {
+    const wallets: { chain: SupportedXCallChains; address: string }[] = [];
+    if (account) wallets.push({ chain: 'icon', address: account });
+    if (address) wallets.push({ chain: 'archway', address });
+    return wallets;
+  }, [account, address]);
 }

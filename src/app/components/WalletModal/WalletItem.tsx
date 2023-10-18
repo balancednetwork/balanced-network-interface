@@ -29,7 +29,7 @@ const WalletItem = ({ address, name, logo, connect, disconnect, description, bor
           {address ? shortenAddress(address) : description}
         </Typography>
       </Box>
-      <Box ml={['65px', 'auto']} pt={['5px', 0]}>
+      <Box ml={['55px', 'auto']} pt={['5px', 0]}>
         {address ? (
           <Flex>
             <UnderlineText onClick={connect}>

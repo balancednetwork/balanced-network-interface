@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
-import { Trans } from '@lingui/macro';
+import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -11,6 +11,7 @@ import styled from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { SupportedXCallChains } from 'app/_xcall/types';
+import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { IconButton, Button } from 'app/components/Button';
 import { Link } from 'app/components/Link';
 import Logo from 'app/components/Logo';
@@ -21,11 +22,13 @@ import { ReactComponent as WalletIcon } from 'assets/icons/wallet.svg';
 import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
+import { useSignedInWallets } from 'store/wallet/hooks';
 import { shortenAddress } from 'utils';
 
 import ArchwayWallet from '../ArchwayWallet';
 import ICONWallet from '../ICONWallet';
 import { notificationCSS } from '../ICONWallet/wallets/utils';
+import { MouseoverTooltip } from '../Tooltip';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -83,8 +86,8 @@ const ConnectionStatus = styled(Flex)`
   align-items: end;
 
   span {
-    opacity: 0.5;
-    line-height: 1.32;
+    opacity: 0.75;
+    ${({ theme }) => theme.colors.text};
   }
 
   strong,
@@ -128,40 +131,31 @@ export const CopyableAddress = ({
   closeAfterDelay?: number;
   copyIcon?: boolean;
 }) => {
-  // const [isCopied, updateCopyState] = React.useState(false);
+  const [isCopied, updateCopyState] = React.useState(false);
   const copyAddress = React.useCallback(async (account: string) => {
     await navigator.clipboard.writeText(account);
-    // updateCopyState(true);
+    updateCopyState(true);
   }, []);
 
   return account ? (
-    <StyledAddress
-      // onMouseLeave={() => {
-      //   setTimeout(() => updateCopyState(false), 250);
-      // }}
-      onClick={() => copyAddress(account)}
+    <MouseoverTooltip
+      text={isCopied ? t`Copied` : t`Copy address`}
+      placement={'left'}
+      noArrowAndBorder
+      closeAfterDelay={closeAfterDelay}
+      zIndex={9999}
     >
-      {shortenAddress(account)}
-      {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
-    </StyledAddress>
-  ) : // <MouseoverTooltip
-  //   text={isCopied ? t`Copied` : t`Copy address`}
-  //   placement={'right'}
-  //   noArrowAndBorder
-  //   closeAfterDelay={closeAfterDelay}
-  //   zIndex={9999}
-  // >
-  //   <StyledAddress
-  //     onMouseLeave={() => {
-  //       setTimeout(() => updateCopyState(false), 250);
-  //     }}
-  //     onClick={() => copyAddress(account)}
-  //   >
-  //     {shortenAddress(account)}
-  //     {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
-  //   </StyledAddress>
-  // </MouseoverTooltip>
-  null;
+      <StyledAddress
+        onMouseLeave={() => {
+          setTimeout(() => updateCopyState(false), 250);
+        }}
+        onClick={() => copyAddress(account)}
+      >
+        {shortenAddress(account)}
+        {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
+      </StyledAddress>
+    </MouseoverTooltip>
+  ) : null;
 };
 
 export default function Header(props: { title?: string; className?: string }) {
@@ -173,6 +167,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
   const [initiallyActiveTab, setInitiallyActiveTab] = useState<SupportedXCallChains | null>(null);
   const [activeTab, setActiveTab] = useState<SupportedXCallChains>();
+  const signedInWallets = useSignedInWallets();
 
   useEffect(() => {
     if (account && !initiallyActiveTab) {
@@ -230,8 +225,15 @@ export default function Header(props: { title?: string; className?: string }) {
     setActiveTab(chain);
   };
 
-  const isIconActive = activeTab === 'icon' || (!activeTab && initiallyActiveTab === 'icon');
-  const isArchwayActive = activeTab === 'archway' || (!activeTab && initiallyActiveTab === 'archway');
+  const isIconActive =
+    signedInWallets.length === 1
+      ? signedInWallets.some(wallet => wallet.chain === 'icon')
+      : activeTab === 'icon' || (!activeTab && initiallyActiveTab === 'icon');
+
+  const isArchwayActive =
+    signedInWallets.length === 1
+      ? signedInWallets.some(wallet => wallet.chain === 'archway')
+      : activeTab === 'archway' || (!activeTab && initiallyActiveTab === 'archway');
 
   return (
     <header className={className}>
@@ -261,13 +263,28 @@ export default function Header(props: { title?: string; className?: string }) {
             <WalletInfo>
               {upSmall && (
                 <>
-                  <Typography variant="p" textAlign="right">
-                    <Trans>Multi-chain wallet</Trans>
-                  </Typography>
-                  <ConnectionStatus>
-                    {account ? <strong>ICON, </strong> : <span>ICON, </span>}
-                    {accountArch ? <strong>Archway</strong> : <span>Archway</span>}
-                  </ConnectionStatus>
+                  {signedInWallets.length > 1 ? (
+                    <>
+                      <Typography variant="p" textAlign="right">
+                        <Trans>Multi-chain wallet</Trans>
+                      </Typography>
+                      <ConnectionStatus>
+                        {signedInWallets.map((wallet, index) => (
+                          <span>
+                            {getNetworkDisplayName(wallet.chain)}
+                            {index + 1 < signedInWallets.length ? ', ' : ''}
+                          </span>
+                        ))}
+                      </ConnectionStatus>
+                    </>
+                  ) : (
+                    <>
+                      <Typography variant="p" textAlign="right">
+                        {t`${getNetworkDisplayName(signedInWallets[0].chain)} wallet`}
+                      </Typography>
+                      <CopyableAddress account={signedInWallets[0].address} />
+                    </>
+                  )}
                 </>
               )}
             </WalletInfo>
@@ -301,14 +318,26 @@ export default function Header(props: { title?: string; className?: string }) {
                           </WalletButton>
                         </WalletButtons>
                       </WalletMenu>
-                      <ChainTabs>
-                        <ChainTabButton onClick={() => handleChainTabClick('icon')} active={isIconActive}>
-                          ICON
-                        </ChainTabButton>
-                        <ChainTabButton onClick={() => handleChainTabClick('archway')} active={isArchwayActive}>
-                          Archway
-                        </ChainTabButton>
-                      </ChainTabs>
+                      {signedInWallets.length === 1 && !upSmall && (
+                        <Flex justifyContent={'flex-end'} width={'100%'} padding={'2px 25px 25px'}>
+                          <CopyableAddress account={signedInWallets[0].address} closeAfterDelay={1000} copyIcon />
+                        </Flex>
+                      )}
+                      {signedInWallets.length > 1 && (
+                        <ChainTabs>
+                          {signedInWallets.some(wallet => wallet.chain === 'icon') && (
+                            <ChainTabButton onClick={() => handleChainTabClick('icon')} active={isIconActive}>
+                              ICON
+                            </ChainTabButton>
+                          )}
+                          {signedInWallets.some(wallet => wallet.chain === 'archway') && (
+                            <ChainTabButton onClick={() => handleChainTabClick('archway')} active={isArchwayActive}>
+                              Archway
+                            </ChainTabButton>
+                          )}
+                        </ChainTabs>
+                      )}
+
                       {isIconActive && <ICONWallet anchor={anchor} setAnchor={setAnchor} />}
                       {isArchwayActive && <ArchwayWallet anchor={anchor} setAnchor={setAnchor} />}
                     </WalletWrap>

@@ -25,7 +25,7 @@ import { useRatesWithOracle } from 'queries/reward';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useICONWalletBalances } from 'store/wallet/hooks';
+import { useICONWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import Divider from '../Divider';
@@ -222,6 +222,7 @@ const ICONWallet = ({ setAnchor, anchor, ...rest }) => {
   const [modalAsset, setModalAsset] = useState<string | undefined>();
   const tokenListConfig = useTokenListConfig();
   const toggleWalletModal = useWalletModalToggle();
+  const signedInWallets = useSignedInWallets();
 
   const debouncedQuery = useDebounce(searchQuery, 200);
   const enter = useKeyPress('Enter');
@@ -399,9 +400,11 @@ const ICONWallet = ({ setAnchor, anchor, ...rest }) => {
   return (
     <>
       <WalletAssets>
-        <Flex padding="0 0 20px">
-          <CopyableAddress account={account} closeAfterDelay={1000} copyIcon />
-        </Flex>
+        {signedInWallets.length > 1 && (
+          <Flex padding="0 0 20px">
+            <CopyableAddress account={account} closeAfterDelay={1000} copyIcon />
+          </Flex>
+        )}
         <SearchInput
           type="text"
           id="token-search-input"

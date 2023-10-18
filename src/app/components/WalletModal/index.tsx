@@ -373,7 +373,7 @@ export default function WalletModal() {
     return [
       {
         name: 'ICON',
-        logo: <IconWalletIcon width="50" height="50" />,
+        logo: <IconWalletIcon width="40" height="40" />,
         connect: ICONWalletModalToggle,
         disconnect: disconnect,
         description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain`,
@@ -381,7 +381,7 @@ export default function WalletModal() {
       },
       {
         name: 'Archway',
-        logo: <ArchWalletIcon width="50" height="50" />,
+        logo: <ArchWalletIcon width="40" height="40" />,
         connect: handleOpenWalletArchway,
         disconnect: disconnectKeplr,
         description: t`Swap & transfer assets cross-chain.`,

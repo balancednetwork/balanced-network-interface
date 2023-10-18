@@ -210,12 +210,6 @@ export function CurrencySearch({
 
   return (
     <Wrapper width={width}>
-      {showCommunityListControl && (
-        <Flex justifyContent="center" paddingBottom="10px">
-          <CommunityListToggle></CommunityListToggle>
-        </Flex>
-      )}
-
       <Flex>
         <SearchInput
           type="text"
@@ -227,6 +221,12 @@ export function CurrencySearch({
           onChange={handleInput}
         />
       </Flex>
+
+      {showCommunityListControl && (
+        <Flex justifyContent="center" paddingTop="10px">
+          <CommunityListToggle></CommunityListToggle>
+        </Flex>
+      )}
 
       {searchToken && !searchTokenIsAdded ? (
         <Column style={{ padding: '20px 0', height: '100%' }}>

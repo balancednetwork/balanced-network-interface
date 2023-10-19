@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
 import { XCallActivityItem } from 'app/_xcall/types';
@@ -14,6 +15,7 @@ const MemoizedItem = React.memo(XCallItem);
 export default function BridgeActivity() {
   const { data: activityItems } = useXCallActivityItems();
   const { data: xCallStats } = useXCallStats();
+  const isSmall = useMedia('(max-width: 600px)');
   const xcallState = useXCallState();
   console.log('🚀 ~ file: BridgeActivity.tsx:17 ~ BridgeActivity ~ xcallState:', xcallState);
 
@@ -23,14 +25,15 @@ export default function BridgeActivity() {
         <Typography variant="h2" mb={'38px'}>
           <Trans>Activity</Trans>
         </Typography>
-        <Flex mt={4}>
+        <Flex mt={4} flexWrap={isSmall ? 'wrap' : 'nowrap'}>
           <Flex
             width={[1, 1 / 2]}
-            p="0 25px"
+            p={isSmall ? '0 25px 15px' : '0 25px'}
+            mb={isSmall ? '15px' : '0'}
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            className="border-right"
+            className={isSmall ? 'border-bottom' : 'border-right'}
           >
             <Typography>
               <Trans>Cross-chains transfer (24H)</Trans>

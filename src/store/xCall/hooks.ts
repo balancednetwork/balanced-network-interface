@@ -202,3 +202,18 @@ export function useRollBackFromOrigin(): (chain: SupportedXCallChains, sn: numbe
     [dispatch],
   );
 }
+
+export function useXCallStats(): UseQueryResult<{ transfers: number; swaps: number }> {
+  return useQuery(
+    'xCallStats',
+    () => {
+      return {
+        transfers: 187,
+        swaps: 65,
+      };
+    },
+    {
+      keepPreviousData: true,
+    },
+  );
+}

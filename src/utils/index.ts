@@ -25,7 +25,7 @@ export function shortenAddress(address: string, chars = 7): string {
   if (!isEoaAddress(address) && !isArchEoaAddress(address)) {
     throw Error(`Invalid 'address' parameter '${address}'.`);
   }
-  return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
+  return `${address.substring(0, chars + 2)}...${address.substring(address.length - chars)}`;
 }
 
 export function shortenSCOREAddress(address: string, chars = 7): string {

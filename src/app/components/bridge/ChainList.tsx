@@ -9,6 +9,7 @@ import { getNetworkDisplayName } from 'app/_xcall/utils';
 type ChainListProps = {
   chain: SupportedXCallChains;
   setChain: (chain: SupportedXCallChains) => void;
+  chains?: SupportedXCallChains[];
 };
 
 type ChainItemProps = {
@@ -21,16 +22,14 @@ const ChainItem = ({ chain, isActive, isLast }: ChainItemProps) => {
   return <Box>{getNetworkDisplayName(chain)}</Box>;
 };
 
-const ChainList = ({ chain, setChain }: ChainListProps) => {
+const ChainList = ({ chain, setChain, chains }: ChainListProps) => {
+  const relevantChains = chains || SUPPORTED_XCALL_CHAINS;
+
   return (
     <Box p={'15px'}>
-      {SUPPORTED_XCALL_CHAINS.map((chainItem, index) => (
+      {relevantChains.map((chainItem, index) => (
         <Box key={index} onClick={e => setChain(chainItem)}>
-          <ChainItem
-            chain={chainItem}
-            isActive={chain === chainItem}
-            isLast={SUPPORTED_XCALL_CHAINS.length === index + 1}
-          />
+          <ChainItem chain={chainItem} isActive={chain === chainItem} isLast={relevantChains.length === index + 1} />
         </Box>
       ))}
     </Box>

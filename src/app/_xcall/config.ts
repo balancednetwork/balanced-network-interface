@@ -7,7 +7,7 @@ import { SupportedXCallChains } from './types';
 export const SUPPORTED_XCALL_CHAINS_BY_ICON_NETWORK: { [key in SupportedChainId]: SupportedXCallChains[] } = {
   [SupportedChainId.MAINNET]: ['archway', 'icon'],
   [SupportedChainId.BERLIN]: ['archway', 'icon'],
-  [SupportedChainId.LISBON]: [],
+  [SupportedChainId.LISBON]: ['archway', 'icon'],
   [SupportedChainId.SEJONG]: [],
   [SupportedChainId.YEOUIDO]: [],
 };
@@ -15,7 +15,7 @@ export const SUPPORTED_XCALL_CHAINS_BY_ICON_NETWORK: { [key in SupportedChainId]
 const CROSS_TRANSFER_TOKENS_BY_ICON_NETWORK: { [key in SupportedChainId]: string[] } = {
   [SupportedChainId.MAINNET]: ['bnUSD'],
   [SupportedChainId.BERLIN]: ['bnUSD'],
-  [SupportedChainId.LISBON]: [],
+  [SupportedChainId.LISBON]: ['bnUSD'],
   [SupportedChainId.SEJONG]: [],
   [SupportedChainId.YEOUIDO]: [],
 };
@@ -23,7 +23,7 @@ const CROSS_TRANSFER_TOKENS_BY_ICON_NETWORK: { [key in SupportedChainId]: string
 const ASSET_MANAGER_TOKENS_BY_ICON_NETWORK: { [key in SupportedChainId]: string[] } = {
   [SupportedChainId.MAINNET]: ['sArch'],
   [SupportedChainId.BERLIN]: ['TwitterAsset'],
-  [SupportedChainId.LISBON]: [],
+  [SupportedChainId.LISBON]: ['TwitterAsset'],
   [SupportedChainId.SEJONG]: [],
   [SupportedChainId.YEOUIDO]: [],
 };

@@ -20,7 +20,7 @@ const InputContainer = styled.div`
   width: 100%;
 `;
 
-const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
+const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean; active: boolean }>`
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
   border-right: ${({ theme }) => `1px solid ${theme.colors.divider}`};
@@ -31,7 +31,7 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
   padding: 4px 15px;
   color: #ffffff;
   border-radius: 10px 0 0 10px;
-  transition: border 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  transition: all 0.3s ease;
   cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   :hover,
@@ -39,6 +39,8 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean }>`
     border: ${({ theme }) => `2px solid ${theme.colors.primary}`};
     border-right: ${({ theme }) => `1px solid ${theme.colors.primary}`};
   }
+
+  ${props => props.active && 'border-bottom-left-radius: 0;'}
 `;
 
 const StyledTokenName = styled.span`
@@ -57,7 +59,7 @@ const NumberInput = styled.input<{ bg?: string; active?: boolean }>`
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
   color: #ffffff;
-  padding: 7px 20px;
+  padding: 7px 15px;
   outline: none;
   transition: all 0.3s ease;
   overflow: visible;
@@ -95,6 +97,7 @@ interface CurrencyInputPanelProps {
   selectedCurrency?: Currency | null;
   isChainDifference?: boolean;
   showCommunityListControl?: boolean;
+  isCrossChainToken?: boolean;
 }
 
 export const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
@@ -114,6 +117,7 @@ export default function CurrencyInputPanel({
   selectedCurrency,
   isChainDifference,
   showCommunityListControl = true,
+  isCrossChainToken = false,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -141,7 +145,7 @@ export default function CurrencyInputPanel({
     <InputContainer ref={ref} className={className}>
       <ClickAwayListener onClickAway={() => setOpen(false)}>
         <div>
-          <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect}>
+          <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} active={isCrossChainToken}>
             {currency ? (
               <>
                 <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
@@ -191,7 +195,7 @@ export default function CurrencyInputPanel({
         spellCheck="false"
         //style
         bg={bg}
-        active={(onPercentSelect && isActive) || isChainDifference}
+        active={(onPercentSelect && isActive) || isChainDifference || isCrossChainToken}
       />
 
       {onPercentSelect && (

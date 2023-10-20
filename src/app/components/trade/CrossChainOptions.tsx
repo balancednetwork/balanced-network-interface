@@ -26,7 +26,7 @@ type CrossChainInputOptionsProps = {
 export const Wrap = styled(Flex)`
   align-items: center;
   padding: 3px 17px 4px;
-  background: #1b3857;
+  background: #0f395a;
   transform: translateY(-15px);
   border-radius: 0 0 10px 10px;
   justify-content: space-between;

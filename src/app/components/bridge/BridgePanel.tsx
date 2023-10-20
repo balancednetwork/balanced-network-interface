@@ -161,7 +161,6 @@ export default function BridgePanel() {
   }, [setDestinationAddress, bridgeDirection.to]);
 
   const xCallReset = React.useCallback(() => {
-    //stopListening();
     setXCallInProgress(false);
     setModalClosable(true);
     setOpen(false);

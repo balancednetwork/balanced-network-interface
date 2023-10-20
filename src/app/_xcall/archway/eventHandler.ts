@@ -3,7 +3,7 @@ import React from 'react';
 import { useQuery, UseQueryResult } from 'react-query';
 import { v4 as uuidv4 } from 'uuid';
 
-import { useAddDestinationEvent, useXCallOriginEvents } from 'store/xCall/hooks';
+import { useAddDestinationEvent, useXCallListeningTo, useXCallOriginEvents } from 'store/xCall/hooks';
 
 import { ICON_XCALL_NETWORK_ID } from '../_icon/config';
 import { CrossChainTxType, XCallEvent, XCallEventType } from '../types';
@@ -20,11 +20,12 @@ const ARCHWAY_SOCKET_QUERY = {
   },
 };
 
-export const useArchwayEventListener = (eventName: XCallEventType | null) => {
+export const useArchwayEventListener = () => {
+  const listeningTo = useXCallListeningTo();
+  const eventName: XCallEventType | null = listeningTo?.chain === 'archway' ? listeningTo.event : null;
   const [socket, setSocket] = React.useState<WebSocket | undefined>(undefined);
   const addDestinationEvent = useAddDestinationEvent();
   const iconOriginEvents = useXCallOriginEvents('icon');
-  // const query = `tm.event = 'Tx' AND wasm-${eventName} EXISTS`;
   const query = `wasm-${eventName} EXISTS`;
 
   const disconnectFromWebsocket = React.useCallback(() => {

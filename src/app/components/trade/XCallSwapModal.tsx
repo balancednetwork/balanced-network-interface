@@ -139,11 +139,10 @@ const XCallSwapModal = ({
   );
 
   const xCallReset = React.useCallback(() => {
-    stopListening();
     setXCallInProgress(false);
     setModalClosable(true);
     onClose();
-  }, [onClose, stopListening]);
+  }, [onClose]);
 
   const controlledClose = React.useCallback(() => {
     if (modalClosable && !xCallInProgress) {

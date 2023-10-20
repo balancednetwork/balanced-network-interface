@@ -8,11 +8,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass';
 
-import { useICONEventListener } from 'app/_xcall/_icon/eventHandlers';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
-import { useArchwayEventListener } from 'app/_xcall/archway/eventHandler';
 import { DestinationXCallData, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
@@ -76,9 +74,6 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const isICONTxPending = useIsICONTxPending();
   const rollBackFromOrigin = useRollBackFromOrigin();
-
-  useArchwayEventListener(listeningTo?.chain === 'archway' ? listeningTo.event : null);
-  useICONEventListener(listeningTo?.chain === 'icon' ? listeningTo.event : null);
 
   const handleArchwayExecuteXCall = async (data: DestinationXCallData) => {
     if (signingClient && accountArch) {

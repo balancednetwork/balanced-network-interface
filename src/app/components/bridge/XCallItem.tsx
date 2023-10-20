@@ -58,8 +58,6 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
   const { account } = useIconReact();
   const { signingClient, address: accountArch } = useArchwayContext();
   const iconDestinationEvents = useXCallDestinationEvents('icon');
-  // const archwayOriginEvents = useXCallOriginEvents('archway');
-  // const archwayDestinationEvents = useXCallDestinationEvents('archway');
   const addOriginEvent = useAddOriginEvent();
   // const listeningTo = useXCallListeningTo();
   // const stopListening = useStopListening();
@@ -191,8 +189,8 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
           gas: '300000',
         });
 
-        console.log('xCall debug - Archway rollbackCall completeEEE', res);
-
+        console.log('xCall debug - Archway rollbackCall complete', res);
+        //TODO: handle arch rollback response
         // const callExecuted = res.events.some(
         //   e => e.type === 'wasm-CallExecuted' && e.attributes.some(a => a.key === 'code' && a.value === '1'),
         // );
@@ -212,10 +210,46 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
     }
   };
 
+  const handleICONRollbackXCall = async (data: OriginXCallData) => {
+    if (account) {
+      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
+      if (bnJs.contractSettings.ledgerSettings.actived) {
+        changeShouldLedgerSign(true);
+      }
+
+      bnJs.inject({ account });
+      const { result: hash } = await bnJs.XCall.executeRollback(data.sn);
+      addTransaction({ hash }, { pending: 'Executing xCall rollback...', summary: 'Rollback executed.' });
+      const txResult = await fetchTxResult(hash);
+      if (txResult?.status === 1 && txResult.eventLogs.length) {
+        // looking for CallExecuted event
+        // then set listener to ResponseMessage / RollbackMessage
+        const callExecutedEvent = txResult.eventLogs.find(event =>
+          event.indexed.includes(getICONEventSignature(XCallEvent.RollbackExecuted)),
+        );
+        console.log('xCall debug - ICON execute rollback tx result: ', txResult);
+
+        if (callExecutedEvent?.data[0] === '0x1') {
+          console.log('xCall debug - xCall rollback executed successfully');
+          removeEvent(data.sn, true);
+        }
+
+        if (callExecutedEvent?.data[0] === '0x0') {
+          console.log('xCall debug - xCall rollback executed with error');
+          //TODO: handle rollback error
+        }
+      }
+      window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+      changeShouldLedgerSign(false);
+    }
+  };
+
   const handleRollback = async (data: OriginXCallData) => {
     if (data.chain === 'archway') {
       handleArchwayRollbackXCall(data);
     } else if (data.chain === 'icon') {
+      handleICONRollbackXCall(data);
     }
   };
 

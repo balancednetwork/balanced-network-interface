@@ -4,7 +4,7 @@ import { useQuery, UseQueryResult } from 'react-query';
 
 import bnJs from 'bnJs';
 import { useBlockNumber } from 'store/application/hooks';
-import { useAddDestinationEvent, useXCallOriginEvents } from 'store/xCall/hooks';
+import { useAddDestinationEvent, useXCallListeningTo, useXCallOriginEvents } from 'store/xCall/hooks';
 
 import { XCallEvent, XCallEventType } from '../types';
 import { ICON_WEBSOCKET_URL } from './config';
@@ -21,7 +21,9 @@ const QUERY_PARAMS = {
   logs: '0x1',
 };
 
-export const useICONEventListener = (eventName: XCallEventType | null) => {
+export const useICONEventListener = () => {
+  const listeningTo = useXCallListeningTo();
+  const eventName: XCallEventType | null = listeningTo?.chain === 'icon' ? listeningTo.event : null;
   const [socket, setSocket] = React.useState<WebSocket | undefined>(undefined);
   const event = eventName && `${getICONEventSignature(eventName)}`;
   const iconBlockHeight = useBlockNumber();

@@ -6,7 +6,6 @@ import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass';
 
 import { ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
-import { useICONEventListener } from 'app/_xcall/_icon/eventHandlers';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import { DestinationXCallData, XCallEvent } from 'app/_xcall/types';
 import { getBytesFromString, getRlpEncodedMsg } from 'app/_xcall/utils';
@@ -22,14 +21,11 @@ import {
   useSetListeningTo,
   useStopListening,
   useXCallDestinationEvents,
-  useXCallListeningTo,
   useXCallOriginEvents,
 } from 'store/xCall/hooks';
 
 import { useArchwayContext } from '../ArchwayProvider';
 import { ARCHWAY_CONTRACTS, ARCHWAY_CW20_COLLATERAL } from '../config';
-// import { BORROW_TX } from '../testnetChainInfo';
-import { useArchwayEventListener } from '../eventHandler';
 import { getXCallOriginEventDataFromArchway } from '../utils';
 
 const ArchwayTest = () => {
@@ -50,10 +46,6 @@ const ArchwayTest = () => {
   const archwayOriginEvents = useXCallOriginEvents('archway');
   const addOriginEvent = useAddOriginEvent();
   const stopListening = useStopListening();
-
-  const listeningTo = useXCallListeningTo();
-  useArchwayEventListener(listeningTo?.chain === 'archway' ? listeningTo.event : null);
-  useICONEventListener(listeningTo?.chain === 'icon' ? listeningTo.event : null);
 
   //probably not needed, just use destination events with data hash
   const xCallData = React.useMemo(() => {

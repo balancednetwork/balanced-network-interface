@@ -6,7 +6,7 @@ import { Box, Flex } from 'rebass';
 
 import { XCallActivityItem } from 'app/_xcall/types';
 import { Typography } from 'app/theme';
-import { useXCallActivityItems, useXCallState, useXCallStats } from 'store/xCall/hooks';
+import { useXCallActivityItems, useXCallStats } from 'store/xCall/hooks';
 
 import XCallItem from './XCallItem';
 
@@ -16,8 +16,6 @@ export default function BridgeActivity() {
   const { data: activityItems } = useXCallActivityItems();
   const { data: xCallStats } = useXCallStats();
   const isSmall = useMedia('(max-width: 600px)');
-  const xcallState = useXCallState();
-  console.log('🚀 ~ file: BridgeActivity.tsx:17 ~ BridgeActivity ~ xcallState:', xcallState);
 
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>

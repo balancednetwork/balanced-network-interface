@@ -206,7 +206,11 @@ const XCallSwapModal = ({
     };
   }, [executionTrade]);
 
-  const handleICONTxResult = async (hash: string) => {
+  const handleICONTxResult = async (
+    hash: string,
+    descriptionAction: string = 'Default swap description',
+    descriptionAmount: string = 'Default swap amount description',
+  ) => {
     const txResult = await fetchTxResult(hash);
     console.log('xCall debug - ICON tx - ', txResult);
     if (txResult?.status === 1 && txResult.eventLogs.length) {
@@ -218,8 +222,8 @@ const XCallSwapModal = ({
         console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
         const originEventData = getXCallOriginEventDataFromICON(
           callMessageSentEvent,
-          'todo swap modal',
-          'todo swap modal',
+          descriptionAction,
+          descriptionAmount,
         );
         originEventData && addOriginEvent('icon', originEventData);
       }
@@ -239,6 +243,12 @@ const XCallSwapModal = ({
     );
 
     const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+    const descriptionAction = t`Swap ${executionTrade.inputAmount.currency.symbol || ''} for ${
+      executionTrade.outputAmount.currency.symbol || ''
+    }`;
+    const descriptionAmount = t`${executionTrade.inputAmount.toFixed(2)} ${
+      executionTrade.inputAmount.currency.symbol || ''
+    } for ${executionTrade.outputAmount.toFixed(2)} ${executionTrade.outputAmount.currency.symbol || ''}`;
 
     if (originChain === 'icon') {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -263,7 +273,7 @@ const XCallSwapModal = ({
               summary: swapMessages.successMessage,
             },
           );
-          await handleICONTxResult(hash);
+          await handleICONTxResult(hash, descriptionAction, descriptionAmount);
         }
         cleanupSwap();
       } else {
@@ -288,7 +298,7 @@ const XCallSwapModal = ({
               summary: swapMessages.successMessage,
             },
           );
-          await handleICONTxResult(hash);
+          await handleICONTxResult(hash, descriptionAction, descriptionAmount);
         }
         cleanupSwap();
       }
@@ -331,7 +341,7 @@ const XCallSwapModal = ({
           );
           console.log('xCall debug - Archway swap init tx:', res);
 
-          const originEventData = getXCallOriginEventDataFromArchway(res.events, 'todo swap modal', 'todo swap modal');
+          const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, t`Cross-chain swap requested.`);
           originEventData && addOriginEvent('archway', originEventData);
         } catch (e) {
@@ -370,7 +380,7 @@ const XCallSwapModal = ({
           console.log('xCall debug - Archway swap init tx:', res);
           addTransactionResult('archway', res, 'Cross-chain swap requested.');
           setXCallInProgress(true);
-          const originEventData = getXCallOriginEventDataFromArchway(res.events, 'todo swap modal', 'todo swap modal');
+          const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           originEventData && addOriginEvent('archway', originEventData);
         } catch (e) {
           console.error(e);

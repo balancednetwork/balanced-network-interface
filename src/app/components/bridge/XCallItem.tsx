@@ -12,6 +12,7 @@ import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { DestinationXCallData, OriginXCallData, XCallActivityItem, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
+import { ReactComponent as ArrowIcon } from 'assets/icons/arrow-white.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -21,7 +22,7 @@ import {
   useRemoveEvent,
   useRollBackFromOrigin,
   useSetListeningTo,
-  useXCallDestinationEvents,
+  useXCallState,
 } from 'store/xCall/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -43,13 +44,15 @@ const Status = styled(Typography)`
 `;
 
 const FailedX = styled(Box)`
-  width: 15px;
+  width: 10px;
   height: 15px;
   margin-right: 10px;
 
   :before {
-    content: 'X',
+    content: 'X';
+    display: block;
     font-size: 16px;
+    line-height: 1.03;
     color: ${({ theme }) => theme.colors.alert};
   }
 `;
@@ -57,7 +60,7 @@ const FailedX = styled(Box)`
 const XCallItem = ({ chain, destinationData, originData, status }: XCallActivityItem) => {
   const { account } = useIconReact();
   const { signingClient, address: accountArch } = useArchwayContext();
-  const iconDestinationEvents = useXCallDestinationEvents('icon');
+  const xCallState = useXCallState();
   const addOriginEvent = useAddOriginEvent();
   // const listeningTo = useXCallListeningTo();
   // const stopListening = useStopListening();
@@ -84,7 +87,10 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
       bnJs.inject({ account });
       const { result: hash } = await bnJs.XCall.executeCall(`0x${data.reqId.toString(16)}`, data.data);
-      addTransaction({ hash }, { pending: 'Confirming xCall', summary: 'xCall confirmed successfully' });
+      addTransaction(
+        { hash },
+        { pending: 'Confirming cross-chain transaction.', summary: 'Cross-chain transaction confirmed.' },
+      );
       const txResult = await fetchTxResult(hash);
       if (txResult?.status === 1 && txResult.eventLogs.length) {
         // looking for CallExecuted event
@@ -98,8 +104,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
         if (callExecutedEvent?.data[0] === '0x1') {
           console.log('xCall debug - xCall executed successfully');
-          const sn = iconDestinationEvents.find(event => event.reqId === data.reqId)?.sn;
-          sn && removeEvent(sn, true);
+          const origin = xCallState.events[data.origin].origin.find(event => event.sn === data.sn);
 
           //has xCall emitted CallMessageSent event?
           const callMessageSentEvent = txResult.eventLogs.find(event =>
@@ -110,11 +115,13 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
             console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
             const originEventData = getXCallOriginEventDataFromICON(
               callMessageSentEvent,
-              'todo action manager',
-              'todo action manager',
+              origin?.descriptionAction || 'Swap',
+              origin?.descriptionAmount || '',
             );
             originEventData && addOriginEvent('icon', originEventData);
           }
+
+          removeEvent(data.sn, true);
         }
 
         if (callExecutedEvent?.data[0] === '0x0') {
@@ -141,7 +148,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
       };
 
       try {
-        initTransaction('archway', 'Confirming xCall');
+        initTransaction('archway', 'Confirming cross-chain transaction.');
         const res: ExecuteResult = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, 'auto');
 
         console.log('xCall debug - Archway executeCall complete', res);
@@ -153,7 +160,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         if (callExecuted) {
           removeEvent(data.sn, true);
           console.log('xCall debug - Archway executeCall - success');
-          addTransactionResult('archway', res, 'xCall confirmed successfully');
+          addTransactionResult('archway', res, 'Cross-chain transaction confirmed.');
         } else {
           console.log('xCall debug - Archway executeCall - fail');
           addTransactionResult('archway', res || null, t`Transfer failed.`);
@@ -257,6 +264,8 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
     const [elapsedTime, setElapsedTime] = React.useState(0);
     const timestamp = originData.timestamp;
 
+    console.log(destinationData);
+
     React.useEffect(() => {
       if (status === 'pending') {
         const interval = setInterval(() => {
@@ -295,7 +304,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
             <Box>
               {destinationData && (
                 <UnderlineText onClick={e => handleExecute(destinationData)}>
-                  <Typography color="primaryBright">Confirm call</Typography>
+                  <Typography color="primaryBright">Confirm transaction</Typography>
                 </UnderlineText>
               )}
             </Box>
@@ -309,7 +318,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
             </Flex>
             <Box>
               <UnderlineText onClick={e => handleRollback(originData)}>
-                <Typography color="primaryBright">Revert call</Typography>
+                <Typography color="primaryBright">Revert transaction</Typography>
               </UnderlineText>
             </Box>
           </>
@@ -321,9 +330,11 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
   return (
     <Wrap>
-      <Flex alignItems="center">{`${getNetworkDisplayName(originData.chain)} -> ${
-        destinationData ? getNetworkDisplayName(destinationData.chain) : '...'
-      }`}</Flex>
+      <Flex alignItems="center">
+        {getNetworkDisplayName(originData.chain)}
+        <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
+        {`${destinationData ? getNetworkDisplayName(destinationData.chain) : '...'}`}
+      </Flex>
       <Flex justifyContent="center" flexDirection="column">
         <Typography fontWeight={700} color="text">
           {originData.descriptionAction}

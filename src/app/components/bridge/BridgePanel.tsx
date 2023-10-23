@@ -32,7 +32,7 @@ import {
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
-import { useAddOriginEvent, useStopListening } from 'store/xCall/hooks';
+import { useAddOriginEvent } from 'store/xCall/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import AddressInputPanel from '../AddressInputPanel';
@@ -65,7 +65,6 @@ export default function BridgePanel() {
   const [modalClosable, setModalClosable] = React.useState(true);
   const [xCallInProgress, setXCallInProgress] = React.useState(false);
   const addOriginEvent = useAddOriginEvent();
-  const stopListening = useStopListening();
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
@@ -521,7 +520,6 @@ export default function BridgePanel() {
               <>
                 <TextButton
                   onClick={() => {
-                    stopListening();
                     setXCallInProgress(false);
                     setOpen(false);
                   }}

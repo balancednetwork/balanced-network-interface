@@ -193,7 +193,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         initTransaction('archway', 'Executing xCall rollback');
         const res: ExecuteResult = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, {
           amount: [{ amount: '1', denom: 'aconst' }],
-          gas: '300000',
+          gas: '600000',
         });
 
         console.log('xCall debug - Archway rollbackCall complete', res);

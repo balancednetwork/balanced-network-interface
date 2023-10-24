@@ -338,8 +338,8 @@ const ArchwayTest = () => {
 
   const swapArchToBnUSD = async (receiver?: string) => {
     if (signingClient && address) {
-      const swapParams: { path: string[]; receiver?: string } = {
-        path: ['cxd06f80e28e989a67e297799ab1fb501cdddc2b4d'],
+      const swapParams: { pathWRONG: string[]; receiver?: string } = {
+        pathWRONG: ['cxd06f80e28e989a67e297799ab1fb501cdddc2b4d'],
       };
 
       if (receiver) {
@@ -349,7 +349,7 @@ const ArchwayTest = () => {
       const msg = {
         deposit: {
           token_address: ARCHWAY_CW20_COLLATERAL.address,
-          amount: '5000000',
+          amount: '500000',
           to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
           data: getBytesFromString(
             JSON.stringify({
@@ -390,11 +390,12 @@ const ArchwayTest = () => {
     if (signingClient && address) {
       const swapParams: { patFUKh: string[]; receiver?: string } = {
         patFUKh: ['cx6975cdce422307b73b753b121877960e83b3bc35'],
+        receiver: `${ICON_XCALL_NETWORK_ID}/hx2cb62eb17836201c7e4df1186348859dedc018ae}`,
       };
 
       const msg = {
         cross_transfer: {
-          amount: '100000000000000',
+          amount: '100000000000000000',
           to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
           data: getBytesFromString(
             JSON.stringify({
@@ -606,7 +607,7 @@ const ArchwayTest = () => {
               Arch (arch) to bnUSD (icon)
             </Button>
             <Button onClick={() => swapArchBnUSDToArch()} mr={'10px'}>
-              bnUSD (arch) to Arch (arch) FAIL
+              bnUSD (arch) to Arch (icon) FAIL
             </Button>
             <Button
               onClick={() => swapSICXToArch(`archway/archway1kyw8c9ssqtg3akaf3wn6xtyylrs0cst835gyp9`)}

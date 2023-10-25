@@ -9,7 +9,7 @@ import { ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST } from 'store/lists/hooks';
 // prettier-ignore
 export const ArchwayToken: TokenMap = {
   //TODO: Archway mainnet info
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '', 6, 'sArch', 'Staked Archway'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '', 6, 'sARCH', 'Staked Archway'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx6975cdce422307b73b753b121877960e83b3bc35', 6, 'TwitterAsset', 'Test Archway'),
 };
 

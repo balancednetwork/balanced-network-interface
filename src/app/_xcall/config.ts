@@ -21,9 +21,9 @@ const CROSS_TRANSFER_TOKENS_BY_ICON_NETWORK: { [key in SupportedChainId]: string
 };
 
 const ASSET_MANAGER_TOKENS_BY_ICON_NETWORK: { [key in SupportedChainId]: string[] } = {
-  [SupportedChainId.MAINNET]: ['sArch'],
-  [SupportedChainId.BERLIN]: ['sArch'],
-  [SupportedChainId.LISBON]: ['sArch'],
+  [SupportedChainId.MAINNET]: ['sARCH'],
+  [SupportedChainId.BERLIN]: ['sARCH'],
+  [SupportedChainId.LISBON]: ['sARCH'],
   [SupportedChainId.SEJONG]: [],
   [SupportedChainId.YEOUIDO]: [],
 };

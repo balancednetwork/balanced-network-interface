@@ -222,7 +222,7 @@
       "address": "cx6975cdce422307b73b753b121877960e83b3bc35",
       "chainId": 7,
       "name": "Test Archway",
-      "symbol": "sArch",
+      "symbol": "sARCH",
       "decimals": 6,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/arch.png"
     }

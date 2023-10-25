@@ -442,7 +442,7 @@ export default function BridgePanel() {
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
             <Button onClick={() => setOpen(true)} disabled={!isBridgeButtonAvailable}>
-              Bridge
+              Transfer
             </Button>
           </Flex>
         </AutoColumn>

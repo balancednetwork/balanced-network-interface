@@ -14,7 +14,7 @@
       "address": "todoArch1",
       "chainId": 1,
       "name": "Staked Archway",
-      "symbol": "sArch",
+      "symbol": "sARCH",
       "decimals": 6,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
     },
@@ -29,8 +29,8 @@
     {
       "address": "archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44",
       "chainId": 7,
-      "name": "sArch",
-      "symbol": "sArch",
+      "name": "sARCH",
+      "symbol": "sARCH",
       "decimals": 6,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/arch.png"
     },

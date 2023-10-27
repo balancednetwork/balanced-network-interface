@@ -5,35 +5,28 @@ import { Trade } from '@balancednetwork/v1-sdk';
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
 import { t, Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass';
 
-import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { DestinationXCallData, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
-import { useIsICONTxPending, useTransactionAdder } from 'store/transactions/hooks';
 import {
   useAddTransactionResult,
   useArchwayTransactionsState,
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
 import {
-  useAddOriginEvent,
   useXCallDestinationEvents,
   useXCallListeningTo,
   useRemoveEvent,
-  useSetListeningTo,
   useRollBackFromOrigin,
 } from 'store/xCall/hooks';
-import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Button } from '../Button';
 import Spinner from '../Spinner';
+import XCallExecutionHandlerICON from './XCallExecutionHandlerICON';
 
 type XCallEventManagerProps = {
   xCallReset: () => void;
@@ -56,23 +49,14 @@ type XCallEventManagerProps = {
 };
 
 const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XCallEventManagerProps) => {
-  const { account } = useIconReact();
   const { signingClient, address: accountArch } = useArchwayContext();
   const iconDestinationEvents = useXCallDestinationEvents('icon');
-  // const archwayOriginEvents = useXCallOriginEvents('archway');
   const archwayDestinationEvents = useXCallDestinationEvents('archway');
-  const addOriginEvent = useAddOriginEvent();
   const listeningTo = useXCallListeningTo();
-  // const stopListening = useStopListening();
   const removeEvent = useRemoveEvent();
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
-  const setListeningTo = useSetListeningTo();
-  const addTransaction = useTransactionAdder();
-  // const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-  const isICONTxPending = useIsICONTxPending();
   const rollBackFromOrigin = useRollBackFromOrigin();
 
   const handleArchwayExecuteXCall = async (data: DestinationXCallData) => {
@@ -113,66 +97,6 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
         console.error(e);
         addTransactionResult('archway', null, t`Execution failed`);
       }
-    }
-  };
-
-  const handleICONExecuteXCall = async (data: DestinationXCallData) => {
-    if (account) {
-      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-      if (bnJs.contractSettings.ledgerSettings.actived) {
-        changeShouldLedgerSign(true);
-      }
-
-      // addTransaction
-
-      bnJs.inject({ account });
-      const { result: hash } = await bnJs.XCall.executeCall(`0x${data.reqId.toString(16)}`, data.data);
-      addTransaction({ hash }, { pending: msgs.txMsgs.icon.pending, summary: msgs.txMsgs.icon.summary });
-      const txResult = await fetchTxResult(hash);
-      if (txResult?.status === 1 && txResult.eventLogs.length) {
-        // looking for CallExecuted event
-        // then set listener to ResponseMessage / RollbackMessage
-        const callExecutedEvent = txResult.eventLogs.find(event =>
-          event.indexed.includes(getICONEventSignature(XCallEvent.CallExecuted)),
-        );
-        console.log('xCall debug - ICON executeCall tx result: ', txResult);
-
-        if (callExecutedEvent?.data[0] === '0x1') {
-          console.log('xCall debug - xCall executed successfully');
-          const sn = iconDestinationEvents.find(event => event.reqId === data.reqId)?.sn;
-          sn && removeEvent(sn, true);
-
-          clearInputs && clearInputs();
-          //has xCall emitted CallMessageSent event?
-          const callMessageSentEvent = txResult.eventLogs.find(event =>
-            event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
-          );
-
-          if (callMessageSentEvent) {
-            console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
-            const originEventData = getXCallOriginEventDataFromICON(
-              callMessageSentEvent,
-              'todo event manager',
-              'todo event manager',
-            );
-            originEventData && addOriginEvent('icon', originEventData);
-          } else {
-            xCallReset();
-          }
-        }
-
-        if (callExecutedEvent?.data[0] === '0x0') {
-          console.log('xCall debug - xCall executed with error');
-          if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
-            rollBackFromOrigin(data.origin, data.sn);
-            console.log('xCall debug - xCALL rollback needed');
-            setListeningTo('archway', XCallEvent.RollbackMessage);
-          }
-        }
-      }
-      window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-      changeShouldLedgerSign(false);
     }
   };
 
@@ -238,15 +162,14 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
         >
           <Box pt={3}>
             <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-              <Typography mb={4}>
-                <Trans>{msgs.managerMsgs.icon.actionRequired}</Trans>
-              </Typography>
               {iconDestinationEvents.map(event => (
-                <Flex alignItems="center" key={event.reqId}>
-                  <Button onClick={() => handleICONExecuteXCall(event)} disabled={isICONTxPending}>
-                    {isICONTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm</Trans>}
-                  </Button>
-                </Flex>
+                <XCallExecutionHandlerICON
+                  key={event.sn}
+                  event={event}
+                  msgs={msgs}
+                  clearInputs={clearInputs}
+                  xCallReset={xCallReset}
+                />
               ))}
             </Flex>
           </Box>

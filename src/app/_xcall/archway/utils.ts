@@ -48,3 +48,14 @@ export function getXCallDestinationEventDataFromArchwayEvent(
     };
   }
 }
+
+export function getRollbackEventDataFromArchwayEvent(events: readonly Event[]): { sn: string } | undefined {
+  const snRaw = events['wasm-RollbackMessage.sn'];
+  const sn: string = snRaw && snRaw[0];
+  console.log('xCall debug - Archway rollback event data {sn}: ', sn);
+  if (sn) {
+    return {
+      sn,
+    };
+  }
+}

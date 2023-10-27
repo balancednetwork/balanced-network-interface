@@ -22,6 +22,7 @@ export type OriginXCallData = {
   sn: number;
   rollback?: boolean;
   rollbackRequired?: boolean;
+  rollbackReady?: boolean;
   eventName: XCallEventType;
   chain: SupportedXCallChains;
   destination: SupportedXCallChains;
@@ -77,5 +78,5 @@ export type XCallActivityItem = {
   chain: SupportedXCallChains;
   originData: OriginXCallData;
   destinationData?: DestinationXCallData;
-  status: 'pending' | 'executable' | 'failed';
+  status: 'pending' | 'executable' | 'failed' | 'rollbackReady';
 };

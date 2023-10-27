@@ -1,7 +1,9 @@
 import rlp from 'rlp';
 
+import { XCallState } from 'store/xCall/reducer';
+
 import { ARCHWAY_SUPPORTED_TOKENS_LIST } from './archway/tokens';
-import { SupportedXCallChains, XCallEvent, XCallEventType } from './types';
+import { OriginXCallData, SupportedXCallChains, XCallEvent, XCallEventType } from './types';
 
 export function getRlpEncodedMsg(msg: string | any[]) {
   return Array.from(rlp.encode(msg));
@@ -49,4 +51,10 @@ export const getArchwayCounterToken = (symbol?: string) => {
   if (symbol) {
     return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
   }
+};
+
+export const getOriginEvent = (sn: number, xCallState: XCallState): OriginXCallData | undefined => {
+  return Object.keys(xCallState.events)
+    .map(chain => xCallState.events[chain].origin.find(e => e.sn === sn))
+    .find(event => event);
 };

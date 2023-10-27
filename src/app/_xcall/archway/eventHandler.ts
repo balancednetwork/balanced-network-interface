@@ -3,13 +3,18 @@ import React from 'react';
 import { useQuery, UseQueryResult } from 'react-query';
 import { v4 as uuidv4 } from 'uuid';
 
-import { useAddDestinationEvent, useXCallListeningTo, useXCallOriginEvents } from 'store/xCall/hooks';
+import {
+  useAddDestinationEvent,
+  useFlagRollBackReady,
+  useXCallListeningTo,
+  useXCallOriginEvents,
+} from 'store/xCall/hooks';
 
 import { ICON_XCALL_NETWORK_ID } from '../_icon/config';
 import { CrossChainTxType, XCallEvent, XCallEventType } from '../types';
 import { useArchwayContext } from './ArchwayProvider';
 import { ARCHWAY_CONTRACTS, ARCHWAY_WEBSOCKET_URL } from './config';
-import { getXCallDestinationEventDataFromArchwayEvent } from './utils';
+import { getRollbackEventDataFromArchwayEvent, getXCallDestinationEventDataFromArchwayEvent } from './utils';
 
 const ARCHWAY_SOCKET_QUERY = {
   jsonrpc: '2.0',
@@ -26,6 +31,8 @@ export const useArchwayEventListener = () => {
   const [socket, setSocket] = React.useState<WebSocket | undefined>(undefined);
   const addDestinationEvent = useAddDestinationEvent();
   const iconOriginEvents = useXCallOriginEvents('icon');
+  const archwayOriginEvents = useXCallOriginEvents('archway');
+  const flagRollbackReady = useFlagRollBackReady();
   const query = `wasm-${eventName} EXISTS`;
 
   const disconnectFromWebsocket = React.useCallback(() => {
@@ -71,8 +78,14 @@ export const useArchwayEventListener = () => {
                 break;
               }
               case XCallEvent.RollbackMessage: {
-                //TODO: handle rollback message
-                console.log('TODO: logged event from RollbackMessage: ', events);
+                const rollbackEventData = getRollbackEventDataFromArchwayEvent(events);
+
+                if (rollbackEventData) {
+                  if (archwayOriginEvents.some(e => e.sn === parseInt(rollbackEventData.sn))) {
+                    flagRollbackReady('archway', parseInt(rollbackEventData.sn));
+                    disconnectFromWebsocket();
+                  }
+                }
                 break;
               }
             }
@@ -91,7 +104,16 @@ export const useArchwayEventListener = () => {
     } else {
       disconnectFromWebsocket();
     }
-  }, [socket, disconnectFromWebsocket, eventName, query, addDestinationEvent, iconOriginEvents]);
+  }, [
+    socket,
+    disconnectFromWebsocket,
+    eventName,
+    query,
+    addDestinationEvent,
+    iconOriginEvents,
+    archwayOriginEvents,
+    flagRollbackReady,
+  ]);
 };
 
 export function getXcallResult(tx: CrossChainTxType): string | undefined {

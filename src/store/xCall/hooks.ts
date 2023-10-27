@@ -17,6 +17,7 @@ import { AppState } from 'store';
 import {
   addXCallDestinationEvent,
   addXCallOriginEvent,
+  flagRollBackReady,
   removeXCallDestinationEvent,
   removeXCallEvent,
   removeXCallOriginEvent,
@@ -162,7 +163,7 @@ export function useXCallActivityItems(): UseQueryResult<XCallActivityItem[] | un
         const rollback = SUPPORTED_XCALL_CHAINS.map(chain => {
           const chainXCalls: XCallActivityItem[] = [];
           xCallState.events[chain].origin.forEach(event => {
-            if (event.rollbackRequired) {
+            if (event.rollbackRequired && !event.rollbackReady) {
               const otherChains = SUPPORTED_XCALL_CHAINS.filter(c => c !== chain);
               const destinationEvent = otherChains.map(chain => {
                 return xCallState.events[chain].destination.find(destination => destination.sn === event.sn);
@@ -181,7 +182,29 @@ export function useXCallActivityItems(): UseQueryResult<XCallActivityItem[] | un
           return chainXCalls.filter(xCall => xCall !== undefined);
         });
 
-        return [...executable, ...pending, ...rollback].flat().sort((a, b) => {
+        const rollbackReady = SUPPORTED_XCALL_CHAINS.map(chain => {
+          const chainXCalls: XCallActivityItem[] = [];
+          xCallState.events[chain].origin.forEach(event => {
+            if (event.rollbackReady) {
+              const otherChains = SUPPORTED_XCALL_CHAINS.filter(c => c !== chain);
+              const destinationEvent = otherChains.map(chain => {
+                return xCallState.events[chain].destination.find(destination => destination.sn === event.sn);
+              })[0];
+
+              if (destinationEvent) {
+                chainXCalls.push({
+                  chain,
+                  destinationData: destinationEvent,
+                  originData: event,
+                  status: 'rollbackReady',
+                });
+              }
+            }
+          });
+          return chainXCalls.filter(xCall => xCall !== undefined);
+        });
+
+        return [...executable, ...pending, ...rollback, ...rollbackReady].flat().sort((a, b) => {
           return b.originData.timestamp - a.originData.timestamp;
         });
       }
@@ -198,6 +221,16 @@ export function useRollBackFromOrigin(): (chain: SupportedXCallChains, sn: numbe
   return React.useCallback(
     (chain, sn) => {
       dispatch(rollBackFromOrigin({ chain, sn }));
+    },
+    [dispatch],
+  );
+}
+
+export function useFlagRollBackReady(): (chain: SupportedXCallChains, sn: number) => void {
+  const dispatch = useDispatch();
+  return React.useCallback(
+    (chain, sn) => {
+      dispatch(flagRollBackReady({ chain, sn }));
     },
     [dispatch],
   );

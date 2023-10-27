@@ -30,8 +30,9 @@ import {
   useArchwayTransactionsState,
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
-import { useAddOriginEvent, useStopListening } from 'store/xCall/hooks';
-import { formatBigNumber, toDec } from 'utils';
+import { useSignedInWallets } from 'store/wallet/hooks';
+import { useAddOriginEvent } from 'store/xCall/hooks';
+import { formatBigNumber, shortenAddress, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Button, TextButton } from '../Button';
@@ -123,15 +124,14 @@ const XCallSwapModal = ({
   const [xCallInProgress, setXCallInProgress] = React.useState(false);
   const slippageTolerance = useSwapSlippageTolerance();
   const addTransaction = useTransactionAdder();
-  // const iconDestinationEvents = useXCallDestinationEvents('icon');
-  // const archwayOriginEvents = useXCallOriginEvents('archway');
+  const signedInWallets = useSignedInWallets();
   const addOriginEvent = useAddOriginEvent();
-  // const listeningTo = useXCallListeningTo();
-  const stopListening = useStopListening();
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
   const { data: archwayXcallFees } = useArchwayXcallFee();
+
+  const originAddress = signedInWallets.find(wallet => wallet.chain === originChain)?.address;
 
   const { increaseAllowance, allowanceIncreased, isIncreaseNeeded: allowanceIncreaseNeeded } = useAllowanceHandler(
     (originChain === 'archway' && getArchwayCounterToken(executionTrade?.inputAmount.currency.symbol)?.address) || '',
@@ -291,6 +291,7 @@ const XCallSwapModal = ({
         );
 
         if (hash) {
+          setXCallInProgress(true);
           addTransaction(
             { hash },
             {
@@ -414,12 +415,15 @@ const XCallSwapModal = ({
             <Typography textAlign="center">
               <Trans>Pay</Trans>
             </Typography>
-            <Typography variant="p" textAlign="center">
+            <Typography variant="p" textAlign="center" py="5px">
               {formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency')}{' '}
               {currencies[Field.INPUT]?.symbol}
             </Typography>
             <Typography textAlign="center">
               <Trans>{getNetworkDisplayName(originChain)}</Trans>
+            </Typography>
+            <Typography textAlign="center">
+              <Trans>{originAddress && shortenAddress(originAddress, 5)}</Trans>
             </Typography>
           </Box>
 
@@ -427,12 +431,15 @@ const XCallSwapModal = ({
             <Typography textAlign="center">
               <Trans>Receive</Trans>
             </Typography>
-            <Typography variant="p" textAlign="center">
+            <Typography variant="p" textAlign="center" py="5px">
               {formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency')}{' '}
               {currencies[Field.OUTPUT]?.symbol}
             </Typography>
             <Typography textAlign="center">
               <Trans>{getNetworkDisplayName(destinationChain)}</Trans>
+            </Typography>
+            <Typography textAlign="center">
+              <Trans>{destinationAddress && shortenAddress(destinationAddress, 5)}</Trans>
             </Typography>
           </Box>
         </Flex>
@@ -488,7 +495,6 @@ const XCallSwapModal = ({
             <>
               <TextButton
                 onClick={() => {
-                  stopListening();
                   setXCallInProgress(false);
                   onClose();
                 }}

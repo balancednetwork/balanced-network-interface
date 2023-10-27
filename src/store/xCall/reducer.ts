@@ -19,6 +19,7 @@ import {
   stopListening,
   setListeningTo,
   rollBackFromOrigin,
+  flagRollBackReady,
 } from './actions';
 
 export type XCallState = {
@@ -100,6 +101,20 @@ export default createReducer(initialState, builder =>
         const originEvent: OriginXCallData | undefined = state.events[chain].origin.find(data => data.sn === sn);
         if (originEvent) {
           originEvent.rollbackRequired = true;
+          state.events[chain].origin = state.events[chain].origin.map(data => {
+            if (data.sn === originEvent.sn) {
+              return originEvent;
+            }
+            return data;
+          });
+        }
+      }
+    })
+    .addCase(flagRollBackReady, (state, { payload: { chain, sn } }) => {
+      if (chain && sn) {
+        const originEvent: OriginXCallData | undefined = state.events[chain].origin.find(data => data.sn === sn);
+        if (originEvent) {
+          originEvent.rollbackReady = true;
           state.events[chain].origin = state.events[chain].origin.map(data => {
             if (data.sn === originEvent.sn) {
               return originEvent;

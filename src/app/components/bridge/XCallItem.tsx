@@ -190,7 +190,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
       };
 
       try {
-        initTransaction('archway', 'Executing xCall rollback');
+        initTransaction('archway', 'Executing rollback...');
         const res: ExecuteResult = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, {
           amount: [{ amount: '1', denom: 'aconst' }],
           gas: '600000',
@@ -198,18 +198,16 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
         console.log('xCall debug - Archway rollbackCall complete', res);
         //TODO: handle arch rollback response
-        // const callExecuted = res.events.some(
-        //   e => e.type === 'wasm-CallExecuted' && e.attributes.some(a => a.key === 'code' && a.value === '1'),
-        // );
+        const rollbackExecuted = res.events.some(e => e.type === 'wasm-RollbackExecuted');
 
-        // if (callExecuted) {
-        //   removeEvent(data.sn, true);
-        //   console.log('xCall debug - Archway rollbackCall - success');
-        //   addTransactionResult('archway', res, 'xCall rollback confirmed successfully');
-        // } else {
-        //   console.log('xCall debug - Archway rollbackCall - fail');
-        //   addTransactionResult('archway', res || null, t`Rollback failed.`);
-        // }
+        if (rollbackExecuted) {
+          removeEvent(data.sn, true);
+          console.log('xCall debug - Archway rollbackCall - success');
+          addTransactionResult('archway', res, 'Rollback executed');
+        } else {
+          console.log('xCall debug - Archway rollbackCall - fail');
+          addTransactionResult('archway', res || null, t`Rollback failed.`);
+        }
       } catch (e) {
         console.error(e);
         addTransactionResult('archway', null, t`Execution failed`);
@@ -264,8 +262,6 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
     const [elapsedTime, setElapsedTime] = React.useState(0);
     const timestamp = originData.timestamp;
 
-    console.log(destinationData);
-
     React.useEffect(() => {
       if (status === 'pending') {
         const interval = setInterval(() => {
@@ -311,6 +307,19 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
           </>
         );
       case 'failed':
+        return (
+          <>
+            <Flex alignItems="center">
+              <FailedX /> <Status style={{ transform: 'translateY(1px)' }}>Failed</Status>
+            </Flex>
+            <Box>
+              <Typography opacity={0.75} fontSize={14}>
+                Confirming rollback...
+              </Typography>
+            </Box>
+          </>
+        );
+      case 'rollbackReady':
         return (
           <>
             <Flex alignItems="center">

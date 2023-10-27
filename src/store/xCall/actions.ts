@@ -37,4 +37,9 @@ export const rollBackFromOrigin = createAction<{
   sn?: number;
 }>('xCall/rollBackFromOrigin');
 
+export const flagRollBackReady = createAction<{
+  chain?: SupportedXCallChains;
+  sn?: number;
+}>('xCall/flagRollBackReady');
+
 export const stopListening = createAction('xCall/stopListening');

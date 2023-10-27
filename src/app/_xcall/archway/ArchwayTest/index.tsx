@@ -604,7 +604,7 @@ const ArchwayTest = () => {
               onClick={() => swapArchToBnUSD(`${ICON_XCALL_NETWORK_ID}/hx2cb62eb17836201c7e4df1186348859dedc018ae`)}
               mr={'10px'}
             >
-              Arch (arch) to bnUSD (icon)
+              Arch (arch) to bnUSD (icon) FAIL
             </Button>
             <Button onClick={() => swapArchBnUSDToArch()} mr={'10px'}>
               bnUSD (arch) to Arch (icon) FAIL

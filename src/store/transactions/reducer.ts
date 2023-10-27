@@ -21,6 +21,7 @@ export interface TransactionDetails {
   confirmedTime?: number;
   from: string;
   redirectOnSuccess?: string;
+  isTxSuccessfulBasedOnEvents?: (eventLogs: any[]) => boolean;
 }
 
 export interface TransactionState {
@@ -35,12 +36,26 @@ export default createReducer(initialState, builder =>
   builder
     .addCase(
       addTransaction,
-      (transactions, { payload: { networkId, from, hash, approval, summary, claim, redirectOnSuccess } }) => {
+      (
+        transactions,
+        {
+          payload: { networkId, from, hash, approval, summary, claim, redirectOnSuccess, isTxSuccessfulBasedOnEvents },
+        },
+      ) => {
         if (transactions[networkId]?.[hash]) {
           throw Error('Attempted to add existing transaction.');
         }
         const txs = transactions[networkId] ?? {};
-        txs[hash] = { hash, approval, summary, claim, from, addedTime: now(), redirectOnSuccess };
+        txs[hash] = {
+          hash,
+          approval,
+          summary,
+          claim,
+          from,
+          addedTime: now(),
+          redirectOnSuccess,
+          isTxSuccessfulBasedOnEvents,
+        };
         transactions[networkId] = txs;
       },
     )

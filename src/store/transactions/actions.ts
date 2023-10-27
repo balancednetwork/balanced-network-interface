@@ -1,6 +1,8 @@
 import { SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { createAction } from '@reduxjs/toolkit';
 
+export type ICONTxEventLog = { data: string[]; indexed: string[]; scoreAddress: string };
+
 export interface SerializableTransactionReceipt {
   to: string;
   from?: string;
@@ -10,6 +12,7 @@ export interface SerializableTransactionReceipt {
   txHash: string;
   blockHeight: number;
   status?: number;
+  eventLogs?: ICONTxEventLog[];
 }
 
 export const addTransaction = createAction<{
@@ -20,6 +23,7 @@ export const addTransaction = createAction<{
   claim?: { recipient: string };
   summary?: string;
   redirectOnSuccess?: string;
+  isTxSuccessfulBasedOnEvents?: (eventLogs: ICONTxEventLog[]) => boolean;
 }>('transactions/addTransaction');
 export const clearAllTransactions = createAction<{ networkId: NetworkId }>('transactions/clearAllTransactions');
 export const finalizeTransaction = createAction<{

@@ -13,6 +13,7 @@ import styled from 'styled-components';
 
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'app/_xcall/archway/tokens';
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { Button, TextButton } from 'app/components/Button';
@@ -20,7 +21,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
 import Popover, { DropdownPopper } from 'app/components/Popover';
-import QuestionHelper from 'app/components/QuestionHelper';
+import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import SlippageSetting from 'app/components/SlippageSetting';
 import { Typography } from 'app/theme';
 import { ReactComponent as FlipIcon } from 'assets/icons/flip.svg';
@@ -41,6 +42,7 @@ import { useArchwayWalletBalances, useHasEnoughICX, useSignedInWallets } from 's
 import { formatBigNumber, formatPercent, maxAmountSpend, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import Divider from '../Divider';
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 import StabilityFund from '../StabilityFund';
@@ -64,11 +66,17 @@ export default function SwapPanel() {
     currencies.OUTPUT?.wrapped.address,
   );
   const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
-  const showFundOption = isSwapEligibleForStabilityFund && fundMaxSwap?.greaterThan(0);
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
   const [crossChainOrigin, setCrossChainOrigin] = React.useState<SupportedXCallChains>('icon');
   const [crossChainDestination, setCrossChainDestination] = React.useState<SupportedXCallChains>('icon');
   const [destinationAddress, setDestinationAddress] = React.useState<string | undefined>();
+  const { data: xCallArchwayFee } = useArchwayXcallFee();
+  const showFundOption =
+    isSwapEligibleForStabilityFund &&
+    fundMaxSwap?.greaterThan(0) &&
+    crossChainOrigin === 'icon' &&
+    crossChainDestination === 'icon';
+
   const signedInWallets = useSignedInWallets();
   const isChainDifference = crossChainOrigin !== crossChainDestination;
   const isOutputCrosschainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
@@ -114,7 +122,11 @@ export default function SwapPanel() {
       const wallet = signedInWallets.find(wallet => wallet.chain === crossChainDestination);
       if (wallet) {
         setDestinationAddress(wallet.address);
+      } else {
+        setDestinationAddress(undefined);
       }
+    } else {
+      setDestinationAddress(undefined);
     }
   }, [signedInWallets, crossChainDestination, isChainDifference]);
 
@@ -221,7 +233,7 @@ export default function SwapPanel() {
         toggleWalletModal();
         return;
       }
-      if (crossChainOrigin === 'icon' && !account) {
+      if ((crossChainOrigin === 'icon' || crossChainDestination === 'icon') && !account) {
         toggleWalletModal();
         return;
       }
@@ -335,7 +347,7 @@ export default function SwapPanel() {
     </Button>
   ) : (
     <Button disabled={!!account} color="primary" onClick={handleSwap}>
-      {account ? inputError : t`Swap`}
+      {account ? inputError || t`Swap` : t`Swap`}
     </Button>
   );
 
@@ -409,7 +421,7 @@ export default function SwapPanel() {
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
               selectedCurrency={currencies[Field.INPUT]}
-              isChainDifference={isChainDifference}
+              // isChainDifference={isChainDifference}
               isCrossChainToken={isOutputCrosschainCompatible}
             />
           </Flex>
@@ -495,6 +507,63 @@ export default function SwapPanel() {
                       </Typography>
                       <SlippageSetting rawSlippage={slippageTolerance} setRawSlippage={setSlippageTolerance} />
                     </Flex>
+
+                    {(crossChainOrigin !== 'icon' || crossChainDestination !== 'icon') && (
+                      <>
+                        <Divider my={2} />
+                        <Flex alignItems="center" justifyContent="space-between" mb={2}>
+                          <Typography>
+                            <Trans>Bridge</Trans>
+                          </Typography>
+
+                          <Typography textAlign="right">
+                            IBC + xCall
+                            <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
+                              <QuestionHelper
+                                width={300}
+                                text={
+                                  <>
+                                    <Typography mb={3}>
+                                      <Trans>
+                                        <strong>IBC</strong> is an interoperability protocol that allows blockchains to
+                                        connect and communicate with each other, primarily within the Cosmos ecosystem.
+                                      </Trans>
+                                    </Typography>
+                                    <Typography>
+                                      <Trans>
+                                        <strong>xCall</strong> is a cross-chain messaging service that allows you to
+                                        interact with smart contracts on other blockchains. While made for ICON's BTP,
+                                        any interoperability solution can adopt it.
+                                      </Trans>
+                                    </Typography>
+                                  </>
+                                }
+                              ></QuestionHelper>
+                            </QuestionWrapper>
+                          </Typography>
+                        </Flex>
+                        <Flex alignItems="center" justifyContent="space-between" mb={2}>
+                          <Typography>
+                            <Trans>Transfer Fee</Trans>
+                          </Typography>
+
+                          <Typography textAlign="right">
+                            {/* //TODO: check archway decimals */}
+                            {crossChainOrigin === 'icon'
+                              ? 'No fee'
+                              : xCallArchwayFee &&
+                                `${(Number(xCallArchwayFee.rollback) / 10 ** 6).toPrecision(2)} Arch`}
+                          </Typography>
+                        </Flex>
+                        <Flex alignItems="center" justifyContent="space-between" mb={2}>
+                          <Typography>
+                            <Trans>Transfer time</Trans>
+                          </Typography>
+
+                          <Typography textAlign="right">~ 1m</Typography>
+                        </Flex>
+                      </>
+                    )}
                   </Box>
                 </DropdownPopper>
               </div>

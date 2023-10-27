@@ -10,7 +10,7 @@ import { useBlockNumber } from 'store/application/hooks';
 import { getTrackerLink } from 'utils';
 
 import { AppDispatch } from '../index';
-import { finalizeTransaction } from './actions';
+import { finalizeTransaction, ICONTxEventLog } from './actions';
 import { useAllTransactions } from './hooks';
 
 export function shouldCheck(tx: { addedTime: number; receipt?: {}; lastCheckedBlockNumber?: number }): boolean {
@@ -36,21 +36,24 @@ export default function Updater(): null {
         iconService
           .getTransactionResult(hash)
           .execute()
-          .then(receipt => {
-            if (receipt) {
+          .then(txResult => {
+            if (txResult) {
               dispatch(
                 finalizeTransaction({
                   networkId,
                   hash,
                   receipt: {
-                    blockHash: receipt.blockHash,
-                    blockHeight: receipt.blockHeight,
-                    scoreAddress: receipt.scoreAddress,
+                    blockHash: txResult.blockHash,
+                    blockHeight: txResult.blockHeight,
+                    scoreAddress: txResult.scoreAddress,
                     // from: receipt.from,
-                    status: Converter.toNumber(receipt.status),
-                    to: receipt.to,
-                    txHash: receipt.txHash,
-                    txIndex: receipt.txIndex,
+                    status: Converter.toNumber(txResult.status),
+                    to: txResult.to,
+                    txHash: txResult.txHash,
+                    txIndex: txResult.txIndex,
+                    ...(transactions[hash].isTxSuccessfulBasedOnEvents && {
+                      eventLogs: txResult.eventLogs as ICONTxEventLog[],
+                    }),
                   },
                 }),
               );
@@ -60,9 +63,14 @@ export default function Updater(): null {
                 onClick: () => window.open(link, '_blank'),
               };
 
+              const predicate = transactions[hash].isTxSuccessfulBasedOnEvents;
+
               // success
-              if (receipt.status === 1) {
-                toast.update(receipt.txHash, {
+              if (
+                (!predicate && txResult.status === 1) ||
+                (predicate && predicate(txResult.eventLogs as ICONTxEventLog[]))
+              ) {
+                toast.update(txResult.txHash, {
                   ...toastProps,
                   render: (
                     <NotificationSuccess
@@ -75,10 +83,10 @@ export default function Updater(): null {
               }
 
               // failure
-              if (receipt.status === 0) {
-                toast.update(receipt.txHash, {
+              if (txResult.status === 0 || (predicate && !predicate(txResult.eventLogs as ICONTxEventLog[]))) {
+                toast.update(txResult.txHash, {
                   ...toastProps,
-                  render: <NotificationError failureReason={(receipt?.failure as any)?.message} />,
+                  render: <NotificationError failureReason={(txResult?.failure as any)?.message} />,
                   autoClose: 5000,
                 });
               }

@@ -210,7 +210,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset }: XCa
           <Trans>Execute rollback</Trans>
         </Typography>
         <Flex alignItems="center">
-          <Button onClick={() => handleArchwayRollbackXCall(originEvent)} disabled={false}>
+          <Button onClick={() => handleArchwayRollbackXCall(originEvent)} disabled={isTxPending}>
             {isTxPending ? <Trans>Executing...</Trans> : <Trans>Execute</Trans>}
           </Button>
         </Flex>

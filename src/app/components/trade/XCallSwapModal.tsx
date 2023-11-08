@@ -308,7 +308,7 @@ const XCallSwapModal = ({
       if (!archToken || !(signingClient && accountArch)) {
         return;
       }
-      // const allowanceRes = await handleAllowance();
+
       const swapParams = {
         path: executionTrade.route.pathForSwap,
         ...(receivingNetworkAddress && { receiver: receivingNetworkAddress }),

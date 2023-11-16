@@ -219,11 +219,11 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
     },
     {
-      "address": "cx6975cdce422307b73b753b121877960e83b3bc35",
+      "address": "cx4761756e11195947dd27d765ac01e931b836065c",
       "chainId": 7,
-      "name": "Test Archway",
+      "name": "Staked Archway",
       "symbol": "sARCH",
-      "decimals": 6,
+      "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/arch.png"
     }
   ]

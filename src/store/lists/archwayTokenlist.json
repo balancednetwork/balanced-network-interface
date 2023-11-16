@@ -15,19 +15,11 @@
       "chainId": 1,
       "name": "Staked Archway",
       "symbol": "sARCH",
-      "decimals": 6,
+      "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
     },
     {
-      "address": "todoArch2",
-      "chainId": 1,
-      "name": "bnUSD",
-      "symbol": "sICX",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
-    },
-    {
-      "address": "archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44",
+      "address": "archway1erqguqc3hmfajgu7e2dvgaccx6feu5ru3gyatdxu94p66j9hp7msn2kcqp",
       "chainId": 7,
       "name": "sARCH",
       "symbol": "sARCH",

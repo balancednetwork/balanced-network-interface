@@ -483,7 +483,7 @@ export default function BridgePanel() {
             <Trans>address</Trans>
           </Typography>
 
-          <Typography variant="p" textAlign="center" margin={'auto'} maxWidth={200} fontSize={16}>
+          <Typography variant="p" textAlign="center" margin={'auto'} maxWidth={225} fontSize={16}>
             {destinationAddress}
           </Typography>
 

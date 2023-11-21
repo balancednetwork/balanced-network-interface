@@ -525,15 +525,13 @@ export default function SwapPanel() {
                                   <>
                                     <Typography mb={3}>
                                       <Trans>
-                                        <strong>IBC</strong> is an interoperability protocol that allows blockchains to
-                                        connect and communicate with each other, primarily within the Cosmos ecosystem.
+                                        <strong>IBC</strong> is the Cosmos interoperability protocol.
                                       </Trans>
                                     </Typography>
                                     <Typography>
                                       <Trans>
-                                        <strong>xCall</strong> is a cross-chain messaging service that allows you to
-                                        interact with smart contracts on other blockchains. While made for ICON's BTP,
-                                        any interoperability solution can adopt it.
+                                        <strong>xCall</strong> is a cross-chain messaging service that can interact with
+                                        smart contracts on other blockchains.
                                       </Trans>
                                     </Typography>
                                   </>
@@ -544,15 +542,15 @@ export default function SwapPanel() {
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between" mb={2}>
                           <Typography>
-                            <Trans>Transfer Fee</Trans>
+                            <Trans>Transfer fee</Trans>
                           </Typography>
 
                           <Typography textAlign="right">
                             {/* //TODO: check archway decimals */}
                             {crossChainOrigin === 'icon'
-                              ? 'No fee'
+                              ? 'N/A'
                               : xCallArchwayFee &&
-                                `${(Number(xCallArchwayFee.rollback) / 10 ** 6).toPrecision(2)} Arch`}
+                                `${(Number(xCallArchwayFee.rollback) / 10 ** 6).toPrecision(2)} ARCH`}
                           </Typography>
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between" mb={2}>

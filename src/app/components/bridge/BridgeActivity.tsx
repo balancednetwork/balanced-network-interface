@@ -6,6 +6,7 @@ import { Box, Flex } from 'rebass';
 
 import { XCallActivityItem } from 'app/_xcall/types';
 import { Typography } from 'app/theme';
+import { useSignedInWallets } from 'store/wallet/hooks';
 import { useXCallActivityItems, useXCallStats } from 'store/xCall/hooks';
 
 import XCallItem from './XCallItem';
@@ -16,6 +17,7 @@ export default function BridgeActivity() {
   const { data: activityItems } = useXCallActivityItems();
   const { data: xCallStats } = useXCallStats();
   const isSmall = useMedia('(max-width: 600px)');
+  const signedInWallets = useSignedInWallets();
 
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>
@@ -54,9 +56,16 @@ export default function BridgeActivity() {
         {activityItems?.map((item: XCallActivityItem) => (
           <MemoizedItem key={item.originData.sn} {...item} />
         ))}
-        {activityItems?.length === 0 && (
-          <Typography textAlign="center">You have no pending or failed cross-chain transactions.</Typography>
-        )}
+        {activityItems?.length === 0 &&
+          (signedInWallets.length ? (
+            <Typography textAlign="center">
+              <Trans>You have no pending or failed cross-chain transactions.</Trans>
+            </Typography>
+          ) : (
+            <Typography textAlign="center">
+              <Trans>There are no pending cross-chain transactions.</Trans>
+            </Typography>
+          ))}
       </Box>
     </Box>
   );

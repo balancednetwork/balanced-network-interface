@@ -31,7 +31,7 @@ import {
   useArchwayTransactionsState,
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
-import { useCrossChainWalletBalances } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { useAddOriginEvent } from 'store/xCall/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -64,6 +64,7 @@ export default function BridgePanel() {
   const [inputUntouched, setInputUntouched] = React.useState(true);
   const [modalClosable, setModalClosable] = React.useState(true);
   const [xCallInProgress, setXCallInProgress] = React.useState(false);
+  const signedInWallets = useSignedInWallets();
   const addOriginEvent = useAddOriginEvent();
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
@@ -109,11 +110,22 @@ export default function BridgePanel() {
     setPercentAmount(percent);
   };
 
+  function getPercentAmount(percent: number, balance: CurrencyAmount<Currency>) {
+    return balance.multiply(new Fraction(percent, 100)).toExact();
+  }
+
+  React.useEffect(() => {
+    const currencyAmount = currencyToBridge && crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
+    if (percentAmount && currencyAmount) {
+      setAmountToBridge(getPercentAmount(percentAmount, currencyAmount));
+    }
+  }, [bridgeDirection.from, crossChainWallet, currencyToBridge, percentAmount]);
+
   const currencyAmountToBridge = React.useMemo(() => {
     if (currencyToBridge && amountToBridge) {
       return CurrencyAmount.fromRawAmount(
         currencyToBridge.wrapped,
-        new BigNumber(amountToBridge).times(10 ** currencyToBridge.wrapped.decimals).toFixed(),
+        new BigNumber(Number(amountToBridge) || 0).times(10 ** currencyToBridge.wrapped.decimals).toFixed(),
       );
     }
     return undefined;
@@ -121,14 +133,11 @@ export default function BridgePanel() {
 
   const parsedAmount = React.useMemo(() => {
     const currencyAmount = currencyToBridge && crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
-    if (currencyAmount) {
-      if (percentAmount) {
-        return currencyAmount.multiply(new Fraction(percentAmount, 100)).toExact();
-      } else {
-        return amountToBridge;
-      }
+    if (currencyAmount && percentAmount) {
+      return getPercentAmount(percentAmount, currencyAmount);
+    } else {
+      return amountToBridge || '';
     }
-    return '';
   }, [amountToBridge, bridgeDirection.from, crossChainWallet, currencyToBridge, percentAmount]);
 
   const { increaseAllowance, allowanceIncreased, isIncreaseNeeded: allowanceIncreaseNeeded } = useAllowanceHandler(
@@ -173,12 +182,12 @@ export default function BridgePanel() {
 
   const isBridgeButtonAvailable = React.useMemo(() => {
     if (!currencyAmountToBridge) return false;
-    if (bridgeDirection.from === 'icon' && !account) return false;
-    if (bridgeDirection.from === 'archway' && !accountArch) return false;
+    if (!signedInWallets.some(wallet => wallet.chain === bridgeDirection.from)) return false;
+    if (!signedInWallets.some(wallet => wallet.chain === bridgeDirection.to)) return false;
     if (!currencyAmountToBridge?.greaterThan(0)) return false;
     //todo: add check for available balance
     return true;
-  }, [account, accountArch, bridgeDirection.from, currencyAmountToBridge]);
+  }, [bridgeDirection.from, bridgeDirection.to, currencyAmountToBridge, signedInWallets]);
 
   const descriptionAction = `Transfer ${currencyToBridge?.symbol}`;
   const descriptionAmount = `${currencyAmountToBridge?.toFixed(2)} ${currencyAmountToBridge?.currency.symbol}`;

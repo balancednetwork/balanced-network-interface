@@ -10,7 +10,7 @@ import { ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST } from 'store/lists/hooks';
 export const ArchwayToken: TokenMap = {
   //TODO: Archway mainnet info
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '', 6, 'sARCH', 'Staked Archway'),
-  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx6975cdce422307b73b753b121877960e83b3bc35', 6, 'TwitterAsset', 'Test Archway'),
+  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx4761756e11195947dd27d765ac01e931b836065c', 18, 'sARCH', 'Staked Archway'),
 };
 
 const chainId = NETWORK_ID;

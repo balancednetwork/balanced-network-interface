@@ -28,9 +28,10 @@ const CROSSCHAIN_SUPPORTED_TOKENS_: { [key in SupportedChainId]: any } = {
   [SupportedChainId.MAINNET]: {
     cx88fd7df7ddff82f7cc735c871dc519838cb235bb: ['icon', 'archway'],
   },
+  //TODO: refactor
   [SupportedChainId.BERLIN]: {
     cxd06f80e28e989a67e297799ab1fb501cdddc2b4d: ['icon', 'archway'],
-    cx6975cdce422307b73b753b121877960e83b3bc35: ['icon', 'archway'],
+    cx4761756e11195947dd27d765ac01e931b836065c: ['icon', 'archway'],
   },
   [SupportedChainId.LISBON]: {},
   [SupportedChainId.YEOUIDO]: {},

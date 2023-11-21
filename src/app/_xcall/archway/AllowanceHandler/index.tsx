@@ -67,7 +67,7 @@ const useAllowanceHandler = (
         //todo: fee for mainnet
         const res = await signingClient.execute(address, tokenAddress, msg, {
           amount: [{ amount: '1', denom: 'aconst' }],
-          gas: '200000',
+          gas: '400000',
         });
         setAllowanceIncreased(true);
         addTransactionResult(

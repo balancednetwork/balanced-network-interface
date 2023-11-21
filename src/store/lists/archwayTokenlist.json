@@ -23,7 +23,7 @@
       "chainId": 7,
       "name": "sARCH",
       "symbol": "sARCH",
-      "decimals": 6,
+      "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/arch.png"
     },
     {

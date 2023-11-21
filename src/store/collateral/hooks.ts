@@ -297,44 +297,46 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
   return useMemo(() => {
     const allCollateralInfo: CollateralInfo[] | undefined =
       collateralTokens &&
-      Object.values(collateralTokens).map(address => {
-        const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
+      Object.values(collateralTokens)
+        .filter(address => SUPPORTED_TOKENS_MAP_BY_ADDRESS[address])
+        .map(address => {
+          const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
 
-        const collateralDepositUSDValue =
-          depositedAmounts && oraclePrices && depositedAmounts[token.symbol!]
-            ? depositedAmounts[token.symbol!].times(oraclePrices[token.symbol!])
-            : new BigNumber(0);
+          const collateralDepositUSDValue =
+            depositedAmounts && oraclePrices && depositedAmounts[token.symbol!]
+              ? depositedAmounts[token.symbol!].times(oraclePrices[token.symbol!])
+              : new BigNumber(0);
 
-        const availableCollateral =
-          token.symbol === 'sICX'
-            ? toBigNumber(balances[address])
-                .plus(toBigNumber(balances[NULL_CONTRACT_ADDRESS]))
+          const availableCollateral =
+            token.symbol === 'sICX'
+              ? toBigNumber(balances[address])
+                  .plus(toBigNumber(balances[NULL_CONTRACT_ADDRESS]))
+                  .multipliedBy(oraclePrices[token.symbol!])
+              : toBigNumber(balances[address]).multipliedBy(oraclePrices[token.symbol!] || 1);
+
+          const loanTaken =
+            borrowedAmounts && borrowedAmounts[token.symbol!] ? borrowedAmounts[token.symbol!] : new BigNumber(0);
+
+          const loanAvailable =
+            (lockingRatios[token.symbol!] &&
+              depositedAmounts[token.symbol!] &&
+              depositedAmounts[token.symbol!]
                 .multipliedBy(oraclePrices[token.symbol!])
-            : toBigNumber(balances[address]).multipliedBy(oraclePrices[token.symbol!] || 1);
+                .div(lockingRatios[token.symbol!])
+                .dividedBy(1 + originationFee)
+                .minus(loanTaken)) ||
+            new BigNumber(0);
 
-        const loanTaken =
-          borrowedAmounts && borrowedAmounts[token.symbol!] ? borrowedAmounts[token.symbol!] : new BigNumber(0);
-
-        const loanAvailable =
-          (lockingRatios[token.symbol!] &&
-            depositedAmounts[token.symbol!] &&
-            depositedAmounts[token.symbol!]
-              .multipliedBy(oraclePrices[token.symbol!])
-              .div(lockingRatios[token.symbol!])
-              .dividedBy(1 + originationFee)
-              .minus(loanTaken)) ||
-          new BigNumber(0);
-
-        return {
-          symbol: token.symbol!,
-          name: token.name!,
-          displayName: token.symbol === 'sICX' ? 'ICX / sICX' : '',
-          collateralDeposit: collateralDepositUSDValue,
-          collateralAvailable: availableCollateral,
-          loanTaken: loanTaken,
-          loanAvailable: loanAvailable.isGreaterThan(0) ? loanAvailable : new BigNumber(0),
-        };
-      });
+          return {
+            symbol: token.symbol!,
+            name: token.name!,
+            displayName: token.symbol === 'sICX' ? 'ICX / sICX' : '',
+            collateralDeposit: collateralDepositUSDValue,
+            collateralAvailable: availableCollateral,
+            loanTaken: loanTaken,
+            loanAvailable: loanAvailable.isGreaterThan(0) ? loanAvailable : new BigNumber(0),
+          };
+        });
     return allCollateralInfo;
   }, [collateralTokens, depositedAmounts, borrowedAmounts, oraclePrices, balances, lockingRatios, originationFee]);
 }

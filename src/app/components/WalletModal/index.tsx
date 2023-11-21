@@ -97,12 +97,13 @@ const WalletOption = styled(Box)`
   position: relative;
   align-items: center;
   cursor: pointer;
-  padding: 5px 20px;
+  padding: 10px 20px;
   margin: 0px 10px;
   border-radius: 10px;
   text-decoration: none;
   color: white;
   user-select: none;
+  width: 130px;
   max-width: 100px;
 
   ${ChainIcons}, ${WalletIcons} {
@@ -123,8 +124,8 @@ const WalletOption = styled(Box)`
     }
   }
 
-  ${({ theme }) => theme.mediaWidth.up360`
-    width: 140px;
+  ${({ theme }) => theme.mediaWidth.up420`
+    max-width: 130px;
   `};
 
   > *:first-child {
@@ -158,8 +159,13 @@ const Wrapper = styled.div`
   gap: 15px;
 `;
 
-const UnbrakableText = styled(Text)`
+const UnbrakebleText = styled(Text)`
   white-space: nowrap;
+`;
+
+const ScrollHelper = styled.div`
+  min-height: 120px;
+  overflow-y: auto;
 `;
 
 const presenceVariants = {
@@ -178,6 +184,7 @@ export default function WalletModal() {
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
   const upExtraSmall = useMedia('(min-width: 420px)');
+  const upSuperExtraSmall = useMedia('(min-width: 364px)');
   const { connectToWallet: connectToKeplr, address: accountArch, disconnect: disconnectKeplr } = useArchwayContext();
 
   const [{ offset, limit }, updatePaging] = useState({
@@ -431,20 +438,22 @@ export default function WalletModal() {
             style={{ minHeight: '40px' }}
           />
 
-          <AnimatePresence>
-            {filteredWallets.map((wallet, index) => (
-              <motion.div key={wallet.name} {...presenceVariants} style={{ overflow: 'hidden' }}>
-                <WalletItem {...wallet} border={index + 1 < filteredWallets.length} />
-              </motion.div>
-            ))}
-            {filteredWallets.length === 0 && (
-              <motion.div key="no-result" {...presenceVariants}>
-                <Typography textAlign="center">
-                  No matches for <strong>{chainQuery}</strong>
-                </Typography>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <ScrollHelper>
+            <AnimatePresence>
+              {filteredWallets.map((wallet, index) => (
+                <motion.div key={wallet.name} {...presenceVariants} style={{ overflow: 'hidden' }}>
+                  <WalletItem {...wallet} border={index + 1 < filteredWallets.length} />
+                </motion.div>
+              ))}
+              {filteredWallets.length === 0 && (
+                <motion.div key="no-result" {...presenceVariants}>
+                  <Typography textAlign="center">
+                    No matches for <strong>{chainQuery}</strong>
+                  </Typography>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </ScrollHelper>
 
           <Flex justifyContent="center" alignItems="center" sx={{ borderRadius: 10 }} padding={2} bg="bg3">
             <Typography mr={1}>
@@ -488,14 +497,14 @@ export default function WalletModal() {
           <Flex alignItems="stretch" justifyContent="space-around" flexWrap={upExtraSmall ? 'nowrap' : 'wrap'}>
             <WalletOption onClick={handleOpenWallet}>
               <IconWalletIcon width="50" height="50" />
-              <UnbrakableText>ICON wallet</UnbrakableText>
+              <UnbrakebleText>ICON wallet</UnbrakebleText>
             </WalletOption>
 
-            <VerticalDivider text={t`or`} />
+            {upSuperExtraSmall && <VerticalDivider text={t`or`} />}
 
             <WalletOption onClick={handleOpenLedger}>
               <LedgerIcon width="50" height="50" />
-              <UnbrakableText>Ledger</UnbrakableText>
+              <UnbrakebleText>Ledger</UnbrakebleText>
             </WalletOption>
           </Flex>
         </ModalContentWrapper>

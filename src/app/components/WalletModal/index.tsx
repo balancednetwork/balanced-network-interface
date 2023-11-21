@@ -34,6 +34,7 @@ import {
   useIsICONWalletModalOpen,
 } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
+import { useSignedInWallets } from 'store/wallet/hooks';
 
 import { VerticalDivider } from '../Divider';
 import { ModalContentWrapper } from '../ModalContent';
@@ -183,6 +184,7 @@ export default function WalletModal() {
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
+  const signedInWallets = useSignedInWallets();
   const upExtraSmall = useMedia('(min-width: 420px)');
   const upSuperExtraSmall = useMedia('(min-width: 364px)');
   const { connectToWallet: connectToKeplr, address: accountArch, disconnect: disconnectKeplr } = useArchwayContext();
@@ -478,14 +480,16 @@ export default function WalletModal() {
             </ClickAwayListener>
           </Flex>
 
-          <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
-            <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
-            <Box>
-              <Link href="https://balanced.network/disclaimer/" target="_blank">
-                <Trans>View disclaimer</Trans>
-              </Link>
-            </Box>
-          </Typography>
+          {!signedInWallets.length && (
+            <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
+              <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
+              <Box>
+                <Link href="https://balanced.network/disclaimer/" target="_blank">
+                  <Trans>View disclaimer</Trans>
+                </Link>
+              </Box>
+            </Typography>
+          )}
         </Wrapper>
       </StyledModal>
 

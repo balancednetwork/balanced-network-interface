@@ -342,7 +342,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
       <Flex alignItems="center">
         {getNetworkDisplayName(originData.chain)}
         <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
-        {`${destinationData ? getNetworkDisplayName(destinationData.chain) : '...'}`}
+        {getNetworkDisplayName(originData.destination)}
       </Flex>
       <Flex justifyContent="center" flexDirection="column">
         <Typography fontWeight={700} color="text">

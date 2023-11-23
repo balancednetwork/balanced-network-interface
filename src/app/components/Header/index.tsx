@@ -270,7 +270,7 @@ export default function Header(props: { title?: string; className?: string }) {
                       </Typography>
                       <ConnectionStatus>
                         {signedInWallets.map((wallet, index) => (
-                          <span>
+                          <span key={index}>
                             {getNetworkDisplayName(wallet.chain)}
                             {index + 1 < signedInWallets.length ? ', ' : ''}
                           </span>

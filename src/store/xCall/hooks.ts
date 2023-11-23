@@ -1,8 +1,13 @@
 import React from 'react';
 
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import BigNumber from 'bignumber.js';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { COSMOS_NATIVE_AVAILABLE_TOKENS } from 'app/_xcall/_icon/config';
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
 import {
   OriginXCallData,
@@ -12,6 +17,7 @@ import {
   XCallEventType,
   XCallActivityItem,
 } from 'app/_xcall/types';
+import { getArchwayCounterToken } from 'app/_xcall/utils';
 import { AppState } from 'store';
 
 import {
@@ -248,5 +254,60 @@ export function useXCallStats(): UseQueryResult<{ transfers: number; swaps: numb
     {
       keepPreviousData: true,
     },
+  );
+}
+
+export function useWithdrawableNativeAmount(
+  chain: SupportedXCallChains,
+  currencyAmount?: CurrencyAmount<Token>,
+): UseQueryResult<
+  | {
+      amount: BigNumber;
+      fee: BigNumber;
+      symbol: string;
+    }
+  | undefined
+> {
+  const amount = currencyAmount?.numerator.toString();
+  const address = currencyAmount?.currency.wrapped.address;
+  const { client } = useArchwayContext();
+
+  return useQuery(
+    ['withdrawableNativeAmount', amount, address, chain],
+    async () => {
+      if (
+        client &&
+        address &&
+        amount &&
+        currencyAmount &&
+        COSMOS_NATIVE_AVAILABLE_TOKENS.some(token => token.address === address)
+      ) {
+        if (chain === 'archway') {
+          const stakedArchwayAddress = getArchwayCounterToken('sARCH');
+          if (stakedArchwayAddress?.address) {
+            const response = await client.queryContractSmart(ARCHWAY_CONTRACTS.liquidSwap, {
+              simulation: {
+                offer_asset: {
+                  amount: amount,
+                  info: {
+                    token: {
+                      contract_addr: stakedArchwayAddress?.address,
+                    },
+                  },
+                },
+              },
+            });
+
+            return {
+              amount: new BigNumber(response.return_amount).div(10 ** currencyAmount.currency.decimals),
+              fee: new BigNumber(response.commission_amount).div(10 ** currencyAmount.currency.decimals),
+              symbol: 'ARCH',
+            };
+          }
+        }
+      }
+      return undefined;
+    },
+    { keepPreviousData: true, enabled: !!currencyAmount },
   );
 }

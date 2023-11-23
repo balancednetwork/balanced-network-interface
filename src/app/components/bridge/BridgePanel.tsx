@@ -6,8 +6,9 @@ import BigNumber from 'bignumber.js';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
+import styled from 'styled-components';
 
-import { ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
+import { ICON_XCALL_NETWORK_ID, COSMOS_NATIVE_AVAILABLE_TOKENS } from 'app/_xcall/_icon/config';
 import { useIconXcallFee } from 'app/_xcall/_icon/eventHandlers';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
@@ -32,7 +33,7 @@ import {
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
-import { useAddOriginEvent } from 'store/xCall/hooks';
+import { useAddOriginEvent, useWithdrawableNativeAmount } from 'store/xCall/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import AddressInputPanel from '../AddressInputPanel';
@@ -46,6 +47,24 @@ import { BrightPanel } from '../trade/utils';
 import XCallEventManager from '../trade/XCallEventManager';
 import { presenceVariants, StyledButton } from '../trade/XCallSwapModal';
 import ChainSelector from './ChainSelector';
+
+const WithdrawOption = styled.button<{ active: boolean }>`
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 0;
+  outline: none;
+  cursor: pointer;
+  margin: 15px 15px 0;
+  transition: all 0.2s ease;
+
+  ${({ theme }) => `color: ${theme.colors.text}`};
+  ${({ theme, active }) => `background-color: ${active ? theme.colors.bg3 : 'transparent'}`};
+
+  &:hover {
+    ${({ theme }) => `background-color: ${theme.colors.bg3}`};
+  }
+`;
 
 export default function BridgePanel() {
   const { account } = useIconReact();
@@ -72,6 +91,7 @@ export default function BridgePanel() {
   const { data: archwayXcallFees } = useArchwayXcallFee();
   const { data: iconXcallFees } = useIconXcallFee();
   const [isOpen, setOpen] = React.useState(false);
+  const [withdrawNative, setWithdrawNative] = React.useState(false);
 
   const handleSetOriginChain = React.useCallback(
     (chain: SupportedXCallChains) => {
@@ -101,6 +121,7 @@ export default function BridgePanel() {
   };
 
   const handleInputSelect = (currency: Currency) => {
+    setWithdrawNative(false);
     setCurrencyToBridge(currency);
   };
 
@@ -130,6 +151,7 @@ export default function BridgePanel() {
     }
     return undefined;
   }, [amountToBridge, currencyToBridge]);
+  const { data: withdrawableNativeAmount } = useWithdrawableNativeAmount(bridgeDirection.to, currencyAmountToBridge);
 
   const parsedAmount = React.useMemo(() => {
     const currencyAmount = currencyToBridge && crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
@@ -186,11 +208,15 @@ export default function BridgePanel() {
     if (!signedInWallets.some(wallet => wallet.chain === bridgeDirection.to)) return false;
     if (!currencyAmountToBridge?.greaterThan(0)) return false;
     if (
-      crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address].lessThan(currencyAmountToBridge)
+      crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address]?.lessThan(currencyAmountToBridge)
     )
       return false;
     return true;
   }, [bridgeDirection.from, bridgeDirection.to, crossChainWallet, currencyAmountToBridge, signedInWallets]);
+
+  const isNativeVersionAvailable = COSMOS_NATIVE_AVAILABLE_TOKENS.some(
+    token => token.address === currencyToBridge?.wrapped.address,
+  );
 
   const descriptionAction = `Transfer ${currencyToBridge?.symbol}`;
   const descriptionAmount = `${currencyAmountToBridge?.toFixed(2)} ${currencyAmountToBridge?.currency.symbol}`;
@@ -250,7 +276,7 @@ export default function BridgePanel() {
       } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
         const { result: hash } = await bnJs
           .inject({ account })
-          .AssetManager.withdrawTo(
+          .AssetManager[withdrawNative ? 'withdrawNativeTo' : 'withdrawTo'](
             currencyAmountToBridge.quotient.toString(),
             tokenAddress,
             destination,
@@ -498,6 +524,37 @@ export default function BridgePanel() {
           <Typography variant="p" textAlign="center" margin={'auto'} maxWidth={225} fontSize={16}>
             {destinationAddress}
           </Typography>
+
+          {isNativeVersionAvailable && (
+            <>
+              <Typography textAlign="center" mb="2px" mt={3}>
+                <Trans>Do you want to receive a native version of the token?</Trans>
+              </Typography>
+              <Flex justifyContent="space-around">
+                <WithdrawOption active={withdrawNative} onClick={() => setWithdrawNative(true)}>
+                  <Typography fontWeight="bold" mb={1}>
+                    Unstake
+                  </Typography>
+                  <Typography>
+                    {`${withdrawableNativeAmount?.amount.toFormat(2, { groupSeparator: ',', decimalSeparator: '.' })} ${
+                      withdrawableNativeAmount?.symbol
+                    }`}{' '}
+                  </Typography>
+                </WithdrawOption>
+
+                <WithdrawOption active={!withdrawNative} onClick={() => setWithdrawNative(false)}>
+                  <Typography fontWeight="bold" mb={1}>
+                    Keep {currencyToBridge?.symbol}
+                  </Typography>
+                  <Typography>
+                    {`${currencyAmountToBridge?.toFixed(2, { groupSeparator: ',', decimalSeparator: '.' })} ${
+                      currencyAmountToBridge?.currency.symbol
+                    }`}{' '}
+                  </Typography>
+                </WithdrawOption>
+              </Flex>
+            </>
+          )}
 
           <XCallEventManager xCallReset={xCallReset} msgs={msgs} />
 

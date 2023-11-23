@@ -11,6 +11,7 @@ export const ArchwayToken: TokenMap = {
   //TODO: Archway mainnet info
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '', 6, 'sARCH', 'Staked Archway'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx4761756e11195947dd27d765ac01e931b836065c', 18, 'sARCH', 'Staked Archway'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, 'cx4761756e11195947dd27d765ac01e931b836065c', 18, 'sARCH', 'Staked Archway'),
 };
 
 const chainId = NETWORK_ID;

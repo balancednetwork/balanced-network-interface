@@ -208,7 +208,8 @@ export default function BridgePanel() {
     if (!signedInWallets.some(wallet => wallet.chain === bridgeDirection.to)) return false;
     if (!currencyAmountToBridge?.greaterThan(0)) return false;
     if (
-      crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address]?.lessThan(currencyAmountToBridge)
+      !crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address] ||
+      crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address].lessThan(currencyAmountToBridge)
     )
       return false;
     return true;

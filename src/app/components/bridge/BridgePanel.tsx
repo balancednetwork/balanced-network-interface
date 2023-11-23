@@ -317,7 +317,7 @@ export default function BridgePanel() {
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
           originEventData && addOriginEvent('archway', originEventData);
-          //todo: clear inputs
+          handleTypeInput('');
         } catch (e) {
           console.error(e);
           addTransactionResult('archway', null, 'Cross-chain transfer request failed');
@@ -342,7 +342,7 @@ export default function BridgePanel() {
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
           originEventData && addOriginEvent('archway', originEventData);
-          //todo: clear inputs
+          handleTypeInput('');
         } catch (e) {
           console.error(e);
           addTransactionResult('archway', null, 'Cross-chain transfer request failed');

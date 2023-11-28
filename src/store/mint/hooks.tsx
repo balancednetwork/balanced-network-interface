@@ -9,6 +9,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 
+import { SupportedXCallChains } from 'app/_xcall/types';
 import bnJs from 'bnJs';
 import { isNativeCurrency, useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases } from 'hooks/Tokens';
@@ -16,7 +17,7 @@ import { useQueuePair } from 'hooks/useQueuePair';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useCurrencyBalances } from 'store/wallet/hooks';
+import { useCrossChainCurrencyBalances, useCurrencyBalances } from 'store/wallet/hooks';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, typeInput, selectCurrency } from './actions';
@@ -118,7 +119,10 @@ const useCurrencyDeposit = (
   return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, JSBI.BigInt(result)) : undefined;
 };
 
-export function useDerivedMintInfo(): {
+export function useDerivedMintInfo(
+  AChain?: SupportedXCallChains,
+  BChain?: SupportedXCallChains,
+): {
   dependentField: Field;
   currencies: { [field in Field]?: Currency };
   pair?: Pair | null;
@@ -177,13 +181,20 @@ export function useDerivedMintInfo(): {
   // balances
   const currencyArr = React.useMemo(() => [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]], [currencies]);
   const balances = useCurrencyBalances(account ?? undefined, currencyArr);
-  const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
-    () => ({
-      [Field.CURRENCY_A]: balances[0], // base token
-      [Field.CURRENCY_B]: balances[1], // quote token
-    }),
-    [balances],
-  );
+  const balancesCrossChain = useCrossChainCurrencyBalances(currencyArr);
+  const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
+    if (AChain && BChain && balancesCrossChain) {
+      return {
+        [Field.CURRENCY_A]: balancesCrossChain[0]?.[AChain], // base token
+        [Field.CURRENCY_B]: balancesCrossChain[1]?.[BChain], // quote token
+      };
+    } else {
+      return {
+        [Field.CURRENCY_A]: balances[0], // base token
+        [Field.CURRENCY_B]: balances[1], // quote token
+      };
+    }
+  }, [AChain, BChain, balances, balancesCrossChain]);
 
   // deposits
   const depositA = useCurrencyDeposit(account ?? undefined, currencyA);

@@ -335,9 +335,17 @@ export default function BridgePanel() {
           };
           initTransaction('archway', `Requesting cross-chain transfer...`);
           setXCallInProgress(true);
-          const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.assetManager, msg, 'auto', undefined, [
-            { amount: archwayXcallFees.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' },
-          ]);
+          const res = await signingClient.execute(
+            accountArch,
+            ARCHWAY_CONTRACTS.assetManager,
+            msg,
+            {
+              amount: [{ amount: '1', denom: 'aconst' }],
+              gas: '1200000',
+            },
+            undefined,
+            [{ amount: archwayXcallFees.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' }],
+          );
           console.log('xCall debug - Archway bridge init tx:', res);
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, t`Cross-chain transfer requested.`);

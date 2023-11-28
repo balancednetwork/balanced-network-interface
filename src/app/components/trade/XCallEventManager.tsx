@@ -32,6 +32,7 @@ type XCallEventManagerProps = {
   xCallReset: () => void;
   clearInputs?: () => void;
   executionTrade?: Trade<Currency, Currency, TradeType>;
+  callback?: (success: boolean) => void;
   msgs: {
     txMsgs: {
       [key in SupportedXCallChains]: {
@@ -48,7 +49,7 @@ type XCallEventManagerProps = {
   };
 };
 
-const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XCallEventManagerProps) => {
+const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEventManagerProps) => {
   const { signingClient, address: accountArch } = useArchwayContext();
   const iconDestinationEvents = useXCallDestinationEvents('icon');
   const archwayDestinationEvents = useXCallDestinationEvents('archway');
@@ -86,10 +87,12 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
         if (callExecuted) {
           removeEvent(data.sn, true);
           console.log('xCall debug - Archway executeCall - success');
+          callback && callback(true);
           xCallReset();
           addTransactionResult('archway', res, msgs.txMsgs.archway.summary);
         } else {
           console.log('xCall debug - Archway executeCall - fail');
+          callback && callback(false);
           addTransactionResult('archway', res || null, t`Transfer failed.`);
           rollBackFromOrigin(data.origin, data.sn);
         }
@@ -169,6 +172,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, executionTrade, msgs }: XC
                   msgs={msgs}
                   clearInputs={clearInputs}
                   xCallReset={xCallReset}
+                  callback={callback}
                 />
               ))}
             </Flex>

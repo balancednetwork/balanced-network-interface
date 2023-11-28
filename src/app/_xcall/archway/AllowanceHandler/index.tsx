@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 
 import {
   useAddTransactionResult,
@@ -42,13 +43,13 @@ const useAllowanceHandler = (
     }
   }, [allowance, amountNeeded]);
 
-  const isIncreaseNeeded = React.useMemo(() => {
-    return tokenAddress !== ARCHWAY_CONTRACTS.bnusd && Number(allowance) < Number(amountNeeded);
-  }, [tokenAddress, allowance, amountNeeded]);
-
   const actualIncreaseNeeded = React.useMemo(() => {
-    return (Number(amountNeeded) - Number(allowance)).toString();
+    return new BigNumber(amountNeeded).minus(new BigNumber(allowance)).toString();
   }, [allowance, amountNeeded]);
+
+  const isIncreaseNeeded = React.useMemo(() => {
+    return tokenAddress !== ARCHWAY_CONTRACTS.bnusd && new BigNumber(actualIncreaseNeeded).gt(0);
+  }, [tokenAddress, actualIncreaseNeeded]);
 
   const increaseAllowance = async () => {
     if (signingClient && address && tokenAddress) {

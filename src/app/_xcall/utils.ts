@@ -1,5 +1,6 @@
 import rlp from 'rlp';
 
+import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { XCallState } from 'store/xCall/reducer';
 
 import { ARCHWAY_SUPPORTED_TOKENS_LIST } from './archway/tokens';
@@ -57,4 +58,13 @@ export const getOriginEvent = (sn: number, xCallState: XCallState): OriginXCallD
   return Object.keys(xCallState.events)
     .map(chain => xCallState.events[chain].origin.find(e => e.sn === sn))
     .find(event => event);
+};
+
+export const getCrossChainTokenAddress = (chain: SupportedXCallChains, tokenSymbol?: string): string | undefined => {
+  if (!tokenSymbol) return;
+  if (chain === 'icon') {
+    return COMBINED_TOKENS_LIST.find(token => token.symbol === tokenSymbol)?.address;
+  } else if (chain === 'archway') {
+    return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === tokenSymbol)?.address;
+  }
 };

@@ -2,11 +2,19 @@ import React from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Currency, Token } from '@balancednetwork/sdk-core';
+import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
+import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
+import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
+import { SupportedXCallChains } from 'app/_xcall/types';
+import { getBytesFromString, getCrossChainTokenAddress } from 'app/_xcall/utils';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
@@ -16,13 +24,20 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
+import {
+  useAddTransactionResult,
+  useArchwayTransactionsState,
+  useInitTransaction,
+} from 'store/transactionsCrosschain/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
+import { useAddOriginEvent } from 'store/xCall/hooks';
 import { toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import ModalContent from '../ModalContent';
+import ModalContent, { ModalContentWrapper } from '../ModalContent';
 import Spinner from '../Spinner';
 import { depositMessage, supplyMessage } from './utils';
+import XCallEventManager from './XCallEventManager';
 
 interface ModalProps {
   isOpen: boolean;
@@ -30,14 +45,24 @@ interface ModalProps {
   children?: React.ReactNode;
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
   currencies: { [field in Field]?: Currency };
+  AChain: SupportedXCallChains;
+  BChain: SupportedXCallChains;
 }
 
 const getPairName = (currencies: { [field in Field]?: Currency }) => {
   return `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`;
 };
 
-export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies }: ModalProps) {
+export default function SupplyLiquidityModal({
+  isOpen,
+  onClose,
+  parsedAmounts,
+  currencies,
+  AChain,
+  BChain,
+}: ModalProps) {
   const { account } = useIconReact();
+  const { signingClient, address: accountArch } = useArchwayContext();
 
   const { currencyDeposits, pair } = useDerivedMintInfo();
   const addTransaction = useTransactionAdder();
@@ -46,13 +71,74 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
+  const addOriginEvent = useAddOriginEvent();
+  const [xCallInProgress, setXCallInProgress] = React.useState(false);
+  const initTransaction = useInitTransaction();
+  const addTransactionResult = useAddTransactionResult();
+  const { isTxPending } = useArchwayTransactionsState();
+  const { increaseAllowance: increaseAllowanceA, isIncreaseNeeded: allowanceIncreaseNeededA } = useAllowanceHandler(
+    (AChain === 'archway' && getCrossChainTokenAddress('archway', currencies[Field.CURRENCY_A]?.wrapped.symbol)) || '',
+    parsedAmounts[Field.CURRENCY_A]?.quotient.toString() || '0',
+  );
+
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
   const [shouldAddAssets, setShouldAddAssets] = React.useState({
     [Field.CURRENCY_A]: false,
     [Field.CURRENCY_B]: false,
   });
 
-  const handleAdd = (field: Field) => async () => {
+  const handleAddArchway = async (field: Field) => {
+    const token = currencies[field] as Token;
+    const address = getCrossChainTokenAddress('archway', token.wrapped.symbol);
+    if (!address || !account || !signingClient || !accountArch) return;
+
+    const descriptionAction = `Supply ${token.symbol} liquidity.`;
+    const descriptionAmount = `${parsedAmounts[field]?.toFixed(2) || '0'} ${token.symbol}`;
+    initTransaction('archway', t`Requesting cross-chain supply...`);
+
+    const msg = {
+      deposit: {
+        token_address: address,
+        amount: parsedAmounts[field]?.quotient.toString(),
+        to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`,
+        data: getBytesFromString(
+          JSON.stringify({
+            method: '_deposit',
+            params: {
+              address: `${account}`,
+            },
+          }),
+        ),
+      },
+    };
+
+    const fee = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+      get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
+    });
+
+    try {
+      const res: ExecuteResult = await signingClient.execute(
+        accountArch,
+        ARCHWAY_CONTRACTS.assetManager,
+        msg,
+        'auto',
+        undefined,
+        // todo: fee for mainnet
+        [{ amount: fee, denom: 'aconst' }],
+      );
+      console.log('xCall debug - Archway supply init tx:', res);
+      addTransactionResult('archway', res, 'Cross-chain supply requested.');
+      setXCallInProgress(true);
+      const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
+      originEventData && addOriginEvent('archway', originEventData);
+    } catch (e) {
+      console.error(e);
+      addTransactionResult('archway', null, 'Supply request failed');
+      setXCallInProgress(false);
+    }
+  };
+
+  const handleAddICON = async (field: Field) => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     const token = currencies[field] as Token;
@@ -114,6 +200,14 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     } finally {
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       setShouldRemoveAssets({ ...shouldRemoveAssets, [field]: false });
+    }
+  };
+
+  const handleAdd = (field: Field) => () => {
+    if (UIStatus[field].chain === 'archway') {
+      handleAddArchway(field);
+    } else if (UIStatus[field].chain === 'icon') {
+      handleAddICON(field);
     }
   };
 
@@ -218,9 +312,12 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     [Field.CURRENCY_A]: {
       shouldSend: !!!currencyDeposits[Field.CURRENCY_A]?.greaterThan(0),
       // isAddPending: !!addingTxs[Field.CURRENCY_A],
-      isAddPending: addingATxStatus === TransactionStatus.pending,
+      isAddPending: addingATxStatus === TransactionStatus.pending || isTxPending || xCallInProgress,
       // isRemovePending: !!removingTxs[Field.CURRENCY_A],
       isRemovePending: removingATxStatus === TransactionStatus.pending,
+      isAllowanceIncreaseNeeded: allowanceIncreaseNeededA,
+      isAllowancePending: false,
+      chain: AChain,
     },
     [Field.CURRENCY_B]: {
       shouldSend: !!!currencyDeposits[Field.CURRENCY_B]?.greaterThan(0),
@@ -228,6 +325,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       isAddPending: addingBTxStatus === TransactionStatus.pending,
       // isRemovePending: !!removingTxs[Field.CURRENCY_B],
       isRemovePending: removingBTxStatus === TransactionStatus.pending,
+      isAllowanceIncreaseNeeded: false,
+      isAllowancePending: false,
+      chain: BChain,
     },
   };
 
@@ -242,6 +342,43 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   };
 
   const hasEnoughICX = useHasEnoughICX();
+
+  const xCallReset = () => {
+    setXCallInProgress(false);
+  };
+
+  const executeCallback = React.useCallback(
+    (success: boolean) => {
+      setAddingTxs(state => ({ ...state, CURRENCY_A: success ? 'success' : '' }));
+      success && setXCallInProgress(false);
+    },
+    [setAddingTxs],
+  );
+
+  const msgs = {
+    txMsgs: {
+      icon: {
+        pending: t`Supplying liquidity...`,
+        summary: t`Liquidity supplied.`,
+      },
+      archway: {
+        pending: t`none`,
+        summary: t`none`,
+      },
+    },
+    managerMsgs: {
+      icon: {
+        awaiting: t`Awaiting message from ICON network`,
+        actionRequired: t`Supply ${parsedAmounts['CURRENCY_A']?.toFixed(2, { groupSeparator: ',' })} ${
+          currencies['CURRENCY_A']?.symbol
+        }`,
+      },
+      archway: {
+        awaiting: t`Awaiting message from Archway network`,
+        actionRequired: t`N/A`,
+      },
+    },
+  };
 
   return (
     <Modal isOpen={isOpen} onDismiss={() => undefined}>
@@ -281,19 +418,35 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                           </Typography>
                         </>
                       )}
-                      {!shouldAddAssets[field] && (
-                        <>
-                          <SupplyButton
-                            disabled={
-                              UIStatus[field].isAddPending ||
-                              shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
-                            }
-                            mt={2}
-                            onClick={handleAdd(field)}
-                          >
-                            {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
-                          </SupplyButton>
-                        </>
+                      {UIStatus[field].isAllowanceIncreaseNeeded ? (
+                        <SupplyButton disabled={isTxPending} mt={2} onClick={increaseAllowanceA}>
+                          {isTxPending ? `Increasing allowance...` : `Increase allowance`}
+                        </SupplyButton>
+                      ) : (
+                        !shouldAddAssets[field] && (
+                          <>
+                            <SupplyButton
+                              disabled={
+                                UIStatus[field].isAddPending ||
+                                shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                              }
+                              mt={2}
+                              onClick={handleAdd(field)}
+                            >
+                              {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
+                            </SupplyButton>
+                            {UIStatus[field].chain !== 'icon' && (
+                              <Modal isOpen={xCallInProgress} onDismiss={() => {}}>
+                                <ModalContentWrapper>
+                                  <Typography mb={3} textAlign="center" fontSize={16}>
+                                    {t`Transfer ${currencies[field]?.symbol} to ICON.`}
+                                  </Typography>
+                                  <XCallEventManager xCallReset={xCallReset} msgs={msgs} callback={executeCallback} />
+                                </ModalContentWrapper>
+                              </Modal>
+                            )}
+                          </>
+                        )
                       )}
                     </>
                   ) : (

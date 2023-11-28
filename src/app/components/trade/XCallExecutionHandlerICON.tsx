@@ -36,6 +36,7 @@ type XCallExecutionHandlerProps = {
   event: DestinationXCallData;
   xCallReset: () => void;
   clearInputs?: () => void;
+  callback?: (success: boolean) => void;
   msgs: {
     txMsgs: {
       [key in SupportedXCallChains]: {
@@ -52,7 +53,7 @@ type XCallExecutionHandlerProps = {
   };
 };
 
-const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset }: XCallExecutionHandlerProps) => {
+const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callback }: XCallExecutionHandlerProps) => {
   const xCallState = useXCallState();
   const { account } = useIconReact();
   const { signingClient, address: accountArch } = useArchwayContext();
@@ -88,6 +89,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset }: XCa
         const rollbackExecuted = res.events.some(e => e.type === 'wasm-RollbackExecuted');
 
         if (rollbackExecuted) {
+          callback && callback(true);
           removeEvent(data.sn, true);
           console.log('xCall debug - Archway rollbackCall - success');
           addTransactionResult('archway', res, 'Rollback executed');
@@ -139,6 +141,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset }: XCa
 
         if (callExecutedEvent?.data[0] === '0x1') {
           console.log('xCall debug - xCall executed successfully');
+          callback && callback(true);
           const sn = xCallState.events['icon'].destination.find(event => event.reqId === data.reqId)?.sn;
           sn && removeEvent(sn, true);
 
@@ -163,6 +166,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset }: XCa
 
         if (callExecutedEvent?.data[0] === '0x0') {
           console.log('xCall debug - xCall executed with error');
+          callback && callback(false);
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
             rollBackFromOrigin(data.origin, data.sn);
             console.log('xCall debug - xCALL rollback needed');

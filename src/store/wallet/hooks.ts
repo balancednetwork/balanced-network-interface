@@ -13,7 +13,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'app/_xcall/archway/tokens';
+import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
 import { SupportedXCallChains } from 'app/_xcall/types';
+import { getCrossChainTokenAddress } from 'app/_xcall/utils';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
@@ -226,6 +228,43 @@ export function useAllTokenBalances(
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens]);
   const balances = useTokenBalances(account ?? undefined, allTokensArray);
   return balances ?? {};
+}
+
+export function useCrossChainCurrencyBalances(
+  currencies: (Currency | undefined)[],
+):
+  | (
+      | { [key in SupportedXCallChains]: CurrencyAmount<Currency> | undefined }
+      | { icon: CurrencyAmount<Currency> | undefined }
+    )[]
+  | undefined {
+  const crossChainBalances = useCrossChainWalletBalances();
+  const containsICX: boolean = useMemo(() => currencies?.some(currency => isNativeCurrency(currency)) ?? false, [
+    currencies,
+  ]);
+  const { account } = useIconReact();
+  const accounts = useMemo(() => (containsICX ? [account || undefined] : []), [containsICX, account]);
+  const icxBalance = useICXBalances(accounts);
+
+  return React.useMemo(() => {
+    if (crossChainBalances && account) {
+      return currencies.map(currency => {
+        if (isNativeCurrency(currency)) return { icon: icxBalance[account] };
+        return SUPPORTED_XCALL_CHAINS.reduce((balances, chain) => {
+          if (crossChainBalances[chain] && currency) {
+            const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);
+            const balance: CurrencyAmount<Currency> | undefined = tokenAddress
+              ? crossChainBalances[chain][tokenAddress]
+              : undefined;
+            balances[chain] = balance;
+            return balances;
+          }
+          balances[chain] = undefined;
+          return balances;
+        }, {} as { [key in SupportedXCallChains]: CurrencyAmount<Currency> | undefined });
+      });
+    }
+  }, [crossChainBalances, account, currencies, icxBalance]);
 }
 
 export function useCurrencyBalances(

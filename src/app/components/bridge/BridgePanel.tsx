@@ -12,6 +12,7 @@ import {
   ICON_XCALL_NETWORK_ID,
   COSMOS_NATIVE_AVAILABLE_TOKENS,
   ARCHWAY_XCALL_NETWORK_ID,
+  ARCHWAY_FEE_TOKEN_SYMBOL,
 } from 'app/_xcall/_icon/config';
 import { useIconXcallFee } from 'app/_xcall/_icon/eventHandlers';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
@@ -27,7 +28,6 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useBridgeDirection, useSetBridgeDestination, useSetBridgeOrigin } from 'store/bridge/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
@@ -318,7 +318,7 @@ export default function BridgePanel() {
           initTransaction('archway', `Requesting cross-chain transfer...`);
           setXCallInProgress(true);
           const res = await signingClient.execute(accountArch, tokenAddress, msg, 'auto', undefined, [
-            { amount: archwayXcallFees.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' },
+            { amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
           ]);
           console.log('xCall debug - Archway bridge init tx:', res);
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
@@ -348,7 +348,7 @@ export default function BridgePanel() {
             msg,
             getFeeParam(1200000),
             undefined,
-            [{ amount: archwayXcallFees.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' }],
+            [{ amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
           );
           console.log('xCall debug - Archway bridge init tx:', res);
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);

@@ -29,6 +29,14 @@ const ARCHWAY_XCALL_NETWORK_IDs: { [key in SupportedChainId]: string } = {
   [SupportedChainId.YEOUIDO]: 'archway',
 };
 
+const ARCHWAY_FEE_TOKEN_SYMBOLS: { [key in SupportedChainId]: string } = {
+  [SupportedChainId.MAINNET]: 'aarch',
+  [SupportedChainId.BERLIN]: 'aconst',
+  [SupportedChainId.LISBON]: 'aconst',
+  [SupportedChainId.SEJONG]: 'aconst',
+  [SupportedChainId.YEOUIDO]: 'aconst',
+};
+
 type TokenChainsType = {
   [ICONtokenAddress: string]: [SupportedXCallChains];
 };
@@ -61,6 +69,7 @@ const COSMOS_NATIVE_AVAILABLE_TOKENS_LIST: { [key in SupportedChainId]: any } = 
 
 export const ICON_XCALL_NETWORK_ID = ICON_XCALL_NETWORK_IDs[NETWORK_ID];
 export const ARCHWAY_XCALL_NETWORK_ID = ARCHWAY_XCALL_NETWORK_IDs[NETWORK_ID];
+export const ARCHWAY_FEE_TOKEN_SYMBOL = ARCHWAY_FEE_TOKEN_SYMBOLS[NETWORK_ID];
 export const ICON_WEBSOCKET_URL = ICON_WEBSOCKET_URLS[NETWORK_ID];
 export const CROSSCHAIN_SUPPORTED_TOKENS: TokenChainsType = CROSSCHAIN_SUPPORTED_TOKENS_[NETWORK_ID];
 export const COSMOS_NATIVE_AVAILABLE_TOKENS = COSMOS_NATIVE_AVAILABLE_TOKENS_LIST[NETWORK_ID];

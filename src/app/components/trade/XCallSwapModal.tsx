@@ -10,7 +10,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { ARCHWAY_XCALL_NETWORK_ID, ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
+import { ARCHWAY_FEE_TOKEN_SYMBOL, ARCHWAY_XCALL_NETWORK_ID, ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
@@ -338,7 +338,7 @@ const XCallSwapModal = ({
             msg,
             'auto',
             undefined,
-            archwayXcallFees && [{ amount: archwayXcallFees?.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' }],
+            archwayXcallFees && [{ amount: archwayXcallFees?.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
           );
           console.log('xCall debug - Archway swap init tx:', res);
 
@@ -376,7 +376,7 @@ const XCallSwapModal = ({
             msg,
             'auto',
             undefined,
-            [{ amount: fee, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' }],
+            [{ amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
           );
           console.log('xCall debug - Archway swap init tx:', res);
           addTransactionResult('archway', res, 'Cross-chain swap requested.');

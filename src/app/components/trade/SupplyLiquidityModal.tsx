@@ -8,7 +8,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
+import { ARCHWAY_FEE_TOKEN_SYMBOL, ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
@@ -20,7 +20,6 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
 import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
@@ -124,7 +123,7 @@ export default function SupplyLiquidityModal({
         msg,
         'auto',
         undefined,
-        [{ amount: fee, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' }],
+        [{ amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
       );
       console.log('xCall debug - Archway supply init tx:', res);
       addTransactionResult('archway', res, 'Cross-chain supply requested.');

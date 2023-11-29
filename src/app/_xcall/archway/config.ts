@@ -55,29 +55,29 @@ type CW20_BASIC_TYPE = {
 
 const ARCHWAY_CW20_COLLATERALS: { [key in SupportedChainId]: CW20_BASIC_TYPE } = {
   [SupportedChainId.MAINNET]: {
-    address: '',
-    decimals: 6,
-    denom: 'TWITTER',
+    address: 'archway1t2llqsvwwunf98v692nqd5juudcmmlu3zk55utx7xtfvznel030saclvq6',
+    decimals: 18,
+    denom: 'sARCH',
   },
   [SupportedChainId.BERLIN]: {
-    address: 'archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44',
-    decimals: 6,
-    denom: 'TWITTER',
+    address: 'cx1f94585b61e47db9d5e036307f96a3251a0486a1',
+    decimals: 18,
+    denom: 'sARCH',
   },
   [SupportedChainId.LISBON]: {
-    address: 'archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44',
-    decimals: 6,
-    denom: 'TWITTER',
+    address: 'cx1f94585b61e47db9d5e036307f96a3251a0486a1',
+    decimals: 18,
+    denom: 'sARCH',
   },
   [SupportedChainId.SEJONG]: {
-    address: 'archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44',
-    decimals: 6,
-    denom: 'TWITTER',
+    address: 'cx1f94585b61e47db9d5e036307f96a3251a0486a1',
+    decimals: 18,
+    denom: 'sARCH',
   },
   [SupportedChainId.YEOUIDO]: {
-    address: 'archway1wxk973qh5035x9v9cal3qlqlqwwznf9fhhz6q89srkv4mszwnqmqyntg44',
-    decimals: 6,
-    denom: 'TWITTER',
+    address: 'cx1f94585b61e47db9d5e036307f96a3251a0486a1',
+    decimals: 18,
+    denom: 'sARCH',
   },
 };
 
@@ -90,10 +90,10 @@ type ContractSetType = {
 
 const ARCHWAY_CONTRACTS_: { [key in SupportedChainId]: ContractSetType } = {
   [SupportedChainId.MAINNET]: {
-    xcall: '',
-    bnusd: '',
-    assetManager: '',
-    liquidSwap: '',
+    xcall: 'archway1f68v03g2646z7wk9h9sy5uxhztajcrdgwvdrsftyp4448h067v0shn6l5w',
+    bnusd: 'archway1l3m84nf7xagkdrcced2y0g367xphnea5uqc3mww3f83eh6h38nqqxnsxz7',
+    assetManager: 'archway1sg2kgqjhj7vyu0x9tflx4ju9vjn2x6c7g39vx3tv9ethfg9d9zns6ajpja',
+    liquidSwap: 'archway1ywv0gxrw3kv25kn9f05dtqf6577fer5pc2vewvgcagpm5p8l4kuqc4qfp6',
   },
   [SupportedChainId.BERLIN]: {
     xcall: 'archway1kenxz0wuczr04mc9q3gwjuyzd6ft4zqm5wach846gghfjupvlncshvchs2',

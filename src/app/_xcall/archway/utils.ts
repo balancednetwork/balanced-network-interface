@@ -1,6 +1,7 @@
 import { Event } from '@cosmjs/cosmwasm-stargate';
 
 import { DestinationXCallData, OriginXCallData, XCallEvent } from 'app/_xcall/types';
+import { NETWORK_ID } from 'constants/config';
 
 import { ARCHWAY_EVENT_XCALL_MSG_SENT } from './types';
 
@@ -58,4 +59,13 @@ export function getRollbackEventDataFromArchwayEvent(events: readonly Event[]): 
       sn,
     };
   }
+}
+
+export function getFeeParam(fee: number): { amount: { amount: string; denom: string }[]; gas: string } | 'auto' {
+  return NETWORK_ID === 1
+    ? 'auto'
+    : {
+        amount: [{ amount: '1', denom: 'aconst' }],
+        gas: `${fee}`,
+      };
 }

@@ -124,7 +124,7 @@ export const useArchwayXcallFee = (): UseQueryResult<{ noRollback: string; rollb
   const { client } = useArchwayContext();
 
   return useQuery(
-    [`archway-xcall-fees`, client],
+    [`archway-xcall-fees`, `client-${client ? 'exists' : 'undefined'}`],
     async () => {
       if (client) {
         const feeWithRollback = await client.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {

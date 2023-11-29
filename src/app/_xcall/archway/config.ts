@@ -104,7 +104,7 @@ const ARCHWAY_CONTRACTS_: { [key in SupportedChainId]: ContractSetType } = {
   [SupportedChainId.LISBON]: {
     xcall: 'archway1kenxz0wuczr04mc9q3gwjuyzd6ft4zqm5wach846gghfjupvlncshvchs2',
     bnusd: 'archway1dxs0j8rk8yd69rdh77ndrefhjzdy3lehujx58yhfxr827nr7rutqpltd2w',
-    assetManager: 'archway18aqg8wgmhrjkdnc4ne6y004w3y4lsjc5mujypvkqn45vwne9zdjsjg3lfm',
+    assetManager: 'archway18kf5sjwk4z007ulz8lhgsjjk860rup0n65a84nkys08s522gt5yqwdasmr',
     liquidSwap: 'archway1wwsvs9nyldsuk3sen36zh2kvxzpc4wg0z9afnz9n25hx22hsxapqfceh3d',
   },
   [SupportedChainId.SEJONG]: {

@@ -8,14 +8,18 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { ICON_XCALL_NETWORK_ID, COSMOS_NATIVE_AVAILABLE_TOKENS } from 'app/_xcall/_icon/config';
+import {
+  ICON_XCALL_NETWORK_ID,
+  COSMOS_NATIVE_AVAILABLE_TOKENS,
+  ARCHWAY_XCALL_NETWORK_ID,
+} from 'app/_xcall/_icon/config';
 import { useIconXcallFee } from 'app/_xcall/_icon/eventHandlers';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
-import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
+import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
@@ -244,6 +248,7 @@ export default function BridgePanel() {
 
   const handleBridgeConfirm = async () => {
     if (!currencyAmountToBridge) return;
+    console.log('iconXcallFees', iconXcallFees);
     const messages = {
       pending: `Requesting cross-chain transfer...`,
       summary: `Cross-chain transfer requested.`,
@@ -254,7 +259,9 @@ export default function BridgePanel() {
         changeShouldLedgerSign(true);
       }
       const tokenAddress = currencyAmountToBridge.currency.address;
-      const destination = `${bridgeDirection.to === 'archway' ? 'archway/' : ''}${destinationAddress}`;
+      const destination = `${
+        bridgeDirection.to === 'archway' ? `${ARCHWAY_XCALL_NETWORK_ID}/` : ''
+      }${destinationAddress}`;
 
       if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
         const cx = bnJs.inject({ account }).getContract(tokenAddress);
@@ -339,10 +346,7 @@ export default function BridgePanel() {
             accountArch,
             ARCHWAY_CONTRACTS.assetManager,
             msg,
-            {
-              amount: [{ amount: '1', denom: 'aconst' }],
-              gas: '1200000',
-            },
+            getFeeParam(1200000),
             undefined,
             [{ amount: archwayXcallFees.rollback, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' }],
           );

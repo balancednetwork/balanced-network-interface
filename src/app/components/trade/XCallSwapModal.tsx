@@ -10,7 +10,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
+import { ARCHWAY_XCALL_NETWORK_ID, ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
@@ -156,7 +156,7 @@ const XCallSwapModal = ({
         return `${ICON_XCALL_NETWORK_ID}/${destinationAddress}`;
       }
       if (destinationChain === 'archway') {
-        return `archway/${destinationAddress}`;
+        return `${ARCHWAY_XCALL_NETWORK_ID}/${destinationAddress}`;
       }
     }
   }, [destinationChain, destinationAddress]);

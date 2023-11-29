@@ -7,7 +7,7 @@ import { useBlockNumber } from 'store/application/hooks';
 import { useAddDestinationEvent, useXCallListeningTo, useXCallOriginEvents } from 'store/xCall/hooks';
 
 import { XCallEvent, XCallEventType } from '../types';
-import { ICON_WEBSOCKET_URL } from './config';
+import { ARCHWAY_XCALL_NETWORK_ID, ICON_WEBSOCKET_URL } from './config';
 import { getICONEventSignature } from './utils';
 
 const QUERY_PARAMS = {
@@ -127,8 +127,9 @@ export const useIconXcallFee = (): UseQueryResult<{ noRollback: string; rollback
   return useQuery(
     `icon-xcall-fees`,
     async () => {
-      const feeWithRollback = await bnJs.XCall.getFee('archway', true);
-      const feeNoRollback = await bnJs.XCall.getFee('archway', false);
+      const feeWithRollback = await bnJs.XCall.getFee(ARCHWAY_XCALL_NETWORK_ID, true);
+      const feeNoRollback = await bnJs.XCall.getFee(ARCHWAY_XCALL_NETWORK_ID, false);
+      console.log('feeWithRollback dd', feeWithRollback);
       return {
         noRollback: feeNoRollback,
         rollback: feeWithRollback,

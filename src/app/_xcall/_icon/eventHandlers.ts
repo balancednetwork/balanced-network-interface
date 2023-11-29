@@ -129,7 +129,7 @@ export const useIconXcallFee = (): UseQueryResult<{ noRollback: string; rollback
     async () => {
       const feeWithRollback = await bnJs.XCall.getFee(ARCHWAY_XCALL_NETWORK_ID, true);
       const feeNoRollback = await bnJs.XCall.getFee(ARCHWAY_XCALL_NETWORK_ID, false);
-      console.log('feeWithRollback dd', feeWithRollback);
+
       return {
         noRollback: feeNoRollback,
         rollback: feeWithRollback,

@@ -12,6 +12,7 @@ import {
 import { useArchwayContext } from '../ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from '../config';
 import { ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '../tokens';
+import { getFeeParam } from '../utils';
 
 const useAllowanceHandler = (
   tokenAddress: string,
@@ -66,10 +67,7 @@ const useAllowanceHandler = (
         );
 
         //todo: fee for mainnet
-        const res = await signingClient.execute(address, tokenAddress, msg, {
-          amount: [{ amount: '1', denom: 'aconst' }],
-          gas: '400000',
-        });
+        const res = await signingClient.execute(address, tokenAddress, msg, getFeeParam(400000));
         setAllowanceIncreased(true);
         addTransactionResult(
           'archway',

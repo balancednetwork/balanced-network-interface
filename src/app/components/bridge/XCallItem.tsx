@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
+import { getFeeParam } from 'app/_xcall/archway/utils';
 import { DestinationXCallData, OriginXCallData, XCallActivityItem, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
@@ -191,10 +192,12 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
       try {
         initTransaction('archway', 'Executing rollback...');
-        const res: ExecuteResult = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, {
-          amount: [{ amount: '1', denom: 'aconst' }],
-          gas: '600000',
-        });
+        const res: ExecuteResult = await signingClient.execute(
+          accountArch,
+          ARCHWAY_CONTRACTS.xcall,
+          msg,
+          getFeeParam(600000),
+        );
 
         console.log('xCall debug - Archway rollbackCall complete', res);
         //TODO: handle arch rollback response

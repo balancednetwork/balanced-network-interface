@@ -20,6 +20,7 @@ import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
 import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';
 import { useDerivedMintInfo } from 'store/mint/hooks';
@@ -123,8 +124,7 @@ export default function SupplyLiquidityModal({
         msg,
         'auto',
         undefined,
-        // todo: fee for mainnet
-        [{ amount: fee, denom: 'aconst' }],
+        [{ amount: fee, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' }],
       );
       console.log('xCall debug - Archway supply init tx:', res);
       addTransactionResult('archway', res, 'Cross-chain supply requested.');

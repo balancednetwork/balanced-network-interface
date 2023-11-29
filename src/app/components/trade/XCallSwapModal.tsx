@@ -376,7 +376,7 @@ const XCallSwapModal = ({
             msg,
             'auto',
             undefined,
-            [{ amount: fee, denom: 'aconst' }],
+            [{ amount: fee, denom: NETWORK_ID === 1 ? 'aarch' : 'aconst' }],
           );
           console.log('xCall debug - Archway swap init tx:', res);
           addTransactionResult('archway', res, 'Cross-chain swap requested.');

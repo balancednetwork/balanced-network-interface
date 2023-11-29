@@ -90,7 +90,7 @@ type ContractSetType = {
 
 const ARCHWAY_CONTRACTS_: { [key in SupportedChainId]: ContractSetType } = {
   [SupportedChainId.MAINNET]: {
-    xcall: 'archway1f68v03g2646z7wk9h9sy5uxhztajcrdgwvdrsftyp4448h067v0shn6l5w',
+    xcall: 'archway19hzhgd90etqc3z2qswumq80ag2d8het38r0al0r4ulrly72t20psdrpna6',
     bnusd: 'archway1l3m84nf7xagkdrcced2y0g367xphnea5uqc3mww3f83eh6h38nqqxnsxz7',
     assetManager: 'archway1sg2kgqjhj7vyu0x9tflx4ju9vjn2x6c7g39vx3tv9ethfg9d9zns6ajpja',
     liquidSwap: 'archway1ywv0gxrw3kv25kn9f05dtqf6577fer5pc2vewvgcagpm5p8l4kuqc4qfp6',

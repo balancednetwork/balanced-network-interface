@@ -248,7 +248,7 @@ export default function BridgePanel() {
 
   const handleBridgeConfirm = async () => {
     if (!currencyAmountToBridge) return;
-    console.log('iconXcallFees', iconXcallFees);
+
     const messages = {
       pending: `Requesting cross-chain transfer...`,
       summary: `Cross-chain transfer requested.`,

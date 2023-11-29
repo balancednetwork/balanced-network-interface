@@ -6,7 +6,7 @@ import { ArchwayToken } from '../archway/tokens';
 import { SupportedXCallChains } from '../types';
 
 const ICON_WEBSOCKET_URLS: { [key in SupportedChainId]: string } = {
-  [SupportedChainId.MAINNET]: 'wss://solidwallet.io/api/v3/icon_dex/block',
+  [SupportedChainId.MAINNET]: 'wss://ctz.solidwallet.io/api/v3/icon_dex/block',
   [SupportedChainId.BERLIN]: 'wss://berlin.net.solidwallet.io/api/v3/icon_dex/block',
   [SupportedChainId.LISBON]: 'wss://lisbon.net.solidwallet.io/api/v3/icon_dex/block',
   [SupportedChainId.SEJONG]: 'wss://sejong.net.solidwallet.io/api/v3/icon_dex/block',
@@ -19,6 +19,14 @@ const ICON_XCALL_NETWORK_IDs: { [key in SupportedChainId]: string } = {
   [SupportedChainId.LISBON]: '0x2.icon',
   [SupportedChainId.SEJONG]: '0xb.icon',
   [SupportedChainId.YEOUIDO]: '0x3.icon',
+};
+
+const ARCHWAY_XCALL_NETWORK_IDs: { [key in SupportedChainId]: string } = {
+  [SupportedChainId.MAINNET]: 'archway-1',
+  [SupportedChainId.BERLIN]: 'archway',
+  [SupportedChainId.LISBON]: 'archway',
+  [SupportedChainId.SEJONG]: 'archway',
+  [SupportedChainId.YEOUIDO]: 'archway',
 };
 
 type TokenChainsType = {
@@ -52,6 +60,7 @@ const COSMOS_NATIVE_AVAILABLE_TOKENS_LIST: { [key in SupportedChainId]: any } = 
 };
 
 export const ICON_XCALL_NETWORK_ID = ICON_XCALL_NETWORK_IDs[NETWORK_ID];
+export const ARCHWAY_XCALL_NETWORK_ID = ARCHWAY_XCALL_NETWORK_IDs[NETWORK_ID];
 export const ICON_WEBSOCKET_URL = ICON_WEBSOCKET_URLS[NETWORK_ID];
 export const CROSSCHAIN_SUPPORTED_TOKENS: TokenChainsType = CROSSCHAIN_SUPPORTED_TOKENS_[NETWORK_ID];
 export const COSMOS_NATIVE_AVAILABLE_TOKENS = COSMOS_NATIVE_AVAILABLE_TOKENS_LIST[NETWORK_ID];

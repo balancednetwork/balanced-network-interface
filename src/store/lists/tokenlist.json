@@ -224,7 +224,7 @@
       "name": "Staked Archway",
       "symbol": "sARCH",
       "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/arch.png"
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
     },
     {
       "address": "cx1f94585b61e47db9d5e036307f96a3251a0486a1",
@@ -232,7 +232,7 @@
       "name": "Staked Archway",
       "symbol": "sARCH",
       "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/arch.png"
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
     },
     {
       "address": "cxfe94530ee0d159db3e5b7dcffbcd0dfb360075c0",
@@ -240,7 +240,7 @@
       "name": "Staked Archway",
       "symbol": "sARCH",
       "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/arch.png"
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
     }
   ]
 }

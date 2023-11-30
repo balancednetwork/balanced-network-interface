@@ -479,7 +479,7 @@ export default function BridgePanel() {
                 <>{(parseInt(iconXcallFees.rollback, 16) / 10 ** 18).toPrecision(1)} ICX</>
               )}
               {bridgeDirection.from === 'archway' && archwayXcallFees && (
-                <>{(Number(archwayXcallFees.rollback) / 10 ** 6).toPrecision(1)} ARCH</>
+                <>{(Number(archwayXcallFees.rollback) / 10 ** 18).toPrecision(1)} ARCH</>
               )}
             </Typography>
           </Flex>

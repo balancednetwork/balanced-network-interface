@@ -2,7 +2,7 @@ import { SupportedChainId } from '@balancednetwork/balanced-js';
 
 import { NETWORK_ID } from 'constants/config';
 
-import { ArchwayToken } from '../archway/tokens';
+import { StakedArchwayToken } from '../archway/tokens';
 import { SupportedXCallChains } from '../types';
 
 const ICON_WEBSOCKET_URLS: { [key in SupportedChainId]: string } = {
@@ -60,9 +60,9 @@ const CROSSCHAIN_SUPPORTED_TOKENS_: { [key in SupportedChainId]: any } = {
 };
 
 const COSMOS_NATIVE_AVAILABLE_TOKENS_LIST: { [key in SupportedChainId]: any } = {
-  [SupportedChainId.MAINNET]: [ArchwayToken[SupportedChainId.MAINNET]],
-  [SupportedChainId.BERLIN]: [ArchwayToken[SupportedChainId.BERLIN]],
-  [SupportedChainId.LISBON]: [ArchwayToken[SupportedChainId.LISBON]],
+  [SupportedChainId.MAINNET]: [StakedArchwayToken[SupportedChainId.MAINNET]],
+  [SupportedChainId.BERLIN]: [StakedArchwayToken[SupportedChainId.BERLIN]],
+  [SupportedChainId.LISBON]: [StakedArchwayToken[SupportedChainId.LISBON]],
   [SupportedChainId.YEOUIDO]: [],
   [SupportedChainId.SEJONG]: [],
 };

@@ -12,6 +12,10 @@ export const getTokenLogoURL = (address: string): string => {
   return `https://raw.githubusercontent.com/balancednetwork/assets/master/blockchains/icon/assets/${address}/logo.png`;
 };
 
+export const getTokenLogoURLFromSymbol = (symbol: string): string => {
+  return `https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/${symbol.toLocaleLowerCase()}.png`;
+};
+
 export const StyledICONLogo = styled.img<{ size: string }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
@@ -41,6 +45,10 @@ export default function CurrencyLogo({
 
     if (currency?.isToken) {
       const defaultUrls = [getTokenLogoURL(currency.address)];
+
+      if (currency?.symbol === 'ARCH') {
+        return [getTokenLogoURLFromSymbol('arch')];
+      }
 
       if (currency instanceof WrappedTokenInfo) {
         return uriLocation ? [uriLocation, ...defaultUrls] : [...defaultUrls];

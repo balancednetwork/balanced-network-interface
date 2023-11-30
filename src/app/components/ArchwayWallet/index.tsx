@@ -10,7 +10,11 @@ import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { ARCHWAY_SUPPORTED_TOKENS_LIST, ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'app/_xcall/archway/tokens';
+import {
+  ARCHWAY_SUPPORTED_TOKENS_LIST,
+  ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS,
+  useARCH,
+} from 'app/_xcall/archway/tokens';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
@@ -84,6 +88,7 @@ const WalletUI = ({ currency }: { currency: Currency }) => {
 const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
   const balances = useArchwayWalletBalances();
+  const arch = useARCH();
   // const transactions = useAllTransactions();
   const { address: accountArch } = useArchwayContext();
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -114,8 +119,8 @@ const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
   }, [debouncedQuery, addressesWithAmount]);
 
   const sortedTokens: Token[] = useMemo(() => {
-    return [...filteredTokens].sort(tokenComparator);
-  }, [filteredTokens, tokenComparator]);
+    return [arch, ...filteredTokens].sort(tokenComparator);
+  }, [arch, filteredTokens, tokenComparator]);
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery);
 

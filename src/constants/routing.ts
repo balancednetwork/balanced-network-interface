@@ -1,7 +1,7 @@
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { Token } from '@balancednetwork/sdk-core';
 
-import { ArchwayToken } from 'app/_xcall/archway/tokens';
+import { StakedArchwayToken } from 'app/_xcall/archway/tokens';
 
 import { ICX, sICX, bnUSD, IUSDC, USDS, OMM, IUSDT, BTCB } from './tokens';
 
@@ -23,17 +23,21 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
     bnUSD[ChainId.BERLIN],
     IUSDC[ChainId.BERLIN],
     USDS[ChainId.BERLIN],
-    ArchwayToken[ChainId.BERLIN],
+    StakedArchwayToken[ChainId.BERLIN],
   ],
   [ChainId.LISBON]: [sICX[ChainId.LISBON], bnUSD[ChainId.LISBON], IUSDC[ChainId.LISBON], USDS[ChainId.LISBON]],
 };
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
   [ChainId.MAINNET]: {
     [IUSDC[ChainId.MAINNET].address]: [OMM[ChainId.MAINNET], IUSDT[ChainId.MAINNET]],
-    [sICX[ChainId.MAINNET].address]: [OMM[ChainId.MAINNET], IUSDT[ChainId.MAINNET], ArchwayToken[ChainId.MAINNET]],
+    [sICX[ChainId.MAINNET].address]: [
+      OMM[ChainId.MAINNET],
+      IUSDT[ChainId.MAINNET],
+      StakedArchwayToken[ChainId.MAINNET],
+    ],
   },
   [ChainId.BERLIN]: {
-    [sICX[ChainId.MAINNET].address]: [ArchwayToken[ChainId.BERLIN]],
+    [sICX[ChainId.MAINNET].address]: [StakedArchwayToken[ChainId.BERLIN]],
   },
 };
 /**

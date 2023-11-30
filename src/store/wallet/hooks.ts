@@ -11,8 +11,9 @@ import { useIconReact } from 'packages/icon-react';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'app/_xcall/archway/tokens';
+import { ARCHWAY_SUPPORTED_TOKENS_LIST, useARCH } from 'app/_xcall/archway/tokens';
 import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { getCrossChainTokenAddress } from 'app/_xcall/utils';
@@ -76,17 +77,25 @@ export function useArchwayBalances(
   [key: string]: CurrencyAmount<Currency>;
 }> {
   const { signingClient } = useArchwayContext();
+  const arch = useARCH();
 
   return useQuery(
     `archwayBalances-${!!signingClient}-${address}-${tokens ? tokens.length : ''}`,
     async () => {
-      if (signingClient) {
+      if (signingClient && address) {
         const balances = await Promise.all(
           tokens.map(async token => {
             const balance = await signingClient.queryContractSmart(token.address, { balance: { address } });
             return CurrencyAmount.fromRawAmount(token, balance.balance);
           }),
         );
+
+        //native token balance
+        const nativeTokenBalance = await signingClient.getBalance(address, ARCHWAY_FEE_TOKEN_SYMBOL);
+        if (nativeTokenBalance) {
+          const balance = CurrencyAmount.fromRawAmount(arch, nativeTokenBalance.amount);
+          balances.push(balance);
+        }
 
         return balances.reduce((acc, balance) => {
           if (!balance) return acc;

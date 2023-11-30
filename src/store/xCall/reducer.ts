@@ -8,7 +8,7 @@ import {
   XCallChainState,
   XCallEventType,
 } from 'app/_xcall/types';
-import { getFollowingEvent, getOppositeChain } from 'app/_xcall/utils';
+import { getFollowingEvent } from 'app/_xcall/utils';
 
 import {
   addXCallOriginEvent,
@@ -52,7 +52,7 @@ export default createReducer(initialState, builder =>
         state.events[chain].origin.push(data);
         state.xCall = CurrentXCallState.AWAITING_DESTINATION_CALL_MESSAGE;
         state.listeningTo = {
-          chain: getOppositeChain(chain),
+          chain: data.destination,
           event: getFollowingEvent(data.eventName),
         };
       }

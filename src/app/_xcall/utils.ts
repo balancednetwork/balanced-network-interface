@@ -29,15 +29,6 @@ export const getFollowingEvent = (event: XCallEventType): XCallEventType => {
   }
 };
 
-//TODO: improve this nonsense
-export const getOppositeChain = (chain: SupportedXCallChains): SupportedXCallChains => {
-  if (chain === 'icon') {
-    return 'archway';
-  } else {
-    return 'icon';
-  }
-};
-
 export const getNetworkDisplayName = (chain: SupportedXCallChains) => {
   if (chain === 'icon') {
     return 'ICON';

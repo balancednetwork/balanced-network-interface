@@ -64,7 +64,7 @@ const ArchwayProvider: React.FC = ({ children }) => {
     }
 
     // @ts-ignore
-    const offlineSigner = window.getOfflineSigner(chain_id);
+    const offlineSigner = keplr.getOfflineSignerOnlyAmino(chain_id);
     const signingClientObj = await SigningArchwayClient.connectWithSigner(ARCHWAY_RPC_PROVIDER, offlineSigner);
     setSigningClient(signingClientObj);
 

@@ -20,6 +20,7 @@ import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
+import { useARCH } from 'app/_xcall/archway/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
@@ -42,6 +43,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import AddressInputPanel from '../AddressInputPanel';
 import { Button, TextButton } from '../Button';
+import CurrencyLogo from '../CurrencyLogo';
 import Modal from '../Modal';
 import { ModalContentWrapper } from '../ModalContent';
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
@@ -49,8 +51,19 @@ import Spinner from '../Spinner';
 import { AutoColumn } from '../trade/SwapPanel';
 import { BrightPanel } from '../trade/utils';
 import XCallEventManager from '../trade/XCallEventManager';
-import { presenceVariants, StyledButton } from '../trade/XCallSwapModal';
+import { presenceVariants, StyledButton as XCallButton } from '../trade/XCallSwapModal';
+import { IBCDescription } from '../XCallDescription';
 import ChainSelector from './ChainSelector';
+
+const StyledXCallButton = styled(XCallButton)`
+  transition: all 0.2s ease;
+
+  &.disabled {
+    background: rgba(255, 255, 255, 0.15);
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+`;
 
 const WithdrawOption = styled.button<{ active: boolean }>`
   text-align: center;
@@ -67,6 +80,10 @@ const WithdrawOption = styled.button<{ active: boolean }>`
 
   &:hover {
     ${({ theme }) => `background-color: ${theme.colors.bg3}`};
+  }
+
+  img {
+    margin-bottom: 5px;
   }
 `;
 
@@ -87,6 +104,7 @@ export default function BridgePanel() {
   const [inputUntouched, setInputUntouched] = React.useState(true);
   const [modalClosable, setModalClosable] = React.useState(true);
   const [xCallInProgress, setXCallInProgress] = React.useState(false);
+  const ARCH = useARCH();
   const signedInWallets = useSignedInWallets();
   const addOriginEvent = useAddOriginEvent();
   const initTransaction = useInitTransaction();
@@ -95,7 +113,7 @@ export default function BridgePanel() {
   const { data: archwayXcallFees } = useArchwayXcallFee();
   const { data: iconXcallFees } = useIconXcallFee();
   const [isOpen, setOpen] = React.useState(false);
-  const [withdrawNative, setWithdrawNative] = React.useState(false);
+  const [withdrawNative, setWithdrawNative] = React.useState<boolean | undefined>();
 
   const handleSetOriginChain = React.useCallback(
     (chain: SupportedXCallChains) => {
@@ -125,7 +143,7 @@ export default function BridgePanel() {
   };
 
   const handleInputSelect = (currency: Currency) => {
-    setWithdrawNative(false);
+    setWithdrawNative(undefined);
     setCurrencyToBridge(currency);
   };
 
@@ -445,26 +463,7 @@ export default function BridgePanel() {
             <Typography color="text">
               IBC + xCall
               <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
-                <QuestionHelper
-                  width={300}
-                  text={
-                    <>
-                      <Typography mb={3}>
-                        <Trans>
-                          <strong>IBC</strong> is an interoperability protocol that allows blockchains to connect and
-                          communicate with each other, primarily within the Cosmos ecosystem.
-                        </Trans>
-                      </Typography>
-                      <Typography>
-                        <Trans>
-                          <strong>xCall</strong> is a cross-chain messaging service that allows you to interact with
-                          smart contracts on other blockchains. While made for ICON's BTP, any interoperability solution
-                          can adopt it.
-                        </Trans>
-                      </Typography>
-                    </>
-                  }
-                ></QuestionHelper>
+                <QuestionHelper width={300} text={<IBCDescription />}></QuestionHelper>
               </QuestionWrapper>
             </Typography>
           </Flex>
@@ -541,10 +540,14 @@ export default function BridgePanel() {
           {isNativeVersionAvailable && (
             <>
               <Typography textAlign="center" mb="2px" mt={3}>
-                <Trans>Do you want to receive a native version of the token?</Trans>
+                {`Choose what to do with your ${currencyToBridge?.symbol}:`}
               </Typography>
               <Flex justifyContent="space-around">
-                <WithdrawOption active={withdrawNative} onClick={() => setWithdrawNative(true)}>
+                <WithdrawOption
+                  active={withdrawNative !== undefined && withdrawNative}
+                  onClick={() => setWithdrawNative(true)}
+                >
+                  {currencyToBridge?.symbol === 'sARCH' && <CurrencyLogo currency={ARCH} />}
                   <Typography fontWeight="bold" mb={1}>
                     Unstake
                   </Typography>
@@ -555,7 +558,11 @@ export default function BridgePanel() {
                   </Typography>
                 </WithdrawOption>
 
-                <WithdrawOption active={!withdrawNative} onClick={() => setWithdrawNative(false)}>
+                <WithdrawOption
+                  active={withdrawNative !== undefined && !withdrawNative}
+                  onClick={() => setWithdrawNative(false)}
+                >
+                  <CurrencyLogo currency={currencyToBridge} />
                   <Typography fontWeight="bold" mb={1}>
                     Keep {currencyToBridge?.symbol}
                   </Typography>
@@ -611,9 +618,13 @@ export default function BridgePanel() {
                 {allowanceIncreaseNeeded && !xCallInProgress ? (
                   <Button disabled>Transfer</Button>
                 ) : (
-                  <StyledButton onClick={handleBridgeConfirm} disabled={xCallInProgress}>
+                  <StyledXCallButton
+                    onClick={handleBridgeConfirm}
+                    disabled={xCallInProgress}
+                    className={isNativeVersionAvailable && withdrawNative === undefined ? 'disabled' : ''}
+                  >
                     {!xCallInProgress ? <Trans>Transfer</Trans> : <Trans>xCall in progress</Trans>}
-                  </StyledButton>
+                  </StyledXCallButton>
                 )}
               </>
             )}

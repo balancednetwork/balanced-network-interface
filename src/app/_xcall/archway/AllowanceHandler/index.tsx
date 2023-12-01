@@ -63,7 +63,7 @@ const useAllowanceHandler = (
       try {
         initTransaction(
           'archway',
-          t`Approving ${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} for cross-chain transfer.`,
+          t`Approving ${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} for cross-chain transfer...`,
         );
 
         //todo: fee for mainnet

@@ -46,6 +46,7 @@ import Divider from '../Divider';
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 import StabilityFund from '../StabilityFund';
+import { IBCDescription } from '../XCallDescription';
 import CrossChainOptions from './CrossChainOptions';
 import { BrightPanel, swapMessage } from './utils';
 import XCallSwapModal from './XCallSwapModal';
@@ -519,24 +520,7 @@ export default function SwapPanel() {
                           <Typography textAlign="right">
                             IBC + xCall
                             <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
-                              <QuestionHelper
-                                width={300}
-                                text={
-                                  <>
-                                    <Typography mb={3}>
-                                      <Trans>
-                                        <strong>IBC</strong> is the Cosmos interoperability protocol.
-                                      </Trans>
-                                    </Typography>
-                                    <Typography>
-                                      <Trans>
-                                        <strong>xCall</strong> is a cross-chain messaging service that can interact with
-                                        smart contracts on other blockchains.
-                                      </Trans>
-                                    </Typography>
-                                  </>
-                                }
-                              ></QuestionHelper>
+                              <QuestionHelper width={300} text={<IBCDescription />}></QuestionHelper>
                             </QuestionWrapper>
                           </Typography>
                         </Flex>

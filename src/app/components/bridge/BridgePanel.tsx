@@ -23,6 +23,7 @@ import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
+import { useXCallGasChecker } from 'app/_xcall/hooks';
 import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
@@ -95,7 +96,7 @@ export default function BridgePanel() {
   const setBridgeOrigin = useSetBridgeOrigin();
   const setBridgeDestination = useSetBridgeDestination();
   const addTransaction = useTransactionAdder();
-  // const hasEnoughICX = useHasEnoughICX();
+  const { data: gasChecker } = useXCallGasChecker(bridgeDirection.from, bridgeDirection.to);
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const [currencyToBridge, setCurrencyToBridge] = React.useState<Currency | undefined>();
@@ -579,29 +580,37 @@ export default function BridgePanel() {
           <XCallEventManager xCallReset={xCallReset} msgs={msgs} />
 
           {/* Handle allowance */}
-          <AnimatePresence>
-            {!xCallInProgress && allowanceIncreaseNeeded && !allowanceIncreased && (
-              <motion.div key="allowance-handler" {...presenceVariants} style={{ overflow: 'hidden' }}>
-                <Box pt={3}>
-                  <Flex
-                    pt={3}
-                    alignItems="center"
-                    justifyContent="center"
-                    flexDirection="column"
-                    className="border-top"
-                  >
-                    <Typography
-                      pb={4}
-                    >{t`Approve ${currencyAmountToBridge?.currency.symbol} for cross-chain transfer.`}</Typography>
-                    {!isTxPending && allowanceIncreaseNeeded && !allowanceIncreased && (
-                      <Button onClick={increaseAllowance}>Approve</Button>
-                    )}
-                    {isTxPending && <Button disabled>Approving...</Button>}
-                  </Flex>
-                </Box>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {gasChecker && gasChecker.hasEnoughGas && (
+            <AnimatePresence>
+              {!xCallInProgress && allowanceIncreaseNeeded && !allowanceIncreased && (
+                <motion.div key="allowance-handler" {...presenceVariants} style={{ overflow: 'hidden' }}>
+                  <Box pt={3}>
+                    <Flex
+                      pt={3}
+                      alignItems="center"
+                      justifyContent="center"
+                      flexDirection="column"
+                      className="border-top"
+                    >
+                      <Typography
+                        pb={4}
+                      >{t`Approve ${currencyAmountToBridge?.currency.symbol} for cross-chain transfer.`}</Typography>
+                      {!isTxPending && allowanceIncreaseNeeded && !allowanceIncreased && (
+                        <Button onClick={increaseAllowance}>Approve</Button>
+                      )}
+                      {isTxPending && <Button disabled>Approving...</Button>}
+                    </Flex>
+                  </Box>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
+
+          {gasChecker && !gasChecker.hasEnoughGas && (
+            <Typography mt={4} mb={-1} textAlign="center" color="alert">
+              {gasChecker.errorMessage || t`Not enough gas to complete the swap.`}
+            </Typography>
+          )}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}

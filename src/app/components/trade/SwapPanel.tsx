@@ -318,10 +318,6 @@ export default function SwapPanel() {
     </Button>
   );
 
-  console.log('currency input  ', trade?.inputAmount.toFixed());
-  console.log('currency balance', currencyBalances?.INPUT?.toFixed());
-  console.log('-----');
-
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>

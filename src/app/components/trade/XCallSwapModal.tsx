@@ -17,6 +17,7 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
+import { useXCallGasChecker } from 'app/_xcall/hooks';
 import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getArchwayCounterToken, getBytesFromString, getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
@@ -130,6 +131,7 @@ const XCallSwapModal = ({
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
   const { data: archwayXcallFees } = useArchwayXcallFee();
+  const { data: gasChecker } = useXCallGasChecker(originChain, destinationChain);
 
   const originAddress = signedInWallets.find(wallet => wallet.chain === originChain)?.address;
 
@@ -471,23 +473,37 @@ const XCallSwapModal = ({
         />
 
         {/* Handle allowance */}
-        <AnimatePresence>
-          {!xCallInProgress && allowanceIncreaseNeeded && !allowanceIncreased && (
-            <motion.div key="allowance-handler" {...presenceVariants} style={{ overflow: 'hidden' }}>
-              <Box pt={3}>
-                <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-                  <Typography
-                    pb={4}
-                  >{t`Approve ${executionTrade?.inputAmount.currency.symbol} for cross-chain transfer.`}</Typography>
-                  {!isTxPending && allowanceIncreaseNeeded && !allowanceIncreased && (
-                    <Button onClick={increaseAllowance}>Approve</Button>
-                  )}
-                  {isTxPending && <Button disabled>Approving...</Button>}
-                </Flex>
-              </Box>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {gasChecker && gasChecker.hasEnoughGas && (
+          <AnimatePresence>
+            {!xCallInProgress && allowanceIncreaseNeeded && !allowanceIncreased && (
+              <motion.div key="allowance-handler" {...presenceVariants} style={{ overflow: 'hidden' }}>
+                <Box pt={3}>
+                  <Flex
+                    pt={3}
+                    alignItems="center"
+                    justifyContent="center"
+                    flexDirection="column"
+                    className="border-top"
+                  >
+                    <Typography
+                      pb={4}
+                    >{t`Approve ${executionTrade?.inputAmount.currency.symbol} for cross-chain transfer.`}</Typography>
+                    {!isTxPending && allowanceIncreaseNeeded && !allowanceIncreased && (
+                      <Button onClick={increaseAllowance}>Approve</Button>
+                    )}
+                    {isTxPending && <Button disabled>Approving...</Button>}
+                  </Flex>
+                </Box>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
+
+        {gasChecker && !gasChecker.hasEnoughGas && (
+          <Typography mt={4} mb={-1} textAlign="center" color="alert">
+            {gasChecker.errorMessage || t`Not enough gas to complete the swap.`}
+          </Typography>
+        )}
 
         <Flex justifyContent="center" mt={4} pt={4} className="border-top">
           {shouldLedgerSign && <Spinner></Spinner>}
@@ -502,6 +518,8 @@ const XCallSwapModal = ({
                 <Trans>Cancel</Trans>
               </TextButton>
               {allowanceIncreaseNeeded && !xCallInProgress ? (
+                <Button disabled={true}>Swap</Button>
+              ) : gasChecker && !gasChecker.hasEnoughGas ? (
                 <Button disabled={true}>Swap</Button>
               ) : (
                 <StyledButton onClick={handleXCallSwap} disabled={xCallInProgress}>

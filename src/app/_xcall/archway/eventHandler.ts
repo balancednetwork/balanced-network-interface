@@ -73,7 +73,6 @@ export const useArchwayEventListener = () => {
                 break;
               }
               case XCallEvent.ResponseMessage: {
-                //TODO: handle response message
                 console.log('TODO: logged event from ResponseMessage: ', events);
                 break;
               }

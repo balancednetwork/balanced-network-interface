@@ -325,10 +325,8 @@ const ArchwayTest = () => {
         if (callExecuted) {
           removeEvent(data.sn, true);
           console.log('ARCHWAY executeCall - SUCCESS');
-          //TODO: Check for wasm-CallMessageSent - low priority and probability I guess
         } else {
           console.log('ARCHWAY executeCall - FAIL');
-          //TODO: check for RollbackMessage on ICON
         }
       } catch (e) {
         console.error(e);

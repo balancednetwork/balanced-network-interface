@@ -14,7 +14,6 @@ import styled from 'styled-components';
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
-import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'app/_xcall/archway/tokens';
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
@@ -38,7 +37,7 @@ import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFun
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useArchwayWalletBalances, useHasEnoughICX, useSignedInWallets } from 'store/wallet/hooks';
+import { useHasEnoughICX, useSignedInWallets } from 'store/wallet/hooks';
 import { formatBigNumber, formatPercent, maxAmountSpend, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -57,9 +56,14 @@ export default function SwapPanel() {
   useInitialSwapLoad();
   const { account } = useIconReact();
   const { address: accountArch } = useArchwayContext();
+  const [crossChainOrigin, setCrossChainOrigin] = React.useState<SupportedXCallChains>('icon');
+  const [crossChainDestination, setCrossChainDestination] = React.useState<SupportedXCallChains>('icon');
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-  const { trade, currencyBalances, currencies, parsedAmount, inputError, percents } = useDerivedSwapInfo();
+  const { trade, currencyBalances, currencies, parsedAmount, inputError, percents } = useDerivedSwapInfo(
+    crossChainOrigin,
+    crossChainDestination,
+  );
   const memoizedInputAmount = useCAMemo(trade?.inputAmount);
   const memoizedOutputAmount = useCAMemo(trade?.outputAmount);
   const isSwapEligibleForStabilityFund = useIsSwapEligible(
@@ -68,8 +72,6 @@ export default function SwapPanel() {
   );
   const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
-  const [crossChainOrigin, setCrossChainOrigin] = React.useState<SupportedXCallChains>('icon');
-  const [crossChainDestination, setCrossChainDestination] = React.useState<SupportedXCallChains>('icon');
   const [destinationAddress, setDestinationAddress] = React.useState<string | undefined>();
   const { data: xCallArchwayFee } = useArchwayXcallFee();
   const showFundOption =
@@ -88,35 +90,6 @@ export default function SwapPanel() {
   );
   const [crossChainSwapModalOpen, setCrossChainSwapModalOpen] = React.useState(false);
   const closeCrossChainSwapModal = React.useCallback(() => setCrossChainSwapModalOpen(false), []);
-
-  //TODO: maybe move to currencyBalances from derived info
-  const archwayBalances = useArchwayWalletBalances();
-  const currencyBalancesCrossChain = React.useMemo(() => {
-    const balances = { ...currencyBalances };
-    const crossCurrencies = { ...currencies };
-    if (!archwayBalances) {
-      return balances;
-    }
-    if (crossChainOrigin === 'archway') {
-      const symbol = crossCurrencies[Field.INPUT]?.symbol;
-      if (symbol) {
-        const address = ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol)?.address;
-        if (address) {
-          balances[Field.INPUT] = archwayBalances[address];
-        }
-      }
-    }
-    if (crossChainDestination === 'archway') {
-      const symbol = crossCurrencies[Field.OUTPUT]?.symbol;
-      if (symbol) {
-        const address = ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol)?.address;
-        if (address) {
-          balances[Field.OUTPUT] = archwayBalances[address];
-        }
-      }
-    }
-    return balances;
-  }, [currencyBalances, currencies, archwayBalances, crossChainOrigin, crossChainDestination]);
 
   React.useEffect(() => {
     if (isChainDifference) {
@@ -166,9 +139,7 @@ export default function SwapPanel() {
     handleTypeOutput('');
   }, [handleTypeInput, handleTypeOutput]);
 
-  const maxInputAmount = React.useMemo(() => maxAmountSpend(currencyBalancesCrossChain[Field.INPUT]), [
-    currencyBalancesCrossChain,
-  ]);
+  const maxInputAmount = React.useMemo(() => maxAmountSpend(currencyBalances[Field.INPUT]), [currencyBalances]);
 
   const handleInputSelect = useCallback(
     (inputCurrency: Currency) => {
@@ -205,12 +176,7 @@ export default function SwapPanel() {
   const [showInverted, setShowInverted] = React.useState<boolean>(false);
   const slippageTolerance = useSwapSlippageTolerance();
   const setSlippageTolerance = useSetSlippageTolerance();
-  const isValid = React.useMemo(() => {
-    return (
-      (crossChainOrigin === 'icon' && !inputError) ||
-      (crossChainOrigin === 'archway' && trade?.inputAmount.lessThan(currencyBalancesCrossChain[Field.INPUT] || 0))
-    );
-  }, [crossChainOrigin, currencyBalancesCrossChain, inputError, trade?.inputAmount]);
+  const isValid = !inputError;
 
   // old code
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
@@ -352,6 +318,10 @@ export default function SwapPanel() {
     </Button>
   );
 
+  console.log('currency input  ', trade?.inputAmount.toFixed());
+  console.log('currency balance', currencyBalances?.INPUT?.toFixed());
+  console.log('-----');
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -365,7 +335,9 @@ export default function SwapPanel() {
               hidden={(crossChainOrigin === 'icon' && !account) || (crossChainOrigin === 'archway' && !accountArch)}
             >
               <Trans>Wallet:</Trans>{' '}
-              {`${currencyBalancesCrossChain[Field.INPUT]?.toFixed(4, { groupSeparator: ',' })} 
+              {`${
+                currencyBalances[Field.INPUT] ? currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' }) : 0
+              } 
                 ${currencies[Field.INPUT]?.symbol}`}
             </Typography>
           </Flex>
@@ -409,7 +381,7 @@ export default function SwapPanel() {
               }
             >
               <Trans>Wallet:</Trans>{' '}
-              {`${currencyBalancesCrossChain[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })}
+              {`${currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })}
                 ${currencies[Field.OUTPUT]?.symbol}`}
             </Typography>
           </Flex>
@@ -530,11 +502,10 @@ export default function SwapPanel() {
                           </Typography>
 
                           <Typography textAlign="right">
-                            {/* //TODO: check archway decimals */}
                             {crossChainOrigin === 'icon'
                               ? 'N/A'
                               : xCallArchwayFee &&
-                                `${(Number(xCallArchwayFee.rollback) / 10 ** 6).toPrecision(2)} ARCH`}
+                                `${(Number(xCallArchwayFee.rollback) / 10 ** 18).toPrecision(2)} ARCH`}
                           </Typography>
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between" mb={2}>

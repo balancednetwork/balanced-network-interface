@@ -92,10 +92,10 @@ const ArchwayProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
-    if (addressStored && !signingClient) {
+    if (addressStored && !signingClient && chain_id) {
       connectToWallet();
     }
-  }, [signingClient, addressStored, connectToWallet]);
+  }, [signingClient, addressStored, connectToWallet, chain_id]);
 
   return <ArchwayContext.Provider value={context}>{children}</ArchwayContext.Provider>;
 };

@@ -25,7 +25,7 @@ const AddressInputLabel = styled.button<{ bg?: string }>`
   justify-content: center;
 `;
 
-const AddressInput = styled.input<{ bg?: string }>`
+const AddressInput = styled.input<{ bg?: string; drivenOnly?: boolean }>`
   flex: 1;
   width: 100%;
   height: 43px;
@@ -44,10 +44,15 @@ const AddressInput = styled.input<{ bg?: string }>`
   line-height: 1.15;
   margin: 0;
 
-  :hover,
-  :focus {
-    border: 2px solid #2ca9b7;
-  }
+  ${({ drivenOnly }) => drivenOnly && `cursor: default;`};
+
+  ${({ drivenOnly }) =>
+    !drivenOnly &&
+    `
+    :hover, :focus {
+      border: 2px solid #2ca9b7;
+    }
+  `};
 `;
 
 interface AddressInputPanelProps {
@@ -56,9 +61,17 @@ interface AddressInputPanelProps {
   bg?: string;
   className?: string;
   placeholder?: string;
+  drivenOnly?: boolean;
 }
 
-export default function AddressInputPanel({ value, onUserInput, bg, className, placeholder }: AddressInputPanelProps) {
+export default function AddressInputPanel({
+  value,
+  onUserInput,
+  bg,
+  className,
+  placeholder,
+  drivenOnly,
+}: AddressInputPanelProps) {
   return (
     <InputContainer className={className}>
       <AddressInputLabel bg={bg}>
@@ -66,10 +79,11 @@ export default function AddressInputPanel({ value, onUserInput, bg, className, p
       </AddressInputLabel>
 
       <AddressInput
-        placeholder={placeholder || 'hx00000...'}
+        placeholder={drivenOnly ? '' : placeholder || 'hx00000...'}
         value={value}
         onChange={event => onUserInput(event.target.value)}
         bg={bg}
+        drivenOnly={drivenOnly}
       />
     </InputContainer>
   );

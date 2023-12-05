@@ -5,15 +5,12 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
-import { useICONWalletModalToggle } from 'store/application/hooks';
-import { useSignedInWallets } from 'store/wallet/hooks';
-import { shortenAddress } from 'utils';
 
 import ChainList from '../bridge/ChainList';
+import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
 
@@ -41,9 +38,6 @@ export const SelectorWrap = styled.div`
 
 const CrossChainOptions = ({ currency, chain, setChain }: CrossChainInputOptionsProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-  const signedInWallets = useSignedInWallets();
-  const { connectToWallet: connectKeplr } = useArchwayContext();
-  const ICONWalletModalToggle = useICONWalletModalToggle();
 
   const arrowRef = React.useRef(null);
 
@@ -62,18 +56,6 @@ const CrossChainOptions = ({ currency, chain, setChain }: CrossChainInputOptions
       setChain('icon');
     };
   }, [setChain, currency?.wrapped.address]);
-
-  const getChainAddress = (chain): string | undefined => {
-    const wallet = signedInWallets.find(wallet => wallet.chain === chain);
-    if (wallet) {
-      return wallet.address;
-    }
-  };
-
-  const handleConnect = () => {
-    if (chain === 'icon') ICONWalletModalToggle();
-    if (chain === 'archway') connectKeplr();
-  };
 
   return (
     <Wrap>
@@ -102,13 +84,7 @@ const CrossChainOptions = ({ currency, chain, setChain }: CrossChainInputOptions
         </ClickAwayListener>
       </Flex>
 
-      <Typography onClick={handleConnect} color="primaryBright">
-        {getChainAddress(chain) ? (
-          <UnderlineText>{shortenAddress(getChainAddress(chain) || '', 5)}</UnderlineText>
-        ) : (
-          <UnderlineText>Connect wallet</UnderlineText>
-        )}
-      </Typography>
+      <CrossChainWalletConnect chain={chain} />
     </Wrap>
   );
 };

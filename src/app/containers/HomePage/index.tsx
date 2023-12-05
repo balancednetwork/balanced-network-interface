@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
-import { Box, Flex } from 'rebass/styled-components';
+import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
@@ -19,7 +19,7 @@ import { useLoanFetchInfo } from 'store/loan/hooks';
 import { useFetchOraclePrices } from 'store/oracle/hooks';
 import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';
-import { useSignedInWallets, useWalletFetchBalances } from 'store/wallet/hooks';
+import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 const Grid = styled.div`
   flex: 1;
@@ -35,18 +35,9 @@ const Grid = styled.div`
   `};
 `;
 
-const SignInMessage = styled(Box)`
-  width: 100%;
-  align-self: stretch;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 export function HomePage() {
   const { account } = useIconReact();
   const { address: accountArch } = useArchwayContext();
-  const signedInWallets = useSignedInWallets();
 
   useFetchPrice();
   useFetchOraclePrices();
@@ -67,7 +58,7 @@ export function HomePage() {
           <PositionDetailPanel />
           <RewardsPanel />
         </Grid>
-      ) : signedInWallets.length ? (
+      ) : (
         <Grid>
           <BoxPanel bg="bg3" sx={{ position: 'relative' }}>
             <Typography variant="h2" paddingRight={'7px'}>
@@ -111,10 +102,6 @@ export function HomePage() {
             </BoxPanel>
           </RewardsPanelLayout>
         </Grid>
-      ) : (
-        <SignInMessage>
-          <Trans>Sign in on ICON to use the Home page.</Trans>
-        </SignInMessage>
       )}
     </>
   );

@@ -44,6 +44,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import AddressInputPanel from '../AddressInputPanel';
 import { Button, TextButton } from '../Button';
+import CrossChainConnectWallet from '../CrossChainWalletConnect';
 import CurrencyLogo from '../CurrencyLogo';
 import Modal from '../Modal';
 import { ModalContentWrapper } from '../ModalContent';
@@ -86,6 +87,18 @@ const WithdrawOption = styled.button<{ active: boolean }>`
   img {
     margin-bottom: 5px;
   }
+`;
+
+const ConnectWrap = styled.div`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  top: 0;
+  right: 0;
+  padding-right: 15px;
 `;
 
 export default function BridgePanel() {
@@ -446,12 +459,17 @@ export default function BridgePanel() {
             />
           </Flex>
 
-          <Flex>
+          <Flex style={{ position: 'relative' }}>
             <AddressInputPanel
               value={destinationAddress}
               onUserInput={handleDestinationAddressInput}
-              placeholder={t`${getNetworkDisplayName(bridgeDirection.to)} address`}
+              drivenOnly={true}
             />
+            {!destinationAddress && (
+              <ConnectWrap>
+                <CrossChainConnectWallet chain={bridgeDirection.to} />
+              </ConnectWrap>
+            )}
           </Flex>
         </AutoColumn>
 

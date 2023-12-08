@@ -68,7 +68,7 @@ const COSMOS_NATIVE_AVAILABLE_TOKENS_LIST: { [key in SupportedChainId]: any } = 
 };
 
 const AUTO_EXECUTION_ON_ICON_: { [key in SupportedChainId]: boolean } = {
-  [SupportedChainId.MAINNET]: false,
+  [SupportedChainId.MAINNET]: true,
   [SupportedChainId.BERLIN]: true,
   [SupportedChainId.LISBON]: false,
   [SupportedChainId.YEOUIDO]: false,

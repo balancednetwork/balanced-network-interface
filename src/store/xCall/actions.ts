@@ -1,6 +1,16 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { DestinationXCallData, OriginXCallData, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
+import {
+  DestinationXCallData,
+  OriginXCallData,
+  SupportedXCallChains,
+  XCallEventType,
+  CurrentXCallStateType,
+} from 'app/_xcall/types';
+
+export const setXCallState = createAction<{
+  state?: CurrentXCallStateType;
+}>('xCall/setXCallState');
 
 export const addXCallOriginEvent = createAction<{
   chain?: SupportedXCallChains;

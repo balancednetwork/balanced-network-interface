@@ -16,9 +16,11 @@ import {
   XCallChainState,
   XCallEventType,
   XCallActivityItem,
+  CurrentXCallStateType,
 } from 'app/_xcall/types';
 import { getArchwayCounterToken } from 'app/_xcall/utils';
 import { AppState } from 'store';
+// import { ONE_DAY_DURATION } from 'utils';
 
 import {
   addXCallDestinationEvent,
@@ -29,6 +31,7 @@ import {
   removeXCallOriginEvent,
   rollBackFromOrigin,
   setListeningTo,
+  setXCallState,
   stopListening,
 } from './actions';
 
@@ -46,6 +49,16 @@ export function useXCallListeningTo(): AppState['xCall']['listeningTo'] {
 
 export function useXCallChainState(chain: SupportedXCallChains): XCallChainState {
   return useSelector((state: AppState) => state.xCall.events[chain]);
+}
+
+export function useSetXCallState(): (state: CurrentXCallStateType) => void {
+  const dispatch = useDispatch();
+  return React.useCallback(
+    state => {
+      dispatch(setXCallState({ state }));
+    },
+    [dispatch],
+  );
 }
 
 export function useAddOriginEvent(): (chain: SupportedXCallChains, data: OriginXCallData) => void {
@@ -243,9 +256,14 @@ export function useFlagRollBackReady(): (chain: SupportedXCallChains, sn: number
 }
 
 export function useXCallStats(): UseQueryResult<{ transfers: number; swaps: number }> {
+  // const IBC_CX = 'cx622bbab73698f37dbef53955fd3decffeb0b0c16';
+
   return useQuery(
     'xCallStats',
     () => {
+      // const yesterdayTimestamp = (new Date().getTime() - ONE_DAY_DURATION) * 1000;
+      // let page = 0
+      //https://tracker.icon.community/api/v1/transactions/address/cx622bbab73698f37dbef53955fd3decffeb0b0c16?addr=cx622bbab73698f37dbef53955fd3decffeb0b0c16&limit=25&skip=0
       return {
         transfers: 187,
         swaps: 65,
@@ -253,6 +271,7 @@ export function useXCallStats(): UseQueryResult<{ transfers: number; swaps: numb
     },
     {
       keepPreviousData: true,
+      refetchInterval: 5000,
     },
   );
 }

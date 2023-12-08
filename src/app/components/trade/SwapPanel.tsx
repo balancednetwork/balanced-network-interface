@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
-import { SupportedXCallChains } from 'app/_xcall/types';
+import { CurrentXCallState, SupportedXCallChains } from 'app/_xcall/types';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
@@ -38,6 +38,7 @@ import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useSignedInWallets } from 'store/wallet/hooks';
+import { useCurrentXCallState, useSetXCallState } from 'store/xCall/hooks';
 import { formatBigNumber, formatPercent, maxAmountSpend, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -58,6 +59,8 @@ export default function SwapPanel() {
   const { address: accountArch } = useArchwayContext();
   const [crossChainOrigin, setCrossChainOrigin] = React.useState<SupportedXCallChains>('icon');
   const [crossChainDestination, setCrossChainDestination] = React.useState<SupportedXCallChains>('icon');
+  const setCurrentXCallState = useSetXCallState();
+  const currentXCallState = useCurrentXCallState();
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
   const { trade, currencyBalances, currencies, parsedAmount, inputError, percents } = useDerivedSwapInfo(
@@ -89,7 +92,10 @@ export default function SwapPanel() {
     currencies?.INPUT?.wrapped.address || '',
   );
   const [crossChainSwapModalOpen, setCrossChainSwapModalOpen] = React.useState(false);
-  const closeCrossChainSwapModal = React.useCallback(() => setCrossChainSwapModalOpen(false), []);
+  const closeCrossChainSwapModal = React.useCallback(() => {
+    setCrossChainSwapModalOpen(false);
+    setCurrentXCallState(CurrentXCallState.IDLE);
+  }, [setCurrentXCallState]);
 
   React.useEffect(() => {
     if (isChainDifference) {
@@ -103,6 +109,12 @@ export default function SwapPanel() {
       setDestinationAddress(undefined);
     }
   }, [signedInWallets, crossChainDestination, isChainDifference]);
+
+  React.useEffect(() => {
+    if (currentXCallState === CurrentXCallState.IDLE) {
+      closeCrossChainSwapModal();
+    }
+  }, [currentXCallState, closeCrossChainSwapModal]);
 
   const parsedAmounts = React.useMemo(
     () => ({
@@ -206,6 +218,7 @@ export default function SwapPanel() {
       }
       setExecutionTrade(trade);
       setCrossChainSwapModalOpen(true);
+      setCurrentXCallState(CurrentXCallState.AWAKE);
     } else {
       if (!account) {
         toggleWalletModal();
@@ -214,7 +227,7 @@ export default function SwapPanel() {
         setExecutionTrade(trade);
       }
     }
-  }, [account, accountArch, crossChainDestination, crossChainOrigin, toggleWalletModal, trade]);
+  }, [account, accountArch, crossChainDestination, crossChainOrigin, setCurrentXCallState, toggleWalletModal, trade]);
 
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));

@@ -54,6 +54,7 @@ export type XCallDirection = {
 
 export type CurrentXCallStateType =
   | 'IDLE'
+  | 'AWAKE'
   | 'AWAITING_DESTINATION_CALL_MESSAGE'
   | 'AWAITING_USER_CALL_EXECUTION'
   | 'AWAITING_ORIGIN_ROLLBACK_MESSAGE'
@@ -61,6 +62,7 @@ export type CurrentXCallStateType =
 
 export const CurrentXCallState: { [key in CurrentXCallStateType]: CurrentXCallStateType } = Object.freeze({
   IDLE: 'IDLE',
+  AWAKE: 'AWAKE',
   AWAITING_DESTINATION_CALL_MESSAGE: 'AWAITING_DESTINATION_CALL_MESSAGE',
   AWAITING_USER_CALL_EXECUTION: 'AWAITING_USER_CALL_EXECUTION',
 

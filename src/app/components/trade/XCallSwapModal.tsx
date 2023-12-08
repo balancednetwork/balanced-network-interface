@@ -18,7 +18,7 @@ import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
-import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
+import { CurrentXCallState, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getArchwayCounterToken, getBytesFromString, getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -32,7 +32,7 @@ import {
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
 import { useSignedInWallets } from 'store/wallet/hooks';
-import { useAddOriginEvent } from 'store/xCall/hooks';
+import { useAddOriginEvent, useCurrentXCallState } from 'store/xCall/hooks';
 import { formatBigNumber, shortenAddress, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -132,6 +132,7 @@ const XCallSwapModal = ({
   const { isTxPending } = useArchwayTransactionsState();
   const { data: archwayXcallFees } = useArchwayXcallFee();
   const { data: gasChecker } = useXCallGasChecker(originChain, destinationChain);
+  const currentXCallState = useCurrentXCallState();
 
   const originAddress = signedInWallets.find(wallet => wallet.chain === originChain)?.address;
 
@@ -168,6 +169,12 @@ const XCallSwapModal = ({
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
     changeShouldLedgerSign(false);
   };
+
+  React.useEffect(() => {
+    if (currentXCallState === CurrentXCallState.IDLE) {
+      xCallReset();
+    }
+  }, [currentXCallState, xCallReset]);
 
   //todo: extract to method to handle other chains in the future
   const msgs = React.useMemo(() => {

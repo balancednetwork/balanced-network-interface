@@ -95,6 +95,7 @@ export default createReducer(initialState, builder =>
     })
     .addCase(stopListening, state => {
       state.listeningTo = undefined;
+      state.xCall = CurrentXCallState.IDLE;
     })
     .addCase(rollBackFromOrigin, (state, { payload: { chain, sn } }) => {
       if (chain && sn) {

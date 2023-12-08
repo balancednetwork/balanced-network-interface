@@ -24,7 +24,7 @@ import { useARCH } from 'app/_xcall/archway/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
-import { SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
+import { CurrentXCallState, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
@@ -39,7 +39,12 @@ import {
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
-import { useAddOriginEvent, useWithdrawableNativeAmount, useXCallDestinationEvents } from 'store/xCall/hooks';
+import {
+  useAddOriginEvent,
+  useCurrentXCallState,
+  useSetXCallState,
+  useWithdrawableNativeAmount,
+} from 'store/xCall/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import AddressInputPanel from '../AddressInputPanel';
@@ -128,8 +133,8 @@ export default function BridgePanel() {
   const { data: iconXcallFees } = useIconXcallFee();
   const [isOpen, setOpen] = React.useState(false);
   const [withdrawNative, setWithdrawNative] = React.useState<boolean | undefined>();
-  const iconDestinationEvents = useXCallDestinationEvents('icon');
-  const [destinationReceived, setDestinationReceived] = React.useState(false);
+  const currentXCallState = useCurrentXCallState();
+  const setCurrentXCallState = useSetXCallState();
 
   const handleSetOriginChain = React.useCallback(
     (chain: SupportedXCallChains) => {
@@ -228,12 +233,22 @@ export default function BridgePanel() {
     };
   }, [setDestinationAddress, bridgeDirection.to]);
 
-  const xCallReset = React.useCallback(() => {
-    setXCallInProgress(false);
-    setModalClosable(true);
+  const openModal = React.useCallback(() => {
+    setCurrentXCallState(CurrentXCallState.AWAKE);
+    setOpen(true);
+  }, [setCurrentXCallState]);
+
+  const closeModal = React.useCallback(() => {
+    setCurrentXCallState(CurrentXCallState.IDLE);
     setOpen(false);
-    setDestinationReceived(false);
-  }, [setXCallInProgress, setModalClosable, setOpen, setDestinationReceived]);
+    setXCallInProgress(false);
+  }, [setCurrentXCallState]);
+
+  const xCallReset = React.useCallback(() => {
+    setModalClosable(true);
+    closeModal();
+    handleTypeInput('');
+  }, [closeModal]);
 
   const controlledClose = React.useCallback(() => {
     if (modalClosable && !xCallInProgress) {
@@ -242,16 +257,10 @@ export default function BridgePanel() {
   }, [modalClosable, xCallInProgress, xCallReset]);
 
   React.useEffect(() => {
-    if (iconDestinationEvents.length > 0) {
-      setDestinationReceived(true);
-    }
-  }, [iconDestinationEvents, setDestinationReceived]);
-
-  React.useEffect(() => {
-    if (xCallInProgress && destinationReceived && iconDestinationEvents.length === 0) {
+    if (currentXCallState === CurrentXCallState.IDLE) {
       xCallReset();
     }
-  }, [destinationReceived, iconDestinationEvents.length, xCallInProgress, xCallReset]);
+  }, [currentXCallState, xCallReset]);
 
   const isBridgeButtonAvailable = React.useMemo(() => {
     if (!currencyAmountToBridge) return false;
@@ -372,7 +381,6 @@ export default function BridgePanel() {
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
           originEventData && addOriginEvent('archway', originEventData);
-          handleTypeInput('');
         } catch (e) {
           console.error(e);
           addTransactionResult('archway', null, 'Cross-chain transfer request failed');
@@ -402,7 +410,6 @@ export default function BridgePanel() {
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
           originEventData && addOriginEvent('archway', originEventData);
-          handleTypeInput('');
         } catch (e) {
           console.error(e);
           addTransactionResult('archway', null, 'Cross-chain transfer request failed');
@@ -526,7 +533,7 @@ export default function BridgePanel() {
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
-            <Button onClick={() => setOpen(true)} disabled={!isBridgeButtonAvailable}>
+            <Button onClick={openModal} disabled={!isBridgeButtonAvailable}>
               Transfer
             </Button>
           </Flex>
@@ -650,12 +657,7 @@ export default function BridgePanel() {
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
-                <TextButton
-                  onClick={() => {
-                    setXCallInProgress(false);
-                    setOpen(false);
-                  }}
-                >
+                <TextButton onClick={closeModal}>
                   <Trans>Cancel</Trans>
                 </TextButton>
                 {allowanceIncreaseNeeded && !xCallInProgress ? (

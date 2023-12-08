@@ -1,10 +1,10 @@
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
-import IconService from 'icon-sdk-js';
+import IconService, { BigNumber } from 'icon-sdk-js';
 
 import { NETWORK_ID } from 'constants/config';
 
-import { OriginXCallData, XCallEvent, XCallEventType } from '../types';
-import { ICONTxEvent, ICONTxResultType } from './types';
+import { OriginXCallData, SupportedXCallChains, XCallEvent, XCallEventType } from '../types';
+import { ICONBlockType, ICONTxEvent, ICONTxResultType } from './types';
 
 export const httpProvider = new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint);
 export const iconService = new IconService(httpProvider);
@@ -20,6 +20,19 @@ export async function fetchTxResult(hash: string): Promise<ICONTxResultType | un
     try {
       const txResult = await iconService.getTransactionResult(hash).execute();
       return txResult as ICONTxResultType;
+    } catch (e) {
+      console.log(`xCall debug - icon tx result (pass ${i}):`, e);
+    }
+    await sleep(1000);
+  }
+}
+
+export async function fetchBlock(height: string): Promise<ICONBlockType | undefined> {
+  const heightNumber = new BigNumber(height, 16).minus(1);
+  for (let i = 0; i < 10; i++) {
+    try {
+      const block = await iconService.getBlockByHeight(heightNumber).execute();
+      return block as ICONBlockType;
     } catch (e) {
       console.log(`xCall debug - icon tx result (pass ${i}):`, e);
     }
@@ -51,6 +64,7 @@ export const getICONEventSignature = (eventName: XCallEventType) => {
 
 export function getXCallOriginEventDataFromICON(
   callMessageSentLog: ICONTxEvent,
+  destination: SupportedXCallChains,
   descriptionAction: string,
   descriptionAmount: string,
 ): OriginXCallData {
@@ -62,9 +76,40 @@ export function getXCallOriginEventDataFromICON(
     rollback,
     eventName,
     chain: 'icon',
-    destination: 'archway',
+    destination: destination,
     timestamp: new Date().getTime(),
     descriptionAction,
     descriptionAmount,
   };
+}
+
+export function getCallMessageSentEventFromLogs(logs: ICONTxEvent[]): ICONTxEvent | undefined {
+  return logs.find(event => event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)));
+}
+
+export async function getTxFromCallExecutedLog(
+  blockHash: string,
+  indexes: string[],
+  reqId: string,
+): Promise<ICONTxResultType | undefined> {
+  const block = await fetchBlock(blockHash);
+  if (block) {
+    const indexesDecimal = indexes.map(i => parseInt(i, 16));
+    const transactions = await Promise.all(
+      indexesDecimal.map(async index => await fetchTxResult(block.confirmedTransactionList[index].txHash)),
+    );
+    const tx = transactions.find(transaction => {
+      const callExecutedLog = transaction?.eventLogs.find(event =>
+        event.indexed.includes(getICONEventSignature(XCallEvent.CallExecuted)),
+      );
+      if (callExecutedLog) {
+        const reqIdFromLog = callExecutedLog.indexed[1];
+        return reqId === reqIdFromLog;
+      } else {
+        return false;
+      }
+    });
+
+    return tx;
+  }
 }

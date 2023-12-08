@@ -3,12 +3,14 @@ import { Event } from '@cosmjs/cosmwasm-stargate';
 import { DestinationXCallData, OriginXCallData, XCallEvent } from 'app/_xcall/types';
 import { NETWORK_ID } from 'constants/config';
 
+import { AUTO_EXECUTION_ON_ICON } from '../_icon/config';
 import { ARCHWAY_EVENT_XCALL_MSG_SENT } from './types';
 
 export function getXCallOriginEventDataFromArchway(
   events: readonly Event[],
   descriptionAction: string,
   descriptionAmount: string,
+  autoExecute: boolean = AUTO_EXECUTION_ON_ICON,
 ): OriginXCallData | undefined {
   const xCallSentEvent = events.find(e => e.type === ARCHWAY_EVENT_XCALL_MSG_SENT);
   // const xCallDataEvent = events.find(e => e.type === 'wasm-send_packet');
@@ -24,6 +26,7 @@ export function getXCallOriginEventDataFromArchway(
       timestamp: new Date().getTime(),
       descriptionAction,
       descriptionAmount,
+      autoExecute: autoExecute,
     };
   }
 }

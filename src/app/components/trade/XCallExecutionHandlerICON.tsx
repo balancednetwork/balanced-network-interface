@@ -156,8 +156,11 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
 
           if (callMessageSentEvent) {
             console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
+
+            //todo: find the destination event and determine destination for this new origin event
             const originEventData = getXCallOriginEventDataFromICON(
               callMessageSentEvent,
+              'archway',
               'todo event manager',
               'todo event manager',
             );
@@ -182,7 +185,16 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
     }
   };
 
-  if (originEvent && !originEvent.rollbackRequired) {
+  if (originEvent && !originEvent.rollbackRequired && originEvent.autoExecute) {
+    return (
+      <Flex alignItems="center" justifyContent="center" flexDirection="column">
+        <Typography mb={4}>{t`Awaiting execution on ICON.`}</Typography>
+        <Spinner />
+      </Flex>
+    );
+  }
+
+  if (originEvent && !originEvent.rollbackRequired && !originEvent.autoExecute) {
     return (
       <>
         <Typography mb={4}>

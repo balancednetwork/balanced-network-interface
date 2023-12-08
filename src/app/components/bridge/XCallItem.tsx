@@ -6,7 +6,12 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
+import {
+  fetchTxResult,
+  getCallMessageSentEventFromLogs,
+  getICONEventSignature,
+  getXCallOriginEventDataFromICON,
+} from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { getFeeParam } from 'app/_xcall/archway/utils';
@@ -108,14 +113,14 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
           const origin = xCallState.events[data.origin].origin.find(event => event.sn === data.sn);
 
           //has xCall emitted CallMessageSent event?
-          const callMessageSentEvent = txResult.eventLogs.find(event =>
-            event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
-          );
+          const callMessageSentEvent = getCallMessageSentEventFromLogs(txResult.eventLogs);
 
           if (callMessageSentEvent) {
             console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
+            //todo: find the destination event and determine destination for this new origin event
             const originEventData = getXCallOriginEventDataFromICON(
               callMessageSentEvent,
+              'archway',
               origin?.descriptionAction || 'Swap',
               origin?.descriptionAmount || '',
             );

@@ -39,7 +39,7 @@ import {
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
-import { useAddOriginEvent, useWithdrawableNativeAmount } from 'store/xCall/hooks';
+import { useAddOriginEvent, useWithdrawableNativeAmount, useXCallDestinationEvents } from 'store/xCall/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import AddressInputPanel from '../AddressInputPanel';
@@ -128,6 +128,8 @@ export default function BridgePanel() {
   const { data: iconXcallFees } = useIconXcallFee();
   const [isOpen, setOpen] = React.useState(false);
   const [withdrawNative, setWithdrawNative] = React.useState<boolean | undefined>();
+  const iconDestinationEvents = useXCallDestinationEvents('icon');
+  const [destinationReceived, setDestinationReceived] = React.useState(false);
 
   const handleSetOriginChain = React.useCallback(
     (chain: SupportedXCallChains) => {
@@ -230,13 +232,26 @@ export default function BridgePanel() {
     setXCallInProgress(false);
     setModalClosable(true);
     setOpen(false);
-  }, [setXCallInProgress, setModalClosable, setOpen]);
+    setDestinationReceived(false);
+  }, [setXCallInProgress, setModalClosable, setOpen, setDestinationReceived]);
 
   const controlledClose = React.useCallback(() => {
     if (modalClosable && !xCallInProgress) {
       xCallReset();
     }
   }, [modalClosable, xCallInProgress, xCallReset]);
+
+  React.useEffect(() => {
+    if (iconDestinationEvents.length > 0) {
+      setDestinationReceived(true);
+    }
+  }, [iconDestinationEvents, setDestinationReceived]);
+
+  React.useEffect(() => {
+    if (xCallInProgress && destinationReceived && iconDestinationEvents.length === 0) {
+      xCallReset();
+    }
+  }, [destinationReceived, iconDestinationEvents.length, xCallInProgress, xCallReset]);
 
   const isBridgeButtonAvailable = React.useMemo(() => {
     if (!currencyAmountToBridge) return false;
@@ -270,6 +285,7 @@ export default function BridgePanel() {
         console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
         const originEventData = getXCallOriginEventDataFromICON(
           callMessageSentEvent,
+          bridgeDirection.to,
           descriptionAction,
           descriptionAmount,
         );

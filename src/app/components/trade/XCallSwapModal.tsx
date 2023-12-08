@@ -222,8 +222,10 @@ const XCallSwapModal = ({
 
       if (callMessageSentEvent) {
         console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
+        //todo: find the destination event and determine destination for this new origin event
         const originEventData = getXCallOriginEventDataFromICON(
           callMessageSentEvent,
+          'archway',
           descriptionAction,
           descriptionAmount,
         );
@@ -425,7 +427,7 @@ const XCallSwapModal = ({
               <Trans>{getNetworkDisplayName(originChain)}</Trans>
             </Typography>
             <Typography textAlign="center">
-              <Trans>{originAddress && shortenAddress(originAddress, 5)}</Trans>
+              <Trans>{destinationAddress && originAddress && shortenAddress(originAddress, 5)}</Trans>
             </Typography>
           </Box>
 

@@ -9,6 +9,7 @@ import { Box, Flex } from 'rebass';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
+import { getFeeParam } from 'app/_xcall/archway/utils';
 import { DestinationXCallData, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
@@ -76,7 +77,12 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
 
       try {
         initTransaction('archway', msgs.txMsgs.archway.pending);
-        const res: ExecuteResult = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, 'auto');
+        const res: ExecuteResult = await signingClient.execute(
+          accountArch,
+          ARCHWAY_CONTRACTS.xcall,
+          msg,
+          getFeeParam(600000),
+        );
 
         console.log('xCall debug - Archway executeCall complete', res);
 

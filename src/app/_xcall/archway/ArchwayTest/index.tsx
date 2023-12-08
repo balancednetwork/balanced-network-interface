@@ -284,7 +284,7 @@ const ArchwayTest = () => {
           if (callMessageSentEvent) {
             console.log('CALL MESSAGE SENT EVENT DETECTED');
             console.log(callMessageSentEvent);
-            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent, 'test1', 'test2');
+            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent, 'archway', 'test1', 'test2');
             originEventData && addOriginEvent('icon', originEventData);
           }
         }
@@ -463,7 +463,7 @@ const ArchwayTest = () => {
           if (callMessageSentEvent) {
             console.log('CALL MESSAGE SENT EVENT DETECTED');
             console.log(callMessageSentEvent);
-            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent, 'test1', 'test2');
+            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent, 'archway', 'test1', 'test2');
             originEventData && addOriginEvent('icon', originEventData);
           }
         }
@@ -541,7 +541,7 @@ const ArchwayTest = () => {
           if (callMessageSentEvent) {
             console.log('CALL MESSAGE SENT EVENT DETECTED');
             console.log(callMessageSentEvent);
-            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent, 'test1', 'test2');
+            const originEventData = getXCallOriginEventDataFromICON(callMessageSentEvent, 'archway', 'test1', 'test2');
             originEventData && addOriginEvent('icon', originEventData);
           }
         }

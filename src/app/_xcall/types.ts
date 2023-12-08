@@ -26,6 +26,7 @@ export type OriginXCallData = {
   eventName: XCallEventType;
   chain: SupportedXCallChains;
   destination: SupportedXCallChains;
+  autoExecute?: boolean;
   timestamp: number;
   descriptionAction: string;
   descriptionAmount: string;
@@ -38,6 +39,7 @@ export type DestinationXCallData = {
   eventName: XCallEventType;
   chain: SupportedXCallChains;
   origin: SupportedXCallChains;
+  autoExecute?: boolean;
 };
 
 export type XCallChainState = {

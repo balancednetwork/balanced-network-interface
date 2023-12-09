@@ -18,6 +18,7 @@ const useAllowanceHandler = (
   tokenAddress: string,
   amountNeeded: string,
   spenderAddress: string = ARCHWAY_CONTRACTS.assetManager,
+  callback?: (success: boolean) => void,
 ) => {
   const { address, signingClient } = useArchwayContext();
   const addTransactionResult = useAddTransactionResult();
@@ -66,7 +67,6 @@ const useAllowanceHandler = (
           t`Approving ${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} for cross-chain transfer...`,
         );
 
-        //todo: fee for mainnet
         const res = await signingClient.execute(address, tokenAddress, msg, getFeeParam(400000));
         setAllowanceIncreased(true);
         addTransactionResult(
@@ -75,6 +75,7 @@ const useAllowanceHandler = (
           t`${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} approved for cross-chain transfer.`,
         );
         console.log('xCall debug - increase allowance: ', res);
+        callback && callback(true);
       } catch (e) {
         console.error(e);
         addTransactionResult(

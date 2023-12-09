@@ -18,6 +18,7 @@ import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useCrossChainCurrencyBalances, useCurrencyBalances } from 'store/wallet/hooks';
+import { useCurrentXCallState } from 'store/xCall/hooks';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, typeInput, selectCurrency } from './actions';
@@ -106,6 +107,7 @@ const useCurrencyDeposit = (
   const token = currency?.wrapped;
   const transactions = useAllTransactions();
   const [result, setResult] = React.useState<string | undefined>();
+  const currentXCallState = useCurrentXCallState();
 
   React.useEffect(() => {
     (async () => {
@@ -114,7 +116,7 @@ const useCurrencyDeposit = (
         setResult(res);
       }
     })();
-  }, [transactions, token, account]);
+  }, [transactions, token, account, currentXCallState]);
 
   return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, JSBI.BigInt(result)) : undefined;
 };

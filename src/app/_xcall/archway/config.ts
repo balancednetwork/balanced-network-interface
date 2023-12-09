@@ -137,6 +137,14 @@ const ARCHWAY_WEBSOCKET_URLS: { [key in SupportedChainId]: string } = {
   [SupportedChainId.YEOUIDO]: 'wss://rpc.constantine.archway.tech:443/websocket',
 };
 
+const AUTO_EXECUTION_ON_ARCHWAY_: { [key in SupportedChainId]: boolean } = {
+  [SupportedChainId.MAINNET]: false,
+  [SupportedChainId.BERLIN]: true,
+  [SupportedChainId.LISBON]: false,
+  [SupportedChainId.YEOUIDO]: false,
+  [SupportedChainId.SEJONG]: false,
+};
+
 export const ARCHWAY_CHAIN: Chain = ARCHWAY_CHAINS[NETWORK_ID];
 export const ARCHWAY_ASSET_LIST: AssetList = ARCHWAY_ASSET_LISTS[NETWORK_ID];
 export const ARCHWAY_RPC_PROVIDER: string = ARCHWAY_RPC_PROVIDERS[NETWORK_ID];
@@ -144,3 +152,4 @@ export const ARCHWAY_CW20_COLLATERAL: CW20_BASIC_TYPE = ARCHWAY_CW20_COLLATERALS
 export const ARCHWAY_CONTRACTS: ContractSetType = ARCHWAY_CONTRACTS_[NETWORK_ID];
 export const ARCHWAY_WEBSOCKET_URL: string = ARCHWAY_WEBSOCKET_URLS[NETWORK_ID];
 export const ARCHWAY_TRACKER_LINK: string = ARCHWAY_TRACKER_LINKS[NETWORK_ID];
+export const AUTO_EXECUTION_ON_ARCHWAY: boolean = AUTO_EXECUTION_ON_ARCHWAY_[NETWORK_ID];

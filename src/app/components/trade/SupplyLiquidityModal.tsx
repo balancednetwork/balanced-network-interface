@@ -13,7 +13,7 @@ import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
-import { SupportedXCallChains } from 'app/_xcall/types';
+import { CurrentXCallState, SupportedXCallChains } from 'app/_xcall/types';
 import { getBytesFromString, getCrossChainTokenAddress } from 'app/_xcall/utils';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
@@ -30,7 +30,7 @@ import {
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { useAddOriginEvent } from 'store/xCall/hooks';
+import { useAddOriginEvent, useCurrentXCallState, useSetXCallState } from 'store/xCall/hooks';
 import { toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -70,9 +70,9 @@ export default function SupplyLiquidityModal({
   const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
-
+  const currentXCallState = useCurrentXCallState();
+  const setCurrentXCallState = useSetXCallState();
   const addOriginEvent = useAddOriginEvent();
-  const [xCallInProgress, setXCallInProgress] = React.useState(false);
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
@@ -127,13 +127,13 @@ export default function SupplyLiquidityModal({
       );
       console.log('xCall debug - Archway supply init tx:', res);
       addTransactionResult('archway', res, 'Cross-chain supply requested.');
-      setXCallInProgress(true);
+      setCurrentXCallState(CurrentXCallState.AWAKE);
       const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
       originEventData && addOriginEvent('archway', originEventData);
     } catch (e) {
       console.error(e);
       addTransactionResult('archway', null, 'Supply request failed');
-      setXCallInProgress(false);
+      setCurrentXCallState(CurrentXCallState.IDLE);
     }
   };
 
@@ -307,28 +307,39 @@ export default function SupplyLiquidityModal({
     ? true
     : !!currencyDeposits[Field.CURRENCY_A]?.greaterThan(0) && !!currencyDeposits[Field.CURRENCY_B]?.greaterThan(0);
 
-  const UIStatus = {
-    [Field.CURRENCY_A]: {
-      shouldSend: !!!currencyDeposits[Field.CURRENCY_A]?.greaterThan(0),
-      // isAddPending: !!addingTxs[Field.CURRENCY_A],
-      isAddPending: addingATxStatus === TransactionStatus.pending || isTxPending || xCallInProgress,
-      // isRemovePending: !!removingTxs[Field.CURRENCY_A],
-      isRemovePending: removingATxStatus === TransactionStatus.pending,
-      isAllowanceIncreaseNeeded: allowanceIncreaseNeededA,
-      isAllowancePending: false,
-      chain: AChain,
-    },
-    [Field.CURRENCY_B]: {
-      shouldSend: !!!currencyDeposits[Field.CURRENCY_B]?.greaterThan(0),
-      // isAddPending: !!addingTxs[Field.CURRENCY_B],
-      isAddPending: addingBTxStatus === TransactionStatus.pending,
-      // isRemovePending: !!removingTxs[Field.CURRENCY_B],
-      isRemovePending: removingBTxStatus === TransactionStatus.pending,
-      isAllowanceIncreaseNeeded: false,
-      isAllowancePending: false,
-      chain: BChain,
-    },
-  };
+  const UIStatus = React.useMemo(
+    () => ({
+      [Field.CURRENCY_A]: {
+        shouldSend: !!!currencyDeposits[Field.CURRENCY_A]?.greaterThan(0),
+        // isAddPending: !!addingTxs[Field.CURRENCY_A],
+        isAddPending: addingATxStatus === TransactionStatus.pending || isTxPending,
+        // isRemovePending: !!removingTxs[Field.CURRENCY_A],
+        isRemovePending: removingATxStatus === TransactionStatus.pending,
+        isAllowanceIncreaseNeeded: allowanceIncreaseNeededA,
+        chain: AChain,
+      },
+      [Field.CURRENCY_B]: {
+        shouldSend: !!!currencyDeposits[Field.CURRENCY_B]?.greaterThan(0),
+        // isAddPending: !!addingTxs[Field.CURRENCY_B],
+        isAddPending: addingBTxStatus === TransactionStatus.pending,
+        // isRemovePending: !!removingTxs[Field.CURRENCY_B],
+        isRemovePending: removingBTxStatus === TransactionStatus.pending,
+        isAllowanceIncreaseNeeded: false,
+        chain: BChain,
+      },
+    }),
+    [
+      AChain,
+      BChain,
+      addingATxStatus,
+      addingBTxStatus,
+      allowanceIncreaseNeededA,
+      currencyDeposits,
+      isTxPending,
+      removingATxStatus,
+      removingBTxStatus,
+    ],
+  );
 
   const [hasErrorMessage, setHasErrorMessage] = React.useState(false);
   const handleCancelSupply = () => {
@@ -343,16 +354,24 @@ export default function SupplyLiquidityModal({
   const hasEnoughICX = useHasEnoughICX();
 
   const xCallReset = () => {
-    setXCallInProgress(false);
+    setCurrentXCallState(CurrentXCallState.IDLE);
   };
 
-  const executeCallback = React.useCallback(
-    (success: boolean) => {
-      setAddingTxs(state => ({ ...state, CURRENCY_A: success ? 'success' : '' }));
-      success && setXCallInProgress(false);
-    },
-    [setAddingTxs],
-  );
+  const executeCallback = React.useCallback((success: boolean) => {
+    setAddingTxs(state => ({ ...state, CURRENCY_A: success ? 'success' : '' }));
+    // setCurrentXCallState(CurrentXCallState.IDLE);
+  }, []);
+
+  // React.useEffect(() => {
+  //   if (
+  //     UIStatus[Field.CURRENCY_A].chain !== 'icon' &&
+  //     currentXCallState === CurrentXCallState.IDLE &&
+  //     !UIStatus[Field.CURRENCY_A].shouldSend &&
+  //     isOpen
+  //   ) {
+  //     executeCallback(true);
+  //   }
+  // }, [UIStatus, currentXCallState, executeCallback, isOpen]);
 
   const msgs = {
     txMsgs: {
@@ -379,168 +398,176 @@ export default function SupplyLiquidityModal({
     },
   };
 
+  const isXcallModalOpen =
+    currentXCallState !== CurrentXCallState.IDLE &&
+    UIStatus[Field.CURRENCY_A].chain !== 'icon' &&
+    !UIStatus[Field.CURRENCY_A].isAddPending;
+  console.log('currentXCallState: ', isXcallModalOpen);
+
   return (
-    <Modal isOpen={isOpen} onDismiss={() => undefined}>
-      <ModalContent>
-        <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-          {pair ? t`Supply liquidity?` : t`Create liquidity pool?`}
-        </Typography>
-        <Typography variant="p" textAlign="center" mb={4} hidden={isQueue}>
-          <Trans>Send each asset to the contract</Trans>, <br />
-          {pair ? t`then click Supply.` : t`then create the pool.`}
-        </Typography>
-        <Flex alignItems="center" mb={1} hidden={isQueue}>
-          <Box
-            width={1 / 2}
-            sx={{
-              borderBottom: ['0px solid rgba(255, 255, 255, 0.15)', 0],
-              borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
-            }}
-          >
-            <StyledDL>
-              <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                <Trans>Assets to send</Trans>
-              </Typography>
-
-              {[Field.CURRENCY_A, Field.CURRENCY_B].map((field: Field) => (
-                <Box key={field} my={1}>
-                  {UIStatus[field].shouldSend ? (
-                    <>
-                      <Typography variant="p" fontWeight="bold" textAlign="center">
-                        {parsedAmounts[field]?.toSignificant(6)} {currencies[field]?.symbol}
-                      </Typography>
-                      {shouldAddAssets[field] && (
-                        <>
-                          <Spinner></Spinner>
-                          <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                            <Trans>Confirm the transaction on your Ledger.</Trans>
-                          </Typography>
-                        </>
-                      )}
-                      {UIStatus[field].isAllowanceIncreaseNeeded ? (
-                        <SupplyButton disabled={isTxPending} mt={2} onClick={increaseAllowanceA}>
-                          {isTxPending ? `Increasing allowance...` : `Increase allowance`}
-                        </SupplyButton>
-                      ) : (
-                        !shouldAddAssets[field] && (
-                          <>
-                            <SupplyButton
-                              disabled={
-                                UIStatus[field].isAddPending ||
-                                shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
-                              }
-                              mt={2}
-                              onClick={handleAdd(field)}
-                            >
-                              {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
-                            </SupplyButton>
-                            {UIStatus[field].chain !== 'icon' && (
-                              <Modal isOpen={xCallInProgress} onDismiss={() => {}}>
-                                <ModalContentWrapper>
-                                  <Typography mb={3} textAlign="center" fontSize={16}>
-                                    {t`Transfer ${currencies[field]?.symbol} to ICON.`}
-                                  </Typography>
-                                  <XCallEventManager xCallReset={xCallReset} msgs={msgs} callback={executeCallback} />
-                                </ModalContentWrapper>
-                              </Modal>
-                            )}
-                          </>
-                        )
-                      )}
-                    </>
-                  ) : (
-                    <CheckIconWrapper>
-                      <CheckIcon />
-                    </CheckIconWrapper>
-                  )}
-                </Box>
-              ))}
-            </StyledDL>
-          </Box>
-          <Box width={1 / 2}>
-            <StyledDL>
-              <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                <Trans>In contract</Trans>
-              </Typography>
-
-              {[Field.CURRENCY_A, Field.CURRENCY_B].map((field: Field) => (
-                <Box key={field} my={1}>
-                  {UIStatus[field].shouldSend ? (
-                    <>
-                      <StyledEmpty>-</StyledEmpty>
-                    </>
-                  ) : (
-                    <>
-                      <Typography variant="p" fontWeight="bold" textAlign="center">
-                        {currencyDeposits[field]?.toSignificant(6)} {currencies[field]?.symbol}
-                      </Typography>
-                      {shouldRemoveAssets[field] && (
-                        <>
-                          <Spinner></Spinner>
-                          <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                            <Trans>Confirm the transaction on your Ledger.</Trans>
-                          </Typography>
-                        </>
-                      )}
-                      {!shouldRemoveAssets[field] && (
-                        <RemoveButton
-                          disabled={
-                            UIStatus[field].isRemovePending ||
-                            shouldRemoveAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
-                          }
-                          mt={2}
-                          onClick={handleRemove(field, currencyDeposits[field])}
-                        >
-                          {!UIStatus[field].isRemovePending ? t`Remove` : t`Removing`}
-                        </RemoveButton>
-                      )}
-                    </>
-                  )}
-                </Box>
-              ))}
-            </StyledDL>
-          </Box>
-        </Flex>
-        <Flex alignItems="center" hidden={!isQueue}>
-          <Box width={1}>
-            <Typography fontWeight="bold" textAlign={isQueue ? 'center' : 'right'} fontSize="20px" as="h3">
-              {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {currencies[Field.CURRENCY_A]?.symbol}
-            </Typography>
-            <Typography mt={2} textAlign="center">
-              <Trans>
-                This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this
-                happens.
-              </Trans>
-            </Typography>
-          </Box>
-        </Flex>
-        {hasErrorMessage && (
-          <Typography textAlign="center" color="alert">
-            <Trans>Remove your assets to cancel this transaction.</Trans>
+    <>
+      <Modal isOpen={isOpen} onDismiss={() => undefined}>
+        <ModalContent>
+          <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+            {pair ? t`Supply liquidity?` : t`Create liquidity pool?`}
           </Typography>
-        )}
-        <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-          {shouldLedgerSign && <Spinner></Spinner>}
-          {!shouldLedgerSign && (
-            <>
-              <TextButton onClick={handleCancelSupply}>
-                <Trans>Cancel</Trans>
-              </TextButton>
+          <Typography variant="p" textAlign="center" mb={4} hidden={isQueue}>
+            <Trans>Send each asset to the contract</Trans>, <br />
+            {pair ? t`then click Supply.` : t`then create the pool.`}
+          </Typography>
+          <Flex alignItems="center" mb={1} hidden={isQueue}>
+            <Box
+              width={1 / 2}
+              sx={{
+                borderBottom: ['0px solid rgba(255, 255, 255, 0.15)', 0],
+                borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
+              }}
+            >
+              <StyledDL>
+                <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                  <Trans>Assets to send</Trans>
+                </Typography>
 
-              {pair ? (
-                <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                  {confirmTx ? t`Supplying` : t`Supply`}
-                </Button>
-              ) : (
-                <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                  {confirmTx ? t`Creating pool` : t`Create pool`}
-                </Button>
-              )}
-            </>
+                {[Field.CURRENCY_A, Field.CURRENCY_B].map((field: Field) => (
+                  <Box key={field} my={1}>
+                    {UIStatus[field].shouldSend ? (
+                      <>
+                        <Typography variant="p" fontWeight="bold" textAlign="center">
+                          {parsedAmounts[field]?.toSignificant(6)} {currencies[field]?.symbol}
+                        </Typography>
+                        {shouldAddAssets[field] && (
+                          <>
+                            <Spinner></Spinner>
+                            <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                              <Trans>Confirm the transaction on your Ledger.</Trans>
+                            </Typography>
+                          </>
+                        )}
+                        {UIStatus[field].isAllowanceIncreaseNeeded ? (
+                          <SupplyButton disabled={isTxPending} mt={2} onClick={increaseAllowanceA}>
+                            {isTxPending ? `Increasing...` : `Increase allowance`}
+                          </SupplyButton>
+                        ) : (
+                          !shouldAddAssets[field] && (
+                            <>
+                              <SupplyButton
+                                disabled={
+                                  UIStatus[field].isAddPending ||
+                                  shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                                }
+                                mt={2}
+                                onClick={handleAdd(field)}
+                              >
+                                {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
+                              </SupplyButton>
+                            </>
+                          )
+                        )}
+                      </>
+                    ) : (
+                      <CheckIconWrapper>
+                        <CheckIcon />
+                      </CheckIconWrapper>
+                    )}
+                  </Box>
+                ))}
+              </StyledDL>
+            </Box>
+            <Box width={1 / 2}>
+              <StyledDL>
+                <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                  <Trans>In contract</Trans>
+                </Typography>
+
+                {[Field.CURRENCY_A, Field.CURRENCY_B].map((field: Field) => (
+                  <Box key={field} my={1}>
+                    {UIStatus[field].shouldSend ? (
+                      <>
+                        <StyledEmpty>-</StyledEmpty>
+                      </>
+                    ) : (
+                      <>
+                        <Typography variant="p" fontWeight="bold" textAlign="center">
+                          {currencyDeposits[field]?.toSignificant(6)} {currencies[field]?.symbol}
+                        </Typography>
+                        {shouldRemoveAssets[field] && (
+                          <>
+                            <Spinner></Spinner>
+                            <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                              <Trans>Confirm the transaction on your Ledger.</Trans>
+                            </Typography>
+                          </>
+                        )}
+                        {!shouldRemoveAssets[field] && (
+                          <RemoveButton
+                            disabled={
+                              UIStatus[field].isRemovePending ||
+                              shouldRemoveAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                            }
+                            mt={2}
+                            onClick={handleRemove(field, currencyDeposits[field])}
+                          >
+                            {!UIStatus[field].isRemovePending ? t`Remove` : t`Removing`}
+                          </RemoveButton>
+                        )}
+                      </>
+                    )}
+                  </Box>
+                ))}
+              </StyledDL>
+            </Box>
+          </Flex>
+          <Flex alignItems="center" hidden={!isQueue}>
+            <Box width={1}>
+              <Typography fontWeight="bold" textAlign={isQueue ? 'center' : 'right'} fontSize="20px" as="h3">
+                {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {currencies[Field.CURRENCY_A]?.symbol}
+              </Typography>
+              <Typography mt={2} textAlign="center">
+                <Trans>
+                  This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this
+                  happens.
+                </Trans>
+              </Typography>
+            </Box>
+          </Flex>
+          {hasErrorMessage && (
+            <Typography textAlign="center" color="alert">
+              <Trans>Remove your assets to cancel this transaction.</Trans>
+            </Typography>
           )}
-        </Flex>
-      </ModalContent>
-    </Modal>
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+            {shouldLedgerSign && <Spinner></Spinner>}
+            {!shouldLedgerSign && (
+              <>
+                <TextButton onClick={handleCancelSupply}>
+                  <Trans>Cancel</Trans>
+                </TextButton>
+
+                {pair ? (
+                  <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
+                    {confirmTx ? t`Supplying` : t`Supply`}
+                  </Button>
+                ) : (
+                  <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
+                    {confirmTx ? t`Creating pool` : t`Create pool`}
+                  </Button>
+                )}
+              </>
+            )}
+          </Flex>
+        </ModalContent>
+      </Modal>
+      {UIStatus[Field.CURRENCY_A].chain !== 'icon' && (
+        <Modal isOpen={isXcallModalOpen} onDismiss={() => {}}>
+          <ModalContentWrapper>
+            <Typography mb={3} textAlign="center" fontSize={16}>
+              {t`Transfer ${currencies[Field.CURRENCY_A]?.symbol} to ICON.`}
+            </Typography>
+            <XCallEventManager xCallReset={xCallReset} msgs={msgs} callback={executeCallback} />
+          </ModalContentWrapper>
+        </Modal>
+      )}
+    </>
   );
 }
 

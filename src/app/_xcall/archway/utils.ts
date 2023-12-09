@@ -4,6 +4,7 @@ import { DestinationXCallData, OriginXCallData, XCallEvent } from 'app/_xcall/ty
 import { NETWORK_ID } from 'constants/config';
 
 import { AUTO_EXECUTION_ON_ICON } from '../_icon/config';
+import { AUTO_EXECUTION_ON_ARCHWAY } from './config';
 import { ARCHWAY_EVENT_XCALL_MSG_SENT } from './types';
 
 export function getXCallOriginEventDataFromArchway(
@@ -49,8 +50,21 @@ export function getXCallDestinationEventDataFromArchwayEvent(
       eventName: XCallEvent.CallMessage,
       chain: 'archway',
       origin: 'icon',
+      //TODO: get autoExecute value from origin event
+      autoExecute: AUTO_EXECUTION_ON_ARCHWAY,
     };
   }
+}
+
+export function getCallExecutedEventDataFromArchwayEvent(
+  events: readonly Event[],
+): { reqId: number; success: boolean } | undefined {
+  const reqIdRaw = events['wasm-CallExecuted.reqId'];
+  const success = events['wasm-CallExecuted.msg']?.[0] === 'success';
+  return {
+    reqId: reqIdRaw && parseInt(reqIdRaw[0]),
+    success,
+  };
 }
 
 export function getRollbackEventDataFromArchwayEvent(events: readonly Event[]): { sn: string } | undefined {

@@ -6,6 +6,11 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   useAddDestinationEvent,
   useFlagRollBackReady,
+  useRemoveEvent,
+  useRollBackFromOrigin,
+  useSetListeningTo,
+  useStopListening,
+  useXCallDestinationEvents,
   useXCallListeningTo,
   useXCallOriginEvents,
 } from 'store/xCall/hooks';
@@ -14,7 +19,11 @@ import { ICON_XCALL_NETWORK_ID } from '../_icon/config';
 import { CrossChainTxType, XCallEvent, XCallEventType } from '../types';
 import { useArchwayContext } from './ArchwayProvider';
 import { ARCHWAY_CONTRACTS, ARCHWAY_WEBSOCKET_URL } from './config';
-import { getRollbackEventDataFromArchwayEvent, getXCallDestinationEventDataFromArchwayEvent } from './utils';
+import {
+  getCallExecutedEventDataFromArchwayEvent,
+  getRollbackEventDataFromArchwayEvent,
+  getXCallDestinationEventDataFromArchwayEvent,
+} from './utils';
 
 const ARCHWAY_SOCKET_QUERY = {
   jsonrpc: '2.0',
@@ -30,9 +39,14 @@ export const useArchwayEventListener = () => {
   const eventName: XCallEventType | null = listeningTo?.chain === 'archway' ? listeningTo.event : null;
   const [socket, setSocket] = React.useState<WebSocket | undefined>(undefined);
   const addDestinationEvent = useAddDestinationEvent();
+  const setListeningTo = useSetListeningTo();
   const iconOriginEvents = useXCallOriginEvents('icon');
   const archwayOriginEvents = useXCallOriginEvents('archway');
+  const archwayDestinationEvents = useXCallDestinationEvents('archway');
+  const removeEvent = useRemoveEvent();
+  const rollBackFromOrigin = useRollBackFromOrigin();
   const flagRollbackReady = useFlagRollBackReady();
+  const stopListening = useStopListening();
   const query = `wasm-${eventName} EXISTS`;
 
   const disconnectFromWebsocket = React.useCallback(() => {
@@ -65,9 +79,33 @@ export const useArchwayEventListener = () => {
                 const destinationEventData = getXCallDestinationEventDataFromArchwayEvent(events);
 
                 if (destinationEventData) {
-                  if (iconOriginEvents.some(e => e.sn === destinationEventData.sn)) {
-                    addDestinationEvent('archway', destinationEventData);
+                  const originEvent = iconOriginEvents.find(e => e.sn === destinationEventData.sn);
+                  if (originEvent) {
+                    addDestinationEvent('archway', { ...destinationEventData, autoExecute: originEvent.autoExecute });
                     disconnectFromWebsocket();
+
+                    if (originEvent.autoExecute) {
+                      console.log('xCall debug AUTO EXECUTE DETECTED - listening for CallExecuted event');
+                      setListeningTo('archway', XCallEvent.CallExecuted);
+                    }
+                  }
+                }
+                break;
+              }
+              case XCallEvent.CallExecuted: {
+                const callExecutedEventData = getCallExecutedEventDataFromArchwayEvent(events);
+                if (callExecutedEventData) {
+                  const destinationEvent = archwayDestinationEvents.find(e => e.reqId === callExecutedEventData.reqId);
+                  if (destinationEvent) {
+                    stopListening();
+                    disconnectFromWebsocket();
+                    if (callExecutedEventData.success) {
+                      console.log('xCall debug - CallExecuted event detected - removing xCall event');
+                      removeEvent(destinationEvent.sn, true);
+                    } else {
+                      rollBackFromOrigin(destinationEvent.origin, destinationEvent.sn);
+                      setListeningTo(destinationEvent.origin, XCallEvent.RollbackMessage);
+                    }
                   }
                 }
                 break;
@@ -112,6 +150,11 @@ export const useArchwayEventListener = () => {
     iconOriginEvents,
     archwayOriginEvents,
     flagRollbackReady,
+    setListeningTo,
+    archwayDestinationEvents,
+    removeEvent,
+    rollBackFromOrigin,
+    stopListening,
   ]);
 };
 

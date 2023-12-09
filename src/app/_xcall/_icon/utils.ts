@@ -3,6 +3,7 @@ import IconService, { BigNumber } from 'icon-sdk-js';
 
 import { NETWORK_ID } from 'constants/config';
 
+import { AUTO_EXECUTION_ON_ARCHWAY } from '../archway/config';
 import { OriginXCallData, SupportedXCallChains, XCallEvent, XCallEventType } from '../types';
 import { ICONBlockType, ICONTxEvent, ICONTxResultType } from './types';
 
@@ -67,10 +68,12 @@ export function getXCallOriginEventDataFromICON(
   destination: SupportedXCallChains,
   descriptionAction: string,
   descriptionAmount: string,
+  autoExecute?: boolean,
 ): OriginXCallData {
   const sn = parseInt(callMessageSentLog.indexed[3], 16);
   const rollback = false;
   const eventName = XCallEvent.CallMessageSent;
+  const autoExec = autoExecute === undefined && destination === 'archway' ? AUTO_EXECUTION_ON_ARCHWAY : undefined;
   return {
     sn,
     rollback,
@@ -80,6 +83,7 @@ export function getXCallOriginEventDataFromICON(
     timestamp: new Date().getTime(),
     descriptionAction,
     descriptionAmount,
+    autoExecute: autoExecute || !!autoExec,
   };
 }
 

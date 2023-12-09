@@ -146,18 +146,36 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
           exit={{ opacity: 0, height: 0 }}
         >
           <Box pt={3}>
-            <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-              <Typography mb={4}>
-                <Trans>{msgs.managerMsgs.archway.actionRequired}</Trans>
-              </Typography>
-              {archwayDestinationEvents.map(event => (
-                <Flex alignItems="center" key={event.reqId}>
-                  <Button onClick={e => handleArchwayExecuteXCall(event)} disabled={isTxPending}>
-                    {isTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm</Trans>}
-                  </Button>
-                </Flex>
-              ))}
-            </Flex>
+            {archwayDestinationEvents.map(event => (
+              <Flex
+                key={event.sn}
+                pt={3}
+                alignItems="center"
+                justifyContent="center"
+                flexDirection="column"
+                className="border-top"
+              >
+                {event.autoExecute ? (
+                  <>
+                    <Typography mb={4}>
+                      <Trans>Awaiting execution on Archway.</Trans>
+                    </Typography>
+                    <Spinner />
+                  </>
+                ) : (
+                  <>
+                    <Typography mb={4}>
+                      <Trans>{msgs.managerMsgs.archway.actionRequired}</Trans>
+                    </Typography>
+                    <Flex alignItems="center">
+                      <Button onClick={e => handleArchwayExecuteXCall(event)} disabled={isTxPending}>
+                        {isTxPending ? <Trans>Confirming...</Trans> : <Trans>Confirm</Trans>}
+                      </Button>
+                    </Flex>
+                  </>
+                )}
+              </Flex>
+            ))}
           </Box>
         </motion.div>
       )}

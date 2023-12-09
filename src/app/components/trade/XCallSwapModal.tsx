@@ -173,8 +173,9 @@ const XCallSwapModal = ({
   React.useEffect(() => {
     if (currentXCallState === CurrentXCallState.IDLE) {
       xCallReset();
+      clearInputs();
     }
-  }, [currentXCallState, xCallReset]);
+  }, [clearInputs, currentXCallState, xCallReset]);
 
   //todo: extract to method to handle other chains in the future
   const msgs = React.useMemo(() => {

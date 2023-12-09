@@ -161,13 +161,13 @@ export const useICONEventListener = () => {
                               '',
                             );
 
+                            destinationEvent && removeEvent(destinationEvent.sn, false);
                             //add new origin event
                             originEventData && addOriginEvent('icon', originEventData);
                           } else {
+                            destinationEvent && removeEvent(destinationEvent.sn, true);
                             stopListening();
                           }
-                          //remove executed destination event
-                          destinationEvent && removeEvent(destinationEvent.sn, true);
                         } else {
                           if (destinationEvent) {
                             //todo: not tested yet

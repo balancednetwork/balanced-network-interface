@@ -392,7 +392,9 @@ export default function SwapPanel() {
               }
             >
               <Trans>Wallet:</Trans>{' '}
-              {`${currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })}
+              {`${
+                currencyBalances[Field.OUTPUT] ? currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' }) : 0
+              } 
                 ${currencies[Field.OUTPUT]?.symbol}`}
             </Typography>
           </Flex>

@@ -14,6 +14,7 @@ import styled from 'styled-components';
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
+import { useARCH } from 'app/_xcall/archway/tokens';
 import { CurrentXCallState, SupportedXCallChains } from 'app/_xcall/types';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
@@ -83,6 +84,7 @@ export default function SwapPanel() {
     crossChainOrigin === 'icon' &&
     crossChainDestination === 'icon';
 
+  const ARCH = useARCH();
   const signedInWallets = useSignedInWallets();
   const isChainDifference = crossChainOrigin !== crossChainDestination;
   const isOutputCrosschainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
@@ -513,8 +515,10 @@ export default function SwapPanel() {
                           <Typography textAlign="right">
                             {crossChainOrigin === 'icon'
                               ? 'N/A'
-                              : xCallArchwayFee &&
-                                `${(Number(xCallArchwayFee.rollback) / 10 ** 18).toPrecision(2)} ARCH`}
+                              : crossChainOrigin === 'archway'
+                              ? xCallArchwayFee &&
+                                `${(Number(xCallArchwayFee.rollback) / 10 ** ARCH.decimals).toPrecision(2)} ARCH`
+                              : 'N/A'}
                           </Typography>
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between" mb={2}>

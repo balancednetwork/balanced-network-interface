@@ -16,6 +16,7 @@ import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
+import { useARCH } from 'app/_xcall/archway/tokens';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
 import { CurrentXCallState, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
@@ -133,7 +134,7 @@ const XCallSwapModal = ({
   const { data: archwayXcallFees } = useArchwayXcallFee();
   const { data: gasChecker } = useXCallGasChecker(originChain, destinationChain);
   const currentXCallState = useCurrentXCallState();
-
+  const ARCH = useARCH();
   const originAddress = signedInWallets.find(wallet => wallet.chain === originChain)?.address;
 
   const { increaseAllowance, allowanceIncreased, isIncreaseNeeded: allowanceIncreaseNeeded } = useAllowanceHandler(
@@ -470,7 +471,7 @@ const XCallSwapModal = ({
         {originChain === 'archway' && archwayXcallFees && (
           <Typography textAlign="center">
             <Trans>You'll also pay</Trans>{' '}
-            <strong>{(Number(archwayXcallFees.rollback) / 10 ** 6).toPrecision(1)} Arch</strong>{' '}
+            <strong>{(Number(archwayXcallFees.rollback) / 10 ** ARCH.decimals).toPrecision(1)} Arch</strong>{' '}
             <Trans>to transfer cross-chain.</Trans>
           </Typography>
         )}

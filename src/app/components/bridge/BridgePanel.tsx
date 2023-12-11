@@ -255,6 +255,7 @@ export default function BridgePanel() {
     if (!currencyAmountToBridge) return false;
     if (!signedInWallets.some(wallet => wallet.chain === bridgeDirection.from)) return false;
     if (!signedInWallets.some(wallet => wallet.chain === bridgeDirection.to)) return false;
+    if (destinationAddress === '') return false;
     if (!currencyAmountToBridge?.greaterThan(0)) return false;
     if (
       !crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address] ||
@@ -262,7 +263,14 @@ export default function BridgePanel() {
     )
       return false;
     return true;
-  }, [bridgeDirection.from, bridgeDirection.to, crossChainWallet, currencyAmountToBridge, signedInWallets]);
+  }, [
+    bridgeDirection.from,
+    bridgeDirection.to,
+    crossChainWallet,
+    currencyAmountToBridge,
+    destinationAddress,
+    signedInWallets,
+  ]);
 
   const isNativeVersionAvailable = COSMOS_NATIVE_AVAILABLE_TOKENS.some(
     token => token.address === currencyToBridge?.wrapped.address,

@@ -120,7 +120,6 @@ export default function BridgePanel() {
   const [currencyToBridge, setCurrencyToBridge] = React.useState<Currency | undefined>();
   const [amountToBridge, setAmountToBridge] = React.useState<string>('');
   const [destinationAddress, setDestinationAddress] = React.useState<string>('');
-  const [inputUntouched, setInputUntouched] = React.useState(true);
   const [modalClosable, setModalClosable] = React.useState(true);
   const [xCallInProgress, setXCallInProgress] = React.useState(false);
   const ARCH = useARCH();
@@ -211,27 +210,17 @@ export default function BridgePanel() {
   );
 
   const handleDestinationAddressInput = (value: string) => {
-    setInputUntouched(false);
     setDestinationAddress(value);
   };
 
   React.useEffect(() => {
-    if (!destinationAddress && inputUntouched) {
-      if (bridgeDirection.to === 'icon') {
-        setDestinationAddress(account || '');
-      }
-      if (bridgeDirection.to === 'archway') {
-        setDestinationAddress(accountArch || '');
-      }
-    }
-  }, [account, accountArch, destinationAddress, bridgeDirection.to, inputUntouched, setDestinationAddress]);
-
-  React.useEffect(() => {
-    return () => {
+    const destinationWallet = signedInWallets.find(wallet => wallet.chain === bridgeDirection.to);
+    if (destinationWallet) {
+      setDestinationAddress(destinationWallet.address);
+    } else {
       setDestinationAddress('');
-      setInputUntouched(true);
-    };
-  }, [setDestinationAddress, bridgeDirection.to]);
+    }
+  }, [bridgeDirection.to, setDestinationAddress, signedInWallets]);
 
   const openModal = React.useCallback(() => {
     setCurrentXCallState(CurrentXCallState.AWAKE);
@@ -488,7 +477,7 @@ export default function BridgePanel() {
               onUserInput={handleDestinationAddressInput}
               drivenOnly={true}
             />
-            {!destinationAddress && (
+            {!destinationAddress && !signedInWallets.find(wallet => wallet.chain === bridgeDirection.to)?.address && (
               <ConnectWrap>
                 <CrossChainConnectWallet chain={bridgeDirection.to} />
               </ConnectWrap>

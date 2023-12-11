@@ -402,7 +402,6 @@ export default function SupplyLiquidityModal({
     currentXCallState !== CurrentXCallState.IDLE &&
     UIStatus[Field.CURRENCY_A].chain !== 'icon' &&
     !UIStatus[Field.CURRENCY_A].isAddPending;
-  console.log('currentXCallState: ', isXcallModalOpen);
 
   return (
     <>

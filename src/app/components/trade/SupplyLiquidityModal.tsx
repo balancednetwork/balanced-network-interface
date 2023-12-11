@@ -444,7 +444,7 @@ export default function SupplyLiquidityModal({
                         )}
                         {UIStatus[field].isAllowanceIncreaseNeeded ? (
                           <SupplyButton disabled={isTxPending} mt={2} onClick={increaseAllowanceA}>
-                            {isTxPending ? `Increasing...` : `Increase allowance`}
+                            {isTxPending ? `Approving...` : `Approve`}
                           </SupplyButton>
                         ) : (
                           !shouldAddAssets[field] && (

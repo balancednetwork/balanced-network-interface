@@ -196,7 +196,7 @@ const XCallSwapModal = ({
           summary: swapMessages?.successMessage || 'Swapped successfully',
         },
         archway: {
-          pending: t`Transferring ${executionTrade?.outputAmount.currency.symbol || 'swap result'} to Archway.`,
+          pending: t`Transferring ${executionTrade?.outputAmount.currency.symbol || 'swap result'} to Archway...`,
           summary: t`Transferred ${executionTrade?.outputAmount.toFixed(2)} ${
             executionTrade?.outputAmount.currency.symbol || 'Swap result'
           } to Archway.`,

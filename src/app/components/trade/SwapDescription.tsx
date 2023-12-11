@@ -130,7 +130,7 @@ export default function SwapDescription() {
   };
 
   return (
-    <Box bg="bg2" flex={1} p={[5, 7]}>
+    <Flex bg="bg2" flex={1} flexDirection="column" p={[5, 7]}>
       <Flex mb={5} flexWrap="wrap">
         <Box width={[1, 1 / 2]}>
           <Typography variant="h3" mb={2}>
@@ -193,37 +193,38 @@ export default function SwapDescription() {
           </ChartControlGroup>
         </Box>
       </Flex>
+      <div style={{ flexGrow: 1, display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <ChartContainer my="auto" width="100%" ref={ref}>
+          {pair ? (
+            <>
+              {isChartLoading ? (
+                <Spinner size={75} centered />
+              ) : (
+                <>
+                  {chartOption.type === CHART_TYPES.AREA && (
+                    <TradingViewChart
+                      data={pair.poolId === 1 ? queueData : data}
+                      volumeData={pair.poolId === 1 ? queueData : data}
+                      width={width}
+                      type={CHART_TYPES.AREA}
+                    />
+                  )}
 
-      <ChartContainer ref={ref}>
-        {pair ? (
-          <>
-            {isChartLoading ? (
-              <Spinner size={75} centered />
-            ) : (
-              <>
-                {chartOption.type === CHART_TYPES.AREA && (
-                  <TradingViewChart
-                    data={pair.poolId === 1 ? queueData : data}
-                    volumeData={pair.poolId === 1 ? queueData : data}
-                    width={width}
-                    type={CHART_TYPES.AREA}
-                  />
-                )}
-
-                {chartOption.type === CHART_TYPES.CANDLE && (
-                  <TradingViewChart data={data} volumeData={data} width={width} type={CHART_TYPES.CANDLE} />
-                )}
-              </>
-            )}
-          </>
-        ) : (
-          <Flex justifyContent="center" alignItems="center" height="100%">
-            <Typography>
-              <Trans>No price chart available for this pair.</Trans>
-            </Typography>
-          </Flex>
-        )}
-      </ChartContainer>
+                  {chartOption.type === CHART_TYPES.CANDLE && (
+                    <TradingViewChart data={data} volumeData={data} width={width} type={CHART_TYPES.CANDLE} />
+                  )}
+                </>
+              )}
+            </>
+          ) : (
+            <Flex justifyContent="center" alignItems="center" height="100%">
+              <Typography>
+                <Trans>No price chart available for this pair.</Trans>
+              </Typography>
+            </Flex>
+          )}
+        </ChartContainer>
+      </div>
 
       <Modal isOpen={tradingViewActive} onDismiss={handleTVDismiss} fullscreen>
         {tradingViewActive && (
@@ -238,7 +239,7 @@ export default function SwapDescription() {
           </TVChartContainerWrap>
         )}
       </Modal>
-    </Box>
+    </Flex>
   );
 }
 

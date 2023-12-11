@@ -276,6 +276,27 @@ export function useCrossChainCurrencyBalances(
   }, [crossChainBalances, account, currencies, icxBalance]);
 }
 
+export const useCurrencyBalanceCrossChains = (currency: Currency): BigNumber => {
+  const crossChainBalances = useCrossChainWalletBalances();
+
+  return React.useMemo(() => {
+    if (crossChainBalances) {
+      return SUPPORTED_XCALL_CHAINS.reduce((balances, chain) => {
+        if (crossChainBalances[chain]) {
+          const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);
+          if (tokenAddress) {
+            const balance = new BigNumber(crossChainBalances[chain][tokenAddress]?.toFixed() || 0);
+            balances = balances.plus(balance);
+          }
+        }
+        return balances;
+      }, new BigNumber(0));
+    } else {
+      return new BigNumber(0);
+    }
+  }, [crossChainBalances, currency]);
+};
+
 export function useCurrencyBalances(
   account: string | undefined,
   currencies: (Currency | undefined)[],

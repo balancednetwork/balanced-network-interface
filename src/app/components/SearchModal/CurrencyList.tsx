@@ -2,6 +2,7 @@ import React, { useEffect, CSSProperties, useState, useCallback } from 'react';
 
 import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
 import { Flex } from 'rebass/styled-components';
@@ -15,7 +16,7 @@ import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useIsUserAddedToken } from 'store/user/hooks';
-import { useCurrencyBalance } from 'store/wallet/hooks';
+import { useCurrencyBalanceCrossChains, useSignedInWallets } from 'store/wallet/hooks';
 import { toFraction } from 'utils';
 
 function currencyKey(currency: Currency): string {
@@ -55,7 +56,10 @@ function CurrencyRow({
   onFocus: () => void;
   rateFracs: { [key in string]: Fraction } | undefined;
 }) {
-  const balance = useCurrencyBalance(account ?? undefined, currency);
+  // const balance = useCurrencyBalance(account ?? undefined, currency);
+  const balance = useCurrencyBalanceCrossChains(currency);
+  const signedInWallets = useSignedInWallets();
+
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
   const theme = useTheme();
 
@@ -87,13 +91,13 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {balance && balance.greaterThan(0)
-              ? balance.toFixed(HIGH_PRICE_ASSET_DP[balance.currency.wrapped.address] || 2, { groupSeparator: ',' })
+            {balance && balance.isGreaterThan(0)
+              ? balance.toFormat(HIGH_PRICE_ASSET_DP[currency.wrapped.address] || 2)
               : 0}
 
-            {balance?.greaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
+            {balance?.isGreaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
               <Typography variant="span" fontSize={14} color="text2" display="block">
-                {`$${balance.multiply(rateFracs[currency.symbol!]).toFixed(2, { groupSeparator: ',' })}`}
+                {`$${balance.times(new BigNumber(rateFracs[currency.symbol!].toFixed(8))).toFormat(2)}`}
               </Typography>
             )}
           </DataText>
@@ -153,7 +157,7 @@ function CurrencyRow({
       onMouseLeave={close}
       className={isFocused ? 'focused' : ''}
     >
-      {account ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
+      {signedInWallets.length > 0 ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
     </ListItem>
   );
 }

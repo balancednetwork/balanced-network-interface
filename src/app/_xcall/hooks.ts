@@ -31,9 +31,10 @@ export function useXCallGasChecker(
       if (chain1 === 'archway' || chain2 === 'archway') {
         const gasAmount = balances['archway'] && balances['archway'][ARCH.address];
         const hasEnoughGas =
-          AUTO_EXECUTION_ON_ARCHWAY || gasAmount
+          AUTO_EXECUTION_ON_ARCHWAY ||
+          (gasAmount
             ? !CurrencyAmount.fromRawAmount(ARCH, ARCHWAY_GAS_THRESHOLD * 10 ** ARCH.decimals).greaterThan(gasAmount)
-            : false;
+            : false);
         if (!hasEnoughGas) {
           errorMessage = `You need at least ${ARCHWAY_GAS_THRESHOLD} ARCH to pay for transaction fees on Archway.`;
         }
@@ -43,9 +44,10 @@ export function useXCallGasChecker(
       if (icon || chain1 === 'icon' || chain2 === 'icon') {
         const gasAmount = balances['icon'] && balances['icon'][ICX.address];
         const hasEnoughGas =
-          AUTO_EXECUTION_ON_ICON || gasAmount
+          AUTO_EXECUTION_ON_ICON ||
+          (gasAmount
             ? !CurrencyAmount.fromRawAmount(ICX, ICX_GAS_THRESHOLD * 10 ** ICX.decimals).greaterThan(gasAmount)
-            : false;
+            : false);
         if (!hasEnoughGas) {
           errorMessage = `You need at least ${ICX_GAS_THRESHOLD} ICX to pay for transaction fees on ICON.`;
         }

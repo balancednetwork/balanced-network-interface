@@ -256,9 +256,9 @@ export function useCrossChainCurrencyBalances(
   const icxBalance = useICXBalances(accounts);
 
   return React.useMemo(() => {
-    if (crossChainBalances && account) {
+    if (crossChainBalances) {
       return currencies.map(currency => {
-        if (isNativeCurrency(currency)) return { icon: icxBalance[account] };
+        if (account && isNativeCurrency(currency)) return { icon: icxBalance[account] };
         return SUPPORTED_XCALL_CHAINS.reduce((balances, chain) => {
           if (crossChainBalances[chain] && currency) {
             const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);

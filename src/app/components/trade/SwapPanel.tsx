@@ -362,7 +362,7 @@ export default function SwapPanel() {
               currency={currencies[Field.INPUT]}
               onUserInput={handleTypeInput}
               onCurrencySelect={handleInputSelect}
-              onPercentSelect={!!account ? handleInputPercentSelect : undefined}
+              onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
               percent={percents[Field.INPUT]}
               selectedCurrency={currencies[Field.OUTPUT]}
               isCrossChainToken={isInputCrosschainCompatible}

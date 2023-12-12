@@ -20,9 +20,10 @@ import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArrowIcon } from 'assets/icons/arrow-white.svg';
 import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useICONWalletModalToggle, useWalletModalToggle } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useAddTransactionResult, useInitTransaction } from 'store/transactionsCrosschain/hooks';
+import { useSignedInWallets } from 'store/wallet/hooks';
 import {
   useAddOriginEvent,
   useRemoveEvent,
@@ -80,6 +81,9 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   // const isICONTxPending = useIsICONTxPending();
   const rollBackFromOrigin = useRollBackFromOrigin();
+  const signedInWallets = useSignedInWallets();
+  const toggleWalletModal = useWalletModalToggle();
+  const toggleICONleWalletModal = useICONWalletModalToggle();
 
   const handleICONExecuteXCall = async (data: DestinationXCallData) => {
     if (account) {
@@ -181,9 +185,17 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
   const handleExecute = async (data: DestinationXCallData) => {
     if (data.chain === 'archway') {
-      handleArchwayExecuteXCall(data);
+      if (signedInWallets.find(w => w.chain === 'archway')?.address) {
+        handleArchwayExecuteXCall(data);
+      } else {
+        toggleWalletModal();
+      }
     } else if (data.chain === 'icon') {
-      handleICONExecuteXCall(data);
+      if (signedInWallets.find(w => w.chain === 'icon')?.address) {
+        handleICONExecuteXCall(data);
+      } else {
+        toggleICONleWalletModal();
+      }
     }
   };
 
@@ -260,9 +272,17 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
   const handleRollback = async (data: OriginXCallData) => {
     if (data.chain === 'archway') {
-      handleArchwayRollbackXCall(data);
+      if (signedInWallets.find(w => w.chain === 'archway')?.address) {
+        handleArchwayRollbackXCall(data);
+      } else {
+        toggleWalletModal();
+      }
     } else if (data.chain === 'icon') {
-      handleICONRollbackXCall(data);
+      if (signedInWallets.find(w => w.chain === 'icon')?.address) {
+        handleICONRollbackXCall(data);
+      } else {
+        toggleICONleWalletModal();
+      }
     }
   };
 

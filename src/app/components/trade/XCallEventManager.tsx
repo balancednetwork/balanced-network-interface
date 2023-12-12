@@ -23,6 +23,7 @@ import {
   useXCallListeningTo,
   useRemoveEvent,
   useRollBackFromOrigin,
+  useXCallState,
 } from 'store/xCall/hooks';
 
 import { Button } from '../Button';
@@ -60,6 +61,25 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
   const rollBackFromOrigin = useRollBackFromOrigin();
+  const xCallState = useXCallState();
+
+  const anyPristineEvents = React.useMemo(() => {
+    return Object.keys(xCallState.events).reduce((pristineEvents, chain) => {
+      let hasPristineEvents = false;
+      xCallState.events[chain].origin.forEach(event => {
+        if (event.isPristine) {
+          hasPristineEvents = true;
+        }
+      });
+      xCallState.events[chain].destination.forEach(event => {
+        if (event.isPristine) {
+          hasPristineEvents = true;
+        }
+      });
+      pristineEvents[chain] = hasPristineEvents;
+      return pristineEvents;
+    }, {} as { [key in SupportedXCallChains]: boolean });
+  }, [xCallState.events]);
 
   const handleArchwayExecuteXCall = async (data: DestinationXCallData) => {
     if (signingClient && accountArch) {
@@ -122,7 +142,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
 
   return (
     <AnimatePresence>
-      {listeningTo?.event === XCallEvent.CallMessage && (
+      {listeningTo?.event === XCallEvent.CallMessage && Object.values(anyPristineEvents).some(pristine => pristine) && (
         <motion.div
           key="event-wrap-CallMessage"
           initial={{ opacity: 0, height: 0 }}
@@ -138,7 +158,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
         </motion.div>
       )}
 
-      {archwayDestinationEvents.length > 0 && (
+      {archwayDestinationEvents.length > 0 && anyPristineEvents.archway && (
         <motion.div
           key="event-wrap-awaiting-arch-confirmation"
           initial={{ opacity: 0, height: 0 }}
@@ -180,7 +200,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
         </motion.div>
       )}
 
-      {iconDestinationEvents.length > 0 && (
+      {iconDestinationEvents.length > 0 && anyPristineEvents.icon && (
         <motion.div
           key="event-wrap-awaiting-icon-confirmation"
           initial={{ opacity: 0, height: 0 }}

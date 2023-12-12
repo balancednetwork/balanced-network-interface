@@ -42,6 +42,7 @@ import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/ho
 import {
   useAddOriginEvent,
   useCurrentXCallState,
+  useSetNotPristine,
   useSetXCallState,
   useWithdrawableNativeAmount,
 } from 'store/xCall/hooks';
@@ -134,6 +135,7 @@ export default function BridgePanel() {
   const [withdrawNative, setWithdrawNative] = React.useState<boolean | undefined>();
   const currentXCallState = useCurrentXCallState();
   const setCurrentXCallState = useSetXCallState();
+  const setNotPristine = useSetNotPristine();
 
   const handleSetOriginChain = React.useCallback(
     (chain: SupportedXCallChains) => {
@@ -222,6 +224,10 @@ export default function BridgePanel() {
     }
   }, [bridgeDirection.to, setDestinationAddress, signedInWallets]);
 
+  React.useEffect(() => {
+    return () => setNotPristine();
+  }, [setNotPristine]);
+
   const openModal = React.useCallback(() => {
     setCurrentXCallState(CurrentXCallState.AWAKE);
     setOpen(true);
@@ -231,7 +237,8 @@ export default function BridgePanel() {
     setCurrentXCallState(CurrentXCallState.IDLE);
     setOpen(false);
     setXCallInProgress(false);
-  }, [setCurrentXCallState]);
+    setNotPristine();
+  }, [setCurrentXCallState, setNotPristine]);
 
   const xCallReset = React.useCallback(() => {
     setModalClosable(true);

@@ -31,6 +31,7 @@ import {
   removeXCallOriginEvent,
   rollBackFromOrigin,
   setListeningTo,
+  setNotPristine,
   setXCallState,
   stopListening,
 } from './actions';
@@ -130,6 +131,13 @@ export function useStopListening(): () => void {
   const dispatch = useDispatch();
   return React.useCallback(() => {
     dispatch(stopListening());
+  }, [dispatch]);
+}
+
+export function useSetNotPristine(): () => void {
+  const dispatch = useDispatch();
+  return React.useCallback(() => {
+    dispatch(setNotPristine());
   }, [dispatch]);
 }
 

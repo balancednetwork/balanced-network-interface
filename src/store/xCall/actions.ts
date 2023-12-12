@@ -52,4 +52,6 @@ export const flagRollBackReady = createAction<{
   sn?: number;
 }>('xCall/flagRollBackReady');
 
+export const setNotPristine = createAction('xCall/setNotPristine');
+
 export const stopListening = createAction('xCall/stopListening');

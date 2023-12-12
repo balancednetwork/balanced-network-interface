@@ -20,6 +20,7 @@ import {
   setListeningTo,
   rollBackFromOrigin,
   flagRollBackReady,
+  setNotPristine,
 } from './actions';
 
 export type XCallState = {
@@ -49,7 +50,7 @@ export default createReducer(initialState, builder =>
   builder
     .addCase(addXCallOriginEvent, (state, { payload: { chain, data } }) => {
       if (chain && data) {
-        state.events[chain].origin.push(data);
+        state.events[chain].origin.push({ ...data, isPristine: true });
         state.xCall = CurrentXCallState.AWAITING_DESTINATION_CALL_MESSAGE;
         state.listeningTo = {
           chain: data.destination,
@@ -59,7 +60,7 @@ export default createReducer(initialState, builder =>
     })
     .addCase(addXCallDestinationEvent, (state, { payload: { chain, data } }) => {
       if (chain && data) {
-        state.events[chain].destination.push(data);
+        state.events[chain].destination.push({ ...data, isPristine: true });
         state.xCall = CurrentXCallState.AWAITING_USER_CALL_EXECUTION;
         state.listeningTo = undefined;
       }
@@ -124,5 +125,11 @@ export default createReducer(initialState, builder =>
           });
         }
       }
+    })
+    .addCase(setNotPristine, state => {
+      Object.keys(state.events).forEach(chain => {
+        state.events[chain].origin = state.events[chain].origin.map(data => ({ ...data, isPristine: false }));
+        state.events[chain].destination = state.events[chain].destination.map(data => ({ ...data, isPristine: false }));
+      });
     }),
 );

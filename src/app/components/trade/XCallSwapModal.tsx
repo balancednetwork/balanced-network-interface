@@ -148,6 +148,10 @@ const XCallSwapModal = ({
     onClose();
   }, [onClose]);
 
+  React.useEffect(() => {
+    return () => onClose();
+  }, [onClose]);
+
   const controlledClose = React.useCallback(() => {
     if (modalClosable && !xCallInProgress) {
       xCallReset();

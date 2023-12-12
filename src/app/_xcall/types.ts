@@ -30,6 +30,7 @@ export type OriginXCallData = {
   timestamp: number;
   descriptionAction: string;
   descriptionAmount: string;
+  isPristine?: boolean;
 };
 
 export type DestinationXCallData = {
@@ -40,6 +41,7 @@ export type DestinationXCallData = {
   chain: SupportedXCallChains;
   origin: SupportedXCallChains;
   autoExecute?: boolean;
+  isPristine?: boolean;
 };
 
 export type XCallChainState = {

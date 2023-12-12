@@ -138,7 +138,7 @@ const ARCHWAY_WEBSOCKET_URLS: { [key in SupportedChainId]: string } = {
 };
 
 const AUTO_EXECUTION_ON_ARCHWAY_: { [key in SupportedChainId]: boolean } = {
-  [SupportedChainId.MAINNET]: false,
+  [SupportedChainId.MAINNET]: true,
   [SupportedChainId.BERLIN]: true,
   [SupportedChainId.LISBON]: false,
   [SupportedChainId.YEOUIDO]: false,

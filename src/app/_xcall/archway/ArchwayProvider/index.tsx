@@ -52,19 +52,28 @@ const ArchwayProvider: React.FC = ({ children }) => {
 
   const connectToWallet = React.useCallback(async () => {
     const { keplr } = window as any;
-    if (!keplr) {
+    const { leap } = window as any;
+    if (!keplr && !leap) {
       window.open('https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en', '_blank');
       return;
     }
     if (NETWORK_ID === SupportedChainId.MAINNET) {
-      await keplr.enable(chain_id);
+      if (leap) {
+        await leap.enable(chain_id);
+      } else {
+        await keplr.enable(chain_id);
+      }
     }
     if (chain_id === 'constantine-3') {
-      await keplr.experimentalSuggestChain(CONSTANTINE_CHAIN_INFO);
+      if (leap) {
+        await leap.experimentalSuggestChain(CONSTANTINE_CHAIN_INFO);
+      } else {
+        keplr.experimentalSuggestChain(CONSTANTINE_CHAIN_INFO);
+      }
     }
 
     // @ts-ignore
-    const offlineSigner = keplr.getOfflineSignerOnlyAmino(chain_id);
+    const offlineSigner = leap ? leap.getOfflineSignerOnlyAmino(chain_id) : keplr.getOfflineSignerOnlyAmino(chain_id);
     const signingClientObj = await SigningArchwayClient.connectWithSigner(ARCHWAY_RPC_PROVIDER, offlineSigner);
     setSigningClient(signingClientObj);
 

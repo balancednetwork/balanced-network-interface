@@ -213,7 +213,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
     return (
       <>
         <Typography mb={4}>
-          <Trans>Transaction failed, awaiting rollback activation.</Trans>
+          <Trans>Couldn't complete transaction. Revert requested.</Trans>
         </Typography>
         <Flex alignItems="center">
           <Spinner />
@@ -226,11 +226,11 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
     return (
       <>
         <Typography mb={4}>
-          <Trans>Execute rollback</Trans>
+          <Trans>Revert transaction.</Trans>
         </Typography>
         <Flex alignItems="center">
           <Button onClick={() => handleArchwayRollbackXCall(originEvent)} disabled={isTxPending}>
-            {isTxPending ? <Trans>Executing...</Trans> : <Trans>Execute</Trans>}
+            {isTxPending ? <Trans>Reverting...</Trans> : <Trans>Revert</Trans>}
           </Button>
         </Flex>
       </>

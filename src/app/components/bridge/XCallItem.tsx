@@ -208,7 +208,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
       };
 
       try {
-        initTransaction('archway', 'Executing rollback...');
+        initTransaction('archway', 'Reverting cross-chain transaction...');
         const res: ExecuteResult = await signingClient.execute(
           accountArch,
           ARCHWAY_CONTRACTS.xcall,
@@ -223,14 +223,14 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         if (rollbackExecuted) {
           removeEvent(data.sn, true);
           console.log('xCall debug - Archway rollbackCall - success');
-          addTransactionResult('archway', res, 'Rollback executed');
+          addTransactionResult('archway', res, 'Cross-chain transaction reverted.');
         } else {
           console.log('xCall debug - Archway rollbackCall - fail');
-          addTransactionResult('archway', res || null, t`Rollback failed.`);
+          addTransactionResult('archway', res || null, t`Reverting failed.`);
         }
       } catch (e) {
         console.error(e);
-        addTransactionResult('archway', null, t`Execution failed`);
+        addTransactionResult('archway', null, t`Execution failed.`);
       }
     }
   };
@@ -245,7 +245,10 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
       bnJs.inject({ account });
       const { result: hash } = await bnJs.XCall.executeRollback(data.sn);
-      addTransaction({ hash }, { pending: 'Executing xCall rollback...', summary: 'Rollback executed.' });
+      addTransaction(
+        { hash },
+        { pending: 'Reverting cross-chain transaction...', summary: 'Cross-chain transaction reverted.' },
+      );
       const txResult = await fetchTxResult(hash);
       if (txResult?.status === 1 && txResult.eventLogs.length) {
         // looking for CallExecuted event

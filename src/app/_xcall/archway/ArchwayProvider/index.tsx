@@ -68,7 +68,7 @@ const ArchwayProvider: React.FC = ({ children }) => {
       if (leap) {
         await leap.experimentalSuggestChain(CONSTANTINE_CHAIN_INFO);
       } else {
-        keplr.experimentalSuggestChain(CONSTANTINE_CHAIN_INFO);
+        await keplr.experimentalSuggestChain(CONSTANTINE_CHAIN_INFO);
       }
     }
 

@@ -521,7 +521,7 @@ export default function SwapPanel() {
                               ? 'N/A'
                               : crossChainOrigin === 'archway'
                               ? xCallArchwayFee &&
-                                `${(Number(xCallArchwayFee.rollback) / 10 ** ARCH.decimals).toPrecision(2)} ARCH`
+                                `${(Number(xCallArchwayFee.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH`
                               : 'N/A'}
                           </Typography>
                         </Flex>

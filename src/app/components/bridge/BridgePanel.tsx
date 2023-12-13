@@ -540,10 +540,10 @@ export default function BridgePanel() {
 
             <Typography color="text">
               {bridgeDirection.from === 'icon' && iconXcallFees && (
-                <>{(parseInt(iconXcallFees.rollback, 16) / 10 ** 18).toPrecision(1)} ICX</>
+                <>{(parseInt(iconXcallFees.rollback, 16) / 10 ** 18).toPrecision(3)} ICX</>
               )}
               {bridgeDirection.from === 'archway' && archwayXcallFees && (
-                <>{(Number(archwayXcallFees.rollback) / 10 ** ARCH.decimals).toPrecision(1)} ARCH</>
+                <>{(Number(archwayXcallFees.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH</>
               )}
             </Typography>
           </Flex>

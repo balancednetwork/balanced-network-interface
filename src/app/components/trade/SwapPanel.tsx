@@ -530,7 +530,7 @@ export default function SwapPanel() {
                             <Trans>Transfer time</Trans>
                           </Typography>
 
-                          <Typography textAlign="right">~ 1m</Typography>
+                          <Typography textAlign="right">~ 30s</Typography>
                         </Flex>
                       </>
                     )}

@@ -57,6 +57,13 @@ const ArchwayProvider: React.FC = ({ children }) => {
       window.open('https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en', '_blank');
       return;
     }
+
+    keplr.defaultOptions = {
+      sign: {
+        preferNoSetFee: true,
+      },
+    };
+
     if (NETWORK_ID === SupportedChainId.MAINNET) {
       if (leap) {
         await leap.enable(chain_id);

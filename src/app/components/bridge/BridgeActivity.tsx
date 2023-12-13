@@ -36,7 +36,7 @@ export default function BridgeActivity() {
             className={isSmall ? 'border-bottom' : 'border-right'}
           >
             <Typography>
-              <Trans>Cross-chains transfer (24H)</Trans>
+              <Trans>Cross-chain transfers (24H)</Trans>
             </Typography>
             <Typography color="text" fontSize={16} mt={2}>
               {xCallStats ? xCallStats.transfers : '...'}
@@ -44,7 +44,7 @@ export default function BridgeActivity() {
           </Flex>
           <Flex width={[1, 1 / 2]} p="0 25px" flexDirection="column" justifyContent="center" alignItems="center">
             <Typography>
-              <Trans>Cross-chains swaps (24H)</Trans>
+              <Trans>Cross-chain swaps (24H)</Trans>
             </Typography>
             <Typography color="text" fontSize={16} mt={2}>
               {xCallStats ? xCallStats.swaps : '...'}

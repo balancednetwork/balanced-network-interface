@@ -470,6 +470,25 @@ export default function BridgePanel() {
             <ChainSelector label="to" chain={bridgeDirection.to} setChain={handleSetDestinationChain} />
           </Flex>
 
+          <Typography
+            as="div"
+            mb={-1}
+            textAlign="right"
+            hidden={
+              (bridgeDirection.from === 'icon' && !account) || (bridgeDirection.from === 'archway' && !accountArch)
+            }
+          >
+            <Trans>Wallet:</Trans>{' '}
+            {`${
+              crossChainWallet[bridgeDirection.from][currencyToBridge?.wrapped.address || '']
+                ? crossChainWallet[bridgeDirection.from][currencyToBridge?.wrapped.address || ''].toFixed(4, {
+                    groupSeparator: ',',
+                  })
+                : 0
+            } 
+                ${currencyToBridge?.symbol}`}
+          </Typography>
+
           <Flex>
             <CurrencyInputPanel
               account={account}

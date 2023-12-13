@@ -89,11 +89,9 @@ const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
   const balances = useArchwayWalletBalances();
   const arch = useARCH();
-  // const transactions = useAllTransactions();
   const { address: accountArch } = useArchwayContext();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>();
-  // const [modalAsset, setModalAsset] = useState<string | undefined>();
   const [modalAsset] = useState<string | undefined>();
 
   const debouncedQuery = useDebounce(searchQuery, 200);
@@ -119,8 +117,12 @@ const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
   }, [debouncedQuery, addressesWithAmount]);
 
   const sortedTokens: Token[] = useMemo(() => {
-    return [arch, ...filteredTokens].sort(tokenComparator);
-  }, [arch, filteredTokens, tokenComparator]);
+    if (balances[arch.address]?.greaterThan(0)) {
+      return [arch, ...filteredTokens].sort(tokenComparator);
+    } else {
+      return filteredTokens.sort(tokenComparator);
+    }
+  }, [arch, balances, filteredTokens, tokenComparator]);
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery);
 

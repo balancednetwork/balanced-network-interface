@@ -335,6 +335,6 @@ export function useWithdrawableNativeAmount(
       }
       return undefined;
     },
-    { keepPreviousData: true, enabled: !!currencyAmount },
+    { keepPreviousData: true, refetchInterval: 2000, enabled: !!currencyAmount },
   );
 }

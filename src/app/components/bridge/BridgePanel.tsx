@@ -273,11 +273,14 @@ export default function BridgePanel() {
         setErrorMessage(t`Enter amount`);
       } else {
         if (
-          !crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address] ||
-          (signedInWallets.some(wallet => wallet.chain === bridgeDirection.from) &&
-            crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address]?.lessThan(
-              currencyAmountToBridge,
-            ))
+          signedInWallets.some(
+            wallet =>
+              wallet.chain === bridgeDirection.from &&
+              (!crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address] ||
+                crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address]?.lessThan(
+                  currencyAmountToBridge,
+                )),
+          )
         ) {
           setErrorMessage(t`Insufficient ${currencyAmountToBridge.currency.symbol}`);
         } else {

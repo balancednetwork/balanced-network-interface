@@ -475,7 +475,7 @@ const XCallSwapModal = ({
         {originChain === 'archway' && archwayXcallFees && (
           <Typography textAlign="center">
             <Trans>You'll also pay</Trans>{' '}
-            <strong>{(Number(archwayXcallFees.rollback) / 10 ** ARCH.decimals).toPrecision(3)} Arch</strong>{' '}
+            <strong>{(Number(archwayXcallFees.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH</strong>{' '}
             <Trans>to transfer cross-chain.</Trans>
           </Typography>
         )}

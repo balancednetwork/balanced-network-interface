@@ -30,7 +30,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useBridgeDirection, useSetBridgeDestination, useSetBridgeOrigin } from 'store/bridge/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import {
@@ -136,6 +136,8 @@ export default function BridgePanel() {
   const currentXCallState = useCurrentXCallState();
   const setCurrentXCallState = useSetXCallState();
   const setNotPristine = useSetNotPristine();
+  const toggleWalletModal = useWalletModalToggle();
+  const [errorMessage, setErrorMessage] = React.useState<string | undefined>();
 
   const handleSetOriginChain = React.useCallback(
     (chain: SupportedXCallChains) => {
@@ -190,7 +192,7 @@ export default function BridgePanel() {
     if (currencyToBridge && amountToBridge && !isNaN(parseFloat(amountToBridge))) {
       return CurrencyAmount.fromRawAmount(
         currencyToBridge.wrapped,
-        new BigNumber(amountToBridge).times(10 ** currencyToBridge.wrapped.decimals).toFixed(),
+        new BigNumber(amountToBridge).times(10 ** currencyToBridge.wrapped.decimals).toFixed(0),
       );
     }
     return undefined;
@@ -259,25 +261,33 @@ export default function BridgePanel() {
   }, [currentXCallState, xCallReset]);
 
   const isBridgeButtonAvailable = React.useMemo(() => {
-    if (!currencyAmountToBridge) return false;
-    if (!signedInWallets.some(wallet => wallet.chain === bridgeDirection.from)) return false;
     if (!signedInWallets.some(wallet => wallet.chain === bridgeDirection.to)) return false;
     if (destinationAddress === '') return false;
-    if (!currencyAmountToBridge?.greaterThan(0)) return false;
-    if (
-      !crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address] ||
-      crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address].lessThan(currencyAmountToBridge)
-    )
-      return false;
+
     return true;
-  }, [
-    bridgeDirection.from,
-    bridgeDirection.to,
-    crossChainWallet,
-    currencyAmountToBridge,
-    destinationAddress,
-    signedInWallets,
-  ]);
+  }, [bridgeDirection.to, destinationAddress, signedInWallets]);
+
+  React.useEffect(() => {
+    if (currencyAmountToBridge) {
+      if (currencyAmountToBridge.equalTo(0)) {
+        setErrorMessage(t`Enter amount`);
+      } else {
+        if (
+          !crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address] ||
+          (signedInWallets.some(wallet => wallet.chain === bridgeDirection.from) &&
+            crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address]?.lessThan(
+              currencyAmountToBridge,
+            ))
+        ) {
+          setErrorMessage(t`Insufficient ${currencyAmountToBridge.currency.symbol}`);
+        } else {
+          setErrorMessage(undefined);
+        }
+      }
+    } else {
+      setErrorMessage(t`Enter amount`);
+    }
+  }, [bridgeDirection.from, crossChainWallet, currencyAmountToBridge, setErrorMessage, signedInWallets]);
 
   const isNativeVersionAvailable = COSMOS_NATIVE_AVAILABLE_TOKENS.some(
     token => token.address === currencyToBridge?.wrapped.address,
@@ -458,6 +468,14 @@ export default function BridgePanel() {
     },
   };
 
+  const handleModalOpen = () => {
+    if (signedInWallets.some(wallet => wallet.chain === bridgeDirection.from)) {
+      openModal();
+    } else {
+      toggleWalletModal();
+    }
+  };
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -556,8 +574,8 @@ export default function BridgePanel() {
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
-            <Button onClick={openModal} disabled={!isBridgeButtonAvailable}>
-              Transfer
+            <Button onClick={handleModalOpen} disabled={!isBridgeButtonAvailable || !!errorMessage}>
+              {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
             </Button>
           </Flex>
         </AutoColumn>

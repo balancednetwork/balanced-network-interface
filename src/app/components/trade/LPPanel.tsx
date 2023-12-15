@@ -130,6 +130,7 @@ export default function LPPanel() {
   };
 
   const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
+  const [chainSelectorOpen, setChainSelectorOpen] = React.useState(false);
   const [crossChainCurrencyA, setCrossChainCurrencyA] = React.useState<SupportedXCallChains>('icon');
   const [crossChainCurrencyB] = React.useState<SupportedXCallChains>('icon');
   const {
@@ -293,6 +294,8 @@ export default function LPPanel() {
                   currency={currencies[Field.CURRENCY_A]}
                   chain={crossChainCurrencyA}
                   setChain={setCrossChainCurrencyA}
+                  isOpen={chainSelectorOpen}
+                  setOpen={setChainSelectorOpen}
                 />
               )}
             </AutoColumn>

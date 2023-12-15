@@ -14,10 +14,12 @@ import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
 
-type CrossChainInputOptionsProps = {
+type CrossChainOptionsProps = {
   currency?: Currency;
   chain: SupportedXCallChains;
   setChain: (chain: SupportedXCallChains) => void;
+  isOpen: boolean;
+  setOpen: (isOpen: boolean) => void;
 };
 
 export const Wrap = styled(Flex)`
@@ -36,20 +38,39 @@ export const SelectorWrap = styled.div`
   color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
-const CrossChainOptions = ({ currency, chain, setChain }: CrossChainInputOptionsProps) => {
+const CrossChainOptions = ({ currency, chain, setChain, isOpen, setOpen }: CrossChainOptionsProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchor(anchor ? null : arrowRef.current);
+    console.log(anchor);
+    if (isOpen) {
+      setOpen(false);
+    } else {
+      setOpen(true);
+    }
   };
 
   const closeDropdown = e => {
-    if (!e.target.classList.contains('search-field')) {
-      setAnchor(null);
+    if (isOpen) {
+      setOpen(false);
     }
   };
+
+  const setChainWrap = React.useCallback(
+    (chain: SupportedXCallChains) => {
+      setChain(chain);
+      setOpen(false);
+    },
+    [setChain, setOpen],
+  );
+
+  React.useEffect(() => {
+    if (arrowRef.current) {
+      setAnchor(arrowRef.current);
+    }
+  }, [setAnchor]);
 
   React.useEffect(() => {
     return () => {
@@ -72,14 +93,8 @@ const CrossChainOptions = ({ currency, chain, setChain }: CrossChainInputOptions
           </div>
         </SelectorWrap>
         <ClickAwayListener onClickAway={e => closeDropdown(e)}>
-          <DropdownPopper
-            show={Boolean(anchor)}
-            anchorEl={anchor}
-            arrowEl={arrowRef.current}
-            placement="bottom"
-            offset={[0, 8]}
-          >
-            <ChainList setChain={setChain} chain={chain} />
+          <DropdownPopper show={isOpen} anchorEl={anchor} arrowEl={arrowRef.current} placement="bottom" offset={[0, 8]}>
+            <ChainList setChain={setChainWrap} chain={chain} />
           </DropdownPopper>
         </ClickAwayListener>
       </Flex>

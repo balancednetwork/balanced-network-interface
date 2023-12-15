@@ -60,6 +60,9 @@ export default function SwapPanel() {
   const { address: accountArch } = useArchwayContext();
   const [crossChainOrigin, setCrossChainOrigin] = React.useState<SupportedXCallChains>('icon');
   const [crossChainDestination, setCrossChainDestination] = React.useState<SupportedXCallChains>('icon');
+  const [originSelectorOpen, setOriginSelectorOpen] = React.useState(false);
+  const [destinationSelectorOpen, setDestinationSelectorOpen] = React.useState(false);
+  const isFirstRender = React.useRef(true);
   const setCurrentXCallState = useSetXCallState();
   const currentXCallState = useCurrentXCallState();
   const setNotPristine = useSetNotPristine();
@@ -188,6 +191,24 @@ export default function SwapPanel() {
     },
     [onPercentSelection, maxInputAmount],
   );
+
+  const inputSymbol = currencies[Field.INPUT]?.symbol;
+  React.useEffect(() => {
+    if (isInputCrosschainCompatible) {
+      setOriginSelectorOpen(true);
+    }
+  }, [isInputCrosschainCompatible, inputSymbol]);
+
+  const outputSymbol = currencies[Field.OUTPUT]?.symbol;
+  React.useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (isOutputCrosschainCompatible) {
+      setDestinationSelectorOpen(true);
+    }
+  }, [isOutputCrosschainCompatible, outputSymbol]);
 
   const [showInverted, setShowInverted] = React.useState<boolean>(false);
   const slippageTolerance = useSwapSlippageTolerance();
@@ -374,6 +395,8 @@ export default function SwapPanel() {
               currency={currencies[Field.INPUT]}
               chain={crossChainOrigin}
               setChain={setCrossChainOrigin}
+              isOpen={originSelectorOpen}
+              setOpen={setOriginSelectorOpen}
             />
           )}
 
@@ -419,6 +442,8 @@ export default function SwapPanel() {
               currency={currencies[Field.OUTPUT]}
               chain={crossChainDestination}
               setChain={setCrossChainDestination}
+              isOpen={destinationSelectorOpen}
+              setOpen={setDestinationSelectorOpen}
             />
           )}
         </AutoColumn>

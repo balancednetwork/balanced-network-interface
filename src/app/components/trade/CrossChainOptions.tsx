@@ -44,7 +44,6 @@ const CrossChainOptions = ({ currency, chain, setChain, isOpen, setOpen }: Cross
   const arrowRef = React.useRef(null);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(anchor);
     if (isOpen) {
       setOpen(false);
     } else {
@@ -71,12 +70,6 @@ const CrossChainOptions = ({ currency, chain, setChain, isOpen, setOpen }: Cross
       setAnchor(arrowRef.current);
     }
   }, [setAnchor]);
-
-  React.useEffect(() => {
-    return () => {
-      setChain('icon');
-    };
-  }, [setChain, currency?.wrapped.address]);
 
   return (
     <Wrap>

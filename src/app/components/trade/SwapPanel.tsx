@@ -15,6 +15,7 @@ import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
+import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
 import { CurrentXCallState, SupportedXCallChains } from 'app/_xcall/types';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
@@ -62,7 +63,6 @@ export default function SwapPanel() {
   const [crossChainDestination, setCrossChainDestination] = React.useState<SupportedXCallChains>('icon');
   const [originSelectorOpen, setOriginSelectorOpen] = React.useState(false);
   const [destinationSelectorOpen, setDestinationSelectorOpen] = React.useState(false);
-  const isFirstRender = React.useRef(true);
   const setCurrentXCallState = useSetXCallState();
   const currentXCallState = useCurrentXCallState();
   const setNotPristine = useSetNotPristine();
@@ -140,6 +140,37 @@ export default function SwapPanel() {
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection } = useSwapActionHandlers();
 
+  const onSwitchTokensWithChainControl = useCallback(() => {
+    const prevInputChain = crossChainOrigin;
+    const prevOutputChain = crossChainDestination;
+    onSwitchTokens();
+    setCrossChainOrigin(prevOutputChain);
+    setCrossChainDestination(prevInputChain);
+  }, [crossChainDestination, crossChainOrigin, onSwitchTokens]);
+
+  const onCurrencySelectionWithChainControl = useCallback(
+    (field: Field, currency: Currency) => {
+      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(currency.wrapped.address || '');
+      onCurrencySelection(field, currency);
+
+      if (field === Field.INPUT) {
+        if (isCrossChainCompatible && DEFAULT_TOKEN_CHAIN[currency.symbol as string]) {
+          setCrossChainOrigin(DEFAULT_TOKEN_CHAIN[currency.symbol as string]);
+        } else {
+          setCrossChainOrigin('icon');
+        }
+      }
+      if (field === Field.OUTPUT) {
+        if (isCrossChainCompatible && DEFAULT_TOKEN_CHAIN[currency.symbol as string]) {
+          setCrossChainDestination(DEFAULT_TOKEN_CHAIN[currency.symbol as string]);
+        } else {
+          setCrossChainDestination('icon');
+        }
+      }
+    },
+    [onCurrencySelection],
+  );
+
   const handleTypeInput = useCallback(
     (value: string) => {
       onUserInput(Field.INPUT, value);
@@ -164,24 +195,36 @@ export default function SwapPanel() {
     (inputCurrency: Currency) => {
       const outputCurrencySymbol = currencies[Field.OUTPUT]?.symbol;
       if (outputCurrencySymbol !== undefined && inputCurrency.symbol === outputCurrencySymbol) {
-        onSwitchTokens();
+        onSwitchTokensWithChainControl();
         return;
       }
-      onCurrencySelection(Field.INPUT, inputCurrency);
+      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
+        inputCurrency.wrapped.address || '',
+      );
+      onCurrencySelectionWithChainControl(Field.INPUT, inputCurrency);
+      if (isCrossChainCompatible) {
+        setOriginSelectorOpen(true);
+      }
     },
-    [currencies, onSwitchTokens, onCurrencySelection],
+    [currencies, onCurrencySelectionWithChainControl, onSwitchTokensWithChainControl],
   );
 
   const handleOutputSelect = useCallback(
     (outputCurrency: Currency) => {
       const inputCurrencySymbol = currencies[Field.INPUT]?.symbol;
       if (inputCurrencySymbol !== undefined && outputCurrency.symbol === inputCurrencySymbol) {
-        onSwitchTokens();
+        onSwitchTokensWithChainControl();
         return;
       }
-      onCurrencySelection(Field.OUTPUT, outputCurrency);
+      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
+        outputCurrency.wrapped.address || '',
+      );
+      onCurrencySelectionWithChainControl(Field.OUTPUT, outputCurrency);
+      if (isCrossChainCompatible) {
+        setDestinationSelectorOpen(true);
+      }
     },
-    [currencies, onSwitchTokens, onCurrencySelection],
+    [currencies, onCurrencySelectionWithChainControl, onSwitchTokensWithChainControl],
   );
 
   const handleInputPercentSelect = useCallback(
@@ -191,24 +234,6 @@ export default function SwapPanel() {
     },
     [onPercentSelection, maxInputAmount],
   );
-
-  const inputSymbol = currencies[Field.INPUT]?.symbol;
-  React.useEffect(() => {
-    if (isInputCrosschainCompatible) {
-      setOriginSelectorOpen(true);
-    }
-  }, [isInputCrosschainCompatible, inputSymbol]);
-
-  const outputSymbol = currencies[Field.OUTPUT]?.symbol;
-  React.useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    if (isOutputCrosschainCompatible) {
-      setDestinationSelectorOpen(true);
-    }
-  }, [isOutputCrosschainCompatible, outputSymbol]);
 
   const [showInverted, setShowInverted] = React.useState<boolean>(false);
   const slippageTolerance = useSwapSlippageTolerance();
@@ -401,7 +426,7 @@ export default function SwapPanel() {
           )}
 
           <Flex alignItems="center" justifyContent="center" my={-1}>
-            <FlipButton onClick={onSwitchTokens}>
+            <FlipButton onClick={onSwitchTokensWithChainControl}>
               <FlipIcon width={25} height={17} />
             </FlipButton>
           </Flex>

@@ -28,6 +28,11 @@ const ASSET_MANAGER_TOKENS_BY_ICON_NETWORK: { [key in SupportedChainId]: string[
   [SupportedChainId.YEOUIDO]: [],
 };
 
+export const DEFAULT_TOKEN_CHAIN: { [key in string]: SupportedXCallChains } = {
+  bnUSD: 'icon',
+  sARCH: 'archway',
+};
+
 export const SUPPORTED_XCALL_CHAINS = SUPPORTED_XCALL_CHAINS_BY_ICON_NETWORK[NETWORK_ID];
 export const CROSS_TRANSFER_TOKENS = CROSS_TRANSFER_TOKENS_BY_ICON_NETWORK[NETWORK_ID];
 export const ASSET_MANAGER_TOKENS = ASSET_MANAGER_TOKENS_BY_ICON_NETWORK[NETWORK_ID];

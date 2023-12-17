@@ -1324,10 +1324,10 @@
   dependencies:
     "@ledgerhq/hw-transport" "^4.13.0"
 
-"@balancednetwork/sdk-core@1.0.1", "@balancednetwork/sdk-core@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/sdk-core/-/sdk-core-1.0.1.tgz#05eba5030aa20eaddf9b50fc9c7616af97cbfee3"
-  integrity sha512-viWcb6tfbmgfXiaoTFx2iQRxHFpvWBFmOV06CdGHdtxkQBwyhpanJJDL1KrFEhHbMa6OiTlow/LYDEYzrYDmeA==
+"@balancednetwork/sdk-core@1.0.4", "@balancednetwork/sdk-core@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/sdk-core/-/sdk-core-1.0.4.tgz#a9923d733f15ca6c211eb0d38c07a045b7869e79"
+  integrity sha512-ZdnM1NroZa5E8ej3K2d1nPFY9vg/LkoO6UT867P+29wdw5dUN6M71VUWsDsOKEr5BMWm5Fa8eRjBQuK/GVdorw==
   dependencies:
     "@ethersproject/address" "^5.0.2"
     big.js "^5.2.2"
@@ -1336,12 +1336,12 @@
     tiny-invariant "^1.1.0"
     toformat "^2.0.0"
 
-"@balancednetwork/v1-sdk@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.0.3.tgz#a307ada1c1feb2134aa0681697d8006d873e6468"
-  integrity sha512-hJok5KLOHPyl3D1FrNJb/ZaVZuOhn+9NjE8Zch3R6nQRDdxKRS792qeFK7RdmDP+MubK4JZfU+Pk6+2qHygmjQ==
+"@balancednetwork/v1-sdk@1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/v1-sdk/-/v1-sdk-1.1.2.tgz#4af734c0bc19c4b490bca5a4450512796143d5a0"
+  integrity sha512-Sz8ySjHoB8/npOrZrWbzCGnqQPO3nnDIJUV8byTh3908GdP8a7fXbUArWNKLTUWtsdDGxPCX+iFub2U2WfN7Fw==
   dependencies:
-    "@balancednetwork/sdk-core" "^1.0.1"
+    "@balancednetwork/sdk-core" "^1.0.4"
     "@ethersproject/address" "^5.0.0"
     "@ethersproject/solidity" "^5.0.0"
     tiny-invariant "^1.1.0"

@@ -35,17 +35,14 @@ const Slider = styled(Box)`
   `}
 `;
 
-export function subtract(
+function subtract(
   amountA: CurrencyAmount<Currency> | undefined,
   amountB: CurrencyAmount<Currency> | undefined,
 ): CurrencyAmount<Currency> | undefined {
-  return amountA
-    ? amountB
-      ? amountA.currency.equals(amountB.currency)
-        ? amountA.subtract(amountB)
-        : amountA
-      : amountA
-    : undefined;
+  if (!amountA) return undefined;
+  if (!amountB) return amountA;
+  const diff = new BigNumber(amountA.quotient.toString()).minus(new BigNumber(amountB.quotient.toString()));
+  return CurrencyAmount.fromRawAmount(amountA.currency, diff.toString());
 }
 
 function WalletSection({ AChain, BChain }: { AChain?: SupportedXCallChains; BChain?: SupportedXCallChains }) {

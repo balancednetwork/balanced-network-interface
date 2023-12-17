@@ -9,6 +9,7 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
+import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
@@ -214,7 +215,16 @@ export default function LPPanel() {
   const isValid = !error;
 
   const handleCurrencyASelect = React.useCallback(
-    (currencyA: Currency) => onCurrencySelection(Field.CURRENCY_A, currencyA),
+    (currencyA: Currency) => {
+      onCurrencySelection(Field.CURRENCY_A, currencyA);
+
+      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(currencyA.wrapped.address || '');
+      if (isCrossChainCompatible && DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]) {
+        setCrossChainCurrencyA(DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]);
+      } else {
+        setCrossChainCurrencyA('icon');
+      }
+    },
     [onCurrencySelection],
   );
 

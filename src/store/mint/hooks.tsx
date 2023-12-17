@@ -122,8 +122,8 @@ const useCurrencyDeposit = (
 };
 
 export function useDerivedMintInfo(
-  AChain?: SupportedXCallChains,
-  BChain?: SupportedXCallChains,
+  AChain: SupportedXCallChains = 'icon',
+  BChain: SupportedXCallChains = 'icon',
 ): {
   dependentField: Field;
   currencies: { [field in Field]?: Currency };
@@ -304,7 +304,8 @@ export function useDerivedMintInfo(
       totalSupply &&
       tokenAmountA &&
       tokenAmountB &&
-      pair.involvesToken(tokenAmountA.currency) &&
+      ((pair.token0.symbol as string) === (tokenAmountA.currency.symbol as string) ||
+        (pair.token1.symbol as string) === (tokenAmountA.currency.symbol as string)) &&
       pair.involvesToken(tokenAmountB.currency) &&
       !tokenAmountA.currency.equals(tokenAmountB.currency)
     ) {

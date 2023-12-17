@@ -216,8 +216,11 @@ export default function LPPanel() {
       onCurrencySelection(Field.CURRENCY_A, currencyA);
 
       const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(currencyA.wrapped.address || '');
-      if (isCrossChainCompatible && DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]) {
-        setCrossChainCurrencyA(DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]);
+      if (isCrossChainCompatible) {
+        setChainSelectorOpen(true);
+        if (DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]) {
+          setCrossChainCurrencyA(DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]);
+        }
       } else {
         setCrossChainCurrencyA('icon');
       }

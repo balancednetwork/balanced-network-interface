@@ -30,7 +30,7 @@ import {
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { useAddOriginEvent, useCurrentXCallState, useSetXCallState } from 'store/xCall/hooks';
+import { useAddOriginEvent, useCurrentXCallState, useIsAnyEventPristine, useSetXCallState } from 'store/xCall/hooks';
 import { toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -68,7 +68,7 @@ export default function SupplyLiquidityModal({
   const addTransaction = useTransactionAdder();
 
   const shouldLedgerSign = useShouldLedgerSign();
-
+  const isAnyEventPristine = useIsAnyEventPristine();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const currentXCallState = useCurrentXCallState();
   const setCurrentXCallState = useSetXCallState();
@@ -399,6 +399,7 @@ export default function SupplyLiquidityModal({
   };
 
   const isXcallModalOpen =
+    isAnyEventPristine &&
     currentXCallState !== CurrentXCallState.IDLE &&
     UIStatus[Field.CURRENCY_A].chain !== 'icon' &&
     !UIStatus[Field.CURRENCY_A].isAddPending;

@@ -144,6 +144,21 @@ export function useSetNotPristine(): () => void {
   }, [dispatch]);
 }
 
+export function useIsAnyEventPristine(): boolean {
+  const xCallState = useXCallState();
+  let existPristine = false;
+
+  SUPPORTED_XCALL_CHAINS.forEach(chain => {
+    const origin = xCallState.events[chain].origin;
+    const destination = xCallState.events[chain].destination;
+    if (origin.some(event => event.isPristine) || destination.some(event => event.isPristine)) {
+      existPristine = true;
+    }
+  });
+
+  return existPristine;
+}
+
 export function useXCallActivityItems(): UseQueryResult<XCallActivityItem[] | undefined> {
   const xCallState = useXCallState();
 

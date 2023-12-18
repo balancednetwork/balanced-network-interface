@@ -38,10 +38,39 @@ import Spinner from '../Spinner';
 
 const Wrap = styled(Box)`
   display: grid;
-  grid-template-columns: 3fr 4fr 3fr;
+  grid-template-columns: 4fr 3fr 3fr;
   grid-gap: 15px;
   width: 100%;
   padding-bottom: 20px;
+
+  @media (min-width: 800px) and (max-width: 1049px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    * {
+      text-align: center;
+      align-items: center !important;
+    }
+  }
+
+  @media (max-width: 580px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    * {
+      text-align: center;
+      align-items: center !important;
+    }
+  }
+
+  @media (min-width: 1050px) {
+    display: grid;
+    grid-template-columns: 3fr 4fr 3fr;
+  }
 `;
 
 const Status = styled(Typography)`
@@ -383,7 +412,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
           {originData.descriptionAmount}
         </Typography>
       </Flex>
-      <Flex justifyContent="center" flexDirection="column" alignItems="flex-end">
+      <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">
         <Action />
       </Flex>
     </Wrap>

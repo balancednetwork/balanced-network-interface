@@ -41,7 +41,7 @@ export function getXCallDestinationEventDataFromArchwayEvent(
   const data = dataRaw && (dataRaw[0] as string);
   const sn = snRaw && parseInt(snRaw[0]);
   const reqId = reqIdRaw && parseInt(reqIdRaw[0]);
-  console.log('xCall debug - Archway destination event data {data, sn, reqId}: ', data, sn, reqId);
+
   if (data && sn && reqId) {
     return {
       data,
@@ -70,7 +70,7 @@ export function getCallExecutedEventDataFromArchwayEvent(
 export function getRollbackEventDataFromArchwayEvent(events: readonly Event[]): { sn: string } | undefined {
   const snRaw = events['wasm-RollbackMessage.sn'];
   const sn: string = snRaw && snRaw[0];
-  console.log('xCall debug - Archway rollback event data {sn}: ', sn);
+
   if (sn) {
     return {
       sn,

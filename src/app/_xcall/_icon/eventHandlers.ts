@@ -81,19 +81,16 @@ export const useICONEventListener = () => {
         const websocket = new WebSocket(ICON_WEBSOCKET_URL);
 
         websocket.onopen = () => {
-          console.log('xCall debug - ICON websocket opened');
           websocket.send(JSON.stringify(query.current));
         };
 
         websocket.onmessage = async event => {
           const eventData = JSON.parse(event.data);
-          console.log('xCall debug - ICON block: ', eventData);
 
           if (eventData) {
             switch (eventName) {
               case XCallEvent.CallMessage: {
                 if (eventData.logs) {
-                  console.log('xCall debug - Matching event found: ' + eventData);
                   const callMessageLog =
                     eventData.logs &&
                     eventData.logs[0][0].find(log => log.indexed[0] === getICONEventSignature(XCallEvent.CallMessage));
@@ -120,7 +117,6 @@ export const useICONEventListener = () => {
                         disconnectFromWebsocket();
 
                         if (originEvent.autoExecute) {
-                          console.log('xCall debug AUTO EXECUTE DETECTED - listening for CallExecuted event');
                           setListeningTo('icon', XCallEvent.CallExecuted);
                         }
                       }
@@ -131,7 +127,6 @@ export const useICONEventListener = () => {
               }
               case XCallEvent.CallExecuted: {
                 if (eventData.logs) {
-                  console.log('xCall debug - Matching event found: ' + eventData);
                   const blockHeight = eventData.height;
                   const indexes = eventData.indexes;
                   const executeCallLog =
@@ -141,7 +136,7 @@ export const useICONEventListener = () => {
                     const reqIdRaw = executeCallLog.indexed[1];
                     const reqId = parseInt(executeCallLog.indexed[1], 16);
                     const success = executeCallLog.data[0] === '0x1';
-                    console.log('xCall debug AUTO EXECUTE - ICON call executed: ', reqId, success);
+
                     if (reqId) {
                       const destinationEvent = iconDestinationEvents.find(e => e.reqId === reqId);
                       const tx = await getTxFromCallExecutedLog(blockHeight, indexes, reqIdRaw);
@@ -151,7 +146,6 @@ export const useICONEventListener = () => {
                           //check for callMessageSent event
                           const callMessageSentLog = getCallMessageSentEventFromLogs(tx.eventLogs);
                           if (callMessageSentLog) {
-                            console.log('xCall debug - CallMessageSent event detected', callMessageSentLog);
                             //todo: find the destination event and determine destination for this new origin event
                             //todo: fill description from the destination event as well
                             const originEventData = getXCallOriginEventDataFromICON(
@@ -171,7 +165,6 @@ export const useICONEventListener = () => {
                         } else {
                           if (destinationEvent) {
                             //todo: not tested yet
-                            console.log('xCall debug - xCALL rollback needed');
                             rollBackFromOrigin(destinationEvent.origin, destinationEvent.sn);
                             setListeningTo(destinationEvent.origin, XCallEvent.RollbackMessage);
                           }
@@ -196,9 +189,7 @@ export const useICONEventListener = () => {
           console.error(error);
           disconnectFromWebsocket();
         };
-        websocket.onclose = () => {
-          console.log('xCall debug - ICON ws closed');
-        };
+        websocket.onclose = () => {};
         setSocket(websocket);
       }
     } else {

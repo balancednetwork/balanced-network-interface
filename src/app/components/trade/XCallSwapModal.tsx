@@ -227,14 +227,13 @@ const XCallSwapModal = ({
     descriptionAmount: string = 'Default swap amount description',
   ) => {
     const txResult = await fetchTxResult(hash);
-    console.log('xCall debug - ICON tx - ', txResult);
+
     if (txResult?.status === 1 && txResult.eventLogs.length) {
       const callMessageSentEvent = txResult.eventLogs.find(event =>
         event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
       );
 
       if (callMessageSentEvent) {
-        console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
         //todo: find the destination event and determine destination for this new origin event
         const originEventData = getXCallOriginEventDataFromICON(
           callMessageSentEvent,
@@ -357,7 +356,6 @@ const XCallSwapModal = ({
             undefined,
             archwayXcallFees && [{ amount: archwayXcallFees?.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
           );
-          console.log('xCall debug - Archway swap init tx:', res);
 
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, t`Cross-chain swap requested.`);
@@ -395,7 +393,7 @@ const XCallSwapModal = ({
             undefined,
             [{ amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
           );
-          console.log('xCall debug - Archway swap init tx:', res);
+
           addTransactionResult('archway', res, 'Cross-chain swap requested.');
           setXCallInProgress(true);
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);

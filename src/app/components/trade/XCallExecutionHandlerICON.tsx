@@ -88,17 +88,15 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
           getFeeParam(600000),
         );
 
-        console.log('xCall debug - Archway rollbackCall complete', res);
         const rollbackExecuted = res.events.some(e => e.type === 'wasm-RollbackExecuted');
 
         if (rollbackExecuted) {
           callback && callback(true);
           removeEvent(data.sn, true);
-          console.log('xCall debug - Archway rollbackCall - success');
+
           addTransactionResult('archway', res, 'Rollback executed');
           xCallReset();
         } else {
-          console.log('xCall debug - Archway rollbackCall - fail');
           addTransactionResult('archway', res || null, t`Rollback failed.`);
         }
       } catch (e) {
@@ -140,10 +138,8 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
         const callExecutedEvent = txResult.eventLogs.find(event =>
           event.indexed.includes(getICONEventSignature(XCallEvent.CallExecuted)),
         );
-        console.log('xCall debug - ICON executeCall tx result: ', txResult);
 
         if (callExecutedEvent?.data[0] === '0x1') {
-          console.log('xCall debug - xCall executed successfully');
           callback && callback(true);
           const sn = xCallState.events['icon'].destination.find(event => event.reqId === data.reqId)?.sn;
           sn && removeEvent(sn, true);
@@ -155,8 +151,6 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
           );
 
           if (callMessageSentEvent) {
-            console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
-
             //todo: find the destination event and determine destination for this new origin event
             const originEventData = getXCallOriginEventDataFromICON(
               callMessageSentEvent,
@@ -171,11 +165,10 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
         }
 
         if (callExecutedEvent?.data[0] === '0x0') {
-          console.log('xCall debug - xCall executed with error');
           callback && callback(false);
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
             rollBackFromOrigin(data.origin, data.sn);
-            console.log('xCall debug - xCALL rollback needed');
+
             setListeningTo('archway', XCallEvent.RollbackMessage);
           }
         }

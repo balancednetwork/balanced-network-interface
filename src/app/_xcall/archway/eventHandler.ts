@@ -62,7 +62,6 @@ export const useArchwayEventListener = () => {
         const websocket = new WebSocket(ARCHWAY_WEBSOCKET_URL);
 
         websocket.onopen = () => {
-          console.log('xCall debug - archway ws opened');
           const queryObject = JSON.parse(JSON.stringify(ARCHWAY_SOCKET_QUERY));
           queryObject.params.query = query;
           websocket.send(JSON.stringify(queryObject));
@@ -71,9 +70,7 @@ export const useArchwayEventListener = () => {
         websocket.onmessage = event => {
           const eventData = JSON.parse(event.data);
           const events = eventData.result?.events;
-          console.log('xCall debug - Arch tx info: ', eventData.result);
           if (events) {
-            console.log('xCall debug - Matching transaction found: ', events);
             switch (eventName) {
               case XCallEvent.CallMessage: {
                 const destinationEventData = getXCallDestinationEventDataFromArchwayEvent(events);
@@ -85,7 +82,6 @@ export const useArchwayEventListener = () => {
                     disconnectFromWebsocket();
 
                     if (originEvent.autoExecute) {
-                      console.log('xCall debug AUTO EXECUTE DETECTED - listening for CallExecuted event');
                       setListeningTo('archway', XCallEvent.CallExecuted);
                     }
                   }
@@ -100,7 +96,6 @@ export const useArchwayEventListener = () => {
                     stopListening();
                     disconnectFromWebsocket();
                     if (callExecutedEventData.success) {
-                      console.log('xCall debug - CallExecuted event detected - removing xCall event');
                       removeEvent(destinationEvent.sn, true);
                     } else {
                       rollBackFromOrigin(destinationEvent.origin, destinationEvent.sn);
@@ -133,9 +128,7 @@ export const useArchwayEventListener = () => {
           console.error(error);
           disconnectFromWebsocket();
         };
-        websocket.onclose = () => {
-          console.log('xCall debug - archway ws closed');
-        };
+        websocket.onclose = () => {};
         setSocket(websocket);
       }
     } else {

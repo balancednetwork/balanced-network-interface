@@ -75,7 +75,7 @@ const useAllowanceHandler = (
           res,
           t`${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} approved for cross-chain transfer.`,
         );
-        console.log('xCall debug - increase allowance: ', res);
+
         callback && callback(true);
       } catch (e) {
         console.error(e);

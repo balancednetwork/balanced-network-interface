@@ -125,7 +125,7 @@ export default function SupplyLiquidityModal({
         undefined,
         [{ amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
       );
-      console.log('xCall debug - Archway supply init tx:', res);
+
       addTransactionResult('archway', res, 'Cross-chain supply requested.');
       setCurrentXCallState(CurrentXCallState.AWAKE);
       const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);

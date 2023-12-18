@@ -137,19 +137,16 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         const callExecutedEvent = txResult.eventLogs.find(event =>
           event.indexed.includes(getICONEventSignature(XCallEvent.CallExecuted)),
         );
-        console.log('xCall debug - ICON executeCall tx result: ', txResult);
 
         //TODO: move to handle ICON tx result together with CallMessage
 
         if (callExecutedEvent?.data[0] === '0x1') {
-          console.log('xCall debug - xCall executed successfully');
           const origin = xCallState.events[data.origin].origin.find(event => event.sn === data.sn);
 
           //has xCall emitted CallMessageSent event?
           const callMessageSentEvent = getCallMessageSentEventFromLogs(txResult.eventLogs);
 
           if (callMessageSentEvent) {
-            console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
             //todo: find the destination event and determine destination for this new origin event
             const originEventData = getXCallOriginEventDataFromICON(
               callMessageSentEvent,
@@ -164,10 +161,9 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         }
 
         if (callExecutedEvent?.data[0] === '0x0') {
-          console.log('xCall debug - xCall executed with error');
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
             rollBackFromOrigin(data.origin, data.sn);
-            console.log('xCall debug - xCALL rollback needed');
+
             setListeningTo('archway', XCallEvent.RollbackMessage);
           }
         }
@@ -190,18 +186,15 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         initTransaction('archway', 'Confirming cross-chain transaction.');
         const res: ExecuteResult = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, 'auto');
 
-        console.log('xCall debug - Archway executeCall complete', res);
-
         const callExecuted = res.events.some(
           e => e.type === 'wasm-CallExecuted' && e.attributes.some(a => a.key === 'code' && a.value === '1'),
         );
 
         if (callExecuted) {
           removeEvent(data.sn, true);
-          console.log('xCall debug - Archway executeCall - success');
+
           addTransactionResult('archway', res, 'Cross-chain transaction confirmed.');
         } else {
-          console.log('xCall debug - Archway executeCall - fail');
           addTransactionResult('archway', res || null, t`Transfer failed.`);
           rollBackFromOrigin(data.origin, data.sn);
         }
@@ -245,16 +238,14 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
           getFeeParam(600000),
         );
 
-        console.log('xCall debug - Archway rollbackCall complete', res);
         //TODO: handle arch rollback response
         const rollbackExecuted = res.events.some(e => e.type === 'wasm-RollbackExecuted');
 
         if (rollbackExecuted) {
           removeEvent(data.sn, true);
-          console.log('xCall debug - Archway rollbackCall - success');
+
           addTransactionResult('archway', res, 'Cross-chain transaction reverted.');
         } else {
-          console.log('xCall debug - Archway rollbackCall - fail');
           addTransactionResult('archway', res || null, t`Reverting failed.`);
         }
       } catch (e) {
@@ -285,15 +276,12 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         const callExecutedEvent = txResult.eventLogs.find(event =>
           event.indexed.includes(getICONEventSignature(XCallEvent.RollbackExecuted)),
         );
-        console.log('xCall debug - ICON execute rollback tx result: ', txResult);
 
         if (callExecutedEvent?.data[0] === '0x1') {
-          console.log('xCall debug - xCall rollback executed successfully');
           removeEvent(data.sn, true);
         }
 
         if (callExecutedEvent?.data[0] === '0x0') {
-          console.log('xCall debug - xCall rollback executed with error');
           //TODO: handle rollback error
         }
       }

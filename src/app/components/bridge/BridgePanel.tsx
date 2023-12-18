@@ -301,14 +301,13 @@ export default function BridgePanel() {
 
   const handleICONTxResult = async (hash: string) => {
     const txResult = await fetchTxResult(hash);
-    console.log('xCall debug - ICON tx - ', txResult);
+
     if (txResult?.status === 1 && txResult.eventLogs.length) {
       const callMessageSentEvent = txResult.eventLogs.find(event =>
         event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
       );
 
       if (callMessageSentEvent) {
-        console.log('xCall debug - CallMessageSent event detected', callMessageSentEvent);
         const originEventData = getXCallOriginEventDataFromICON(
           callMessageSentEvent,
           bridgeDirection.to,
@@ -394,7 +393,7 @@ export default function BridgePanel() {
           const res = await signingClient.execute(accountArch, tokenAddress, msg, 'auto', undefined, [
             { amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
           ]);
-          console.log('xCall debug - Archway bridge init tx:', res);
+
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
           originEventData && addOriginEvent('archway', originEventData);
@@ -423,7 +422,7 @@ export default function BridgePanel() {
             undefined,
             [{ amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
           );
-          console.log('xCall debug - Archway bridge init tx:', res);
+
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
           addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
           originEventData && addOriginEvent('archway', originEventData);

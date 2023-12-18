@@ -104,20 +104,17 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
           getFeeParam(600000),
         );
 
-        console.log('xCall debug - Archway executeCall complete', res);
-
         const callExecuted = res.events.some(
           e => e.type === 'wasm-CallExecuted' && e.attributes.some(a => a.key === 'code' && a.value === '1'),
         );
 
         if (callExecuted) {
           removeEvent(data.sn, true);
-          console.log('xCall debug - Archway executeCall - success');
+
           callback && callback(true);
           xCallReset();
           addTransactionResult('archway', res, msgs.txMsgs.archway.summary);
         } else {
-          console.log('xCall debug - Archway executeCall - fail');
           callback && callback(false);
           addTransactionResult('archway', res || null, t`Transfer failed.`);
           rollBackFromOrigin(data.origin, data.sn);

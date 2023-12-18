@@ -27,7 +27,7 @@ import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 import BBalnPanel from './BBaln/BBalnPanel';
 
-const RewardsPanelLayout = styled(FlexPanel)`
+export const RewardsPanelLayout = styled(FlexPanel)`
   padding: 0;
   grid-area: initial;
   flex-direction: column;

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
+import { useIconReact } from 'packages/icon-react';
 import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
@@ -37,6 +38,7 @@ export default function ProposalsPanel() {
   const { data: activeProposals } = useActiveProposals();
   const theme = useTheme();
   const bBalnAmount = useBBalnAmount();
+  const { account } = useIconReact();
 
   const shouldShowNotification = currentProposal => {
     return (
@@ -58,7 +60,7 @@ export default function ProposalsPanel() {
             <UnderlineText>View all</UnderlineText>
           </Link>
         </Flex>
-        {bBalnAmount.isGreaterThan(0) && (
+        {account && bBalnAmount.isGreaterThan(0) && (
           <Typography mt={['5px', '0']}>
             <ButtonLink to="/vote/new-proposal/">
               <Trans>New proposal</Trans>

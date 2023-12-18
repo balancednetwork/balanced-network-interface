@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CurrencyAmount, Currency, Percent } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Currency, Percent, Fraction } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
@@ -8,6 +8,9 @@ import Nouislider from 'packages/nouislider-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
+import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
+import { SupportedXCallChains } from 'app/_xcall/types';
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Typography } from 'app/theme';
@@ -20,6 +23,7 @@ import { useMintState, useDerivedMintInfo, useMintActionHandlers, useInitialSupp
 import { maxAmountSpend } from 'utils';
 
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
+import CrossChainOptions from './CrossChainOptions';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
@@ -31,22 +35,19 @@ const Slider = styled(Box)`
   `}
 `;
 
-export function subtract(
+function subtract(
   amountA: CurrencyAmount<Currency> | undefined,
   amountB: CurrencyAmount<Currency> | undefined,
 ): CurrencyAmount<Currency> | undefined {
-  return amountA
-    ? amountB
-      ? amountA.currency.equals(amountB.currency)
-        ? amountA.subtract(amountB)
-        : amountA
-      : amountA
-    : undefined;
+  if (!amountA) return undefined;
+  if (!amountB) return amountA;
+  const diff = new Fraction(`${amountA.quotient}`).subtract(new Fraction(`${amountB.quotient}`));
+  return CurrencyAmount.fromRawAmount(amountA.currency, diff.quotient);
 }
 
-function WalletSection() {
+function WalletSection({ AChain, BChain }: { AChain?: SupportedXCallChains; BChain?: SupportedXCallChains }) {
   const { account } = useIconReact();
-  const { currencies, currencyBalances, parsedAmounts } = useDerivedMintInfo();
+  const { currencies, currencyBalances, parsedAmounts } = useDerivedMintInfo(AChain, BChain);
 
   const remains: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
     () => ({
@@ -127,6 +128,9 @@ export default function LPPanel() {
   };
 
   const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
+  const [chainSelectorOpen, setChainSelectorOpen] = React.useState(false);
+  const [crossChainCurrencyA, setCrossChainCurrencyA] = React.useState<SupportedXCallChains>('icon');
+  const [crossChainCurrencyB] = React.useState<SupportedXCallChains>('icon');
   const {
     dependentField,
     parsedAmounts,
@@ -139,12 +143,16 @@ export default function LPPanel() {
     pairState,
     liquidityMinted,
     mintableLiquidity,
-  } = useDerivedMintInfo();
+  } = useDerivedMintInfo(crossChainCurrencyA, crossChainCurrencyB);
   const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection } = useMintActionHandlers(noLiquidity);
 
   const sliderInstance = React.useRef<any>(null);
 
   const [{ percent, needUpdate }, setPercent] = React.useState({ percent: 0, needUpdate: false });
+
+  const isCurrencyACrosschainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
+    currencies?.CURRENCY_A?.wrapped.address || '',
+  );
 
   React.useEffect(() => {
     sliderInstance.current?.noUiSlider.set(0);
@@ -204,7 +212,19 @@ export default function LPPanel() {
   const isValid = !error;
 
   const handleCurrencyASelect = React.useCallback(
-    (currencyA: Currency) => onCurrencySelection(Field.CURRENCY_A, currencyA),
+    (currencyA: Currency) => {
+      onCurrencySelection(Field.CURRENCY_A, currencyA);
+
+      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(currencyA.wrapped.address || '');
+      if (isCrossChainCompatible) {
+        setChainSelectorOpen(true);
+        if (DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]) {
+          setCrossChainCurrencyA(DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]);
+        }
+      } else {
+        setCrossChainCurrencyA('icon');
+      }
+    },
     [onCurrencySelection],
   );
 
@@ -276,8 +296,18 @@ export default function LPPanel() {
                   onUserInput={handleTypeAInput}
                   onCurrencySelect={handleCurrencyASelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
+                  isCrossChainToken={isCurrencyACrosschainCompatible}
                 />
               </Flex>
+              {isCurrencyACrosschainCompatible && (
+                <CrossChainOptions
+                  currency={currencies[Field.CURRENCY_A]}
+                  chain={crossChainCurrencyA}
+                  setChain={setCrossChainCurrencyA}
+                  isOpen={chainSelectorOpen}
+                  setOpen={setChainSelectorOpen}
+                />
+              )}
             </AutoColumn>
 
             <AutoColumn gap="md" hidden={isQueue}>
@@ -295,7 +325,7 @@ export default function LPPanel() {
             </AutoColumn>
           </AutoColumn>
           <Flex mt={3} justifyContent="flex-end">
-            <WalletSection />
+            <WalletSection AChain={crossChainCurrencyA} BChain={crossChainCurrencyB} />
           </Flex>
           {currencies[Field.CURRENCY_A] &&
             currencies[Field.CURRENCY_B] &&
@@ -372,6 +402,8 @@ export default function LPPanel() {
         onClose={handleSupplyConfirmDismiss}
         parsedAmounts={amounts}
         currencies={currencies}
+        AChain={crossChainCurrencyA}
+        BChain={crossChainCurrencyB}
       />
     </>
   );

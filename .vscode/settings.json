@@ -19,5 +19,5 @@
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.formatOnSave": true,
   "eslint.format.enable": true,
-  "cSpell.words": ["BALN", "BNUSD"]
+  "cSpell.words": ["BALN", "BNUSD", "Multichain"]
 }

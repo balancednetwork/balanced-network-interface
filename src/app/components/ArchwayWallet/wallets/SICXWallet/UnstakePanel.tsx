@@ -16,7 +16,7 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from 'store/application/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useICONWalletBalances } from 'store/wallet/hooks';
 import { isZeroCA, multiplyCABN, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -37,7 +37,7 @@ export default function UnstakePanel() {
 
   const { data: icxUnstakingTime } = useICXUnstakingTime();
 
-  const wallet = useWalletBalances();
+  const wallet = useICONWalletBalances();
 
   const sicxAddress = bnJs.sICX.address;
 

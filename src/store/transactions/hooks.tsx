@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { t } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
@@ -9,7 +9,7 @@ import { NotificationPending, NotificationError } from 'app/components/Notificat
 import { getTrackerLink } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
-import { addTransaction } from './actions';
+import { addTransaction, ICONTxEventLog } from './actions';
 import { TransactionDetails } from './reducer';
 
 interface TransactionResponse {
@@ -23,6 +23,7 @@ export function useTransactionAdder(): (
     summary?: string;
     pending?: string;
     redirectOnSuccess?: string;
+    isTxSuccessfulBasedOnEvents?: (eventLogs: ICONTxEventLog[]) => boolean;
   },
 ) => void {
   const { networkId, account } = useIconReact();
@@ -31,7 +32,17 @@ export function useTransactionAdder(): (
   return useCallback(
     (
       response: TransactionResponse,
-      { summary, pending, redirectOnSuccess }: { summary?: string; pending?: string; redirectOnSuccess?: string } = {},
+      {
+        summary,
+        pending,
+        redirectOnSuccess,
+        isTxSuccessfulBasedOnEvents,
+      }: {
+        summary?: string;
+        pending?: string;
+        redirectOnSuccess?: string;
+        isTxSuccessfulBasedOnEvents?: (eventLogs: ICONTxEventLog[]) => boolean;
+      } = {},
     ) => {
       if (!account) return;
       if (!networkId) return;
@@ -55,7 +66,9 @@ export function useTransactionAdder(): (
         toastId: hash,
       });
 
-      dispatch(addTransaction({ hash, from: account, networkId, summary, redirectOnSuccess }));
+      dispatch(
+        addTransaction({ hash, from: account, networkId, summary, redirectOnSuccess, isTxSuccessfulBasedOnEvents }),
+      );
     },
     [dispatch, networkId, account],
   );
@@ -90,3 +103,13 @@ export function useTransactionStatus(transactionHash?: string): TransactionStatu
     return undefined;
   }
 }
+
+export const useIsICONTxPending = (): boolean => {
+  const transactions = useAllTransactions();
+  return useMemo(() => {
+    if (!transactions) {
+      return false;
+    }
+    return Object.values(transactions).some(tx => !tx.confirmedTime);
+  }, [transactions]);
+};

@@ -10,6 +10,7 @@ import createSagaMiddleware from 'redux-saga';
 import application from './application/reducer';
 import arbitraryCalls from './arbitraryCalls/reducer';
 import bbaln from './bbaln/reducer';
+import bridge from './bridge/reducer';
 import collateral from './collateral/reducer';
 import fees from './fees/reducer';
 import lists from './lists/reducer';
@@ -24,10 +25,12 @@ import stabilityFund from './stabilityFund/reducer';
 import stakedLP from './stakedLP/reducer';
 import swap from './swap/reducer';
 import transactions from './transactions/reducer';
+import transactionsCrosschain from './transactionsCrosschain/reducer';
 import user from './user/reducer';
 import wallet from './wallet/reducer';
+import xCall from './xCall/reducer';
 
-const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists'];
+const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists', 'xCall'];
 
 export function configureAppStore() {
   const reduxSagaMonitorOptions = {};
@@ -64,6 +67,9 @@ export function configureAppStore() {
       lists,
       liveVoting,
       arbitraryCalls,
+      xCall,
+      transactionsCrosschain,
+      bridge,
     }),
     middleware: [
       ...getDefaultMiddleware({

@@ -38,7 +38,7 @@ export function ProposalList() {
           <Typography variant="h2">
             <Trans>Proposals</Trans>
           </Typography>
-          {bBalnAmount.isGreaterThan(0) && (
+          {account && bBalnAmount.isGreaterThan(0) && (
             <ButtonLink to="/vote/new-proposal/">
               <Trans>New proposal</Trans>
             </ButtonLink>

@@ -20,7 +20,7 @@ export const API_VERSION = IconConverter.toBigNumber(3);
 
 export const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
-const LOCAL_STORAGE_ADDRESS_EXPIRY = 3600000;
+export const LOCAL_STORAGE_ADDRESS_EXPIRY = 3600000;
 
 const iconService = new IconService(new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint));
 

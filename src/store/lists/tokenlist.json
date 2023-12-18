@@ -99,7 +99,7 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/fin.png"
     },
     {
-      "address": "cxdd89d7a425b8f0b6448a8c80136727c517e64033",
+      "address": "cxb7d63658e3375f701af9d420ea351d0736760634",
       "chainId": 7,
       "name": "Staked ICX",
       "symbol": "sICX",
@@ -107,7 +107,7 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sicx.png"
     },
     {
-      "address": "cx1cd2da25f9942fda5144e139bbda3e5108d3c083",
+      "address": "cxd06f80e28e989a67e297799ab1fb501cdddc2b4d",
       "chainId": 7,
       "name": "Balanced Dollar",
       "symbol": "bnUSD",
@@ -115,7 +115,7 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
     },
     {
-      "address": "cx9eefbe346b17328e2265573f6e166f6bc4a13cc4",
+      "address": "cx026a11686efc8f52243415adb217ec9a1bc50433",
       "chainId": 7,
       "name": "Balance Token",
       "symbol": "BALN",
@@ -217,6 +217,30 @@
       "symbol": "TETH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
+    },
+    {
+      "address": "cx4761756e11195947dd27d765ac01e931b836065c",
+      "chainId": 7,
+      "name": "Staked Archway",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "cx1f94585b61e47db9d5e036307f96a3251a0486a1",
+      "chainId": 2,
+      "name": "Staked Archway",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "cxfe94530ee0d159db3e5b7dcffbcd0dfb360075c0",
+      "chainId": 1,
+      "name": "Staked Archway",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
     }
   ]
 }

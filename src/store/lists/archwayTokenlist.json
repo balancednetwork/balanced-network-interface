@@ -1,0 +1,62 @@
+{
+  "name": "Archway Tokens",
+  "timestamp": "2023-09-26T08:37:27.276Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/arch.png",
+  "keywords": ["archway", "default"],
+  "tokens": [
+    {
+      "address": "archway1t2llqsvwwunf98v692nqd5juudcmmlu3zk55utx7xtfvznel030saclvq6",
+      "chainId": 1,
+      "name": "Staked Arch",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "archway1l3m84nf7xagkdrcced2y0g367xphnea5uqc3mww3f83eh6h38nqqxnsxz7",
+      "chainId": 1,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "archway1erqguqc3hmfajgu7e2dvgaccx6feu5ru3gyatdxu94p66j9hp7msn2kcqp",
+      "chainId": 7,
+      "name": "Staked Arch",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "archway1dxs0j8rk8yd69rdh77ndrefhjzdy3lehujx58yhfxr827nr7rutqpltd2w",
+      "chainId": 7,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "archway1erqguqc3hmfajgu7e2dvgaccx6feu5ru3gyatdxu94p66j9hp7msn2kcqp",
+      "chainId": 2,
+      "name": "Staked Arch",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "archway1dxs0j8rk8yd69rdh77ndrefhjzdy3lehujx58yhfxr827nr7rutqpltd2w",
+      "chainId": 2,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    }
+  ]
+}

@@ -25,7 +25,7 @@ export const useICX = () => {
   return ICX[chainId];
 };
 
-type TokenMap = { [key: number]: Token };
+export type TokenMap = { [key: number]: Token };
 
 export const ICX: TokenMap = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX'),

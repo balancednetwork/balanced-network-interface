@@ -8,11 +8,12 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 
+import { SupportedXCallChains } from 'app/_xcall/types';
 import { canBeQueue } from 'constants/currency';
 import { useAllTokens } from 'hooks/Tokens';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
-import { useCurrencyBalances } from 'store/wallet/hooks';
+import { useCrossChainCurrencyBalances, useCurrencyBalances } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
@@ -110,7 +111,10 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
 }
 
 // from the current swap inputs, compute the best trade and return it.
-export function useDerivedSwapInfo(): {
+export function useDerivedSwapInfo(
+  inputChain: SupportedXCallChains = 'icon',
+  outputChain: SupportedXCallChains = 'icon',
+): {
   trade: Trade<Currency, Currency, TradeType> | undefined;
   currencies: { [field in Field]?: Currency };
   percents: { [field in Field]?: number };
@@ -133,16 +137,23 @@ export function useDerivedSwapInfo(): {
     account ?? undefined,
     useMemo(() => [inputCurrency ?? undefined, outputCurrency ?? undefined], [inputCurrency, outputCurrency]),
   );
+  const balancesCrossChain = useCrossChainCurrencyBalances([inputCurrency, outputCurrency]);
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
-
-  const currencyBalances = useMemo(() => {
-    return {
-      [Field.INPUT]: relevantTokenBalances[0],
-      [Field.OUTPUT]: relevantTokenBalances[1],
-    };
-  }, [relevantTokenBalances]);
+  const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
+    if (inputChain && outputChain && balancesCrossChain) {
+      return {
+        [Field.INPUT]: balancesCrossChain[0]?.[inputChain],
+        [Field.OUTPUT]: balancesCrossChain[1]?.[outputChain],
+      };
+    } else {
+      return {
+        [Field.INPUT]: relevantTokenBalances[0],
+        [Field.OUTPUT]: relevantTokenBalances[1],
+      };
+    }
+  }, [inputChain, outputChain, relevantTokenBalances, balancesCrossChain]);
 
   const currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {

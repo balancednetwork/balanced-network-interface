@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import axios from 'axios';
@@ -6,10 +6,8 @@ import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
 
 import { NETWORK_ID } from 'constants/config';
-import { INITIAL_SWAP } from 'store/swap/reducer';
 
 import { AppDispatch, AppState } from '../index';
 import {
@@ -18,6 +16,7 @@ import {
   ApplicationModal,
   setOpenModal,
   updateSlippageTolerance,
+  toggleICONWalletModal,
 } from './reducer';
 
 type BlockDetails = {
@@ -40,6 +39,19 @@ export function useToggleModal(modal: ApplicationModal): () => void {
   const open = useModalOpen(modal);
   const dispatch = useDispatch<AppDispatch>();
   return useCallback(() => dispatch(setOpenModal(open ? null : modal)), [dispatch, modal, open]);
+}
+
+export function useICONWalletModalToggle(): () => void {
+  const isOpen = useSelector((state: AppState) => state.application.iconWalletModal);
+  const dispatch = useDispatch<AppDispatch>();
+  return useCallback(() => {
+    console.log(isOpen);
+    dispatch(toggleICONWalletModal({ isOpen: !isOpen }));
+  }, [dispatch, isOpen]);
+}
+
+export function useIsICONWalletModalOpen(): boolean {
+  return useSelector((state: AppState) => state.application.iconWalletModal);
 }
 
 export function useWalletModalToggle(): () => void {
@@ -141,20 +153,4 @@ export function useICXUnstakingTime() {
       keepPreviousData: true,
     },
   );
-}
-
-export function useBridgeModalURLHandler() {
-  const bridgeModalToggle = useTransferAssetsModalToggle();
-  const location = useLocation();
-  const history = useHistory();
-  const [firstLoad, setFirstLoad] = useState(true);
-
-  useEffect(() => {
-    if (firstLoad && location.pathname.includes('/bridge')) {
-      history.push(`/trade/${INITIAL_SWAP.base.symbol}_${INITIAL_SWAP.quote.symbol}`);
-      history.push('/trade/bridge');
-      bridgeModalToggle();
-    }
-    setFirstLoad(false);
-  }, [firstLoad, location.pathname, bridgeModalToggle, history]);
 }

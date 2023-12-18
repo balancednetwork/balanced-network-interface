@@ -4,6 +4,7 @@ import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednet
 import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { t, Trans } from '@lingui/macro';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
@@ -11,13 +12,14 @@ import { useMedia } from 'react-use';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { VerticalDivider } from 'app/components/Divider';
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';
 import { MenuList, LanguageMenuItem } from 'app/components/Menu';
 import Modal, { ModalProps } from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
+import { ReactComponent as ArchWalletIcon } from 'assets/icons/archway.svg';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
 import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
@@ -28,10 +30,17 @@ import {
   useModalOpen,
   useCurrentLedgerAddressPage,
   useChangeCurrentLedgerAddressPage,
+  useICONWalletModalToggle,
+  useIsICONWalletModalOpen,
 } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
+import { useSignedInWallets } from 'store/wallet/hooks';
 
+import { VerticalDivider } from '../Divider';
+import { ModalContentWrapper } from '../ModalContent';
 import { DropdownPopper } from '../Popover';
+import SearchInput from '../SearchModal/SearchInput';
+import WalletItem from './WalletItem';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -80,20 +89,44 @@ const LedgerAddressList = styled(Modal)`
   width: 500px;
 `;
 
+const ChainIcons = styled.div``;
+const WalletIcons = styled.div``;
+
 const WalletOption = styled(Box)`
   display: flex;
   flex-direction: column;
+  position: relative;
   align-items: center;
   cursor: pointer;
-  padding: 5px 20px;
+  padding: 10px 20px;
   margin: 0px 10px;
   border-radius: 10px;
   text-decoration: none;
   color: white;
   user-select: none;
+  width: 130px;
+  max-width: 100px;
 
-  ${({ theme }) => theme.mediaWidth.up360`
-    width: 140px;
+  ${ChainIcons}, ${WalletIcons} {
+    position: absolute;
+    right: 5px;
+    bottom: 38px;
+    display: flex;
+    flex-flow: column;
+    opacity: 0.6;
+
+    > * {
+      margin-top: 7px;
+    }
+
+    img {
+      width: 15px;
+      height: 15px;
+    }
+  }
+
+  ${({ theme }) => theme.mediaWidth.up420`
+    max-width: 130px;
   `};
 
   > *:first-child {
@@ -110,16 +143,12 @@ const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean
   'aria-label': 'dialog',
 })`
   &[data-reach-dialog-content] {
-    ${({ mobile, theme }) =>
-      !mobile &&
-      `
-      width: 320px;
+    width: 320px;
 
-      @media (min-width: 360px) {
-        width: 100%;
-        max-width: 360px;
-      }
-    `}
+    @media (min-width: 600px) {
+      width: 100%;
+      max-width: 495px;
+    }
   }
 `;
 
@@ -131,18 +160,34 @@ const Wrapper = styled.div`
   gap: 15px;
 `;
 
-const UnbrakableText = styled(Text)`
+const UnbrakebleText = styled(Text)`
   white-space: nowrap;
 `;
+
+const ScrollHelper = styled.div`
+  min-height: 120px;
+  overflow-y: auto;
+`;
+
+const presenceVariants = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+};
 
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
+  const ICONWalletModalToggle = useICONWalletModalToggle();
+  const isICONWalletModalOpen = useIsICONWalletModalOpen();
   const [showLedgerAddress, updateShowledgerAddress] = useState(false);
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
   const [isLedgerErr, setIsLedgerErr] = useState(false);
-  const upExtraSmall = useMedia('(min-width: 360px)');
+  const signedInWallets = useSignedInWallets();
+  const upExtraSmall = useMedia('(min-width: 420px)');
+  const upSuperExtraSmall = useMedia('(min-width: 364px)');
+  const { connectToWallet: connectToKeplr, address: accountArch, disconnect: disconnectKeplr } = useArchwayContext();
 
   const [{ offset, limit }, updatePaging] = useState({
     offset: 0,
@@ -151,20 +196,24 @@ export default function WalletModal() {
   const currentLedgerAddressPage = useCurrentLedgerAddressPage();
   const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
 
-  const { requestAddress, hasExtension } = useIconReact();
+  const { requestAddress, hasExtension, account, disconnect } = useIconReact();
 
-  const handleOpenWallet = () => {
-    toggleWalletModal();
+  const handleOpenWallet = React.useCallback(() => {
     if (isMobile) {
       requestAddress();
     } else {
       if (hasExtension) {
         requestAddress();
+        ICONWalletModalToggle();
       } else {
         window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
       }
     }
-  };
+  }, [ICONWalletModalToggle, hasExtension, requestAddress]);
+
+  const handleOpenWalletArchway = React.useCallback(() => {
+    connectToKeplr();
+  }, [connectToKeplr]);
 
   const updateLedgerAddress = React.useCallback(async ({ offset, limit }) => {
     const currentAddressList: any[] = await requestLedgerAddress({
@@ -316,27 +365,97 @@ export default function WalletModal() {
     }
   }, [walletModalOpen]);
 
+  const isLoggedInSome = account || accountArch;
+  const numberOfConnectedWallets = Number(!!account) + Number(!!accountArch);
+  const [chainQuery, setChainQuery] = useState('');
+
+  const handleChainQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setChainQuery(e.target.value);
+  };
+
+  const disconnectAll = () => {
+    account && disconnect();
+    accountArch && disconnectKeplr();
+  };
+
+  const walletConfig = React.useMemo(() => {
+    return [
+      {
+        name: 'ICON',
+        logo: <IconWalletIcon width="40" height="40" />,
+        connect: ICONWalletModalToggle,
+        disconnect: disconnect,
+        description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain`,
+        address: account,
+      },
+      {
+        name: 'Archway',
+        logo: <ArchWalletIcon width="40" height="40" />,
+        connect: handleOpenWalletArchway,
+        disconnect: disconnectKeplr,
+        description: t`Swap & transfer assets cross-chain.`,
+        address: accountArch,
+      },
+    ];
+  }, [ICONWalletModalToggle, disconnect, account, handleOpenWalletArchway, disconnectKeplr, accountArch]);
+
+  const filteredWallets = React.useMemo(() => {
+    return [...walletConfig].filter(wallet => {
+      return (
+        wallet.name.toLowerCase().includes(chainQuery.toLowerCase()) ||
+        wallet.description.toLowerCase().includes(chainQuery.toLowerCase())
+      );
+    });
+  }, [walletConfig, chainQuery]);
+
   return (
     <>
       <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} mobile={isMobile}>
         <Wrapper>
-          <Typography textAlign="center" mb={1}>
-            <Trans>Sign in with</Trans>:
-          </Typography>
+          {isLoggedInSome ? (
+            <Flex mb={1} justifyContent="space-between" flexWrap={['wrap', 'nowrap']}>
+              <Typography variant="h2">Manage wallets</Typography>
+              <Flex flexDirection="column" alignItems={['flex-start', 'flex-end']} justifyContent="center" mt={1}>
+                <Typography>
+                  {numberOfConnectedWallets > 1
+                    ? t`Connected to ${numberOfConnectedWallets} blockchains`
+                    : t`Connected to ${numberOfConnectedWallets} blockchain`}
+                </Typography>
+                <Typography onClick={disconnectAll} color="alert" style={{ cursor: 'pointer' }}>
+                  Disconnect all
+                </Typography>
+              </Flex>
+            </Flex>
+          ) : (
+            <Typography textAlign="center" variant={'h2'} mb={1}>
+              <Trans>Sign in to Balanced</Trans>
+            </Typography>
+          )}
 
-          <Flex alignItems="stretch" justifyContent="space-between">
-            <WalletOption onClick={handleOpenWallet}>
-              <IconWalletIcon width="50" height="50" />
-              <UnbrakableText>ICON</UnbrakableText>
-            </WalletOption>
+          <SearchInput
+            type="text"
+            value={chainQuery}
+            onChange={handleChainQuery}
+            placeholder="Search for blockchains..."
+            style={{ minHeight: '40px' }}
+          />
 
-            {upExtraSmall && <VerticalDivider text={t`or`}></VerticalDivider>}
-
-            <WalletOption onClick={handleOpenLedger}>
-              <LedgerIcon width="50" height="50" />
-              <UnbrakableText>Ledger</UnbrakableText>
-            </WalletOption>
-          </Flex>
+          <ScrollHelper>
+            <AnimatePresence>
+              {filteredWallets.map((wallet, index) => (
+                <motion.div key={wallet.name} {...presenceVariants} style={{ overflow: 'hidden' }}>
+                  <WalletItem {...wallet} border={index + 1 < filteredWallets.length} />
+                </motion.div>
+              ))}
+              {filteredWallets.length === 0 && (
+                <motion.div key="no-result" {...presenceVariants}>
+                  <Typography textAlign="center">
+                    No matches for <strong>{chainQuery}</strong>
+                  </Typography>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </ScrollHelper>
 
           <Flex justifyContent="center" alignItems="center" sx={{ borderRadius: 10 }} padding={2} bg="bg3">
             <Typography mr={1}>
@@ -361,16 +480,39 @@ export default function WalletModal() {
             </ClickAwayListener>
           </Flex>
 
-          <Typography textAlign="center" as="div">
-            <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
-            <Box>
-              <Link href="https://balanced.network/disclaimer/" target="_blank">
-                <Trans>View disclaimer</Trans>
-              </Link>
-            </Box>
-          </Typography>
+          {!signedInWallets.length && (
+            <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
+              <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
+              <Box>
+                <Link href="https://balanced.network/disclaimer/" target="_blank">
+                  <Trans>View disclaimer</Trans>
+                </Link>
+              </Box>
+            </Typography>
+          )}
         </Wrapper>
       </StyledModal>
+
+      <Modal isOpen={isICONWalletModalOpen} onDismiss={ICONWalletModalToggle} maxWidth={360}>
+        <ModalContentWrapper>
+          <Typography textAlign="center" margin={'0 0 25px'}>
+            Connect with:
+          </Typography>
+          <Flex alignItems="stretch" justifyContent="space-around" flexWrap={upExtraSmall ? 'nowrap' : 'wrap'}>
+            <WalletOption onClick={handleOpenWallet}>
+              <IconWalletIcon width="50" height="50" />
+              <UnbrakebleText>ICON wallet</UnbrakebleText>
+            </WalletOption>
+
+            {upSuperExtraSmall && <VerticalDivider text={t`or`} />}
+
+            <WalletOption onClick={handleOpenLedger}>
+              <LedgerIcon width="50" height="50" />
+              <UnbrakebleText>Ledger</UnbrakebleText>
+            </WalletOption>
+          </Flex>
+        </ModalContentWrapper>
+      </Modal>
 
       <LedgerAddressList
         isOpen={showLedgerAddress}
@@ -444,9 +586,7 @@ export default function WalletModal() {
                     onClick={async () => {
                       await getLedgerPage(currentLedgerAddressPage + 1);
                     }}
-                  >
-                    ˃
-                  </li>
+                  ></li>
                 </ul>
               )}
             </>

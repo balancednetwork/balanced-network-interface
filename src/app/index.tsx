@@ -10,6 +10,8 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from 'app/theme';
 import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
+import { useICONEventListener } from './_xcall/_icon/eventHandlers';
+import { useArchwayEventListener } from './_xcall/archway/eventHandler';
 import TransferAssetsModal from './components/BTP/index';
 import { ClaimGoodwill } from './containers/Claim/Goodwill';
 import { Claim } from './containers/Claim/LegacyFees';
@@ -26,6 +28,8 @@ function Updaters() {
 
 export function App() {
   const { i18n } = useTranslation();
+  useArchwayEventListener();
+  useICONEventListener();
 
   return (
     <>

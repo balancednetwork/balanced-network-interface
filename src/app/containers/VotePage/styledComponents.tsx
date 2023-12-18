@@ -3,9 +3,9 @@ import React from 'react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
+import { notificationCSS } from 'app/components/ICONWallet/wallets/utils';
 import { FlexPanel } from 'app/components/Panel';
 import { HeaderText } from 'app/components/trade/LiquidityDetails';
-import { notificationCSS } from 'app/components/Wallet/wallets/utils';
 import { Typography } from 'app/theme';
 import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 

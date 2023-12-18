@@ -22,6 +22,7 @@ interface CurrencySearchModalProps {
   disableNonToken?: boolean;
   width?: number;
   anchorEl?: any;
+  showCommunityListControl: boolean;
 }
 
 export enum CurrencyModalView {
@@ -44,6 +45,7 @@ export default function CurrencySearchModal({
   disableNonToken = false,
   width,
   anchorEl,
+  showCommunityListControl,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
   const lastOpen = useLast(isOpen);
@@ -112,6 +114,7 @@ export default function CurrencySearchModal({
           setRemoveToken={setRemoveToken}
           showManageView={showManageView}
           width={width}
+          showCommunityListControl={showCommunityListControl}
         />
       </PopperWithoutArrow>
 

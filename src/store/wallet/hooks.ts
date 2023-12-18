@@ -8,8 +8,15 @@ import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 import { forEach } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
+import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { ARCHWAY_SUPPORTED_TOKENS_LIST, useARCH } from 'app/_xcall/archway/tokens';
+import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
+import { SupportedXCallChains } from 'app/_xcall/types';
+import { getCrossChainTokenAddress } from 'app/_xcall/utils';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
@@ -28,10 +35,18 @@ import { useUserAddedTokens } from 'store/user/hooks';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-import { changeBalances } from './actions';
+import { changeArchwayBalances, changeICONBalances } from './actions';
 
-export function useWalletBalances(): AppState['wallet'] {
+export function useCrossChainWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);
+}
+
+export function useICONWalletBalances(): AppState['wallet']['icon'] {
+  return useSelector((state: AppState) => state.wallet.icon);
+}
+
+export function useArchwayWalletBalances(): AppState['wallet']['archway'] {
+  return useSelector((state: AppState) => state.wallet.archway);
 }
 
 export function useAvailableBalances(
@@ -55,7 +70,52 @@ export function useAvailableBalances(
   }, [balances]);
 }
 
-export function useWalletFetchBalances(account?: string | null) {
+export function useArchwayBalances(
+  address: string | undefined,
+  tokens: Token[],
+): UseQueryResult<{
+  [key: string]: CurrencyAmount<Currency>;
+}> {
+  const { signingClient } = useArchwayContext();
+  const arch = useARCH();
+
+  return useQuery(
+    `archwayBalances-${!!signingClient}-${address}-${tokens ? tokens.length : ''}`,
+    async () => {
+      if (signingClient && address) {
+        const balances = await Promise.all(
+          tokens.map(async token => {
+            const balance = await signingClient.queryContractSmart(token.address, { balance: { address } });
+            return CurrencyAmount.fromRawAmount(token, balance.balance);
+          }),
+        );
+
+        //native token balance
+        const nativeTokenBalance = await signingClient.getBalance(address, ARCHWAY_FEE_TOKEN_SYMBOL);
+        if (nativeTokenBalance) {
+          const balance = CurrencyAmount.fromRawAmount(arch, nativeTokenBalance.amount);
+          balances.push(balance);
+        }
+
+        return balances.reduce((acc, balance) => {
+          if (!balance) return acc;
+          if (!JSBI.greaterThan(balance.quotient, BIGINT_ZERO)) {
+            return acc;
+          }
+          acc[balance.currency.wrapped.address] = balance;
+          return acc;
+        }, {});
+      }
+    },
+    {
+      keepPreviousData: true,
+      enabled: !!signingClient && !!address,
+      refetchInterval: 10000,
+    },
+  );
+}
+
+export function useWalletFetchBalances(account?: string | null, accountArch?: string | null) {
   const dispatch = useDispatch();
   const tokenListConfig = useTokenListConfig();
   const userAddedTokens = useUserAddedTokens();
@@ -65,12 +125,18 @@ export function useWalletFetchBalances(account?: string | null) {
       ? [...COMBINED_TOKENS_LIST, ...userAddedTokens]
       : [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
   }, [userAddedTokens, tokenListConfig]);
+  const tokensArch = [...ARCHWAY_SUPPORTED_TOKENS_LIST];
 
   const balances = useAvailableBalances(account || undefined, tokens);
+  const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
 
   React.useEffect(() => {
-    dispatch(changeBalances(balances));
+    dispatch(changeICONBalances(balances));
   }, [balances, dispatch]);
+
+  React.useEffect(() => {
+    balancesArch && dispatch(changeArchwayBalances(balancesArch));
+  }, [balancesArch, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {
@@ -101,7 +167,7 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
 };
 
 export const useHasEnoughICX = () => {
-  const balances = useWalletBalances();
+  const balances = useICONWalletBalances();
   const icxAddress = bnJs.ICX.address;
   return balances[icxAddress] && balances[icxAddress].greaterThan(MINIMUM_ICX_FOR_TX);
 };
@@ -138,7 +204,7 @@ export function useTokenBalances(
           };
         });
 
-        const data: any[] = await bnJs.Multicall.getAggregateData(cds);
+        const data: any[] = await bnJs.Multicall.getAggregateData(cds.filter(cd => cd.target.startsWith('cx')));
         const result = data.map(bal => (bal === null ? undefined : bal));
 
         setBalances(result);
@@ -172,6 +238,64 @@ export function useAllTokenBalances(
   const balances = useTokenBalances(account ?? undefined, allTokensArray);
   return balances ?? {};
 }
+
+export function useCrossChainCurrencyBalances(
+  currencies: (Currency | undefined)[],
+):
+  | (
+      | { [key in SupportedXCallChains]: CurrencyAmount<Currency> | undefined }
+      | { icon: CurrencyAmount<Currency> | undefined }
+    )[]
+  | undefined {
+  const crossChainBalances = useCrossChainWalletBalances();
+  const containsICX: boolean = useMemo(() => currencies?.some(currency => isNativeCurrency(currency)) ?? false, [
+    currencies,
+  ]);
+  const { account } = useIconReact();
+  const accounts = useMemo(() => (containsICX ? [account || undefined] : []), [containsICX, account]);
+  const icxBalance = useICXBalances(accounts);
+
+  return React.useMemo(() => {
+    if (crossChainBalances) {
+      return currencies.map(currency => {
+        if (account && isNativeCurrency(currency)) return { icon: icxBalance[account] };
+        return SUPPORTED_XCALL_CHAINS.reduce((balances, chain) => {
+          if (crossChainBalances[chain] && currency) {
+            const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);
+            const balance: CurrencyAmount<Currency> | undefined = tokenAddress
+              ? crossChainBalances[chain][tokenAddress]
+              : undefined;
+            balances[chain] = balance;
+            return balances;
+          }
+          balances[chain] = undefined;
+          return balances;
+        }, {} as { [key in SupportedXCallChains]: CurrencyAmount<Currency> | undefined });
+      });
+    }
+  }, [crossChainBalances, account, currencies, icxBalance]);
+}
+
+export const useCurrencyBalanceCrossChains = (currency: Currency): BigNumber => {
+  const crossChainBalances = useCrossChainWalletBalances();
+
+  return React.useMemo(() => {
+    if (crossChainBalances) {
+      return SUPPORTED_XCALL_CHAINS.reduce((balances, chain) => {
+        if (crossChainBalances[chain]) {
+          const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);
+          if (tokenAddress) {
+            const balance = new BigNumber(crossChainBalances[chain][tokenAddress]?.toFixed() || 0);
+            balances = balances.plus(balance);
+          }
+        }
+        return balances;
+      }, new BigNumber(0));
+    } else {
+      return new BigNumber(0);
+    }
+  }, [crossChainBalances, currency]);
+};
 
 export function useCurrencyBalances(
   account: string | undefined,
@@ -262,4 +386,16 @@ export function useLiquidityTokenBalance(account: string | undefined | null, pai
   const query = useBnJsContractQuery<string>('Dex', 'balanceOf', [account, pair?.poolId]);
   const { data } = query;
   return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
+}
+
+export function useSignedInWallets(): { chain: SupportedXCallChains; address: string }[] {
+  const { account } = useIconReact();
+  const { address } = useArchwayContext();
+
+  return useMemo(() => {
+    const wallets: { chain: SupportedXCallChains; address: string }[] = [];
+    if (account) wallets.push({ chain: 'icon', address: account });
+    if (address) wallets.push({ chain: 'archway', address });
+    return wallets;
+  }, [account, address]);
 }

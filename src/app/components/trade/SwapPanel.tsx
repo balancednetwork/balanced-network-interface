@@ -11,12 +11,18 @@ import { ChevronRight } from 'react-feather';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
+import { useARCH } from 'app/_xcall/archway/tokens';
+import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
+import { CurrentXCallState, SupportedXCallChains } from 'app/_xcall/types';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
 import Popover, { DropdownPopper } from 'app/components/Popover';
-import QuestionHelper from 'app/components/QuestionHelper';
+import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import SlippageSetting from 'app/components/SlippageSetting';
 import { Typography } from 'app/theme';
 import { ReactComponent as FlipIcon } from 'assets/icons/flip.svg';
@@ -33,23 +39,39 @@ import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFun
 import { Field } from 'store/swap/actions';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
+import { useHasEnoughICX, useSignedInWallets } from 'store/wallet/hooks';
+import { useCurrentXCallState, useSetNotPristine, useSetXCallState } from 'store/xCall/hooks';
 import { formatBigNumber, formatPercent, maxAmountSpend, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import Divider from '../Divider';
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 import StabilityFund from '../StabilityFund';
+import { IBCDescription } from '../XCallDescription';
+import CrossChainOptions from './CrossChainOptions';
 import { BrightPanel, swapMessage } from './utils';
+import XCallSwapModal from './XCallSwapModal';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
 export default function SwapPanel() {
   useInitialSwapLoad();
   const { account } = useIconReact();
+  const { address: accountArch } = useArchwayContext();
+  const [crossChainOrigin, setCrossChainOrigin] = React.useState<SupportedXCallChains>('icon');
+  const [crossChainDestination, setCrossChainDestination] = React.useState<SupportedXCallChains>('icon');
+  const [originSelectorOpen, setOriginSelectorOpen] = React.useState(false);
+  const [destinationSelectorOpen, setDestinationSelectorOpen] = React.useState(false);
+  const setCurrentXCallState = useSetXCallState();
+  const currentXCallState = useCurrentXCallState();
+  const setNotPristine = useSetNotPristine();
   const { independentField, typedValue } = useSwapState();
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-  const { trade, currencyBalances, currencies, parsedAmount, inputError, percents } = useDerivedSwapInfo();
+  const { trade, currencyBalances, currencies, parsedAmount, inputError, percents } = useDerivedSwapInfo(
+    crossChainOrigin,
+    crossChainDestination,
+  );
   const memoizedInputAmount = useCAMemo(trade?.inputAmount);
   const memoizedOutputAmount = useCAMemo(trade?.outputAmount);
   const isSwapEligibleForStabilityFund = useIsSwapEligible(
@@ -57,8 +79,49 @@ export default function SwapPanel() {
     currencies.OUTPUT?.wrapped.address,
   );
   const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
-  const showFundOption = isSwapEligibleForStabilityFund && fundMaxSwap?.greaterThan(0);
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
+  const [destinationAddress, setDestinationAddress] = React.useState<string | undefined>();
+  const { data: xCallArchwayFee } = useArchwayXcallFee();
+  const showFundOption =
+    isSwapEligibleForStabilityFund &&
+    fundMaxSwap?.greaterThan(0) &&
+    crossChainOrigin === 'icon' &&
+    crossChainDestination === 'icon';
+
+  const ARCH = useARCH();
+  const signedInWallets = useSignedInWallets();
+  const isChainDifference = crossChainOrigin !== crossChainDestination;
+  const isOutputCrosschainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
+    currencies?.OUTPUT?.wrapped.address || '',
+  );
+  const isInputCrosschainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
+    currencies?.INPUT?.wrapped.address || '',
+  );
+  const [crossChainSwapModalOpen, setCrossChainSwapModalOpen] = React.useState(false);
+  const closeCrossChainSwapModal = React.useCallback(() => {
+    setCrossChainSwapModalOpen(false);
+    setCurrentXCallState(CurrentXCallState.IDLE);
+    setNotPristine();
+  }, [setCurrentXCallState, setNotPristine]);
+
+  React.useEffect(() => {
+    if (isChainDifference) {
+      const wallet = signedInWallets.find(wallet => wallet.chain === crossChainDestination);
+      if (wallet) {
+        setDestinationAddress(wallet.address);
+      } else {
+        setDestinationAddress(undefined);
+      }
+    } else {
+      setDestinationAddress(undefined);
+    }
+  }, [signedInWallets, crossChainDestination, isChainDifference]);
+
+  React.useEffect(() => {
+    if (currentXCallState === CurrentXCallState.IDLE) {
+      closeCrossChainSwapModal();
+    }
+  }, [currentXCallState, closeCrossChainSwapModal]);
 
   const parsedAmounts = React.useMemo(
     () => ({
@@ -76,6 +139,37 @@ export default function SwapPanel() {
   }, [dependentField, independentField, parsedAmounts, typedValue]);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection } = useSwapActionHandlers();
+
+  const onSwitchTokensWithChainControl = useCallback(() => {
+    const prevInputChain = crossChainOrigin;
+    const prevOutputChain = crossChainDestination;
+    onSwitchTokens();
+    setCrossChainOrigin(prevOutputChain);
+    setCrossChainDestination(prevInputChain);
+  }, [crossChainDestination, crossChainOrigin, onSwitchTokens]);
+
+  const onCurrencySelectionWithChainControl = useCallback(
+    (field: Field, currency: Currency) => {
+      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(currency.wrapped.address || '');
+      onCurrencySelection(field, currency);
+
+      if (field === Field.INPUT) {
+        if (isCrossChainCompatible && DEFAULT_TOKEN_CHAIN[currency.symbol as string]) {
+          setCrossChainOrigin(DEFAULT_TOKEN_CHAIN[currency.symbol as string]);
+        } else {
+          setCrossChainOrigin('icon');
+        }
+      }
+      if (field === Field.OUTPUT) {
+        if (isCrossChainCompatible && DEFAULT_TOKEN_CHAIN[currency.symbol as string]) {
+          setCrossChainDestination(DEFAULT_TOKEN_CHAIN[currency.symbol as string]);
+        } else {
+          setCrossChainDestination('icon');
+        }
+      }
+    },
+    [onCurrencySelection],
+  );
 
   const handleTypeInput = useCallback(
     (value: string) => {
@@ -101,24 +195,36 @@ export default function SwapPanel() {
     (inputCurrency: Currency) => {
       const outputCurrencySymbol = currencies[Field.OUTPUT]?.symbol;
       if (outputCurrencySymbol !== undefined && inputCurrency.symbol === outputCurrencySymbol) {
-        onSwitchTokens();
+        onSwitchTokensWithChainControl();
         return;
       }
-      onCurrencySelection(Field.INPUT, inputCurrency);
+      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
+        inputCurrency.wrapped.address || '',
+      );
+      onCurrencySelectionWithChainControl(Field.INPUT, inputCurrency);
+      if (isCrossChainCompatible) {
+        setOriginSelectorOpen(true);
+      }
     },
-    [currencies, onSwitchTokens, onCurrencySelection],
+    [currencies, onCurrencySelectionWithChainControl, onSwitchTokensWithChainControl],
   );
 
   const handleOutputSelect = useCallback(
     (outputCurrency: Currency) => {
       const inputCurrencySymbol = currencies[Field.INPUT]?.symbol;
       if (inputCurrencySymbol !== undefined && outputCurrency.symbol === inputCurrencySymbol) {
-        onSwitchTokens();
+        onSwitchTokensWithChainControl();
         return;
       }
-      onCurrencySelection(Field.OUTPUT, outputCurrency);
+      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
+        outputCurrency.wrapped.address || '',
+      );
+      onCurrencySelectionWithChainControl(Field.OUTPUT, outputCurrency);
+      if (isCrossChainCompatible) {
+        setDestinationSelectorOpen(true);
+      }
     },
-    [currencies, onSwitchTokens, onCurrencySelection],
+    [currencies, onCurrencySelectionWithChainControl, onSwitchTokensWithChainControl],
   );
 
   const handleInputPercentSelect = useCallback(
@@ -151,13 +257,27 @@ export default function SwapPanel() {
 
   const [executionTrade, setExecutionTrade] = React.useState<Trade<Currency, Currency, TradeType>>();
   const handleSwap = useCallback(() => {
-    if (!account) {
-      toggleWalletModal();
-    } else {
-      setShowSwapConfirm(true);
+    if (crossChainOrigin !== 'icon' || crossChainDestination !== 'icon') {
+      if ((crossChainOrigin === 'archway' || crossChainDestination === 'archway') && !accountArch) {
+        toggleWalletModal();
+        return;
+      }
+      if ((crossChainOrigin === 'icon' || crossChainDestination === 'icon') && !account) {
+        toggleWalletModal();
+        return;
+      }
       setExecutionTrade(trade);
+      setCrossChainSwapModalOpen(true);
+      setCurrentXCallState(CurrentXCallState.AWAKE);
+    } else {
+      if (!account) {
+        toggleWalletModal();
+      } else {
+        setShowSwapConfirm(true);
+        setExecutionTrade(trade);
+      }
     }
-  }, [account, toggleWalletModal, trade]);
+  }, [account, accountArch, crossChainDestination, crossChainOrigin, setCurrentXCallState, toggleWalletModal, trade]);
 
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
@@ -257,7 +377,7 @@ export default function SwapPanel() {
     </Button>
   ) : (
     <Button disabled={!!account} color="primary" onClick={handleSwap}>
-      {account ? inputError : t`Swap`}
+      {account ? inputError || t`Swap` : t`Swap`}
     </Button>
   );
 
@@ -269,9 +389,14 @@ export default function SwapPanel() {
             <Typography variant="h2">
               <Trans>Swap</Trans>
             </Typography>
-            <Typography as="div" hidden={!account}>
+            <Typography
+              as="div"
+              hidden={(crossChainOrigin === 'icon' && !account) || (crossChainOrigin === 'archway' && !accountArch)}
+            >
               <Trans>Wallet:</Trans>{' '}
-              {`${currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' })} 
+              {`${
+                currencyBalances[Field.INPUT] ? currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' }) : 0
+              } 
                 ${currencies[Field.INPUT]?.symbol}`}
             </Typography>
           </Flex>
@@ -283,14 +408,25 @@ export default function SwapPanel() {
               currency={currencies[Field.INPUT]}
               onUserInput={handleTypeInput}
               onCurrencySelect={handleInputSelect}
-              onPercentSelect={!!account ? handleInputPercentSelect : undefined}
+              onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
               percent={percents[Field.INPUT]}
               selectedCurrency={currencies[Field.OUTPUT]}
+              isCrossChainToken={isInputCrosschainCompatible}
             />
           </Flex>
 
+          {isInputCrosschainCompatible && (
+            <CrossChainOptions
+              currency={currencies[Field.INPUT]}
+              chain={crossChainOrigin}
+              setChain={setCrossChainOrigin}
+              isOpen={originSelectorOpen}
+              setOpen={setOriginSelectorOpen}
+            />
+          )}
+
           <Flex alignItems="center" justifyContent="center" my={-1}>
-            <FlipButton onClick={onSwitchTokens}>
+            <FlipButton onClick={onSwitchTokensWithChainControl}>
               <FlipIcon width={25} height={17} />
             </FlipButton>
           </Flex>
@@ -299,9 +435,16 @@ export default function SwapPanel() {
             <Typography variant="h2">
               <Trans>For</Trans>
             </Typography>
-            <Typography as="div" hidden={!account}>
+            <Typography
+              as="div"
+              hidden={
+                (crossChainDestination === 'icon' && !account) || (crossChainDestination === 'archway' && !accountArch)
+              }
+            >
               <Trans>Wallet:</Trans>{' '}
-              {`${currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })}
+              {`${
+                currencyBalances[Field.OUTPUT] ? currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' }) : 0
+              } 
                 ${currencies[Field.OUTPUT]?.symbol}`}
             </Typography>
           </Flex>
@@ -314,8 +457,20 @@ export default function SwapPanel() {
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
               selectedCurrency={currencies[Field.INPUT]}
+              // isChainDifference={isChainDifference}
+              isCrossChainToken={isOutputCrosschainCompatible}
             />
           </Flex>
+
+          {isOutputCrosschainCompatible && (
+            <CrossChainOptions
+              currency={currencies[Field.OUTPUT]}
+              chain={crossChainDestination}
+              setChain={setCrossChainDestination}
+              isOpen={destinationSelectorOpen}
+              setOpen={setDestinationSelectorOpen}
+            />
+          )}
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
@@ -390,6 +545,45 @@ export default function SwapPanel() {
                       </Typography>
                       <SlippageSetting rawSlippage={slippageTolerance} setRawSlippage={setSlippageTolerance} />
                     </Flex>
+
+                    {(crossChainOrigin !== 'icon' || crossChainDestination !== 'icon') && (
+                      <>
+                        <Divider my={2} />
+                        <Flex alignItems="center" justifyContent="space-between" mb={2}>
+                          <Typography>
+                            <Trans>Bridge</Trans>
+                          </Typography>
+
+                          <Typography textAlign="right">
+                            IBC + xCall
+                            <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
+                              <QuestionHelper width={300} text={<IBCDescription />}></QuestionHelper>
+                            </QuestionWrapper>
+                          </Typography>
+                        </Flex>
+                        <Flex alignItems="center" justifyContent="space-between" mb={2}>
+                          <Typography>
+                            <Trans>Transfer fee</Trans>
+                          </Typography>
+
+                          <Typography textAlign="right">
+                            {crossChainOrigin === 'icon'
+                              ? 'N/A'
+                              : crossChainOrigin === 'archway'
+                              ? xCallArchwayFee &&
+                                `${(Number(xCallArchwayFee.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH`
+                              : 'N/A'}
+                          </Typography>
+                        </Flex>
+                        <Flex alignItems="center" justifyContent="space-between" mb={2}>
+                          <Typography>
+                            <Trans>Transfer time</Trans>
+                          </Typography>
+
+                          <Typography textAlign="right">~ 30s</Typography>
+                        </Flex>
+                      </>
+                    )}
                   </Box>
                 </DropdownPopper>
               </div>
@@ -486,6 +680,17 @@ export default function SwapPanel() {
           </Flex>
         </ModalContent>
       </Modal>
+
+      <XCallSwapModal
+        isOpen={crossChainSwapModalOpen}
+        currencies={currencies}
+        executionTrade={executionTrade}
+        originChain={crossChainOrigin}
+        destinationChain={crossChainDestination}
+        destinationAddress={destinationAddress}
+        clearInputs={clearSwapInputOutput}
+        onClose={closeCrossChainSwapModal}
+      />
     </>
   );
 }
@@ -545,7 +750,7 @@ const FlipButton = styled(Box)`
   cursor: pointer;
 `;
 
-const AutoColumn = styled(Box)<{
+export const AutoColumn = styled(Box)<{
   gap?: 'sm' | 'md' | 'lg' | string;
   justify?: 'stretch' | 'center' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'space-between';
 }>`

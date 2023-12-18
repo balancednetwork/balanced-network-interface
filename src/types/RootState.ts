@@ -7,6 +7,7 @@
 import { ApplicationState } from 'store/application/reducer';
 import { ArbitraryCallsState } from 'store/arbitraryCalls/reducer';
 import { BBalnState } from 'store/bbaln/reducer';
+import { BridgeState } from 'store/bridge/reducer';
 import { CollateralState } from 'store/collateral/reducer';
 import { FeesState } from 'store/fees/reducer';
 import { TokenListState } from 'store/lists/reducer';
@@ -20,8 +21,10 @@ import { StabilityFundState } from 'store/stabilityFund/reducer';
 import { StakedLPState } from 'store/stakedLP/reducer';
 import { SwapState } from 'store/swap/reducer';
 import { TransactionState } from 'store/transactions/reducer';
+import { TransactionsCrosschainState } from 'store/transactionsCrosschain/reducer';
 import { UserState } from 'store/user/reducer';
 import { WalletState } from 'store/wallet/reducer';
+import { XCallState } from 'store/xCall/reducer';
 
 // #redux-step-3: define interface for RootState (the root tree view on Redux Devtool chrome extension)
 export interface RootState {
@@ -44,4 +47,7 @@ export interface RootState {
   lists: TokenListState;
   liveVoting: LiveVotingState;
   arbitraryCalls: ArbitraryCallsState;
+  xCall: XCallState;
+  transactionsCrosschain: TransactionsCrosschainState;
+  bridge: BridgeState;
 }

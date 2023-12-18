@@ -21,7 +21,7 @@ import { BIGINT_ZERO } from 'constants/misc';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX, useWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useICONWalletBalances } from 'store/wallet/hooks';
 import { maxAmountSpend, toCurrencyAmount, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -46,7 +46,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const { account } = useIconReact();
 
-  const wallet = useWalletBalances();
+  const wallet = useICONWalletBalances();
 
   const walletAmount = wallet[currency.wrapped.address];
 

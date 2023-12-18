@@ -61,7 +61,7 @@ const StyledTab = styled.li<{ selected: boolean }>`
   outline: none;
 
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 15px 35px;
+    padding: 15px 25px;
   `};
 
   &:not([aria-selected='true']):hover {

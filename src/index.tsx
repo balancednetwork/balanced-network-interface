@@ -17,6 +17,7 @@ import 'sanitize.css/sanitize.css';
 
 // Import root app
 import { App } from 'app';
+import { ArchwayProvider } from 'app/_xcall/archway/ArchwayProvider';
 import store from 'store';
 
 // Initialize languages
@@ -46,11 +47,13 @@ ReactDOM.render(
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>
           <IconReactProvider>
-            <LanguageProvider>
-              <React.StrictMode>
-                <App />
-              </React.StrictMode>
-            </LanguageProvider>
+            <ArchwayProvider>
+              <LanguageProvider>
+                <React.StrictMode>
+                  <App />
+                </React.StrictMode>
+              </LanguageProvider>
+            </ArchwayProvider>
           </IconReactProvider>
         </QueryClientProvider>
       </HelmetProvider>

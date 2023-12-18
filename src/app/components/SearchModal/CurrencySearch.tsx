@@ -7,12 +7,14 @@ import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'app/_xcall/archway/tokens';
 import { Typography } from 'app/theme';
 import { FUNDING_TOKENS_LIST, useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
 import useDebounce from 'hooks/useDebounce';
 import { useOnClickOutside } from 'hooks/useOnClickOutside';
 import useToggle from 'hooks/useToggle';
+import { useBridgeDirection } from 'store/bridge/hooks';
 import { isAddress } from 'utils';
 
 import Column from '../Column';
@@ -28,6 +30,7 @@ export enum CurrencySelectionType {
   TRADE_MINT_BASE,
   TRADE_MINT_QUOTE,
   VOTE_FUNDING,
+  BRIDGE,
 }
 
 const removebnUSD = (tokens: { [address: string]: Token }) => {
@@ -56,6 +59,7 @@ interface CurrencySearchProps {
   setRemoveToken: (token: Token) => void;
   width?: number;
   balanceList?: { [key: string]: BigNumber };
+  showCommunityListControl?: boolean;
 }
 
 export function CurrencySearch({
@@ -75,6 +79,7 @@ export function CurrencySearch({
   setRemoveToken,
   width,
   balanceList,
+  showCommunityListControl,
 }: CurrencySearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const debouncedQuery = useDebounce(searchQuery, 200);
@@ -83,6 +88,9 @@ export function CurrencySearch({
 
   const tokens = useAllTokens();
   const bases = useCommonBases();
+  const bridgeDirection = useBridgeDirection();
+
+  const bridgeDirectionString = `${bridgeDirection.from}-${bridgeDirection.to}`;
 
   const allTokens = useMemo(() => {
     switch (currencySelectionType) {
@@ -94,8 +102,35 @@ export function CurrencySearch({
         return bases;
       case CurrencySelectionType.VOTE_FUNDING:
         return FUNDING_TOKENS_LIST;
+      case CurrencySelectionType.BRIDGE: {
+        //TODO: handle for multiple chain selections in the future
+        if (bridgeDirectionString === 'archway-icon') {
+          return ARCHWAY_SUPPORTED_TOKENS_LIST.reduce((tokens, token) => {
+            tokens[token.address] = token;
+            return tokens;
+          }, {} as { [address: string]: Token });
+        } else if (bridgeDirectionString === 'icon-archway') {
+          const archSymbols = ARCHWAY_SUPPORTED_TOKENS_LIST.map(token => token.symbol);
+          return Object.keys(tokens).reduce((tokenUnion, token) => {
+            if (archSymbols.includes(tokens[token].symbol)) {
+              tokenUnion[token] = tokens[token];
+            }
+            return tokenUnion;
+          }, {} as { [address: string]: Token });
+        } else {
+          return tokens;
+        }
+      }
     }
-  }, [tokens, bases, currencySelectionType]);
+  }, [currencySelectionType, tokens, bases, bridgeDirectionString]);
+
+  //select first currency from list if there is none selected for bridging
+  useEffect(() => {
+    if (!selectedCurrency && currencySelectionType === CurrencySelectionType.BRIDGE) {
+      const firstCurrency = Object.values(allTokens)[0];
+      onCurrencySelect(firstCurrency);
+    }
+  }, [selectedCurrency, allTokens, onCurrencySelect, currencySelectionType]);
 
   // if they input an address, use it
 
@@ -175,9 +210,6 @@ export function CurrencySearch({
 
   return (
     <Wrapper width={width}>
-      <Flex justifyContent="center" paddingBottom="10px">
-        <CommunityListToggle></CommunityListToggle>
-      </Flex>
       <Flex>
         <SearchInput
           type="text"
@@ -189,6 +221,12 @@ export function CurrencySearch({
           onChange={handleInput}
         />
       </Flex>
+
+      {showCommunityListControl && (
+        <Flex justifyContent="center" paddingTop="10px">
+          <CommunityListToggle></CommunityListToggle>
+        </Flex>
+      )}
 
       {searchToken && !searchTokenIsAdded ? (
         <Column style={{ padding: '20px 0', height: '100%' }}>

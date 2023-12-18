@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from 'store';
 
 import { changeConfig } from './actions';
+import ARCHWAY_DEFAULT_TOKEN_LIST from './archwayTokenlist.json';
 import COMMUNITY_TOKEN_LIST from './communitylist.json';
 import DEFAULT_TOKEN_LIST from './tokenlist.json';
 import { WrappedTokenInfo } from './wrappedTokenInfo';
@@ -24,6 +25,17 @@ export type TokenAddressMap = Readonly<{
     [tokenAddress: string]: { token: WrappedTokenInfo; list: TokenList };
   }>;
 }>;
+
+export const ArchToICONNetworkMap: { [key: string]: number } = {
+  'archway-1': 1,
+  'constantine-3': 7,
+};
+
+export const ICONToArchNetworkMap: { [key: number]: string } = {
+  1: 'archway-1',
+  2: 'constantine-3',
+  7: 'constantine-3',
+};
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
   typeof WeakMap !== 'undefined' ? new WeakMap<TokenList, TokenAddressMap>() : null;
@@ -52,8 +64,11 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
   listCache?.set(list, map);
   return map;
 }
+
 export const TRANSFORMED_DEFAULT_TOKEN_LIST = listToTokenMap(DEFAULT_TOKEN_LIST);
 export const TRANSFORMED_COMBINED_TOKEN_LIST = listToTokenMap(COMMUNITY_TOKEN_LIST);
+
+export const ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST = listToTokenMap(ARCHWAY_DEFAULT_TOKEN_LIST);
 
 Object.keys(TRANSFORMED_DEFAULT_TOKEN_LIST).forEach(chain => {
   if (!TRANSFORMED_COMBINED_TOKEN_LIST[chain]) TRANSFORMED_COMBINED_TOKEN_LIST[chain] = {};

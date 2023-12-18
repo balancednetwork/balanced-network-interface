@@ -1,6 +1,8 @@
 import React from 'react';
 
+import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,8 +21,9 @@ import {
   CurrentXCallStateType,
 } from 'app/_xcall/types';
 import { getArchwayCounterToken } from 'app/_xcall/utils';
+import { NETWORK_ID } from 'constants/config';
 import { AppState } from 'store';
-// import { ONE_DAY_DURATION } from 'utils';
+import { ONE_DAY_DURATION } from 'utils';
 
 import {
   addXCallDestinationEvent,
@@ -263,23 +266,65 @@ export function useFlagRollBackReady(): (chain: SupportedXCallChains, sn: number
   );
 }
 
-export function useXCallStats(): UseQueryResult<{ transfers: number; swaps: number }> {
-  // const IBC_CX = 'cx622bbab73698f37dbef53955fd3decffeb0b0c16';
+export type xCallActivityDataType = {
+  hour: string;
+  count: number;
+};
+
+export function useXCallStats(): UseQueryResult<{ transactionCount: number; data: xCallActivityDataType[] }> {
+  const IBC_HANDLER_CX = 'cx622bbab73698f37dbef53955fd3decffeb0b0c16';
+  const yesterdayTimestamp = (new Date().getTime() - ONE_DAY_DURATION) * 1000;
+
+  async function getTxs(skip: number) {
+    const response = await axios.get(
+      `${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/transactions/address/${IBC_HANDLER_CX}?addr=${IBC_HANDLER_CX}&limit=100&skip=${skip}`,
+    );
+    return response.data;
+  }
+
+  function countTransactionsByHour(transactions: { block_timestamp: number }[]): xCallActivityDataType[] {
+    const transactionCountByHour: { count: number; hour: string }[] = [];
+
+    const yesterdayDate = new Date(yesterdayTimestamp / 1000);
+    const currentHour = yesterdayDate.getHours();
+
+    for (let i = 0; i < 24; i++) {
+      const hour = (currentHour + i + 1) % 24;
+      transactionCountByHour.push({
+        count: 1,
+        hour: hour.toString().padStart(2, '0'),
+      });
+    }
+
+    return transactions.reduce((acc, transaction) => {
+      const date = new Date(Math.floor(transaction.block_timestamp / 1000));
+      const hour = date.getHours().toString().padStart(2, '0');
+
+      const currentHour = acc.find(item => item.hour === hour);
+      currentHour && (currentHour.count = currentHour.count + 1);
+      return acc;
+    }, transactionCountByHour);
+  }
 
   return useQuery(
     'xCallStats',
-    () => {
-      // const yesterdayTimestamp = (new Date().getTime() - ONE_DAY_DURATION) * 1000;
-      // let page = 0
-      //https://tracker.icon.community/api/v1/transactions/address/cx622bbab73698f37dbef53955fd3decffeb0b0c16?addr=cx622bbab73698f37dbef53955fd3decffeb0b0c16&limit=25&skip=0
+    async () => {
+      const txBatches = await Promise.all([getTxs(0), getTxs(100), getTxs(200), getTxs(300), getTxs(400)]);
+      const txs = txBatches.flat();
+      const oldTxIndex = txs.findIndex(tx => tx.block_timestamp < yesterdayTimestamp + 3600000000);
+      const relevantTxs = txs.slice(0, oldTxIndex);
+      const xCallTransactions = relevantTxs.filter(
+        tx => tx.method === 'recvPacket' || tx.method === 'acknowledgePacket',
+      );
+
       return {
-        transfers: 187,
-        swaps: 65,
+        transactionCount: xCallTransactions.length,
+        data: countTransactionsByHour(xCallTransactions),
       };
     },
     {
       keepPreviousData: true,
-      refetchInterval: 5000,
+      refetchInterval: 3000,
     },
   );
 }

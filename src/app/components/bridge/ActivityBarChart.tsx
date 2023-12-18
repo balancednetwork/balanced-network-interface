@@ -53,7 +53,7 @@ const CustomTooltip = ({ active, payload, label }) => {
     return (
       <TooltipWrapper>
         <span>
-          <strong>{count - 1}</strong> transaction{count === 1 ? '' : 's'}
+          <strong>{count - 1}</strong> transaction{count === 2 ? '' : 's'}
         </span>
         <label>{getLabel(hour)}</label>
       </TooltipWrapper>

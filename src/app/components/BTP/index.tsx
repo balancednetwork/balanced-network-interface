@@ -32,6 +32,7 @@ import { Typography } from 'app/theme';
 import { ReactComponent as ArrowIcon } from 'assets/icons/arrow.svg';
 import { useModalOpen, useTransferAssetsModalToggle } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
+import { TransactionStatus } from 'store/transactions/hooks';
 import { EVENTS, on, off } from 'utils/customEvent';
 
 import { ExternalLink } from '../SearchModal/components';
@@ -95,8 +96,21 @@ const FeeAmount = styled(Typography)`
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
-  color: rgb(47, 204, 220);
+  color: #2fccdc;
+  text-decoration: none !important;
+  &:hover {
+    text-decoration: underline !important;
+  }
 `;
+const StyledTextButton = styled(TextButton)`
+  color: #2fccdc;
+  padding: 0 !important;
+  &:hover {
+    text-decoration: underline !important;
+    color: #2fccdc !important;
+  }
+`;
+
 addICONexListener();
 
 const BTPContent = () => {
@@ -108,6 +122,7 @@ const BTPContent = () => {
   const [sendingBalance, setSendingBalance] = useState('');
   const [isOpenAssetOptions, setIsOpenAssetOptions] = useState(false);
   const [walletModalOpen, setOpenWalletModal] = useState(false);
+  const [isRemovingFromContract, setIsRemovingFromContract] = useState<boolean>(false);
 
   const toggleTransferAssetsModal = useTransferAssetsModalToggle();
   const [, setSendingInfo] = useState({ token: '', network: '' });
@@ -160,6 +175,7 @@ const BTPContent = () => {
       setApprovedBalance('');
       return;
     }
+
     const result = (await getBTPService()?.getBalanceOf({
       address: accountInfo?.address,
       symbol: assetName,
@@ -274,6 +290,21 @@ const BTPContent = () => {
     setIsOpenConfirm(false);
   };
 
+  const onRemoveFromContract = async () => {
+    if (isRemovingFromContract) return;
+    setIsRemovingFromContract(true);
+    const res = await getBTPService()?.reclaim({
+      coinName: assetName,
+      value: appovedBalance || new BigNumber(balanceInputValue).plus(fee).toFixed(),
+    });
+
+    if (res?.transactionStatus === TransactionStatus.success) {
+      setApprovedBalance('');
+    }
+
+    setIsRemovingFromContract(false);
+  };
+
   const isInsufficient = new BigNumber(fee).plus(sendingBalance).isGreaterThan(balanceOfAssetName);
   const isEmpty = !sendingAddress || !accountInfo?.address;
 
@@ -290,7 +321,6 @@ const BTPContent = () => {
     history.goBack();
     toggleTransferAssetsModal();
   };
-
   return (
     <>
       <StyledModal
@@ -359,6 +389,9 @@ const BTPContent = () => {
                 tokenSymbol={assetName}
                 fee={fee}
                 hasAlreadyApproved={isApproved}
+                shouldCheckIRC2Token={shouldCheckIRC2Token}
+                onRemoveFromContract={onRemoveFromContract}
+                isRemovingFromContract={isRemovingFromContract}
               />
               <Box className="full-width">
                 <Address address={sendingAddress} onChange={setSendingAddress} />
@@ -395,16 +428,21 @@ const BTPContent = () => {
               </Button>
             </Flex>
             {isApproved && (
-              <Typography textAlign="center" paddingTop={'10px'} color="#F05365">
-                You have approved {appovedBalance} {assetName}, but have not been transferred yet.
-                <br />
-                Please transfer them before making a new transaction.
-              </Typography>
-            )}
-            {isGreaterThanMaxTransferAmount && (
-              <Typography textAlign="center" paddingTop={'10px'} color="#F05365">
-                You can transfer a maximum of {maxTransferAmount.toFixed(2)} {assetName}.
-              </Typography>
+              <>
+                <Typography textAlign="center" paddingTop={'10px'} marginBottom={'5px'} color="#fb6a6a">
+                  {appovedBalance} {assetName} is awaiting transfer.
+                </Typography>
+                {isRemovingFromContract ? (
+                  <Typography textAlign="center">{`Removing ${assetName} from the bridge contract...`}</Typography>
+                ) : (
+                  <Typography textAlign="center">
+                    <StyledTextButton onClick={onRemoveFromContract}>
+                      Remove it from the bridge contract
+                    </StyledTextButton>
+                    , or enter an address to complete the transaction.
+                  </Typography>
+                )}
+              </>
             )}
           </Flex>
         </Wrapper>

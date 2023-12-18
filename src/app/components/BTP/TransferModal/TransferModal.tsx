@@ -18,16 +18,23 @@ import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
 import { MODAL_FADE_DURATION } from 'constants/index';
 import { TransactionStatus } from 'store/transactions/hooks';
 
+const CheckIconWrapper = styled.div`
+  display: block;
+  width: 32px;
+`;
 const StyledModalContent = styled(Flex)`
   width: 100%;
   align-items: stretch;
   flex-direction: column;
   margin: 25px;
+  text-align: center;
 `;
-
-const CheckIconWrapper = styled.div`
-  display: block;
-  width: 32px;
+const StyledTextButton = styled(TextButton)`
+  color: #2fccdc;
+  padding: 0 !important;
+  &:hover {
+    text-decoration: underline !important;
+  }
 `;
 
 export const TransferAssetModal = ({
@@ -39,11 +46,15 @@ export const TransferAssetModal = ({
   tokenSymbol,
   fee,
   hasAlreadyApproved,
+  shouldCheckIRC2Token,
+  onRemoveFromContract,
+  isRemovingFromContract,
 }) => {
   const networkSrc = useFromNetwork();
   const networkDst = useToNetwork();
   const [approveStatus, setApproveStatus] = useState<TransactionStatus | ''>();
   const [transferStatus, setTransferStatus] = useState<TransactionStatus | ''>('');
+
   const isApproved = hasAlreadyApproved || approveStatus === TransactionStatus.success;
   const isApproving = approveStatus === TransactionStatus.pending;
   const isTranferring = transferStatus === TransactionStatus.pending;
@@ -115,7 +126,10 @@ export const TransferAssetModal = ({
       }, MODAL_FADE_DURATION);
     }
   };
-
+  const removeFromContract = async () => {
+    await onRemoveFromContract();
+    setApproveStatus('');
+  };
   useEffect(() => {
     if (isOpen) {
       setApproveStatus('');
@@ -138,16 +152,33 @@ export const TransferAssetModal = ({
             + {fee} {tokenSymbol} transfer fee
           </Trans>
         </Typography>
+
         {!isSendingNativeCoin && !hasAlreadyApproved && (
           <Flex justifyContent="center" mt={2}>
             {!isApproved ? (
               <Button fontSize={14} onClick={approveNonNativeToken} disabled={isApproving}>
-                <Trans>{isApproving ? 'Approving asset' : 'Approve asset'}</Trans>
+                {shouldCheckIRC2Token ? (
+                  <Trans>{isApproving ? 'Sending to contract' : 'Send to contract'}</Trans>
+                ) : (
+                  <Trans>{isApproving ? 'Approving asset' : 'Approve asset'}</Trans>
+                )}
               </Button>
-            ) : (
+            ) : networkSrc.value === 'BSC' ? (
               <CheckIconWrapper>
                 <CheckIcon />
               </CheckIconWrapper>
+            ) : (
+              <Typography textAlign="center">
+                {isRemovingFromContract ? (
+                  <StyledTextButton padding="0 !important" color="#2fccdc !important">
+                    Removing from contract
+                  </StyledTextButton>
+                ) : (
+                  <StyledTextButton onClick={removeFromContract} padding="0 !important" color="#2fccdc !important">
+                    Remove from contract
+                  </StyledTextButton>
+                )}
+              </Typography>
             )}
           </Flex>
         )}
@@ -172,11 +203,9 @@ export const TransferAssetModal = ({
           </Box>
         </Flex>
 
-        <Typography textAlign="center" width={'55%'} margin={'0 auto'}>
-          <Trans>Address</Trans>
-          <Typography variant="p" textAlign="center" color="white">
-            {sendingAddress}
-          </Typography>
+        <Trans>Address</Trans>
+        <Typography variant="p" textAlign="center" color="white" width="55%" margin="0 auto">
+          {sendingAddress}
         </Typography>
 
         <Flex justifyContent="center" mt={4} pt={4} className="border-top">

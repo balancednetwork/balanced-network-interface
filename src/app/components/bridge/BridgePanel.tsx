@@ -210,7 +210,7 @@ export default function BridgePanel() {
 
   const { increaseAllowance, allowanceIncreased, isIncreaseNeeded: allowanceIncreaseNeeded } = useAllowanceHandler(
     (bridgeDirection.from === 'archway' && currencyToBridge?.wrapped.address) || '',
-    currencyAmountToBridge?.quotient.toString() || '0',
+    `${currencyAmountToBridge ? currencyAmountToBridge.quotient : '0'}`,
   );
 
   const handleDestinationAddressInput = (value: string) => {
@@ -341,7 +341,7 @@ export default function BridgePanel() {
         const cx = bnJs.inject({ account }).getContract(tokenAddress);
         const { result: hash } = await cx.crossTransfer(
           destination,
-          currencyAmountToBridge.quotient.toString(),
+          `${currencyAmountToBridge.quotient}`,
           parseInt(iconXcallFees.rollback, 16).toString(),
         );
         if (hash) {
@@ -359,7 +359,7 @@ export default function BridgePanel() {
         const { result: hash } = await bnJs
           .inject({ account })
           .AssetManager[withdrawNative ? 'withdrawNativeTo' : 'withdrawTo'](
-            currencyAmountToBridge.quotient.toString(),
+            `${currencyAmountToBridge.quotient}`,
             tokenAddress,
             destination,
             parseInt(iconXcallFees.rollback, 16).toString(),
@@ -383,7 +383,7 @@ export default function BridgePanel() {
       if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
         const msg = {
           cross_transfer: {
-            amount: currencyAmountToBridge.quotient.toString(),
+            amount: `${currencyAmountToBridge.quotient}`,
             to: destination,
             data: [],
           },
@@ -408,7 +408,7 @@ export default function BridgePanel() {
           const msg = {
             deposit: {
               token_address: tokenAddress,
-              amount: currencyAmountToBridge.quotient.toString(),
+              amount: `${currencyAmountToBridge.quotient}`,
               to: destination,
               data: [],
             },

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Fraction } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
@@ -46,7 +47,7 @@ const useAllowanceHandler = (
   }, [allowance, amountNeeded]);
 
   const actualIncreaseNeeded = React.useMemo(() => {
-    return new BigNumber(amountNeeded).minus(new BigNumber(allowance)).toString();
+    return `${new Fraction(amountNeeded).subtract(new Fraction(allowance)).quotient}`;
   }, [allowance, amountNeeded]);
 
   const isIncreaseNeeded = React.useMemo(() => {

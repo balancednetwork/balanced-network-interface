@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CurrencyAmount, Currency, Percent } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Currency, Percent, Fraction } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
@@ -41,8 +41,8 @@ function subtract(
 ): CurrencyAmount<Currency> | undefined {
   if (!amountA) return undefined;
   if (!amountB) return amountA;
-  const diff = new BigNumber(amountA.quotient.toString()).minus(new BigNumber(amountB.quotient.toString()));
-  return CurrencyAmount.fromRawAmount(amountA.currency, diff.toString());
+  const diff = new Fraction(`${amountA.quotient}`).subtract(new Fraction(`${amountB.quotient}`));
+  return CurrencyAmount.fromRawAmount(amountA.currency, diff.quotient);
 }
 
 function WalletSection({ AChain, BChain }: { AChain?: SupportedXCallChains; BChain?: SupportedXCallChains }) {

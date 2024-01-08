@@ -25,9 +25,7 @@ export function ProposalList() {
   const bBalnAmount = useBBalnAmount();
 
   const shouldShowNotification = currentProposal => {
-    return (
-      activeProposals && activeProposals.filter(proposal => parseInt(proposal.id, 16) === currentProposal.id).length > 0
-    );
+    return activeProposals && activeProposals.filter(proposal => proposal.id === currentProposal.id).length > 0;
   };
 
   return (

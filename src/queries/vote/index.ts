@@ -112,7 +112,7 @@ export const useTotalCollectedFeesQuery = () => {
 export const useProposalCount = (): UseQueryResult<number> => {
   return useQuery('proposalCounts', async () => {
     const res = await bnJs.Governance.getTotalProposal();
-    return parseInt(res, 16);
+    return (parseInt(res, 16) || -1) + 1;
   });
 };
 
@@ -171,27 +171,27 @@ export const useTotalProposalCountQuery = () => {
   });
 };
 
-export const useActiveProposals = (offset: number = 60, batchSize: number = 200) => {
+export const useActiveProposals = () => {
   const { account } = useIconReact();
   const { data: platformDay } = usePlatformDayQuery();
   const transactions = useAllTransactions();
   const txCount = React.useMemo(() => (transactions ? Object.keys(transactions).length : 0), [transactions]);
+  const { data: proposals } = useTotalProposalQuery();
 
   return useQuery(
-    `activeProposals-${offset}-${batchSize}-${account}-${txCount}}`,
+    `activeProposals-${proposals ? proposals.length : ''}-${account}-${txCount}-${platformDay}`,
     async () => {
-      if (account) {
-        const proposals = await bnJs.Governance.getProposals(offset, batchSize);
-
+      if (account && proposals) {
         const activeProposals = await Promise.all(
           proposals.map(async proposal => {
+            console.log(proposal);
             if (
               platformDay &&
               proposal.status === 'Active' &&
-              parseInt(proposal['start day'], 16) <= platformDay &&
-              parseInt(proposal['end day'], 16) > platformDay
+              proposal.startDay <= platformDay &&
+              proposal.endDay > platformDay
             ) {
-              const res = await bnJs.Governance.getVotesOfUser(parseInt(proposal.id), account!);
+              const res = await bnJs.Governance.getVotesOfUser(proposal.id, account!);
               const approval = BalancedJs.utils.toIcx(res['for']);
               const reject = BalancedJs.utils.toIcx(res['against']);
               const hasVoted = !(approval.isZero() && reject.isZero());
@@ -207,7 +207,7 @@ export const useActiveProposals = (offset: number = 60, batchSize: number = 200)
       }
     },
     {
-      enabled: !!account && !!platformDay,
+      enabled: !!account && !!platformDay && !!proposals,
     },
   );
 };

@@ -41,9 +41,7 @@ export default function ProposalsPanel() {
   const { account } = useIconReact();
 
   const shouldShowNotification = currentProposal => {
-    return (
-      activeProposals && activeProposals.filter(proposal => parseInt(proposal.id, 16) === currentProposal.id).length > 0
-    );
+    return activeProposals && activeProposals.filter(proposal => proposal.id === currentProposal.id).length > 0;
   };
 
   return (
@@ -81,7 +79,7 @@ export default function ProposalsPanel() {
                         variant="h3"
                         fontSize={16}
                         mt={-1}
-                        notification={shouldShowNotification(proposal)}
+                        notification={!!shouldShowNotification(proposal)}
                       >
                         {normalizeContent(proposal.name, 55)}
                       </StyledTypography>

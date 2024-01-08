@@ -16,7 +16,7 @@ import { useBBalnAmount, useFetchBBalnInfo } from 'store/bbaln/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 export function ProposalList() {
-  const { data: proposals } = useTotalProposalQuery(50);
+  const { data: proposals } = useTotalProposalQuery();
   const { account } = useIconReact();
   useFetchBBalnInfo(account);
   useWalletFetchBalances(account);

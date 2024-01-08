@@ -122,7 +122,10 @@ export const useTotalProposalQuery = (offset: number = 0, batchSize: number = 25
   return useQuery<Array<ProposalInterface>>(
     [QUERY_KEYS.Vote.TotalProposals, proposalCount, offset, batchSize],
     async () => {
-      const res = await bnJs.Governance.getProposals((proposalCount as number) - (offset + batchSize), batchSize);
+      const res = await bnJs.Governance.getProposals(
+        Math.max((proposalCount as number) - (offset + batchSize), 0),
+        batchSize,
+      );
 
       const data = res
         .map(r => {

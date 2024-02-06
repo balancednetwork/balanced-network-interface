@@ -14,7 +14,6 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { ZERO } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
-import { useRewardQuery } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useFetchUnclaimedDividends, useUnclaimedFees } from 'store/fees/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
@@ -44,8 +43,6 @@ export const RewardsPanelLayout = styled(FlexPanel)`
 `;
 
 const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }) => {
-  const { account } = useIconReact();
-  const addTransaction = useTransactionAdder();
   const shouldLedgerSign = useShouldLedgerSign();
 
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -57,29 +54,29 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       changeShouldLedgerSign(true);
     }
 
-    bnJs
-      .inject({ account })
-      .Rewards.claimRewards()
-      .then(res => {
-        addTransaction(
-          { hash: res.result },
-          {
-            summary: t`Claimed ${reward?.dp(2).toFormat()} BALN.`,
-            pending: t`Claiming rewards...`,
-          },
-        );
-        toggleOpen();
-      })
-      .catch(e => {
-        console.error('error', e);
-      })
-      .finally(() => {
-        changeShouldLedgerSign(false);
-        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-      });
+    // bnJs
+    //   .inject({ account })
+    //   .Rewards.claimRewards()
+    //   .then(res => {
+    //     addTransaction(
+    //       { hash: res.result },
+    //       {
+    //         summary: t`Claimed ${reward?.dp(2).toFormat()} BALN.`,
+    //         pending: t`Claiming rewards...`,
+    //       },
+    //     );
+    //     toggleOpen();
+    //   })
+    //   .catch(e => {
+    //     console.error('error', e);
+    //   })
+    //   .finally(() => {
+    //     changeShouldLedgerSign(false);
+    //     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+    //   });
   };
 
-  const { data: reward } = useRewardQuery();
+  // const { data: reward } = useRewardQuery();
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
@@ -87,34 +84,34 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
     setOpen(!open);
   };
 
-  const getRewardsUI = () => {
-    if (reward?.isZero()) {
-      return (
-        <>
-          <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
-            <Trans>Ineligible</Trans>
-            <QuestionHelper
-              text={t`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
-            />
-          </Typography>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Typography variant="p">
-            {`${reward?.toFormat(2)} `}
-            <Typography as="span" color="text1">
-              BALN
-            </Typography>
-          </Typography>
-          <Button mt={3} mx={shouldBreakOnMobile ? 0 : 2} onClick={toggleOpen} fontSize={14}>
-            <Trans>Claim</Trans>
-          </Button>
-        </>
-      );
-    }
-  };
+  // const getRewardsUI = () => {
+  //   if (reward?.isZero()) {
+  //     return (
+  //       <>
+  //         <Typography variant="p" as="div" textAlign={'center'} padding={shouldBreakOnMobile ? '0' : '0 10px'}>
+  //           <Trans>Ineligible</Trans>
+  //           <QuestionHelper
+  //             text={t`To earn Balanced rewards, take out a loan or supply liquidity on the Trade page.`}
+  //           />
+  //         </Typography>
+  //       </>
+  //     );
+  //   } else {
+  //     return (
+  //       <>
+  //         <Typography variant="p">
+  //           {`${reward?.toFormat(2)} `}
+  //           <Typography as="span" color="text1">
+  //             BALN
+  //           </Typography>
+  //         </Typography>
+  //         <Button mt={3} mx={shouldBreakOnMobile ? 0 : 2} onClick={toggleOpen} fontSize={14}>
+  //           <Trans>Claim</Trans>
+  //         </Button>
+  //       </>
+  //     );
+  //   }
+  // };
 
   const hasEnoughICX = useHasEnoughICX();
 
@@ -122,7 +119,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
 
   const beforeAmount = BALNDetails['Total balance'] || ZERO;
 
-  const afterAmount = beforeAmount.plus(reward || ZERO);
+  // const afterAmount = beforeAmount.plus(reward || ZERO);
 
   return (
     <Flex
@@ -143,7 +140,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
       >
         <Trans>Balance Tokens</Trans>
       </Typography>
-      {reward && getRewardsUI()}
+      {/* {reward && getRewardsUI()} */}
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
@@ -152,7 +149,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {reward?.dp(2).toFormat() + ' BALN'}
+            {/* {reward?.dp(2).toFormat() + ' BALN'} */}
           </Typography>
 
           <Flex my={5}>
@@ -170,7 +167,7 @@ const RewardSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boolean }
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(2).toFormat() + ' BALN'}
+                {/* {afterAmount.dp(2).toFormat() + ' BALN'} */}
               </Typography>
             </Box>
           </Flex>
@@ -323,12 +320,12 @@ const NetworkFeeSection = ({ shouldBreakOnMobile }: { shouldBreakOnMobile: boole
   );
 };
 
-const RewardsPanel = () => {
+const RewardsPanelOld = () => {
   useFetchUnclaimedDividends();
   const locale = useActiveLocale();
   const shouldBreakOnMobile = useMedia('(max-width: 499px)') && 'en-US,ko-KR'.indexOf(locale) < 0;
   return (
-    <RewardsPanelLayout bg="bg2" className="js-rewards-panel" mb={'100px'}>
+    <RewardsPanelLayout bg="bg2" className="js-rewards-panel" mt={'100px'} mb={'100px'}>
       <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 'initial', 350]}>
         <Flex alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h2">
@@ -349,4 +346,4 @@ const RewardsPanel = () => {
   );
 };
 
-export default RewardsPanel;
+export default RewardsPanelOld;

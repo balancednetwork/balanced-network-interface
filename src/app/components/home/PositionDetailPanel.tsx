@@ -474,7 +474,7 @@ export const ActivityPanel = styled(FlexPanel)`
 
   ${({ theme }) => theme.mediaWidth.upMedium`
     padding: 0;
-    grid-area: 2 / 1 / 2 / 3;
+    grid-column: span 2;
     flex-direction: row;
   `}
 `;

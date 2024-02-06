@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 
 import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { useQuery, UseQueryResult } from 'react-query';
 
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
-import { COMBINED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { COMBINED_TOKENS_MAP_BY_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useAllTokens } from 'queries/backendv2';
 import QUERY_KEYS from 'queries/queryKeys';
 import { useBlockNumber } from 'store/application/hooks';
@@ -59,15 +59,15 @@ export const usePlatformDayQuery = () => {
   });
 };
 
-export const useRewardQuery = () => {
+export const useLPReward = (): UseQueryResult<CurrencyAmount<Token>> => {
   const { account } = useIconReact();
   const blockNumber = useBlockNumber();
 
-  return useQuery<BigNumber>(
+  return useQuery<CurrencyAmount<Token>>(
     `${QUERY_KEYS.Reward.UserReward(account ?? '')}-${blockNumber}`,
     async () => {
       const res = await bnJs.Rewards.getBalnHolding(account!);
-      return BalancedJs.utils.toIcx(res);
+      return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.BALN.address], res);
     },
     { keepPreviousData: true },
   );

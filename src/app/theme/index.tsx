@@ -116,6 +116,8 @@ export const Typography = React.forwardRef((props: TextProps & { variant?: Typog
       return <Text ref={ref} as="h2" color="text" fontSize={25} fontWeight="bold" {...rest} />;
     case 'h3':
       return <Text ref={ref} as="h3" color="text" fontSize={20} fontWeight="bold" {...rest} />;
+    case 'h4':
+      return <Text ref={ref} as="h4" color="text" fontSize={18} fontWeight="bold" {...rest} />;
     case 'p':
       return <Text ref={ref} as="p" color="text" fontSize={16} {...rest} />;
     case 'label':
@@ -398,10 +400,10 @@ export const ThemedGlobalStyle = createGlobalStyle`
 
   .noUi-target {
     background: #03334f;
-    border-radius: 4px;
+    border-radius: 5px;
   }
   .noUi-connects {
-    border-radius: 3px;
+    border-radius: 5px;
   }
   .noUi-connect {
     background: #2ca9b7;

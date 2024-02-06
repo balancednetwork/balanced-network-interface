@@ -9,6 +9,7 @@ import Nouislider from 'packages/nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
+import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
@@ -60,6 +61,11 @@ import {
   comparePeriods,
 } from './utils';
 
+const StyledThreshold = styled(Threshold)`
+  height: 20px;
+  margin-top: -10px;
+`;
+
 export default function BBalnSlider({
   title,
   titleVariant = 'h3',
@@ -67,11 +73,17 @@ export default function BBalnSlider({
   lockupNotice,
   onActiveSlider,
   onDisabledSlider,
+  sliderBg,
+  sliderMargin,
+  simple,
 }: {
   title: string;
-  lockupNotice: string;
-  titleVariant?: 'h3' | 'h2';
+  lockupNotice?: string;
+  titleVariant?: 'h4' | 'h3' | 'h2';
   showMaxRewardsNotice?: boolean;
+  sliderBg?: string;
+  sliderMargin?: string;
+  simple?: boolean;
   onActiveSlider?: () => void;
   onDisabledSlider?: () => void;
 }) {
@@ -395,7 +407,7 @@ export default function BBalnSlider({
       lockedBalnAmount?.greaterThan(0) ||
       stakedBalance?.isGreaterThan(0) ? (
         <>
-          <Flex alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}>
+          <Flex alignItems="flex-start" margin={simple && isAdjusting ? '0 0 15px' : ''}>
             <Flex
               flexDirection={isSmallScreen ? 'column' : 'row'}
               alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}
@@ -403,43 +415,53 @@ export default function BBalnSlider({
               <Typography variant={titleVariant} paddingRight={'10px'} paddingBottom={isSmallScreen ? '5px' : '0'}>
                 {title}{' '}
               </Typography>
-              <Typography padding="0 3px 2px 0">
-                <Tooltip
-                  text={maxRewardNoticeContent}
-                  width={215}
-                  show={!!showMaxRewardsNotice && !!hasLPOrLoan && isAdjusting && maxRewardThreshold.isGreaterThan(0)}
-                  placement="top-start"
-                  forcePlacement={true}
-                  strategy="absolute"
-                  offset={[-18, 20]}
-                >
-                  {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()}
-                </Tooltip>
-                {' bBALN'}
-                <QuestionHelper
-                  text={
-                    <>
-                      <Trans>Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x.</Trans>
-                      <Typography mt={2}>
-                        <Trans>
-                          The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will
-                          decrease over time.
-                        </Trans>
-                      </Typography>
-                      {showMaxRewardsNotice && !isAdjusting && hasLPOrLoan && (
+              <Typography padding="0 3px 2px 0" style={titleVariant === 'h4' ? { transform: 'translateY(1px)' } : {}}>
+                {simple ? (
+                  <>_%</>
+                ) : (
+                  <>
+                    <Tooltip
+                      text={maxRewardNoticeContent}
+                      width={215}
+                      show={
+                        !!showMaxRewardsNotice && !!hasLPOrLoan && isAdjusting && maxRewardThreshold.isGreaterThan(0)
+                      }
+                      placement="top-start"
+                      forcePlacement={true}
+                      strategy="absolute"
+                      offset={[-18, 20]}
+                    >
+                      {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()}
+                    </Tooltip>
+                    {' bBALN'}
+                    <QuestionHelper
+                      text={
                         <>
-                          <Divider my={2} />
-                          <Typography fontWeight={700}>{maxRewardNoticeContent}</Typography>
+                          <Trans>
+                            Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x.
+                          </Trans>
+                          <Typography mt={2}>
+                            <Trans>
+                              The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will
+                              decrease over time.
+                            </Trans>
+                          </Typography>
+                          {showMaxRewardsNotice && !isAdjusting && hasLPOrLoan && (
+                            <>
+                              <Divider my={2} />
+                              <Typography fontWeight={700}>{maxRewardNoticeContent}</Typography>
+                            </>
+                          )}
                         </>
-                      )}
-                    </>
-                  }
-                />
+                      }
+                    />
+                  </>
+                )}
               </Typography>
             </Flex>
 
             {stakedBalance?.isEqualTo(0) && (
-              <ButtonsWrap>
+              <ButtonsWrap verticalButtons={!simple}>
                 {isAdjusting ? (
                   <>
                     <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmallScreen ? '5px' : 0}>
@@ -478,15 +500,28 @@ export default function BBalnSlider({
             <UnstakePrompt stakedBalance={stakedBalance} availableBalance={balnBalanceAvailable} />
           ) : (
             <>
-              <SliderWrap>
-                <Typography className={`lockup-notice${isAdjusting ? '' : ' show'}`}>{lockupNotice}</Typography>
+              <SliderWrap sliderBg={sliderBg} sliderMargin={sliderMargin}>
+                {lockupNotice && (
+                  <Typography className={`lockup-notice${isAdjusting ? '' : ' show'}`}>{lockupNotice}</Typography>
+                )}
                 {shouldShowLock && isAdjusting && (
                   <Box style={{ position: 'relative' }}>
-                    <Threshold position={lockbarPercentPosition} flipTextDirection={lockbarPercentPosition < 50}>
-                      <MetaData as="dl" style={{ textAlign: 'right' }}>
-                        <dd>Locked</dd>
-                      </MetaData>
-                    </Threshold>
+                    {simple ? (
+                      <StyledThreshold
+                        position={lockbarPercentPosition}
+                        flipTextDirection={lockbarPercentPosition < 50}
+                      >
+                        <MetaData as="dl" style={{ textAlign: 'right' }}>
+                          <dd>Locked</dd>
+                        </MetaData>
+                      </StyledThreshold>
+                    ) : (
+                      <Threshold position={lockbarPercentPosition} flipTextDirection={lockbarPercentPosition < 50}>
+                        <MetaData as="dl" style={{ textAlign: 'right' }}>
+                          <dd>Locked</dd>
+                        </MetaData>
+                      </Threshold>
+                    )}
                   </Box>
                 )}
 
@@ -513,7 +548,7 @@ export default function BBalnSlider({
                   />
                 </Box>
 
-                <Flex justifyContent="space-between" flexWrap={'wrap'}>
+                <Flex justifyContent="space-between" flexWrap={'wrap'} marginTop={isAdjusting ? '15px' : ''}>
                   <Flex alignItems="center">
                     {isAdjusting ? (
                       <BalnPreviewInput
@@ -539,7 +574,7 @@ export default function BBalnSlider({
 
                   {/* Show selected or locked time period */}
                   {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
-                    <Typography paddingTop={isAdjusting ? '6px' : '0'}>
+                    <Typography paddingTop={isAdjusting ? '5px' : '0'}>
                       {shouldBoost ? (
                         <>
                           {t`Locked until`}{' '}

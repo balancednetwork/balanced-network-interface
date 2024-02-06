@@ -184,7 +184,6 @@ export const useActiveProposals = () => {
       if (account && proposals) {
         const activeProposals = await Promise.all(
           proposals.map(async proposal => {
-            console.log(proposal);
             if (
               platformDay &&
               proposal.status === 'Active' &&

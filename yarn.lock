@@ -1307,6 +1307,14 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
+"@balancednetwork/balanced-js@../balanced-js":
+  version "1.2.26"
+  dependencies:
+    "@balancednetwork/hw-app-icx" "^1.0.6"
+    bignumber.js "9.0.1"
+    icon-sdk-js "^1.2.1"
+    lodash-es "4.17.21"
+
 "@balancednetwork/balanced-js@1.2.26":
   version "1.2.26"
   resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.2.26.tgz#9d34704a3cbd854f3a521b6044d7bd04c504da29"

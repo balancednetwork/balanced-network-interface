@@ -2,14 +2,13 @@ import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
-import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import CollateralPanel from 'app/components/home/CollateralPanel';
 import LoanPanel from 'app/components/home/LoanPanel';
 import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
-import RewardsPanel, { StyledBoxPanel } from 'app/components/home/RewardsPanel';
+import RewardsPanel from 'app/components/home/RewardsPanel';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
@@ -78,19 +77,6 @@ export function HomePage() {
               <Trans>To take out a loan, deposit collateral.</Trans>
             </Typography>
           </BoxPanel>
-          <StyledBoxPanel bg="bg3">
-            <Typography mb="30px" variant="h2">
-              Rewards
-            </Typography>
-            <Flex flexDirection={['column', 'column', 'row']} width="100%">
-              <Box className="border-right" width="100%">
-                <Typography variant="h3">bnUSD savings</Typography>
-              </Box>
-              <Box width="100%">
-                <Typography variant="h3">Earning power</Typography>
-              </Box>
-            </Flex>
-          </StyledBoxPanel>
         </Grid>
       )}
     </>

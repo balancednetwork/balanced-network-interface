@@ -66,15 +66,23 @@ const LPRewards = () => {
       <Box width="100%">
         <Flex justifyContent="space-between" mb={3}>
           <Typography variant="h4" fontWeight="bold" fontSize={14} color="text">
-            Loans & liquidity
+            Balanced incentives
           </Typography>
-          <UnderlineText>
-            <Typography color="primaryBright" onClick={toggleOpen}>
-              <Trans>Claim</Trans>
-            </Typography>
-          </UnderlineText>
+          {reward?.greaterThan(0) && (
+            <UnderlineText>
+              <Typography color="primaryBright" onClick={toggleOpen}>
+                <Trans>Claim</Trans>
+              </Typography>
+            </UnderlineText>
+          )}
         </Flex>
-        {reward && <RewardsGrid rewards={[reward]} />}
+        {reward?.greaterThan(0) ? (
+          <RewardsGrid rewards={[reward]} />
+        ) : (
+          <Typography fontSize={14} opacity={0.75} maxWidth={'220px'} mb={5}>
+            Take out a loan or supply liquidity to earn BALN
+          </Typography>
+        )}
       </Box>
 
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>

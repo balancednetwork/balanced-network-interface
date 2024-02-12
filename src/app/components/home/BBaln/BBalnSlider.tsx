@@ -47,7 +47,7 @@ import { getFormattedNumber } from 'utils/formatter';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { DropdownPopper } from '../../Popover';
-import QuestionHelper from '../../QuestionHelper';
+import QuestionHelper, { QuestionWrapper } from '../../QuestionHelper';
 import { MetaData } from '../PositionDetailPanel';
 import { BalnPreviewInput, ButtonsWrap, SliderWrap, Threshold } from './styledComponents';
 import { LockedPeriod } from './types';
@@ -383,6 +383,16 @@ export default function BBalnSlider({
     ? `${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN required for maximum BALN rewards.`
     : 'You have reached maximum BALN rewards.';
 
+  const EarningPowerTooltipContent = () => (
+    <>
+      <Typography mb={3}>
+        <Trans>Lock up BALN to hold bBALN, which earns network fees and boosts your loan and liquidity rewards.</Trans>
+      </Typography>
+      <Typography>
+        <Trans>Your earning power depends on your bBALN holdings and position size compared to everyone else's.</Trans>
+      </Typography>
+    </>
+  );
   const hasLPOrLoan = sources && boostedLPs && (sources.Loans.balance.isGreaterThan(0) || boostedLPs.length);
 
   const balnReturnedEarly = useMemo(() => {
@@ -637,10 +647,21 @@ export default function BBalnSlider({
         <>
           <Typography variant={titleVariant} marginBottom={6}>
             <Trans>{title}</Trans>
+            {simple && (
+              <QuestionWrapper style={{ marginLeft: '5px', transform: 'translateY(1px)' }}>
+                <QuestionHelper width={330} text={<EarningPowerTooltipContent />} />
+              </QuestionWrapper>
+            )}
           </Typography>
-          <Typography fontSize={14} opacity={0.75}>
-            <Trans>Earn or buy BALN, then lock it up here to boost your earning potential and voting power.</Trans>
-          </Typography>
+          {simple ? (
+            <Typography fontSize={14} opacity={0.75} mb={5}>
+              <Trans>Lock up BALN to boost the amount you earn from rewards.</Trans>
+            </Typography>
+          ) : (
+            <Typography fontSize={14} opacity={0.75}>
+              <Trans>Earn or buy BALN, then lock it up here to boost your earning potential and voting power.</Trans>
+            </Typography>
+          )}
         </>
       )}
 

@@ -77,6 +77,7 @@ export function HomePage() {
               <Trans>To take out a loan, deposit collateral.</Trans>
             </Typography>
           </BoxPanel>
+          <RewardsPanel />
         </Grid>
       )}
     </>

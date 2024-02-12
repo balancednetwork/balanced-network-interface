@@ -69,7 +69,7 @@ export const useLPReward = (): UseQueryResult<CurrencyAmount<Token>> => {
       const res = await bnJs.Rewards.getBalnHolding(account!);
       return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.BALN.address], res);
     },
-    { keepPreviousData: true },
+    { keepPreviousData: true, enabled: !!account },
   );
 };
 

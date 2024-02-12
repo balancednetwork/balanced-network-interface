@@ -16,6 +16,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useBBalnAmount, useDBBalnAmountDiff, usePastMonthFeesDistributed, useTotalSupply } from 'store/bbaln/hooks';
 import { useUnclaimedFees } from 'store/fees/hooks';
 // import { useHasNetworkFees } from 'store/reward/hooks';
+import { useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -35,6 +36,7 @@ const NetworkFeesReward = () => {
   const totalSupplyBBaln = useTotalSupply();
   const bBalnAmount = useBBalnAmount();
   const bbalnAmountDiff = useDBBalnAmountDiff();
+  const hasNetworkFees = useHasNetworkFees();
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -78,22 +80,28 @@ const NetworkFeesReward = () => {
             <QuestionHelper
               text={
                 <>
-                  <Trans>
-                    Your share{' '}
-                    {!bBalnAmount.isEqualTo(0) && (
-                      <strong>
-                        (
-                        {totalSupplyBBaln
-                          ? `${bBalnAmount.dividedBy(totalSupplyBBaln).times(100).toPrecision(3)} %`
-                          : '-'}
-                        ){' '}
-                      </strong>
-                    )}
-                    of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN.
-                  </Trans>
+                  {hasNetworkFees && (
+                    <Trans>
+                      Your share{' '}
+                      {!bBalnAmount.isEqualTo(0) && (
+                        <strong>
+                          (
+                          {totalSupplyBBaln
+                            ? `${bBalnAmount.dividedBy(totalSupplyBBaln).times(100).toPrecision(3)} %`
+                            : '-'}
+                          ){' '}
+                        </strong>
+                      )}
+                      of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN.
+                    </Trans>
+                  )}
+
                   {pastMonthFees && (
-                    <Typography mt={2} color="text1">
-                      <>{t`$${pastMonthFees.total.toFormat(0)} was distributed over the last 30 days`}</>
+                    <Typography mt={hasNetworkFees ? 2 : 0} color="text1">
+                      <>
+                        <strong style={{ color: '#FFFFFF' }}>${pastMonthFees.total.toFormat(0)} </strong>
+                        {t`was distributed over the last 30 days`}
+                      </>
                       {totalSupplyBBaln && bBalnAmount && bbalnAmountDiff && bBalnAmount.isGreaterThan(0) ? (
                         <>
                           {t`, so you would have received`}{' '}
@@ -111,13 +119,21 @@ const NetworkFeesReward = () => {
             />
           </QuestionWrapper>
         </Typography>
-        <UnderlineText>
-          <Typography color="primaryBright" onClick={toggleOpen}>
-            <Trans>Claim</Trans>
-          </Typography>
-        </UnderlineText>
+        {hasNetworkFees && (
+          <UnderlineText>
+            <Typography color="primaryBright" onClick={toggleOpen}>
+              <Trans>Claim</Trans>
+            </Typography>
+          </UnderlineText>
+        )}
       </Flex>
-      <RewardsGrid rewards={Object.values(rewards)} />
+      {hasNetworkFees ? (
+        <RewardsGrid rewards={Object.values(rewards)} />
+      ) : (
+        <Typography fontSize={14} opacity={0.75} maxWidth={'220px'} mb={5}>
+          Lock up BALN to earn fees from Balanced transactions.
+        </Typography>
+      )}
 
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>
         <ModalContent>

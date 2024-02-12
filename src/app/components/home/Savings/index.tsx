@@ -146,7 +146,7 @@ const Savings = () => {
               bnUSD savings
             </Typography>
             <Typography pt={isSmallScreen ? '5px' : '9px'} color="text1">
-              22.4% APR
+              22.4% p.a.
             </Typography>
           </Flex>
           {bnUSDCombinedTotal > 0 && (
@@ -202,7 +202,9 @@ const Savings = () => {
             </Flex>
           </>
         ) : (
-          <>Get some bnUSD to stake it.</>
+          <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
+            Deposit bnUSD to earn interest, and withdraw when you need it.
+          </Typography>
         )}
       </Box>
 

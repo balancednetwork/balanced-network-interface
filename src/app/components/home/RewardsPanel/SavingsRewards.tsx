@@ -12,7 +12,7 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useUnclaimedRewards } from 'store/savings/hooks';
+import { useLockedAmount, useUnclaimedRewards } from 'store/savings/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -27,6 +27,7 @@ const SavingsRewards = () => {
   const addTransaction = useTransactionAdder();
   const hasEnoughICX = useHasEnoughICX();
   const [isOpen, setOpen] = React.useState(false);
+  const lockedAmount = useLockedAmount();
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -62,16 +63,29 @@ const SavingsRewards = () => {
     <>
       <Box width="100%">
         <Flex justifyContent="space-between" mb={3}>
-          <Typography variant="h4" fontWeight="bold" fontSize={14} color="text">
-            bnUSD savings
-          </Typography>
-          <UnderlineText>
-            <Typography color="primaryBright" onClick={toggleOpen}>
-              <Trans>Claim</Trans>
+          <Flex>
+            <Typography variant="h4" fontWeight="bold" fontSize={16} color="text">
+              bnUSD savings
             </Typography>
-          </UnderlineText>
+            <Typography fontSize={14} opacity={0.75} padding="3px 0 0 8px">
+              3.5%
+            </Typography>
+          </Flex>
+          {lockedAmount && lockedAmount.greaterThan(0) && (
+            <UnderlineText>
+              <Typography color="primaryBright" onClick={toggleOpen}>
+                <Trans>Claim</Trans>
+              </Typography>
+            </UnderlineText>
+          )}
         </Flex>
-        <RewardsGrid rewards={rewards} />
+        {lockedAmount && lockedAmount.greaterThan(0) ? (
+          <RewardsGrid rewards={rewards} />
+        ) : (
+          <Typography fontSize={14} opacity={0.75} maxWidth={'220px'} mb={5}>
+            Deposit bnUSD to earn interest and other incentives
+          </Typography>
+        )}
       </Box>
 
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>

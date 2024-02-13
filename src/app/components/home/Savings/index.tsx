@@ -16,7 +16,12 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useLockedAmount, useSavingsSliderActionHandlers, useSavingsSliderState } from 'store/savings/hooks';
+import {
+  useLockedAmount,
+  useSavingsRate,
+  useSavingsSliderActionHandlers,
+  useSavingsSliderState,
+} from 'store/savings/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from 'store/wallet/hooks';
 import { escapeRegExp, parseUnits } from 'utils';
@@ -38,6 +43,7 @@ const Savings = () => {
   const hasEnoughICX = useHasEnoughICX();
   const [isOpen, setOpen] = React.useState(false);
   const isSmallScreen = useMedia('(max-width: 540px)');
+  const { data: savingsRate } = useSavingsRate();
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -54,6 +60,26 @@ const Savings = () => {
       return parseFloat(lockedAmount.toFixed(2));
     } else return 0;
   }, [bnUSDBalance, lockedAmount]);
+
+  const bnUSDDiff = React.useMemo(() => {
+    if (isAdjusting) {
+      const diff = typedValueBN.minus(lockedAmountBN);
+      const balance = new BigNumber(bnUSDBalance?.toFixed() || 0);
+      if (diff.isGreaterThan(0) && balance.minus(diff).isLessThan(0.01)) {
+        return balance;
+      } else {
+        return typedValueBN.minus(lockedAmountBN);
+      }
+    } else {
+      return new BigNumber(0);
+    }
+  }, [bnUSDBalance, isAdjusting, lockedAmountBN, typedValueBN]);
+
+  const dynamicDailyAmountRate = React.useMemo(() => {
+    if (!savingsRate || !lockedAmount) return;
+    const dailyReward = savingsRate.monthlyRewards.div(30);
+    return dailyReward.div(new BigNumber(savingsRate.totalLocked.toFixed()).plus(bnUSDDiff));
+  }, [bnUSDDiff, lockedAmount, savingsRate]);
 
   React.useEffect(() => {
     if (lockedAmount && sliderInstance.current) {
@@ -82,14 +108,6 @@ const Savings = () => {
     }
   };
 
-  const bnUSDDiff = React.useMemo(() => {
-    if (isAdjusting) {
-      return typedValueBN.minus(lockedAmountBN);
-    } else {
-      return new BigNumber(0);
-    }
-  }, [isAdjusting, lockedAmountBN, typedValueBN]);
-
   const handleCancel = () => {
     adjust(false);
     onFieldAInput(lockedAmount?.toFixed(2) || '0');
@@ -108,8 +126,8 @@ const Savings = () => {
           addTransaction(
             { hash },
             {
-              pending: t`Staking bnUSD...`,
-              summary: t`${bnUSDDiff.abs().toFormat()} bnUSD staked.`,
+              pending: t`Depositing bnUSD...`,
+              summary: t`Deposited ${bnUSDDiff.abs().toFormat(2)} bnUSD.`,
             },
           );
         } else if (bnUSDDiff.isLessThan(0)) {
@@ -117,8 +135,8 @@ const Savings = () => {
           addTransaction(
             { hash },
             {
-              pending: t`Unstaking bnUSD...`,
-              summary: t`${bnUSDDiff.abs().toFormat()} bnUSD unstaked.`,
+              pending: t`Withdrawing bnUSD...`,
+              summary: t`Withdrew ${bnUSDDiff.abs().toFormat(2)} bnUSD.`,
             },
           );
         }
@@ -146,7 +164,7 @@ const Savings = () => {
               bnUSD savings
             </Typography>
             <Typography pt={isSmallScreen ? '5px' : '9px'} color="text1">
-              22.4% p.a.
+              {savingsRate?.APR && `${savingsRate.APR.toFormat(2)}% p.a.`}
             </Typography>
           </Flex>
           {bnUSDCombinedTotal > 0 && (
@@ -157,7 +175,13 @@ const Savings = () => {
                 onClick={isAdjusting ? () => toggleOpen() : () => adjust(true)}
                 disabled={isAdjusting && bnUSDDiff.isEqualTo(0)}
               >
-                {isAdjusting ? t`Confirm` : t`Adjust`}
+                {isAdjusting
+                  ? t`Confirm`
+                  : lockedAmount?.greaterThan(0) && !bnUSDBalance
+                  ? t`Withdraw`
+                  : bnUSDBalance.greaterThan(0) && lockedAmount?.equalTo(0)
+                  ? 'Deposit'
+                  : 'Adjust'}
               </Button>
             </Flex>
           )}
@@ -168,7 +192,7 @@ const Savings = () => {
               <Nouislider
                 disabled={!isAdjusting}
                 id="slider-savings"
-                start={[Number(lockedAmount?.toFixed(0) || 0)]}
+                start={[Number(lockedAmount?.toFixed() || 0)]}
                 connect={[true, false]}
                 range={{
                   min: [0],
@@ -198,7 +222,11 @@ const Savings = () => {
                 )}
                 <Typography fontSize={14}>{`/ ${bnUSDCombinedTotal.toFixed(2)} bnUSD`}</Typography>
               </Flex>
-              <Typography fontSize={14}>{`~ $_ daily`}</Typography>
+              {typedValueBN?.isGreaterThan(0) && dynamicDailyAmountRate && (
+                <Typography fontSize={14}>{`~ $${typedValueBN
+                  .times(dynamicDailyAmountRate)
+                  .toFormat(2)} daily`}</Typography>
+              )}
             </Flex>
           </>
         ) : (
@@ -211,34 +239,36 @@ const Savings = () => {
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>
         <Flex flexDirection="column" alignItems="stretch" m={'25px'} width="100%">
           <Typography textAlign="center" mb="5px">
-            {bnUSDDiff.isGreaterThan(0) ? t`Stake bnUSD?` : t`Unstake bnUSD?`}
+            {bnUSDDiff.isGreaterThan(0) ? t`Deposit bnUSD?` : t`Withdraw bnUSD?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${bnUSDDiff.abs().toFormat()} bnUSD`}
+            {`${bnUSDDiff.abs().toFormat(2)} bnUSD`}
           </Typography>
 
           <Flex my={'25px'}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {lockedAmount?.toFixed(0, { groupSeparator: ',' })} bnUSD
+                {lockedAmount?.toFixed(2, { groupSeparator: ',' })} bnUSD
               </Typography>
             </Box>
 
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {`${bnUSDDiff.plus(new BigNumber(lockedAmount?.toFixed() ?? 0))} bnUSD`}
+                {`${bnUSDDiff.plus(new BigNumber(lockedAmount?.toFixed() ?? 0)).toFixed(2)} bnUSD`}
               </Typography>
             </Box>
           </Flex>
 
-          <Typography textAlign="center">
-            <Trans>You can update your staked balance anytime.</Trans>
-          </Typography>
+          {bnUSDDiff.isGreaterThan(0) && (
+            <Typography textAlign="center" mb={4}>
+              <Trans>You can withdraw at any time.</Trans>
+            </Typography>
+          )}
 
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top" flexWrap={'wrap'}>
+          <Flex justifyContent="center" pt={4} className="border-top" flexWrap={'wrap'}>
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
@@ -246,7 +276,7 @@ const Savings = () => {
                   Cancel
                 </TextButton>
                 <Button disabled={!hasEnoughICX} onClick={handleConfirm} fontSize={14}>
-                  {bnUSDDiff.isGreaterThan(0) ? 'Stake bnUSD' : t`Unstake bnUSD`}
+                  {bnUSDDiff.isGreaterThan(0) ? 'Deposit bnUSD' : t`Withdraw bnUSD`}
                 </Button>
               </>
             )}

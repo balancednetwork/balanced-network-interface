@@ -31,6 +31,7 @@ const SliderWrap = styled(Flex)`
 `;
 
 const RewardsPanel = () => {
+  const [showGlobalTooltip, setGlobalTooltip] = React.useState(false);
   const isMedium = useMedia('(max-width: 1050px)');
   const isSmall = useMedia('(max-width: 800px)');
 
@@ -45,16 +46,24 @@ const RewardsPanel = () => {
         </SliderWrap>
         {isMedium ? <Divider my="30px" /> : <VerticalDivider margin={'3px 50px'} />}
         <SliderWrap>
-          <BBalnSlider title={t`Earning power`} titleVariant="h4" showMaxRewardsNotice sliderMargin="15px 0 0" simple />
+          <BBalnSlider
+            title={t`Earning power`}
+            titleVariant="h4"
+            showMaxRewardsNotice
+            sliderMargin="15px 0 0"
+            simple
+            showGlobalTooltip={showGlobalTooltip}
+            setGlobalTooltip={setGlobalTooltip}
+          />
         </SliderWrap>
       </Flex>
       <BoxPanel bg="bg2" mt="35px" style={{ padding: '17px 20px' }}>
         <Flex flexWrap={isSmall ? 'wrap' : 'nowrap'}>
           <SavingsRewards />
           {!isSmall ? <VerticalDivider margin={'3px 30px'} /> : <Divider width="100%" my={4} />}
-          <LPRewards />
+          <LPRewards showGlobalTooltip={showGlobalTooltip} />
           {!isSmall ? <VerticalDivider margin={'3px 30px'} /> : <Divider width="100%" my={4} />}
-          <NetworkFeesReward />
+          <NetworkFeesReward showGlobalTooltip={showGlobalTooltip} />
         </Flex>
       </BoxPanel>
     </StyledBoxPanel>

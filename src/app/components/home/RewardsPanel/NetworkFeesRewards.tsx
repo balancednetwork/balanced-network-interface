@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass';
 
@@ -8,14 +9,22 @@ import { Button, TextButton } from 'app/components/Button';
 import { UnderlineText } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
-import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
+import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Spinner from 'app/components/Spinner';
+import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
+import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useBBalnAmount, useDBBalnAmountDiff, usePastMonthFeesDistributed, useTotalSupply } from 'store/bbaln/hooks';
+import {
+  useBBalnAmount,
+  useBBalnSliderState,
+  useDBBalnAmountDiff,
+  useLockedBaln,
+  usePastMonthFeesDistributed,
+  useTotalSupply,
+} from 'store/bbaln/hooks';
 import { useUnclaimedFees } from 'store/fees/hooks';
-// import { useHasNetworkFees } from 'store/reward/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -23,8 +32,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import RewardsGrid from './RewardsGrid';
 
-const NetworkFeesReward = () => {
-  // const hasNetworkFees = useHasNetworkFees();
+const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const rewards = useUnclaimedFees();
   const { account } = useIconReact();
   const shouldLedgerSign = useShouldLedgerSign();
@@ -37,6 +45,12 @@ const NetworkFeesReward = () => {
   const bBalnAmount = useBBalnAmount();
   const bbalnAmountDiff = useDBBalnAmountDiff();
   const hasNetworkFees = useHasNetworkFees();
+  const { typedValue } = useBBalnSliderState();
+  const lockedBalnAmount = useLockedBaln();
+
+  const balnSliderAmount = React.useMemo(() => new BigNumber(typedValue), [typedValue]);
+  const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
+  const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -71,54 +85,70 @@ const NetworkFeesReward = () => {
       });
   };
 
+  const feeShare = React.useMemo(() => {
+    if (!totalSupplyBBaln) return;
+    if (differenceBalnAmount.isGreaterThanOrEqualTo(0)) {
+      return bBalnAmount.plus(bbalnAmountDiff).dividedBy(totalSupplyBBaln.plus(bbalnAmountDiff));
+    } else {
+      return bBalnAmount.minus(bbalnAmountDiff).dividedBy(totalSupplyBBaln.minus(bbalnAmountDiff));
+    }
+  }, [bBalnAmount, bbalnAmountDiff, differenceBalnAmount, totalSupplyBBaln]);
+
   return (
     <Box width="100%">
       <Flex justifyContent="space-between" mb={3}>
         <Typography variant="h4" fontWeight="bold" fontSize={14} color="text">
-          Network fees
-          <QuestionWrapper style={{ transform: 'translateY(1px)' }}>
-            <QuestionHelper
-              text={
-                <>
-                  {hasNetworkFees && (
+          <span style={{ paddingRight: '8px' }}>
+            <Trans>Network fees</Trans>
+          </span>
+          <Tooltip
+            text={
+              <>
+                {hasNetworkFees && (
+                  <>
                     <Trans>
-                      Your share{' '}
+                      You'll receive a{' '}
                       {!bBalnAmount.isEqualTo(0) && (
                         <strong>
-                          (
-                          {totalSupplyBBaln
-                            ? `${bBalnAmount.dividedBy(totalSupplyBBaln).times(100).toPrecision(3)} %`
-                            : '-'}
-                          ){' '}
+                          {bBalnAmount.isEqualTo(0)
+                            ? 'N/A'
+                            : totalSupplyBBaln && feeShare
+                            ? `${feeShare.times(100).toPrecision(4)} %`
+                            : '-'}{' '}
                         </strong>
                       )}
-                      of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN.
+                      share of the fees distributed to bBALN holders, equivalent to
                     </Trans>
-                  )}
-
-                  {pastMonthFees && (
-                    <Typography mt={hasNetworkFees ? 2 : 0} color="text1">
-                      <>
-                        <strong style={{ color: '#FFFFFF' }}>${pastMonthFees.total.toFormat(0)} </strong>
-                        {t`was distributed over the last 30 days`}
-                      </>
-                      {totalSupplyBBaln && bBalnAmount && bbalnAmountDiff && bBalnAmount.isGreaterThan(0) ? (
-                        <>
-                          {t`, so you would have received`}{' '}
-                          <strong>{t`$${pastMonthFees?.total
-                            .times(bBalnAmount.plus(bbalnAmountDiff).dividedBy(totalSupplyBBaln.plus(bbalnAmountDiff)))
-                            .toFormat(2)}.`}</strong>
-                        </>
-                      ) : (
-                        '.'
-                      )}
-                    </Typography>
-                  )}
-                </>
+                    {feeShare && <strong> {t`$${pastMonthFees?.total.times(feeShare).toFormat(2)}`}</strong>}{' '}
+                    <Trans>in the last 30 days.</Trans>
+                  </>
+                )}
+              </>
+            }
+            show={showGlobalTooltip}
+            placement="bottom"
+            width={300}
+            forcePlacement={true}
+          >
+            <MouseoverTooltip
+              text={
+                <Typography>
+                  <>
+                    <strong style={{ color: '#FFFFFF' }}>${pastMonthFees?.total.toFormat(0) ?? '-'} </strong>
+                    {t`was distributed to bBALN holders in the last 30 days.`}
+                  </>
+                </Typography>
               }
-            />
-          </QuestionWrapper>
+              width={220}
+              placement="bottom"
+            >
+              <QuestionWrapper style={{ transform: 'translateY(1px)' }}>
+                <QuestionIcon width={14} />
+              </QuestionWrapper>
+            </MouseoverTooltip>
+          </Tooltip>
         </Typography>
+
         {hasNetworkFees && (
           <UnderlineText>
             <Typography color="primaryBright" onClick={toggleOpen}>

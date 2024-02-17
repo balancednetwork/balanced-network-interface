@@ -171,8 +171,6 @@ export function useSavingsRate(): UseQueryResult<
       if (tokenPrices === undefined || blockThen === undefined || totalLocked === undefined) return;
       const rewardsReceivedIn = ['sICX', 'bnUSD', 'BALN'];
 
-      console.log('REFETCHING');
-
       async function getRewards(blockHeight?: number): Promise<BigNumber> {
         const rewards = await Promise.all(
           rewardsReceivedIn.map(async token => {

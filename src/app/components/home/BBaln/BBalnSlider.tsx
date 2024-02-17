@@ -21,6 +21,7 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
+import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -76,6 +77,8 @@ export default function BBalnSlider({
   sliderBg,
   sliderMargin,
   simple,
+  showGlobalTooltip = false,
+  setGlobalTooltip,
 }: {
   title: string;
   lockupNotice?: string;
@@ -84,8 +87,10 @@ export default function BBalnSlider({
   sliderBg?: string;
   sliderMargin?: string;
   simple?: boolean;
+  showGlobalTooltip?: boolean;
   onActiveSlider?: () => void;
   onDisabledSlider?: () => void;
+  setGlobalTooltip?: (value: boolean) => void;
 }) {
   const { account } = useIconReact();
   const bBalnAmount = useBBalnAmount();
@@ -111,6 +116,7 @@ export default function BBalnSlider({
   const isSmallScreen = useMedia('(max-width: 540px)');
   const isSuperSmallScreen = useMedia('(max-width: 400px)');
   const addTransaction = useTransactionAdder();
+  const [tooltipHovered, setTooltipHovered] = useState(false);
 
   const balnBalanceAvailable = useMemo(
     () => (balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0)),
@@ -312,6 +318,14 @@ export default function BBalnSlider({
     }
   }, [onFieldAInput, lockedBalnAmount, isAdjusting, availablePeriods, changePeriod]);
 
+  React.useEffect(() => {
+    if (isAdjusting) {
+      setGlobalTooltip && setGlobalTooltip(true);
+    } else {
+      setGlobalTooltip && setGlobalTooltip(false);
+    }
+  }, [isAdjusting, setGlobalTooltip]);
+
   // optimize slider performance
   // change slider value if only a user types
   React.useEffect(() => {
@@ -379,14 +393,17 @@ export default function BBalnSlider({
     }
   }, [sources, totalSupplyBBaln, bBalnAmount]);
 
-  const maxRewardNoticeContent = maxRewardThreshold.isGreaterThan(0)
-    ? `${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN required for maximum BALN rewards.`
-    : 'You have reached maximum BALN rewards.';
+  const maxRewardNoticeContent = dynamicBBalnAmount.isLessThan(bBalnAmount?.plus(maxRewardThreshold))
+    ? `You Need ${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN for maximum earning power.`
+    : 'You receive maximum rewards for your position.';
 
   const EarningPowerTooltipContent = () => (
     <>
       <Typography mb={3}>
-        <Trans>Lock up BALN to hold bBALN, which earns network fees and boosts your loan and liquidity rewards.</Trans>
+        <Trans>
+          Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity
+          pools.
+        </Trans>
       </Typography>
       <Typography>
         <Trans>Your earning power depends on your bBALN holdings and position size compared to everyone else's.</Trans>
@@ -410,6 +427,13 @@ export default function BBalnSlider({
     }
   }, [balnReturnedEarly, lockedBalnAmount]);
 
+  const earningPower = useMemo(() => {
+    if (!dynamicBBalnAmount) return;
+    if (maxRewardThreshold.isEqualTo(0)) return new BigNumber(100);
+    const max = bBalnAmount.plus(maxRewardThreshold);
+    return BigNumber.min(dynamicBBalnAmount.dividedBy(max).times(60).plus(40), new BigNumber(100));
+  }, [bBalnAmount, dynamicBBalnAmount, maxRewardThreshold]);
+
   return (
     <>
       {balnBalanceAvailable.isGreaterThan(0) ||
@@ -422,12 +446,37 @@ export default function BBalnSlider({
               flexDirection={isSmallScreen ? 'column' : 'row'}
               alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}
             >
-              <Typography variant={titleVariant} paddingRight={'10px'} paddingBottom={isSmallScreen ? '5px' : '0'}>
+              <Typography variant={titleVariant} paddingRight={'8px'} paddingBottom={isSmallScreen ? '5px' : '0'}>
                 {title}{' '}
               </Typography>
               <Typography padding="0 3px 2px 0" style={titleVariant === 'h4' ? { transform: 'translateY(1px)' } : {}}>
                 {simple ? (
-                  <>_%</>
+                  <>
+                    {earningPower && <span style={{ marginRight: '8px' }}>{earningPower.toFixed(1)}%</span>}
+                    <Tooltip
+                      show={showGlobalTooltip || tooltipHovered}
+                      text={
+                        <>
+                          <EarningPowerTooltipContent />
+                          <Typography mt={3}>
+                            You have <strong>{dynamicBBalnAmount.dp(2).toFormat()} bBALN</strong>.{' '}
+                            {hasLPOrLoan && maxRewardNoticeContent}
+                          </Typography>
+                        </>
+                      }
+                      placement="top"
+                      forcePlacement={true}
+                      width={280}
+                    >
+                      <QuestionWrapper
+                        onMouseEnter={() => setTooltipHovered(true)}
+                        onMouseLeave={() => setTooltipHovered(false)}
+                        style={{ transform: 'translateY(1px)' }}
+                      >
+                        <QuestionIcon width={14} />
+                      </QuestionWrapper>
+                    </Tooltip>
+                  </>
                 ) : (
                   <>
                     <Tooltip

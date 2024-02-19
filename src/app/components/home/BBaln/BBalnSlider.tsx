@@ -399,13 +399,13 @@ export default function BBalnSlider({
 
   const EarningPowerTooltipContent = () => (
     <>
-      <Typography mb={3}>
+      <Typography mb={3} color="text1">
         <Trans>
           Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity
           pools.
         </Trans>
       </Typography>
-      <Typography>
+      <Typography color="text1">
         <Trans>Your earning power depends on your bBALN holdings and position size compared to everyone else's.</Trans>
       </Typography>
     </>

@@ -76,10 +76,10 @@ const Savings = () => {
   }, [bnUSDBalance, isAdjusting, lockedAmountBN, typedValueBN]);
 
   const dynamicDailyAmountRate = React.useMemo(() => {
-    if (!savingsRate || !lockedAmount) return;
+    if (!savingsRate) return;
     const dailyReward = savingsRate.monthlyRewards.div(30);
     return dailyReward.div(new BigNumber(savingsRate.totalLocked.toFixed()).plus(bnUSDDiff));
-  }, [bnUSDDiff, lockedAmount, savingsRate]);
+  }, [bnUSDDiff, savingsRate]);
 
   React.useEffect(() => {
     if (lockedAmount && sliderInstance.current) {
@@ -179,7 +179,7 @@ const Savings = () => {
                   ? t`Confirm`
                   : lockedAmount?.greaterThan(0) && !bnUSDBalance
                   ? t`Withdraw`
-                  : bnUSDBalance.greaterThan(0) && lockedAmount?.equalTo(0)
+                  : bnUSDBalance.greaterThan(0) && (!lockedAmount || lockedAmount?.equalTo(0))
                   ? 'Deposit'
                   : 'Adjust'}
               </Button>
@@ -250,7 +250,7 @@ const Savings = () => {
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">Before</Typography>
               <Typography variant="p" textAlign="center">
-                {lockedAmount?.toFixed(2, { groupSeparator: ',' })} bnUSD
+                {lockedAmount?.toFixed(2, { groupSeparator: ',' }) || 0} bnUSD
               </Typography>
             </Box>
 

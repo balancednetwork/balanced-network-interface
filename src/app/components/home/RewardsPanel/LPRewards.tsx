@@ -18,7 +18,7 @@ import { useLPReward } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useBBalnAmount, useDynamicBBalnAmount, useSources, useTotalSupply } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
+import { useHasEnoughICX, useICONWalletBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import PositionRewardsInfo from './PositionRewardsInfo';
@@ -36,8 +36,13 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const bBalnAmount = useBBalnAmount();
   const hasEnoughICX = useHasEnoughICX();
+  const balances = useICONWalletBalances();
   const isSmall = useMedia('(max-width: 1050px)');
   const isExtraSmall = useMedia('(max-width: 800px)');
+  const hasLPOrLoan = React.useMemo(
+    () => sources && Object.values(sources).some(source => source.balance.isGreaterThan(0)),
+    [sources],
+  );
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -69,6 +74,8 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
     <Trans>You receive maximum rewards for your position.</Trans>
   );
 
+  const balnBalance = balances?.[bnJs.BALN.address];
+
   const handleClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
@@ -83,8 +90,8 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
         addTransaction(
           { hash: res.result },
           {
-            summary: t`Claimed loans & liquidity rewards.`,
-            pending: t`Claiming loans & liquidity rewards...`,
+            summary: t`Claimed Balanced incentives.`,
+            pending: t`Claiming Balanced incentives...`,
           },
         );
         toggleOpen();
@@ -104,7 +111,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
         <Flex justifyContent="space-between" mb={3}>
           <Typography variant="h4" fontWeight="bold" fontSize={14} color="text">
             <Tooltip
-              show={showGlobalTooltip && !isExtraSmall}
+              show={!!hasLPOrLoan && showGlobalTooltip && !isExtraSmall}
               text={
                 <>
                   <Typography>{maxRewardNoticeContent}</Typography>
@@ -139,7 +146,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb={1}>
-            <Trans>Claim loans & liquidity rewards?</Trans>
+            <Trans>Claim Balanced incentives?</Trans>
           </Typography>
 
           <Flex flexDirection="column" alignItems="center" mt={2}>
@@ -153,7 +160,23 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
             )}
           </Flex>
 
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+          <Flex my={'25px'}>
+            <Box width={1 / 2} className="border-right">
+              <Typography textAlign="center">Before</Typography>
+              <Typography variant="p" textAlign="center">
+                {balnBalance?.toFixed(2, { groupSeparator: ',' }) || 0} BALN
+              </Typography>
+            </Box>
+
+            <Box width={1 / 2}>
+              <Typography textAlign="center">After</Typography>
+              <Typography variant="p" textAlign="center">
+                {reward && `${balnBalance.add(reward).toFixed(2, { groupSeparator: ',' })} BALN`}
+              </Typography>
+            </Box>
+          </Flex>
+
+          <Flex justifyContent="center" pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>

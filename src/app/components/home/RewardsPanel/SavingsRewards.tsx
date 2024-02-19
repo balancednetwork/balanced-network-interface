@@ -47,8 +47,8 @@ const SavingsRewards = () => {
       addTransaction(
         { hash },
         {
-          pending: t`Claiming savings rewards...`,
-          summary: t`Claimed savings rewards.`,
+          pending: t`Claiming bnUSD rewards...`,
+          summary: t`Claimed bnUSD rewards.`,
         },
       );
       toggleOpen();
@@ -94,7 +94,7 @@ const SavingsRewards = () => {
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb={1}>
-            <Trans>Claim bnUSD savings?</Trans>
+            <Trans>Claim bnUSD rewards?</Trans>
           </Typography>
 
           <Flex flexDirection="column" alignItems="center" mt={2}>

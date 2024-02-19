@@ -28,8 +28,6 @@ const PositionRewardsInfo = () => {
   const rewardsAPY = useLoanAPY();
   const { data: allPairs } = useAllPairs();
 
-  console.log(allPairs);
-
   const boostedLPs = React.useMemo(() => {
     if (sources && incentivisedPairs) {
       const pairNames = incentivisedPairs.map(pair => pair.name);

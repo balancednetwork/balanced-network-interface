@@ -22,20 +22,19 @@ import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery_DEPRECATED, Period } from 'queries/rebalancing';
 import { useRatesQuery } from 'queries/reward';
-import { useBBalnSliderState, useSources, useWorkingBalance } from 'store/bbaln/hooks';
 import { useCollateralInputAmountInUSD, useCollateralType, useIsHandlingICX } from 'store/collateral/hooks';
 import {
   useLoanInputAmount,
-  useLoanAPY,
-  useOwnDailyRewards,
   useThresholdPrices,
   useCollateralLockedSliderPos,
   useLoanAvailableAmount,
+  useInterestRate,
 } from 'store/loan/hooks';
 import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useCurrentCollateralRatio } from 'store/reward/hooks';
-import { formatBigNumber } from 'utils';
+import { InterestPeriod } from 'types';
+import { formatBigNumber, getAccumulatedInterest } from 'utils';
 
 import { DropdownPopper } from '../Popover';
 import { StyledSkeleton } from '../ProposalInfo';
@@ -50,16 +49,19 @@ const PERIOD_LABELS: { [key: string]: MessageDescriptor } = {
   [Period.all]: defineMessage({ message: 'All time' }),
 };
 
+const INTEREST_PERIODS: { [key: string]: InterestPeriod } = {
+  day: { display: t`daily`, days: 1 },
+  week: { display: t`weekly`, days: 7 },
+  month: { display: t`monthly`, days: 30 },
+  year: { display: t`yearly`, days: 365 },
+};
+
 const PositionDetailPanel = () => {
-  const dailyRewards = useOwnDailyRewards();
-  const rewardsAPY = useLoanAPY();
   const oraclePrice = useOraclePrice();
   const { data: rates } = useRatesQuery();
-  const sources = useSources();
   const collateralType = useCollateralType();
   const locale = useActiveLocale();
-  const getWorkingBalance = useWorkingBalance();
-  const { isAdjusting: isBBalnAdjusting } = useBBalnSliderState();
+  const { data: interestRate } = useInterestRate(collateralType);
   const upLarge = useMedia('(min-width: 1200px)');
   const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
@@ -69,6 +71,7 @@ const PositionDetailPanel = () => {
   const [show, setShow] = React.useState<boolean>(false);
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
+  const [interestPeriod, setInterestPeriod] = React.useState<InterestPeriod>(INTEREST_PERIODS.day);
   const isHandlingICX = useIsHandlingICX();
   const heightenBars =
     (useMedia('(max-width: 359px)') && 'es-ES,nl-NL,de-DE,fr-FR'.indexOf(locale) >= 0) || 'pl-PL'.indexOf(locale) >= 0;
@@ -112,8 +115,11 @@ const PositionDetailPanel = () => {
 
   // handle rebalancing logic
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+  //handle interest period logic
+  const [interestAnchor, setInterestAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
+  const arrowRefInterest = React.useRef(null);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
     setAnchor(anchor ? null : arrowRef.current);
@@ -123,9 +129,22 @@ const PositionDetailPanel = () => {
     setAnchor(null);
   };
 
+  const handleInterestToggle = (e: React.MouseEvent<HTMLElement>) => {
+    setInterestAnchor(anchor ? null : arrowRefInterest.current);
+  };
+
   const handlePeriod = (p: Period) => {
     closeMenu();
     setPeriod(p);
+  };
+
+  const closeInterestDropdown = () => {
+    setInterestAnchor(null);
+  };
+
+  const handleInterestPeriod = (p: InterestPeriod) => {
+    closeInterestDropdown();
+    setInterestPeriod(p);
   };
 
   const pos = useCollateralLockedSliderPos();
@@ -399,57 +418,47 @@ const PositionDetailPanel = () => {
               <Box flex={1} my={2}>
                 <Flex alignItems="center" mb={3}>
                   <Typography variant="h3" mr={15}>
-                    <Trans>Loan rewards</Trans>
+                    <Trans>Loan interest</Trans>
                   </Typography>
                 </Flex>
                 <Flex>
-                  <Box width={1 / 2}>
-                    <Typography variant="p">{`~ ${
-                      sources
-                        ? isBBalnAdjusting
-                          ? dailyRewards
-                              .times(
-                                getWorkingBalance(sources.Loans.balance, sources.Loans.supply).dividedBy(
-                                  sources.Loans.balance,
-                                ),
-                              )
-                              .dp(2)
-                              .toFormat()
-                          : dailyRewards
-                              .times(sources.Loans.workingBalance.dividedBy(sources.Loans.balance))
-                              .dp(2)
-                              .toFormat()
-                        : dailyRewards.dp(2).toFormat()
-                    } BALN`}</Typography>
-                    <Typography mt={1}>
-                      <Trans>Daily rewards</Trans>
+                  <Box width={[1 / 2, 1 / 2, 1 / 2, 4 / 7]}>
+                    <Typography variant="p">
+                      {interestRate
+                        ? `${getAccumulatedInterest(loanInputAmount, interestRate, interestPeriod.days).toFixed(
+                            3,
+                          )} bnUSD`
+                        : '-'}
                     </Typography>
+                    <ClickAwayListener onClickAway={closeInterestDropdown}>
+                      <div style={{ transform: 'translateY(3px)' }}>
+                        <UnderlineTextWithArrow
+                          onClick={handleInterestToggle}
+                          text={interestPeriod.display + ' ' + t`interest`}
+                          arrowRef={arrowRefInterest}
+                        />
+                        <DropdownPopper show={Boolean(interestAnchor)} anchorEl={interestAnchor} placement="bottom-end">
+                          <MenuList>
+                            {Object.values(INTEREST_PERIODS).map(p => (
+                              <MenuItem key={p.display} onClick={() => handleInterestPeriod(p)}>
+                                {p.display}
+                              </MenuItem>
+                            ))}
+                          </MenuList>
+                        </DropdownPopper>
+                      </div>
+                    </ClickAwayListener>
                   </Box>
                   {!upMedium && <VerticalDivider mr={8} />}
-                  <Box width={1 / 2}>
+                  <Box width={[1 / 2, 1 / 2, 1 / 2, 3 / 7]}>
                     <Typography variant="p" color="white">
-                      {rewardsAPY
-                        ? sources
-                          ? isBBalnAdjusting
-                            ? rewardsAPY
-                                .times(100)
-                                .times(
-                                  getWorkingBalance(sources.Loans.balance, sources.Loans.supply).dividedBy(
-                                    sources.Loans.balance,
-                                  ),
-                                )
-                                .dp(2)
-                                .toFormat()
-                            : rewardsAPY
-                                .times(100)
-                                .times(sources.Loans.workingBalance.dividedBy(sources.Loans.balance))
-                                .dp(2)
-                                .toFormat()
-                          : rewardsAPY.times(100).dp(2).toFormat()
+                      {interestRate?.isGreaterThan(0)
+                        ? `${interestRate.times(100).toFixed(2)}%`.replace('0%', '%').replace('00%', '%')
                         : '-'}
-                      %
                     </Typography>
-                    <Typography mt={1}>APY</Typography>
+                    <Typography mt={1}>
+                      <Trans>interest rate</Trans>
+                    </Typography>
                   </Box>
                 </Flex>
               </Box>

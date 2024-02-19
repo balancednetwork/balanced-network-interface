@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -426,4 +426,16 @@ export function useBorrowableAmountWithReserve() {
   const { originationFee = 0 } = useLoanParameters() || {};
 
   return BigNumber.max(totalBorrowableAmount.dividedBy(1 + originationFee), borrowedAmount);
+}
+
+export function useInterestRate(symbol: string): UseQueryResult<BigNumber> {
+  return useQuery(`interestRate-${symbol}`, async () => {
+    const data = await bnJs.Loans.getInterestRate(symbol);
+
+    if (data) {
+      return new BigNumber(data).div(1000000);
+    } else {
+      return new BigNumber(0);
+    }
+  });
 }

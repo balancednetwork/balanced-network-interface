@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
+import { useAllPairs } from 'queries/backendv2';
 import { useIncentivisedPairs } from 'queries/reward';
 import { Source, useSources, useWorkingBalance } from 'store/bbaln/hooks';
 import { useLoanAPY } from 'store/loan/hooks';
@@ -25,6 +26,9 @@ const PositionRewardsInfo = () => {
   const sources = useSources();
   const { data: incentivisedPairs } = useIncentivisedPairs();
   const rewardsAPY = useLoanAPY();
+  const { data: allPairs } = useAllPairs();
+
+  console.log(allPairs);
 
   const boostedLPs = React.useMemo(() => {
     if (sources && incentivisedPairs) {
@@ -50,8 +54,6 @@ const PositionRewardsInfo = () => {
   const loanBoost =
     sources && getWorkingBalance(sources.Loans.balance, sources.Loans.supply).dividedBy(sources.Loans.balance);
 
-  console.log('PositionRewardsInfo sources', sources);
-  console.log('PositionRewardsInfo incenti', incentivisedPairs);
   return (
     <Wrap>
       <Typography mt={3}>Your return:</Typography>
@@ -65,7 +67,7 @@ const PositionRewardsInfo = () => {
           boostedLPNumbers?.length !== 0 &&
           boostedLPs &&
           Object.keys(boostedLPs).map(boostedLP => {
-            const apy = incentivisedPairs?.find(pair => pair.name === boostedLP)?.rewards;
+            const apy = allPairs?.find(pair => pair.name === boostedLP)?.balnApy;
             return (
               <li key={boostedLP}>
                 <SourceInfo
@@ -73,7 +75,7 @@ const PositionRewardsInfo = () => {
                   boost={getWorkingBalance(boostedLPs[boostedLP].balance, boostedLPs[boostedLP].supply).dividedBy(
                     boostedLPs[boostedLP].balance,
                   )}
-                  apy={apy && new BigNumber(apy.toFixed(8))}
+                  apy={new BigNumber(apy ?? 0)}
                 />
               </li>
             );

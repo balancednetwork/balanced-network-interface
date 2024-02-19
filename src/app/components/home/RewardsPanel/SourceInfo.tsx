@@ -18,7 +18,7 @@ const SourceInfo = ({ name, boost, apy }: { name: string; boost?: BigNumber; apy
   if (!boost || !apy) return null;
   return (
     <Wrap>
-      {`${name}:`} <strong>{`${apy.times(100).dp(2).times(boost).toFormat(2)}%`}</strong>{' '}
+      {`${name}:`} <strong>{`${apy.times(100).times(boost).toFormat(2, BigNumber.ROUND_HALF_UP)}%`}</strong>{' '}
       {boost.isLessThan(2.5) && (
         <>
           <span>{`(potential `}</span>

@@ -24,7 +24,7 @@ import {
   usePastMonthFeesDistributed,
   useTotalSupply,
 } from 'store/bbaln/hooks';
-import { useUnclaimedFees } from 'store/fees/hooks';
+import { useFetchUnclaimedDividends, useUnclaimedFees } from 'store/fees/hooks';
 import { useHasNetworkFees } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -33,6 +33,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import RewardsGrid from './RewardsGrid';
 
 const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
+  useFetchUnclaimedDividends();
   const rewards = useUnclaimedFees();
   const { account } = useIconReact();
   const shouldLedgerSign = useShouldLedgerSign();
@@ -113,7 +114,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
                           {bBalnAmount.isEqualTo(0)
                             ? 'N/A'
                             : totalSupplyBBaln && feeShare
-                            ? `${feeShare.times(100).toPrecision(4)} %`
+                            ? `${feeShare.times(100).toPrecision(3)} %`
                             : '-'}{' '}
                         </strong>
                       )}
@@ -139,7 +140,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
                   </>
                 </Typography>
               }
-              width={220}
+              width={260}
               placement="bottom"
             >
               <QuestionWrapper style={{ transform: 'translateY(1px)' }}>

@@ -446,13 +446,13 @@ export default function BBalnSlider({
               flexDirection={isSmallScreen ? 'column' : 'row'}
               alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}
             >
-              <Typography variant={titleVariant} paddingRight={'8px'} paddingBottom={isSmallScreen ? '5px' : '0'}>
+              <Typography variant={titleVariant} paddingRight={'7px'} paddingBottom={isSmallScreen ? '5px' : '0'}>
                 {title}{' '}
               </Typography>
               <Typography padding="0 3px 2px 0" style={titleVariant === 'h4' ? { transform: 'translateY(1px)' } : {}}>
                 {simple ? (
                   <>
-                    {earningPower && <span style={{ marginRight: '8px' }}>{earningPower.toFixed(1)}%</span>}
+                    {earningPower && <span style={{ marginRight: '8px' }}>{earningPower.toFixed(0)}%</span>}
                     <Tooltip
                       show={showGlobalTooltip || tooltipHovered}
                       text={

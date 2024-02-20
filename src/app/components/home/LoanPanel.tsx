@@ -371,8 +371,8 @@ const LoanPanel = () => {
           {interestRate && shouldBorrow && (
             <Typography textAlign="center">
               <Trans>
-                Your loan will increase at a rate of{' '}
-                {`${interestRate.times(100).toFixed(2)}%`.replace('00%', '%').replace('0%', '%')} per year.
+                Your loan will increase at a rate of {`${interestRate.times(100).toFixed(2)}%`.replace('.00%', '%')} per
+                year.
               </Trans>
             </Typography>
           )}

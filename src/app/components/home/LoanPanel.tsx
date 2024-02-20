@@ -30,6 +30,7 @@ import {
   useLoanUsedAmount,
   useLoanParameters,
   useBorrowableAmountWithReserve,
+  useInterestRate,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -43,6 +44,7 @@ const LoanPanel = () => {
   const { account } = useIconReact();
   const collateralType = useCollateralType();
   const locale = useActiveLocale();
+  const { data: interestRate } = useInterestRate(collateralType);
 
   const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '300px'})`);
 
@@ -363,6 +365,15 @@ const LoanPanel = () => {
           {shouldBorrow && (
             <Typography textAlign="center">
               <Trans>Includes a fee of {fee.dp(2).toFormat()} bnUSD.</Trans>
+            </Typography>
+          )}
+
+          {interestRate && shouldBorrow && (
+            <Typography textAlign="center">
+              <Trans>
+                Your loan will increase at a rate of{' '}
+                {`${interestRate.times(100).toFixed(2)}%`.replace('00%', '%').replace('0%', '%')} per year.
+              </Trans>
             </Typography>
           )}
 

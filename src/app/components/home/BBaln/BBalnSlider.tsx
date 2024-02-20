@@ -474,6 +474,7 @@ export default function BBalnSlider({
                       placement="top"
                       forcePlacement={true}
                       width={280}
+                      strategy="absolute"
                     >
                       <QuestionWrapper
                         onMouseEnter={() => handleGlobalHover(true)}

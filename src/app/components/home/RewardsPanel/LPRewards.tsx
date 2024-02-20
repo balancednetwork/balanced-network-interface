@@ -14,13 +14,16 @@ import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
+import { useAllPairs } from 'queries/backendv2';
 import { useLPReward } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useBBalnAmount, useDynamicBBalnAmount, useSources, useTotalSupply } from 'store/bbaln/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from 'store/wallet/hooks';
+import { getFormattedNumber } from 'utils/formatter';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
+import { MAX_BOOST } from '../BBaln/utils';
 import PositionRewardsInfo from './PositionRewardsInfo';
 import RewardsGrid from './RewardsGrid';
 
@@ -37,6 +40,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const bBalnAmount = useBBalnAmount();
   const hasEnoughICX = useHasEnoughICX();
   const balances = useICONWalletBalances();
+  const { data: allPairs } = useAllPairs();
   const isSmall = useMedia('(max-width: 1050px)');
   const isExtraSmall = useMedia('(max-width: 800px)');
   const hasLPOrLoan = React.useMemo(
@@ -47,6 +51,17 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
   }, [isOpen]);
+
+  const [lowestApy, highestApy] = React.useMemo(() => {
+    if (allPairs) {
+      const apys = Object.values(allPairs)
+        .filter(pair => pair.balnApy > 0)
+        .map(pair => pair.balnApy * 100);
+      return [Math.min(...apys), Math.max(...apys)];
+    } else {
+      return [0, 0];
+    }
+  }, [allPairs]);
 
   const maxRewardThreshold = React.useMemo(() => {
     if (sources && totalSupplyBBaln && bBalnAmount) {
@@ -109,23 +124,40 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
     <>
       <Box width="100%">
         <Flex justifyContent="space-between" mb={3}>
-          <Typography variant="h4" fontWeight="bold" fontSize={14} color="text">
-            <Tooltip
-              show={!!hasLPOrLoan && showGlobalTooltip && !isExtraSmall}
-              text={
-                <>
-                  <Typography>{maxRewardNoticeContent}</Typography>
-                  <PositionRewardsInfo />
-                </>
-              }
-              placement="bottom-end"
-              forcePlacement={isSmall}
-              width={320}
-              offset={[0, 19]}
+          <Flex flexWrap="wrap">
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              mr={'8px'}
+              fontSize={16}
+              color="text"
+              style={{ whiteSpace: 'nowrap' }}
             >
-              Balanced incentives
-            </Tooltip>
-          </Typography>
+              <Tooltip
+                show={!!hasLPOrLoan && showGlobalTooltip && !isExtraSmall}
+                text={
+                  <>
+                    <Typography>{maxRewardNoticeContent}</Typography>
+                    <PositionRewardsInfo />
+                  </>
+                }
+                placement="bottom-end"
+                forcePlacement={isSmall}
+                width={320}
+                offset={[0, 19]}
+              >
+                Balanced incentives
+              </Tooltip>
+            </Typography>
+            {!account && (
+              <Typography fontSize={14} opacity={0.75} mr={-3} padding="3px 0 0 0" style={{ whiteSpace: 'nowrap' }}>
+                {`${getFormattedNumber(lowestApy, 'number2')} - ${getFormattedNumber(
+                  MAX_BOOST.times(highestApy).toNumber(),
+                  'number2',
+                )}%`}
+              </Typography>
+            )}
+          </Flex>
           {reward?.greaterThan(0) && (
             <UnderlineText>
               <Typography color="primaryBright" onClick={toggleOpen}>

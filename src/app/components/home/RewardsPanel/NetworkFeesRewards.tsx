@@ -18,6 +18,7 @@ import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import {
   useBBalnAmount,
+  useBBalnApr,
   useBBalnSliderState,
   useDBBalnAmountDiff,
   useLockedBaln,
@@ -48,6 +49,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
   const hasNetworkFees = useHasNetworkFees();
   const { typedValue } = useBBalnSliderState();
   const lockedBalnAmount = useLockedBaln();
+  const { data: bBalnApr } = useBBalnApr();
 
   const balnSliderAmount = React.useMemo(() => new BigNumber(typedValue), [typedValue]);
   const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
@@ -98,10 +100,17 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
   return (
     <Box width="100%">
       <Flex justifyContent="space-between" mb={3}>
-        <Typography variant="h4" fontWeight="bold" fontSize={14} color="text">
-          <span style={{ paddingRight: '8px' }}>
-            <Trans>Network fees</Trans>
-          </span>
+        <Flex alignItems="center">
+          <Typography variant="h4" fontWeight="bold" fontSize={16} color="text">
+            <span style={{ paddingRight: '8px' }}>
+              <Trans>Network fees</Trans>
+            </span>
+          </Typography>
+          {!account && bBalnApr && (
+            <Typography fontSize={14} opacity={0.75} padding="3px 8px 0 0">
+              {`${bBalnApr.toFixed(2)}%`}
+            </Typography>
+          )}
           <Tooltip
             text={
               <>
@@ -148,7 +157,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
               </QuestionWrapper>
             </MouseoverTooltip>
           </Tooltip>
-        </Typography>
+        </Flex>
 
         {hasNetworkFees && (
           <UnderlineText>

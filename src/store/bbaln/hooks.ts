@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { LockedPeriod } from 'app/components/home/BBaln/types';
@@ -12,7 +12,7 @@ import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import useInterval from 'hooks/useInterval';
 import { BalanceData } from 'hooks/useV2Pairs';
-import { PairData } from 'queries/backendv2';
+import { PairData, useTokenPrices } from 'queries/backendv2';
 import { useRatesQuery } from 'queries/reward';
 import { useBlockDetails } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
@@ -421,6 +421,20 @@ export const useTotalBalnLocked = () => {
   });
 };
 
-export const useTotalBBalnSupply = () => {
-  return useQuery('bbalnTotalSupply', async () => {});
-};
+export function useBBalnApr(): UseQueryResult<BigNumber | undefined> {
+  const { data: pastMonthDistributed } = usePastMonthFeesDistributed();
+  const { data: prices } = useTokenPrices();
+  const bBALNSupply = useTotalSupply();
+
+  return useQuery(
+    `bbalnApr-${pastMonthDistributed ? 'fees' : 'nofees'}-${bBALNSupply ? bBALNSupply.toFixed(0) : ''}-${
+      prices ? Object.keys(prices).length : ''
+    }`,
+    async () => {
+      if (!pastMonthDistributed || !prices || !bBALNSupply) return;
+      const assumedYearlyDistribution = pastMonthDistributed.total.times(12);
+      return assumedYearlyDistribution.div(bBALNSupply.times(prices['BALN'])).times(100);
+    },
+    { keepPreviousData: true },
+  );
+}

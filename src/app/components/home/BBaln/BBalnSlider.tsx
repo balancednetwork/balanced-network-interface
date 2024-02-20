@@ -270,6 +270,8 @@ export default function BBalnSlider({
       : t`Lock up BALN`
     : bBalnAmount?.isZero()
     ? t`Lock up BALN`
+    : balnBalanceAvailable.isLessThan(1)
+    ? t`Withdraw`
     : t`Adjust`;
   const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
@@ -434,6 +436,11 @@ export default function BBalnSlider({
     return BigNumber.min(dynamicBBalnAmount.dividedBy(max).times(60).plus(40), new BigNumber(100));
   }, [bBalnAmount, dynamicBBalnAmount, maxRewardThreshold]);
 
+  const handleGlobalHover = (isHover: boolean) => {
+    setTooltipHovered(isHover);
+    setGlobalTooltip && setGlobalTooltip(isHover);
+  };
+
   return (
     <>
       {balnBalanceAvailable.isGreaterThan(0) ||
@@ -457,8 +464,8 @@ export default function BBalnSlider({
                       show={showGlobalTooltip || tooltipHovered}
                       text={
                         <>
-                          <EarningPowerTooltipContent />
-                          <Typography mt={3}>
+                          {!isAdjusting && <EarningPowerTooltipContent />}
+                          <Typography mt={!isAdjusting ? 3 : 0}>
                             You have <strong>{dynamicBBalnAmount.dp(2).toFormat()} bBALN</strong>.{' '}
                             {hasLPOrLoan && maxRewardNoticeContent}
                           </Typography>
@@ -469,8 +476,8 @@ export default function BBalnSlider({
                       width={280}
                     >
                       <QuestionWrapper
-                        onMouseEnter={() => setTooltipHovered(true)}
-                        onMouseLeave={() => setTooltipHovered(false)}
+                        onMouseEnter={() => handleGlobalHover(true)}
+                        onMouseLeave={() => handleGlobalHover(false)}
                         style={{ transform: 'translateY(1px)' }}
                       >
                         <QuestionIcon width={14} />

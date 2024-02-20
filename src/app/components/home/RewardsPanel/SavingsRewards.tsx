@@ -68,7 +68,7 @@ const SavingsRewards = () => {
             <Typography variant="h4" fontWeight="bold" fontSize={16} color="text">
               bnUSD savings
             </Typography>
-            {savingsRate?.APR && !account && (
+            {savingsRate?.APR && (!account || !lockedAmount || lockedAmount.equalTo(0)) && (
               <Typography fontSize={14} opacity={0.75} padding="3px 0 0 8px">
                 {`${savingsRate?.APR.toFixed(2)}%`}
               </Typography>

@@ -149,7 +149,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
                 Balanced incentives
               </Tooltip>
             </Typography>
-            {!account && (
+            {(!account || !hasLPOrLoan) && (
               <Typography fontSize={14} opacity={0.75} mr={-3} padding="3px 0 0 0" style={{ whiteSpace: 'nowrap' }}>
                 {`${getFormattedNumber(lowestApy, 'number2')} - ${getFormattedNumber(
                   MAX_BOOST.times(highestApy).toNumber(),

@@ -106,7 +106,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
               <Trans>Network fees</Trans>
             </span>
           </Typography>
-          {!account && bBalnApr && (
+          {(!account || beforeBalnAmount.isEqualTo(0)) && bBalnApr && (
             <Typography fontSize={14} opacity={0.75} padding="3px 8px 0 0">
               {`${bBalnApr.toFixed(2)}%`}
             </Typography>
@@ -114,25 +114,21 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
           <Tooltip
             text={
               <>
-                {hasNetworkFees && (
-                  <>
-                    <Trans>
-                      You'll receive a{' '}
-                      {!bBalnAmount.isEqualTo(0) && (
-                        <strong>
-                          {bBalnAmount.isEqualTo(0)
-                            ? 'N/A'
-                            : totalSupplyBBaln && feeShare
-                            ? `${feeShare.times(100).toPrecision(3)} %`
-                            : '-'}{' '}
-                        </strong>
-                      )}
-                      share of the fees distributed to bBALN holders, equivalent to
-                    </Trans>
-                    {feeShare && <strong> {t`$${pastMonthFees?.total.times(feeShare).toFormat(2)}`}</strong>}{' '}
-                    <Trans>in the last 30 days.</Trans>
-                  </>
-                )}
+                <Trans>
+                  You'll receive a{' '}
+                  {!bBalnAmount.isEqualTo(0) && (
+                    <strong>
+                      {bBalnAmount.isEqualTo(0)
+                        ? 'N/A'
+                        : totalSupplyBBaln && feeShare
+                        ? `${feeShare.times(100).toPrecision(3)} %`
+                        : '-'}{' '}
+                    </strong>
+                  )}
+                  share of the fees distributed to bBALN holders, equivalent to
+                </Trans>
+                {feeShare && <strong> {t`$${pastMonthFees?.total.times(feeShare).toFormat(2)}`}</strong>}{' '}
+                <Trans>in the last 30 days.</Trans>
               </>
             }
             show={showGlobalTooltip}

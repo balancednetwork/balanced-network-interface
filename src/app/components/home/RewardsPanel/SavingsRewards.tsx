@@ -82,11 +82,11 @@ const SavingsRewards = () => {
             </UnderlineText>
           )}
         </Flex>
-        {lockedAmount && lockedAmount.greaterThan(0) ? (
+        {account && lockedAmount && lockedAmount.greaterThan(0) ? (
           <RewardsGrid rewards={rewards} />
         ) : (
-          <Typography fontSize={14} opacity={0.75} maxWidth={'220px'} mb={5}>
-            Deposit bnUSD to earn interest and other incentives
+          <Typography fontSize={14} opacity={0.75} mb={5}>
+            To earn interest and other incentives, deposit bnUSD into your savings.
           </Typography>
         )}
       </Box>

@@ -23,7 +23,7 @@ import {
   useSavingsSliderState,
 } from 'store/savings/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX, useICONWalletBalances } from 'store/wallet/hooks';
+import { useHasEnoughICX, useICONWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { escapeRegExp, parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -44,6 +44,7 @@ const Savings = () => {
   const [isOpen, setOpen] = React.useState(false);
   const isSmallScreen = useMedia('(max-width: 540px)');
   const { data: savingsRate } = useSavingsRate();
+  const signedInWallet = useSignedInWallets();
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -164,10 +165,10 @@ const Savings = () => {
               bnUSD savings
             </Typography>
             <Typography pt={isSmallScreen ? '5px' : '9px'} color="text1">
-              {savingsRate?.APR && `${savingsRate.APR.toFormat(2)}% p.a.`}
+              {savingsRate?.APR && `${savingsRate.APR.toFormat(2)}% APR`}
             </Typography>
           </Flex>
-          {bnUSDCombinedTotal > 0 && (
+          {account && bnUSDCombinedTotal > 0 && (
             <Flex>
               {isAdjusting && <TextButton onClick={handleCancel}>{t`Cancel`}</TextButton>}
               <Button
@@ -186,7 +187,7 @@ const Savings = () => {
             </Flex>
           )}
         </Flex>
-        {bnUSDCombinedTotal > 0 ? (
+        {account && bnUSDCombinedTotal > 0 ? (
           <>
             <Box margin="25px 0 10px">
               <Nouislider
@@ -224,14 +225,18 @@ const Savings = () => {
               </Flex>
               {typedValueBN?.isGreaterThan(0) && dynamicDailyAmountRate && (
                 <Typography fontSize={14}>{`~ $${typedValueBN
-                  .times(dynamicDailyAmountRate)
-                  .toFormat(2)} daily`}</Typography>
+                  .times(dynamicDailyAmountRate.times(7))
+                  .toFormat(2)} weekly`}</Typography>
               )}
             </Flex>
           </>
+        ) : !account && signedInWallet.length > 0 ? (
+          <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
+            <Trans>Sign in on ICON, then deposit bnUSD to earn rewards.</Trans>
+          </Typography>
         ) : (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
-            Deposit bnUSD to earn interest, and withdraw when you need it.
+            <Trans>Buy or borrow bnUSD, then deposit it here to earn rewards.</Trans>
           </Typography>
         )}
       </Box>

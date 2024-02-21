@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { t } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
+import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
@@ -8,6 +9,7 @@ import styled from 'styled-components';
 import Divider, { VerticalDivider } from 'app/components/Divider';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
+import { useEarnedPastMonth } from 'store/reward/hooks';
 
 import BBalnSlider from '../BBaln/BBalnSlider';
 import Savings from '../Savings';
@@ -34,12 +36,19 @@ const RewardsPanel = () => {
   const [showGlobalTooltip, setGlobalTooltip] = React.useState(false);
   const isMedium = useMedia('(max-width: 1050px)');
   const isSmall = useMedia('(max-width: 800px)');
+  const { account } = useIconReact();
+  const { data: earnedPastMonth } = useEarnedPastMonth();
 
   return (
     <StyledBoxPanel bg="bg3">
-      <Typography mb="30px" variant="h2">
-        Rewards
-      </Typography>
+      <Flex mb="30px" alignItems="center" flexWrap="wrap" justifyContent="space-between">
+        <Typography variant="h2">Rewards</Typography>
+        {account && (
+          <Typography color="text1" fontSize={14} pt="9px">
+            <Trans>Earned</Trans> <strong>{`$${earnedPastMonth?.toFormat(2)}`}</strong> <Trans>in the past month</Trans>
+          </Typography>
+        )}
+      </Flex>
       <Flex flexDirection={isMedium ? 'column' : 'row'}>
         <SliderWrap>
           <Savings />

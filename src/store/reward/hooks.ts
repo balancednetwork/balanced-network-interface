@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { PLUS_INFINITY } from 'constants/index';
+import { useTokenPrices } from 'queries/backendv2';
 import { useBBalnAmount } from 'store/bbaln/hooks';
 import { useCollateralInputAmountAbsolute } from 'store/collateral/hooks';
 import { useHasUnclaimedFees } from 'store/fees/hooks';
@@ -179,6 +180,34 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
       }
     },
     {
+      keepPreviousData: true,
+    },
+  );
+}
+
+export function useEarnedPastMonth(): UseQueryResult<BigNumber | undefined> {
+  const { account } = useIconReact();
+  const { data: prices } = useTokenPrices();
+
+  return useQuery(
+    `earnedPastMonth-${account}-${prices ? Object.keys(prices).length : '0'}`,
+    async () => {
+      if (account) {
+        //get month old transactions
+
+        //get rewards from fees
+
+        //get rewards from incentives
+
+        //get rewards from savings
+
+        //get bribes rewards
+
+        return new BigNumber(23.9);
+      }
+    },
+    {
+      enabled: !!account,
       keepPreviousData: true,
     },
   );

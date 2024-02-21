@@ -42,7 +42,7 @@ import {
 } from 'store/bbaln/hooks';
 import { usePowerLeft } from 'store/liveVoting/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
+import { useBALNDetails, useHasEnoughICX, useSignedInWallets } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { getFormattedNumber } from 'utils/formatter';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -117,6 +117,7 @@ export default function BBalnSlider({
   const isSuperSmallScreen = useMedia('(max-width: 400px)');
   const addTransaction = useTransactionAdder();
   const [tooltipHovered, setTooltipHovered] = useState(false);
+  const signedInWallets = useSignedInWallets();
 
   const balnBalanceAvailable = useMemo(
     () => (balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0)),
@@ -396,7 +397,7 @@ export default function BBalnSlider({
   }, [sources, totalSupplyBBaln, bBalnAmount]);
 
   const maxRewardNoticeContent = dynamicBBalnAmount.isLessThan(bBalnAmount?.plus(maxRewardThreshold))
-    ? `You Need ${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN for maximum earning power.`
+    ? `You need ${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN for 100% earning power.`
     : 'You receive maximum rewards for your position.';
 
   const EarningPowerTooltipContent = () => (
@@ -443,10 +444,11 @@ export default function BBalnSlider({
 
   return (
     <>
-      {balnBalanceAvailable.isGreaterThan(0) ||
-      bBalnAmount.isGreaterThan(0) ||
-      lockedBalnAmount?.greaterThan(0) ||
-      stakedBalance?.isGreaterThan(0) ? (
+      {account &&
+      (balnBalanceAvailable.isGreaterThan(0) ||
+        bBalnAmount.isGreaterThan(0) ||
+        lockedBalnAmount?.greaterThan(0) ||
+        stakedBalance?.isGreaterThan(0)) ? (
         <>
           <Flex alignItems="flex-start" margin={simple && isAdjusting ? '0 0 15px' : ''}>
             <Flex
@@ -711,9 +713,15 @@ export default function BBalnSlider({
             )}
           </Typography>
           {simple ? (
-            <Typography fontSize={14} opacity={0.75} mb={5}>
-              <Trans>Lock up BALN to boost the amount you earn from rewards.</Trans>
-            </Typography>
+            !account && signedInWallets.length > 0 ? (
+              <Typography fontSize={14} opacity={0.75} mb={5}>
+                <Trans>Sign in on ICON, then lock up BALN to boost your rewards.</Trans>
+              </Typography>
+            ) : (
+              <Typography fontSize={14} opacity={0.75} mb={5}>
+                <Trans>Earn or buy BALN, then lock it up here to boost your rewards.</Trans>
+              </Typography>
+            )
           ) : (
             <Typography fontSize={14} opacity={0.75}>
               <Trans>Earn or buy BALN, then lock it up here to boost your earning potential and voting power.</Trans>

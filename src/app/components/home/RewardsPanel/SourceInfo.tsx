@@ -21,7 +21,7 @@ const SourceInfo = ({ name, boost, apy }: { name: string; boost?: BigNumber; apy
       {`${name}:`} <strong>{`${apy.times(100).times(boost).toFormat(2, BigNumber.ROUND_HALF_UP)}%`}</strong>{' '}
       {boost.isLessThan(2.5) && (
         <>
-          <span>{`(potential `}</span>
+          <span>{`(potential: `}</span>
           <strong>{`${apy.times(100).dp(2).times(MAX_BOOST).toFormat(2)}%`}</strong>
           <span>{`)`}</span>
         </>

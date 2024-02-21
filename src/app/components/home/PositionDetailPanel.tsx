@@ -50,10 +50,10 @@ const PERIOD_LABELS: { [key: string]: MessageDescriptor } = {
 };
 
 const INTEREST_PERIODS: { [key: string]: InterestPeriod } = {
-  day: { display: t`daily`, days: 1 },
-  week: { display: t`weekly`, days: 7 },
-  month: { display: t`monthly`, days: 30 },
-  year: { display: t`yearly`, days: 365 },
+  day: { display: t`Daily`, days: 1 },
+  week: { display: t`Weekly`, days: 7 },
+  month: { display: t`Monthly`, days: 30 },
+  year: { display: t`Yearly`, days: 365 },
 };
 
 const PositionDetailPanel = () => {
@@ -71,7 +71,7 @@ const PositionDetailPanel = () => {
   const [show, setShow] = React.useState<boolean>(false);
   const [showRebalancing, setShowRebalancing] = React.useState<boolean>(false);
   const [period, setPeriod] = React.useState<Period>(Period.day);
-  const [interestPeriod, setInterestPeriod] = React.useState<InterestPeriod>(INTEREST_PERIODS.day);
+  const [interestPeriod, setInterestPeriod] = React.useState<InterestPeriod>(INTEREST_PERIODS.week);
   const isHandlingICX = useIsHandlingICX();
   const heightenBars =
     (useMedia('(max-width: 359px)') && 'es-ES,nl-NL,de-DE,fr-FR'.indexOf(locale) >= 0) || 'pl-PL'.indexOf(locale) >= 0;
@@ -452,12 +452,10 @@ const PositionDetailPanel = () => {
                   {!upMedium && <VerticalDivider mr={8} />}
                   <Box width={[1 / 2, 1 / 2, 1 / 2, 3 / 7]}>
                     <Typography variant="p" color="white">
-                      {interestRate?.isGreaterThan(0)
-                        ? `${interestRate.times(100).toFixed(2)}%`.replace('0%', '%').replace('00%', '%')
-                        : '-'}
+                      {interestRate ? `${interestRate.times(100).toFixed(2)}%`.replace('.00%', '%') : '-'}
                     </Typography>
                     <Typography mt={1}>
-                      <Trans>interest rate</Trans>
+                      <Trans>Interest rate</Trans>
                     </Typography>
                   </Box>
                 </Flex>

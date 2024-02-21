@@ -43,8 +43,8 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const { data: allPairs } = useAllPairs();
   const isSmall = useMedia('(max-width: 1050px)');
   const isExtraSmall = useMedia('(max-width: 800px)');
-  const hasLPOrLoan = React.useMemo(
-    () => sources && Object.values(sources).some(source => source.balance.isGreaterThan(0)),
+  const numberOfPositions = React.useMemo(
+    () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(0)).length : 0),
     [sources],
   );
 
@@ -82,8 +82,8 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
 
   const maxRewardNoticeContent = dynamicBBalnAmount.isLessThan(bBalnAmount?.plus(maxRewardThreshold)) ? (
     <>
-      {t`Your positions require`} <strong>{`${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN`}</strong>{' '}
-      {t`for maximum rewards.`}
+      {numberOfPositions > 1 ? t`Your positions require` : t`Your position requires`}{' '}
+      <strong>{`${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN`}</strong> {t`for maximum rewards.`}
     </>
   ) : (
     <Trans>You receive maximum rewards for your position.</Trans>
@@ -134,7 +134,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
               style={{ whiteSpace: 'nowrap' }}
             >
               <Tooltip
-                show={!!hasLPOrLoan && showGlobalTooltip && !isExtraSmall}
+                show={!!numberOfPositions && showGlobalTooltip && !isExtraSmall}
                 text={
                   <>
                     <Typography>{maxRewardNoticeContent}</Typography>
@@ -149,7 +149,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
                 Balanced incentives
               </Tooltip>
             </Typography>
-            {(!account || !hasLPOrLoan) && (
+            {(!account || !numberOfPositions) && (
               <Typography fontSize={14} opacity={0.75} mr={-3} padding="3px 0 0 0" style={{ whiteSpace: 'nowrap' }}>
                 {`${getFormattedNumber(lowestApy, 'number2')} - ${getFormattedNumber(
                   MAX_BOOST.times(highestApy).toNumber(),
@@ -169,8 +169,8 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
         {reward?.greaterThan(0) ? (
           <RewardsGrid rewards={[reward]} />
         ) : (
-          <Typography fontSize={14} opacity={0.75} maxWidth={'220px'} mb={5}>
-            Take out a loan or supply liquidity to earn BALN
+          <Typography fontSize={14} opacity={0.75} mb={5}>
+            To earn BALN, take out a loan or supply liquidity on the Trade page.
           </Typography>
         )}
       </Box>

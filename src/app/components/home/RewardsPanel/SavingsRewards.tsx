@@ -12,7 +12,7 @@ import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useLockedAmount, useSavingsRate, useUnclaimedRewards } from 'store/savings/hooks';
+import { useLockedAmount, useUnclaimedRewards } from 'store/savings/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -28,7 +28,6 @@ const SavingsRewards = () => {
   const hasEnoughICX = useHasEnoughICX();
   const [isOpen, setOpen] = React.useState(false);
   const lockedAmount = useLockedAmount();
-  const { data: savingsRate } = useSavingsRate();
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -68,11 +67,6 @@ const SavingsRewards = () => {
             <Typography variant="h4" fontWeight="bold" fontSize={16} color="text">
               bnUSD savings
             </Typography>
-            {savingsRate?.APR && (!account || !lockedAmount || lockedAmount.equalTo(0)) && (
-              <Typography fontSize={14} opacity={0.75} padding="3px 0 0 8px">
-                {`${savingsRate?.APR.toFixed(2)}%`}
-              </Typography>
-            )}
           </Flex>
           {lockedAmount && lockedAmount.greaterThan(0) && account && (
             <UnderlineText>

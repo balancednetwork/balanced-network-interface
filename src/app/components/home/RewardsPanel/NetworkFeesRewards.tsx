@@ -16,11 +16,9 @@ import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import {
-  useBBalnApr,
   useBBalnSliderState,
   useDBBalnAmountDiff,
   useDynamicBBalnAmount,
-  useLockedBaln,
   usePastMonthFeesDistributed,
   useTotalSupply,
 } from 'store/bbaln/hooks';
@@ -47,8 +45,6 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
   const bbalnAmountDiff = useDBBalnAmountDiff();
   const hasNetworkFees = useHasNetworkFees();
   const { isAdjusting } = useBBalnSliderState();
-  const lockedBalnAmount = useLockedBaln();
-  const { data: bBalnApr } = useBBalnApr();
   const [tooltipHovered, setTooltipHovered] = React.useState(false);
 
   const toggleOpen = React.useCallback(() => {
@@ -98,11 +94,6 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
               <Trans>Network fees</Trans>
             </span>
           </Typography>
-          {(!account || lockedBalnAmount?.equalTo(0)) && bBalnApr && (
-            <Typography fontSize={14} opacity={0.75} padding="3px 8px 0 0">
-              {`${bBalnApr.toFixed(2)}%`}
-            </Typography>
-          )}
           <Tooltip
             text={
               account && dynamicBalnAmount.isGreaterThan(0) ? (

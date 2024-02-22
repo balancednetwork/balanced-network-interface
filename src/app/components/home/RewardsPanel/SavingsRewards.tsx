@@ -62,7 +62,7 @@ const SavingsRewards = () => {
   return (
     <>
       <Box width="100%">
-        <Flex justifyContent="space-between" mb={3}>
+        <Flex justifyContent="space-between" mb={3} alignItems="center">
           <Flex>
             <Typography variant="h4" fontWeight="bold" fontSize={16} color="text">
               bnUSD savings

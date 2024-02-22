@@ -10,9 +10,11 @@ import { Button, TextButton } from 'app/components/Button';
 import { UnderlineText } from 'app/components/DropdownText';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
+import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
+import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import bnJs from 'bnJs';
 import { useLPReward } from 'queries/reward';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -39,6 +41,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const balances = useICONWalletBalances();
   const isSmall = useMedia('(max-width: 1050px)');
   const isExtraSmall = useMedia('(max-width: 800px)');
+  const [tooltipHovered, setTooltipHovered] = React.useState(false);
   const numberOfPositions = React.useMemo(
     () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(0)).length : 0),
     [sources],
@@ -108,7 +111,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   return (
     <>
       <Box width="100%">
-        <Flex justifyContent="space-between" mb={3}>
+        <Flex justifyContent="space-between" mb={3} alignItems="center">
           <Flex flexWrap="wrap">
             <Typography
               variant="h4"
@@ -119,7 +122,10 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
               style={{ whiteSpace: 'nowrap' }}
             >
               <Tooltip
-                show={!!numberOfPositions && showGlobalTooltip && !isExtraSmall}
+                show={
+                  (!!numberOfPositions && showGlobalTooltip && !isExtraSmall) ||
+                  (!!numberOfPositions && isExtraSmall && tooltipHovered)
+                }
                 text={
                   <>
                     <Typography>{maxRewardNoticeContent}</Typography>
@@ -132,6 +138,17 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
                 offset={[0, 19]}
               >
                 Balanced incentives
+                {isExtraSmall && account && !!numberOfPositions && (
+                  <QuestionWrapper
+                    style={{ transform: 'translateY(1px)', marginLeft: '8px' }}
+                    onMouseEnter={() => setTooltipHovered(true)}
+                    onMouseLeave={() => setTooltipHovered(false)}
+                    onTouchStart={() => setTooltipHovered(true)}
+                    onTouchCancel={() => setTooltipHovered(false)}
+                  >
+                    <QuestionIcon width={14} />
+                  </QuestionWrapper>
+                )}
               </Tooltip>
             </Typography>
           </Flex>

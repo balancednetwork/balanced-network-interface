@@ -464,6 +464,7 @@ export default function BBalnSlider({
                     )}
                     <Tooltip
                       show={showGlobalTooltip || tooltipHovered}
+                      offset={isSmallScreen ? [0, 40] : [0, 10]}
                       text={
                         <>
                           {!isAdjusting && <EarningPowerTooltipContent />}
@@ -483,6 +484,8 @@ export default function BBalnSlider({
                       <QuestionWrapper
                         onMouseEnter={() => handleGlobalHover(true)}
                         onMouseLeave={() => handleGlobalHover(false)}
+                        onTouchStart={() => handleGlobalHover(true)}
+                        onTouchCancel={() => handleGlobalHover(false)}
                         style={{ transform: 'translateY(1px)' }}
                       >
                         <QuestionIcon width={14} />

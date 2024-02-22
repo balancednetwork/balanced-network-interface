@@ -42,7 +42,9 @@ const RewardsPanel = () => {
   return (
     <StyledBoxPanel bg="bg3">
       <Flex mb="30px" alignItems="center" flexWrap="wrap" justifyContent="space-between">
-        <Typography variant="h2">Rewards</Typography>
+        <Typography variant="h2" mr={6}>
+          Rewards
+        </Typography>
         {account && (
           <Typography color="text1" fontSize={14} pt="9px">
             <Trans>Earned</Trans> <strong>{`$${earnedPastMonth?.toFormat(2)}`}</strong> <Trans>in the past month</Trans>
@@ -69,9 +71,9 @@ const RewardsPanel = () => {
       <BoxPanel bg="bg2" mt="35px" style={{ padding: '17px 20px' }}>
         <Flex flexWrap={isSmall ? 'wrap' : 'nowrap'}>
           <SavingsRewards />
-          {!isSmall ? <VerticalDivider margin={'3px 30px'} /> : <Divider width="100%" my={4} />}
+          {!isSmall ? <VerticalDivider margin={isMedium ? '3px 15px' : '3px 30px'} /> : <Divider width="100%" my={4} />}
           <LPRewards showGlobalTooltip={showGlobalTooltip} />
-          {!isSmall ? <VerticalDivider margin={'3px 30px'} /> : <Divider width="100%" my={4} />}
+          {!isSmall ? <VerticalDivider margin={isMedium ? '3px 15px' : '3px 30px'} /> : <Divider width="100%" my={4} />}
           <NetworkFeesReward showGlobalTooltip={showGlobalTooltip} />
         </Flex>
       </BoxPanel>

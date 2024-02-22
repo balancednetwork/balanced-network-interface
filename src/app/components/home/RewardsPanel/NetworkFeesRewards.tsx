@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
 import { Button, TextButton } from 'app/components/Button';
@@ -46,6 +47,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
   const hasNetworkFees = useHasNetworkFees();
   const { isAdjusting } = useBBalnSliderState();
   const [tooltipHovered, setTooltipHovered] = React.useState(false);
+  const isSmallScreen = useMedia('(max-width: 800px)');
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -87,7 +89,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
 
   return (
     <Box width="100%">
-      <Flex justifyContent="space-between" mb={3}>
+      <Flex justifyContent="space-between" mb={3} alignItems="center">
         <Flex alignItems="center">
           <Typography variant="h4" fontWeight="bold" fontSize={16} color="text">
             <span style={{ paddingRight: '8px' }}>
@@ -129,7 +131,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
                 </>
               )
             }
-            show={tooltipHovered || showGlobalTooltip}
+            show={tooltipHovered || (!isSmallScreen && showGlobalTooltip)}
             placement="bottom"
             width={300}
             forcePlacement={true}
@@ -138,6 +140,8 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
               style={{ transform: 'translateY(1px)' }}
               onMouseEnter={() => setTooltipHovered(true)}
               onMouseLeave={() => setTooltipHovered(false)}
+              onTouchStart={() => setTooltipHovered(true)}
+              onTouchCancel={() => setTooltipHovered(false)}
             >
               <QuestionIcon width={14} />
             </QuestionWrapper>

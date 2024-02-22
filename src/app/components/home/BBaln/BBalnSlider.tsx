@@ -390,7 +390,7 @@ export default function BBalnSlider({
 
   const EarningPowerTooltipContent = () => (
     <>
-      {!bBalnAmount.isGreaterThan(0) && (
+      {(!bBalnAmount.isGreaterThan(0) || !account) && (
         <Typography color="text1" mb={account ? 3 : 0}>
           <Trans>
             Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity
@@ -432,7 +432,8 @@ export default function BBalnSlider({
     if (!dynamicBBalnAmount) return;
     if (maxRewardThreshold.isEqualTo(0)) return new BigNumber(100);
     const max = bBalnAmount.plus(maxRewardThreshold);
-    return BigNumber.min(dynamicBBalnAmount.dividedBy(max).times(60).plus(40), new BigNumber(100));
+    const ePower = BigNumber.min(dynamicBBalnAmount.dividedBy(max).times(60).plus(40), new BigNumber(100));
+    return !ePower.isNaN() ? ePower : new BigNumber(40);
   }, [bBalnAmount, dynamicBBalnAmount, maxRewardThreshold]);
 
   const handleGlobalHover = (isHover: boolean) => {
@@ -471,7 +472,7 @@ export default function BBalnSlider({
                           {(isAdjusting || numberOfPositions || dynamicBBalnAmount.isGreaterThan(0)) && (
                             <Typography mt={!isAdjusting ? 3 : 0}>
                               You have <strong>{dynamicBBalnAmount.dp(2).toFormat()} bBALN</strong>.{' '}
-                              {numberOfPositions && maxRewardNoticeContent}
+                              {numberOfPositions ? maxRewardNoticeContent : ''}
                             </Typography>
                           )}
                         </>

@@ -128,7 +128,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
                 }
                 placement="bottom-end"
                 forcePlacement={isSmall}
-                width={320}
+                width={330}
                 offset={[0, 19]}
               >
                 Balanced incentives

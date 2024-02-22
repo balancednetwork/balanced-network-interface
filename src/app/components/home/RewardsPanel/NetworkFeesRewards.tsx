@@ -111,17 +111,15 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
                     ) : (
                       <strong>0% </strong>
                     )}
-                    of the fees shared with bBALN holders.
+                    of the fees shared with bBALN holders
                   </Trans>
-                  {feeShare && (
-                    <Typography fontSize={14} mt={3}>
-                      Of the{' '}
-                      <>
-                        <strong style={{ color: '#FFFFFF' }}>${pastMonthFees?.total.toFormat(0) ?? '-'} </strong>
-                        {t`Balanced distributed over the last 30 days, your share would have earned `}
-                        <strong> {t`$${pastMonthFees?.total.times(feeShare).toFormat(2)}`}</strong>.
-                      </>
-                    </Typography>
+                  {feeShare ? (
+                    <>
+                      , equivalent to <strong> {t`$${pastMonthFees?.total.times(feeShare).toFormat(2)}`}</strong> over
+                      the last 30 days.
+                    </>
+                  ) : (
+                    '.'
                   )}
                 </>
               ) : (

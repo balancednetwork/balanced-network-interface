@@ -33,7 +33,6 @@ import {
   useLockedUntil,
   useHasLockExpired,
   useTotalSupply,
-  Source,
   useBBalnChangeSelectedPeriod,
   useSelectedPeriod,
   useDynamicBBalnAmount,
@@ -368,17 +367,6 @@ export default function BBalnSlider({
     }
   };
 
-  const boostedLPs = useMemo(() => {
-    if (sources) {
-      return Object.keys(sources).reduce((LPs, sourceName) => {
-        if (sourceName !== 'Loans' && sources[sourceName].balance.isGreaterThan(0)) {
-          LPs[sourceName] = { ...sources[sourceName] };
-        }
-        return LPs;
-      }, {} as { [key in string]: Source });
-    }
-  }, [sources]);
-
   const maxRewardThreshold = useMemo(() => {
     if (sources && totalSupplyBBaln && bBalnAmount) {
       return BigNumber.max(
@@ -402,18 +390,28 @@ export default function BBalnSlider({
 
   const EarningPowerTooltipContent = () => (
     <>
-      <Typography mb={3} color="text1">
-        <Trans>
-          Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity
-          pools.
-        </Trans>
-      </Typography>
-      <Typography color="text1">
-        <Trans>Your earning power depends on your bBALN holdings and position size compared to everyone else's.</Trans>
-      </Typography>
+      {!bBalnAmount.isGreaterThan(0) && (
+        <Typography color="text1" mb={account ? 3 : 0}>
+          <Trans>
+            Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity
+            pools.
+          </Trans>
+        </Typography>
+      )}
+      {account && (
+        <Typography color="text1">
+          <Trans>
+            Your earning power depends on your bBALN holdings and position size compared to everyone else's.
+          </Trans>
+        </Typography>
+      )}
     </>
   );
-  const hasLPOrLoan = sources && boostedLPs && (sources.Loans.balance.isGreaterThan(0) || boostedLPs.length);
+
+  const numberOfPositions = React.useMemo(
+    () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(0)).length : 0),
+    [sources],
+  );
 
   const balnReturnedEarly = useMemo(() => {
     if (lockedBalnAmount && bBalnAmount) {
@@ -461,16 +459,20 @@ export default function BBalnSlider({
               <Typography padding="0 3px 2px 0" style={titleVariant === 'h4' ? { transform: 'translateY(1px)' } : {}}>
                 {simple ? (
                   <>
-                    {earningPower && <span style={{ marginRight: '8px' }}>{earningPower.toFixed(0)}%</span>}
+                    {earningPower && (numberOfPositions || dynamicBBalnAmount.isGreaterThan(0) || isAdjusting) && (
+                      <span style={{ marginRight: '8px' }}>{earningPower.toFixed(0)}%</span>
+                    )}
                     <Tooltip
                       show={showGlobalTooltip || tooltipHovered}
                       text={
                         <>
                           {!isAdjusting && <EarningPowerTooltipContent />}
-                          <Typography mt={!isAdjusting ? 3 : 0}>
-                            You have <strong>{dynamicBBalnAmount.dp(2).toFormat()} bBALN</strong>.{' '}
-                            {hasLPOrLoan && maxRewardNoticeContent}
-                          </Typography>
+                          {(isAdjusting || numberOfPositions || dynamicBBalnAmount.isGreaterThan(0)) && (
+                            <Typography mt={!isAdjusting ? 3 : 0}>
+                              You have <strong>{dynamicBBalnAmount.dp(2).toFormat()} bBALN</strong>.{' '}
+                              {numberOfPositions && maxRewardNoticeContent}
+                            </Typography>
+                          )}
                         </>
                       }
                       placement="top"
@@ -493,7 +495,10 @@ export default function BBalnSlider({
                       text={maxRewardNoticeContent}
                       width={215}
                       show={
-                        !!showMaxRewardsNotice && !!hasLPOrLoan && isAdjusting && maxRewardThreshold.isGreaterThan(0)
+                        !!showMaxRewardsNotice &&
+                        !!numberOfPositions &&
+                        isAdjusting &&
+                        maxRewardThreshold.isGreaterThan(0)
                       }
                       placement="top-start"
                       forcePlacement={true}
@@ -515,7 +520,7 @@ export default function BBalnSlider({
                               decrease over time.
                             </Trans>
                           </Typography>
-                          {showMaxRewardsNotice && !isAdjusting && hasLPOrLoan && (
+                          {showMaxRewardsNotice && !isAdjusting && numberOfPositions && (
                             <>
                               <Divider my={2} />
                               <Typography fontWeight={700}>{maxRewardNoticeContent}</Typography>

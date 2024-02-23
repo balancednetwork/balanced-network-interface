@@ -18,7 +18,7 @@ import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import {
   useLockedAmount,
-  useSavingsRate,
+  useSavingsRateInfo,
   useSavingsSliderActionHandlers,
   useSavingsSliderState,
 } from 'store/savings/hooks';
@@ -43,7 +43,7 @@ const Savings = () => {
   const hasEnoughICX = useHasEnoughICX();
   const [isOpen, setOpen] = React.useState(false);
   const isSmallScreen = useMedia('(max-width: 540px)');
-  const { data: savingsRate } = useSavingsRate();
+  const { data: savingsRate } = useSavingsRateInfo();
   const signedInWallet = useSignedInWallets();
 
   const toggleOpen = React.useCallback(() => {
@@ -78,9 +78,13 @@ const Savings = () => {
 
   const dynamicDailyAmountRate = React.useMemo(() => {
     if (!savingsRate) return;
-    const dailyReward = savingsRate.monthlyRewards.div(30);
-    return dailyReward.div(new BigNumber(savingsRate.totalLocked.toFixed()).plus(bnUSDDiff));
+    return savingsRate.dailyPayout.div(new BigNumber(savingsRate.totalLocked.toFixed()).plus(bnUSDDiff));
   }, [bnUSDDiff, savingsRate]);
+
+  const staticDailyAmountRate = React.useMemo(() => {
+    if (!savingsRate) return;
+    return savingsRate.dailyPayout.div(savingsRate.totalLocked.toFixed());
+  }, [savingsRate]);
 
   React.useEffect(() => {
     if (lockedAmount && sliderInstance.current) {
@@ -221,12 +225,12 @@ const Savings = () => {
                     {lockedAmount?.toFixed(2, { groupSeparator: ',' }).replace('.00', '') || 0}
                   </Typography>
                 )}
-                <Typography fontSize={14}>{`/ ${bnUSDCombinedTotal.toFixed(2)} bnUSD`}</Typography>
+                <Typography fontSize={14}>{`/ ${new BigNumber(bnUSDCombinedTotal).toFormat(2)} bnUSD`}</Typography>
               </Flex>
-              {typedValueBN?.isGreaterThan(0) && dynamicDailyAmountRate && (
+              {typedValueBN?.isGreaterThan(0) && dynamicDailyAmountRate && staticDailyAmountRate && (
                 <Typography fontSize={14}>{`~ $${typedValueBN
-                  .times(dynamicDailyAmountRate.times(7))
-                  .toFormat(2)} weekly`}</Typography>
+                  .times(isAdjusting ? dynamicDailyAmountRate : staticDailyAmountRate)
+                  .toFormat(2)} daily`}</Typography>
               )}
             </Flex>
           </>

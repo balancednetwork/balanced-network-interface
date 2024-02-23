@@ -7,9 +7,9 @@ import { UseQueryResult, useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useTokenPrices } from 'queries/backendv2';
-import { useBlockDetails } from 'store/application/hooks';
+import { useSupportedCollateralTokens } from 'store/collateral/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -156,53 +156,107 @@ export function useUnclaimedRewards(): UseQueryResult<CurrencyAmount<Token>[] | 
   );
 }
 
-export function useSavingsRate(): UseQueryResult<
-  { totalLocked: CurrencyAmount<Token>; monthlyRewards: BigNumber; APR: BigNumber } | undefined
+function useTricklerAllowedTokens(): UseQueryResult<string[] | undefined> {
+  return useQuery(
+    'tricklerTokens',
+    async () => {
+      const tokens = await bnJs.Trickler.getAllowListTokens();
+      return tokens;
+    },
+    {
+      keepPreviousData: true,
+    },
+  );
+}
+
+function useTricklerDistributionPeriod(): UseQueryResult<number | undefined> {
+  return useQuery(
+    'tricklerDistributionPeriod',
+    async () => {
+      const periodInBlocks = await bnJs.Trickler.getDistributionPeriod();
+      return periodInBlocks;
+    },
+    {
+      keepPreviousData: true,
+    },
+  );
+}
+
+export function useSavingsRateInfo(): UseQueryResult<
+  { totalLocked: CurrencyAmount<Token>; dailyPayout: BigNumber; APR: BigNumber } | undefined
 > {
-  const fiveMinPeriod = 1000 * 300;
-  const now = Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod;
-  const { data: blockThen } = useBlockDetails(new Date(now).setDate(new Date().getDate() - 30));
   const { data: tokenPrices } = useTokenPrices();
   const { data: totalLocked } = useTotalBnUSDLocked();
+  const { data: tokenList } = useTricklerAllowedTokens();
+  const { data: periodInBlocks } = useTricklerDistributionPeriod();
+  const { data: collateralTokens } = useSupportedCollateralTokens();
 
   return useQuery(
-    `savingsRate-${blockThen?.number || ''}-${totalLocked?.toFixed() || ''}-${Object.keys(tokenPrices ?? {}).length}`,
+    `savingsRate-${totalLocked?.toFixed() || ''}-${Object.keys(tokenPrices ?? {}).length}-${tokenList?.length ?? ''}-${
+      Object.keys(collateralTokens ?? {}).length
+    }-${periodInBlocks ?? ''}`,
     async () => {
-      if (tokenPrices === undefined || blockThen === undefined || totalLocked === undefined) return;
-      const rewardsReceivedIn = ['sICX', 'bnUSD', 'BALN'];
+      if (
+        tokenPrices === undefined ||
+        totalLocked === undefined ||
+        tokenList === undefined ||
+        collateralTokens === undefined ||
+        periodInBlocks === undefined
+      )
+        return;
 
-      async function getRewards(blockHeight?: number): Promise<BigNumber> {
-        const rewards = await Promise.all(
-          rewardsReceivedIn.map(async token => {
-            const address = SUPPORTED_TOKENS_LIST.find(tokenObj => tokenObj.symbol === token)?.address || '';
+      async function getTricklerBalance(): Promise<BigNumber> {
+        const amounts: BigNumber[] = await Promise.all(
+          tokenList!.map(async tokenAddress => {
+            const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress];
+            const cx = bnJs.getContract(tokenAddress);
             try {
-              const rewards = address && (await bnJs.Savings.getTotalPayout(address, blockHeight));
-              const price = tokenPrices?.[token];
-              return new BigNumber(rewards).div(10 ** 18).times(price || 0);
+              const balanceRaw = await cx.balanceOf(bnJs.Trickler.address);
+              const symbol = await cx.symbol();
+              const currencyAmount = CurrencyAmount.fromRawAmount(token, balanceRaw);
+              const price = tokenPrices?.[symbol];
+              return price?.times(new BigNumber(currencyAmount.toFixed())) ?? new BigNumber(0);
             } catch (e) {
               console.error('Error while fetching bnUSD payout stats: ', e);
               return new BigNumber(0);
             }
           }),
         );
-        return rewards.reduce((acc, cur) => acc.plus(cur), new BigNumber(0));
+        return amounts.reduce((acc, cur) => acc.plus(cur), new BigNumber(0));
       }
 
-      const rewardsReceivedTotal = await getRewards();
-      const rewardsReceivedThen = await getRewards(blockThen.number);
-      const monthlyRewards = rewardsReceivedTotal.minus(rewardsReceivedThen);
+      const tricklerBalance = await getTricklerBalance();
+      const distributionPeriodInSeconds = periodInBlocks * 2;
+      const yearlyRatio = (60 * 60 * 24 * 365) / distributionPeriodInSeconds;
+      const tricklerPayoutPerYear = tricklerBalance.times(yearlyRatio);
 
-      const APR = new BigNumber(monthlyRewards.times(12)).div(new BigNumber(totalLocked.toFixed())).times(100);
+      const rewardsFromInterests = await Promise.all(
+        Object.entries(collateralTokens).map(async ([symbol, address]) => {
+          const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
+          const totalDebtRaw = await bnJs.Loans.getTotalCollateralDebt(symbol, 'bnUSD');
+          const interest = await bnJs.Loans.getInterestRate(symbol);
+          const rate = new BigNumber(interest ?? 0).div(1000000);
+          const totalDebt = CurrencyAmount.fromRawAmount(token, totalDebtRaw);
+          return rate.times(new BigNumber(totalDebt.toFixed()));
+        }),
+      );
+
+      const interestPayoutPerYear = rewardsFromInterests.reduce((acc, cur) => acc.plus(cur), new BigNumber(0));
+      const dailyPayout = tricklerPayoutPerYear.plus(interestPayoutPerYear).div(365);
+      const APR = tricklerPayoutPerYear
+        .plus(interestPayoutPerYear)
+        .div(new BigNumber(totalLocked.toFixed()))
+        .times(100);
 
       return {
         totalLocked,
-        monthlyRewards,
+        dailyPayout,
         APR,
       };
     },
     {
       keepPreviousData: true,
-      enabled: !!tokenPrices && !!blockThen,
+      enabled: !!tokenPrices && !!tokenList && !!collateralTokens,
     },
   );
 }

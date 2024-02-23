@@ -38,8 +38,10 @@ import {
   useDynamicBBalnAmount,
   useSources,
   useTimeRemaining,
+  usePastMonthFeesDistributed,
 } from 'store/bbaln/hooks';
 import { usePowerLeft } from 'store/liveVoting/hooks';
+import { useHasAnyKindOfRewards } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useBALNDetails, useHasEnoughICX, useSignedInWallets } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
@@ -117,6 +119,8 @@ export default function BBalnSlider({
   const addTransaction = useTransactionAdder();
   const [tooltipHovered, setTooltipHovered] = useState(false);
   const signedInWallets = useSignedInWallets();
+  const { data: pastMonthFees } = usePastMonthFeesDistributed();
+  const hasAnyKindOfRewards = useHasAnyKindOfRewards();
 
   const balnBalanceAvailable = useMemo(
     () => (balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0)),
@@ -398,18 +402,24 @@ export default function BBalnSlider({
           </Trans>
         </Typography>
       )}
-      {account && (
+      {account && hasAnyKindOfRewards && (
         <Typography color="text1">
           <Trans>
             Your earning power depends on your bBALN holdings and position size compared to everyone else's.
           </Trans>
         </Typography>
       )}
+      {(!hasAnyKindOfRewards || !account) && (
+        <Typography mt={3}>
+          <strong style={{ color: '#FFFFFF' }}>${pastMonthFees?.total.toFormat(0) ?? '-'} </strong>
+          {t`was distributed to bBALN holders in the last 30 days.`}
+        </Typography>
+      )}
     </>
   );
 
   const numberOfPositions = React.useMemo(
-    () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(0)).length : 0),
+    () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(100)).length : 0),
     [sources],
   );
 

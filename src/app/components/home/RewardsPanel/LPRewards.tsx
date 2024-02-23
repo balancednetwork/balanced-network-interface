@@ -43,7 +43,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const isExtraSmall = useMedia('(max-width: 800px)');
   const [tooltipHovered, setTooltipHovered] = React.useState(false);
   const numberOfPositions = React.useMemo(
-    () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(0)).length : 0),
+    () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(100)).length : 0),
     [sources],
   );
 
@@ -164,7 +164,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
           <RewardsGrid rewards={[reward]} />
         ) : (
           <Typography fontSize={14} opacity={0.75} mb={5}>
-            To earn BALN, take out a loan or supply liquidity on the Trade page.
+            To earn BALN, borrow bnUSD or supply liquidity on the Trade page.
           </Typography>
         )}
       </Box>

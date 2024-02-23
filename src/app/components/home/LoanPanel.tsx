@@ -222,7 +222,7 @@ const LoanPanel = () => {
 
         <Flex flex={1} justifyContent="center" alignItems="center">
           <Typography>
-            <Trans>To take out a loan, deposit collateral.</Trans>
+            <Trans>To borrow bnUSD, deposit collateral.</Trans>
           </Typography>
         </Flex>
       </FlexPanel>

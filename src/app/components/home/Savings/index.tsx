@@ -162,7 +162,7 @@ const Savings = () => {
             flexWrap="wrap"
           >
             <Typography mr="10px" variant="h4">
-              bnUSD savings
+              <Trans>Savings rate</Trans>
             </Typography>
             <Typography pt={isSmallScreen ? '5px' : '9px'} color="text1">
               {savingsRate?.APR && `${savingsRate.APR.toFormat(2)}% APR`}
@@ -181,7 +181,7 @@ const Savings = () => {
                   : lockedAmount?.greaterThan(0) && !bnUSDBalance
                   ? t`Withdraw`
                   : bnUSDBalance.greaterThan(0) && (!lockedAmount || lockedAmount?.equalTo(0))
-                  ? 'Deposit'
+                  ? 'Deposit bnUSD'
                   : 'Adjust'}
               </Button>
             </Flex>

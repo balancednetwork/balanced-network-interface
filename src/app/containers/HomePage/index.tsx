@@ -74,7 +74,7 @@ export function HomePage() {
               <Trans>Loan</Trans>
             </Typography>
             <Typography mt={8} mb={7} textAlign="center">
-              <Trans>To take out a loan, deposit collateral.</Trans>
+              <Trans>To borrow bnUSD, deposit collateral.</Trans>
             </Typography>
           </BoxPanel>
           <RewardsPanel />

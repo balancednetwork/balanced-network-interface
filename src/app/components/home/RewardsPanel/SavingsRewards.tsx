@@ -28,6 +28,7 @@ const SavingsRewards = () => {
   const hasEnoughICX = useHasEnoughICX();
   const [isOpen, setOpen] = React.useState(false);
   const lockedAmount = useLockedAmount();
+  const hasRewards = rewards?.some(reward => reward.greaterThan(0));
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -65,10 +66,10 @@ const SavingsRewards = () => {
         <Flex justifyContent="space-between" mb={3} alignItems="center">
           <Flex>
             <Typography variant="h4" fontWeight="bold" fontSize={16} color="text">
-              bnUSD savings
+              Savings rate
             </Typography>
           </Flex>
-          {lockedAmount && lockedAmount.greaterThan(0) && account && (
+          {(hasRewards || (lockedAmount && lockedAmount.greaterThan(0) && account)) && (
             <UnderlineText>
               <Typography color="primaryBright" onClick={toggleOpen}>
                 <Trans>Claim</Trans>
@@ -76,7 +77,7 @@ const SavingsRewards = () => {
             </UnderlineText>
           )}
         </Flex>
-        {account && lockedAmount && lockedAmount.greaterThan(0) ? (
+        {(account && hasRewards) || (lockedAmount && lockedAmount.greaterThan(0)) ? (
           <RewardsGrid rewards={rewards} />
         ) : (
           <Typography fontSize={14} opacity={0.75} mb={5}>

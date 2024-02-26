@@ -8,13 +8,16 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
 import { PLUS_INFINITY } from 'constants/index';
-import { useBBalnAmount } from 'store/bbaln/hooks';
+import { useTokenPrices } from 'queries/backendv2';
+import { useLPReward } from 'queries/reward';
+import { useBBalnAmount, useDynamicBBalnAmount, useSources } from 'store/bbaln/hooks';
 import { useCollateralInputAmountAbsolute } from 'store/collateral/hooks';
 import { useHasUnclaimedFees } from 'store/fees/hooks';
 import { WEIGHT_CONST } from 'store/liveVoting/hooks';
 import { RewardDistribution, RewardDistributionRaw } from 'store/liveVoting/types';
 import { useLoanInputAmount } from 'store/loan/hooks';
 import { useOraclePrice } from 'store/oracle/hooks';
+import { useLockedAmount, useUnclaimedRewards } from 'store/savings/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
@@ -181,5 +184,47 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
     {
       keepPreviousData: true,
     },
+  );
+}
+
+export function useEarnedPastMonth(): UseQueryResult<BigNumber | undefined> {
+  const { account } = useIconReact();
+  const { data: prices } = useTokenPrices();
+
+  return useQuery(
+    `earnedPastMonth-${account}-${prices ? Object.keys(prices).length : '0'}`,
+    async () => {
+      if (account) {
+        //todo: after endpoint is ready, fetch the data from there
+        return new BigNumber(23.9);
+      }
+    },
+    {
+      enabled: !!account,
+      keepPreviousData: true,
+    },
+  );
+}
+
+export function useHasAnyKindOfRewards() {
+  const dynamicBBalnAmount = useDynamicBBalnAmount();
+  const bnUSDDeposit = useLockedAmount();
+  const sources = useSources();
+  const hasUnclaimedFees = useHasUnclaimedFees();
+  const { data: reward } = useLPReward();
+  const { data: savingsRewards } = useUnclaimedRewards();
+
+  const numberOfPositions = React.useMemo(
+    () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(100)).length : 0),
+    [sources],
+  );
+
+  return (
+    hasUnclaimedFees ||
+    reward?.greaterThan(0) ||
+    savingsRewards?.some(reward => reward.greaterThan(0)) ||
+    dynamicBBalnAmount.isGreaterThan(0) ||
+    bnUSDDeposit?.greaterThan(0) ||
+    numberOfPositions > 0
   );
 }

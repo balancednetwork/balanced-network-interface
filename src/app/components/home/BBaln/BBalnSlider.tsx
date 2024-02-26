@@ -9,6 +9,7 @@ import Nouislider from 'packages/nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
+import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
@@ -20,6 +21,7 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
+import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
@@ -31,22 +33,23 @@ import {
   useLockedUntil,
   useHasLockExpired,
   useTotalSupply,
-  Source,
   useBBalnChangeSelectedPeriod,
   useSelectedPeriod,
   useDynamicBBalnAmount,
   useSources,
   useTimeRemaining,
+  usePastMonthFeesDistributed,
 } from 'store/bbaln/hooks';
 import { usePowerLeft } from 'store/liveVoting/hooks';
+import { useHasAnyKindOfRewards } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
+import { useBALNDetails, useHasEnoughICX, useSignedInWallets } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { getFormattedNumber } from 'utils/formatter';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { DropdownPopper } from '../../Popover';
-import QuestionHelper from '../../QuestionHelper';
+import QuestionHelper, { QuestionWrapper } from '../../QuestionHelper';
 import { MetaData } from '../PositionDetailPanel';
 import { BalnPreviewInput, ButtonsWrap, SliderWrap, Threshold } from './styledComponents';
 import { LockedPeriod } from './types';
@@ -60,6 +63,11 @@ import {
   comparePeriods,
 } from './utils';
 
+const StyledThreshold = styled(Threshold)`
+  height: 20px;
+  margin-top: -10px;
+`;
+
 export default function BBalnSlider({
   title,
   titleVariant = 'h3',
@@ -67,13 +75,23 @@ export default function BBalnSlider({
   lockupNotice,
   onActiveSlider,
   onDisabledSlider,
+  sliderBg,
+  sliderMargin,
+  simple,
+  showGlobalTooltip = false,
+  setGlobalTooltip,
 }: {
   title: string;
-  lockupNotice: string;
-  titleVariant?: 'h3' | 'h2';
+  lockupNotice?: string;
+  titleVariant?: 'h4' | 'h3' | 'h2';
   showMaxRewardsNotice?: boolean;
+  sliderBg?: string;
+  sliderMargin?: string;
+  simple?: boolean;
+  showGlobalTooltip?: boolean;
   onActiveSlider?: () => void;
   onDisabledSlider?: () => void;
+  setGlobalTooltip?: (value: boolean) => void;
 }) {
   const { account } = useIconReact();
   const bBalnAmount = useBBalnAmount();
@@ -99,6 +117,10 @@ export default function BBalnSlider({
   const isSmallScreen = useMedia('(max-width: 540px)');
   const isSuperSmallScreen = useMedia('(max-width: 400px)');
   const addTransaction = useTransactionAdder();
+  const [tooltipHovered, setTooltipHovered] = useState(false);
+  const signedInWallets = useSignedInWallets();
+  const { data: pastMonthFees } = usePastMonthFeesDistributed();
+  const hasAnyKindOfRewards = useHasAnyKindOfRewards();
 
   const balnBalanceAvailable = useMemo(
     () => (balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0)),
@@ -252,6 +274,8 @@ export default function BBalnSlider({
       : t`Lock up BALN`
     : bBalnAmount?.isZero()
     ? t`Lock up BALN`
+    : balnBalanceAvailable.isLessThan(1)
+    ? t`Withdraw`
     : t`Adjust`;
   const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
@@ -300,6 +324,14 @@ export default function BBalnSlider({
     }
   }, [onFieldAInput, lockedBalnAmount, isAdjusting, availablePeriods, changePeriod]);
 
+  React.useEffect(() => {
+    if (isAdjusting) {
+      setGlobalTooltip && setGlobalTooltip(true);
+    } else {
+      setGlobalTooltip && setGlobalTooltip(false);
+    }
+  }, [isAdjusting, setGlobalTooltip]);
+
   // optimize slider performance
   // change slider value if only a user types
   React.useEffect(() => {
@@ -339,17 +371,6 @@ export default function BBalnSlider({
     }
   };
 
-  const boostedLPs = useMemo(() => {
-    if (sources) {
-      return Object.keys(sources).reduce((LPs, sourceName) => {
-        if (sourceName !== 'Loans' && sources[sourceName].balance.isGreaterThan(0)) {
-          LPs[sourceName] = { ...sources[sourceName] };
-        }
-        return LPs;
-      }, {} as { [key in string]: Source });
-    }
-  }, [sources]);
-
   const maxRewardThreshold = useMemo(() => {
     if (sources && totalSupplyBBaln && bBalnAmount) {
       return BigNumber.max(
@@ -367,11 +388,52 @@ export default function BBalnSlider({
     }
   }, [sources, totalSupplyBBaln, bBalnAmount]);
 
-  const maxRewardNoticeContent = maxRewardThreshold.isGreaterThan(0)
-    ? `${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN required for maximum BALN rewards.`
-    : 'You have reached maximum BALN rewards.';
+  const maxRewardNoticeContent = dynamicBBalnAmount.isLessThan(bBalnAmount?.plus(maxRewardThreshold)) ? (
+    <>
+      {t`You need`}{' '}
+      <strong>
+        {bBalnAmount
+          ?.plus(maxRewardThreshold)
+          .toFormat(bBalnAmount.plus(maxRewardThreshold).isGreaterThan(100) ? 0 : 2)}{' '}
+        bBALN
+      </strong>{' '}
+      {t`for 100% earning power.`}
+    </>
+  ) : (
+    t`You receive maximum rewards for your position.`
+  );
 
-  const hasLPOrLoan = sources && boostedLPs && (sources.Loans.balance.isGreaterThan(0) || boostedLPs.length);
+  const EarningPowerTooltipContent = () => (
+    <>
+      {(!bBalnAmount.isGreaterThan(0) || !account) && (
+        <Typography color="text1" mb={account ? 3 : 0}>
+          <Trans>
+            Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity
+            pools.
+          </Trans>
+        </Typography>
+      )}
+      {account && hasAnyKindOfRewards && (
+        <Typography color="text1">
+          <Trans>
+            Your earning power depends on your bBALN holdings and position size compared to everyone else's.
+          </Trans>
+        </Typography>
+      )}
+      {(!hasAnyKindOfRewards || !account) && (
+        <Typography mt={3}>
+          {t`bBALN holders received`}{' '}
+          <strong style={{ color: '#FFFFFF' }}>${pastMonthFees?.total.toFormat(0) ?? '-'} </strong>
+          {t`from network fees in the last 30 days.`}
+        </Typography>
+      )}
+    </>
+  );
+
+  const numberOfPositions = React.useMemo(
+    () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(100)).length : 0),
+    [sources],
+  );
 
   const balnReturnedEarly = useMemo(() => {
     if (lockedBalnAmount && bBalnAmount) {
@@ -388,58 +450,121 @@ export default function BBalnSlider({
     }
   }, [balnReturnedEarly, lockedBalnAmount]);
 
+  const earningPower = useMemo(() => {
+    if (!dynamicBBalnAmount) return;
+    if (maxRewardThreshold.isEqualTo(0)) return new BigNumber(100);
+    const max = bBalnAmount.plus(maxRewardThreshold);
+    const ePower = BigNumber.min(dynamicBBalnAmount.dividedBy(max).times(60).plus(40), new BigNumber(100));
+    return !ePower.isNaN() ? ePower : new BigNumber(40);
+  }, [bBalnAmount, dynamicBBalnAmount, maxRewardThreshold]);
+
+  const handleGlobalHover = (isHover: boolean) => {
+    setTooltipHovered(isHover);
+    setGlobalTooltip && setGlobalTooltip(isHover);
+  };
+
   return (
     <>
-      {balnBalanceAvailable.isGreaterThan(0) ||
-      bBalnAmount.isGreaterThan(0) ||
-      lockedBalnAmount?.greaterThan(0) ||
-      stakedBalance?.isGreaterThan(0) ? (
+      {account &&
+      (balnBalanceAvailable.isGreaterThan(0) ||
+        bBalnAmount.isGreaterThan(0) ||
+        lockedBalnAmount?.greaterThan(0) ||
+        stakedBalance?.isGreaterThan(0)) ? (
         <>
-          <Flex alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}>
+          <Flex alignItems="flex-start" margin={simple && isAdjusting ? '0 0 15px' : ''}>
             <Flex
               flexDirection={isSmallScreen ? 'column' : 'row'}
               alignItems={isSmallScreen ? 'flex-start' : 'flex-end'}
             >
-              <Typography variant={titleVariant} paddingRight={'10px'} paddingBottom={isSmallScreen ? '5px' : '0'}>
+              <Typography variant={titleVariant} paddingRight={'7px'} paddingBottom={isSmallScreen ? '5px' : '0'}>
                 {title}{' '}
               </Typography>
-              <Typography padding="0 3px 2px 0">
-                <Tooltip
-                  text={maxRewardNoticeContent}
-                  width={215}
-                  show={!!showMaxRewardsNotice && !!hasLPOrLoan && isAdjusting && maxRewardThreshold.isGreaterThan(0)}
-                  placement="top-start"
-                  forcePlacement={true}
-                  strategy="absolute"
-                  offset={[-18, 20]}
-                >
-                  {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()}
-                </Tooltip>
-                {' bBALN'}
-                <QuestionHelper
-                  text={
-                    <>
-                      <Trans>Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x.</Trans>
-                      <Typography mt={2}>
-                        <Trans>
-                          The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will
-                          decrease over time.
-                        </Trans>
-                      </Typography>
-                      {showMaxRewardsNotice && !isAdjusting && hasLPOrLoan && (
+              <Typography padding="0 3px 2px 0" style={titleVariant === 'h4' ? { transform: 'translateY(1px)' } : {}}>
+                {simple ? (
+                  <>
+                    {earningPower && (numberOfPositions || dynamicBBalnAmount.isGreaterThan(0) || isAdjusting) && (
+                      <span style={{ marginRight: '8px' }}>{earningPower.toFixed(0)}%</span>
+                    )}
+                    <Tooltip
+                      show={showGlobalTooltip || tooltipHovered}
+                      offset={isSmallScreen ? [0, 40] : [0, 10]}
+                      text={
                         <>
-                          <Divider my={2} />
-                          <Typography fontWeight={700}>{maxRewardNoticeContent}</Typography>
+                          {!isAdjusting && <EarningPowerTooltipContent />}
+                          {(isAdjusting || numberOfPositions || dynamicBBalnAmount.isGreaterThan(0)) && (
+                            <Typography mt={!isAdjusting ? 3 : 0}>
+                              You have{' '}
+                              <strong>
+                                {dynamicBBalnAmount.dp(dynamicBBalnAmount.isGreaterThan(100) ? 0 : 2).toFormat()} bBALN
+                              </strong>
+                              . {numberOfPositions ? maxRewardNoticeContent : ''}
+                            </Typography>
+                          )}
                         </>
-                      )}
-                    </>
-                  }
-                />
+                      }
+                      placement="top"
+                      forcePlacement={true}
+                      width={280}
+                      strategy="absolute"
+                    >
+                      <QuestionWrapper
+                        onMouseEnter={() => handleGlobalHover(true)}
+                        onMouseLeave={() => handleGlobalHover(false)}
+                        onTouchStart={() => handleGlobalHover(true)}
+                        onTouchCancel={() => handleGlobalHover(false)}
+                        style={{ transform: 'translateY(1px)' }}
+                      >
+                        <QuestionIcon width={14} />
+                      </QuestionWrapper>
+                    </Tooltip>
+                  </>
+                ) : (
+                  <>
+                    <Tooltip
+                      text={maxRewardNoticeContent}
+                      width={215}
+                      show={
+                        !!showMaxRewardsNotice &&
+                        !!numberOfPositions &&
+                        isAdjusting &&
+                        maxRewardThreshold.isGreaterThan(0)
+                      }
+                      placement="top-start"
+                      forcePlacement={true}
+                      strategy="absolute"
+                      offset={[-18, 20]}
+                    >
+                      {isAdjusting ? dynamicBBalnAmount.dp(2).toFormat() : bBalnAmount.dp(2).toFormat()}
+                    </Tooltip>
+                    {' bBALN'}
+                    <QuestionHelper
+                      text={
+                        <>
+                          <Trans>
+                            Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x.
+                          </Trans>
+                          <Typography mt={2}>
+                            <Trans>
+                              The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will
+                              decrease over time.
+                            </Trans>
+                          </Typography>
+                          {showMaxRewardsNotice && !isAdjusting && numberOfPositions && (
+                            <>
+                              <Divider my={2} />
+                              <Typography fontWeight={700}>{maxRewardNoticeContent}</Typography>
+                            </>
+                          )}
+                        </>
+                      }
+                    />
+                  </>
+                )}
               </Typography>
             </Flex>
 
             {stakedBalance?.isEqualTo(0) && (
-              <ButtonsWrap>
+              <ButtonsWrap verticalButtons={!simple}>
                 {isAdjusting ? (
                   <>
                     <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmallScreen ? '5px' : 0}>
@@ -478,15 +603,28 @@ export default function BBalnSlider({
             <UnstakePrompt stakedBalance={stakedBalance} availableBalance={balnBalanceAvailable} />
           ) : (
             <>
-              <SliderWrap>
-                <Typography className={`lockup-notice${isAdjusting ? '' : ' show'}`}>{lockupNotice}</Typography>
+              <SliderWrap sliderBg={sliderBg} sliderMargin={sliderMargin}>
+                {lockupNotice && (
+                  <Typography className={`lockup-notice${isAdjusting ? '' : ' show'}`}>{lockupNotice}</Typography>
+                )}
                 {shouldShowLock && isAdjusting && (
                   <Box style={{ position: 'relative' }}>
-                    <Threshold position={lockbarPercentPosition} flipTextDirection={lockbarPercentPosition < 50}>
-                      <MetaData as="dl" style={{ textAlign: 'right' }}>
-                        <dd>Locked</dd>
-                      </MetaData>
-                    </Threshold>
+                    {simple ? (
+                      <StyledThreshold
+                        position={lockbarPercentPosition}
+                        flipTextDirection={lockbarPercentPosition < 50}
+                      >
+                        <MetaData as="dl" style={{ textAlign: 'right' }}>
+                          <dd>Locked</dd>
+                        </MetaData>
+                      </StyledThreshold>
+                    ) : (
+                      <Threshold position={lockbarPercentPosition} flipTextDirection={lockbarPercentPosition < 50}>
+                        <MetaData as="dl" style={{ textAlign: 'right' }}>
+                          <dd>Locked</dd>
+                        </MetaData>
+                      </Threshold>
+                    )}
                   </Box>
                 )}
 
@@ -513,7 +651,7 @@ export default function BBalnSlider({
                   />
                 </Box>
 
-                <Flex justifyContent="space-between" flexWrap={'wrap'}>
+                <Flex justifyContent="space-between" flexWrap={'wrap'} marginTop={isAdjusting ? '15px' : ''}>
                   <Flex alignItems="center">
                     {isAdjusting ? (
                       <BalnPreviewInput
@@ -539,7 +677,7 @@ export default function BBalnSlider({
 
                   {/* Show selected or locked time period */}
                   {(bBalnAmount?.isGreaterThan(0) || isAdjusting) && (
-                    <Typography paddingTop={isAdjusting ? '6px' : '0'}>
+                    <Typography paddingTop={isAdjusting ? '5px' : '0'}>
                       {shouldBoost ? (
                         <>
                           {t`Locked until`}{' '}
@@ -602,10 +740,27 @@ export default function BBalnSlider({
         <>
           <Typography variant={titleVariant} marginBottom={6}>
             <Trans>{title}</Trans>
+            {simple && (
+              <QuestionWrapper style={{ marginLeft: '5px', transform: 'translateY(1px)' }}>
+                <QuestionHelper width={330} text={<EarningPowerTooltipContent />} />
+              </QuestionWrapper>
+            )}
           </Typography>
-          <Typography fontSize={14} opacity={0.75}>
-            <Trans>Earn or buy BALN, then lock it up here to boost your earning potential and voting power.</Trans>
-          </Typography>
+          {simple ? (
+            !account && signedInWallets.length > 0 ? (
+              <Typography fontSize={14} opacity={0.75} mb={5}>
+                <Trans>Sign in on ICON, then lock up BALN to boost your rewards.</Trans>
+              </Typography>
+            ) : (
+              <Typography fontSize={14} opacity={0.75} mb={5}>
+                <Trans>Earn or buy BALN, then lock it up here to boost your rewards.</Trans>
+              </Typography>
+            )
+          ) : (
+            <Typography fontSize={14} opacity={0.75}>
+              <Trans>Earn or buy BALN, then lock it up here to boost your earning potential and voting power.</Trans>
+            </Typography>
+          )}
         </>
       )}
 

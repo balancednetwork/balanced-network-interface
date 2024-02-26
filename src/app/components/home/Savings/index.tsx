@@ -230,7 +230,8 @@ const Savings = () => {
               {typedValueBN?.isGreaterThan(0) && dynamicDailyAmountRate && staticDailyAmountRate && (
                 <Typography fontSize={14}>{`~ $${typedValueBN
                   .times(isAdjusting ? dynamicDailyAmountRate : staticDailyAmountRate)
-                  .toFormat(2)} daily`}</Typography>
+                  .times(7)
+                  .toFormat(2)} weekly`}</Typography>
               )}
             </Flex>
           </>

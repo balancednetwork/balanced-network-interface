@@ -37,7 +37,6 @@ export default function Routes() {
         <Route exact path="/trade" component={TradePage} />
         <Route exact path="/trade/:pair" component={TradePage} />
         <Route exact path="/trade/supply" component={TradePage} />
-        <Route exact path="/trade/supply/ICX" component={TradePage} />
         <Route exact path="/trade/supply/:pair" component={TradePage} />
         <Route exact path="/trade/bridge/" component={TradePage} />
         <Route path="/vote/new-proposal" component={NewProposalPage} />

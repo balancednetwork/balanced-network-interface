@@ -195,16 +195,7 @@ export function useEarnedPastMonth(): UseQueryResult<BigNumber | undefined> {
     `earnedPastMonth-${account}-${prices ? Object.keys(prices).length : '0'}`,
     async () => {
       if (account) {
-        //get month old transactions
-
-        //get rewards from fees
-
-        //get rewards from incentives
-
-        //get rewards from savings
-
-        //get bribes rewards
-
+        //todo: after endpoint is ready, fetch the data from there
         return new BigNumber(23.9);
       }
     },

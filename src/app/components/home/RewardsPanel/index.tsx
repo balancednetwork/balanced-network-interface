@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import Divider, { VerticalDivider } from 'app/components/Divider';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
-import { useEarnedPastMonth, useHasAnyKindOfRewards } from 'store/reward/hooks';
+import { useHasAnyKindOfRewards } from 'store/reward/hooks';
 
 import BBalnSlider from '../BBaln/BBalnSlider';
 import Savings from '../Savings';
@@ -38,7 +38,7 @@ const RewardsPanel = () => {
   const isSmall = useMedia('(max-width: 800px)');
   const { account } = useIconReact();
   const hasAnyKindOfRewards = useHasAnyKindOfRewards();
-  const { data: earnedPastMonth } = useEarnedPastMonth();
+  // // const { data: earnedPastMonth } = useEarnedPastMonth();
 
   const handleSetGlobalTooltip = React.useCallback(
     (shouldShow: boolean) => {
@@ -53,11 +53,11 @@ const RewardsPanel = () => {
         <Typography variant="h2" mr={6}>
           Rewards
         </Typography>
-        {account && (
+        {/* {account && (
           <Typography color="text1" fontSize={14} pt="9px">
             <Trans>Earned</Trans> <strong>{`$${earnedPastMonth?.toFormat(2)}`}</strong> <Trans>in the past month</Trans>
           </Typography>
-        )}
+        )} */}
       </Flex>
       <Flex flexDirection={isMedium ? 'column' : 'row'}>
         <SliderWrap>

@@ -40,6 +40,13 @@ const RewardsPanel = () => {
   const hasAnyKindOfRewards = useHasAnyKindOfRewards();
   const { data: earnedPastMonth } = useEarnedPastMonth();
 
+  const handleSetGlobalTooltip = React.useCallback(
+    (shouldShow: boolean) => {
+      setGlobalTooltip(shouldShow);
+    },
+    [setGlobalTooltip],
+  );
+
   return (
     <StyledBoxPanel bg="bg3">
       <Flex mb="30px" alignItems="center" flexWrap="wrap" justifyContent="space-between">
@@ -65,7 +72,7 @@ const RewardsPanel = () => {
             sliderMargin="15px 0 0"
             simple
             showGlobalTooltip={showGlobalTooltip}
-            setGlobalTooltip={setGlobalTooltip}
+            setGlobalTooltip={handleSetGlobalTooltip}
           />
         </SliderWrap>
       </Flex>

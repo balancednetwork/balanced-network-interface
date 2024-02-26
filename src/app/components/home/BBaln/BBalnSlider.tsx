@@ -394,9 +394,10 @@ export default function BBalnSlider({
       <strong>
         {bBalnAmount
           ?.plus(maxRewardThreshold)
-          .toFormat(bBalnAmount.plus(maxRewardThreshold).isGreaterThan(100) ? 0 : 2)}
+          .toFormat(bBalnAmount.plus(maxRewardThreshold).isGreaterThan(100) ? 0 : 2)}{' '}
+        bBALN
       </strong>{' '}
-      {t`bBALN for 100% earning power.`}
+      {t`for 100% earning power.`}
     </>
   ) : (
     t`You receive maximum rewards for your position.`

@@ -71,7 +71,10 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const maxRewardNoticeContent = dynamicBBalnAmount.isLessThan(bBalnAmount?.plus(maxRewardThreshold)) ? (
     <>
       {numberOfPositions > 1 ? t`Your positions require` : t`Your position requires`}{' '}
-      <strong>{`${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN`}</strong> {t`for maximum rewards.`}
+      <strong>{`${bBalnAmount
+        ?.plus(maxRewardThreshold)
+        .toFormat(bBalnAmount.plus(maxRewardThreshold).isGreaterThan(100) ? 0 : 2)} bBALN`}</strong>{' '}
+      {t`for maximum rewards.`}
     </>
   ) : (
     <Trans>You receive maximum rewards for your position.</Trans>

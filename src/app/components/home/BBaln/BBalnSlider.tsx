@@ -388,9 +388,19 @@ export default function BBalnSlider({
     }
   }, [sources, totalSupplyBBaln, bBalnAmount]);
 
-  const maxRewardNoticeContent = dynamicBBalnAmount.isLessThan(bBalnAmount?.plus(maxRewardThreshold))
-    ? `You need ${bBalnAmount?.plus(maxRewardThreshold).toFormat(2)} bBALN for 100% earning power.`
-    : 'You receive maximum rewards for your position.';
+  const maxRewardNoticeContent = dynamicBBalnAmount.isLessThan(bBalnAmount?.plus(maxRewardThreshold)) ? (
+    <>
+      {t`You need`}{' '}
+      <strong>
+        {bBalnAmount
+          ?.plus(maxRewardThreshold)
+          .toFormat(bBalnAmount.plus(maxRewardThreshold).isGreaterThan(100) ? 0 : 2)}
+      </strong>{' '}
+      {t`bBALN for 100% earning power.`}
+    </>
+  ) : (
+    t`You receive maximum rewards for your position.`
+  );
 
   const EarningPowerTooltipContent = () => (
     <>
@@ -411,8 +421,9 @@ export default function BBalnSlider({
       )}
       {(!hasAnyKindOfRewards || !account) && (
         <Typography mt={3}>
+          {t`bBALN holders received`}{' '}
           <strong style={{ color: '#FFFFFF' }}>${pastMonthFees?.total.toFormat(0) ?? '-'} </strong>
-          {t`was distributed to bBALN holders in the last 30 days.`}
+          {t`from network fees in the last 30 days.`}
         </Typography>
       )}
     </>
@@ -481,8 +492,11 @@ export default function BBalnSlider({
                           {!isAdjusting && <EarningPowerTooltipContent />}
                           {(isAdjusting || numberOfPositions || dynamicBBalnAmount.isGreaterThan(0)) && (
                             <Typography mt={!isAdjusting ? 3 : 0}>
-                              You have <strong>{dynamicBBalnAmount.dp(2).toFormat()} bBALN</strong>.{' '}
-                              {numberOfPositions ? maxRewardNoticeContent : ''}
+                              You have{' '}
+                              <strong>
+                                {dynamicBBalnAmount.dp(dynamicBBalnAmount.isGreaterThan(100) ? 0 : 2).toFormat()} bBALN
+                              </strong>
+                              . {numberOfPositions ? maxRewardNoticeContent : ''}
                             </Typography>
                           )}
                         </>

@@ -126,8 +126,9 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
                 </>
               ) : (
                 <>
+                  {t`bBALN holders received`}{' '}
                   <strong style={{ color: '#FFFFFF' }}>${pastMonthFees?.total.toFormat(0) ?? '-'} </strong>
-                  {t`was distributed to bBALN holders in the last 30 days.`}
+                  {t`from network fees in the last 30 days.`}
                 </>
               )
             }

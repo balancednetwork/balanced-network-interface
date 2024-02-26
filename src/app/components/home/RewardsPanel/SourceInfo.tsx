@@ -18,11 +18,19 @@ const SourceInfo = ({ name, boost, apy }: { name: string; boost?: BigNumber; apy
   if (!boost || !apy) return null;
   return (
     <Wrap>
-      {`${name}:`} <strong>{`${apy.times(100).times(boost).toFormat(2, BigNumber.ROUND_HALF_UP)}%`}</strong>{' '}
+      {`${name}:`}{' '}
+      <strong>{`${apy
+        .times(100)
+        .times(boost)
+        .toFormat(apy.times(100).times(boost).isGreaterThan(100) ? 0 : 2, BigNumber.ROUND_HALF_UP)}%`}</strong>{' '}
       {boost.isLessThan(2.5) && (
         <>
           <span>{`(potential: `}</span>
-          <strong>{`${apy.times(100).dp(2).times(MAX_BOOST).toFormat(2)}%`}</strong>
+          <strong>{`${apy
+            .times(100)
+            .times(MAX_BOOST)
+            .dp(2)
+            .toFormat(apy.times(100).times(MAX_BOOST).isGreaterThan(100) ? 0 : 2, BigNumber.ROUND_HALF_UP)}%`}</strong>
           <span>{`)`}</span>
         </>
       )}

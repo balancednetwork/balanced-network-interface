@@ -29,6 +29,7 @@ import { getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
+import { ReactComponent as FlipIcon } from 'assets/icons/horizontal-flip.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useBridgeDirection, useSetBridgeDestination, useSetBridgeOrigin } from 'store/bridge/hooks';
@@ -478,6 +479,13 @@ export default function BridgePanel() {
     }
   };
 
+  const handleSwitch = () => {
+    const from = bridgeDirection.from;
+    const to = bridgeDirection.to;
+    setBridgeOrigin(to);
+    setBridgeDestination(from);
+  };
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -485,8 +493,11 @@ export default function BridgePanel() {
           <Typography variant="h2">
             <Trans>Transfer</Trans>
           </Typography>
-          <Flex width="100%" alignItems="flex-start" justifyContent="space-between">
+          <Flex width="100%" alignItems="center" justifyContent="space-between">
             <ChainSelector label="from" chain={bridgeDirection.from} setChain={handleSetOriginChain} />
+            <Box sx={{ cursor: 'pointer', marginLeft: '-25px' }} onClick={handleSwitch}>
+              <FlipIcon width={25} height={17} />
+            </Box>
             <ChainSelector label="to" chain={bridgeDirection.to} setChain={handleSetDestinationChain} />
           </Flex>
 

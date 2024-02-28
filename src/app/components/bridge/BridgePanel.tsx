@@ -25,7 +25,7 @@ import { getFeeParam, getXCallOriginEventDataFromArchway, isDenomAsset } from 'a
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
 import { CurrentXCallState, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+import { getCrossChainTokenBySymbol, getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
@@ -295,6 +295,12 @@ export default function BridgePanel() {
     }
   }, [bridgeDirection.from, crossChainWallet, currencyAmountToBridge, setErrorMessage, signedInWallets]);
 
+  const selectedTokenWalletBalance = React.useMemo(() => {
+    if (currencyToBridge) {
+      return crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
+    }
+  }, [bridgeDirection.from, crossChainWallet, currencyToBridge]);
+
   const isNativeVersionAvailable = COSMOS_NATIVE_AVAILABLE_TOKENS.some(
     token => token.address === currencyToBridge?.wrapped.address,
   );
@@ -522,8 +528,10 @@ export default function BridgePanel() {
   const handleSwitch = () => {
     const from = bridgeDirection.from;
     const to = bridgeDirection.to;
-    setBridgeOrigin(to);
-    setBridgeDestination(from);
+    const crossChainCurrency = getCrossChainTokenBySymbol(to, currencyToBridge?.symbol);
+    handleSetOriginChain(to);
+    handleSetDestinationChain(from);
+    crossChainCurrency && handleInputSelect(crossChainCurrency);
   };
 
   return (
@@ -551,11 +559,9 @@ export default function BridgePanel() {
           >
             <Trans>Wallet:</Trans>{' '}
             {`${
-              crossChainWallet[bridgeDirection.from][currencyToBridge?.wrapped.address || '']
-                ? crossChainWallet[bridgeDirection.from][currencyToBridge?.wrapped.address || ''].toFixed(4, {
-                    groupSeparator: ',',
-                  })
-                : 0
+              selectedTokenWalletBalance?.toFixed(4, {
+                groupSeparator: ',',
+              }) ?? 0
             } 
                 ${currencyToBridge?.symbol}`}
           </Typography>

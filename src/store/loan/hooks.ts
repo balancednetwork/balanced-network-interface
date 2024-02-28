@@ -433,7 +433,7 @@ export function useInterestRate(symbol: string): UseQueryResult<BigNumber> {
     const data = await bnJs.Loans.getInterestRate(symbol);
 
     if (data) {
-      return new BigNumber(data).div(1000000);
+      return new BigNumber(data).div(10000);
     } else {
       return new BigNumber(0);
     }

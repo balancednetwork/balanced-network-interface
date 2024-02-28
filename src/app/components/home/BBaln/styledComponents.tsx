@@ -5,19 +5,22 @@ import { Typography } from 'app/theme';
 
 import { MetaData } from '../PositionDetailPanel';
 
-export const ButtonsWrap = styled(Flex)`
+export const ButtonsWrap = styled(Flex)<{ verticalButtons?: boolean }>`
   margin-left: auto;
   flex-direction: row;
-  @media screen and (max-width: 400px) {
-    flex-direction: column;
-  }
+  ${({ verticalButtons }) =>
+    verticalButtons &&
+    css`
+      @media screen and (max-width: 400px) {
+        flex-direction: column;
+      } ;
+    `};
 `;
 
-export const SliderWrap = styled(Box)`
-  margin: 25px 0;
+export const SliderWrap = styled(Box)<{ sliderBg?: string; sliderMargin?: string }>`
+  ${({ sliderMargin }) => (sliderMargin ? `margin: ${sliderMargin};` : 'margin: 25px 0;')}
   .noUi-horizontal .noUi-connects {
-    background: #144a68;
-    border-radius: 5px;
+    ${({ sliderBg }) => sliderBg && `background: ${sliderBg};`}
   }
   .lockup-notice {
     /* transition: all ease 0.2s; */

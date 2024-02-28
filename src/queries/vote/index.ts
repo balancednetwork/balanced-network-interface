@@ -116,7 +116,7 @@ export const useProposalCount = (): UseQueryResult<number> => {
   });
 };
 
-export const useTotalProposalQuery = (offset: number = 0, batchSize: number = 25) => {
+export const useTotalProposalQuery = (offset: number = 0, batchSize: number = 20) => {
   const { data: proposalCount } = useProposalCount();
 
   return useQuery<Array<ProposalInterface>>(
@@ -184,7 +184,6 @@ export const useActiveProposals = () => {
       if (account && proposals) {
         const activeProposals = await Promise.all(
           proposals.map(async proposal => {
-            console.log(proposal);
             if (
               platformDay &&
               proposal.status === 'Active' &&

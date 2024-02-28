@@ -16,10 +16,16 @@ const StyledHr = styled.div`
   background-color: ${({ theme }) => theme.colors.divider};
 `;
 
-const StyledWrapper = styled.div<{ horizontal?: boolean }>`
+const StyledWrapper = styled.div<{ horizontal?: boolean; margin?: string }>`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  ${({ margin }) =>
+    margin &&
+    css`
+      margin: ${margin};
+    `};
 
   span {
     white-space: nowrap;
@@ -54,12 +60,16 @@ export const HorizontalDivider = ({ text, ...rest }: { text: string }) => {
   );
 };
 
-export const VerticalDivider = ({ text, ...rest }: { text: string }) => {
+export const VerticalDivider = ({ text, margin, ...rest }: { text?: string; margin?: string }) => {
   return (
-    <StyledWrapper>
+    <StyledWrapper margin={margin}>
       <StyledHr />
-      <span>{text}</span>
-      <StyledHr />
+      {text && (
+        <>
+          <span>{text}</span>
+          <StyledHr />
+        </>
+      )}
     </StyledWrapper>
   );
 };

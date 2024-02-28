@@ -307,3 +307,9 @@ export function getPoolFromName(name: string): { base: Token; quote: Token } | u
 
   if (token1 && token2) return { base: token1, quote: token2 };
 }
+
+export function getAccumulatedInterest(principal: BigNumber, rate: BigNumber, days: number): BigNumber {
+  const dailyRate = rate.div(365);
+  const accumulatedInterest = principal.times(dailyRate.plus(1).pow(days)).minus(principal);
+  return accumulatedInterest;
+}

@@ -9,6 +9,7 @@ export const Button = styled(RebassButton)<{ warning?: boolean }>`
   color: #ffffff;
   text-decoration: none;
   background-color: ${({ theme }) => theme.colors.primary};
+  white-space: nowrap;
   cursor: pointer;
   transition: background-color 0.3s ease;
   user-select: none;
@@ -68,6 +69,7 @@ export const TextButton = styled(RebassButton)`
   transition: color 0.3s ease;
   user-select: none;
   line-height: 1.4;
+  white-space: nowrap;
 
   &:hover {
     color: rgba(255, 255, 255, 1);

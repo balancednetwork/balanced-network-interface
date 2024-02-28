@@ -1307,10 +1307,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@balancednetwork/balanced-js@1.2.26":
-  version "1.2.26"
-  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.2.26.tgz#9d34704a3cbd854f3a521b6044d7bd04c504da29"
-  integrity sha512-lTUc6o8Fpger4Ar99x/AGE/cSmVgg7HfvCtb9H7meGgOSE5kFXpLq6io9ErS81bEMoWwPJZsvghROX2bX9MV0Q==
+"@balancednetwork/balanced-js@1.2.31":
+  version "1.2.31"
+  resolved "https://registry.yarnpkg.com/@balancednetwork/balanced-js/-/balanced-js-1.2.31.tgz#a83327fa530d495ffa49a1b78c85b38e3bb878e8"
+  integrity sha512-w789FeeU0dwOIHyY29R7f5/4Uj7l9bWmfMlBWWU8UE7MOBqGvaW6fkQolvb1vBF4J1KZrcafzImrRY3TN8x0rA==
   dependencies:
     "@balancednetwork/hw-app-icx" "^1.0.6"
     bignumber.js "9.0.1"

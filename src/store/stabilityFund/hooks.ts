@@ -70,7 +70,9 @@ export function useFetchStabilityFundBalances(): void {
     data.forEach((balance, index) => {
       const address = whitelistedTokens[index];
       const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address] as Token;
-      balances[address] = CurrencyAmount.fromRawAmount<Token>(token, balance);
+      if (token) {
+        balances[address] = CurrencyAmount.fromRawAmount<Token>(token, balance);
+      }
     });
 
     dispatch(setBalances({ balances }));

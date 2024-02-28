@@ -17,6 +17,7 @@ import { MintState } from 'store/mint/reducer';
 import { OracleState } from 'store/oracle/reducer';
 import { RatioState } from 'store/ratio/reducer';
 import { RewardState } from 'store/reward/reducer';
+import { SavingsState } from 'store/savings/reducer';
 import { StabilityFundState } from 'store/stabilityFund/reducer';
 import { StakedLPState } from 'store/stakedLP/reducer';
 import { SwapState } from 'store/swap/reducer';
@@ -50,4 +51,5 @@ export interface RootState {
   xCall: XCallState;
   transactionsCrosschain: TransactionsCrosschainState;
   bridge: BridgeState;
+  savings: SavingsState;
 }

@@ -204,7 +204,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput, inputAmount, outputAmou
             {t`1 ${sendSymbol} per ${receivedCurrency?.symbol}`}
           </Typography>
 
-          <Flex my={5}>
+          <Flex mt={5}>
             <Box width={1 / 2} className="border-right">
               <Typography textAlign="center">
                 <Trans>Pay</Trans>
@@ -226,12 +226,14 @@ const StabilityFund = ({ clearSwapInputOutput, setInput, inputAmount, outputAmou
               </Typography>
             </Box>
           </Flex>
-          <Typography textAlign="center">
-            <Trans>
-              Includes a fee of {feeAmount ? new BigNumber(feeAmount.toFixed()).toFormat(2) : '-'}{' '}
-              {receivedCurrency?.symbol}.
-            </Trans>
-          </Typography>
+          {feeAmount?.greaterThan(0) && (
+            <Typography mt={5} textAlign="center">
+              <Trans>
+                Includes a fee of {feeAmount ? new BigNumber(feeAmount.toFixed()).toFormat(2) : '-'}{' '}
+                {receivedCurrency?.symbol}.
+              </Trans>
+            </Typography>
+          )}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}

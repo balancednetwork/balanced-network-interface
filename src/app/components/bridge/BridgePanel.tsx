@@ -21,11 +21,11 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
-import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
+import { getFeeParam, getXCallOriginEventDataFromArchway, isDenomAsset } from 'app/_xcall/archway/utils';
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
 import { CurrentXCallState, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+import { getCrossChainTokenBySymbol, getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
@@ -200,6 +200,8 @@ export default function BridgePanel() {
   }, [amountToBridge, currencyToBridge]);
   const { data: withdrawableNativeAmount } = useWithdrawableNativeAmount(bridgeDirection.to, currencyAmountToBridge);
 
+  const isDenom = currencyAmountToBridge && isDenomAsset(currencyAmountToBridge.currency);
+
   const parsedAmount = React.useMemo(() => {
     const currencyAmount = currencyToBridge && crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
     if (currencyAmount && percentAmount) {
@@ -210,7 +212,7 @@ export default function BridgePanel() {
   }, [amountToBridge, bridgeDirection.from, crossChainWallet, currencyToBridge, percentAmount]);
 
   const { increaseAllowance, allowanceIncreased, isIncreaseNeeded: allowanceIncreaseNeeded } = useAllowanceHandler(
-    (bridgeDirection.from === 'archway' && currencyToBridge?.wrapped.address) || '',
+    (bridgeDirection.from === 'archway' && !isDenom && currencyToBridge?.wrapped.address) || '',
     `${currencyAmountToBridge ? currencyAmountToBridge.quotient : '0'}`,
   );
 
@@ -292,6 +294,12 @@ export default function BridgePanel() {
       setErrorMessage(t`Enter amount`);
     }
   }, [bridgeDirection.from, crossChainWallet, currencyAmountToBridge, setErrorMessage, signedInWallets]);
+
+  const selectedTokenWalletBalance = React.useMemo(() => {
+    if (currencyToBridge) {
+      return crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
+    }
+  }, [bridgeDirection.from, crossChainWallet, currencyToBridge]);
 
   const isNativeVersionAvailable = COSMOS_NATIVE_AVAILABLE_TOKENS.some(
     token => token.address === currencyToBridge?.wrapped.address,
@@ -380,48 +388,24 @@ export default function BridgePanel() {
       const tokenAddress = currencyAmountToBridge.currency.address;
       const destination = `${bridgeDirection.to === 'icon' ? `${ICON_XCALL_NETWORK_ID}/` : ''}${destinationAddress}`;
 
-      if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
-        const msg = {
-          cross_transfer: {
-            amount: `${currencyAmountToBridge.quotient}`,
-            to: destination,
-            data: [],
-          },
+      if (isDenom) {
+        const msg = { deposit_denom: { denom: tokenAddress, to: destination, data: [] } };
+        const assetToBridge = {
+          denom: tokenAddress,
+          amount: `${currencyAmountToBridge.quotient}`,
         };
-        try {
-          initTransaction('archway', `Requesting cross-chain transfer...`);
-          setXCallInProgress(true);
-          const res = await signingClient.execute(accountArch, tokenAddress, msg, 'auto', undefined, [
-            { amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
-          ]);
 
-          const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
-          addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
-          originEventData && addOriginEvent('archway', originEventData);
-        } catch (e) {
-          console.error(e);
-          addTransactionResult('archway', null, 'Cross-chain transfer request failed');
-          setXCallInProgress(false);
-        }
-      } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
         try {
-          const msg = {
-            deposit: {
-              token_address: tokenAddress,
-              amount: `${currencyAmountToBridge.quotient}`,
-              to: destination,
-              data: [],
-            },
-          };
           initTransaction('archway', `Requesting cross-chain transfer...`);
           setXCallInProgress(true);
+
           const res = await signingClient.execute(
             accountArch,
             ARCHWAY_CONTRACTS.assetManager,
             msg,
             getFeeParam(1200000),
             undefined,
-            [{ amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
+            [{ amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }, assetToBridge],
           );
 
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
@@ -431,6 +415,68 @@ export default function BridgePanel() {
           console.error(e);
           addTransactionResult('archway', null, 'Cross-chain transfer request failed');
           setXCallInProgress(false);
+        }
+      } else {
+        if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
+          const msg = {
+            cross_transfer: {
+              amount: `${currencyAmountToBridge.quotient}`,
+              to: destination,
+              data: [],
+            },
+          };
+          try {
+            initTransaction('archway', `Requesting cross-chain transfer...`);
+            setXCallInProgress(true);
+            const res = await signingClient.execute(accountArch, tokenAddress, msg, 'auto', undefined, [
+              { amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
+            ]);
+
+            const originEventData = getXCallOriginEventDataFromArchway(
+              res.events,
+              descriptionAction,
+              descriptionAmount,
+            );
+            addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
+            originEventData && addOriginEvent('archway', originEventData);
+          } catch (e) {
+            console.error(e);
+            addTransactionResult('archway', null, 'Cross-chain transfer request failed');
+            setXCallInProgress(false);
+          }
+        } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
+          try {
+            const msg = {
+              deposit: {
+                token_address: tokenAddress,
+                amount: `${currencyAmountToBridge.quotient}`,
+                to: destination,
+                data: [],
+              },
+            };
+            initTransaction('archway', `Requesting cross-chain transfer...`);
+            setXCallInProgress(true);
+            const res = await signingClient.execute(
+              accountArch,
+              ARCHWAY_CONTRACTS.assetManager,
+              msg,
+              getFeeParam(1200000),
+              undefined,
+              [{ amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
+            );
+
+            const originEventData = getXCallOriginEventDataFromArchway(
+              res.events,
+              descriptionAction,
+              descriptionAmount,
+            );
+            addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
+            originEventData && addOriginEvent('archway', originEventData);
+          } catch (e) {
+            console.error(e);
+            addTransactionResult('archway', null, 'Cross-chain transfer request failed');
+            setXCallInProgress(false);
+          }
         }
       }
     }
@@ -482,8 +528,10 @@ export default function BridgePanel() {
   const handleSwitch = () => {
     const from = bridgeDirection.from;
     const to = bridgeDirection.to;
-    setBridgeOrigin(to);
-    setBridgeDestination(from);
+    const crossChainCurrency = getCrossChainTokenBySymbol(to, currencyToBridge?.symbol);
+    handleSetOriginChain(to);
+    handleSetDestinationChain(from);
+    crossChainCurrency && handleInputSelect(crossChainCurrency);
   };
 
   return (
@@ -511,11 +559,9 @@ export default function BridgePanel() {
           >
             <Trans>Wallet:</Trans>{' '}
             {`${
-              crossChainWallet[bridgeDirection.from][currencyToBridge?.wrapped.address || '']
-                ? crossChainWallet[bridgeDirection.from][currencyToBridge?.wrapped.address || ''].toFixed(4, {
-                    groupSeparator: ',',
-                  })
-                : 0
+              selectedTokenWalletBalance?.toFixed(4, {
+                groupSeparator: ',',
+              }) ?? 0
             } 
                 ${currencyToBridge?.symbol}`}
           </Typography>

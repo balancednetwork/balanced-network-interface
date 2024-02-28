@@ -59,3 +59,12 @@ export const getCrossChainTokenAddress = (chain: SupportedXCallChains, tokenSymb
     return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === tokenSymbol)?.address;
   }
 };
+
+export const getCrossChainTokenBySymbol = (chain: SupportedXCallChains, symbol?: string) => {
+  if (!symbol) return;
+  if (chain === 'icon') {
+    return COMBINED_TOKENS_LIST.find(token => token.symbol === symbol);
+  } else if (chain === 'archway') {
+    return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+  }
+};

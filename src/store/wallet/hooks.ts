@@ -14,10 +14,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_SUPPORTED_TOKENS_LIST, useARCH } from 'app/_xcall/archway/tokens';
+import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { getCrossChainTokenAddress } from 'app/_xcall/utils';
 import bnJs from 'bnJs';
+import { NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_TX } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import {
@@ -83,21 +85,30 @@ export function useArchwayBalances(
     `archwayBalances-${!!signingClient}-${address}-${tokens ? tokens.length : ''}`,
     async () => {
       if (signingClient && address) {
-        const balances = await Promise.all(
-          tokens.map(async token => {
+        const cw20Tokens = [...tokens].filter(token => !isDenomAsset(token));
+        const denoms = [...tokens].filter(token => isDenomAsset(token));
+
+        const cw20Balances = await Promise.all(
+          cw20Tokens.map(async token => {
             const balance = await signingClient.queryContractSmart(token.address, { balance: { address } });
             return CurrencyAmount.fromRawAmount(token, balance.balance);
           }),
         );
 
-        //native token balance
-        const nativeTokenBalance = await signingClient.getBalance(address, ARCHWAY_FEE_TOKEN_SYMBOL);
-        if (nativeTokenBalance) {
-          const balance = CurrencyAmount.fromRawAmount(arch, nativeTokenBalance.amount);
-          balances.push(balance);
-        }
+        const nativeBalances = await Promise.all(
+          denoms.map(async token => {
+            const nativeBalance = await signingClient.getBalance(address, token.address);
+            const tokenObj = new Token(NETWORK_ID, token.address, token.decimals, token.symbol, token.name);
+            const balance = CurrencyAmount.fromRawAmount(tokenObj, nativeBalance.amount ?? 0);
+            return balance;
+          }),
+        );
 
-        return balances.reduce((acc, balance) => {
+        //arch token balance
+        const archTokenBalance = await signingClient.getBalance(address, ARCHWAY_FEE_TOKEN_SYMBOL);
+        const archBalance = CurrencyAmount.fromRawAmount(arch, archTokenBalance.amount || 0);
+
+        return [archBalance, ...nativeBalances, ...cw20Balances].reduce((acc, balance) => {
           if (!balance) return acc;
           if (!JSBI.greaterThan(balance.quotient, BIGINT_ZERO)) {
             return acc;

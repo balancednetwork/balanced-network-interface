@@ -1,3 +1,4 @@
+import { Token } from '@balancednetwork/sdk-core';
 import { Event } from '@cosmjs/cosmwasm-stargate';
 
 import { DestinationXCallData, OriginXCallData, XCallEvent } from 'app/_xcall/types';
@@ -85,4 +86,8 @@ export function getFeeParam(fee: number): { amount: { amount: string; denom: str
         amount: [{ amount: '1', denom: 'aconst' }],
         gas: `${fee}`,
       };
+}
+
+export function isDenomAsset(token: Token): boolean {
+  return !token.address.startsWith('archway');
 }

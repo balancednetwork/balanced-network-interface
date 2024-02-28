@@ -27,6 +27,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
     },
     {
+      "address": "ibc/43897B9739BD63E3A08A88191999C632E052724AB96BD4C74AE31375C991F48D",
+      "chainId": 1,
+      "name": "Archway USDC",
+      "symbol": "archUSDC",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
+    },
+    {
       "address": "archway1erqguqc3hmfajgu7e2dvgaccx6feu5ru3gyatdxu94p66j9hp7msn2kcqp",
       "chainId": 7,
       "name": "Staked Arch",

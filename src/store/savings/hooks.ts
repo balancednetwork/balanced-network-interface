@@ -235,7 +235,7 @@ export function useSavingsRateInfo(): UseQueryResult<
           const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
           const totalDebtRaw = await bnJs.Loans.getTotalCollateralDebt(symbol, 'bnUSD');
           const interest = await bnJs.Loans.getInterestRate(symbol);
-          const rate = new BigNumber(interest ?? 0).div(1000000);
+          const rate = new BigNumber(interest ?? 0).div(10000);
           const totalDebt = CurrencyAmount.fromRawAmount(token, totalDebtRaw);
           return rate.times(new BigNumber(totalDebt.toFixed()));
         }),

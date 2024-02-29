@@ -339,6 +339,7 @@ export default function WalletModal() {
     });
     updateShowledgerAddress(false);
     toggleWalletModal();
+    ICONWalletModalToggle();
   };
 
   function getPageNumbers(index: number) {

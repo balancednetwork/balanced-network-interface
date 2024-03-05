@@ -1,5 +1,5 @@
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import { Icon } from './Icon';
 

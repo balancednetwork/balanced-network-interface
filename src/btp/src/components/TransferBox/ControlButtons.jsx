@@ -3,7 +3,7 @@ import React from 'react';
 import leftArrow from 'btp/src/assets/images/blue-left-arrow.svg';
 import { colors } from 'btp/src/components/Styles/Colors';
 import { SubTitleMixin } from 'btp/src/components/Typography/SubTitle';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import { Button as PrimaryButton } from 'app/components/Button';
 

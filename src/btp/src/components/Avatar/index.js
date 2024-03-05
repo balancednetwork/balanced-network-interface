@@ -1,7 +1,7 @@
 import React from 'react';
 
 import defaultAvatar from 'btp/src/assets/images/avatar.svg';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const Wapper = styled.img`
   ${({ size }) => `

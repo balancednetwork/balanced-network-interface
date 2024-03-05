@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { StyledICONLogo } from 'app/components/CurrencyLogo';
-import { ReactComponent as Archway } from 'assets/icons/archway.svg';
+import Archway from 'assets/icons/archway.svg';
 import ICONLogo from 'assets/images/icon-logo.png';
 
 import { SupportedXCallChains } from '../types';

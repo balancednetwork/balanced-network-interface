@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { TextMixin, Text } from 'btp/src/components/Typography/Text';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import { colors } from '../Styles/Colors';
 import { Input } from './Input';

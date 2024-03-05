@@ -1,11 +1,13 @@
-const linguiConfig = {
+import type { LinguiConfig } from '@lingui/conf';
+
+const linguiConfig: LinguiConfig = {
   catalogs: [
     {
       path: '<rootDir>/src/locales/{locale}',
       include: ['<rootDir>/src'],
     },
   ],
-  compileNamespace: 'cjs',
+  // compileNamespace: 'cjs',
   fallbackLocales: {
     default: 'en-US',
   },

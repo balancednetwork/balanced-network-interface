@@ -7,7 +7,7 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
 import { Typography } from 'app/theme';
-import { ReactComponent as ArrowDown } from 'assets/icons/arrow-down.svg';
+import ArrowDown from 'assets/icons/arrow-down.svg';
 
 interface NetworkSelectorProps {
   label?: string;

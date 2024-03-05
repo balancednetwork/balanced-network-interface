@@ -11,7 +11,7 @@ import { media } from 'btp/src/components/Styles/Media';
 import { HeaderMixin } from 'btp/src/components/Typography/Header';
 import { TextMixin } from 'btp/src/components/Typography/Text';
 import PropTypes from 'prop-types';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const Wapper = styled.div`
   min-height: 100vh;

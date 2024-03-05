@@ -7,7 +7,7 @@ import { colors } from 'btp/src/components/Styles/Colors';
 import { Text } from 'btp/src/components/Typography';
 import { useOnClickOutside } from 'btp/src/hooks/useOnClickOutside';
 import PropTypes from 'prop-types';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const { brandSecondaryBase, grayLine, grayBG } = colors;
 

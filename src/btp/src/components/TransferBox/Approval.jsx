@@ -11,7 +11,7 @@ import { useGetBTPService } from 'btp/src/hooks/useService';
 import { hashShortener, toSeparatedNumberString } from 'btp/src/utils/app';
 import PropTypes from 'prop-types';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import { ControlButtons } from './ControlButtons';
 import { icons } from './Details';

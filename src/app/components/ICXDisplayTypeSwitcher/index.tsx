@@ -6,7 +6,7 @@ import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from 'app/theme';
-import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
+import QuestionIcon from 'assets/icons/question.svg';
 import {
   useCollateralChangeIcxDisplayType,
   useCollateralDepositedAmountInICX,

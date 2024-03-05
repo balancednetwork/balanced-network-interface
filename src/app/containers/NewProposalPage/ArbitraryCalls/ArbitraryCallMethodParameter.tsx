@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import { UnderlineText } from 'app/components/DropdownText';
 import { Typography } from 'app/theme';
-import { ReactComponent as RemoveIcon } from 'assets/icons/remove.svg';
+import RemoveIcon from 'assets/icons/remove.svg';
 import { CxMethodInput } from 'hooks/useCxApi';
 import {
   useAddCallStruct,

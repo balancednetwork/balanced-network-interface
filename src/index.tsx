@@ -1,11 +1,11 @@
-import 'react-app-polyfill/ie11';
-import 'react-app-polyfill/stable';
+// import 'react-app-polyfill/ie11';
+// import 'react-app-polyfill/stable';
 
-import * as React from 'react';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 
 import BigNumber from 'bignumber.js';
 import { IconReactProvider } from 'packages/icon-react';
-import * as ReactDOM from 'react-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
@@ -23,8 +23,6 @@ import store from 'store';
 // Initialize languages
 import { LanguageProvider } from './i18n';
 
-const MOUNT_NODE = document.getElementById('root') as HTMLElement;
-
 const queryClient = new QueryClient();
 // Set the global formatting options
 const fmt = {
@@ -41,25 +39,24 @@ const fmt = {
 BigNumber.config({ FORMAT: fmt, ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN }); // equivalent
 
-ReactDOM.render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <HelmetProvider>
-        <QueryClientProvider client={queryClient}>
-          <IconReactProvider>
-            <ArchwayProvider>
-              <LanguageProvider>
-                <React.StrictMode>
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <BrowserRouter>
+        <HelmetProvider>
+          <QueryClientProvider client={queryClient}>
+            <IconReactProvider>
+              <ArchwayProvider>
+                <LanguageProvider>
                   <App />
-                </React.StrictMode>
-              </LanguageProvider>
-            </ArchwayProvider>
-          </IconReactProvider>
-        </QueryClientProvider>
-      </HelmetProvider>
-    </BrowserRouter>
-  </Provider>,
-  MOUNT_NODE,
+                </LanguageProvider>
+              </ArchwayProvider>
+            </IconReactProvider>
+          </QueryClientProvider>
+        </HelmetProvider>
+      </BrowserRouter>
+    </Provider>
+  </React.StrictMode>,
 );
 
 // If you want your app to work offline and load faster, you can change

@@ -16,7 +16,7 @@ import { toSeparatedNumberString } from 'btp/src/utils/app';
 import { getBalanceToken } from 'btp/src/utils/constants';
 import PropTypes from 'prop-types';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const { tertiaryBase, grayScaleSubText, grayLine } = colors;
 

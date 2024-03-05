@@ -1,7 +1,7 @@
 import { PrimaryButton, SecondaryButton } from 'components/Button';
 import { media } from 'components/Styles/Media';
 import { Text } from 'components/Typography';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
   padding-top: 3px;

@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
 import { Placement } from '@popperjs/core';
-import Portal from '@reach/portal';
+import { Portal } from '@reach/portal';
 import { usePopper } from 'react-popper';
 import styled from 'styled-components';
 

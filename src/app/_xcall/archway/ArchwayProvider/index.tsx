@@ -29,7 +29,7 @@ const initialContext: ArchwayContextType = {
 
 const ArchwayContext = createContext<ArchwayContextType>(initialContext);
 
-const ArchwayProvider: React.FC = ({ children }) => {
+const ArchwayProvider = ({ children }) => {
   const [address, setAddress] = useState<string>('');
   const [chain_id, setChainId] = useState<string>('');
   const [client, setClient] = useState<ArchwayClient>();

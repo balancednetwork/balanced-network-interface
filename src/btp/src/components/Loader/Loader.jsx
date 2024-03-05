@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 
 import { colors } from 'btp/src/components/Styles/Colors';
 import PropTypes from 'prop-types';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const Wapper = styled.div`
   ${({ color, size, borderSize }) => `

@@ -4,7 +4,7 @@ import { Token } from '@balancednetwork/sdk-core';
 import { CheckCircle } from 'react-feather';
 import { Flex } from 'rebass';
 import { useTheme } from 'styled-components';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import { RowFixed } from 'app/components/Row';

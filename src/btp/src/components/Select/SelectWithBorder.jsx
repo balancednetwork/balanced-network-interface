@@ -3,7 +3,7 @@ import React from 'react';
 import { Select } from 'btp/src/components/Select';
 import { colors } from 'btp/src/components/Styles/Colors';
 import { Text } from 'btp/src/components/Typography';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const StyledSelect = styled(Select)`
   width: ${({ width }) => width || '256px'};

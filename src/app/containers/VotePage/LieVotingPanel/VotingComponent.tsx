@@ -13,7 +13,7 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
-import { ReactComponent as EditIcon } from 'assets/icons/edit.svg';
+import EditIcon from 'assets/icons/edit.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import {

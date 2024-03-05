@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { colors } from 'btp/src/components/Styles/Colors';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import Button from './Button';
 

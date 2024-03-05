@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { UnderlineText } from 'app/components/DropdownText';
 import QuestionHelper from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
-import { ReactComponent as CopyIcon } from 'assets/icons/copy.svg';
+import CopyIcon from 'assets/icons/copy.svg';
 import { useAddCall, useEditableContractCalls } from 'store/arbitraryCalls/hooks';
 
 import ArbitraryCall from './ArbitraryCall';

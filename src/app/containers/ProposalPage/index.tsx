@@ -26,9 +26,9 @@ import {
 } from 'app/components/ProposalInfo/components';
 import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
 import { Typography } from 'app/theme';
-import { ReactComponent as CancelIcon } from 'assets/icons/cancel.svg';
-import { ReactComponent as CheckCircleIcon } from 'assets/icons/check_circle.svg';
-import { ReactComponent as ExternalIcon } from 'assets/icons/external.svg';
+import CancelIcon from 'assets/icons/cancel.svg';
+import CheckCircleIcon from 'assets/icons/check_circle.svg';
+import ExternalIcon from 'assets/icons/external.svg';
 import bnJs from 'bnJs';
 import { useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';

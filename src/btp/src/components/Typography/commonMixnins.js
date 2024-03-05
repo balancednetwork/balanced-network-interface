@@ -1,5 +1,5 @@
 import { colors } from 'btp/src/components/Styles/Colors';
-import { css } from 'styled-components/macro';
+import { css } from 'styled-components';
 
 export const normal = css`
   font-weight: 300;

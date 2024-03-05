@@ -18,7 +18,7 @@ import { BoxPanel, FlexPanel } from 'app/components/Panel';
 import { QuestionWrapper } from 'app/components/QuestionHelper';
 import Tooltip, { TooltipContainer } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
-import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
+import QuestionIcon from 'assets/icons/question.svg';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery_DEPRECATED, Period } from 'queries/rebalancing';
 import { useRatesQuery } from 'queries/reward';

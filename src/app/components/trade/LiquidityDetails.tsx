@@ -14,7 +14,7 @@ import styled from 'styled-components';
 
 import Message from 'app/Message';
 import { Typography } from 'app/theme';
-import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-line.svg';
+import ArrowDownIcon from 'assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';

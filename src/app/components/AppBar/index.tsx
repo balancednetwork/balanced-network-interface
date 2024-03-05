@@ -5,12 +5,11 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { ReactComponent as HomeIcon } from 'assets/icons/home.svg';
-import { ReactComponent as TradeIcon } from 'assets/icons/trade.svg';
-import { ReactComponent as VoteIcon } from 'assets/icons/vote.svg';
+import HomeIcon from 'assets/icons/home.svg';
+import TradeIcon from 'assets/icons/trade.svg';
+import VoteIcon from 'assets/icons/vote.svg';
 import { useActiveProposals } from 'queries/vote';
 import { useBBalnAmount } from 'store/bbaln/hooks';
-
 import { notificationCSS } from '../ICONWallet/wallets/utils';
 
 const Navigation = styled.nav`

@@ -2,8 +2,13 @@ import React from 'react';
 
 import { TextProps } from 'rebass';
 import { Text } from 'rebass/styled-components';
-import { ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, MediaFunction } from 'styled-components';
-import { css, DefaultTheme } from 'styled-components/macro';
+import {
+  ThemeProvider as StyledComponentsThemeProvider,
+  createGlobalStyle,
+  MediaFunction,
+  DefaultTheme,
+  css,
+} from 'styled-components';
 
 import texGyeAdventorBoldWoff from 'assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff';
 import texGyeAdventorBoldWoff2 from 'assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff2';

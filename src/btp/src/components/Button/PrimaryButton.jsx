@@ -2,7 +2,7 @@ import React from 'react';
 
 import { colors } from 'btp/src/components/Styles/Colors';
 import { media } from 'btp/src/components/Styles/Media';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import Button from './Button';
 

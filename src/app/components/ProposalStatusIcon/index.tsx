@@ -7,9 +7,9 @@ import utc from 'dayjs/plugin/utc';
 import { Flex } from 'rebass/styled-components';
 
 import { Typography } from 'app/theme';
-import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
-import { ReactComponent as FailureIcon } from 'assets/icons/failure.svg';
-import { ReactComponent as TickIcon } from 'assets/icons/tick.svg';
+import CalendarIcon from 'assets/icons/calendar.svg';
+import FailureIcon from 'assets/icons/failure.svg';
+import TickIcon from 'assets/icons/tick.svg';
 import { formatTimeStr } from 'utils/timeformat';
 
 dayjs.extend(utc);

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { SelectorPopover } from 'app/components/Popover';
-import { ReactComponent as DropDown } from 'assets/icons/arrow-down.svg';
+import DropDown from 'assets/icons/arrow-down.svg';
 import useWidth from 'hooks/useWidth';
 import { COMMON_PERCENTS } from 'store/swap/actions';
 import { escapeRegExp } from 'utils';

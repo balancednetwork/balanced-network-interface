@@ -7,7 +7,7 @@ import { notificationCSS } from 'app/components/ICONWallet/wallets/utils';
 import { FlexPanel } from 'app/components/Panel';
 import { HeaderText } from 'app/components/trade/LiquidityDetails';
 import { Typography } from 'app/theme';
-import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
+import QuestionIcon from 'assets/icons/question.svg';
 
 export const Grid = styled(Box)`
   display: grid;

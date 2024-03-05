@@ -1,7 +1,7 @@
 import { colors } from 'components/Styles/Colors';
 import { Tooltip } from 'components/Tooltip';
 import { SubTitle } from 'components/Typography';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import infoIcon from 'assets/images/info-icon.svg';
 

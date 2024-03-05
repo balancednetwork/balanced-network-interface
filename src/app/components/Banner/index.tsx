@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import { ReactComponent as CrossIcon } from 'assets/icons/cross.svg';
+import CrossIcon from 'assets/icons/cross.svg';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { PageLocation } from 'utils';
 

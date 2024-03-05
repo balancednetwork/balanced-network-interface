@@ -28,7 +28,7 @@ import { Button, TextButton } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import Modal, { ModalProps } from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import { ReactComponent as ArrowIcon } from 'assets/icons/arrow.svg';
+import ArrowIcon from 'assets/icons/arrow.svg';
 import { useModalOpen, useTransferAssetsModalToggle } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
 import { TransactionStatus } from 'store/transactions/hooks';

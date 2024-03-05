@@ -4,7 +4,7 @@ import { addresses } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';

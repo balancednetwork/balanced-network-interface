@@ -5,7 +5,7 @@ import { TransferCard } from 'btp/src/components/TransferCard';
 import { useSelect } from 'btp/src/hooks/useRematch';
 import { useTokenToUsd } from 'btp/src/hooks/useTokenToUsd';
 import { Form } from 'react-final-form';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import { Approval } from './Approval';
 import { Details } from './Details';

@@ -3,7 +3,7 @@ import React from 'react';
 import { colors } from 'btp/src/components/Styles/Colors';
 import { SubTitleMixin } from 'btp/src/components/Typography/SubTitle';
 import PropTypes from 'prop-types';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const ButtonStyle = styled.button`
   ${SubTitleMixin.mdBold};

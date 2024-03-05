@@ -8,7 +8,7 @@ import { media } from 'btp/src/components/Styles/Media';
 import { Text } from 'btp/src/components/Typography';
 import { wallets } from 'btp/src/utils/constants';
 import PropTypes from 'prop-types';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const { grayText, successState, grayAccent } = colors;
 

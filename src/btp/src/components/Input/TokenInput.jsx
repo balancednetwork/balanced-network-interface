@@ -5,7 +5,7 @@ import { Text } from 'btp/src/components/Typography';
 import { HeaderMixin } from 'btp/src/components/Typography/Header';
 import { toSeparatedNumberString } from 'btp/src/utils/app';
 import PropTypes from 'prop-types';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import { Input } from './Input';
 

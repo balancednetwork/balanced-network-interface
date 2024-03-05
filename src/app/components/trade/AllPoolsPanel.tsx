@@ -9,7 +9,7 @@ import Divider from 'app/components/Divider';
 import PoolLogo from 'app/components/PoolLogo';
 import { MouseoverTooltip } from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
-import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
+import QuestionIcon from 'assets/icons/question.svg';
 import { PairInfo } from 'constants/pairs';
 import useSort from 'hooks/useSort';
 import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from 'queries/backendv2';

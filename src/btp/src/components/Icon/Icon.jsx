@@ -1,17 +1,17 @@
 import React, { memo } from 'react';
 
-import { ReactComponent as bchIcon } from 'btp/src/assets/images/bch-icon.svg';
-import { ReactComponent as binanceIcon } from 'btp/src/assets/images/binance-icon.svg';
-import { ReactComponent as btcIcon } from 'btp/src/assets/images/btc-icon.svg';
-import { ReactComponent as copyIcon } from 'btp/src/assets/images/copy-icon.svg';
-import { ReactComponent as ethIcon } from 'btp/src/assets/images/eth-icon.svg';
-import { ReactComponent as iconexIcon } from 'btp/src/assets/images/icon-ex.svg';
-import { ReactComponent as metaMaskIcon } from 'btp/src/assets/images/metal-mask.svg';
+import bchIcon from 'btp/src/assets/images/bch-icon.svg';
+import binanceIcon from 'btp/src/assets/images/binance-icon.svg';
+import btcIcon from 'btp/src/assets/images/btc-icon.svg';
+import copyIcon from 'btp/src/assets/images/copy-icon.svg';
+import ethIcon from 'btp/src/assets/images/eth-icon.svg';
+import iconexIcon from 'btp/src/assets/images/icon-ex.svg';
+import metaMaskIcon from 'btp/src/assets/images/metal-mask.svg';
 import MBIcon from 'btp/src/assets/images/moonbeam.jpeg';
-import { ReactComponent as nearIcon } from 'btp/src/assets/images/near-icon.svg';
+import nearIcon from 'btp/src/assets/images/near-icon.svg';
 import { wallets } from 'btp/src/utils/constants';
 import PropTypes from 'prop-types';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const sizes = {
   s: '20px',

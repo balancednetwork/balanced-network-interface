@@ -25,7 +25,7 @@ import Popover, { DropdownPopper } from 'app/components/Popover';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import SlippageSetting from 'app/components/SlippageSetting';
 import { Typography } from 'app/theme';
-import { ReactComponent as FlipIcon } from 'assets/icons/flip.svg';
+import FlipIcon from 'assets/icons/flip.svg';
 import bnJs from 'bnJs';
 import { SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
 import {

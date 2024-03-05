@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Icon } from 'btp/src/components/Icon';
 import { TextMixin } from 'btp/src/components/Typography/Text';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const Wrapper = styled.h4`
   ${TextMixin.md};

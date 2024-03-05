@@ -9,9 +9,9 @@ import styled from 'styled-components';
 
 import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
 import { Typography } from 'app/theme';
-import { ReactComponent as CalendarIcon } from 'assets/icons/calendar.svg';
-import { ReactComponent as PieChartIcon } from 'assets/icons/pie-chart.svg';
-import { ReactComponent as UserIcon } from 'assets/icons/users.svg';
+import CalendarIcon from 'assets/icons/calendar.svg';
+import PieChartIcon from 'assets/icons/pie-chart.svg';
+import UserIcon from 'assets/icons/users.svg';
 import { ProposalInterface } from 'types';
 import { getDateFromDay } from 'utils/timeformat';
 

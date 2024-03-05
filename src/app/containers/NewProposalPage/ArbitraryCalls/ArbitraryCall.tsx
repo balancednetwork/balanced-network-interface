@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
-import { ReactComponent as RemoveIcon } from 'assets/icons/remove.svg';
+import RemoveIcon from 'assets/icons/remove.svg';
 import { useCxApi } from 'hooks/useCxApi';
 import { useRemoveCall, useUpdateCallContract } from 'store/arbitraryCalls/hooks';
 import { EditableArbitraryCall } from 'store/arbitraryCalls/reducer';

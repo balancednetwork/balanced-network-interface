@@ -18,7 +18,7 @@ import { getFeeParam } from 'app/_xcall/archway/utils';
 import { DestinationXCallData, OriginXCallData, XCallActivityItem, XCallEvent } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
-import { ReactComponent as ArrowIcon } from 'assets/icons/arrow-white.svg';
+import ArrowIcon from 'assets/icons/arrow-white.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useICONWalletModalToggle, useWalletModalToggle } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';

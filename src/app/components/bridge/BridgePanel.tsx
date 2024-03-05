@@ -29,7 +29,7 @@ import { getCrossChainTokenBySymbol, getNetworkDisplayName } from 'app/_xcall/ut
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
-import { ReactComponent as FlipIcon } from 'assets/icons/horizontal-flip.svg';
+import FlipIcon from 'assets/icons/horizontal-flip.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
 import { useBridgeDirection, useSetBridgeDestination, useSetBridgeOrigin } from 'store/bridge/hooks';

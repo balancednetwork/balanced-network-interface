@@ -18,7 +18,7 @@ import { wallets } from 'btp/src/utils/constants';
 import { composeValidators, maxValue } from 'btp/src/utils/inputValidation';
 import PropTypes from 'prop-types';
 import { Field } from 'react-final-form';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import { ControlButtons } from './ControlButtons';
 

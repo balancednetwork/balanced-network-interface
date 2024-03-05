@@ -1,7 +1,7 @@
 import { Select } from 'components/Select';
 import { colors } from 'components/Styles/Colors';
 import { Text } from 'components/Typography';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import filledDownArrow from 'assets/images/filled-down-arrow.svg';
 

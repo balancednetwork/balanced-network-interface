@@ -18,7 +18,7 @@ import { getBytesFromString, getCrossChainTokenAddress } from 'app/_xcall/utils'
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import { ReactComponent as CheckIcon } from 'assets/icons/tick.svg';
+import CheckIcon from 'assets/icons/tick.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Field } from 'store/mint/actions';

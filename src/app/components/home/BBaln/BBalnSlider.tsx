@@ -21,7 +21,7 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
-import { ReactComponent as QuestionIcon } from 'assets/icons/question.svg';
+import QuestionIcon from 'assets/icons/question.svg';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';

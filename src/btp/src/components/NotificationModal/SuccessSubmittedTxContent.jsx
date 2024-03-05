@@ -4,7 +4,7 @@ import arrowIcon from 'btp/src/assets/images/blue-up-arrow.svg';
 import { colors } from 'btp/src/components/Styles/Colors';
 import { Link, Text } from 'btp/src/components/Typography';
 import { useDispatch } from 'btp/src/hooks/useRematch';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
   text-align: center;

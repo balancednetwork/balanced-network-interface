@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Currency, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -17,7 +16,7 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
-import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
+import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
 import { CurrentXCallState, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
 import { getArchwayCounterToken, getBytesFromString, getNetworkDisplayName } from 'app/_xcall/utils';
@@ -348,13 +347,15 @@ const XCallSwapModal = ({
         };
 
         try {
-          const res: ExecuteResult = await signingClient.execute(
+          const res = await signingClient.execute(
             accountArch,
             ARCHWAY_CONTRACTS.bnusd,
             msg,
             'auto',
             undefined,
-            archwayXcallFees && [{ amount: archwayXcallFees?.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
+            archwayXcallFees?.rollback && archwayXcallFees.rollback !== '0'
+              ? [{ amount: archwayXcallFees?.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
+              : undefined,
           );
 
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
@@ -385,13 +386,13 @@ const XCallSwapModal = ({
         });
 
         try {
-          const res: ExecuteResult = await signingClient.execute(
+          const res = await signingClient.execute(
             accountArch,
             ARCHWAY_CONTRACTS.assetManager,
             msg,
-            'auto',
+            getFeeParam(1500000),
             undefined,
-            [{ amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
+            fee !== undefined && fee !== '0' ? [{ amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL }] : undefined,
           );
 
           addTransactionResult('archway', res, 'Cross-chain swap requested.');

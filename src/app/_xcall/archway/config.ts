@@ -102,7 +102,7 @@ const ARCHWAY_CONTRACTS_: { [key in SupportedChainId]: ContractSetType } = {
     liquidSwap: 'archway1wwsvs9nyldsuk3sen36zh2kvxzpc4wg0z9afnz9n25hx22hsxapqfceh3d',
   },
   [SupportedChainId.LISBON]: {
-    xcall: 'archway1kenxz0wuczr04mc9q3gwjuyzd6ft4zqm5wach846gghfjupvlncshvchs2',
+    xcall: 'archway1h04c8eqr99dnsw6wqx80juj2vtuxth70eh65cf6pnj4zan6ms4jqshc5wk',
     bnusd: 'archway1dxs0j8rk8yd69rdh77ndrefhjzdy3lehujx58yhfxr827nr7rutqpltd2w',
     assetManager: 'archway18kf5sjwk4z007ulz8lhgsjjk860rup0n65a84nkys08s522gt5yqwdasmr',
     liquidSwap: 'archway1wwsvs9nyldsuk3sen36zh2kvxzpc4wg0z9afnz9n25hx22hsxapqfceh3d',
@@ -140,7 +140,7 @@ const ARCHWAY_WEBSOCKET_URLS: { [key in SupportedChainId]: string } = {
 const AUTO_EXECUTION_ON_ARCHWAY_: { [key in SupportedChainId]: boolean } = {
   [SupportedChainId.MAINNET]: true,
   [SupportedChainId.BERLIN]: true,
-  [SupportedChainId.LISBON]: false,
+  [SupportedChainId.LISBON]: true,
   [SupportedChainId.YEOUIDO]: false,
   [SupportedChainId.SEJONG]: false,
 };

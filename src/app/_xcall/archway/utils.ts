@@ -83,7 +83,7 @@ export function getFeeParam(fee: number): { amount: { amount: string; denom: str
   return NETWORK_ID === 1
     ? 'auto'
     : {
-        amount: [{ amount: '1', denom: 'aconst' }],
+        amount: [{ amount: '56000000000000000', denom: 'aconst' }],
         gas: `${fee}`,
       };
 }

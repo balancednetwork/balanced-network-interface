@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Currency, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
 import { t, Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
@@ -97,12 +96,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
 
       try {
         initTransaction('archway', msgs.txMsgs.archway.pending);
-        const res: ExecuteResult = await signingClient.execute(
-          accountArch,
-          ARCHWAY_CONTRACTS.xcall,
-          msg,
-          getFeeParam(600000),
-        );
+        const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, getFeeParam(600000));
 
         const callExecuted = res.events.some(
           e => e.type === 'wasm-CallExecuted' && e.attributes.some(a => a.key === 'code' && a.value === '1'),

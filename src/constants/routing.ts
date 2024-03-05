@@ -57,8 +57,8 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [ChainId.MAINNET]: [
     sICX[ChainId.MAINNET],
     bnUSD[ChainId.MAINNET],
-    IUSDC[ChainId.MAINNET],
-    USDS[ChainId.MAINNET],
+    // IUSDC[ChainId.MAINNET],
+    // USDS[ChainId.MAINNET],
     BTCB[ChainId.MAINNET],
   ],
   [ChainId.YEOUIDO]: [sICX[ChainId.YEOUIDO], bnUSD[ChainId.YEOUIDO], IUSDC[ChainId.YEOUIDO], USDS[ChainId.YEOUIDO]],

@@ -3,6 +3,7 @@ import { defineConfig, loadEnv } from 'vite';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgr from "vite-plugin-svgr";
 import { lingui } from "@lingui/vite-plugin";
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig((command, mode) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -20,6 +21,14 @@ export default defineConfig((command, mode) => {
           plugins: [
             "macros",
           ]
+        }
+      }),
+      nodePolyfills({
+        include: ['buffer'],
+        global: {
+          Buffer: true,
+          global: false,
+          process: false,
         }
       }),
       lingui(),

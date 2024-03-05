@@ -116,6 +116,7 @@ export default function BBalnSlider({
   const hasEnoughICX = useHasEnoughICX();
   const isSmallScreen = useMedia('(max-width: 540px)');
   const isSuperSmallScreen = useMedia('(max-width: 400px)');
+  const isSuperExtraSmallScreen = useMedia('(max-width: 379px)');
   const addTransaction = useTransactionAdder();
   const [tooltipHovered, setTooltipHovered] = useState(false);
   const signedInWallets = useSignedInWallets();
@@ -416,7 +417,7 @@ export default function BBalnSlider({
       {account && hasAnyKindOfRewards && (
         <Typography color="text1">
           <Trans>
-            Your earning power depends on your bBALN holdings and position size compared to everyone else's.
+            Your earning potential depends on your bBALN holdings and position size compared to everyone else's.
           </Trans>
         </Typography>
       )}
@@ -487,7 +488,7 @@ export default function BBalnSlider({
                     )}
                     <Tooltip
                       show={showGlobalTooltip || tooltipHovered}
-                      offset={isSmallScreen ? [0, 40] : [0, 10]}
+                      offset={isSuperExtraSmallScreen ? [0, 66] : isSmallScreen ? [0, 40] : [0, 10]}
                       text={
                         <>
                           {!isAdjusting && <EarningPowerTooltipContent />}
@@ -567,7 +568,11 @@ export default function BBalnSlider({
               <ButtonsWrap verticalButtons={!simple}>
                 {isAdjusting ? (
                   <>
-                    <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmallScreen ? '5px' : 0}>
+                    <TextButton
+                      onClick={handleCancelAdjusting}
+                      marginBottom={isSuperSmallScreen ? '5px' : 0}
+                      marginLeft={[0, 0, simple ? '-40px' : 0]}
+                    >
                       Cancel
                     </TextButton>
                     <Button

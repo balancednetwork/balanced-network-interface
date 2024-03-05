@@ -417,7 +417,7 @@ export default function BBalnSlider({
       {account && hasAnyKindOfRewards && (
         <Typography color="text1">
           <Trans>
-            Your earning power depends on your bBALN holdings and position size compared to everyone else's.
+            Your earning potential depends on your bBALN holdings and position size compared to everyone else's.
           </Trans>
         </Typography>
       )}

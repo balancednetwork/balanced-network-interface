@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
 import { t } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass';
@@ -184,7 +183,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
       try {
         initTransaction('archway', 'Confirming cross-chain transaction.');
-        const res: ExecuteResult = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, 'auto');
+        const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, 'auto');
 
         const callExecuted = res.events.some(
           e => e.type === 'wasm-CallExecuted' && e.attributes.some(a => a.key === 'code' && a.value === '1'),
@@ -231,12 +230,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
       try {
         initTransaction('archway', 'Reverting cross-chain transaction...');
-        const res: ExecuteResult = await signingClient.execute(
-          accountArch,
-          ARCHWAY_CONTRACTS.xcall,
-          msg,
-          getFeeParam(600000),
-        );
+        const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, getFeeParam(600000));
 
         //TODO: handle arch rollback response
         const rollbackExecuted = res.events.some(e => e.type === 'wasm-RollbackExecuted');

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Flex } from 'rebass';
@@ -81,12 +80,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
 
       try {
         initTransaction('archway', 'Executing rollback...');
-        const res: ExecuteResult = await signingClient.execute(
-          accountArch,
-          ARCHWAY_CONTRACTS.xcall,
-          msg,
-          getFeeParam(600000),
-        );
+        const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, getFeeParam(600000));
 
         const rollbackExecuted = res.events.some(e => e.type === 'wasm-RollbackExecuted');
 

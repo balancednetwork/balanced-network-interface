@@ -91,8 +91,8 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
     opacity: 1;
   }
 
-  :hover,
-  :focus {
+  &:hover,
+  &:focus {
     color: ${({ theme }) => theme.colors.bg1};
     background-color: ${({ theme }) => theme.colors.primary};
     opacity: 1;

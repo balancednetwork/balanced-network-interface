@@ -133,7 +133,7 @@ const WalletOption = styled(Box)`
     margin-bottom: 10px;
   }
 
-  :hover {
+  &:hover {
     background-color: ${({ theme }) => theme.colors.bg3};
     opacity: 1;
   }

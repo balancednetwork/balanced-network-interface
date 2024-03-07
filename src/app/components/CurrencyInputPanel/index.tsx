@@ -34,8 +34,9 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean; active: 
   transition: all 0.3s ease;
   cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-  :hover,
-  :focus {
+
+  &:hover,
+  &:focus {
     border: ${({ theme }) => `2px solid ${theme.colors.primary}`};
     border-right: ${({ theme }) => `1px solid ${theme.colors.primary}`};
   }
@@ -67,10 +68,12 @@ const NumberInput = styled.input<{ bg?: string; active?: boolean }>`
   font-size: 100%;
   line-height: 1.15;
   margin: 0;
-  :hover,
-  :focus {
+
+  &:hover,
+  &:focus {
     border: 2px solid #2ca9b7;
   }
+
   ${props => props.active && 'border-bottom-right-radius: 0;'}
 `;
 

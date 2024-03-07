@@ -35,8 +35,8 @@ const ProposalWrapper = styled.div<{ showNotification?: boolean }>`
   margin: 0 0 25px;
   cursor: pointer;
 
-  :hover,
-  :focus {
+  &:hover,
+  &:focus {
     border: 2px solid #2ca9b7;
   }
 

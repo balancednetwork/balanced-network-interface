@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import SearchIcon from 'assets/icons/search.svg';
+import SearchIcon from 'assets/icons/search.svg?inline';
 
 export const SearchInput = styled.input`
   background-image: url(${SearchIcon});
@@ -31,12 +31,12 @@ export const SearchInput = styled.input`
     opacity: 1;
   }
 
-  :focus {
+  &:focus {
     border: 2px solid ${({ theme }) => theme.colors.primary};
     outline: none;
   }
 
-  :hover {
+  &:hover {
     border: 2px solid ${({ theme }) => theme.colors.primary};
     outline: none;
   }

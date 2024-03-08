@@ -4,7 +4,7 @@ import { MessageDescriptor } from '@lingui/core';
 import { defineMessage, t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { AnimatePresence, motion } from 'framer-motion';
-import Nouislider from 'nouislider-react';
+import Nouislider from 'packages/nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isIOS } from 'react-device-detect';
 import { useMedia } from 'react-use';

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import Nouislider from 'nouislider-react';
+import Nouislider from 'packages/nouislider-react';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 

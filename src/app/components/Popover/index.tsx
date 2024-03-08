@@ -226,7 +226,10 @@ export function DropdownPopper({
 
   if (containerOffset && styles.arrow) {
     const arrowX = arrowEl?.getBoundingClientRect().x || 0;
-    styles.arrow.transform = `translate3d(${arrowX - containerOffset + 6}px,0,0)`;
+    styles.arrow = {
+      ...styles.arrow,
+      transform: `translate3d(${arrowX - containerOffset + 6}px,0,0)`,
+    };
   }
 
   if (customArrowStyle && styles.arrow) {

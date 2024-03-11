@@ -45,22 +45,25 @@ const ChainSelector = ({ chain, setChain, label }: ChainSelectorProps) => {
       <Typography variant="label" style={{ textTransform: 'capitalize' }}>
         {label}
       </Typography>
-      <Wrap onClick={handleToggle} style={{ position: 'relative' }}>
-        <UnderlineText style={{ paddingRight: '1px' }}>{getNetworkDisplayName(chain)}</UnderlineText>
-        <div ref={arrowRef} style={{ display: 'inline-block' }}>
-          <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
-        </div>
-      </Wrap>
       <ClickAwayListener onClickAway={e => closeDropdown(e)}>
-        <DropdownPopper
-          show={Boolean(anchor)}
-          anchorEl={anchor}
-          arrowEl={arrowRef.current}
-          placement="bottom"
-          offset={[0, 8]}
-        >
-          <ChainList setChain={setChain} chain={chain} />
-        </DropdownPopper>
+        <div>
+          <Wrap onClick={handleToggle} style={{ position: 'relative' }}>
+            <UnderlineText style={{ paddingRight: '1px' }}>{getNetworkDisplayName(chain)}</UnderlineText>
+            <div ref={arrowRef} style={{ display: 'inline-block' }}>
+              <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
+            </div>
+          </Wrap>
+
+          <DropdownPopper
+            show={Boolean(anchor)}
+            anchorEl={anchor}
+            arrowEl={arrowRef.current}
+            placement="bottom"
+            offset={[0, 8]}
+          >
+            <ChainList setChain={setChain} chain={chain} />
+          </DropdownPopper>
+        </div>
       </ClickAwayListener>
     </Box>
   );

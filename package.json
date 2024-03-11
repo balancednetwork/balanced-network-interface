@@ -11,6 +11,7 @@
     "@chain-registry/types": "0.16.0",
     "@cosmjs/cosmwasm-stargate": "0.32.2",
     "@cosmjs/stargate": "0.32.2",
+    "@emotion/is-prop-valid": "1.2.2",
     "@ethereumjs/rlp": "5.0.0",
     "@ethersproject/address": "5.4.0",
     "@ethersproject/rlp": "5.7.0",
@@ -97,16 +98,16 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "start:prod": "yarn run build && serve -s build",
+    "start:prod": "pnpm run build && serve -s build",
     "checkTs": "tsc --noEmit",
     "eslint": "eslint --ext js,ts,tsx",
-    "lint": "yarn run eslint src",
-    "lint:fix": "yarn run eslint --fix src",
+    "lint": "pnpm run eslint src",
+    "lint:fix": "pnpm run eslint --fix src",
     "lint:css": "stylelint src/**/*.css",
     "prettify": "prettier --write",
     "prei18n:extract": "touch src/locales/en-US.po",
     "i18n:extract": "lingui extract --locale en-US",
-    "i18n:compile": "yarn i18n:extract && lingui compile",
+    "i18n:compile": "pnpm i18n:extract && lingui compile",
     "i18n:pseudo": "lingui extract --locale pseudo && lingui compile",
     "clean": "rm -rf node_modules"
   },
@@ -117,12 +118,11 @@
     "not op_mini all"
   ],
   "engines": {
-    "node": ">=18.0.0",
-    "yarn": "^1.22.10"
+    "node": ">=18.0.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
-      "yarn run eslint --max-warnings=0"
+      "pnpm run eslint --max-warnings=0"
     ],
     "*.{md,json}": [
       "prettier --write"
@@ -130,7 +130,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run checkTs && lint-staged"
+      "pre-commit": "pnpm run checkTs && lint-staged"
     }
   },
   "jest": {

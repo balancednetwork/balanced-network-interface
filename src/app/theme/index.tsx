@@ -8,7 +8,9 @@ import {
   MediaFunction,
   DefaultTheme,
   css,
+  StyleSheetManager,
 } from 'styled-components';
+import isPropValid from '@emotion/is-prop-valid';
 
 import texGyeAdventorBoldWoff from 'assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff';
 import texGyeAdventorBoldWoff2 from 'assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff2';
@@ -141,7 +143,11 @@ export const Typography = React.forwardRef((props: TextProps & { variant?: Typog
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const themeObject = theme();
 
-  return <StyledComponentsThemeProvider theme={themeObject}>{children}</StyledComponentsThemeProvider>;
+  return (
+    <StyledComponentsThemeProvider theme={themeObject}>
+      <StyleSheetManager shouldForwardProp={prop => isPropValid(prop)}>{children}</StyleSheetManager>
+    </StyledComponentsThemeProvider>
+  );
 }
 
 export const FixedGlobalStyle = createGlobalStyle`

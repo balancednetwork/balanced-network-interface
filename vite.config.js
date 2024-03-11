@@ -14,6 +14,9 @@ export default defineConfig((command, mode) => {
     plugins: [
       svgr({
         include: "**/*.svg",
+        svgrOptions: {
+          ref: true,
+        }
       }),
       viteTsconfigPaths(),
       react({

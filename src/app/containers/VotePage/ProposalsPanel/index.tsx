@@ -10,13 +10,14 @@ import { ButtonLink } from 'app/components/Button';
 import Divider from 'app/components/Divider';
 import { UnderlineText } from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
-import { StyledSkeleton, VoteDateEndLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
+import { VoteDateEndLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
 import { Typography } from 'app/theme';
 import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
 import { useBBalnAmount } from 'store/bbaln/hooks';
 import { normalizeContent } from 'utils';
 
 import { Grid, ProposalPreview, StyledTypography } from '../styledComponents';
+import Skeleton from 'app/components/Skeleton';
 
 const MetaWrap = styled.div`
   display: flex;
@@ -100,68 +101,68 @@ export default function ProposalsPanel() {
           <>
             <ProposalPreview bg="bg3" flexDirection="column" noHover>
               <Typography variant="h3" fontSize={16} mt={-1}>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton height={20} mb="5px"></Skeleton>
+                <Skeleton height={20} mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1" mt={2}>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1">
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1">
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1" mb="auto">
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Divider mt={3} mb={2}></Divider>
               <Typography fontSize={14} color="text1" mb={-2}>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton></Skeleton>
               </Typography>
             </ProposalPreview>
             <ProposalPreview bg="bg3" flexDirection="column" noHover>
               <Typography variant="h3" fontSize={16} mt={-1}>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton height={20} mb="5px"></Skeleton>
+                <Skeleton height={20} mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1" mt={2}>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1">
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1">
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1" mb="auto">
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Divider mt={3} mb={2}></Divider>
               <Typography fontSize={14} color="text1" mb={-2}>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton></Skeleton>
               </Typography>
             </ProposalPreview>
             <ProposalPreview bg="bg3" flexDirection="column" noHover>
               <Typography variant="h3" fontSize={16} mt={-1}>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton height={20} mb="5px"></Skeleton>
+                <Skeleton height={20} mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1" mt={2}>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1">
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1">
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Typography fontSize={14} color="text1" mb="auto">
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton mb="5px"></Skeleton>
               </Typography>
               <Divider mt={3} mb={2}></Divider>
               <Typography fontSize={14} color="text1" mb={-2}>
-                <StyledSkeleton animation="wave"></StyledSkeleton>
+                <Skeleton></Skeleton>
               </Typography>
             </ProposalPreview>
           </>

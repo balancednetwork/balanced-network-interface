@@ -12,7 +12,6 @@ import Divider from 'app/components/Divider';
 import { getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
-import { StyledSkeleton } from 'app/components/ProposalInfo/components';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -27,6 +26,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { formatTimeLeft } from '../utils';
 import { Bribe } from './types';
+import Skeleton from 'app/components/Skeleton';
 
 const BribedSourceWrap = styled.div`
   padding: 25px;
@@ -39,20 +39,20 @@ export const BribeSkeleton = () => {
   return (
     <BribedSourceWrap>
       <Typography fontWeight={700} fontSize={16} mb={2}>
-        <StyledSkeleton width={170} style={{ marginLeft: 'auto', marginRight: 'auto' }} />
+        <Skeleton width={170} ml="auto" mr="auto" />
       </Typography>
 
       <Typography fontSize={14}>
-        <StyledSkeleton width={150} style={{ marginLeft: 'auto', marginRight: 'auto', marginBottom: '2px' }} />
-        <StyledSkeleton width={150} style={{ marginLeft: 'auto', marginRight: 'auto', marginBottom: '2px' }} />
-        <StyledSkeleton width={150} style={{ marginLeft: 'auto', marginRight: 'auto', marginBottom: '2px' }} />
+        <Skeleton width={150} ml="auto" mr="auto" mb="5px" />
+        <Skeleton width={150} ml="auto" mr="auto" mb="5px" />
+        <Skeleton width={150} ml="auto" mr="auto" mb="5px" />
       </Typography>
       {account && (
         <>
           <Divider my={3} />
           <Typography fontSize={14}>
-            <StyledSkeleton width={130} style={{ marginLeft: 'auto', marginRight: 'auto' }} />
-            <StyledSkeleton width={100} style={{ marginLeft: 'auto', marginRight: 'auto' }} />
+            <Skeleton width={130} ml="auto" mr="auto" mb="5px" />
+            <Skeleton width={100} ml="auto" mr="auto" />
           </Typography>
         </>
       )}

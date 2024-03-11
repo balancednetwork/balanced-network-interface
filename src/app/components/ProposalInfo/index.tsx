@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Skeleton from '@material-ui/lab/Skeleton';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Flex } from 'rebass/styled-components';
@@ -19,6 +18,7 @@ import {
   VoterPercentLabel,
   VoteStatusLabel,
 } from './components';
+import Skeleton from '../Skeleton';
 
 dayjs.extend(duration);
 
@@ -58,10 +58,6 @@ const ContentText = styled(Typography)`
   font-size: 16px;
 `;
 
-export const StyledSkeleton = styled(Skeleton)`
-  background-color: rgba(44, 169, 183, 0.2) !important;
-`;
-
 export default function ProposalInfo({
   proposal,
   showNotification,
@@ -74,14 +70,10 @@ export default function ProposalInfo({
   return (
     <ProposalWrapper showNotification={showNotification}>
       <Typography variant="h3" mb="10px">
-        {title ? title : <StyledSkeleton animation="wave" height={30} />}
+        {title ? title : <Skeleton height={30} />}
       </Typography>
       <ContentText>
-        {description ? (
-          description && normalizeContent(description, 600)
-        ) : (
-          <StyledSkeleton animation="wave" height={20} />
-        )}
+        {description ? description && normalizeContent(description, 600) : <Skeleton height={20} />}
       </ContentText>
       <Divider />
       <Flex alignItems="center" flexWrap="wrap" sx={{ columnGap: '15px' }}>

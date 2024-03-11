@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
-import { Skeleton } from '@material-ui/lab';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
@@ -18,6 +17,7 @@ import { useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { getFormattedNumber } from 'utils/formatter';
 
 import { MAX_BOOST } from '../home/BBaln/utils';
+import Skeleton from '../Skeleton';
 
 const List = styled(Box)`
   -webkit-overflow-scrolling: touch;
@@ -197,28 +197,28 @@ const TooltipWrapper = styled.span`
 const SkeletonPairPlaceholder = () => {
   return (
     <DashGrid my={2}>
-      <DataText>
+      <DataText minWidth="220px">
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px', minHeight: '48px', position: 'relative' }}>
-            <StyledSkeleton variant="circle" width={48} height={48} className="pool-icon-skeleton" />
-            <StyledSkeleton variant="circle" width={48} height={48} className="pool-icon-skeleton" />
+            <StyledSkeleton variant="circle" width={48} className="pool-icon-skeleton" />
+            <StyledSkeleton variant="circle" width={48} className="pool-icon-skeleton" />
           </Box>
           <Text ml={2}>
-            <StyledSkeleton width={90} />
+            <Skeleton width={90} />
           </Text>
         </Flex>
       </DataText>
-      <DataText>
-        <StyledSkeleton width={50} />
+      <DataText minWidth="200px">
+        <Skeleton width={50} />
       </DataText>
       <DataText>
-        <StyledSkeleton width={100} />
+        <Skeleton width={100} />
       </DataText>
       <DataText>
-        <StyledSkeleton width={100} />
+        <Skeleton width={100} />
       </DataText>
       <DataText>
-        <StyledSkeleton width={70} />
+        <Skeleton width={70} />
       </DataText>
     </DashGrid>
   );
@@ -396,27 +396,27 @@ export default function AllPoolsPanel() {
           </HeaderText>
         </DashGrid>
 
-        {incentivisedPairs ? (
+        {/* {incentivisedPairs ? (
           sortData(Object.values(incentivisedPairs)).map((pair, index, array) => (
             <PairItem key={index} pair={pair} onClick={handlePoolLick} isLast={array.length - 1 === index} />
           ))
-        ) : (
-          <>
-            <SkeletonPairPlaceholder />
-            <Divider />
-            <SkeletonPairPlaceholder />
-            <Divider />
-            <SkeletonPairPlaceholder />
-            <Divider />
-            <SkeletonPairPlaceholder />
-            <Divider />
-            <SkeletonPairPlaceholder />
-            <Divider />
-            <SkeletonPairPlaceholder />
-            <Divider />
-            <SkeletonPairPlaceholder />
-          </>
-        )}
+        ) : ( */}
+        <>
+          <SkeletonPairPlaceholder />
+          <Divider />
+          <SkeletonPairPlaceholder />
+          <Divider />
+          <SkeletonPairPlaceholder />
+          <Divider />
+          <SkeletonPairPlaceholder />
+          <Divider />
+          <SkeletonPairPlaceholder />
+          <Divider />
+          <SkeletonPairPlaceholder />
+          <Divider />
+          <SkeletonPairPlaceholder />
+        </>
+        {/* )} */}
       </List>
     </Box>
   );

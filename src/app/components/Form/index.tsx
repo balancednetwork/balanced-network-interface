@@ -12,8 +12,7 @@ import QuestionIcon from 'assets/icons/question.svg';
 import { MINUS_INFINITY, PLUS_INFINITY, ZERO } from 'constants/index';
 import { CurrencyKey } from 'types';
 import { escapeRegExp } from 'utils'; // match escaped "." characters via in a non-capturing group
-
-import { StyledSkeleton } from '../ProposalInfo';
+import Skeleton from '../Skeleton';
 
 export const CheckBox = styled(Box)<{ isActive: boolean }>`
   width: 20px;
@@ -144,7 +143,7 @@ export const CurrencyField: React.FC<{
           {value !== 'NaN' ? (
             `${BigNumber.max(new BigNumber(value), ZERO).dp(decimalPlaces).toFormat()} ${currency}`
           ) : (
-            <StyledSkeleton width={80} animation="wave" />
+            <Skeleton width={80} animation="wave" />
           )}
         </Typography>
       )}

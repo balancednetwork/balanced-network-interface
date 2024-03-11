@@ -17,7 +17,6 @@ import { Button, AlertButton } from 'app/components/Button';
 import Column from 'app/components/Column';
 import { UnderlineText } from 'app/components/DropdownText';
 import { BoxPanel } from 'app/components/Panel';
-import { StyledSkeleton } from 'app/components/ProposalInfo';
 import {
   VoteDateEndLabel,
   VoterNumberLabel,
@@ -36,6 +35,7 @@ import { useFetchBBalnInfo } from 'store/bbaln/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 import { formatTimeStr } from 'utils/timeformat';
+import Skeleton from 'app/components/Skeleton';
 
 dayjs.extend(duration);
 
@@ -182,12 +182,12 @@ export function ProposalPage() {
         {proposal ? (
           <Breadcrumb locationText={t`Vote`} locationPath="/vote" title={proposal?.name || ''} />
         ) : (
-          <StyledSkeleton animation="wave" width={280} height={28} />
+          <Skeleton width={280} height={28} />
         )}
 
         <BoxPanel bg="bg2" my={10}>
           <Typography variant="h2" mb={4}>
-            {proposal ? proposal.name : <StyledSkeleton animation="wave" height={35} />}
+            {proposal ? proposal.name : <Skeleton height={35} />}
           </Typography>
 
           <Flex alignItems="center" mb={3} flexWrap="wrap" sx={{ columnGap: '15px' }} my={1}>
@@ -357,9 +357,9 @@ export function ProposalPage() {
               proposal?.description
             ) : (
               <>
-                <StyledSkeleton height={22} />
-                <StyledSkeleton height={22} />
-                <StyledSkeleton height={22} width={220} />
+                <Skeleton height={22} />
+                <Skeleton height={22} />
+                <Skeleton height={22} width={220} />
               </>
             )}
           </Typography>

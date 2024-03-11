@@ -28,7 +28,6 @@ import { useRewards } from 'store/reward/hooks';
 import { useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
 
 import { Banner } from '../Banner';
-import { StyledSkeleton } from '../ProposalInfo/components';
 import Spinner from '../Spinner';
 import { StyledAccordionButton, StyledAccordionPanel, StyledAccordionItem } from './LiquidityDetails/Accordion';
 import { StyledBoxPanel } from './LiquidityDetails/shared';
@@ -36,6 +35,7 @@ import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
 import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './LiquidityDetails/WithdrawPanel';
 import { usePoolPanelContext } from './PoolPanelContext';
 import { getFormattedRewards, totalSupply, stakedFraction } from './utils';
+import Skeleton from '../Skeleton';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -309,7 +309,7 @@ const PoolRecord = ({
               { groupSeparator: ',' },
             )} ${aBalance.currency.symbol}`}</Typography>
           ) : (
-            <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            <Skeleton width={100}></Skeleton>
           )}
           {quoteCurrencyTotalSupply ? (
             <Typography fontSize={16}>{`${quoteCurrencyTotalSupply?.toFixed(
@@ -317,7 +317,7 @@ const PoolRecord = ({
               { groupSeparator: ',' },
             )} ${bBalance.currency.symbol}`}</Typography>
           ) : (
-            <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+            <Skeleton width={100}></Skeleton>
           )}
         </DataText>
 
@@ -340,7 +340,7 @@ const PoolRecord = ({
                 '-'
               )
             ) : (
-              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+              <Skeleton width={100}></Skeleton>
             )}
           </DataText>
         )}

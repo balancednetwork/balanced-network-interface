@@ -14,8 +14,7 @@ import {
   useCollateralActionHandlers,
 } from 'store/collateral/hooks';
 import { useLoanActionHandlers } from 'store/loan/hooks';
-
-import { StyledSkeleton as Skeleton } from '../ProposalInfo';
+import Skeleton from '../Skeleton';
 
 const CollateralTypesGrid = styled.div<{
   border?: boolean;

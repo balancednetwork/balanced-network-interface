@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import Skeleton from '@material-ui/lab/Skeleton';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import { Flex, Box } from 'rebass/styled-components';
@@ -14,6 +13,7 @@ import PieChartIcon from 'assets/icons/pie-chart.svg';
 import UserIcon from 'assets/icons/users.svg';
 import { ProposalInterface } from 'types';
 import { getDateFromDay } from 'utils/timeformat';
+import Skeleton from '../Skeleton';
 
 dayjs.extend(duration);
 
@@ -29,10 +29,6 @@ const RejectionSwatch = styled(Box)`
   height: 20px;
   width: 20px;
   border-radius: 5px;
-`;
-
-export const StyledSkeleton = styled(Skeleton)`
-  background-color: rgba(44, 169, 183, 0.2) !important;
 `;
 
 export const IconLabel = ({ icon, content }: { icon: React.ReactNode; content: React.ReactNode }) => {
@@ -51,8 +47,8 @@ export const VoteStatusLabel = ({ proposal }: { proposal?: ProposalInterface }) 
         <ProposalStatusIcon status={proposal.status} startDay={proposal.startDay} endDay={proposal.endDay} />
       ) : (
         <Flex alignItems="center" sx={{ columnGap: '10px' }}>
-          <StyledSkeleton animation="wave" width={22} variant="circle" />
-          <StyledSkeleton animation="wave" width={80} />
+          <Skeleton width={22} variant="circle" />
+          <Skeleton width={80} />
         </Flex>
       )}
     </div>
@@ -86,7 +82,7 @@ export const VoterPercentLabel = ({ value }: { value?: number }) => {
             <Trans>{value}% voted</Trans>
           </Typography>
         ) : (
-          <StyledSkeleton animation="wave" width={80} />
+          <Skeleton width={80} />
         )
       }
     />
@@ -103,7 +99,7 @@ export const VoterNumberLabel = ({ value }: { value?: number }) => {
             <Trans>{value || '-'} voters</Trans>
           </Typography>
         ) : (
-          <StyledSkeleton animation="wave" width={80} />
+          <Skeleton width={80} />
         )
       }
     />
@@ -120,7 +116,7 @@ export const ApprovalLabel = ({ value }: { value?: number }) => {
             {value}%
           </Typography>
         ) : (
-          <StyledSkeleton animation="wave" width={40} />
+          <Skeleton width={40} />
         )
       }
     />
@@ -137,7 +133,7 @@ export const RejectionLabel = ({ value }: { value?: number }) => {
             {value}%
           </Typography>
         ) : (
-          <StyledSkeleton animation="wave" width={40} />
+          <Skeleton width={40} />
         )
       }
     />

@@ -37,8 +37,8 @@ import { InterestPeriod } from 'types';
 import { formatBigNumber, getAccumulatedInterest } from 'utils';
 
 import { DropdownPopper } from '../Popover';
-import { StyledSkeleton } from '../ProposalInfo';
 import { RebalancingInfo } from './LoanPanel';
+import Skeleton from '../Skeleton';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
@@ -194,7 +194,7 @@ const PositionDetailPanel = () => {
                   {collateralInputAmountInUSD ? (
                     `$${collateralInputAmountInUSD.dp(2).toFormat()}`
                   ) : (
-                    <StyledSkeleton width={90} animation="wave" />
+                    <Skeleton width={90} animation="wave" />
                   )}
                 </Typography>
               </Box>

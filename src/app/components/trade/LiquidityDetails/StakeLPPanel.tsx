@@ -28,9 +28,9 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { StyledSkeleton } from '../../ProposalInfo/components';
 import { getFormattedRewards, stakedFraction } from '../utils';
 import { getABBalance, getShareReward } from './WithdrawPanel';
+import Skeleton from 'app/components/Skeleton';
 
 export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const { account } = useIconReact();
@@ -212,7 +212,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
           </Typography>
           <Typography color="text" fontSize={16}>
             {!allPairs || !sources ? (
-              <StyledSkeleton animation="wave" width={100}></StyledSkeleton>
+              <Skeleton width={100}></Skeleton>
             ) : sources[sourceName] ? (
               `${new BigNumber(allPairs[pair.poolId!].balnApy)
                 .times(sources[sourceName].workingBalance.dividedBy(sources[sourceName].balance))

@@ -29,6 +29,9 @@ dependencies:
   '@cosmjs/stargate':
     specifier: 0.32.2
     version: 0.32.2
+  '@emotion/is-prop-valid':
+    specifier: 1.2.2
+    version: 1.2.2
   '@ethereumjs/rlp':
     specifier: 5.0.0
     version: 5.0.0
@@ -2115,6 +2118,12 @@ packages:
 
   /@emotion/is-prop-valid@1.2.1:
     resolution: {integrity: sha512-61Mf7Ufx4aDxx1xlDeOm8aFFigGHE4z+0sKCa+IHCeZKiyP9RLD0Mmx7m8b9/Cf37f7NAvQOOJAbQQGVr5uERw==}
+    dependencies:
+      '@emotion/memoize': 0.8.1
+    dev: false
+
+  /@emotion/is-prop-valid@1.2.2:
+    resolution: {integrity: sha512-uNsoYd37AFmaCdXlg6EYD1KaPOaRWRByMCYzbKUX4+hhMfrxdVSelShywL4JVaAeM/eHUOSprYBQls+/neX3pw==}
     dependencies:
       '@emotion/memoize': 0.8.1
     dev: false

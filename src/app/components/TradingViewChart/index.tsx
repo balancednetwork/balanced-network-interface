@@ -130,7 +130,7 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
 
   // if no chart created yet, create one with options and add to DOM manually
   useEffect(() => {
-    if (!chartCreated && data && ref.current) {
+    if (data && ref.current) {
       let chart = createChart(
         ref.current,
         type === CHART_TYPES.CANDLE ? { width: width, ...CandleOption } : { width: width, ...AreaOption },
@@ -175,8 +175,15 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
       chart.timeScale().fitContent();
 
       setChartCreated(chart);
+
+      return () => {
+        // destroy chart
+        chart.resize(0, 0);
+        chart.remove();
+        setChartCreated(null);
+      };
     }
-  }, [chartCreated, data, topScale, type, width, volumeData]);
+  }, [data, topScale, type, width, volumeData]);
 
   // responsiveness
   useEffect(() => {

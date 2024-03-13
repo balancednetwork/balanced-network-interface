@@ -257,6 +257,22 @@
       "symbol": "hyTB",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hyTB.png"
+    },
+    {
+      "address": "cx2d552c485ec8bcaa75aac02424e2aca6ffdb2f1b",
+      "chainId": 1,
+      "name": "BNB",
+      "symbol": "BNB",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnb.png"
+    },
+    {
+      "address": "cx66a031cc3bd305c76371fb586e93801b948254f0",
+      "chainId": 1,
+      "name": "AVAX",
+      "symbol": "AVAX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/avax.png"
     }
   ]
 }

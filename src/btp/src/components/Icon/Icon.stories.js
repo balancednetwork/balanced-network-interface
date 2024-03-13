@@ -21,7 +21,7 @@ const Wrapper = styled.div`
       margin-bottom: 10px;
       cursor: pointer;
 
-      :active {
+      &:active {
         color: #00000054;
       }
     }

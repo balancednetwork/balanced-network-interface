@@ -9,18 +9,18 @@ import Button from './Button';
 const { primaryBrandLight, primaryBrandBG, grayScaleLoading, graySubText } = colors;
 
 const PrimaryButtonStyled = styled(Button)`
-  :hover,
-  :active,
-  :focus {
+  &:hover,
+  &:active,
+  &:focus {
     background-color: ${primaryBrandLight};
     color: ${primaryBrandBG};
   }
 
-  :disabled {
+  &:disabled {
     background-color: ${grayScaleLoading};
     color: ${graySubText};
 
-    :hover {
+    &:hover {
       background-color: ${grayScaleLoading};
       color: ${graySubText};
     }

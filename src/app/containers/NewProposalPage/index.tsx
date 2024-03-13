@@ -58,8 +58,8 @@ export const FieldInput = styled.input`
   border: 2px solid ${({ theme }) => theme.colors.bg5};
   background-color: ${({ theme }) => theme.colors.bg5};
   transition: all ease 0.3s;
-  :hover,
-  :focus {
+  &:hover,
+  &:focus {
     border: 2px solid ${({ theme }) => theme.colors.primaryBright};
     outline: none;
   }
@@ -70,7 +70,7 @@ export const FieldInput = styled.input`
     appearance: none;
   }
   -moz-appearance: textfield;
-  :disabled {
+  &:disabled {
     opacity: 0;
     border: 2px solid ${({ theme }) => theme.colors.bg5};
     cursor: default;
@@ -90,8 +90,8 @@ const FieldTextArea = styled.textarea`
   font-family: tex-gyre-adventor, Arial, sans-serif;
   font-size: 16px;
   background-color: ${({ theme }) => theme.colors.bg5};
-  :hover,
-  :focus {
+  &:hover,
+  &:focus {
     border: 2px solid ${({ theme }) => theme.colors.primaryBright};
     outline: none;
     transition: border 0.2s ease;

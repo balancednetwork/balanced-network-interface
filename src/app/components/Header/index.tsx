@@ -75,7 +75,7 @@ const WalletButtons = styled(Flex)`
 `;
 
 export const StyledAddress = styled(Typography)`
-  :hover {
+  &:hover {
     color: #2fccdc;
     cursor: pointer;
   }
@@ -111,7 +111,7 @@ export const ChainTabButton = styled(Button)<{ active?: boolean }>`
   transition: background-color 0.3s ease;
   margin-right: 10px;
 
-  :hover {
+  &:hover {
     background-color: ${({ theme }) => theme.colors.primary};
   }
 

@@ -39,7 +39,7 @@ const StyledWalletItem = styled.button`
   }
 
   &:hover,
-  :focus {
+  &:focus {
     background: ${grayAccent};
     border-radius: 4px;
   }

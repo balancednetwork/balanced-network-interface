@@ -35,7 +35,7 @@ export const StyledTab = styled(Tab)<{ hasNotification?: boolean }>`
       transition: border-bottom 0.2s ease, color 0.2s ease;
     }
 
-    :hover {
+    &:hover {
       border-bottom: 3px solid #2ca9b7;
       color: #ffffff;
       transition: border-bottom 0.2s ease, color 0.2s ease;

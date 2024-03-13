@@ -26,8 +26,8 @@ const LocationText = styled(Typography)`
   color: ${({ theme }) => theme.colors.primaryBright};
   border-bottom: 1px solid ${({ theme }) => theme.colors.bg1};
   padding-bottom: 5px;
-  :hover,
-  :focus {
+  &:hover,
+  &:focus {
     padding-bottom: 5px;
     border-bottom: 1px solid ${({ theme }) => theme.colors.primaryBright};
   }

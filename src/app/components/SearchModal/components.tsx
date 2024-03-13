@@ -8,16 +8,16 @@ const StyledLink = styled.a`
   color: ${({ theme }) => theme.colors.primary};
   font-weight: 500;
 
-  :hover {
+  &:hover {
     text-decoration: underline;
   }
 
-  :focus {
+  &:focus {
     outline: none;
     text-decoration: underline;
   }
 
-  :active {
+  &:active {
     text-decoration: none;
   }
 `;

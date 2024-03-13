@@ -102,7 +102,7 @@ export const ChartControlButton = styled(Button)<{ active?: boolean }>`
   background-color: ${({ theme, active }) => (active ? theme.colors.primary : theme.colors.bg3)};
   transition: background-color 0.3s ease;
 
-  :hover {
+  &:hover {
     background-color: ${({ theme }) => theme.colors.primary};
   }
 

@@ -28,7 +28,7 @@ export const MenuItem = styled(RowBetween)`
   grid-gap: 16px;
   cursor: ${({ disabled }) => !disabled && 'pointer'};
   pointer-events: ${({ disabled }) => disabled && 'none'};
-  :hover {
+  &:hover {
     background-color: ${({ theme, disabled }) => !disabled && theme.colors.bg2};
   }
   opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};

@@ -34,8 +34,8 @@ const SlippageInput = styled(Flex)`
   align-items: center;
   overflow: hidden;
 
-  :hover,
-  :focus {
+  &:hover,
+  &:focus {
     border: 2px solid #2ca9b7;
   }
 `;

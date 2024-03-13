@@ -651,7 +651,7 @@ const OptionButton = styled(Box)`
     pointer-events: none;
   }
 
-  :hover {
+  &:hover {
     border: 2px solid ${({ theme }) => theme.colors.primary};
     transition: border 0.2s ease;
   }

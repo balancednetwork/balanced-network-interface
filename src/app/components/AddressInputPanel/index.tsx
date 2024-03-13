@@ -49,7 +49,7 @@ const AddressInput = styled.input<{ bg?: string; drivenOnly?: boolean }>`
   ${({ drivenOnly }) =>
     !drivenOnly &&
     `
-    :hover, :focus {
+    &:hover, &:focus {
       border: 2px solid #2ca9b7;
     }
   `};

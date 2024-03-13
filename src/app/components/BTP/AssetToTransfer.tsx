@@ -43,12 +43,12 @@ const NumberInput = styled.input<{ bg?: string; active?: boolean }>`
   font-size: 100%;
   line-height: 1.15;
   margin: 0;
-  :hover,
-  :focus {
+  &:hover,
+  &:focus {
     border: 2px solid #2ca9b7;
   }
   ${props => props.active && 'border-bottom-right-radius: 0;'}
-  :disabled {
+  &:disabled {
     border-color: rgb(6 9 56 / 30%);
     background: rgb(62 63 84 / 20%);
     color: #b1b1b1;
@@ -101,8 +101,8 @@ export const AssetInput = styled.input`
   margin: 0;
   height: 43px;
   width: 100%;
-  :hover,
-  :focus {
+  &:hover,
+  &:focus {
     border: 2px solid #2ca9b7;
   }
 `;

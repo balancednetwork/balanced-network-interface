@@ -18,7 +18,7 @@ export const MenuItem = styled.li`
   padding: 10px 15px;
   transition: background-color 0.3s ease;
 
-  :hover {
+  &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.colors.primary};
     transition: background-color 0.2s ease;
@@ -30,7 +30,7 @@ const InternalMenuItem = styled(Link)`
   transition: background-color 0.3s ease;
   color: ${({ theme }) => theme.colors.white};
 
-  :hover {
+  &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.colors.primary};
     transition: background-color 0.2s ease;
@@ -43,7 +43,7 @@ const InternalLinkMenuItem = styled(InternalMenuItem)`
   align-items: center;
   justify-content: space-between;
   text-decoration: none;
-  :hover {
+  &:hover {
     color: ${({ theme }) => theme.colors.white};
     cursor: pointer;
     text-decoration: none;

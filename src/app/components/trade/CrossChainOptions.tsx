@@ -77,18 +77,27 @@ const CrossChainOptions = ({ currency, chain, setChain, isOpen, setOpen }: Cross
         <Typography mr={1} lineHeight="1.7">
           On
         </Typography>
-        <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
-          <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>
-            {getNetworkDisplayName(chain)}
-          </UnderlineText>
-          <div ref={arrowRef} style={{ display: 'inline-block' }}>
-            <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
-          </div>
-        </SelectorWrap>
         <ClickAwayListener onClickAway={e => closeDropdown(e)}>
-          <DropdownPopper show={isOpen} anchorEl={anchor} arrowEl={arrowRef.current} placement="bottom" offset={[0, 8]}>
-            <ChainList setChain={setChainWrap} chain={chain} />
-          </DropdownPopper>
+          <div>
+            <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
+              <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>
+                {getNetworkDisplayName(chain)}
+              </UnderlineText>
+              <div ref={arrowRef} style={{ display: 'inline-block' }}>
+                <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
+              </div>
+            </SelectorWrap>
+
+            <DropdownPopper
+              show={isOpen}
+              anchorEl={anchor}
+              arrowEl={arrowRef.current}
+              placement="bottom"
+              offset={[0, 8]}
+            >
+              <ChainList setChain={setChainWrap} chain={chain} />
+            </DropdownPopper>
+          </div>
         </ClickAwayListener>
       </Flex>
 

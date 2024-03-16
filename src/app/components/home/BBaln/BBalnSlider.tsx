@@ -684,36 +684,42 @@ export default function BBalnSlider({
                           {isAdjusting ? (
                             <>
                               <ClickAwayListener onClickAway={closeDropdown}>
-                                <UnderlineTextWithArrow
-                                  onClick={handlePeriodDropdownToggle}
-                                  text={formatDate(
-                                    getClosestUnixWeekStart(
-                                      new Date(
-                                        new Date().setDate(new Date().getDate() + (selectedPeriod.weeks * 7 - 7)),
-                                      ).getTime(),
-                                    ),
-                                  )}
-                                  arrowRef={periodArrowRef}
-                                />
+                                <div>
+                                  <UnderlineTextWithArrow
+                                    onClick={handlePeriodDropdownToggle}
+                                    text={formatDate(
+                                      getClosestUnixWeekStart(
+                                        new Date(
+                                          new Date().setDate(new Date().getDate() + (selectedPeriod.weeks * 7 - 7)),
+                                        ).getTime(),
+                                      ),
+                                    )}
+                                    arrowRef={periodArrowRef}
+                                  />
+
+                                  <DropdownPopper
+                                    show={Boolean(periodDropdownAnchor)}
+                                    anchorEl={periodDropdownAnchor}
+                                    placement="bottom-end"
+                                  >
+                                    <MenuList>
+                                      {availablePeriods
+                                        .filter(
+                                          (period, index) =>
+                                            index === 0 || comparePeriods(period, availablePeriods[index - 1]) !== 0,
+                                        )
+                                        .map(period => (
+                                          <MenuItem
+                                            key={period.weeks}
+                                            onClick={() => handleLockingPeriodChange(period)}
+                                          >
+                                            {period.name}
+                                          </MenuItem>
+                                        ))}
+                                    </MenuList>
+                                  </DropdownPopper>
+                                </div>
                               </ClickAwayListener>
-                              <DropdownPopper
-                                show={Boolean(periodDropdownAnchor)}
-                                anchorEl={periodDropdownAnchor}
-                                placement="bottom-end"
-                              >
-                                <MenuList>
-                                  {availablePeriods
-                                    .filter(
-                                      (period, index) =>
-                                        index === 0 || comparePeriods(period, availablePeriods[index - 1]) !== 0,
-                                    )
-                                    .map(period => (
-                                      <MenuItem key={period.weeks} onClick={() => handleLockingPeriodChange(period)}>
-                                        {period.name}
-                                      </MenuItem>
-                                    ))}
-                                </MenuList>
-                              </DropdownPopper>
                             </>
                           ) : (
                             formatDate(lockedUntil)

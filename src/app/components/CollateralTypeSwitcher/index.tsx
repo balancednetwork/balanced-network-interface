@@ -45,23 +45,26 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
 
   return (
     <>
-      <Wrap onClick={handleToggle} style={{ position: 'relative' }}>
-        <UnderlineText>{collateralType === 'sICX' ? 'ICX' : collateralType}</UnderlineText>
-        <div ref={arrowRef} style={{ display: 'inline-block' }}>
-          <StyledArrowDownIcon />
-        </div>
-      </Wrap>
       <ClickAwayListener onClickAway={e => closeDropdown(e)}>
-        <DropdownPopper
-          show={Boolean(anchor)}
-          anchorEl={anchor}
-          arrowEl={arrowRef.current}
-          containerOffset={containerRef ? containerRef.getBoundingClientRect().x : 0}
-          placement="bottom"
-          offset={[0, 8]}
-        >
-          <CollateralTypeList width={width} anchor={anchor} setAnchor={setAnchor} />
-        </DropdownPopper>
+        <div>
+          <Wrap onClick={handleToggle} style={{ position: 'relative' }}>
+            <UnderlineText>{collateralType === 'sICX' ? 'ICX' : collateralType}</UnderlineText>
+            <div ref={arrowRef} style={{ display: 'inline-block' }}>
+              <StyledArrowDownIcon />
+            </div>
+          </Wrap>
+
+          <DropdownPopper
+            show={Boolean(anchor)}
+            anchorEl={anchor}
+            arrowEl={arrowRef.current}
+            containerOffset={containerRef ? containerRef.getBoundingClientRect().x : 0}
+            placement="bottom"
+            offset={[0, 8]}
+          >
+            <CollateralTypeList width={width} anchor={anchor} setAnchor={setAnchor} />
+          </DropdownPopper>
+        </div>
       </ClickAwayListener>
     </>
   );

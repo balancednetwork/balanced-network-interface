@@ -67,9 +67,7 @@ import MetamaskIcon from 'assets/icons/metamask.svg';
 //   width: 500px;
 // `;
 
-const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />).attrs({
-  'aria-label': 'dialog',
-})`
+const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
     ${({ mobile, theme }) =>
       !mobile &&

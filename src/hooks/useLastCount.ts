@@ -5,7 +5,7 @@ export default function useLastCount(value: number) {
   const [last, setLast] = useState<number>(0);
 
   useEffect(() => {
-    intervalId.current = setInterval(() => setLast(last => last + 1), value);
+    intervalId.current = window.setInterval(() => setLast(last => last + 1), value);
 
     return () => {
       clearInterval(intervalId.current);

@@ -139,9 +139,7 @@ const WalletOption = styled(Box)`
   }
 `;
 
-const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />).attrs({
-  'aria-label': 'dialog',
-})`
+const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
     width: 320px;
 
@@ -265,7 +263,7 @@ export default function WalletModal() {
         bnJs.contractSettings.ledgerSettings.transport.close();
       }
       const transport = await TransportWebHID.create();
-      transport.setDebugMode && transport.setDebugMode(false);
+      // transport.setDebugMode && transport.setDebugMode(false);
       bnJs.inject({
         legerSettings: {
           transport,

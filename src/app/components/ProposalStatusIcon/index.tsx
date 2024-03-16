@@ -42,6 +42,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <FailureIcon height="22" width="22" />
         <Typography variant="content" color="white">
+          {/* @ts-ignore */}
           <Trans id={StatusMap[status].id} />
         </Typography>
       </Flex>
@@ -86,6 +87,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
       <Flex alignItems="center" sx={{ columnGap: '10px' }}>
         <TickIcon height="22" width="22" />
         <Typography variant="content" color="white">
+          {/* @ts-ignore */}
           <Trans id={StatusMap[status].id} />
         </Typography>
       </Flex>
@@ -107,6 +109,7 @@ export function ProposalStatusIcon(props: ProposalStatusProps) {
   return (
     <Flex alignItems="center">
       <Typography variant="content" color="white">
+        {/* @ts-ignore */}
         <Trans id={StatusMap[status].id} />
       </Typography>
     </Flex>

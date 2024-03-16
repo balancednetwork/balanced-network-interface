@@ -241,6 +241,7 @@ export default function Header(props: { title?: string; className?: string }) {
         <Flex alignItems="center">
           <StyledLogo />
           <Typography variant="h1">
+            {/* @ts-ignore */}
             <Trans id={title} />
           </Typography>
           {NETWORK_ID !== NetworkId.MAINNET && (

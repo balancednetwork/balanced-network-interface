@@ -69,7 +69,7 @@ export function IconReactProvider({ children }) {
     async function createConnection() {
       if (ledgerAddressPoint >= 0) {
         const transport = await TransportWebHID.create();
-        transport.setDebugMode && transport.setDebugMode(false);
+        // transport.setDebugMode && transport.setDebugMode(false);
         bnJs.inject({
           account,
           legerSettings: {

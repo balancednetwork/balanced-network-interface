@@ -11,6 +11,7 @@ src/lib/locales/**/pseudo.po
 src/locales/**/*.js
 src/locales/**/en-US.po
 src/locales/**/pseudo.po
+dist
 
 # misc
 .DS_Store

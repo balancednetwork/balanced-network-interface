@@ -92,7 +92,7 @@ export function CurrencySearch({
 
   const bridgeDirectionString = `${bridgeDirection.from}-${bridgeDirection.to}`;
 
-  const allTokens = useMemo(() => {
+  const allTokens: { [address: string]: Token } = useMemo(() => {
     switch (currencySelectionType) {
       case CurrencySelectionType.NORMAL:
         return tokens;

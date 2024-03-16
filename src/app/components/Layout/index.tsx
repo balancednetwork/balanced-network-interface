@@ -55,7 +55,7 @@ const MobileAppBarWrapper = styled(Box)`
   }
 `;
 
-export const DefaultLayout: React.FC<{ title?: string }> = props => {
+export const DefaultLayout: React.FC<{ title?: string; children: React.ReactNode }> = props => {
   const { children, title = 'Home' } = props;
   const upLarge = useMedia('(min-width: 1200px)');
 

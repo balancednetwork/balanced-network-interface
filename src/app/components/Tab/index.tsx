@@ -13,6 +13,7 @@ const StyledTabs = styled.ul`
 export const Tabs: React.FC<{
   value?: number;
   onChange?: (event: React.MouseEvent, value: number) => void;
+  children: React.ReactNode[];
 }> = props => {
   const { children: childrenProp, value = 0, onChange } = props;
 
@@ -40,6 +41,7 @@ export const Tabs: React.FC<{
 
     childIndex += 1;
     return React.cloneElement(child, {
+      // @ts-ignore
       selected,
       onChange,
       value: childValue,
@@ -94,7 +96,7 @@ export const Tab = props => {
   );
 };
 
-export const TabPanel: React.FC<{ value: number; index: number }> = props => {
+export const TabPanel: React.FC<{ value: number; index: number; children: React.ReactNode }> = props => {
   const { children, value, index, ...other } = props;
 
   return (

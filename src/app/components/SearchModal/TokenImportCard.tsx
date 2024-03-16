@@ -21,6 +21,7 @@ interface TokenImportCardProps {
 const TokenImportCard = ({ token }: TokenImportCardProps) => {
   const { networkId: chainId } = useIconReact();
   return (
+    // @ts-ignore
     <Card>
       <AutoColumn gap="10px" justify="center">
         <AutoColumn gap="4px" justify="center">

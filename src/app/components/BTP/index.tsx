@@ -71,9 +71,7 @@ const FlexSelector = styled(Flex)`
   }
 `;
 
-const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />).attrs({
-  'aria-label': 'dialog',
-})`
+const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
     ${({ mobile }) =>
       !mobile &&

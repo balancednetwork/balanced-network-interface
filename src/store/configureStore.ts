@@ -17,7 +17,6 @@ import loan from './loan/reducer';
 import mint from './mint/reducer';
 import oracle from './oracle/reducer';
 import ratio from './ratio/reducer';
-import { createReducer } from './reducers';
 import reward from './reward/reducer';
 import savings from './savings/reducer';
 import stabilityFund from './stabilityFund/reducer';
@@ -33,7 +32,7 @@ const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists', 'xCall'];
 
 export function configureAppStore() {
   const store = configureStore({
-    reducer: createReducer({
+    reducer: {
       application,
       bbaln,
       reward,
@@ -56,7 +55,7 @@ export function configureAppStore() {
       transactionsCrosschain,
       bridge,
       savings,
-    }),
+    },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,

@@ -167,6 +167,7 @@ export default function SwapDescription() {
                 onClick={handleChartPeriodChange}
                 active={chartOption.period === CHART_PERIODS[key]}
               >
+                {/* @ts-ignore */}
                 <Trans id={CHART_PERIODS_LABELS[CHART_PERIODS[key]].id} />
               </ChartControlButton>
             ))}
@@ -181,6 +182,7 @@ export default function SwapDescription() {
                 onClick={handleChartTypeChange}
                 active={chartOption.type === CHART_TYPES[key]}
               >
+                {/* @ts-ignore */}
                 <Trans id={CHART_TYPES_LABELS[CHART_TYPES[key]].id} />
               </ChartControlButton>
             ))}

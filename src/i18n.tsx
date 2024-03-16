@@ -21,7 +21,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 
   return (
-    <Provider locale={locale} forceRenderAfterLocaleChange={true} onActivate={onActivate}>
+    <Provider locale={locale} onActivate={onActivate}>
       {children}
     </Provider>
   );

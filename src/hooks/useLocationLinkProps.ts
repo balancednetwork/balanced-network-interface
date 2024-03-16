@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { LocationDescriptor } from 'history';
+import { To } from 'history';
 import { stringify } from 'qs';
 // import ReactGA from 'react-ga';
 import { useLocation } from 'react-router-dom';
@@ -13,7 +13,7 @@ import useParsedQueryString from 'hooks/useParsedQueryString';
 export function useLocationLinkProps(
   locale: SupportedLocale | null,
 ): {
-  to?: LocationDescriptor;
+  to?: To;
   onClick?: () => void;
 } {
   const location = useLocation();

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { MessageDescriptor } from '@lingui/core';
-import { defineMessage, t, Trans } from '@lingui/macro';
+import { t, Trans, msg } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { AnimatePresence, motion } from 'framer-motion';
 import Nouislider from 'packages/nouislider-react';
@@ -43,10 +43,10 @@ import Skeleton from '../Skeleton';
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
 const PERIOD_LABELS: { [key: string]: MessageDescriptor } = {
-  [Period.day]: defineMessage({ message: 'Past day' }),
-  [Period.week]: defineMessage({ message: 'Past week' }),
-  [Period.month]: defineMessage({ message: 'Past month' }),
-  [Period.all]: defineMessage({ message: 'All time' }),
+  [Period.day]: msg`Past day`,
+  [Period.week]: msg`Past week`,
+  [Period.month]: msg`Past month`,
+  [Period.all]: msg`All time`,
 };
 
 const INTEREST_PERIODS: { [key: string]: InterestPeriod } = {
@@ -353,6 +353,7 @@ const PositionDetailPanel = () => {
                     <div>
                       <UnderlineTextWithArrow
                         onClick={handleToggle}
+                        // @ts-ignore
                         text={<Trans id={PERIOD_LABELS[period].id} />}
                         arrowRef={arrowRef}
                       />
@@ -364,6 +365,7 @@ const PositionDetailPanel = () => {
                               key={p}
                               onClick={() => handlePeriod(p)}
                             >
+                              {/* @ts-ignore */}
                               <Trans id={PERIOD_LABELS[p].id} />
                             </MenuItem>
                           ))}

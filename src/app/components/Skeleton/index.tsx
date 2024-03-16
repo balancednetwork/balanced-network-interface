@@ -10,6 +10,7 @@ interface SkeletonProps {
   mt?: string;
   mb?: string;
   className?: string;
+  animation?: string;
 }
 
 const SkeletonElement = styled.div<{

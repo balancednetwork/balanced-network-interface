@@ -105,11 +105,10 @@
     "lint:fix": "pnpm run eslint --fix src",
     "lint:css": "stylelint src/**/*.css",
     "prettify": "prettier --write",
-    "prei18n:extract": "touch src/locales/en-US.po",
-    "i18n:extract": "lingui extract --locale en-US",
-    "i18n:compile": "pnpm i18n:extract && lingui compile",
-    "i18n:pseudo": "lingui extract --locale pseudo && lingui compile",
-    "clean": "rm -rf node_modules"
+    "i18n:extract": "lingui extract",
+    "i18n:compile": "pnpm run i18n:extract && lingui compile",
+    "clean": "rm -rf node_modules",
+    "prepare": "pnpm run i18n:compile"
   },
   "proxy": "https://balanced.sudoblock.io",
   "browserslist": [

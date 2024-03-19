@@ -1,9 +1,9 @@
+import { lingui } from '@lingui/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import svgr from 'vite-plugin-svgr';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
-import svgr from "vite-plugin-svgr";
-import { lingui } from "@lingui/vite-plugin";
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig((command, mode) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -13,18 +13,16 @@ export default defineConfig((command, mode) => {
     base: '/',
     plugins: [
       svgr({
-        include: "**/*.svg",
+        include: '**/*.svg',
         svgrOptions: {
           ref: true,
-        }
+        },
       }),
       viteTsconfigPaths(),
       react({
         babel: {
-          plugins: [
-            "macros",
-          ]
-        }
+          plugins: ['macros'],
+        },
       }),
       nodePolyfills({
         include: ['buffer'],
@@ -32,7 +30,7 @@ export default defineConfig((command, mode) => {
           Buffer: true,
           global: false,
           process: false,
-        }
+        },
       }),
       lingui(),
     ],
@@ -43,7 +41,7 @@ export default defineConfig((command, mode) => {
       port: 3000,
     },
     define: {
-      'process.env': env
-    }
-  }
+      'process.env': env,
+    },
+  };
 });

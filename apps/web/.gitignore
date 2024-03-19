@@ -1,0 +1,31 @@
+# Don't check auto-generated stuff into git
+coverage
+build
+node_modules
+stats.json
+.pnp
+.pnp.js
+src/locales/**/*.js
+src/locales/**/*.po
+dist
+
+# misc
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.env.local
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+
+# boilerplate internals
+generated-cra-app
+.cra-template-rb
+template
+.env
+.eslintcache
+
+.idea

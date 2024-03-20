@@ -148,7 +148,7 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
 
         candleSeries.setData(data);
 
-        var volumeSeries = chart.addHistogramSeries({
+        const volumeSeries = chart.addHistogramSeries({
           color: 'rgba(44, 169, 183, 0.5)',
           priceFormat: {
             type: 'volume',

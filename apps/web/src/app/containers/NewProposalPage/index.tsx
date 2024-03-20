@@ -165,7 +165,7 @@ export function NewProposalPage() {
     const value = parseInt(event.currentTarget.value);
     if (0 < value && value < 15) {
       setDuration(event.currentTarget.value);
-    } else if (isNaN(value)) {
+    } else if (Number.isNaN(value)) {
       setDuration('');
     }
   };

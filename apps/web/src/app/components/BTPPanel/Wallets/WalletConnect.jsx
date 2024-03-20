@@ -121,20 +121,22 @@ const WalletConnect = () => {
 
     switch (selectedWallet) {
       case wallets.iconex:
-      case wallets.hana:
+      case wallets.hana: {
         const hasAccount = requestAddress();
         if (!hasAccount) {
           setLoading(false);
         }
         break;
+      }
 
-      case wallets.metamask:
+      case wallets.metamask: {
         const isConnected = await EthereumInstance.connectMetaMaskWallet();
         if (isConnected) {
           await EthereumInstance.getEthereumAccounts();
         }
         setLoading(false);
         break;
+      }
 
       default:
         return;

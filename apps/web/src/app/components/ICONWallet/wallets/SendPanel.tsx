@@ -69,7 +69,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const differenceAmount = toCurrencyAmount(
     beforeAmount.currency.wrapped,
-    isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value),
+    Number.isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value),
   );
 
   const afterAmount = beforeAmount.subtract(differenceAmount);

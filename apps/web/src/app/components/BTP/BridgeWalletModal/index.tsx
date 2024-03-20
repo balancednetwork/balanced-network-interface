@@ -168,7 +168,7 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
 
     try {
       switch (type) {
-        case wallets.metamask:
+        case wallets.metamask: {
           const isConnected = await EthereumInstance.connectMetaMaskWallet();
           console.log('isConnected', isConnected);
           if (isConnected) {
@@ -181,8 +181,9 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
           }
           setOpenWalletModal();
           break;
+        }
         case wallets.iconex:
-        case wallets.hana:
+        case wallets.hana: {
           const hasAccount = await requestAddress();
           if (hasAccount) {
             localStorage.setItem(CONNECTED_WALLET_LOCAL_STORAGE, type);
@@ -193,6 +194,7 @@ export default function BridgeWalletModal({ walletModalOpen, setOpenWalletModal 
           setOpenWalletModal();
 
           break;
+        }
         default:
           break;
       }

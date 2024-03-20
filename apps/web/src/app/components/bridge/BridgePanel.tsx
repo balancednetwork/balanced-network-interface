@@ -190,7 +190,7 @@ export default function BridgePanel() {
   }, [bridgeDirection.from, crossChainWallet, currencyToBridge, percentAmount]);
 
   const currencyAmountToBridge = React.useMemo(() => {
-    if (currencyToBridge && amountToBridge && !isNaN(parseFloat(amountToBridge))) {
+    if (currencyToBridge && amountToBridge && !Number.isNaN(parseFloat(amountToBridge))) {
       return CurrencyAmount.fromRawAmount(
         currencyToBridge.wrapped,
         new BigNumber(amountToBridge).times(10 ** currencyToBridge.wrapped.decimals).toFixed(0),

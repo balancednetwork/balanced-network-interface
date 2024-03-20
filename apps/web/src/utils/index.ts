@@ -53,7 +53,6 @@ export function getTrackerLink(
     case 'block': {
       return `${prefix}/block/${data}`;
     }
-    case 'contract':
     default: {
       return `${prefix}/contract/${data}`;
     }

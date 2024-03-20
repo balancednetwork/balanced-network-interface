@@ -34,8 +34,8 @@ const RejectionSwatch = styled(Box)`
 export const IconLabel = ({ icon, content }: { icon: React.ReactNode; content: React.ReactNode }) => {
   return (
     <Flex alignItems="center" sx={{ columnGap: '10px', lineHeight: '35px' }}>
-      <>{icon}</>
-      <>{content}</>
+      {icon}
+      {content}
     </Flex>
   );
 };

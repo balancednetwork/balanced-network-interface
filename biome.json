@@ -3,12 +3,6 @@
   "organizeImports": {
     "enabled": false
   },
-  "linter": {
-    "enabled": false,
-    "rules": {
-      "recommended": true
-    }
-  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -26,6 +20,39 @@
       "semicolons": "always",
       "arrowParentheses": "asNeeded",
       "quoteStyle": "single"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json"],
+    "ignore": ["**/node_modules/**", "**/dist/**", "**/public/**", "./src/charting_library/**", "./src/locales/**"],
+    "rules": {
+      "style": {
+        "noNonNullAssertion": "off",
+        "useTemplate": "off",
+        "useImportType": "off",
+        "useNodejsImportProtocol": "off",
+        "noInferrableTypes": "off",
+        "useEnumInitializers": "off",
+        "useNumberNamespace": "off",
+        "noUselessElse": "off",
+        "noUnusedTemplateLiteral": "off",
+        "useSingleVarDeclarator": "off",
+        "useSelfClosingElements": "off",
+        "useDefaultParameterLast": "off"
+      },
+      "complexity": {
+        "useLiteralKeys": "off",
+        "noForEach": "off",
+        "useOptionalChain": "off",
+        "noExtraBooleanCast": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "performance": {
+        "noDelete": "off"
+      }
     }
   }
 }

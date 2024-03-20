@@ -28,12 +28,13 @@ const eventHandler = async event => {
   try {
     switch (type) {
       // request for wallet address confirm
-      case TYPES.RESPONSE_ADDRESS:
+      case TYPES.RESPONSE_ADDRESS: {
         const accountInfo = await getAccountInfo(payload);
         triggerSetAccountInfo(accountInfo);
 
         localStorage.setItem(ADDRESS_LOCAL_STORAGE, payload);
         break;
+      }
 
       // check if the wallet includes the current address
       case TYPES.RESPONSE_HAS_ADDRESS:
@@ -105,7 +106,7 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
   try {
     switch (type) {
       case TYPES.RESPONSE_SIGNING:
-      case TYPES.RESPONSE_JSON_RPC:
+      case TYPES.RESPONSE_JSON_RPC: {
         console.log('Please wait a moment.');
         const txHash = payload.result || (await sendTransaction(payload));
         const currentNetworkConfig = chainConfigs[window['accountInfo'].id];
@@ -165,6 +166,7 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
           }, 2000);
         });
         return res;
+      }
       case TYPES.CANCEL_SIGNING:
       case TYPES.CANCEL_JSON_RPC: {
         const error = new Error('Cancel transaction');
@@ -197,7 +199,6 @@ export const signingEventHandler = async (event): Promise<TransactionResponse> =
         };
         break;
       }
-      case SIGNING_ACTIONS.TRANSFER:
       default:
         toastProps.onClick = () => {
           const currentNetworkConfig = chainConfigs[window['accountInfo'].id];

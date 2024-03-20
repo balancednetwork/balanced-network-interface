@@ -100,7 +100,7 @@ const PositionDetailPanel = () => {
 
   const currentRatio = useCurrentCollateralRatio();
 
-  var lowRisk1 = (900 * 100) / currentRatio.toNumber();
+  const lowRisk1 = (900 * 100) / currentRatio.toNumber();
 
   const availableLoanAmount = useLoanAvailableAmount();
 

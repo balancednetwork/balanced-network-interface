@@ -277,7 +277,8 @@ const LoanPanel = () => {
                 min: [0],
                 // https://github.com/balancednetwork/balanced-network-interface/issues/50
                 max: [
-                  isNaN(borrowableAmountWithReserve.dp(2).toNumber()) || borrowableAmountWithReserve.dp(2).isZero()
+                  Number.isNaN(borrowableAmountWithReserve.dp(2).toNumber()) ||
+                  borrowableAmountWithReserve.dp(2).isZero()
                     ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
                     : borrowableAmountWithReserve.dp(2).toNumber(),
                 ],

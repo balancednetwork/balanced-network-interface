@@ -169,7 +169,7 @@ export default function Modal({
                 fullscreen={fullscreen}
               >
                 {/* prevents the automatic focusing of inputs on mobile by the reach dialog */}
-                {!initialFocusRef && isMobile ? <div tabIndex={1} /> : null}
+                {!initialFocusRef && isMobile ? <div /> : null}
                 {children}
               </StyledDialogContent>
             </StyledDialogOverlay>

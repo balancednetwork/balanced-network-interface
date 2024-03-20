@@ -309,8 +309,8 @@ export const getBalanceOf = async ({ address, refundable = false, symbol, approv
     return refundable
       ? convertToICX(balance.refundable)
       : approved
-      ? convertToICX(balance.usable)
-      : roundNumber(ethers.utils.formatEther(balance), 6);
+        ? convertToICX(balance.usable)
+        : roundNumber(ethers.utils.formatEther(balance), 6);
   } catch (err) {
     console.log('getBalanceOf err', err);
     return 0;

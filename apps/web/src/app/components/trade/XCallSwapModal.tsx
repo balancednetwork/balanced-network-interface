@@ -137,7 +137,11 @@ const XCallSwapModal = ({
   const ARCH = useARCH();
   const originAddress = signedInWallets.find(wallet => wallet.chain === originChain)?.address;
 
-  const { increaseAllowance, allowanceIncreased, isIncreaseNeeded: allowanceIncreaseNeeded } = useAllowanceHandler(
+  const {
+    increaseAllowance,
+    allowanceIncreased,
+    isIncreaseNeeded: allowanceIncreaseNeeded,
+  } = useAllowanceHandler(
     (originChain === 'archway' && getArchwayCounterToken(executionTrade?.inputAmount.currency.symbol)?.address) || '',
     executionTrade?.inputAmount.quotient.toString() || '0',
   );

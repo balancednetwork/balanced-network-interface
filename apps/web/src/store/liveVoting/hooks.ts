@@ -155,20 +155,23 @@ export function useFetchUserVoteData(): void {
     if (account) {
       const data: Map<string, VoteItemInfoRaw> = await bnJs.Rewards.getUserVoteData(account!);
 
-      const userVoteData = Object.keys(data).reduce((userVoteData, rawItem) => {
-        try {
-          userVoteData[rawItem] = {
-            slope: new BigNumber(data[rawItem].slope),
-            power: new Fraction(data[rawItem].power, 10000),
-            end: new Date(parseInt(data[rawItem].end, 16) / 1000),
-            lastVote: new Date(parseInt(data[rawItem].lastVote, 16) / 1000),
-          };
-        } catch (e) {
-          console.error(e);
-        } finally {
-          return userVoteData;
-        }
-      }, {} as Map<string, VoteItemInfo>);
+      const userVoteData = Object.keys(data).reduce(
+        (userVoteData, rawItem) => {
+          try {
+            userVoteData[rawItem] = {
+              slope: new BigNumber(data[rawItem].slope),
+              power: new Fraction(data[rawItem].power, 10000),
+              end: new Date(parseInt(data[rawItem].end, 16) / 1000),
+              lastVote: new Date(parseInt(data[rawItem].lastVote, 16) / 1000),
+            };
+          } catch (e) {
+            console.error(e);
+          } finally {
+            return userVoteData;
+          }
+        },
+        {} as Map<string, VoteItemInfo>,
+      );
 
       const powerLeft = new Fraction(1).subtract(
         Object.values(userVoteData).reduce((total, item) => total.add(item.power), new Fraction(0)),

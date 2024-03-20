@@ -570,9 +570,9 @@ export default function SwapPanel() {
                             {crossChainOrigin === 'icon'
                               ? 'N/A'
                               : crossChainOrigin === 'archway'
-                              ? xCallArchwayFee &&
-                                `${(Number(xCallArchwayFee.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH`
-                              : 'N/A'}
+                                ? xCallArchwayFee &&
+                                  `${(Number(xCallArchwayFee.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH`
+                                : 'N/A'}
                           </Typography>
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between" mb={2}>

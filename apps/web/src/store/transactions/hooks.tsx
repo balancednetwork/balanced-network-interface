@@ -84,9 +84,9 @@ export function useAllTransactions(): { [txHash: string]: TransactionDetails } |
 }
 
 export enum TransactionStatus {
-  'pending' = 'pending',
-  'success' = 'success',
-  'failure' = 'failure',
+  pending = 'pending',
+  success = 'success',
+  failure = 'failure',
 }
 
 export function useTransactionStatus(transactionHash?: string): TransactionStatus | undefined {

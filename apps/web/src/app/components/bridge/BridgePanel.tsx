@@ -211,7 +211,11 @@ export default function BridgePanel() {
     }
   }, [amountToBridge, bridgeDirection.from, crossChainWallet, currencyToBridge, percentAmount]);
 
-  const { increaseAllowance, allowanceIncreased, isIncreaseNeeded: allowanceIncreaseNeeded } = useAllowanceHandler(
+  const {
+    increaseAllowance,
+    allowanceIncreased,
+    isIncreaseNeeded: allowanceIncreaseNeeded,
+  } = useAllowanceHandler(
     (bridgeDirection.from === 'archway' && !isDenom && currencyToBridge?.wrapped.address) || '',
     `${currencyAmountToBridge ? currencyAmountToBridge.quotient : '0'}`,
   );

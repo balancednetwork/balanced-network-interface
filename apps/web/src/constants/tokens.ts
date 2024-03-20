@@ -62,11 +62,41 @@ export const BALN: TokenMap = {
 // disable prettier printWidth rule
 // prettier-ignore
 export const IUSDC: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cxae3034235540b924dfcc1b45836c293dcc82bfb7', 6, 'IUSDC', 'ICON USD Coin'),
-  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cx65f639254090820361da483df233f6d0e69af9b7', 6, 'IUSDC', 'ICON USD Coin'),
-  [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cx599d58885e5b1736c934fca7e53e04c797ab05be', 6, 'IUSDC', 'ICON USD Coin'),
-  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx538a925f49427d4f1078aed638c8cb525071fc68', 6, 'IUSDC', 'ICON USD Coin'),
-  [ChainId.LISBON]: new Token(ChainId.LISBON, 'cx9634be155fc77754c4b2e1bceddc1c63d973f1f3', 6, 'IUSDC', 'ICON USD Coin'),
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'cxae3034235540b924dfcc1b45836c293dcc82bfb7',
+    6,
+    'IUSDC',
+    'ICON USD Coin',
+  ),
+  [ChainId.YEOUIDO]: new Token(
+    ChainId.YEOUIDO,
+    'cx65f639254090820361da483df233f6d0e69af9b7',
+    6,
+    'IUSDC',
+    'ICON USD Coin',
+  ),
+  [ChainId.SEJONG]: new Token(
+    ChainId.SEJONG,
+    'cx599d58885e5b1736c934fca7e53e04c797ab05be',
+    6,
+    'IUSDC',
+    'ICON USD Coin',
+  ),
+  [ChainId.BERLIN]: new Token(
+    ChainId.BERLIN,
+    'cx538a925f49427d4f1078aed638c8cb525071fc68',
+    6,
+    'IUSDC',
+    'ICON USD Coin',
+  ),
+  [ChainId.LISBON]: new Token(
+    ChainId.LISBON,
+    'cx9634be155fc77754c4b2e1bceddc1c63d973f1f3',
+    6,
+    'IUSDC',
+    'ICON USD Coin',
+  ),
 };
 
 // disable prettier printWidth rule
@@ -92,7 +122,13 @@ export const OMM: TokenMap = {
 // disable prettier printWidth rule
 // prettier-ignore
 export const IUSDT: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88', 6, 'IUSDT', 'ICON Tether'),
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88',
+    6,
+    'IUSDT',
+    'ICON Tether',
+  ),
 };
 
 export const CFT: TokenMap = {
@@ -106,20 +142,44 @@ export const METX: TokenMap = {
 // disable prettier printWidth rule
 // prettier-ignore
 export const GBET: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx6139a27c15f1653471ffba0b4b88dc15de7e3267', 18, 'BET', 'GangstaBet Token'),
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'cx6139a27c15f1653471ffba0b4b88dc15de7e3267',
+    18,
+    'BET',
+    'GangstaBet Token',
+  ),
 };
 
 // disable prettier printWidth rule
 // prettier-ignore
 export const ETH: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx288d13e1b63563459a2ac6179f237711f6851cb5', 18, 'ETH', 'Binance Ethereum'),
-  [ChainId.LISBON]: new Token(ChainId.MAINNET, 'cx99c79fd6dee53335f686c7f2cb513745622634f2', 18, 'TETH', 'Binance Ethereum'),
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'cx288d13e1b63563459a2ac6179f237711f6851cb5',
+    18,
+    'ETH',
+    'Binance Ethereum',
+  ),
+  [ChainId.LISBON]: new Token(
+    ChainId.MAINNET,
+    'cx99c79fd6dee53335f686c7f2cb513745622634f2',
+    18,
+    'TETH',
+    'Binance Ethereum',
+  ),
 };
 
 // disable prettier printWidth rule
 // prettier-ignore
 export const BTCB: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx5b5a03cb525a1845d0af3a872d525b18a810acb0', 18, 'BTCB', 'Binance Bitcoin'),
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'cx5b5a03cb525a1845d0af3a872d525b18a810acb0',
+    18,
+    'BTCB',
+    'Binance Bitcoin',
+  ),
 };
 
 const chainId = NETWORK_ID;

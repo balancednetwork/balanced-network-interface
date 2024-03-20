@@ -241,9 +241,9 @@ export function useTokenBalances(
   }, [balances, tokens]);
 }
 
-export function useAllTokenBalances(
-  account: string | undefined | null,
-): { [tokenAddress: string]: CurrencyAmount<Token> | undefined } {
+export function useAllTokenBalances(account: string | undefined | null): {
+  [tokenAddress: string]: CurrencyAmount<Token> | undefined;
+} {
   const allTokens = useAllTokens();
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens]);
   const balances = useTokenBalances(account ?? undefined, allTokensArray);
@@ -259,9 +259,10 @@ export function useCrossChainCurrencyBalances(
     )[]
   | undefined {
   const crossChainBalances = useCrossChainWalletBalances();
-  const containsICX: boolean = useMemo(() => currencies?.some(currency => isNativeCurrency(currency)) ?? false, [
-    currencies,
-  ]);
+  const containsICX: boolean = useMemo(
+    () => currencies?.some(currency => isNativeCurrency(currency)) ?? false,
+    [currencies],
+  );
   const { account } = useIconReact();
   const accounts = useMemo(() => (containsICX ? [account || undefined] : []), [containsICX, account]);
   const icxBalance = useICXBalances(accounts);
@@ -270,18 +271,21 @@ export function useCrossChainCurrencyBalances(
     if (crossChainBalances) {
       return currencies.map(currency => {
         if (account && isNativeCurrency(currency)) return { icon: icxBalance[account] };
-        return SUPPORTED_XCALL_CHAINS.reduce((balances, chain) => {
-          if (crossChainBalances[chain] && currency) {
-            const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);
-            const balance: CurrencyAmount<Currency> | undefined = tokenAddress
-              ? crossChainBalances[chain][tokenAddress]
-              : undefined;
-            balances[chain] = balance;
+        return SUPPORTED_XCALL_CHAINS.reduce(
+          (balances, chain) => {
+            if (crossChainBalances[chain] && currency) {
+              const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);
+              const balance: CurrencyAmount<Currency> | undefined = tokenAddress
+                ? crossChainBalances[chain][tokenAddress]
+                : undefined;
+              balances[chain] = balance;
+              return balances;
+            }
+            balances[chain] = undefined;
             return balances;
-          }
-          balances[chain] = undefined;
-          return balances;
-        }, {} as { [key in SupportedXCallChains]: CurrencyAmount<Currency> | undefined });
+          },
+          {} as { [key in SupportedXCallChains]: CurrencyAmount<Currency> | undefined },
+        );
       });
     }
   }, [crossChainBalances, account, currencies, icxBalance]);
@@ -322,9 +326,10 @@ export function useCurrencyBalances(
 
   const tokenBalances = useTokenBalances(account, tokens);
 
-  const containsICX: boolean = useMemo(() => currencies?.some(currency => isNativeCurrency(currency)) ?? false, [
-    currencies,
-  ]);
+  const containsICX: boolean = useMemo(
+    () => currencies?.some(currency => isNativeCurrency(currency)) ?? false,
+    [currencies],
+  );
   const accounts = useMemo(() => (containsICX ? [account] : []), [containsICX, account]);
   const icxBalance = useICXBalances(accounts);
 
@@ -347,9 +352,9 @@ export function useCurrencyBalance(account?: string, currency?: Currency): Curre
   )[0];
 }
 
-export function useICXBalances(
-  uncheckedAddresses: (string | undefined)[],
-): { [address: string]: CurrencyAmount<Currency> | undefined } {
+export function useICXBalances(uncheckedAddresses: (string | undefined)[]): {
+  [address: string]: CurrencyAmount<Currency> | undefined;
+} {
   const [balances, setBalances] = useState<string[]>([]);
 
   const transactions = useAllTransactions();

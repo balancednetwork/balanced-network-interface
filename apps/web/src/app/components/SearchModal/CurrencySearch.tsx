@@ -105,18 +105,24 @@ export function CurrencySearch({
       case CurrencySelectionType.BRIDGE: {
         //TODO: handle for multiple chain selections in the future
         if (bridgeDirectionString === 'archway-icon') {
-          return ARCHWAY_SUPPORTED_TOKENS_LIST.reduce((tokens, token) => {
-            tokens[token.address] = token;
-            return tokens;
-          }, {} as { [address: string]: Token });
+          return ARCHWAY_SUPPORTED_TOKENS_LIST.reduce(
+            (tokens, token) => {
+              tokens[token.address] = token;
+              return tokens;
+            },
+            {} as { [address: string]: Token },
+          );
         } else if (bridgeDirectionString === 'icon-archway') {
           const archSymbols = ARCHWAY_SUPPORTED_TOKENS_LIST.map(token => token.symbol);
-          return Object.keys(tokens).reduce((tokenUnion, token) => {
-            if (archSymbols.includes(tokens[token].symbol)) {
-              tokenUnion[token] = tokens[token];
-            }
-            return tokenUnion;
-          }, {} as { [address: string]: Token });
+          return Object.keys(tokens).reduce(
+            (tokenUnion, token) => {
+              if (archSymbols.includes(tokens[token].symbol)) {
+                tokenUnion[token] = tokens[token];
+              }
+              return tokenUnion;
+            },
+            {} as { [address: string]: Token },
+          );
         } else {
           return tokens;
         }

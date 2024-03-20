@@ -28,9 +28,7 @@ export function useMintState(): AppState['mint'] {
   return useSelector<AppState, AppState['mint']>(state => state.mint);
 }
 
-export function useMintActionHandlers(
-  noLiquidity: boolean | undefined,
-): {
+export function useMintActionHandlers(noLiquidity: boolean | undefined): {
   onCurrencySelection: (field: Field, currency: Currency) => void;
   onFieldAInput: (typedValue: string) => void;
   onFieldBInput: (typedValue: string) => void;
@@ -232,8 +230,8 @@ export function useDerivedMintInfo(
               ? pair.priceOf(tokenA).quote(wrappedIndependentAmount)
               : CurrencyAmount.fromRawAmount(tokenB, 0)
             : pair.involvesToken(tokenB)
-            ? pair.priceOf(tokenB).quote(wrappedIndependentAmount)
-            : CurrencyAmount.fromRawAmount(tokenA, 0);
+              ? pair.priceOf(tokenB).quote(wrappedIndependentAmount)
+              : CurrencyAmount.fromRawAmount(tokenA, 0);
         return dependentCurrency?.isNative
           ? CurrencyAmount.fromRawAmount(dependentCurrency, dependentTokenAmount.quotient)
           : dependentTokenAmount;

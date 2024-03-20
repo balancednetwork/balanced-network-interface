@@ -24,7 +24,7 @@
       "quoteProperties": "asNeeded",
       "trailingComma": "all",
       "semicolons": "always",
-      "arrowParentheses": "always",
+      "arrowParentheses": "asNeeded",
       "quoteStyle": "single"
     }
   }

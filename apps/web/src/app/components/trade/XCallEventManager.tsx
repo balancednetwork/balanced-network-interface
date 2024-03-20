@@ -64,21 +64,24 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
   const xCallState = useXCallState();
 
   const anyPristineEvents = React.useMemo(() => {
-    return Object.keys(xCallState.events).reduce((pristineEvents, chain) => {
-      let hasPristineEvents = false;
-      xCallState.events[chain].origin.forEach(event => {
-        if (event.isPristine) {
-          hasPristineEvents = true;
-        }
-      });
-      xCallState.events[chain].destination.forEach(event => {
-        if (event.isPristine) {
-          hasPristineEvents = true;
-        }
-      });
-      pristineEvents[chain] = hasPristineEvents;
-      return pristineEvents;
-    }, {} as { [key in SupportedXCallChains]: boolean });
+    return Object.keys(xCallState.events).reduce(
+      (pristineEvents, chain) => {
+        let hasPristineEvents = false;
+        xCallState.events[chain].origin.forEach(event => {
+          if (event.isPristine) {
+            hasPristineEvents = true;
+          }
+        });
+        xCallState.events[chain].destination.forEach(event => {
+          if (event.isPristine) {
+            hasPristineEvents = true;
+          }
+        });
+        pristineEvents[chain] = hasPristineEvents;
+        return pristineEvents;
+      },
+      {} as { [key in SupportedXCallChains]: boolean },
+    );
   }, [xCallState.events]);
 
   const handleArchwayExecuteXCall = async (data: DestinationXCallData) => {

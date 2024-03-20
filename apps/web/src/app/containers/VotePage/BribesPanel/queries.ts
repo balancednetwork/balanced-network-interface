@@ -37,12 +37,15 @@ export function useBribes(): UseQueryResult<Bribe[], Error> {
 
       const tokensForBribedPools = await bnJs.Multicall.getAggregateData(cds);
 
-      const bribedPools = [...sourceNames].reduce((pools, current, index) => {
-        if (tokensForBribedPools[index].length) {
-          pools[current] = tokensForBribedPools[index];
-        }
-        return pools;
-      }, {} as { [key in SourceName]: BribeToken[] });
+      const bribedPools = [...sourceNames].reduce(
+        (pools, current, index) => {
+          if (tokensForBribedPools[index].length) {
+            pools[current] = tokensForBribedPools[index];
+          }
+          return pools;
+        },
+        {} as { [key in SourceName]: BribeToken[] },
+      );
 
       const bribes = await Promise.all(
         Object.keys(bribedPools).map(async sourceName => {

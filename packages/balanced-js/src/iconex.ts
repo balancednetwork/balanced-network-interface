@@ -38,8 +38,8 @@ export const request = (event: ICONexRequestEvent): Promise<ICONexResponseEvent>
     }),
   );
 
-  return new Promise((resolve) => {
-    const handler = (evt) => {
+  return new Promise(resolve => {
+    const handler = evt => {
       window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
       resolve(evt.detail);
     };

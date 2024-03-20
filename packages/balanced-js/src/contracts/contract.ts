@@ -144,7 +144,7 @@ export class Contract {
         },
       }),
     );
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const handler = ({ detail: { type, payload } }: any) => {
         if (type === 'RESPONSE_JSON-RPC') {
           window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);

@@ -331,12 +331,10 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
         </Box>
         <Typography mb={5} textAlign="right">
           {`Available:
-            ${availableCurrency(parsedAmount[Field.CURRENCY_A], availableBase)} ${
-            balances[0]?.currency.symbol || '...'
-          } /
+            ${availableCurrency(parsedAmount[Field.CURRENCY_A], availableBase)} ${balances[0]?.currency.symbol || '...'} /
             ${availableCurrency(parsedAmount[Field.CURRENCY_B], availableQuote)} ${
-            balances[1]?.currency.symbol || '...'
-          }`}
+              balances[1]?.currency.symbol || '...'
+            }`}
         </Typography>
         <Box mb={5}>
           {hasUnstakedLP && (

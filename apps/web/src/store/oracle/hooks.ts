@@ -32,9 +32,10 @@ const PERIOD = 5 * 1000;
 export function useFetchOraclePrices() {
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const dispatch = useDispatch();
-  const supportedSymbols = useMemo(() => supportedCollateralTokens && Object.keys(supportedCollateralTokens), [
-    supportedCollateralTokens,
-  ]);
+  const supportedSymbols = useMemo(
+    () => supportedCollateralTokens && Object.keys(supportedCollateralTokens),
+    [supportedCollateralTokens],
+  );
 
   useInterval(async () => {
     if (supportedSymbols) {

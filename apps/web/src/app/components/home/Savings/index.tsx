@@ -183,10 +183,10 @@ const Savings = () => {
                 {isAdjusting
                   ? t`Confirm`
                   : lockedAmount?.greaterThan(0) && !bnUSDBalance
-                  ? t`Withdraw`
-                  : bnUSDBalance.greaterThan(0) && (!lockedAmount || lockedAmount?.equalTo(0))
-                  ? 'Deposit bnUSD'
-                  : 'Adjust'}
+                    ? t`Withdraw`
+                    : bnUSDBalance.greaterThan(0) && (!lockedAmount || lockedAmount?.equalTo(0))
+                      ? 'Deposit bnUSD'
+                      : 'Adjust'}
               </Button>
             </Flex>
           )}

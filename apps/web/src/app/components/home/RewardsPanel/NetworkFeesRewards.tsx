@@ -107,8 +107,8 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
                         {dynamicBalnAmount.isEqualTo(0)
                           ? 'N/A'
                           : totalSupplyBBaln && feeShare
-                          ? `${feeShare.times(100).toPrecision(3)}%`
-                          : '-'}{' '}
+                            ? `${feeShare.times(100).toPrecision(3)}%`
+                            : '-'}{' '}
                       </strong>
                     ) : (
                       <strong>0% </strong>

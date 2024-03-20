@@ -6,10 +6,10 @@ import bnJs from 'bnJs';
 import QUERY_KEYS from 'queries/queryKeys';
 
 export enum Period {
-  'day' = 'day',
-  'week' = 'week',
-  'month' = 'month',
-  'all' = 'all',
+  day = 'day',
+  week = 'week',
+  month = 'month',
+  all = 'all',
 }
 
 export function useRebalancingDataQuery_DEPRECATED(period: Period) {

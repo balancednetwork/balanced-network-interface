@@ -19,8 +19,8 @@ export const SUCCESS_TRANSACTION = 'SUCCESS_TRANSACTION';
 export const E2ETestingRoute = '/E2ETestingRoute';
 
 export enum ICX_METHOD {
-  'SEND_TRANSACTION' = 'icx_sendTransaction',
-  'CALL' = 'icx_call',
+  SEND_TRANSACTION = 'icx_sendTransaction',
+  CALL = 'icx_call',
 }
 
 export const JSON_RPC = '2.0';

@@ -45,8 +45,8 @@ const SkeletonElement = styled.div<{
         ? `${width}px`
         : width
       : typeof height === 'number'
-      ? `${height}px`
-      : height};
+        ? `${height}px`
+        : height};
   margin-right: ${({ mr }) => mr};
   margin-left: ${({ ml }) => ml};
   margin-top: ${({ mt }) => mt};

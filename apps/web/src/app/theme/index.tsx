@@ -26,16 +26,19 @@ export const sizes = {
   up500: 500,
 };
 
-export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce((acc, label) => {
-  acc[label] = (first: any, ...interpolations: any[]) =>
-    css`
+export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce(
+  (acc, label) => {
+    acc[label] = (first: any, ...interpolations: any[]) =>
+      css`
       @media (min-width: ${sizes[label]}px) {
         ${css(first, ...interpolations)}
       }
     `;
 
-  return acc;
-}, {} as { [key in keyof typeof sizes]: MediaFunction });
+    return acc;
+  },
+  {} as { [key in keyof typeof sizes]: MediaFunction },
+);
 
 export function theme(): DefaultTheme {
   return {

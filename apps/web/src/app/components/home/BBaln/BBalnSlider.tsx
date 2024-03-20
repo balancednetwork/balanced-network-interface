@@ -273,10 +273,10 @@ export default function BBalnSlider({
       ? t`Withdraw BALN`
       : t`Lock up BALN`
     : bBalnAmount?.isZero()
-    ? t`Lock up BALN`
-    : balnBalanceAvailable.isLessThan(1)
-    ? t`Withdraw`
-    : t`Adjust`;
+      ? t`Lock up BALN`
+      : balnBalanceAvailable.isLessThan(1)
+        ? t`Withdraw`
+        : t`Adjust`;
   const beforeBalnAmount = new BigNumber(lockedBalnAmount?.toFixed(0) || 0);
   const differenceBalnAmount = balnSliderAmount.minus(beforeBalnAmount || new BigNumber(0));
   const shouldBoost = differenceBalnAmount.isPositive();
@@ -307,8 +307,8 @@ export default function BBalnSlider({
       return samePeriod
         ? [samePeriod, ...(availablePeriods.length ? availablePeriods : [lockingPeriods[lockingPeriods.length - 1]])]
         : availablePeriods.length
-        ? availablePeriods
-        : [lockingPeriods[lockingPeriods.length - 1]];
+          ? availablePeriods
+          : [lockingPeriods[lockingPeriods.length - 1]];
     } else {
       return lockingPeriods;
     }

@@ -31,12 +31,15 @@ const PositionRewardsInfo = () => {
   const boostedLPs = React.useMemo(() => {
     if (sources && incentivisedPairs) {
       const pairNames = incentivisedPairs.map(pair => pair.name);
-      return Object.keys(sources).reduce((LPs, sourceName) => {
-        if (pairNames.indexOf(sourceName) >= 0 && sources[sourceName].balance.isGreaterThan(0)) {
-          LPs[sourceName] = { ...sources[sourceName] };
-        }
-        return LPs;
-      }, {} as { [key in string]: Source });
+      return Object.keys(sources).reduce(
+        (LPs, sourceName) => {
+          if (pairNames.indexOf(sourceName) >= 0 && sources[sourceName].balance.isGreaterThan(0)) {
+            LPs[sourceName] = { ...sources[sourceName] };
+          }
+          return LPs;
+        },
+        {} as { [key in string]: Source },
+      );
     }
   }, [sources, incentivisedPairs]);
 

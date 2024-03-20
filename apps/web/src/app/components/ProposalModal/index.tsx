@@ -39,11 +39,11 @@ const SubmitButton = styled(Button)`
 `;
 
 export enum ModalStatus {
-  'None' = 'None',
-  'Approve' = 'Approve',
-  'Reject' = 'Reject',
-  'ChangeToApprove' = 'ChangeToApprove',
-  'ChangeToReject' = 'ChangeToReject',
+  None = 'None',
+  Approve = 'Approve',
+  Reject = 'Reject',
+  ChangeToApprove = 'ChangeToApprove',
+  ChangeToReject = 'ChangeToReject',
 }
 
 interface ProposalProps {

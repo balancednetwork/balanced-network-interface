@@ -81,17 +81,15 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
         const chunkedData = await Promise.all(chunks.map(async chunk => await bnJs.Multicall.getAggregateData(chunk)));
         const data: any[] = chunkedData.flat();
 
-        const ps = data.map(
-          (stats, idx): PairData => {
-            const [tokenA, tokenB] = tokens[idx];
+        const ps = data.map((stats, idx): PairData => {
+          const [tokenA, tokenB] = tokens[idx];
 
-            if (!tokenA || !tokenB || !stats) {
-              return [PairState.NOT_EXISTS, null, null];
-            }
+          if (!tokenA || !tokenB || !stats) {
+            return [PairState.NOT_EXISTS, null, null];
+          }
 
-            return getPair(stats, tokenA, tokenB);
-          },
-        );
+          return getPair(stats, tokenA, tokenB);
+        });
 
         setPairs(ps);
       } catch (err) {
@@ -128,9 +126,9 @@ export function usePoolShare(poolId: number, tokenA?: Currency, tokenB?: Currenc
   }, [balance, pair]);
 }
 
-export function useAvailablePairs(
-  currencies: [Currency | undefined, Currency | undefined][],
-): { [poolId: number]: Pair } {
+export function useAvailablePairs(currencies: [Currency | undefined, Currency | undefined][]): {
+  [poolId: number]: Pair;
+} {
   const reserves = useV2Pairs(currencies);
 
   return useMemo<{ [poolId: number]: Pair }>(() => {

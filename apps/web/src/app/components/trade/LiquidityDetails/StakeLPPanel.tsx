@@ -44,9 +44,10 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const balance = useBalance(poolId);
-  const stakedBalance = useMemo(() => new BigNumber(balance?.stakedLPBalance?.toFixed() || 0), [
-    balance?.stakedLPBalance,
-  ]);
+  const stakedBalance = useMemo(
+    () => new BigNumber(balance?.stakedLPBalance?.toFixed() || 0),
+    [balance?.stakedLPBalance],
+  );
 
   const totalStaked = useTotalStaked(poolId);
 

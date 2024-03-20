@@ -34,10 +34,10 @@ export function useTradeExactIn(
   currencyOut?: Currency,
   { maxHops = MAX_HOPS } = {},
 ): Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined {
-  const [currencyA, currencyB] = useMemo(() => [currencyAmountIn?.currency, currencyOut], [
-    currencyAmountIn,
-    currencyOut,
-  ]);
+  const [currencyA, currencyB] = useMemo(
+    () => [currencyAmountIn?.currency, currencyOut],
+    [currencyAmountIn, currencyOut],
+  );
 
   const pairs = useAllCommonPairs(currencyA, currencyB);
 
@@ -74,10 +74,10 @@ export function useTradeExactOut(
   currencyAmountOut?: CurrencyAmount<Currency>,
   { maxHops = MAX_HOPS } = {},
 ): Trade<Currency, Currency, TradeType.EXACT_OUTPUT> | undefined {
-  const [currencyA, currencyB] = useMemo(() => [currencyIn, currencyAmountOut?.currency], [
-    currencyIn,
-    currencyAmountOut,
-  ]);
+  const [currencyA, currencyB] = useMemo(
+    () => [currencyIn, currencyAmountOut?.currency],
+    [currencyIn, currencyAmountOut],
+  );
 
   const pairs = useAllCommonPairs(currencyA, currencyB);
 

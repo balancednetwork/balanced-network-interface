@@ -41,15 +41,17 @@ export const ProposalPreview = styled(FlexPanel)<{ noHover?: boolean }>`
       opacity: 0;
     }
 
-    ${!noHover &&
-    css`
+    ${
+      !noHover &&
+      css`
       &:hover {
         &:before {
           transform: scale(1);
           opacity: 1;
         }
       }
-    `}
+    `
+    }
   `};
 `;
 

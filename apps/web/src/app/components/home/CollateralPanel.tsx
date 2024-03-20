@@ -314,7 +314,7 @@ const CollateralPanel = () => {
     sliderInstance.current.noUiSlider.updateOptions(
       {
         format: {
-          to: (value: Number) => value.toFixed(collateralDecimalPlaces),
+          to: (value: number) => value.toFixed(collateralDecimalPlaces),
           from: (value: string) => Number(value),
         },
       },

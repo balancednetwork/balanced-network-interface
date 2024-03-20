@@ -1,4 +1,4 @@
-export let ABI = [
+export const ABI = [
   {
     inputs: [
       {

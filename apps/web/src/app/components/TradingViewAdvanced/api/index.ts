@@ -54,7 +54,7 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
   public async resolveSymbol(symbolName: string, onResolve: ResolveCallback, onError) {
     const result = await getSymbolInfo(symbolName);
 
-    setTimeout(function () {
+    setTimeout(() => {
       onResolve(result);
     }, 0);
   }

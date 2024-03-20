@@ -1,4 +1,4 @@
-export let ABIOfToken = [
+export const ABIOfToken = [
   {
     inputs: [
       {

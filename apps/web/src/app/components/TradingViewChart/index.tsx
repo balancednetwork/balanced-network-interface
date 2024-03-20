@@ -131,13 +131,13 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
   // if no chart created yet, create one with options and add to DOM manually
   useEffect(() => {
     if (data && ref.current) {
-      let chart = createChart(
+      const chart = createChart(
         ref.current,
         type === CHART_TYPES.CANDLE ? { width: width, ...CandleOption } : { width: width, ...AreaOption },
       );
 
       if (type === CHART_TYPES.CANDLE) {
-        let candleSeries = chart.addCandlestickSeries({
+        const candleSeries = chart.addCandlestickSeries({
           upColor: 'rgba(44, 169, 183, 1)',
           downColor: '#fb6a6a',
           borderDownColor: '#fb6a6a',
@@ -163,7 +163,7 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
 
         volumeSeries.setData(volumeData);
       } else {
-        let series = chart.addAreaSeries({
+        const series = chart.addAreaSeries({
           topColor: 'rgba(44, 169, 183, 0.56)',
           bottomColor: 'rgba(44, 169, 183, 0.04)',
           lineColor: 'rgba(44, 169, 183, 1)',

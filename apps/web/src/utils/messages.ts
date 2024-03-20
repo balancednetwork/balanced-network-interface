@@ -14,7 +14,7 @@ export const _t = (id: string, ...rest: any[]): [string, ...any[]] => {
   return [id, ...rest];
 };
 
-export const showMessageOnBeforeUnload = function (e) {
+export const showMessageOnBeforeUnload = (e) => {
   e.preventDefault();
   window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   bnJs.contractSettings.ledgerSettings.transport.device.close();

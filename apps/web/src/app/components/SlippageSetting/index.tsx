@@ -56,7 +56,7 @@ export interface SlippageSettingsProps {
   rawSlippage: number;
   setRawSlippage: (rawSlippage: number) => void;
 }
-const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`);
+const inputRegex = /^\d*(?:\\[.])?\d*$/;
 export default function SlippageSettings({ rawSlippage, setRawSlippage }: SlippageSettingsProps) {
   const [slippageInput, setSlippageInput] = React.useState('');
   // const [deadlineInput, setDeadlineInput] = React.useState('');

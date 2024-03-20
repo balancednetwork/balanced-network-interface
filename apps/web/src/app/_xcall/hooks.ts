@@ -26,7 +26,7 @@ export function useXCallGasChecker(
     ['gasChecker', chain1, chain2, icon, wallets, balances],
     async () => {
       let errorMessage = '';
-      let hasEnoughGasAllArray: boolean[] = [];
+      const hasEnoughGasAllArray: boolean[] = [];
 
       if (chain1 === 'archway' || chain2 === 'archway') {
         const gasAmount = balances['archway'] && balances['archway'][ARCH.address];

@@ -17,7 +17,7 @@ const requestHasAccount = () => {
 export const checkICONexInstalled = callback => {
   requestHasAccount();
 
-  return new Promise(function (resolve) {
+  return new Promise(resolve => {
     setTimeout(() => {
       if (isICONexInstalled()) {
         resolve(true);

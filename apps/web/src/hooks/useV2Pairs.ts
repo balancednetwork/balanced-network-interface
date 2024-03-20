@@ -174,7 +174,7 @@ export function useBalances(
 
       const poolKeys = Object.keys(pools);
 
-      let cds = poolKeys
+      const cds = poolKeys
         .map(poolId => {
           if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
             return {

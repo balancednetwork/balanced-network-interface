@@ -22,7 +22,7 @@ export interface ChartContainerProps {
   setActiveSymbol: (symbol: string | undefined) => void;
 }
 
-export interface ChartContainerState {}
+export type ChartContainerState = {};
 
 export class TVChartContainer extends React.PureComponent<Partial<ChartContainerProps>, ChartContainerState> {
   public static defaultProps: Omit<ChartContainerProps, 'container'> = {

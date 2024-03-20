@@ -103,7 +103,7 @@ interface CurrencyInputPanelProps {
   isCrossChainToken?: boolean;
 }
 
-export const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
+export const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
 
 export default function CurrencyInputPanel({
   value,

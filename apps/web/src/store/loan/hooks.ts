@@ -137,7 +137,7 @@ export function useLoanFetchInfo(account?: string | null) {
   }, [fetchLoanInfo, account, transactions]);
 
   React.useEffect(() => {
-    (async function () {
+    (async () => {
       if (account && supportedSymbols) {
         const cds: CallData[] = supportedSymbols.map(symbol => {
           return {

@@ -14,7 +14,7 @@ export default function useTimeout(callback: () => void, delay: null | number) {
     }
 
     if (delay !== null) {
-      let id = setTimeout(tick, delay);
+      const id = setTimeout(tick, delay);
       return () => clearTimeout(id);
     }
   }, [delay]);

@@ -162,7 +162,7 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
 
         const temp = {};
 
-        forEach(result, function (value, key) {
+        forEach(result, (value, key) => {
           if (key === 'Unstaking time (in microseconds)') temp[key] = new BigNumber(value);
           else temp[key] = BalancedJs.utils.toIcx(value);
         });

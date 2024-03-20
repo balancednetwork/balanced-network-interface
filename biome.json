@@ -39,7 +39,8 @@
         "noUnusedTemplateLiteral": "off",
         "useSingleVarDeclarator": "off",
         "useSelfClosingElements": "off",
-        "useDefaultParameterLast": "off"
+        "useDefaultParameterLast": "off",
+        "noParameterAssign": "off"
       },
       "complexity": {
         "useLiteralKeys": "off",
@@ -48,10 +49,14 @@
         "noExtraBooleanCast": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off"
       },
       "performance": {
         "noDelete": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
       }
     }
   }

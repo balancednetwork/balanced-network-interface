@@ -64,7 +64,13 @@ export default class IRC2 extends Contract {
     return this.call(callParams);
   }
 
-  swapUsingRoute(value: string, outputAddress: string, minimumReceive: string, path: (string | null)[], receiver?: string) {
+  swapUsingRoute(
+    value: string,
+    outputAddress: string,
+    minimumReceive: string,
+    path: (string | null)[],
+    receiver?: string,
+  ) {
     const data = {
       method: '_swap',
       params: {
@@ -72,7 +78,7 @@ export default class IRC2 extends Contract {
         // this should be decimal
         minimumReceive: minimumReceive,
         path: path,
-        ...(receiver && { receiver: receiver })
+        ...(receiver && { receiver: receiver }),
       },
     };
 
@@ -91,7 +97,7 @@ export default class IRC2 extends Contract {
 
     return this.callICONPlugins(callParams);
   }
-  
+
   crossTransfer(_to: string, _value: string, fee: string) {
     const payload = this.transactionParamsBuilder({
       method: 'crossTransfer',
@@ -99,7 +105,7 @@ export default class IRC2 extends Contract {
       params: {
         _to,
         _value: IconConverter.toHexNumber(_value),
-      }
+      },
     });
 
     return this.callICONPlugins(payload);

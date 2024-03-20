@@ -58,14 +58,14 @@ export default class Rewards extends Contract {
 
     return this.call(payload);
   }
-  
+
   getBoostData(address: string, sources?: string[]) {
     const payload = this.paramsBuilder({
       method: `getBoostData`,
       params: {
         user: address,
-        sources: sources
-      }
+        sources: sources,
+      },
     });
 
     return this.call(payload);
@@ -73,7 +73,7 @@ export default class Rewards extends Contract {
 
   getDistributionPercentages() {
     const payload = this.paramsBuilder({
-      method: 'getDistributionPercentages'
+      method: 'getDistributionPercentages',
     });
 
     return this.call(payload);
@@ -93,7 +93,7 @@ export default class Rewards extends Contract {
       params: {
         user,
         source,
-      }
+      },
     });
 
     return this.call(payload);
@@ -105,7 +105,7 @@ export default class Rewards extends Contract {
       params: {
         user,
         source,
-      }
+      },
     });
 
     return this.call(payload);
@@ -116,7 +116,7 @@ export default class Rewards extends Contract {
       method: `getUserVoteData`,
       params: {
         user,
-      }
+      },
     });
 
     return this.call(payload);
@@ -128,7 +128,7 @@ export default class Rewards extends Contract {
       params: {
         name,
         userWeight: IconConverter.toHex(userWeight),
-      }
+      },
     });
 
     return this.callICONPlugins(payload);
@@ -139,7 +139,7 @@ export default class Rewards extends Contract {
       method: `getWeightsSumPerType`,
       params: {
         typeId: IconConverter.toHex(type),
-      }
+      },
     });
 
     return this.call(payload);

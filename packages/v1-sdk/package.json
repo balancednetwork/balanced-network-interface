@@ -5,10 +5,7 @@
   "description": "🛠 An SDK for building applications on top of BalancedNetwork V1",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "repository": "https://github.com/balancednetwork/v1-sdk.git",
   "scripts": {
     "lint": "tsup lint src test",
@@ -17,7 +14,7 @@
     "test": "tsup test",
     "prepublishOnly": "tsup",
     "clean": "rm -rf dist && rm -rf node_modules",
-    "pretty": "prettier "
+    "pretty": "biome format . --write"
   },
   "dependencies": {
     "@balancednetwork/sdk-core": "workspace:*",

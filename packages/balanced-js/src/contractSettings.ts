@@ -25,7 +25,7 @@ class ContractSettings {
   ledgerSettings: LedgerSettings = {
     path: LEDGER_BASE_PATH,
     transport: null,
-    actived: false
+    actived: false,
   };
 
   /**

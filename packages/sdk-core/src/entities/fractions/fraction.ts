@@ -65,9 +65,9 @@ export class Fraction {
     return new Fraction(
       JSBI.add(
         JSBI.multiply(this.numerator, otherParsed.denominator),
-        JSBI.multiply(otherParsed.numerator, this.denominator)
+        JSBI.multiply(otherParsed.numerator, this.denominator),
       ),
-      JSBI.multiply(this.denominator, otherParsed.denominator)
+      JSBI.multiply(this.denominator, otherParsed.denominator),
     );
   }
 
@@ -79,9 +79,9 @@ export class Fraction {
     return new Fraction(
       JSBI.subtract(
         JSBI.multiply(this.numerator, otherParsed.denominator),
-        JSBI.multiply(otherParsed.numerator, this.denominator)
+        JSBI.multiply(otherParsed.numerator, this.denominator),
       ),
-      JSBI.multiply(this.denominator, otherParsed.denominator)
+      JSBI.multiply(this.denominator, otherParsed.denominator),
     );
   }
 
@@ -89,7 +89,7 @@ export class Fraction {
     const otherParsed = Fraction.tryParseFraction(other);
     return JSBI.lessThan(
       JSBI.multiply(this.numerator, otherParsed.denominator),
-      JSBI.multiply(otherParsed.numerator, this.denominator)
+      JSBI.multiply(otherParsed.numerator, this.denominator),
     );
   }
 
@@ -97,7 +97,7 @@ export class Fraction {
     const otherParsed = Fraction.tryParseFraction(other);
     return JSBI.equal(
       JSBI.multiply(this.numerator, otherParsed.denominator),
-      JSBI.multiply(otherParsed.numerator, this.denominator)
+      JSBI.multiply(otherParsed.numerator, this.denominator),
     );
   }
 
@@ -105,7 +105,7 @@ export class Fraction {
     const otherParsed = Fraction.tryParseFraction(other);
     return JSBI.greaterThan(
       JSBI.multiply(this.numerator, otherParsed.denominator),
-      JSBI.multiply(otherParsed.numerator, this.denominator)
+      JSBI.multiply(otherParsed.numerator, this.denominator),
     );
   }
 
@@ -113,7 +113,7 @@ export class Fraction {
     const otherParsed = Fraction.tryParseFraction(other);
     return new Fraction(
       JSBI.multiply(this.numerator, otherParsed.numerator),
-      JSBI.multiply(this.denominator, otherParsed.denominator)
+      JSBI.multiply(this.denominator, otherParsed.denominator),
     );
   }
 
@@ -121,14 +121,14 @@ export class Fraction {
     const otherParsed = Fraction.tryParseFraction(other);
     return new Fraction(
       JSBI.multiply(this.numerator, otherParsed.denominator),
-      JSBI.multiply(this.denominator, otherParsed.numerator)
+      JSBI.multiply(this.denominator, otherParsed.numerator),
     );
   }
 
   public toSignificant(
     significantDigits: number,
     format: object = { groupSeparator: '' },
-    rounding: Rounding = Rounding.ROUND_HALF_UP
+    rounding: Rounding = Rounding.ROUND_HALF_UP,
   ): string {
     invariant(Number.isInteger(significantDigits), `${significantDigits} is not an integer.`);
     invariant(significantDigits > 0, `${significantDigits} is not positive.`);
@@ -143,7 +143,7 @@ export class Fraction {
   public toFixed(
     decimalPlaces: number,
     format: object = { groupSeparator: '' },
-    rounding: Rounding = Rounding.ROUND_HALF_UP
+    rounding: Rounding = Rounding.ROUND_HALF_UP,
   ): string {
     invariant(Number.isInteger(decimalPlaces), `${decimalPlaces} is not an integer.`);
     invariant(decimalPlaces >= 0, `${decimalPlaces} is negative.`);

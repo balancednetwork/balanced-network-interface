@@ -6,17 +6,15 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.mjs",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "repository": "https://github.com/balancednetwork/sdk-core.git",
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "tsup test",
     "prepublishOnly": "tsup build",
-    "clean": "rm -rf dist && rm -rf node_modules"
+    "clean": "rm -rf dist && rm -rf node_modules",
+    "pretty": "biome format . --write"
   },
   "dependencies": {
     "@ethersproject/address": "^5.0.2",

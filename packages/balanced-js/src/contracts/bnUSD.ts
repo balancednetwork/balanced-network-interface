@@ -12,8 +12,8 @@ export default class bnUSD extends IRC2 {
 
   stake(value: string) {
     const transferData = JSON.stringify({
-      method: "_lock"
-    })
+      method: '_lock',
+    });
 
     const payload = this.transactionParamsBuilder({
       method: 'transfer',

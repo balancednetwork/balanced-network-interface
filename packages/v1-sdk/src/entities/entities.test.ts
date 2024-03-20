@@ -23,7 +23,7 @@ function decimalize(amount: number, decimals: number): JSBI {
 }
 
 describe('entities', () => {
-  DECIMAL_PERMUTATIONS.forEach(decimals => {
+  DECIMAL_PERMUTATIONS.forEach((decimals) => {
     describe(`decimals permutation: ${decimals}`, () => {
       let tokens: Token[];
       beforeAll(() => {

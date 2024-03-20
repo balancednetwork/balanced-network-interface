@@ -23,7 +23,7 @@ export class Ledger {
 
     return {
       getProperties: () => rawTransaction,
-      getSignature: () => signedRawTxBase64
+      getSignature: () => signedRawTxBase64,
     };
   }
 }

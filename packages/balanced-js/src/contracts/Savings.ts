@@ -14,8 +14,8 @@ export default class Savings extends Contract {
     const payload = this.paramsBuilder({
       method: 'getLockedAmount',
       params: {
-        user
-      }
+        user,
+      },
     });
 
     return this.call(payload);
@@ -25,8 +25,8 @@ export default class Savings extends Contract {
     const payload = this.paramsBuilder({
       method: 'getUnclaimedRewards',
       params: {
-        user
-      }
+        user,
+      },
     });
 
     return this.call(payload);
@@ -36,8 +36,8 @@ export default class Savings extends Contract {
     const payload = this.transactionParamsBuilder({
       method: 'unlock',
       params: {
-        amount: IconConverter.toHexNumber(amount)
-      }
+        amount: IconConverter.toHexNumber(amount),
+      },
     });
 
     return this.callICONPlugins(payload);
@@ -46,7 +46,7 @@ export default class Savings extends Contract {
   claimRewards() {
     const payload = this.transactionParamsBuilder({
       method: 'claimRewards',
-      params: {}
+      params: {},
     });
 
     return this.callICONPlugins(payload);
@@ -57,8 +57,8 @@ export default class Savings extends Contract {
       method: 'getTotalPayout',
       blockHeight: blockHeight,
       params: {
-        token
-      }
+        token,
+      },
     });
 
     return this.call(payload);

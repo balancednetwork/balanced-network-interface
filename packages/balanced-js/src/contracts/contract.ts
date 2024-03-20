@@ -20,7 +20,10 @@ export class Contract {
   public address: string = '';
   public ledger: Ledger;
 
-  constructor(protected contractSettings: ContractSettings, address?: string) {
+  constructor(
+    protected contractSettings: ContractSettings,
+    address?: string,
+  ) {
     this.provider = contractSettings.provider;
     this.nid = contractSettings.networkId;
     this.ledger = new Ledger(contractSettings);
@@ -45,14 +48,14 @@ export class Contract {
     return JSON.parse(
       JSON.stringify(params, (_key, value) => {
         return isEmpty(value) && value !== 0 ? undefined : value;
-      })
+      }),
     );
   }
 
   public paramsBuilder({
     method,
     blockHeight,
-    params
+    params,
   }: {
     method: string;
     blockHeight?: number;
@@ -75,7 +78,7 @@ export class Contract {
   public transactionParamsBuilder({
     method,
     params,
-    value = '0'
+    value = '0',
   }: {
     method: string;
     value?: string;
@@ -99,7 +102,7 @@ export class Contract {
       jsonrpc: '2.0',
       method: 'icx_sendTransaction',
       params: IconConverter.toRawTransaction(payload),
-      id: Date.now()
+      id: Date.now(),
     };
   }
 
@@ -121,7 +124,7 @@ export class Contract {
       jsonrpc: '2.0',
       method: 'icx_sendTransaction',
       params: IconConverter.toRawTransaction(payload),
-      id: Date.now()
+      id: Date.now(),
     };
   }
 
@@ -137,11 +140,11 @@ export class Contract {
       new CustomEvent('ICONEX_RELAY_REQUEST', {
         detail: {
           type: 'REQUEST_JSON-RPC',
-          payload
-        }
-      })
+          payload,
+        },
+      }),
     );
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const handler = ({ detail: { type, payload } }: any) => {
         if (type === 'RESPONSE_JSON-RPC') {
           window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
@@ -159,7 +162,7 @@ export class Contract {
     if (this.contractSettings.ledgerSettings.actived) {
       const signedTransaction = await this.ledger.signTransaction(payload);
       return {
-        result: await this.provider.sendTransaction(signedTransaction).execute()
+        result: await this.provider.sendTransaction(signedTransaction).execute(),
       };
     }
   }

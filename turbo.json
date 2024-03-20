@@ -11,6 +11,10 @@
     },
     "clean": {
       "cache": false
+    },
+    "pretty": {
+      "dependsOn": ["^pretty"],
+      "cache": false
     }
   }
 }

@@ -13,7 +13,7 @@ export default class Loans extends Contract {
   withdrawCollateral(value: string, collateralType?: string) {
     const payload = this.transactionParamsBuilder({
       method: 'withdrawCollateral',
-      params: { 
+      params: {
         _value: IconConverter.toHexNumber(value),
         _collateralSymbol: collateralType || null,
       },
@@ -25,7 +25,7 @@ export default class Loans extends Contract {
   withdrawAndUnstake(value: string) {
     const payload = this.transactionParamsBuilder({
       method: 'withdrawAndUnstake',
-      params: { 
+      params: {
         _value: IconConverter.toHexNumber(value),
       },
     });
@@ -56,7 +56,7 @@ export default class Loans extends Contract {
         _assetToBorrow: asset || 'bnUSD',
         _amountToBorrow: IconConverter.toHexNumber(amount),
       },
-    })
+    });
 
     return this.callICONPlugins(payload);
   }
@@ -176,8 +176,8 @@ export default class Loans extends Contract {
       method: 'borrowerCount',
       blockHeight,
       params: {
-        collateralAddress
-      }
+        collateralAddress,
+      },
     });
 
     return this.call(callParams);
@@ -188,8 +188,8 @@ export default class Loans extends Contract {
       method: 'getCurrentFloor',
       blockHeight,
       params: {
-        tokenAddress
-      }
+        tokenAddress,
+      },
     });
 
     return this.call(callParams);
@@ -198,7 +198,7 @@ export default class Loans extends Contract {
   getFloorPercentage(blockHeight?: number) {
     const callParams = this.paramsBuilder({
       method: 'getFloorPercentage',
-      blockHeight
+      blockHeight,
     });
 
     return this.call(callParams);
@@ -207,19 +207,19 @@ export default class Loans extends Contract {
   getTimeDelayMicroSeconds(blockHeight?: number) {
     const callParams = this.paramsBuilder({
       method: 'getTimeDelayMicroSeconds',
-      blockHeight
+      blockHeight,
     });
 
     return this.call(callParams);
   }
-  
+
   getInterestRate(symbol: string) {
     const callParams = this.paramsBuilder({
       method: 'getInterestRate',
       params: {
         symbol,
       },
-    })
+    });
 
     return this.call(callParams);
   }

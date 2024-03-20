@@ -14,8 +14,8 @@ export default class BBALN extends Contract {
     const payload = this.paramsBuilder({
       method: 'getLocked',
       params: {
-        _owner: account
-      }
+        _owner: account,
+      },
     });
 
     return this.call(payload);
@@ -26,8 +26,8 @@ export default class BBALN extends Contract {
       method: 'balanceOf',
       params: {
         _owner: account,
-        timestamp: timestamp
-      }
+        timestamp: timestamp,
+      },
     });
 
     return this.call(payload);
@@ -40,7 +40,7 @@ export default class BBALN extends Contract {
 
     return this.callICONPlugins(payload);
   }
-  
+
   withdrawEarly() {
     const payload = this.transactionParamsBuilder({
       method: 'withdrawEarly',
@@ -64,7 +64,7 @@ export default class BBALN extends Contract {
     const payload = this.paramsBuilder({
       method: 'getTotalLocked',
     });
-    
+
     return this.call(payload);
   }
 
@@ -73,8 +73,8 @@ export default class BBALN extends Contract {
       method: 'totalSupply',
       params: {
         time: timestamp ? `${timestamp}000` : '0',
-      }
-    })
+      },
+    });
 
     return this.call(payload);
   }
@@ -83,7 +83,7 @@ export default class BBALN extends Contract {
     const payload = this.paramsBuilder({
       method: 'activeUsersCount',
     });
-    
+
     return this.call(payload);
   }
 }

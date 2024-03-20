@@ -28,8 +28,8 @@ export default class XCall extends Contract {
     const callParams = this.paramsBuilder({
       method: 'verifySuccess',
       params: {
-        sn
-      }
+        sn,
+      },
     });
 
     return this.call(callParams);
@@ -41,13 +41,13 @@ export default class XCall extends Contract {
       params: {
         _net,
         _rollback: _rollback ? '0x1' : '0x0',
-      }
+      },
     });
 
     return this.call(callParams);
   }
 
-  sendCallMessage(_to: string, _data: string, _rollback?: string,  sources?: string[], destinations?: string[]) {
+  sendCallMessage(_to: string, _data: string, _rollback?: string, sources?: string[], destinations?: string[]) {
     const payload = this.transactionParamsBuilder({
       method: 'sendCallMessage',
       params: {
@@ -55,7 +55,7 @@ export default class XCall extends Contract {
         _data,
         _rollback,
         sources,
-        destinations
+        destinations,
       },
     });
 
@@ -67,7 +67,7 @@ export default class XCall extends Contract {
       method: 'executeCall',
       params: {
         _reqId,
-        _data
+        _data,
       },
     });
 
@@ -78,7 +78,7 @@ export default class XCall extends Contract {
     const payload = this.transactionParamsBuilder({
       method: 'executeRollback',
       params: {
-        _sn
+        _sn,
       },
     });
 

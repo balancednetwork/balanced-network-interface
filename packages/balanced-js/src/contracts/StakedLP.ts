@@ -58,8 +58,8 @@ export default class StakedLP extends Contract {
     const payload = this.paramsBuilder({
       method: 'getSourceName',
       params: {
-        id: IconConverter.toHexNumber(sourceID)
-      }
+        id: IconConverter.toHexNumber(sourceID),
+      },
     });
 
     return this.call(payload);
@@ -69,8 +69,8 @@ export default class StakedLP extends Contract {
     const payload = this.paramsBuilder({
       method: 'getSourceId',
       params: {
-        name: source
-      }
+        name: source,
+      },
     });
 
     return this.call(payload);
@@ -89,7 +89,7 @@ export default class StakedLP extends Contract {
       method: 'totalStaked',
       params: {
         _id: IconConverter.toHex(id),
-      }
+      },
     });
 
     return this.call(payload);

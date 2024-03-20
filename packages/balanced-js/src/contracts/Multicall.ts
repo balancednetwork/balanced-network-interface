@@ -14,7 +14,7 @@ export interface CallData {
  * Not yet used
  */
 export function convertParams(params: any[]): string[] {
-  return params.map(param => {
+  return params.map((param) => {
     if (typeof param === 'number') {
       return IconConverter.toHexNumber(param);
     } else if (typeof param === 'boolean') {
@@ -60,7 +60,7 @@ export default class Multicall extends Contract {
       const result = await this.tryAggregate(false, calls);
       const aggs = result['returnData'];
 
-      const data = aggs.map(agg => {
+      const data = aggs.map((agg) => {
         if (agg['success'] === '0x0') {
           return null;
         }

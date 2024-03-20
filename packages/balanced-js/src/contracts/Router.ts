@@ -17,7 +17,7 @@ export default class Router extends Contract {
       params: {
         _path: path,
         _minReceive: IconConverter.toHexNumber(minimumReceive),
-        ...(receiver && { _receiver: receiver })
+        ...(receiver && { _receiver: receiver }),
       },
     });
 

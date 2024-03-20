@@ -11,12 +11,14 @@
     "preinstall": "npx only-allow pnpm",
     "dev": "turbo run dev --filter=web...",
     "build": "turbo run build --filter=web...",
+    "pretty": "turbo run pretty",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@biomejs/biome": "1.6.1",
     "typescript": "^5.3.3"
   }
 }

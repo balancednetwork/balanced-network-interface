@@ -76,11 +76,11 @@ export default class BALN extends IRC2 {
 
   createLock(to: string, value: string, unlockTime: number) {
     const transferData = JSON.stringify({
-      method: "createLock",
+      method: 'createLock',
       params: {
-        unlockTime:unlockTime * 1000
-      }
-    })
+        unlockTime: unlockTime * 1000,
+      },
+    });
 
     const payload = this.transactionParamsBuilder({
       method: 'transfer',
@@ -96,12 +96,12 @@ export default class BALN extends IRC2 {
 
   increaseAmount(to: string, value: string, unlockTime: number) {
     const transferData = JSON.stringify({
-      method: "increaseAmount",
+      method: 'increaseAmount',
       params: {
-        unlockTime: unlockTime * 1000
-      }
-    })
-    
+        unlockTime: unlockTime * 1000,
+      },
+    });
+
     const payload = this.transactionParamsBuilder({
       method: 'transfer',
       params: {

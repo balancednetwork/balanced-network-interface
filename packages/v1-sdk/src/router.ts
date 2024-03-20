@@ -1,6 +1,13 @@
 import invariant from 'tiny-invariant';
 
-import { Token, Currency, CurrencyAmount, Percent, TradeType, validateAndParseAddress } from '@balancednetwork/sdk-core';
+import {
+  Token,
+  Currency,
+  CurrencyAmount,
+  Percent,
+  TradeType,
+  validateAndParseAddress,
+} from '@balancednetwork/sdk-core';
 
 import { Trade } from './entities';
 

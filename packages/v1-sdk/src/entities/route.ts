@@ -15,7 +15,7 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     invariant(pairs.length > 0, 'PAIRS');
     const chainId: number = pairs[0].chainId;
     invariant(
-      pairs.every(pair => pair.chainId === chainId),
+      pairs.every((pair) => pair.chainId === chainId),
       'CHAIN_IDS',
     );
 
@@ -62,14 +62,17 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
   }
 
   public get pathForSwap(): (string | null)[] {
-    return this.path.map((token: Token) => {
-      if ( token.symbol === 'ICX') {
-        return null;
-      }
-      if (this.externalNativeTokens.includes(token.symbol!)) {
-        return [token.address, null];
-      }
-      return token.address;
-    }).slice(1).flat();
+    return this.path
+      .map((token: Token) => {
+        if (token.symbol === 'ICX') {
+          return null;
+        }
+        if (this.externalNativeTokens.includes(token.symbol!)) {
+          return [token.address, null];
+        }
+        return token.address;
+      })
+      .slice(1)
+      .flat();
   }
 }

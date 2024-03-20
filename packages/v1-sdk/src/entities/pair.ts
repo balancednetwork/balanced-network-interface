@@ -33,7 +33,7 @@ export const computePairAddress = ({
   return getCreate2Address(
     factoryAddress,
     keccak256(['bytes'], [pack(['address', 'address'], [token0.address, token1.address])]),
-    INIT_CODE_HASH
+    INIT_CODE_HASH,
   );
 };
 export class Pair {
@@ -55,7 +55,7 @@ export class Pair {
       poolId?: number;
       totalSupply?: string;
       baseAddress?: string;
-    }
+    },
   ) {
     let tokenAmounts = [currencyAmountA, tokenAmountB];
     // Also, as a rule, sICX is always on the right side (except for sICX/bnUSD). bnUSD is also always on the right side (Exception for sICX/BTCB)
@@ -78,7 +78,7 @@ export class Pair {
       'cx0000000000000000000000000000000000000002',
       decimals,
       'BALN-V2',
-      'Balanced V2'
+      'Balanced V2',
     );
     this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
@@ -186,7 +186,7 @@ export class Pair {
     const denominator = JSBI.add(JSBI.multiply(inputReserve.quotient, _1000), inputAmountWithFee);
     const outputAmount = CurrencyAmount.fromRawAmount(
       inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      JSBI.divide(numerator, denominator)
+      JSBI.divide(numerator, denominator),
     );
     if (JSBI.equal(outputAmount.quotient, ZERO)) {
       throw new InsufficientInputAmountError();
@@ -226,7 +226,7 @@ export class Pair {
     const denominator = JSBI.multiply(JSBI.subtract(outputReserve.quotient, outputAmount.quotient), _997);
     const inputAmount = CurrencyAmount.fromRawAmount(
       outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      JSBI.add(JSBI.divide(numerator, denominator), ONE)
+      JSBI.add(JSBI.divide(numerator, denominator), ONE),
     );
     return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
   }
@@ -234,7 +234,7 @@ export class Pair {
   public getLiquidityMinted(
     totalSupply: CurrencyAmount<Token>,
     tokenAmountA: CurrencyAmount<Token>,
-    tokenAmountB: CurrencyAmount<Token>
+    tokenAmountB: CurrencyAmount<Token>,
   ): CurrencyAmount<Token> {
     invariant(totalSupply.currency.equals(this.liquidityToken), 'LIQUIDITY');
     const tokenAmounts = [tokenAmountA, tokenAmountB];
@@ -245,23 +245,23 @@ export class Pair {
     if (this.isQueue) {
       return CurrencyAmount.fromRawAmount(
         this.liquidityToken,
-        tokenAmountA.currency.address === NULL_CONTRACT_ADDRESS ? tokenAmountA.quotient : tokenAmountB.quotient
+        tokenAmountA.currency.address === NULL_CONTRACT_ADDRESS ? tokenAmountA.quotient : tokenAmountB.quotient,
       );
     }
 
     if (JSBI.equal(totalSupply.quotient, ZERO)) {
       liquidity = JSBI.subtract(
         sqrt(JSBI.multiply(tokenAmounts[0].quotient, tokenAmounts[1].quotient)),
-        MINIMUM_LIQUIDITY
+        MINIMUM_LIQUIDITY,
       );
     } else {
       const amount0 = JSBI.divide(
         JSBI.multiply(tokenAmounts[0].quotient, totalSupply.quotient),
-        this.reserve0.quotient
+        this.reserve0.quotient,
       );
       const amount1 = JSBI.divide(
         JSBI.multiply(tokenAmounts[1].quotient, totalSupply.quotient),
-        this.reserve1.quotient
+        this.reserve1.quotient,
       );
       liquidity = JSBI.lessThanOrEqual(amount0, amount1) ? amount0 : amount1;
     }
@@ -276,7 +276,7 @@ export class Pair {
     totalSupply: CurrencyAmount<Token>,
     liquidity: CurrencyAmount<Token>,
     feeOn: boolean = false,
-    kLast?: BigintIsh
+    kLast?: BigintIsh,
   ): CurrencyAmount<Token> {
     invariant(this.involvesToken(token), 'TOKEN');
     invariant(totalSupply.currency.equals(this.liquidityToken), 'TOTAL_SUPPLY');
@@ -307,7 +307,7 @@ export class Pair {
 
     return CurrencyAmount.fromRawAmount(
       token,
-      JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserveOf(token).quotient), totalSupplyAdjusted.quotient)
+      JSBI.divide(JSBI.multiply(liquidity.quotient, this.reserveOf(token).quotient), totalSupplyAdjusted.quotient),
     );
   }
 }

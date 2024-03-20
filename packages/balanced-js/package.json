@@ -6,10 +6,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.mjs",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "repository": "https://github.com/balancednetwork/balanced-js.git",
   "scripts": {
     "lint": "tsup lint src",
@@ -17,7 +14,8 @@
     "dev": "tsup --watch",
     "test": "tsup --run",
     "prepublishOnly": "tsup",
-    "clean": "rm -rf dist && rm -rf node_modules"
+    "clean": "rm -rf dist && rm -rf node_modules",
+    "pretty": "biome format . --write"
   },
   "dependencies": {
     "@balancednetwork/hw-app-icx": "^1.0.6",

@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-import SearchIcon from 'assets/icons/search.svg?inline';
+const SearchIcon = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="matrix(1,0,0,1,-2,-2)"><circle cx="10.5" cy="10.5" r="7.5" style="fill:none;stroke:rgb(128,133,151);stroke-width:2px;"/></g><g transform="matrix(1,0,0,1,-2,-2)"><path d="M21,21L15.8,15.8" style="fill:none;fill-rule:nonzero;stroke:rgb(128,133,151);stroke-width:2px;"/></g></svg>'
 
 export const SearchInput = styled.input`
-  background-image: url(${SearchIcon});
+  background-image: url('${SearchIcon}');
   background-repeat: no-repeat;
   background-size: 18px;
   background-position: 15px 10px;

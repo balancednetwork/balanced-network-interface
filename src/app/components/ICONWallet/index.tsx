@@ -119,6 +119,20 @@ export const ListItem = styled(DashGrid)<{ border?: boolean }>`
   }
 `;
 
+export const StandardCursorListItem = styled(DashGrid)<{ border?: boolean }>`
+  padding: 20px 0;
+  cursor: default; // Standard cursor style
+  color: #ffffff;
+  transition: all 0.2s ease;
+  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
+  @media screen and (max-width: ${walletBreakpoint}) {
+    padding: 15px 0;
+  }
+  &.active {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
 export const AssetSymbol = styled.div<{ hasNotification?: boolean }>`
   display: grid;
   grid-column-gap: 12px;

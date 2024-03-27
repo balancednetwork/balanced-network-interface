@@ -409,7 +409,9 @@ export default function BridgePanel() {
             msg,
             getFeeParam(1200000),
             undefined,
-            [{ amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }, assetToBridge],
+            archwayXcallFees.rollback !== '0'
+              ? [{ amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }, assetToBridge]
+              : [assetToBridge],
           );
 
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
@@ -429,12 +431,20 @@ export default function BridgePanel() {
               data: [],
             },
           };
+
           try {
             initTransaction('archway', `Requesting cross-chain transfer...`);
             setXCallInProgress(true);
-            const res = await signingClient.execute(accountArch, tokenAddress, msg, 'auto', undefined, [
-              { amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
-            ]);
+            const res = await signingClient.execute(
+              accountArch,
+              tokenAddress,
+              msg,
+              'auto',
+              undefined,
+              archwayXcallFees.rollback !== '0'
+                ? [{ amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
+                : undefined,
+            );
 
             const originEventData = getXCallOriginEventDataFromArchway(
               res.events,
@@ -466,7 +476,9 @@ export default function BridgePanel() {
               msg,
               getFeeParam(1200000),
               undefined,
-              [{ amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
+              archwayXcallFees.rollback !== '0'
+                ? [{ amount: archwayXcallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
+                : undefined,
             );
 
             const originEventData = getXCallOriginEventDataFromArchway(

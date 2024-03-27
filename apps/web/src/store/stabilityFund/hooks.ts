@@ -174,7 +174,9 @@ export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<
       data.forEach((limit, index) => {
         const address = whitelistedTokenAddresses[index];
         const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address] as Token;
-        limits[address] = CurrencyAmount.fromRawAmount(token, limit);
+        if (token) {
+          limits[address] = CurrencyAmount.fromRawAmount(token, limit);
+        }
       });
 
       return limits;

@@ -61,14 +61,18 @@ export function useFetchSavingsInfo(account?: string | null) {
     async account => {
       if (account) {
         const lockedAmount = await bnJs.Savings.getLockedAmount(account);
-        try {
-          const lockedBnUSD = CurrencyAmount.fromRawAmount(
-            SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address],
-            lockedAmount,
-          );
-          changeLockedAmount(lockedBnUSD);
-        } catch (e) {
-          console.log(e);
+        if (lockedAmount) {
+          try {
+            const lockedBnUSD = CurrencyAmount.fromRawAmount(
+              SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address],
+              lockedAmount,
+            );
+            changeLockedAmount(lockedBnUSD);
+          } catch (e) {
+            console.log(e);
+          }
+        } else {
+          changeLockedAmount(CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], '0'));
         }
       } else {
         changeLockedAmount(CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], '0'));

@@ -66,7 +66,7 @@ const RewardsPanel = () => {
         {isMedium ? <Divider my="30px" /> : <VerticalDivider margin={'3px 50px'} />}
         <SliderWrap>
           <BBalnSlider
-            title={t`Earning power`}
+            title={t`Earning potential`}
             titleVariant="h4"
             showMaxRewardsNotice
             sliderMargin="15px 0 0"

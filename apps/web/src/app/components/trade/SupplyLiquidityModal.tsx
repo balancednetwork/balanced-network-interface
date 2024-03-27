@@ -2,7 +2,6 @@ import React from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Currency, Token } from '@balancednetwork/sdk-core';
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate';
 import { t, Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
@@ -117,14 +116,9 @@ export default function SupplyLiquidityModal({
     });
 
     try {
-      const res: ExecuteResult = await signingClient.execute(
-        accountArch,
-        ARCHWAY_CONTRACTS.assetManager,
-        msg,
-        'auto',
-        undefined,
-        [{ amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
-      );
+      const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.assetManager, msg, 'auto', undefined, [
+        { amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
+      ]);
 
       addTransactionResult('archway', res, 'Cross-chain supply requested.');
       setCurrentXCallState(CurrentXCallState.AWAKE);

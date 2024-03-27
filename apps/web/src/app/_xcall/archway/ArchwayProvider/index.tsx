@@ -58,11 +58,13 @@ const ArchwayProvider = ({ children }) => {
       return;
     }
 
-    keplr.defaultOptions = {
-      sign: {
-        preferNoSetFee: true,
-      },
-    };
+    if (NETWORK_ID === SupportedChainId.MAINNET) {
+      keplr.defaultOptions = {
+        sign: {
+          preferNoSetFee: true,
+        },
+      };
+    }
 
     if (NETWORK_ID === SupportedChainId.MAINNET) {
       if (leap) {

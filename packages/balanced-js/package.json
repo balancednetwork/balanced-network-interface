@@ -1,0 +1,48 @@
+{
+  "name": "@balancednetwork/balanced-js",
+  "license": "MIT",
+  "version": "1.2.33",
+  "description": "🛠 An SDK for building applications on top of BalancedNetwork",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.mjs",
+  "files": ["dist", "src"],
+  "repository": "https://github.com/balancednetwork/balanced-js.git",
+  "scripts": {
+    "lint": "tsup lint src",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "tsup --run",
+    "prepublishOnly": "tsup",
+    "clean": "rm -rf dist && rm -rf node_modules",
+    "pretty": "biome format . --write"
+  },
+  "dependencies": {
+    "@balancednetwork/hw-app-icx": "^1.0.6",
+    "bignumber.js": "9.0.1",
+    "icon-sdk-js": "^1.2.1",
+    "lodash-es": "4.17.21"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "@types/lodash-es": "^4.17.12",
+    "tsup": "^8.0.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  }
+}

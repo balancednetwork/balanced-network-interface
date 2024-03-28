@@ -47,7 +47,7 @@ const WalletInfo = styled(Box)`
 const WalletButtonWrapper = styled(Box)<{ hasnotification?: boolean }>`
   position: relative;
   ${({ hasnotification }) => (hasnotification ? notificationCSS : '')}
-  &::before, &:after {
+  &::before, &::after {
     left: 7px;
     top: 13px;
     ${({ theme }) => `background-color: ${theme.colors.bg5}`};

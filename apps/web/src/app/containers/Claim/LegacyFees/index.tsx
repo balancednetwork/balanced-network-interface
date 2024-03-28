@@ -68,7 +68,7 @@ const Separator = styled.h1`
     font-size: 60px;
   `};
 
-  ::after {
+  &::after {
     content: '';
     display: block;
     margin-top: 20px;

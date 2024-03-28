@@ -523,7 +523,7 @@ const Threshold = styled(Box)<{ warned?: boolean; heightened?: boolean }>`
   z-index: 2;
   transition: color 0.3s ease;
 
-  ::after {
+  &::after {
     position: absolute;
     content: '';
     top: 0;
@@ -570,7 +570,7 @@ const Locked = styled(Threshold)<{ pos: number }>`
 const Liquidated = styled(Threshold)`
   left: 100%;
 
-  ::after {
+  &::after {
     margin-left: 0;
   }
 

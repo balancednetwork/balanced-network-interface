@@ -58,7 +58,7 @@ const Separator = styled.h1`
   font-size: 60px;
   line-height: 1.33;
   text-align: center;
-  ::after {
+  &::after {
     content: '';
     display: block;
     margin-top: 20px;

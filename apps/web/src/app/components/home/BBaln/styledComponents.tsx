@@ -127,7 +127,7 @@ export const Threshold = styled(Box)<{ position: number; flipTextDirection?: boo
   height: 25px;
   margin-top: -15px;
   background: #fff;
-  ::after {
+  &::after {
     position: absolute;
     content: '';
     top: 0;
@@ -148,7 +148,7 @@ export const Threshold = styled(Box)<{ position: number; flipTextDirection?: boo
   ${({ flipTextDirection }) =>
     flipTextDirection &&
     css`
-      ::after {
+      &::after {
         margin-left: 0;
       }
 

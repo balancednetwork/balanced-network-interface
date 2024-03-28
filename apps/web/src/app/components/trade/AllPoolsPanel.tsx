@@ -396,11 +396,11 @@ export default function AllPoolsPanel() {
           </HeaderText>
         </DashGrid>
 
-        {/* {incentivisedPairs ? (
+        {incentivisedPairs ? (
           sortData(Object.values(incentivisedPairs)).map((pair, index, array) => (
             <PairItem key={index} pair={pair} onClick={handlePoolLick} isLast={array.length - 1 === index} />
           ))
-        ) : ( */}
+        ) : (
         <>
           <SkeletonPairPlaceholder />
           <Divider />
@@ -416,7 +416,7 @@ export default function AllPoolsPanel() {
           <Divider />
           <SkeletonPairPlaceholder />
         </>
-        {/* )} */}
+        )}
       </List>
     </Box>
   );

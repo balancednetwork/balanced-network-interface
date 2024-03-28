@@ -40,7 +40,7 @@ const Arrow = styled.div`
   height: 12px;
   z-index: -1;
 
-  ::before {
+  &::before {
     position: absolute;
     width: 12px;
     height: 12px;

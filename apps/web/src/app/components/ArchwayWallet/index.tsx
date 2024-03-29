@@ -41,8 +41,8 @@ import {
   DataText,
   HeaderText,
   List,
-  ListItem,
   ModalContent,
+  StandardCursorListItem,
   WalletAssets,
   WalletTotal,
   Wrapper,
@@ -294,7 +294,7 @@ const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
               {valueSortedTokens.map((currency, index, arr) => {
                 const symbol = currency.symbol!;
                 return (
-                  <ListItem
+                  <StandardCursorListItem
                     className={index === activeIndex ? 'active' : ''}
                     key={symbol}
                     border={index !== arr.length - 1}
@@ -302,7 +302,7 @@ const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
                     // onClick={() => handleAssetClick(symbol)}
                   >
                     <TokenInfo currency={currency} />
-                  </ListItem>
+                  </StandardCursorListItem>
                 );
               })}
             </List>
@@ -333,14 +333,14 @@ const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
                     )}
                   </BalanceAndValueWrap>
                 </DashGrid>
-                <ListItem border={false}>
+                <StandardCursorListItem border={false}>
                   <TokenInfo
                     currency={
                       filteredSortedTokens.find(currency => currency.wrapped.symbol === modalAsset) ||
                       filteredSortedTokens[0]
                     }
                   />
-                </ListItem>
+                </StandardCursorListItem>
                 <BoxPanelWithArrow bg="bg3">
                   <WalletUI
                     currency={

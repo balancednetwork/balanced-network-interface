@@ -1,10 +1,11 @@
 import React from 'react';
 
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { LOCALE_LABEL, SupportedLocale } from 'constants/locales';
 import { useLocationLinkProps } from 'hooks/useLocationLinkProps';
+import { Check } from 'react-feather';
 
 export const MenuList = styled.ul`
   list-style-type: none;
@@ -25,10 +26,11 @@ export const MenuItem = styled.li`
   }
 `;
 
-const InternalMenuItem = styled(Link)`
+const InternalMenuItem = styled(Link)<{ $active?: boolean }>`
   padding: 10px 15px;
   transition: background-color 0.3s ease;
   color: ${({ theme }) => theme.colors.white};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors.primary : 'transparent')};
 
   &:hover {
     cursor: pointer;
@@ -63,6 +65,7 @@ export function LanguageMenuItem({
 
   if (!to) return null;
 
+  const theme = useTheme();
   return (
     <InternalLinkMenuItem
       onClick={() => {
@@ -72,7 +75,7 @@ export function LanguageMenuItem({
       to={to}
     >
       <li>{LOCALE_LABEL[locale]}</li>
-      {/* {active && <Check opacity={0.6} size={16} />} */}
+      {active && <Check opacity={0.6} size={16} color={theme.colors.primary} />}
     </InternalLinkMenuItem>
   );
 }

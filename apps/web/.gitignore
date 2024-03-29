@@ -6,6 +6,7 @@ stats.json
 .pnp
 .pnp.js
 dist
+src/locales/*.js
 
 # misc
 .DS_Store

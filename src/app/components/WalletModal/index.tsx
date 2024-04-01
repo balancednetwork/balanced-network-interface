@@ -4,6 +4,7 @@ import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednet
 import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { t, Trans } from '@lingui/macro';
+import { Skeleton } from '@material-ui/lab';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -17,7 +18,6 @@ import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';
 import { MenuList, LanguageMenuItem } from 'app/components/Menu';
 import Modal, { ModalProps } from 'app/components/Modal';
-import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArchWalletIcon } from 'assets/icons/archway.svg';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
@@ -91,6 +91,11 @@ const LedgerAddressList = styled(Modal)`
 
 const ChainIcons = styled.div``;
 const WalletIcons = styled.div``;
+
+const StyledSkeleton = styled(Skeleton)`
+  background-color: rgba(44, 169, 183, 0.2) !important;
+  display: inline-block !important;
+`;
 
 const WalletOption = styled(Box)`
   display: flex;
@@ -197,6 +202,7 @@ export default function WalletModal() {
   const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
 
   const { requestAddress, hasExtension, account, disconnect } = useIconReact();
+  const renderedAddressList = isLedgerLoading ? [undefined, undefined, undefined, undefined, undefined] : addressList;
 
   const handleOpenWallet = React.useCallback(() => {
     if (isMobile) {
@@ -289,7 +295,11 @@ export default function WalletModal() {
 
   const getLedgerPage = React.useCallback(
     async (pageNum: number) => {
-      updateAddressList([]);
+      // disable current page
+      if (pageNum === currentLedgerAddressPage) {
+        return;
+      }
+      // updateAddressList([]);
 
       setLedgerLoading(true);
       setIsLedgerErr(false);
@@ -304,24 +314,18 @@ export default function WalletModal() {
         return;
       }
 
-      // disable current page
-      if (pageNum === currentLedgerAddressPage) {
-        return;
-      }
-
       const next = (pageNum - 1) * limit;
+      updatePaging({
+        limit,
+        offset: next,
+      });
+      changeCurrentLedgerAddressPage(pageNum);
 
       await updateLedgerAddress({ offset: next, limit });
       clearTimeout(timeout);
 
       // setLedgerLoading(false);
       setIsLedgerErr(false);
-
-      updatePaging({
-        limit,
-        offset: next,
-      });
-      changeCurrentLedgerAddressPage(pageNum);
     },
     [limit, currentLedgerAddressPage, updatePaging, changeCurrentLedgerAddressPage, updateLedgerAddress],
   );
@@ -527,11 +531,7 @@ export default function WalletModal() {
           <Typography textAlign="center" mb={3}>
             <Trans>Choose a wallet from your Ledger:</Trans>
           </Typography>
-          {isLedgerLoading && (
-            <Flex justifyContent="center">
-              <Spinner></Spinner>
-            </Flex>
-          )}
+
           {isLedgerErr && (
             <Flex justifyContent="center" mt={4} mb={4}>
               <Typography>
@@ -543,53 +543,60 @@ export default function WalletModal() {
             <>
               <table className="wallet">
                 <tbody>
-                  {addressList.map((address: any) => {
+                  {renderedAddressList.map((address: any, index: number) => {
                     return (
                       <tr
-                        key={address.point}
+                        key={address?.point || index}
                         onClick={() => {
+                          if (!address) return;
                           chooseLedgerAddress({
                             address: address.address,
                             point: address.point,
                           });
                         }}
+                        style={{ pointerEvents: isLedgerLoading ? 'none' : 'auto' }}
                       >
-                        <td style={{ textAlign: 'left' }}>{displayAddress(address.address)}</td>
-                        <td style={{ textAlign: 'right' }}>{address.balance} ICX</td>
+                        <td style={{ textAlign: 'left' }}>
+                          {!address ? <StyledSkeleton width="100%" /> : displayAddress(address.address)}
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          {!address ? <StyledSkeleton width="50%" /> : address.balance + 'ICX'}{' '}
+                        </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
-              {!isLedgerLoading && (
-                <ul className="pagination">
-                  <li
-                    onClick={async () => {
-                      await getLedgerPage(currentLedgerAddressPage - 1);
-                    }}
-                  >
-                    ˂
-                  </li>
-                  {getPageNumbers(currentLedgerAddressPage).map(value => {
-                    return (
-                      <li
-                        key={Date.now() + Math.random()}
-                        className={value === currentLedgerAddressPage ? 'actived' : ''}
-                        onClick={async () => {
-                          await getLedgerPage(value);
-                        }}
-                      >
-                        {value}
-                      </li>
-                    );
-                  })}
-                  <li
-                    onClick={async () => {
-                      await getLedgerPage(currentLedgerAddressPage + 1);
-                    }}
-                  ></li>
-                </ul>
-              )}
+
+              <ul className="pagination" style={{ pointerEvents: isLedgerLoading ? 'none' : 'auto' }}>
+                <li
+                  onClick={async () => {
+                    await getLedgerPage(currentLedgerAddressPage - 1);
+                  }}
+                >
+                  {'<'}
+                </li>
+                {getPageNumbers(currentLedgerAddressPage).map(value => {
+                  return (
+                    <li
+                      key={Date.now() + Math.random()}
+                      className={value === currentLedgerAddressPage ? 'actived' : ''}
+                      onClick={async () => {
+                        await getLedgerPage(value);
+                      }}
+                    >
+                      {value}
+                    </li>
+                  );
+                })}
+                <li
+                  onClick={async () => {
+                    await getLedgerPage(currentLedgerAddressPage + 1);
+                  }}
+                >
+                  {'>'}
+                </li>
+              </ul>
             </>
           )}
         </Flex>

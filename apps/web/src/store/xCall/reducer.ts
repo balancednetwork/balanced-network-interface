@@ -1,7 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import {
-  CurrentXCallState,
   CurrentXCallStateType,
   OriginXCallData,
   SupportedXCallChains,
@@ -33,7 +32,7 @@ export type XCallState = {
 };
 
 const initialState: XCallState = {
-  xCall: CurrentXCallState.IDLE,
+  xCall: CurrentXCallStateType.IDLE,
   events: {
     icon: {
       origin: [],
@@ -51,7 +50,7 @@ export default createReducer(initialState, builder =>
     .addCase(addXCallOriginEvent, (state, { payload: { chain, data } }) => {
       if (chain && data) {
         state.events[chain].origin.push({ ...data, isPristine: true });
-        state.xCall = CurrentXCallState.AWAITING_DESTINATION_CALL_MESSAGE;
+        state.xCall = CurrentXCallStateType.AWAITING_DESTINATION_CALL_MESSAGE;
         state.listeningTo = {
           chain: data.destination,
           event: getFollowingEvent(data.eventName),
@@ -61,7 +60,7 @@ export default createReducer(initialState, builder =>
     .addCase(addXCallDestinationEvent, (state, { payload: { chain, data } }) => {
       if (chain && data) {
         state.events[chain].destination.push({ ...data, isPristine: true });
-        state.xCall = CurrentXCallState.AWAITING_USER_CALL_EXECUTION;
+        state.xCall = CurrentXCallStateType.AWAITING_USER_CALL_EXECUTION;
         state.listeningTo = undefined;
       }
     })
@@ -72,7 +71,7 @@ export default createReducer(initialState, builder =>
           state.events[chain].destination = state.events[chain].destination.filter(data => data.sn !== sn);
         });
         if (setToIdle) {
-          state.xCall = CurrentXCallState.IDLE;
+          state.xCall = CurrentXCallStateType.IDLE;
         }
       }
     })
@@ -96,7 +95,7 @@ export default createReducer(initialState, builder =>
     })
     .addCase(stopListening, state => {
       state.listeningTo = undefined;
-      state.xCall = CurrentXCallState.IDLE;
+      state.xCall = CurrentXCallStateType.IDLE;
     })
     .addCase(rollBackFromOrigin, (state, { payload: { chain, sn } }) => {
       if (chain && sn) {

@@ -12,7 +12,7 @@ import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
-import { CurrentXCallState, SupportedXCallChains } from 'app/_xcall/types';
+import { CurrentXCallStateType, SupportedXCallChains } from 'app/_xcall/types';
 import { getBytesFromString, getCrossChainTokenAddress } from 'app/_xcall/utils';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
@@ -121,13 +121,13 @@ export default function SupplyLiquidityModal({
       ]);
 
       addTransactionResult('archway', res, 'Cross-chain supply requested.');
-      setCurrentXCallState(CurrentXCallState.AWAKE);
+      setCurrentXCallState(CurrentXCallStateType.AWAKE);
       const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
       originEventData && addOriginEvent('archway', originEventData);
     } catch (e) {
       console.error(e);
       addTransactionResult('archway', null, 'Supply request failed');
-      setCurrentXCallState(CurrentXCallState.IDLE);
+      setCurrentXCallState(CurrentXCallStateType.IDLE);
     }
   };
 
@@ -348,18 +348,18 @@ export default function SupplyLiquidityModal({
   const hasEnoughICX = useHasEnoughICX();
 
   const xCallReset = () => {
-    setCurrentXCallState(CurrentXCallState.IDLE);
+    setCurrentXCallState(CurrentXCallStateType.IDLE);
   };
 
   const executeCallback = React.useCallback((success: boolean) => {
     setAddingTxs(state => ({ ...state, CURRENCY_A: success ? 'success' : '' }));
-    // setCurrentXCallState(CurrentXCallState.IDLE);
+    // setCurrentXCallState(CurrentXCallStateType.IDLE);
   }, []);
 
   // React.useEffect(() => {
   //   if (
   //     UIStatus[Field.CURRENCY_A].chain !== 'icon' &&
-  //     currentXCallState === CurrentXCallState.IDLE &&
+  //     currentXCallState === CurrentXCallStateType.IDLE &&
   //     !UIStatus[Field.CURRENCY_A].shouldSend &&
   //     isOpen
   //   ) {
@@ -394,7 +394,7 @@ export default function SupplyLiquidityModal({
 
   const isXcallModalOpen =
     isAnyEventPristine &&
-    currentXCallState !== CurrentXCallState.IDLE &&
+    currentXCallState !== CurrentXCallStateType.IDLE &&
     UIStatus[Field.CURRENCY_A].chain !== 'icon' &&
     !UIStatus[Field.CURRENCY_A].isAddPending;
 

@@ -18,7 +18,7 @@ import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
-import { CurrentXCallState, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
+import { CurrentXCallStateType, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
 import { getArchwayCounterToken, getBytesFromString, getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -179,7 +179,7 @@ const XCallSwapModal = ({
   };
 
   React.useEffect(() => {
-    if (currentXCallState === CurrentXCallState.IDLE) {
+    if (currentXCallState === CurrentXCallStateType.IDLE) {
       xCallReset();
       clearInputs();
     }

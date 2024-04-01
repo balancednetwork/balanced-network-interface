@@ -47,26 +47,27 @@ export type XCallDirection = {
   destination: SupportedXCallChains;
 };
 
-export type CurrentXCallStateType =
-  | 'IDLE'
-  | 'AWAKE'
-  | 'AWAITING_DESTINATION_CALL_MESSAGE'
-  | 'AWAITING_USER_CALL_EXECUTION'
-  | 'AWAITING_ORIGIN_ROLLBACK_MESSAGE'
-  | 'AWAITING_ORIGIN_RESPONSE_MESSAGE';
+export enum CurrentXCallStateType {
+  IDLE = 'IDLE',
+  AWAKE = 'AWAKE',
+  AWAITING_DESTINATION_CALL_MESSAGE = 'AWAITING_DESTINATION_CALL_MESSAGE',
+  AWAITING_USER_CALL_EXECUTION = 'AWAITING_USER_CALL_EXECUTION',
+  AWAITING_ORIGIN_ROLLBACK_MESSAGE = 'AWAITING_ORIGIN_ROLLBACK_MESSAGE',
+  AWAITING_ORIGIN_RESPONSE_MESSAGE = 'AWAITING_ORIGIN_RESPONSE_MESSAGE'
+}
 
-export const CurrentXCallState: { [key in CurrentXCallStateType]: CurrentXCallStateType } = Object.freeze({
-  IDLE: 'IDLE',
-  AWAKE: 'AWAKE',
-  AWAITING_DESTINATION_CALL_MESSAGE: 'AWAITING_DESTINATION_CALL_MESSAGE',
-  AWAITING_USER_CALL_EXECUTION: 'AWAITING_USER_CALL_EXECUTION',
+// export const CurrentXCallState: { [key in CurrentXCallStateType]: CurrentXCallStateType } = Object.freeze({
+//   IDLE: 'IDLE',
+//   AWAKE: 'AWAKE',
+//   AWAITING_DESTINATION_CALL_MESSAGE: 'AWAITING_DESTINATION_CALL_MESSAGE',
+//   AWAITING_USER_CALL_EXECUTION: 'AWAITING_USER_CALL_EXECUTION',
 
-  // raised every time _rollback wasn't null
-  AWAITING_ORIGIN_RESPONSE_MESSAGE: 'AWAITING_ORIGIN_RESPONSE_MESSAGE',
+//   // raised every time _rollback wasn't null
+//   AWAITING_ORIGIN_RESPONSE_MESSAGE: 'AWAITING_ORIGIN_RESPONSE_MESSAGE',
 
-  // raised when _rollback wasn't null and executeCall failed - revert happened in execution
-  AWAITING_ORIGIN_ROLLBACK_MESSAGE: 'AWAITING_ORIGIN_ROLLBACK_MESSAGE',
-});
+//   // raised when _rollback wasn't null and executeCall failed - revert happened in execution
+//   AWAITING_ORIGIN_ROLLBACK_MESSAGE: 'AWAITING_ORIGIN_ROLLBACK_MESSAGE',
+// });
 
 export type CrossChainTxType = {
   transactionHash: string;

@@ -24,7 +24,7 @@ import { useARCH } from 'app/_xcall/archway/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway, isDenomAsset } from 'app/_xcall/archway/utils';
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
-import { CurrentXCallState, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
+import { CurrentXCallStateType, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
 import { getCrossChainTokenBySymbol, getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
@@ -238,12 +238,12 @@ export default function BridgePanel() {
   }, [setNotPristine]);
 
   const openModal = React.useCallback(() => {
-    setCurrentXCallState(CurrentXCallState.AWAKE);
+    setCurrentXCallState(CurrentXCallStateType.AWAKE);
     setOpen(true);
   }, [setCurrentXCallState]);
 
   const closeModal = React.useCallback(() => {
-    setCurrentXCallState(CurrentXCallState.IDLE);
+    setCurrentXCallState(CurrentXCallStateType.IDLE);
     setOpen(false);
     setXCallInProgress(false);
     setNotPristine();
@@ -262,7 +262,7 @@ export default function BridgePanel() {
   }, [modalClosable, xCallInProgress, xCallReset]);
 
   React.useEffect(() => {
-    if (currentXCallState === CurrentXCallState.IDLE) {
+    if (currentXCallState === CurrentXCallStateType.IDLE) {
       xCallReset();
     }
   }, [currentXCallState, xCallReset]);

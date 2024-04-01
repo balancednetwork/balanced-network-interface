@@ -16,7 +16,7 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
-import { CurrentXCallState, SupportedXCallChains } from 'app/_xcall/types';
+import { CurrentXCallStateType, SupportedXCallChains } from 'app/_xcall/types';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
@@ -100,7 +100,7 @@ export default function SwapPanel() {
   const [crossChainSwapModalOpen, setCrossChainSwapModalOpen] = React.useState(false);
   const closeCrossChainSwapModal = React.useCallback(() => {
     setCrossChainSwapModalOpen(false);
-    setCurrentXCallState(CurrentXCallState.IDLE);
+    setCurrentXCallState(CurrentXCallStateType.IDLE);
     setNotPristine();
   }, [setCurrentXCallState, setNotPristine]);
 
@@ -118,7 +118,7 @@ export default function SwapPanel() {
   }, [signedInWallets, crossChainDestination, isChainDifference]);
 
   React.useEffect(() => {
-    if (currentXCallState === CurrentXCallState.IDLE) {
+    if (currentXCallState === CurrentXCallStateType.IDLE) {
       closeCrossChainSwapModal();
     }
   }, [currentXCallState, closeCrossChainSwapModal]);
@@ -268,7 +268,7 @@ export default function SwapPanel() {
       }
       setExecutionTrade(trade);
       setCrossChainSwapModalOpen(true);
-      setCurrentXCallState(CurrentXCallState.AWAKE);
+      setCurrentXCallState(CurrentXCallStateType.AWAKE);
     } else {
       if (!account) {
         toggleWalletModal();

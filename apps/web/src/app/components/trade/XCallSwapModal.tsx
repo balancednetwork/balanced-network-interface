@@ -57,8 +57,8 @@ type XCallSwapModalProps = {
 export const StyledButton = styled(Button)`
   position: relative;
 
-  :after,
-  :before {
+  &:after,
+  &:before {
     content: '';
     position: absolute;
     width: 0;
@@ -72,7 +72,7 @@ export const StyledButton = styled(Button)`
     bottom: 0;
   }
 
-  :before {
+  &:before {
     top: 0;
   }
 
@@ -95,7 +95,7 @@ export const StyledButton = styled(Button)`
   }
 
   &:disabled {
-    :after {
+    &:after {
       animation: expand 2s infinite;
     }
   }

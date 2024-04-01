@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "turbo run dev --filter=web...",
@@ -16,6 +19,7 @@
   "license": "ISC",
   "devDependencies": {
     "@biomejs/biome": "1.6.1",
+    "turbo": "^1.13.0",
     "typescript": "^5.3.3"
   }
 }

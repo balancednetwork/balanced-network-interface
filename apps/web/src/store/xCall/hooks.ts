@@ -117,12 +117,12 @@ export function useRemoveEvent(): (sn: number, setToIdle?: boolean) => void {
 
 export function useXCallOriginEvents(chain: SupportedXCallChains): OriginXCallData[] {
   const state = useXCallChainState(chain);
-  return [...state.origin];
+  return state.origin;
 }
 
 export function useXCallDestinationEvents(chain: SupportedXCallChains): DestinationXCallData[] {
   const state = useXCallChainState(chain);
-  return [...state.destination];
+  return state.destination;
 }
 
 export function useSetListeningTo(): (chain: SupportedXCallChains, event: XCallEventType) => void {
@@ -292,7 +292,7 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
 
   async function getTxs(skip: number) {
     const response = await axios.get(
-      `${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/transactions/address/${IBC_HANDLER_CX}?addr=${IBC_HANDLER_CX}&limit=100&skip=${skip}`,
+      `${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/transactions/address/${IBC_HANDLER_CX}?limit=100&skip=${skip}`,
     );
     return response.data;
   }
@@ -324,7 +324,7 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
   return useQuery(
     'xCallStats',
     async () => {
-      const txBatches = await Promise.all([getTxs(0), getTxs(100), getTxs(200), getTxs(300), getTxs(400)]);
+      const txBatches = await Promise.all([getTxs(0), getTxs(100)]);
       const txs = txBatches.flat();
       const oldTxIndex = txs.findIndex(tx => tx.block_timestamp < yesterdayTimestamp + 3600000000);
       const relevantTxs = txs.slice(0, oldTxIndex);
@@ -339,7 +339,7 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
     },
     {
       keepPreviousData: true,
-      refetchInterval: 3000,
+      refetchInterval: 30000,
     },
   );
 }

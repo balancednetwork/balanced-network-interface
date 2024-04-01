@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { useQuery, UseQueryResult } from 'react-query';
 import { v4 as uuidv4 } from 'uuid';
@@ -37,7 +37,6 @@ const ARCHWAY_SOCKET_QUERY = {
 export const useArchwayEventListener = () => {
   const listeningTo = useXCallListeningTo();
   const eventName: XCallEventType | null = listeningTo?.chain === 'archway' ? listeningTo.event : null;
-  const [socket, setSocket] = React.useState<WebSocket | undefined>(undefined);
   const addDestinationEvent = useAddDestinationEvent();
   const setListeningTo = useSetListeningTo();
   const iconOriginEvents = useXCallOriginEvents('icon');
@@ -47,106 +46,111 @@ export const useArchwayEventListener = () => {
   const rollBackFromOrigin = useRollBackFromOrigin();
   const flagRollbackReady = useFlagRollBackReady();
   const stopListening = useStopListening();
-  const query = `wasm-${eventName} EXISTS`;
+  const query = eventName ? `wasm-${eventName} EXISTS` : null;
 
-  const disconnectFromWebsocket = React.useCallback(() => {
-    if (!socket || socket.readyState !== WebSocket.OPEN) return;
-    socket.send(JSON.stringify({ ...ARCHWAY_SOCKET_QUERY, method: 'unsubscribe' }));
-    socket.close();
-    setSocket(undefined);
-  }, [socket]);
+  const socketRef = useRef<WebSocket | undefined>(undefined);
 
-  React.useEffect(() => {
-    if (eventName) {
-      if (!socket) {
-        const websocket = new WebSocket(ARCHWAY_WEBSOCKET_URL);
+  const [isReady, setIsReady] = useState(false);
 
-        websocket.onopen = () => {
-          const queryObject = JSON.parse(JSON.stringify(ARCHWAY_SOCKET_QUERY));
-          queryObject.params.query = query;
-          websocket.send(JSON.stringify(queryObject));
-        };
+  // initialize the websocket connection
+  useEffect(() => {
+    // create a new websocket
+    socketRef.current = new WebSocket(ARCHWAY_WEBSOCKET_URL);
 
-        websocket.onmessage = event => {
-          const eventData = JSON.parse(event.data);
-          const events = eventData.result?.events;
-          if (events) {
-            switch (eventName) {
-              case XCallEvent.CallMessage: {
-                const destinationEventData = getXCallDestinationEventDataFromArchwayEvent(events);
+    // set the ready state
+    socketRef.current.onopen = () => {
+      setIsReady(true);
+    };
 
-                if (destinationEventData) {
-                  const originEvent = iconOriginEvents.find(e => e.sn === destinationEventData.sn);
-                  if (originEvent) {
-                    addDestinationEvent('archway', { ...destinationEventData, autoExecute: originEvent.autoExecute });
-                    disconnectFromWebsocket();
+    return () => {
+      // close the websocket connection
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
+  }, []);
 
-                    if (originEvent.autoExecute) {
-                      setListeningTo('archway', XCallEvent.CallExecuted);
-                    }
+  useEffect(() => {
+    if (socketRef.current && isReady) {
+      const websocket = socketRef.current;
+      // subscribe to the event
+      websocket.send(JSON.stringify({ ...ARCHWAY_SOCKET_QUERY, params: { query: query } }));
+
+      return () => {
+        // unsubscribe from the event
+        websocket.send(JSON.stringify({ ...ARCHWAY_SOCKET_QUERY, method: 'unsubscribe' }));
+      };
+    }
+  }, [isReady, query]);
+
+  useEffect(() => {
+    if (socketRef.current && isReady) {
+      socketRef.current.onmessage = event => {
+        const eventData = JSON.parse(event.data);
+        const events = eventData.result?.events;
+
+        if (events) {
+          switch (eventName) {
+            case XCallEvent.CallMessage: {
+              const destinationEventData = getXCallDestinationEventDataFromArchwayEvent(events);
+
+              if (destinationEventData) {
+                const originEvent = iconOriginEvents.find(e => e.sn === destinationEventData.sn);
+                if (originEvent) {
+                  addDestinationEvent('archway', { ...destinationEventData, autoExecute: originEvent.autoExecute });
+
+                  if (originEvent.autoExecute) {
+                    setListeningTo('archway', XCallEvent.CallExecuted);
                   }
                 }
-                break;
               }
-              case XCallEvent.CallExecuted: {
-                const callExecutedEventData = getCallExecutedEventDataFromArchwayEvent(events);
-                if (callExecutedEventData) {
-                  const destinationEvent = archwayDestinationEvents.find(e => e.reqId === callExecutedEventData.reqId);
-                  if (destinationEvent) {
-                    stopListening();
-                    disconnectFromWebsocket();
-                    if (callExecutedEventData.success) {
-                      removeEvent(destinationEvent.sn, true);
-                    } else {
-                      rollBackFromOrigin(destinationEvent.origin, destinationEvent.sn);
-                      setListeningTo(destinationEvent.origin, XCallEvent.RollbackMessage);
-                    }
+              break;
+            }
+            case XCallEvent.CallExecuted: {
+              const callExecutedEventData = getCallExecutedEventDataFromArchwayEvent(events);
+              if (callExecutedEventData) {
+                const destinationEvent = archwayDestinationEvents.find(e => e.reqId === callExecutedEventData.reqId);
+                if (destinationEvent) {
+                  stopListening();
+                  if (callExecutedEventData.success) {
+                    removeEvent(destinationEvent.sn, true);
+                  } else {
+                    rollBackFromOrigin(destinationEvent.origin, destinationEvent.sn);
+                    setListeningTo(destinationEvent.origin, XCallEvent.RollbackMessage);
                   }
                 }
-                break;
               }
-              case XCallEvent.ResponseMessage: {
-                console.log('TODO: logged event from ResponseMessage: ', events);
-                break;
-              }
-              case XCallEvent.RollbackMessage: {
-                const rollbackEventData = getRollbackEventDataFromArchwayEvent(events);
+              break;
+            }
+            case XCallEvent.ResponseMessage: {
+              console.log('TODO: logged event from ResponseMessage: ', events);
+              break;
+            }
+            case XCallEvent.RollbackMessage: {
+              const rollbackEventData = getRollbackEventDataFromArchwayEvent(events);
 
-                if (rollbackEventData) {
-                  if (archwayOriginEvents.some(e => e.sn === parseInt(rollbackEventData.sn))) {
-                    flagRollbackReady('archway', parseInt(rollbackEventData.sn));
-                    disconnectFromWebsocket();
-                  }
+              if (rollbackEventData) {
+                if (archwayOriginEvents.some(e => e.sn === parseInt(rollbackEventData.sn))) {
+                  flagRollbackReady('archway', parseInt(rollbackEventData.sn));
                 }
-                break;
               }
+              break;
             }
           }
-        };
-
-        websocket.onerror = error => {
-          console.error(error);
-          disconnectFromWebsocket();
-        };
-        websocket.onclose = () => {};
-        setSocket(websocket);
-      }
-    } else {
-      disconnectFromWebsocket();
+        }
+      };
     }
   }, [
-    socket,
-    disconnectFromWebsocket,
+    isReady,
     eventName,
-    query,
     addDestinationEvent,
     iconOriginEvents,
+    archwayDestinationEvents,
     archwayOriginEvents,
     flagRollbackReady,
-    setListeningTo,
-    archwayDestinationEvents,
     removeEvent,
     rollBackFromOrigin,
+    setListeningTo,
     stopListening,
   ]);
 };

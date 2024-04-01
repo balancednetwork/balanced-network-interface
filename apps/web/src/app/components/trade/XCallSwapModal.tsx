@@ -18,7 +18,7 @@ import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
-import { CurrentXCallState, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
+import { CurrentXCallState, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
 import { getArchwayCounterToken, getBytesFromString, getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -233,7 +233,7 @@ const XCallSwapModal = ({
 
     if (txResult?.status === 1 && txResult.eventLogs.length) {
       const callMessageSentEvent = txResult.eventLogs.find(event =>
-        event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
+        event.indexed.includes(getICONEventSignature(XCallEventType.CallMessageSent)),
       );
 
       if (callMessageSentEvent) {

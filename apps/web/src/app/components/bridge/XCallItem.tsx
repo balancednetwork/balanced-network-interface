@@ -14,7 +14,7 @@ import {
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { getFeeParam } from 'app/_xcall/archway/utils';
-import { DestinationXCallData, OriginXCallData, XCallActivityItem, XCallEvent } from 'app/_xcall/types';
+import { DestinationXCallData, OriginXCallData, XCallActivityItem, XCallEventType } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
@@ -134,7 +134,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         // looking for CallExecuted event
         // then set listener to ResponseMessage / RollbackMessage
         const callExecutedEvent = txResult.eventLogs.find(event =>
-          event.indexed.includes(getICONEventSignature(XCallEvent.CallExecuted)),
+          event.indexed.includes(getICONEventSignature(XCallEventType.CallExecuted)),
         );
 
         //TODO: move to handle ICON tx result together with CallMessage
@@ -163,7 +163,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
             rollBackFromOrigin(data.origin, data.sn);
 
-            setListeningTo('archway', XCallEvent.RollbackMessage);
+            setListeningTo('archway', XCallEventType.RollbackMessage);
           }
         }
       }
@@ -268,7 +268,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         // looking for CallExecuted event
         // then set listener to ResponseMessage / RollbackMessage
         const callExecutedEvent = txResult.eventLogs.find(event =>
-          event.indexed.includes(getICONEventSignature(XCallEvent.RollbackExecuted)),
+          event.indexed.includes(getICONEventSignature(XCallEventType.RollbackExecuted)),
         );
 
         if (callExecutedEvent?.data[0] === '0x1') {

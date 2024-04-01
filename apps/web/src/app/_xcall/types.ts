@@ -2,22 +2,15 @@ import { Event } from '@cosmjs/cosmwasm-stargate';
 
 export type SupportedXCallChains = 'icon' | 'archway';
 
-export type XCallEventType =
-  | 'CallMessageSent'
-  | 'CallMessage'
-  | 'ResponseMessage'
-  | 'RollbackMessage'
-  | 'CallExecuted'
-  | 'RollbackExecuted';
+export enum XCallEventType {
+  CallMessageSent = 'CallMessageSent',
+  CallMessage = 'CallMessage',
+  ResponseMessage = 'ResponseMessage',
+  RollbackMessage = 'RollbackMessage',
+  CallExecuted = 'CallExecuted',
+  RollbackExecuted = 'RollbackExecuted'
+}
 
-export const XCallEvent: { [key in XCallEventType]: XCallEventType } = Object.freeze({
-  CallMessageSent: 'CallMessageSent',
-  CallMessage: 'CallMessage',
-  ResponseMessage: 'ResponseMessage',
-  RollbackMessage: 'RollbackMessage',
-  CallExecuted: 'CallExecuted',
-  RollbackExecuted: 'RollbackExecuted',
-});
 export type OriginXCallData = {
   sn: number;
   rollback?: boolean;

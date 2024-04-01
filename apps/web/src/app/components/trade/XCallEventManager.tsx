@@ -9,7 +9,7 @@ import { Box, Flex } from 'rebass';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { getFeeParam } from 'app/_xcall/archway/utils';
-import { DestinationXCallData, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
+import { DestinationXCallData, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import {
@@ -136,7 +136,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
 
   return (
     <AnimatePresence>
-      {listeningTo?.event === XCallEvent.CallMessage && Object.values(anyPristineEvents).some(pristine => pristine) && (
+      {listeningTo?.event === XCallEventType.CallMessage && Object.values(anyPristineEvents).some(pristine => pristine) && (
         <motion.div
           key="event-wrap-CallMessage"
           initial={{ opacity: 0, height: 0 }}

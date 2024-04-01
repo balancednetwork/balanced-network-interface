@@ -4,7 +4,7 @@ import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { XCallState } from 'store/xCall/reducer';
 
 import { ARCHWAY_SUPPORTED_TOKENS_LIST } from './archway/tokens';
-import { OriginXCallData, SupportedXCallChains, XCallEvent, XCallEventType } from './types';
+import { OriginXCallData, SupportedXCallChains, XCallEventType } from './types';
 
 export function getRlpEncodedMsg(msg: string | any[]) {
   return Array.from(rlp.encode(msg));
@@ -22,10 +22,10 @@ export function getStringFromBytes(bytes: number[]) {
 //TODO: improve this nonsense
 export const getFollowingEvent = (event: XCallEventType): XCallEventType => {
   switch (event) {
-    case XCallEvent.CallMessageSent:
-      return XCallEvent.CallMessage;
+    case XCallEventType.CallMessageSent:
+      return XCallEventType.CallMessage;
     default:
-      return XCallEvent.CallMessage;
+      return XCallEventType.CallMessage;
   }
 };
 

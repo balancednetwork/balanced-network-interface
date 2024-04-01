@@ -1,7 +1,7 @@
 import { Token } from '@balancednetwork/sdk-core';
 import { Event } from '@cosmjs/cosmwasm-stargate';
 
-import { DestinationXCallData, OriginXCallData, XCallEvent } from 'app/_xcall/types';
+import { DestinationXCallData, OriginXCallData, XCallEventType } from 'app/_xcall/types';
 import { NETWORK_ID } from 'constants/config';
 
 import { AUTO_EXECUTION_ON_ICON } from '../_icon/config';
@@ -22,7 +22,7 @@ export function getXCallOriginEventDataFromArchway(
   if (sn) {
     return {
       sn: parseInt(sn),
-      eventName: XCallEvent.CallMessageSent,
+      eventName: XCallEventType.CallMessageSent,
       chain: 'archway',
       destination: 'icon',
       timestamp: new Date().getTime(),
@@ -48,7 +48,7 @@ export function getXCallDestinationEventDataFromArchwayEvent(
       data,
       sn,
       reqId,
-      eventName: XCallEvent.CallMessage,
+      eventName: XCallEventType.CallMessage,
       chain: 'archway',
       origin: 'icon',
       //TODO: get autoExecute value from origin event

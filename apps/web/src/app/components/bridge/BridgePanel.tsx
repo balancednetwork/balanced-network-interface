@@ -24,7 +24,7 @@ import { useARCH } from 'app/_xcall/archway/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway, isDenomAsset } from 'app/_xcall/archway/utils';
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
-import { CurrentXCallState, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
+import { CurrentXCallState, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
 import { getCrossChainTokenBySymbol, getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
@@ -317,7 +317,7 @@ export default function BridgePanel() {
 
     if (txResult?.status === 1 && txResult.eventLogs.length) {
       const callMessageSentEvent = txResult.eventLogs.find(event =>
-        event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
+        event.indexed.includes(getICONEventSignature(XCallEventType.CallMessageSent)),
       );
 
       if (callMessageSentEvent) {

@@ -16,7 +16,7 @@ import {
   useXCallOriginEvents,
 } from 'store/xCall/hooks';
 
-import { XCallEvent, XCallEventType } from '../types';
+import { XCallEventType } from '../types';
 import { ARCHWAY_XCALL_NETWORK_ID, ICON_WEBSOCKET_URL } from './config';
 import {
   getCallMessageSentEventFromLogs,
@@ -86,11 +86,11 @@ export const useICONEventListener = () => {
 
         if (eventData) {
           switch (eventName) {
-            case XCallEvent.CallMessage: {
+            case XCallEventType.CallMessage: {
               if (eventData.logs) {
                 const callMessageLog =
                   eventData.logs &&
-                  eventData.logs[0][0].find(log => log.indexed[0] === getICONEventSignature(XCallEvent.CallMessage));
+                  eventData.logs[0][0].find(log => log.indexed[0] === getICONEventSignature(XCallEventType.CallMessage));
                 if (callMessageLog) {
                   const snRaw = callMessageLog.indexed[3];
                   const sn = snRaw && parseInt(snRaw, 16);
@@ -106,14 +106,14 @@ export const useICONEventListener = () => {
                         sn,
                         reqId,
                         data,
-                        eventName: XCallEvent.CallMessage,
+                        eventName: XCallEventType.CallMessage,
                         chain: 'icon',
                         origin: 'archway',
                         autoExecute: originEvent.autoExecute,
                       });
 
                       if (originEvent.autoExecute) {
-                        setListeningTo('icon', XCallEvent.CallExecuted);
+                        setListeningTo('icon', XCallEventType.CallExecuted);
                       }
                     }
                   }
@@ -121,13 +121,13 @@ export const useICONEventListener = () => {
               }
               break;
             }
-            case XCallEvent.CallExecuted: {
+            case XCallEventType.CallExecuted: {
               if (eventData.logs) {
                 const blockHeight = eventData.height;
                 const indexes = eventData.indexes;
                 const executeCallLog =
                   eventData.logs &&
-                  eventData.logs[0][0].find(log => log.indexed[0] === getICONEventSignature(XCallEvent.CallExecuted));
+                  eventData.logs[0][0].find(log => log.indexed[0] === getICONEventSignature(XCallEventType.CallExecuted));
                 if (executeCallLog) {
                   const reqIdRaw = executeCallLog.indexed[1];
                   const reqId = parseInt(executeCallLog.indexed[1], 16);
@@ -161,7 +161,7 @@ export const useICONEventListener = () => {
                         if (destinationEvent) {
                           //todo: not tested yet
                           rollBackFromOrigin(destinationEvent.origin, destinationEvent.sn);
-                          setListeningTo(destinationEvent.origin, XCallEvent.RollbackMessage);
+                          setListeningTo(destinationEvent.origin, XCallEventType.RollbackMessage);
                         }
                       }
                     }
@@ -170,10 +170,10 @@ export const useICONEventListener = () => {
               }
               break;
             }
-            case XCallEvent.ResponseMessage: {
+            case XCallEventType.ResponseMessage: {
               break;
             }
-            case XCallEvent.RollbackMessage: {
+            case XCallEventType.RollbackMessage: {
               break;
             }
           }

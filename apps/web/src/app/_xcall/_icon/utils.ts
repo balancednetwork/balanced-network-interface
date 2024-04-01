@@ -4,7 +4,7 @@ import IconService, { BigNumber } from 'icon-sdk-js';
 import { NETWORK_ID } from 'constants/config';
 
 import { AUTO_EXECUTION_ON_ARCHWAY } from '../archway/config';
-import { OriginXCallData, SupportedXCallChains, XCallEvent, XCallEventType } from '../types';
+import { OriginXCallData, SupportedXCallChains, XCallEventType } from '../types';
 import { ICONBlockType, ICONTxEvent, ICONTxResultType } from './types';
 
 export const httpProvider = new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint);
@@ -43,19 +43,19 @@ export async function fetchBlock(height: string): Promise<ICONBlockType | undefi
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {
-    case XCallEvent.CallMessage: {
+    case XCallEventType.CallMessage: {
       return 'CallMessage(str,str,int,int,bytes)';
     }
-    case XCallEvent.CallExecuted: {
+    case XCallEventType.CallExecuted: {
       return 'CallExecuted(int,int,str)';
     }
-    case XCallEvent.CallMessageSent: {
+    case XCallEventType.CallMessageSent: {
       return 'CallMessageSent(Address,str,int)';
     }
-    case XCallEvent.ResponseMessage: {
+    case XCallEventType.ResponseMessage: {
       return 'ResponseMessage(int,int,str)';
     }
-    case XCallEvent.RollbackMessage: {
+    case XCallEventType.RollbackMessage: {
       return 'RollbackMessage(int)';
     }
     default:
@@ -72,7 +72,7 @@ export function getXCallOriginEventDataFromICON(
 ): OriginXCallData {
   const sn = parseInt(callMessageSentLog.indexed[3], 16);
   const rollback = false;
-  const eventName = XCallEvent.CallMessageSent;
+  const eventName = XCallEventType.CallMessageSent;
   const autoExec = autoExecute === undefined && destination === 'archway' ? AUTO_EXECUTION_ON_ARCHWAY : undefined;
   return {
     sn,
@@ -88,7 +88,7 @@ export function getXCallOriginEventDataFromICON(
 }
 
 export function getCallMessageSentEventFromLogs(logs: ICONTxEvent[]): ICONTxEvent | undefined {
-  return logs.find(event => event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)));
+  return logs.find(event => event.indexed.includes(getICONEventSignature(XCallEventType.CallMessageSent)));
 }
 
 export async function getTxFromCallExecutedLog(
@@ -104,7 +104,7 @@ export async function getTxFromCallExecutedLog(
     );
     const tx = transactions.find(transaction => {
       const callExecutedLog = transaction?.eventLogs.find(event =>
-        event.indexed.includes(getICONEventSignature(XCallEvent.CallExecuted)),
+        event.indexed.includes(getICONEventSignature(XCallEventType.CallExecuted)),
       );
       if (callExecutedLog) {
         const reqIdFromLog = callExecutedLog.indexed[1];

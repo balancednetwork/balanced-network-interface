@@ -16,7 +16,7 @@ import {
 } from 'store/xCall/hooks';
 
 import { ICON_XCALL_NETWORK_ID } from '../_icon/config';
-import { CrossChainTxType, XCallEvent, XCallEventType } from '../types';
+import { CrossChainTxType, XCallEventType } from '../types';
 import { useArchwayContext } from './ArchwayProvider';
 import { ARCHWAY_CONTRACTS, ARCHWAY_WEBSOCKET_URL } from './config';
 import {
@@ -91,7 +91,7 @@ export const useArchwayEventListener = () => {
 
         if (events) {
           switch (eventName) {
-            case XCallEvent.CallMessage: {
+            case XCallEventType.CallMessage: {
               const destinationEventData = getXCallDestinationEventDataFromArchwayEvent(events);
 
               if (destinationEventData) {
@@ -100,13 +100,13 @@ export const useArchwayEventListener = () => {
                   addDestinationEvent('archway', { ...destinationEventData, autoExecute: originEvent.autoExecute });
 
                   if (originEvent.autoExecute) {
-                    setListeningTo('archway', XCallEvent.CallExecuted);
+                    setListeningTo('archway', XCallEventType.CallExecuted);
                   }
                 }
               }
               break;
             }
-            case XCallEvent.CallExecuted: {
+            case XCallEventType.CallExecuted: {
               const callExecutedEventData = getCallExecutedEventDataFromArchwayEvent(events);
               if (callExecutedEventData) {
                 const destinationEvent = archwayDestinationEvents.find(e => e.reqId === callExecutedEventData.reqId);
@@ -116,17 +116,17 @@ export const useArchwayEventListener = () => {
                     removeEvent(destinationEvent.sn, true);
                   } else {
                     rollBackFromOrigin(destinationEvent.origin, destinationEvent.sn);
-                    setListeningTo(destinationEvent.origin, XCallEvent.RollbackMessage);
+                    setListeningTo(destinationEvent.origin, XCallEventType.RollbackMessage);
                   }
                 }
               }
               break;
             }
-            case XCallEvent.ResponseMessage: {
+            case XCallEventType.ResponseMessage: {
               console.log('TODO: logged event from ResponseMessage: ', events);
               break;
             }
-            case XCallEvent.RollbackMessage: {
+            case XCallEventType.RollbackMessage: {
               const rollbackEventData = getRollbackEventDataFromArchwayEvent(events);
 
               if (rollbackEventData) {

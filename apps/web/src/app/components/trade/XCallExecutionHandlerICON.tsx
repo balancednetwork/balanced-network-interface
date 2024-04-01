@@ -8,7 +8,7 @@ import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON }
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { getFeeParam } from 'app/_xcall/archway/utils';
-import { DestinationXCallData, OriginXCallData, SupportedXCallChains, XCallEvent } from 'app/_xcall/types';
+import { DestinationXCallData, OriginXCallData, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
 import { getOriginEvent } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -102,7 +102,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
 
   const xCallSwapSuccessPredicate = (eventLogs: ICONTxEventLog[]) => {
     const callExecutedEvent = eventLogs.find(log =>
-      log.indexed.includes(getICONEventSignature(XCallEvent.CallExecuted)),
+      log.indexed.includes(getICONEventSignature(XCallEventType.CallExecuted)),
     );
     return callExecutedEvent ? callExecutedEvent.data[0] === '0x1' : false;
   };
@@ -130,7 +130,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
         // looking for CallExecuted event
         // then set listener to ResponseMessage / RollbackMessage
         const callExecutedEvent = txResult.eventLogs.find(event =>
-          event.indexed.includes(getICONEventSignature(XCallEvent.CallExecuted)),
+          event.indexed.includes(getICONEventSignature(XCallEventType.CallExecuted)),
         );
 
         if (callExecutedEvent?.data[0] === '0x1') {
@@ -141,7 +141,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
           clearInputs && clearInputs();
           //has xCall emitted CallMessageSent event?
           const callMessageSentEvent = txResult.eventLogs.find(event =>
-            event.indexed.includes(getICONEventSignature(XCallEvent.CallMessageSent)),
+            event.indexed.includes(getICONEventSignature(XCallEventType.CallMessageSent)),
           );
 
           if (callMessageSentEvent) {
@@ -163,7 +163,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
             rollBackFromOrigin(data.origin, data.sn);
 
-            setListeningTo('archway', XCallEvent.RollbackMessage);
+            setListeningTo('archway', XCallEventType.RollbackMessage);
           }
         }
       }

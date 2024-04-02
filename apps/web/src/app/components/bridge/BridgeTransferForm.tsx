@@ -7,9 +7,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { useIconXcallFee } from 'app/_xcall/_icon/eventHandlers';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { getCrossChainTokenBySymbol, getNetworkDisplayName } from 'app/_xcall/utils';
@@ -31,6 +29,7 @@ import { IBCDescription } from '../XCallDescription';
 import ChainSelector from './ChainSelector';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { useWalletModalToggle } from 'store/application/hooks';
+import { useXcallFee } from 'app/_xcall/hooks';
 
 const ConnectWrap = styled.div`
   position: absolute;
@@ -70,8 +69,7 @@ export default function BridgeTransferForm({ onSubmit }) {
 
   const ARCH = useARCH();
   const signedInWallets = useSignedInWallets();
-  const { data: archwayXcallFees } = useArchwayXcallFee();
-  const { data: iconXcallFees } = useIconXcallFee();
+  const { formattedXcallFee } = useXcallFee(bridgeDirection.from);
   const setNotPristine = useSetNotPristine();
   const toggleWalletModal = useWalletModalToggle();
 
@@ -320,14 +318,7 @@ export default function BridgeTransferForm({ onSubmit }) {
               <Trans>Fee</Trans>
             </Typography>
 
-            <Typography color="text">
-              {bridgeDirection.from === 'icon' && iconXcallFees && (
-                <>{(parseInt(iconXcallFees.rollback, 16) / 10 ** 18).toPrecision(3)} ICX</>
-              )}
-              {bridgeDirection.from === 'archway' && archwayXcallFees && (
-                <>{(Number(archwayXcallFees.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH</>
-              )}
-            </Typography>
+            <Typography color="text">{formattedXcallFee && formattedXcallFee}</Typography>
           </Flex>
           <Flex alignItems="center" justifyContent="space-between">
             <Typography>

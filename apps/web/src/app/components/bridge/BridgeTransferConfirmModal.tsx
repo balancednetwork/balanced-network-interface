@@ -157,8 +157,8 @@ export default function BridgeTransferConfirmModal({
   const addOriginEvent = useAddOriginEvent();
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
-  const { data: archwayXcallFees } = useXcallFee('archway');
-  const { data: iconXcallFees } = useXcallFee('icon');
+  const { xcallFee: archwayXcallFees } = useXcallFee('archway');
+  const { xcallFee: iconXcallFees } = useXcallFee('icon');
 
   const descriptionAction = `Transfer ${currencyToBridge?.symbol}`;
   const descriptionAmount = `${currencyAmountToBridge?.toFixed(2)} ${currencyAmountToBridge?.currency.symbol}`;

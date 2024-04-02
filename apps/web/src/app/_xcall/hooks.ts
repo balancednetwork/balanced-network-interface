@@ -69,21 +69,25 @@ export function useXCallGasChecker(
 
 // TODO: improve this hook
 export const useXcallFee = (chain: string) => {
+  const ARCH = useARCH();
   const { data: archwayXcallFees } = useArchwayXcallFee();
   const { data: iconXcallFees } = useIconXcallFee();
 
-  let data: any;
+  let xcallFee: any;
+  let formattedXcallFee: any;
 
   switch (chain) {
     case 'archway':
-      data = archwayXcallFees;
+      xcallFee = archwayXcallFees;
+      formattedXcallFee = (Number(xcallFee?.rollback) / 10 ** ARCH.decimals).toPrecision(3) + ' ARCH';
       break;
     case 'icon':
-      data = iconXcallFees;
+      xcallFee = iconXcallFees;
+      formattedXcallFee = (parseInt(xcallFee?.rollback, 16) / 10 ** 18).toPrecision(3) + ' ICX';
       break;
     default:
       throw new Error(`Unsupported chain: ${chain}`);
   }
 
-  return { data };
+  return { xcallFee, formattedXcallFee };
 };

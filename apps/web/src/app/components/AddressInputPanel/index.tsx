@@ -56,6 +56,7 @@ const AddressInput = styled.input<{ bg?: string; drivenOnly?: boolean }>`
 `;
 
 interface AddressInputPanelProps {
+  label?: string;
   value: string;
   onUserInput: (value: string) => void;
   bg?: string;
@@ -65,6 +66,7 @@ interface AddressInputPanelProps {
 }
 
 export default function AddressInputPanel({
+  label = 'Address',
   value,
   onUserInput,
   bg,
@@ -75,7 +77,7 @@ export default function AddressInputPanel({
   return (
     <InputContainer className={className}>
       <AddressInputLabel bg={bg}>
-        <Trans>Address</Trans>
+        <Trans>{label}</Trans>
       </AddressInputLabel>
 
       <AddressInput

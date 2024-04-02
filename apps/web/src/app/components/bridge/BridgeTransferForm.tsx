@@ -12,7 +12,7 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { SupportedXCallChains } from 'app/_xcall/types';
-import { getCrossChainTokenBySymbol } from 'app/_xcall/utils';
+import { getCrossChainTokenBySymbol, getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
@@ -42,6 +42,14 @@ const ConnectWrap = styled.div`
   top: 0;
   right: 0;
   padding-right: 15px;
+`;
+
+export const ChainWrap = styled(Flex)`
+  align-items: center;
+  padding: 3px 12px 4px;
+  transform: translateY(-15px);
+  // border-radius: 0 0 10px 10px;
+  justify-content: space-between;
 `;
 
 export default function BridgeTransferForm({ onSubmit }) {
@@ -231,23 +239,27 @@ export default function BridgeTransferForm({ onSubmit }) {
             <ChainSelector label="to" chain={bridgeDirection.to} setChain={handleSetDestinationChain} />
           </Flex>
 
-          <Typography
-            as="div"
-            mb={-1}
-            textAlign="right"
-            hidden={
-              (bridgeDirection.from === 'icon' && !account) || (bridgeDirection.from === 'archway' && !accountArch)
-            }
-          >
-            <Trans>Wallet:</Trans>{' '}
-            {`${
-              selectedTokenWalletBalance?.toFixed(4, {
-                groupSeparator: ',',
-              }) ?? 0
-            } 
+          <Flex width="100%" alignItems="center" justifyContent="space-between">
+            <Typography variant="h2">
+              <Trans>Send</Trans>
+            </Typography>
+            <Typography
+              as="div"
+              mb={-1}
+              textAlign="right"
+              hidden={
+                (bridgeDirection.from === 'icon' && !account) || (bridgeDirection.from === 'archway' && !accountArch)
+              }
+            >
+              <Trans>Wallet:</Trans>{' '}
+              {`${
+                selectedTokenWalletBalance?.toFixed(4, {
+                  groupSeparator: ',',
+                }) ?? 0
+              } 
                 ${currencyToBridge?.symbol}`}
-          </Typography>
-
+            </Typography>
+          </Flex>
           <Flex>
             <CurrencyInputPanel
               account={account}
@@ -263,9 +275,15 @@ export default function BridgeTransferForm({ onSubmit }) {
               showCommunityListControl={false}
             />
           </Flex>
+          <ChainWrap>
+            <Typography mr={1} lineHeight="1.7">
+              On {getNetworkDisplayName(bridgeDirection.from)}
+            </Typography>
+          </ChainWrap>
 
           <Flex style={{ position: 'relative' }}>
             <AddressInputPanel
+              label="To"
               value={destinationAddress}
               onUserInput={handleDestinationAddressInput}
               drivenOnly={true}
@@ -276,6 +294,11 @@ export default function BridgeTransferForm({ onSubmit }) {
               </ConnectWrap>
             )}
           </Flex>
+          <ChainWrap>
+            <Typography mr={1} lineHeight="1.7">
+              On {getNetworkDisplayName(bridgeDirection.to)}
+            </Typography>
+          </ChainWrap>
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>

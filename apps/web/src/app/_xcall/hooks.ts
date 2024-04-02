@@ -8,6 +8,8 @@ import { AUTO_EXECUTION_ON_ICON } from './_icon/config';
 import { AUTO_EXECUTION_ON_ARCHWAY } from './archway/config';
 import { useARCH } from './archway/tokens';
 import { SupportedXCallChains } from './types';
+import { useArchwayXcallFee } from './archway/eventHandler';
+import { useIconXcallFee } from './_icon/eventHandlers';
 
 const ARCHWAY_GAS_THRESHOLD = 5;
 const ICX_GAS_THRESHOLD = 4;
@@ -64,3 +66,24 @@ export function useXCallGasChecker(
     },
   );
 }
+
+// TODO: improve this hook
+export const useXcallFee = (chain: string) => {
+  const { data: archwayXcallFees } = useArchwayXcallFee();
+  const { data: iconXcallFees } = useIconXcallFee();
+
+  let data: any;
+
+  switch (chain) {
+    case 'archway':
+      data = archwayXcallFees;
+      break;
+    case 'icon':
+      data = iconXcallFees;
+      break;
+    default:
+      throw new Error(`Unsupported chain: ${chain}`);
+  }
+
+  return { data };
+};

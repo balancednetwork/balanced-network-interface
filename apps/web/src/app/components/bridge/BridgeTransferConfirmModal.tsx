@@ -6,12 +6,10 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { COSMOS_NATIVE_AVAILABLE_TOKENS } from 'app/_xcall/_icon/config';
-import { useIconXcallFee } from 'app/_xcall/_icon/eventHandlers';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
-import { useXCallGasChecker } from 'app/_xcall/hooks';
+import { useXCallGasChecker, useXcallFee } from 'app/_xcall/hooks';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
-import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { Typography } from 'app/theme';
 import { useShouldLedgerSign } from 'store/application/hooks';
@@ -159,8 +157,8 @@ export default function BridgeTransferConfirmModal({
   const addOriginEvent = useAddOriginEvent();
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
-  const { data: archwayXcallFees } = useArchwayXcallFee();
-  const { data: iconXcallFees } = useIconXcallFee();
+  const { data: archwayXcallFees } = useXcallFee('archway');
+  const { data: iconXcallFees } = useXcallFee('icon');
 
   const descriptionAction = `Transfer ${currencyToBridge?.symbol}`;
   const descriptionAmount = `${currencyAmountToBridge?.toFixed(2)} ${currencyAmountToBridge?.currency.symbol}`;

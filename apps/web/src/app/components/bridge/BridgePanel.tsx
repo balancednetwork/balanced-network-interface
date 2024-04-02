@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { CurrentXCallStateType } from 'app/_xcall/types';
 import { useCurrentXCallState, useSetNotPristine, useSetXCallState } from 'store/xCall/hooks';
 
-import BridgeTransferModal from './BridgeTransferModal';
+import BridgeTransferConfirmModal from './BridgeTransferConfirmModal';
 import BridgeTransferForm from './BridgeTransferForm';
 import BridgeActivity from './BridgeActivity';
 
@@ -62,7 +62,7 @@ export default function BridgePanel() {
       <BridgeTransferForm onSubmit={handleModalOpen} />
       <BridgeActivity />
 
-      <BridgeTransferModal
+      <BridgeTransferConfirmModal
         transferData={transferData || {}}
         isOpen={isOpen}
         onDismiss={controlledClose}

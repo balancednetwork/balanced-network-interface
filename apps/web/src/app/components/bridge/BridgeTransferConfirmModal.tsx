@@ -75,7 +75,7 @@ const WithdrawOption = styled.button<{ active: boolean }>`
   }
 `;
 
-export default function BridgeTransferModal({
+export default function BridgeTransferConfirmModal({
   isOpen,
   onDismiss,
   closeModal,

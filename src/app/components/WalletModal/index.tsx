@@ -6,7 +6,7 @@ import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { t, Trans } from '@lingui/macro';
 import { Skeleton } from '@material-ui/lab';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact, LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
@@ -204,16 +204,20 @@ export default function WalletModal() {
 
   const { requestAddress, hasExtension, account, disconnect } = useIconReact();
   const renderedAddressList = isLedgerLoading ? new Array(LIMIT_PAGING_LEDGER).fill(undefined) : addressList;
-  const [ledgerAddressPoint] = useLocalStorageWithExpiry<number | null>('ledgerAddressPointWithExpiry', null, 0);
+  const [ledgerAddressPoint] = useLocalStorageWithExpiry<number>(
+    'ledgerAddressPointWithExpiry',
+    0,
+    LOCAL_STORAGE_ADDRESS_EXPIRY,
+  );
 
   useEffect(() => {
     if (ledgerAddressPoint !== -1 && !bnJs.contractSettings.ledgerSettings.transport) {
-      initialiseTransport();
+      initialiseTransport(ledgerAddressPoint);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ledgerAddressPoint]);
 
-  const initialiseTransport = async () => {
+  const initialiseTransport = async (ledgerAddressPoint?: number) => {
     try {
       if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
         await bnJs.contractSettings.ledgerSettings.transport.close();
@@ -221,10 +225,14 @@ export default function WalletModal() {
 
       const transport = await TransportWebHID.create();
       transport.setDebugMode && transport.setDebugMode(false);
+
+      const legerSettings: any = { transport };
+      if (typeof ledgerAddressPoint === 'number') {
+        legerSettings.path = getLedgerAddressPath(ledgerAddressPoint);
+      }
+
       bnJs.inject({
-        legerSettings: {
-          transport,
-        },
+        legerSettings,
       });
     } catch (e) {
       console.log('initialiseTransport err: ', e);

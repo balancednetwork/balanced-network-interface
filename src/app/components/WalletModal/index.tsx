@@ -215,15 +215,17 @@ export default function WalletModal() {
 
   const initialiseTransport = async () => {
     try {
-      if (!bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-        const transport = await TransportWebHID.create();
-        transport.setDebugMode && transport.setDebugMode(false);
-        bnJs.inject({
-          legerSettings: {
-            transport,
-          },
-        });
+      if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+        await bnJs.contractSettings.ledgerSettings.transport.close();
       }
+
+      const transport = await TransportWebHID.create();
+      transport.setDebugMode && transport.setDebugMode(false);
+      bnJs.inject({
+        legerSettings: {
+          transport,
+        },
+      });
     } catch (e) {
       console.log('initialiseTransport err: ', e);
       disconnect();

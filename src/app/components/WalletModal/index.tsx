@@ -202,7 +202,7 @@ export default function WalletModal() {
   const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
 
   const { requestAddress, hasExtension, account, disconnect } = useIconReact();
-  const renderedAddressList = isLedgerLoading ? [undefined, undefined, undefined, undefined, undefined] : addressList;
+  const renderedAddressList = isLedgerLoading ? new Array(LIMIT_PAGING_LEDGER).fill(undefined) : addressList;
 
   const handleOpenWallet = React.useCallback(() => {
     if (isMobile) {
@@ -270,6 +270,7 @@ export default function WalletModal() {
       if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
         bnJs.contractSettings.ledgerSettings.transport.close();
       }
+
       const transport = await TransportWebHID.create();
       transport.setDebugMode && transport.setDebugMode(false);
       bnJs.inject({
@@ -277,11 +278,13 @@ export default function WalletModal() {
           transport,
         },
       });
+
       updateShowledgerAddress(true);
 
       await updateLedgerAddress({ offset, limit });
       clearTimeout(timeout);
     } catch (err: any) {
+      console.log('🚀 ~ handleOpenLedger ~ err:', err);
       clearTimeout(timeout);
       if (err.id === 'InvalidChannel') {
         await bnJs.contractSettings.ledgerSettings.transport.close();

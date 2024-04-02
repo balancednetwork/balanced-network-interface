@@ -112,16 +112,20 @@ export default function BridgePanel() {
   const { account } = useIconReact();
   const { address: accountArch, signingClient } = useArchwayContext();
   const crossChainWallet = useCrossChainWalletBalances();
+
+  // create useBridgeState hook
   const bridgeDirection = useBridgeDirection();
   const setBridgeOrigin = useSetBridgeOrigin();
   const setBridgeDestination = useSetBridgeDestination();
+  const [currencyToBridge, setCurrencyToBridge] = React.useState<Currency | undefined>();
+  const [amountToBridge, setAmountToBridge] = React.useState<string>('');
+  const [destinationAddress, setDestinationAddress] = React.useState<string>('');
+
   const addTransaction = useTransactionAdder();
   const { data: gasChecker } = useXCallGasChecker(bridgeDirection.from, bridgeDirection.to);
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
-  const [currencyToBridge, setCurrencyToBridge] = React.useState<Currency | undefined>();
-  const [amountToBridge, setAmountToBridge] = React.useState<string>('');
-  const [destinationAddress, setDestinationAddress] = React.useState<string>('');
+
   const [modalClosable, setModalClosable] = React.useState(true);
   const [xCallInProgress, setXCallInProgress] = React.useState(false);
   const ARCH = useARCH();

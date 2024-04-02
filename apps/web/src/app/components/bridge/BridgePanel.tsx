@@ -4,6 +4,7 @@ import { useCurrentXCallState, useSetNotPristine, useSetXCallState } from 'store
 
 import BridgeTransferModal from './BridgeTransferModal';
 import BridgeTransferForm from './BridgeTransferForm';
+import BridgeActivity from './BridgeActivity';
 
 export default function BridgePanel() {
   const [transferData, setTransferData] = useState<any>();
@@ -59,6 +60,7 @@ export default function BridgePanel() {
   return (
     <>
       <BridgeTransferForm onSubmit={handleModalOpen} />
+      <BridgeActivity />
 
       <BridgeTransferModal
         transferData={transferData || {}}

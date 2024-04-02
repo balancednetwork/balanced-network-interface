@@ -7,7 +7,6 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import BridgeActivity from 'app/components/bridge/BridgeActivity';
 import BridgePanel from 'app/components/bridge/BridgePanel';
 import { UnderlineText } from 'app/components/DropdownText';
 import { Tab, Tabs, TabPanel } from 'app/components/Tab';
@@ -139,7 +138,6 @@ export function TradePage() {
           <TabPanel value={value} index={2}>
             <SectionPanel bg="bg2">
               <BridgePanel />
-              <BridgeActivity />
             </SectionPanel>
           </TabPanel>
         </Flex>

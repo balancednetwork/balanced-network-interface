@@ -25,6 +25,7 @@ import { ReactComponent as LedgerIcon } from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
 import { useActiveLocale } from 'hooks/useActiveLocale';
+import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
 import {
   useWalletModalToggle,
   useModalOpen,
@@ -203,6 +204,31 @@ export default function WalletModal() {
 
   const { requestAddress, hasExtension, account, disconnect } = useIconReact();
   const renderedAddressList = isLedgerLoading ? new Array(LIMIT_PAGING_LEDGER).fill(undefined) : addressList;
+  const [ledgerAddressPoint] = useLocalStorageWithExpiry<number | null>('ledgerAddressPointWithExpiry', null, 0);
+
+  useEffect(() => {
+    if (ledgerAddressPoint !== -1 && !bnJs.contractSettings.ledgerSettings.transport) {
+      initialiseTransport();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ledgerAddressPoint]);
+
+  const initialiseTransport = async () => {
+    try {
+      if (!bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+        const transport = await TransportWebHID.create();
+        transport.setDebugMode && transport.setDebugMode(false);
+        bnJs.inject({
+          legerSettings: {
+            transport,
+          },
+        });
+      }
+    } catch (e) {
+      console.log('initialiseTransport err: ', e);
+      disconnect();
+    }
+  };
 
   const handleOpenWallet = React.useCallback(() => {
     if (isMobile) {
@@ -271,20 +297,13 @@ export default function WalletModal() {
         bnJs.contractSettings.ledgerSettings.transport.close();
       }
 
-      const transport = await TransportWebHID.create();
-      transport.setDebugMode && transport.setDebugMode(false);
-      bnJs.inject({
-        legerSettings: {
-          transport,
-        },
-      });
+      await initialiseTransport();
 
       updateShowledgerAddress(true);
 
       await updateLedgerAddress({ offset, limit });
       clearTimeout(timeout);
     } catch (err: any) {
-      console.log('🚀 ~ handleOpenLedger ~ err:', err);
       clearTimeout(timeout);
       if (err.id === 'InvalidChannel') {
         await bnJs.contractSettings.ledgerSettings.transport.close();
@@ -292,6 +311,7 @@ export default function WalletModal() {
           handleOpenLedger();
         }, 0);
       }
+      updateShowledgerAddress(false);
       alert('Insert your ledger device, then enter your password and try again.');
     }
   };

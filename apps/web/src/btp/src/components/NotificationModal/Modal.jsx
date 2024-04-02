@@ -13,7 +13,7 @@ import { TextMixin } from 'btp/src/components/Typography/Text';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const Wapper = styled.div`
+const Wrapper = styled.div`
   min-height: 100vh;
   width: 100%;
   display: ${({ isShowed }) => (isShowed ? 'grid' : 'none')};
@@ -123,12 +123,12 @@ export const Modal = memo(
     const { text, ...others } = button;
 
     return (
-      <Wapper isShowed={display}>
+      <Wrapper isShowed={display}>
         <Content width={width} marginTop={marginTop}>
           {hasHeading && (
             <div className="heading">
               {title && <h3 className="title">{title}</h3>}
-              {hasClosedBtn && <button className="close-btn" onClick={() => setDisplay(false)}></button>}
+              {hasClosedBtn && <button type="button" className="close-btn" onClick={() => setDisplay(false)}></button>}
             </div>
           )}
           <div className="content">
@@ -142,7 +142,7 @@ export const Modal = memo(
             </StyledButton>
           )}
         </Content>
-      </Wapper>
+      </Wrapper>
     );
   },
 );

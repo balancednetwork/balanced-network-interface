@@ -316,7 +316,7 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
       const hour = date.getHours().toString().padStart(2, '0');
 
       const currentHour = acc.find(item => item.hour === hour);
-      currentHour && (currentHour.count = currentHour.count + 1);
+      if (currentHour) currentHour.count = currentHour.count + 1;
       return acc;
     }, transactionCountByHour);
   }

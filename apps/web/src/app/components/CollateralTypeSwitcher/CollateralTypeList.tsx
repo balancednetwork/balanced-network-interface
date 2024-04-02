@@ -107,7 +107,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   const changeCollateralType = useCollateralChangeCollateralType();
   const allCollateralData = useAllCollateralData();
   const hideCollateralInfoColumn = useMedia('(max-width: 500px)');
-  const escape = useKeyPress('Escape');
+  const handleEscape = useKeyPress('Escape');
   const { onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
 
@@ -122,10 +122,10 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
   );
 
   useEffect(() => {
-    if (anchor && escape) {
+    if (anchor && handleEscape) {
       setAnchor(null);
     }
-  }, [anchor, escape, setAnchor]);
+  }, [anchor, handleEscape, setAnchor]);
 
   return (
     <Box p={'25px 0 5px'} width={width}>

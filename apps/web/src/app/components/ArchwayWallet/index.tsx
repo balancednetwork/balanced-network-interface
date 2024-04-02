@@ -96,7 +96,7 @@ const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
 
   const debouncedQuery = useDebounce(searchQuery, 200);
   const enter = useKeyPress('Enter');
-  const escape = useKeyPress('Escape');
+  const handleEscape = useKeyPress('Escape');
   const [isOpen, setOpen] = useState(false);
   const toggleWalletModal = useWalletModalToggle();
   const signedInWallets = useSignedInWallets();
@@ -178,10 +178,10 @@ const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
   }, [setOpen]);
 
   useEffect(() => {
-    if (escape) {
+    if (handleEscape) {
       setAnchor(null);
     }
-  }, [escape, setAnchor]);
+  }, [handleEscape, setAnchor]);
 
   useEffect(() => {
     if (enter && anchor) {

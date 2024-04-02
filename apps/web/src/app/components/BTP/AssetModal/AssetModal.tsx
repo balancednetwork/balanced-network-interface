@@ -41,7 +41,7 @@ const Assets = styled(motion(Flex))`
 
 const AssetItem = ({ asset, onChange }) => {
   return (
-    <ListItem onClick={() => onChange(asset)} className={false ? 'focused' : ''}>
+    <ListItem onClick={() => onChange(asset)}>
       <Flex>
         <Icon icon={asset?.value} width="24px" margin={'0 8px 0 0'} />
         <DataText variant="p" fontWeight="bold">

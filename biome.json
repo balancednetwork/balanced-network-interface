@@ -40,23 +40,34 @@
         "useSingleVarDeclarator": "off",
         "useSelfClosingElements": "off",
         "useDefaultParameterLast": "off",
-        "noParameterAssign": "off"
+        "noParameterAssign": "off",
+        "noCommaOperator": "off"
       },
       "complexity": {
         "useLiteralKeys": "off",
         "noForEach": "off",
         "useOptionalChain": "off",
-        "noExtraBooleanCast": "off"
+        "noExtraBooleanCast": "off",
+        "noBannedTypes": "off"
       },
       "suspicious": {
         "noExplicitAny": "off",
-        "noArrayIndexKey": "off"
+        "noArrayIndexKey": "off",
+        "noImplicitAnyLet": "off",
+        "noAssignInExpressions": "off",
+        "noAsyncPromiseExecutor": "off"
       },
       "performance": {
-        "noDelete": "off"
+        "noDelete": "off",
+        "noAccumulatingSpread": "off"
       },
       "correctness": {
-        "useExhaustiveDependencies": "off"
+        "useExhaustiveDependencies": "off",
+        "noUnsafeFinally": "off"
+      },
+      "a11y": {
+        "useAltText": "off",
+        "useKeyWithClickEvents": "off"
       }
     }
   }

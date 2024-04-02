@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact, LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
+import { toast } from 'react-toastify';
 import { useMedia } from 'react-use';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -18,6 +19,7 @@ import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';
 import { MenuList, LanguageMenuItem } from 'app/components/Menu';
 import Modal, { ModalProps } from 'app/components/Modal';
+import { NotificationError } from 'app/components/Notification/TransactionNotification';
 import { Typography } from 'app/theme';
 import { ReactComponent as ArchWalletIcon } from 'assets/icons/archway.svg';
 import { ReactComponent as IconWalletIcon } from 'assets/icons/iconex.svg';
@@ -322,7 +324,16 @@ export default function WalletModal() {
         }, 0);
       }
       updateShowledgerAddress(false);
-      alert('Insert your ledger device, then enter your password and try again.');
+      toast(
+        <NotificationError
+          title="Connect your device"
+          failureReason={t`Insert your ledger device, then enter your password and try again.`}
+        />,
+        {
+          toastId: 'genericError',
+          autoClose: 5000,
+        },
+      );
     }
   };
 

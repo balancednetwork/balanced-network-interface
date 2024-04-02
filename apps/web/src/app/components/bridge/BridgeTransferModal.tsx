@@ -15,26 +15,24 @@ import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
 import { Typography } from 'app/theme';
 import { useShouldLedgerSign } from 'store/application/hooks';
-import { useChangeShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
+import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useBridgeDirection } from 'store/bridge/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useAddTransactionResult, useInitTransaction } from 'store/transactionsCrosschain/hooks';
 import { useArchwayTransactionsState } from 'store/transactionsCrosschain/hooks';
 import { useWithdrawableNativeAmount } from 'store/xCall/hooks';
-import { useAddOriginEvent, useCurrentXCallState, useSetNotPristine, useSetXCallState } from 'store/xCall/hooks';
-import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
+import { useAddOriginEvent } from 'store/xCall/hooks';
 
-import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 
 import { ICON_XCALL_NETWORK_ID, ARCHWAY_XCALL_NETWORK_ID, ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { getFeeParam, getXCallOriginEventDataFromArchway, isDenomAsset } from 'app/_xcall/archway/utils';
+import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
-import { CurrentXCallStateType, XCallEventType } from 'app/_xcall/types';
+import { XCallEventType } from 'app/_xcall/types';
 import bnJs from 'bnJs';
-import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Button, TextButton } from '../Button';

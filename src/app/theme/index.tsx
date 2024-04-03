@@ -188,7 +188,7 @@ export const FixedGlobalStyle = createGlobalStyle`
     border-radius: 10px;
   }
 
-  .wallet tbody tr:hover {
+  .wallet tbody tr:hover, .wallet tbody tr.active {
     background-color: #2ca9b7;
   }
 

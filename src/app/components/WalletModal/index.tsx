@@ -212,8 +212,13 @@ export default function WalletModal() {
     LOCAL_STORAGE_ADDRESS_EXPIRY,
   );
 
+  // init transport
   useEffect(() => {
-    if (ledgerAddressPoint !== -1 && !bnJs.contractSettings.ledgerSettings.transport) {
+    if (
+      localStorage.getItem('ledgerAddressPointWithExpiry') &&
+      ledgerAddressPoint !== -1 &&
+      !bnJs.contractSettings.ledgerSettings.transport
+    ) {
       initialiseTransport(ledgerAddressPoint);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -295,25 +300,27 @@ export default function WalletModal() {
     setLedgerLoading(true);
     setIsLedgerErr(false);
     updateAddressList([]);
-    updatePaging({
-      offset: 0,
-      limit: LIMIT_PAGING_LEDGER,
-    });
+
+    if (!account) {
+      updatePaging({
+        offset: 0,
+        limit: LIMIT_PAGING_LEDGER,
+      });
+      changeCurrentLedgerAddressPage(1);
+    }
 
     const timeout = setTimeout(() => {
       setIsLedgerErr(true);
     }, 3 * 1000);
 
     try {
-      if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-        bnJs.contractSettings.ledgerSettings.transport.close();
-      }
+      disconnectLedger();
 
       await initialiseTransport();
 
       updateShowledgerAddress(true);
 
-      await updateLedgerAddress({ offset, limit });
+      await updateLedgerAddress(!account ? { offset: 0, limit: LIMIT_PAGING_LEDGER } : { offset, limit });
       clearTimeout(timeout);
     } catch (err: any) {
       clearTimeout(timeout);
@@ -422,7 +429,14 @@ export default function WalletModal() {
     setChainQuery(e.target.value);
   };
 
+  const disconnectLedger = () => {
+    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+      bnJs.contractSettings.ledgerSettings.transport.close();
+    }
+  };
+
   const disconnectAll = () => {
+    disconnectLedger();
     account && disconnect();
     accountArch && disconnectKeplr();
   };
@@ -433,7 +447,10 @@ export default function WalletModal() {
         name: 'ICON',
         logo: <IconWalletIcon width="40" height="40" />,
         connect: ICONWalletModalToggle,
-        disconnect: disconnect,
+        disconnect: () => {
+          disconnectLedger();
+          disconnect();
+        },
         description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain`,
         address: account,
       },
@@ -590,6 +607,7 @@ export default function WalletModal() {
                   {renderedAddressList.map((address: any, index: number) => {
                     return (
                       <tr
+                        className={account === address?.address ? 'active' : ''}
                         key={address?.point || index}
                         onClick={() => {
                           if (!address) return;

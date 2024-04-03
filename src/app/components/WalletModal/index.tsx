@@ -333,8 +333,8 @@ export default function WalletModal() {
       updateShowledgerAddress(false);
       toast(
         <NotificationError
-          title="Connect your device"
-          failureReason={t`Insert your ledger device, then enter your password and try again.`}
+          title="Couldn't detect a Ledger device."
+          failureReason={t`Make sure it's connected and try again.`}
         />,
         {
           toastId: 'genericError',

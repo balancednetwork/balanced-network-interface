@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
@@ -8,14 +8,13 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/_xcall/archway/tokens';
-import { SupportedXCallChains } from 'app/_xcall/types';
-import { getCrossChainTokenBySymbol, getNetworkDisplayName } from 'app/_xcall/utils';
+
+import { getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/horizontal-flip.svg';
-import { useBridgeDirection, useSetBridgeDestination, useSetBridgeOrigin } from 'store/bridge/hooks';
+import { useBridgeActionHandlers, useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { useSetNotPristine } from 'store/xCall/hooks';
 
@@ -27,9 +26,9 @@ import { AutoColumn } from '../trade/SwapPanel';
 import { BrightPanel } from '../trade/utils';
 import { IBCDescription } from '../XCallDescription';
 import ChainSelector from './ChainSelector';
-import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useXcallFee } from 'app/_xcall/hooks';
+import { useXCallFee } from 'app/_xcall/hooks';
+import { Field } from 'store/bridge/reducer';
 
 const ConnectWrap = styled.div`
   position: absolute;
@@ -51,172 +50,49 @@ export const ChainWrap = styled(Flex)`
   justify-content: space-between;
 `;
 
-export default function BridgeTransferForm({ onSubmit }) {
+export default function BridgeTransferForm({ openModal }) {
   const { account } = useIconReact();
-  const { address: accountArch, signingClient } = useArchwayContext();
+  const { address: accountArch } = useArchwayContext();
   const crossChainWallet = useCrossChainWalletBalances();
 
-  // create useBridgeState hook
+  const bridgeState = useBridgeState();
+  const { currency: currencyToBridge, recipient, typedValue } = bridgeState;
+  const { onChangeRecipient, onCurrencySelection, onUserInput, onChainSelection, onSwitchChain, onPercentSelection } =
+    useBridgeActionHandlers();
   const bridgeDirection = useBridgeDirection();
-  const setBridgeOrigin = useSetBridgeOrigin();
-  const setBridgeDestination = useSetBridgeDestination();
-  const [currencyToBridge, setCurrencyToBridge] = React.useState<Currency | undefined>();
-  const [amountToBridge, setAmountToBridge] = React.useState<string>('');
-  const [destinationAddress, setDestinationAddress] = React.useState<string>('');
-  const [withdrawNative, setWithdrawNative] = React.useState<boolean | undefined>();
-  const [percentAmount, setPercentAmount] = React.useState<number | undefined>();
-  const [errorMessage, setErrorMessage] = React.useState<string | undefined>();
+  const percentAmount = bridgeState[Field.FROM].percent;
 
-  const ARCH = useARCH();
   const signedInWallets = useSignedInWallets();
-  const { formattedXcallFee } = useXcallFee(bridgeDirection.from);
+  const { formattedXCallFee } = useXCallFee(bridgeDirection.from);
   const setNotPristine = useSetNotPristine();
   const toggleWalletModal = useWalletModalToggle();
 
-  const handleSetOriginChain = React.useCallback(
-    (chain: SupportedXCallChains) => {
-      if (chain === bridgeDirection.to) {
-        setBridgeDestination(bridgeDirection.from);
-      }
-      setBridgeOrigin(chain);
-      setCurrencyToBridge(undefined);
-    },
-    [bridgeDirection.from, bridgeDirection.to, setBridgeDestination, setBridgeOrigin],
-  );
-
-  const handleSetDestinationChain = React.useCallback(
-    (chain: SupportedXCallChains) => {
-      if (chain === bridgeDirection.from) {
-        setBridgeOrigin(bridgeDirection.to);
-      }
-      setBridgeDestination(chain);
-      setCurrencyToBridge(undefined);
-    },
-    [bridgeDirection.from, bridgeDirection.to, setBridgeDestination, setBridgeOrigin],
-  );
-
-  const handleTypeInput = (value: string) => {
-    setAmountToBridge(value);
-    setPercentAmount(undefined);
-  };
-
-  const handleInputSelect = (currency: Currency) => {
-    setWithdrawNative(undefined);
-    setCurrencyToBridge(currency);
-  };
-
   const handleInputPercentSelect = (percent: number) => {
-    setPercentAmount(percent);
-  };
-
-  function getPercentAmount(percent: number, balance: CurrencyAmount<Currency>) {
-    return balance.multiply(new Fraction(percent, 100)).toFixed();
-  }
-
-  React.useEffect(() => {
     const currencyAmount = currencyToBridge && crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
-    if (percentAmount && currencyAmount) {
-      setAmountToBridge(getPercentAmount(percentAmount, currencyAmount));
+    if (currencyAmount) {
+      onPercentSelection(Field.FROM, percent, currencyAmount.multiply(new Fraction(percent, 100)).toFixed());
     }
-  }, [bridgeDirection.from, crossChainWallet, currencyToBridge, percentAmount]);
-
-  const currencyAmountToBridge = React.useMemo(() => {
-    if (currencyToBridge && amountToBridge && !Number.isNaN(parseFloat(amountToBridge))) {
-      return CurrencyAmount.fromRawAmount(
-        currencyToBridge.wrapped,
-        new BigNumber(amountToBridge).times(10 ** currencyToBridge.wrapped.decimals).toFixed(0),
-      );
-    }
-    return undefined;
-  }, [amountToBridge, currencyToBridge]);
-
-  const parsedAmount = React.useMemo(() => {
-    const currencyAmount = currencyToBridge && crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
-    if (currencyAmount && percentAmount) {
-      return getPercentAmount(percentAmount, currencyAmount);
-    } else {
-      return amountToBridge || '';
-    }
-  }, [amountToBridge, bridgeDirection.from, crossChainWallet, currencyToBridge, percentAmount]);
-
-  const handleDestinationAddressInput = (value: string) => {
-    setDestinationAddress(value);
   };
 
   React.useEffect(() => {
     const destinationWallet = signedInWallets.find(wallet => wallet.chain === bridgeDirection.to);
     if (destinationWallet) {
-      setDestinationAddress(destinationWallet.address);
+      onChangeRecipient(destinationWallet.address);
     } else {
-      setDestinationAddress('');
+      onChangeRecipient(null);
     }
-  }, [bridgeDirection.to, setDestinationAddress, signedInWallets]);
+  }, [bridgeDirection.to, onChangeRecipient, signedInWallets]);
 
   // TODO: understand the purpose of this useEffect
   React.useEffect(() => {
     return () => setNotPristine();
   }, [setNotPristine]);
 
-  const isBridgeButtonAvailable = React.useMemo(() => {
-    if (!signedInWallets.some(wallet => wallet.chain === bridgeDirection.to)) return false;
-    if (destinationAddress === '') return false;
-
-    return true;
-  }, [bridgeDirection.to, destinationAddress, signedInWallets]);
-
-  React.useEffect(() => {
-    if (currencyAmountToBridge) {
-      if (currencyAmountToBridge.equalTo(0)) {
-        setErrorMessage(t`Enter amount`);
-      } else {
-        if (
-          signedInWallets.some(
-            wallet =>
-              wallet.chain === bridgeDirection.from &&
-              (!crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address] ||
-                crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address]?.lessThan(
-                  currencyAmountToBridge,
-                )),
-          )
-        ) {
-          setErrorMessage(t`Insufficient ${currencyAmountToBridge.currency.symbol}`);
-        } else {
-          setErrorMessage(undefined);
-        }
-      }
-    } else {
-      setErrorMessage(t`Enter amount`);
-    }
-  }, [bridgeDirection.from, crossChainWallet, currencyAmountToBridge, setErrorMessage, signedInWallets]);
-
-  const selectedTokenWalletBalance = React.useMemo(() => {
-    if (currencyToBridge) {
-      return crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
-    }
-  }, [bridgeDirection.from, crossChainWallet, currencyToBridge]);
-
-  const handleSwitch = () => {
-    const from = bridgeDirection.from;
-    const to = bridgeDirection.to;
-    const crossChainCurrency = getCrossChainTokenBySymbol(to, currencyToBridge?.symbol);
-    handleSetOriginChain(to);
-    handleSetDestinationChain(from);
-    crossChainCurrency && handleInputSelect(crossChainCurrency);
-  };
+  const { errorMessage, isAvailable, selectedTokenWalletBalance } = useDerivedBridgeInfo();
 
   const handleSubmit = async () => {
     if (signedInWallets.some(wallet => wallet.chain === bridgeDirection.from)) {
-      const isDenom = currencyAmountToBridge && isDenomAsset(currencyAmountToBridge.currency);
-      onSubmit({
-        bridgeDirection,
-        currencyToBridge,
-        amountToBridge,
-        destinationAddress,
-        withdrawNative,
-        percentAmount,
-        currencyAmountToBridge,
-        isDenom,
-      });
+      openModal();
     } else {
       toggleWalletModal();
     }
@@ -227,14 +103,14 @@ export default function BridgeTransferForm({ onSubmit }) {
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
         <AutoColumn gap="md">
           <Typography variant="h2">
-            <Trans>Transfer</Trans>
+            <Trans>Bridge</Trans>
           </Typography>
           <Flex width="100%" alignItems="center" justifyContent="space-between">
-            <ChainSelector label="from" chain={bridgeDirection.from} setChain={handleSetOriginChain} />
-            <Box sx={{ cursor: 'pointer', marginLeft: '-25px' }} onClick={handleSwitch}>
+            <ChainSelector label="from" chain={bridgeDirection.from} setChain={c => onChainSelection(Field.FROM, c)} />
+            <Box sx={{ cursor: 'pointer', marginLeft: '-25px' }} onClick={onSwitchChain}>
               <FlipIcon width={25} height={17} />
             </Box>
-            <ChainSelector label="to" chain={bridgeDirection.to} setChain={handleSetDestinationChain} />
+            <ChainSelector label="to" chain={bridgeDirection.to} setChain={c => onChainSelection(Field.TO, c)} />
           </Flex>
 
           <Flex width="100%" alignItems="center" justifyContent="space-between">
@@ -261,12 +137,11 @@ export default function BridgeTransferForm({ onSubmit }) {
           <Flex>
             <CurrencyInputPanel
               account={account}
-              value={parsedAmount}
-              // currency={currencyToBridge || bnUSD[NETWORK_ID]}
+              value={typedValue}
               currency={currencyToBridge}
               selectedCurrency={currencyToBridge}
-              onUserInput={handleTypeInput}
-              onCurrencySelect={handleInputSelect}
+              onUserInput={onUserInput}
+              onCurrencySelect={onCurrencySelection}
               onPercentSelect={!!account ? handleInputPercentSelect : undefined}
               percent={percentAmount}
               currencySelectionType={CurrencySelectionType.BRIDGE}
@@ -280,13 +155,8 @@ export default function BridgeTransferForm({ onSubmit }) {
           </ChainWrap>
 
           <Flex style={{ position: 'relative' }}>
-            <AddressInputPanel
-              label="To"
-              value={destinationAddress}
-              onUserInput={handleDestinationAddressInput}
-              drivenOnly={true}
-            />
-            {!destinationAddress && !signedInWallets.find(wallet => wallet.chain === bridgeDirection.to)?.address && (
+            <AddressInputPanel label="To" value={recipient || ''} onUserInput={onChangeRecipient} drivenOnly={true} />
+            {!recipient && !signedInWallets.find(wallet => wallet.chain === bridgeDirection.to)?.address && (
               <ConnectWrap>
                 <CrossChainConnectWallet chain={bridgeDirection.to} />
               </ConnectWrap>
@@ -318,7 +188,7 @@ export default function BridgeTransferForm({ onSubmit }) {
               <Trans>Fee</Trans>
             </Typography>
 
-            <Typography color="text">{formattedXcallFee && formattedXcallFee}</Typography>
+            <Typography color="text">{formattedXCallFee && formattedXCallFee}</Typography>
           </Flex>
           <Flex alignItems="center" justifyContent="space-between">
             <Typography>
@@ -329,7 +199,7 @@ export default function BridgeTransferForm({ onSubmit }) {
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
-            <Button onClick={handleSubmit} disabled={!isBridgeButtonAvailable || !!errorMessage}>
+            <Button onClick={handleSubmit} disabled={!isAvailable || !!errorMessage}>
               {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
             </Button>
           </Flex>

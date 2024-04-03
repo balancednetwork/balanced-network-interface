@@ -392,7 +392,7 @@ export default function SupplyLiquidityModal({
     },
   };
 
-  const isXcallModalOpen =
+  const isXCallModalOpen =
     isAnyEventPristine &&
     currentXCallState !== CurrentXCallStateType.IDLE &&
     UIStatus[Field.CURRENCY_A].chain !== 'icon' &&
@@ -552,7 +552,7 @@ export default function SupplyLiquidityModal({
         </ModalContent>
       </Modal>
       {UIStatus[Field.CURRENCY_A].chain !== 'icon' && (
-        <Modal isOpen={isXcallModalOpen} onDismiss={() => {}}>
+        <Modal isOpen={isXCallModalOpen} onDismiss={() => {}}>
           <ModalContentWrapper>
             <Typography mb={3} textAlign="center" fontSize={16}>
               {t`Transfer ${currencies[Field.CURRENCY_A]?.symbol} to ICON.`}

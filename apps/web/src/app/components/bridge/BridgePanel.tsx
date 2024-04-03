@@ -7,8 +7,6 @@ import BridgeTransferForm from './BridgeTransferForm';
 import BridgeActivity from './BridgeActivity';
 
 export default function BridgePanel() {
-  const [transferData, setTransferData] = useState<any>();
-
   const [modalClosable, setModalClosable] = useState(true);
   const [xCallInProgress, setXCallInProgress] = useState(false);
 
@@ -52,18 +50,12 @@ export default function BridgePanel() {
     }
   }, [currentXCallState, xCallReset]);
 
-  const handleModalOpen = values => {
-    setTransferData(values);
-    openModal();
-  };
-
   return (
     <>
-      <BridgeTransferForm onSubmit={handleModalOpen} />
+      <BridgeTransferForm openModal={openModal} />
       <BridgeActivity />
 
       <BridgeTransferConfirmModal
-        transferData={transferData || {}}
         isOpen={isOpen}
         onDismiss={controlledClose}
         closeModal={closeModal}

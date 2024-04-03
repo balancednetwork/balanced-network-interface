@@ -8,8 +8,8 @@ import { AUTO_EXECUTION_ON_ICON } from './_icon/config';
 import { AUTO_EXECUTION_ON_ARCHWAY } from './archway/config';
 import { useARCH } from './archway/tokens';
 import { SupportedXCallChains } from './types';
-import { useArchwayXcallFee } from './archway/eventHandler';
-import { useIconXcallFee } from './_icon/eventHandlers';
+import { useArchwayXCallFee } from './archway/eventHandler';
+import { useIconXCallFee } from './_icon/eventHandlers';
 
 const ARCHWAY_GAS_THRESHOLD = 5;
 const ICX_GAS_THRESHOLD = 4;
@@ -68,26 +68,26 @@ export function useXCallGasChecker(
 }
 
 // TODO: improve this hook
-export const useXcallFee = (chain: string) => {
+export const useXCallFee = (chain: string) => {
   const ARCH = useARCH();
-  const { data: archwayXcallFees } = useArchwayXcallFee();
-  const { data: iconXcallFees } = useIconXcallFee();
+  const { data: archwayXCallFees } = useArchwayXCallFee();
+  const { data: iconXCallFees } = useIconXCallFee();
 
   let xcallFee: any;
-  let formattedXcallFee: any;
+  let formattedXCallFee: any;
 
   switch (chain) {
     case 'archway':
-      xcallFee = archwayXcallFees;
-      formattedXcallFee = (Number(xcallFee?.rollback) / 10 ** ARCH.decimals).toPrecision(3) + ' ARCH';
+      xcallFee = archwayXCallFees;
+      formattedXCallFee = (Number(xcallFee?.rollback) / 10 ** ARCH.decimals).toPrecision(3) + ' ARCH';
       break;
     case 'icon':
-      xcallFee = iconXcallFees;
-      formattedXcallFee = (parseInt(xcallFee?.rollback, 16) / 10 ** 18).toPrecision(3) + ' ICX';
+      xcallFee = iconXCallFees;
+      formattedXCallFee = (parseInt(xcallFee?.rollback, 16) / 10 ** 18).toPrecision(3) + ' ICX';
       break;
     default:
       throw new Error(`Unsupported chain: ${chain}`);
   }
 
-  return { xcallFee, formattedXcallFee };
+  return { xcallFee, formattedXCallFee };
 };

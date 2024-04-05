@@ -439,3 +439,27 @@ export function useInterestRate(symbol: string): UseQueryResult<BigNumber> {
     }
   });
 }
+
+export function useRedemptionFee(): UseQueryResult<number> {
+  return useQuery(`redemptionFee`, async () => {
+    const data = await bnJs.Loans.getRedemptionFee();
+
+    if (data) {
+      return Number.parseInt(data);
+    } else {
+      return 0;
+    }
+  });
+}
+
+export function useRedemptionDaoFee(): UseQueryResult<number> {
+  return useQuery(`redemptionDaoFee`, async () => {
+    const data = await bnJs.Loans.getRedemptionDaoFee();
+
+    if (data) {
+      return Number.parseInt(data);
+    } else {
+      return 0;
+    }
+  });
+}

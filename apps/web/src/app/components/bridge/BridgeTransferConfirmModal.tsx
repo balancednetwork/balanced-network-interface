@@ -40,6 +40,7 @@ import { ModalContentWrapper } from '../ModalContent';
 import Spinner from '../Spinner';
 import XCallEventManager from '../trade/XCallEventManager';
 import { presenceVariants, StyledButton as XCallButton } from '../trade/XCallSwapModal';
+import { StdFee } from '@archwayhq/arch3.js';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -237,26 +238,25 @@ export default function BridgeTransferConfirmModal({
       const tokenAddress = currencyAmountToBridge.currency.address;
       const destination = `${bridgeDirection.to === 'icon' ? `${ICON_XCALL_NETWORK_ID}/` : ''}${destinationAddress}`;
 
-      if (isDenom) {
-        const msg = { deposit_denom: { denom: tokenAddress, to: destination, data: [] } };
-        const assetToBridge = {
-          denom: tokenAddress,
-          amount: `${currencyAmountToBridge.quotient}`,
-        };
-
+      const executeTransaction = async (msg: any, contract: string, fee: StdFee | 'auto', assetToBridge?: any) => {
         try {
           initTransaction('archway', `Requesting cross-chain transfer...`);
           setXCallInProgress(true);
 
           const res = await signingClient.execute(
             accountArch,
-            ARCHWAY_CONTRACTS.assetManager,
+            contract,
             msg,
-            getFeeParam(1200000),
+            fee,
             undefined,
             archwayXCallFees.rollback !== '0'
-              ? [{ amount: archwayXCallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }, assetToBridge]
-              : [assetToBridge],
+              ? [
+                  { amount: archwayXCallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
+                  ...(assetToBridge ? [assetToBridge] : []),
+                ]
+              : assetToBridge
+                ? [assetToBridge]
+                : undefined,
           );
 
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
@@ -267,6 +267,16 @@ export default function BridgeTransferConfirmModal({
           addTransactionResult('archway', null, 'Cross-chain transfer request failed');
           setXCallInProgress(false);
         }
+      };
+
+      if (isDenom) {
+        const msg = { deposit_denom: { denom: tokenAddress, to: destination, data: [] } };
+        const assetToBridge = {
+          denom: tokenAddress,
+          amount: `${currencyAmountToBridge.quotient}`,
+        };
+
+        executeTransaction(msg, ARCHWAY_CONTRACTS.assetManager, getFeeParam(1200000), assetToBridge);
       } else {
         if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
           const msg = {
@@ -277,67 +287,18 @@ export default function BridgeTransferConfirmModal({
             },
           };
 
-          try {
-            initTransaction('archway', `Requesting cross-chain transfer...`);
-            setXCallInProgress(true);
-            const res = await signingClient.execute(
-              accountArch,
-              tokenAddress,
-              msg,
-              'auto',
-              undefined,
-              archwayXCallFees.rollback !== '0'
-                ? [{ amount: archwayXCallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
-                : undefined,
-            );
-
-            const originEventData = getXCallOriginEventDataFromArchway(
-              res.events,
-              descriptionAction,
-              descriptionAmount,
-            );
-            addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
-            originEventData && addOriginEvent('archway', originEventData);
-          } catch (e) {
-            console.error(e);
-            addTransactionResult('archway', null, 'Cross-chain transfer request failed');
-            setXCallInProgress(false);
-          }
+          executeTransaction(msg, tokenAddress, 'auto');
         } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
-          try {
-            const msg = {
-              deposit: {
-                token_address: tokenAddress,
-                amount: `${currencyAmountToBridge.quotient}`,
-                to: destination,
-                data: [],
-              },
-            };
-            initTransaction('archway', `Requesting cross-chain transfer...`);
-            setXCallInProgress(true);
-            const res = await signingClient.execute(
-              accountArch,
-              ARCHWAY_CONTRACTS.assetManager,
-              msg,
-              getFeeParam(1200000),
-              undefined,
-              archwayXCallFees.rollback !== '0'
-                ? [{ amount: archwayXCallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
-                : undefined,
-            );
+          const msg = {
+            deposit: {
+              token_address: tokenAddress,
+              amount: `${currencyAmountToBridge.quotient}`,
+              to: destination,
+              data: [],
+            },
+          };
 
-            const originEventData = getXCallOriginEventDataFromArchway(
-              res.events,
-              descriptionAction,
-              descriptionAmount,
-            );
-            addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
-            originEventData && addOriginEvent('archway', originEventData);
-          } catch (e) {
-            console.error(e);
-            addTransactionResult('archway', null, 'Cross-chain transfer request failed');
-            setXCallInProgress(false);
-          }
+          executeTransaction(msg, ARCHWAY_CONTRACTS.assetManager, getFeeParam(1200000));
         }
       }
     }

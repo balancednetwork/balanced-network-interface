@@ -60,7 +60,7 @@ msgstr ""
 msgid "{0} queue{1}"
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 msgid "To"
 msgstr ""
 
@@ -164,7 +164,7 @@ msgstr "Refuser"
 msgid "Your allocation"
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferForm.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Wallet:"
@@ -628,7 +628,6 @@ msgstr "Promulgué"
 msgid "Vote for this pool to receive bribes."
 msgstr ""
 
-#: src/app/components/AddressInputPanel/index.tsx
 #: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Address"
@@ -650,7 +649,7 @@ msgstr ""
 msgid "100 bnUSD"
 msgstr "100 bnUSD"
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 msgid "Awaiting archway manager message"
 msgstr ""
 
@@ -716,8 +715,12 @@ msgstr ""
 msgid "Slippage tolerance"
 msgstr "Tolérance de \"glissement\""
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
+msgstr ""
+
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 msgid "Transferring {0} to {1}..."
 msgstr ""
 
@@ -813,14 +816,15 @@ msgstr ""
 msgid "{0}"
 msgstr "{0}"
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferForm.tsx
+#: src/app/components/bridge/BridgeTransferForm.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/containers/TradePage/index.tsx
 msgid "Bridge"
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/store/bridge/hooks.tsx
+#: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
 msgstr "Entrer le montant"
@@ -848,6 +852,7 @@ msgstr ""
 #: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ArchwayWallet/wallets/SICXWallet/index.tsx
+#: src/app/components/bridge/BridgeTransferForm.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/index.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
@@ -872,7 +877,7 @@ msgstr ""
 msgid "Liquidity incentives"
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferForm.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Transfer time"
 msgstr ""
@@ -1080,7 +1085,7 @@ msgstr "Plus tard"
 msgid "No assets available."
 msgstr "Pas d'actifs disponibles."
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferForm.tsx
 #: src/app/components/trade/SwapPanel.tsx
 msgid "Fee"
 msgstr "Frais"
@@ -1103,7 +1108,7 @@ msgstr "moins d'une minute"
 msgid "Couldn't transfer {0} to {1}. Try again."
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/PositionDetailPanel.tsx
 msgid "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
 msgstr ""
 
@@ -1140,6 +1145,10 @@ msgstr ""
 msgid "<0>IBC</0> is the Cosmos interoperability protocol."
 msgstr ""
 
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "If bnUSD ever falls below ${redeemLimit}, traders can use the smart contracts to redeem it for borrower collateral."
+msgstr ""
+
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Claim Balanced incentives?"
 msgstr ""
@@ -1152,7 +1161,7 @@ msgstr "Portefeuille : {0} {1}"
 msgid "Forum link"
 msgstr "Lien du forum"
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 #: src/app/components/trade/XCallSwapModal.tsx
 msgid "Not enough gas to complete the swap."
 msgstr ""
@@ -1257,7 +1266,7 @@ msgstr "En attente"
 msgid "Transfer {inputCurrency} to {network}..."
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "Insuffisant {0}"
@@ -1414,8 +1423,8 @@ msgid "Awaiting confirmation on {0}."
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
-msgstr ""
+#~ msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
+#~ msgstr ""
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
@@ -1504,7 +1513,7 @@ msgstr ""
 msgid "Claim ICX"
 msgstr "Réclamer ICX"
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 #: src/app/components/trade/XCallSwapModal.tsx
 msgid "xCall in progress"
 msgstr ""
@@ -1538,15 +1547,15 @@ msgstr ""
 msgid "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 msgid "Send {0} to {1}."
 msgstr ""
 
 #: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -1613,7 +1622,7 @@ msgstr ""
 msgid "Total supply"
 msgstr "Offre totale"
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 msgid "From"
 msgstr ""
 
@@ -1726,13 +1735,13 @@ msgid ""
 "{2} {3}"
 msgstr "Portefeuille : {0} {1} / {2} {3}"
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 msgid "Awaiting icon manager message"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-msgid "If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral."
-msgstr ""
+#~ msgid "If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral."
+#~ msgstr ""
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Executed."
@@ -1973,9 +1982,7 @@ msgstr "Soumettre une proposition ?"
 msgid "Unstake BALN?"
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 msgid "Cross-chain transfer requested."
 msgstr ""
 
@@ -2056,8 +2063,8 @@ msgstr ""
 msgid "No price chart available for this pair."
 msgstr "Aucun graphique de prix n'est disponible pour cette paire."
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 #: src/btp/src/connectors/helper.ts
 msgid "Transferred {0} {1} to {2}."
 msgstr ""
@@ -2183,7 +2190,7 @@ msgstr ""
 msgid "All collateral locked"
 msgstr "Tout le collatéral verrouillé"
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 #: src/app/components/trade/XCallSwapModal.tsx
 msgid "Approve {0} for cross-chain transfer."
 msgstr ""
@@ -2229,7 +2236,7 @@ msgstr ""
 msgid "Cancelled"
 msgstr "Annulé"
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 msgid "address"
 msgstr ""
 
@@ -2239,6 +2246,10 @@ msgstr "Retirer des liquidités"
 
 #: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "On Ledger:"
+msgstr ""
+
+#: src/app/components/AddressInputPanel/index.tsx
+msgid "{label}"
 msgstr ""
 
 #: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
@@ -2265,7 +2276,7 @@ msgstr "Rééquilibrage du prix du bnUSD..."
 msgid "Transfer failed."
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
 msgid "Transfer asset cross-chain?"
 msgstr ""
 
@@ -2350,9 +2361,8 @@ msgstr ""
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr "{inputAmount} {inputCurrency} échangé contre {outputAmount} {outputCurrency}"
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/bridge/BridgeTransferConfirmModal.tsx
+#: src/app/components/bridge/BridgeTransferForm.tsx
 msgid "Transfer"
 msgstr ""
 

@@ -7,6 +7,7 @@ import { NETWORK_ID } from 'constants/config';
 import { AUTO_EXECUTION_ON_ICON } from '../_icon/config';
 import { AUTO_EXECUTION_ON_ARCHWAY } from './config';
 import { ARCHWAY_EVENT_XCALL_MSG_SENT } from './types';
+import { StdFee } from '@archwayhq/arch3.js';
 
 export function getXCallOriginEventDataFromArchway(
   events: readonly Event[],
@@ -79,7 +80,7 @@ export function getRollbackEventDataFromArchwayEvent(events: readonly Event[]): 
   }
 }
 
-export function getFeeParam(fee: number): { amount: { amount: string; denom: string }[]; gas: string } | 'auto' {
+export function getFeeParam(fee: number): StdFee | 'auto' {
   return NETWORK_ID === 1
     ? 'auto'
     : {

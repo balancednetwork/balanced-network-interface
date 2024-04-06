@@ -52,14 +52,14 @@ export const useICONEventListener = () => {
   const addOriginEvent = useAddOriginEvent();
 
   React.useEffect(() => {
-    if (iconBlockHeight) {
+    if (eventName && iconBlockHeight) {
       if (!blockHeightRef.current) {
         blockHeightRef.current = `0x${iconBlockHeight.toString(16)}`;
       }
     } else {
       blockHeightRef.current = null;
     }
-  }, [iconBlockHeight, event]);
+  }, [iconBlockHeight, eventName]);
 
   React.useEffect(() => {
     if (eventName) {

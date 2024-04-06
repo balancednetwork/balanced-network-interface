@@ -448,6 +448,7 @@ const BTPContent = () => {
 
 const BTP = () => {
   const dispatch = useBTPDispatch<BTPAppDispatch>();
+  const isBTPModalOpen = useModalOpen(ApplicationModal.TRANSFER_ASSETS);
   useEffect(() => {
     const dispatchFnc = ({ detail }: { detail: { action: Action } }) => {
       console.log(detail.action);
@@ -463,11 +464,11 @@ const BTP = () => {
         id: 'ICON',
       }),
     );
-    on(EVENTS.DISPATCH, dispatchFnc);
+    isBTPModalOpen && on(EVENTS.DISPATCH, dispatchFnc);
     return () => {
       off(EVENTS.DISPATCH, dispatchFnc);
     };
-  }, [dispatch]);
+  }, [dispatch, isBTPModalOpen]);
 
   return (
     <Provider store={store} context={BTPContext}>

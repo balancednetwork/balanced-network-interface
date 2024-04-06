@@ -52,14 +52,14 @@ export const useICONEventListener = () => {
   const addOriginEvent = useAddOriginEvent();
 
   React.useEffect(() => {
-    if (iconBlockHeight) {
+    if (eventName && iconBlockHeight) {
       if (!blockHeightRef.current) {
         blockHeightRef.current = `0x${iconBlockHeight.toString(16)}`;
       }
     } else {
       blockHeightRef.current = null;
     }
-  }, [iconBlockHeight, event]);
+  }, [iconBlockHeight, eventName]);
 
   React.useEffect(() => {
     if (eventName) {
@@ -90,7 +90,9 @@ export const useICONEventListener = () => {
               if (eventData.logs) {
                 const callMessageLog =
                   eventData.logs &&
-                  eventData.logs[0][0].find(log => log.indexed[0] === getICONEventSignature(XCallEventType.CallMessage));
+                  eventData.logs[0][0].find(
+                    log => log.indexed[0] === getICONEventSignature(XCallEventType.CallMessage),
+                  );
                 if (callMessageLog) {
                   const snRaw = callMessageLog.indexed[3];
                   const sn = snRaw && parseInt(snRaw, 16);
@@ -127,7 +129,9 @@ export const useICONEventListener = () => {
                 const indexes = eventData.indexes;
                 const executeCallLog =
                   eventData.logs &&
-                  eventData.logs[0][0].find(log => log.indexed[0] === getICONEventSignature(XCallEventType.CallExecuted));
+                  eventData.logs[0][0].find(
+                    log => log.indexed[0] === getICONEventSignature(XCallEventType.CallExecuted),
+                  );
                 if (executeCallLog) {
                   const reqIdRaw = executeCallLog.indexed[1];
                   const reqId = parseInt(executeCallLog.indexed[1], 16);

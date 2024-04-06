@@ -188,7 +188,7 @@ export default function CurrencyList({
   onDismiss: () => void;
 }) {
   const enter = useKeyPress('Enter');
-  const escape = useKeyPress('Escape');
+  const handleEscape = useKeyPress('Escape');
   const { activeIndex, setActiveIndex } = useArrowControl(isOpen, currencies?.length || 0);
 
   const rates = useRatesWithOracle();
@@ -214,10 +214,10 @@ export default function CurrencyList({
   }, [isOpen, activeIndex, enter, currencies, currencies.length, onCurrencySelect]);
 
   useEffect(() => {
-    if (isOpen && escape) {
+    if (isOpen && handleEscape) {
       onDismiss();
     }
-  }, [isOpen, escape, onDismiss]);
+  }, [isOpen, handleEscape, onDismiss]);
 
   return (
     <List1 mt={4}>

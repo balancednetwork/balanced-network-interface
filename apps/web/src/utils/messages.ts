@@ -14,9 +14,10 @@ export const _t = (id: string, ...rest: any[]): [string, ...any[]] => {
   return [id, ...rest];
 };
 
-export const showMessageOnBeforeUnload = (e) => {
+export const showMessageOnBeforeUnload = e => {
   e.preventDefault();
   window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   bnJs.contractSettings.ledgerSettings.transport.device.close();
-  return (e.returnValue = 'Your transaction will be canceled, and you’ll need to sign in again.');
+  e.returnValue = 'Your transaction will be canceled, and you’ll need to sign in again.';
+  return e.returnValue;
 };

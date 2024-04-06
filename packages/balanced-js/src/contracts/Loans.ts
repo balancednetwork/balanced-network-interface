@@ -223,4 +223,22 @@ export default class Loans extends Contract {
 
     return this.call(callParams);
   }
+
+  getRedemptionFee(blockHeight?: number) {
+    const callParams = this.paramsBuilder({
+      method: 'getRedemptionFee',
+      blockHeight,
+    });
+
+    return this.call(callParams);
+  }
+
+  getRedemptionDaoFee(blockHeight?: number) {
+    const callParams = this.paramsBuilder({
+      method: 'getRedemptionDaoFee',
+      blockHeight,
+    });
+
+    return this.call(callParams);
+  }
 }

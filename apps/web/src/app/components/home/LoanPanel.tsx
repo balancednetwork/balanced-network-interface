@@ -397,36 +397,4 @@ const LoanPanel = () => {
   );
 };
 
-export const RebalancingInfo = () => {
-  return (
-    <RebalancingInfoWrap width="100%">
-      <Typography mb={3}>
-        <Trans>
-          If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral.
-        </Trans>
-      </Typography>
-      <Typography mb={3}>
-        <Trans>
-          For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of
-          borrower debt repaid.
-        </Trans>
-      </Typography>
-      <Typography>
-        <Trans>
-          Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less
-          it will affect you.
-        </Trans>
-      </Typography>
-    </RebalancingInfoWrap>
-  );
-};
-
-const RebalancingInfoWrap = styled(Box)`
-  color: '#D5D7DB';
-  svg {
-    height: auto;
-    margin-bottom: 10px;
-  }
-`;
-
 export default LoanPanel;

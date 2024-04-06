@@ -189,9 +189,9 @@ export function CurrencySearch({
 
   //handle focus on modal open
   useEffect(() => {
-    let focusTimeout;
+    let focusTimeout: number | undefined;
     if (isOpen && !isMobile) {
-      focusTimeout = setTimeout(() => {
+      focusTimeout = window.setTimeout(() => {
         inputRef.current?.focus();
       }, 50);
     }

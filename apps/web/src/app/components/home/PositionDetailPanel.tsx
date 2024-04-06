@@ -29,6 +29,8 @@ import {
   useCollateralLockedSliderPos,
   useLoanAvailableAmount,
   useInterestRate,
+  useRedemptionFee,
+  useRedemptionDaoFee,
 } from 'store/loan/hooks';
 import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -37,7 +39,6 @@ import { InterestPeriod } from 'types';
 import { formatBigNumber, getAccumulatedInterest } from 'utils';
 
 import { DropdownPopper } from '../Popover';
-import { RebalancingInfo } from './LoanPanel';
 import Skeleton from '../Skeleton';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
@@ -487,6 +488,45 @@ export const ActivityPanel = styled(FlexPanel)`
 `;
 
 const MotionActivityPanel = motion(ActivityPanel);
+
+const RebalancingInfo = () => {
+  const { data: redemptionFee } = useRedemptionFee();
+  const { data: redemptionDaoFee } = useRedemptionDaoFee();
+
+  const redeemLimit = redemptionFee && redemptionDaoFee ? 1 - (redemptionFee + redemptionDaoFee) / 10000 : '-';
+  const redeemRepaidAmt = redemptionDaoFee ? 1 - redemptionDaoFee / 10000 : '-';
+
+  return (
+    <RebalancingInfoWrap width="100%">
+      <Typography mb={3}>
+        <Trans>
+          If bnUSD ever falls below ${redeemLimit}, traders can use the smart contracts to redeem it for borrower
+          collateral.
+        </Trans>
+      </Typography>
+      <Typography mb={3}>
+        <Trans>
+          For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and{' '}
+          {redeemRepaidAmt} bnUSD of borrower debt repaid.
+        </Trans>
+      </Typography>
+      <Typography>
+        <Trans>
+          Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less
+          it will affect you.
+        </Trans>
+      </Typography>
+    </RebalancingInfoWrap>
+  );
+};
+
+const RebalancingInfoWrap = styled(Box)`
+  color: '#D5D7DB';
+  svg {
+    height: auto;
+    margin-bottom: 10px;
+  }
+`;
 
 const Chip = styled(Box)`
   display: inline-block;

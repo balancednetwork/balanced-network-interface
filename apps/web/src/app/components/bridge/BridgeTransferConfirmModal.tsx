@@ -152,8 +152,7 @@ export default function BridgeTransferConfirmModal({
   const addOriginEvent = useAddOriginEvent();
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
-  const { xcallFee: archwayXCallFees } = useXCallFee('archway');
-  const { xcallFee: iconXCallFees } = useXCallFee('icon');
+  const { xcallFee } = useXCallFee(bridgeDirection.from);
 
   const descriptionAction = `Transfer ${currencyToBridge?.symbol}`;
   const descriptionAmount = `${currencyAmountToBridge?.toFixed(2)} ${currencyAmountToBridge?.currency.symbol}`;
@@ -185,7 +184,7 @@ export default function BridgeTransferConfirmModal({
       pending: `Requesting cross-chain transfer...`,
       summary: `Cross-chain transfer requested.`,
     };
-    if (bridgeDirection.from === 'icon' && account && iconXCallFees) {
+    if (bridgeDirection.from === 'icon' && account && xcallFee) {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
       if (bnJs.contractSettings.ledgerSettings.actived) {
         changeShouldLedgerSign(true);
@@ -200,7 +199,7 @@ export default function BridgeTransferConfirmModal({
         const { result: hash } = await cx.crossTransfer(
           destination,
           `${currencyAmountToBridge.quotient}`,
-          parseInt(iconXCallFees.rollback, 16).toString(),
+          xcallFee.rollback,
         );
         if (hash) {
           setXCallInProgress(true);
@@ -220,7 +219,7 @@ export default function BridgeTransferConfirmModal({
             `${currencyAmountToBridge.quotient}`,
             tokenAddress,
             destination,
-            parseInt(iconXCallFees.rollback, 16).toString(),
+            xcallFee.rollback,
           );
         if (hash) {
           setXCallInProgress(true);
@@ -234,7 +233,7 @@ export default function BridgeTransferConfirmModal({
           await handleICONTxResult(hash);
         }
       }
-    } else if (bridgeDirection.from === 'archway' && accountArch && signingClient && archwayXCallFees) {
+    } else if (bridgeDirection.from === 'archway' && accountArch && signingClient && xcallFee) {
       const tokenAddress = currencyAmountToBridge.currency.address;
       const destination = `${bridgeDirection.to === 'icon' ? `${ICON_XCALL_NETWORK_ID}/` : ''}${destinationAddress}`;
 
@@ -249,9 +248,9 @@ export default function BridgeTransferConfirmModal({
             msg,
             fee,
             undefined,
-            archwayXCallFees.rollback !== '0'
+            xcallFee.rollback !== '0'
               ? [
-                  { amount: archwayXCallFees.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
+                  { amount: xcallFee.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
                   ...(assetToBridge ? [assetToBridge] : []),
                 ]
               : assetToBridge

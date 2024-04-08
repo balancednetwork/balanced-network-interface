@@ -451,19 +451,8 @@ const BTP = () => {
   const isBTPModalOpen = useModalOpen(ApplicationModal.TRANSFER_ASSETS);
   useEffect(() => {
     const dispatchFnc = ({ detail }: { detail: { action: Action } }) => {
-      console.log(detail.action);
       dispatch(detail.action);
     };
-    dispatch(
-      setAccountInfo({
-        address: 'hx1b57ca63337d35f7880612a7f08b03d3bc2bf565',
-        balance: 0,
-        wallet: 'iconex',
-        symbol: 'ICX',
-        currentNetwork: 'ICON',
-        id: 'ICON',
-      }),
-    );
     isBTPModalOpen && on(EVENTS.DISPATCH, dispatchFnc);
     return () => {
       off(EVENTS.DISPATCH, dispatchFnc);

@@ -3,22 +3,23 @@
   "version": "1.0.0",
   "private": true,
   "description": "",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "turbo run dev --filter=web...",
     "build": "turbo run build --filter=web...",
     "pretty": "turbo run pretty",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "checkTs": "turbo run checkTs",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@biomejs/biome": "1.6.1",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
     "turbo": "^1.13.0",
     "typescript": "^5.3.3"
   }

@@ -15,6 +15,9 @@
     "pretty": {
       "dependsOn": ["^pretty"],
       "cache": false
+    },
+    "checkTs": {
+      "cache": false
     }
   }
 }

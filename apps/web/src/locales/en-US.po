@@ -681,6 +681,10 @@ msgstr "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgid "Slippage tolerance"
 msgstr "Slippage tolerance"
 
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
+msgstr "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
+
 #: src/app/components/bridge/BridgePanel.tsx
 #: src/app/components/bridge/BridgePanel.tsx
 msgid "Transferring {0} to {1}..."
@@ -1060,7 +1064,7 @@ msgstr "less then a minute"
 msgid "Couldn't transfer {0} to {1}. Try again."
 msgstr "Couldn't transfer {0} to {1}. Try again."
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/PositionDetailPanel.tsx
 msgid "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
 msgstr "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
 
@@ -1096,6 +1100,10 @@ msgstr "{0} {1} for {2} {3}"
 #: src/app/components/XCallDescription/index.tsx
 msgid "<0>IBC</0> is the Cosmos interoperability protocol."
 msgstr "<0>IBC</0> is the Cosmos interoperability protocol."
+
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "If bnUSD ever falls below ${redeemLimit}, traders can use the smart contracts to redeem it for borrower collateral."
+msgstr "If bnUSD ever falls below ${redeemLimit}, traders can use the smart contracts to redeem it for borrower collateral."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Claim Balanced incentives?"
@@ -1358,8 +1366,8 @@ msgid "Awaiting confirmation on {0}."
 msgstr "Awaiting confirmation on {0}."
 
 #: src/app/components/home/LoanPanel.tsx
-msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
-msgstr "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
+#~ msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
+#~ msgstr "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
 
 #: src/app/components/Logo/index.tsx
 msgid "Back to the Balanced website"
@@ -1671,8 +1679,8 @@ msgid "Awaiting icon manager message"
 msgstr "Awaiting icon manager message"
 
 #: src/app/components/home/LoanPanel.tsx
-msgid "If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral."
-msgstr "If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral."
+#~ msgid "If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral."
+#~ msgstr "If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral."
 
 #: src/app/containers/NewProposalPage/index.tsx
 msgid "Executed."

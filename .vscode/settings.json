@@ -18,6 +18,5 @@
   },
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnSave": true,
-  "eslint.format.enable": true,
   "cSpell.words": ["BALN", "BNUSD", "Multichain"]
 }

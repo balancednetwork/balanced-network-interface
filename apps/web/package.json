@@ -41,7 +41,6 @@
     "chalk": "4.1.0",
     "dayjs": "1.10.7",
     "decimal.js-light": "2.5.1",
-    "eslint": "8.57.0",
     "ethers": "5.6.1",
     "final-form": "4.20.6",
     "framer-motion": "11.0.14",
@@ -52,7 +51,6 @@
     "icon-sdk-js": "1.5.1",
     "jsbi": "3.1.6",
     "lightweight-charts": "3.2.0",
-    "lint-staged": "10.3.0",
     "lodash-es": "4.17.21",
     "nouislider": "14.6.4",
     "nouislider-react": "3.3.9",
@@ -100,7 +98,6 @@
     "preview": "vite preview",
     "start:prod": "pnpm run build && serve -s build",
     "checkTs": "tsc --noEmit",
-    "eslint": "eslint --ext js,ts,tsx",
     "lint": "biome lint .",
     "lint:fix": "biome lint . --apply",
     "lint:css": "stylelint src/**/*.css",
@@ -115,34 +112,6 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": ["pnpm run eslint --max-warnings=0"],
-    "*.{md,json}": ["prettier --write"]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pnpm run checkTs && lint-staged"
-    }
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}",
-      "!src/**/*/*.d.ts",
-      "!src/**/*/Loadable.{js,jsx,ts,tsx}",
-      "!src/**/*/messages.ts",
-      "!src/**/*/types.ts",
-      "!src/index.tsx",
-      "!src/serviceWorker.ts"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 90,
-        "functions": 90,
-        "lines": 90,
-        "statements": 90
-      }
-    }
-  },
   "devDependencies": {
     "@lingui/cli": "4.7.1",
     "@lingui/vite-plugin": "4.7.1",
@@ -152,11 +121,8 @@
     "@types/react-dom": "^18.0.6",
     "@types/react-router-dom": "^5",
     "@types/rebass": "4.0.7",
-    "@typescript-eslint/eslint-plugin": "7.1.0",
-    "@typescript-eslint/parser": "7.1.0",
     "babel-plugin-macros": "3.1.0",
     "cross-env": "7.0.2",
-    "husky": "4.2.5",
     "postcss-styled-syntax": "0.6.4",
     "stylelint": "16.2.1",
     "stylelint-config-standard": "36.0.0",

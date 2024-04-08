@@ -357,9 +357,9 @@ export function ProposalPage() {
               proposal?.description
             ) : (
               <>
-                <Skeleton height={22} />
-                <Skeleton height={22} />
-                <Skeleton height={22} width={220} />
+                <Skeleton height={18} />
+                <Skeleton height={18} mt="7px" />
+                <Skeleton height={18} mt="7px" width={220} />
               </>
             )}
           </Typography>

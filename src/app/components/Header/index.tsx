@@ -199,11 +199,14 @@ export default function Header(props: { title?: string; className?: string }) {
 
   const handleDisconnectWallet = async () => {
     closeWalletMenu();
-    disconnect();
     disconnectKeplr();
+
     if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
       bnJs.contractSettings.ledgerSettings.transport.close();
     }
+
+    // disconnect function includes resetContractLedgerSettings, so put it below the transport.close()
+    disconnect();
   };
 
   const handleWalletClose = e => {

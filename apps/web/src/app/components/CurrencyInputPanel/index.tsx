@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
@@ -140,9 +140,9 @@ export default function CurrencyInputPanel({
     }
   };
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     setOpen(false);
-  };
+  }, [setOpen]);
 
   return (
     <InputContainer ref={ref} className={className}>

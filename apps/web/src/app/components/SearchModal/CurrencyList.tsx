@@ -211,7 +211,7 @@ export default function CurrencyList({
     if (isOpen && enter && currencies?.length && activeIndex !== undefined) {
       onCurrencySelect(currencies[activeIndex]);
     }
-  }, [isOpen, activeIndex, enter, currencies, currencies.length]);
+  }, [isOpen, activeIndex, enter, currencies, currencies.length, onCurrencySelect]);
 
   useEffect(() => {
     if (isOpen && handleEscape) {

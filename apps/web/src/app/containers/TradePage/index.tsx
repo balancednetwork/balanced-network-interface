@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
+
 import { Flex, Box } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
@@ -55,7 +56,7 @@ export function TradePage() {
   const { account } = useIconReact();
   const { address: accountArch } = useArchwayContext();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useFetchPrice();
   useFetchOraclePrices();
@@ -72,13 +73,16 @@ export function TradePage() {
   const handleTabClick = (event: React.MouseEvent, value: number) => {
     setValue(value);
     if (value === 0) {
-      history.replace('/trade');
+      // history.replace('/trade');
+      navigate('/trade', { replace: true });
     }
     if (value === 1) {
-      history.replace('/trade/supply');
+      // history.replace('/trade/supply');
+      navigate('/trade/supply', { replace: true });
     }
     if (value === 2) {
-      history.replace('/trade/bridge');
+      // history.replace('/trade/bridge');
+      navigate('/trade/bridge', { replace: true });
     }
   };
 

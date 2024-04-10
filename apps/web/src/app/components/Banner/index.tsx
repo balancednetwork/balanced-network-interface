@@ -1,7 +1,8 @@
 import React, { ReactNode } from 'react';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5-compat';
+
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 

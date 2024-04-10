@@ -3,8 +3,8 @@ import React from 'react';
 import { MessageDescriptor } from '@lingui/core';
 import { defineMessage } from '@lingui/macro';
 import { Helmet } from 'react-helmet-async';
-import { Switch, Route, useLocation } from 'react-router-dom';
-import { CompatRoute } from 'react-router-dom-v5-compat';
+import { Switch } from 'react-router-dom';
+import { CompatRoute, useLocation } from 'react-router-dom-v5-compat';
 
 import { DefaultLayout } from 'app/components/Layout';
 

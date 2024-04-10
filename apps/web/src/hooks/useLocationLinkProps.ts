@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { To } from 'history';
 import { stringify } from 'qs';
 // import ReactGA from 'react-ga';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom-v5-compat';
 
 import { SupportedLocale } from 'constants/locales';
 import useParsedQueryString from 'hooks/useParsedQueryString';

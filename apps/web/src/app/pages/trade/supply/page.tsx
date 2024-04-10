@@ -32,9 +32,7 @@ export function SupplyPage() {
 
   return (
     <PoolPanelContext.Provider value={data}>
-      <SectionPanel bg="bg2">
-        <LPPanel />
-      </SectionPanel>
+      <LPPanel />
 
       <div style={{ marginTop: '50px' }}>
         <LiquidityPoolsPanel />

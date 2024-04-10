@@ -102,7 +102,7 @@ const StyledCode = styled.pre`
   `};
 `;
 
-export function ProposalPage() {
+export function ProposalDetailsPage() {
   const { account } = useIconReact();
   const { address: accountArch } = useArchwayContext();
 

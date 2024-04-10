@@ -10,8 +10,6 @@ import { DefaultLayout } from 'app/components/Layout';
 import { lazyLoad } from 'utils/loadable';
 
 import { HomePage } from './containers/HomePage/Loadable';
-import { NewProposalPage } from './containers/NewProposalPage/Loadable';
-import { ProposalPage } from './containers/ProposalPage/Loadable';
 import { TradePage } from './containers/TradePage/Loadable';
 
 // import { VotePage } from './pages/vote/page';
@@ -21,6 +19,12 @@ const VotePage = lazyLoad(
 );
 
 import { ProposalListPage } from './pages/vote/proposals/page';
+// import { ProposalPage } from './containers/ProposalPage/Loadable';
+const ProposalDetailsPage = lazyLoad(
+  () => import('./pages/vote/proposals/[proposalId]/page'),
+  module => module.ProposalDetailsPage,
+);
+import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 
 import { ClaimGoodwill } from './containers/Claim/Goodwill';
 import { Claim } from './containers/Claim/LegacyFees';
@@ -72,7 +76,7 @@ export default function RootRoutes() {
           <Route index element={<VotePage />} />
           <Route path="proposal-list" element={<ProposalListPage />} />
           <Route path="new-proposal" element={<NewProposalPage />} />
-          <Route path="proposal/:id" element={<ProposalPage />} />
+          <Route path="proposal/:id" element={<ProposalDetailsPage />} />
         </Route>
 
         <Route path="airdrip" element={<Redirect to="https://balanced.network/" />} />

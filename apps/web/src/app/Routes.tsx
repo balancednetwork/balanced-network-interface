@@ -15,7 +15,11 @@ const HomePage = lazyLoad(
   module => module.HomePage,
 );
 
-import { TradePage } from './containers/TradePage/Loadable';
+// import { TradePage } from './containers/TradePage/Loadable';
+const TradePage = lazyLoad(
+  () => import('./pages/trade/page'),
+  module => module.TradePage,
+);
 
 // import { VotePage } from './pages/vote/page';
 const VotePage = lazyLoad(

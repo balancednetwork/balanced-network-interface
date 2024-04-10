@@ -7,7 +7,8 @@ import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 
 import { SupportedXCallChains } from 'app/_xcall/types';
 import bnJs from 'bnJs';

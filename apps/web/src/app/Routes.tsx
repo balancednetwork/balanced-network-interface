@@ -4,6 +4,7 @@ import { MessageDescriptor } from '@lingui/core';
 import { defineMessage } from '@lingui/macro';
 import { Helmet } from 'react-helmet-async';
 import { Switch, Route, useLocation } from 'react-router-dom';
+import { CompatRoute } from 'react-router-dom-v5-compat';
 
 import { DefaultLayout } from 'app/components/Layout';
 
@@ -31,17 +32,17 @@ export default function Routes() {
         <title>{title?.message}</title>
       </Helmet>
       <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/vote" component={VotePage} />
-        <Route exact path="/vote/proposal-list" component={ProposalList} />
-        <Route exact path="/trade" component={TradePage} />
-        <Route exact path="/trade/:pair" component={TradePage} />
-        <Route exact path="/trade/supply" component={TradePage} />
-        <Route exact path="/trade/supply/:pair" component={TradePage} />
-        <Route exact path="/trade/bridge/" component={TradePage} />
-        <Route path="/vote/new-proposal" component={NewProposalPage} />
-        <Route path="/vote/proposal/:id" component={ProposalPage} />
-        <Route
+        <CompatRoute exact path="/" component={HomePage} />
+        <CompatRoute exact path="/vote" component={VotePage} />
+        <CompatRoute exact path="/vote/proposal-list" component={ProposalList} />
+        <CompatRoute exact path="/trade" component={TradePage} />
+        <CompatRoute exact path="/trade/:pair" component={TradePage} />
+        <CompatRoute exact path="/trade/supply" component={TradePage} />
+        <CompatRoute exact path="/trade/supply/:pair" component={TradePage} />
+        <CompatRoute exact path="/trade/bridge/" component={TradePage} />
+        <CompatRoute path="/vote/new-proposal" component={NewProposalPage} />
+        <CompatRoute path="/vote/proposal/:id" component={ProposalPage} />
+        <CompatRoute
           exact
           path="/airdrip"
           component={() => {
@@ -49,7 +50,7 @@ export default function Routes() {
             return null;
           }}
         />
-        <Route
+        <CompatRoute
           component={() => {
             window.location.href = 'https://balanced.network/404';
             return null;

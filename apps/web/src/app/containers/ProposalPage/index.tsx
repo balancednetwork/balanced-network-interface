@@ -6,7 +6,8 @@ import duration from 'dayjs/plugin/duration';
 import { useIconReact } from 'packages/icon-react';
 import babelParser from 'prettier/parser-babel';
 import prettier from 'prettier/standalone';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
+
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css, useTheme } from 'styled-components';
@@ -109,7 +110,7 @@ export function ProposalPage() {
   useFetchBBalnInfo(account);
   const [modalStatus, setModalStatus] = useState(ModalStatus.None);
   const { id: pId } = useParams<{ id: string }>();
-  const proposalQuery = useProposalInfoQuery(parseInt(pId));
+  const proposalQuery = useProposalInfoQuery(parseInt(pId ?? ''));
   const { data: proposal } = proposalQuery;
   const { data: votingWeight } = useUserWeightQuery(proposal?.snapshotBlock);
   const voteStatusQuery = useUserVoteStatusQuery(proposal?.id);

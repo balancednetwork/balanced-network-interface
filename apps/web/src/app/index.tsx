@@ -3,6 +3,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Switch, Route } from 'react-router-dom';
+import { CompatRoute } from 'react-router-dom-v5-compat';
 
 import NotificationContainer from 'app/components/Notification/NotificationContainer';
 import WalletModal from 'app/components/WalletModal';
@@ -45,8 +46,8 @@ export function App() {
 
         <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
         <Switch>
-          <Route exact path="/claim-legacy-fees" component={Claim} />
-          <Route exact path="/claim-goodwill" component={ClaimGoodwill} />
+          <CompatRoute exact path="/claim-legacy-fees" component={Claim} />
+          <CompatRoute exact path="/claim-goodwill" component={ClaimGoodwill} />
           <Route component={Routes} />
         </Switch>
       </ThemeProvider>

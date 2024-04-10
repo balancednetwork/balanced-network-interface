@@ -6,7 +6,8 @@ import { t } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom-v5-compat';
 
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { canBeQueue } from 'constants/currency';
@@ -35,6 +36,8 @@ export function useSwapActionHandlers(): {
   const dispatch = useDispatch<AppDispatch>();
   const history = useHistory();
   const { pair = '' } = useParams<{ pair: string }>();
+  // console.log('pair', pair); // TODO: console logged continuously on swap page, need to fix
+
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
       dispatch(

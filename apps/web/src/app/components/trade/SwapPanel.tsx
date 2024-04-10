@@ -13,7 +13,7 @@ import styled from 'styled-components';
 
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
+import { useArchwayXCallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
 import { CurrentXCallStateType, SupportedXCallChains } from 'app/_xcall/types';
@@ -81,7 +81,7 @@ export default function SwapPanel() {
   const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
   const [destinationAddress, setDestinationAddress] = React.useState<string | undefined>();
-  const { data: xCallArchwayFee } = useArchwayXcallFee();
+  const { data: xCallArchwayFee } = useArchwayXCallFee();
   const showFundOption =
     isSwapEligibleForStabilityFund &&
     fundMaxSwap?.greaterThan(0) &&

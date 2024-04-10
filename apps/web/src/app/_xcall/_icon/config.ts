@@ -4,6 +4,7 @@ import { NETWORK_ID } from 'constants/config';
 
 import { StakedArchwayToken } from '../archway/tokens';
 import { SupportedXCallChains } from '../types';
+import { Token } from '@balancednetwork/sdk-core';
 
 const ICON_WEBSOCKET_URLS: { [key in SupportedChainId]: string } = {
   [SupportedChainId.MAINNET]: 'wss://ctz.solidwallet.io/api/v3/icon_dex/block',
@@ -59,7 +60,7 @@ const CROSSCHAIN_SUPPORTED_TOKENS_: { [key in SupportedChainId]: any } = {
   [SupportedChainId.SEJONG]: {},
 };
 
-const COSMOS_NATIVE_AVAILABLE_TOKENS_LIST: { [key in SupportedChainId]: any } = {
+const COSMOS_NATIVE_AVAILABLE_TOKENS_LIST: { [key in SupportedChainId]: Token[] } = {
   [SupportedChainId.MAINNET]: [StakedArchwayToken[SupportedChainId.MAINNET]],
   [SupportedChainId.BERLIN]: [StakedArchwayToken[SupportedChainId.BERLIN]],
   [SupportedChainId.LISBON]: [StakedArchwayToken[SupportedChainId.LISBON]],

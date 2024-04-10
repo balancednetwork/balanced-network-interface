@@ -8,7 +8,7 @@ export enum XCallEventType {
   ResponseMessage = 'ResponseMessage',
   RollbackMessage = 'RollbackMessage',
   CallExecuted = 'CallExecuted',
-  RollbackExecuted = 'RollbackExecuted'
+  RollbackExecuted = 'RollbackExecuted',
 }
 
 export type OriginXCallData = {
@@ -53,7 +53,7 @@ export enum CurrentXCallStateType {
   AWAITING_DESTINATION_CALL_MESSAGE = 'AWAITING_DESTINATION_CALL_MESSAGE',
   AWAITING_USER_CALL_EXECUTION = 'AWAITING_USER_CALL_EXECUTION',
   AWAITING_ORIGIN_ROLLBACK_MESSAGE = 'AWAITING_ORIGIN_ROLLBACK_MESSAGE',
-  AWAITING_ORIGIN_RESPONSE_MESSAGE = 'AWAITING_ORIGIN_RESPONSE_MESSAGE'
+  AWAITING_ORIGIN_RESPONSE_MESSAGE = 'AWAITING_ORIGIN_RESPONSE_MESSAGE',
 }
 
 // export const CurrentXCallState: { [key in CurrentXCallStateType]: CurrentXCallStateType } = Object.freeze({
@@ -80,3 +80,8 @@ export type XCallActivityItem = {
   destinationData?: DestinationXCallData;
   status: 'pending' | 'executable' | 'failed' | 'rollbackReady';
 };
+
+export interface IXCallFee {
+  noRollback: string;
+  rollback: string;
+}

@@ -15,7 +15,7 @@ import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
 import { useBBalnAmount, useFetchBBalnInfo } from 'store/bbaln/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 
-export function ProposalList() {
+export function ProposalListPage() {
   const { data: proposals } = useTotalProposalQuery();
   const { account } = useIconReact();
   useFetchBBalnInfo(account);

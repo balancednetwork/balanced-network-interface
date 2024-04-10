@@ -242,6 +242,9 @@ importers:
       react-router-dom:
         specifier: ^5
         version: 5.3.4(react@18.2.0)
+      react-router-dom-v5-compat:
+        specifier: 6.22.3
+        version: 6.22.3(react-dom@18.2.0)(react-router-dom@5.3.4)(react@18.2.0)
       react-spring:
         specifier: 8.0.27
         version: 8.0.27(react-dom@18.2.0)(react@18.2.0)
@@ -2353,6 +2356,11 @@ packages:
       '@rematch/core': 2.2.0(redux@5.0.1)
       redux: 5.0.1
       reselect: 4.1.8
+    dev: false
+
+  /@remix-run/router@1.15.3:
+    resolution: {integrity: sha512-Oy8rmScVrVxWZVOpEF57ovlnhpZ8CCPlnIIumVcV9nFdiSIrus99+Lw78ekXyGvVDlIsFJbSfmSovJUhCWYV3w==}
+    engines: {node: '>=14.0.0'}
     dev: false
 
   /@rollup/plugin-inject@5.0.5:
@@ -8042,6 +8050,21 @@ packages:
       use-sidecar: 1.1.2(@types/react@18.2.67)(react@18.2.0)
     dev: false
 
+  /react-router-dom-v5-compat@6.22.3(react-dom@18.2.0)(react-router-dom@5.3.4)(react@18.2.0):
+    resolution: {integrity: sha512-icbyLKEUdMqWjehsRrQv0g/N4C33KFC2ZmnOBF7vvy1hudYSJWY4VTOjy3ey2YY+r3WtcdEH72M7IIGVHAkEtw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+      react-router-dom: 4 || 5
+    dependencies:
+      history: 5.3.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-router: 6.22.3(react@18.2.0)
+      react-router-dom: 5.3.4(react@18.2.0)
+    dev: false
+
   /react-router-dom@5.3.4(react@18.2.0):
     resolution: {integrity: sha512-m4EqFMHv/Ih4kpcBCONHbkT68KoAeHN4p3lAGoNryfHi0dMy0kCzEZakiKRsvg5wHZ/JLrLW8o8KomWiz/qbYQ==}
     peerDependencies:
@@ -8072,6 +8095,16 @@ packages:
       react-is: 16.13.1
       tiny-invariant: 1.1.0
       tiny-warning: 1.0.3
+    dev: false
+
+  /react-router@6.22.3(react@18.2.0):
+    resolution: {integrity: sha512-dr2eb3Mj5zK2YISHK++foM9w4eBnO23eKnZEDs7c880P6oKbrjz/Svg9+nxqtHQK+oMW4OtjZca0RqPglXxguQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      '@remix-run/router': 1.15.3
+      react: 18.2.0
     dev: false
 
   /react-smooth@2.0.5(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):

@@ -9,7 +9,7 @@ import { Typography } from 'app/theme';
 import { useSignedInWallets } from 'store/wallet/hooks';
 import { useXCallActivityItems, useXCallStats } from 'store/xCall/hooks';
 
-import Spinner from '../Spinner';
+import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';
 import XCallItem from './XCallItem';
 

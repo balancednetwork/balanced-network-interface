@@ -9,7 +9,7 @@ import { SupportedXCallChains } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 
-import ChainList from '../bridge/ChainList';
+import ChainList from '../../pages/trade/bridge/_components/ChainList';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';

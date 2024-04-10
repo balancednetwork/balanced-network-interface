@@ -32,8 +32,8 @@ import {
 } from 'store/xCall/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { UnderlineText } from '../DropdownText';
-import Spinner from '../Spinner';
+import { UnderlineText } from '../../../../components/DropdownText';
+import Spinner from '../../../../components/Spinner';
 
 const Wrap = styled(Box)`
   display: grid;

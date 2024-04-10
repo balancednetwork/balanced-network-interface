@@ -8,8 +8,8 @@ import { SupportedXCallChains } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 
-import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
-import { DropdownPopper } from '../Popover';
+import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';
+import { DropdownPopper } from '../../../../components/Popover';
 import ChainList from './ChainList';
 
 type ChainSelectorProps = {

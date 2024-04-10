@@ -49,19 +49,19 @@ import {
 } from 'store/xCall/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import AddressInputPanel from '../AddressInputPanel';
-import { Button, TextButton } from '../Button';
-import CrossChainConnectWallet from '../CrossChainWalletConnect';
-import CurrencyLogo from '../CurrencyLogo';
-import Modal from '../Modal';
-import { ModalContentWrapper } from '../ModalContent';
-import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
-import Spinner from '../Spinner';
-import { AutoColumn } from '../trade/SwapPanel';
-import { BrightPanel } from '../trade/utils';
-import XCallEventManager from '../trade/XCallEventManager';
-import { presenceVariants, StyledButton as XCallButton } from '../trade/XCallSwapModal';
-import { IBCDescription } from '../XCallDescription';
+import AddressInputPanel from '../../../../components/AddressInputPanel';
+import { Button, TextButton } from '../../../../components/Button';
+import CrossChainConnectWallet from '../../../../components/CrossChainWalletConnect';
+import CurrencyLogo from '../../../../components/CurrencyLogo';
+import Modal from '../../../../components/Modal';
+import { ModalContentWrapper } from '../../../../components/ModalContent';
+import { CurrencySelectionType } from '../../../../components/SearchModal/CurrencySearch';
+import Spinner from '../../../../components/Spinner';
+import { AutoColumn } from '../../../../components/trade/SwapPanel';
+import { BrightPanel } from '../../../../components/trade/utils';
+import XCallEventManager from '../../../../components/trade/XCallEventManager';
+import { presenceVariants, StyledButton as XCallButton } from '../../../../components/trade/XCallSwapModal';
+import { IBCDescription } from '../../../../components/XCallDescription';
 import ChainSelector from './ChainSelector';
 
 const StyledXCallButton = styled(XCallButton)`

@@ -88,7 +88,7 @@ const useClaimableAmountQuery = () => {
   );
 };
 
-export function ClaimGoodwill() {
+export function ClaimGoodwillPage() {
   const toggleWalletModal = useWalletModalToggle();
   const { account } = useIconReact();
 

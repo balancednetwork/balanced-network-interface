@@ -82,7 +82,7 @@ const Separator = styled.h1`
   }
 `;
 
-export function Claim() {
+export function ClaimLegacyFeesPage() {
   const toggleWalletModal = useWalletModalToggle();
   const { account } = useIconReact();
   const [feeTx, setFeeTx] = React.useState('');

@@ -30,8 +30,16 @@ const ProposalNewPage = lazyLoad(
   module => module.ProposalNewPage,
 );
 
-import { ClaimGoodwill } from './containers/Claim/Goodwill';
-import { Claim } from './containers/Claim/LegacyFees';
+// import { ClaimGoodwill } from './containers/Claim/Goodwill';
+// import { Claim } from './containers/Claim/LegacyFees';
+const ClaimLegacyFeesPage = lazyLoad(
+  () => import('./pages/claim-legacy-fees/page'),
+  module => module.ClaimLegacyFeesPage,
+);
+const ClaimGoodwillPage = lazyLoad(
+  () => import('./pages/claim-goodwill/page'),
+  module => module.ClaimGoodwillPage,
+);
 
 const routeTexts: [string, MessageDescriptor][] = [
   ['/vote', defineMessage({ message: 'Vote' })],
@@ -87,8 +95,8 @@ export default function RootRoutes() {
         <Route path="*" element={<Redirect to="https://balanced.network/404" />} />
       </Route>
 
-      <Route path="/claim-legacy-fees" element={<Claim />} />
-      <Route path="/claim-goodwill" element={<ClaimGoodwill />} />
+      <Route path="/claim-legacy-fees" element={<ClaimLegacyFeesPage />} />
+      <Route path="/claim-goodwill" element={<ClaimGoodwillPage />} />
     </Routes>
   );
 }

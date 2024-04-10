@@ -9,54 +9,33 @@ import { DefaultLayout } from 'app/components/Layout';
 
 import { lazyLoad } from 'utils/loadable';
 
-// import { HomePage } from './containers/HomePage/Loadable';
 const HomePage = lazyLoad(
   () => import('./pages/page'),
   module => module.HomePage,
 );
 
-// import { TradePage } from './containers/TradePage/Loadable';
 const TradePageLayout = lazyLoad(
   () => import('./pages/trade/layout'),
   module => module.TradePageLayout,
 );
-
 import { TradePage } from './pages/trade/page';
 import { SupplyPage } from './pages/trade/supply/page';
 import { BridgePage } from './pages/trade/bridge/page';
-// const TradePage = lazyLoad(
-//   () => import('./pages/trade/page'),
-//   module => module.TradePage,
-// );
-// const SupplyPage = lazyLoad(
-//   () => import('./pages/trade/supply/page'),
-//   module => module.SupplyPage,
-// );
-// const BridgePage = lazyLoad(
-//   () => import('./pages/trade/bridge/page'),
-//   module => module.BridgePage,
-// );
 
-// import { VotePage } from './pages/vote/page';
 const VotePage = lazyLoad(
   () => import('./pages/vote/page'),
   module => module.VotePage,
 );
-
 import { ProposalListPage } from './pages/vote/proposals/page';
-// import { ProposalPage } from './containers/ProposalPage/Loadable';
 const ProposalDetailsPage = lazyLoad(
   () => import('./pages/vote/proposals/[proposalId]/page'),
   module => module.ProposalDetailsPage,
 );
-// import { NewProposalPage } from './containers/NewProposalPage/Loadable';
 const ProposalNewPage = lazyLoad(
   () => import('./pages/vote/proposals/new/page'),
   module => module.ProposalNewPage,
 );
 
-// import { ClaimGoodwill } from './containers/Claim/Goodwill';
-// import { Claim } from './containers/Claim/LegacyFees';
 const ClaimLegacyFeesPage = lazyLoad(
   () => import('./pages/claim-legacy-fees/page'),
   module => module.ClaimLegacyFeesPage,

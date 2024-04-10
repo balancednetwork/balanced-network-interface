@@ -16,10 +16,26 @@ const HomePage = lazyLoad(
 );
 
 // import { TradePage } from './containers/TradePage/Loadable';
-const TradePage = lazyLoad(
-  () => import('./pages/trade/page'),
-  module => module.TradePage,
+const TradePageLayout = lazyLoad(
+  () => import('./pages/trade/layout'),
+  module => module.TradePageLayout,
 );
+
+import { TradePage } from './pages/trade/page';
+import { SupplyPage } from './pages/trade/supply/page';
+import { BridgePage } from './pages/trade/bridge/page';
+// const TradePage = lazyLoad(
+//   () => import('./pages/trade/page'),
+//   module => module.TradePage,
+// );
+// const SupplyPage = lazyLoad(
+//   () => import('./pages/trade/supply/page'),
+//   module => module.SupplyPage,
+// );
+// const BridgePage = lazyLoad(
+//   () => import('./pages/trade/bridge/page'),
+//   module => module.BridgePage,
+// );
 
 // import { VotePage } from './pages/vote/page';
 const VotePage = lazyLoad(
@@ -85,12 +101,12 @@ export default function RootRoutes() {
       >
         <Route index element={<HomePage />} />
 
-        <Route path="trade" element={<Outlet />}>
+        <Route path="trade" element={<TradePageLayout />}>
           <Route index element={<TradePage />} />
           <Route path=":pair" element={<TradePage />} />
-          <Route path="supply" element={<TradePage />} />
-          <Route path="supply/:pair" element={<TradePage />} />
-          <Route path="bridge/" element={<TradePage />} />
+          <Route path="supply" element={<SupplyPage />} />
+          <Route path="supply/:pair" element={<SupplyPage />} />
+          <Route path="bridge/" element={<BridgePage />} />
         </Route>
 
         <Route path="vote" element={<Outlet />}>

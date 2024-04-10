@@ -9,10 +9,10 @@ import { useFetchUserVoteData } from 'store/liveVoting/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 
-import BribesPanel from './BribesPanel';
-import LiveVotingPanel from './LieVotingPanel';
-import ProposalsPanel from './ProposalsPanel';
-import VotingPowerPanel from './VotingPowerPanel';
+import BribesPanel from './_components/BribesPanel';
+import LiveVotingPanel from './_components/LieVotingPanel';
+import ProposalsPanel from './_components/ProposalsPanel';
+import VotingPowerPanel from './_components/VotingPowerPanel';
 
 const MemoizedVotingPanel = React.memo(LiveVotingPanel);
 

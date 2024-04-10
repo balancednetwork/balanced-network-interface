@@ -24,7 +24,11 @@ const ProposalDetailsPage = lazyLoad(
   () => import('./pages/vote/proposals/[proposalId]/page'),
   module => module.ProposalDetailsPage,
 );
-import { NewProposalPage } from './containers/NewProposalPage/Loadable';
+// import { NewProposalPage } from './containers/NewProposalPage/Loadable';
+const ProposalNewPage = lazyLoad(
+  () => import('./pages/vote/proposals/new/page'),
+  module => module.ProposalNewPage,
+);
 
 import { ClaimGoodwill } from './containers/Claim/Goodwill';
 import { Claim } from './containers/Claim/LegacyFees';
@@ -75,7 +79,7 @@ export default function RootRoutes() {
         <Route path="vote" element={<Outlet />}>
           <Route index element={<VotePage />} />
           <Route path="proposal-list" element={<ProposalListPage />} />
-          <Route path="new-proposal" element={<NewProposalPage />} />
+          <Route path="new-proposal" element={<ProposalNewPage />} />
           <Route path="proposal/:id" element={<ProposalDetailsPage />} />
         </Route>
 

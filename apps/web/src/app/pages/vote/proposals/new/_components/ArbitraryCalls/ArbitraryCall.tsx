@@ -12,7 +12,7 @@ import { useCxApi } from 'hooks/useCxApi';
 import { useRemoveCall, useUpdateCallContract } from 'store/arbitraryCalls/hooks';
 import { EditableArbitraryCall } from 'store/arbitraryCalls/reducer';
 
-import { FieldInput } from '..';
+import { FieldInput } from '../../page';
 import ArbitraryCallMethodParameter from './ArbitraryCallMethodParameter';
 import ArbitraryCallMethodSelector from './ArbitraryCallMethodSelector';
 import { inputVariants } from './ArbitraryCallsForm';

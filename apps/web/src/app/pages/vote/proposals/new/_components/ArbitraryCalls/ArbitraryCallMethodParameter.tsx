@@ -24,7 +24,7 @@ import {
   EditableArbitraryCallParameter,
 } from 'store/arbitraryCalls/reducer';
 
-import { FieldInput } from '..';
+import { FieldInput } from '../../page';
 import { RemoveButton } from './ArbitraryCall';
 import { inputVariants } from './ArbitraryCallsForm';
 

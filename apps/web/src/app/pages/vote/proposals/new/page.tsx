@@ -24,8 +24,8 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import ArbitraryCallsForm from './ArbitraryCalls/ArbitraryCallsForm';
-import { getTransactionsString } from './ArbitraryCalls/utils';
+import ArbitraryCallsForm from './_components/ArbitraryCalls/ArbitraryCallsForm';
+import { getTransactionsString } from './_components/ArbitraryCalls/utils';
 
 const NewProposalContainer = styled(Box)`
   flex: 1;
@@ -103,7 +103,7 @@ interface ErrorItem {
   ratio: boolean;
 }
 
-export function NewProposalPage() {
+export function ProposalNewPage() {
   const { account } = useIconReact();
   const { address: accountArch } = useArchwayContext();
   useFetchBBalnInfo(account);

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
-import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Flex, Box } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';

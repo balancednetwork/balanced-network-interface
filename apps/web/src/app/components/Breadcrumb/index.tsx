@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 

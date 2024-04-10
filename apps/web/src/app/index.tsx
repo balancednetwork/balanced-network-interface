@@ -2,8 +2,7 @@ import React from 'react';
 
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Switch, Route } from 'react-router-dom';
-import { CompatRoute } from 'react-router-dom-v5-compat';
+import { Routes, Route } from 'react-router-dom';
 
 import NotificationContainer from 'app/components/Notification/NotificationContainer';
 import WalletModal from 'app/components/WalletModal';
@@ -16,7 +15,7 @@ import { useArchwayEventListener } from './_xcall/archway/eventHandler';
 import TransferAssetsModal from './components/BTP/index';
 import { ClaimGoodwill } from './containers/Claim/Goodwill';
 import { Claim } from './containers/Claim/LegacyFees';
-import Routes from './Routes';
+import RootRoutes from './Routes';
 
 function Updaters() {
   return (
@@ -45,11 +44,11 @@ export function App() {
         {/* Add message for community */}
 
         <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
-        <Switch>
-          <CompatRoute exact path="/claim-legacy-fees" component={Claim} />
-          <CompatRoute exact path="/claim-goodwill" component={ClaimGoodwill} />
-          <Route component={Routes} />
-        </Switch>
+        <Routes>
+          <Route path="/claim-legacy-fees" element={<Claim />} />
+          <Route path="/claim-goodwill" element={<ClaimGoodwill />} />
+          <Route path="*" element={<RootRoutes />} />
+        </Routes>
       </ThemeProvider>
     </>
   );

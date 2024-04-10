@@ -3,7 +3,7 @@ import React from 'react';
 import { t, Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useIconReact } from 'packages/icon-react';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 
 import { Breadcrumb } from 'app/components/Breadcrumb';

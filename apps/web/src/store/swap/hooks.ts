@@ -6,7 +6,7 @@ import { t } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom-v5-compat';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { canBeQueue } from 'constants/currency';

@@ -6,7 +6,7 @@ import duration from 'dayjs/plugin/duration';
 import { useIconReact } from 'packages/icon-react';
 import babelParser from 'prettier/parser-babel';
 import prettier from 'prettier/standalone';
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';

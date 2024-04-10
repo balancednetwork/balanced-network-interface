@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { useLocation, NavLink, NavLinkProps } from 'react-router-dom-v5-compat';
+import { useLocation, NavLink, NavLinkProps } from 'react-router-dom';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 

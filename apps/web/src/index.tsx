@@ -10,7 +10,6 @@ import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { CompatRouter } from 'react-router-dom-v5-compat';
 
 import * as serviceWorker from 'serviceWorker';
 
@@ -45,19 +44,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <CompatRouter>
-          <HelmetProvider>
-            <QueryClientProvider client={queryClient}>
-              <IconReactProvider>
-                <ArchwayProvider>
-                  <LanguageProvider>
-                    <App />
-                  </LanguageProvider>
-                </ArchwayProvider>
-              </IconReactProvider>
-            </QueryClientProvider>
-          </HelmetProvider>
-        </CompatRouter>
+        <HelmetProvider>
+          <QueryClientProvider client={queryClient}>
+            <IconReactProvider>
+              <ArchwayProvider>
+                <LanguageProvider>
+                  <App />
+                </LanguageProvider>
+              </ArchwayProvider>
+            </IconReactProvider>
+          </QueryClientProvider>
+        </HelmetProvider>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,

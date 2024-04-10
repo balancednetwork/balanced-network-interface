@@ -17,6 +17,7 @@ type NotificationProps = {
   failureReason?: string;
   redirectOnSuccess?: string;
   generic?: boolean;
+  title?: string;
 };
 
 const NotificationPending = ({ summary }: NotificationProps) => {
@@ -53,7 +54,7 @@ const NotificationSuccess = ({ summary, redirectOnSuccess }: NotificationProps) 
   );
 };
 
-const NotificationError = ({ failureReason, generic }: NotificationProps) => {
+const NotificationError = ({ failureReason, generic, title }: NotificationProps) => {
   const arbitraryCallsTestExecutionPassed = failureReason && failureReason.indexOf('everted(20)') >= 0;
   return (
     <NotificationContainer
@@ -72,7 +73,9 @@ const NotificationError = ({ failureReason, generic }: NotificationProps) => {
       <TransactionInfo flexDirection="column">
         <TransactionInfoBody>
           <Typography variant="p" fontWeight={500}>
-            {arbitraryCallsTestExecutionPassed ? (
+            {title ? (
+              <Trans>{title}</Trans>
+            ) : arbitraryCallsTestExecutionPassed ? (
               <Trans>Contract calls verified.</Trans>
             ) : (
               <Trans>Couldn't complete your transaction.</Trans>

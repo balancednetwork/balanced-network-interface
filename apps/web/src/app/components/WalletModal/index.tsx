@@ -4,10 +4,12 @@ import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednet
 import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { t, Trans } from '@lingui/macro';
+import Skeleton from 'app/components/Skeleton';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact, LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
+import { toast } from 'react-toastify';
 import { useMedia } from 'react-use';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -17,7 +19,7 @@ import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';
 import { MenuList, LanguageMenuItem } from 'app/components/Menu';
 import Modal, { ModalProps } from 'app/components/Modal';
-import Spinner from 'app/components/Spinner';
+import { NotificationError } from 'app/components/Notification/TransactionNotification';
 import { Typography } from 'app/theme';
 import ArchWalletIcon from 'assets/icons/archway.svg';
 import IconWalletIcon from 'assets/icons/iconex.svg';
@@ -25,6 +27,7 @@ import LedgerIcon from 'assets/icons/ledger.svg';
 import bnJs from 'bnJs';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
 import { useActiveLocale } from 'hooks/useActiveLocale';
+import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
 import {
   useWalletModalToggle,
   useModalOpen,
@@ -195,6 +198,47 @@ export default function WalletModal() {
   const changeCurrentLedgerAddressPage = useChangeCurrentLedgerAddressPage();
 
   const { requestAddress, hasExtension, account, disconnect } = useIconReact();
+  const renderedAddressList = isLedgerLoading ? new Array(LIMIT_PAGING_LEDGER).fill(undefined) : addressList;
+  const [ledgerAddressPoint] = useLocalStorageWithExpiry<number>(
+    'ledgerAddressPointWithExpiry',
+    0,
+    LOCAL_STORAGE_ADDRESS_EXPIRY,
+  );
+
+  // init transport
+  useEffect(() => {
+    if (
+      localStorage.getItem('ledgerAddressPointWithExpiry') &&
+      ledgerAddressPoint !== -1 &&
+      !bnJs.contractSettings.ledgerSettings.transport
+    ) {
+      initialiseTransport(ledgerAddressPoint);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ledgerAddressPoint]);
+
+  const initialiseTransport = async (ledgerAddressPoint?: number) => {
+    try {
+      if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+        await bnJs.contractSettings.ledgerSettings.transport.close();
+      }
+
+      const transport = await TransportWebHID.create();
+      transport.setDebugMode && transport.setDebugMode();
+
+      const legerSettings: any = { transport };
+      if (typeof ledgerAddressPoint === 'number') {
+        legerSettings.path = getLedgerAddressPath(ledgerAddressPoint);
+      }
+
+      bnJs.inject({
+        legerSettings,
+      });
+    } catch (e) {
+      console.log('initialiseTransport err: ', e);
+      disconnect();
+    }
+  };
 
   const handleOpenWallet = React.useCallback(() => {
     if (isMobile) {
@@ -249,29 +293,27 @@ export default function WalletModal() {
     setLedgerLoading(true);
     setIsLedgerErr(false);
     updateAddressList([]);
-    updatePaging({
-      offset: 0,
-      limit: LIMIT_PAGING_LEDGER,
-    });
+
+    if (!account) {
+      updatePaging({
+        offset: 0,
+        limit: LIMIT_PAGING_LEDGER,
+      });
+      changeCurrentLedgerAddressPage(1);
+    }
 
     const timeout = setTimeout(() => {
       setIsLedgerErr(true);
     }, 3 * 1000);
 
     try {
-      if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-        bnJs.contractSettings.ledgerSettings.transport.close();
-      }
-      const transport = await TransportWebHID.create();
-      // transport.setDebugMode && transport.setDebugMode(false);
-      bnJs.inject({
-        legerSettings: {
-          transport,
-        },
-      });
+      disconnectLedger();
+
+      await initialiseTransport();
+
       updateShowledgerAddress(true);
 
-      await updateLedgerAddress({ offset, limit });
+      await updateLedgerAddress(!account ? { offset: 0, limit: LIMIT_PAGING_LEDGER } : { offset, limit });
       clearTimeout(timeout);
     } catch (err: any) {
       clearTimeout(timeout);
@@ -281,13 +323,27 @@ export default function WalletModal() {
           handleOpenLedger();
         }, 0);
       }
-      alert('Insert your ledger device, then enter your password and try again.');
+      updateShowledgerAddress(false);
+      toast(
+        <NotificationError
+          title="Couldn't detect a Ledger device."
+          failureReason={t`Make sure it's connected and try again.`}
+        />,
+        {
+          toastId: 'genericError',
+          autoClose: 5000,
+        },
+      );
     }
   };
 
   const getLedgerPage = React.useCallback(
     async (pageNum: number) => {
-      updateAddressList([]);
+      // disable current page
+      if (pageNum === currentLedgerAddressPage) {
+        return;
+      }
+      // updateAddressList([]);
 
       setLedgerLoading(true);
       setIsLedgerErr(false);
@@ -302,24 +358,18 @@ export default function WalletModal() {
         return;
       }
 
-      // disable current page
-      if (pageNum === currentLedgerAddressPage) {
-        return;
-      }
-
       const next = (pageNum - 1) * limit;
+      updatePaging({
+        limit,
+        offset: next,
+      });
+      changeCurrentLedgerAddressPage(pageNum);
 
       await updateLedgerAddress({ offset: next, limit });
       clearTimeout(timeout);
 
       // setLedgerLoading(false);
       setIsLedgerErr(false);
-
-      updatePaging({
-        limit,
-        offset: next,
-      });
-      changeCurrentLedgerAddressPage(pageNum);
     },
     [limit, currentLedgerAddressPage, updatePaging, changeCurrentLedgerAddressPage, updateLedgerAddress],
   );
@@ -372,7 +422,14 @@ export default function WalletModal() {
     setChainQuery(e.target.value);
   };
 
+  const disconnectLedger = () => {
+    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+      bnJs.contractSettings.ledgerSettings.transport.close();
+    }
+  };
+
   const disconnectAll = () => {
+    disconnectLedger();
     account && disconnect();
     accountArch && disconnectKeplr();
   };
@@ -383,7 +440,10 @@ export default function WalletModal() {
         name: 'ICON',
         logo: <IconWalletIcon width="40" height="40" />,
         connect: ICONWalletModalToggle,
-        disconnect: disconnect,
+        disconnect: () => {
+          disconnectLedger();
+          disconnect();
+        },
         description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain`,
         address: account,
       },
@@ -525,11 +585,7 @@ export default function WalletModal() {
           <Typography textAlign="center" mb={3}>
             <Trans>Choose a wallet from your Ledger:</Trans>
           </Typography>
-          {isLedgerLoading && (
-            <Flex justifyContent="center">
-              <Spinner></Spinner>
-            </Flex>
-          )}
+
           {isLedgerErr && (
             <Flex justifyContent="center" mt={4} mb={4}>
               <Typography>
@@ -541,53 +597,65 @@ export default function WalletModal() {
             <>
               <table className="wallet">
                 <tbody>
-                  {addressList.map((address: any) => {
+                  {renderedAddressList.map((address: any, index: number) => {
                     return (
                       <tr
-                        key={address.point}
+                        className={account === address?.address ? 'active' : ''}
+                        key={address?.point || index}
                         onClick={() => {
+                          if (!address) return;
                           chooseLedgerAddress({
                             address: address.address,
                             point: address.point,
                           });
                         }}
+                        style={{ pointerEvents: isLedgerLoading ? 'none' : 'auto' }}
                       >
-                        <td style={{ textAlign: 'left' }}>{displayAddress(address.address)}</td>
-                        <td style={{ textAlign: 'right' }}>{address.balance} ICX</td>
+                        <td>
+                          {!address ? (
+                            <Skeleton width="100%" height="22.5px" />
+                          ) : (
+                            <span>{displayAddress(address.address)}</span>
+                          )}
+                        </td>
+                        <td style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          {!address ? <Skeleton width="50%" height="22.5px" /> : address.balance + 'ICX'}{' '}
+                        </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
-              {!isLedgerLoading && (
-                <ul className="pagination">
-                  <li
-                    onClick={async () => {
-                      await getLedgerPage(currentLedgerAddressPage - 1);
-                    }}
-                  >
-                    ˂
-                  </li>
-                  {getPageNumbers(currentLedgerAddressPage).map(value => {
-                    return (
-                      <li
-                        key={Date.now() + Math.random()}
-                        className={value === currentLedgerAddressPage ? 'actived' : ''}
-                        onClick={async () => {
-                          await getLedgerPage(value);
-                        }}
-                      >
-                        {value}
-                      </li>
-                    );
-                  })}
-                  <li
-                    onClick={async () => {
-                      await getLedgerPage(currentLedgerAddressPage + 1);
-                    }}
-                  ></li>
-                </ul>
-              )}
+
+              <ul className="pagination" style={{ pointerEvents: isLedgerLoading ? 'none' : 'auto' }}>
+                <li
+                  onClick={async () => {
+                    await getLedgerPage(currentLedgerAddressPage - 1);
+                  }}
+                >
+                  {'<'}
+                </li>
+                {getPageNumbers(currentLedgerAddressPage).map(value => {
+                  return (
+                    <li
+                      key={Date.now() + Math.random()}
+                      className={value === currentLedgerAddressPage ? 'actived' : ''}
+                      onClick={async () => {
+                        await getLedgerPage(value);
+                      }}
+                    >
+                      {value}
+                    </li>
+                  );
+                })}
+                <li
+                  onClick={async () => {
+                    await getLedgerPage(currentLedgerAddressPage + 1);
+                  }}
+                >
+                  {'>'}
+                </li>
+              </ul>
             </>
           )}
         </Flex>

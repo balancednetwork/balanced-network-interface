@@ -9,7 +9,12 @@ import { DefaultLayout } from 'app/components/Layout';
 
 import { lazyLoad } from 'utils/loadable';
 
-import { HomePage } from './containers/HomePage/Loadable';
+// import { HomePage } from './containers/HomePage/Loadable';
+const HomePage = lazyLoad(
+  () => import('./pages/page'),
+  module => module.HomePage,
+);
+
 import { TradePage } from './containers/TradePage/Loadable';
 
 // import { VotePage } from './pages/vote/page';

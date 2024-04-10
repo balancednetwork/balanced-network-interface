@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import styled, { useTheme } from 'styled-components';
 
 import { LOCALE_LABEL, SupportedLocale } from 'constants/locales';

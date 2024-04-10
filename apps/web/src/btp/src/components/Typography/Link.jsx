@@ -2,7 +2,7 @@ import React from 'react';
 
 import { SubTitleMixin } from 'btp/src/components/Typography/SubTitle';
 import { TextMixin } from 'btp/src/components/Typography/Text';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom-v5-compat';
 import styled from 'styled-components';
 
 import { colors } from '../Styles/Colors';

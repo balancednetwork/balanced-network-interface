@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { Button as RebassButton } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 

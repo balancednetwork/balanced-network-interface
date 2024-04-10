@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { NavLink, NavLinkProps } from 'react-router-dom';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation, NavLink, NavLinkProps } from 'react-router-dom-v5-compat';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -60,9 +59,7 @@ const ListItem = styled.li`
   `}
 `;
 
-const activeClassName = 'ACTIVE';
-
-const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
+const StyledNavLink = styled(NavLink)`
   display: block;
   margin-left: 50%;
   transform: translate(-50%);
@@ -86,7 +83,7 @@ const StyledNavLink = styled(NavLink).attrs({ activeClassName })`
     }
   `};
 
-  &.${activeClassName} {
+  &.active {
     color: ${({ theme }) => theme.colors.bg1};
     background-color: ${({ theme }) => theme.colors.primary};
     opacity: 1;
@@ -129,7 +126,7 @@ const StyledNavLinkWithNotification = styled(
       top: 10px;
     }
 
-    &:hover, &.${activeClassName} {
+    &:hover, &.active {
       &:before, &:after {
         background-color: ${theme.colors.bg1}
       }
@@ -158,7 +155,7 @@ export default React.memo(function AppBar() {
     <Navigation>
       <List onClick={closeWalletHelper}>
         <ListItem>
-          <StyledNavLink exact to="/">
+          <StyledNavLink end to="/">
             <HomeIcon width="35" height="33" />
             <Text>
               <Trans>Home</Trans>
@@ -175,7 +172,7 @@ export default React.memo(function AppBar() {
         </ListItem>
         <ListItem>
           <StyledNavLinkWithNotification
-            exact
+            end
             to="/vote"
             hasNotification={!!(activeProposals && activeProposals.length && bBalnAmount.isGreaterThan(0))}
           >

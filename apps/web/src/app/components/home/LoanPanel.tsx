@@ -91,7 +91,8 @@ const LoanPanel = () => {
         : parsedAmount[dependentField].toFixed(2),
   };
 
-  const buttonText = borrowedAmount.isZero() ? t`Borrow` : t`Adjust`;
+  //BTCB tmp fix
+  const buttonText = borrowedAmount.isZero() ? t`Borrow` : collateralType === 'BTCB' ? t`Repay` : t`Adjust`;
 
   const currentValue = parseFloat(formattedAmounts[Field.LEFT]);
 

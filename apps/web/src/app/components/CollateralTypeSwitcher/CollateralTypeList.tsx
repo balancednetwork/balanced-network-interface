@@ -141,6 +141,8 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
 
       <GridWrap>
         {allCollateralData
+          //BTCB tmp filter fix
+          ?.filter(collateralType => collateralType.symbol !== 'BTCB' || collateralType.collateralDeposit.gt(0))
           ?.sort((a, b) => b.collateralDeposit.toNumber() - a.collateralDeposit.toNumber())
           .map((collateralType, i, { length }) => {
             const isLast = length - 1 === i;
@@ -190,7 +192,10 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
 
                 <CollateralTypesGridItem>
                   <Typography className="white">{`$${collateralType.loanTaken.toFormat(0)}`}</Typography>
-                  <Typography className="grey">{`$${collateralType.loanAvailable.toFormat(0)}`}</Typography>
+                  <Typography className="grey">
+                    {/* BTCB tmp fix */}
+                    {collateralType.symbol === 'BTCB' ? '$0' : `$${collateralType.loanAvailable.toFormat(0)}`}
+                  </Typography>
                 </CollateralTypesGridItem>
               </CollateralTypesGrid>
             );

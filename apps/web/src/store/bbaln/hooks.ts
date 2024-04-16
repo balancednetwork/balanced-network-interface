@@ -23,6 +23,7 @@ import { Field } from '../loan/actions';
 import { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } from './actions';
 
 const PERCENTAGE_DISTRIBUTED = new BigNumber(0.3);
+const ENSHRINEMENT_RATIO = new BigNumber(0.5);
 
 export type Source = {
   balance: BigNumber;
@@ -373,20 +374,25 @@ export const usePastMonthFeesDistributed = () => {
 
           const bnUSDFees = new BigNumber(formatUnits(bnUSDFeesNow))
             .minus(new BigNumber(formatUnits(bnUSDFeesThen)))
+            .times(ENSHRINEMENT_RATIO)
             .times(PERCENTAGE_DISTRIBUTED);
           const sICXFees = new BigNumber(formatUnits(sICXFeesNow))
             .minus(new BigNumber(formatUnits(sICXFeesThen)))
             .times(rates['sICX'])
+            .times(ENSHRINEMENT_RATIO)
             .times(PERCENTAGE_DISTRIBUTED);
           const balnFees = new BigNumber(formatUnits(balnFeesNow))
             .minus(new BigNumber(formatUnits(balnFeesThen)))
             .times(rates['BALN'])
+            .times(ENSHRINEMENT_RATIO)
             .times(PERCENTAGE_DISTRIBUTED);
           const loansFees = new BigNumber(formatUnits(loanFeesNow))
             .minus(new BigNumber(formatUnits(loanFeesThen)))
+            .times(ENSHRINEMENT_RATIO)
             .times(PERCENTAGE_DISTRIBUTED);
           const fundFees = new BigNumber(formatUnits(fundFeesNow))
             .minus(new BigNumber(formatUnits(fundFeesThen)))
+            .times(ENSHRINEMENT_RATIO)
             .times(PERCENTAGE_DISTRIBUTED);
 
           return {

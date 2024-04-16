@@ -357,7 +357,8 @@ export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]
 
     const supportedTokens = {};
     Object.keys(data).forEach((symbol, index) => {
-      if (debtCeilings[index] > 0) {
+      //temporarily allow BTCB with 0 debt ceiling
+      if (debtCeilings[index] > 0 || symbol === 'BTCB') {
         supportedTokens[symbol] = data[symbol];
       }
     });

@@ -15,9 +15,9 @@ import { Button, TextButton } from 'app/components/Button';
 import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
 import Divider from 'app/components/Divider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import { MenuItem, MenuList } from 'app/components/Menu';
 import Modal from 'app/components/Modal';
+import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
@@ -777,7 +777,7 @@ export default function BBalnSlider({
 
       {/* Adjust Modal */}
       <Modal isOpen={confirmationModalOpen} onDismiss={toggleConfirmationModalOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
             {shouldBoost ? t`Lock up Balance Tokens?` : t`Unlock Balance Tokens?`}
           </Typography>
@@ -840,15 +840,13 @@ export default function BBalnSlider({
             )}
           </Flex>
 
-          <LedgerConfirmMessage />
-
           {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
 
       {/* Withdraw Modal */}
       <Modal isOpen={withdrawModalOpen} onDismiss={toggleWithdrawModalOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
             <Trans>Withdraw Balance Tokens</Trans>
           </Typography>
@@ -874,10 +872,8 @@ export default function BBalnSlider({
             )}
           </Flex>
 
-          <LedgerConfirmMessage />
-
           {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

@@ -8,8 +8,8 @@ import { Button, TextButton } from 'app/components/Button';
 import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
 import { inputRegex } from 'app/components/CurrencyInputPanel';
 import { UnderlineText } from 'app/components/DropdownText';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
 import Modal from 'app/components/Modal';
+import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import Tooltip from 'app/components/Tooltip';
 import { Typography } from 'app/theme';
@@ -195,7 +195,7 @@ export default function VotingComponent({ name, respoLayout }: VotingComponentPr
       </Flex>
 
       <Modal isOpen={showConfirmation && editing === name} onDismiss={() => changeShowConfirmation(false)}>
-        <Flex flexDirection="column" alignItems="stretch" m={5} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
             <Trans>Adjust liquidity allocation?</Trans>
           </Typography>
@@ -238,10 +238,8 @@ export default function VotingComponent({ name, respoLayout }: VotingComponentPr
             )}
           </Flex>
 
-          <LedgerConfirmMessage />
-
           {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

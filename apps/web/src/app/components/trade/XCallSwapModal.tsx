@@ -38,10 +38,10 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Button, TextButton } from '../Button';
 import Modal from '../Modal';
-import { ModalContentWrapper } from '../ModalContent';
 import Spinner from '../Spinner';
 import { swapMessage } from './utils';
 import XCallEventManager from './XCallEventManager';
+import ModalContent from '../ModalContent';
 
 type XCallSwapModalProps = {
   isOpen: boolean;
@@ -414,7 +414,7 @@ const XCallSwapModal = ({
 
   return (
     <Modal isOpen={isOpen} onDismiss={controlledClose}>
-      <ModalContentWrapper>
+      <ModalContent noMessages={xCallInProgress}>
         <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
           <Trans>
             Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
@@ -547,7 +547,7 @@ const XCallSwapModal = ({
             </>
           )}
         </Flex>
-      </ModalContentWrapper>
+      </ModalContent>
     </Modal>
   );
 };

@@ -43,14 +43,6 @@ const ConnectWrap = styled.div`
   padding-right: 15px;
 `;
 
-export const ChainWrap = styled(Flex)`
-  align-items: center;
-  padding: 3px 12px 4px;
-  transform: translateY(-15px);
-  // border-radius: 0 0 10px 10px;
-  justify-content: space-between;
-`;
-
 export default function BridgeTransferForm({ openModal }) {
   const { account } = useIconReact();
   const { address: accountArch } = useArchwayContext();
@@ -114,27 +106,22 @@ export default function BridgeTransferForm({ openModal }) {
             <ChainSelector label="to" chain={bridgeDirection.to} setChain={c => onChainSelection(Field.TO, c)} />
           </Flex>
 
-          <Flex width="100%" alignItems="center" justifyContent="space-between">
-            <Typography variant="h2">
-              <Trans>Send</Trans>
-            </Typography>
-            <Typography
-              as="div"
-              mb={-1}
-              textAlign="right"
-              hidden={
-                (bridgeDirection.from === 'icon' && !account) || (bridgeDirection.from === 'archway' && !accountArch)
-              }
-            >
-              <Trans>Wallet:</Trans>{' '}
-              {`${
-                selectedTokenWalletBalance?.toFixed(4, {
-                  groupSeparator: ',',
-                }) ?? 0
-              } 
+          <Typography
+            as="div"
+            mb={-1}
+            textAlign="right"
+            hidden={
+              (bridgeDirection.from === 'icon' && !account) || (bridgeDirection.from === 'archway' && !accountArch)
+            }
+          >
+            <Trans>Wallet:</Trans>{' '}
+            {`${
+              selectedTokenWalletBalance?.toFixed(4, {
+                groupSeparator: ',',
+              }) ?? 0
+            } 
                 ${currencyToBridge?.symbol}`}
-            </Typography>
-          </Flex>
+          </Typography>
           <Flex>
             <CurrencyInputPanel
               account={account}
@@ -149,11 +136,6 @@ export default function BridgeTransferForm({ openModal }) {
               showCommunityListControl={false}
             />
           </Flex>
-          <ChainWrap>
-            <Typography mr={1} lineHeight="1.7">
-              On {getNetworkDisplayName(bridgeDirection.from)}
-            </Typography>
-          </ChainWrap>
 
           <Flex style={{ position: 'relative' }}>
             <AddressInputPanel value={recipient || ''} onUserInput={onChangeRecipient} drivenOnly={true} />
@@ -163,11 +145,6 @@ export default function BridgeTransferForm({ openModal }) {
               </ConnectWrap>
             )}
           </Flex>
-          <ChainWrap>
-            <Typography mr={1} lineHeight="1.7">
-              On {getNetworkDisplayName(bridgeDirection.to)}
-            </Typography>
-          </ChainWrap>
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>

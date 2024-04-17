@@ -172,7 +172,6 @@ export default React.memo(function AppBar() {
         </ListItem>
         <ListItem>
           <StyledNavLinkWithNotification
-            end
             to="/vote"
             hasNotification={!!(activeProposals && activeProposals.length && bBalnAmount.isGreaterThan(0))}
           >

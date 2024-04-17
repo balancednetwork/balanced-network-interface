@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { SupportedXCallChains } from 'app/_xcall/types';
 import bnJs from 'bnJs';
@@ -35,7 +35,7 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
   onSlide: (field: Field, typedValue: string) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { pair = '' } = useParams<{ pair: string }>();
 
   const onCurrencySelection = useCallback(
@@ -49,18 +49,21 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
 
       if (field === Field.CURRENCY_A) {
         if (currency.symbol === 'ICX') {
-          history.replace(`/trade/supply/${currency.symbol}`);
+          // history.replace(`/trade/supply/${currency.symbol}`);
+          navigate(`/trade/supply/${currency.symbol}`, { replace: true });
         } else {
           const currentQuote = pair.split('_')[1];
-          history.replace(`/trade/supply/${currency.symbol}` + (currentQuote ? `_${currentQuote}` : ''));
+          // history.replace(`/trade/supply/${currency.symbol}` + (currentQuote ? `_${currentQuote}` : ''));
+          navigate(`/trade/supply/${currency.symbol}` + (currentQuote ? `_${currentQuote}` : ''), { replace: true });
         }
       }
       if (field === Field.CURRENCY_B) {
         const currentBase = pair.split('_')[0];
-        history.replace(`/trade/supply/${currentBase}_${currency.symbol}`);
+        // history.replace(`/trade/supply/${currentBase}_${currency.symbol}`);
+        navigate(`/trade/supply/${currentBase}_${currency.symbol}`, { replace: true });
       }
     },
-    [dispatch, history, pair],
+    [dispatch, pair],
   );
 
   const onFieldAInput = useCallback(
@@ -384,7 +387,7 @@ export function useDerivedMintInfo(
 
 export function useInitialSupplyLoad(): void {
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
-  const history = useHistory();
+  const navigate = useNavigate();
   const tokens = useAllTokens();
   const bases = useCommonBases();
   const { onCurrencySelection } = useMintActionHandlers(true);
@@ -409,12 +412,16 @@ export function useInitialSupplyLoad(): void {
         ICX && onCurrencySelection(Field.CURRENCY_A, ICX);
       } else {
         if (currencies.CURRENCY_A && currencies.CURRENCY_B) {
-          history.replace(`/trade/supply/${currencies.CURRENCY_A.symbol}_${currencies.CURRENCY_B.symbol}`);
+          // history.replace(`/trade/supply/${currencies.CURRENCY_A.symbol}_${currencies.CURRENCY_B.symbol}`);
+          navigate(`/trade/supply/${currencies.CURRENCY_A.symbol}_${currencies.CURRENCY_B.symbol}`, { replace: true });
         } else {
-          history.replace(`/trade/supply/${INITIAL_MINT.currencyA.symbol}_${INITIAL_MINT.currencyB.symbol}`);
+          // history.replace(`/trade/supply/${INITIAL_MINT.currencyA.symbol}_${INITIAL_MINT.currencyB.symbol}`);
+          navigate(`/trade/supply/${INITIAL_MINT.currencyA.symbol}_${INITIAL_MINT.currencyB.symbol}`, {
+            replace: true,
+          });
         }
       }
       setFirstLoad(false);
     }
-  }, [firstLoad, tokens, onCurrencySelection, history, currencies.CURRENCY_A, currencies.CURRENCY_B, bases, ICX, pair]);
+  }, [firstLoad, tokens, onCurrencySelection, currencies.CURRENCY_A, currencies.CURRENCY_B, bases, ICX, pair]);
 }

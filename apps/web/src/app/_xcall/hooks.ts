@@ -7,7 +7,9 @@ import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/ho
 import { AUTO_EXECUTION_ON_ICON } from './_icon/config';
 import { AUTO_EXECUTION_ON_ARCHWAY } from './archway/config';
 import { useARCH } from './archway/tokens';
-import { SupportedXCallChains } from './types';
+import { IXCallFee, SupportedXCallChains } from './types';
+import { useArchwayXCallFee } from './archway/eventHandler';
+import { useIconXCallFee } from './_icon/eventHandlers';
 
 const ARCHWAY_GAS_THRESHOLD = 5;
 const ICX_GAS_THRESHOLD = 4;
@@ -64,3 +66,27 @@ export function useXCallGasChecker(
     },
   );
 }
+
+// TODO: improve this hook
+export const useXCallFee = (chain: string) => {
+  const { data: archwayXCallFees } = useArchwayXCallFee();
+  const { data: iconXCallFees } = useIconXCallFee();
+
+  let xcallFee: IXCallFee | undefined;
+  let formattedXCallFee: string;
+
+  switch (chain) {
+    case 'archway':
+      xcallFee = archwayXCallFees;
+      formattedXCallFee = (Number(xcallFee?.rollback) / 10 ** 18).toPrecision(3) + ' ARCH';
+      break;
+    case 'icon':
+      xcallFee = iconXCallFees;
+      formattedXCallFee = (Number(xcallFee?.rollback) / 10 ** 18).toPrecision(3) + ' ICX';
+      break;
+    default:
+      throw new Error(`Unsupported chain: ${chain}`);
+  }
+
+  return { xcallFee, formattedXCallFee };
+};

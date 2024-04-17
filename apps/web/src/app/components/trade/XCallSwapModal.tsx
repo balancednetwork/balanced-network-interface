@@ -14,7 +14,7 @@ import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON }
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
-import { useArchwayXcallFee } from 'app/_xcall/archway/eventHandler';
+import { useArchwayXCallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { useXCallGasChecker } from 'app/_xcall/hooks';
@@ -130,7 +130,7 @@ const XCallSwapModal = ({
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
-  const { data: archwayXcallFees } = useArchwayXcallFee();
+  const { data: archwayXCallFees } = useArchwayXCallFee();
   const { data: gasChecker } = useXCallGasChecker(originChain, destinationChain);
   const currentXCallState = useCurrentXCallState();
   const ARCH = useARCH();
@@ -357,8 +357,8 @@ const XCallSwapModal = ({
             msg,
             'auto',
             undefined,
-            archwayXcallFees?.rollback && archwayXcallFees.rollback !== '0'
-              ? [{ amount: archwayXcallFees?.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
+            archwayXCallFees?.rollback && archwayXCallFees.rollback !== '0'
+              ? [{ amount: archwayXCallFees?.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
               : undefined,
           );
 
@@ -475,10 +475,10 @@ const XCallSwapModal = ({
           </strong>
           .
         </Typography>
-        {originChain === 'archway' && archwayXcallFees && (
+        {originChain === 'archway' && archwayXCallFees && (
           <Typography textAlign="center">
             <Trans>You'll also pay</Trans>{' '}
-            <strong>{(Number(archwayXcallFees.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH</strong>{' '}
+            <strong>{(Number(archwayXCallFees.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH</strong>{' '}
             <Trans>to transfer cross-chain.</Trans>
           </Typography>
         )}

@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -37,8 +38,8 @@ const NotificationPending = ({ summary }: NotificationProps) => {
 };
 
 const NotificationSuccess = ({ summary, redirectOnSuccess }: NotificationProps) => {
-  const history = useHistory();
-  redirectOnSuccess && history.push(redirectOnSuccess);
+  const navigate = useNavigate();
+  redirectOnSuccess && navigate(redirectOnSuccess);
 
   return (
     <NotificationContainer>

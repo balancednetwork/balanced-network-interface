@@ -1,18 +1,49 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { MessageDescriptor } from '@lingui/core';
 import { defineMessage } from '@lingui/macro';
 import { Helmet } from 'react-helmet-async';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Outlet } from 'react-router-dom';
 
 import { DefaultLayout } from 'app/components/Layout';
 
-import { HomePage } from './containers/HomePage/Loadable';
-import { NewProposalPage } from './containers/NewProposalPage/Loadable';
-import { ProposalPage } from './containers/ProposalPage/Loadable';
-import { TradePage } from './containers/TradePage/Loadable';
-import { VotePage } from './containers/VotePage/Loadable';
-import { ProposalList } from './containers/VotePage/ProposalsPanel/ProposalList';
+import { lazyLoad } from 'utils/loadable';
+
+const HomePage = lazyLoad(
+  () => import('./pages/page'),
+  module => module.HomePage,
+);
+
+const TradePageLayout = lazyLoad(
+  () => import('./pages/trade/layout'),
+  module => module.TradePageLayout,
+);
+import { TradePage } from './pages/trade/page';
+import { SupplyPage } from './pages/trade/supply/page';
+import { BridgePage } from './pages/trade/bridge/page';
+
+const VotePage = lazyLoad(
+  () => import('./pages/vote/page'),
+  module => module.VotePage,
+);
+import { ProposalListPage } from './pages/vote/proposals/page';
+const ProposalDetailsPage = lazyLoad(
+  () => import('./pages/vote/proposals/[proposalId]/page'),
+  module => module.ProposalDetailsPage,
+);
+const ProposalNewPage = lazyLoad(
+  () => import('./pages/vote/proposals/new/page'),
+  module => module.ProposalNewPage,
+);
+
+const ClaimLegacyFeesPage = lazyLoad(
+  () => import('./pages/claim-legacy-fees/page'),
+  module => module.ClaimLegacyFeesPage,
+);
+const ClaimGoodwillPage = lazyLoad(
+  () => import('./pages/claim-goodwill/page'),
+  module => module.ClaimGoodwillPage,
+);
 
 const routeTexts: [string, MessageDescriptor][] = [
   ['/vote', defineMessage({ message: 'Vote' })],
@@ -20,42 +51,56 @@ const routeTexts: [string, MessageDescriptor][] = [
   ['/', defineMessage({ message: 'Home' })],
 ];
 
-export default function Routes() {
-  const location = useLocation();
+const Redirect = ({ to }) => {
+  useEffect(() => {
+    window.location.href = to;
+    throw new Error('Redirecting...');
+  }, [to]);
+  return null;
+};
 
+export default function RootRoutes() {
+  const location = useLocation();
   const title = routeTexts.find(item => location.pathname.startsWith(item[0]))?.[1];
 
   return (
-    <DefaultLayout title={title?.id}>
-      <Helmet>
-        <title>{title?.message}</title>
-      </Helmet>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/vote" component={VotePage} />
-        <Route exact path="/vote/proposal-list" component={ProposalList} />
-        <Route exact path="/trade" component={TradePage} />
-        <Route exact path="/trade/:pair" component={TradePage} />
-        <Route exact path="/trade/supply" component={TradePage} />
-        <Route exact path="/trade/supply/:pair" component={TradePage} />
-        <Route exact path="/trade/bridge/" component={TradePage} />
-        <Route path="/vote/new-proposal" component={NewProposalPage} />
-        <Route path="/vote/proposal/:id" component={ProposalPage} />
-        <Route
-          exact
-          path="/airdrip"
-          component={() => {
-            window.location.href = 'https://balanced.network/';
-            return null;
-          }}
-        />
-        <Route
-          component={() => {
-            window.location.href = 'https://balanced.network/404';
-            return null;
-          }}
-        />
-      </Switch>
-    </DefaultLayout>
+    <Routes>
+      <Route
+        path="*"
+        element={
+          <>
+            <DefaultLayout title={title?.id}>
+              <Helmet>
+                <title>{title?.message}</title>
+              </Helmet>
+              <Outlet />
+            </DefaultLayout>
+          </>
+        }
+      >
+        <Route index element={<HomePage />} />
+
+        <Route path="trade" element={<TradePageLayout />}>
+          <Route index element={<TradePage />} />
+          <Route path=":pair" element={<TradePage />} />
+          <Route path="supply" element={<SupplyPage />} />
+          <Route path="supply/:pair" element={<SupplyPage />} />
+          <Route path="bridge/" element={<BridgePage />} />
+        </Route>
+
+        <Route path="vote" element={<Outlet />}>
+          <Route index element={<VotePage />} />
+          <Route path="proposal-list" element={<ProposalListPage />} />
+          <Route path="new-proposal" element={<ProposalNewPage />} />
+          <Route path="proposal/:id" element={<ProposalDetailsPage />} />
+        </Route>
+
+        <Route path="airdrip" element={<Redirect to="https://balanced.network/" />} />
+        <Route path="*" element={<Redirect to="https://balanced.network/404" />} />
+      </Route>
+
+      <Route path="/claim-legacy-fees" element={<ClaimLegacyFeesPage />} />
+      <Route path="/claim-goodwill" element={<ClaimGoodwillPage />} />
+    </Routes>
   );
 }

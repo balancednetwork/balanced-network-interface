@@ -6,7 +6,7 @@ import { t } from '@lingui/macro';
 import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { SupportedXCallChains } from 'app/_xcall/types';
 import { canBeQueue } from 'constants/currency';
@@ -33,8 +33,10 @@ export function useSwapActionHandlers(): {
   onChangeRecipient: (recipient: string | null) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { pair = '' } = useParams<{ pair: string }>();
+  // console.log('pair', pair); // TODO: console logged continuously on swap page, need to fix
+
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
       dispatch(
@@ -45,14 +47,16 @@ export function useSwapActionHandlers(): {
       );
       if (field === Field.INPUT) {
         const currentQuote = pair.split('_')[1];
-        history.replace(`/trade/${currency.symbol}_${currentQuote}`);
+        // history.replace(`/trade/${currency.symbol}_${currentQuote}`);
+        navigate(`/trade/${currency.symbol}_${currentQuote}`, { replace: true });
       }
       if (field === Field.OUTPUT) {
         const currentBase = pair.split('_')[0];
-        history.replace(`/trade/${currentBase}_${currency.symbol}`);
+        // history.replace(`/trade/${currentBase}_${currency.symbol}`);
+        navigate(`/trade/${currentBase}_${currency.symbol}`, { replace: true });
       }
     },
-    [dispatch, history, pair],
+    [dispatch, pair],
   );
 
   const onPercentSelection = useCallback(
@@ -65,9 +69,10 @@ export function useSwapActionHandlers(): {
   const onSwitchTokens = useCallback(() => {
     const currentBase = pair.split('_')[0];
     const currentQuote = pair.split('_')[1];
-    history.replace(`/trade/${currentQuote}_${currentBase}`);
+    // history.replace(`/trade/${currentQuote}_${currentBase}`);
+    navigate(`/trade/${currentQuote}_${currentBase}`, { replace: true });
     dispatch(switchCurrencies());
-  }, [pair, history, dispatch]);
+  }, [pair, dispatch]);
 
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {
@@ -230,7 +235,7 @@ export function useDerivedSwapInfo(
 
 export function useInitialSwapLoad(): void {
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
-  const history = useHistory();
+  const navigate = useNavigate();
   const tokens = useAllTokens();
   const { pair = '' } = useParams<{ pair: string }>();
   const { onCurrencySelection } = useSwapActionHandlers();
@@ -249,12 +254,14 @@ export function useInitialSwapLoad(): void {
         onCurrencySelection(Field.OUTPUT, quote);
       } else {
         if (currencies.INPUT && currencies.OUTPUT) {
-          history.replace(`/trade/${currencies.INPUT.symbol}_${currencies.OUTPUT.symbol}`);
+          // history.replace(`/trade/${currencies.INPUT.symbol}_${currencies.OUTPUT.symbol}`);
+          navigate(`/trade/${currencies.INPUT.symbol}_${currencies.OUTPUT.symbol}`, { replace: true });
         } else {
-          history.replace(`/trade/${INITIAL_SWAP.base.symbol}_${INITIAL_SWAP.quote.symbol}`);
+          // history.replace(`/trade/${INITIAL_SWAP.base.symbol}_${INITIAL_SWAP.quote.symbol}`);
+          navigate(`/trade/${INITIAL_SWAP.base.symbol}_${INITIAL_SWAP.quote.symbol}`, { replace: true });
         }
       }
       setFirstLoad(false);
     }
-  }, [firstLoad, tokens, onCurrencySelection, history, currencies.INPUT, currencies.OUTPUT, pair]);
+  }, [firstLoad, tokens, onCurrencySelection, currencies.INPUT, currencies.OUTPUT, pair]);
 }

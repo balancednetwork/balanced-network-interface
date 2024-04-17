@@ -10,6 +10,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+
 import * as serviceWorker from 'serviceWorker';
 
 // Use consistent styling

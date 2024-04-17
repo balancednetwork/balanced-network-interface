@@ -1,0 +1,74 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.6.1/schema.json",
+  "organizeImports": {
+    "enabled": false
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120,
+    "lineEnding": "lf",
+    "ignore": []
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingComma": "all",
+      "semicolons": "always",
+      "arrowParentheses": "asNeeded",
+      "quoteStyle": "single"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json"],
+    "ignore": ["**/node_modules/**", "**/dist/**", "**/public/**", "./src/charting_library/**", "./src/locales/**"],
+    "rules": {
+      "style": {
+        "noNonNullAssertion": "off",
+        "useTemplate": "off",
+        "useImportType": "off",
+        "useNodejsImportProtocol": "off",
+        "noInferrableTypes": "off",
+        "useEnumInitializers": "off",
+        "useNumberNamespace": "off",
+        "noUselessElse": "off",
+        "noUnusedTemplateLiteral": "off",
+        "useSingleVarDeclarator": "off",
+        "useSelfClosingElements": "off",
+        "useDefaultParameterLast": "off",
+        "noParameterAssign": "off",
+        "noCommaOperator": "off"
+      },
+      "complexity": {
+        "useLiteralKeys": "off",
+        "noForEach": "off",
+        "useOptionalChain": "off",
+        "noExtraBooleanCast": "off",
+        "noBannedTypes": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off",
+        "noImplicitAnyLet": "off",
+        "noAssignInExpressions": "off",
+        "noAsyncPromiseExecutor": "off"
+      },
+      "performance": {
+        "noDelete": "off",
+        "noAccumulatingSpread": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off",
+        "noUnsafeFinally": "off"
+      },
+      "a11y": {
+        "useAltText": "off",
+        "useKeyWithClickEvents": "off"
+      }
+    }
+  }
+}

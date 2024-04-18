@@ -234,8 +234,9 @@ export default function WalletModal() {
       bnJs.inject({
         legerSettings,
       });
-    } catch (e) {
-      console.log('initialiseTransport err: ', e);
+    } catch (e: any) {
+      console.error('initialiseTransport err: ', e);
+      if (e.endsWith('in progress.')) return;
       disconnect();
     }
   };

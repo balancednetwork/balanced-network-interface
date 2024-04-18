@@ -70,6 +70,9 @@ Create an .env file
 ## For Sejong testnet
 REACT_APP_NETWORK_ID=83
 
+## For Lisbon testnet
+REACT_APP_NETWORK_ID=2
+
 ## For Yeouido testnet
 REACT_APP_NETWORK_ID=3
 

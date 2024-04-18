@@ -166,7 +166,7 @@ export default function BridgeTransferForm({ openModal }) {
               <Trans>Fee</Trans>
             </Typography>
 
-            <Typography color="text">{formattedXCallFee && formattedXCallFee}</Typography>
+            <Typography color="text">{formattedXCallFee ?? ''}</Typography>
           </Flex>
           <Flex alignItems="center" justifyContent="space-between">
             <Typography>

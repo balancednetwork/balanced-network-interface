@@ -11,14 +11,14 @@ import {
 } from 'store/transactionsCrosschain/hooks';
 
 import { useArchwayContext } from '../ArchwayProvider';
-import { ARCHWAY_CONTRACTS } from '../config';
+import { archway } from '../config1';
 import { ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '../tokens';
 import { getFeeParam } from '../utils';
 
 const useAllowanceHandler = (
   tokenAddress: string,
   amountNeeded: string,
-  spenderAddress: string = ARCHWAY_CONTRACTS.assetManager,
+  spenderAddress: string = archway.contracts.assetManager,
   callback?: (success: boolean) => void,
 ) => {
   const { address, signingClient } = useArchwayContext();
@@ -51,7 +51,7 @@ const useAllowanceHandler = (
   }, [allowance, amountNeeded]);
 
   const isIncreaseNeeded = React.useMemo(() => {
-    return tokenAddress !== ARCHWAY_CONTRACTS.bnusd && new BigNumber(actualIncreaseNeeded).gt(0);
+    return tokenAddress !== archway.contracts.bnUSD && new BigNumber(actualIncreaseNeeded).gt(0);
   }, [tokenAddress, actualIncreaseNeeded]);
 
   const increaseAllowance = async () => {

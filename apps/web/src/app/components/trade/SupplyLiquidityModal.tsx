@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import { ARCHWAY_FEE_TOKEN_SYMBOL, ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
+import { archway } from 'app/_xcall/archway/config1';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { CurrentXCallStateType, SupportedXCallChains } from 'app/_xcall/types';
 import { getBytesFromString, getCrossChainTokenAddress } from 'app/_xcall/utils';
@@ -111,12 +111,12 @@ export default function SupplyLiquidityModal({
       },
     };
 
-    const fee = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+    const fee = await signingClient.queryContractSmart(archway.contracts.xCall, {
       get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
     });
 
     try {
-      const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.assetManager, msg, 'auto', undefined, [
+      const res = await signingClient.execute(accountArch, archway.contracts.assetManager, msg, 'auto', undefined, [
         { amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
       ]);
 

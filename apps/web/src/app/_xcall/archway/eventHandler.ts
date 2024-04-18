@@ -15,10 +15,8 @@ import {
   useXCallOriginEvents,
 } from 'store/xCall/hooks';
 
-import { ICON_XCALL_NETWORK_ID } from '../_icon/config';
-import { CrossChainTxType, IXCallFee, XCallEventType } from '../types';
-import { useArchwayContext } from './ArchwayProvider';
-import { ARCHWAY_CONTRACTS, ARCHWAY_WEBSOCKET_URL } from './config';
+import { CrossChainTxType, XCallEventType } from '../types';
+import { ARCHWAY_WEBSOCKET_URL } from './config';
 import {
   getCallExecutedEventDataFromArchwayEvent,
   getRollbackEventDataFromArchwayEvent,
@@ -158,27 +156,3 @@ export const useArchwayEventListener = () => {
 export function getXCallResult(tx: CrossChainTxType): string | undefined {
   return tx.events.find(e => e.type === 'wasm-CallExecuted')?.attributes.find(a => a.key === 'msg')?.value;
 }
-
-export const useArchwayXCallFee = (): UseQueryResult<IXCallFee> => {
-  const { client } = useArchwayContext();
-
-  return useQuery(
-    [`archway-xcall-fees`, `client-${client ? 'exists' : 'undefined'}`],
-    async () => {
-      if (client) {
-        const feeWithRollback = await client.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
-          get_fee: { nid: ICON_XCALL_NETWORK_ID, rollback: true },
-        });
-        const feeNoRollback = await client.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
-          get_fee: { nid: ICON_XCALL_NETWORK_ID, rollback: false },
-        });
-
-        return {
-          noRollback: feeNoRollback,
-          rollback: feeWithRollback,
-        };
-      }
-    },
-    { enabled: !!client, keepPreviousData: true },
-  );
-};

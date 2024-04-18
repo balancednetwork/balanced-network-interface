@@ -8,8 +8,8 @@ import { LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
 import { NETWORK_ID } from 'constants/config';
 import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
 
-import { ARCHWAY_RPC_PROVIDER } from '../config';
 import { CONSTANTINE_CHAIN_INFO } from '../testnetChainInfo';
+import { archway } from '../config1';
 
 interface ArchwayContextType {
   address: string;
@@ -42,7 +42,7 @@ const ArchwayProvider = ({ children }) => {
 
   useEffect(() => {
     async function connectToRPC() {
-      const client = await ArchwayClient.connect(ARCHWAY_RPC_PROVIDER);
+      const client = await ArchwayClient.connect(archway.rpc.http);
       const chainId = await client.getChainId();
       setClient(client);
       setChainId(chainId);
@@ -83,7 +83,7 @@ const ArchwayProvider = ({ children }) => {
 
     // @ts-ignore
     const offlineSigner = leap ? leap.getOfflineSignerOnlyAmino(chain_id) : keplr.getOfflineSignerOnlyAmino(chain_id);
-    const signingClientObj = await SigningArchwayClient.connectWithSigner(ARCHWAY_RPC_PROVIDER, offlineSigner);
+    const signingClientObj = await SigningArchwayClient.connectWithSigner(archway.rpc.http, offlineSigner);
     setSigningClient(signingClientObj);
 
     const account: AccountData = (await offlineSigner.getAccounts())[0];

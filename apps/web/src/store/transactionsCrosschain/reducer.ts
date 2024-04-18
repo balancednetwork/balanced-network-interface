@@ -1,10 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { openToast } from 'btp/src/connectors/transactionToast';
 
-import { ARCHWAY_TRACKER_LINK } from 'app/_xcall/archway/config';
 import { TransactionStatus } from 'store/transactions/hooks';
 
 import { initTransaction, addTransactionResult } from './actions';
+import { archway } from 'app/_xcall/archway/config1';
 
 export interface TransactionDetails {
   hash: string;
@@ -33,7 +33,7 @@ export default createReducer(initialState, builder =>
     .addCase(addTransactionResult, (state, { payload: { chain, tx, msg } }) => {
       const toastProps = tx && {
         onClick: () => {
-          window.open(`${ARCHWAY_TRACKER_LINK}/${tx.transactionHash}`, '_blank');
+          window.open(`${archway.tracker}/${tx.transactionHash}`, '_blank');
         },
       };
 

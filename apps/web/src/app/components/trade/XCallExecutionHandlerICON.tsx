@@ -6,7 +6,7 @@ import { Flex } from 'rebass';
 
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
+import { archway } from 'app/_xcall/archway/config1';
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import { DestinationXCallData, OriginXCallData, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
 import { getOriginEvent } from 'app/_xcall/utils';
@@ -80,7 +80,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
 
       try {
         initTransaction('archway', 'Executing rollback...');
-        const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, getFeeParam(600000));
+        const res = await signingClient.execute(accountArch, archway.contracts.xCall, msg, getFeeParam(600000));
 
         const rollbackExecuted = res.events.some(e => e.type === 'wasm-RollbackExecuted');
 

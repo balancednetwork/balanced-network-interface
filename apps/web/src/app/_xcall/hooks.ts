@@ -23,6 +23,7 @@ export function useXCallGasChecker(
       {
         const xChain = xChains[chain1];
         const nativeCurrency = xChain.nativeCurrency;
+        // !TODO: use native property to fetch native currency balance
         const gasAmount = balances[chain1] && balances[chain1]['native'];
         const hasEnoughGas =
           xChain.autoExecution ||

@@ -110,7 +110,9 @@ export function IconReactProvider({ children }) {
   }, [setAccount, setLedgerAddressPoint]);
 
   React.useEffect(() => {
+    console.log('useEffect');
     const handler = async () => {
+      console.log('the page is fully loaded');
       await request({ type: ICONexRequestEventType.REQUEST_HAS_ACCOUNT });
       setHasExtension(true);
     };

@@ -142,7 +142,7 @@ export default function CurrencyInputPanel({
 
   const handleDismiss = useCallback(() => {
     setOpen(false);
-  }, [setOpen]);
+  }, []);
 
   return (
     <InputContainer ref={ref} className={className}>

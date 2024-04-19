@@ -65,6 +65,7 @@ export function IconReactProvider({ children }) {
   );
   const [hasExtension, setHasExtension] = React.useState<boolean>(false);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     async function createConnection() {
       if (ledgerAddressPoint >= 0) {
@@ -80,7 +81,6 @@ export function IconReactProvider({ children }) {
       }
     }
     createConnection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const requestAddress = React.useCallback(

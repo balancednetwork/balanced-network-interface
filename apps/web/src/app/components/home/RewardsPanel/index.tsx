@@ -40,12 +40,9 @@ const RewardsPanel = () => {
   const hasAnyKindOfRewards = useHasAnyKindOfRewards();
   // // const { data: earnedPastMonth } = useEarnedPastMonth();
 
-  const handleSetGlobalTooltip = React.useCallback(
-    (shouldShow: boolean) => {
-      setGlobalTooltip(shouldShow);
-    },
-    [setGlobalTooltip],
-  );
+  const handleSetGlobalTooltip = React.useCallback((shouldShow: boolean) => {
+    setGlobalTooltip(shouldShow);
+  }, []);
 
   return (
     <StyledBoxPanel bg="bg3">

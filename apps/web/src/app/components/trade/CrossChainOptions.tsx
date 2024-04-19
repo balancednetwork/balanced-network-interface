@@ -69,7 +69,7 @@ const CrossChainOptions = ({ currency, chain, setChain, isOpen, setOpen }: Cross
     if (arrowRef.current) {
       setAnchor(arrowRef.current);
     }
-  }, [setAnchor]);
+  }, []);
 
   return (
     <Wrap>

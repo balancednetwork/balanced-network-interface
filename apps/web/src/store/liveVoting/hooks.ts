@@ -182,6 +182,7 @@ export function useFetchUserVoteData(): void {
     }
   }, [account, changeUserData, changePowerLeft]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     fetchData();
   }, [transactions, account, fetchData]);

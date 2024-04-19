@@ -56,7 +56,7 @@ export function useSwapActionHandlers(): {
         navigate(`/trade/${currentBase}_${currency.symbol}`, { replace: true });
       }
     },
-    [dispatch, pair],
+    [dispatch, pair, navigate],
   );
 
   const onPercentSelection = useCallback(
@@ -72,7 +72,7 @@ export function useSwapActionHandlers(): {
     // history.replace(`/trade/${currentQuote}_${currentBase}`);
     navigate(`/trade/${currentQuote}_${currentBase}`, { replace: true });
     dispatch(switchCurrencies());
-  }, [pair, dispatch]);
+  }, [pair, dispatch, navigate]);
 
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {
@@ -263,5 +263,5 @@ export function useInitialSwapLoad(): void {
       }
       setFirstLoad(false);
     }
-  }, [firstLoad, tokens, onCurrencySelection, currencies.INPUT, currencies.OUTPUT, pair]);
+  }, [firstLoad, tokens, onCurrencySelection, currencies.INPUT, currencies.OUTPUT, pair, navigate]);
 }

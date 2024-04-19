@@ -65,8 +65,8 @@ function CurrencyRow({
 
   // only show add or remove buttons if not on selected list
   const [show, setShow] = useState(false);
-  const open = useCallback(() => setShow(true), [setShow]);
-  const close = useCallback(() => setShow(false), [setShow]);
+  const open = useCallback(() => setShow(true), []);
+  const close = useCallback(() => setShow(false), []);
 
   const focusCombined = () => {
     onFocus();

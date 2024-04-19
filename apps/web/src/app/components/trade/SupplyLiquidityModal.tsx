@@ -280,6 +280,7 @@ export default function SupplyLiquidityModal({
   }, [confirmTx, confirmTxStatus, onClose]);
 
   // refresh Modal UI
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (!isOpen) {
       setAddingTxs({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });

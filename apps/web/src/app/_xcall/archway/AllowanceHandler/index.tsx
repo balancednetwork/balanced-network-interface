@@ -28,6 +28,7 @@ const useAllowanceHandler = (
   const [allowance, setAllowance] = React.useState<string>('0');
   const [allowanceIncreased, setAllowanceIncreased] = React.useState<boolean>(false);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (address && tokenAddress && tokenAddress.includes('archway') && signingClient) {
       signingClient

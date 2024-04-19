@@ -314,7 +314,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
         return () => clearInterval(interval);
       }
-    }, [timestamp]);
+    }, [timestamp, status]);
 
     const minutes = Math.floor(elapsedTime / 60);
     const seconds = elapsedTime % 60;

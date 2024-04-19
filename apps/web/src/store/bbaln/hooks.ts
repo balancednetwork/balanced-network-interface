@@ -139,6 +139,7 @@ export function useFetchBBalnInfo(account?: string | null) {
     }
   }, [changeTotalSupply]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (account) {
       fetchBBalnInfo(account);

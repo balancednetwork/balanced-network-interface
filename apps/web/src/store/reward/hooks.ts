@@ -112,6 +112,7 @@ export const useHasNetworkFees = () => {
   const transactions = useAllTransactions();
   const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     const checkIfHasNetworkFees = async () => {
       if (account && bbalnAmount) {

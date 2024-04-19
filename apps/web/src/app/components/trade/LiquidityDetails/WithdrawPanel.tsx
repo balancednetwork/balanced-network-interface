@@ -202,6 +202,7 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
     });
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     availableBase &&
       availableQuote &&
@@ -213,7 +214,6 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
         availableBase.multiply(percent),
         availableQuote.multiply(percent),
       );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onChangeWithdrawnValue, percent, portion, availableBase?.toFixed(), availableQuote?.toFixed(), poolId]);
 
   const sliderInstance = React.useRef<any>(null);
@@ -222,7 +222,7 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
     if (inputType === 'text') {
       sliderInstance.current?.noUiSlider.set(portion);
     }
-  }, [sliderInstance, inputType, portion]);
+  }, [inputType, portion]);
 
   const [open, setOpen] = React.useState(false);
 

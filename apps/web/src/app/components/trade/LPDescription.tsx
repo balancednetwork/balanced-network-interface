@@ -69,7 +69,7 @@ export default function LPDescription() {
 
   const userPoolBalances = useBalance(pair?.poolId || -1);
 
-  //calulate Your supply temporary value  and Your daily reward temporary value
+  //calculate Your supply temporary value  and Your daily reward temporary value
   const formattedAmounts = useMemo(
     () => ({
       [independentField]: tryParseAmount(typedValue, currencies[independentField]),
@@ -84,6 +84,7 @@ export default function LPDescription() {
   const tempTotalPoolTokens = new BigNumber(totalPoolTokens?.toFixed() || 0).plus(
     formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0,
   );
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const userRewards = useMemo(() => {
     return !!pair && !!totalPoolTokens && !!poolRewards && !!userPoolBalance
       ? poolRewards.times(
@@ -92,7 +93,6 @@ export default function LPDescription() {
             .div(tempTotalPoolTokens),
         )
       : undefined;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pair, totalPoolTokens, userPoolBalance, poolRewards, formattedAmounts[Field.CURRENCY_A]?.toFixed()]);
 
   const { baseValue, quoteValue } = useWithdrawnPercent(pair?.poolId ?? -1) || {};

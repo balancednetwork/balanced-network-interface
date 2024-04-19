@@ -65,18 +65,18 @@ export default function CurrencySearchModal({
   const showImportView = useCallback(() => {
     setModalView(CurrencyModalView.importToken);
     onDismiss();
-  }, [setModalView, onDismiss]);
+  }, [onDismiss]);
   const closeImportView = useCallback(() => {
     setModalView(CurrencyModalView.search);
   }, []);
   const showRemoveView = useCallback(() => {
     setModalView(CurrencyModalView.removeToken);
     onDismiss();
-  }, [setModalView, onDismiss]);
+  }, [onDismiss]);
   const closeRemoveView = useCallback(() => {
     setModalView(CurrencyModalView.search);
   }, []);
-  const showManageView = useCallback(() => setModalView(CurrencyModalView.manage), [setModalView]);
+  const showManageView = useCallback(() => setModalView(CurrencyModalView.manage), []);
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {

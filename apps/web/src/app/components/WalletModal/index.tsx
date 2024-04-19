@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednetwork/balanced-js';
 import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
@@ -371,7 +371,7 @@ export default function WalletModal() {
       // setLedgerLoading(false);
       setIsLedgerErr(false);
     },
-    [limit, currentLedgerAddressPage, updatePaging, changeCurrentLedgerAddressPage, updateLedgerAddress],
+    [limit, currentLedgerAddressPage, changeCurrentLedgerAddressPage, updateLedgerAddress],
   );
 
   const chooseLedgerAddress = ({ address, point }: { address: string; point: number }) => {
@@ -404,15 +404,15 @@ export default function WalletModal() {
     setAnchor(anchor ? null : arrowRef.current);
   };
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setAnchor(null);
-  };
+  }, []);
 
   useEffect(() => {
     if (walletModalOpen) {
       closeMenu();
     }
-  }, [walletModalOpen]);
+  }, [walletModalOpen, closeMenu]);
 
   const isLoggedInSome = account || accountArch;
   const numberOfConnectedWallets = Number(!!account) + Number(!!accountArch);
@@ -456,7 +456,15 @@ export default function WalletModal() {
         address: accountArch,
       },
     ];
-  }, [ICONWalletModalToggle, disconnect, account, handleOpenWalletArchway, disconnectKeplr, accountArch]);
+  }, [
+    ICONWalletModalToggle,
+    disconnect,
+    account,
+    handleOpenWalletArchway,
+    disconnectKeplr,
+    accountArch,
+    disconnectLedger,
+  ]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {

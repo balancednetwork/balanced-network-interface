@@ -125,6 +125,7 @@ export function useCollateralFetchInfo(account?: string | null) {
     [changeDepositedAmount, supportedCollateralTokens],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (account) {
       fetchCollateralInfo(account);

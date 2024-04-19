@@ -215,6 +215,7 @@ export default function Header(props: { title?: string; className?: string }) {
     }
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     (async () => {
       if (account) {

@@ -63,7 +63,7 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
         navigate(`/trade/supply/${currentBase}_${currency.symbol}`, { replace: true });
       }
     },
-    [dispatch, pair],
+    [dispatch, pair, navigate],
   );
 
   const onFieldAInput = useCallback(
@@ -110,6 +110,7 @@ const useCurrencyDeposit = (
   const [result, setResult] = React.useState<string | undefined>();
   const currentXCallState = useCurrentXCallState();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     (async () => {
       if (token?.address && account) {
@@ -423,5 +424,15 @@ export function useInitialSupplyLoad(): void {
       }
       setFirstLoad(false);
     }
-  }, [firstLoad, tokens, onCurrencySelection, currencies.CURRENCY_A, currencies.CURRENCY_B, bases, ICX, pair]);
+  }, [
+    firstLoad,
+    tokens,
+    onCurrencySelection,
+    currencies.CURRENCY_A,
+    currencies.CURRENCY_B,
+    bases,
+    ICX,
+    pair,
+    navigate,
+  ]);
 }

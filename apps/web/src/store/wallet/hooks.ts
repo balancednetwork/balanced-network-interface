@@ -155,6 +155,7 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
   const transactions = useAllTransactions();
   const [details, setDetails] = React.useState({});
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     const fetchDetails = async () => {
       if (account) {
@@ -191,6 +192,7 @@ export function useTokenBalances(
 
   const transactions = useAllTransactions();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const fetchBalances = async () => {
       if (account) {
@@ -370,6 +372,7 @@ export function useICXBalances(uncheckedAddresses: (string | undefined)[]): {
     [uncheckedAddresses],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const fetchBalances = async () => {
       const result = await Promise.all(

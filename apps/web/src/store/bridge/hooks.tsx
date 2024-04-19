@@ -67,7 +67,7 @@ export function useBridgeActionHandlers() {
 
   const onSwitchChain = useCallback(() => {
     dispatch(switchChain());
-  }, []);
+  }, [dispatch]);
 
   const onPercentSelection = useCallback(
     (field: Field, percent: number, value: string) => {

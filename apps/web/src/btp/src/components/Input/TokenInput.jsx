@@ -50,7 +50,7 @@ export const TokenInput = ({ isCurrent, value, token, usdRate, onBlur = () => {}
       tokenInputRef.current.focus();
       setShowInput(true);
     }
-  }, [isCurrent, setShowInput]);
+  }, [isCurrent]);
 
   return (
     <Wrapper>

@@ -62,7 +62,6 @@
         "noAccumulatingSpread": "off"
       },
       "correctness": {
-        "useExhaustiveDependencies": "off",
         "noUnsafeFinally": "off"
       },
       "a11y": {

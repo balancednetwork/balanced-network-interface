@@ -39,6 +39,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
     setPairs(Array(tokens.length).fill([PairState.LOADING, null]));
   }, [tokens]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const fetchReserves = async () => {
       try {
@@ -168,6 +169,7 @@ export function useBalances(
 
   const last = useLastCount(10000);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     async function fetchBalances() {
       if (!account) return;

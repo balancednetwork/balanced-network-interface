@@ -41,9 +41,9 @@ export const useTotalStaked = (poolId: number) => {
   const stakedBalance = balance?.stakedLPBalance || ZERO;
   const availableStake = balance?.balance || ZERO;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   return React.useMemo(
     () => new BigNumber(stakedBalance.toFixed()).plus(availableStake.toFixed()),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [stakedBalance.toFixed(), availableStake.toFixed()],
   );
 };

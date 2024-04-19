@@ -208,6 +208,7 @@ const WalletUI = ({ currency }: { currency: Currency }) => {
   const { account } = useIconReact();
   const transactions = useAllTransactions();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     (async () => {
       if (account) {
@@ -326,6 +327,7 @@ const ICONWallet = ({ setAnchor, anchor, ...rest }) => {
     showModal();
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     (async () => {
       if (account) {
@@ -337,7 +339,7 @@ const ICONWallet = ({ setAnchor, anchor, ...rest }) => {
 
   const showModal = useCallback(() => {
     setOpen(true);
-  }, [setOpen]);
+  }, []);
 
   useEffect(() => {
     if (handleEscape) {

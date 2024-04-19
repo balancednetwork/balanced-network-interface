@@ -154,11 +154,12 @@ export default function LPPanel() {
     currencies?.CURRENCY_A?.wrapped.address || '',
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     sliderInstance.current?.noUiSlider.set(0);
     setPercent({ percent: 0, needUpdate: false });
     onSlide(Field.CURRENCY_A, '');
-  }, [currencies, onSlide, sliderInstance]);
+  }, [currencies, onSlide]);
 
   const handleSlider = (values: string[], handle: number) => {
     setPercent({ percent: parseFloat(values[handle]), needUpdate: true });

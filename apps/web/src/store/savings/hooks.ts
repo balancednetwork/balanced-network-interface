@@ -81,6 +81,7 @@ export function useFetchSavingsInfo(account?: string | null) {
     [changeLockedAmount],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (account) {
       fetchSavingsInfo(account);

@@ -127,6 +127,7 @@ const AssetToTransfer = ({
 
   const fromNetwork = useFromNetwork();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     setBalance('');
   }, [balanceOfAssetName, setBalance]);

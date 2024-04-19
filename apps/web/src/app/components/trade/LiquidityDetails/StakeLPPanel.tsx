@@ -62,12 +62,12 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
     setAdjusting(false);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     onStakedLPPercentSelected(
       poolId,
       totalStaked.isZero() ? ZERO : stakedBalance.dividedBy(totalStaked).multipliedBy(100),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onStakedLPPercentSelected, poolId, stakedBalance.toFixed(), totalStaked.toFixed()]);
 
   const handleSlide = useCallback(
@@ -77,6 +77,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
     [onStakedLPPercentSelected, poolId],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!isAdjusting) {
       onStakedLPPercentSelected(
@@ -84,7 +85,6 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
         !totalStaked.isZero() ? stakedBalance.dividedBy(totalStaked).multipliedBy(100) : ZERO,
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onStakedLPPercentSelected, isAdjusting, totalStaked.toFixed(), poolId, stakedBalance.toFixed()]);
 
   // modal

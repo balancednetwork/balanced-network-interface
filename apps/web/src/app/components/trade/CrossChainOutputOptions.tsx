@@ -21,6 +21,7 @@ type CrossChainOutputOptionsProps = {
 const CrossChainOutputOptions = ({ currency, destinationChain, setDestinationChain }: CrossChainOutputOptionsProps) => {
   const isCrossChainToken = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(currency?.wrapped.address || '');
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (!isCrossChainToken) {
       setDestinationChain('icon');

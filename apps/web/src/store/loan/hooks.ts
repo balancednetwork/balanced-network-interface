@@ -130,6 +130,7 @@ export function useLoanFetchInfo(account?: string | null) {
     [changeBadDebt, changeTotalSupply, changeBorrowedAmount, supportedSymbols],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (account) {
       fetchLoanInfo(account);

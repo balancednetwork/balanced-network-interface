@@ -89,7 +89,7 @@ const ArchwayProvider = ({ children }) => {
     const account: AccountData = (await offlineSigner.getAccounts())[0];
     account.address && setAddress(account.address);
     account.address && setAddressStored(account.address);
-  }, [chain_id, setAddress, setAddressStored]);
+  }, [chain_id, setAddressStored]);
 
   const disconnect = (): void => {
     signingClient?.disconnect();

@@ -91,7 +91,7 @@ const Select = ({ options = [], customeArrow, showCheck, loading, onChange = () 
   const [isOpenSelect, setIsOpenSelect] = useState(false);
   const [selectedValue, setSelectedValue] = useState(options[0] || {});
 
-  /* eslint-disable react-hooks/exhaustive-deps */
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!loading) {
       setSelectedValue(options[0] || {});

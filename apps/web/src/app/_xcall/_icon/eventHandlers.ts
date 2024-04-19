@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { useQuery, UseQueryResult } from 'react-query';
-
 import bnJs from 'bnJs';
 import { useBlockNumber } from 'store/application/hooks';
 import {
@@ -16,26 +14,14 @@ import {
   useXCallOriginEvents,
 } from 'store/xCall/hooks';
 
-import { IXCallFee, XCallEventType } from '../types';
-import { ARCHWAY_XCALL_NETWORK_ID, ICON_WEBSOCKET_URL } from './config';
+import { XCallEventType } from '../types';
+import { ICON_WEBSOCKET_URL } from './config';
 import {
   getCallMessageSentEventFromLogs,
   getICONEventSignature,
   getTxFromCallExecutedLog,
   getXCallOriginEventDataFromICON,
 } from './utils';
-import BigNumber from 'bignumber.js';
-
-const QUERY_PARAMS = {
-  height: '',
-  eventFilters: [
-    {
-      event: '',
-      addr: bnJs.XCall.address,
-    },
-  ],
-  logs: '0x1',
-};
 
 export const useICONEventListener = () => {
   const listeningTo = useXCallListeningTo();
@@ -206,20 +192,4 @@ export const useICONEventListener = () => {
     rollBackFromOrigin,
     addOriginEvent,
   ]);
-};
-
-export const useIconXCallFee = (): UseQueryResult<IXCallFee> => {
-  return useQuery(
-    `icon-xcall-fees`,
-    async () => {
-      const feeWithRollback = await bnJs.XCall.getFee(ARCHWAY_XCALL_NETWORK_ID, true);
-      const feeNoRollback = await bnJs.XCall.getFee(ARCHWAY_XCALL_NETWORK_ID, false);
-
-      return {
-        noRollback: new BigNumber(feeNoRollback).toString(),
-        rollback: new BigNumber(feeWithRollback).toString(),
-      };
-    },
-    { keepPreviousData: true },
-  );
 };

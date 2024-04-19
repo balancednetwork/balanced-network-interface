@@ -1,18 +1,10 @@
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { useQuery, UseQueryResult } from 'react-query';
-
-import { useICX } from 'constants/tokens';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
-
-import { AUTO_EXECUTION_ON_ICON } from './_icon/config';
-import { AUTO_EXECUTION_ON_ARCHWAY } from './archway/config';
-import { useARCH } from './archway/tokens';
-import { IXCallFee, SupportedXCallChains } from './types';
-import { useArchwayXCallFee } from './archway/eventHandler';
-import { useIconXCallFee } from './_icon/eventHandlers';
-
-const ARCHWAY_GAS_THRESHOLD = 5;
-const ICX_GAS_THRESHOLD = 4;
+import { BridgePair, IXCallFee, MessagingProtocol, MessagingProtocolId, SupportedXCallChains } from './types';
+import { useArchwayContext } from './archway/ArchwayProvider';
+import bnJs from 'bnJs';
+import { archway, xChains } from './archway/config1';
 
 export function useXCallGasChecker(
   chain1: SupportedXCallChains,
@@ -21,8 +13,6 @@ export function useXCallGasChecker(
 ): UseQueryResult<{ hasEnoughGas: boolean; errorMessage: string }> {
   const wallets = useSignedInWallets();
   const balances = useCrossChainWalletBalances();
-  const ARCH = useARCH();
-  const ICX = useICX();
 
   return useQuery<{ hasEnoughGas: boolean; errorMessage: string }>(
     ['gasChecker', chain1, chain2, icon, wallets, balances],
@@ -30,30 +20,40 @@ export function useXCallGasChecker(
       let errorMessage = '';
       const hasEnoughGasAllArray: boolean[] = [];
 
-      if (chain1 === 'archway' || chain2 === 'archway') {
-        const gasAmount = balances['archway'] && balances['archway'][ARCH.address];
+      {
+        const xChain = xChains[chain1];
+        const nativeCurrency = xChain.nativeCurrency;
+        const gasAmount = balances[chain1] && balances[chain1]['native'];
         const hasEnoughGas =
-          AUTO_EXECUTION_ON_ARCHWAY ||
+          xChain.autoExecution ||
           (gasAmount
-            ? !CurrencyAmount.fromRawAmount(ARCH, ARCHWAY_GAS_THRESHOLD * 10 ** ARCH.decimals).greaterThan(gasAmount)
+            ? !CurrencyAmount.fromRawAmount(
+                gasAmount.currency,
+                xChain.gasThreshold * 10 ** nativeCurrency.decimals,
+              ).greaterThan(gasAmount)
             : false);
-        if (!hasEnoughGas) {
-          errorMessage = `You need at least ${ARCHWAY_GAS_THRESHOLD} ARCH to pay for transaction fees on Archway.`;
-        }
         hasEnoughGasAllArray.push(hasEnoughGas);
+        if (!hasEnoughGas) {
+          errorMessage = `You need at least ${xChain.gasThreshold} ${nativeCurrency.symbol} to pay for transaction fees on ${nativeCurrency.name}.`;
+        }
       }
 
-      if (icon || chain1 === 'icon' || chain2 === 'icon') {
-        const gasAmount = balances['icon'] && balances['icon'][ICX.address];
+      {
+        const xChain = xChains[chain2];
+        const nativeCurrency = xChain.nativeCurrency;
+        const gasAmount = balances[chain2] && balances[chain2]['native'];
         const hasEnoughGas =
-          AUTO_EXECUTION_ON_ICON ||
+          xChain.autoExecution ||
           (gasAmount
-            ? !CurrencyAmount.fromRawAmount(ICX, ICX_GAS_THRESHOLD * 10 ** ICX.decimals).greaterThan(gasAmount)
+            ? !CurrencyAmount.fromRawAmount(
+                gasAmount.currency,
+                xChain.gasThreshold * 10 ** nativeCurrency.decimals,
+              ).greaterThan(gasAmount)
             : false);
-        if (!hasEnoughGas) {
-          errorMessage = `You need at least ${ICX_GAS_THRESHOLD} ICX to pay for transaction fees on ICON.`;
-        }
         hasEnoughGasAllArray.push(hasEnoughGas);
+        if (!hasEnoughGas) {
+          errorMessage = `You need at least ${xChain.gasThreshold} ${nativeCurrency.symbol} to pay for transaction fees on ${nativeCurrency.name}.`;
+        }
       }
 
       const hasEnoughGas = !hasEnoughGasAllArray.some(hasEnough => !hasEnough);
@@ -67,26 +67,106 @@ export function useXCallGasChecker(
   );
 }
 
-// TODO: improve this hook
-export const useXCallFee = (chain: string) => {
-  const { data: archwayXCallFees } = useArchwayXCallFee();
-  const { data: iconXCallFees } = useIconXCallFee();
+const xCallTable = {
+  icon: {
+    archway: 'archway-1',
+    avalanche: '',
+  },
+  archway: {
+    icon: '0x1.icon',
+  },
+};
 
-  let xcallFee: IXCallFee | undefined;
-  let formattedXCallFee: string;
+const getXCallId = (from, to) => {
+  return xCallTable[from][to];
+};
 
-  switch (chain) {
-    case 'archway':
-      xcallFee = archwayXCallFees;
-      formattedXCallFee = (Number(xcallFee?.rollback) / 10 ** 18).toPrecision(3) + ' ARCH';
-      break;
-    case 'icon':
-      xcallFee = iconXCallFees;
-      formattedXCallFee = (Number(xcallFee?.rollback) / 10 ** 18).toPrecision(3) + ' ICX';
-      break;
-    default:
-      throw new Error(`Unsupported chain: ${chain}`);
+const fetchFee = async (from: SupportedXCallChains, to: SupportedXCallChains, rollback: boolean, client?: any) => {
+  if (from === 'archway') {
+    return await client.queryContractSmart(archway.contracts.xCall, {
+      get_fee: { nid: getXCallId(from, to), rollback: rollback },
+    });
+  } else if (from === 'icon') {
+    return await bnJs.XCall.getFee(getXCallId(from, to), rollback);
   }
+};
 
-  return { xcallFee, formattedXCallFee };
+// TODO: improve this hook
+export const useXCallFee = (
+  from: SupportedXCallChains,
+  to: SupportedXCallChains,
+): { xCallFee: IXCallFee | undefined; formattedXCallFee: string } => {
+  const { client } = useArchwayContext();
+
+  const query = useQuery(
+    [`xcall-fees`, from, to],
+    async () => {
+      if (client) {
+        const feeWithRollback = await fetchFee(from, to, true, client);
+        const feeNoRollback = await fetchFee(from, to, false, client);
+
+        return {
+          noRollback: feeNoRollback,
+          rollback: feeWithRollback,
+        };
+      }
+    },
+    { enabled: !!client, keepPreviousData: true },
+  );
+
+  const { data: xCallFee } = query;
+
+  const chain = xChains[from];
+  const formattedXCallFee: string =
+    (Number(xCallFee?.rollback) / 10 ** 18).toPrecision(3) + ' ' + chain.nativeCurrency.symbol;
+
+  return { xCallFee, formattedXCallFee };
+};
+
+const MESSAGING_PROTOCOLS: { [key in MessagingProtocolId]: MessagingProtocol } = {
+  [MessagingProtocolId.BTP]: {
+    id: MessagingProtocolId.BTP,
+    name: 'BTP',
+    description: 'is the Icon interoperability protocol',
+  },
+  [MessagingProtocolId.IBC]: {
+    id: MessagingProtocolId.IBC,
+    name: 'IBC',
+    description: 'is the Cosmos interoperability protocol',
+  },
+  [MessagingProtocolId.C_RELAY]: {
+    id: MessagingProtocolId.C_RELAY,
+    name: 'Centralised Relay',
+    description: 'is the interoperability protocol based on centralized relay',
+  },
+};
+
+const sortChains = (a: SupportedXCallChains, b: SupportedXCallChains): [SupportedXCallChains, SupportedXCallChains] => {
+  return a.localeCompare(b) > 0 ? [a, b] : [b, a];
+};
+
+const BRIDGE_PAIRS: BridgePair[] = [
+  { chains: sortChains('icon', 'archway'), protocol: MessagingProtocolId.IBC },
+  // { chains: sortChains('icon', 'avax'), protocol: MessagingProtocolId.C_RELAY },
+];
+
+export const useXCallPair = (from: SupportedXCallChains, to: SupportedXCallChains): BridgePair | undefined => {
+  const chains = sortChains(from, to);
+  return BRIDGE_PAIRS.find(pair => pair.chains[0] === chains[0] && pair.chains[1] === chains[1]);
+};
+
+/**
+ * This hook returns the fundamental messaging protocol information of xCall from x chain to y chain.
+ * @constructor
+ * @param {SupportedXCallChains} from - bridge from.
+ * @param {SupportedXCallChains} to - bridge to.
+ */
+
+export const useXCallProtocol = (
+  from: SupportedXCallChains,
+  to: SupportedXCallChains,
+): MessagingProtocol | undefined => {
+  const pair = useXCallPair(from, to);
+  const id = pair?.protocol;
+  if (id) return MESSAGING_PROTOCOLS[id];
 };

@@ -13,11 +13,10 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL, ARCHWAY_XCALL_NETWORK_ID, ICON_XCALL_NETWORK_
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
-import { useArchwayXCallFee } from 'app/_xcall/archway/eventHandler';
+import { archway } from 'app/_xcall/archway/config1';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
-import { useXCallGasChecker } from 'app/_xcall/hooks';
+import { useXCallFee, useXCallGasChecker } from 'app/_xcall/hooks';
 import { CurrentXCallStateType, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
 import { getArchwayCounterToken, getBytesFromString, getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
@@ -130,7 +129,7 @@ const XCallSwapModal = ({
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
-  const { data: archwayXCallFees } = useArchwayXCallFee();
+  const { xCallFee: archwayXCallFees } = useXCallFee('archway', 'icon');
   const { data: gasChecker } = useXCallGasChecker(originChain, destinationChain);
   const currentXCallState = useCurrentXCallState();
   const ARCH = useARCH();
@@ -353,7 +352,7 @@ const XCallSwapModal = ({
         try {
           const res = await signingClient.execute(
             accountArch,
-            ARCHWAY_CONTRACTS.bnusd,
+            archway.contracts.bnUSD!,
             msg,
             'auto',
             undefined,
@@ -385,14 +384,14 @@ const XCallSwapModal = ({
           },
         };
 
-        const fee = await signingClient.queryContractSmart(ARCHWAY_CONTRACTS.xcall, {
+        const fee = await signingClient.queryContractSmart(archway.contracts.xCall, {
           get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
         });
 
         try {
           const res = await signingClient.execute(
             accountArch,
-            ARCHWAY_CONTRACTS.assetManager,
+            archway.contracts.assetManager,
             msg,
             getFeeParam(1500000),
             undefined,

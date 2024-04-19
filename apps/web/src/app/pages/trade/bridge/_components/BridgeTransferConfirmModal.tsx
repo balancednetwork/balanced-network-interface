@@ -8,9 +8,9 @@ import styled from 'styled-components';
 import { COSMOS_NATIVE_AVAILABLE_TOKENS } from 'app/_xcall/_icon/config';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
-import { useXCallGasChecker, useXCallFee } from 'app/_xcall/hooks';
+import { useXCallFee, useXCallGasChecker } from 'app/_xcall/hooks';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
-import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
+import { archway } from 'app/_xcall/archway/config1';
 import { Typography } from 'app/theme';
 import { useShouldLedgerSign } from 'store/application/hooks';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
@@ -30,7 +30,6 @@ import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/arch
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 import { XCallEventType } from 'app/_xcall/types';
 import bnJs from 'bnJs';
-import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Button, TextButton } from 'app/components/Button';
@@ -152,7 +151,7 @@ export default function BridgeTransferConfirmModal({
   const addOriginEvent = useAddOriginEvent();
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
-  const { xcallFee } = useXCallFee(bridgeDirection.from);
+  const { xCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
   const descriptionAction = `Transfer ${currencyToBridge?.symbol}`;
   const descriptionAmount = `${currencyAmountToBridge?.toFixed(2)} ${currencyAmountToBridge?.currency.symbol}`;
@@ -184,7 +183,7 @@ export default function BridgeTransferConfirmModal({
       pending: `Requesting cross-chain transfer...`,
       summary: `Cross-chain transfer requested.`,
     };
-    if (bridgeDirection.from === 'icon' && account && xcallFee) {
+    if (bridgeDirection.from === 'icon' && account && xCallFee) {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
       if (bnJs.contractSettings.ledgerSettings.actived) {
         changeShouldLedgerSign(true);
@@ -199,7 +198,7 @@ export default function BridgeTransferConfirmModal({
         const { result: hash } = await cx.crossTransfer(
           destination,
           `${currencyAmountToBridge.quotient}`,
-          xcallFee.rollback,
+          xCallFee.rollback,
         );
         if (hash) {
           setXCallInProgress(true);
@@ -219,7 +218,7 @@ export default function BridgeTransferConfirmModal({
             `${currencyAmountToBridge.quotient}`,
             tokenAddress,
             destination,
-            xcallFee.rollback,
+            xCallFee.rollback,
           );
         if (hash) {
           setXCallInProgress(true);
@@ -233,7 +232,7 @@ export default function BridgeTransferConfirmModal({
           await handleICONTxResult(hash);
         }
       }
-    } else if (bridgeDirection.from === 'archway' && accountArch && signingClient && xcallFee) {
+    } else if (bridgeDirection.from === 'archway' && accountArch && signingClient && xCallFee) {
       const tokenAddress = currencyAmountToBridge.currency.address;
       const destination = `${bridgeDirection.to === 'icon' ? `${ICON_XCALL_NETWORK_ID}/` : ''}${destinationAddress}`;
 
@@ -248,9 +247,9 @@ export default function BridgeTransferConfirmModal({
             msg,
             fee,
             undefined,
-            xcallFee.rollback !== '0'
+            xCallFee.rollback !== '0'
               ? [
-                  { amount: xcallFee.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
+                  { amount: xCallFee.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
                   ...(assetToBridge ? [assetToBridge] : []),
                 ]
               : assetToBridge
@@ -275,7 +274,7 @@ export default function BridgeTransferConfirmModal({
           amount: `${currencyAmountToBridge.quotient}`,
         };
 
-        executeTransaction(msg, ARCHWAY_CONTRACTS.assetManager, getFeeParam(1200000), assetToBridge);
+        executeTransaction(msg, archway.contracts.assetManager, getFeeParam(1200000), assetToBridge);
       } else {
         if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
           const msg = {
@@ -297,7 +296,7 @@ export default function BridgeTransferConfirmModal({
             },
           };
 
-          executeTransaction(msg, ARCHWAY_CONTRACTS.assetManager, getFeeParam(1200000));
+          executeTransaction(msg, archway.contracts.assetManager, getFeeParam(1200000));
         }
       }
     }

@@ -3,9 +3,9 @@ import IconService, { BigNumber } from 'icon-sdk-js';
 
 import { NETWORK_ID } from 'constants/config';
 
-import { AUTO_EXECUTION_ON_ARCHWAY } from '../archway/config';
 import { OriginXCallData, SupportedXCallChains, XCallEventType } from '../types';
 import { ICONBlockType, ICONTxEvent, ICONTxResultType } from './types';
+import { xChains } from '../archway/config1';
 
 export const httpProvider = new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint);
 export const iconService = new IconService(httpProvider);
@@ -73,7 +73,8 @@ export function getXCallOriginEventDataFromICON(
   const sn = parseInt(callMessageSentLog.indexed[3], 16);
   const rollback = false;
   const eventName = XCallEventType.CallMessageSent;
-  const autoExec = autoExecute === undefined && destination === 'archway' ? AUTO_EXECUTION_ON_ARCHWAY : undefined;
+  const autoExec =
+    autoExecute === undefined && destination === 'archway' ? xChains[destination].autoExecution : undefined;
   return {
     sn,
     rollback,

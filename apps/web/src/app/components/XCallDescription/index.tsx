@@ -3,13 +3,14 @@ import React from 'react';
 import { Trans } from '@lingui/macro';
 
 import { Typography } from 'app/theme';
+import { MessagingProtocol } from 'app/_xcall/types';
 
-export const IBCDescription = () => {
+export const XCallDescription = ({ protocol }: { protocol: MessagingProtocol }) => {
   return (
     <>
       <Typography mb={3}>
         <Trans>
-          <strong>IBC</strong> is the Cosmos interoperability protocol.
+          <strong>{protocol.name}</strong> {protocol.description}.
         </Trans>
       </Typography>
       <Typography>

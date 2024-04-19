@@ -13,7 +13,6 @@ import styled from 'styled-components';
 
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useArchwayXCallFee } from 'app/_xcall/archway/eventHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
 import { CurrentXCallStateType, SupportedXCallChains } from 'app/_xcall/types';
@@ -48,10 +47,11 @@ import Divider from '../Divider';
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 import StabilityFund from '../StabilityFund';
-import { IBCDescription } from '../XCallDescription';
+import { XCallDescription } from '../XCallDescription';
 import CrossChainOptions from './CrossChainOptions';
 import { BrightPanel, swapMessage } from './utils';
 import XCallSwapModal from './XCallSwapModal';
+import { useXCallFee, useXCallProtocol } from 'app/_xcall/hooks';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
@@ -81,7 +81,6 @@ export default function SwapPanel() {
   const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
   const [destinationAddress, setDestinationAddress] = React.useState<string | undefined>();
-  const { data: xCallArchwayFee } = useArchwayXCallFee();
   const showFundOption =
     isSwapEligibleForStabilityFund &&
     fundMaxSwap?.greaterThan(0) &&
@@ -381,6 +380,9 @@ export default function SwapPanel() {
     </Button>
   );
 
+  const protocol = useXCallProtocol(crossChainOrigin, crossChainDestination);
+  const { formattedXCallFee } = useXCallFee(crossChainOrigin, crossChainDestination);
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -553,27 +555,21 @@ export default function SwapPanel() {
                           <Typography>
                             <Trans>Bridge</Trans>
                           </Typography>
-
-                          <Typography textAlign="right">
-                            IBC + xCall
-                            <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
-                              <QuestionHelper width={300} text={<IBCDescription />}></QuestionHelper>
-                            </QuestionWrapper>
-                          </Typography>
+                          {protocol && (
+                            <Typography color="text">
+                              {protocol?.name} + xCall
+                              <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
+                                <QuestionHelper width={300} text={<XCallDescription protocol={protocol} />} />
+                              </QuestionWrapper>
+                            </Typography>
+                          )}{' '}
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between" mb={2}>
                           <Typography>
-                            <Trans>Transfer fee</Trans>
+                            <Trans>Bridge fee</Trans>
                           </Typography>
 
-                          <Typography textAlign="right">
-                            {crossChainOrigin === 'icon'
-                              ? 'N/A'
-                              : crossChainOrigin === 'archway'
-                                ? xCallArchwayFee &&
-                                  `${(Number(xCallArchwayFee.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH`
-                                : 'N/A'}
-                          </Typography>
+                          <Typography color="text">{formattedXCallFee ?? ''}</Typography>
                         </Flex>
                         <Flex alignItems="center" justifyContent="space-between" mb={2}>
                           <Typography>

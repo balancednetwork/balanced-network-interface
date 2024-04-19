@@ -12,7 +12,7 @@ import {
   getXCallOriginEventDataFromICON,
 } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
+import { archway } from 'app/_xcall/archway/config1';
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import { DestinationXCallData, OriginXCallData, XCallActivityItem, XCallEventType } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
@@ -183,7 +183,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
       try {
         initTransaction('archway', 'Confirming cross-chain transaction.');
-        const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, 'auto');
+        const res = await signingClient.execute(accountArch, archway.contracts.xCall, msg, 'auto');
 
         const callExecuted = res.events.some(
           e => e.type === 'wasm-CallExecuted' && e.attributes.some(a => a.key === 'code' && a.value === '1'),
@@ -230,7 +230,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
 
       try {
         initTransaction('archway', 'Reverting cross-chain transaction...');
-        const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, getFeeParam(600000));
+        const res = await signingClient.execute(accountArch, archway.contracts.xCall, msg, getFeeParam(600000));
 
         //TODO: handle arch rollback response
         const rollbackExecuted = res.events.some(e => e.type === 'wasm-RollbackExecuted');

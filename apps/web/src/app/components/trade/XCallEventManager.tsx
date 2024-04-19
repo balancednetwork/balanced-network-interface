@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
+import { archway } from 'app/_xcall/archway/config1';
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import { DestinationXCallData, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
@@ -99,7 +99,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
 
       try {
         initTransaction('archway', msgs.txMsgs.archway.pending);
-        const res = await signingClient.execute(accountArch, ARCHWAY_CONTRACTS.xcall, msg, getFeeParam(600000));
+        const res = await signingClient.execute(accountArch, archway.contracts.xCall, msg, getFeeParam(600000));
 
         const callExecuted = res.events.some(
           e => e.type === 'wasm-CallExecuted' && e.attributes.some(a => a.key === 'code' && a.value === '1'),
@@ -136,21 +136,24 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
 
   return (
     <AnimatePresence>
-      {listeningTo?.event === XCallEventType.CallMessage && Object.values(anyPristineEvents).some(pristine => pristine) && (
-        <motion.div
-          key="event-wrap-CallMessage"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-        >
-          <Box pt={3}>
-            <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-              <Typography mb={4}>{t`Awaiting confirmation on ${getNetworkDisplayName(listeningTo.chain)}.`}</Typography>
-              <MemoizedSpinnerControl />
-            </Flex>
-          </Box>
-        </motion.div>
-      )}
+      {listeningTo?.event === XCallEventType.CallMessage &&
+        Object.values(anyPristineEvents).some(pristine => pristine) && (
+          <motion.div
+            key="event-wrap-CallMessage"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+          >
+            <Box pt={3}>
+              <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
+                <Typography mb={4}>{t`Awaiting confirmation on ${getNetworkDisplayName(
+                  listeningTo.chain,
+                )}.`}</Typography>
+                <MemoizedSpinnerControl />
+              </Flex>
+            </Box>
+          </motion.div>
+        )}
 
       {archwayDestinationEvents.length > 0 && anyPristineEvents.archway && (
         <motion.div

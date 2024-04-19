@@ -24,11 +24,11 @@ import CrossChainConnectWallet from 'app/components/CrossChainWalletConnect';
 import { CurrencySelectionType } from 'app/components/SearchModal/CurrencySearch';
 import { AutoColumn } from 'app/components/trade/SwapPanel';
 import { BrightPanel } from 'app/components/trade/utils';
-import { IBCDescription } from 'app/components/XCallDescription';
+import { XCallDescription } from 'app/components/XCallDescription';
 
 import ChainSelector from './ChainSelector';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useXCallFee } from 'app/_xcall/hooks';
+import { useXCallFee, useXCallProtocol } from 'app/_xcall/hooks';
 import { Field } from 'store/bridge/reducer';
 
 const ConnectWrap = styled.div`
@@ -56,7 +56,6 @@ export default function BridgeTransferForm({ openModal }) {
   const percentAmount = bridgeState[Field.FROM].percent;
 
   const signedInWallets = useSignedInWallets();
-  const { formattedXCallFee } = useXCallFee(bridgeDirection.from);
   const setNotPristine = useSetNotPristine();
   const toggleWalletModal = useWalletModalToggle();
 
@@ -90,6 +89,9 @@ export default function BridgeTransferForm({ openModal }) {
       toggleWalletModal();
     }
   };
+
+  const protocol = useXCallProtocol(bridgeDirection.from, bridgeDirection.to);
+  const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
   return (
     <>
@@ -153,12 +155,14 @@ export default function BridgeTransferForm({ openModal }) {
               <Trans>Bridge</Trans>
             </Typography>
 
-            <Typography color="text">
-              IBC + xCall
-              <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
-                <QuestionHelper width={300} text={<IBCDescription />}></QuestionHelper>
-              </QuestionWrapper>
-            </Typography>
+            {protocol && (
+              <Typography color="text">
+                {protocol?.name} + xCall
+                <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
+                  <QuestionHelper width={300} text={<XCallDescription protocol={protocol} />} />
+                </QuestionWrapper>
+              </Typography>
+            )}
           </Flex>
 
           <Flex alignItems="center" justifyContent="space-between">
@@ -168,6 +172,7 @@ export default function BridgeTransferForm({ openModal }) {
 
             <Typography color="text">{formattedXCallFee ?? ''}</Typography>
           </Flex>
+
           <Flex alignItems="center" justifyContent="space-between">
             <Typography>
               <Trans>Transfer time</Trans>

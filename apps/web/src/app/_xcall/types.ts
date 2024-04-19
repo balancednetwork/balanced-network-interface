@@ -85,3 +85,48 @@ export interface IXCallFee {
   noRollback: string;
   rollback: string;
 }
+
+export type Chain = {
+  id: string | number;
+  name: string;
+  network: string;
+  nativeCurrency: {
+    decimals: number;
+    name: string;
+    symbol: string;
+  };
+  rpc: {
+    http: string;
+    ws?: string;
+  };
+  tracker: string;
+};
+
+export type XChain = Chain & {
+  contracts: {
+    xCall: string;
+    assetManager: string;
+    bnUSD?: string;
+    liquidSwap?: string;
+  };
+  autoExecution: boolean;
+  gasThreshold: number;
+};
+
+export enum MessagingProtocolId {
+  BTP = 'BTP',
+  IBC = 'IBC',
+  // centralized relay
+  C_RELAY = 'C_RELAY',
+}
+
+export type BridgePair = {
+  chains: [SupportedXCallChains, SupportedXCallChains];
+  protocol: MessagingProtocolId;
+};
+
+export interface MessagingProtocol {
+  id: MessagingProtocolId;
+  name: string;
+  description: string;
+}

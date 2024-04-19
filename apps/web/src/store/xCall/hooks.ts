@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { COSMOS_NATIVE_AVAILABLE_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { ARCHWAY_CONTRACTS } from 'app/_xcall/archway/config';
+import { archway } from 'app/_xcall/archway/config1';
 import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
 import {
   OriginXCallData,
@@ -372,7 +372,7 @@ export function useWithdrawableNativeAmount(
         if (chain === 'archway') {
           const stakedArchwayAddress = getArchwayCounterToken('sARCH');
           if (stakedArchwayAddress?.address) {
-            const response = await client.queryContractSmart(ARCHWAY_CONTRACTS.liquidSwap, {
+            const response = await client.queryContractSmart(archway.contracts.liquidSwap!, {
               simulation: {
                 offer_asset: {
                   amount: amount,

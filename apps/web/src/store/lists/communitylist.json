@@ -43,14 +43,6 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/crown.png"
     },
     {
-      "address": "cx13b52d9f24db8d64d93a31926e3c69d44fbe8f9a",
-      "chainId": 1,
-      "name": "CLAW Token",
-      "symbol": "CLAW",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/claw.png"
-    },
-    {
       "address": "cx369a5f4ce4f4648dfc96ba0c8229be0693b4eca2",
       "chainId": 1,
       "name": "Metanyx",
@@ -65,30 +57,6 @@
       "symbol": "VOID",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/void.png"
-    },
-    {
-      "address": "cxc0b5b52c9f8b4251a47e91dda3bd61e5512cd782",
-      "chainId": 1,
-      "name": "TAP Token",
-      "symbol": "TAP",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/tap.png"
-    },
-    {
-      "address": "cxe7c05b43b3832c04735e7f109409ebcb9c19e664",
-      "chainId": 1,
-      "name": "IAM Token",
-      "symbol": "IAM",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iam.png"
-    },
-    {
-      "address": "cxd1f08a2967de6374f52408396bfe2fe8183b2800",
-      "chainId": 1,
-      "name": "CODE Token",
-      "symbol": "CODE",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/code.png"
     }
   ]
 }

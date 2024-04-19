@@ -171,14 +171,6 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
     },
     {
-      "address": "cxb49d82c46be6b61cab62aaf9824b597c6cf8a25d",
-      "chainId": 1,
-      "name": "Binance USD",
-      "symbol": "BUSD",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/busd.png"
-    },
-    {
       "address": "cxc3c552054ba6823107b56086134c2afc26ab1dfa",
       "chainId": 2,
       "name": "Balance Token",

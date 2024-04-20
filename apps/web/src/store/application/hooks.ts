@@ -16,7 +16,8 @@ import {
   ApplicationModal,
   setOpenModal,
   updateSlippageTolerance,
-  toggleICONWalletModal,
+  WalletModal,
+  setOpenWalletModal,
 } from './reducer';
 
 type BlockDetails = {
@@ -41,21 +42,26 @@ export function useToggleModal(modal: ApplicationModal): () => void {
   return useCallback(() => dispatch(setOpenModal(open ? null : modal)), [dispatch, modal, open]);
 }
 
-export function useICONWalletModalToggle(): () => void {
-  const isOpen = useSelector((state: AppState) => state.application.iconWalletModal);
-  const dispatch = useDispatch<AppDispatch>();
-  return useCallback(() => {
-    console.log(isOpen);
-    dispatch(toggleICONWalletModal({ isOpen: !isOpen }));
-  }, [dispatch, isOpen]);
-}
-
-export function useIsICONWalletModalOpen(): boolean {
-  return useSelector((state: AppState) => state.application.iconWalletModal);
-}
-
 export function useWalletModalToggle(): () => void {
   return useToggleModal(ApplicationModal.WALLET);
+}
+
+//////////////////chain wallet ///////////////////////////////////
+export function useChainWalletModalOpen(modal: WalletModal): boolean {
+  const openModal = useSelector((state: AppState) => state.application.openWalletModal);
+  return openModal === modal;
+}
+
+export function useChainWalletToggleModal(modal: WalletModal): () => void {
+  const open = useChainWalletModalOpen(modal);
+  const dispatch = useDispatch<AppDispatch>();
+  return useCallback(() => dispatch(setOpenWalletModal(open ? null : modal)), [dispatch, modal, open]);
+}
+
+export function useWalletModal(modal: WalletModal): [boolean, () => void] {
+  const isOpen = useChainWalletModalOpen(modal);
+  const toggle = useChainWalletToggleModal(modal);
+  return [isOpen, toggle];
 }
 
 export function useTransferAssetsModalToggle(): () => void {

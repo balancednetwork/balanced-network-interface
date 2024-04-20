@@ -19,7 +19,7 @@ import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useICONWalletModalToggle, useWalletModalToggle } from 'store/application/hooks';
+import { useChangeShouldLedgerSign, useWalletModal, useWalletModalToggle } from 'store/application/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useAddTransactionResult, useInitTransaction } from 'store/transactionsCrosschain/hooks';
 import { useSignedInWallets } from 'store/wallet/hooks';
@@ -34,6 +34,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { UnderlineText } from '../../../../components/DropdownText';
 import Spinner from '../../../../components/Spinner';
+import { ApplicationModal, WalletModal } from 'store/application/reducer';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -111,7 +112,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
   const rollBackFromOrigin = useRollBackFromOrigin();
   const signedInWallets = useSignedInWallets();
   const toggleWalletModal = useWalletModalToggle();
-  const toggleICONleWalletModal = useICONWalletModalToggle();
+  const [, toggleICONleWalletModal] = useWalletModal(WalletModal.ICON);
 
   const handleICONExecuteXCall = async (data: DestinationXCallData) => {
     if (account) {

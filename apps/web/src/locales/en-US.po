@@ -319,8 +319,8 @@ msgid "Claiming network fees..."
 msgstr "Claiming network fees..."
 
 #: src/app/components/trade/SwapPanel.tsx
-msgid "Transfer fee"
-msgstr "Transfer fee"
+#~ msgid "Transfer fee"
+#~ msgstr "Transfer fee"
 
 #: src/app/components/Header/index.tsx
 msgid "Copied"
@@ -529,11 +529,12 @@ msgstr "Verify contract call"
 msgid "Reverting failed."
 msgstr "Reverting failed."
 
-#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/IconWalletModal.tsx
 msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 msgstr "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 
-#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/AvalancheWalletModal.tsx
+#: src/app/components/WalletModal/IconWalletModal.tsx
 msgid "or"
 msgstr "or"
 
@@ -1100,8 +1101,8 @@ msgid "{0} {1} for {2} {3}"
 msgstr "{0} {1} for {2} {3}"
 
 #: src/app/components/XCallDescription/index.tsx
-msgid "<0>IBC</0> is the Cosmos interoperability protocol."
-msgstr "<0>IBC</0> is the Cosmos interoperability protocol."
+#~ msgid "<0>IBC</0> is the Cosmos interoperability protocol."
+#~ msgstr "<0>IBC</0> is the Cosmos interoperability protocol."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "If bnUSD ever falls below ${redeemLimit}, traders can use the smart contracts to redeem it for borrower collateral."
@@ -1414,6 +1415,7 @@ msgid "{0} wallet"
 msgstr "{0} wallet"
 
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer assets cross-chain."
 msgstr "Swap & transfer assets cross-chain."
 
@@ -1692,7 +1694,7 @@ msgstr "Executed."
 msgid "Unlocked {0} BALN."
 msgstr "Unlocked {0} BALN."
 
-#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/IconWalletModal.tsx
 msgid "Choose a wallet from your Ledger:"
 msgstr "Choose a wallet from your Ledger:"
 
@@ -2112,7 +2114,7 @@ msgstr "Position details"
 msgid "Adjust allocation"
 msgstr "Adjust allocation"
 
-#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/IconWalletModal.tsx
 msgid "Make sure it's connected and try again."
 msgstr "Make sure it's connected and try again."
 
@@ -2131,6 +2133,10 @@ msgstr "There are no pending cross-chain transactions."
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
 msgstr "All collateral locked"
+
+#: src/app/components/XCallDescription/index.tsx
+msgid "<0>{0}</0> {1}."
+msgstr "<0>{0}</0> {1}."
 
 #: src/app/components/trade/XCallSwapModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
@@ -2160,6 +2166,10 @@ msgstr "There's no liquidity pool for this pair yet."
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlocking BALN early..."
 msgstr "Unlocking BALN early..."
+
+#: src/app/components/trade/SwapPanel.tsx
+msgid "Bridge fee"
+msgstr "Bridge fee"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"

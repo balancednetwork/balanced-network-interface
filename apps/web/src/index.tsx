@@ -24,6 +24,9 @@ import store from 'store';
 // Initialize languages
 import { LanguageProvider } from './i18n';
 
+import { WagmiProvider } from 'wagmi';
+import { wagmiConfig } from './config/wagmi';
+
 const queryClient = new QueryClient();
 // Set the global formatting options
 const fmt = {
@@ -49,7 +52,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <IconReactProvider>
               <ArchwayProvider>
                 <LanguageProvider>
-                  <App />
+                  <WagmiProvider config={wagmiConfig}>
+                    <App />
+                  </WagmiProvider>
                 </LanguageProvider>
               </ArchwayProvider>
             </IconReactProvider>

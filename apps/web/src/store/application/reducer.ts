@@ -11,6 +11,11 @@ export type PopupContent = {
   };
 };
 
+export enum WalletModal {
+  ICON,
+  AVALANCHE,
+}
+
 export enum ApplicationModal {
   WALLET,
   SETTINGS,
@@ -27,11 +32,11 @@ export enum ApplicationModal {
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>;
 
 export interface ApplicationState {
-  readonly blockNumber: { readonly [chainId: number]: number };
-  readonly chainId: number | null;
-  readonly popupList: PopupList;
-  readonly openModal: ApplicationModal | null;
-  iconWalletModal: boolean;
+  blockNumber: { readonly [chainId: number]: number };
+  chainId: number | null;
+  popupList: PopupList;
+  openModal: ApplicationModal | null;
+  openWalletModal: WalletModal | null;
   shouldLedgerSign: boolean;
   currentLedgerAddressPage: number;
   slippageTolerance: number;
@@ -41,11 +46,11 @@ const initialState: ApplicationState = {
   blockNumber: {},
   chainId: null,
   openModal: null,
+  openWalletModal: null,
   popupList: [],
   shouldLedgerSign: false,
   currentLedgerAddressPage: 1,
   slippageTolerance: DEFAULT_SLIPPAGE,
-  iconWalletModal: false,
 };
 
 const applicationSlice = createSlice({
@@ -66,6 +71,9 @@ const applicationSlice = createSlice({
     },
     setOpenModal(state, action) {
       state.openModal = action.payload;
+    },
+    setOpenWalletModal(state, action) {
+      state.openWalletModal = action.payload;
     },
     addPopup(state, { payload: { content, key, removeAfterMs = DEFAULT_TXN_DISMISS_MS } }) {
       state.popupList = (key ? state.popupList.filter(popup => popup.key !== key) : state.popupList).concat([
@@ -93,9 +101,6 @@ const applicationSlice = createSlice({
     updateSlippageTolerance(state, action) {
       state.slippageTolerance = action.payload.slippageTolerance;
     },
-    toggleICONWalletModal(state, { payload: { isOpen } }) {
-      state.iconWalletModal = isOpen;
-    },
   },
 });
 
@@ -108,6 +113,6 @@ export const {
   changeShouldLedgedSignMessage,
   changeCurrentLedgerAddressPage,
   updateSlippageTolerance,
-  toggleICONWalletModal,
+  setOpenWalletModal,
 } = applicationSlice.actions;
 export default applicationSlice.reducer;

@@ -25,7 +25,14 @@
   "linter": {
     "enabled": true,
     "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json"],
-    "ignore": ["**/node_modules/**", "**/dist/**", "**/public/**", "./src/charting_library/**", "./src/locales/**"],
+    "ignore": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/public/**",
+      "./src/charting_library/**",
+      "./src/locales/**",
+      "./src/packages/nouislider-react/**"
+    ],
     "rules": {
       "style": {
         "noNonNullAssertion": "off",

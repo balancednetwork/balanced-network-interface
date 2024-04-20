@@ -621,7 +621,7 @@ export default function WalletModal() {
                         </td>
                         <td>
                           <span style={{ display: 'inline-flex', justifyContent: 'flex-end', width: '100%' }}>
-                            {!address ? <Skeleton width="50%" height="17.5px" /> : address.balance + 'ICX'}
+                            {!address ? <Skeleton width="50%" height="17.5px" /> : address.balance + ' ICX'}
                           </span>
                         </td>
                       </tr>

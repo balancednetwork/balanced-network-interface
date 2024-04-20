@@ -234,8 +234,9 @@ export default function WalletModal() {
       bnJs.inject({
         legerSettings,
       });
-    } catch (e) {
-      console.log('initialiseTransport err: ', e);
+    } catch (e: any) {
+      console.error('initialiseTransport err: ', e);
+      if (e.endsWith('in progress.')) return;
       disconnect();
     }
   };
@@ -620,7 +621,7 @@ export default function WalletModal() {
                         </td>
                         <td>
                           <span style={{ display: 'inline-flex', justifyContent: 'flex-end', width: '100%' }}>
-                            {!address ? <Skeleton width="50%" height="17.5px" /> : address.balance + 'ICX'}
+                            {!address ? <Skeleton width="50%" height="17.5px" /> : address.balance + ' ICX'}
                           </span>
                         </td>
                       </tr>

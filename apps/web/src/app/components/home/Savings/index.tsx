@@ -10,7 +10,7 @@ import { Box, Flex } from 'rebass';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
 import { inputRegex } from 'app/components/CurrencyInputPanel';
-import LedgerConfirmMessage from 'app/components/LedgerConfirmMessage';
+import ModalContent from 'app/components/ModalContent';
 import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
@@ -247,7 +247,7 @@ const Savings = () => {
       </Box>
 
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>
-        <Flex flexDirection="column" alignItems="stretch" m={'25px'} width="100%">
+        <ModalContent>
           <Typography textAlign="center" mb="5px">
             {bnUSDDiff.isGreaterThan(0) ? t`Deposit bnUSD?` : t`Withdraw bnUSD?`}
           </Typography>
@@ -292,10 +292,8 @@ const Savings = () => {
             )}
           </Flex>
 
-          <LedgerConfirmMessage />
-
           {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </Flex>
+        </ModalContent>
       </Modal>
     </>
   );

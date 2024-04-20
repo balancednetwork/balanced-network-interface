@@ -17,7 +17,6 @@ import { Typography } from 'app/theme';
 import ArchWalletIcon from 'assets/icons/archway.svg';
 import IconWalletIcon from 'assets/icons/iconex.svg';
 import AvalancheWalletIcon from 'assets/icons/avalanche.svg';
-import bnJs from 'bnJs';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useWalletModalToggle, useModalOpen, useWalletModal } from 'store/application/hooks';
@@ -29,6 +28,7 @@ import SearchInput from '../SearchModal/SearchInput';
 import WalletItem from './WalletItem';
 import { IconWalletModal } from './IconWalletModal';
 import { AvalancheWalletModal } from './AvalancheWalletModal';
+import { useAccount, useDisconnect } from 'wagmi';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -60,15 +60,53 @@ const presenceVariants = {
   exit: { opacity: 0, height: 0 },
 };
 
+enum WalletType {
+  ICON,
+  Archway,
+  Avalanche,
+}
+
+const useAvalancheReact = () => {
+  const { address } = useAccount();
+  const { disconnectAsync } = useDisconnect();
+
+  return {
+    account: address,
+    disconnect: disconnectAsync,
+  };
+};
+
+const useWallets = () => {
+  const arch = useArchwayContext();
+  const icon = useIconReact();
+  const avax = useAvalancheReact();
+
+  // const icon = ();
+  return {
+    [WalletType.ICON]: {
+      account: icon.account,
+      disconnect: icon.disconnect,
+    },
+    [WalletType.Archway]: {
+      account: arch.address,
+      disconnect: arch.disconnect,
+    },
+    [WalletType.Avalanche]: {
+      account: avax.account,
+      disconnect: avax.disconnect,
+    },
+  };
+};
+
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
   const [, toggleIconWallet] = useWalletModal(WalletModalEnum.ICON);
   const [, toggleAvaxWallet] = useWalletModal(WalletModalEnum.AVALANCHE);
   const signedInWallets = useSignedInWallets();
-  const { connectToWallet: connectToKeplr, address: accountArch, disconnect: disconnectKeplr } = useArchwayContext();
+  const { connectToWallet: connectToKeplr } = useArchwayContext();
 
-  const { account, disconnect } = useIconReact();
+  const wallets = useWallets();
 
   const handleOpenWalletArchway = React.useCallback(() => {
     connectToKeplr();
@@ -94,24 +132,16 @@ export default function WalletModal() {
     }
   }, [walletModalOpen, closeMenu]);
 
-  const isLoggedInSome = account || accountArch;
-  const numberOfConnectedWallets = Number(!!account) + Number(!!accountArch);
+  const numberOfConnectedWallets = Object.values(wallets).filter(w => !!w.account).length;
+  const isLoggedInSome = numberOfConnectedWallets > 0;
   const [chainQuery, setChainQuery] = useState('');
 
   const handleChainQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChainQuery(e.target.value);
   };
 
-  const disconnectLedger = () => {
-    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-      bnJs.contractSettings.ledgerSettings.transport.close();
-    }
-  };
-
   const disconnectAll = () => {
-    disconnectLedger();
-    account && disconnect();
-    accountArch && disconnectKeplr();
+    Object.values(wallets).forEach(wallet => wallet.account && wallet.disconnect());
   };
 
   const walletConfig = useMemo(() => {
@@ -120,40 +150,28 @@ export default function WalletModal() {
         name: 'ICON',
         logo: <IconWalletIcon width="40" height="40" />,
         connect: toggleIconWallet,
-        disconnect: () => {
-          disconnectLedger();
-          disconnect();
-        },
+        disconnect: wallets[WalletType.ICON].disconnect,
         description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain`,
-        address: account,
+        address: wallets[WalletType.ICON].account,
       },
       {
         name: 'Archway',
         logo: <ArchWalletIcon width="40" height="40" />,
         connect: handleOpenWalletArchway,
-        disconnect: disconnectKeplr,
+        disconnect: wallets[WalletType.Archway].disconnect,
         description: t`Swap & transfer assets cross-chain.`,
-        address: accountArch,
+        address: wallets[WalletType.Archway].account,
       },
       {
         name: 'Avalanche',
         logo: <AvalancheWalletIcon width="40" height="40" />,
         connect: toggleAvaxWallet,
-        disconnect: disconnectKeplr,
+        disconnect: wallets[WalletType.Avalanche].disconnect,
         description: t`Swap & transfer assets cross-chain.`,
-        address: accountArch,
+        address: wallets[WalletType.Avalanche].account,
       },
     ];
-  }, [
-    toggleIconWallet,
-    disconnect,
-    account,
-    handleOpenWalletArchway,
-    disconnectKeplr,
-    accountArch,
-    toggleAvaxWallet,
-    disconnectLedger,
-  ]);
+  }, [toggleIconWallet, handleOpenWalletArchway, toggleAvaxWallet, wallets]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {

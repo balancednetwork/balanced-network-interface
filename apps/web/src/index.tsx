@@ -8,6 +8,10 @@ import BigNumber from 'bignumber.js';
 import { IconReactProvider } from 'packages/icon-react';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import {
+  QueryClient as WagmiQueryClient,
+  QueryClientProvider as WagmiQueryClientProvider,
+} from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -42,6 +46,7 @@ const fmt = {
 
 BigNumber.config({ FORMAT: fmt, ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN }); // equivalent
+const wagmiQueryClient = new WagmiQueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -53,7 +58,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <ArchwayProvider>
                 <LanguageProvider>
                   <WagmiProvider config={wagmiConfig}>
-                    <App />
+                    <WagmiQueryClientProvider client={wagmiQueryClient}>
+                      <App />
+                    </WagmiQueryClientProvider>
                   </WagmiProvider>
                 </LanguageProvider>
               </ArchwayProvider>

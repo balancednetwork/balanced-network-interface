@@ -7,13 +7,14 @@ import styled from 'styled-components';
 
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import IconWalletIcon from 'assets/icons/iconex.svg';
-import LedgerIcon from 'assets/icons/ledger.svg';
+import IconWalletIcon from 'assets/icons/wallets/metamask.svg';
 import { useWalletModal } from 'store/application/hooks';
 
-import { VerticalDivider } from '../Divider';
 import { ModalContentWrapper } from '../ModalContent';
-import { ApplicationModal, WalletModal } from 'store/application/reducer';
+import { WalletModal } from 'store/application/reducer';
+
+import { useAccount, useConnect } from 'wagmi';
+import { injected } from 'wagmi/connectors';
 
 const ChainIcons = styled.div``;
 const WalletIcons = styled.div``;
@@ -72,9 +73,13 @@ const UnbreakableText = styled(Text)`
 export const AvalancheWalletModal = () => {
   const [isOpen, toggle] = useWalletModal(WalletModal.AVALANCHE);
   const upExtraSmall = useMedia('(min-width: 420px)');
-  const upSuperExtraSmall = useMedia('(min-width: 364px)');
+  const [, toggleAvaxWallet] = useWalletModal(WalletModal.AVALANCHE);
 
-  const handleConnect = () => {};
+  const { connectAsync } = useConnect();
+  const handleConnect = async () => {
+    await connectAsync({ connector: injected() });
+    toggleAvaxWallet();
+  };
 
   return (
     <>
@@ -87,13 +92,6 @@ export const AvalancheWalletModal = () => {
             <WalletOption onClick={handleConnect}>
               <IconWalletIcon width="50" height="50" />
               <UnbreakableText>Metamask</UnbreakableText>
-            </WalletOption>
-
-            {upSuperExtraSmall && <VerticalDivider text={t`or`} />}
-
-            <WalletOption onClick={handleConnect}>
-              <LedgerIcon width="50" height="50" />
-              <UnbreakableText>Ledger</UnbreakableText>
             </WalletOption>
           </Flex>
         </ModalContentWrapper>

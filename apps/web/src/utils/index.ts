@@ -22,9 +22,10 @@ const isArchEoaAddress = (address: string) => {
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
-  if (!isEoaAddress(address) && !isArchEoaAddress(address)) {
-    throw Error(`Invalid 'address' parameter '${address}'.`);
-  }
+  // !TODO: fix it later
+  // if (!isEoaAddress(address) && !isArchEoaAddress(address)) {
+  //   throw Error(`Invalid 'address' parameter '${address}'.`);
+  // }
   return `${address.substring(0, chars + 2)}...${address.substring(address.length - chars)}`;
 }
 

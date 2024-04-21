@@ -161,7 +161,7 @@ const Wrapper = styled.div`
   gap: 15px;
 `;
 
-const UnbrakebleText = styled(Text)`
+const UnbreakableText = styled(Text)`
   white-space: nowrap;
 `;
 
@@ -561,14 +561,14 @@ export default function WalletModal() {
           <Flex alignItems="stretch" justifyContent="space-around" flexWrap={upExtraSmall ? 'nowrap' : 'wrap'}>
             <WalletOption onClick={handleOpenWallet}>
               <IconWalletIcon width="50" height="50" />
-              <UnbrakebleText>ICON wallet</UnbrakebleText>
+              <UnbreakableText>ICON wallet</UnbreakableText>
             </WalletOption>
 
             {upSuperExtraSmall && <VerticalDivider text={t`or`} />}
 
             <WalletOption onClick={handleOpenLedger}>
               <LedgerIcon width="50" height="50" />
-              <UnbrakebleText>Ledger</UnbrakebleText>
+              <UnbreakableText>Ledger</UnbreakableText>
             </WalletOption>
           </Flex>
         </ModalContentWrapper>

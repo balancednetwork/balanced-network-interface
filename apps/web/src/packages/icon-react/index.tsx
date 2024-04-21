@@ -120,7 +120,7 @@ export function IconReactProvider({ children }) {
     window.addEventListener('load', delayedHandler);
 
     return () => {
-      window.removeEventListener('load', handler);
+      window.removeEventListener('load', delayedHandler);
     };
   }, []);
 

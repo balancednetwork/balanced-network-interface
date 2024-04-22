@@ -281,6 +281,14 @@
       "symbol": "HVH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hvh.png"
-    }
+    },
+    {
+        "address": "cx4297f4b63262507623b6ad575d0d8dd2db980e4e",
+        "chainId": 1,
+        "name": "Injective",
+        "symbol": "INJ",
+        "decimals": 18,
+        "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hvh.png"
+      }
   ]
 }

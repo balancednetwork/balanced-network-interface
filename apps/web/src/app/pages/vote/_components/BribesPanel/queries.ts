@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { CallData } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useIconReact } from 'packages/icon-react';
-import { UseQueryResult, useQuery } from 'react-query';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { WEEK_IN_MS, getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
 import bnJs from 'bnJs';
@@ -26,9 +26,9 @@ export function useBribes(): UseQueryResult<Bribe[], Error> {
     return [];
   }, [voteData]);
 
-  return useQuery(
-    `bribes-${sourceNames.length}-${account}-${txCount}`,
-    async () => {
+  return useQuery({
+    queryKey: [`bribes-${sourceNames.length}-${account}-${txCount}`],
+    queryFn: async () => {
       const cds: CallData[] = sourceNames.map(sourceName => ({
         target: bnJs.Bribe.address,
         method: 'bribesPerSource',
@@ -97,10 +97,8 @@ export function useBribes(): UseQueryResult<Bribe[], Error> {
         })
         .flat();
     },
-    {
-      keepPreviousData: true,
-      refetchInterval: 3000,
-      enabled: sourceNames.length > 0,
-    },
-  );
+    placeholderData: keepPreviousData,
+    refetchInterval: 3000,
+    enabled: sourceNames.length > 0,
+  });
 }

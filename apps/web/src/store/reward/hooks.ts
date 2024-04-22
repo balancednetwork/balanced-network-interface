@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Fraction } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery, UseQueryResult } from 'react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -61,18 +61,16 @@ export function useChangeReward(): (poolId: string, reward: BigNumber) => void {
 }
 
 export function useEmissions() {
-  return useQuery(
-    'getEmissions',
-    async () => {
+  return useQuery({
+    queryKey: ['getEmissions'],
+    queryFn: async () => {
       const data = await bnJs.Rewards.getEmission();
       return new BigNumber(data).div(10 ** 18);
     },
-    {
-      keepPreviousData: true,
-      refetchOnReconnect: false,
-      refetchInterval: undefined,
-    },
-  );
+    placeholderData: keepPreviousData,
+    refetchOnReconnect: false,
+    refetchInterval: undefined,
+  });
 }
 
 export function useFetchRewardsInfo() {
@@ -128,47 +126,50 @@ export const useHasNetworkFees = () => {
 };
 
 export function useRewardsPercentDistribution(): UseQueryResult<RewardDistribution, Error> {
-  return useQuery('rewardDistribution', async () => {
-    const data: RewardDistributionRaw = await bnJs.Rewards.getDistributionPercentages();
+  return useQuery({
+    queryKey: ['rewardDistribution'],
+    queryFn: async () => {
+      const data: RewardDistributionRaw = await bnJs.Rewards.getDistributionPercentages();
 
-    return {
-      Base: Object.keys(data.Base).reduce((distributions, item) => {
-        try {
-          distributions[item] = new Fraction(data.Base[item], WEIGHT_CONST);
-        } catch (e) {
-          console.error(e);
-        } finally {
-          return distributions;
-        }
-      }, {}),
-      Fixed: Object.keys(data.Fixed).reduce((distributions, item) => {
-        try {
-          distributions[item] = new Fraction(data.Fixed[item], WEIGHT_CONST);
-        } catch (e) {
-          console.error(e);
-        } finally {
-          return distributions;
-        }
-      }, {}),
-      Voting: Object.keys(data.Voting).reduce((distributions, item) => {
-        try {
-          distributions[item] = new Fraction(data.Voting[item], WEIGHT_CONST);
-        } catch (e) {
-          console.error(e);
-        } finally {
-          return distributions;
-        }
-      }, {}),
-    };
+      return {
+        Base: Object.keys(data.Base).reduce((distributions, item) => {
+          try {
+            distributions[item] = new Fraction(data.Base[item], WEIGHT_CONST);
+          } catch (e) {
+            console.error(e);
+          } finally {
+            return distributions;
+          }
+        }, {}),
+        Fixed: Object.keys(data.Fixed).reduce((distributions, item) => {
+          try {
+            distributions[item] = new Fraction(data.Fixed[item], WEIGHT_CONST);
+          } catch (e) {
+            console.error(e);
+          } finally {
+            return distributions;
+          }
+        }, {}),
+        Voting: Object.keys(data.Voting).reduce((distributions, item) => {
+          try {
+            distributions[item] = new Fraction(data.Voting[item], WEIGHT_CONST);
+          } catch (e) {
+            console.error(e);
+          } finally {
+            return distributions;
+          }
+        }, {}),
+      };
+    },
   });
 }
 
 export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fraction>, Error> {
   const { data: distribution } = useRewardsPercentDistribution();
 
-  return useQuery(
-    ['flattenedDistribution', distribution],
-    () => {
+  return useQuery({
+    queryKey: ['flattenedDistribution', distribution],
+    queryFn: () => {
       if (distribution) {
         return Object.values(distribution).reduce((flattened, dist) => {
           return Object.keys(dist).reduce((flattened, item) => {
@@ -182,29 +183,25 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
         }, {});
       }
     },
-    {
-      keepPreviousData: true,
-    },
-  );
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useEarnedPastMonth(): UseQueryResult<BigNumber | undefined> {
   const { account } = useIconReact();
   const { data: prices } = useTokenPrices();
 
-  return useQuery(
-    `earnedPastMonth-${account}-${prices ? Object.keys(prices).length : '0'}`,
-    async () => {
+  return useQuery({
+    queryKey: [`earnedPastMonth-${account}-${prices ? Object.keys(prices).length : '0'}`],
+    queryFn: async () => {
       if (account) {
         //todo: after endpoint is ready, fetch the data from there
         return new BigNumber(23.9);
       }
     },
-    {
-      enabled: !!account,
-      keepPreviousData: true,
-    },
-  );
+    enabled: !!account,
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useHasAnyKindOfRewards() {

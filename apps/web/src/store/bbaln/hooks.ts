@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery, UseQueryResult } from 'react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { LockedPeriod } from 'app/components/home/BBaln/types';
@@ -199,8 +199,11 @@ export function useHasLockExpired() {
   const lockedUntil = useLockedUntil();
   const now = new Date();
 
-  return useQuery<boolean | undefined>(`hasLockExpired${lockedUntil?.getTime()}`, () => {
-    return lockedUntil && now.getTime() > lockedUntil.getTime();
+  return useQuery<boolean | undefined>({
+    queryKey: [`hasLockExpired${lockedUntil?.getTime()}`],
+    queryFn: () => {
+      return lockedUntil && now.getTime() > lockedUntil.getTime();
+    },
   });
 }
 
@@ -352,9 +355,9 @@ export const usePastMonthFeesDistributed = () => {
   const { data: blockThen } = useBlockDetails(new Date(now).setDate(new Date().getDate() - 30));
   const { data: rates } = useRatesQuery();
 
-  return useQuery(
-    `PastMonthFeesDistributed${blockThen && blockThen.number}${rates && Object.keys(rates).length}`,
-    async () => {
+  return useQuery({
+    queryKey: [`PastMonthFeesDistributed${blockThen && blockThen.number}${rates && Object.keys(rates).length}`],
+    queryFn: async () => {
       if (blockThen?.number && rates) {
         try {
           const loanFeesNow = await bnJs.FeeHandler.getLoanFeesAccrued();
@@ -409,8 +412,8 @@ export const usePastMonthFeesDistributed = () => {
         }
       }
     },
-    { keepPreviousData: true },
-  );
+    placeholderData: keepPreviousData,
+  });
 };
 
 export const useTimeRemaining = () => {
@@ -422,9 +425,12 @@ export const useTimeRemaining = () => {
 };
 
 export const useTotalBalnLocked = () => {
-  return useQuery('totalBalnLocked', async () => {
-    const data = await bnJs.BBALN.getTotalLocked();
-    return new BigNumber(formatUnits(data));
+  return useQuery({
+    queryKey: ['totalBalnLocked'],
+    queryFn: async () => {
+      const data = await bnJs.BBALN.getTotalLocked();
+      return new BigNumber(formatUnits(data));
+    },
   });
 };
 
@@ -433,15 +439,17 @@ export function useBBalnApr(): UseQueryResult<BigNumber | undefined> {
   const { data: prices } = useTokenPrices();
   const bBALNSupply = useTotalSupply();
 
-  return useQuery(
-    `bbalnApr-${pastMonthDistributed ? 'fees' : 'nofees'}-${bBALNSupply ? bBALNSupply.toFixed(0) : ''}-${
-      prices ? Object.keys(prices).length : ''
-    }`,
-    async () => {
+  return useQuery({
+    queryKey: [
+      `bbalnApr-${pastMonthDistributed ? 'fees' : 'nofees'}-${bBALNSupply ? bBALNSupply.toFixed(0) : ''}-${
+        prices ? Object.keys(prices).length : ''
+      }`,
+    ],
+    queryFn: async () => {
       if (!pastMonthDistributed || !prices || !bBALNSupply) return;
       const assumedYearlyDistribution = pastMonthDistributed.total.times(12);
       return assumedYearlyDistribution.div(bBALNSupply.times(prices['BALN'])).times(100);
     },
-    { keepPreviousData: true },
-  );
+    placeholderData: keepPreviousData,
+  });
 }

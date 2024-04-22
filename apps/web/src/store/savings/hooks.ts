@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from 'react';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { UseQueryResult, useQuery } from 'react-query';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -35,9 +35,9 @@ export function useSavingsChangeLockedAmount(): (lockedAmount: CurrencyAmount<To
 }
 
 export function useTotalBnUSDLocked(): UseQueryResult<CurrencyAmount<Token> | undefined> {
-  return useQuery(
-    'bnUSDtotalLocked',
-    async () => {
+  return useQuery({
+    queryKey: ['bnUSDtotalLocked'],
+    queryFn: async () => {
       try {
         const totalLocked = await bnJs.bnUSD.balanceOf(bnJs.Savings.address);
         return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], totalLocked);
@@ -46,11 +46,9 @@ export function useTotalBnUSDLocked(): UseQueryResult<CurrencyAmount<Token> | un
         return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], '0');
       }
     },
-    {
-      refetchInterval: 2000,
-      keepPreviousData: true,
-    },
-  );
+    refetchInterval: 2000,
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useFetchSavingsInfo(account?: string | null) {
@@ -134,9 +132,9 @@ export function useSavingsSliderActionHandlers() {
 export function useUnclaimedRewards(): UseQueryResult<CurrencyAmount<Token>[] | undefined> {
   const { account } = useIconReact();
 
-  return useQuery(
-    ['savingsRewards', account],
-    async () => {
+  return useQuery({
+    queryKey: ['savingsRewards', account],
+    queryFn: async () => {
       if (!account) return;
 
       try {
@@ -153,38 +151,32 @@ export function useUnclaimedRewards(): UseQueryResult<CurrencyAmount<Token>[] | 
         console.log(e);
       }
     },
-    {
-      keepPreviousData: true,
-      enabled: !!account,
-      refetchInterval: 5000,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: !!account,
+    refetchInterval: 5000,
+  });
 }
 
 function useTricklerAllowedTokens(): UseQueryResult<string[] | undefined> {
-  return useQuery(
-    'tricklerTokens',
-    async () => {
+  return useQuery({
+    queryKey: ['tricklerTokens'],
+    queryFn: async () => {
       const tokens = await bnJs.Trickler.getAllowListTokens();
       return tokens;
     },
-    {
-      keepPreviousData: true,
-    },
-  );
+    placeholderData: keepPreviousData,
+  });
 }
 
 function useTricklerDistributionPeriod(): UseQueryResult<number | undefined> {
-  return useQuery(
-    'tricklerDistributionPeriod',
-    async () => {
+  return useQuery({
+    queryKey: ['tricklerDistributionPeriod'],
+    queryFn: async () => {
       const periodInBlocks = await bnJs.Trickler.getDistributionPeriod();
       return periodInBlocks;
     },
-    {
-      keepPreviousData: true,
-    },
-  );
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useSavingsRateInfo(): UseQueryResult<
@@ -196,11 +188,13 @@ export function useSavingsRateInfo(): UseQueryResult<
   const { data: periodInBlocks } = useTricklerDistributionPeriod();
   const { data: collateralTokens } = useSupportedCollateralTokens();
 
-  return useQuery(
-    `savingsRate-${totalLocked?.toFixed() || ''}-${Object.keys(tokenPrices ?? {}).length}-${tokenList?.length ?? ''}-${
-      Object.keys(collateralTokens ?? {}).length
-    }-${periodInBlocks ?? ''}`,
-    async () => {
+  return useQuery({
+    queryKey: [
+      `savingsRate-${totalLocked?.toFixed() || ''}-${Object.keys(tokenPrices ?? {}).length}-${
+        tokenList?.length ?? ''
+      }-${Object.keys(collateralTokens ?? {}).length}-${periodInBlocks ?? ''}`,
+    ],
+    queryFn: async () => {
       if (
         tokenPrices === undefined ||
         totalLocked === undefined ||
@@ -259,9 +253,7 @@ export function useSavingsRateInfo(): UseQueryResult<
         APR,
       };
     },
-    {
-      keepPreviousData: true,
-      enabled: !!tokenPrices && !!tokenList && !!collateralTokens,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: !!tokenPrices && !!tokenList && !!collateralTokens,
+  });
 }

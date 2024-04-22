@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -346,9 +346,12 @@ export function useLockingRatio() {
 
 function useLiquidationRatioRaw() {
   const collateralType = useCollateralType();
-  return useQuery(`${collateralType}LiquidationRatio`, async () => {
-    const data = await bnJs.Loans.getLiquidationRatio(collateralType);
-    return data;
+  return useQuery({
+    queryKey: [`${collateralType}LiquidationRatio`],
+    queryFn: async () => {
+      const data = await bnJs.Loans.getLiquidationRatio(collateralType);
+      return data;
+    },
   });
 }
 
@@ -430,37 +433,46 @@ export function useBorrowableAmountWithReserve() {
 }
 
 export function useInterestRate(symbol: string): UseQueryResult<BigNumber> {
-  return useQuery(`interestRate-${symbol}`, async () => {
-    const data = await bnJs.Loans.getInterestRate(symbol);
+  return useQuery({
+    queryKey: [`interestRate-${symbol}`],
+    queryFn: async () => {
+      const data = await bnJs.Loans.getInterestRate(symbol);
 
-    if (data) {
-      return new BigNumber(data).div(10000);
-    } else {
-      return new BigNumber(0);
-    }
+      if (data) {
+        return new BigNumber(data).div(10000);
+      } else {
+        return new BigNumber(0);
+      }
+    },
   });
 }
 
 export function useRedemptionFee(): UseQueryResult<number> {
-  return useQuery(`redemptionFee`, async () => {
-    const data = await bnJs.Loans.getRedemptionFee();
+  return useQuery({
+    queryKey: [`redemptionFee`],
+    queryFn: async () => {
+      const data = await bnJs.Loans.getRedemptionFee();
 
-    if (data) {
-      return Number.parseInt(data);
-    } else {
-      return 0;
-    }
+      if (data) {
+        return Number.parseInt(data);
+      } else {
+        return 0;
+      }
+    },
   });
 }
 
 export function useRedemptionDaoFee(): UseQueryResult<number> {
-  return useQuery(`redemptionDaoFee`, async () => {
-    const data = await bnJs.Loans.getRedemptionDaoFee();
+  return useQuery({
+    queryKey: [`redemptionDaoFee`],
+    queryFn: async () => {
+      const data = await bnJs.Loans.getRedemptionDaoFee();
 
-    if (data) {
-      return Number.parseInt(data);
-    } else {
-      return 0;
-    }
+      if (data) {
+        return Number.parseInt(data);
+      } else {
+        return 0;
+      }
+    },
   });
 }

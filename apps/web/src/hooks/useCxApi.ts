@@ -1,6 +1,6 @@
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import axios, { AxiosResponse } from 'axios';
-import { useQuery } from 'react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { NETWORK_ID } from 'constants/config';
 import { ArbitraryCallParameterType } from 'store/arbitraryCalls/reducer';
@@ -33,9 +33,9 @@ function isCxValid(cx: string) {
 }
 
 export function useCxApi(cx: string | undefined) {
-  return useQuery(
-    `cxApi-${cx}`,
-    async () => {
+  return useQuery({
+    queryKey: [`cxApi-${cx}`],
+    queryFn: async () => {
       if (!cx || !isCxValid(cx)) return;
 
       const params = { ...API_PARAMS, params: { address: cx } };
@@ -45,8 +45,6 @@ export function useCxApi(cx: string | undefined) {
         return response.data.result.filter(method => method.type === 'function' && method.readonly !== '0x1');
       }
     },
-    {
-      keepPreviousData: false,
-    },
-  );
+    placeholderData: keepPreviousData,
+  });
 }

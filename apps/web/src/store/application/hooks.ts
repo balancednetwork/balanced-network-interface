@@ -4,7 +4,7 @@ import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery } from 'react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { NETWORK_ID } from 'constants/config';
@@ -117,13 +117,16 @@ export const useBlockDetails = (timestamp: number) => {
     const { data } = await axios.get(`${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/blocks/timestamp/${timestamp * 1000}`);
     return data;
   };
-  return useQuery<BlockDetails>(`getBlock${timestamp}`, getBlock);
+  return useQuery<BlockDetails>({
+    queryKey: [`getBlock${timestamp}`],
+    queryFn: getBlock,
+  });
 };
 
 export function useICXUnstakingTime() {
-  return useQuery(
-    'icxUnstakingTime',
-    async () => {
+  return useQuery({
+    queryKey: ['icxUnstakingTime'],
+    queryFn: async () => {
       const totalICXRequest = {
         jsonrpc: '2.0',
         method: 'icx_getTotalSupply',
@@ -155,8 +158,6 @@ export function useICXUnstakingTime() {
         console.error('Error while fetching total ICX staked info', e);
       }
     },
-    {
-      keepPreviousData: true,
-    },
-  );
+    placeholderData: keepPreviousData,
+  });
 }

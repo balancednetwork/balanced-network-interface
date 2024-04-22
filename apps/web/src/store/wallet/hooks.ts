@@ -8,7 +8,7 @@ import { Validator } from 'icon-sdk-js';
 import JSBI from 'jsbi';
 import { forEach } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery, UseQueryResult } from 'react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
@@ -81,9 +81,9 @@ export function useArchwayBalances(
   const { signingClient } = useArchwayContext();
   const arch = useARCH();
 
-  return useQuery(
-    `archwayBalances-${!!signingClient}-${address}-${tokens ? tokens.length : ''}`,
-    async () => {
+  return useQuery({
+    queryKey: [`archwayBalances-${!!signingClient}-${address}-${tokens ? tokens.length : ''}`],
+    queryFn: async () => {
       if (signingClient && address) {
         const cw20Tokens = [...tokens].filter(token => !isDenomAsset(token));
         const denoms = [...tokens].filter(token => isDenomAsset(token));
@@ -118,12 +118,10 @@ export function useArchwayBalances(
         }, {});
       }
     },
-    {
-      keepPreviousData: true,
-      enabled: !!signingClient && !!address,
-      refetchInterval: 10000,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: !!signingClient && !!address,
+    refetchInterval: 10000,
+  });
 }
 
 export function useWalletFetchBalances(account?: string | null, accountArch?: string | null) {

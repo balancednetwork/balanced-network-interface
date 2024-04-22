@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { useQuery, UseQueryResult } from 'react-query';
 import { v4 as uuidv4 } from 'uuid';
 
 import {

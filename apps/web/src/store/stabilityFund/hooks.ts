@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import JSBI from 'jsbi';
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -157,9 +157,9 @@ export function useFeeAmount(inputAmount: CurrencyAmount<Currency> | undefined):
 export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<Token> }> {
   const whitelistedTokenAddresses = useWhitelistedTokenAddresses() || [];
 
-  return useQuery<{ [key: string]: CurrencyAmount<Token> }>(
-    `useFundLimitsQuery${whitelistedTokenAddresses.length}`,
-    async () => {
+  return useQuery<{ [key: string]: CurrencyAmount<Token> }>({
+    queryKey: [`useFundLimitsQuery${whitelistedTokenAddresses.length}`],
+    queryFn: async () => {
       const cds: CallData[] = whitelistedTokenAddresses.map(address => {
         return {
           target: stabilityFundAddress,
@@ -181,7 +181,7 @@ export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<
 
       return limits;
     },
-  );
+  });
 }
 
 function useFeeIn(): string | undefined {

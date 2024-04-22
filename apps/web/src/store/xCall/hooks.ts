@@ -4,7 +4,7 @@ import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { useQuery, UseQueryResult } from 'react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { COSMOS_NATIVE_AVAILABLE_TOKENS } from 'app/_xcall/_icon/config';
@@ -162,9 +162,9 @@ export function useIsAnyEventPristine(): boolean {
 export function useXCallActivityItems(): UseQueryResult<XCallActivityItem[] | undefined> {
   const xCallState = useXCallState();
 
-  return useQuery(
-    ['xCallActivityItems', xCallState],
-    async () => {
+  return useQuery({
+    queryKey: ['xCallActivityItems', xCallState],
+    queryFn: async () => {
       if (xCallState) {
         const executable = SUPPORTED_XCALL_CHAINS.map(chain => {
           const chainXCalls: XCallActivityItem[] = [];
@@ -254,11 +254,9 @@ export function useXCallActivityItems(): UseQueryResult<XCallActivityItem[] | un
         });
       }
     },
-    {
-      enabled: !!xCallState,
-      keepPreviousData: true,
-    },
-  );
+    enabled: !!xCallState,
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useRollBackFromOrigin(): (chain: SupportedXCallChains, sn: number) => void {
@@ -321,9 +319,9 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
     }, transactionCountByHour);
   }
 
-  return useQuery(
-    'xCallStats',
-    async () => {
+  return useQuery({
+    queryKey: ['xCallStats'],
+    queryFn: async () => {
       const txBatches = await Promise.all([getTxs(0), getTxs(100)]);
       const txs = txBatches.flat();
       const oldTxIndex = txs.findIndex(tx => tx.block_timestamp < yesterdayTimestamp + 3600000000);
@@ -337,11 +335,9 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
         data: countTransactionsByHour(xCallTransactions),
       };
     },
-    {
-      keepPreviousData: true,
-      refetchInterval: 30000,
-    },
-  );
+    placeholderData: keepPreviousData,
+    refetchInterval: 30000,
+  });
 }
 
 export function useWithdrawableNativeAmount(
@@ -359,9 +355,9 @@ export function useWithdrawableNativeAmount(
   const address = currencyAmount?.currency.wrapped.address;
   const { client } = useArchwayContext();
 
-  return useQuery(
-    ['withdrawableNativeAmount', amount, address, chain],
-    async () => {
+  return useQuery({
+    queryKey: ['withdrawableNativeAmount', amount, address, chain],
+    queryFn: async () => {
       if (
         client &&
         address &&
@@ -395,6 +391,8 @@ export function useWithdrawableNativeAmount(
       }
       return undefined;
     },
-    { keepPreviousData: true, refetchInterval: 2000, enabled: !!currencyAmount },
-  );
+    placeholderData: keepPreviousData,
+    refetchInterval: 2000,
+    enabled: !!currencyAmount,
+  });
 }

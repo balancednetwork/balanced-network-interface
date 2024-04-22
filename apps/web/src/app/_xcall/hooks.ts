@@ -1,5 +1,5 @@
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { useQuery, UseQueryResult } from 'react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { BridgePair, IXCallFee, MessagingProtocol, MessagingProtocolId, SupportedXCallChains } from './types';
 import { useArchwayContext } from './archway/ArchwayProvider';
@@ -14,9 +14,9 @@ export function useXCallGasChecker(
   const wallets = useSignedInWallets();
   const balances = useCrossChainWalletBalances();
 
-  return useQuery<{ hasEnoughGas: boolean; errorMessage: string }>(
-    ['gasChecker', chain1, chain2, icon, wallets, balances],
-    async () => {
+  return useQuery<{ hasEnoughGas: boolean; errorMessage: string }>({
+    queryKey: ['gasChecker', chain1, chain2, icon, wallets, balances],
+    queryFn: async () => {
       let errorMessage = '';
       const hasEnoughGasAllArray: boolean[] = [];
 
@@ -61,11 +61,9 @@ export function useXCallGasChecker(
 
       return { hasEnoughGas, errorMessage };
     },
-    {
-      keepPreviousData: true,
-      refetchInterval: 3000,
-    },
-  );
+    placeholderData: keepPreviousData,
+    refetchInterval: 3000,
+  });
 }
 
 const xCallTable = {
@@ -99,9 +97,9 @@ export const useXCallFee = (
 ): { xCallFee: IXCallFee | undefined; formattedXCallFee: string } => {
   const { client } = useArchwayContext();
 
-  const query = useQuery(
-    [`xcall-fees`, from, to],
-    async () => {
+  const query = useQuery({
+    queryKey: [`xcall-fees`, from, to],
+    queryFn: async () => {
       if (client) {
         const feeWithRollback = await fetchFee(from, to, true, client);
         const feeNoRollback = await fetchFee(from, to, false, client);
@@ -112,8 +110,9 @@ export const useXCallFee = (
         };
       }
     },
-    { enabled: !!client, keepPreviousData: true },
-  );
+    enabled: !!client,
+    placeholderData: keepPreviousData,
+  });
 
   const { data: xCallFee } = query;
 

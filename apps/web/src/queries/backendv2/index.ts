@@ -1,7 +1,7 @@
 import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { useQuery } from 'react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import bnJs from 'bnJs';
 import { PairInfo } from 'constants/pairs';
@@ -30,9 +30,11 @@ export const useContractMethodsDataQuery = (
   start_timestamp?: number,
   end_timestamp?: number,
 ) => {
-  return useQuery<ContractMethodsDataType[]>(
-    `historicalQuery|${skip}|${limit}|${contract}|${method}|${days_ago}|${start_timestamp}|${end_timestamp}`,
-    async () => {
+  return useQuery<ContractMethodsDataType[]>({
+    queryKey: [
+      `historicalQuery|${skip}|${limit}|${contract}|${method}|${days_ago}|${start_timestamp}|${end_timestamp}`,
+    ],
+    queryFn: async () => {
       const { data } = await axios.get(
         `${API_ENDPOINT}/contract-methods?skip=${skip}&limit=${limit}&address=${contract}&method=${method}${
           days_ago ? `&days_ago=${days_ago}` : ''
@@ -46,15 +48,15 @@ export const useContractMethodsDataQuery = (
         return item;
       });
     },
-  );
+  });
 };
 
 export function useAllTokens() {
   const MIN_MARKETCAP_TO_INCLUDE = 5000;
 
-  return useQuery(
-    `allTokens`,
-    async () => {
+  return useQuery({
+    queryKey: [`allTokens`],
+    queryFn: async () => {
       const response = await axios.get(`${API_ENDPOINT}/tokens`);
 
       if (response.status === 200) {
@@ -66,28 +68,24 @@ export function useAllTokens() {
           .filter(item => item['market_cap'] > MIN_MARKETCAP_TO_INCLUDE);
       }
     },
-    {
-      keepPreviousData: true,
-    },
-  );
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useAllTokensByAddress() {
   const { data: allTokens, isSuccess: allTokensSuccess } = useAllTokens();
 
-  return useQuery(
-    `allTokensByAddress`,
-    () => {
+  return useQuery({
+    queryKey: [`allTokensByAddress`],
+    queryFn: () => {
       return allTokens.reduce((tokens, item) => {
         tokens[item['address']] = item;
         return tokens;
       }, {});
     },
-    {
-      keepPreviousData: true,
-      enabled: allTokensSuccess,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: allTokensSuccess,
+  });
 }
 
 export type PairData = {
@@ -113,9 +111,9 @@ export function useAllPairs() {
   const { data: incentivisedPairs, isSuccess: incentivisedPairsSuccess } = useIncentivisedPairs();
   const { data: dailyDistribution, isSuccess: dailyDistributionSuccess } = useEmissions();
 
-  return useQuery<PairData[]>(
-    `allPairs-${incentivisedPairs && incentivisedPairs.length}-${dailyDistribution?.toFixed()}`,
-    async () => {
+  return useQuery<PairData[]>({
+    queryKey: [`allPairs-${incentivisedPairs && incentivisedPairs.length}-${dailyDistribution?.toFixed()}`],
+    queryFn: async () => {
       const response = await axios.get(`${API_ENDPOINT}/pools`);
 
       if (response.status === 200 && incentivisedPairs && dailyDistribution && allTokens) {
@@ -210,19 +208,17 @@ export function useAllPairs() {
         }
       }
     },
-    {
-      keepPreviousData: true,
-      enabled: incentivisedPairsSuccess && dailyDistributionSuccess && allTokensSuccess,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: incentivisedPairsSuccess && dailyDistributionSuccess && allTokensSuccess,
+  });
 }
 
 export function useAllPairsById() {
   const { data: allPairs, isSuccess: allPairsSuccess } = useAllPairs();
 
-  return useQuery<{ [key in string]: PairData } | undefined>(
-    'allPairsById',
-    () => {
+  return useQuery<{ [key in string]: PairData } | undefined>({
+    queryKey: ['allPairsById'],
+    queryFn: () => {
       if (allPairs) {
         return allPairs.reduce((allPairs, item) => {
           allPairs[item.info['id']] = item;
@@ -230,18 +226,16 @@ export function useAllPairsById() {
         }, {});
       }
     },
-    {
-      keepPreviousData: true,
-      enabled: allPairsSuccess,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: allPairsSuccess,
+  });
 }
 export function useAllPairsByName() {
   const { data: allPairs, isSuccess: allPairsSuccess } = useAllPairs();
 
-  return useQuery<{ [key in string]: PairData } | undefined>(
-    'allPairsByName',
-    () => {
+  return useQuery<{ [key in string]: PairData } | undefined>({
+    queryKey: ['allPairsByName'],
+    queryFn: () => {
       if (allPairs) {
         return allPairs.reduce((allPairs, item) => {
           allPairs[item['name']] = item;
@@ -249,27 +243,23 @@ export function useAllPairsByName() {
         }, {});
       }
     },
-    {
-      keepPreviousData: true,
-      enabled: allPairsSuccess,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: allPairsSuccess,
+  });
 }
 
 export function useTokenPrices() {
   const { data: allTokens, isSuccess: allTokensSuccess } = useAllTokens();
 
-  return useQuery<{ [key in string]: BigNumber }>(
-    `tokenPrices${allTokens}`,
-    () => {
+  return useQuery<{ [key in string]: BigNumber }>({
+    queryKey: [`tokenPrices${allTokens}`],
+    queryFn: () => {
       return allTokens.reduce((tokens, item) => {
         tokens[item['symbol']] = new BigNumber(item.price);
         return tokens;
       }, {});
     },
-    {
-      keepPreviousData: true,
-      enabled: allTokensSuccess,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: allTokensSuccess,
+  });
 }

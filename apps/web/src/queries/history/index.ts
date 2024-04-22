@@ -1,6 +1,6 @@
 import axios from 'axios';
 import querystring from 'querystring';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { API_ENDPOINT } from '../constants';
 
@@ -19,9 +19,9 @@ export type Transaction = {
 };
 
 export const useAllTransactionsQuery = (page: number, limit: number, account: string | null | undefined) => {
-  return useQuery<{ count: number; transactions: Transaction[] }>(
-    ['transactions', page, limit, account],
-    async () => {
+  return useQuery<{ count: number; transactions: Transaction[] }>({
+    queryKey: ['transactions', page, limit, account],
+    queryFn: async () => {
       const endpoint = `${API_ENDPOINT}/stats/transaction-history?${querystring.stringify({
         skip: page * limit,
         limit: 20,
@@ -31,16 +31,14 @@ export const useAllTransactionsQuery = (page: number, limit: number, account: st
       const { data } = await axios.get(endpoint);
       return data;
     },
-    {
-      enabled: !!account,
-    },
-  );
+    enabled: !!account,
+  });
 };
 
 export const useInternalTransactionQuery = (transactionHash: string) => {
-  return useQuery<{ transaction: Transaction }>(
-    ['transaction'],
-    async () => {
+  return useQuery<{ transaction: Transaction }>({
+    queryKey: ['transaction'],
+    queryFn: async () => {
       const endpoint = `${API_ENDPOINT}/staking/logs/ICXTransfer?${querystring.stringify({
         skip: 0,
         limit: 1,
@@ -50,8 +48,6 @@ export const useInternalTransactionQuery = (transactionHash: string) => {
       const { data } = await axios.get(endpoint);
       return data;
     },
-    {
-      enabled: !!transactionHash,
-    },
-  );
+    enabled: !!transactionHash,
+  });
 };

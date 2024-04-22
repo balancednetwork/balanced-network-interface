@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 const API_ENDPOINT = 'https://balanced.icon.community/api/v1/contract-volumes';
 
@@ -12,9 +12,11 @@ export const useContractVolumesDataQuery = (
   start_timestamp?: number,
   end_timestamp?: number,
 ) => {
-  return useQuery<any[]>(
-    `contractVolumes|${skip}|${limit}|${contract}|${method}|${days_ago}|${start_timestamp}|${end_timestamp}`,
-    async () => {
+  return useQuery<any[]>({
+    queryKey: [
+      `contractVolumes|${skip}|${limit}|${contract}|${method}|${days_ago}|${start_timestamp}|${end_timestamp}`,
+    ],
+    queryFn: async () => {
       const { data } = await axios.get(
         `${API_ENDPOINT}?skip=${skip}&limit=${limit}&address=${contract}&method=${method}${
           days_ago ? `&days_ago=${days_ago}` : ''
@@ -28,5 +30,5 @@ export const useContractVolumesDataQuery = (
         return item;
       });
     },
-  );
+  });
 };

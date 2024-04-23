@@ -15,9 +15,9 @@ import styled from 'styled-components';
 import Modal, { ModalProps } from 'app/components/Modal';
 // import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
-import IconWalletIcon from 'assets/icons/iconex.svg';
+import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
 // import LedgerIcon  from 'assets/icons/ledger.svg';
-import MetamaskIcon from 'assets/icons/metamask.svg';
+import MetamaskIcon from 'assets/icons/wallets/metamask.svg';
 // import { useChangeCurrentLedgerAddressPage, useCurrentLedgerAddressPage } from 'store/application/hooks';
 
 // const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;

@@ -9,14 +9,14 @@ import { useIconReact, LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react'
 import { isMobile } from 'react-device-detect';
 import { toast } from 'react-toastify';
 import { useMedia } from 'react-use';
-import { Flex, Box, Text } from 'rebass/styled-components';
+import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import Modal from 'app/components/Modal';
 import { NotificationError } from 'app/components/Notification/TransactionNotification';
 import { Typography } from 'app/theme';
-import IconWalletIcon from 'assets/icons/iconex.svg';
-import LedgerIcon from 'assets/icons/ledger.svg';
+import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
+import LedgerIcon from 'assets/icons/wallets/ledger.svg';
 import bnJs from 'bnJs';
 import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
 import {
@@ -28,7 +28,8 @@ import {
 
 import { VerticalDivider } from '../Divider';
 import { ModalContentWrapper } from '../ModalContent';
-import { ApplicationModal, WalletModal } from 'store/application/reducer';
+import { WalletModal } from 'store/application/reducer';
+import { WalletOption, UnbreakableText } from './shared';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -72,60 +73,6 @@ const requestLedgerAddress = async ({
 };
 
 const LIMIT_PAGING_LEDGER = 5;
-
-const ChainIcons = styled.div``;
-const WalletIcons = styled.div``;
-
-const WalletOption = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  align-items: center;
-  cursor: pointer;
-  padding: 10px 20px;
-  margin: 0px 10px;
-  border-radius: 10px;
-  text-decoration: none;
-  color: white;
-  user-select: none;
-  width: 130px;
-  max-width: 100px;
-
-  ${ChainIcons}, ${WalletIcons} {
-    position: absolute;
-    right: 5px;
-    bottom: 38px;
-    display: flex;
-    flex-flow: column;
-    opacity: 0.6;
-
-    > * {
-      margin-top: 7px;
-    }
-
-    img {
-      width: 15px;
-      height: 15px;
-    }
-  }
-
-  ${({ theme }) => theme.mediaWidth.up420`
-    max-width: 130px;
-  `};
-
-  > *:first-child {
-    margin-bottom: 10px;
-  }
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.bg3};
-    opacity: 1;
-  }
-`;
-
-const UnbreakableText = styled(Text)`
-  white-space: nowrap;
-`;
 
 const LedgerAddressList = styled(Modal)`
   width: 500px;

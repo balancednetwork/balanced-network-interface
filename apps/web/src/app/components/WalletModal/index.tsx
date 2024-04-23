@@ -15,7 +15,7 @@ import { MenuList, LanguageMenuItem } from 'app/components/Menu';
 import Modal, { ModalProps } from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import ArchWalletIcon from 'assets/icons/archway.svg';
-import IconWalletIcon from 'assets/icons/iconex.svg';
+import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
 import AvalancheWalletIcon from 'assets/icons/avalanche.svg';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
 import { useActiveLocale } from 'hooks/useActiveLocale';

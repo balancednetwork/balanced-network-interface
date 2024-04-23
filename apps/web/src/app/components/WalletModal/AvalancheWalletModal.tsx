@@ -1,84 +1,33 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { t } from '@lingui/macro';
-import { useMedia } from 'react-use';
-import { Flex, Box, Text } from 'rebass/styled-components';
-import styled from 'styled-components';
+import { Flex } from 'rebass/styled-components';
 
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import IconWalletIcon from 'assets/icons/wallets/metamask.svg';
+import WalletConnectIcon from 'assets/icons/wallets/walletconnect.svg?inline';
 import { useWalletModal } from 'store/application/hooks';
 
 import { ModalContentWrapper } from '../ModalContent';
 import { WalletModal } from 'store/application/reducer';
 
-import { useAccount, useConnect } from 'wagmi';
-import { injected } from 'wagmi/connectors';
+import { Connector, useConnect, useConnectors } from 'wagmi';
+import { avalanche } from 'wagmi/chains';
+import { WalletOption, UnbreakableText } from './shared';
 
-const ChainIcons = styled.div``;
-const WalletIcons = styled.div``;
-
-const WalletOption = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  align-items: center;
-  cursor: pointer;
-  padding: 10px 20px;
-  margin: 0px 10px;
-  border-radius: 10px;
-  text-decoration: none;
-  color: white;
-  user-select: none;
-  width: 130px;
-  max-width: 100px;
-
-  ${ChainIcons}, ${WalletIcons} {
-    position: absolute;
-    right: 5px;
-    bottom: 38px;
-    display: flex;
-    flex-flow: column;
-    opacity: 0.6;
-
-    > * {
-      margin-top: 7px;
-    }
-
-    img {
-      width: 15px;
-      height: 15px;
-    }
-  }
-
-  ${({ theme }) => theme.mediaWidth.up420`
-    max-width: 130px;
-  `};
-
-  > *:first-child {
-    margin-bottom: 10px;
-  }
-
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.bg3};
-    opacity: 1;
-  }
-`;
-
-const UnbreakableText = styled(Text)`
-  white-space: nowrap;
-`;
+const icons = {
+  walletConnect: WalletConnectIcon,
+};
 
 export const AvalancheWalletModal = () => {
   const [isOpen, toggle] = useWalletModal(WalletModal.AVALANCHE);
-  const upExtraSmall = useMedia('(min-width: 420px)');
-  const [, toggleAvaxWallet] = useWalletModal(WalletModal.AVALANCHE);
+
+  const connectors = useConnectors();
 
   const { connectAsync } = useConnect();
-  const handleConnect = async () => {
-    await connectAsync({ connector: injected() });
-    toggleAvaxWallet();
+
+  const handleConnect = async (connector: Connector) => {
+    await connectAsync({ connector: connector, chainId: avalanche.id });
+    toggle();
   };
 
   return (
@@ -88,11 +37,13 @@ export const AvalancheWalletModal = () => {
           <Typography textAlign="center" margin={'0 0 25px'}>
             Connect with:
           </Typography>
-          <Flex alignItems="stretch" justifyContent="space-around" flexWrap={upExtraSmall ? 'nowrap' : 'wrap'}>
-            <WalletOption onClick={handleConnect}>
-              <IconWalletIcon width="50" height="50" />
-              <UnbreakableText>Metamask</UnbreakableText>
-            </WalletOption>
+          <Flex alignItems="stretch" justifyContent="space-around" flexWrap="wrap">
+            {connectors?.toReversed()?.map(connector => (
+              <WalletOption key={connector.id} onClick={() => handleConnect(connector)}>
+                <img width={50} height={50} src={connector.icon ?? icons[connector.id]} />
+                <UnbreakableText>{connector.name}</UnbreakableText>
+              </WalletOption>
+            ))}
           </Flex>
         </ModalContentWrapper>
       </Modal>

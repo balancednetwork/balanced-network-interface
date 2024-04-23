@@ -533,7 +533,6 @@ msgstr "Reverting failed."
 msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 msgstr "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 
-#: src/app/components/WalletModal/AvalancheWalletModal.tsx
 #: src/app/components/WalletModal/IconWalletModal.tsx
 msgid "or"
 msgstr "or"

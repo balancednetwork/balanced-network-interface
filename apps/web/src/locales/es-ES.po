@@ -566,7 +566,6 @@ msgstr ""
 msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 msgstr "Cancelar cualquier transacción pendiente en su Ledger, o dar permiso a Chrome para usarla."
 
-#: src/app/components/WalletModal/AvalancheWalletModal.tsx
 #: src/app/components/WalletModal/IconWalletModal.tsx
 msgid "or"
 msgstr "o"

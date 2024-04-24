@@ -118,7 +118,7 @@ export const useBlockDetails = (timestamp: number) => {
     return data;
   };
   return useQuery<BlockDetails>({
-    queryKey: [`getBlock${timestamp}`],
+    queryKey: [`getBlock`, timestamp],
     queryFn: getBlock,
   });
 };
@@ -144,19 +144,15 @@ export function useICXUnstakingTime() {
           },
         },
       };
-      try {
-        const totalICXStakedResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalStakedRequest);
-        const totalICXResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalICXRequest);
-        const totalICXStaked = new BigNumber(totalICXStakedResponse.data.result.totalStake).div(10 ** 18).toNumber();
-        const totalICX = new BigNumber(totalICXResponse.data.result).div(10 ** 18).toNumber();
+      const totalICXStakedResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalStakedRequest);
+      const totalICXResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalICXRequest);
+      const totalICXStaked = new BigNumber(totalICXStakedResponse.data.result.totalStake).div(10 ** 18).toNumber();
+      const totalICX = new BigNumber(totalICXResponse.data.result).div(10 ** 18).toNumber();
 
-        //70% is threshold when unstaking time is the same
-        //20 is max unstaking time
-        //5 is min unstaking time
-        return new BigNumber(((20 - 5) / 0.7 ** 2) * (totalICXStaked / totalICX - 0.7) ** 2 + 5);
-      } catch (e) {
-        console.error('Error while fetching total ICX staked info', e);
-      }
+      //70% is threshold when unstaking time is the same
+      //20 is max unstaking time
+      //5 is min unstaking time
+      return new BigNumber(((20 - 5) / 0.7 ** 2) * (totalICXStaked / totalICX - 0.7) ** 2 + 5);
     },
     placeholderData: keepPreviousData,
   });

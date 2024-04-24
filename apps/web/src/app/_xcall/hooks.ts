@@ -20,11 +20,11 @@ export function useXCallGasChecker(
       let errorMessage = '';
       const hasEnoughGasAllArray: boolean[] = [];
 
-      {
-        const xChain = xChains[chain1];
+      [chain1, chain2].forEach(chain => {
+        const xChain = xChains[chain];
         const nativeCurrency = xChain.nativeCurrency;
         // !TODO: use native property to fetch native currency balance
-        const gasAmount = balances[chain1] && balances[chain1]['native'];
+        const gasAmount = balances[chain] && balances[chain]['native'];
         const hasEnoughGas =
           xChain.autoExecution ||
           (gasAmount
@@ -37,25 +37,7 @@ export function useXCallGasChecker(
         if (!hasEnoughGas) {
           errorMessage = `You need at least ${xChain.gasThreshold} ${nativeCurrency.symbol} to pay for transaction fees on ${nativeCurrency.name}.`;
         }
-      }
-
-      {
-        const xChain = xChains[chain2];
-        const nativeCurrency = xChain.nativeCurrency;
-        const gasAmount = balances[chain2] && balances[chain2]['native'];
-        const hasEnoughGas =
-          xChain.autoExecution ||
-          (gasAmount
-            ? !CurrencyAmount.fromRawAmount(
-                gasAmount.currency,
-                xChain.gasThreshold * 10 ** nativeCurrency.decimals,
-              ).greaterThan(gasAmount)
-            : false);
-        hasEnoughGasAllArray.push(hasEnoughGas);
-        if (!hasEnoughGas) {
-          errorMessage = `You need at least ${xChain.gasThreshold} ${nativeCurrency.symbol} to pay for transaction fees on ${nativeCurrency.name}.`;
-        }
-      }
+      });
 
       const hasEnoughGas = !hasEnoughGasAllArray.some(hasEnough => !hasEnough);
 
@@ -100,15 +82,13 @@ export const useXCallFee = (
   const query = useQuery({
     queryKey: [`xcall-fees`, from, to],
     queryFn: async () => {
-      if (client) {
-        const feeWithRollback = await fetchFee(from, to, true, client);
-        const feeNoRollback = await fetchFee(from, to, false, client);
+      const feeWithRollback = await fetchFee(from, to, true, client);
+      const feeNoRollback = await fetchFee(from, to, false, client);
 
-        return {
-          noRollback: feeNoRollback,
-          rollback: feeWithRollback,
-        };
-      }
+      return {
+        noRollback: feeNoRollback,
+        rollback: feeWithRollback,
+      };
     },
     enabled: !!client,
     placeholderData: keepPreviousData,

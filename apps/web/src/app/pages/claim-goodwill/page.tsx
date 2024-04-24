@@ -79,7 +79,9 @@ const useClaimableAmountQuery = () => {
   return useQuery({
     queryKey: ['claimableAmount', account, txs],
     queryFn: async () => {
-      const result = await bnJs.LiquidationDisbursement.getDisbursementDetail(account ?? '');
+      if (!account) return;
+
+      const result = await bnJs.LiquidationDisbursement.getDisbursementDetail(account);
       return result['claimableTokens']['cx2609b924e33ef00b648a409245c7ea394c467824'];
     },
     enabled: !!account,

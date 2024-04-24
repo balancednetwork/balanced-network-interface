@@ -158,7 +158,7 @@ export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<
   const whitelistedTokenAddresses = useWhitelistedTokenAddresses() || [];
 
   return useQuery<{ [key: string]: CurrencyAmount<Token> }>({
-    queryKey: [`useFundLimitsQuery${whitelistedTokenAddresses.length}`],
+    queryKey: [`useFundLimitsQuery`, whitelistedTokenAddresses.length],
     queryFn: async () => {
       const cds: CallData[] = whitelistedTokenAddresses.map(address => {
         return {

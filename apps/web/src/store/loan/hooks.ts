@@ -347,7 +347,7 @@ export function useLockingRatio() {
 function useLiquidationRatioRaw() {
   const collateralType = useCollateralType();
   return useQuery({
-    queryKey: [`${collateralType}LiquidationRatio`],
+    queryKey: [collateralType, `LiquidationRatio`],
     queryFn: async () => {
       const data = await bnJs.Loans.getLiquidationRatio(collateralType);
       return data;
@@ -434,7 +434,7 @@ export function useBorrowableAmountWithReserve() {
 
 export function useInterestRate(symbol: string): UseQueryResult<BigNumber> {
   return useQuery({
-    queryKey: [`interestRate-${symbol}`],
+    queryKey: [`interestRate`, symbol],
     queryFn: async () => {
       const data = await bnJs.Loans.getInterestRate(symbol);
 

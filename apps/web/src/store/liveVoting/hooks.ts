@@ -33,26 +33,21 @@ export function usePowerLeft(): AppState['liveVoting']['powerLeft'] {
 export function useSourceVoteData(): UseQueryResult<Map<string, VoteSource>, Error> {
   const transactions = useAllTransactions();
   return useQuery({
-    queryKey: [`sourceVoteData-${transactions && Object.keys(transactions).length}`],
+    queryKey: [`sourceVoteData`, transactions && Object.keys(transactions).length],
     queryFn: async () => {
       const data: { [key in string]: VoteSourceRaw } = await bnJs.Rewards.getSourceVoteData();
 
       return Object.keys(data).reduce((sources, source) => {
-        try {
-          const votable = parseInt(data[source].votable, 16) === 1;
-          if (votable)
-            sources[source] = {
-              type: parseInt(data[source].type, 16),
-              weight: new Fraction(data[source].weight, WEIGHT_CONST),
-              currentWeight: new Fraction(data[source].currentWeight, WEIGHT_CONST),
-              currentBias: new BigNumber(data[source].currentBias),
-              currentSlope: new BigNumber(data[source].currentSlope),
-            };
-        } catch (e) {
-          console.error(e);
-        } finally {
-          return sources;
-        }
+        const votable = parseInt(data[source].votable, 16) === 1;
+        if (votable)
+          sources[source] = {
+            type: parseInt(data[source].type, 16),
+            weight: new Fraction(data[source].weight, WEIGHT_CONST),
+            currentWeight: new Fraction(data[source].currentWeight, WEIGHT_CONST),
+            currentBias: new BigNumber(data[source].currentBias),
+            currentSlope: new BigNumber(data[source].currentSlope),
+          };
+        return sources;
       }, {});
     },
     placeholderData: keepPreviousData,
@@ -65,24 +60,23 @@ export function useCombinedVoteData(): UseQueryResult<Map<string, VoteSource>, E
 
   return useQuery({
     queryKey: [
-      `combinedVoteData${voteData && Object.keys(voteData).length}${distribution && Object.keys(distribution).length}`,
+      `combinedVoteData`,
+      voteData && Object.keys(voteData).length,
+      distribution && Object.keys(distribution).length,
     ],
     queryFn: () => {
-      if (voteData && distribution) {
-        const distributionFixedSources = Object.keys(distribution.Fixed);
+      if (!voteData || !distribution) return;
 
-        return Object.keys(voteData).reduce((sources, source) => {
-          if (distributionFixedSources.indexOf(source) >= 0) {
-            try {
-              sources[source].weight = sources[source].weight.add(distribution.Fixed[source]);
-            } catch (e) {
-              console.error(e);
-            }
-          }
-          return sources;
-        }, voteData);
-      }
+      const distributionFixedSources = Object.keys(distribution.Fixed);
+
+      return Object.keys(voteData).reduce((sources, source) => {
+        if (distributionFixedSources.indexOf(source) >= 0) {
+          sources![source].weight = sources![source].weight.add(distribution.Fixed[source]);
+        }
+        return sources;
+      }, voteData);
     },
+    enabled: !!voteData && !!distribution,
     placeholderData: keepPreviousData,
     refetchInterval: undefined,
     refetchOnWindowFocus: false,
@@ -232,27 +226,28 @@ export function useTotalBBalnAllocated(): UseQueryResult<BigNumber | undefined, 
   return useQuery({
     queryKey: ['totalBBalnAllocation', types],
     queryFn: async () => {
-      if (types) {
-        const allocations: string[] = [];
-        await Promise.all(
-          types
-            .filter((value, index, self) => self.indexOf(value) === index)
-            .map(type => bnJs.Rewards.getWeightsSumPerType(type)),
-        ).then(res => {
-          try {
-            res.forEach(typeAllocation => allocations.push(typeAllocation.bias));
-          } catch (e) {
-            console.error(e);
-          }
-        });
+      if (!types) return;
 
-        return allocations.length
-          ? allocations.reduce(
-              (total, typeAllocation) => total.plus(new BigNumber(typeAllocation).div(10 ** 18)),
-              new BigNumber(0),
-            )
-          : undefined;
-      }
+      const allocations: string[] = [];
+      await Promise.all(
+        types
+          .filter((value, index, self) => self.indexOf(value) === index)
+          .map(type => bnJs.Rewards.getWeightsSumPerType(type)),
+      ).then(res => {
+        try {
+          res.forEach(typeAllocation => allocations.push(typeAllocation.bias));
+        } catch (e) {
+          console.error(e);
+        }
+      });
+
+      return allocations.length
+        ? allocations.reduce(
+            (total, typeAllocation) => total.plus(new BigNumber(typeAllocation).div(10 ** 18)),
+            new BigNumber(0),
+          )
+        : undefined;
     },
+    enabled: !!types,
   });
 }

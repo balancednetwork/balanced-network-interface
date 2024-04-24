@@ -170,19 +170,20 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
   return useQuery({
     queryKey: ['flattenedDistribution', distribution],
     queryFn: () => {
-      if (distribution) {
-        return Object.values(distribution).reduce((flattened, dist) => {
-          return Object.keys(dist).reduce((flattened, item) => {
-            if (Object.keys(flattened).indexOf(item) >= 0) {
-              flattened[item] = flattened[item].add(dist[item]);
-            } else {
-              flattened[item] = dist[item];
-            }
-            return flattened;
-          }, flattened);
-        }, {});
-      }
+      if (!distribution) return;
+
+      return Object.values(distribution).reduce((flattened, dist) => {
+        return Object.keys(dist).reduce((flattened, item) => {
+          if (Object.keys(flattened).indexOf(item) >= 0) {
+            flattened[item] = flattened[item].add(dist[item]);
+          } else {
+            flattened[item] = dist[item];
+          }
+          return flattened;
+        }, flattened);
+      }, {});
     },
+    enabled: !!distribution,
     placeholderData: keepPreviousData,
   });
 }
@@ -192,12 +193,10 @@ export function useEarnedPastMonth(): UseQueryResult<BigNumber | undefined> {
   const { data: prices } = useTokenPrices();
 
   return useQuery({
-    queryKey: [`earnedPastMonth-${account}-${prices ? Object.keys(prices).length : '0'}`],
+    queryKey: [`earnedPastMonth`, account, prices ? Object.keys(prices).length : '0'],
     queryFn: async () => {
-      if (account) {
-        //todo: after endpoint is ready, fetch the data from there
-        return new BigNumber(23.9);
-      }
+      //todo: after endpoint is ready, fetch the data from there
+      return new BigNumber(23.9);
     },
     enabled: !!account,
     placeholderData: keepPreviousData,

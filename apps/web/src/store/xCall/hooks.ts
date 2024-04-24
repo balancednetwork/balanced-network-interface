@@ -165,94 +165,92 @@ export function useXCallActivityItems(): UseQueryResult<XCallActivityItem[] | un
   return useQuery({
     queryKey: ['xCallActivityItems', xCallState],
     queryFn: async () => {
-      if (xCallState) {
-        const executable = SUPPORTED_XCALL_CHAINS.map(chain => {
-          const chainXCalls: XCallActivityItem[] = [];
-          xCallState.events[chain].destination.forEach(event => {
-            const otherChains = SUPPORTED_XCALL_CHAINS.filter(c => c !== chain);
-            const originEvent = otherChains.map(chain => {
-              return xCallState.events[chain].origin.find(origin => origin.sn === event.sn);
-            })[0];
+      const executable = SUPPORTED_XCALL_CHAINS.map(chain => {
+        const chainXCalls: XCallActivityItem[] = [];
+        xCallState.events[chain].destination.forEach(event => {
+          const otherChains = SUPPORTED_XCALL_CHAINS.filter(c => c !== chain);
+          const originEvent = otherChains.map(chain => {
+            return xCallState.events[chain].origin.find(origin => origin.sn === event.sn);
+          })[0];
 
-            if (originEvent && !originEvent.rollbackRequired) {
-              chainXCalls.push({
-                chain,
-                destinationData: event,
-                originData: originEvent,
-                status: 'executable',
-              });
-            }
-          });
-          return chainXCalls.filter(xCall => xCall !== undefined);
+          if (originEvent && !originEvent.rollbackRequired) {
+            chainXCalls.push({
+              chain,
+              destinationData: event,
+              originData: originEvent,
+              status: 'executable',
+            });
+          }
         });
+        return chainXCalls.filter(xCall => xCall !== undefined);
+      });
 
-        const pending = SUPPORTED_XCALL_CHAINS.map(chain => {
-          const chainXCalls: XCallActivityItem[] = [];
-          xCallState.events[chain].origin.forEach(event => {
+      const pending = SUPPORTED_XCALL_CHAINS.map(chain => {
+        const chainXCalls: XCallActivityItem[] = [];
+        xCallState.events[chain].origin.forEach(event => {
+          const otherChains = SUPPORTED_XCALL_CHAINS.filter(c => c !== chain);
+          const destinationEvent = otherChains.map(chain => {
+            return xCallState.events[chain].destination.find(destination => destination.sn === event.sn);
+          })[0];
+
+          if (!destinationEvent) {
+            chainXCalls.push({
+              chain,
+              originData: event,
+              status: 'pending',
+            });
+          }
+        });
+        return chainXCalls.filter(xCall => xCall !== undefined);
+      });
+
+      const rollback = SUPPORTED_XCALL_CHAINS.map(chain => {
+        const chainXCalls: XCallActivityItem[] = [];
+        xCallState.events[chain].origin.forEach(event => {
+          if (event.rollbackRequired && !event.rollbackReady) {
             const otherChains = SUPPORTED_XCALL_CHAINS.filter(c => c !== chain);
             const destinationEvent = otherChains.map(chain => {
               return xCallState.events[chain].destination.find(destination => destination.sn === event.sn);
             })[0];
 
-            if (!destinationEvent) {
+            if (destinationEvent) {
               chainXCalls.push({
                 chain,
+                destinationData: destinationEvent,
                 originData: event,
-                status: 'pending',
+                status: 'failed',
               });
             }
-          });
-          return chainXCalls.filter(xCall => xCall !== undefined);
+          }
         });
+        return chainXCalls.filter(xCall => xCall !== undefined);
+      });
 
-        const rollback = SUPPORTED_XCALL_CHAINS.map(chain => {
-          const chainXCalls: XCallActivityItem[] = [];
-          xCallState.events[chain].origin.forEach(event => {
-            if (event.rollbackRequired && !event.rollbackReady) {
-              const otherChains = SUPPORTED_XCALL_CHAINS.filter(c => c !== chain);
-              const destinationEvent = otherChains.map(chain => {
-                return xCallState.events[chain].destination.find(destination => destination.sn === event.sn);
-              })[0];
+      const rollbackReady = SUPPORTED_XCALL_CHAINS.map(chain => {
+        const chainXCalls: XCallActivityItem[] = [];
+        xCallState.events[chain].origin.forEach(event => {
+          if (event.rollbackReady) {
+            const otherChains = SUPPORTED_XCALL_CHAINS.filter(c => c !== chain);
+            const destinationEvent = otherChains.map(chain => {
+              return xCallState.events[chain].destination.find(destination => destination.sn === event.sn);
+            })[0];
 
-              if (destinationEvent) {
-                chainXCalls.push({
-                  chain,
-                  destinationData: destinationEvent,
-                  originData: event,
-                  status: 'failed',
-                });
-              }
+            if (destinationEvent) {
+              chainXCalls.push({
+                chain,
+                destinationData: destinationEvent,
+                originData: event,
+                status: 'rollbackReady',
+              });
             }
-          });
-          return chainXCalls.filter(xCall => xCall !== undefined);
+          }
         });
+        return chainXCalls.filter(xCall => xCall !== undefined);
+      });
 
-        const rollbackReady = SUPPORTED_XCALL_CHAINS.map(chain => {
-          const chainXCalls: XCallActivityItem[] = [];
-          xCallState.events[chain].origin.forEach(event => {
-            if (event.rollbackReady) {
-              const otherChains = SUPPORTED_XCALL_CHAINS.filter(c => c !== chain);
-              const destinationEvent = otherChains.map(chain => {
-                return xCallState.events[chain].destination.find(destination => destination.sn === event.sn);
-              })[0];
-
-              if (destinationEvent) {
-                chainXCalls.push({
-                  chain,
-                  destinationData: destinationEvent,
-                  originData: event,
-                  status: 'rollbackReady',
-                });
-              }
-            }
-          });
-          return chainXCalls.filter(xCall => xCall !== undefined);
-        });
-
-        return [...executable, ...pending, ...rollback, ...rollbackReady].flat().sort((a, b) => {
-          return b.originData.timestamp - a.originData.timestamp;
-        });
-      }
+      return [...executable, ...pending, ...rollback, ...rollbackReady].flat().sort((a, b) => {
+        return b.originData.timestamp - a.originData.timestamp;
+      });
     },
     enabled: !!xCallState,
     placeholderData: keepPreviousData,
@@ -354,45 +352,37 @@ export function useWithdrawableNativeAmount(
   const amount = currencyAmount?.numerator.toString();
   const address = currencyAmount?.currency.wrapped.address;
   const { client } = useArchwayContext();
+  const isNativeToken = COSMOS_NATIVE_AVAILABLE_TOKENS.some(token => token.address === address);
 
   return useQuery({
     queryKey: ['withdrawableNativeAmount', amount, address, chain],
     queryFn: async () => {
-      if (
-        client &&
-        address &&
-        amount &&
-        currencyAmount &&
-        COSMOS_NATIVE_AVAILABLE_TOKENS.some(token => token.address === address)
-      ) {
-        if (chain === 'archway') {
-          const stakedArchwayAddress = getArchwayCounterToken('sARCH');
-          if (stakedArchwayAddress?.address) {
-            const response = await client.queryContractSmart(archway.contracts.liquidSwap!, {
-              simulation: {
-                offer_asset: {
-                  amount: amount,
-                  info: {
-                    token: {
-                      contract_addr: stakedArchwayAddress?.address,
-                    },
-                  },
+      if (!currencyAmount || !amount || !address || !client || chain !== 'archway' || !isNativeToken) return;
+
+      const stakedArchwayAddress = getArchwayCounterToken('sARCH');
+      if (stakedArchwayAddress?.address) {
+        const response = await client!.queryContractSmart(archway.contracts.liquidSwap!, {
+          simulation: {
+            offer_asset: {
+              amount: amount,
+              info: {
+                token: {
+                  contract_addr: stakedArchwayAddress?.address,
                 },
               },
-            });
+            },
+          },
+        });
 
-            return {
-              amount: new BigNumber(response.return_amount).div(10 ** currencyAmount.currency.decimals),
-              fee: new BigNumber(response.commission_amount).div(10 ** currencyAmount.currency.decimals),
-              symbol: 'ARCH',
-            };
-          }
-        }
+        return {
+          amount: new BigNumber(response.return_amount).div(10 ** currencyAmount!.currency.decimals),
+          fee: new BigNumber(response.commission_amount).div(10 ** currencyAmount!.currency.decimals),
+          symbol: 'ARCH',
+        };
       }
-      return undefined;
     },
     placeholderData: keepPreviousData,
     refetchInterval: 2000,
-    enabled: !!currencyAmount,
+    enabled: !!currencyAmount && !!amount && !!address && !!client && chain === 'archway' && isNativeToken,
   });
 }

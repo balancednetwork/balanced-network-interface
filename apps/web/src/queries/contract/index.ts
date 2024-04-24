@@ -13,9 +13,7 @@ export const useContractVolumesDataQuery = (
   end_timestamp?: number,
 ) => {
   return useQuery<any[]>({
-    queryKey: [
-      `contractVolumes|${skip}|${limit}|${contract}|${method}|${days_ago}|${start_timestamp}|${end_timestamp}`,
-    ],
+    queryKey: [`contractVolumes`, skip, limit, contract, method, days_ago, start_timestamp, end_timestamp],
     queryFn: async () => {
       const { data } = await axios.get(
         `${API_ENDPOINT}?skip=${skip}&limit=${limit}&address=${contract}&method=${method}${

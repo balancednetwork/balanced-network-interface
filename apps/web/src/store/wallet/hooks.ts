@@ -82,41 +82,41 @@ export function useArchwayBalances(
   const arch = useARCH();
 
   return useQuery({
-    queryKey: [`archwayBalances-${!!signingClient}-${address}-${tokens ? tokens.length : ''}`],
+    queryKey: [`archwayBalances`, signingClient, address, tokens ? tokens.length : ''],
     queryFn: async () => {
-      if (signingClient && address) {
-        const cw20Tokens = [...tokens].filter(token => !isDenomAsset(token));
-        const denoms = [...tokens].filter(token => isDenomAsset(token));
+      if (!signingClient || !address) return;
 
-        const cw20Balances = await Promise.all(
-          cw20Tokens.map(async token => {
-            const balance = await signingClient.queryContractSmart(token.address, { balance: { address } });
-            return CurrencyAmount.fromRawAmount(token, balance.balance);
-          }),
-        );
+      const cw20Tokens = [...tokens].filter(token => !isDenomAsset(token));
+      const denoms = [...tokens].filter(token => isDenomAsset(token));
 
-        const nativeBalances = await Promise.all(
-          denoms.map(async token => {
-            const nativeBalance = await signingClient.getBalance(address, token.address);
-            const tokenObj = new Token(NETWORK_ID, token.address, token.decimals, token.symbol, token.name);
-            const balance = CurrencyAmount.fromRawAmount(tokenObj, nativeBalance.amount ?? 0);
-            return balance;
-          }),
-        );
+      const cw20Balances = await Promise.all(
+        cw20Tokens.map(async token => {
+          const balance = await signingClient.queryContractSmart(token.address, { balance: { address } });
+          return CurrencyAmount.fromRawAmount(token, balance.balance);
+        }),
+      );
 
-        //arch token balance
-        const archTokenBalance = await signingClient.getBalance(address, ARCHWAY_FEE_TOKEN_SYMBOL);
-        const archBalance = CurrencyAmount.fromRawAmount(arch, archTokenBalance.amount || 0);
+      const nativeBalances = await Promise.all(
+        denoms.map(async token => {
+          const nativeBalance = await signingClient.getBalance(address, token.address);
+          const tokenObj = new Token(NETWORK_ID, token.address, token.decimals, token.symbol, token.name);
+          const balance = CurrencyAmount.fromRawAmount(tokenObj, nativeBalance.amount ?? 0);
+          return balance;
+        }),
+      );
 
-        return [archBalance, ...nativeBalances, ...cw20Balances].reduce((acc, balance) => {
-          if (!balance) return acc;
-          if (!JSBI.greaterThan(balance.quotient, BIGINT_ZERO)) {
-            return acc;
-          }
-          acc[balance.currency.wrapped.address] = balance;
+      //arch token balance
+      const archTokenBalance = await signingClient.getBalance(address, ARCHWAY_FEE_TOKEN_SYMBOL);
+      const archBalance = CurrencyAmount.fromRawAmount(arch, archTokenBalance.amount || 0);
+
+      return [archBalance, ...nativeBalances, ...cw20Balances].reduce((acc, balance) => {
+        if (!balance) return acc;
+        if (!JSBI.greaterThan(balance.quotient, BIGINT_ZERO)) {
           return acc;
-        }, {});
-      }
+        }
+        acc[balance.currency.wrapped.address] = balance;
+        return acc;
+      }, {});
     },
     placeholderData: keepPreviousData,
     enabled: !!signingClient && !!address,

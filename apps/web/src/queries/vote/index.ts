@@ -183,31 +183,31 @@ export const useActiveProposals = () => {
   const { data: proposals } = useTotalProposalQuery();
 
   return useQuery({
-    queryKey: [`activeProposals-${proposals ? proposals.length : ''}-${account}-${txCount}-${platformDay}`],
+    queryKey: [`activeProposals`, proposals ? proposals.length : '', account, txCount, platformDay],
     queryFn: async () => {
-      if (account && proposals) {
-        const activeProposals = await Promise.all(
-          proposals.map(async proposal => {
-            if (
-              platformDay &&
-              proposal.status === 'Active' &&
-              proposal.startDay <= platformDay &&
-              proposal.endDay > platformDay
-            ) {
-              const res = await bnJs.Governance.getVotesOfUser(proposal.id, account!);
-              const approval = BalancedJs.utils.toIcx(res['for']);
-              const reject = BalancedJs.utils.toIcx(res['against']);
-              const hasVoted = !(approval.isZero() && reject.isZero());
+      if (!account || !platformDay || !proposals) return;
 
-              return !hasVoted;
-            } else {
-              return false;
-            }
-          }),
-        ).then(results => proposals.filter((_proposal, index) => results[index]));
+      const activeProposals = await Promise.all(
+        proposals.map(async proposal => {
+          if (
+            platformDay &&
+            proposal.status === 'Active' &&
+            proposal.startDay <= platformDay &&
+            proposal.endDay > platformDay
+          ) {
+            const res = await bnJs.Governance.getVotesOfUser(proposal.id, account);
+            const approval = BalancedJs.utils.toIcx(res['for']);
+            const reject = BalancedJs.utils.toIcx(res['against']);
+            const hasVoted = !(approval.isZero() && reject.isZero());
 
-        return activeProposals;
-      }
+            return !hasVoted;
+          } else {
+            return false;
+          }
+        }),
+      ).then(results => proposals.filter((_proposal, index) => results[index]));
+
+      return activeProposals;
     },
     enabled: !!account && !!platformDay && !!proposals,
   });

@@ -27,7 +27,7 @@ export function useBribes(): UseQueryResult<Bribe[], Error> {
   }, [voteData]);
 
   return useQuery({
-    queryKey: [`bribes-${sourceNames.length}-${account}-${txCount}`],
+    queryKey: [`bribes`, sourceNames.length, account, txCount],
     queryFn: async () => {
       const cds: CallData[] = sourceNames.map(sourceName => ({
         target: bnJs.Bribe.address,

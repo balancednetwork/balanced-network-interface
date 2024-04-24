@@ -34,10 +34,8 @@ function isCxValid(cx: string) {
 
 export function useCxApi(cx: string | undefined) {
   return useQuery({
-    queryKey: [`cxApi-${cx}`],
+    queryKey: [`cxApi`, cx],
     queryFn: async () => {
-      if (!cx || !isCxValid(cx)) return;
-
       const params = { ...API_PARAMS, params: { address: cx } };
       const response: AxiosResponse<{ result: CxMethod[] }> = await axios.post(`${RPC_ENDPOINT}`, params);
 
@@ -45,6 +43,7 @@ export function useCxApi(cx: string | undefined) {
         return response.data.result.filter(method => method.type === 'function' && method.readonly !== '0x1');
       }
     },
+    enabled: !!cx && isCxValid(cx),
     placeholderData: keepPreviousData,
   });
 }

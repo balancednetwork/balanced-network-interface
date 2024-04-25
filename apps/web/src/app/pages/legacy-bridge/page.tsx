@@ -27,7 +27,7 @@ export function LegacyBridge() {
   return (
     <SectionPanel>
       <div>
-        <BTPButton onClick={handleBTPButtonClick}>Transfer assets between blockchains (Legacy)</BTPButton>
+        <BTPButton onClick={handleBTPButtonClick}>Transfer assets back to their native blockchain</BTPButton>
       </div>
       <TransferAssetsModal />
     </SectionPanel>

@@ -49,6 +49,7 @@ const ClaimGoodwillPage = lazyLoad(
 const routeTexts: [string, MessageDescriptor][] = [
   ['/vote', defineMessage({ message: 'Vote' })],
   ['/trade', defineMessage({ message: 'Trade' })],
+  ['/legacy-bridge', defineMessage({ message: 'Legacy bridge' })],
   ['/', defineMessage({ message: 'Home' })],
 ];
 
